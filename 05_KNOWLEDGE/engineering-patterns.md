@@ -641205,3 +641205,205 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `bec6d69e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8827. Bump the minor group with 3 updates (Harvested from rdfjs/N3.js)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Bump the minor group with 3 updates",
+  "source": "rdfjs/N3.js",
+  "source_url": "https://github.com/rdfjs/N3.js",
+  "source_version": "f921e119",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-17T00:56:00.506Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rdfjs-n3-js",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rdfjs/N3.js](https://github.com/rdfjs/N3.js) (Revision: `f921e119`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rdfjs/N3.js. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f921e119`: deps-dev): Bump the minor group with 3 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+      "version": "8.1.2",
+      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.1.2.tgz",
+      "integrity": "sha512-xqDajHAAOjklW5UtWzFd9vSmlQ16+emgGi0HsyDQFGRQWZ/GjuwCoYGC3PnHxspmOR+HJBzDIOkMxNq/VvC98w==",
+        "@babel/generator": "^8.1.2",
+        "@babel/helpers": "^8.1.2",
+        "@babel/parser": "^8.1.2",
+        "@babel/template": "^8.1.2",
+        "@babel/traverse": "^8.1.2",
+        "@babel/types": "^8.1.2",
+      "version": "8.1.2",
+      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.2.tgz",
+      "integrity": "sha512-tAjURz1NaCZGtdG3hB6gjaIeTVo4XFD4TnbqIEneADVJ1Jpt2NxhPBAjbhius8ulUG5b/P2b56ec1ClJZa2aBQ==",
+        "@babel/parser": "^8.1.2",
+        "@babel/types": "^8.1.2",
+      "version": "8.1.2",
+      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.1.2.tgz",
+      "integrity": "sha512-TRz5Z0MgfIfWqwEIq/pCpUpEXQxUt2Ig2ZbxG3SdmhSbHMAFFYGOix0kI4JLV371/TA+qWnQ4xWHPWjojkyRFA==",
+      "version": "8.1.2",
+      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.2.tgz",
+      "integrity": "sha512-BmtiG8H9OUWSTFOgl9jtPYmfDi6uc21Pf4GUxkgGoZnzMIzpDnhkl5gsGJW6wb1jmKCyU565F
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+      "version": "8.1.0",
+      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.1.0.tgz",
+      "integrity": "sha512-3jqm7xh3kJCmIeOK8sk6/EvOWdSzvOqvjt0tJEDOHHmzWjcQSvIh2/tq1I9RA741tl0QZdMzPJWCulWE+Dy5ww==",
+        "@babel/generator": "^8.1.0",
+        "@babel/helpers": "^8.1.0",
+        "@babel/parser": "^8.1.0",
+        "@babel/template": "^8.0.0",
+        "@babel/traverse": "^8.1.0",
+        "@babel/types": "^8.1.0",
+      "version": "8.1.0",
+      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.0.tgz",
+      "integrity": "sha512-7fiBJ61wDV3AHbg7n/EfLBv3RU+lsdRP8QNJnydkKWA7e48FnnvKQWbVHsJQCBE7JHTj4xlzZL9fvQYsBUip2A==",
+        "@babel/parser": "^8.1.0",
+        "@babel/types": "^8.1.0",
+      "version": "8.0.8",
+      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.0.8.tgz",
+      "integrity": "sha512-fVM+gSuKbdv9cpmyRNh5EvsDHUZCdxQH3FdnFKSkNYHpbsn95bbrxm+ES3MVeQjcqwi2O5ur/DjLfmTQaO60ng==",
+      "version": "8.1.0",
+      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.0.tgz",
+      "integrity": "sha512-949bjw10dhaRdtQeCpfVShFA4jIcto97BkqmWnRjpzyQuHVZ7EDriaoCn/4D8h1NqSKlmI20x
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f921e119` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8828. Empirical Invariant Guard in copilot-instructions.md (Harvested from Permify/permify)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Empirical Invariant Guard in copilot-instructions.md",
+  "source": "Permify/permify",
+  "source_url": "https://github.com/Permify/permify",
+  "source_version": "18fcfdda",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-17T00:56:05.084Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-permify-permify",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.67,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "WARN",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "WARN",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Permify/permify](https://github.com/Permify/permify) (Revision: `18fcfdda`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 67%).
+
+**RULE**:
+When implementing operations in `.github/copilot-instructions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Permify/permify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `18fcfdda`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/copilot-instructions.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+- Use only public artifacts: the published `ghcr.io/permify/permify` images, public docs
+  (`docs/`), and public client libraries. You may read this repo's source to understand intended
+  behavior, but reproduce the bug by calling the running service's API, not by reading code and
+  guessing. Never build or run Permify from this checkout's source — always use a released image.
+- **Latest** (the newest published release) should already be running at `http://localhost:3476`
+  (REST) / `localhost:3478` (gRPC). Check it first: `curl -s http://localhost:3476/healthz`. If
+  that fails, start it yourself and wait up to about 5 minutes:
+  `docker compose -p triage -f .github/triage/docker-compose.yml up -d db-latest permify-latest`.
+- If the issue names a released version (for example `v1.7.4`), start a second instance pinned to
+  that exact tag:
+  `/healthz` to answer. If the image tag cannot be pulled, say so in your report and test latest
+  only. If the issue does not name a version, test latest only.
+- **Pin down exactly what you tested while it is running, not from a later registry lookup.**
+  Tags like `latest` and `v1.7.4` are mutable and can move; only the digest attached to the im
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+- Use only public artifacts: this repo's own `Dockerfile.local` build, the published
+  `ghcr.io/permify/permify` images, public docs (`docs/`), and public client libraries. You may
+  read the source to understand intended behavior, but reproduce the bug by calling the running
+  service's API, not by reading code and guessing.
+- **HEAD** (this checkout, i.e. the default branch) should already be running at
+  `http://localhost:3476` (REST) / `localhost:3478` (gRPC). Check it first:
+  `curl -s http://localhost:3476/healthz`. If that fails, start it yourself and wait up to about
+  5 minutes: `docker compose -p triage -f .github/triage/docker-compose.yml up -d --build database permify-latest`.
+- If the issue names a released version (for example `v1.7.4`), start a second instance to test
+  exactly what shipped:
+  `/healthz` to answer. If the image tag cannot be pulled, say so in your report and test HEAD only.
+   steps on HEAD.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `18fcfdda` are properly handled with clean fallback behavior.

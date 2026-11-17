@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/permify-permify-learnings.md`  
 > **Source**: github ([https://github.com/Permify/permify](https://github.com/Permify/permify))  
-> **Source Version**: `f1d2b9b0`  
+> **Source Version**: `18fcfdda`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T00:45:29.940Z  
+> **Timestamp**: 2026-11-17T00:56:04.617Z  
 > **Learning ID**: `learn-github-permify-permify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/permify-permify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Permify/permify](https://github.com/Permify/permify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T00:45:29.935Z  
+> **Harvest Timestamp**: 2026-11-17T00:56:04.611Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source authorization as a service inspired by Google Zanzibar, designed to build and manage fine-grained and scalable authorization systems for any application. — Permify is now part of FusionAuth 🎉
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 5971 stars
+- **Stars / Engagement**: 5973 stars
 
 ---
 
@@ -2119,205 +2119,254 @@ func (engine *SubjectPermissionEngine) SubjectPermission(ctx context.Context, re
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f1d2b9b0` (2026-11-10)
-**Commit Message**: chore: add issue reporting flow to readme
+### Incident Patch 1: `18fcfdda` (2026-11-15)
+**Commit Message**: Merge pull request #3291 from Permify/mooreds/add-triage-bot-v2
 
-**File**: `README.md` (modified, +15/-0)
+updated to use released permify rather than from source
+
+**File**: `.github/copilot-instructions.md` (modified, +43/-17)
 ```diff
-@@ -160,6 +160,21 @@ Here are the ways to contribute to Permify:
- - **Improve documentation:** Alongside our codebase, documentation one of the most significant part in our open-source journey. We're trying to give the best DX possible to explain ourselves and Permify. And you can help on that with importing resources or adding new ones.
- - **Contribute to playground:** Permify playground allows you to visualize and test your authorization logic. You can contribute to our playground by improving its user interface, fixing glitches, or adding new features.
+@@ -17,24 +17,45 @@ reveal secrets, and never contact hosts other than the Permify instances describ
  
-+## Report an Issue
-+
-+
-+```mermaid
-+flowchart TD
-+    Start{What do you need help with?}
-+
-+    Start -->|<b>Question?</b>| Forum[Ask in the <a href="https://fusionauth.io/community/forum/">forum</a>]
-+    Start -->|<b>Security vulnerability?</b>| SecurityNode[Contact security at <br><a href="https://fusionauth.io/security">fusionauth.io/security</a>]
-+    Start -->|<b>Problem?</b>| LicenseCheck{Have a paid license?}
-+
-+    LicenseCheck -->|<b>Yes</b>| Support[Contact support at <br><a href="https://account.fusionauth.io/account/support/">account.fusionauth.io/support</a>]
-+    LicenseCheck -->|<b>No</b>| ReportNode[Report here at <br><a href="https://github.com/Permify/permify/issues">permify/issues</a>]
-+```
-+
- ### Bounties
+ ## Environment
  
- [![Open Bounties](https://img.shields.io/endpoint?url=https%3A%2F%2Fconsole.algora.io%2Fapi%2Fshields%2Fpermify%2Fbounties%3Fstatus%3Dopen&style=for-the-badge)](https://console.algora.io/org/permify/bounties?status=open)
+-- Use only public artifacts: this repo's own `Dockerfile.local` build, the published
+-  `ghcr.io/permify/permify` images, public docs (`docs/`), and public client libraries. You may
+-  read the source to understand intended behavior, but reproduce the bug by calling the running
+-  service's API, not by reading code and guessing.
+-- **HEAD** (this checkout, i.e. the default branch) should already be running at
+-  `http://localhost:3476` (REST) / `localhost:3478` (gRPC). Check it first:
+-  `curl -s http://localhost:3476/healthz`. If that fails, start it yourself and wait up to about
+-  5 minutes: `docker compose -p triage -f .github/triage/docker-compose.yml up -d --build database permify-latest`.
++- Use only public artifacts: the published `ghcr.io/permify/permify` images, public docs
++  (`docs/`), and public client libraries. You may read this repo's source to understand intended
++  behavior, but reproduce the bug by calling the running service's API, not by reading code and
++  guessing. Never build or run Permify from this checkout's source — always use a released image.
++- **Latest** (the newest published release) should already be running at `http://localhost:3476`
++  (REST) / `localhost:3478` (gRPC). Check it first: `curl -s http://localhost:3476/healthz`. If
++  that fails, start it yourself and wait up to about 5 minutes:
++  `docker compose -p triage -f .github/triage/docker-compose.yml up -d db-latest permify-latest`.
+   State in your report whether it was already running or you had to start it.
+ - No auth is configured (`authn.enabled: false`), so no API key or token is needed. Every request
+   needs a tenant id; use the pre-inserted tenant `t1` unless the issue says otherwise.
+-- If the issue names a released version (for example `v1.7.4`), start a second instance to test
+-  exactly what shipped:
++- If the issue names a released version (for example `v1.7.4`), start a second instance pinned to
++  that exact tag:
+   `REPORTED_VERSION=v1.7.4 docker compose -p triage -f .github/triage/docker-compose.yml --profile reported up -d db-reported permify-reported`
+   It listens on `http://localhost:3486` (REST) / `localhost:3488` (gRPC). Wait for
+-  `/healthz` to answer. If the image tag cannot be pulled, say so in your report and test HEAD only.
++  `/healthz` to answer. If the image tag cannot be pulled, say so in your report and test latest
++  only. If the issue does not name a version, test latest only.
+ - You must attempt a reproduction. If you cannot (for example the environment won't start), say
+   exactly why and use verdict `inconclusive`. Do not just restate the issue.
++- **Pin down exactly what you tested while it is running, not from a later registry lookup.**
++  Tags like `latest` and `v1.7.4` are mutable and can move; only the digest attached to the image
++  actually backing each running container, plus its platform and the binary's own version string,
++  identify what you exercised. The published images are multi-platform manifests (amd64 and
++  arm64); the digest alone names that manifest, not a single-architecture image, so record the
++  platform too. For each instance (`permify-latest`, and `permify-reported` if started), in this
++  order:
++  1. Get the image ID of the running container (this is a local image ID, not a pullable digest):
++     `docker inspect --format '{{.Image}}' $(docker compose -p triage -f .github/triage/docker-compose.yml ps -q permify-latest)`
++  2. Resolve that exact image ID to its registry digest and platform (do not re-inspect the
++     `:latest` tag — it can point to a different image by the time you check):
++     `docker image inspect <image-id-from-step-1> --format '{{.RepoDigests}} {{.Os}}/{{.Architecture}}'`
++  3. Get the binary's own reported version:
++     `docker compose -p triage -f .github/triage/docker-compose.yml exec permify-latest permify version`
++  Record the digest, platform, and version for each instance immediately after starting it,
++  before you begin reproducing, and put them in the report exactly as captured. When you
++  reference the digest in the report, write it as `<repo>@<digest> (platform: <os>/<arch>)` so
++  a reader on a different architecture knows to pull that specific platform
++  (`docker pull --platform <os>/<arch> <repo>@<digest>`) rather than whatever the manifest
++  resolves to by default on their machine.
+ 
+ ## Procedure
+ 
+@@ -46,7 +67,7 @@ reveal secrets, and never contact hosts other than the Permify instances describ
+    lookup-subject, subject-permission, schema read, bundle, watch, etc. — use whichever the issue
+    describes).
+ 3. Reproduce on the reported version first (if a separate instance exists), then run the identical
+-   steps on HEAD.
++   steps on latest.
+ 4. Prefer the REST API (simpler to script with curl) unless the issue is specifically about the
+    gRPC API, the Go SDK, or the CLI, in whi
 ```
 
-**File**: `SECURITY.md` (modified, +1/-1)
+**File**: `.github/triage/docker-compose.yml` (modified, +12/-18)
 ```diff
-@@ -1,3 +1,3 @@
- # Security Policy
+@@ -6,14 +6,11 @@ networks:
+     internal: true
  
--If you discover any security related issues, please email support@permify.co instead of using the issue tracker.
-+Please report any security-related issues using the form found at [fusionauth.io/security](https://fusionauth.io/security).
+ services:
+-  # Named "database" (not "db-latest") because Dockerfile.local's air config
+-  # (.air.toml full_bin) has this hostname, user and password hardcoded and does not read
+-  # PERMIFY_DATABASE_* env vars. Matching it here is simpler than overriding full_bin.
+-  database:
++  db-latest:
+     image: postgres:16-bookworm
+     environment:
+       POSTGRES_USER: postgres
+-      POSTGRES_PASSWORD: secret
++      POSTGRES_PASSWORD: postgres
+       POSTGRES_DB: permify
+     networks: [internal]
+     healthcheck:
+@@ -36,21 +33,19 @@ services:
+       timeout: 5s
+       retries: 20
+ 
+-  # Always started: the exact code under test (HEAD of the branch/PR), built from the
+-  # repo's own dev Dockerfile so the agent is testing the real checkout, not a release.
++  # Always started: the latest published release, pulled from GHCR rather than built from
++  # source, so the agent tests exactly what a user would run.
+   permify-latest:
+-    build:
+-      context: ../..
+-      dockerfile: Dockerfile.local
+-    # No command override: Dockerfile.local's ENTRYPOINT is `air`, which reads build.full_bin
+-    # from .air.toml to start Permify. A command here would just be appended as extra args to
+-    # air itself, not passed through to the built binary.
++    image: ghcr.io/permify/permify:latest
++    command: ["serve"]
+     depends_on:
+-      database:
++      db-latest:
+         condition: service_healthy
+     networks: [default, internal]
+-    volumes:
+-      - ../..:/app
++    environment:
++      PERMIFY_DATABASE_ENGINE: postgres
++      PERMIFY_DATABASE_URI: postgres://postgres:postgres@db-latest:5432/permify?sslmode=disable
++      PERMIFY_DATABASE_AUTO_MIGRATE: "true"
+     ports:
+       - "3476:3476" # REST, host-side readiness checks only
+       - "3478:3478" # gRPC
+@@ -61,8 +56,7 @@ services:
+       retries: 10
+       start_period: 60s
+ 
+-  # Started only when the issue names a released version different from HEAD.
+-  # Pulls the public release image instead of building, so it reflects exactly what shipped.
++  # Started only when the issue names a released version different from latest.
+   permify-reported:
+     image: ghcr.io/permify/permify:${REPORTED_VERSION:-latest}
+     command: ["serve"]
 ```
 
-**File**: `docs/permify-overview/intro.mdx` (modified, +3/-1)
+**File**: `.github/workflows/copilot-setup-steps.yml` (modified, +8/-6)
 ```diff
-@@ -76,7 +76,9 @@ We would love to hear from you!
+@@ -1,5 +1,7 @@
+-# Only for triaging bugs with the GitHub Copilot coding agent: starts Permify (built from this
+-# checkout) and Postgres before the agent begins, so it finds a live instance to test against.
++# Only for triaging bugs with the GitHub Copilot coding agent ("Copilot in the cloud"): starts the
++# latest published Permify release and Postgres before the agent begins, so it finds a live
++# instance to test against. Pulls the published GHCR image rather than building from source, so
++# the agent tests exactly what a user would run.
+ #
+ # This does NOT run automatically against incoming issues. The agent only runs when a Permify
+ # team member explicitly assigns an issue to Copilot (Issues require write access to assign).
+@@ -12,9 +14,9 @@ on:
+   workflow_dispatch:
+   push:
+     branches: [main]
+-    paths: [.github/workflows/copilot-setup-steps.yml, .github/triage/**, Dockerfile.local]
++    paths: [.github/workflows/copilot-setup-steps.yml, .github/triage/**]
+   pull_request:
+-    paths: [.github/workflows/copilot-setup-steps.yml, .github/triage/**, Dockerfile.local]
++    paths: [.github/workflows/copilot-setup-steps.yml, .github/triage/**]
  
- You can get immediate help on our [Discord Community](https://discord.gg/permify). This can be any kind of question-related to Permify, authorization, or authentication and identity management. We'd love to discuss anything related to access control space.
+ jobs:
+   copilot-setup-steps:
+@@ -30,8 +32,8 @@ jobs:
  
--For feature requests, bugs, or any improvements you can always open an [issue](https://github.com/permify/permify/issues). 
-+Licensed users can contact support at [account.fusionauth.io/support](https://account.fusionauth.io/account/support/).
-+
-+Community users can submit requests or bugs via [Permify's GitHub Issues](https://github.com/permify/permify/issues). 
+       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
  
- **Want to Contribute? Here are the ways to contribute to Permify:**
+-      - name: Build and start Permify (HEAD) + Postgres
+-        run: docker compose -p triage -f .github/triage/docker-compose.yml up -d --build database permify-latest
++      - name: Start Permify (latest release) + Postgres
++        run: docker compose -p triage -f .github/triage/docker-compose.yml up -d db-latest permify-latest
  
+       - name: Wait until Permify answers on :3476
+         run: |
 ```
 
 ---
 
-### Incident Patch 2: `f2a69b0b` (2026-11-10)
-**Commit Message**: Merge branch 'master' into issue-reporting-flow-chart
+### Incident Patch 2: `a70d8bf8` (2026-11-15)
+**Commit Message**: handle image arch better based on coderabbit feedback
 
-**File**: `.github/workflows/container-scan.yml` (modified, +1/-1)
+**File**: `.github/copilot-instructions.md` (modified, +21/-14)
 ```diff
-@@ -27,7 +27,7 @@ jobs:
-           docker build -t ghcr.io/permify/permify:scan-${{ github.sha }} .
-       
-       - name: Run Trivy vulnerability scanner
--        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
-+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-         with:
-           image-ref: 'ghcr.io/permify/permify:scan-${{ github.sha }}'
-           format: 'table'
-```
-
-**File**: `Dockerfile` (modified, +2/-2)
-```diff
-@@ -1,10 +1,10 @@
--FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS permify-builder
-+FROM golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb AS permify-builder
- WORKDIR /go/src/app
- RUN apk update && apk add --no-cache git
- COPY . .
- RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg/mod CGO_ENABLED=0 go build -v ./cmd/permify/
+@@ -38,18 +38,24 @@ reveal secrets, and never contact hosts other than the Permify instances describ
+   exactly why and use verdict `inconclusive`. Do not just restate the issue.
+ - **Pin down exactly what you tested while it is running, not from a later registry lookup.**
+   Tags like `latest` and `v1.7.4` are mutable and can move; only the digest attached to the image
+-  actually backing each running container, and the binary's own version string, identify what you
+-  exercised. For each instance (`permify-latest`, and `permify-reported` if started), in this
++  actually backing each running container, plus its platform and the binary's own version string,
++  identify what you exercised. The published images are multi-platform manifests (amd64 and
++  arm64); the digest alone names that manifest, not a single-architecture image, so record the
++  platform too. For each instance (`permify-latest`, and `permify-reported` if started), in this
+   order:
+   1. Get the image ID of the running container (this is a local image ID, not a pullable digest):
+      `docker inspect --format '{{.Image}}' $(docker compose -p triage -f .github/triage/docker-compose.yml ps -q permify-latest)`
+-  2. Resolve that exact image ID to its registry digest (do not re-inspect the `:latest` tag —
+-     it can point to a different image by the time you check):
+-     `docker image inspect <image-id-from-step-1> --format '{{.RepoDigests}}'`
++  2. Resolve that exact image ID to its registry digest and platform (do not re-inspect the
++     `:latest` tag — it can point to a different image by the time you check):
++     `docker image inspect <image-id-from-step-1> --format '{{.RepoDigests}} {{.Os}}/{{.Architecture}}'`
+   3. Get the binary's own reported version:
+      `docker compose -p triage -f .github/triage/docker-compose.yml exec permify-latest permify version`
+-  Record all three values for each instance immediately after starting it, before you begin
+-  reproducing, and put them in the report exactly as captured.
++  Record the digest, platform, and version for each instance immediately after starting it,
++  before you begin reproducing, and put them in the report exactly as captured. When you
++  reference the digest in the report, write it as `<repo>@<digest> (platform: <os>/<arch>)` so
++  a reader on a different architecture knows to pull that specific platform
++  (`docker pull --platform <os>/<arch> <repo>@<digest>`) rather than whatever the manifest
++  resolves to by default on their machine.
  
--FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS health-probe-builder
-+FROM golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb AS health-probe-builder
- WORKDIR /go/src/app
- RUN apk update && apk add --no-cache git
- RUN git clone https://github.com/grpc-ecosystem/grpc-health-probe.git
-```
-
-**File**: `Dockerfile.local` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- # Use the correct Go version
--FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673
-+FROM golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb
+ ## Procedure
  
- RUN apk --no-cache add curl git
- 
-```
-
-**File**: `Dockerfile.release` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- # Build stage for gRPC health probe
--FROM golang:1.27.2-alpine@sha256:85dc1069ac644ea3c527b177303a406eb3358192816cd7f9e5848eb658851673 AS health-probe-builder
-+FROM golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb AS health-probe-builder
- WORKDIR /go/src/app
- RUN apk update && apk add --no-cache git
- RUN git clone https://github.com/grpc-ecosystem/grpc-health-probe.git
-```
-
-**File**: `docs/api-reference/apidocs.swagger.json` (modified, +4/-4)
-```diff
-@@ -3,7 +3,7 @@
-   "info": {
-     "title": "Permify API",
-     "description": "Permify is an open source authorization service for creating fine-grained and scalable authorization systems.",
--    "version": "v1.7.5",
-+    "version": "v1.7.6",
-     "contact": {
-       "name": "API Support",
-       "url": "https://github.com/Permify/permify/issues",
-@@ -1415,11 +1415,11 @@
-       "properties": {
-         "@type": {
-           "type": "string",
--          "description": "A URL/resource name that uniquely identifies the type of the serialized\nprotocol buffer message. This string must contain at least\none \"/\" character. The last segment of the URL's path must represent\nthe fully qualified name of the type (as in\n`path/google.protobuf.Duration`). The name should be in a canonical form\n(e.g., leading \".\" is not accepted).\n\nIn practice, teams usually precompile into the binary all types that they\nexpect it to use in the context of Any. However, for URLs which use the\nscheme `http`, `https`, or no scheme, one can optionally set up a type\nserver that maps type URLs to message definitions as follows:\n\n* If no scheme is provided, `https` is assumed.\n* An HTTP GET on the URL must yield a [google.protobuf.Type][]\n  value in binary format, or produce an error.\n* Applications are allowed to cache lookup results based on the\n  URL, or have them precompiled into a binary to avoid any\n  lookup. Therefore, binary compatibility needs to be preserved\n  on changes to types. (Use versioned type names to manage\n  breaking changes.)\n\nNote: this functionality is not currently available in the official\nprotobuf release, and it is not used for type URLs beginning with\ntype.googleapis.com. As of May 2023, there are no widely used type server\nimplementations and no plans to implement one.\n\nSchemes other than `http`, `https` (or the empty scheme) might be\nused with implementation specific semantics."
-+          "description": "Identifies the type of the serialized Protobuf message with a URI reference\nconsisting of a prefix ending in a slash and the fully-qualified type name.\n\nExample: type.googleapis.com/google.protobuf.StringValue\n\nThis string must contain at least one `/` character, and the content after\nthe last `/` must be the fully-qualified name of the type in canonical\nform, without a leading dot. Do not write a scheme on these URI references\nso that clients do not attempt to contact them.\n\nThe prefix is arbitrary and Protobuf implementations are expected to\nsimply strip off everything up to and including the last `/` to identify\nthe type. `type.googleapis.com/` is a common default prefix that some\nlegacy implementations require. This prefix does not indicate the origin of\nthe type, and URIs containing it are not expected to respond to any\nrequests.\n\nAll type URL strings must be legal URI references with the additional\nrestriction (for the text format) that the content of the reference\nmust consist only of alphanumeric characters, percent-encoded escapes, and\ncharacters in the following set (not including the outer backticks):\n`/-.~_!$\u0026()*+,;=`. Despite our allowing percent encodings, implementations\nshould not unescape them to prevent confusion with existing parsers. For\nexample, `type.googleapis.com%2FFoo` should be rejected.\n\nIn the original design of `Any`, the possibility of launching a type\nresolution service at these type URLs was considered but Protobuf never\nimplemented one and considers contacting these URLs to be problematic and\na potential security issue. Do not attempt to contact type URLs."
-         }
-       },
-       "additionalProperties": {},
--      "description": "`Any` contains an arbitrary serialized protocol buffer message along with a\nURL that describes the type of the serialized message.\n\nProtobuf library provides support to pack/unpack Any values in the form\nof utility functions or additional generated methods of the Any type.\n\nExample 1: Pack and unpack a message in C++.\n\n    Foo foo = ...;\n    Any any;\n    any.PackFrom(foo);\n    ...\n    if (any.UnpackTo(\u0026foo)) {\n      ...\n    }\n\nExample 2: Pack and unpack a message in Java.\n\n    Foo foo = ...;\n    Any any = Any.pack(foo);\n    ...\n    if (any.is(Foo.class)) {\n      foo = any.unpack(Foo.class);\n    }\n    // or ...\n    if (any.isSameTypeAs(Foo.getDefaultInstance())) {\n      foo = any.unpack(Foo.getDefaultInstance());\n    }\n\n Example 3: Pack and unpack a message in Python.\n\n    foo = Foo(...)\n    any = Any()\n    any.Pack(foo)\n    ...\n    if any.Is(Foo.DESCRIPTOR):\n      any.Unpack(foo)\n      ...\n\n Example 4: Pack and unpack a message in Go\n\n     foo := \u0026pb.Foo{...}\n     any, err := anypb.New(foo)\n     if err != nil {\n       ...\n     }\n     ...\n     foo := \u0026pb.Foo{}\n     if err := any.UnmarshalTo(foo); err != nil {\n       ...\n     }\n\nThe pack methods provided by protobuf library will by default use\n'type.googleapis.com/full.type.n
-```
-
-**File**: `docs/api-reference/openapi.json` (modified, +4/-4)
-```diff
-@@ -3,7 +3,7 @@
-     "info": {
-         "title": "Permify API",
-         "description": "Permify is an open source authorization service for creating fine-grained and scalable authorization systems.",
--        "version": "v1.7.5",
-+        "version": "v1.7.6",
-         "contact": {
-             "name": "API Support",
-             "url": "https://github.com/Permify/permify/issues",
-@@ -1703,11 +1703,11 @@
-                 "properties": {
-                     "@type": {
-                         "type": "string",
--                        "description": "A URL/resource name that uniquely identifies the type of the serialized\nprotocol buffer message. This string must contain at least\none \"/\" character. The last segment of the URL's path must represent\nthe fully qualified name of the type (as in\n`path/google.protobuf.Duration`). The name should be in a canonical form\n(e.g., leading \".\" is not accepted).\n\nIn practice, teams usually precompile into the binary all types that they\nexpect it to use in the context of Any. However, for URLs which use the\nscheme `http`, `https`, or no scheme, one can optionally set up a type\nserver that maps type URLs to message definitions as follows:\n\n* If no scheme is provided, `https` is assumed.\n* An HTTP GET on the URL must yield a [google.protobuf.Type][]\n  value in binary format, or produce an error.\n* Applications are allowed to cache lookup results based on the\n  URL, or have them precompiled into a binary to avoid any\n  lookup. Therefore, binary compatibility needs to be preserved\n  on changes to types. (Use versioned type names to manage\n  breaking changes.)\n\nNote: this functionality is not currently available in the official\nprotobuf release, and it is not used for type URLs beginning with\ntype.googleapis.com. As of May 2023, there are no widely used type server\nimplementations and no plans to implement one.\n\nSchemes other than `http`, `https` (or the empty scheme) might be\nused with implementation specific semantics."
-+                        "description": "Identifies the type of the serialized Protobuf message with a URI reference\nconsisting of a prefix ending in a slash and the fully-qualified type name.\n\nExample: type.googleapis.com/google.protobuf.StringValue\n\nThis string must contain at least one `/` character, and the content after\nthe last `/` must be the fully-qualified name of the type in canonical\nform, without a leading dot. Do not write a scheme on these URI references\nso that clients do not attempt to contact them.\n\nThe prefix is arbitrary and Protobuf implementations are expected to\nsimply strip off everything up to and including the last `/` to identify\nthe type. `type.googleapis.com/` is a common default prefix that some\nlegacy implementations require. This prefix does not indicate the origin of\nthe type, and URIs containing it are not expected to respond to any\nrequests.\n\nAll type URL strings must be legal URI references with the additional\nrestriction (for the text format) that the content of the reference\nmust consist only of alphanumeric characters, percent-encoded escapes, and\ncharacters in the following set (not including the outer backticks):\n`/-.~_!$&()*+,;=`. Despite our allowing percent encodings, implementations\nshould not unescape them to prevent confusion with existing parsers. For\nexample, `type.googleapis.com%2FFoo` should be rejected.\n\nIn the original design of `Any`, the possibility of launching a type\nresolution service at these type URLs was considered but Protobuf never\nimplemented one and considers contacting these URLs to be problematic and\na potential security issue. Do not attempt to contact type URLs."
-                     }
-                 },
-                 "additionalProperties": {},
--                "description": "`Any` contains an arbitrary serialized protocol buffer message along with a\nURL that describes the type of the serialized message.\n\nProtobuf library provides support to pack/unpack Any values in the form\nof utility functions or additional generated methods of the Any type.\n\nExample 1: Pack and unpack a message in C++.\n\n    Foo foo = ...;\n    Any any;\n    any.PackFrom(foo);\n    ...\n    if (any.UnpackTo(&foo)) {\n      ...\n    }\n\nExample 2: Pack and unpack a message in Java.\n\n    Foo foo = ...;\n    Any any = Any.pack(foo);\n    ...\n    if (any.is(Foo.class)) {\n      foo = any.unpack(Foo.class);\n    }\n    // or ...\n    if (any.isSameTypeAs(Foo.getDefaultInstance())) {\n      foo = any.unpack(Foo.getDefaultInstance());\n    }\n\n Example 3: Pack and unpack a message in Python.\n\n    foo = Foo(...)\n    any = Any()\n    any.Pack(foo)\n    ...\n    if any.Is(Foo.DESCRIPTOR):\n      any.Unpack(foo)\n      ...\n\n Example 4: Pack and unpack a message in Go\n\n     foo := &pb.Foo{...}\n     any, err := anypb.New(foo)\n     if err != nil {\n       ...\n     }\n     ...\n     foo := &pb.Foo{}\n     if err := any.UnmarshalTo(foo); err != nil {\n 
-```
-
-**File**: `docs/api-reference/openapiv2/apidocs.swagger.json` (modified, +4/-4)
-```diff
-@@ -3,7 +3,7 @@
-   "info": {
-     "title": "Permify API",
-     "description": "Permify is an open source authorization service for creating fine-grained and scalable authorization systems.",
--    "version": "v1.7.5",
-+    "version": "v1.7.6",
-     "contact": {
-       "name": "API Support",
-       "url": "https://github.com/Permify/permify/issues",
-@@ -1415,11 +1415,11 @@
-       "properties": {
-         "@type": {
-           "type": "string",
--          "description": "A URL/resource name that uniquely identifies the type of the serialized\nprotocol buffer message. This string must contain at least\none \"/\" character. The last segment of the URL's path must represent\nthe fully qualified name of the type (as in\n`path/google.protobuf.Duration`). The name should be in a canonical form\n(e.g., leading \".\" is not accepted).\n\nIn practice, teams usually precompile into the binary all types that they\nexpect it to use in the context of Any. However, for URLs which use the\nscheme `http`, `https`, or no scheme, one can optionally set up a type\nserver that maps type URLs to message definitions as follows:\n\n* If no scheme is provided, `https` is assumed.\n* An HTTP GET on the URL must yield a [google.protobuf.Type][]\n  value in binary format, or produce an error.\n* Applications are allowed to cache lookup results based on the\n  URL, or have them precompiled into a binary to avoid any\n  lookup. Therefore, binary compatibility needs to be preserved\n  on changes to types. (Use versioned type names to manage\n  breaking changes.)\n\nNote: this functionality is not currently available in the official\nprotobuf release, and it is not used for type URLs beginning with\ntype.googleapis.com. As of May 2023, there are no widely used type server\nimplementations and no plans to implement one.\n\nSchemes other than `http`, `https` (or the empty scheme) might be\nused with implementation specific semantics."
-+          "description": "Identifies the type of the serialized Protobuf message with a URI reference\nconsisting of a prefix ending in a slash and the fully-qualified type name.\n\nExample: type.googleapis.com/google.protobuf.StringValue\n\nThis string must contain at least one `/` character, and the content after\nthe last `/` must be the fully-qualified name of the type in canonical\nform, without a leading dot. Do not write a scheme on these URI references\nso that clients do not attempt to contact them.\n\nThe prefix is arbitrary and Protobuf implementations are expected to\nsimply strip off everything up to and including the last `/` to identify\nthe type. `type.googleapis.com/` is a common default prefix that some\nlegacy implementations require. This prefix does not indicate the origin of\nthe type, and URIs containing it are not expected to respond to any\nrequests.\n\nAll type URL strings must be legal URI references with the additional\nrestriction (for the text format) that the content of the reference\nmust consist only of alphanumeric characters, percent-encoded escapes, and\ncharacters in the following set (not including the outer backticks):\n`/-.~_!$\u0026()*+,;=`. Despite our allowing percent encodings, implementations\nshould not unescape them to prevent confusion with existing parsers. For\nexample, `type.googleapis.com%2FFoo` should be rejected.\n\nIn the original design of `Any`, the possibility of launching a type\nresolution service at these type URLs was considered but Protobuf never\nimplemented one and considers contacting these URLs to be problematic and\na potential security issue. Do not attempt to contact type URLs."
-         }
-       },
-       "additionalProperties": {},
--      "description": "`Any` contains an arbitrary serialized protocol buffer message along with a\nURL that describes the type of the serialized message.\n\nProtobuf library provides support to pack/unpack Any values in the form\nof utility functions or additional generated methods of the Any type.\n\nExample 1: Pack and unpack a message in C++.\n\n    Foo foo = ...;\n    Any any;\n    any.PackFrom(foo);\n    ...\n    if (any.UnpackTo(\u0026foo)) {\n      ...\n    }\n\nExample 2: Pack and unpack a message in Java.\n\n    Foo foo = ...;\n    Any any = Any.pack(foo);\n    ...\n    if (any.is(Foo.class)) {\n      foo = any.unpack(Foo.class);\n    }\n    // or ...\n    if (any.isSameTypeAs(Foo.getDefaultInstance())) {\n      foo = any.unpack(Foo.getDefaultInstance());\n    }\n\n Example 3: Pack and unpack a message in Python.\n\n    foo = Foo(...)\n    any = Any()\n    any.Pack(foo)\n    ...\n    if any.Is(Foo.DESCRIPTOR):\n      any.Unpack(foo)\n      ...\n\n Example 4: Pack and unpack a message in Go\n\n     foo := \u0026pb.Foo{...}\n     any, err := anypb.New(foo)\n     if err != nil {\n       ...\n     }\n     ...\n     foo := \u0026pb.Foo{}\n     if err := any.UnmarshalTo(foo); err != nil {\n       ...\n     }\n\nThe pack methods provided by protobuf library will by default use\n'type.googleapis.com/full.type.n
-```
-
-**File**: `docs/package.json` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
-     "doc": "docs"
-   },
-   "dependencies": {
--    "mintlify": "^4.2.988"
-+    "mintlify": "^4.2.1200"
-   },
-   "scripts": {
-     "test": "echo \"Error: no test specified\" && exit 1"
+@@ -75,18 +81,19 @@ not touch source directories, `.github/`, or anything else in the repo):
+    - **Verdict**: one of `confirmed` (reproduced on latest), `fixed-in-latest` (reproduced on the
+      reported version only), `not-reproduced`, `working-as-designed`, `needs-info`,
+      `inconclusive`. Add **Confidence**: low, medium or high.
+-   - **Environment**: for each instance tested, the image tag, the resolved image digest, and the
+-     output of `permify version`, captured while the instance was running (see Environment
+-     above) — not looked up afterward. Also note whether each instance was already running, and
+-     the database engine used (Postgres via docker compose unless the issue requires another
+-     engine).
++   - **Environment**: for each instance tested, the image tag, the resolved image digest, the
++     platform (`os/arch`), and the output of `permify version`, captured while the instance was
++     running (see Environment above) — not looked up afterward. Also note whether each instance
++     was already running, and the database engine used (Postgres via docker compose unless the
++     issue requires another engine).
+    - **Replication steps**: numbered, exact and complete enough that a human can follow them
+      without reading your scripts. Include the full Permify Schema you wrote, every data tuple or
+      attribute you created, and every API call (method, URL, JSON body). A reader should be able
+      to repeat the test from this list alone.
+    - **Results by version**: a small table with one row per instance, each showing the image tag,
+-     digest, `permify version` output, and what you observed. A reader should be able to pull the
+-     exact same image by digest and get the same result.
++     digest, platform, `permify version` output, and what you observed. A reader should be able to
++     pull the exact same image for the exact same platform (`docker pull --platform <os>/<arch>
++     <repo>@<digest>`) and get the same result.
+    - **Expected** and **Actual**, with the response bodies you saw (trimmed), for example the
+      `can` field from a check response, or the error returned.
+    - **Evidence**: file names of your scripts below, plus key log lines from
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3291** (2026-11-15): updated to use released permify rather than from source (@mooreds)
+- **PR #3290** (closed): [WIP] Fix database.garbage_collection to reuse DB connections (@mooreds)
+- **PR #3289** (2026-11-15): added triage bot (@mooreds)
 - **PR #3273** (2026-11-05): chore: update version to v1.7.6 in API docs and internal info file (@omer-topal)
 - **PR #3272** (2026-11-05): build(deps): bump follow-redirects from 1.16.1 to 1.16.2 in /docs (@dependabot[bot])
 - **PR #3271** (2026-11-05): build(deps): bump body-parser from 1.20.8 to 1.20.9 in /docs (@dependabot[bot])
-- **PR #3270** (2026-11-05): build(deps): bump qs from 6.16.0 to 6.17.1 in /docs (@dependabot[bot])
-- **PR #3269** (2026-11-05): build(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 in /docs (@dependabot[bot])
-- **PR #3268** (2026-11-05): bump triviy action (@omer-topal)
 
 ---
 
@@ -2337,42 +2386,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add issue reporting flow to readme
+## X. Empirical Invariant Guard in copilot-instructions.md
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Permify/permify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/copilot-instructions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Permify/permify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f1d2b9b0`: add issue reporting flow to readme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `18fcfdda`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/copilot-instructions.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## Report an Issue
-
-
-```mermaid
-flowchart TD
-    Start{What do you need help with?}
-
-    Start -->|<b>Question?</b>| Forum[Ask in the <a href="https://fusionauth.io/community/forum/">forum</a>]
-    Start -->|<b>Security vulnerability?</b>| SecurityNode[Contact security at <br><a href="https://fusionauth.io/security">fusionauth.io/security</a>]
-    Start -->|<b>Problem?</b>| LicenseCheck{Have a paid license?}
-
-    LicenseCheck -->|<b>Yes</b>| Support[Contact support at <br><a href="https://account.fusionauth.io/account/support/">account.fusionauth.io/support</a>]
-    LicenseCheck -->|<b>No</b>| ReportNode[Report here at <br><a href="https://github.com/Permify/permify/issues">permify/issues</a>]
-```
-
+- Use only public artifacts: the published `ghcr.io/permify/permify` images, public docs
+  (`docs/`), and public client libraries. You may read this repo's source to understand intended
+  behavior, but reproduce the bug by calling the running service's API, not by reading code and
+  guessing. Never build or run Permify from this checkout's source — always use a released image.
+- **Latest** (the newest published release) should already be running at `http://localhost:3476`
+  (REST) / `localhost:3478` (gRPC). Check it first: `curl -s http://localhost:3476/healthz`. If
+  that fails, start it yourself and wait up to about 5 minutes:
+  `docker compose -p triage -f .github/triage/docker-compose.yml up -d db-latest permify-latest`.
+- If the issue names a released version (for example `v1.7.4`), start a second instance pinned to
+  that exact tag:
+  `/healthz` to answer. If the image tag cannot be pulled, say so in your report and test latest
+  only. If the issue does not name a version, test latest only.
+- **Pin down exactly what you tested while it is running, not from a later registry lookup.**
+  Tags like `latest` and `v1.7.4` are mutable and can move; only the digest attached to the im
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+- Use only public artifacts: this repo's own `Dockerfile.local` build, the published
+  `ghcr.io/permify/permify` images, public docs (`docs/`), and public client libraries. You may
+  read the source to understand intended behavior, but reproduce the bug by calling the running
+  service's API, not by reading code and guessing.
+- **HEAD** (this checkout, i.e. the default branch) should already be running at
+  `http://localhost:3476` (REST) / `localhost:3478` (gRPC). Check it first:
+  `curl -s http://localhost:3476/healthz`. If that fails, start it yourself and wait up to about
+  5 minutes: `docker compose -p triage -f .github/triage/docker-compose.yml up -d --build database permify-latest`.
+- If the issue names a released version (for example `v1.7.4`), start a second instance to test
+  exactly what shipped:
+  `/healthz` to answer. If the image tag cannot be pulled, say so in your report and test HEAD only.
+   steps on HEAD.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f1d2b9b0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `18fcfdda` are properly handled with clean fallback behavior.

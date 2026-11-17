@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T00:38:47.210Z",
-  "total_records": 1376,
+  "last_updated": "2026-11-17T00:56:39.678Z",
+  "total_records": 1383,
   "domains": {
     "A": {
       "total": 9,
@@ -42,7 +42,7 @@
       ]
     },
     "D": {
-      "total": 604,
+      "total": 605,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -647,7 +647,8 @@
         "domain_intelligence-research-knowledge-intelligence-nousresearch-arete-27b-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-prunaai-p-h3-image-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",
+        "DOM-D-C8024830"
       ]
     },
     "E": {
@@ -952,7 +953,7 @@
       ]
     },
     "H": {
-      "total": 306,
+      "total": 308,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1259,11 +1260,13 @@
         "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants",
         "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants",
         "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-learnings-core-invariants"
       ]
     },
     "I": {
-      "total": 68,
+      "total": 70,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1332,7 +1335,9 @@
         "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",
         "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-core-invariants",
         "domain_intelligence-content-information-intelligence-encode-httpx-learnings-core-invariants",
-        "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-permify-permify-core-invariants",
+        "domain_intelligence-content-information-intelligence-permify-permify-learnings-core-invariants"
       ]
     },
     "J": {
@@ -1362,7 +1367,7 @@
       ]
     },
     "K": {
-      "total": 55,
+      "total": 57,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1418,7 +1423,9 @@
         "domain_intelligence-quality-verification-intelligence-crate-crate-core-invariants",
         "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-learnings-core-invariants"
       ]
     },
     "L": {
@@ -24380,6 +24387,102 @@
       "repository": "hf-prunaai-p-h3-image-learnings",
       "content_hash": "a9f70efc59cf7e3887d4b79a17cf45c226a1161ea7ce8cab42272c5481794de5",
       "created_at": "2026-11-17T00:38:46.553Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: 1jehuang/jcode Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-1jehuang-jcode-technical-construction-intelligence-1jehuang-jcode-core-invariant.md",
+      "repository": "1jehuang/jcode",
+      "content_hash": "f26aec05e2c31187e92797a5d6102aada14daf470b6e47b18e2628221526b4c2",
+      "created_at": "2026-11-17T00:55:57.507Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: rdfjs/N3.js Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rdfjs-n3-js-quality-verification-intelligence-rdfjs-n3-js-core-invariants.md",
+      "repository": "rdfjs/N3.js",
+      "content_hash": "915b3d0762d7152b756d5bb21551ee5349d9895adfc28400376be9a889162274",
+      "created_at": "2026-11-17T00:56:01.219Z"
+    },
+    "domain_intelligence-content-information-intelligence-permify-permify-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-permify-permify-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: Permify/permify Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-permify-permify-content-information-intelligence-permify-permify-core-invariants.md",
+      "repository": "Permify/permify",
+      "content_hash": "f87e374798d4dfc07f3da8dc05393474f8c777a4cb89c378e0abfa10a666326d",
+      "created_at": "2026-11-17T00:56:05.792Z"
+    },
+    "DOM-D-C8024830": {
+      "record_id": "DOM-D-C8024830",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): 1jehuang/jcode",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  \n> **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  \n> **Source Version**: `c6280dda`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> *",
+      "content_hash": "9a50b591c3353f4839889856d1d3590264dec9616c1e0a4c1daaf56cd90f4f11",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  \n> **Source**: github ([https://github.com/1jehuang/jc -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  \n> **Source**: github ([https://github.com/1jehuang/jc",
+      "provenance": {
+        "source_uri": "project://1jehuang-jcode/1jehuang-jcode-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T00:56:08.646Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (1jehuang-jcode)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of 1jehuang-jcode"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T00:56:37.007Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: 1jehuang-jcode-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-1jehuang-jcode-learnings-technical-construction-intelligence-1jehuang-jcode-lear.md",
+      "repository": "1jehuang-jcode-learnings",
+      "content_hash": "72a8d43fbbe515dade69813f8366a65335b90ca44510f15ca7bf25340ee07763",
+      "created_at": "2026-11-17T00:56:37.274Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: rdfjs-n3.js-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rdfjs-n3-js-learnings-quality-verification-intelligence-rdfjs-n3-js-learnings-co.md",
+      "repository": "rdfjs-n3.js-learnings",
+      "content_hash": "25aef3f9c622d14a1a1ec8220ed7e040f4d479f454661c30a9d9fb7e11d5169f",
+      "created_at": "2026-11-17T00:56:38.983Z"
+    },
+    "domain_intelligence-content-information-intelligence-permify-permify-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-permify-permify-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: permify-permify-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-permify-permify-learnings-content-information-intelligence-permify-permify-learn.md",
+      "repository": "permify-permify-learnings",
+      "content_hash": "46bbfc997ee4a387b1ef1245b4bf5675fd18965dabad01c8270f151e04fd115c",
+      "created_at": "2026-11-17T00:56:39.678Z"
     }
   }
 }

@@ -10389,3 +10389,7 @@
 | `CYCLE-20261117-RX9Y` | `2026-11-17T00:38:31.990Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8824` | Yes (`6d4c3a16...`) |
 | `CYCLE-20261117-S2QY` | `2026-11-17T00:38:39.082Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8825` | Yes (`ff77003d...`) |
 | `CYCLE-20261117-S4N2` | `2026-11-17T00:38:41.534Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`946cdfcd...`) |
+| `CYCLE-20261117-EBUQ` | `2026-11-17T00:55:57.314Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md` | Yes (`bc60fb0e...`) |
+| `CYCLE-20261117-EEN5` | `2026-11-17T00:56:00.929Z` | `rdfjs/N3.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8827` | Yes (`77f7278d...`) |
+| `CYCLE-20261117-EI63` | `2026-11-17T00:56:05.499Z` | `Permify/permify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8828` | Yes (`da9437d6...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T00:56:37.024Z` | `1jehuang-jcode` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C8024830` [Domain D] | Yes (`9a50b591...`) |

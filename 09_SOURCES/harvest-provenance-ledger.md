@@ -10422,3 +10422,7 @@ Every entry in this ledger must capture:
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `77a25c16` | Multi-dimensional audit evidence | 2026-11-17T00:38:31.994Z |
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `3a622ae9` | Multi-dimensional audit evidence | 2026-11-17T00:38:39.087Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `bec6d69e` | Multi-dimensional audit evidence | 2026-11-17T00:38:41.538Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `c6280dda` | Multi-dimensional audit evidence | 2026-11-17T00:55:57.318Z |
+| `learn-github-rdfjs-n3-js` | `https://github.com/rdfjs/N3.js` | `f921e119` | Multi-dimensional audit evidence | 2026-11-17T00:56:00.933Z |
+| `learn-github-permify-permify` | `https://github.com/Permify/permify` | `18fcfdda` | Multi-dimensional audit evidence | 2026-11-17T00:56:05.503Z |
+| `learn-dom-d-c8024830` | `project://1jehuang-jcode` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/1jehuang-jcode-learnings.md` | 2026-11-17T00:56:37.024Z |

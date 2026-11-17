@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T00:38:47.363Z",
-  "total_verified_learnings": 8821,
+  "last_updated": "2026-11-17T00:56:39.811Z",
+  "total_verified_learnings": 8823,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19532,
+  "total_items": 19549,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -240536,8 +240536,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "25b40def",
-      "content_hash": "150f4452c76a5118a365199e86fd861c1b23e099c5933971f6c8a546789ec9b3",
+      "source_version": "c6280dda",
+      "content_hash": "bc60fb0eeab187386347ce17e303dc4127dba6b7d22dbba9d52c3c38d1b9eed3",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -240552,7 +240552,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T05:31:41.999Z",
+      "verified_at": "2026-11-17T00:55:57.152Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240606,10 +240606,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/1jehuang-jcode-agent-contract-1jehuang-jcode-autonomous-specialist-persona.md",
       "title": "Agent Contract: 1jehuang/jcode Autonomous Specialist Persona",
       "repository": "1jehuang/jcode",
-      "source_version": "25b40def",
-      "content_hash": "870a669f9dc28f0f94d9807448c2e93356f44764cc32db2e7044e71aa87708a0",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-15T05:31:42.654Z"
+      "source_version": "c6280dda",
+      "content_hash": "25775e885fec6a598341a6d155cd7687738839171d3b8d9374788d309aa484d1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T00:55:57.629Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode",
@@ -240618,10 +240618,10 @@
       "relative_path": "08_VERIFICATION/1jehuang-jcode-verification-protocol-empirical-defect-shield-for-1jehuang-jcode.md",
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang/jcode",
       "repository": "1jehuang/jcode",
-      "source_version": "25b40def",
-      "content_hash": "83859e989b3f939656e1ac81d2e5d1ad7a8e0d3443a6697e8d1b676b30b30acb",
+      "source_version": "c6280dda",
+      "content_hash": "c5f274d563cb0d9fbf26d8d91e8ef2cc2d5be2712eda5596873eac5d5ff07894",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T05:31:42.775Z"
+      "persisted_at": "2026-11-17T00:55:57.736Z"
     },
     "candidate_directive-update-all-go-dependencies-main": {
       "item_id": "candidate_directive-update-all-go-dependencies-main",
@@ -240706,9 +240706,9 @@
       "title": "Agent Contract: 1jehuang-jcode-learnings Autonomous Specialist Persona",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "21e2f493d9c299c869b1f8d78fb3299c48a5d3c3259be2d17e861cd845e7e618",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-15T05:36:48.922Z"
+      "content_hash": "4664017d8193520e35675807570eeab5219627edbb1a5973c792d64769d4304f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T00:56:37.408Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings",
@@ -240718,9 +240718,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang-jcode-learnings",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "44c7858756a7f744dd95c91eafd5f0baed6801b1a8eb8b2ffd14dbff416f8f0a",
+      "content_hash": "7049e88fd46a9a4708dd60581315af409273e4522d8898274a3874ed6fc28eaf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T05:36:49.059Z"
+      "persisted_at": "2026-11-17T00:56:37.520Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
@@ -260440,6 +260440,256 @@
       "content_hash": "a2cd60ae03ad90dbdc16e9092a35e4123a7a12a03386c146f0ba696badbc1223",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T00:38:47.060Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-1jehuang-jcode-technical-construction-intelligence-1jehuang-jcode-core-invariant.md",
+      "title": "Technical Construction Intelligence: 1jehuang/jcode Core Invariants",
+      "repository": "1jehuang/jcode",
+      "source_version": "c6280dda",
+      "content_hash": "f26aec05e2c31187e92797a5d6102aada14daf470b6e47b18e2628221526b4c2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T00:55:57.507Z"
+    },
+    "learn-github-rdfjs-n3-js": {
+      "learning_id": "learn-github-rdfjs-n3-js",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "rdfjs/N3.js",
+      "repository": "rdfjs/N3.js",
+      "slug": "rdfjs-n3.js",
+      "platform": "github",
+      "source_url": "https://github.com/rdfjs/N3.js",
+      "source_version": "f921e119",
+      "content_hash": "77f7278d2e510c08edf725bedc574eefa6c889b990ea601f3caa9eaca2b283aa",
+      "dossier_path": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8827,
+          "title": "Bump the minor group with 3 updates",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T00:56:00.770Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8827": {
+      "learning_id": "rule-8827",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8827,
+      "title": "Bump the minor group with 3 updates",
+      "source_url": "https://github.com/rdfjs/N3.js",
+      "source_version": "f921e119",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T00:56:00.771Z"
+    },
+    "candidate_directive-bump-the-minor-group-with-3-updates": {
+      "item_id": "candidate_directive-bump-the-minor-group-with-3-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EERW-bump-the-minor-group-with-3-updates.md",
+      "title": "Bump the minor group with 3 updates",
+      "repository": "rdfjs/N3.js",
+      "source_version": "f921e119",
+      "content_hash": "fb57d97a50e26bda41a7af928ac7da5b42bb31222647b93ed3775a10ad5fc7e8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T00:56:01.101Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rdfjs-n3-js-quality-verification-intelligence-rdfjs-n3-js-core-invariants.md",
+      "title": "Quality & Verification Intelligence: rdfjs/N3.js Core Invariants",
+      "repository": "rdfjs/N3.js",
+      "source_version": "f921e119",
+      "content_hash": "915b3d0762d7152b756d5bb21551ee5349d9895adfc28400376be9a889162274",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T00:56:01.219Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rdfjs-n3-js": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rdfjs-n3-js",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rdfjs-n3-js-verification-protocol-empirical-defect-shield-for-rdfjs-n3-js.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rdfjs/N3.js",
+      "repository": "rdfjs/N3.js",
+      "source_version": "f921e119",
+      "content_hash": "995d1463ad0030895483c2db5f8ec0057bf3c1433feda9dd2d3f58a5cbd39187",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T00:56:01.341Z"
+    },
+    "learn-github-permify-permify": {
+      "learning_id": "learn-github-permify-permify",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Permify/permify",
+      "repository": "Permify/permify",
+      "slug": "permify-permify",
+      "platform": "github",
+      "source_url": "https://github.com/Permify/permify",
+      "source_version": "18fcfdda",
+      "content_hash": "da9437d6ecbadec69da9364a12578b41d42bcd40f686a21b0c7f84d27394e48f",
+      "dossier_path": "07_PROJECT_LEARNING/permify-permify-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/permify-permify-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8828,
+          "title": "Empirical Invariant Guard in copilot-instructions.md",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T00:56:05.342Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8828": {
+      "learning_id": "rule-8828",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8828,
+      "title": "Empirical Invariant Guard in copilot-instructions.md",
+      "source_url": "https://github.com/Permify/permify",
+      "source_version": "18fcfdda",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T00:56:05.342Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-copilot-instructions-md": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-copilot-instructions-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F8FS-empirical-invariant-guard-in-copilot-instructions-md.md",
+      "title": "Empirical Invariant Guard in copilot-instructions.md",
+      "repository": "permify-permify-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e4d01d8048aa7f6eab786f781934d25c0f9ef682dc83d8e12021fe69421a579a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T00:56:39.556Z"
+    },
+    "domain_intelligence-content-information-intelligence-permify-permify-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-permify-permify-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-permify-permify-content-information-intelligence-permify-permify-core-invariants.md",
+      "title": "Content & Information Intelligence: Permify/permify Core Invariants",
+      "repository": "Permify/permify",
+      "source_version": "18fcfdda",
+      "content_hash": "f87e374798d4dfc07f3da8dc05393474f8c777a4cb89c378e0abfa10a666326d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T00:56:05.792Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-permify-permify": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-permify-permify",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/permify-permify-verification-protocol-empirical-defect-shield-for-permify-permif.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Permify/permify",
+      "repository": "Permify/permify",
+      "source_version": "18fcfdda",
+      "content_hash": "b62b55720423b39bdffa33f5375de8a71e74561982aee1c9e61a129edc491e9c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T00:56:05.910Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-1jehuang-jcode-learnings-technical-construction-intelligence-1jehuang-jcode-lear.md",
+      "title": "Technical Construction Intelligence: 1jehuang-jcode-learnings Core Invariants",
+      "repository": "1jehuang-jcode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "72a8d43fbbe515dade69813f8366a65335b90ca44510f15ca7bf25340ee07763",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T00:56:37.274Z"
+    },
+    "candidate_directive-deps-dev-bump-the-minor-group-with-3-updates": {
+      "item_id": "candidate_directive-deps-dev-bump-the-minor-group-with-3-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F7WV-deps-dev-bump-the-minor-group-with-3-updates.md",
+      "title": "deps-dev): Bump the minor group with 3 updates",
+      "repository": "rdfjs-n3.js-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dd89565ddf1a4601bb849ffcd68c8dd5a11639aa255f9eef94fb1dcf8900be69",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T00:56:38.863Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rdfjs-n3-js-learnings-quality-verification-intelligence-rdfjs-n3-js-learnings-co.md",
+      "title": "Quality & Verification Intelligence: rdfjs-n3.js-learnings Core Invariants",
+      "repository": "rdfjs-n3.js-learnings",
+      "source_version": "HEAD",
+      "content_hash": "25aef3f9c622d14a1a1ec8220ed7e040f4d479f454661c30a9d9fb7e11d5169f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T00:56:38.983Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rdfjs-n3-js-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rdfjs-n3-js-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rdfjs-n3-js-learnings-verification-protocol-empirical-defect-shield-for-rdfjs-n3.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rdfjs-n3.js-learnings",
+      "repository": "rdfjs-n3.js-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ecf7d232babc713aee42a286b1e58e9f4793d7feebe93e245ee71544868618d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T00:56:39.116Z"
+    },
+    "domain_intelligence-content-information-intelligence-permify-permify-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-permify-permify-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-permify-permify-learnings-content-information-intelligence-permify-permify-learn.md",
+      "title": "Content & Information Intelligence: permify-permify-learnings Core Invariants",
+      "repository": "permify-permify-learnings",
+      "source_version": "HEAD",
+      "content_hash": "46bbfc997ee4a387b1ef1245b4bf5675fd18965dabad01c8270f151e04fd115c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T00:56:39.678Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-permify-permify-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-permify-permify-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/permify-permify-learnings-verification-protocol-empirical-defect-shield-for-perm.md",
+      "title": "Verification Protocol: Empirical Defect Shield for permify-permify-learnings",
+      "repository": "permify-permify-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ad94a307d2f316096a07e6cf669730f62b175af757f4823875c93d186d515a3a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T00:56:39.811Z"
     }
   },
   "ai-builder-brain": {

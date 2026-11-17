@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T00:38:41.549Z",
+  "last_updated": "2026-11-17T00:56:05.511Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4161,14 +4161,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-permify-permify",
-      "content_hash": "d794d44225e008818407e785b10267572a6959d35ed037064d394f4ee01af052",
-      "verified_at": "2026-11-12T00:45:30.277Z",
+      "content_hash": "da9437d6ecbadec69da9364a12578b41d42bcd40f686a21b0c7f84d27394e48f",
+      "verified_at": "2026-11-17T00:56:05.510Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T00:45:30.277Z"
+      "last_updated": "2026-11-17T00:56:05.510Z"
     },
     "rustls/rustls": {
       "repository": "rustls/rustls",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "150f4452c76a5118a365199e86fd861c1b23e099c5933971f6c8a546789ec9b3",
-      "verified_at": "2026-11-15T05:31:42.192Z",
+      "content_hash": "bc60fb0eeab187386347ce17e303dc4127dba6b7d22dbba9d52c3c38d1b9eed3",
+      "verified_at": "2026-11-17T00:55:57.326Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T05:31:42.192Z"
+      "last_updated": "2026-11-17T00:55:57.326Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -14616,14 +14616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rdfjs-n3-js",
-      "content_hash": "05762807bcc591f8012100bbfd29b5d754e9d9de45b3cd51aae3534392316f1d",
-      "verified_at": "2026-11-12T07:46:25.631Z",
+      "content_hash": "77f7278d2e510c08edf725bedc574eefa6c889b990ea601f3caa9eaca2b283aa",
+      "verified_at": "2026-11-17T00:56:00.941Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T07:46:25.631Z"
+      "last_updated": "2026-11-17T00:56:00.941Z"
     },
     "iziz/libPhoneNumber-iOS": {
       "repository": "iziz/libPhoneNumber-iOS",

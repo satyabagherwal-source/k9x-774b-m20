@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for rdfjs/n3.js
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for rdfjs/N3.js
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "rdfjs/n3.js",
-  "source_url": "https://github.com/rdfjs/n3.js",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "rdfjs/N3.js",
+  "source_url": "https://github.com/rdfjs/N3.js",
+  "source_version": "f921e119",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-17T00:56:01.101Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-rdfjs-n3-js",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rdfjs/n3.js](https://github.com/rdfjs/n3.js) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [rdfjs/N3.js](https://github.com/rdfjs/N3.js) (Revision: `f921e119`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T00:56:01.101Z`  
+> **Learning ID**: `learn-github-rdfjs-n3-js`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `rdfjs/n3.js` (Commit: `historical`)
+- **Target Repository**: `rdfjs/N3.js` (Commit: `f921e119`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md`  
-> **Source**: github ([https://github.com/rdfjs/N3.js](https://github.com/rdfjs/N3.js))  
-> **Source Version**: `01ebe841`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:46:14.582Z  
-> **Learning ID**: `learn-github-rdfjs-n3-js`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): rdfjs/N3.js
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rdfjs/N3.js](https://github.com/rdfjs/N3.js))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:46:14.576Z  
+> **Harvest Timestamp**: 2026-11-17T00:56:00.036Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Lightning fast, spec-compatible, streaming RDF for JavaScript
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 799 stars
+- **Stars / Engagement**: 800 stars
 
 ---
 
@@ -1006,40 +992,159 @@ console.timeEnd(TEST);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01ebe841` (2026-11-09)
-**Commit Message**: chore(ci): refetch upstream spec suites (#874)
+### Incident Patch 1: `f921e119` (2026-11-16)
+**Commit Message**: chore(deps-dev): Bump the minor group with 3 updates (#878)
 
-Co-authored-by: jeswr <[REDACTED_EMAIL]>
+Bumps the minor group with 3 updates: [@babel/core](https://github.com/babel/babel/tree/HEAD/packages/babel-core), [@babel/register](https://github.com/babel/babel/tree/HEAD/packages/babel-register) and [eslint-plugin-import-x](https://github.com/un-ts/eslint-plugin-import-x).
 
-**File**: `spec/cache-key.txt` (modified, +6/-6)
+
+Updates `@babel/core` from 8.1.0 to 8.1.2
+- [Release notes](https://github.com/babel/babel/releases)
+- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/babel/babel/commits/v8.1.2/packages/babel-core)
+
+Updates `@babel/register` from 8.0.6 to 8.1.2
+- [Release notes](https://github.com/babel/babel/releases)
+- [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/babel/babel/commits/v8.1.2/packages/babel-register)
+
+Updates `eslint-plugin-import-x` from 4.17.1 to 4.18.1
+- [Release notes](https://github.com/un-ts/eslint-plugin-import-x/releases)
+- [Changelog](https://github.com/un-ts/eslint-plugin-import-x/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/un-ts/eslint-plugin-import-x/compare/v4.17.1...v4.18.1)
+
+---
+updated-dependencies:
+- dependency-name:
+
+**File**: `package-lock.json` (modified, +120/-100)
 ```diff
-@@ -1,11 +1,11 @@
--rdf/rdf11/rdf-n-triples a4087116d5f1df52c0485ba5f0a7a7b0fbd662fd
-+rdf/rdf11/rdf-n-triples a9fe7cf2a16230106989370903fe7ae3f2d0cc20
- rdf/rdf11/rdf-n-quads a4087116d5f1df52c0485ba5f0a7a7b0fbd662fd
--rdf/rdf11/rdf-turtle a4087116d5f1df52c0485ba5f0a7a7b0fbd662fd
--rdf/rdf11/rdf-trig d163beb0a59f82f501d07e793b55b9c12b498972
-+rdf/rdf11/rdf-turtle a743114a082a9f3763ed98dded96349359b11b0a
-+rdf/rdf11/rdf-trig c71837d8c485f138f828a863c9aab138eb4f60f1
- rdf/rdf12/rdf-n-triples/syntax b2c8fd9b9442e6f7f42cd570d8d693ad8c2bcfad
--rdf/rdf12/rdf-n-quads/syntax 2ec17135f24959cb10d5f7bac8bb685ecd379fb6
--rdf/rdf12/rdf-turtle/syntax 2ec17135f24959cb10d5f7bac8bb685ecd379fb6
--rdf/rdf12/rdf-trig/syntax 2ec17135f24959cb10d5f7bac8bb685ecd379fb6
-+rdf/rdf12/rdf-n-quads/syntax c71837d8c485f138f828a863c9aab138eb4f60f1
-+rdf/rdf12/rdf-turtle/syntax c71837d8c485f138f828a863c9aab138eb4f60f1
-+rdf/rdf12/rdf-trig/syntax c71837d8c485f138f828a863c9aab138eb4f60f1
- rdf/rdf12/rdf-turtle/eval 2ec17135f24959cb10d5f7bac8bb685ecd379fb6
- rdf/rdf12/rdf-trig/eval 2ec17135f24959cb10d5f7bac8bb685ecd379fb6
- rdf/rdf12/rdf-n-triples/c14n d20621fa03dc04e7b7d6c8a7acd06be4494d2741
+@@ -138,20 +138,20 @@
+       }
+     },
+     "node_modules/@babel/core": {
+-      "version": "8.1.0",
+-      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.1.0.tgz",
+-      "integrity": "sha512-3jqm7xh3kJCmIeOK8sk6/EvOWdSzvOqvjt0tJEDOHHmzWjcQSvIh2/tq1I9RA741tl0QZdMzPJWCulWE+Dy5ww==",
++      "version": "8.1.2",
++      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.1.2.tgz",
++      "integrity": "sha512-xqDajHAAOjklW5UtWzFd9vSmlQ16+emgGi0HsyDQFGRQWZ/GjuwCoYGC3PnHxspmOR+HJBzDIOkMxNq/VvC98w==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@babel/code-frame": "^8.0.6",
+-        "@babel/generator": "^8.1.0",
++        "@babel/generator": "^8.1.2",
+         "@babel/helper-compilation-targets": "^8.0.7",
+-        "@babel/helpers": "^8.1.0",
+-        "@babel/parser": "^8.1.0",
+-        "@babel/template": "^8.0.0",
+-        "@babel/traverse": "^8.1.0",
+-        "@babel/types": "^8.1.0",
++        "@babel/helpers": "^8.1.2",
++        "@babel/parser": "^8.1.2",
++        "@babel/template": "^8.1.2",
++        "@babel/traverse": "^8.1.2",
++        "@babel/types": "^8.1.2",
+         "@types/gensync": "^1.0.5",
+         "convert-source-map": "^2.0.0",
+         "empathic": "^2.0.1",
+@@ -183,14 +183,14 @@
+       }
+     },
+     "node_modules/@babel/generator": {
+-      "version": "8.1.0",
+-      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.0.tgz",
+-      "integrity": "sha512-7fiBJ61wDV3AHbg7n/EfLBv3RU+lsdRP8QNJnydkKWA7e48FnnvKQWbVHsJQCBE7JHTj4xlzZL9fvQYsBUip2A==",
++      "version": "8.1.2",
++      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.2.tgz",
++      "integrity": "sha512-tAjURz1NaCZGtdG3hB6gjaIeTVo4XFD4TnbqIEneADVJ1Jpt2NxhPBAjbhius8ulUG5b/P2b56ec1ClJZa2aBQ==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@babel/parser": "^8.1.0",
+-        "@babel/types": "^8.1.0",
++        "@babel/parser": "^8.1.2",
++        "@babel/types": "^8.1.2",
+         "@jridgewell/gen-mapping": "0.4.0-beta.0",
+         "@jridgewell/trace-mapping": "^0.3.31",
+         "@types/jsesc": "^2.5.0",
+@@ -445,9 +445,9 @@
+       }
+     },
+     "node_modules/@babel/helper-string-parser": {
+-      "version": "8.0.8",
+-      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.0.8.tgz",
+-      "integrity": "sha512-fVM+gSuKbdv9cpmyRNh5EvsDHUZCdxQH3FdnFKSkNYHpbsn95bbrxm+ES3MVeQjcqwi2O5ur/DjLfmTQaO60ng==",
++      "version": "8.1.2",
++      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.1.2.tgz",
++      "integrity": "sha512-TRz5Z0MgfIfWqwEIq/pCpUpEXQxUt2Ig2ZbxG3SdmhSbHMAFFYGOix0kI4JLV371/TA+qWnQ4xWHPWjojkyRFA==",
+       "dev": true,
+       "license": "MIT",
+       "engines": {
+@@ -490,27 +490,27 @@
+       }
+     },
+     "node_modules/@babel/helpers": {
+-      "version": "8.1.0",
+-      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.0.tgz",
+-      "integrity": "sha512-949bjw10dhaRdtQeCpfVShFA4jIcto97BkqmWnRjpzyQuHVZ7EDriaoCn/4D8h1NqSKlmI20xPU0vHf3jQbQRg==",
++      "version": "8.1.2",
++      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.2.tgz",
++      "integrity": "sha512-BmtiG8H9OUWSTFOgl9jtPYmfDi6uc21Pf4GUxkgGoZnzMIzpDnhkl5gsGJW6wb1jmKCyU565F8IYe5mwOTctfw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@babel/template": "^8.0.0",
+-        "@babel/types": "^8.1.0"
++        "@babel/template": "^8.1.2",
++        "@babel/types": "^8.1.2"
+       },
+       "engines": {
+         "node": "^22.18.0 || >=24.11.0"
+       }
+     },
+     "node_modules/@babel/parser": {
+-      "version": "8.1.0",
+-      "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-8.1.0.tgz",
+-      "integrity": "sha512-fpqZYAC+Tthr19JbEKxXhCGutvfm/+roMe+ULrgUKI+GVyzkQiTMTSheORcWIAzW8T3Oo3W5UavWSvAWmsp7fA==",
++      "version": "8.1.2",
++      "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-8.1.2.tgz",
++      "integrity": "sha512-ZDKU7vaX0VORd2BhaO+3FKr/30TKjbUy3SMZcydiPngnAb+MesgUoh5SJcE5EwEyBj14M5J6fK56GuBqvYmOpw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@babel/types": "^8.1.0"
++        "@babel/types": "^8.1.2"
+       },
+       "bin": {
+         "parser": "bin/babel-parser.js"
+@@ -1580,9 +1580,9 @@
+       }
+     },
+     "node_modules/@babel/register": {
+-      "version": "8.0.6",
+-      "resolved": "https://registry.npmjs.org/@babel/register/-/register-8.0.6.tgz",
+-      "integrity": "sha512-Ix77Wl3Xpv/YXCRUa7s/FC0pWqsA+fego+HjmC0ziJioGKrBdS2Jpz2GruJMkUKYiJ33m+W8NXfce+3PQRzmSQ==",
++      "version": "8.1.2",
++      "resolved": "https://registry.npmjs.org/@babel/register/-/register-8.1.2.tgz",
++      "integrity": "sha512-ZzLJg0RjvqcKHsnaFRVa7FDENGRXINoHtC9vT0XG8FpuOW+Jb/L/sMLXKiIzjN8wD4gL6ui6hUWuDderLyJH6Q==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -1600,47 +1600,47 @@
+       }
+     },
+     "n
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #878** (2026-11-16): chore(deps-dev): Bump the minor group with 3 updates (@dependabot[bot])
 - **PR #877** (2026-11-09): chore(deps-dev): Bump the minor group with 5 updates (@dependabot[bot])
 - **PR #876** (2026-11-02): chore(deps-dev): Bump @babel/core from 8.0.7 to 8.0.10 in the minor group (@dependabot[bot])
 - **PR #874** (2026-11-09): chore(ci): refetch upstream spec suites (@github-actions[bot])
 - **PR #873** (2026-10-26): chore(deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (@dependabot[bot])
 - **PR #872** (2026-10-19): chore(deps-dev): Bump the minor group with 2 updates (@dependabot[bot])
-- **PR #871** (2026-10-12): chore(ci): refetch upstream spec suites (@github-actions[bot])
 
 ---
 
@@ -1059,41 +1164,69 @@ Co-authored-by: jeswr <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): refetch upstream spec suites (#874)
+## X. deps-dev): Bump the minor group with 3 updates
 
 **RULE**:
-When implementing operations in `spec/cache-key.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rdfjs/N3.js. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rdfjs/N3.js. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01ebe841`: ci): refetch upstream spec suites (#874). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f921e119`: deps-dev): Bump the minor group with 3 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `spec/cache-key.txt`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-rdf/rdf11/rdf-n-triples a9fe7cf2a16230106989370903fe7ae3f2d0cc20
-rdf/rdf11/rdf-turtle a743114a082a9f3763ed98dded96349359b11b0a
-rdf/rdf11/rdf-trig c71837d8c485f138f828a863c9aab138eb4f60f1
-rdf/rdf12/rdf-n-quads/syntax c71837d8c485f138f828a863c9aab138eb4f60f1
-rdf/rdf12/rdf-turtle/syntax c71837d8c485f138f828a863c9aab138eb4f60f1
-rdf/rdf12/rdf-trig/syntax c71837d8c485f138f828a863c9aab138eb4f60f1
+      "version": "8.1.2",
+      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.1.2.tgz",
+      "integrity": "sha512-xqDajHAAOjklW5UtWzFd9vSmlQ16+emgGi0HsyDQFGRQWZ/GjuwCoYGC3PnHxspmOR+HJBzDIOkMxNq/VvC98w==",
+        "@babel/generator": "^8.1.2",
+        "@babel/helpers": "^8.1.2",
+        "@babel/parser": "^8.1.2",
+        "@babel/template": "^8.1.2",
+        "@babel/traverse": "^8.1.2",
+        "@babel/types": "^8.1.2",
+      "version": "8.1.2",
+      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.2.tgz",
+      "integrity": "sha512-tAjURz1NaCZGtdG3hB6gjaIeTVo4XFD4TnbqIEneADVJ1Jpt2NxhPBAjbhius8ulUG5b/P2b56ec1ClJZa2aBQ==",
+        "@babel/parser": "^8.1.2",
+        "@babel/types": "^8.1.2",
+      "version": "8.1.2",
+      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.1.2.tgz",
+      "integrity": "sha512-TRz5Z0MgfIfWqwEIq/pCpUpEXQxUt2Ig2ZbxG3SdmhSbHMAFFYGOix0kI4JLV371/TA+qWnQ4xWHPWjojkyRFA==",
+      "version": "8.1.2",
+      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.2.tgz",
+      "integrity": "sha512-BmtiG8H9OUWSTFOgl9jtPYmfDi6uc21Pf4GUxkgGoZnzMIzpDnhkl5gsGJW6wb1jmKCyU565F
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-rdf/rdf11/rdf-n-triples a4087116d5f1df52c0485ba5f0a7a7b0fbd662fd
-rdf/rdf11/rdf-turtle a4087116d5f1df52c0485ba5f0a7a7b0fbd662fd
-rdf/rdf11/rdf-trig d163beb0a59f82f501d07e793b55b9c12b498972
-rdf/rdf12/rdf-n-quads/syntax 2ec17135f24959cb10d5f7bac8bb685ecd379fb6
-rdf/rdf12/rdf-turtle/syntax 2ec17135f24959cb10d5f7bac8bb685ecd379fb6
-rdf/rdf12/rdf-trig/syntax 2ec17135f24959cb10d5f7bac8bb685ecd379fb6
+// Induced defect failure mode:
+      "version": "8.1.0",
+      "resolved": "https://registry.npmjs.org/@babel/core/-/core-8.1.0.tgz",
+      "integrity": "sha512-3jqm7xh3kJCmIeOK8sk6/EvOWdSzvOqvjt0tJEDOHHmzWjcQSvIh2/tq1I9RA741tl0QZdMzPJWCulWE+Dy5ww==",
+        "@babel/generator": "^8.1.0",
+        "@babel/helpers": "^8.1.0",
+        "@babel/parser": "^8.1.0",
+        "@babel/template": "^8.0.0",
+        "@babel/traverse": "^8.1.0",
+        "@babel/types": "^8.1.0",
+      "version": "8.1.0",
+      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.0.tgz",
+      "integrity": "sha512-7fiBJ61wDV3AHbg7n/EfLBv3RU+lsdRP8QNJnydkKWA7e48FnnvKQWbVHsJQCBE7JHTj4xlzZL9fvQYsBUip2A==",
+        "@babel/parser": "^8.1.0",
+        "@babel/types": "^8.1.0",
+      "version": "8.0.8",
+      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.0.8.tgz",
+      "integrity": "sha512-fVM+gSuKbdv9cpmyRNh5EvsDHUZCdxQH3FdnFKSkNYHpbsn95bbrxm+ES3MVeQjcqwi2O5ur/DjLfmTQaO60ng==",
+      "version": "8.1.0",
+      "resolved": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.0.tgz",
+      "integrity": "sha512-949bjw10dhaRdtQeCpfVShFA4jIcto97BkqmWnRjpzyQuHVZ7EDriaoCn/4D8h1NqSKlmI20x
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01ebe841` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f921e119` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

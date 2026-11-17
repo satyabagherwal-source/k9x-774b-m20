@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `25b40def`  
+> **Source Version**: `c6280dda`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T05:31:41.138Z  
+> **Timestamp**: 2026-11-17T00:55:56.906Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T05:31:40.924Z  
+> **Harvest Timestamp**: 2026-11-17T00:55:56.616Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21778 stars
+- **Stars / Engagement**: 21824 stars
 
 ---
 
@@ -346,8 +346,20 @@ fn stable_hash_json<T: serde::Serialize + ?Sized>(value: &T) -> u64 {
     stable_hash_str(&encode_json(value))
 }
 
-pub(super) fn stable_json_len<T: serde::Serialize + ?Sized>(value: &T) -> usize {
+#[cfg(test)]
+fn stable_json_len<T: serde::Serialize + ?Sized>(value: &T) -> usize {
     encode_json(value).len()
+}
+
+/// The array envelope is independent of each message's cached immutable
+/// content. Include current metadata, but do not encode whole transcripts
+/// again just to count bytes already accounted for by `SharedContent`.
+fn messages_json_len(messages: &[Message]) -> usize {
+    2 + messages.len().saturating_sub(1)
+        + messages
+            .iter()
+            .map(Message::serialized_json_bytes)
+            .sum::<usize>()
 }
 
 fn json_hash_and_len<T: serde::Serialize + ?Sized>(value: &T) -> (u64, usize) {
@@ -414,7 +426,7 @@ pub(super) fn kv_cache_request_event(
         tool_count: eager_tools.len(),
         system_static_chars: system_static.chars().count(),
         tools_json_chars,
-        messages_json_chars: stable_json_len(messages),
+        messages_json_chars: messages_json_len(messages),
         ephemeral_hash,
         ephemeral_chars,
         ephemeral_message_count: ephemeral_messages.len(),
@@ -441,7 +453,7 @@ impl Agent {
             .try_read()
             .map_err(|_| anyhow::anyhow!("compaction state is busy"))?;
         anyhow::ensure!(!manager.is_compacting(), "compaction is still running");
-        self.session.compaction = manager.persisted_state();
+        self.session.compaction = manager.persisted_state().map(Arc::new);
         // Prepared blank sessions also have externally visible IDs. Ordinary
         // save intentionally skips these until the first user message.
         self.session.save_prepared()?;
@@ -665,7 +677,7 @@ impl Agent {
     ///
     /// This failure is caused by the serialized request body (dominated by inline
     /// base64 images) exceeding the provider's size cap, which is independent of
-    /// the to
+
 ```
 
 ### Core Architecture Module: `crates/jcode-app-core/src/agent/conversation_reset.rs`
@@ -1568,10 +1580,30 @@ use jcode_agent_runtime::{
 };
 use std::sync::Arc;
 
+fn frozen_snapshot_memory_profile(
+    locked_tools: Option<&[crate::message::ToolDefinition]>,
+    agents_md: Option<&String>,
+    skills: &[crate::prompt::SkillInfo],
+) -> serde_json::Value {
+    // Serialized schemas are an attribution proxy, not an allocation bound or
+    // capacity. The prompt strings report capacity without copying their text.
+    serde_json::json!({
+        "locked_tools_count": locked_tools.map_or(0, <[_]>::len),
+        "locked_tools_json_bytes": locked_tools
+            .map_or(0, |tools| crate::process_memory::estimate_json_bytes(&tools)),
+        "agents_md_snapshot_capacity_bytes": agents_md.map_or(0, String::capacity),
+        "prompt_skills_snapshot_count": skills.len(),
+        "prompt_skills_snapshot_capacity_bytes": skills.iter()
+            .map(|skill| skill.name.capacity().saturating_add(skill.description.capacity()))
+            .fold(0usize, usize::saturating_add),
+    })
+}
+
 fn soft_interrupt_session_display_role(source: SoftInterruptSource) -> Option<StoredDisplayRole> {
     match source {
         SoftInterruptSource::User => None,
         SoftInterruptSource::System => Some(StoredDisplayRole::System),
+        SoftInterruptSource::FileActivity => Some(StoredDisplayRole::FileActivity),
         SoftInterruptSource::BackgroundTask => Some(StoredDisplayRole::BackgroundTask),
     }
 }
@@ -1581,6 +1613,7 @@ fn soft_interrupt_protocol_display_role(source: SoftInterruptSource) -> Option<S
         SoftInterruptSource::User => None,
         SoftInterruptSource::System => Some("system".to_string()),
         SoftInterruptSource::BackgroundTask => Some("background_task".to_string()),
+        SoftInterruptSource::FileActivity => Some("file_activity".to_string()),
     }
 }
 
@@ -1823,32 +1856,7 @@ impl Agent {
                 "working_dir": self.session.working_dir,
                 "message_count": self.session.messages.len(),
             },
-            "interrupts": {
-                "soft_interrupt_count": self.soft_interrupt_count(),
-                "has_urgent": self.has_urgent_interrupt(),
-                "pending_alert_count": self.pending_alert_count(),
-                "soft_interrupts": self.soft_interrupts_preview(),
-                "pending_alerts": self.pending_alerts_preview(),
-            },
-            "cache_tracker": {
-                "turn_count": self.cache_tracker.turn_count(),
-                "had_violation": self.cache_tracker.had_violation(),
-            },
-            "features": {
-                "memory_enabled": self.memory_enabled,
-            },
-            "token_usage": {
-                "input": self.last_usage.input_tokens,
-                "output": self.last_usage.output_tokens,
-                "cache_read": self.last_usage.cache_read_input_tokens,
-                "cache_write": self.last_usage.cache_creation_input_tokens,
-            },
-        })
-    }
-
-    pub fn debug_memory_profile(&self) -> serde_json::Value {
-        let process = crate::process_memory::snapshot_with_source("agent:memory");
-        
+            "interrupts":
 ```
 
 ### Core Architecture Module: `crates/jcode-app-core/src/agent/messages.rs`
@@ -1864,7 +1872,11 @@ impl Agent {
         self.persist_session_now()
     }
 
-    pub(crate) fn add_message(&mut self, role: Role, content: Vec<ContentBlock>) -> String {
+    pub(crate) fn add_message(
+        &mut self,
+        role: Role,
+        content: impl Into<crate::message::SharedContent>,
+    ) -> String {
         let id = self.session.add_message(role, content);
         let compaction = self.registry.compaction();
         if let Ok(mut manager) = compaction.try_write() {
@@ -1880,7 +1892,7 @@ impl Agent {
     pub(crate) fn add_message_with_display_role(
         &mut self,
         role: Role,
-        content: Vec<ContentBlock>,
+        content: impl Into<crate::message::SharedContent>,
         display_role: Option<StoredDisplayRole>,
     ) -> String {
         let id = self
@@ -1900,7 +1912,7 @@ impl Agent {
     pub(crate) fn add_message_with_duration(
         &mut self,
         role: Role,
-        content: Vec<ContentBlock>,
+        content: impl Into<crate::message::SharedContent>,
         duration_ms: Option<u64>,
     ) -> String {
         let id = self
@@ -1920,7 +1932,7 @@ impl Agent {
     pub(crate) fn add_message_ext(
         &mut self,
         role: Role,
-        content: Vec<ContentBlock>,
+        content: impl Into<crate::message::SharedContent>,
         duration_ms: Option<u64>,
         token_usage: Option<crate::session::StoredTokenUsage>,
     ) -> String {
@@ -2072,6 +2084,27 @@ mod durable_error_tests {
     }
 
     #[test]
+    fn message_insertion_retains_shared_payload_storage() {
+        let _lock = crate::storage::lock_test_env();
+        let mut agent = Agent::new_provisional_with_initial_working_dir(
+            Arc::new(NoNetworkProvider),
+            Registry::empty(),
+            None,
+        );
+        let message = Message::user("shared payload");
+        agent.add_message(Role::User, message.content.clone());
+        assert!(
+            agent
+                .session
+                .messages
+                .last()
+                .unwrap()
+                .content
+                .shares_storage_with(&message.content)
+        );
+    }
+
+    #[test]
     fn failed_wake_error_is_saved_without_an_assistant_message() {
         let _lock = crate::storage::lock_test_env();
         let home = tempfile::tempdir().unwrap();
@@ -2097,22 +2130,7 @@ mod durable_error_tests {
         );
         let error = anyhow::anyhow!("invalid_request_error: missing call_id")
             .context("provider rejected wake");
-        let message = crate::util::format_error_chain(&error);
-        let message_count = agent.session.messages.len();
-        let provider_messages = serde_json::to_value(&agent.session.messages).unwrap();
-        agent.persist_turn_error(&message).unwrap();
-        let loaded = Session::load(agent.session_id()).unwrap();
-        assert_eq!(loaded.messages.len(), message_count);
-        assert_eq!(agent.session.messages.len(), message_count);
-        assert_eq!(
-            serde_json::to_value(&loaded.messages).unwrap(),
-            provider_messages
-        );
-        let history = crate::session::render_messages(&loaded);
-        assert_eq!(history.len(), 2);
-        assert_eq!(history[0].content, "wake");
-        assert_eq!(history[1].role, "error");
-        assert_eq!(history[1].
+        let message = c
 ```
 
 ### Core Architecture Module: `crates/jcode-app-core/src/agent/prompting.rs`
@@ -2327,441 +2345,1119 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a3e25f7` (2026-11-14)
-**Commit Message**: perf(tui): retain unchanged cells in sparse frame snapshots
+### Incident Patch 1: `591efa20` (2026-11-16)
+**Commit Message**: fix(ci): remove panic regressions and dead-code warnings
 
-Keep the vector-copy fast path for dense frames and resizes. Sparse synthetic frames: 44.17ms to 28.34ms across 500 updates. Verify Unicode/style/resize equivalence and unchanged heap-backed symbol reuse.
-
-**File**: `crates/jcode-tui/src/tui/app/run_shell.rs` (modified, +21/-4)
+**File**: `crates/jcode-app-core/src/ambient/manager.rs` (modified, +0/-7)
 ```diff
-@@ -59,6 +59,25 @@ pub(super) fn coalesced_frame_timer(
+@@ -77,13 +77,6 @@ impl AmbientManager {
+         Ok(id)
      }
- }
  
-+/// Keep the spinner/animation snapshot exact without cloning unchanged cells
-+/// on sparse frames. Ratatui already counted flushed updates, so dense redraws
-+/// retain the straight vector copy rather than paying another diff scan.
-+pub(super) fn update_retained_frame(previous: &mut Buffer, rendered: &Buffer, updates: usize) {
-+    let sparse = previous.area == rendered.area
-+        && previous.content.len() == rendered.content.len()
-+        && updates < rendered.content.len() / 4;
-+    previous.area = rendered.area;
-+    if sparse {
-+        for (to, from) in previous.content.iter_mut().zip(&rendered.content) {
-+            if to != from {
-+                to.clone_from(from);
-+            }
-+        }
-+    } else {
-+        previous.content.clone_from(&rendered.content);
-+    }
-+}
-+
- pub(super) fn redraw_timer(period: Duration) -> tokio::time::Interval {
-     let mut interval = tokio::time::interval_at(tokio::time::Instant::now() + period, period);
-     // Redraw ticks represent visual liveness, not elapsed simulation steps. An
-@@ -615,10 +634,8 @@ impl StatusSpinnerRenderer {
-         let total_cells = Some(completed.buffer.content.len());
-         let completed_buffer = match stored_frame {
-             Some(mut buffer) => {
--                // Derived `Buffer::clone_from` reallocates; `Vec::clone_from`
--                // reuses the existing cell storage.
--                buffer.area = completed.buffer.area;
--                buffer.content.clone_from(&completed.buffer.content);
-+                // Reuse the Vec and skip unchanged cells on sparse frames.
-+                update_retained_frame(&mut buffer, completed.buffer, completed.flushed_updates);
-                 buffer
-             }
-             None => completed.buffer.clone(),
+-    pub(super) fn transact_queue<T>(
+-        &mut self,
+-        update: impl FnOnce(&mut Vec<ScheduledItem>) -> Result<T>,
+-    ) -> Result<T> {
+-        self.queue.transact(update)
+-    }
+-
+     pub(super) fn scheduled_item(request: ScheduleRequest) -> ScheduledItem {
+         let id = format!("sched_{:032x}", rand::random::<u128>());
+         let scheduled_for = request.wake_at.unwrap_or_else(|| {
 ```
 
-**File**: `crates/jcode-tui/src/tui/app/run_shell_tests.rs` (modified, +42/-8)
+**File**: `crates/jcode-base/src/mobile_sync_progress.rs` (modified, +9/-9)
 ```diff
-@@ -509,6 +509,46 @@ fn idle_animation_repaint_preserves_cells_outside_animation_after_swap() {
+@@ -66,9 +66,7 @@ impl Serialize for MergedSessions<'_> {
+         // Preserve BTreeMap order, including keys inserted between existing ones.
+         loop {
+             match (current.peek(), updates.peek()) {
+-                (Some((old_id, _)), Some((id, _))) if old_id == id => {
+-                    let (id, old) = current.next().unwrap();
+-                    let (_, progress) = updates.next().unwrap();
++                (Some(&(id, old)), Some(&(update_id, progress))) if id == update_id => {
+                     map.serialize_entry(
+                         id,
+                         if replaces(Some(old), progress) {
+@@ -77,18 +75,20 @@ impl Serialize for MergedSessions<'_> {
+                             old
+                         },
+                     )?;
++                    current.next();
++                    updates.next();
+                 }
+-                (Some((old_id, _)), Some((id, _))) if old_id < id => {
+-                    let (id, progress) = current.next().unwrap();
++                (Some(&(id, progress)), Some(&(update_id, _))) if id < update_id => {
+                     map.serialize_entry(id, progress)?;
++                    current.next();
+                 }
+-                (_, Some(_)) => {
+-                    let (id, progress) = updates.next().unwrap();
++                (_, Some(&(id, progress))) => {
+                     map.serialize_entry(id, progress)?;
++                    updates.next();
+                 }
+-                (Some(_), None) => {
+-                    let (id, progress) = current.next().unwrap();
++                (Some(&(id, progress)), None) => {
+                     map.serialize_entry(id, progress)?;
++                    current.next();
+                 }
+                 (None, None) => break,
+             }
+```
+
+**File**: `crates/jcode-message-types/src/tool_prompt_size.rs` (modified, +15/-6)
+```diff
+@@ -9,13 +9,18 @@ pub(super) fn prompt_chars(tool: &ToolDefinition) -> usize {
+         + value_chars(&tool.input_schema)
+ }
+ 
+-// Serialize each borrowed component rather than first cloning the complete
+-// schema tree into another Value. Value's Display uses the existing compact
+-// serializer, so escaping and number formatting stay identical to legacy JSON.
++// Count string escaping directly and format borrowed schema values instead of
++// cloning the complete schema tree into another Value. Value's Display uses
++// the compact serializer, preserving escaping and number formatting.
+ fn string_chars(value: &str) -> usize {
+-    serde_json::to_string(value)
+-        .expect("string serialization cannot fail")
+-        .len()
++    2 + value
++        .chars()
++        .map(|ch| match ch {
++            '"' | '\\' | '\n' | '\r' | '\t' | '\u{08}' | '\u{0c}' => 2,
++            '\u{00}'..='\u{1f}' => 6,
++            _ => ch.len_utf8(),
++        })
++        .sum::<usize>()
+ }
+ 
+ fn value_chars(value: &Value) -> usize {
+@@ -61,6 +66,10 @@ mod tests {
+         let controls: String = (0..=127).map(char::from).collect();
+         let strings = [controls, "界🦀/\u{2028}\u{2029}".repeat(50), String::new()];
+         for text in strings {
++            assert_eq!(
++                string_chars(&text),
++                serde_json::to_string(&text).unwrap().len()
++            );
+             let schema =
+                 json!({text.clone(): [text, i64::MIN, u64::MAX, -0.0, 1e-300, 1e300, {}, []]});
+             assert_eq!(
+```
+
+**File**: `crates/jcode-provider-anthropic-runtime/src/lib.rs` (modified, +3/-3)
+```diff
+@@ -1276,9 +1276,9 @@ fn anthropic_canonical_payload(request: &ApiRequest) -> Value {
+         "temperature": request.temperature,
+     });
+ 
+-    let object = payload
+-        .as_object_mut()
+-        .expect("canonical payload is an object");
++    let Value::Object(object) = &mut payload else {
++        return Value::Null;
++    };
+     object.insert("messages".into(), messages_value);
+     object.insert("system".into(), system_value.unwrap_or(Value::Null));
+     object.insert("tools".into(), tools_value.unwrap_or(Value::Null));
+```
+
+**File**: `crates/jcode-provider-antigravity-runtime/src/lib.rs` (modified, +3/-3)
+```diff
+@@ -409,9 +409,9 @@ fn canonical_payload(request: &CodeAssistGenerateRequest) -> Value {
+         "model": &request.model,
+         "tool_config": &request.request.tool_config,
+     });
+-    let object = payload
+-        .as_object_mut()
+-        .expect("canonical payload is an object");
++    let Value::Object(object) = &mut payload else {
++        return Value::Null;
++    };
+     object.insert(
+         "contents".into(),
+         serde_json::to_value(&request.request.contents).unwrap_or(Value::Null),
+```
+
+**File**: `crates/jcode-provider-copilot-runtime/src/lib.rs` (modified, +2/-1)
+```diff
+@@ -70,7 +70,8 @@ fn canonical_diagnostic_parts(
+ ) -> (&[Value], Option<&Value>, Option<&Value>) {
+     let items = payload[if responses { "input" } else { "messages" }]
+         .as_array()
+-        .expect("canonical Copilot input is an array");
++        .map(Vec::as_slice)
++        .unwrap_or_default();
+     let system = if responses {
+         payload.get("instructions")
+     } else {
+```
+
+**File**: `crates/jcode-provider-cursor-runtime/src/lib.rs` (modified, +5/-1)
+```diff
+@@ -551,7 +551,11 @@ impl Provider for CursorCliProvider {
+             .unwrap_or_else(|poisoned| poisoned.into_inner())
+             .clone();
+         let payload = canonical_input_payload(&model, system, &prompt);
+-        let prompt_items = std::slice::from_ref(payload.get("prompt").unwrap());
++        let prompt_items = std::slice::from_ref(
++            payload
++                .get("prompt")
++                .ok_or_else(|| anyhow::anyhow!("canonical payload is missing prompt"))?,
++        );
+         let system_value = payload.get("system").filter(|value| !value.is_null());
+         jcode_provider_core::fingerprint::log_provider_canonical_input(
+             "cursor",
+```
+
+**File**: `crates/jcode-provider-gemini-runtime/src/lib.rs` (modified, +3/-3)
+```diff
+@@ -564,9 +564,9 @@ fn canonical_payload(request: &CodeAssistGenerateRequest) -> Value {
+         "model": &request.model,
+         "tool_config": &request.request.tool_config,
+     });
+-    let object = payload
+-        .as_object_mut()
+-        .expect("canonical payload is an object");
++    let Value::Object(object) = &mut payload else {
++        return Value::Null;
++    };
+     object.insert(
+         "contents".into(),
+         serde_json::to_value(&request.request.contents).unwrap_or(Value::Null),
+```
+
+---
+
+### Incident Patch 2: `379203b4` (2026-11-17)
+**Commit Message**: test: extract oversized regression test groups without changing coverage
+
+**File**: `crates/jcode-app-core/src/agent_tests.rs` (modified, +3/-131)
+```diff
+@@ -38,76 +38,6 @@ struct NativeAutoCompactionProvider;
+ 
+ struct BoundSavedAccountProvider;
+ 
+-#[tokio::test]
+-async fn working_directory_moves_preserve_first_active_session_origin() {
+-    let mut agent = Agent::new(Arc::new(BoundSavedAccountProvider), Registry::empty());
+-    agent.session.messages.clear();
+-    agent.session.working_dir = Some("/daemon".into());
+-    agent.set_working_dir("/projects/start");
+-    assert_eq!(
+-        agent.session.original_working_dir, None,
+-        "initial subscription is not a move"
+-    );
+-    agent.session.add_message(
+-        Role::User,
+-        vec![ContentBlock::Text {
+-            text: "hello".into(),
+-            cache_control: None,
+-        }],
+-    );
+-    agent.set_working_dir("/projects/second");
+-    agent.set_working_dir_for_pending_context(Some("/projects/third".into()));
+-    assert_eq!(
+-        agent.session.original_working_dir.as_deref(),
+-        Some("/projects/start")
+-    );
+-    assert_eq!(agent.working_dir(), Some("/projects/third"));
+-    agent.set_working_dir("/projects/start");
+-    assert_eq!(
+-        agent.session.original_working_dir.as_deref(),
+-        Some("/projects/start")
+-    );
+-}
+-
+-#[tokio::test]
+-async fn user_response_capability_updates_locked_tool_surface() {
+-    let mut agent = Agent::new(Arc::new(BoundSavedAccountProvider), Registry::empty());
+-    assert!(
+-        !agent
+-            .tool_definitions()
+-            .await
+-            .iter()
+-            .any(|d| d.name == "user_response")
+-    );
+-    assert!(agent.locked_tools.is_some());
+-    assert!(!agent.tool_names().await.iter().any(|n| n == "applet"));
+-    agent.set_desktop_response_capability(true).await;
+-    assert!(agent.locked_tools.is_none());
+-    assert!(agent.tool_names().await.iter().any(|n| n == "applet"));
+-    assert!(
+-        agent
+-            .tool_definitions()
+-            .await
+-            .iter()
+-            .any(|d| d.name == "user_response")
+-    );
+-    agent.set_desktop_response_capability(true).await;
+-    assert!(
+-        agent.locked_tools.is_some(),
+-        "unchanged capability preserves the cache"
+-    );
+-    agent.set_desktop_response_capability(false).await;
+-    assert!(agent.locked_tools.is_none());
+-    assert!(!agent.tool_names().await.iter().any(|n| n == "applet"));
+-    assert!(
+-        !agent
+-            .tool_definitions()
+-            .await
+-            .iter()
+-            .any(|d| d.name == "user_response")
+-    );
+-}
+-
+ #[async_trait]
+ impl Provider for BoundSavedAccountProvider {
+     async fn complete(
+@@ -133,67 +63,6 @@ impl Provider for BoundSavedAccountProvider {
      }
  }
  
-+#[test]
-+fn retained_frame_update_matches_a_full_copy_for_sparse_dense_and_resized_frames() {
-+    for old_area in [Rect::new(0, 0, 8, 4), Rect::new(3, 2, 7, 3)] {
-+        for new_area in [old_area, Rect::new(0, 0, 10, 2), Rect::new(0, 0, 0, 0)] {
-+            for reported_updates in [0, 1, 8, 100] {
-+                let mut previous = Buffer::empty(old_area);
-+                let mut rendered = Buffer::empty(new_area);
-+                for (i, cell) in rendered.content.iter_mut().enumerate() {
-+                    cell.set_symbol(["a", "日", "e\u{301}", "👩‍💻"][i % 4]);
-+                    cell.set_fg(if i % 2 == 0 { Color::Red } else { Color::Cyan });
-+                    cell.set_bg(Color::Blue);
-+                    cell.skip = i % 3 == 0;
-+                }
-+                let capacity = previous.content.capacity();
-+                let storage = previous.content.as_ptr();
-+                update_retained_frame(&mut previous, &rendered, reported_updates);
-+                assert_eq!(previous, rendered);
-+                if old_area == new_area {
-+                    assert_eq!(previous.content.as_ptr(), storage);
-+                    assert_eq!(previous.content.capacity(), capacity);
-+                }
+-#[tokio::test]
+-async fn saved_account_observed_binding_is_persisted() {
+-    let _guard = crate::storage::lock_test_env();
+-    let home = tempfile::tempdir().unwrap();
+-    struct RestoreHome(Option<std::ffi::OsString>);
+-    impl Drop for RestoreHome {
+-        fn drop(&mut self) {
+-            match &self.0 {
+-                Some(home) => crate::env::set_var("JCODE_HOME", home),
+-                None => crate::env::remove_var("JCODE_HOME"),
+-            }
+-            crate::config::Config::invalidate_cache();
+-        }
+-    }
+-    let _restore = RestoreHome(std::env::var_os("JCODE_HOME"));
+-    crate::env::set_var("JCODE_HOME", home.path());
+-    crate::config::Config::invalidate_cache();
+-    let provider: Arc<dyn Provider> = Arc::new(BoundSavedAccountProvider);
+-    let mut agent = Agent::new(provider, Registry::empty());
+-    agent.session.route_api_method = None;
+-    agent.session.save_prepared().unwrap();
+-    agent.sync_bound_account_route();
+-    assert_eq!(
+-        agent.session.route_api_method.as_deref(),
+-        Some("openai-oauth@work")
+-    );
+-    let saved = crate::session::Session::load(&agent.session.id).unwrap();
+-    assert_eq!(saved.route_api_method.as_deref(), Some("openai-oauth@work"));
+-    assert_eq!(saved.provider_key.as_deref(), Some("openai-oauth"));
+-    agent.sync_bound_account_route();
+-    assert_eq!(agent.session.route_api_method, saved.route_api_method);
+-    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("work"));
+-    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("personal"));
+-    agent.record_failed_account_route("429 rate limit reached");
+-    assert!(
+-        crate::provider::provider_unavailability_detail_for_account_label("openai", Some("work"))
+-            .is_some()
+-    );
+-    assert!(
+-        crate::provider::provider_unavailability_detail_for_account_label(
+-            "openai",
+-            Some("personal")
+-        )
+-        .is_none()
+-    );
+-    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("work"));
+-    agent.session.route_api_method = Some("openai-oauth@personal".to_string());
+-    agent.sync_bound_account_route();
+-    assert_eq!(
+-        agent.session.route_api_method.as_deref(),
+-        Some("openai-oauth@personal")
+-    );
+-    assert!(
+-        agent
+-   
+```
+
+**File**: `crates/jcode-app-core/src/agent_tests_additional_tests.rs` (added, +132/-0)
+```diff
+@@ -0,0 +1,132 @@
++use super::*;
++
++#[tokio::test]
++async fn working_directory_moves_preserve_first_active_session_origin() {
++    let mut agent = Agent::new(Arc::new(BoundSavedAccountProvider), Registry::empty());
++    agent.session.messages.clear();
++    agent.session.working_dir = Some("/daemon".into());
++    agent.set_working_dir("/projects/start");
++    assert_eq!(
++        agent.session.original_working_dir, None,
++        "initial subscription is not a move"
++    );
++    agent.session.add_message(
++        Role::User,
++        vec![ContentBlock::Text {
++            text: "hello".into(),
++            cache_control: None,
++        }],
++    );
++    agent.set_working_dir("/projects/second");
++    agent.set_working_dir_for_pending_context(Some("/projects/third".into()));
++    assert_eq!(
++        agent.session.original_working_dir.as_deref(),
++        Some("/projects/start")
++    );
++    assert_eq!(agent.working_dir(), Some("/projects/third"));
++    agent.set_working_dir("/projects/start");
++    assert_eq!(
++        agent.session.original_working_dir.as_deref(),
++        Some("/projects/start")
++    );
++}
++
++#[tokio::test]
++async fn user_response_capability_updates_locked_tool_surface() {
++    let mut agent = Agent::new(Arc::new(BoundSavedAccountProvider), Registry::empty());
++    assert!(
++        !agent
++            .tool_definitions()
++            .await
++            .iter()
++            .any(|d| d.name == "user_response")
++    );
++    assert!(agent.locked_tools.is_some());
++    assert!(!agent.tool_names().await.iter().any(|n| n == "applet"));
++    agent.set_desktop_response_capability(true).await;
++    assert!(agent.locked_tools.is_none());
++    assert!(agent.tool_names().await.iter().any(|n| n == "applet"));
++    assert!(
++        agent
++            .tool_definitions()
++            .await
++            .iter()
++            .any(|d| d.name == "user_response")
++    );
++    agent.set_desktop_response_capability(true).await;
++    assert!(
++        agent.locked_tools.is_some(),
++        "unchanged capability preserves the cache"
++    );
++    agent.set_desktop_response_capability(false).await;
++    assert!(agent.locked_tools.is_none());
++    assert!(!agent.tool_names().await.iter().any(|n| n == "applet"));
++    assert!(
++        !agent
++            .tool_definitions()
++            .await
++            .iter()
++            .any(|d| d.name == "user_response")
++    );
++}
++
++#[tokio::test]
++async fn saved_account_observed_binding_is_persisted() {
++    let _guard = crate::storage::lock_test_env();
++    let home = tempfile::tempdir().unwrap();
++    struct RestoreHome(Option<std::ffi::OsString>);
++    impl Drop for RestoreHome {
++        fn drop(&mut self) {
++            match &self.0 {
++                Some(home) => crate::env::set_var("JCODE_HOME", home),
++                None => crate::env::remove_var("JCODE_HOME"),
 +            }
++            crate::config::Config::invalidate_cache();
 +        }
 +    }
++    let _restore = RestoreHome(std::env::var_os("JCODE_HOME"));
++    crate::env::set_var("JCODE_HOME", home.path());
++    crate::config::Config::invalidate_cache();
++    let provider: Arc<dyn Provider> = Arc::new(BoundSavedAccountProvider);
++    let mut agent = Agent::new(provider, Registry::empty());
++    agent.session.route_api_method = None;
++    agent.session.save_prepared().unwrap();
++    agent.sync_bound_account_route();
++    assert_eq!(
++        agent.session.route_api_method.as_deref(),
++        Some("openai-oauth@work")
++    );
++    let saved = crate::session::Session::load(&agent.session.id).unwrap();
++    assert_eq!(saved.route_api_method.as_deref(), Some("openai-oauth@work"));
++    assert_eq!(saved.provider_key.as_deref(), Some("openai-oauth"));
++    agent.sync_bound_account_route();
++    assert_eq!(agent.session.route_api_method, saved.route_api_method);
++    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("work"));
++    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("personal"));
++    agent.record_failed_account_route("429 rate limit reached");
++    assert!(
++        crate::provider::provider_unavailability_detail_for_account_label("openai", Some("work"))
++            .is_some()
++    );
++    assert!(
++        crate::provider::provider_unavailability_detail_for_account_label(
++            "openai",
++            Some("personal")
++        )
++        .is_none()
++    );
++    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("work"));
++    agent.session.route_api_method = Some("openai-oauth@personal".to_string());
++    agent.sync_bound_account_route();
++    assert_eq!(
++        agent.session.route_api_method.as_deref(),
++        Some("openai-oauth@personal")
++    );
++    assert!(
++        agent
++            .ensure_session_lease()
++            .unwrap_err()
++            .to_string()
++            .contains("personal")
++    );
 +}
-+
-+#[test]
-+fn sparse_retained_frame_keeps_unchanged_heap_backed_symbols() {
-+    let mut cell = ratatui::buffer::Cell::EMPTY;
-+    cell.set_symbol(&format!("a{}", "\u{301}".repeat(32)));
-+    let source = Buffer::filled(Rect::new(0, 0, 8, 4), cell);
-+    let mut previous = source.clone();
-+    let symbol = previous.content[0].symbol().as_ptr();
-+    let mut rendered = source;
-+    rendered.content[1].set_fg(Color::Red);
-+    update_retained_frame(&mut previous, &rendered, 1);
-+    assert_eq!(previous, rendered);
-+    assert_eq!(previous.content[0].symbol().as_ptr(), symbol);
-+}
-+
- #[test]
- #[ignore = "manual retained-frame copy timing probe"]
- fn retained_frame_copy_probe() {
-@@ -536,25 +576,19 @@ fn retained_frame_copy_probe() {
-     let full_time = started.elapsed();
-     target.content.clone_from(&source.content);
-     let started = Instant::now();
--    let mut copied = 0usize;
-     for frame in 0..frames {
-         source.content[frame % area.area() as usize].set_fg(if frame % 2 == 0 {
-             Color::Yellow
-         } else {
-             Color::Green
-         });
--        for (to, from) in target.content.iter_mut().zip(black_box(&source.content)) {
--            if to != from {
--                to.clone_from(from);
--                copied += 1;
+```
+
+**File**: `crates/jcode-app-core/src/server/client_lifecycle_tests.rs` (modified, +3/-155)
+```diff
+@@ -7,44 +7,6 @@ use futures::stream;
+ use std::sync::atomic::{AtomicBool, Ordering};
+ use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
+ 
+-#[test]
+-fn identity_transport_negotiation_preserves_legacy_payload_shape() {
+-    let identity = crate::protocol::TurnIdentity {
+-        runtime_generation: "runtime".into(),
+-        turn_id: 7,
+-    };
+-    let wrapped = ServerEvent::TurnEvent {
+-        identity: identity.clone(),
+-        event: Box::new(ServerEvent::Done { id: 99 }),
+-    };
+-    assert!(matches!(
+-        event_for_transport(wrapped.clone(), false),
+-        Some(ServerEvent::Done { id: 99 })
+-    ));
+-    assert!(matches!(
+-        event_for_transport(wrapped, true),
+-        Some(ServerEvent::TurnEvent { .. })
+-    ));
+-    let started = ServerEvent::TurnStarted { identity };
+-    assert!(event_for_transport(started.clone(), false).is_none());
+-    assert!(matches!(
+-        event_for_transport(started, true),
+-        Some(ServerEvent::TurnStarted { .. })
+-    ));
+-    assert!(
+-        event_for_transport(
+-            ServerEvent::TurnState {
+-                session_id: "session".into(),
+-                runtime_generation: "runtime".into(),
+-                turn_id: None,
+-                latest_turn_id: 7
+-            },
+-            false
+-        )
+-        .is_none()
+-    );
+-}
+-
+ fn turn_payload(event: ServerEvent) -> ServerEvent {
+     match event {
+         ServerEvent::TurnEvent { event, .. } => *event,
+@@ -134,123 +96,6 @@ impl Drop for IsolatedRuntimeDir {
+     }
+ }
+ 
+-/// Regression for issue #428: a turn actively streaming in this session but
+-/// NOT owned by the cancelling connection (no local task handle: post-reload
+-/// reattach, server-initiated wake turns, headless recovery) must abort
+-/// promptly even when the control handle's stop signal is a *different
+-/// instance* from the streaming agent's own `graceful_shutdown` signal.
+-///
+-/// Before the fix, `cancel_processing_message` hit the NO_LOCAL_TASK branch,
+-/// fired the stale handle-local signal (which nothing was listening to),
+-/// emitted `Interrupted` immediately, and the provider stream kept generating
+-/// for minutes ("Interrupting..." disappears, model keeps going, eventually
+-/// "Interrupted [x66]").
+-#[test]
+-fn cancel_aborts_detached_streaming_turn_with_stale_stop_signal() -> anyhow::Result<()> {
+-    let _lock = crate::storage::lock_test_env();
+-    let _env = IsolatedReloadRecoveryEnv::new();
+-    let session_id = "session_detached_streaming_cancel_428";
+-
+-    let rt = tokio::runtime::Runtime::new().expect("runtime");
+-    rt.block_on(async {
+-        let provider: Arc<dyn Provider> = Arc::new(NeverEndingStreamProvider);
+-        let registry = Registry::new(Arc::clone(&provider)).await;
+-        let mut session =
+-            crate::session::Session::create_with_id(session_id.to_string(), None, None);
+-        session.model = Some("never-ending-stream".to_string());
+-        let agent = Arc::new(Mutex::new(Agent::new_with_session(
+-            provider, registry, session, None,
+-        )));
+-
+-        let (event_tx, mut event_rx) = mpsc::unbounded_channel::<ServerEvent>();
+-
+-        // Start the turn the way server-initiated paths do: no entry in any
+-        // connection's processing-task map.
+-        let turn_agent = Arc::clone(&agent);
+-        let turn = tokio::spawn(async move {
+-            process_message_streaming_mpsc(turn_agent, "stream forever", Vec::new(), None, event_tx)
+-                .await
+-        });
+-
+-        // Wait until the provider stream is actively producing output.
+-        loop {
+-            match tokio::time::timeout(Duration::from_secs(5), event_rx.recv()).await {
+-                Ok(Some(ServerEvent::TextDelta { .. })) => break,
+-                Ok(Some(_)) => continue,
+-                Ok(None) => panic!("event channel closed before streaming started"),
+-                Err(_) => panic!("turn never started streaming"),
 -            }
 -        }
-+        update_retained_frame(&mut target, black_box(&source), 1);
-         black_box(&target);
-     }
-     let selective_time = started.elapsed();
-     assert_eq!(target, source);
-     eprintln!(
--        "retained frame copy: {frames} frames, full {full_time:?} ({} copied cells), selective {selective_time:?} ({copied} copied cells)",
-+        "retained frame copy: {frames} frames, full {full_time:?} ({} copied cells), selective {selective_time:?} ({frames} copied cells)",
-         frames * area.area() as usize
-     );
- }
+-
+-        // Esc arrives on a connection that does not own the task. Its control
+-        // handle holds a stop signal instance that is NOT the streaming
+-        // agent's graceful_shutdown signal (stale/lost registration).
+-        let stale_stop_signal = InterruptSignal::new();
+-        let control = SessionControlHandle::cancel_only(
+-            session_id,
+-            Arc::new(std::sync::Mutex::new(Vec::new())),
+-            stale_stop_signal.clone(),
+-        );
+-        let (client_event_tx, _client_event_rx) = mpsc::unbounded_channel::<ServerEvent>();
+-        let swarm_members = Arc::new(RwLock::new(HashMap::new()));
+-        let swarms_by_id = Arc::new(RwLock::new(HashMap::new()));
+-        let event_history = Arc::new(RwLock::new(std::collections::VecDeque::new()));
+-        let event_counter = Arc::new(std::sync::atomic::AtomicU64::new(0));
+-        let (swarm_event_tx, _) = broadcast::channel(8);
+-        let mut client_is_processing = false;
+-        let mut message_id = None;
+-        let 
 ```
 
----
-
-### Incident Patch 2: `62abb68b` (2026-11-14)
-**Commit Message**: fix(tui): preserve newer drafts when held prompts fail delivery
-
-**File**: `crates/jcode-tui/src/tui/app/remote/input_dispatch.rs` (modified, +9/-1)
+**File**: `crates/jcode-app-core/src/server/client_lifecycle_tests_additional_tests.rs` (added, +156/-0)
 ```diff
-@@ -198,7 +198,15 @@ pub(in crate::tui::app) async fn submit_prepared_remote_input(
-         .await
-     {
-         app.remove_display_message(echo_index);
--        restore_prepared_remote_input(app, prepared);
-+        app.restore_failover_payload(super::super::FallbackResendPayload {
-+            content: prepared.expanded,
-+            images: prepared.images,
-+            raw_input: Some(prepared.raw_input),
-+            is_system: false,
-+            system_reminder: None,
-+            auto_retry: false,
-+            retry_attempts: 0,
+@@ -0,0 +1,156 @@
++use super::*;
++
++#[test]
++fn identity_transport_negotiation_preserves_legacy_payload_shape() {
++    let identity = crate::protocol::TurnIdentity {
++        runtime_generation: "runtime".into(),
++        turn_id: 7,
++    };
++    let wrapped = ServerEvent::TurnEvent {
++        identity: identity.clone(),
++        event: Box::new(ServerEvent::Done { id: 99 }),
++    };
++    assert!(matches!(
++        event_for_transport(wrapped.clone(), false),
++        Some(ServerEvent::Done { id: 99 })
++    ));
++    assert!(matches!(
++        event_for_transport(wrapped, true),
++        Some(ServerEvent::TurnEvent { .. })
++    ));
++    let started = ServerEvent::TurnStarted { identity };
++    assert!(event_for_transport(started.clone(), false).is_none());
++    assert!(matches!(
++        event_for_transport(started, true),
++        Some(ServerEvent::TurnStarted { .. })
++    ));
++    assert!(
++        event_for_transport(
++            ServerEvent::TurnState {
++                session_id: "session".into(),
++                runtime_generation: "runtime".into(),
++                turn_id: None,
++                latest_turn_id: 7
++            },
++            false
++        )
++        .is_none()
++    );
++}
++
++/// Regression for issue #428: a turn actively streaming in this session but
++/// NOT owned by the cancelling connection (no local task handle: post-reload
++/// reattach, server-initiated wake turns, headless recovery) must abort
++/// promptly even when the control handle's stop signal is a *different
++/// instance* from the streaming agent's own `graceful_shutdown` signal.
++///
++/// Before the fix, `cancel_processing_message` hit the NO_LOCAL_TASK branch,
++/// fired the stale handle-local signal (which nothing was listening to),
++/// emitted `Interrupted` immediately, and the provider stream kept generating
++/// for minutes ("Interrupting..." disappears, model keeps going, eventually
++/// "Interrupted [x66]").
++#[test]
++fn cancel_aborts_detached_streaming_turn_with_stale_stop_signal() -> anyhow::Result<()> {
++    let _lock = crate::storage::lock_test_env();
++    let _env = IsolatedReloadRecoveryEnv::new();
++    let session_id = "session_detached_streaming_cancel_428";
++
++    let rt = tokio::runtime::Runtime::new().expect("runtime");
++    rt.block_on(async {
++        let provider: Arc<dyn Provider> = Arc::new(NeverEndingStreamProvider);
++        let registry = Registry::new(Arc::clone(&provider)).await;
++        let mut session =
++            crate::session::Session::create_with_id(session_id.to_string(), None, None);
++        session.model = Some("never-ending-stream".to_string());
++        let agent = Arc::new(Mutex::new(Agent::new_with_session(
++            provider, registry, session, None,
++        )));
++
++        let (event_tx, mut event_rx) = mpsc::unbounded_channel::<ServerEvent>();
++
++        // Start the turn the way server-initiated paths do: no entry in any
++        // connection's processing-task map.
++        let turn_agent = Arc::clone(&agent);
++        let turn = tokio::spawn(async move {
++            process_message_streaming_mpsc(turn_agent, "stream forever", Vec::new(), None, event_tx)
++                .await
 +        });
-         app.push_display_message(DisplayMessage::error(format!(
-             "Failed to send message: {error}"
-         )));
++
++        // Wait until the provider stream is actively producing output.
++        loop {
++            match tokio::time::timeout(Duration::from_secs(5), event_rx.recv()).await {
++                Ok(Some(ServerEvent::TextDelta { .. })) => break,
++                Ok(Some(_)) => continue,
++                Ok(None) => panic!("event channel closed before streaming started"),
++                Err(_) => panic!("turn never started streaming"),
++            }
++        }
++
++        // Esc arrives on a connection that does not own the task. Its control
++        // handle holds a stop signal instance that is NOT the streaming
++        // agent's graceful_shutdown signal (stale/lost registration).
++        let stale_stop_signal = InterruptSignal::new();
++        let control = SessionControlHandle::cancel_only(
++            session_id,
++            Arc::new(std::sync::Mutex::new(Vec::new())),
++            stale_stop_signal.clone(),
++        );
++        let (client_event_tx, _client_event_rx) = mpsc::unbounded_channel::<ServerEvent>();
++        let swarm_members = Arc::new(RwLock::new(HashMap::new()));
++        let swarms_by_id = Arc::new(RwLock::new(HashMap::new()));
++        let event_history = Arc::new(RwLock::new(std::collections::VecDeque::new()));
++        let event_counter = Arc::new(std::sync::atomic::AtomicU64::new(0));
++        let (swarm_event_tx, _) = broadcast::channel(8);
++        let mut client_is_processing = false;
++        let mut message_id = None;
++        let mut cancel_session_id = None;
++        let mut task = None;
++
++        cancel_processing_message(
++            &mut ProcessingState {
++                client_is_processing: &mut client_is_processing,
++                message_id: &mut message_id,
++                session_id: &mut cancel_session_id,
++            
 ```
 
-**File**: `crates/jcode-tui/src/tui/app/tests/reload_recovery_replay.rs` (modified, +48/-2)
+**File**: `crates/jcode-app-core/src/tool/selfdev/tests.rs` (modified, +3/-22)
 ```diff
-@@ -347,7 +347,7 @@ fn reload_recovery_prepared_send_failure_restores_draft_without_exiting() {
-     );
-     assert!(!app.is_processing);
-     assert!(app.current_message_id.is_none());
--    assert_eq!(app.input, "Continue the interrupted work");
-+    assert_eq!(app.input, "Continue the interrupted work [image 1]");
-     assert_eq!(app.cursor_pos, app.input.len());
-     assert_eq!(app.pending_images, images);
-     assert!(
-@@ -382,7 +382,7 @@ fn reload_recovery_keyboard_send_failure_keeps_client_and_draft_alive() {
-     let result =
-         rt.block_on(app.handle_remote_key(KeyCode::Enter, KeyModifiers::empty(), &mut connection));
-     assert!(result.is_ok());
--    assert_eq!(app.input, "Keep this prompt");
-+    assert_eq!(app.input, "Keep this prompt [image 1]");
-     assert_eq!(app.pending_images, images);
-     assert!(!app.is_processing);
-     assert!(
-@@ -392,6 +392,52 @@ fn reload_recovery_keyboard_send_failure_keeps_client_and_draft_alive() {
-     );
+@@ -102,28 +102,6 @@ fn request_fixture(
+     }
  }
  
+-#[test]
+-fn build_lock_is_removed_on_drop_and_can_be_reacquired() {
+-    let _env_lock = crate::storage::lock_test_env();
+-    let temp = tempfile::tempdir().expect("temp jcode home");
+-    let _home = EnvVarGuard::set("JCODE_HOME", temp.path());
+-    let scope = format!("lock-drop-{}", std::process::id());
+-    let path = SelfDevTool::build_lock_path(&scope).expect("lock path");
+-
+-    let first = SelfDevTool::try_acquire_build_lock(&scope)
+-        .expect("first lock attempt")
+-        .expect("first lock acquired");
+-    assert!(path.exists(), "lock file should exist while held");
+-    drop(first);
+-    assert!(!path.exists(), "lock file should be removed on drop");
+-
+-    let second = SelfDevTool::try_acquire_build_lock(&scope)
+-        .expect("second lock attempt")
+-        .expect("lock should be reacquirable after drop");
+-    drop(second);
+-    assert!(!path.exists(), "reacquired lock should also clean up");
+-}
+-
+ #[test]
+ fn terminal_request_history_is_archived_without_touching_active_requests() {
+     // One shared env lock only: `lock_test_env` is a plain non-reentrant mutex,
+@@ -1440,3 +1418,6 @@ fn reconcile_keeps_running_request_not_yet_registered_in_live_task_map() {
+ 
+ #[path = "repo_resolver_tests.rs"]
+ mod repo_resolver;
++
++#[path = "tests_additional_tests.rs"]
++mod additional_build_lock_is_removed_on_drop_and_can_be_reacquired;
+```
+
+**File**: `crates/jcode-app-core/src/tool/selfdev/tests_additional_tests.rs` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++use super::*;
++
 +#[test]
-+fn reload_recovery_deferred_send_failure_preserves_newer_draft() {
-+    let rt = tokio::runtime::Runtime::new().unwrap();
-+    let _guard = rt.enter();
-+    for after_model_switch in [false, true] {
-+        let mut app = create_test_app();
-+        app.is_remote = true;
-+        app.auto_poke_incomplete_todos = false;
-+        let mut connection = crate::tui::backend::RemoteConnection::dummy();
-+        app.remote_model_switch_in_flight = after_model_switch;
-+        let held_image = ("image/png".to_string(), "held-image".to_string());
-+        rt.block_on(remote::submit_prepared_remote_input(
-+            &mut app,
-+            &mut connection,
-+            input::PreparedInput {
-+                raw_input: "Held prompt [image 1]".to_string(),
-+                expanded: "Expanded held prompt".to_string(),
-+                images: vec![held_image.clone()],
-+            },
-+        ))
-+        .unwrap();
-+        let new_image = ("image/png".to_string(), "new-image".to_string());
-+        app.input = "Newer unsent draft [image 1]".to_string();
-+        app.cursor_pos = app.input.len();
-+        app.pending_images = vec![new_image.clone()];
-+        connection.mark_history_loaded();
-+        app.remote_model_switch_in_flight = false;
-+        drop(connection.take_dummy_peer());
-+        rt.block_on(remote::process_remote_followups(&mut app, &mut connection));
-+        assert_eq!(app.input, "Newer unsent draft [image 1] [image 2]");
-+        assert_eq!(app.pending_images, vec![new_image, held_image]);
-+        assert!(!app.is_processing);
-+        assert!(app.pending_prompt_after_model_switch.is_none());
-+        assert!(app.pending_prompt_before_history.is_none());
-+        assert!(app.display_messages().iter().any(|message| {
-+            message.content.contains("Held prompt [image 1]")
-+                && message.content.contains("draft text is preserved")
-+        }));
-+        assert!(
-+            app.display_messages()
-+                .iter()
-+                .any(|message| message.content.contains("Failed to send message:"))
-+        );
++fn build_lock_is_removed_on_drop_and_can_be_reacquired() {
++    let _env_lock = crate::storage::lock_test_env();
++    let temp = tempfile::tempdir().expect("temp jcode home");
++    let _home = EnvVarGuard::set("JCODE_HOME", temp.path());
++    let scope = format!("lock-drop-{}", std::process::id());
++    let path = SelfDevTool::build_lock_path(&scope).expect("lock path");
++
++    let first = SelfDevTool::try_acquire_build_lock(&scope)
++        .expect("first lock attempt")
++        .expect("first lock acquired");
++    assert!(path.exists(), "lock file should exist while held");
++    drop(first);
++    assert!(!path.exists(), "lock file should be removed on drop");
++
++    let second = SelfDevTool::try_acquire_build_lock(&scope)
++        .expect("second lock attempt")
++        .expect("lock should be reacquirable after drop");
++    drop(second);
++    assert!(!path.exists(), "reacquired lock should also clean up");
++}
+```
+
+**File**: `crates/jcode-app-core/src/tool/tests.rs` (modified, +3/-141)
+```diff
+@@ -8,24 +8,6 @@ use async_trait::async_trait;
+ use serde_json::Value;
+ use std::ffi::OsString;
+ 
+-#[test]
+-fn base_tools_do_not_expose_invalid_reporting_tool() {
+-    let skills = Arc::new(RwLock::new(crate::skill::SkillRegistry::default()));
+-    let tools = Registry::base_tools(&skills);
+-    assert!(!tools.contains_key("invalid"));
+-    assert!(tools.contains_key("bash"));
+-}
+-
+-#[test]
+-fn base_tools_exclude_replace_and_keep_other_editing_tools() {
+-    let skills = Arc::new(RwLock::new(crate::skill::SkillRegistry::default()));
+-    let tools = Registry::base_tools(&skills);
+-    assert!(!tools.contains_key("replace"));
+-    for name in ["edit", "write", "apply_patch"] {
+-        assert!(tools.contains_key(name), "missing editing tool: {name}");
+-    }
+-}
+-
+ struct TestHomeGuard {
+     previous: Option<OsString>,
+ }
+@@ -99,129 +81,6 @@ async fn register_empty_mcp_tools(registry: &Registry, working_dir: &std::path::
+         .await;
+ }
+ 
+-#[tokio::test]
+-async fn mcp_list_remains_available_while_background_connect_is_handshaking() {
+-    let _env_lock = crate::storage::lock_test_env();
+-    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
+-    let _home_guard = TestHomeGuard::new(home.path());
+-    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
+-
+-    std::fs::write(
+-        home.path().join("mcp.json"),
+-        r#"{
+-            "mcpServers": {
+-                "slow": {
+-                    "command": "/bin/sh",
+-                    "args": ["-c", "sleep 2"],
+-                    "timeout_secs": 86400
+-                }
+-            }
+-        }"#,
+-    )
+-    .expect("write slow MCP config");
+-
+-    let registry = Registry::empty();
+-    registry
+-        .register_mcp_tools_for_dir(None, None, None, Some(working_dir.path().to_path_buf()))
+-        .await;
+-
+-    // Let the background connection task acquire its read guard and enter the
+-    // slow initialize handshake before asking the management tool to list.
+-    tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+-    let output = tokio::time::timeout(
+-        std::time::Duration::from_millis(500),
+-        registry.execute(
+-            "mcp",
+-            serde_json::json!({"action": "list"}),
+-            mcp_test_context(working_dir.path()),
+-        ),
+-    )
+-    .await
+-    .expect("mcp list must not wait for a slow background handshake")
+-    .expect("mcp list should succeed");
+-
+-    assert!(
+-        output.output.contains("slow"),
+-        "unexpected output: {}",
+-        output.output
+-    );
+-}
+-
+-#[tokio::test]
+-async fn real_mcp_registration_does_not_retain_registry_tool_map() {
+-    let _env_lock = crate::storage::lock_test_env();
+-    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
+-    let _home_guard = TestHomeGuard::new(home.path());
+-    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
+-    let registry = Registry::empty();
+-    let tools = Arc::downgrade(&registry.tools);
+-
+-    register_empty_mcp_tools(&registry, working_dir.path()).await;
+-    assert!(registry.tool_names().await.iter().any(|name| name == "mcp"));
+-
+-    drop(registry);
+-
+-    assert!(
+-        tools.upgrade().is_none(),
+-        "McpManagementTool must not strongly retain the registry tool map that owns it"
+-    );
+-}
+-
+-#[tokio::test]
+-async fn mcp_management_upgrades_registry_through_surviving_clone() {
+-    let _env_lock = crate::storage::lock_test_env();
+-    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
+-    let _home_guard = TestHomeGuard::new(home.path());
+-    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
+-    let registry = Registry::empty();
+-    let tools = Arc::downgrade(&registry.tools);
+-
+-    register_empty_mcp_tools(&registry, working_dir.path()).await;
+-    let surviving_clone = registry.clone();
+-    drop(registry);
+-
+-    let stale_tool = surviving_clone
+-        .tools
+-        .read()
+-        .await
+-        .get("mcp")
+-        .cloned()
+-        .expect("MCP management tool should be registered");
+-    surviving_clone
+-        .register("mcp__lifetime__sentinel".to_string(), stale_tool)
+-        .await;
+-
+-    let output = surviving_clone
+-        .execute(
+-            "mcp",
+-            serde_json::json!({"action": "reload"}),
+-            mcp_test_context(working_dir.path()),
+-        )
+-        .await
+-        .expect("MCP management should upgrade through the surviving registry clone");
+-    assert!(output.output.contains("No servers found in config"));
+-    assert!(
+-        !surviving_clone
+-            .tool_names()
+-            .await
+-            .iter()
+-            .any(|name| name == "mcp__lifetime__sentinel"),
+-        "reload should mutate the surviving registry through the weak handle"
+-    );
+-    assert!(
+-        surviving_clone
+-            .tool_names()
+-            .await
+-            .iter()
+-            .any(|n
+```
+
+**File**: `crates/jcode-app-core/src/tool/tests_additional_tests.rs` (added, +142/-0)
+```diff
+@@ -0,0 +1,142 @@
++use super::*;
++
++#[test]
++fn base_tools_do_not_expose_invalid_reporting_tool() {
++    let skills = Arc::new(RwLock::new(crate::skill::SkillRegistry::default()));
++    let tools = Registry::base_tools(&skills);
++    assert!(!tools.contains_key("invalid"));
++    assert!(tools.contains_key("bash"));
++}
++
++#[test]
++fn base_tools_exclude_replace_and_keep_other_editing_tools() {
++    let skills = Arc::new(RwLock::new(crate::skill::SkillRegistry::default()));
++    let tools = Registry::base_tools(&skills);
++    assert!(!tools.contains_key("replace"));
++    for name in ["edit", "write", "apply_patch"] {
++        assert!(tools.contains_key(name), "missing editing tool: {name}");
 +    }
 +}
 +
- #[test]
- fn reload_recovery_preserves_visible_turn_timer_through_dispatch() {
-     let _env_guard = crate::storage::lock_test_env();
++#[tokio::test]
++async fn mcp_list_remains_available_while_background_connect_is_handshaking() {
++    let _env_lock = crate::storage::lock_test_env();
++    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
++    let _home_guard = TestHomeGuard::new(home.path());
++    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
++
++    std::fs::write(
++        home.path().join("mcp.json"),
++        r#"{
++            "mcpServers": {
++                "slow": {
++                    "command": "/bin/sh",
++                    "args": ["-c", "sleep 2"],
++                    "timeout_secs": 86400
++                }
++            }
++        }"#,
++    )
++    .expect("write slow MCP config");
++
++    let registry = Registry::empty();
++    registry
++        .register_mcp_tools_for_dir(None, None, None, Some(working_dir.path().to_path_buf()))
++        .await;
++
++    // Let the background connection task acquire its read guard and enter the
++    // slow initialize handshake before asking the management tool to list.
++    tokio::time::sleep(std::time::Duration::from_millis(100)).await;
++    let output = tokio::time::timeout(
++        std::time::Duration::from_millis(500),
++        registry.execute(
++            "mcp",
++            serde_json::json!({"action": "list"}),
++            mcp_test_context(working_dir.path()),
++        ),
++    )
++    .await
++    .expect("mcp list must not wait for a slow background handshake")
++    .expect("mcp list should succeed");
++
++    assert!(
++        output.output.contains("slow"),
++        "unexpected output: {}",
++        output.output
++    );
++}
++
++#[tokio::test]
++async fn real_mcp_registration_does_not_retain_registry_tool_map() {
++    let _env_lock = crate::storage::lock_test_env();
++    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
++    let _home_guard = TestHomeGuard::new(home.path());
++    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
++    let registry = Registry::empty();
++    let tools = Arc::downgrade(&registry.tools);
++
++    register_empty_mcp_tools(&registry, working_dir.path()).await;
++    assert!(registry.tool_names().await.iter().any(|name| name == "mcp"));
++
++    drop(registry);
++
++    assert!(
++        tools.upgrade().is_none(),
++        "McpManagementTool must not strongly retain the registry tool map that owns it"
++    );
++}
++
++#[tokio::test]
++async fn mcp_management_upgrades_registry_through_surviving_clone() {
++    let _env_lock = crate::storage::lock_test_env();
++    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
++    let _home_guard = TestHomeGuard::new(home.path());
++    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
++    let registry = Registry::empty();
++    let tools = Arc::downgrade(&registry.tools);
++
++    register_empty_mcp_tools(&registry, working_dir.path()).await;
++    let surviving_clone = registry.clone();
++    drop(registry);
++
++    let stale_tool = surviving_clone
++        .tools
++        .read()
++        .await
++        .get("mcp")
++        .cloned()
++        .expect("MCP management tool should be registered");
++    surviving_clone
++        .register("mcp__lifetime__sentinel".to_string(), stale_tool)
++        .await;
++
++    let output = surviving_clone
++        .execute(
++            "mcp",
++            serde_json::json!({"action": "reload"}),
++            mcp_test_context(working_dir.path()),
++        )
++        .await
++        .expect("MCP management should upgrade through the surviving registry clone");
++    assert!(output.output.contains("No servers found in config"));
++    assert!(
++        !surviving_clone
++            .tool_names()
++            .await
++            .iter()
++            .any(|name| name == "mcp__lifetime__sentinel"),
++        "reload should mutate the surviving registry through the weak handle"
++    );
++    assert!(
++        surviving_clone
++            .tool_names()
++            .await
++            .iter()
++            .any(|name| name == "mcp"),
++        "reload should preserve the MCP management tool"
++    );
++    assert!(tools.upgrade().is_some());
++
++    drop(surviving_clone);
++    assert!(tools.upgrade().is_none());
++}
 ```
 
 ---
 
-### Incident Patch 3: `f067b920` (2026-11-14)
-**Commit Message**: fix(tui): classify combined recovery retries and expose send failures
+### Incident Patch 3: `a1f6e18b` (2026-11-16)
+**Commit Message**: fix(deps): retain patched quinn UDP transport in lockfile
 
-**File**: `crates/jcode-tui/src/tui/app/remote/input_dispatch.rs` (modified, +16/-16)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -25,6 +25,14 @@ pub(in crate::tui::app) async fn begin_remote_send(
-     // this as an execution retry. Do this at the shared send boundary so both
-     // fallback resends and same-route retries behave identically.
-     const EXECUTION_RETRY_PREFIX: &str = "<system-reminder>Retry the interrupted execution of the previous turn. Continue from the current conversation and completed tool results without repeating completed work.</system-reminder>\n\n";
-+    let recovery = app.cloud_recovery_reminder();
-+    let system_reminder = match (system_reminder, recovery.as_ref()) {
-+        (Some(reminder), Some(recovery)) => Some(format!("{reminder}\n\n{recovery}")),
-+        (None, Some(recovery)) => Some(recovery.clone()),
-+        (reminder, None) => reminder,
-+    };
-+    // Classify the final wire reminder, including cloud recovery context. A
-+    // cloud-only continuation otherwise bypasses the execution-retry marker.
-     let system_reminder = system_reminder.map(|reminder| {
-         if retry_attempts > 0
-             && is_system
-@@ -37,12 +45,6 @@ pub(in crate::tui::app) async fn begin_remote_send(
-             reminder
-         }
-     });
--    let recovery = app.cloud_recovery_reminder();
--    let system_reminder = match (system_reminder, recovery.as_ref()) {
--        (Some(reminder), Some(recovery)) => Some(format!("{reminder}\n\n{recovery}")),
--        (None, Some(recovery)) => Some(recovery.clone()),
--        (reminder, None) => reminder,
--    };
-     let msg_id = remote
-         .send_message_with_images_reminder_and_skill(
-             content.clone(),
-@@ -189,9 +191,8 @@ pub(in crate::tui::app) async fn submit_prepared_remote_input(
-         title: None,
-         tool_data: None,
-     });
--    let _ = app
--        .begin_remote_send(remote, prepared.expanded, prepared.images, false)
--        .await;
-+    app.begin_remote_send(remote, prepared.expanded, prepared.images, false)
-+        .await?;
-     Ok(())
- }
+@@ -233,7 +233,7 @@ dependencies = [
+  "objc2-foundation",
+  "parking_lot",
+  "percent-encoding",
+- "windows-sys 0.60.2",
++ "windows-sys 0.52.0",
+  "x11rb",
+ ]
  
-@@ -890,13 +891,12 @@ mod ssh_slash_tests {
-                 .unwrap();
-                 assert!(app.pending_prompt_before_history.is_none(), "{command}");
-                 assert_eq!(remote.next_request_id_for_test(), next_id);
--                assert!(
--                    app.display_messages()
--                        .last()
--                        .unwrap()
--                        .content
--                        .contains("SSH")
--                );
-+                assert!(app
-+                    .display_messages()
-+                    .last()
-+                    .unwrap()
-+                    .content
-+                    .contains("SSH"));
-             }
-             for command in [
-                 "/future remote skill /context",
-```
-
-**File**: `crates/jcode-tui/src/tui/app/tests/reload_recovery_replay.rs` (modified, +221/-8)
-```diff
-@@ -92,7 +92,11 @@ fn reload_recovery_execution_retries_are_not_delivery_replays() {
-     ))
-     .unwrap();
-     assert_eq!(
--        app.rate_limit_pending_message.as_ref().unwrap().system_reminder.as_deref(),
-+        app.rate_limit_pending_message
-+            .as_ref()
-+            .unwrap()
-+            .system_reminder
-+            .as_deref(),
-         Some(original.as_str())
-     );
+@@ -6959,16 +6959,16 @@ dependencies = [
  
-@@ -112,12 +116,21 @@ fn reload_recovery_execution_retries_are_not_delivery_replays() {
-     assert!(app.is_processing);
-     assert!(app.pending_fallback_resend.is_none());
-     let pending = app.rate_limit_pending_message.as_ref().unwrap();
--    assert!(pending.content.is_empty(), "do not echo another user prompt");
-+    assert!(
-+        pending.content.is_empty(),
-+        "do not echo another user prompt"
-+    );
-     assert_eq!(pending.retry_attempts, 1);
-     let retry = pending.system_reminder.clone().unwrap();
--    assert_ne!(retry, original, "an exact replay is suppressed by the server");
-+    assert_ne!(
-+        retry, original,
-+        "an exact replay is suppressed by the server"
-+    );
-     assert!(retry.contains("Retry the interrupted execution"));
--    assert!(retry.ends_with(&original), "preserve the recovery instructions");
-+    assert!(
-+        retry.ends_with(&original),
-+        "preserve the recovery instructions"
-+    );
+ [[package]]
+ name = "quinn-udp"
+-version = "0.5.14"
++version = "0.5.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "addec6a0dcad8a8d96a771f815f0eaf55f9d1805756410b39f5fa81332574cbd"
++checksum = "af66907df18639dcf4db56ca65490cabc4b27a97dbadd96f2926cca73298f016"
+ dependencies = [
+  "cfg_aliases",
+  "libc",
+  "once_cell",
+  "socket2",
+  "tracing",
+- "windows-sys 0.60.2",
++ "windows-sys 0.52.0",
+ ]
  
-     // Same-route retries share the fix and must not grow the reminder each time.
-     rt.block_on(remote::begin_remote_send(
-@@ -132,11 +145,213 @@ fn reload_recovery_execution_retries_are_not_delivery_replays() {
-     ))
-     .unwrap();
-     assert_eq!(
--        app.rate_limit_pending_message.as_ref().unwrap().system_reminder.as_deref(),
-+        app.rate_limit_pending_message
-+            .as_ref()
-+            .unwrap()
-+            .system_reminder
-+            .as_deref(),
-         Some(retry.as_str())
-     );
- }
- 
-+#[test]
-+fn reload_recovery_cloud_retry_marks_final_wire_reminder() {
-+    use tokio::io::AsyncBufReadExt;
-+
-+    let rt = tokio::runtime::Runtime::new().unwrap();
-+    let _guard = rt.enter();
-+    for existing in [None, Some("Additional recovery instructions".to_string())] {
-+        let mut app = create_test_app();
-+        app.is_remote = true;
-+        let session = super::commands::active_session_id(&app);
-+        let original = ReloadContext::recovery_directive(
-+            Some(&reload_replay_context(&session)),
-+            true,
-+            "",
-+            None,
-+        )
-+        .unwrap()
-+        .continuation_message;
-+        app.cloud_recovery_context = Some((session, original.clone()));
-+        app.cloud_recovery_auto_pending = true;
-+        let mut connection = crate::tui::backend::RemoteConnection::dummy();
-+        let mut peer = tokio::io::BufReader::new(connection.take_dummy_peer().unwrap());
-+        rt.block_on(async {
-+            remote::begin_remote_send(
-+                &mut app,
-+                &mut connection,
-+                String::new(),
-+                vec![],
-+                true,
-+                existing.clone(),
-+                true,
-+                1,
-+            )
-+            .await
-+            .unwrap();
-+            let mut line = String::new();
-+            tokio::time::timeout(Duration::from_secs(1), peer.read_line(&mut line))
-+                .await
-+                .unwrap()
-+                .unwrap();
-+            let wire: serde_json::Value = serde_json::from_str(&line).unwrap();
-+            let reminder = wire["system_reminder"].as_str().unwrap();
-+            assert!(reminder.starts_with("<system-reminder>Retry the interrupted execution"));
-+            assert!(reminder.ends_with(&original));
-+            if let Some(existing) = existing.as_ref() {
-+                assert!(reminder.contains(existing));
-+            }
-+            assert!(app.cloud_recovery_context.is_none());
-+            assert!(!app.cloud_recovery_auto_pending);
-+            let pending = app.rate_limit_pending_message.clone().unwrap();
-+            assert_eq!(pending.system_reminder.as_deref(), Some(reminder));
-+
-+            // A manual fallback can reset the retry budget. That must not
-+            // strip execution identity or add another wrapper on the wire.
-+            remote::begin_remote_send(
-+                &mut app,
-+                &mut connection,
-+                pending.content,
-+                pending.images,
-+                pending.is_system,
-+                pending.system_reminder,
-+                pending.auto_retry,
-+                0,
-+            )
-+            .await
-+            .unwrap();
-+            let mut retry_line = String::new();
-+            tokio::time::timeout(Duration::from_secs(1), peer.read_line(&mut retry_line))
-+                .await
-+                .unwrap()
-+                .unwrap();
-+            let retry_wire: serde_json::Value = serde_json::from_str(&retry_line).unwrap();
-+            assert_eq!(retry_wire["system_reminder"], wire["system_reminder"]);
-+        });
-+
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2189** (closed): fix(tui): repair the three tests that fail on master and block every PR (@KooshaPari)
+- **PR #2185** (closed): fix: resume model catalog on attach if routes not hydrated (@osmanaksu)
+- **PR #2172** (closed): fix: add missing clap entry to Cargo.lock (@alecuba16)
+- **PR #2161** (closed): fix(config): track resume override in cache fingerprint (@Aafimalek)
 - **PR #2130** (closed): style: cargo fmt on master (@alecuba16)
 - **PR #2125** (closed): fix(tui): match openpty pointer signature in libc 0.2.191 (@alecuba16)
-- **PR #2124** (closed): fix(tui): pin picker metadata and token badge test expectations (@alecuba16)
-- **PR #2123** (closed): fix(voice): compile niri socket helper only on unix (@alecuba16)
-- **PR #2122** (closed): fix(cli): requires_api_key is false for bare-IP compat endpoints (@alecuba16)
-- **PR #2098** (closed): fix(webfetch): Report truncation length in bytes (@tayoonabule)
 
 ---
 
@@ -2775,57 +3471,3 @@ Keep the vector-copy fast path for dense frames and resizes. Sparse synthetic fr
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. tui): retain unchanged cells in sparse frame snapshots
-
-**RULE**:
-When implementing operations in `crates/jcode-tui/src/tui/app/run_shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `0a3e25f7`: tui): retain unchanged cells in sparse frame snapshots. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/app/run_shell.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-/// Keep the spinner/animation snapshot exact without cloning unchanged cells
-/// on sparse frames. Ratatui already counted flushed updates, so dense redraws
-/// retain the straight vector copy rather than paying another diff scan.
-pub(super) fn update_retained_frame(previous: &mut Buffer, rendered: &Buffer, updates: usize) {
-    let sparse = previous.area == rendered.area
-        && previous.content.len() == rendered.content.len()
-        && updates < rendered.content.len() / 4;
-    previous.area = rendered.area;
-    if sparse {
-        for (to, from) in previous.content.iter_mut().zip(&rendered.content) {
-            if to != from {
-                to.clone_from(from);
-            }
-        }
-    } else {
-        previous.content.clone_from(&rendered.content);
-    }
-}
-
-                // Reuse the Vec and skip unchanged cells on sparse frames.
-                update_retained_frame(&mut buffer, completed.buffer, completed.flushed_updates);
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-                // Derived `Buffer::clone_from` reallocates; `Vec::clone_from`
-                // reuses the existing cell storage.
-                buffer.area = completed.buffer.area;
-                buffer.content.clone_from(&completed.buffer.content);
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0a3e25f7` are properly handled with clean fallback behavior.

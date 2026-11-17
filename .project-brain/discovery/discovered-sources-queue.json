@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T00:38:46.853Z",
+  "updated_at": "2026-11-17T00:56:39.366Z",
   "stats": {
-    "total_discovered": 4559,
-    "approved_pending_harvest": 4292,
+    "total_discovered": 4584,
+    "approved_pending_harvest": 4314,
     "harvested_count": 0,
-    "rejected_count": 267,
+    "rejected_count": 270,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4290,
+      "COMMUNITY_AND_EXPERT": 4315,
       "OFFICIAL_DOCUMENTATION": 144,
       "STANDARDS_AND_SPECIFICATIONS": 98,
       "ENGINEERING_BLOGS": 3,
@@ -98450,6 +98450,535 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
         "fileName": "goodrain-rainbond-learnings.md"
+      }
+    },
+    "SRC-EFA2B97DE287": {
+      "id": "SRC-EFA2B97DE287",
+      "url": "https://github.com/babel/babel/tree/HEAD/packages/babel-core",
+      "title": "https://github.com/babel/babel/tree/HEAD/packages/babel-core",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.008Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-CDE0EA40030E": {
+      "id": "SRC-CDE0EA40030E",
+      "url": "https://github.com/babel/babel/tree/HEAD/packages/babel-register",
+      "title": "https://github.com/babel/babel/tree/HEAD/packages/babel-register",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.037Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-6E0AB8DD9513": {
+      "id": "SRC-6E0AB8DD9513",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x",
+      "title": "https://github.com/un-ts/eslint-plugin-import-x",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.076Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-54E9C7C74E7E": {
+      "id": "SRC-54E9C7C74E7E",
+      "url": "https://github.com/babel/babel/releases",
+      "title": "https://github.com/babel/babel/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-D86C1D50CC3A": {
+      "id": "SRC-D86C1D50CC3A",
+      "url": "https://github.com/babel/babel/blob/main/CHANGELOG.md",
+      "title": "https://github.com/babel/babel/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.130Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-6FEEB9C90CFB": {
+      "id": "SRC-6FEEB9C90CFB",
+      "url": "https://github.com/babel/babel/commits/v8.1.2/packages/babel-core",
+      "title": "https://github.com/babel/babel/commits/v8.1.2/packages/babel-core",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.168Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-73D528806B7A": {
+      "id": "SRC-73D528806B7A",
+      "url": "https://github.com/babel/babel/commits/v8.1.2/packages/babel-register",
+      "title": "https://github.com/babel/babel/commits/v8.1.2/packages/babel-register",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.197Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-FB78953746DE": {
+      "id": "SRC-FB78953746DE",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/releases",
+      "title": "https://github.com/un-ts/eslint-plugin-import-x/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.224Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-C3DE9C0C4B5F": {
+      "id": "SRC-C3DE9C0C4B5F",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/master/CHANGELOG.md",
+      "title": "https://github.com/un-ts/eslint-plugin-import-x/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.264Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-9C941DB050BC": {
+      "id": "SRC-9C941DB050BC",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/compare/v4.17.1...v4.18.1",
+      "title": "https://github.com/un-ts/eslint-plugin-import-x/compare/v4.17.1...v4.18.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.294Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-8F38FEDA319B": {
+      "id": "SRC-8F38FEDA319B",
+      "url": "https://registry.npmjs.org/@babel/core/-/core-8.1.0.tgz",
+      "title": "https://registry.npmjs.org/@babel/core/-/core-8.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.322Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-219C582F2B3A": {
+      "id": "SRC-219C582F2B3A",
+      "url": "https://registry.npmjs.org/@babel/core/-/core-8.1.2.tgz",
+      "title": "https://registry.npmjs.org/@babel/core/-/core-8.1.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.363Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-B62BFA746C11": {
+      "id": "SRC-B62BFA746C11",
+      "url": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.0.tgz",
+      "title": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.390Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-6C4BB764732C": {
+      "id": "SRC-6C4BB764732C",
+      "url": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.2.tgz",
+      "title": "https://registry.npmjs.org/@babel/generator/-/generator-8.1.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.418Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-093DCFBD3E1C": {
+      "id": "SRC-093DCFBD3E1C",
+      "url": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.0.8.tgz",
+      "title": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.0.8.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.457Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-D6B0FB403A46": {
+      "id": "SRC-D6B0FB403A46",
+      "url": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.1.2.tgz",
+      "title": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-8.1.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.484Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-D38BF0928939": {
+      "id": "SRC-D38BF0928939",
+      "url": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.0.tgz",
+      "title": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-6A92A2DE379B": {
+      "id": "SRC-6A92A2DE379B",
+      "url": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.2.tgz",
+      "title": "https://registry.npmjs.org/@babel/helpers/-/helpers-8.1.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.552Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-2181D3DA9B89": {
+      "id": "SRC-2181D3DA9B89",
+      "url": "https://registry.npmjs.org/@babel/parser/-/parser-8.1.0.tgz",
+      "title": "https://registry.npmjs.org/@babel/parser/-/parser-8.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.579Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-A327F85AAADC": {
+      "id": "SRC-A327F85AAADC",
+      "url": "https://registry.npmjs.org/@babel/parser/-/parser-8.1.2.tgz",
+      "title": "https://registry.npmjs.org/@babel/parser/-/parser-8.1.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-607D15CA6EF0": {
+      "id": "SRC-607D15CA6EF0",
+      "url": "https://registry.npmjs.org/@babel/register/-/register-8.0.6.tgz",
+      "title": "https://registry.npmjs.org/@babel/register/-/register-8.0.6.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.646Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-CA186B8A9AC1": {
+      "id": "SRC-CA186B8A9AC1",
+      "url": "https://registry.npmjs.org/@babel/register/-/register-8.1.2.tgz",
+      "title": "https://registry.npmjs.org/@babel/register/-/register-8.1.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:56:38.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md",
+        "fileName": "rdfjs-n3.js-learnings.md"
+      }
+    },
+    "SRC-EED264217E03": {
+      "id": "SRC-EED264217E03",
+      "url": "http://localhost:3476`",
+      "title": "http://localhost:3476`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T00:56:39.300Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-D87001BCD99D": {
+      "id": "SRC-D87001BCD99D",
+      "url": "http://localhost:3476/healthz%60",
+      "title": "http://localhost:3476/healthz%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T00:56:39.327Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-71BB4819B0DD": {
+      "id": "SRC-71BB4819B0DD",
+      "url": "http://localhost:3486`",
+      "title": "http://localhost:3486`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T00:56:39.366Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
+        "fileName": "permify-permify-learnings.md"
       }
     }
   }

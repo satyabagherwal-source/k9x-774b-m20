@@ -2683,10 +2683,10 @@
     "repository": "Permify/permify",
     "platform": "github",
     "sourceUrl": "https://github.com/Permify/permify",
-    "sourceVersion": "f1d2b9b0",
+    "sourceVersion": "18fcfdda",
     "license": "AGPL-3.0",
-    "contentHash": "d794d44225e008818407e785b10267572a6959d35ed037064d394f4ee01af052",
-    "lastHarvestedAt": "2026-11-12T00:45:30.265Z",
+    "contentHash": "da9437d6ecbadec69da9364a12578b41d42bcd40f686a21b0c7f84d27394e48f",
+    "lastHarvestedAt": "2026-11-17T00:56:05.503Z",
     "learningId": "learn-github-permify-permify"
   },
   "rustls-rustls": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "25b40def",
+    "sourceVersion": "c6280dda",
     "license": "MIT",
-    "contentHash": "150f4452c76a5118a365199e86fd861c1b23e099c5933971f6c8a546789ec9b3",
-    "lastHarvestedAt": "2026-11-15T05:31:42.181Z",
+    "contentHash": "bc60fb0eeab187386347ce17e303dc4127dba6b7d22dbba9d52c3c38d1b9eed3",
+    "lastHarvestedAt": "2026-11-17T00:55:57.318Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -9713,10 +9713,10 @@
     "repository": "rdfjs/N3.js",
     "platform": "github",
     "sourceUrl": "https://github.com/rdfjs/N3.js",
-    "sourceVersion": "01ebe841",
+    "sourceVersion": "f921e119",
     "license": "NOASSERTION",
-    "contentHash": "05762807bcc591f8012100bbfd29b5d754e9d9de45b3cd51aae3534392316f1d",
-    "lastHarvestedAt": "2026-11-12T07:46:25.609Z",
+    "contentHash": "77f7278d2e510c08edf725bedc574eefa6c889b990ea601f3caa9eaca2b283aa",
+    "lastHarvestedAt": "2026-11-17T00:56:00.933Z",
     "learningId": "learn-github-rdfjs-n3-js"
   },
   "iziz-libphonenumber-ios": {

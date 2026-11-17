@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-16T20:11:46.439Z",
+  "updated_at": "2026-11-17T00:56:37.023Z",
   "statistics": {
-    "total_nodes": 287,
+    "total_nodes": 288,
     "total_edges": 149,
     "domain_distribution": {
-      "D": 219,
+      "D": 220,
       "M": 1,
       "H": 28,
       "J": 11,
@@ -6442,6 +6442,28 @@
       ],
       "created_at": "2026-11-16T20:11:46.439Z",
       "updated_at": "2026-11-16T20:11:46.439Z"
+    },
+    "DOM-D-C8024830": {
+      "id": "DOM-D-C8024830",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): 1jehuang/jcode",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  \n> **Source**: github ([https://github.com/1jehuang/jc -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  \n> **Source**: github ([https://github.com/1jehuang/jc",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://1jehuang-jcode/1jehuang-jcode-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T00:56:08.646Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (1jehuang-jcode)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-17T00:56:37.023Z",
+      "updated_at": "2026-11-17T00:56:37.023Z"
     }
   },
   "edges": [
