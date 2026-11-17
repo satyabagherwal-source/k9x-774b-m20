@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "19cceb3b",
+    "sourceVersion": "0bc3222d",
     "license": "MIT",
-    "contentHash": "ce1ea69f72a6da4217801c78f5d7a570240e3db0c93c9bda2d109c3d28588588",
-    "lastHarvestedAt": "2026-11-13T01:39:13.078Z",
+    "contentHash": "7a86d4f2821270934d8e71bb60fc59fea6faae28dbf166409125e0132db357fe",
+    "lastHarvestedAt": "2026-11-17T18:42:43.200Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {
@@ -7243,10 +7243,10 @@
     "repository": "SeaQL/sea-orm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeaQL/sea-orm",
-    "sourceVersion": "18cbaa3d",
+    "sourceVersion": "c453c64e",
     "license": "Apache-2.0",
-    "contentHash": "c8f114995afe521bdf07bcbd37ebd5a9399a3ef7ff045079b7d014d0530407f8",
-    "lastHarvestedAt": "2026-11-16T18:27:17.589Z",
+    "contentHash": "c0aeeb763fbda8af6d959333f37968aad406625467c0410dc41a6b50f0fefe9e",
+    "lastHarvestedAt": "2026-11-17T18:42:50.168Z",
     "learningId": "learn-github-seaql-sea-orm"
   },
   "mobilenativefoundation-store": {
@@ -10705,8 +10705,8 @@
     "sourceUrl": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
     "sourceVersion": "hf-nanbeige-nanbeige4.3-33b",
     "license": "Open-Source",
-    "contentHash": "abab0fd2cf661ba1c49e506ee07a556f68293c850bc8296f1d1a07be21ba4133",
-    "lastHarvestedAt": "2026-11-13T07:25:26.779Z",
+    "contentHash": "0bca3a96d522ce417610274f279f242c895253f26c214c3e3b88b5189858d038",
+    "lastHarvestedAt": "2026-11-17T18:44:17.199Z",
     "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b"
   },
   "kajisho5-ffmpeg-skill": {
@@ -12513,10 +12513,10 @@
     "repository": "lingyired/status-trio",
     "platform": "github",
     "sourceUrl": "https://github.com/lingyired/status-trio",
-    "sourceVersion": "a0ebb92d",
+    "sourceVersion": "ca166e73",
     "license": "Apache-2.0",
-    "contentHash": "ccd11aaf1de5d57ff4f6adbf6bdfff93545e0a036969a2e32195c1ff4a4a5254",
-    "lastHarvestedAt": "2026-11-14T07:39:20.726Z",
+    "contentHash": "c95d222c29e465dc07e9fe090e4e9bea8c61b186be448527deb2f07f27a576be",
+    "lastHarvestedAt": "2026-11-17T18:42:41.855Z",
     "learningId": "learn-github-lingyired-status-trio"
   },
   "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf": {

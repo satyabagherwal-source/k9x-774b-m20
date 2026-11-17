@@ -10696,3 +10696,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored` | `https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored` | `hf-moonmat` | Multi-dimensional audit evidence | 2026-11-17T18:35:22.272Z |
 | `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-17T18:35:24.783Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `aaa5de9c` | Multi-dimensional audit evidence | 2026-11-17T18:35:35.705Z |
+| `learn-github-lingyired-status-trio` | `https://github.com/lingyired/status-trio` | `ca166e73` | Multi-dimensional audit evidence | 2026-11-17T18:42:41.855Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `0bc3222d` | Multi-dimensional audit evidence | 2026-11-17T18:42:43.200Z |
+| `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `c453c64e` | Multi-dimensional audit evidence | 2026-11-17T18:42:50.168Z |
+| `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-11-17T18:44:17.199Z |
+| `learn-dom-h-28b99dba` | `project://hf-nanbeige-nanbeige4.3-33b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | 2026-11-17T18:44:44.098Z |

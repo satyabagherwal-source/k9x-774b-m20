@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T18:35:40.935Z",
-  "total_verified_learnings": 8925,
+  "last_updated": "2026-11-17T18:44:46.152Z",
+  "total_verified_learnings": 8927,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20482,
+  "total_items": 20503,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -225938,14 +225938,19 @@
       "slug": "lingyired-status-trio",
       "platform": "github",
       "source_url": "https://github.com/lingyired/status-trio",
-      "source_version": "a0ebb92d",
-      "content_hash": "ccd11aaf1de5d57ff4f6adbf6bdfff93545e0a036969a2e32195c1ff4a4a5254",
+      "source_version": "ca166e73",
+      "content_hash": "c95d222c29e465dc07e9fe090e4e9bea8c61b186be448527deb2f07f27a576be",
       "dossier_path": "07_PROJECT_LEARNING/lingyired-status-trio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingyired-status-trio-learnings.md",
       "promoted_rules": [
         {
           "number": 8465,
           "title": "let horizontal trackpad scrolling adjust panel sliders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9029,
+          "title": "re-read lid state instead of caching external ownership",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -225954,7 +225959,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T07:39:20.598Z",
+      "verified_at": "2026-11-17T18:42:41.683Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225996,10 +226001,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-technical-construction-intelligence-lingyired-status-trio-.md",
       "title": "Technical Construction Intelligence: lingyired/status-trio Core Invariants",
       "repository": "lingyired/status-trio",
-      "source_version": "a0ebb92d",
-      "content_hash": "ae5860d8ca8e87b1f97de6fe9388a0f468074059d1f1d579d11ba89fdc3a2372",
+      "source_version": "ca166e73",
+      "content_hash": "ca1689e8d68507a177cc2b0da0ce035ecec63efe071863ef888a949ea78ade14",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T07:39:20.970Z"
+      "persisted_at": "2026-11-17T18:42:42.130Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio",
@@ -226008,10 +226013,10 @@
       "relative_path": "08_VERIFICATION/lingyired-status-trio-verification-protocol-empirical-defect-shield-for-lingyire.md",
       "title": "Verification Protocol: Empirical Defect Shield for lingyired/status-trio",
       "repository": "lingyired/status-trio",
-      "source_version": "a0ebb92d",
-      "content_hash": "b56b8d191fd3cf8af7490a90081cbc323e21ed54e54824b639b73bf20b848a4e",
+      "source_version": "ca166e73",
+      "content_hash": "e0e7d0c63749f2d14e12b03af94f99601175b9a42384bf386e96b74b6e1cc0fe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T07:39:21.067Z"
+      "persisted_at": "2026-11-17T18:42:42.253Z"
     },
     "learn-huggingface-naiveai-naive-n0-5-flash": {
       "learning_id": "learn-huggingface-naiveai-naive-n0-5-flash",
@@ -226142,9 +226147,9 @@
       "title": "Technical Construction Intelligence: lingyired-status-trio-learnings Core Invariants",
       "repository": "lingyired-status-trio-learnings",
       "source_version": "HEAD",
-      "content_hash": "e65461ec0ea404f014455098619e0b52f30515a4b72eb3a7b718d06af19b3f8a",
+      "content_hash": "395a71270172caf34b080839291d92f894eb11c0ed0f5f87073d4b03bc9a56f6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T07:41:04.575Z"
+      "persisted_at": "2026-11-17T18:44:45.370Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio-learning",
@@ -226154,9 +226159,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lingyired-status-trio-learnings",
       "repository": "lingyired-status-trio-learnings",
       "source_version": "HEAD",
-      "content_hash": "302de154ca9244668ec8949f6279f647073f5f2e599312601122067368e57173",
+      "content_hash": "18e22caca66097e1da8789fc2d0cd77da3d64b5f4439e75acdc47e8dcbaeab80",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T07:41:04.659Z"
+      "persisted_at": "2026-11-17T18:44:45.518Z"
     },
     "candidate_directive-dual-frequency-context-decoupling-for-hybrid-local-sparse-transformer-layers": {
       "item_id": "candidate_directive-dual-frequency-context-decoupling-for-hybrid-local-sparse-transformer-layers",
@@ -257034,14 +257039,19 @@
       "slug": "seaql-sea-orm",
       "platform": "github",
       "source_url": "https://github.com/SeaQL/sea-orm",
-      "source_version": "18cbaa3d",
-      "content_hash": "c8f114995afe521bdf07bcbd37ebd5a9399a3ef7ff045079b7d014d0530407f8",
+      "source_version": "c453c64e",
+      "content_hash": "c0aeeb763fbda8af6d959333f37968aad406625467c0410dc41a6b50f0fefe9e",
       "dossier_path": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "promoted_rules": [
         {
           "number": 8771,
           "title": "fix typos in comments and examples",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9031,
+          "title": "Make concurrent migrations safe on PostgreSQL",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -257050,7 +257060,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:27:17.430Z",
+      "verified_at": "2026-11-17T18:42:50.019Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257092,10 +257102,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-seaql-sea-orm-architecture-intelligence-seaql-sea-orm-core-invariants.md",
       "title": "Architecture Intelligence: SeaQL/sea-orm Core Invariants",
       "repository": "SeaQL/sea-orm",
-      "source_version": "18cbaa3d",
-      "content_hash": "ea885a5908d5f92a90f42564d880236afdf6cad53c019d34d07669dc585897ed",
+      "source_version": "c453c64e",
+      "content_hash": "dddf8d6624f4480b6909ef3cc0950ff3e7968428bd6d48261178ebde577e93f3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:27:17.872Z"
+      "persisted_at": "2026-11-17T18:42:50.446Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-seaql-sea-orm": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-seaql-sea-orm",
@@ -257104,10 +257114,10 @@
       "relative_path": "08_VERIFICATION/seaql-sea-orm-verification-protocol-empirical-defect-shield-for-seaql-sea-orm.md",
       "title": "Verification Protocol: Empirical Defect Shield for SeaQL/sea-orm",
       "repository": "SeaQL/sea-orm",
-      "source_version": "18cbaa3d",
-      "content_hash": "0d45c38800f5482f23bd61ed27efabba72422627ef94f822b90519b9c73cd1b9",
+      "source_version": "c453c64e",
+      "content_hash": "39bfa2ca26ca73c9bcdd8920ae7a8639f96517ae3e268a22402588b45b6800c8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:27:17.989Z"
+      "persisted_at": "2026-11-17T18:42:50.573Z"
     },
     "rule-8772": {
       "learning_id": "rule-8772",
@@ -274869,6 +274879,320 @@
       "content_hash": "ffed364d75f3d0d57b99566cf54ed1d7d3289a556f8a462dcf4e49b86f368e00",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T18:35:40.747Z"
+    },
+    "rule-9029": {
+      "learning_id": "rule-9029",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9029,
+      "title": "re-read lid state instead of caching external ownership",
+      "source_url": "https://github.com/lingyired/status-trio",
+      "source_version": "ca166e73",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T18:42:41.683Z"
+    },
+    "candidate_directive-re-read-lid-state-instead-of-caching-external-ownership": {
+      "item_id": "candidate_directive-re-read-lid-state-instead-of-caching-external-ownership",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I678-re-read-lid-state-instead-of-caching-external-ownership.md",
+      "title": "re-read lid state instead of caching external ownership",
+      "repository": "lingyired/status-trio",
+      "source_version": "ca166e73",
+      "content_hash": "168bb5437cbcd116ec4b91e20d87043ad45086100c27c904fd33f5284bfdd951",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T18:42:42.025Z"
+    },
+    "learn-github-emberstack-kubernetes-reflector": {
+      "learning_id": "learn-github-emberstack-kubernetes-reflector",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "emberstack/kubernetes-reflector",
+      "repository": "emberstack/kubernetes-reflector",
+      "slug": "emberstack-kubernetes-reflector",
+      "platform": "github",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "0bc3222d",
+      "content_hash": "7a86d4f2821270934d8e71bb60fc59fea6faae28dbf166409125e0132db357fe",
+      "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9030,
+          "title": "Bump the all-dependencies group with 7 updates",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T18:42:42.914Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9030": {
+      "learning_id": "rule-9030",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9030,
+      "title": "Bump the all-dependencies group with 7 updates",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "0bc3222d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T18:42:42.914Z"
+    },
+    "candidate_directive-bump-the-all-dependencies-group-with-7-updates": {
+      "item_id": "candidate_directive-bump-the-all-dependencies-group-with-7-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KTS8-bump-the-all-dependencies-group-with-7-updates.md",
+      "title": "Bump the all-dependencies group with 7 updates",
+      "repository": "emberstack-kubernetes-reflector-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ebb3308fdc82e20e09701144fa819016fd2936684b9c6bc11af1e1fab54d32d1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T18:44:45.896Z"
+    },
+    "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-architecture-intelligence-emberstack-kubernetes-.md",
+      "title": "Architecture Intelligence: emberstack/kubernetes-reflector Core Invariants",
+      "repository": "emberstack/kubernetes-reflector",
+      "source_version": "0bc3222d",
+      "content_hash": "b670f691bd368cc76e8ee7c99905bb69ecd4511d244b9ca7cf22422602a7e515",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T18:42:43.555Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-emberstack-kubernetes-reflecto": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-emberstack-kubernetes-reflecto",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/emberstack-kubernetes-reflector-learnings-verification-protocol-empirical-defect.md",
+      "title": "Verification Protocol: Empirical Defect Shield for emberstack-kubernetes-reflector-learnings",
+      "repository": "emberstack-kubernetes-reflector-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8fb3ab70b82e713e7bce17bf64e6c51cbbee93d46b81a1dc4003cb68c88a5d20",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T18:44:46.152Z"
+    },
+    "rule-9031": {
+      "learning_id": "rule-9031",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9031,
+      "title": "Make concurrent migrations safe on PostgreSQL",
+      "source_url": "https://github.com/SeaQL/sea-orm",
+      "source_version": "c453c64e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T18:42:50.019Z"
+    },
+    "candidate_directive-make-concurrent-migrations-safe-on-postgresql": {
+      "item_id": "candidate_directive-make-concurrent-migrations-safe-on-postgresql",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ICM5-make-concurrent-migrations-safe-on-postgresql.md",
+      "title": "Make concurrent migrations safe on PostgreSQL",
+      "repository": "SeaQL/sea-orm",
+      "source_version": "c453c64e",
+      "content_hash": "923c4cdfac1783d6e0bf8cd6fc5c5c1f790735007993564b29425885d10eebc0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T18:42:50.334Z"
+    },
+    "learn-huggingface-nanbeige-nanbeige4-3-33b": {
+      "learning_id": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Nanbeige/Nanbeige4.3-33B",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "slug": "hf-nanbeige-nanbeige4.3-33b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
+      "source_version": "hf-nanbeige-nanbeige4.3-33b",
+      "content_hash": "0bca3a96d522ce417610274f279f242c895253f26c214c3e3b88b5189858d038",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Special Token Demarcation & Thinking Token Parsing Invariant",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": 9032,
+          "title": "Non-Power-of-Two Grouped-Query Head Allocation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9033,
+          "title": "High-Base Rotary Position Embedding (RoPE) Invariant for Ultra-Long Sequences",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T18:44:17.026Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9032": {
+      "learning_id": "rule-9032",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9032,
+      "title": "Non-Power-of-Two Grouped-Query Head Allocation Invariant",
+      "source_url": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
+      "source_version": "hf-nanbeige-nanbeige4.3-33b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T18:44:17.026Z"
+    },
+    "rule-9033": {
+      "learning_id": "rule-9033",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9033,
+      "title": "High-Base Rotary Position Embedding (RoPE) Invariant for Ultra-Long Sequences",
+      "source_url": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
+      "source_version": "hf-nanbeige-nanbeige4.3-33b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T18:44:17.026Z"
+    },
+    "candidate_directive-special-token-demarcation-thinking-token-parsing-invariant": {
+      "item_id": "candidate_directive-special-token-demarcation-thinking-token-parsing-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KSL3-special-token-demarcation-thinking-token-parsing-invariant.md",
+      "title": "Special Token Demarcation & Thinking Token Parsing Invariant",
+      "repository": "hf-nanbeige-nanbeige4.3-33b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fbac6a60d414f0e7e71b22f9f407b8ffdf75aee1343cfadef094b461cd5eb4b7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T18:44:44.668Z"
+    },
+    "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-nanbeige-nanbeige4-3-33b-design-intelligence-nanbeige-nanbeige4-3-33b-core-in.md",
+      "title": "Design Intelligence: Nanbeige/Nanbeige4.3-33B Core Invariants",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "source_version": "hf-nanbeige-nanbeige4.3-33b",
+      "content_hash": "131e81cec56cb2e95fc428e0599cf7a28d6657e7871d381b65e1df73029edd88",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-17T18:44:17.641Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nanbeige-nanbeige4-3-33b": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nanbeige-nanbeige4-3-33b",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-nanbeige-nanbeige4-3-33b-verification-protocol-empirical-defect-shield-for-na.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Nanbeige/Nanbeige4.3-33B",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "source_version": "hf-nanbeige-nanbeige4.3-33b",
+      "content_hash": "0be335d8ec73af18c3066646f4a1ea08bcef597d70e9b75b8e25d3eabc08c278",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T18:44:17.755Z"
+    },
+    "candidate_directive-non-power-of-two-grouped-query-head-allocation-invariant": {
+      "item_id": "candidate_directive-non-power-of-two-grouped-query-head-allocation-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KSL0-non-power-of-two-grouped-query-head-allocation-invariant.md",
+      "title": "Non-Power-of-Two Grouped-Query Head Allocation Invariant",
+      "repository": "hf-nanbeige-nanbeige4.3-33b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ab12c3a2ddc939a69aec08adbd0c44246dd60fad8a4ab920f4fd3101a1f9cc31",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T18:44:44.345Z"
+    },
+    "candidate_directive-high-base-rotary-position-embedding-rope-invariant-for-ultra-long-sequences": {
+      "item_id": "candidate_directive-high-base-rotary-position-embedding-rope-invariant-for-ultra-long-sequences",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KSL2-high-base-rotary-position-embedding-rope-invariant-for-ultra-long-sequences.md",
+      "title": "High-Base Rotary Position Embedding (RoPE) Invariant for Ultra-Long Sequences",
+      "repository": "hf-nanbeige-nanbeige4.3-33b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3e1bdd9a6c5370faa35a4bdaf2b9962ae415f96656c418d92ad7e1e704444834",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T18:44:44.542Z"
+    },
+    "domain_intelligence-design-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-nanbeige-nanbeige4-3-33b-learnings-design-intelligence-hf-nanbeige-nanbeige4-.md",
+      "title": "Design Intelligence: hf-nanbeige-nanbeige4.3-33b-learnings Core Invariants",
+      "repository": "hf-nanbeige-nanbeige4.3-33b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e2498ee7d830ee52933307b9aa2d797a30bfd3e9b2000c7ef4dca347f7b0bf6b",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-17T18:44:44.793Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-nanbeige-nanbeige4-3-33b-le": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-nanbeige-nanbeige4-3-33b-le",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-nanbeige-nanbeige4-3-33b-learnings-verification-protocol-empirical-defect-shi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-nanbeige-nanbeige4.3-33b-learnings",
+      "repository": "hf-nanbeige-nanbeige4.3-33b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5f9a63dee98db4a0675d31ac769b40afc01788193753fd8dab4864edf45065de",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T18:44:44.934Z"
+    },
+    "candidate_directive-sleep-re-read-lid-state-instead-of-caching-external-ownership": {
+      "item_id": "candidate_directive-sleep-re-read-lid-state-instead-of-caching-external-ownership",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KTA9-sleep-re-read-lid-state-instead-of-caching-external-ownership.md",
+      "title": "sleep): re-read lid state instead of caching external ownership",
+      "repository": "lingyired-status-trio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "44835103fb33b4e0daf2f568166d802e1c030e03d8243e8d27e278a0255b192d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T18:44:45.262Z"
+    },
+    "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-learnings-core-invaria": {
+      "item_id": "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-learnings-architecture-intelligence-emberstack-k.md",
+      "title": "Architecture Intelligence: emberstack-kubernetes-reflector-learnings Core Invariants",
+      "repository": "emberstack-kubernetes-reflector-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f505728a567c22c37ddcacd07e60c8fb08fd77feb78b98700c338342c9a2065c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T18:44:46.014Z"
     }
   },
   "ai-builder-brain": {

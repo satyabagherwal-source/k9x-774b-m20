@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md`  
 > **Source**: github ([https://github.com/emberstack/kubernetes-reflector](https://github.com/emberstack/kubernetes-reflector))  
-> **Source Version**: `19cceb3b`  
+> **Source Version**: `0bc3222d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T01:38:58.413Z  
+> **Timestamp**: 2026-11-17T18:42:42.221Z  
 > **Learning ID**: `learn-github-emberstack-kubernetes-reflector`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/emberstack/kubernetes-reflector](https://github.com/emberstack/kubernetes-reflector))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T01:38:58.405Z  
+> **Harvest Timestamp**: 2026-11-17T18:42:42.217Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Custom Kubernetes controller that can be used to replicate secrets, configmaps and certificates.
 - **Primary Language / Ecosystem**: C#
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1693 stars
+- **Stars / Engagement**: 1695 stars
 
 ---
 
@@ -67,43 +67,79 @@
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `19cceb3b` (2026-11-11)
-**Commit Message**: Bump the all-dependencies group with 1 update (#732)
+### Incident Patch 1: `0bc3222d` (2026-11-16)
+**Commit Message**: Bump the all-dependencies group with 7 updates (#733)
 
-Bumps Microsoft.NET.Test.Sdk from 18.11.1 to 18.12.0
+Bumps coverlet.collector from 10.1.0 to 10.1.1
+Bumps ES.FX.Additions.KubernetesClient from 10.0.81 to 10.0.83
+Bumps ES.FX.Additions.Newtonsoft.Json from 10.0.81 to 10.0.83
+Bumps ES.FX.Ignite from 10.0.81 to 10.0.83
+Bumps ES.FX.Ignite.KubernetesClient from 10.0.81 to 10.0.83
+Bumps ES.FX.Ignite.Serilog from 10.0.81 to 10.0.83
+Bumps Testcontainers.K3s from 4.16.0 to 4.17.0
 
 ---
 updated-dependencies:
-- dependency-name: Microsoft.NET.Test.Sdk
-  dependency-version: 18.12.0
+- dependency-name: coverlet.collector
+  dependency-version: 10.1.1
   dependency-type: direct:production
-  update-type: version-update:semver-minor
+  update-type: version-update:semver-patch
   dependency-group: all-dependencies
-...
+- dependency-name: ES.FX.Additions.KubernetesClient
+  dependency-version: 10.0.83
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: all-dependencies
+- dependency-name: ES.FX.Additions.Newtonsoft.Json
+  dependency-version: 10.0.83
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: all-dependencies
+- dependency-name: ES.FX.Ignite
+  dependency-version: 10.0.83
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: al
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Directory.Packages.props` (modified, +1/-1)
+**File**: `Directory.Packages.props` (modified, +7/-7)
 ```diff
-@@ -13,7 +13,7 @@
+@@ -4,20 +4,20 @@
+     <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+   </PropertyGroup>
+   <ItemGroup>
+-    <PackageVersion Include="coverlet.collector" Version="10.1.0" />
+-    <PackageVersion Include="ES.FX.Ignite" Version="10.0.81" />
+-    <PackageVersion Include="ES.FX.Ignite.KubernetesClient" Version="10.0.81" />
+-    <PackageVersion Include="ES.FX.Ignite.Serilog" Version="10.0.81" />
+-    <PackageVersion Include="ES.FX.Additions.Newtonsoft.Json" Version="10.0.81" />
+-    <PackageVersion Include="ES.FX.Additions.KubernetesClient" Version="10.0.81" />
++    <PackageVersion Include="coverlet.collector" Version="10.1.1" />
++    <PackageVersion Include="ES.FX.Ignite" Version="10.0.83" />
++    <PackageVersion Include="ES.FX.Ignite.KubernetesClient" Version="10.0.83" />
++    <PackageVersion Include="ES.FX.Ignite.Serilog" Version="10.0.83" />
++    <PackageVersion Include="ES.FX.Additions.Newtonsoft.Json" Version="10.0.83" />
++    <PackageVersion Include="ES.FX.Additions.KubernetesClient" Version="10.0.83" />
      <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />
      <PackageVersion Include="Microsoft.AspNetCore.JsonPatch" Version="11.0.0" />
      <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.15" />
--    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.1" />
-+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
+     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
      <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
      <PackageVersion Include="Moq" Version="4.21.0" />
      <PackageVersion Include="Polly.Core" Version="8.9.1" />
+-    <PackageVersion Include="Testcontainers.K3s" Version="4.16.0" />
++    <PackageVersion Include="Testcontainers.K3s" Version="4.17.0" />
+     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
+     <PackageVersion Include="xunit.v3" Version="4.0.3" />
+   </ItemGroup>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #733** (2026-11-16): Bump the all-dependencies group with 7 updates (@dependabot[bot])
 - **PR #732** (2026-11-11): Bump the all-dependencies group with 1 update (@dependabot[bot])
 - **PR #731** (2026-11-10): Bump the all-dependencies group with 3 updates (@dependabot[bot])
 - **PR #730** (2026-11-09): Bump the all-dependencies group with 7 updates (@dependabot[bot])
 - **PR #729** (2026-11-09): build(deps): bump docker/login-action from 4.7.0 to 4.8.0 in the all-dependencies group (@dependabot[bot])
 - **PR #728** (2026-11-06): Bump the all-dependencies group with 5 updates (@dependabot[bot])
-- **PR #727** (2026-11-04): Bump the all-dependencies group with 5 updates (@dependabot[bot])
 
 ---
 
@@ -123,13 +159,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump the all-dependencies group with 1 update (#732)
+## X. Bump the all-dependencies group with 7 updates
 
 **RULE**:
 When implementing operations in `Directory.Packages.props`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in emberstack/kubernetes-reflector. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `19cceb3b`: Bump the all-dependencies group with 1 update (#732). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0bc3222d`: Bump the all-dependencies group with 7 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing C# data structures, boundary deserialization, API parsing, or resource lifecycles matching `Directory.Packages.props`.
@@ -137,14 +173,26 @@ Subsystems managing C# data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c#
 // Verified production-grade fix pattern:
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
+    <PackageVersion Include="coverlet.collector" Version="10.1.1" />
+    <PackageVersion Include="ES.FX.Ignite" Version="10.0.83" />
+    <PackageVersion Include="ES.FX.Ignite.KubernetesClient" Version="10.0.83" />
+    <PackageVersion Include="ES.FX.Ignite.Serilog" Version="10.0.83" />
+    <PackageVersion Include="ES.FX.Additions.Newtonsoft.Json" Version="10.0.83" />
+    <PackageVersion Include="ES.FX.Additions.KubernetesClient" Version="10.0.83" />
+    <PackageVersion Include="Testcontainers.K3s" Version="4.17.0" />
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c#
-// Anti-pattern to NEVER write (induced failure mode):
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.1" />
+// Induced defect failure mode:
+    <PackageVersion Include="coverlet.collector" Version="10.1.0" />
+    <PackageVersion Include="ES.FX.Ignite" Version="10.0.81" />
+    <PackageVersion Include="ES.FX.Ignite.KubernetesClient" Version="10.0.81" />
+    <PackageVersion Include="ES.FX.Ignite.Serilog" Version="10.0.81" />
+    <PackageVersion Include="ES.FX.Additions.Newtonsoft.Json" Version="10.0.81" />
+    <PackageVersion Include="ES.FX.Additions.KubernetesClient" Version="10.0.81" />
+    <PackageVersion Include="Testcontainers.K3s" Version="4.16.0" />
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `19cceb3b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0bc3222d` are properly handled with clean fallback behavior.

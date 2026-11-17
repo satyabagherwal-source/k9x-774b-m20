@@ -10663,3 +10663,8 @@
 | `CYCLE-20261117-8QVW` | `2026-11-17T18:35:22.268Z` | `MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md` | Yes (`c0e790dd...`) |
 | `CYCLE-20261117-8STN` | `2026-11-17T18:35:24.779Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md` | Yes (`8703cf17...`) |
 | `CYCLE-20261117-9190` | `2026-11-17T18:35:35.700Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8770` | Yes (`8acc1856...`) |
+| `CYCLE-20261117-I62K` | `2026-11-17T18:42:41.852Z` | `lingyired/status-trio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9029` | Yes (`c95d222c...`) |
+| `CYCLE-20261117-I73X` | `2026-11-17T18:42:43.197Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9030` | Yes (`7a86d4f2...`) |
+| `CYCLE-20261117-ICHG` | `2026-11-17T18:42:50.164Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9031` | Yes (`c0aeeb76...`) |
+| `CYCLE-20261117-K7N0` | `2026-11-17T18:44:17.196Z` | `Nanbeige/Nanbeige4.3-33B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9032, Rule 9033, Rule null` | Yes (`0bca3a96...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T18:44:44.098Z` | `hf-nanbeige-nanbeige4.3-33b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-28B99DBA` [Domain H] | Yes (`39b39c66...`) |

@@ -4,22 +4,22 @@
 {
   "source_repository": "lingyired/status-trio",
   "source_url": "https://github.com/lingyired/status-trio",
-  "source_version": "a0ebb92d",
+  "source_version": "ca166e73",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T07:39:20.882Z",
+  "timestamp": "2026-11-17T18:42:42.025Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lingyired-status-trio",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lingyired/status-trio](https://github.com/lingyired/status-trio) (Revision: `a0ebb92d`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T07:39:20.882Z`  
+> **Provenance**: Harvested from [lingyired/status-trio](https://github.com/lingyired/status-trio) (Revision: `ca166e73`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T18:42:42.025Z`  
 > **Learning ID**: `learn-github-lingyired-status-trio`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `lingyired/status-trio` (Commit: `a0ebb92d`)
+- **Target Repository**: `lingyired/status-trio` (Commit: `ca166e73`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lingyired-status-trio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lingyired/status-trio](https://github.com/lingyired/status-trio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T07:39:19.763Z  
+> **Harvest Timestamp**: 2026-11-17T18:42:40.821Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Status Trio — a native macOS app that combines Wi-Fi, battery, and volume into one compact, configurable status icon for the menu bar, the Dock, or both, inspired by the iPhone Duo combined status bar.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1901 stars
+- **Stars / Engagement**: 1978 stars
 
 ---
 
@@ -543,6 +543,10 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     public func applicationDidFinishLaunching(_ notification: Notification) {
+        // macOS 26+ defaults to the native glass surfaces; the key can opt out.
+        // Registered here (not in the view) so ImageRenderer/unit-test hosts that
+        // never launch the app keep the deterministic translucent wash.
+        UserDefaults.standard.register(defaults: [PanelCardSurfaceExperiment.defaultsKey: true])
         let backgroundUITesting = BackgroundUITestingConfiguration(
             arguments: ProcessInfo.processInfo.arguments
         )
@@ -587,6 +591,34 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
 
     public func applicationWillTerminate(_ notification: Notification) {
         environment?.stop()
+    }
+
+    /// #295: `pmset -a disablesleep 1` is a persisted system setting, so quitting
+    /// while the lid toggle is on must write it back to 0. `.terminateLater`
+    /// lets the helper call finish first; the delayed reply is a stop path so an
+    /// unreachable helper can never hang quit.
+    public func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard let environment, environment.store.sleepControl.needsTerminationCleanup else {
+            return .terminateNow
+        }
+        let sleepControl = environment.store.sleepControl
+        Task { @MainActor in
+            await sleepControl.shutdown()
+            self.replyToTermination()
+        }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(3))
+            self.replyToTermination()
+        }
+        return .terminateLater
+    }
+
+    private var didReplyToTermination = false
+
+    private func replyToTermination() {
+        guard !didReplyToTermination else { return }
+        didReplyToTermination = true
+        NSApplication.shared.reply(toApplicationShouldTerminate: true)
     }
 
     public func applicationShouldHandleReopen(
@@ -1388,16 +1420,17 @@ final class BluetoothNearbyBatteryOptOutSynchronizer {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #345** (2026-11-15): **[Bug] 切换输入法时图标先闪一下大小写 a（a → A → 中文）**
+  *Symptoms*: ## 用户反馈 切换输入法时，菜单栏图标会走 `a → A → 中文输入法`，反向也一样（`中文 → A → a`），中间会闪一下大写/小写的 a。  ## 代码线索 - #279 让输入源图标跟随 Caps Lock / Shift 显示 `a` / `A`：   `Sources/StatusTrioCore/InputSource/InputSourceModifierObserver.swift`   ```swift   var isUppercase: Bool { capsLock || shift }   ``` - 图标状态由 `InputSourceState.iconDescriptor(markerStyle:)` 合成：`selectedDescriptor.applying(modifiers).applying(markerStyle:)`。 - 修饰键与输入源是**两个独立来源**：`InputSourceController` 里 `modifierObserver.start { ... self.state.modifiers = modifiers }`，输入源变化来自 TIS 通知。两者到达顺序不保证。  ## 可能根因（高置信，待确认） macOS 常用的中文输入法切换方式是「使用大写锁定键切换 ABC 输入法」。此时按 Caps Lock 会： 1. 先产生一次 flagsChanged → `capsLock = true` → 图标立刻按英文源渲染成 **A**； 2. 随后 TIS 的“选中输入源已改变”通知才到 → 切到中文图标。  两个通知之间有一小段延迟，于是先画出中间的大写 A。反向切换同理（Caps Lock 关闭 → 先回 `a`，再切中文/英文）。  如果用户用的是 Ctrl+Space 或自定义快捷键，仍需确认是否同样存在中间态；但「先 A 后中文」的形状非常符合 Caps Lock 切换。  ## 建议修复方向 1. **合并中间态**：对「仅由 Caps Lock 变化」引起的 a/A 切换做约 150–250ms 的短延迟；如果在窗口内收到输入源切换，就直接用新输入源渲染，不画中间态。Shift 的变化保持即时，不影响手动按住 Shift 看 A 的体验。 2. 或：在检测到 Caps Lock 变化与输入源变化几乎同时发生时，只应用输入源变化，丢弃那次修饰键渲染。 3. 不要引入事件 tap、轮询或需要辅助功能权限的监听；沿用现有 `flagsChanged` 全局监听。 4. 保持菜单栏与 Dock 同步（两者共用 `IconSceneState`）；设置里的实时预览也要一致。  ## 待确认 - 用户的输入法切换方式：Caps Lock / Ctrl+Space / Ctrl+Option+Space / 自定义？ - 中间 A 是“一闪而过”还是能停留几百毫秒？ - 反向切换（中文 → 英文）是否也是先 A 再 a？ - 只在主屏菜单栏出现，还是 Dock 图标与设置预览也闪？  ## 验收 - 用 Caps Lock 切换中英文时，图标直接 a ↔ 中文，不再经过 A。 - 手动按 Shift / 开 Caps Lock 但仍用英文输入时，仍正确显示 A（#279 不回退）。 - 使用 Ctrl+Space 等非 Caps Lock 方式切换时行为正常，无中间态。 - 菜单栏、Dock、设置实时预览三处一致；有测试覆盖“修饰键与输入源连续到达”的合成顺序。  关联
+  **Post-Mortem & Fix Analysis**:
+  > 用户确认：**就是用 Caps Lock 切换输入法**，因此根因确认——Caps Lock 的 `flagsChanged` 先到，图标先按 #279 渲染成 `A`，TIS 的输入源切换通知后到，才变成中文图标。  修复口径补充： - 不要试图去探测“Caps Lock 是否被系统设置成切换键”（本机 `com.apple.HIToolbox` 里只有 `AppleCapsLockPressAndHoldToggleOff`，没有可靠公开键）。 - 改为**合并事件**：Caps Lock 引起的 a/A 变化延迟约 150–250ms；若窗口内收到输入源切换，就直接用新输入源渲染，**完全不画中间 A**；若窗口内没有输入源切换，再按 Caps Lock 状态渲染（保证在英文下正常用 Caps Lock 打大写时仍然显示 A）。 - Shift 保持即时，不受影响。 - 需要实测一下事件间隔（Caps Lock `flagsChanged` 到 TIS 选中变化）来确定窗口大小，避免窗口太长导致真的按 Caps Lock 打字时图标反应迟钝。  验收按原 issue：Caps Lock 切换时 a ↔ 中文 再无 A；英文下开 Caps Lock 仍显示 A；菜单栏/Dock/设置预览三处一致。
+  > 这个是系统的逻辑。每次切换的时候系统都是会这样处理，所以先不管
+
 - **Issue #341** (2026-11-13): **[Bug] Dock 图标点击第二次不会隐藏面板，应像菜单栏图标一样开关**
   *Symptoms*: ## 用户需求 Dock 图标点击打开状态面板后，**再点一次 Dock 图标应隐藏面板**，与菜单栏图标的开关行为一致。现在第二次点击不会收起。  ## 现状代码 - `Sources/StatusTrioCore/App/DockActivationAction.swift`：Dock 点击走 `.showPopover`，最终调用 `StatusBarController.togglePopover(anchoredAtScreenPoint:)`。 - `Sources/StatusTrioCore/UI/StatusBarController.swift:622-640`：  ```swift func togglePopover(anchoredAtScreenPoint point: NSPoint) {     guard popoverToggleGate.shouldAccept(at: Date()) else { return }     if popover.isShown { closePopover(); return }     let anchor = dockAnchor(at: point)     presentPopover(...) } ```  - 对比菜单栏路径 `togglePopover()`（同文件 581-604）多了这一步：  ```swift if !popover.isShown, reopenSuppression.shouldSuppressReopen(at: Date()) { return } ```  ## 根因 第二次点击 Dock 图标时的事件顺序是： 1. **mouse-down**：全局 `popoverDismissMonitor`（`installPopoverDismissMonitor`，同文件约 1037-1062）判定这是面板外的点击，于是 `reopenSuppression.recordClose(mouseButtonDown: true)` 并 `popover.performClose(nil)`，面板其实**已经关了**。 2. **reopen 事件**：Dock 点击继续产生应用 reopen，路由到 `togglePopover(anchoredAtScreenPoint:)`；此时 `popover.isShown == false`，而该方法没有检查 `reopenSuppression`，于是又 `presentPopover` 打开。  结果：先关后开，看起来“点不消失”。菜单栏路径正是靠 `reopenSuppression` 修掉了同类的 #224 问题，Dock 路径漏了这段。  ## 建议修复 - 在 `togglePopover(anchoredAtScreenPoint:)` 开头补上与菜单栏一致的守卫：   ```swift   if !popover.isShown, reopenSuppression.shouldSuppressReopen(at: Date()) { return }   ``` - 更彻底（可选）：把 Dock 图标的点击也视为“所有者点击”，在 `PopoverDismissalPolicy` 里识别上次 Dock 锚点附近（打开时记录 `point`），避免先关后开的一帧闪烁；`NSDockTile` 没有公开 frame，所以需保存上次锚点而不是查询 Dock。 - 注意 `pop
   **Post-Mortem & Fix Analysis**:
   > 已在分支 `dsh-024b6289-5f73` 修复（commit 4b4b5968）。  改了什么：`togglePopover(anchoredAtScreenPoint:)` 在消费 `popoverToggleGate` 之前，先按菜单栏路径同样的方式检查 `reopenSuppression`，这样第二次点击 Dock 图标时 mouse-down 已经关掉面板、随后的 reopen 不再把它重新打开。  验证： - 新增 `PopoverReopenSuppressionTests` 两条：一条断言 Dock 入口的先抑制、后门控顺序（修复前失败），一条断言“关→重开→再点”只抑制一次、下一次仍能打开； - 相邻回归 `PopoverToggleGateTests`、`PopoverDismissalPolicyTests`、`DockPlacementTests` 通过； - `bash scripts/verify-local.sh full` 全量本地档案通过（不含签名/公证/DMG/正式发布）。  还需要你验收：真实 Dock 连点第二次收起、第三次重新打开；快速连点不卡死；面板外点击正常关闭；Dock 自动隐藏与左/右侧布局同样成立。真实 Dock 点击属于 Finder 进程，后台 UI 测试无法安全模拟，所以这几项标为待人工验收。
   > 已验收通过并合并到 `main`（4b4b5968），分支 `dsh-024b6289-5f73` 与 worktree 已清理。按规则先不关闭，等正式发布后统一核对版本再关闭。
-
-- **Issue #339** (2026-11-13): **[Bug] AirPods 不在本机附近仍显示「已连接」（system_profiler 逻辑连接被当作真实连接）**
-  *Symptoms*: ## 用户反馈 AirPods 4 实际在别的宿舍（不在本机附近），但 Status Trio 仍显示它「已连接」。同一台 Mac 上 AirPods Pro 2 在系统自带声音菜单里可以正常调节，说明真正连接的是 Pro 2。  ## 现状与根因线索 `Sources/StatusTrioCore/Monitoring/BluetoothDeviceController.swift` 的 `BluetoothPairedDeviceReader` 直接把 `system_profiler -json SPBluetoothDataType` 的 `device_connected` / `device_not_connected` 两个集合映射成 `isConnected`：  ```swift for (collectionKey, isConnected) in [     ("device_connected", true),     ("device_not_connected", false) ] ```  问题：macOS 的已配对 AirPods 会通过 iCloud / 多设备接力维持一个「逻辑连接」状态，即使耳机不在本机附近、实际连在别的设备上，`system_profiler` 仍可能把它列进 `device_connected`。于是： - 面板把远处设备显示成「已连接」； - 更严重的是，`BluetoothListeningModeController` 用它统计「当前连接了几副 AirPods」，两副都算连接 → 触发保守回退的多设备歧义 → 真正在用的 AirPods Pro 2 也拿不到聆听模式（见 #338）。  ## 建议修复方向 - 「已连接」应以本机的真实链路为准：用 `IOBluetoothDevice.isConnected`（或等价的本机 ACL 连接状态）校验，而不是只信 `system_profiler` 分组。 - 更稳妥的补充：要求存在对应的 **CoreAudio 蓝牙音频端点** 才算「本机已连接」；仅配对/仅在别的设备上连接时显示「已配对」或「已连接到其他设备」。 - 读取失败或状态不确定时不要乐观显示「已连接」，用中性状态并说明。 - 聆听模式、电量、快捷断开等依赖连接状态的逻辑统一切到校验后的状态。  ## 待确认 - 用户机器上系统设置 → 蓝牙里 AirPods 4 显示的是「已连接」还是「未连接」。若系统也显示已连接，则属于 macOS 把远端接力当连接，更需要按本机音频端点判定。 - AirPods 4 是否在「查找」/其他登录同一 iCloud 的设备上在线。 - macOS 版本。  ## 验收 - AirPods 不在本机附近、未与本机建立链路时，面板不再显示「已连接」。 - 已配对但连在其他设备时，展示状态与实际一致（如「已连接到其他设备」）。 - 真正连接的 AirPods Pro 2 仍显示已连接，聆听模式可正常出现（与 #338 一起验证）。 - 有测试覆盖：`system_profiler` 报 connected 但无本机链路/无音频端点时判定为未连接。  关联：#338（多副 AirPods 导致聆听模式缺失）、#265（关闭蓝牙后仍显示缓存设备）、#248（离场仍显示）。 
-  **Post-Mortem & Fix Analysis**:
-  > 已合并到 #338 统一跟进：这两件事是同一个根因链（“已连接”判断过乐观 → 多设备歧义 → AirPods Pro 2 的聆听模式也被隐藏）。后续修复与验收都在 #338 里。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1414,460 +1447,196 @@ final class BluetoothNearbyBatteryOptOutSynchronizer {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `684de198` (2026-11-13)
-**Commit Message**: fix(popover): let horizontal trackpad scrolling adjust panel sliders
+### Incident Patch 1: `3e5bd226` (2026-11-16)
+**Commit Message**: fix(sleep): re-read lid state instead of caching external ownership
 
-Panel slider wheel handling only read scrollingDeltaY, so a purely
-horizontal two-finger gesture was consumed without changing the level.
+Once an external disablesleep was seen, the controller remembered it and skipped re-reading, so after the other app cleared it the toggle stayed blocked and kept naming the old app. Enabling now always re-reads the live state; a now-off value enables normally and clears the stale external message, while a still-on value re-detects (and re-queries) the owner.
 
-- Pick the dominant axis (|X| > |Y| wins) so diagonal gestures apply once.
-- Share the vertical step/accumulation and natural-scrolling logic on both
-  axes; horizontal right raises the level like vertical up.
-- Reset partial wheel packets when the axis changes.
-- The panel-wide volume fallback stays vertical-only and now passes a
-  horizontal gesture through instead of swallowing it.
-- Cover pure horizontal, pure vertical, diagonal both ways, precise and
-  line-based packets across all three sliders (issue #342).
-
-**File**: `Sources/StatusTrioCore/UI/PopupVolumeScrollAdjustment.swift` (modified, +32/-5)
+**File**: `Sources/StatusTrioCore/Monitoring/SleepControlController.swift` (modified, +1/-5)
 ```diff
-@@ -7,11 +7,18 @@ struct PopupVolumeScrollAdjustment {
-     private var lastTimestamp: TimeInterval?
-     private var lastContext: String?
-     private var lastWheelStep: Double?
-+    private var lastAxis: ScrollAxis?
-+
-+    private enum ScrollAxis {
-+        case vertical
-+        case horizontal
-+    }
- 
-     /// Shared entry for all three panel sliders; keeps their preferences and
-     /// partial wheel packets on the same path without requiring a live NSEvent.
-     @MainActor
-     mutating func levelDelta(
-+        deltaX: Double = 0,
-         deltaY: Double,
-         isPrecise: Bool,
-         isDirectionInverted: Bool,
-@@ -26,7 +33,7 @@ struct PopupVolumeScrollAdjustment {
-         case .brightness(let displayID): context = "brightness.\(displayID)"
+@@ -416,10 +416,6 @@ final class SleepControlController: ObservableObject {
+         guard !isStopped else { return }
+         if enabled {
+             guard canEnableLidSleep else { return }
+-            guard !lidForeignActive else {
+-                lidSleepExternalState = .managedExternally
+-                return
+-            }
          }
-         return volumeDelta(
--            deltaY: deltaY, isPrecise: isPrecise,
-+            deltaX: deltaX, deltaY: deltaY, isPrecise: isPrecise,
-             isDirectionInverted: isDirectionInverted,
-             usesNaturalScrolling: settings.popupVolumeNaturalScrolling,
-             wheelStep: settings.popupScrollWheelStepPercent / 100,
-@@ -35,6 +42,7 @@ struct PopupVolumeScrollAdjustment {
+         requestLidState(enabled)
      }
- 
-     mutating func volumeDelta(
-+        deltaX: Double = 0,
-         deltaY: Double,
-         isPrecise: Bool,
-         isDirectionInverted: Bool,
-@@ -43,23 +51,29 @@ struct PopupVolumeScrollAdjustment {
-         timestamp: TimeInterval = 0,
-         context: String = "volume"
-     ) -> Double? {
--        guard deltaY.isFinite, deltaY != 0 else { return nil }
-+        guard deltaX.isFinite,
-+              let (delta, axis) = Self.dominantDelta(deltaX: deltaX, deltaY: deltaY)
-+        else { return nil }
-+        // Both axes share one convention: positive is "right"/"up" and raises
-+        // the level, so the same natural-scrolling handling applies to each.
-         let scrollUpDelta = usesNaturalScrolling
--            ? (isDirectionInverted ? -deltaY : deltaY)
--            : deltaY
-+            ? (isDirectionInverted ? -delta : delta)
-+            : delta
-         if isPrecise {
-             pendingLines = 0
-             lastTimestamp = nil
-+            lastAxis = axis
-             return scrollUpDelta * Self.preciseVolumePerPoint
-         }
-         guard wheelStep.isFinite, wheelStep > 0 else { return nil }
--        if lastContext != context || lastWheelStep != wheelStep
-+        if lastContext != context || lastWheelStep != wheelStep || lastAxis != axis
-             || lastTimestamp.map({ timestamp < $0 || timestamp - $0 > PopupVolumeScrollSession.timeout }) == true
-             || pendingLines * scrollUpDelta < 0 {
-             pendingLines = 0
-         }
-         lastContext = context
-         lastWheelStep = wheelStep
-+        lastAxis = axis
-         lastTimestamp = timestamp
-         // AppKit reports lines, not physical notches (commonly 1 or 3 per
-         // event). Normalize a full packet to one step; retain sub-line packets
-@@ -71,6 +85,19 @@ struct PopupVolumeScrollAdjustment {
-         if abs(pendingLines) < 1e-9 { pendingLines = 0 }
-         return direction * wheelStep
-     }
-+
-+    /// Picks the dominant axis so a diagonal trackpad gesture is applied once,
-+    /// never as two separate adjustments. Ties keep the vertical axis, which is
-+    /// the historical behaviour.
-+    private static func dominantDelta(
-+        deltaX: Double,
-+        deltaY: Double
-+    ) -> (delta: Double, axis: ScrollAxis)? {
-+        guard deltaX.isFinite, deltaY.isFinite else { return nil }
-+        if abs(deltaX) > abs(deltaY) { return (deltaX, .horizontal) }
-+        guard deltaY != 0 else { return nil }
-+        return (deltaY, .vertical)
-+    }
- }
- 
- struct PopupVolumeScrollSession {
+@@ -470,7 +466,7 @@ final class SleepControlController: ObservableObject {
+             if target {
+                 // Re-check after any previous await: an unplug during an in-flight
+                 // enable must flip the target off before we ever write `1`.
+-                if lidForeignActive || !canEnableLidSleep {
++                if !canEnableLidSleep {
+                     desiredLidSleep = false
+                     if isPreventingLidSleep { continue }
+                     return
 ```
 
-**File**: `Sources/StatusTrioCore/UI/StatusBarController.swift` (modified, +12/-3)
+---
+
+### Incident Patch 2: `20f881b1` (2026-11-16)
+**Commit Message**: revert(panel): drop GlassEffectContainer grouping over the AppKit glass panel
+
+Wrapping the sibling cards/pills in a GlassEffectContainer washed the glass out and made the keep-awake text unreadable over the NSGlassEffectView panel, so the grouping is reverted. The neutral-glass tint and single material layer changes are kept.
+
+**File**: `Sources/StatusTrioCore/UI/PowerInfoBarView.swift` (modified, +1/-15)
 ```diff
-@@ -1140,7 +1140,7 @@ final class StatusBarController: NSObject {
-         ) else {
-             return false
-         }
--        return consumeVolume(event: event)
-+        return consumeVolume(event: event, allowsHorizontal: false)
-     }
+@@ -10,21 +10,6 @@ struct PowerInfoBarView: View {
+     let state: PowerInfoBarState
  
-     /// Routes a wheel event to the slider directly under the pointer.
-@@ -1153,7 +1153,7 @@ final class StatusBarController: NSObject {
-             guard store.isVolumeControlAvailable, panelViewModel.volume.canAdjust else {
-                 return true // consume so the wheel does not scroll underneath
+     var body: some View {
+-        cardRow
+-            .accessibilityElement(children: .contain)
+-    }
+-
+-    /// Group the adjacent glass cards in one GlassEffectContainer (skill rule:
+-    /// nearby custom glass must share a container or their refraction diverges).
+-    @ViewBuilder private var cardRow: some View {
+-        if #available(macOS 26.0, *) {
+-            GlassEffectContainer(spacing: 8) { rowContent }
+-        } else {
+-            rowContent
+-        }
+-    }
+-
+-    private var rowContent: some View {
+         HStack(spacing: 8) {
+             if state.items.isEmpty {
+                 ForEach(state.placeholderKinds, id: \.self) { kind in
+@@ -36,6 +21,7 @@ struct PowerInfoBarView: View {
+                 }
              }
--            return consumeVolume(event: event)
-+            return consumeVolume(event: event, allowsHorizontal: true)
-         case .brightness(let displayID):
-             // Sliders own the wheel wherever they are; the scope setting only
-             // decides whether empty panel areas also adjust the output volume.
-@@ -1176,6 +1176,7 @@ final class StatusBarController: NSObject {
-             fallback: fallback
-         ) else { return false }
-         let delta = volumeScrollAdjustment.levelDelta(
-+            deltaX: Double(event.scrollingDeltaX),
-             deltaY: Double(event.scrollingDeltaY),
-             isPrecise: event.hasPreciseScrollingDeltas,
-             isDirectionInverted: event.isDirectionInvertedFromDevice,
-@@ -1204,6 +1205,7 @@ final class StatusBarController: NSObject {
-             fallback: fallback
-         ) else { return false }
-         let delta = volumeScrollAdjustment.levelDelta(
-+            deltaX: Double(event.scrollingDeltaX),
-             deltaY: Double(event.scrollingDeltaY),
-             isPrecise: event.hasPreciseScrollingDeltas,
-             isDirectionInverted: event.isDirectionInvertedFromDevice,
-@@ -1218,13 +1220,19 @@ final class StatusBarController: NSObject {
-         return true
+         }
++        .accessibilityElement(children: .contain)
      }
  
--    private func consumeVolume(event: NSEvent) -> Bool {
-+    private func consumeVolume(event: NSEvent, allowsHorizontal: Bool) -> Bool {
-         let volumeState = panelViewModel.volume
-         guard event.window === popover.contentViewController?.view.window,
-               store.isVolumeControlAvailable,
-               volumeState.canAdjust else {
-             return false
-         }
-+        // The panel-wide fallback only owns vertical scrolling; a horizontal
-+        // gesture outside a slider must pass through instead of being swallowed.
-+        if !allowsHorizontal,
-+           abs(event.scrollingDeltaX) > abs(event.scrollingDeltaY) {
-+            return false
-+        }
-         guard event.momentumPhase.isEmpty else { return true }
- 
-         guard let currentScalar = volumeScrollSession.scalar(
-@@ -1235,6 +1243,7 @@ final class StatusBarController: NSObject {
-             return false
-         }
-         let delta = volumeScrollAdjustment.levelDelta(
-+            deltaX: allowsHorizontal ? Double(event.scrollingDeltaX) : 0,
-             deltaY: Double(event.scrollingDeltaY),
-             isPrecise: event.hasPreciseScrollingDeltas,
-             isDirectionInverted: event.isDirectionInvertedFromDevice,
+     private func card(kind: PowerInfoBarKind, value: String?) -> some View {
 ```
 
-**File**: `Tests/StatusTrioCoreTests/PopupHorizontalScrollTests.swift` (added, +72/-0)
+**File**: `Sources/StatusTrioCore/UI/QuickActionsCardView.swift` (modified, +1/-11)
 ```diff
-@@ -0,0 +1,72 @@
-+import Foundation
-+import Testing
-+@testable import StatusTrioCore
-+
-+struct PopupHorizontalScrollTests {
-+    @Test(arguments: [true, false])
-+    func dominantAxisAdjustsOnlyOnce(_ precise: Bool) throws {
-+        // Rightward physical scrolling is positive X and upward physical
-+        // scrolling is positive Y, exactly like the vertical slider.
-+        let packets: [(Double, Double, Double)] = [
-+            (-4, 0, -4), (4, 0, 4), (0, 4, 4),
-+            (-4, -2, -4), (2, 4, 4), (-4, -4, -4)
-+        ]
-+        for (x, y, expected) in packets {
-+            var adjustment = PopupVolumeScrollAdjustment()
-+            let raw = adjustment.volumeDelta(
-+                deltaX: x, deltaY: y, isPrecise: precise,
-+                isDirectionInverted: false, usesNaturalScrolling: false,
-+                wheelStep: 0.05
-+            )
-+            let value = try #require(raw)
-+            let magnitude = precise ? abs(expected) * 0.002 : 0.05
-+            #expect(abs(value - (expected > 0 ? magnitude : -magnitude)) < 0.000_001)
-+        }
-+    }
-+
-+    @Test(arguments: [true, false], [(false, false), (false, true), (true, false), (true, true)])
-+    func horizontalDirectionMirrorsVerticalPreferenceHandling(
-+        _ precise: Bool, _ preferences: (Bool, Bool)
-+    ) throws {
-+        let (inverted, natural) = preferences
-+        for physicalRight in [true, false] {
-+            var adjustment = PopupVolumeScrollAdjustment()
-+            let deltaX = physicalRight
-+                ? (inverted ? -4.0 : 4.0)
-+                : (inverted ? 4.0 : -4.0)
-+            let raw = adjustment.volumeDelta(
-+                deltaX: deltaX, deltaY: 0, isPrecise: precise,
-+                isDirectionInverted: inverted, usesNaturalScrolling: natural
-+            )
-+            let value = try #require(raw)
-+            // Natural scrolling follows physical direction; otherwise the
-+            // system-reported sign decides, exactly like the vertical axis.
-+            let increases = natural ? physicalRight : deltaX > 0
-+            let magnitude = precise ? 0.008 : 0.10
-+            #expect(abs(value - (increases ? magnitude : -magnitude)) < 0.000_001)
-+        }
-+    }
-+
-+    @MainActor
-+    @Test func allSlidersShareHorizontalStepAndAccumulation() throws {
-+        let name = "PopupHorizontalScrollTests.\(UUID().uuidString)"
-+        let defaults = try #require(UserDefaults(suiteName: name))
-+        defer { defaults.removePersistentDomain(forName: name) }
-+        let settings = SettingsStore(defaults: defaults, systemChargeLimit: { nil })
-+        settings.popupScrollWheelStepPercent = 5
-+        for target in [PanelLevelScrollTarget.volume, .audioInput, .brightness(displayID: "display")] {
-+            var adjustment = PopupVolumeScrollAdjustment()
-+            let partial = adjustment.levelDelta(
-+                deltaX: 0.5, deltaY: 0, isPrecise: false,
-+                isDirectionInverted: false, timestamp: 1, target: target, settings: settings
-+            )
-+            #expect(partial == nil)
-+            let raw = adjustment.levelDelta(
-+                deltaX: 0.5, deltaY: 0, isPrecise: false,
-+                isDirectionInverted: false, timestamp: 1.1, target: target, settings: settings
-+            )
-+            let value = try #require(raw)
-+            #expect(abs(value - 0.05) < 0.000_001)
-+        }
-+    }
-+}
+@@ -65,17 +65,7 @@ struct QuickActionsCardView: View {
+             || (control.isPreventingLidSleep && control.lidExpiry != nil)
+     }
+ 
+-    @ViewBuilder private func pillRow(now: Date) -> some View {
+-        if #available(macOS 26.0, *) {
+-            // One container for the adjacent glass capsules so they sample each
+-            // other's glass consistently (skill group rule).
+-            GlassEffectContainer(spacing: 8) { pillStack(now: now) }
+-        } else {
+-            pillStack(now: now)
+-        }
+-    }
+-
+-    private func pillStack(now: Date) -> some View {
++    private func pillRow(now: Date) -> some View {
+         VStack(alignment: .leading, spacing: 8) {
+             if showsDisplay {
+                 displayPill(now: now)
 ```
 
 ---
 
-### Incident Patch 2: `e427cfea` (2026-11-13)
-**Commit Message**: fix(bluetooth): match accessory battery by exact MAC
+### Incident Patch 3: `3f8c4853` (2026-11-16)
+**Commit Message**: style(panel): align liquid glass with skill guidance
 
-pmset can report a Magic Mouse Accessory Identifier as a six-byte Bluetooth address, not only a UUID. Match that address exactly and verify the vendor/product pair, so two same-model mice no longer lose or swap the connected mouse's 98% level. A source that explicitly carries an address never degrades to a name or model guess; disconnected devices still receive nothing; the UUID path for AirPods and its left/right/case grouping is unchanged.
+Wrap the adjacent power-info cards and the two keep-awake capsules in one GlassEffectContainer each so nearby glass samples consistently; keep neutral charger-input cards untinted (tint only semantic cards); drop the extra ultraThinMaterial behind material-mode cards to remove double frosting. Progress/pill hover behaviour unchanged.
 
-**File**: `Sources/StatusTrioCore/Models/BluetoothBatteryLevelFallback.swift` (modified, +33/-0)
+**File**: `Sources/StatusTrioCore/UI/PanelCardSurfaceStyle.swift` (modified, +10/-3)
 ```diff
-@@ -33,6 +33,10 @@ enum BluetoothBatteryLevelFallback {
-         case none
-         case nameOnly
-         case exactVendorProduct
-+        /// `Accessory Identifier` is a six-byte Bluetooth address equal to the
-+        /// device's own address. This is the only *physical-device* evidence the
-+        /// accessory sources can carry, so it outranks every model or name fit.
-+        case exactAddress
+@@ -81,20 +81,27 @@ private struct PanelCardSurfaceModifier: ViewModifier {
+         switch cardStyle {
+         case .glass:
+             if #available(macOS 26.0, *), PanelCardSurfaceExperiment.useNative, cardStyle == .glass {
+-                content
+-                    .glassEffect(
++                // Skill: tint only when the colour carries meaning. Neutral
++                // charger-input cards stay plain glass; semantic cards tint.
++                if case .silver = surface {
++                    content.glassEffect(.regular, in: shape)
++                } else {
++                    content.glassEffect(
+                         .regular.tint(surface.fill(tint: tint, scheme: scheme, cardStyle: .glass)),
+                         in: shape
+                     )
++                }
+             } else {
+                 content
+                     .background(shape.fill(surface.fill(tint: tint, scheme: scheme, cardStyle: .glass)))
+                     .overlay { shape.strokeBorder(surface.stroke(tint: tint, scheme: scheme, cardStyle: .glass), lineWidth: 1) }
+             }
+         case .material:
++            // The panel already draws the popover material; adding another
++            // ultraThinMaterial here double-frosted the cards. Keep only the
++            // semantic wash + hairline rim.
+             content
+                 .background(shape.fill(surface.fill(tint: tint, scheme: scheme, cardStyle: .material)))
+-                .background(shape.fill(.ultraThinMaterial))
+                 .overlay { shape.strokeBorder(surface.stroke(tint: tint, scheme: scheme, cardStyle: .material), lineWidth: 1) }
+         case .solid:
+             content
+```
+
+**File**: `Sources/StatusTrioCore/UI/PowerInfoBarView.swift` (modified, +15/-1)
+```diff
+@@ -10,6 +10,21 @@ struct PowerInfoBarView: View {
+     let state: PowerInfoBarState
+ 
+     var body: some View {
++        cardRow
++            .accessibilityElement(children: .contain)
++    }
++
++    /// Group the adjacent glass cards in one GlassEffectContainer (skill rule:
++    /// nearby custom glass must share a container or their refraction diverges).
++    @ViewBuilder private var cardRow: some View {
++        if #available(macOS 26.0, *) {
++            GlassEffectContainer(spacing: 8) { rowContent }
++        } else {
++            rowContent
++        }
++    }
++
++    private var rowContent: some View {
+         HStack(spacing: 8) {
+             if state.items.isEmpty {
+                 ForEach(state.placeholderKinds, id: \.self) { kind in
+@@ -21,7 +36,6 @@ struct PowerInfoBarView: View {
+                 }
+             }
+         }
+-        .accessibilityElement(children: .contain)
      }
  
-     /// Whether the accessory sources are worth reading at all.
-@@ -248,6 +252,14 @@ enum BluetoothBatteryLevelFallback {
-         // or case, never to a keyboard or mouse.
-         guard readings.allSatisfy({ $0.part == nil }) else { return nil }
- 
-+        // An identifier that is a real Bluetooth address is exact physical
-+        // evidence. When it did not match a device's address, the group must not
-+        // fall back to model or name guessing — that is exactly how a same-model
-+        // neighbour would receive another mouse's level.
-+        guard readings.allSatisfy({ $0.identifier.flatMap(normalizedAddressBytes) == nil }) else {
-+            return nil
-+        }
-+
-         // The source must carry one complete and self-consistent model identity.
-         // A partial pair on any record, or a group whose records disagree, is not
-         // a firm enough basis to relax anything.
-@@ -445,6 +457,27 @@ enum BluetoothBatteryLevelFallback {
-         _ accessory: BluetoothAccessoryBatteryLevel,
-         _ device: BluetoothDevice
-     ) -> IdentityEvidence {
-+        // A six-byte `Accessory Identifier` is a Bluetooth address. The user's
-+        // Magic Mouse proves `pmset` can report the address here rather than a
-+        // UUID, so an exact address is decided first and alone: when the source
-+        // carries a valid address, a device whose address differs cannot match by
-+        // model or name, and no weaker guess is ever used.
-+        if let identifier = accessory.identifier,
-+           normalizedAddressBytes(identifier) != nil {
-+            guard let sourceBytes = normalizedAddressBytes(identifier),
-+                  let deviceBytes = normalizedAddressBytes(device.id),
-+                  sourceBytes == deviceBytes else {
-+                return .none
-+            }
-+            if let vendor = device.vendorID,
-+               let product = device.productID,
-+               let accessoryVendor = accessory.vendorID,
-+               let accessoryProduct = accessory.productID,
-+               vendor != accessoryVendor || product != accessoryProduct {
-+                return .none
-+            }
-+            return .exactAddress
-+        }
-         if let vendor = device.vendorID,
-            let product = device.productID,
-            let accessoryVendor = accessory.vendorID,
+     private func card(kind: PowerInfoBarKind, value: String?) -> some View {
 ```
 
-**File**: `Tests/StatusTrioCoreTests/BluetoothAccessoryBatteryIdentityTests.swift` (added, +47/-0)
+**File**: `Sources/StatusTrioCore/UI/QuickActionsCardView.swift` (modified, +11/-1)
 ```diff
-@@ -0,0 +1,47 @@
-+import Foundation
-+import Testing
-+@testable import StatusTrioCore
-+
-+/// `pmset` can name a Magic Mouse by Bluetooth address, not only by UUID.
-+struct BluetoothAccessoryBatteryIdentityTests {
-+    private func mouse(_ address: String, connected: Bool = true, product: Int = 0x030d) -> BluetoothDevice {
-+        BluetoothDevice(id: address, name: "Magic Mouse", kind: .peripheral(.mouse),
-+                        isConnected: connected, vendorID: 0x004c, productID: product)
-+    }
-+
-+    private func reading(_ identifier: String, product: Int = 0x030d) -> BluetoothAccessoryBatteryLevel {
-+        BluetoothAccessoryBatteryLevel(identifier: identifier, name: "Magic Mouse",
-+                                       vendorID: 0x004c, productID: product, part: nil, percentage: 98)
-+    }
-+
-+    @Test func exactMACResolvesConnectedMouseDespiteSameModelNeighbour() {
-+        let connected = mouse("02:00:00:00:00:01")
-+        let disconnected = mouse("02:00:00:00:00:02", connected: false)
-+        let levels = BluetoothBatteryLevelFallback.merged(
-+            levels: [:], accessories: [reading("02-00-00-00-00-01")], devices: [connected, disconnected])
-+        #expect(levels[BluetoothBatteryReader.normalizedAddress(connected.id)]?.main == 98)
-+        #expect(levels[BluetoothBatteryReader.normalizedAddress(disconnected.id)] == nil)
-+    }
-+
-+    @Test func explicitUnmatchedMACNeverFallsBackToSingleSameModelMouse() {
-+        let connected = mouse("02:00:00:00:00:01")
-+        let levels = BluetoothBatteryLevelFallback.merged(
-+            levels: [:], accessories: [reading("02:00:00:00:00:02")], devices: [connected])
-+        #expect(levels.isEmpty)
-+    }
-+
-+    @Test func disconnectedExactMACCannotDonateBattery() {
-+        let connected = mouse("02:00:00:00:00:01")
-+        let disconnected = mouse("02:00:00:00:00:02", connected: false)
-+        let levels = BluetoothBatteryLevelFallback.merged(
-+            levels: [:], accessories: [reading(disconnected.id)], devices: [connected, disconnected])
-+        #expect(levels.isEmpty)
-+    }
-+
-+    @Test func conflictingModelRefusesExactMAC() {
-+        let connected = mouse("02:00:00:00:00:01")
-+        let levels = BluetoothBatteryLevelFallback.merged(
-+            levels: [:], accessories: [reading(connected.id, product: 999)], devices: [connected])
-+        #expect(levels.isEmpty)
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `daf51598` (2026-11-14)
-**Commit Message**: fix(mirror): name the failing operation in errors
-
-**File**: `scripts/sync-gitee-release.mjs` (modified, +15/-3)
-```diff
-@@ -7,7 +7,8 @@ import { join, dirname } from 'node:path';
- import { fileURLToPath, pathToFileURL } from 'node:url';
- import { execFileSync } from 'node:child_process';
+@@ -65,7 +65,17 @@ struct QuickActionsCardView: View {
+             || (control.isPreventingLidSleep && control.lidExpiry != nil)
+     }
  
--const fail = message => { throw new Error(message); };
-+let stage = 'initializing';
-+const fail = message => { throw new Error(stage + ': ' + message); };
- const hash = bytes => createHash('sha256').update(bytes).digest('hex');
- export function validateManifest(m, tag, repo, sha) {
-   if (m?.schema_version !== 1 || m.tag !== tag || m.source_sha !== sha || !/^[a-f0-9]{40}$/.test(sha) ||
-@@ -28,9 +29,9 @@ export async function request(url, options = {}) {
-   let response;
-   try {
-     response = await fetcher(url, { method, body, headers: {...headers, ...(token ? {Authorization:'Bearer ' + token} : {})}, signal:AbortSignal.timeout(300_000), redirect: token ? 'error' : 'follow' });
--  } catch { fail('Network request failed (timeout, TLS, or redirect); retry the same tag after diagnosis'); }
-+  } catch { fail('network request failed (timeout, TLS, or redirect)'); }
-   if (missing && response.status === 404) return null;
--  if (!response.ok) fail('Remote request failed: HTTP ' + response.status);
-+  if (!response.ok) fail('HTTP ' + response.status);
-   return response;
- }
- const json = async (url, options) => (await request(url, options))?.json();
-@@ -54,8 +55,10 @@ export async function synchronize(config) {
-   const feed = feedURL || 'https://gitee.com/' + gitee + '/raw/main/appcast-gitee.xml';
-   if (new URL(feed).protocol !== 'https:' || new URL(feed).host !== 'gitee.com') fail('Feed must be a public Gitee HTTPS URL');
-   const ghOptions = {token:githubToken};
-+  stage = 'reading GitHub release';
-   const release = await json(gh + '/releases/tags/' + encodeURIComponent(tag), ghOptions);
-   if (release.draft || release.prerelease || release.tag_name !== tag || !release.published_at || release.html_url !== 'https://github.com/' + github + '/releases/tag/' + tag) fail('Not an authoritative published stable GitHub Release');
-+  stage = 'resolving GitHub commit';
-   const commit = await json(gh + '/commits/' + encodeURIComponent(tag), ghOptions);
-   const asset = name => {
-     const matches = release.assets.filter(a => a.name === name && a.state === 'uploaded');
-@@ -64,6 +67,7 @@ export async function synchronize(config) {
-     if (matches[0].browser_download_url !== url) fail('GitHub asset URL identity mismatch');
-     return matches[0];
-   };
-+  stage = 'reading release manifest';
-   const manifestAsset = asset('release-manifest.json');
-   const manifestBytes = await bytes(manifestAsset.browser_download_url);
-   const manifest = JSON.parse(manifestBytes);
-@@ -72,11 +76,13 @@ export async function synchronize(config) {
-   if (dmgAsset.size !== Number(manifest.dmg.length)) fail('GitHub asset metadata length mismatch');
-   const checksum = await bytes(asset(manifest.dmg.filename + '.sha256').browser_download_url);
-   if (checksum.toString().trim() !== manifest.dmg.sha256 + '  ' + manifest.dmg.filename) fail('Checksum sidecar identity mismatch');
-+  stage = 'downloading GitHub DMG';
-   const dmg = await bytes(dmgAsset.browser_download_url);
-   verifyBytes(dmg, manifest.dmg);
-   const sourceFile = await json(gh + '/contents/appcast.xml?ref=main', ghOptions);
-   if (sourceFile.encoding !== 'base64') fail('Unsupported authoritative feed encoding');
-   const source = Buffer.from(sourceFile.content, 'base64');
-+  stage = 'reading Gitee feed metadata';
-   const remoteFileValue = await json(gt + '/contents/appcast-gitee.xml?ref=main', {missing:true});
-   // Gitee returns 200 [] for a missing file, unlike GitHub's 404.
-   const remoteFile = Array.isArray(remoteFileValue) ? null : remoteFileValue;
-@@ -86,6 +92,7 @@ export async function synchronize(config) {
-     await request(feed);
-     if (!remoteFile?.sha) fail('Mirror appcast is missing');
-   }
-+  stage = 'listing Gitee releases';
-   let releases = [];
-   for (let page=1; ; page++) {
-     const batch = await json(gt + '/releases?per_page=100&page=' + page);
-@@ -102,6 +109,7 @@ export async function synchronize(config) {
-   if (!mirror && mode !== 'sync') fail('Mirror release is missing');
-   const mutate = async (url, data, method='POST') => json(url, {token, method, body:JSON.stringify(data), headers:{'Content-Type':'application/json'}});
-   if (!mirror) {
-+    stage = 'creating Gitee release';
-     mirror = await mutate(gt + '/releases', {tag_name:tag, name:release.name || tag, target_commitish:'main', body:marker + '\n' + sourceMarker + '\nAuthoritative release: ' + release.html_url, prerelease:false});
-   }
-   const files = [[manifest.dmg.filename,dmg],[manifest.dmg.filename + '.sha256',checksum],['release-manifest.json',manifestBytes]];
-@@ -113,6 +121,7 @@ export async function synchronize(config) {
-     let existing = matches[0];
-     if (!existing) {
-       if (mode !== 'sync') fail('Mirror attachment missing: ' + name);
-+      stage = 'uploading ' + name;
-       const form = new FormData();
+-    private func pillRow(now: Date) -> some View {
++    @ViewBuilder private func pillRow(now: Date) -> some View {
++        if #available(macOS 26.0, *) {
++            // One container for the adjacent glass capsules so they sample each
++            // other's glass consistently (skill group rule).
++            GlassEffectContainer(spacing: 8) { pillStack(now: now) }
++        } else {
++            pillStack(now: now)
++        }
++    }
++
++    private func pillStack(now: Date) -> some View {
+         VStack(alignment: .leading, spacing: 8) {
+             if showsDisplay {
+                 displayPill(now: now)
 ```
 
 #### Recent Merged Pull Requests:
@@ -1896,63 +1665,35 @@ pmset can report a Magic Mouse Accessory Identifier as a six-byte Bluetooth addr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. popover): let horizontal trackpad scrolling adjust panel sliders
+## X. sleep): re-read lid state instead of caching external ownership
 
 **RULE**:
-When implementing operations in `Sources/StatusTrioCore/UI/PopupVolumeScrollAdjustment.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingyired/status-trio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/StatusTrioCore/Monitoring/SleepControlController.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingyired/status-trio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `684de198`: popover): let horizontal trackpad scrolling adjust panel sliders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e5bd226`: sleep): re-read lid state instead of caching external ownership. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/StatusTrioCore/UI/PopupVolumeScrollAdjustment.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/StatusTrioCore/Monitoring/SleepControlController.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    private var lastAxis: ScrollAxis?
-
-    private enum ScrollAxis {
-        case vertical
-        case horizontal
-    }
-        deltaX: Double = 0,
-            deltaX: deltaX, deltaY: deltaY, isPrecise: isPrecise,
-        deltaX: Double = 0,
-        guard deltaX.isFinite,
-              let (delta, axis) = Self.dominantDelta(deltaX: deltaX, deltaY: deltaY)
-        else { return nil }
-        // Both axes share one convention: positive is "right"/"up" and raises
-        // the level, so the same natural-scrolling handling applies to each.
-            ? (isDirectionInverted ? -delta : delta)
-            : delta
-            lastAxis = axis
-        if lastContext != context || lastWheelStep != wheelStep || lastAxis != axis
-        lastAxis = axis
-
-    /// Picks the dominant axis so a diagonal trackpad gesture is applied once,
-    /// never as two separate adjustments. Ties keep the vertical axis, which is
-    /// the historical behaviour.
-    private static func dominantDelta(
-        deltaX: Double,
-        deltaY: Double
-    ) -> (delta: Double, axis: ScrollAxis)? {
-        guard deltaX.isFinite, deltaY.isFinite else { return nil }
-        if abs(deltaX) > abs(deltaY) { return (delta
+                if !canEnableLidSleep {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-            deltaY: deltaY, isPrecise: isPrecise,
-        guard deltaY.isFinite, deltaY != 0 else { return nil }
-            ? (isDirectionInverted ? -deltaY : deltaY)
-            : deltaY
-        if lastContext != context || lastWheelStep != wheelStep
+            guard !lidForeignActive else {
+                lidSleepExternalState = .managedExternally
+                return
+            }
+                if lidForeignActive || !canEnableLidSleep {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `684de198` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e5bd226` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

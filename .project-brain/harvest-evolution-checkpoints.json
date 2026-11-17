@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T18:35:41.095Z",
+  "last_updated": "2026-11-17T18:44:46.266Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -393,7 +393,7 @@
       "staged_for_review": 1
     },
     "emberstack-kubernetes-reflector-learnings.md": {
-      "processed_at": "2026-11-13T01:39:34.277Z",
+      "processed_at": "2026-11-17T18:44:45.694Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1628,7 +1628,7 @@
       "staged_for_review": 0
     },
     "hf-nanbeige-nanbeige4.3-33b-learnings.md": {
-      "processed_at": "2026-11-13T07:26:07.276Z",
+      "processed_at": "2026-11-17T18:44:44.099Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -2478,7 +2478,7 @@
       "staged_for_review": 1
     },
     "lingyired-status-trio-learnings.md": {
-      "processed_at": "2026-11-14T07:41:04.289Z",
+      "processed_at": "2026-11-17T18:44:45.061Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3353,7 +3353,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1668,
-  "total_canonical_promoted": 323,
-  "total_staged_for_review": 1308
+  "total_dossiers_evaluated": 1671,
+  "total_canonical_promoted": 324,
+  "total_staged_for_review": 1310
 }

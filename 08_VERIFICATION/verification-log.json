@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-FX04",
-    "timestamp": "2026-11-15T14:25:39.796Z",
-    "repository": "Tencent/LoopForge",
-    "learningId": "learn-github-tencent-loopforge",
-    "contentHash": "13e1d5169468e38812cdfa41d8b106e8dc7eb78b994b460c10c8ce0655923f50",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-TV94",
-    "timestamp": "2026-11-15T14:36:30.712Z",
-    "repository": "momenbasel/PureMac",
-    "learningId": "learn-github-momenbasel-puremac",
-    "contentHash": "312f9911d44c53f6f1f917af6d30af505412fb12cbf1ff0a297a2c873f4105aa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-U35P",
-    "timestamp": "2026-11-15T14:36:40.957Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "5a444e051d43c0e5d9fc1f3cb214374ca33bbf45bf56c412b99268a17b11d215",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-IYXA",
-    "timestamp": "2026-11-15T14:56:01.870Z",
-    "repository": "pimalaya/himalaya",
-    "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "d260d27e945dba5d3a1d50bb38ddcb85b86810bbe495ba08eba27f449d722231",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-J08G",
     "timestamp": "2026-11-15T14:56:03.568Z",
     "repository": "seo-skills/seo-audit-skill",
@@ -7492,6 +7432,66 @@
     "contentHash": "8acc18560681ec72135f7298af5ad10f46a0fe1800db6bb1830adf4591aeb6f2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-I62K",
+    "timestamp": "2026-11-17T18:42:41.852Z",
+    "repository": "lingyired/status-trio",
+    "learningId": "learn-github-lingyired-status-trio",
+    "contentHash": "c95d222c29e465dc07e9fe090e4e9bea8c61b186be448527deb2f07f27a576be",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-I73X",
+    "timestamp": "2026-11-17T18:42:43.197Z",
+    "repository": "emberstack/kubernetes-reflector",
+    "learningId": "learn-github-emberstack-kubernetes-reflector",
+    "contentHash": "7a86d4f2821270934d8e71bb60fc59fea6faae28dbf166409125e0132db357fe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-ICHG",
+    "timestamp": "2026-11-17T18:42:50.164Z",
+    "repository": "SeaQL/sea-orm",
+    "learningId": "learn-github-seaql-sea-orm",
+    "contentHash": "c0aeeb763fbda8af6d959333f37968aad406625467c0410dc41a6b50f0fefe9e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-K7N0",
+    "timestamp": "2026-11-17T18:44:17.196Z",
+    "repository": "Nanbeige/Nanbeige4.3-33B",
+    "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+    "contentHash": "0bca3a96d522ce417610274f279f242c895253f26c214c3e3b88b5189858d038",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

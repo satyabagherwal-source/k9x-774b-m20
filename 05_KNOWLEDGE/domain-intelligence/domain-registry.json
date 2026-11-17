@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T18:35:40.747Z",
-  "total_records": 1647,
+  "last_updated": "2026-11-17T18:44:46.014Z",
+  "total_records": 1652,
   "domains": {
     "A": {
       "total": 11,
@@ -765,7 +765,7 @@
       ]
     },
     "F": {
-      "total": 36,
+      "total": 38,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -802,11 +802,13 @@
         "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
         "DOM-F-3EF61085",
         "domain_intelligence-design-intelligence-cypress-io-cypress-core-invariants",
-        "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",
+        "domain_intelligence-design-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invariants"
       ]
     },
     "G": {
-      "total": 296,
+      "total": 298,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1103,11 +1105,13 @@
         "domain_intelligence-architecture-intelligence-stakater-reloader-core-invariants",
         "domain_intelligence-architecture-intelligence-arxanas-git-branchless-core-invariants",
         "domain_intelligence-architecture-intelligence-arxanas-git-branchless-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-core-invariants",
+        "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-learnings-core-invaria"
       ]
     },
     "H": {
-      "total": 392,
+      "total": 393,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1500,7 +1504,8 @@
         "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-core-invariants",
         "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv",
         "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva"
+        "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva",
+        "DOM-H-28B99DBA"
       ]
     },
     "I": {
@@ -13952,8 +13957,8 @@
       "title": "Technical Construction Intelligence: lingyired/status-trio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-technical-construction-intelligence-lingyired-status-trio-.md",
       "repository": "lingyired/status-trio",
-      "content_hash": "ae5860d8ca8e87b1f97de6fe9388a0f468074059d1f1d579d11ba89fdc3a2372",
-      "created_at": "2026-11-14T07:39:20.970Z"
+      "content_hash": "ca1689e8d68507a177cc2b0da0ce035ecec63efe071863ef888a949ea78ade14",
+      "created_at": "2026-11-17T18:42:42.130Z"
     },
     "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants",
@@ -13970,8 +13975,8 @@
       "title": "Technical Construction Intelligence: lingyired-status-trio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-learnings-technical-construction-intelligence-lingyired-st.md",
       "repository": "lingyired-status-trio-learnings",
-      "content_hash": "e65461ec0ea404f014455098619e0b52f30515a4b72eb3a7b718d06af19b3f8a",
-      "created_at": "2026-11-14T07:41:04.575Z"
+      "content_hash": "395a71270172caf34b080839291d92f894eb11c0ed0f5f87073d4b03bc9a56f6",
+      "created_at": "2026-11-17T18:44:45.370Z"
     },
     "DOM-H-87566B56": {
       "record_id": "DOM-H-87566B56",
@@ -23968,8 +23973,8 @@
       "title": "Architecture Intelligence: SeaQL/sea-orm Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-seaql-sea-orm-architecture-intelligence-seaql-sea-orm-core-invariants.md",
       "repository": "SeaQL/sea-orm",
-      "content_hash": "ea885a5908d5f92a90f42564d880236afdf6cad53c019d34d07669dc585897ed",
-      "created_at": "2026-11-16T18:27:17.872Z"
+      "content_hash": "dddf8d6624f4480b6909ef3cc0950ff3e7968428bd6d48261178ebde577e93f3",
+      "created_at": "2026-11-17T18:42:50.446Z"
     },
     "domain_intelligence-architecture-intelligence-seaql-sea-orm-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-seaql-sea-orm-learnings-core-invariants",
@@ -28040,6 +28045,76 @@
       "repository": "flux-iac-tofu-controller-learnings",
       "content_hash": "ffed364d75f3d0d57b99566cf54ed1d7d3289a556f8a462dcf4e49b86f368e00",
       "created_at": "2026-11-17T18:35:40.747Z"
+    },
+    "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: emberstack/kubernetes-reflector Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-architecture-intelligence-emberstack-kubernetes-.md",
+      "repository": "emberstack/kubernetes-reflector",
+      "content_hash": "b670f691bd368cc76e8ee7c99905bb69ecd4511d244b9ca7cf22422602a7e515",
+      "created_at": "2026-11-17T18:42:43.555Z"
+    },
+    "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: Nanbeige/Nanbeige4.3-33B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-nanbeige-nanbeige4-3-33b-design-intelligence-nanbeige-nanbeige4-3-33b-core-in.md",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "content_hash": "131e81cec56cb2e95fc428e0599cf7a28d6657e7871d381b65e1df73029edd88",
+      "created_at": "2026-11-17T18:44:17.641Z"
+    },
+    "DOM-H-28B99DBA": {
+      "record_id": "DOM-H-28B99DBA",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "KV Memory Exhaustion and Crash on Full 512k Sequence Invocations (BUG-NBG-01)",
+      "content": "High-horizon models ($> 128\\text{k}$) cannot use continuous static cache allocators; distributed tensor slicing matching the KV head divisor ($TP=2, 4, 8$) alongside chunked prefill is mandatory.",
+      "content_hash": "39b39c6621f374bba2e19e79bb3a26f74872f08c985d4befff9477e67b54f2c9",
+      "summary": "Linear continuous tensor allocation of KV cache fails when sequence length scales to $2^{19}$ tokens. -> High-horizon models ($> 128\\text{k}$) cannot use continuous static cache allocators; distributed tensor slicing matching the KV head divisor",
+      "provenance": {
+        "source_uri": "project://hf-nanbeige-nanbeige4.3-33b/hf-nanbeige-nanbeige4.3-33b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T18:44:20.664Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nanbeige-nanbeige4.3-33b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json` specifies:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T18:44:44.070Z"
+    },
+    "domain_intelligence-design-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-nanbeige-nanbeige4.3-33b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-nanbeige-nanbeige4-3-33b-learnings-design-intelligence-hf-nanbeige-nanbeige4-.md",
+      "repository": "hf-nanbeige-nanbeige4.3-33b-learnings",
+      "content_hash": "e2498ee7d830ee52933307b9aa2d797a30bfd3e9b2000c7ef4dca347f7b0bf6b",
+      "created_at": "2026-11-17T18:44:44.793Z"
+    },
+    "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-learnings-core-invaria": {
+      "record_id": "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-learnings-core-invaria",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: emberstack-kubernetes-reflector-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-learnings-architecture-intelligence-emberstack-k.md",
+      "repository": "emberstack-kubernetes-reflector-learnings",
+      "content_hash": "f505728a567c22c37ddcacd07e60c8fb08fd77feb78b98700c338342c9a2065c",
+      "created_at": "2026-11-17T18:44:46.014Z"
     }
   }
 }

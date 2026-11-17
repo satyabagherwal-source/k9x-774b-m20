@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T18:35:35.711Z",
-  "total_cycles_completed": 10218,
-  "total_learnings_persisted": 10218,
-  "total_rules_promoted": 9773,
+  "last_updated": "2026-11-17T18:44:17.218Z",
+  "total_cycles_completed": 10222,
+  "total_learnings_persisted": 10222,
+  "total_rules_promoted": 9779,
   "history": [
-    {
-      "timestamp": "2026-11-17T04:05:44.916Z",
-      "repository": "fabio-rovai/open-ontologies",
-      "learningId": "learn-github-fabio-rovai-open-ontologies",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T04:13:18.401Z",
-      "repository": "fujiapple852/trippy",
-      "learningId": "learn-github-fujiapple852-trippy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T04:13:24.623Z",
-      "repository": "webpack/webpack",
-      "learningId": "learn-github-webpack-webpack",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T04:13:25.531Z",
-      "repository": "electron/electron",
-      "learningId": "learn-github-electron-electron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T04:31:20.420Z",
       "repository": "rollup/rollup",
@@ -1403,6 +1375,34 @@
       "repository": "flux-iac/tofu-controller",
       "learningId": "learn-github-flux-iac-tofu-controller",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:42:41.860Z",
+      "repository": "lingyired/status-trio",
+      "learningId": "learn-github-lingyired-status-trio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:42:43.205Z",
+      "repository": "emberstack/kubernetes-reflector",
+      "learningId": "learn-github-emberstack-kubernetes-reflector",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:42:50.173Z",
+      "repository": "SeaQL/sea-orm",
+      "learningId": "learn-github-seaql-sea-orm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:44:17.218Z",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
