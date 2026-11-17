@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-6M8Y",
-    "timestamp": "2026-11-14T07:30:51.298Z",
-    "repository": "HelixDB/helix-db",
-    "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "5419b10249288346b7db86182a5d9c87e60fbeb95d32c191819927af8386fc7e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-HJBN",
-    "timestamp": "2026-11-14T07:39:20.723Z",
-    "repository": "lingyired/status-trio",
-    "learningId": "learn-github-lingyired-status-trio",
-    "contentHash": "ccd11aaf1de5d57ff4f6adbf6bdfff93545e0a036969a2e32195c1ff4a4a5254",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-JOML",
-    "timestamp": "2026-11-14T07:41:00.909Z",
-    "repository": "NaiveAI/Naive-N0.5-Flash",
-    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-    "contentHash": "c4e811c5ba05978cb2cb571fec6687e42dbc82335081e233194a89112bcf4f64",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-ZKIK",
     "timestamp": "2026-11-14T07:53:22.076Z",
     "repository": "openai/clip-vit-base-patch32",
@@ -7490,6 +7445,51 @@
     "repository": "matrixorigin/matrixone",
     "learningId": "learn-github-matrixorigin-matrixone",
     "contentHash": "399434a8eeee9ce3e7c0ecef8c41ee11daa972fb37d14760c999102085783f5e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-HSLW",
+    "timestamp": "2026-11-17T01:54:38.228Z",
+    "repository": "digitalbazaar/pyld",
+    "learningId": "learn-github-digitalbazaar-pyld",
+    "contentHash": "7528960e9a243753995d110dddd85c91e96e8dbb9dba44b0495e9d79721e3f04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-HXZJ",
+    "timestamp": "2026-11-17T01:54:45.199Z",
+    "repository": "openziti/zrok",
+    "learningId": "learn-github-openziti-zrok",
+    "contentHash": "f7fc70c2ec5b84b7dfeb180e64e6756bcf3337610bd9b70a2d6ce779fe01efb8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-I030",
+    "timestamp": "2026-11-17T01:54:47.916Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "bcbb81d4df96828d852949442ad13f8866d4920f236c6950368b6fb51c4fcf2a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -10396,3 +10396,6 @@
 | `CYCLE-20261117-R3TF` | `2026-11-17T01:33:53.043Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8829` | Yes (`169ff26f...`) |
 | `CYCLE-20261117-RA8N` | `2026-11-17T01:34:01.367Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8830` | Yes (`382e5736...`) |
 | `CYCLE-20261117-RG71` | `2026-11-17T01:34:09.085Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8831` | Yes (`399434a8...`) |
+| `CYCLE-20261117-HSLW` | `2026-11-17T01:54:38.228Z` | `digitalbazaar/pyld` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8832` | Yes (`7528960e...`) |
+| `CYCLE-20261117-HXZJ` | `2026-11-17T01:54:45.199Z` | `openziti/zrok` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/openziti-zrok-learnings.md` | Yes (`f7fc70c2...`) |
+| `CYCLE-20261117-I030` | `2026-11-17T01:54:47.916Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8833` | Yes (`bcbb81d4...`) |

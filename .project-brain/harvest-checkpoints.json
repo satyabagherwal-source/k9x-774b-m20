@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T01:34:09.096Z",
+  "last_updated": "2026-11-17T01:54:47.929Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3456,14 +3456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openziti-zrok",
-      "content_hash": "8b4818c23295eaf7be25afa05195c1170e3b73e8d1a2b930aca32ee58d93627a",
-      "verified_at": "2026-11-16T18:46:52.842Z",
+      "content_hash": "f7fc70c2ec5b84b7dfeb180e64e6756bcf3337610bd9b70a2d6ce779fe01efb8",
+      "verified_at": "2026-11-17T01:54:45.221Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:46:52.842Z"
+      "last_updated": "2026-11-17T01:54:45.221Z"
     },
     "crate/crate": {
       "repository": "crate/crate",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "12804ed099922fe56c2a104e6275af839e48755167193ae0e3013cdb761a2d1b",
-      "verified_at": "2026-11-15T17:31:55.238Z",
+      "content_hash": "bcbb81d4df96828d852949442ad13f8866d4920f236c6950368b6fb51c4fcf2a",
+      "verified_at": "2026-11-17T01:54:47.928Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T17:31:55.238Z"
+      "last_updated": "2026-11-17T01:54:47.928Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -14736,14 +14736,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-digitalbazaar-pyld",
-      "content_hash": "6810c558f2f5ef27323167fad03fa8492984fe61e578460f95e64206be87aac2",
-      "verified_at": "2026-11-12T08:27:56.963Z",
+      "content_hash": "7528960e9a243753995d110dddd85c91e96e8dbb9dba44b0495e9d79721e3f04",
+      "verified_at": "2026-11-17T01:54:38.240Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T08:27:56.963Z"
+      "last_updated": "2026-11-17T01:54:38.240Z"
     },
     "aheze/Popovers": {
       "repository": "aheze/Popovers",

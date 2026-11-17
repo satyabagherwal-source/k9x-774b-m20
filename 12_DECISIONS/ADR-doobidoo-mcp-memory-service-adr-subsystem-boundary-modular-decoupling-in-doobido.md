@@ -4,17 +4,17 @@
 {
   "source_repository": "doobidoo/mcp-memory-service",
   "source_url": "https://github.com/doobidoo/mcp-memory-service",
-  "source_version": "cac9a103",
+  "source_version": "30f9eb40",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T17:31:55.379Z",
+  "timestamp": "2026-11-17T01:54:48.108Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-doobidoo-mcp-memory-service",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `cac9a103`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T17:31:55.379Z`  
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `30f9eb40`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T01:54:48.108Z`  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`
 
 
@@ -30,7 +30,7 @@ During deep inspection of doobidoo/mcp-memory-service, modular boundaries, perfo
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T17:31:54.480Z  
+> **Harvest Timestamp**: 2026-11-17T01:54:47.002Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -40,7 +40,7 @@ During deep inspection of doobidoo/mcp-memory-service, modular boundaries, perfo
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2128 stars
+- **Stars / Engagement**: 2133 stars
 
 ---
 
@@ -2924,11 +2924,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1990** (2026-11-14): **[Bug]: test_one_result_and_one_chunk_stay_singular_after_a_language_switch fails on Windows with WinError 206**
-  *Symptoms*: ### Bug Description    Running pytest tests/web/test_i18n_manage_search.py on Windows fails with FileNotFoundError: [WinError 206] The filename or     extension is too long because the Node.js script invocation via -e exceeds the Windows CreateProcessW command-line length     limit.  ### Steps to Reproduce    1. On a Windows machine with Python and Node.js installed, clone the repository.   2. Run: pytest tests/web/test_i18n_manage_search.py -k test_one_result_and_one_chunk_stay_singular_after_a_language_switch   3. Observe process failure during subprocess execution.  ### Expected Behavior   The test should execute and pass cleanly on Windows without exceeding command-line length limits.  ### Actual Behavior   The test fails with FileNotFoundError: [WinError 206] The filename or extension is too long raised by _winapi.CreateProcess:      FAILED tests/web/test_i18n_manage_search.py::test_one_result_and_one_chunk_stay_singular_after_a_language_switch -     FileNotFoundError: [WinError 206] The filename or extension is too long  ### Storage Backend  sqlite-vec (local)  ### Operating System  Windows  ### Python Version  3.13.5  ### MCP Memory Service Version  main (v9.2.0)  ### Installation Method  Source (git clone)  ### Interface Used  Python API (direct import)  ### Configuration  ```shell N/A (running pytest test suite) ```  ### Relevant Log Output  ```shell Traceback (most recent call last):       File "subprocess.py", line 1554, in _execute_child         hp, ht, pid, tid =
+- **Issue #2030** (2026-11-16): **[Bug]: time_expr "between november and january" returns an inverted range and matches nothing**
+  *Symptoms*: ### Bug Description  A `between` range over month names that crosses New Year comes back with the start after the end, so `memory_search(time_expr=...)` returns no memories at all, with no error.  `between november and january` (run on 2026-11-15) resolves to 2026-11-01 .. 2026-01-31. Each month rolls back to its most recent occurrence on its own, and the start is never moved to the previous year. This happens for every cross-year month range whose first month is the current month or earlier (e.g. "between october and march" today), so for most of the year these searches are always empty. Yearless M/D ranges were fixed for the same problem in #1347; month names were not.  ### Steps to Reproduce  1. Clone main and install: `pip install -e .` 2. Save the script below as `repro_between_months.py` 3. Run `python repro_between_months.py`  ```python import asyncio, hashlib, logging, os, tempfile from datetime import datetime, timezone  tmp = tempfile.mkdtemp(prefix="mcp-repro-") os.environ["MCP_MEMORY_BASE_DIR"] = tmp os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1" logging.disable(logging.CRITICAL)  from mcp_memory_service.models.memory import Memory from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage from mcp_memory_service.utils.time_parser import parse_time_expression   def memory(content, when):     m = Memory(content=content, content_hash=hashlib.sha256(content.encode()).hexdigest(),                tags=["repro"], memory_type="note")     m.created_at 
 
-- **Issue #1975** (2026-11-13): **[Bug]: split_content can split in the middle of a URL, version or decimal when "." is the last character of the chunk window**
-  *Symptoms*: ### Bug Description  `_find_best_split_point()` in `src/mcp_memory_service/utils/content_splitter.py` detects sentence ends with `r'[.!?](?=\s|$)'`, applied to `text[:max_length]`. In that window `$` matches the end of the *window*, not the end of the text. So a `.` that happens to be the last character of the window is treated as a sentence end, and the split happens right after it, even when the dot is inside a token such as `example.com`, `3.14159` or `v2.10.4`.  Because only the last regex match is used, this window-end dot also wins over an earlier, genuine sentence end.  This path is used by `MemoryService.store_memory` whenever auto-split is on (the default) and content is longer than the backend limit, so the chunks that are stored and later searched contain broken URLs/versions/numbers.  ### Steps to Reproduce  Run from a source checkout (no server needed):  ```python from mcp_memory_service.utils.content_splitter import split_content  t = "Docs live at https://example.com/guide and the version is 3.14159 today" print(split_content(t, max_length=29, preserve_boundaries=True, overlap=0))  t2 = "Pi is 3.14159. The release is v2.10.4 and the host is api.example.com." print(split_content(t2, max_length=18, preserve_boundaries=True, overlap=0)) print(split_content(t2, max_length=21, preserve_boundaries=True, overlap=0)) ```  ### Expected Behavior  Splits happen at real boundaries (newline, a sentence end followed by whitespace or the end of the text, or a space). A token 
+- **Issue #2029** (2026-11-16): **[Bug]: time_expr "day before yesterday" selects yesterday**
+  *Symptoms*: ### Bug Description  `parse_time_expression("day before yesterday")` returns yesterday's window, so `memory_search(time_expr="day before yesterday")` silently returns the wrong day's memories, with no error. The parser matches the word "yesterday" inside the phrase and ignores "day before". `extract_time_expression` has the same problem and leaves "day before" in the search text.  ### Steps to Reproduce  1. Clone main and install: `pip install -e .` 2. Save the script below as `repro_day_before_yesterday.py` 3. Run `python repro_day_before_yesterday.py`  ```python import asyncio, hashlib, logging, os, tempfile from datetime import datetime, timedelta, timezone  tmp = tempfile.mkdtemp(prefix="mcp-repro-") os.environ["MCP_MEMORY_BASE_DIR"] = tmp os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1" logging.disable(logging.CRITICAL)  from mcp_memory_service.models.memory import Memory from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage from mcp_memory_service.utils.time_parser import parse_time_expression   def memory(content, when):     m = Memory(content=content, content_hash=hashlib.sha256(content.encode()).hexdigest(),                tags=["repro"], memory_type="note")     m.created_at = when.timestamp()     m.created_at_iso = datetime.fromtimestamp(m.created_at, tz=timezone.utc).isoformat()     return m   async def main():     noon = datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)     storage = SqliteVecMemoryStorage(os.path.join(tmp, 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2945,843 +2945,570 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b580e597` (2026-11-15)
-**Commit Message**: fix(security): drop hardcoded Cloudflare credentials from sync_status.py (#2023)
+### Incident Patch 1: `15a9e9a9` (2026-11-16)
+**Commit Message**: fix(security): keep memory_store side effects inside the granted store (GHSA-989p-hfjf-q97q) (#2036)
 
-* fix(security): drop hardcoded Cloudflare credentials from sync_status.py
+* fix(security): keep auto-capture and the NLI check inside the granted store (GHSA-989p-hfjf-q97q)
 
-scripts/maintenance/sync_status.py fell back to a real Cloudflare API
-token, account ID and D1 database ID when the environment did not set
-them. The token has been public since b60bc6f6 (2026-01-07) and earlier
-in start_http_server.sh, so it counts as compromised and gets rotated;
-this removes the fallbacks so the
-script exits naming the missing variables instead.
+A client holding only write:<store> could overwrite the default store
+through memory_store. handle_store_memory wrote the memory to the granted
+store but ran auto-capture without it: capture(), _try_evolve() and
+evolve_memory() took no store, so extracted candidates were compared with
+"default", replaced a similar memory there or were inserted there.
 
-Adds a gitleaks scan of each PR's own commits to CI (binary fetched and
-checksum-verified, since third-party actions are not allowed) and an
-optional staged-changes scan to the pre-commit hook.
+The NLI contradiction check on store had the same gap, inline and in the
+background task: it searched "default" whatever store the memory went to,
+linked the two with a contradicts edge and reported the hit count. For the
+same reason it missed contradictions inside a named store.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+store is now passed down all of these paths, and evolve_memory() refuses a
+hash from another store on its own. The handler forwards the store the
+caller named rather than its "default" fallback: forwarding the fallback
+would have switched evolution off for every caller on a backend whose
+get_by_hash ignores store (Cloudflare, Milvus).
 
-* changelog: name fragment after PR #2023
+The auto-capture and NL
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +27/-0)
+**File**: `changelog.d/ghsa-989p.fixed.md` (added, +2/-0)
 ```diff
-@@ -145,6 +145,33 @@ jobs:
-     - name: Check bundled hooks config matches template structure
-       run: bash scripts/ci/check_hooks_config_drift.sh
- 
-+  secret-scan:
-+    if: github.event_name == 'pull_request'
-+    runs-on: ubuntu-latest
-+    name: Secret Scan (gitleaks, PR commits)
-+    timeout-minutes: 5
-+    steps:
-+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+      with:
-+        fetch-depth: 0
-+    # Third-party actions are not allowed here, so the binary is fetched directly
-+    # and checked against its published checksum. Only the PR's own commits are
-+    # scanned: older history holds known, already-rotated findings.
-+    - name: Install gitleaks
-+      env:
-+        GITLEAKS_VERSION: 8.30.1
-+      run: |
-+        base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
-+        tarball="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
-+        curl -fsSLO "$base/$tarball"
-+        curl -fsSL "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt" | grep " ${tarball}\$" | sha256sum -c -
-+        tar -xzf "$tarball" gitleaks
-+    - name: Scan PR commits
-+      env:
-+        BASE_SHA: ${{ github.event.pull_request.base.sha }}
-+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-+      run: ./gitleaks git --redact --no-banner --log-opts="${BASE_SHA}..${HEAD_SHA}" .
-+
-   hooks-tests:
-     runs-on: ubuntu-latest
-     name: JS Tests (claude-hooks/, opencode/, codex/)
+@@ -0,0 +1,2 @@
++- **A per-store write grant could write to and supersede memories in another store through `memory_store` (GHSA-989p-hfjf-q97q, reported by [RISCON Labs](https://www.risconlabs.com), @RISCON-Labs).**
++  With `auto_extract=true`, `handle_store_memory` stored the memory in the granted store but ran auto-capture without it. `AutoCaptureService.capture()`, `SessionHarvester._try_evolve()` and `MemoryService.evolve_memory()` took no `store`, so the extracted candidates were compared with the `default` store, replaced a similar memory there, or were inserted there. A client holding only `write:projectA` could overwrite `default`. The NLI contradiction check on store (`MCP_NLI_ON_STORE`, inline and background) had the same gap: it compared a memory with the `default` store whatever store it was written to, linked the two with a `contradicts` edge and reported the hit count to the caller. It also missed contradictions inside a named store for the same reason. Conflict detection on store, which runs on every write without any flag, compared the new memory with every store as well and tagged a near-identical memory in another store `conflict:unresolved`, with `contradicts` edges between the two; it is confined to the store of the write now. `store` is now passed down all of these paths, and `evolve_memory()` refuses a hash from another store by itself. Setting `MCP_AUTO_EXTRACT_DEFAULT=false` was never a mitigation: an explicit `auto_extract` argument wins. Affected: 12.4.0 to 12.10.0, on backends that confine by store (sqlite-vec, hybrid). On Cloudflare and Milvus a per-store grant never authorized these calls; there, auto-capture for a named store now stores candidates in that store without evolving existing ones.
 ```
 
-**File**: `changelog.d/2023.fixed.md` (added, +1/-0)
+**File**: `src/mcp_memory_service/consolidation/quarantine.py` (modified, +2/-1)
+```diff
+@@ -357,8 +357,9 @@ async def _run_on_store_checks(
+         try:
+             from ..reasoning.nli import detect_contradictions_nli
+ 
++            nli_store_kw = {"store": store} if store is not None else {}
+             result = await detect_contradictions_nli(
+-                storage, memory_hash=content_hash, dry_run=False
++                storage, memory_hash=content_hash, dry_run=False, **nli_store_kw
+             )
+             pairs_detected = result.get("pairs_detected", 0)
+             logger.info(
+```
+
+**File**: `src/mcp_memory_service/harvest/auto_capture.py` (modified, +31/-16)
+```diff
+@@ -76,6 +76,32 @@ def extract_from_text(self, text: str, role: str = "assistant") -> List[HarvestC
+             if c.confidence >= self.min_confidence and c.memory_type in self.types
+         ]
+ 
++    async def _store_candidate(
++        self,
++        candidate,
++        parent_hash: Optional[str],
++        conversation_id: Optional[str],
++        store: Optional[str],
++    ) -> Dict[str, Any]:
++        """Store one candidate as its own memory, in ``store`` when one is named."""
++        tags = ["auto-capture"] + candidate.tags
++        if parent_hash:
++            tags.append(f"source:{parent_hash[:12]}")
++        # An unnamed store is left to store_memory()'s default.
++        store_kw: Dict[str, Any] = {"store": store} if store is not None else {}
++        return await self.memory_service.store_memory(
++            content=candidate.content,
++            tags=tags,
++            memory_type=candidate.memory_type,
++            metadata={
++                "confidence": candidate.confidence,
++                "source": "auto_capture",
++                "extracted_from": parent_hash,
++            },
++            conversation_id=conversation_id,
++            **store_kw,
++        )
++
+     async def capture(
+         self,
+         text: str,
+@@ -86,6 +112,7 @@ async def capture(
+         dry_run: bool = True,
+         link_parent: bool = True,
+         harvest_config: Optional[HarvestConfig] = None,
++        store: Optional[str] = None,
+     ) -> AutoCaptureResult:
+         """Extract candidates and optionally store them with graph links."""
+         candidates = self.extract_from_text(text, role=role)
+@@ -106,7 +133,9 @@ async def capture(
+ 
+         for candidate in candidates:
+             try:
+-                evolved, child_hash = await self._harvester._try_evolve(candidate, config)
++                evolved, child_hash = await self._harvester._try_evolve(
++                    candidate, config, store=store
++                )
+                 if evolved:
+                     result.evolved += 1
+                     result.stored += 1
+@@ -119,21 +148,7 @@ async def capture(
+                         )
+                     continue
+ 
+-                tags = ["auto-capture"] + candidate.tags
+-                if parent_hash:
+-                    tags.append(f"source:{parent_hash[:12]}")
+-
+-                resp = await self.memory_service.store_memory(
+-                    content=candidate.content,
+-                    tags=tags,
+-                    memory_type=candidate.memory_type,
+-                    metadata={
+-                        "confidence": candidate.confidence,
+-                        "source": "auto_capture",
+-                        "extracted_from": parent_hash,
+-                    },
+-                    conversation_id=conversation_id,
+-                )
++                resp = await self._store_candidate(candidate, parent_hash, conversation_id, store)
+ 
+                 if not (isinstance(resp, dict) and resp.get("success")):
+                     if isinstance(resp, dict) and resp.get("refused_recreate"):
+```
+
+**File**: `src/mcp_memory_service/harvest/harvester.py` (modified, +14/-1)
+```diff
+@@ -342,7 +342,9 @@ def _is_older_statement(candidate, existing) -> bool:
+         existing_time = memory_statement_time(existing)
+         return existing_time is not None and candidate_time < existing_time
+ 
+-    async def _try_evolve(self, candidate, config: "HarvestConfig", metadata=None):
++    async def _try_evolve(
++        self, candidate, config: "HarvestConfig", metadata=None, store: Optional[str] = None
++    ):
+         """Check for similar active memory; if found, evolve it.
+ 
+         Returns ``(evolved, new_hash)``. ``evolved`` is True when an existing
+@@ -357,11 +359,21 @@ async def _try_evolve(self, candidate, config: "HarvestConfig", metadata=None):
+         if not hasattr(self.memory_service, "storage") or not self.memory_service.storage:
+             return False, None
+ 
++        # A caller confined to one store may only evolve a memory of that store.
++        # Where get_by_hash ignores ``store`` that cannot be guaranteed, so the
++        # candidate is stored as its own memory instead (as memory_update refuses).
++        store_kw = {}
++        if store not in (None, "all"):
++            if not getattr(self.memory_service.storage, "get_by_hash_is_store_scoped", False):
++                return False, None
++            store_kw = {"store": store}
++
+         try:
+             similar = await self.memory_service.storage.retrieve(
+                 candidate.content,
+                 n_results=1,
+                 min_confidence=config.min_confidence_to_evolve,
++                **store_kw,
+             )
+         except Exception as e:
+             logger.debug("Similarity check failed, falling back to store: %s", _sanitize_log_value(str(e)))
+@@ -390,6 +402,7 @@ async def _try_evolve(self, candidate, config: "HarvestConfig", metadata=None):
+                 memory_type=candidate.memory_type,
+                 metadata=metadata if metadata is not None else default_metadata,
+                 reason=f"Session harvest: {datetime.now(timezone.utc).isoformat()}",
++                **store_kw,
+             )
+             if ok:
+                 logger.info("Evolved memory %s→%s", existing_hash[:8], new_hash[:8] if new_hash else "?")
+```
+
+**File**: `src/mcp_memory_service/reasoning/nli.py` (modified, +24/-14)
+```diff
+@@ -21,7 +21,7 @@
+ import os
+ import re
+ from dataclasses import dataclass
+-from typing import List, Tuple
++from typing import Any, Dict, List, Optional, Tuple
+ 
+ from .nli_patterns import load_nli_patterns
+ from ..config.locale import get_active_locales
+@@ -439,8 +439,22 @@ async def _classify_band(
+     return contradictions
+ 
+ 
++async def _entity_candidates(graph, entities, memory_hash: str) -> set:
++    """Hashes of the other memories that share an entity with ``memory_hash``."""
++    candidate_hashes = set()
++    for entity in entities:
++        try:
++            hashes = await graph.find_memories_by_entity(entity)
++            if hashes:
++                candidate_hashes.update(hashes)
++        except Exception:
++            continue
++    candidate_hashes.discard(memory_hash)
++    return candidate_hashes
++
++
+ async def detect_contradictions_nli(
+-    storage, memory_hash: str = None, dry_run: bool = True
++    storage, memory_hash: str = None, dry_run: bool = True, store: Optional[str] = None
+ ) -> dict:
+     """
+     NLI-enhanced contradiction detection — 4-stage pipeline.
+@@ -466,8 +480,13 @@ async def detect_contradictions_nli(
+     if memory_hash is None:
+         return result
+ 
++    # Compare only inside the store the memory was written to. Omitted, the
++    # search below falls back to "default" and a memory in another store gets
++    # compared with, and linked to, the default store's memories.
++    store_kw: Dict[str, Any] = {} if store in (None, "all") else {"store": store}
++
+     # Get the source memory
+-    mem_a = await storage.get_by_hash(memory_hash)
++    mem_a = await storage.get_by_hash(memory_hash, **store_kw)
+     if mem_a is None:
+         return result
+ 
+@@ -486,22 +505,13 @@ async def detect_contradictions_nli(
+         return result
+ 
+     # Stage 1: Entity overlap gate
+-    candidate_hashes = set()
+-    for entity in entities_a:
+-        try:
+-            hashes = await graph.find_memories_by_entity(entity)
+-            if hashes:
+-                candidate_hashes.update(hashes)
+-        except Exception:
+-            continue
+-    candidate_hashes.discard(memory_hash)
+-
++    candidate_hashes = await _entity_candidates(graph, entities_a, memory_hash)
+     if not candidate_hashes:
+         return result
+ 
+     # Stage 2: Embedding pre-filter — get candidates in similarity band
+     try:
+-        search_result = await storage.search_memories(query=mem_a.content, limit=20)
++        search_result = await storage.search_memories(query=mem_a.content, limit=20, **store_kw)
+     except Exception:
+         search_result = {}
+ 
+```
+
+**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +74/-51)
+```diff
+@@ -222,6 +222,78 @@ def _dedup_outcome_note(result: dict) -> str:
+     return _one_dedup_note(result)
+ 
+ 
++async def _nli_note_after_store(server, result: dict, store: str) -> str:
++    """Run the inline NLI contradiction check for the memory just stored.
++
++    The check compares within ``store``, the partition the memory was written
++    to (GHSA-989p-hfjf-q97q). Returns the line to append to the response.
++    """
++    try:
++        from ...reasoning.nli import detect_contradictions_nli
++        mem_hash = result["memory"].get("content_hash")
++        if mem_hash:
++            nli_result = await detect_contradictions_nli(
++                server.storage, memory_hash=mem_hash, dry_run=False, store=store
++            )
++            if nli_result.get("pairs_detected", 0) > 0:
++                return f"\n⚠️ Contradiction detected: {nli_result['pairs_detected']} conflict(s) registered."
++    except Exception as e:
++        logger.debug("NLI on-store check failed: %s", _sanitize_log_value(e))
++    return ""
++
++
++async def _auto_capture_note(server, arguments: dict, content, result: dict, conversation_id) -> str:
++    """RFC #1008 §3: optional inline auto-capture from the stored content.
++
++    Returns the line to append to the response, empty when nothing ran.
++    """
++    from ...config import MCP_AUTO_EXTRACT_DEFAULT, MCP_AUTO_EXTRACT_MIN_CONFIDENCE
++    from ...harvest.auto_capture import (
++        AutoCaptureService,
++        parent_hash_from_store_result,
++    )
++
++    auto_extract = arguments.get("auto_extract")
++    if auto_extract is None:
++        auto_extract = MCP_AUTO_EXTRACT_DEFAULT
++
++    # Recursion guard: skip auto-extract for memories produced by auto-capture itself
++    metadata_arg = arguments.get("metadata") or {}
++    if isinstance(metadata_arg, dict) and metadata_arg.get("source") == "auto_capture":
++        auto_extract = False
++
++    if not (auto_extract and content):
++        return ""
++    try:
++        min_conf = arguments.get("min_extract_confidence")
++        if min_conf is None:
++            min_conf = MCP_AUTO_EXTRACT_MIN_CONFIDENCE
++        capture_service = AutoCaptureService(
++            memory_service=server.memory_service,
++            min_confidence=min_conf,
++            types=arguments.get("extract_types"),
++        )
++        capture = await capture_service.capture(
++            content,
++            role=arguments.get("role") or "assistant",
++            parent_hash=parent_hash_from_store_result(result),
++            conversation_id=conversation_id,
++            dry_run=False,
++            # The store the caller named, not the handler's "default" fallback:
++            # capture() leaves an unnamed store to the storage defaults, and a
++            # named one is enforced (GHSA-989p-hfjf-q97q).
++            store=arguments.get("store"),
++        )
++        if capture.candidates:
++            return (
++                f"\nAuto-capture: {capture.stored} stored, {capture.evolved} evolved "
++                f"from {len(capture.candidates)} candidate(s)."
++            )
++    except Exception as cap_err:
++        logger.warning("auto-capture failed: %s", _sanitize_log_value(cap_err))
++    return ""
++
++
+ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent]:
+     content = arguments.get("content")
+     metadata = arguments.get("metadata", {})
+@@ -378,15 +450,7 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
+                 logger.debug("Could not schedule background NLI checks: %s", _sanitize_log_value(e))
+ 
+         if nli_on_store and result.get("success") and "memory" in result:
+-            try:
+-                from ...reasoning.nli import detect_contradictions_nli
+-                mem_hash = result["memory"].get("content_hash")
+-                if mem_hash:
+-                    nli_result = await detect_contradictions_nli(server.storage, memory_hash=mem_hash, dry_run=False)
+-                    if nli_result.get("pairs_detected", 0) > 0:
+-                        message += f"\n⚠️ Contradiction detected: {nli_result['pairs_detected']} conflict(s) registered."
+-            except Exception as e:
+-                logger.debug("NLI on-store check failed: %s", _sanitize_log_value(e))
++            message += await _nli_note_after_store(server, result, store)
+ 
+         # §6: Check against active beliefs (if belief service available)
+         if nli_on_store and result.get("success") and "memory" in result:
+@@ -405,48 +469,7 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
+             except Exception as e:
+                 logger.debug("Belief quarantine check failed: %s", _sanitize_log_value(e))
+ 
+-        # RFC #1008 §3: optional inline auto-capture from stored content
+-        from ...config import MCP_AUTO_EXTRACT_DEFAULT, MCP_AUTO_EXTRACT_MIN_CONFIDENCE
+-        from ...harvest.auto_capture import (
+-            AutoCaptureService,
+-            parent_hash_from_store_re
+```
+
+**File**: `src/mcp_memory_service/services/memory_service.py` (modified, +16/-3)
+```diff
+@@ -717,6 +717,7 @@ async def evolve_memory(
+         memory_type: Optional[str] = None,
+         metadata: Optional[Dict[str, Any]] = None,
+         reason: Optional[str] = None,
++        store: Optional[str] = None,
+     ) -> Tuple[bool, str, Optional[str]]:
+         """Versioned update that gets the same post-store steps as store_memory().
+ 
+@@ -731,17 +732,29 @@ async def evolve_memory(
+         """
+         if not hasattr(self.storage, "update_memory_versioned"):
+             return False, "Storage backend does not support versioned updates", None
++
++        store_kw: Dict[str, Any] = {}
++        if store not in (None, "all"):
++            if not getattr(self.storage, "get_by_hash_is_store_scoped", False):
++                return (
++                    False,
++                    "Store-scoped memory evolution is not supported by the active storage backend",
++                    None,
++                )
++            store_kw = {"store": store}
++
+         # Storage inherits omitted tags/type from the old version; keep that
+         # version around so the re-read fallback below can do the same.
+         previous = None
+         if tags is None or memory_type is None:
+-            previous = await self.storage.get_by_hash(existing_hash)
++            previous = await self.storage.get_by_hash(existing_hash, **store_kw)
+         ok, msg, new_hash = await self.storage.update_memory_versioned(
+             existing_hash,
+             content,
+             new_tags=tags,
+             new_memory_type=memory_type,
+             reason=reason,
++            **store_kw,
+         )
+         if not ok or not new_hash:
+             return ok, msg, new_hash
+@@ -761,7 +774,7 @@ async def evolve_memory(
+         # is reported and worked around rather than turned into a failed evolve.
+         if final_metadata:
+             meta_ok, meta_msg = await self.storage.update_memory_metadata(
+-                new_hash, {"metadata": final_metadata}, preserve_timestamps=True
++                new_hash, {"metadata": final_metadata}, preserve_timestamps=True, **store_kw
+             )
+             if not meta_ok:
+                 logger.warning(
+@@ -770,7 +783,7 @@ async def evolve_memory(
+                 )
+                 msg = f"{msg} (metadata update failed: {meta_msg})"
+ 
+-        memory = await self.storage.get_by_hash(new_hash)
++        memory = await self.storage.get_by_hash(new_hash, **store_kw)
+         if memory is None:
+             # Re-read failed; score the version as written instead of skipping it.
+             memory = self._as_written(new_hash, content, tags, memory_type, final_metadata, previous)
+```
+
+**File**: `src/mcp_memory_service/storage/mixins/metadata.py` (modified, +17/-5)
+```diff
+@@ -642,9 +642,16 @@ def _effective_confidence(
+         return round((confidence if confidence is not None else 1.0) * decay, 4)
+ 
+     def _detect_conflicts(
+-        self, new_hash: str, new_content: str, embedding, exclude_hash: Optional[str] = None
++        self, new_hash: str, new_content: str, embedding, exclude_hash: Optional[str] = None,
++        store: Optional[str] = None,
+     ) -> list:
+-        """Detect conflicting active memories for a newly stored memory."""
++        """Detect conflicting active memories for a newly stored memory.
++
++        With ``store`` set (other than ``"all"``) only memories of that store are
++        compared: _record_conflicts() tags the other memory and links the pair,
++        which a caller confined to one store must not do to another
++        (GHSA-989p-hfjf-q97q).
++        """
+         from difflib import SequenceMatcher
+ 
+         SIMILARITY_THRESHOLD = 0.95
+@@ -653,21 +660,26 @@ def _detect_conflicts(
+         if not self.conn or embedding is None:
+             return []
+ 
++        # Qualified: memory_embeddings has a store column as well.
++        confined = store not in (None, "all")
++        store_sql = " AND m.store = ?" if confined else ""
++        store_params = (store,) if confined else ()
+         try:
+             cursor = self.conn.execute(
+-                """SELECT m.content_hash, m.content,
++                f"""SELECT m.content_hash, m.content,
+                           vec_distance_cosine(me.content_embedding, ?) as distance
+                    FROM memories m
+                    JOIN memory_embeddings me ON m.rowid = me.rowid
+                    WHERE m.deleted_at IS NULL
+                      AND (m.superseded_by IS NULL OR m.superseded_by = '')
+-                     AND m.content_hash NOT IN (?, ?)
++                     AND m.content_hash NOT IN (?, ?){store_sql}
+                    ORDER BY distance ASC
+                    LIMIT 5""",
+                 (
+                     serialize_float32(embedding),
+                     new_hash,
+                     exclude_hash if exclude_hash is not None else new_hash,
++                    *store_params,
+                 ),
+             )
+             candidates = cursor.fetchall()
+@@ -697,7 +709,7 @@ def _detect_conflicts(
+ 
+     async def _record_conflicts(self, new_hash: str, conflicts: list) -> None:
+         """Tag conflicting memories and create graph edges."""
+-        import json as _json
++        import json as _json  # inline import
+ 
+         def _record_all_conflicts():
+             for c in conflicts:
+```
+
+---
+
+### Incident Patch 2: `6a321767` (2026-11-16)
+**Commit Message**: fix: prevent dashboard overflow at tablet widths (#2047)
+
+**File**: `changelog.d/2012.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+- **`scripts/maintenance/sync_status.py` no longer carries Cloudflare credentials.** It fell back to a hardcoded API token, account ID and D1 database ID when the environment did not set them, so the token sat in the public repository since January. The fallbacks are gone and the script exits with a clear message naming the missing variables. CI now runs gitleaks over each pull request's own commits, and the pre-commit hook scans staged changes when gitleaks is installed.
++- **The dashboard stays within the viewport on tablet widths (#2012).** The localized navigation could exceed the available row width between the mobile and desktop breakpoints; it now wraps at tablet widths, while the header keeps its compact icon controls so long translations do not force horizontal scrolling.
 ```
 
-**File**: `scripts/hooks/pre-commit` (modified, +13/-0)
+**File**: `src/mcp_memory_service/web/static/style.css` (modified, +8/-0)
 ```diff
-@@ -38,6 +38,19 @@ else
-     PYTHON_BIN="$(command -v python3 || command -v python)"
- fi
+@@ -1912,6 +1912,14 @@ body.dark-mode .form-group label {
+ }
  
-+# === Secret scan (optional, runs before the LLM checks can exit early) ===
-+if command -v gitleaks &> /dev/null; then
-+    if gitleaks git --staged --redact --no-banner --log-level warn "$SCRIPT_DIR"; then
-+        echo -e "${GREEN}✓${NC} gitleaks: no secrets in staged changes"
-+    else
-+        echo -e "${RED}✗ gitleaks found a possible secret in staged changes${NC}"
-+        echo "  Remove it, or mark a false positive with a trailing 'gitleaks:allow' comment."
-+        exit 1
-+    fi
-+else
-+    echo -e "${YELLOW}⚠️${NC} gitleaks not installed, skipping secret scan"
-+fi
-+
- # Determine which LLM to use (Groq preferred, Gemini fallback)
- LLM_CMD=""
- LLM_NAME=""
-```
-
-**File**: `scripts/maintenance/sync_status.py` (modified, +9/-3)
-```diff
-@@ -12,9 +12,11 @@
- from typing import Set, Dict, Tuple
- 
- # Configuration
--CLOUDFLARE_ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "be0e35a26715043ef8df90253268c33f")
--CLOUDFLARE_D1_DATABASE_ID = os.environ.get("CLOUDFLARE_D1_DATABASE_ID", "f745e9b4-ba8e-4d47-b38f-12af91060d5a")
--CLOUDFLARE_API_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN", "Y9qwW1rYkwiE63iWYASxnzfTQlIn-mtwCihRTwZa")
-+# No defaults: credentials come from the environment only, never from source.
-+REQUIRED_ENV = ("CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_D1_DATABASE_ID", "CLOUDFLARE_API_TOKEN")
-+CLOUDFLARE_ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "")
-+CLOUDFLARE_D1_DATABASE_ID = os.environ.get("CLOUDFLARE_D1_DATABASE_ID", "")
-+CLOUDFLARE_API_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN", "")
- 
- # Default local DB path
- if sys.platform == "win32":
-@@ -98,6 +100,10 @@ def get_d1_hashes(has_deleted_at: bool = False) -> Tuple[Set[str], Set[str]]:
- 
- 
- def main():
-+    missing = [name for name in REQUIRED_ENV if not os.environ.get(name)]
-+    if missing:
-+        sys.exit(f"Missing environment variable(s): {', '.join(missing)}")
-+
-     print("=" * 70)
-     print("MCP Memory Service - Sync Status Report")
-     print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-```
-
----
-
-### Incident Patch 2: `19940279` (2026-11-14)
-**Commit Message**: fix(oauth): name the client on the authorize page, keep admin behind gated registration (#2017)
-
-* fix(oauth): name the client on the authorize page, keep admin behind gated registration
-
-GHSA-w8p9-5v6q-h9ch, reported by hgrgr.
-
-With MCP_DCR_REGISTRATION_KEY unset anyone can register a client with their
-own redirect URI and send the owner a link to the owner's own authorize page.
-That page asked for the API key and showed nothing about the request, and the
-code it issued could carry `read write admin`.
-
-- The page shows the redirect host, the self-reported client name and the
-  scope that will be granted. GET and POST resolve the request through the
-  same function, and the form carries the granted scope, not the requested
-  one.
-- `admin` is granted only to a client that declared it in a registration
-  gated by MCP_DCR_REGISTRATION_KEY. Otherwise it is dropped: at
-  registration, at authorize, and on refresh, so tokens issued before this
-  change stop minting it. It is narrowed, not refused, because clients tend
-  to request every advertised scope.
-- Discovery advertises `admin` only while registration is gated.
-- The page is sent with X-Frame-Options: DENY and frame-ancestors 'no
-
-**File**: `changelog.d/ghsa-w8p9-5v6q-h9ch.fixed.md` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+- **The OAuth authorize page did not say who was asking, and could hand out `admin` (GHSA-w8p9-5v6q-h9ch, reported by hgrgr).**
-+  With `MCP_DCR_REGISTRATION_KEY` unset, anyone could register a client with their own
-+  redirect URI and send the owner a link to the owner's own authorize page. The page asked
-+  for the API key and showed nothing else, so a third party's request looked exactly like a
-+  Claude.ai reconnect, and the resulting token could carry `read write admin`. The page now
-+  shows the redirect host, the self-reported client name and the scope that will be
-+  granted, and it refuses to be framed. `admin` is granted only to a client that declared
-+  it in a registration gated by `MCP_DCR_REGISTRATION_KEY`; everywhere else it is dropped
-+  from the grant, from refreshed tokens and from the advertised scopes. **Behaviour
-+  change:** a client that obtained `admin` through open registration, or through a gated
-+  registration that named no scope, now gets `read write`; register it again with
-+  `MCP_DCR_REGISTRATION_KEY` set and `admin` in its `scope` to keep it. If the server was
-+  reachable from outside with registration open, run `memory oauth list-clients` and
-+  remove what you do not recognise with `memory oauth delete-client`.
-```
-
-**File**: `docs/oauth-quickstart.md` (modified, +14/-0)
-```diff
-@@ -56,6 +56,20 @@ export MCP_OAUTH_ISSUER=https://your-public-url.com
- # No DCR_REGISTRATION_KEY — claude.ai needs open registration
- ```
- 
-+With registration open, anyone who can reach `/oauth/register` can register a
-+client. The page where you enter your API key therefore shows where the access
-+will be sent, the name the application gave itself, and the scope it gets.
-+Check the destination (`claude.ai` or `claude.com` for the Claude.ai connector)
-+before you enter the key, and do not authorize from a link someone sent you.
-+
-+Openly registered clients receive `read` and `write` at most. The `admin` scope
-+is granted only when `MCP_DCR_REGISTRATION_KEY` is set and the client declared
-+`admin` in its registration (`"scope": "read write admin"`). A client registered
-+without a scope has to register again to get it.
-+
-+`memory oauth list-clients` shows every registered client and
-+`memory oauth delete-client <client_id>` removes one.
-+
- ### Docker
- Add to your docker-compose environment:
- ```yaml
-```
-
-**File**: `src/mcp_memory_service/web/oauth/authorization.py` (modified, +330/-153)
-```diff
-@@ -26,7 +26,7 @@
- import base64
- import secrets
- from typing import Optional, Tuple
--from urllib.parse import urlencode
-+from urllib.parse import urlencode, urlsplit
- from fastapi import APIRouter, Depends, HTTPException, status, Form, Query, Request
- from fastapi.responses import HTMLResponse, RedirectResponse
- import jwt
-@@ -37,15 +37,17 @@
-     OAUTH_AUTHORIZATION_CODE_EXPIRE_MINUTES,
-     OAUTH_REFRESH_TOKEN_EXPIRE_DAYS,
-     API_KEY,
-+    DCR_REGISTRATION_KEY,
-     get_jwt_algorithm,
-     get_jwt_signing_key,
- )
--from .models import TokenResponse
-+from .models import RegisteredClient, TokenResponse
- from .middleware import scope_within_ceiling
- from .storage import get_oauth_storage
- from .rate_limit import auth_rate_limit
- from .redirect import (
-     build_redirect_url as _build_redirect_url,
-+    reject_ambiguous_redirect_uri,
-     resolve_registered_redirect_uri,
- )
- from .limits import (
-@@ -192,6 +194,94 @@ async def create_refresh_token(
-     return token, expires_in
- 
- 
-+def _without(scope: Optional[str], token: str) -> Optional[str]:
-+    """``scope`` with ``token`` removed, or None when nothing is left."""
-+    return " ".join(t for t in (scope or "").split() if t != token) or None
-+
-+
-+def _may_hold_admin(client: Optional[RegisteredClient]) -> bool:
-+    """Whether ``admin`` may be granted to this client.
-+
-+    Only to a client whose registered ceiling names it, and only while
-+    registration is gated by MCP_DCR_REGISTRATION_KEY. With registration open
-+    anyone can register a client and pick its ceiling, so the ceiling says
-+    nothing about who is asking (GHSA-w8p9-5v6q-h9ch).
-+    """
-+    if not DCR_REGISTRATION_KEY or client is None:
-+        return False
-+    return "admin" in (client.allowed_scope or "").split()
-+
-+
-+def _grantable_scope(scope: Optional[str], client: Optional[RegisteredClient]) -> Optional[str]:
-+    """Drop ``admin`` from ``scope`` unless this client may hold it.
-+
-+    The scope is narrowed rather than refused because clients commonly request
-+    every scope the server advertises.
-+    """
-+    if _may_hold_admin(client):
-+        return scope
-+    return _without(scope, "admin")
-+
-+
-+def _bind_scope_to_ceiling(
-+    scope: Optional[str], ceiling: Optional[str]
-+) -> Tuple[Optional[str], bool]:
-+    """Apply a client's registered scope ceiling. Returns ``(scope, denied)``.
-+
-+    offline_access is a protocol scope (refresh-token request), not a
-+    data-access grant, so it is exempt from the data-scope ceiling. A client
-+    with no ceiling (``None``) is unaffected.
-+    """
-+    if ceiling is None:
-+        return scope, False
-+    data_scope = _without(scope, OFFLINE_ACCESS_SCOPE)
-+    if data_scope:
-+        return scope, not scope_within_ceiling(data_scope, ceiling)
-+    # No data scope requested. create_access_token() defaults an empty scope to
-+    # the global "read write", which would ESCAPE a store-scoped ceiling. Bind
-+    # the grant to the ceiling instead (never conferring admin), preserving an
-+    # explicit offline_access.
-+    ceil = _without(ceiling, "admin")
-+    offline = OFFLINE_ACCESS_SCOPE if _scope_has_offline_access(scope) else None
-+    bound = " ".join(t for t in (ceil, offline) if t) or None
-+    return bound, not ceil  # an admin-only ceiling has nothing to grant here
-+
-+
-+async def _resolve_authorize_request(
-+    client_id: str, redirect_uri: Optional[str], scope: Optional[str]
-+) -> Tuple[RegisteredClient, str, Optional[str], bool]:
-+    """Resolve what an authorize request would grant, and to whom.
-+
-+    Returns ``(client, validated_redirect_uri, scope, denied)``. GET and POST
-+    both go through here, so the page shows exactly what the POST will issue.
-+    """
-+    validated_redirect_uri = await validate_redirect_uri(client_id, redirect_uri)
-+    # Also here, not only at registration: a client registered before the
-+    # check existed still has its URI in the store.
-+    reject_ambiguous_redirect_uri(validated_redirect_uri)
-+    client = await get_oauth_storage().get_client(client_id)
-+    scope, denied = _bind_scope_to_ceiling(
-+        _grantable_scope(scope, client), client.allowed_scope
-+    )
-+    return client, validated_redirect_uri, scope, denied
-+
-+
-+def _callback_url(redirect_uri: str, params: dict[str, str], state: Optional[str]) -> str:
-+    """The client's callback URL with ``params``, echoing ``state`` when one was sent."""
-+    if state:
-+        params = {**params, "state": state}
-+    return _build_redirect_url(redirect_uri, params)
-+
-+
-+def _scope_denied_redirect(redirect_uri: str, state: Optional[str]) -> RedirectResponse:
-+    logger.warning("Authorization denied: requested scope exceeds client ceiling")
-+    error_params = {
-+        "error": "invalid_scope",
-+        "error_description": "Requested scope exceeds the scope this client is registered for",
-+    }
-+    return RedirectResponse(url=_callback_url(redirect_uri, error_params, state))
-+
-+
- async def validate_redirect_uri(client_id: str, redir
-```
-
-**File**: `src/mcp_memory_service/web/oauth/discovery.py` (modified, +12/-3)
-```diff
-@@ -21,7 +21,7 @@
- import logging
- from fastapi import APIRouter
- from ...compat import _sanitize_log_value
--from ...config import OAUTH_ISSUER, get_jwt_algorithm, join_url
-+from ...config import DCR_REGISTRATION_KEY, OAUTH_ISSUER, get_jwt_algorithm, join_url
- from .models import OAuthServerMetadata, OAuthProtectedResourceMetadata
- 
- logger = logging.getLogger(__name__)
-@@ -30,6 +30,15 @@
- 
- 
- 
-+def _data_scopes_supported() -> list[str]:
-+    """``admin`` is advertised only while registration is gated.
-+
-+    With open registration no client can be granted it (GHSA-w8p9-5v6q-h9ch),
-+    and clients tend to request every scope they are shown.
-+    """
-+    return ["read", "write", "admin"] if DCR_REGISTRATION_KEY else ["read", "write"]
-+
-+
- @router.get("/.well-known/oauth-protected-resource")
- async def oauth_protected_resource_metadata() -> OAuthProtectedResourceMetadata:
-     """
-@@ -43,7 +52,7 @@ async def oauth_protected_resource_metadata() -> OAuthProtectedResourceMetadata:
-     return OAuthProtectedResourceMetadata(
-         resource=OAUTH_ISSUER,
-         authorization_servers=[OAUTH_ISSUER],
--        scopes_supported=["read", "write", "admin"],
-+        scopes_supported=_data_scopes_supported(),
-         bearer_methods_supported=["header"],
-         resource_documentation=join_url(OAUTH_ISSUER, "/docs"),
-     )
-@@ -70,7 +79,7 @@ async def oauth_authorization_server_metadata() -> OAuthServerMetadata:
-         grant_types_supported=["authorization_code", "client_credentials", "refresh_token"],
-         response_types_supported=["code"],
-         token_endpoint_auth_methods_supported=["client_secret_basic", "client_secret_post", "none"],
--        scopes_supported=["read", "write", "admin", "offline_access"],
-+        scopes_supported=[*_data_scopes_supported(), "offline_access"],
-         id_token_signing_alg_values_supported=[algorithm],
-         code_challenge_methods_supported=["S256"]
-     )
-```
-
-**File**: `src/mcp_memory_service/web/oauth/redirect.py` (modified, +14/-0)
-```diff
-@@ -63,6 +63,20 @@ def _invalid_uri(description: str) -> HTTPException:
-     )
- 
- 
-+def reject_ambiguous_redirect_uri(uri: str) -> None:
-+    """Refuse a redirect URI that a browser reads differently from ``urlsplit``.
-+
-+    Browsers treat a backslash in an http(s) URL as a slash and drop tabs and
-+    newlines, so ``https://evil.example\\@claude.ai/cb`` parses here with the
-+    host ``claude.ai`` and navigates to ``evil.example``. No legitimate
-+    redirect URI carries a backslash, whitespace or a control character.
-+    """
-+    if any(ch == "\\" or ch <= " " or ch == "\x7f" for ch in uri):
-+        raise _invalid_uri(
-+            "redirect URI must not contain backslashes, whitespace or control characters"
-+        )
-+
-+
- def validate_registration_redirect_uris(redirect_uris: Optional[List[str]]) -> None:
-     """
-     Validate redirect URIs supplied at client registration (RFC 7591).
-```
-
-**File**: `src/mcp_memory_service/web/oauth/registration.py` (modified, +88/-65)
-```diff
-@@ -21,7 +21,7 @@
- import secrets
- import time
- import logging
--from typing import List
-+from typing import List, Optional
- from fastapi import APIRouter, Depends, HTTPException, Request, status
- from pydantic import ValidationError
- 
-@@ -32,7 +32,7 @@
- )
- from .storage import get_oauth_storage
- from .rate_limit import auth_rate_limit
--from .redirect import validate_registration_redirect_uris
-+from .redirect import reject_ambiguous_redirect_uri, validate_registration_redirect_uris
- from mcp_memory_service.config import DCR_REGISTRATION_KEY
- 
- logger = logging.getLogger(__name__)
-@@ -148,6 +148,91 @@ def _refuse_client_credentials_while_open(grant_types) -> None:
-     )
- 
- 
-+def _validate_client_metadata(request: ClientRegistrationRequest) -> None:
-+    """Validate the redirect URIs, grant types and response types of a registration."""
-+    for uri in request.redirect_uris or []:
-+        reject_ambiguous_redirect_uri(str(uri))
-+
-+    if request.redirect_uris:
-+        validate_redirect_uris([str(uri) for uri in request.redirect_uris])
-+
-+    if request.grant_types:
-+        validate_grant_types(request.grant_types)
-+
-+    if request.response_types:
-+        validate_response_types(request.response_types)
-+
-+    _refuse_client_credentials_while_open(request.grant_types)
-+
-+
-+def _scope_ceiling(requested_scope: Optional[str]) -> Optional[str]:
-+    """The requested scope, captured as the client's permanent ceiling.
-+
-+    An omitted or empty scope leaves the ceiling unbounded (None), unchanged
-+    from the pre-ceiling behaviour, so existing clients and callers are
-+    unaffected. Open registration cannot declare admin: anyone can register,
-+    so the ceiling would be the caller's own wish (GHSA-w8p9-5v6q-h9ch).
-+    """
-+    tokens = (requested_scope or "").split()
-+    if not DCR_REGISTRATION_KEY:
-+        tokens = [t for t in tokens if t != "admin"]
-+    return " ".join(tokens) or None
-+
-+
-+async def _create_client(request: ClientRegistrationRequest) -> ClientRegistrationResponse:
-+    """Validate a registration request, store the client and build the response."""
-+    _validate_client_metadata(request)
-+
-+    # Prepare default values
-+    grant_types = request.grant_types or ["authorization_code"]
-+    response_types = request.response_types or ["code"]
-+    token_endpoint_auth_method = request.token_endpoint_auth_method or "client_secret_basic"
-+
-+    # Generate client credentials. A public client (RFC 7591: auth method
-+    # "none", e.g. the PKCE flow claude.ai uses) must not be issued a secret
-+    # at all — handing one out let a caller turn a registration into client
-+    # authentication. The empty string is stored rather than None so the model
-+    # and the SQLite row stay unchanged; verify_client_secret() already
-+    # refuses an empty stored secret, so such a client cannot authenticate
-+    # with one.
-+    client_id = get_oauth_storage().generate_client_id()
-+    is_public_client = token_endpoint_auth_method == "none"
-+    client_secret = "" if is_public_client else get_oauth_storage().generate_client_secret()
-+
-+    allowed_scope = _scope_ceiling(request.scope)
-+
-+    # Create registered client
-+    registered_client = RegisteredClient(
-+        client_id=client_id,
-+        client_secret=client_secret,
-+        redirect_uris=[str(uri) for uri in request.redirect_uris] if request.redirect_uris else [],
-+        grant_types=grant_types,
-+        response_types=response_types,
-+        token_endpoint_auth_method=token_endpoint_auth_method,
-+        client_name=request.client_name,
-+        created_at=time.time(),
-+        allowed_scope=allowed_scope
-+    )
-+
-+    # Store the client
-+    await get_oauth_storage().store_client(registered_client)
-+
-+    # Create response. client_secret is omitted entirely for a public client.
-+    response = ClientRegistrationResponse(
-+        client_id=client_id,
-+        client_secret=client_secret or None,
-+        redirect_uris=registered_client.redirect_uris,
-+        grant_types=grant_types,
-+        response_types=response_types,
-+        token_endpoint_auth_method=token_endpoint_auth_method,
-+        client_name=request.client_name,
-+        scope=allowed_scope
-+    )
-+
-+    logger.info(f"OAuth client registered successfully: client_id={_sanitize_log_value(client_id)}, name={_sanitize_log_value(request.client_name)}, scope={_sanitize_log_value(allowed_scope)}")
-+    return response
-+
-+
- @router.post(
-     "/register",
-     response_model=ClientRegistrationResponse,
-@@ -173,69 +258,7 @@ async def register_client(
-     logger.info("OAuth client registration request received")
- 
-     try:
--        # Validate client metadata
--        if request.redirect_uris:
--            validate_redirect_uris([str(uri) for uri in request.redirect_uris])
--
--        if request.grant_types:
--            validate_grant_types(request.grant_types)
--
--        if request.response_types:
--            validate_response_types(request.response_types)
--
--        _refuse_client_creden
-```
-
-**File**: `tests/web/test_oauth_authorize_consent.py` (added, +326/-0)
-```diff
-@@ -0,0 +1,326 @@
-+# Copyright 2024 Heinrich Krupp
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+"""GHSA-w8p9-5v6q-h9ch: the authorize page has to say who is asking.
-+
-+With MCP_DCR_REGISTRATION_KEY unset anyone can register a client with their
-+own redirect URI. The owner then authorises on a page that named neither the
-+client, nor where the code would go, nor the scope, and the scope could be
-+``admin``. The owner's API key was the only control, and the owner had nothing
-+to decide with.
-+
-+Three things are pinned here: the page shows the destination, the
-+self-reported name and the scope that will be granted; ``admin`` is granted
-+only to a client whose registration was gated and declared it; the page
-+cannot be framed.
-+"""
-+
-+import base64
-+import hashlib
-+import re
-+import time
-+
-+import pytest
-+from fastapi import FastAPI
-+from fastapi.testclient import TestClient
-+
-+from mcp_memory_service.web.oauth import authorization, discovery, registration
-+from mcp_memory_service.web.oauth.middleware import validate_jwt_token
-+from mcp_memory_service.web.oauth.models import RegisteredClient
-+from mcp_memory_service.web.oauth.storage.memory import MemoryOAuthStorage
-+
-+OWNER_KEY = "owner-api-key"
-+ATTACKER_CB = "https://attacker.example/cb"
-+VERIFIER = "v" * 64
-+CHALLENGE = (
-+    base64.urlsafe_b64encode(hashlib.sha256(VERIFIER.encode()).digest())
-+    .rstrip(b"=")
-+    .decode()
-+)
-+
-+
-+@pytest.fixture
-+def storage(monkeypatch):
-+    store = MemoryOAuthStorage()
-+    monkeypatch.setattr(authorization, "get_oauth_storage", lambda: store)
-+    monkeypatch.setattr(registration, "get_oauth_storage", lambda: store)
-+    monkeypatch.setattr(authorization, "API_KEY", OWNER_KEY)
-+    return store
-+
-+
-+def _set_dcr_key(monkeypatch, key):
-+    for module in (authorization, registration, discovery):
-+        monkeypatch.setattr(module, "DCR_REGISTRATION_KEY", key)
-+
-+
-+@pytest.fixture
-+def open_dcr(monkeypatch):
-+    _set_dcr_key(monkeypatch, None)
-+
-+
-+@pytest.fixture
-+def gated_dcr(monkeypatch):
-+    _set_dcr_key(monkeypatch, "registration-key")
-+
-+
-+@pytest.fixture
-+def http(storage):
-+    app = FastAPI()
-+    app.include_router(registration.router, prefix="/oauth")
-+    app.include_router(authorization.router, prefix="/oauth")
-+    app.include_router(discovery.router)
-+    return TestClient(app, follow_redirects=False)
-+
-+
-+async def _store_client(storage, allowed_scope, name="Totally Not Evil"):
-+    await storage.store_client(
-+        RegisteredClient(
-+            client_id="c1",
-+            client_secret="",
-+            redirect_uris=[ATTACKER_CB],
-+            token_endpoint_auth_method="none",
-+            client_name=name,
-+            created_at=time.time(),
-+            allowed_scope=allowed_scope,
-+        )
-+    )
-+    return "c1"
-+
-+
-+def _authorize_params(client_id, scope="read write admin"):
-+    return {
-+        "response_type": "code",
-+        "client_id": client_id,
-+        "redirect_uri": ATTACKER_CB,
-+        "scope": scope,
-+        "state": "x",
-+        "code_challenge": CHALLENGE,
-+        "code_challenge_method": "S256",
+ @media (min-width: 769px) and (max-width: 1024px) {
++    .nav-container {
++        flex-wrap: wrap;
 +    }
 +
++    .btn-text {
++        display: none;
++    }
 +
-+def _granted_scope(http, client_id, scope="read write admin"):
-+    """Run authorize + token as the owner would and return the token's scope."""
-+    resp = http.post(
-+        "/oauth/authorize",
-+        params=_authorize_params(client_id, scope),
-+        data={"api_key": OWNER_KEY},
-+    )
-+    assert resp.status_code == 200, resp.text
-+    code = re.search(r"code=([^&\"]+)", resp.text).group(1)
-+    token = http.post(
-+        "/oauth/token",
-+        data={
-+            "grant_type": "authorization_code",
-+            "code": code,
-+            "client_id": client_id,
-+            "redirect_uri": ATTACKER_CB,
-+            "code_verifier": VERIFIER,
-+        },
-+    )
-+    assert token.status_code == 200, token.text
-+    # The signed claim is what the API checks, not the response field.
-+    return validate_jwt_token(token.json()["access_token"])["scope"]
-+
-+
-+def test_reported_attack_no_longer_yields_admin(http, open_dcr):
-+    """The advisory's steps 2-6, end to end."""
-+    reg = http.post(
-+        "/oauth/register",
-+        json={
-+            "client_name": "Totally Not Evil",
-+            "redirect_uris": [ATTACKER_CB],
-+            "token_endpoint_auth_method": "none",
-+        },
-+    )
-+    assert reg.status_code == 201, reg.text
-+    client_id = reg.json()["client_id"]
-+
-+    page = http.get("/oauth/authorize", params=_authorize_param
-```
-
-**File**: `tests/web/test_root_path.py` (modified, +3/-1)
-```diff
-@@ -73,7 +73,9 @@ def test_dashboard_assets_and_requests_are_root_relative():
- 
- 
- def test_authorization_form_posts_relative_to_root_path():
--    page = _build_authorize_page("client_id=test")
-+    page = _build_authorize_page(
-+        "client_id=test", client_name="test", destination="claude.ai", scope="read"
-+    )
- 
-     assert 'action="authorize?client_id=test"' in page
-     assert 'action="/oauth/authorize' not in page
-```
-
----
-
-### Incident Patch 3: `cac9a103` (2026-11-15)
-**Commit Message**: fix(dashboard): give the status island its own catalog keys (#2010) (#2022)
-
-* fix(dashboard): give the status island its own catalog keys (#2010)
-
-* chore: name the changelog fragment after the PR (#2022)
-
-* chore: name the changelog fragment after the PR (#2022)
-
----------
-
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/2022.fixed.md` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+- **The dashboard status island labeled its reconnect action "Refresh" (#2010,#2022 Shivraj-G).**
-+  The island was built without catalog keys of its own, so it borrowed `analytics.refresh`,
-+  `manage.ontology.column.detail` and `modal.close`. The reconnect action therefore read
-+  "Refresh" instead of "Reconnect", and the connection row in the panel had no name. The
-+  island now has its own keys (`island.reconnect`, `island.details`, `island.dismiss`,
-+  `island.source.connection`) in all eleven catalogs, and the connection row is named
-+  "Live updates".
-+  
-\ No newline at end of file
-```
-
-**File**: `src/mcp_memory_service/web/static/app.js` (modified, +2/-1)
-```diff
-@@ -4076,7 +4076,7 @@ class MemoryDashboard {
-                     text: text('status.disconnected', 'Disconnected'),
-                     actions: this.authState.requiresAuth && !this.authState.isAuthenticated ? [] : [{
-                         id: 'reconnect',
--                        label: text('analytics.refresh', 'Refresh'),
-+                        label: text('island.reconnect', 'Reconnect'),
-                         run: () => this.setupSSE(),
-                     }],
-                 };
-@@ -4088,6 +4088,7 @@ class MemoryDashboard {
-             default:
-                 entry = { state: 'error', text: text('status.unknown', 'Unknown') };
-         }
-+        entry.label = text('island.source.connection', 'Live updates');
-         // A connection failure is not dismissible: it ends with the next report of this source.
-         this.statusIsland.report('connection', entry);
+     .dashboard-grid {
+         grid-template-columns: 1fr 300px;
      }
 ```
 
-**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +4/-0)
+**File**: `tests/web/test_dashboard_style_guard.py` (modified, +13/-0)
 ```diff
-@@ -612,6 +612,10 @@
-   "status.disconnected": "Getrennt",
-   "status.connecting": "Verbinde...",
-   "status.unknown": "Unbekannt",
-+  "island.details": "Details",
-+  "island.dismiss": "Schließen",
-+  "island.reconnect": "Reconnect",
-+  "island.source.connection": "Live updates",
-   "sync.deltaSync": "Delta-Sync",
-   "sync.checking": "Prüfen...",
-   "sync.pauseTitle": "Synchronisierung pausieren",
+@@ -106,3 +106,16 @@ def test_weights_stay_at_or_below_600():
+         if not sel.startswith("@font-face") and re.search(r"font-weight:\s*(700|800|900|bold)\b", body)
+     ]
+     assert offenders == []
++
++
++def test_tablet_navigation_wraps_for_translated_labels():
++    tablet = re.search(
++        r"@media\s*\(min-width:\s*769px\)\s*and\s*\(max-width:\s*1024px\)\s*\{(.*?)\n\}",
++        CSS,
++        flags=re.S,
++    )
++    assert tablet is not None
++    nav = re.search(r"\.nav-container\s*\{([^}]*)\}", tablet.group(1))
++    assert nav is not None
++    assert re.search(r"flex-wrap:\s*wrap\s*;", nav.group(1))
++    assert re.search(r"\.btn-text\s*\{[^}]*display:\s*none\s*;", tablet.group(1))
 ```
 
-**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +4/-0)
-```diff
-@@ -630,6 +630,10 @@
-   "status.disconnected": "Disconnected",
-   "status.connecting": "Connecting...",
-   "status.unknown": "Unknown",
-+  "island.reconnect": "Reconnect",
-+  "island.details": "Details",
-+  "island.dismiss": "Close",
-+  "island.source.connection": "Live updates",
-   "sync.deltaSync": "Delta sync",
-   "sync.checking": "Checking...",
-   "sync.pauseTitle": "Pause sync",
-```
+---
 
-**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +4/-0)
-```diff
-@@ -612,6 +612,10 @@
-   "status.disconnected": "Desconectado",
-   "status.connecting": "Conectando...",
-   "status.unknown": "Desconocido",
-+  "island.details": "Detalles",
-+  "island.dismiss": "Cerrar",
-+  "island.reconnect": "Reconnect",
-+  "island.source.connection": "Live updates",
-   "sync.deltaSync": "Sincronización delta",
-   "sync.checking": "Comprobando...",
-   "sync.pauseTitle": "Pausar sincronización",
-```
+### Incident Patch 3: `30f9eb40` (2026-11-16)
+**Commit Message**: docs(readme): add downloads, Docker, CI, contributors and Glama badges, fix DeepWiki badge (#2048)
 
-**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +4/-0)
-```diff
-@@ -612,6 +612,10 @@
-   "status.disconnected": "Déconnecté",
-   "status.connecting": "Connexion...",
-   "status.unknown": "Inconnu",
-+  "island.details": "Détails",
-+  "island.dismiss": "Fermer",
-+  "island.reconnect": "Reconnect",
-+  "island.source.connection": "Live updates",
-   "sync.deltaSync": "Sync delta",
-   "sync.checking": "Vérification...",
-   "sync.pauseTitle": "Suspendre la synchronisation",
-```
+deepwiki.com/badge.svg answers 429 to GitHub's image proxy, so the badge rendered as a broken image. It is now a static shields.io badge with the same link target.
 
-**File**: `src/mcp_memory_service/web/static/i18n/hi.json` (modified, +4/-0)
+**File**: `README.md` (modified, +6/-1)
 ```diff
-@@ -630,6 +630,10 @@
-   "status.disconnected": "डिस्कनेक्टेड",
-   "status.connecting": "कनेक्ट हो रहा है...",
-   "status.unknown": "अज्ञात",
-+  "island.reconnect": "फिर से कनेक्ट करें",
-+  "island.details": "विवरण",
-+  "island.dismiss": "बंद करें",
-+  "island.source.connection": "लाइव अपडेट",
-   "sync.deltaSync": "डेल्टा सिंक",
-   "sync.checking": "जाँच हो रही है...",
-   "sync.pauseTitle": "सिंक रोकें",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/id.json` (modified, +4/-0)
-```diff
-@@ -630,6 +630,10 @@
-   "status.disconnected": "Terputus",
-   "status.connecting": "Menghubungkan...",
-   "status.unknown": "Tidak diketahui",
-+  "island.details": "Rincian",
-+  "island.dismiss": "Tutup",
-+  "island.reconnect": "Reconnect",
-+  "island.source.connection": "Live updates",
-   "sync.deltaSync": "Sinkronisasi delta",
-   "sync.checking": "Memeriksa...",
-   "sync.pauseTitle": "Jeda sinkronisasi",
+@@ -14,10 +14,15 @@ context in 5ms — without cloud lock-in or API costs.
+ [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+ [![PyPI version](https://img.shields.io/pypi/v/mcp-memory-service?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/mcp-memory-service/)
+ [![Python](https://img.shields.io/pypi/pyversions/mcp-memory-service?logo=python&logoColor=white)](https://pypi.org/project/mcp-memory-service/)
++[![PyPI Downloads](https://static.pepy.tech/personalized-badge/mcp-memory-service?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/mcp-memory-service)
++[![Docker Pulls](https://img.shields.io/docker/pulls/doobidoo/mcp-memory-service?logo=docker&logoColor=white)](https://hub.docker.com/r/doobidoo/mcp-memory-service)
++[![CI](https://img.shields.io/github/actions/workflow/status/doobidoo/mcp-memory-service/ci.yml?branch=main&logo=github&label=CI)](https://github.com/doobidoo/mcp-memory-service/actions/workflows/ci.yml)
+ [![GitHub stars](https://img.shields.io/github/stars/doobidoo/mcp-memory-service?logo=github&label=stars)](https://github.com/doobidoo/mcp-memory-service)
++[![Contributors](https://img.shields.io/github/contributors/doobidoo/mcp-memory-service)](https://github.com/doobidoo/mcp-memory-service/graphs/contributors)
+ [![Remote MCP](https://img.shields.io/badge/MCP-Remote%20Support-blue?logo=anthropic)](https://github.com/doobidoo/mcp-memory-service/blob/main/docs/remote-mcp-setup.md)
+ [![OAuth 2.0](https://img.shields.io/badge/Auth-OAuth%202.0%20%2B%20DCR-green)](https://github.com/doobidoo/mcp-memory-service/blob/main/docs/oauth-setup.md)
+-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/doobidoo/mcp-memory-service)
++[![Ask DeepWiki](https://img.shields.io/badge/DeepWiki-Ask-0969da)](https://deepwiki.com/doobidoo/mcp-memory-service)
++[![Glama score](https://glama.ai/mcp/servers/doobidoo/mcp-memory-service/badges/score.svg)](https://glama.ai/mcp/servers/doobidoo/mcp-memory-service)
+ 
+ Getting started: [English](https://mcpmemory.services/) · [Deutsch](https://mcpmemory.services/de/) · [Español](https://mcpmemory.services/es/) · [日本語](https://mcpmemory.services/ja/) · [简体中文](https://mcpmemory.services/zh-cn/) · [繁體中文](https://mcpmemory.services/zh-tw/) · [Français](https://mcpmemory.services/fr/) · [Português (Brasil)](https://mcpmemory.services/pt-br/) · [한국어](https://mcpmemory.services/ko/)
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2023** (2026-11-15): fix(security): drop hardcoded Cloudflare credentials from sync_status.py (@doobidoo)
-- **PR #2022** (2026-11-15): fix(dashboard): give the status island its own catalog keys (#2010) (@Shivraj-G)
-- **PR #2021** (2026-11-15): --adapt-pairs: adapt the 4-way head on a store's own labeled pairs, locally (@Yoel-qin)
-- **PR #2020** (2026-11-15): ci(claims): label takeover requests, and read a conditional claim as a claim (@doobidoo)
-- **PR #2019** (2026-11-15): fix(hooks): read the version from _version.py, not the fallback in __init__.py (@doobidoo)
-- **PR #2018** (2026-11-14): chore(release): v12.10.0 (@doobidoo)
+- **PR #2048** (2026-11-16): docs(readme): add downloads, Docker, CI, contributors and Glama badges, fix DeepWiki badge (@doobidoo)
+- **PR #2047** (2026-11-16): fix: prevent dashboard overflow at tablet widths (@jay23606)
+- **PR #2043** (2026-11-16): fix(dashboard): report a finished consolidation on the status island (#2006) (@dodoshell)
+- **PR #2042** (2026-11-16): feat(dashboard): report document imports to the status island (#2004) (@jilsnshah)
+- **PR #2039** (2026-11-16): Semantic dedup reads its one row through the KNN pushdown (#2032) (@Yoel-qin)
+- **PR #2038** (2026-11-16): refactor(logging): guard the six remaining handler, web/api, quality and sync modules (#1146) (@massimiliano1991)
 
 ---
 
@@ -3801,47 +3528,22 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): drop hardcoded Cloudflare credentials from sync_status.py
+## X. security): keep memory_store side effects inside the granted store (GHSA-989p-hf
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/ghsa-989p.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b580e597`: security): drop hardcoded Cloudflare credentials from sync_status.py. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `15a9e9a9`: security): keep memory_store side effects inside the granted store (GHSA-989p-hfjf-q97q). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/ghsa-989p.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  secret-scan:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    name: Secret Scan (gitleaks, PR commits)
-    timeout-minutes: 5
-    steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      with:
-        fetch-depth: 0
-    # Third-party actions are not allowed here, so the binary is fetched directly
-    # and checked against its published checksum. Only the PR's own commits are
-    # scanned: older history holds known, already-rotated findings.
-    - name: Install gitleaks
-      env:
-        GITLEAKS_VERSION: 8.30.1
-      run: |
-        base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
-        tarball="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
-        curl -fsSLO "$base/$tarball"
-        curl -fsSL "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt" | grep " ${tarball}\$" | sha256sum -c -
-        tar -xzf "$tarball" gitleaks
-    - name: Scan PR commits
-      env:
-        BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-      run: ./gitleaks git --redact --no-banner --log-opts="${BASE_SHA}..${HEAD_SHA}" .
-
+- **A per-store write grant could write to and supersede memories in another store through `memory_store` (GHSA-989p-hfjf-q97q, reported by [RISCON Labs](https://www.risconlabs.com), @RISCON-Labs).**
+  With `auto_extract=true`, `handle_store_memory` stored the memory in the granted store but ran auto-capture without it. `AutoCaptureService.capture()`, `SessionHarvester._try_evolve()` and `MemoryService.evolve_memory()` took no `store`, so the extracted candidates were compared with the `default` store, replaced a similar memory there, or were inserted there. A client holding only `write:projectA` could overwrite `default`. The NLI contradiction check on store (`MCP_NLI_ON_STORE`, inline and background) had the same gap: it compared a memory with the `default` store whatever store it was written to, linked the two with a `contradicts` edge and reported the hit count to the caller. It also missed contradictions inside a named store for the same reason. Conflict detection on store, which runs on every write without any flag, compared the new memory with every store as well and tagged a near-identical memory in another store `conflict:unresolved`, with `contradicts` edges between the t
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3851,7 +3553,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b580e597` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `15a9e9a9` are properly handled with clean fallback behavior.
 
 
 ## Consequences

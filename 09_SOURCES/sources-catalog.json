@@ -2213,10 +2213,10 @@
     "repository": "openziti/zrok",
     "platform": "github",
     "sourceUrl": "https://github.com/openziti/zrok",
-    "sourceVersion": "3c87b271",
+    "sourceVersion": "0c23df62",
     "license": "Apache-2.0",
-    "contentHash": "8b4818c23295eaf7be25afa05195c1170e3b73e8d1a2b930aca32ee58d93627a",
-    "lastHarvestedAt": "2026-11-16T18:46:52.831Z",
+    "contentHash": "f7fc70c2ec5b84b7dfeb180e64e6756bcf3337610bd9b70a2d6ce779fe01efb8",
+    "lastHarvestedAt": "2026-11-17T01:54:45.204Z",
     "learningId": "learn-github-openziti-zrok"
   },
   "crate-crate": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "cac9a103",
+    "sourceVersion": "30f9eb40",
     "license": "Apache-2.0",
-    "contentHash": "12804ed099922fe56c2a104e6275af839e48755167193ae0e3013cdb761a2d1b",
-    "lastHarvestedAt": "2026-11-15T17:31:55.231Z",
+    "contentHash": "bcbb81d4df96828d852949442ad13f8866d4920f236c6950368b6fb51c4fcf2a",
+    "lastHarvestedAt": "2026-11-17T01:54:47.920Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -9793,10 +9793,10 @@
     "repository": "digitalbazaar/pyld",
     "platform": "github",
     "sourceUrl": "https://github.com/digitalbazaar/pyld",
-    "sourceVersion": "71b67691",
+    "sourceVersion": "874c56eb",
     "license": "BSD-3-Clause",
-    "contentHash": "6810c558f2f5ef27323167fad03fa8492984fe61e578460f95e64206be87aac2",
-    "lastHarvestedAt": "2026-11-12T08:27:56.945Z",
+    "contentHash": "7528960e9a243753995d110dddd85c91e96e8dbb9dba44b0495e9d79721e3f04",
+    "lastHarvestedAt": "2026-11-17T01:54:38.232Z",
     "learningId": "learn-github-digitalbazaar-pyld"
   },
   "aheze-popovers": {

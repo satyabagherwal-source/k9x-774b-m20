@@ -2,19 +2,19 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T01:34:13.966Z",
+  "updated_at": "2026-11-17T01:54:53.594Z",
   "stats": {
-    "total_discovered": 4597,
-    "approved_pending_harvest": 4327,
+    "total_discovered": 4634,
+    "approved_pending_harvest": 4364,
     "harvested_count": 0,
     "rejected_count": 270,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4328,
+      "COMMUNITY_AND_EXPERT": 4362,
       "OFFICIAL_DOCUMENTATION": 144,
-      "STANDARDS_AND_SPECIFICATIONS": 98,
+      "STANDARDS_AND_SPECIFICATIONS": 100,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 18,
-      "LEGAL_AND_REGULATORY": 1,
+      "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 5
     }
   },
@@ -99265,6 +99265,820 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
         "fileName": "matrixorigin-matrixone-learnings.md"
+      }
+    },
+    "SRC-1ECBEA51ACD8": {
+      "id": "SRC-1ECBEA51ACD8",
+      "url": "https://w3c.github.io/json-ld-api/tests/toRdf-manifest",
+      "title": "https://w3c.github.io/json-ld-api/tests/toRdf-manifest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:51.390Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-8057CE40957F": {
+      "id": "SRC-8057CE40957F",
+      "url": "https://www.w3.org/TR/xmlschema11-2",
+      "title": "https://www.w3.org/TR/xmlschema11-2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:51.421Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-C67E65701FBC": {
+      "id": "SRC-C67E65701FBC",
+      "url": "https://www.rfc-editor.org/rfc/rfc8785",
+      "title": "IETF RFC 8785",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:51.450Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-859BF50DD9F0": {
+      "id": "SRC-859BF50DD9F0",
+      "url": "https://vercel.com/api/www/avatar?projectId=prj_M4898e769tqciw1TTRePsmgjYQqV&teamId=team_bT6ULN5oFw8uRka0uFkKt",
+      "title": "https://vercel.com/api/www/avatar?projectId=prj_M4898e769tqciw1TTRePsmgjYQqV&teamId=team_bT6ULN5oFw8uRka0uFkKt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.045Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openziti-zrok-learnings.md",
+        "fileName": "openziti-zrok-learnings.md"
+      }
+    },
+    "SRC-EEC34B7C39C8": {
+      "id": "SRC-EEC34B7C39C8",
+      "url": "https://www.risconlabs.com/",
+      "title": "https://www.risconlabs.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.695Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-BA021F353826": {
+      "id": "SRC-BA021F353826",
+      "url": "https://img.shields.io/badge/License-Apache%202.0-blue.svg",
+      "title": "https://img.shields.io/badge/License-Apache%202.0-blue.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.723Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-60643DEF1816": {
+      "id": "SRC-60643DEF1816",
+      "url": "https://opensource.org/licenses/Apache-2.0",
+      "title": "https://opensource.org/licenses/Apache-2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "LEGAL_AND_REGULATORY",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.95,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.750Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-9E64D2309463": {
+      "id": "SRC-9E64D2309463",
+      "url": "https://img.shields.io/pypi/v/mcp-memory-service?color=blue&logo=pypi&logoColor=white",
+      "title": "https://img.shields.io/pypi/v/mcp-memory-service?color=blue&logo=pypi&logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.780Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-75EDA02BF698": {
+      "id": "SRC-75EDA02BF698",
+      "url": "https://pypi.org/project/mcp-memory-service",
+      "title": "https://pypi.org/project/mcp-memory-service",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.807Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-4476E4837A15": {
+      "id": "SRC-4476E4837A15",
+      "url": "https://img.shields.io/pypi/pyversions/mcp-memory-service?logo=python&logoColor=white",
+      "title": "https://img.shields.io/pypi/pyversions/mcp-memory-service?logo=python&logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.834Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-95B51DD12611": {
+      "id": "SRC-95B51DD12611",
+      "url": "https://static.pepy.tech/personalized-badge/mcp-memory-service?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads",
+      "title": "https://static.pepy.tech/personalized-badge/mcp-memory-service?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.863Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-748F4F9911E3": {
+      "id": "SRC-748F4F9911E3",
+      "url": "https://pepy.tech/projects/mcp-memory-service",
+      "title": "https://pepy.tech/projects/mcp-memory-service",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.890Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-8312D7D91558": {
+      "id": "SRC-8312D7D91558",
+      "url": "https://img.shields.io/docker/pulls/doobidoo/mcp-memory-service?logo=docker&logoColor=white",
+      "title": "https://img.shields.io/docker/pulls/doobidoo/mcp-memory-service?logo=docker&logoColor=white",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.921Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-6E803C2EF713": {
+      "id": "SRC-6E803C2EF713",
+      "url": "https://hub.docker.com/r/doobidoo/mcp-memory-service",
+      "title": "https://hub.docker.com/r/doobidoo/mcp-memory-service",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.950Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-DBDF90A379A3": {
+      "id": "SRC-DBDF90A379A3",
+      "url": "https://img.shields.io/github/actions/workflow/status/doobidoo/mcp-memory-service/ci.yml?branch=main&logo=github&label=CI",
+      "title": "https://img.shields.io/github/actions/workflow/status/doobidoo/mcp-memory-service/ci.yml?branch=main&logo=github&label=CI",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:52.977Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-AC864F7E0398": {
+      "id": "SRC-AC864F7E0398",
+      "url": "https://github.com/doobidoo/mcp-memory-service/actions/workflows/ci.yml",
+      "title": "https://github.com/doobidoo/mcp-memory-service/actions/workflows/ci.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.004Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-1042ABE82FE9": {
+      "id": "SRC-1042ABE82FE9",
+      "url": "https://img.shields.io/github/stars/doobidoo/mcp-memory-service?logo=github&label=stars",
+      "title": "https://img.shields.io/github/stars/doobidoo/mcp-memory-service?logo=github&label=stars",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-6523ED276E79": {
+      "id": "SRC-6523ED276E79",
+      "url": "https://img.shields.io/github/contributors/doobidoo/mcp-memory-service",
+      "title": "https://img.shields.io/github/contributors/doobidoo/mcp-memory-service",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-0227E24FB257": {
+      "id": "SRC-0227E24FB257",
+      "url": "https://github.com/doobidoo/mcp-memory-service/graphs/contributors",
+      "title": "https://github.com/doobidoo/mcp-memory-service/graphs/contributors",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.091Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-5D499A5431FC": {
+      "id": "SRC-5D499A5431FC",
+      "url": "https://img.shields.io/badge/MCP-Remote%20Support-blue?logo=anthropic",
+      "title": "https://img.shields.io/badge/MCP-Remote%20Support-blue?logo=anthropic",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-F89BA9F2B8F9": {
+      "id": "SRC-F89BA9F2B8F9",
+      "url": "https://github.com/doobidoo/mcp-memory-service/blob/main/docs/remote-mcp-setup.md",
+      "title": "https://github.com/doobidoo/mcp-memory-service/blob/main/docs/remote-mcp-setup.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-1C15C18CCA54": {
+      "id": "SRC-1C15C18CCA54",
+      "url": "https://img.shields.io/badge/Auth-OAuth%202.0%20%2B%20DCR-green",
+      "title": "https://img.shields.io/badge/Auth-OAuth%202.0%20%2B%20DCR-green",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.174Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-853518B47C80": {
+      "id": "SRC-853518B47C80",
+      "url": "https://github.com/doobidoo/mcp-memory-service/blob/main/docs/oauth-setup.md",
+      "title": "https://github.com/doobidoo/mcp-memory-service/blob/main/docs/oauth-setup.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.204Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-A4EF87F03308": {
+      "id": "SRC-A4EF87F03308",
+      "url": "https://deepwiki.com/badge.svg",
+      "title": "https://deepwiki.com/badge.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.242Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-E3B533EB31FA": {
+      "id": "SRC-E3B533EB31FA",
+      "url": "https://deepwiki.com/doobidoo/mcp-memory-service",
+      "title": "https://deepwiki.com/doobidoo/mcp-memory-service",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-98F44F6A74CF": {
+      "id": "SRC-98F44F6A74CF",
+      "url": "https://img.shields.io/badge/DeepWiki-Ask-0969da",
+      "title": "https://img.shields.io/badge/DeepWiki-Ask-0969da",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.299Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-05CA0546825B": {
+      "id": "SRC-05CA0546825B",
+      "url": "https://glama.ai/mcp/servers/doobidoo/mcp-memory-service/badges/score.svg",
+      "title": "https://glama.ai/mcp/servers/doobidoo/mcp-memory-service/badges/score.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.325Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-BB81A1AD133F": {
+      "id": "SRC-BB81A1AD133F",
+      "url": "https://glama.ai/mcp/servers/doobidoo/mcp-memory-service",
+      "title": "https://glama.ai/mcp/servers/doobidoo/mcp-memory-service",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.352Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-24C397485581": {
+      "id": "SRC-24C397485581",
+      "url": "https://mcpmemory.services/",
+      "title": "https://mcpmemory.services/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.378Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-AB27492FACDF": {
+      "id": "SRC-AB27492FACDF",
+      "url": "https://mcpmemory.services/de",
+      "title": "https://mcpmemory.services/de",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.404Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-67AADF1B1F85": {
+      "id": "SRC-67AADF1B1F85",
+      "url": "https://mcpmemory.services/es",
+      "title": "https://mcpmemory.services/es",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-800800AF57CF": {
+      "id": "SRC-800800AF57CF",
+      "url": "https://mcpmemory.services/ja",
+      "title": "https://mcpmemory.services/ja",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.459Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-6284ED87C368": {
+      "id": "SRC-6284ED87C368",
+      "url": "https://mcpmemory.services/zh-cn",
+      "title": "https://mcpmemory.services/zh-cn",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.486Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-9DE6898DBD15": {
+      "id": "SRC-9DE6898DBD15",
+      "url": "https://mcpmemory.services/zh-tw",
+      "title": "https://mcpmemory.services/zh-tw",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.511Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-F07355333760": {
+      "id": "SRC-F07355333760",
+      "url": "https://mcpmemory.services/fr",
+      "title": "https://mcpmemory.services/fr",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.541Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-2B9D95C25F6F": {
+      "id": "SRC-2B9D95C25F6F",
+      "url": "https://mcpmemory.services/pt-br",
+      "title": "https://mcpmemory.services/pt-br",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.568Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-BE7618FF73D3": {
+      "id": "SRC-BE7618FF73D3",
+      "url": "https://mcpmemory.services/ko",
+      "title": "https://mcpmemory.services/ko",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:54:53.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
       }
     }
   }

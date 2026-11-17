@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T01:41:55.452Z",
+  "last_updated": "2026-11-17T01:54:53.779Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3678,14 +3678,14 @@
       "learning_id": "learn-github-prometheus-prometheus"
     },
     {
-      "id": "CD-9KDD",
+      "id": "CD-I3EG",
       "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_repo": "louis-cfm-coucou-learnings",
+      "source_repo": "openziti-zrok-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-9KDD-empirical-invariant-guard-in-changelog-md.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-I3EG-empirical-invariant-guard-in-changelog-md.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-16",
+      "date_staged": "2026-11-17",
       "domain_letter": "D"
     },
     {
@@ -21164,6 +21164,79 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9FD970-engine-detect-uv-run-script-shebangs.md",
       "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-HSQV",
+      "directive_title": "state where @json still overflows and -INF in the large integer changelog",
+      "source_repo": "digitalbazaar/pyld",
+      "source_commit": "874c56eb",
+      "staged_file": "11_INBOX/candidate-directives/CD-HSQV-state-where-json-still-overflows-and-inf-in-the-large-integer-changelog.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-HXZV",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openziti/zrok",
+      "source_commit": "0c23df62",
+      "date_staged": "2026-11-17",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-openziti-zrok",
+      "candidateDomain": "D",
+      "candidateDomainName": "Research & Knowledge Intelligence",
+      "secondaryDomains": [
+        "K"
+      ],
+      "classificationConfidence": 0.1,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-I089",
+      "directive_title": "keep memory_store side effects inside the granted store (GHSA-989p-hf",
+      "source_repo": "doobidoo/mcp-memory-service",
+      "source_commit": "30f9eb40",
+      "staged_file": "11_INBOX/candidate-directives/CD-I089-keep-memory_store-side-effects-inside-the-granted-store-ghsa-989p-hf.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-I2Y5",
+      "directive_title": "docs: state where @json still overflows and -INF in the large integer changelog",
+      "source_repo": "digitalbazaar-pyld-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-I2Y5-docs-state-where-json-still-overflows-and-inf-in-the-large-integer-changelog.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-F1473D",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "openziti-zrok",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F1473D-empirical-invariant-guard-in-changelog-m.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-I4LR",
+      "directive_title": "security): keep memory_store side effects inside the granted store (GHSA-989p-hf",
+      "source_repo": "doobidoo-mcp-memory-service-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-I4LR-security-keep-memory_store-side-effects-inside-the-granted-store-ghsa-989p-hf.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
     }
   ]
 }

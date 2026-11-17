@@ -10429,3 +10429,6 @@ Every entry in this ledger must capture:
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `e6a40af3` | Multi-dimensional audit evidence | 2026-11-17T01:33:53.047Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `a17d6e0a` | Multi-dimensional audit evidence | 2026-11-17T01:34:01.372Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `e765c5fd` | Multi-dimensional audit evidence | 2026-11-17T01:34:09.088Z |
+| `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `874c56eb` | Multi-dimensional audit evidence | 2026-11-17T01:54:38.232Z |
+| `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `0c23df62` | Multi-dimensional audit evidence | 2026-11-17T01:54:45.204Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `30f9eb40` | Multi-dimensional audit evidence | 2026-11-17T01:54:47.920Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T01:41:55.556Z",
-  "total_records": 1385,
+  "last_updated": "2026-11-17T01:54:53.893Z",
+  "total_records": 1387,
   "domains": {
     "A": {
       "total": 9,
@@ -697,7 +697,7 @@
       ]
     },
     "G": {
-      "total": 251,
+      "total": 253,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -949,7 +949,9 @@
         "domain_intelligence-architecture-intelligence-wzh4869-appports-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-ratatui-ratatui-core-invariants",
-        "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-core-invariants",
+        "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-learnings-core-invariants"
       ]
     },
     "H": {
@@ -12335,8 +12337,8 @@
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "repository": "doobidoo/mcp-memory-service",
-      "content_hash": "9f9a805322880fd918184cd1d9549bc5ee9d9316d808062f507da8d01135997b",
-      "created_at": "2026-11-15T17:31:55.459Z"
+      "content_hash": "624b185fde1cc79989a6b621ed3e0483819d1f8cc7045fdeeac21d07731adf10",
+      "created_at": "2026-11-17T01:54:48.228Z"
     },
     "DOM-D-0BBA6E16": {
       "record_id": "DOM-D-0BBA6E16",
@@ -21051,8 +21053,8 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-learnings-technical-construction-intelligence-doobid.md",
       "repository": "doobidoo-mcp-memory-service-learnings",
-      "content_hash": "f4b3690a96e8c4113c87fab6e9629296d9412cdc9ab05adc6320226419d62f5d",
-      "created_at": "2026-11-15T17:31:59.303Z"
+      "content_hash": "c674eabd3282d2d0ed1496ff2c3907cbf3b74380fe143470efab97acb4f30ffc",
+      "created_at": "2026-11-17T01:54:53.893Z"
     },
     "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core",
@@ -23751,8 +23753,8 @@
       "title": "Architecture Intelligence: openziti/zrok Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openziti-zrok-architecture-intelligence-openziti-zrok-core-invariants.md",
       "repository": "openziti/zrok",
-      "content_hash": "7ce87de169ee7645ecbcf6a2b22d86c4887ab2c81632f71d9b09525118566bd7",
-      "created_at": "2026-11-16T18:46:53.224Z"
+      "content_hash": "b48d818dd0ca73893d93faca8e0dde86e842d304b47e7135f7479a420043eee4",
+      "created_at": "2026-11-17T01:54:45.510Z"
     },
     "domain_intelligence-technical-construction-intelligence-alibaba-zvec-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-alibaba-zvec-core-invariants",
@@ -23778,8 +23780,8 @@
       "title": "Architecture Intelligence: openziti-zrok-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openziti-zrok-learnings-architecture-intelligence-openziti-zrok-learnings-core-i.md",
       "repository": "openziti-zrok-learnings",
-      "content_hash": "21b5992b2c034a424646e2c098fd49f579d1b55ff97c5befd7eb5eccff2e7570",
-      "created_at": "2026-11-16T18:47:00.768Z"
+      "content_hash": "091e829765e42c20c00a531e261620b73566e8ef5c6c0ed5ba5e721158acfcd0",
+      "created_at": "2026-11-17T01:54:52.340Z"
     },
     "domain_intelligence-technical-construction-intelligence-inikulin-parse5-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-inikulin-parse5-core-invariants",
@@ -24503,6 +24505,24 @@
       "repository": "karmada-io-karmada-learnings",
       "content_hash": "eaf4e083b9c98c724fada83bcae1a8daa067e304a095f5d258edd3d1813d0585",
       "created_at": "2026-11-17T01:34:13.578Z"
+    },
+    "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: digitalbazaar/pyld Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-digitalbazaar-pyld-architecture-intelligence-digitalbazaar-pyld-core-invariants.md",
+      "repository": "digitalbazaar/pyld",
+      "content_hash": "677c19bac4dbff3a882c9dfa4f4fdc2b4c3b68deccc178a441165759ed2669ff",
+      "created_at": "2026-11-17T01:54:38.527Z"
+    },
+    "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: digitalbazaar-pyld-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-digitalbazaar-pyld-learnings-architecture-intelligence-digitalbazaar-pyld-learni.md",
+      "repository": "digitalbazaar-pyld-learnings",
+      "content_hash": "baf047dbb1aca79cab97f057a24c1e31d14f3b9510efd14d5e2bd825db29b36f",
+      "created_at": "2026-11-17T01:54:51.752Z"
     }
   }
 }

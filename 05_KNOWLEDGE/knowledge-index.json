@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T01:41:55.748Z",
-  "total_verified_learnings": 8824,
+  "last_updated": "2026-11-17T01:54:54.119Z",
+  "total_verified_learnings": 8825,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19562,
+  "total_items": 19573,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219192,13 +219192,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9KDD-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-I3EG-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "louis-cfm-coucou-learnings",
+      "repository": "openziti-zrok-learnings",
       "source_version": "HEAD",
-      "content_hash": "27ed73fcd818534a1a99851d5d7466f858354d6c7246867377efeede90b4afc0",
+      "content_hash": "6ef082575c3fa810066eaa69323ebf3bd27a8ffcb6c38ca8e85f581e47d1a2fa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T16:00:22.374Z"
+      "persisted_at": "2026-11-17T01:54:52.216Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -222394,8 +222394,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "cac9a103",
-      "content_hash": "12804ed099922fe56c2a104e6275af839e48755167193ae0e3013cdb761a2d1b",
+      "source_version": "30f9eb40",
+      "content_hash": "bcbb81d4df96828d852949442ad13f8866d4920f236c6950368b6fb51c4fcf2a",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -222408,6 +222408,11 @@
           "number": 8635,
           "title": "drop hardcoded Cloudflare credentials from sync_status.py",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8833,
+          "title": "keep memory_store side effects inside the granted store (GHSA-989p-hf",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222415,7 +222420,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T17:31:55.086Z",
+      "verified_at": "2026-11-17T01:54:47.749Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222457,10 +222462,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "cac9a103",
-      "content_hash": "9f9a805322880fd918184cd1d9549bc5ee9d9316d808062f507da8d01135997b",
+      "source_version": "30f9eb40",
+      "content_hash": "624b185fde1cc79989a6b621ed3e0483819d1f8cc7045fdeeac21d07731adf10",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:31:55.459Z"
+      "persisted_at": "2026-11-17T01:54:48.228Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service",
@@ -222469,10 +222474,10 @@
       "relative_path": "12_DECISIONS/ADR-doobidoo-mcp-memory-service-adr-subsystem-boundary-modular-decoupling-in-doobido.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "cac9a103",
-      "content_hash": "8f7cf500d794b1f3e601a9938ec4a787b2f1bb5cbde8916a453549533b9b08c1",
+      "source_version": "30f9eb40",
+      "content_hash": "0d551350f3ca272f77f996ddaf4531d4ddec902cd97974d7edb34bfb13c6f622",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:31:55.547Z"
+      "persisted_at": "2026-11-17T01:54:48.357Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service",
@@ -222481,10 +222486,10 @@
       "relative_path": "08_VERIFICATION/doobidoo-mcp-memory-service-verification-protocol-empirical-defect-shield-for-do.md",
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "cac9a103",
-      "content_hash": "25cf968285079330b2a115a6d2468ea6f927aa526f3cab2115d970bf135c2108",
+      "source_version": "30f9eb40",
+      "content_hash": "0e348d68d1db7e4aff094c43fb8b179590f425634fa563ba0bc892582ab09f0c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:31:55.624Z"
+      "persisted_at": "2026-11-17T01:54:48.470Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin",
@@ -245773,9 +245778,9 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4b3690a96e8c4113c87fab6e9629296d9412cdc9ab05adc6320226419d62f5d",
+      "content_hash": "c674eabd3282d2d0ed1496ff2c3907cbf3b74380fe143470efab97acb4f30ffc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:31:59.303Z"
+      "persisted_at": "2026-11-17T01:54:53.893Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin",
@@ -245785,9 +245790,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo-mcp-memory-service-learnings",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "303522bf1bb28da4d79a5e5cdfa3ae951c4f5c4bdd628b9bf17f5c11d54a64b3",
+      "content_hash": "1e2fff2d1a7c30aee9613ef6a23c6676cd767ab68081c24c614a4ad72bb6ffc7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:31:59.391Z"
+      "persisted_at": "2026-11-17T01:54:54.011Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le",
@@ -245797,9 +245802,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo-mcp-memory-service-learnings",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "4cf7799dda61712a144dd2563caf6c260b998a71b1c0781e2b68251b8007d81f",
+      "content_hash": "cb8308f9fb0ff7881aa9a9bc2a5ae4f1fd16137a5c119c4ee1b2a895c89fce48",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:31:59.472Z"
+      "persisted_at": "2026-11-17T01:54:54.119Z"
     },
     "learn-github-lottie-react-native-lottie-react-native": {
       "learning_id": "learn-github-lottie-react-native-lottie-react-native",
@@ -256750,8 +256755,8 @@
       "slug": "openziti-zrok",
       "platform": "github",
       "source_url": "https://github.com/openziti/zrok",
-      "source_version": "3c87b271",
-      "content_hash": "8b4818c23295eaf7be25afa05195c1170e3b73e8d1a2b930aca32ee58d93627a",
+      "source_version": "0c23df62",
+      "content_hash": "f7fc70c2ec5b84b7dfeb180e64e6756bcf3337610bd9b70a2d6ce779fe01efb8",
       "dossier_path": "07_PROJECT_LEARNING/openziti-zrok-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openziti-zrok-learnings.md",
       "promoted_rules": [
@@ -256766,7 +256771,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:46:52.599Z",
+      "verified_at": "2026-11-17T01:54:45.010Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -256808,10 +256813,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openziti-zrok-architecture-intelligence-openziti-zrok-core-invariants.md",
       "title": "Architecture Intelligence: openziti/zrok Core Invariants",
       "repository": "openziti/zrok",
-      "source_version": "3c87b271",
-      "content_hash": "7ce87de169ee7645ecbcf6a2b22d86c4887ab2c81632f71d9b09525118566bd7",
+      "source_version": "0c23df62",
+      "content_hash": "b48d818dd0ca73893d93faca8e0dde86e842d304b47e7135f7479a420043eee4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:46:53.224Z"
+      "persisted_at": "2026-11-17T01:54:45.510Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-openziti-zrok": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-openziti-zrok",
@@ -256820,10 +256825,10 @@
       "relative_path": "08_VERIFICATION/openziti-zrok-verification-protocol-empirical-defect-shield-for-openziti-zrok.md",
       "title": "Verification Protocol: Empirical Defect Shield for openziti/zrok",
       "repository": "openziti/zrok",
-      "source_version": "3c87b271",
-      "content_hash": "1fe94332a71dd8ca65db92a23645c01f176e0930beec2c22f63d75a42cb038d6",
+      "source_version": "0c23df62",
+      "content_hash": "f0f3de857040ec0250ddb3b0e2bb0a6ad8c9933356c43314dd7ecbf554d34640",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:46:53.401Z"
+      "persisted_at": "2026-11-17T01:54:45.634Z"
     },
     "rule-8778": {
       "learning_id": "rule-8778",
@@ -256895,9 +256900,9 @@
       "title": "Architecture Intelligence: openziti-zrok-learnings Core Invariants",
       "repository": "openziti-zrok-learnings",
       "source_version": "HEAD",
-      "content_hash": "21b5992b2c034a424646e2c098fd49f579d1b55ff97c5befd7eb5eccff2e7570",
+      "content_hash": "091e829765e42c20c00a531e261620b73566e8ef5c6c0ed5ba5e721158acfcd0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:47:00.768Z"
+      "persisted_at": "2026-11-17T01:54:52.340Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-openziti-zrok-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-openziti-zrok-learnings",
@@ -256907,9 +256912,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for openziti-zrok-learnings",
       "repository": "openziti-zrok-learnings",
       "source_version": "HEAD",
-      "content_hash": "36c6266534bd27893623c24e773632f036726ce7e43f462333f7e6ef81429747",
+      "content_hash": "320500ff19dc013248227a2f77d75acc46d574ac0144ffba4cbb7ae11c547c92",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:47:00.943Z"
+      "persisted_at": "2026-11-17T01:54:52.466Z"
     },
     "learn-github-inikulin-parse5": {
       "learning_id": "learn-github-inikulin-parse5",
@@ -260883,6 +260888,163 @@
       "content_hash": "ebe2cf391d246f30bf2a6059c0138c7e6704e95fc1fb75743f6d92ae4b680845",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T01:34:13.793Z"
+    },
+    "learn-github-digitalbazaar-pyld": {
+      "learning_id": "learn-github-digitalbazaar-pyld",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "digitalbazaar/pyld",
+      "repository": "digitalbazaar/pyld",
+      "slug": "digitalbazaar-pyld",
+      "platform": "github",
+      "source_url": "https://github.com/digitalbazaar/pyld",
+      "source_version": "874c56eb",
+      "content_hash": "7528960e9a243753995d110dddd85c91e96e8dbb9dba44b0495e9d79721e3f04",
+      "dossier_path": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8832,
+          "title": "state where @json still overflows and -INF in the large integer changelog",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T01:54:38.064Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8832": {
+      "learning_id": "rule-8832",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8832,
+      "title": "state where @json still overflows and -INF in the large integer changelog",
+      "source_url": "https://github.com/digitalbazaar/pyld",
+      "source_version": "874c56eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T01:54:38.064Z"
+    },
+    "candidate_directive-state-where-json-still-overflows-and-inf-in-the-large-integer-changelog": {
+      "item_id": "candidate_directive-state-where-json-still-overflows-and-inf-in-the-large-integer-changelog",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HSQV-state-where-json-still-overflows-and-inf-in-the-large-integer-changelog.md",
+      "title": "state where @json still overflows and -INF in the large integer changelog",
+      "repository": "digitalbazaar/pyld",
+      "source_version": "874c56eb",
+      "content_hash": "b4fcadd49b019d39f4c0aa199dfe56dda824cb3094c8c78425ffdec2e8e0d61d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T01:54:38.408Z"
+    },
+    "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-digitalbazaar-pyld-architecture-intelligence-digitalbazaar-pyld-core-invariants.md",
+      "title": "Architecture Intelligence: digitalbazaar/pyld Core Invariants",
+      "repository": "digitalbazaar/pyld",
+      "source_version": "874c56eb",
+      "content_hash": "677c19bac4dbff3a882c9dfa4f4fdc2b4c3b68deccc178a441165759ed2669ff",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T01:54:38.527Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-digitalbazaar-pyld": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-digitalbazaar-pyld",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/digitalbazaar-pyld-verification-protocol-empirical-defect-shield-for-digitalbaza.md",
+      "title": "Verification Protocol: Empirical Defect Shield for digitalbazaar/pyld",
+      "repository": "digitalbazaar/pyld",
+      "source_version": "874c56eb",
+      "content_hash": "0b919123050eda9d09769cd8da80f631301f718ac9dfe29ec9ea02ddd23e4107",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T01:54:38.650Z"
+    },
+    "rule-8833": {
+      "learning_id": "rule-8833",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8833,
+      "title": "keep memory_store side effects inside the granted store (GHSA-989p-hf",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "30f9eb40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T01:54:47.749Z"
+    },
+    "candidate_directive-keep-memory_store-side-effects-inside-the-granted-store-ghsa-989p-hf": {
+      "item_id": "candidate_directive-keep-memory_store-side-effects-inside-the-granted-store-ghsa-989p-hf",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I089-keep-memory_store-side-effects-inside-the-granted-store-ghsa-989p-hf.md",
+      "title": "keep memory_store side effects inside the granted store (GHSA-989p-hf",
+      "repository": "doobidoo/mcp-memory-service",
+      "source_version": "30f9eb40",
+      "content_hash": "9ca61aecb8ac9fe30db888cc2eae2e8f83462d4d98c6b35e2060ffb4da0c3cca",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T01:54:48.109Z"
+    },
+    "candidate_directive-docs-state-where-json-still-overflows-and-inf-in-the-large-integer-changelog": {
+      "item_id": "candidate_directive-docs-state-where-json-still-overflows-and-inf-in-the-large-integer-changelog",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I2Y5-docs-state-where-json-still-overflows-and-inf-in-the-large-integer-changelog.md",
+      "title": "docs: state where @json still overflows and -INF in the large integer changelog",
+      "repository": "digitalbazaar-pyld-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5b6e48eddf958d5ea7c3625ca2503f8dd65532a93f0401ecaea6e510481214d2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T01:54:51.630Z"
+    },
+    "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-digitalbazaar-pyld-learnings-architecture-intelligence-digitalbazaar-pyld-learni.md",
+      "title": "Architecture Intelligence: digitalbazaar-pyld-learnings Core Invariants",
+      "repository": "digitalbazaar-pyld-learnings",
+      "source_version": "HEAD",
+      "content_hash": "baf047dbb1aca79cab97f057a24c1e31d14f3b9510efd14d5e2bd825db29b36f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T01:54:51.752Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-digitalbazaar-pyld-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-digitalbazaar-pyld-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/digitalbazaar-pyld-learnings-verification-protocol-empirical-defect-shield-for-d.md",
+      "title": "Verification Protocol: Empirical Defect Shield for digitalbazaar-pyld-learnings",
+      "repository": "digitalbazaar-pyld-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c19103482dfe6a06e984d5d8063b6ac6deeb9c5e53a88a8d13b6d8a0597b3f1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T01:54:51.874Z"
+    },
+    "candidate_directive-security-keep-memory_store-side-effects-inside-the-granted-store-ghsa-989p-hf": {
+      "item_id": "candidate_directive-security-keep-memory_store-side-effects-inside-the-granted-store-ghsa-989p-hf",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I4LR-security-keep-memory_store-side-effects-inside-the-granted-store-ghsa-989p-hf.md",
+      "title": "security): keep memory_store side effects inside the granted store (GHSA-989p-hf",
+      "repository": "doobidoo-mcp-memory-service-learnings",
+      "source_version": "HEAD",
+      "content_hash": "83035d1df74942d6c7a9959a53928ac8b1dc95b57b7c97f29a5898f47fc99628",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T01:54:53.779Z"
     }
   },
   "ai-builder-brain": {

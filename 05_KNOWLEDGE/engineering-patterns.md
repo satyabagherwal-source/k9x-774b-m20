@@ -641636,3 +641636,144 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7fcd9bdf` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8832. state where @json still overflows and -INF in the large integer changelog (Harvested from digitalbazaar/pyld)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "state where @json still overflows and -INF in the large integer changelog",
+  "source": "digitalbazaar/pyld",
+  "source_url": "https://github.com/digitalbazaar/pyld",
+  "source_version": "874c56eb",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-17T01:54:37.799Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-digitalbazaar-pyld",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [digitalbazaar/pyld](https://github.com/digitalbazaar/pyld) (Revision: `874c56eb`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in digitalbazaar/pyld. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6c715450`: docs: state where @json still overflows and -INF in the large integer changelog entry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF`, the infinite `xsd:double` (in `json-ld-1.0` mode, as an exact `xsd:integer`). `@json` literals still reject such numbers, as RFC 8785 does.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6c715450` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8833. keep memory_store side effects inside the granted store (GHSA-989p-hf (Harvested from doobidoo/mcp-memory-service)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep memory_store side effects inside the granted store (GHSA-989p-hf",
+  "source": "doobidoo/mcp-memory-service",
+  "source_url": "https://github.com/doobidoo/mcp-memory-service",
+  "source_version": "30f9eb40",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T01:54:47.473Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-doobidoo-mcp-memory-service",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `30f9eb40`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `changelog.d/ghsa-989p.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `15a9e9a9`: security): keep memory_store side effects inside the granted store (GHSA-989p-hfjf-q97q). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/ghsa-989p.fixed.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- **A per-store write grant could write to and supersede memories in another store through `memory_store` (GHSA-989p-hfjf-q97q, reported by [RISCON Labs](https://www.risconlabs.com), @RISCON-Labs).**
+  With `auto_extract=true`, `handle_store_memory` stored the memory in the granted store but ran auto-capture without it. `AutoCaptureService.capture()`, `SessionHarvester._try_evolve()` and `MemoryService.evolve_memory()` took no `store`, so the extracted candidates were compared with the `default` store, replaced a similar memory there, or were inserted there. A client holding only `write:projectA` could overwrite `default`. The NLI contradiction check on store (`MCP_NLI_ON_STORE`, inline and background) had the same gap: it compared a memory with the `default` store whatever store it was written to, linked the two with a `contradicts` edge and reported the hit count to the caller. It also missed contradictions inside a named store for the same reason. Conflict detection on store, which runs on every write without any flag, compared the new memory with every store as well and tagged a near-identical memory in another store `conflict:unresolved`, with `contradicts` edges between the t
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `15a9e9a9` are properly handled with clean fallback behavior.

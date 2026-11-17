@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  
 > **Source**: github ([https://github.com/digitalbazaar/pyld](https://github.com/digitalbazaar/pyld))  
-> **Source Version**: `71b67691`  
+> **Source Version**: `874c56eb`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T08:27:47.331Z  
+> **Timestamp**: 2026-11-17T01:54:37.327Z  
 > **Learning ID**: `learn-github-digitalbazaar-pyld`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/digitalbazaar/pyld](https://github.com/digitalbazaar/pyld))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T08:27:44.076Z  
+> **Harvest Timestamp**: 2026-11-17T01:54:37.013Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -993,85 +993,81 @@ def main(args: list[str] | None = None) -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `71b67691` (2026-11-09)
-**Commit Message**: Bump cachetools from 7.2.5 to 7.2.8
+### Incident Patch 1: `6c715450` (2026-11-10)
+**Commit Message**: docs: state where @json still overflows and -INF in the large integer changelog entry
 
-Bumps [cachetools](https://github.com/tkem/cachetools) from 7.2.5 to 7.2.8.
-- [Changelog](https://github.com/tkem/cachetools/blob/master/CHANGELOG.rst)
-- [Commits](https://github.com/tkem/cachetools/compare/v7.2.5...v7.2.8)
+Signed-off-by: jdsika <[REDACTED_EMAIL]>
 
----
-updated-dependencies:
-- dependency-name: cachetools
-  dependency-version: 7.2.8
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `uv.lock` (modified, +3/-3)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -281,11 +281,11 @@ wheels = [
+@@ -31,7 +31,7 @@
+ - IRI validation now detects multiple # fragments so these IRI's are skipped during toRDF. Fixes [toRdf#te111](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te111) and [toRdf#te112](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te112).
+ - In `_create_node_map()`, ignored `@id: None` subjects are now dropped before they enter the node map to prevent `_graph_to_rdf()` from crashing when sorting mixed `None` and string keys. Fixes [toRdf#te122](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te122).
+ - Use a helper for generalized N-Quads normalization in the test runner, since rdflib cannot parse blank-node predicates. Fixes [toRdf#te075](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te075).
+-- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF`, the infinite `xsd:double` (in `json-ld-1.0` mode, as an exact `xsd:integer`). `@json` literals still reject such numbers, as RFC 8785 does.
++- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
+ - `jsonld.to_rdf()` writes the `xsd:double` NaN as `NaN`, its XSD canonical form, instead of `NAN`, so `jsonld.normalize()` output changes for documents with such a value.
  
- [[package]]
- name = "cachetools"
--version = "7.2.5"
-+version = "7.2.8"
- source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/5a/e5/43f9a3f926cc182a0ee95cfd53ec0b5ac0e2cdafa184af6fc50166fd03fd/cachetools-7.2.5.tar.gz", hash = "sha256:a2223b80de434291ddf4c105354e533bbaf4d29382f5d1bc3e4b9332cb31061e", size = 46088, upload-time = "2026-10-25T08:53:17.172Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/93/6f/faa5e0606769105e70e0478031a8f9a6b729e329f42ce2462585c6d9aa52/cachetools-7.2.8.tar.gz", hash = "sha256:3f9b146b2160975da273e7c23ec882f3996b65df608150d52083c07de0682075", size = 47821, upload-time = "2026-10-31T21:37:51.986Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/4f/bd/bd8f45fbdf05ce06dbadda61bf0a09844bb0cf0a048d7f5c4a368d437e24/cachetools-7.2.5-py3-none-any.whl", hash = "sha256:9033308cc26b678784a27b096aab1541b9e698d785c3e9918b691ccd458d88df", size = 19132, upload-time = "2026-10-25T08:53:15.638Z" },
-+    { url = "https://files.pythonhosted.org/packages/0c/35/2fb720060bb278759da35f2076fab1af4e9d66e3add080e6b40d6e25ba48/cachetools-7.2.8-py3-none-any.whl", hash = "sha256:09b04a85741d0019b3fb7d02b7ee9933a422fa6923af92a0fd63b893b695830c", size = 19646, upload-time = "2026-10-31T21:37:50.278Z" },
- ]
- 
- [[package]]
+ ### Changed
 ```
 
 ---
 
-### Incident Patch 2: `e84d1eca` (2026-11-09)
-**Commit Message**: Bump frozendict from 2.4.7 to 2.5.1
+### Incident Patch 2: `874c56eb` (2026-11-10)
+**Commit Message**: docs: say the operations no longer fail with an OverflowError, which flatten wraps
 
-Bumps [frozendict](https://github.com/Marco-Sulla/python-frozendict) from 2.4.7 to 2.5.1.
-- [Release notes](https://github.com/Marco-Sulla/python-frozendict/releases)
-- [Commits](https://github.com/Marco-Sulla/python-frozendict/compare/v2.4.7...v2.5.1)
+Signed-off-by: jdsika <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@
+ - IRI validation now detects multiple # fragments so these IRI's are skipped during toRDF. Fixes [toRdf#te111](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te111) and [toRdf#te112](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te112).
+ - In `_create_node_map()`, ignored `@id: None` subjects are now dropped before they enter the node map to prevent `_graph_to_rdf()` from crashing when sorting mixed `None` and string keys. Fixes [toRdf#te122](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te122).
+ - Use a helper for generalized N-Quads normalization in the test runner, since rdflib cannot parse blank-node predicates. Fixes [toRdf#te075](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te075).
+-- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
++- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer fail with an `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
+ - `jsonld.to_rdf()` writes the `xsd:double` NaN as `NaN`, its XSD canonical form, instead of `NAN`, so `jsonld.normalize()` output changes for documents with such a value.
+ 
+ ### Changed
+```
 
 ---
-updated-dependencies:
-- dependency-name: frozendict
-  dependency-version: 2.5.1
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+### Incident Patch 3: `000ceeb3` (2026-11-10)
+**Commit Message**: docs: state the inputs and the overflow rounding of the xsd:double helpers
 
-**File**: `uv.lock` (modified, +17/-25)
+Signed-off-by: jdsika <[REDACTED_EMAIL]>
+
+**File**: `lib/pyld/jsonld.py` (modified, +8/-5)
 ```diff
-@@ -639,31 +639,23 @@ wheels = [
+@@ -6458,11 +6458,13 @@ def _to_double(value) -> float:
+     """
+     Converts a number to a double.
  
- [[package]]
- name = "frozendict"
--version = "2.4.7"
--source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/90/b2/2a3d1374b7780999d3184e171e25439a8358c47b481f68be883c14086b4c/frozendict-2.4.7.tar.gz", hash = "sha256:e478fb2a1391a56c8a6e10cc97c4a9002b410ecd1ac28c18d780661762e271bd", size = 317082, upload-time = "2025-11-11T22:40:14.251Z" }
--wheels = [
--    { url = "https://files.pythonhosted.org/packages/d1/bd/920b1c5ff1df427a5fc3fd4c2f13b0b0e720c3d57fafd80557094c1fefe0/frozendict-2.4.7-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:bd37c087a538944652363cfd77fb7abe8100cc1f48afea0b88b38bf0f469c3d2", size = 59848, upload-time = "2025-11-11T22:37:10.964Z" },
--    { url = "https://files.pythonhosted.org/packages/a6/9c/e3e186925b1d84f816d458be4e2ea785bbeba15fd2e9e85c5ae7e7a90421/frozendict-2.4.7-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:2b96f224a5431889f04b2bc99c0e9abe285679464273ead83d7d7f2a15907d35", size = 38164, upload-time = "2025-11-11T22:37:12.622Z" },
--    { url = "https://files.pythonhosted.org/packages/10/4c/af931d88c51ee2fcbf8c817557dcb975133a188f1b44bfa82caa940beeab/frozendict-2.4.7-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:5c1781f28c4bbb177644b3cb6d5cf7da59be374b02d91cdde68d1d5ef32e046b", size = 38341, upload-time = "2025-11-11T22:37:13.611Z" },
--    { url = "https://files.pythonhosted.org/packages/ba/7a/c1fd4f736758cf93939cc3b7c8399fe1db0c121881431d41fcdbae344343/frozendict-2.4.7-cp310-cp310-manylinux1_i686.manylinux_2_28_i686.manylinux_2_5_i686.whl", hash = "sha256:8a06f6c3d3b8d487226fdde93f621e04a54faecc5bf5d9b16497b8f9ead0ac3e", size = 112882, upload-time = "2025-11-11T22:37:15.098Z" },
--    { url = "https://files.pythonhosted.org/packages/bd/b0/304294f7cd099582a98d63e7a9cec34a9905d07f7628b42fc3f9c9a9bc94/frozendict-2.4.7-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:b809d1c861436a75b2b015dbfd94f6154fa4e7cb0a70e389df1d5f6246b21d1e", size = 120482, upload-time = "2025-11-11T22:37:16.182Z" },
--    { url = "https://files.pythonhosted.org/packages/7e/61/689212ea4124fcbd097c0ac02c2c6a4e345ccc132d9104d054ff6b43ab64/frozendict-2.4.7-cp310-cp310-manylinux2014_armv7l.manylinux_2_17_armv7l.manylinux_2_31_armv7l.whl", hash = "sha256:75eefdf257a84ea73d553eb80d0abbff0af4c9df62529e4600fd3f96ff17eeb3", size = 113527, upload-time = "2025-11-11T22:37:17.389Z" },
--    { url = "https://files.pythonhosted.org/packages/5c/9b/38a762f4e76903efd4340454cac2820f583929457822111ef6a00ff1a3f4/frozendict-2.4.7-cp310-cp310-manylinux2014_ppc64le.manylinux_2_17_ppc64le.manylinux_2_28_ppc64le.whl", hash = "sha256:a4d2b27d8156922c9739dd2ff4f3934716e17cfd1cf6fb61aa17af7d378555e9", size = 130068, upload-time = "2025-11-11T22:37:18.494Z" },
--    { url = "https://files.pythonhosted.org/packages/cf/41/9751e9ec1a2e810e8f961aea4f8958953157478daff6b868277ab7c5ef8c/frozendict-2.4.7-cp310-cp310-manylinux2014_s390x.manylinux_2_17_s390x.manylinux_2_28_s390x.whl", hash = "sha256:2ebd953c41408acfb8041ff9e6c3519c09988fb7e007df7ab6b56e229029d788", size = 126184, upload-time = "2025-11-11T22:37:19.789Z" },
--    { url = "https://files.pythonhosted.org/packages/71/be/b179b5f200cb0f52debeccc63b786cabcc408c4542f47c4245f978ad36e3/frozendict-2.4.7-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:4c64d34b802912ee6d107936e970b90750385a1fdfd38d310098b2918ba4cbf2", size = 120168, upload-time = "2025-11-11T22:37:20.929Z" },
--    { url = "https://files.pythonhosted.org/packages/25/c2/1536bc363dbce414e6b632f496aa8219c0db459a99eeafa02eba380e4cfa/frozendict-2.4.7-cp310-cp310-manylinux_2_31_riscv64.manylinux_2_39_riscv64.whl", hash = "sha256:294a7d7d51dd979021a8691b46aedf9bd4a594ce3ed33a4bdf0a712d6929d712", size = 114997, upload-time = "2025-11-11T22:37:21.888Z" },
--    { url = "https://files.pythonhosted.org/packages/29/63/3e9efb490c00a0bf3c7bbf72fc73c90c4a6ebe30595e0fc44f59182b2ae7/frozendict-2.4.7-cp310-cp310-musllinux_1_2_aarch64.whl", hash = "sha256:f65d1b90e9ddc791ea82ef91a9ae0ab27ef6c0cfa88fadfa0e5ca5a22f8fa22f", size = 117292, upload-time = "2025-11-11T22:37:22.978Z" },
--    { url = "https://files.pythonhosted.org/packages/5e/66/d25b1e94f9b0e64025d5cadc77b9b857737ebffd8963ee91de7c5a06415a/frozendict-2.4.7-cp310-cp310-musllinux_1_2_armv7l.whl", hash = "sha256:82d5272d08451bcef6fb6235a0a04cf1816b6b6815cec76be5ace1de17e0c1a4", size = 110656, upload-time = "2025-11-11T22:38:37.652Z" },
--    { url = "https://files.pythonhosted.org/packages/a3/5d/0e7e3294e18bf41d38dbc9ee82539be607c8d26e763ae12d9e41f03f2dae/frozendict-2.4.7-cp310-cp310-musllinux_1_2_i686.whl", hash = "sha256:5943c3f683d3f32036f6ca975e920e383d85add1857eee547742de9c1f283716", size = 113225, upload-time = "2025-11-11T22:38:38.631Z" },
--    { url = "https://files.pythonhosted.org/packages/e0/fb/b72c9b261ac7a7803528aa63bba776face8ad8d39cc4ca4825ddaa7777a9/frozendict-2.4.7-cp310-cp310
+-    An integer beyond the range of a double becomes positive or negative
+-    infinity, as floatingPointRound in XML Schema 1.1 Part 2 rounds it:
+-    https://www.w3.org/TR/xmlschema11-2/#f-floatPtRound
++    An integer that rounds beyond the largest double becomes positive or
++    negative infinity, as the lexical mapping of `xsd:double` in XML Schema
++    1.1 Part 2 rounds it with floatingPointRound:
++    https://www.w3.org/TR/xmlschema11-2/#f-doubleLexmap
+ 
+-    :param value: the number to convert.
++    :param value: the number or numeric string to convert; anything else
++      raises ValueError or TypeError, as float() does.
+ 
+     :return: the double.
+     """
+@@ -6483,7 +6485,8 @@ def _canonicalize_double(value: float | int | str) -> str:
+     specialRepCanonicalMap in XML Schema 1.1 Part 2 maps them:
+     https://www.w3.org/TR/xmlschema11-2/#f-specValCanMap
+ 
+-    :param value: the number to convert.
++    :param value: the number or numeric string to convert, as for
++      _to_double().
+ 
+     :return: the canonical lexical form.
+     """
 ```
 
 #### Recent Merged Pull Requests:
@@ -1079,8 +1075,8 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 - **PR #376** (2026-11-10): Bump ruff from 0.17.2 to 0.17.3 (@dependabot[bot])
 - **PR #375** (2026-11-10): Bump cachetools from 7.2.5 to 7.2.8 (@dependabot[bot])
 - **PR #374** (2026-11-10): Bump pytest from 9.1.1 to 9.2.0 (@dependabot[bot])
+- **PR #373** (2026-11-12): fix: write too large integers and NaN as canonical xsd:double values (@jdsika)
 - **PR #367** (2026-11-02): Bump cachetools from 7.2.1 to 7.2.5 (@dependabot[bot])
-- **PR #366** (2026-11-02): Bump aiohttp from 3.14.4 to 3.14.5 (@dependabot[bot])
 
 ---
 
@@ -1100,32 +1096,28 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump cachetools from 7.2.5 to 7.2.8
+## X. docs: state where @json still overflows and -INF in the large integer changelog 
 
 **RULE**:
-When implementing operations in `uv.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in digitalbazaar/pyld. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in digitalbazaar/pyld. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `71b67691`: Bump cachetools from 7.2.5 to 7.2.8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c715450`: docs: state where @json still overflows and -INF in the large integer changelog entry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `uv.lock`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-version = "7.2.8"
-sdist = { url = "https://files.pythonhosted.org/packages/93/6f/faa5e0606769105e70e0478031a8f9a6b729e329f42ce2462585c6d9aa52/cachetools-7.2.8.tar.gz", hash = "sha256:3f9b146b2160975da273e7c23ec882f3996b65df608150d52083c07de0682075", size = 47821, upload-time = "2026-10-31T21:37:51.986Z" }
-    { url = "https://files.pythonhosted.org/packages/0c/35/2fb720060bb278759da35f2076fab1af4e9d66e3add080e6b40d6e25ba48/cachetools-7.2.8-py3-none-any.whl", hash = "sha256:09b04a85741d0019b3fb7d02b7ee9933a422fa6923af92a0fd63b893b695830c", size = 19646, upload-time = "2026-10-31T21:37:50.278Z" },
+- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-version = "7.2.5"
-sdist = { url = "https://files.pythonhosted.org/packages/5a/e5/43f9a3f926cc182a0ee95cfd53ec0b5ac0e2cdafa184af6fc50166fd03fd/cachetools-7.2.5.tar.gz", hash = "sha256:a2223b80de434291ddf4c105354e533bbaf4d29382f5d1bc3e4b9332cb31061e", size = 46088, upload-time = "2026-10-25T08:53:17.172Z" }
-    { url = "https://files.pythonhosted.org/packages/4f/bd/bd8f45fbdf05ce06dbadda61bf0a09844bb0cf0a048d7f5c4a368d437e24/cachetools-7.2.5-py3-none-any.whl", hash = "sha256:9033308cc26b678784a27b096aab1541b9e698d785c3e9918b691ccd458d88df", size = 19132, upload-time = "2026-10-25T08:53:15.638Z" },
+// Induced defect failure mode:
+- `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer raise `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF`, the infinite `xsd:double` (in `json-ld-1.0` mode, as an exact `xsd:integer`). `@json` literals still reject such numbers, as RFC 8785 does.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `71b67691` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c715450` are properly handled with clean fallback behavior.

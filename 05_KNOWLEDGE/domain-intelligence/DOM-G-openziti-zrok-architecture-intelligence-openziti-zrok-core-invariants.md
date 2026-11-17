@@ -4,24 +4,24 @@
 {
   "source_repository": "openziti/zrok",
   "source_url": "https://github.com/openziti/zrok",
-  "source_version": "3c87b271",
+  "source_version": "0c23df62",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T18:46:53.051Z",
+  "timestamp": "2026-11-17T01:54:45.395Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-openziti-zrok",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [openziti/zrok](https://github.com/openziti/zrok) (Revision: `3c87b271`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T18:46:53.051Z`  
+> **Provenance**: Harvested from [openziti/zrok](https://github.com/openziti/zrok) (Revision: `0c23df62`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T01:54:45.395Z`  
 > **Learning ID**: `learn-github-openziti-zrok`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from openziti/zrok:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openziti-zrok-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openziti/zrok](https://github.com/openziti/zrok))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:46:51.619Z  
+> **Harvest Timestamp**: 2026-11-17T01:54:44.789Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Secure internet sharing made simple.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 4816 stars
+- **Stars / Engagement**: 4818 stars
 
 ---
 
@@ -1397,13 +1397,15 @@ func singleJoiningSlash(a, b string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1290** (2026-11-16): **v2.0.10**
+  *Symptoms*: changelog.
+  **Post-Mortem & Fix Analysis**:
+  > [vc]: #++2hR7sx9UqnUwTRoXbDe/7l77nsyRmfLeKmJKP6S7s=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJ6cm9rIiwicHJvamVjdElkIjoicHJqX000ODk4ZTc2OXRxY2l3MVRUUmVQc21nallRcVYiLCJ2MCI6ZmFsc2UsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiIifSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL29wZW56aXRpL3pyb2svR0M4NldFNGJ4QkdTV3llZ2FpeTNRN0g2dlBhWiIsIm5leHRDb21taXRTdGF0dXMiOiJJR05PUkVEIn1dLCJyZXF1ZXN0UmV2aWV3VXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3ZlcmNlbC1hZ2VudC9yZXF1ZXN0LXJldmlldz9vd25lcj1vcGVueml0aSZyZXBvPXpyb2smcHI9MTI5MCJ9 The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).   <details><summary>1 Skipped Deployment</summary>  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/openziti/zrok"><sup><img src="https://vercel.com/api/www/avatar?projectId=prj_M4898e769tqciw1TTRePsmgjYQqV&teamId=team_bT6ULN5oFw8uRka0uFkKt
+
 - **Issue #1289** (2026-11-16): **agent smoke workflow fix**
   *Symptoms*: a race fix for the automated agent smoke harness.
   **Post-Mortem & Fix Analysis**:
   > [vc]: #Z/2KjRk0M4nEDTudpCJgnFdMhCLFUsSoeK1hK9G1AXU=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJ6cm9rIiwicHJvamVjdElkIjoicHJqX000ODk4ZTc2OXRxY2l3MVRUUmVQc21nallRcVYiLCJ2MCI6ZmFsc2UsInJvb3REaXJlY3RvcnkiOiJ3ZWJzaXRlIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL29wZW56aXRpL3pyb2svNWg0Zm5ndkVINzJEWjNra3pFMlgxd21Yb0dXciIsInByZXZpZXdVcmwiOiJ6cm9rLWdpdC12MjAxMC1hZ2VudC1zbW9rZS1maXgtb3BlbnppdGkudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJERVBMT1lFRCIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJ6cm9rLWdpdC12MjAxMC1hZ2VudC1zbW9rZS1maXgtb3BlbnppdGkudmVyY2VsLmFwcCJ9fV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPW9wZW56aXRpJnJlcG89enJvayZwcj0xMjg5In0= The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com
-
-- **Issue #1288** (2026-11-16): **V2_0_10_basic_auth_file**
-  *Symptoms*: CHANGE: **The agent registry (`agent-registry.json`) is now version 3, which agents from v2.0.9 and earlier cannot read.** The agent reads an existing version 2 registry as it is and saves it as version 3 at the end of its first startup, so upgrading needs no manual step. A v2.0.9 agent will not start on a version 3 registry: it reports the unsupported version, exits 1 and leaves the file as it was. Rolling back to v2.0.9 or earlier therefore needs a manual edit of the registry before the older agent will run; the procedure is in `docs/current/agent-share-lifecycle.md`. A v2.0.8 agent does start, with nothing restored, and replaces the registry with an empty one at its next save, so for v2.0.8 make the edit before starting it.  FEATURE: `zrok2 share public --basic-auth-from-stdin` reads one `<username:password>` from the first line of stdin instead of `--basic-auth`, so a supervising process can pass the credential without it appearing in the process command line or environment, where other local users and endpoint monitoring can read it. It cannot be combined with `--basic-auth` or `--oauth-provider`, and an empty or unreadable stdin fails with exit 2 before the share is created.  FEATURE: `zrok2 share public --basic-auth-file <path>` reads basic authentication users from a file, one `<username:password>` per line, so the credentials appear in neither the process command line nor the environment. Blank lines are skipped, either line ending is accepted, and a password may con
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1420,239 +1422,49 @@ func singleJoiningSlash(a, b string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c87b271` (2026-11-16)
-**Commit Message**: Merge pull request #1289 from openziti/v2010-agent-smoke-fix
+### Incident Patch 1: `0c23df62` (2026-11-16)
+**Commit Message**: Merge pull request #1290 from openziti/v2010-changelog
 
-agent smoke workflow fix
+v2.0.10
 
-**File**: `docs/journal/2026-11-16.md` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -3,3 +3,5 @@
- - A live functional check of the basic authentication work ran on 2026-11-13 from a scratch home with its own environment, and passed. It corrected one claim the documents had from reading alone: a `v2.0.9` agent does not start on a version 3 registry (a failed import is fatal; it exits 1 and leaves the file). The changelog entry and `docs/current/agent-share-lifecycle.md` now say so. The `v2.0.8` reaction is still from reading only.
- - Two things that check observed and nobody acted on. For a moment after the agent creates a public share and before its worker is serving, a request with valid credentials gets 502 while one without gets 401; this follows from the agent creating the share before it launches the worker, and predates this work. A failed start at registry replay shows in `zrok2 agent status` and writes nothing to the agent's log.
- - A test that runs `zrok2 share public` against a real controller without `--force-agent` runs locally when no agent answers, and creates a share. Check the agent is reachable first, or force agent routing.
-+- The agent smoke workflow's offline harness step failed on the macOS row with one test, `TestUnresolvedProcessFailsCleanup/termination_unconfirmed`. It was a race in the harness, not in the product: `awaitGone` in `tests/agent-smoke/process_unix.go` bounds its polling with a context that also cancels a `ps` it catches running, and that killed `ps` was reported as an inspection failure, so the message depended on where the deadline fell. It now reports only an inspection that finished inside the bound. Every other `ERROR` line in that step's log is a failure scenario asserting a failure. Windows waits on handles and has no such path.
-+- The live scenario did not run in that workflow run, so no native platform check of the v2.0.10 work has happened yet. Dispatch the workflow again once this fix is on the branch it runs from.
-```
-
-**File**: `tests/agent-smoke/process_unix.go` (modified, +9/-3)
-```diff
-@@ -169,19 +169,25 @@ func processGone(ctx context.Context, record processRecord) (bool, error) {
- }
+@@ -2,6 +2,8 @@
  
- // awaitGone polls until a killed recorded process is confirmed gone, within bound. inspection failures are
--// retried until the bound expires.
-+// retried until the bound expires. the bound also cancels an inspection it catches running, and that ps then
-+// fails because it was killed, which says nothing about the recorded process; only the result of an inspection
-+// that finished inside the bound is reported as an inspection failure.
- func awaitGone(ctx context.Context, record processRecord, bound, poll time.Duration) error {
- 	ctx, cancel := context.WithTimeout(ctx, bound)
- 	defer cancel()
-+	var inspectErr error
- 	for {
- 		gone, err := processGone(ctx, record)
- 		if err == nil && gone {
- 			return nil
- 		}
-+		if ctx.Err() == nil {
-+			inspectErr = err
-+		}
- 		select {
- 		case <-ctx.Done():
--			if err != nil {
--				return fmt.Errorf("termination not confirmed within %v of being killed: %w", bound, err)
-+			if inspectErr != nil {
-+				return fmt.Errorf("termination not confirmed within %v of being killed: %w", bound, inspectErr)
- 			}
- 			return fmt.Errorf("not confirmed terminated within %v of being killed", bound)
- 		case <-time.After(poll):
-```
-
-**File**: `tests/agent-smoke/process_unix_test.go` (modified, +33/-0)
-```diff
-@@ -3,13 +3,15 @@
- package main
+ ## Unreleased
  
- import (
-+	"context"
- 	"fmt"
- 	"io/fs"
- 	"os"
- 	"os/exec"
- 	"path/filepath"
- 	"syscall"
- 	"testing"
-+	"time"
- 
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-@@ -44,13 +46,44 @@ func fakePS(t *testing.T, started, command string) {
- 	if started != "" {
- 		script = fmt.Sprintf("#!/bin/sh\ncase \"$2\" in\nlstart=) echo '%v' ;;\nargs=) echo '%v' ;;\n*) echo S ;;\nesac\n", started, command)
- 	}
-+	installPS(t, script)
-+}
++## v2.0.10
 +
-+// installPS makes script the only ps on PATH for the rest of the test.
-+func installPS(t *testing.T, script string) {
- 	dir := t.TempDir()
- 	if err := os.WriteFile(filepath.Join(dir, "ps"), []byte(script), 0o755); err != nil {
- 		t.Fatal(err)
- 	}
- 	t.Setenv("PATH", dir)
- }
+ CHANGE: **The agent registry (`agent-registry.json`) is now version 3, which agents from v2.0.9 and earlier cannot read.** The agent reads an existing version 2 registry as it is and saves it as version 3 at the end of its first startup, so upgrading needs no manual step. A v2.0.9 agent will not start on a version 3 registry: it reports the unsupported version, exits 1 and leaves the file as it was. Rolling back to v2.0.9 or earlier therefore needs a manual edit of the registry before the older agent will run; the procedure is in `docs/current/agent-share-lifecycle.md`. A v2.0.8 agent does start, with nothing restored, and replaces the registry with an empty one at its next save, so for v2.0.8 make the edit before starting it.
  
-+// the bound catching an inspection mid-run is the bound expiring, not an inspection failure. a ps that always
-+// outlasts the bound makes that happen on every run; left to chance, it depends on where the deadline falls among
-+// the polls, which is how a loaded runner came to report the killed ps as the reason.
-+func TestAwaitGoneDoesNotReportTheInspectionItInterrupted(t *testing.T) {
-+	// exec, so the kill reaches the sleeper itself and no child is left holding the output pipe open.
-+	installPS(t, "#!/bin/sh\nexec /bin/sleep 30\n")
-+	record := processRecord{PID: os.Getpid(), Platform: "posix", Started: "then", Command: "it"}
-+	bound := 200 * time.Millisecond
-+	start := time.Now()
-+	err := awaitGone(context.Background(), record, bound, 10*time.Millisecond)
-+	require.Error(t, err)
-+	assert.Equal(t, "not confirmed terminated within 200ms of being killed", err.Error())
-+	assert.Less(t, time.Since(start), 5*time.Second, "the interrupted inspection must not outlive the bound by long")
-+}
-+
-+// an inspection that fails inside the bound is still reported with its cause, including when a later inspection
-+// is the one the bound interrupts.
-+func TestAwaitGoneReportsAnInspectionFailure(t *testing.T) {
-+	installPS(t, "#!/bin/sh\nexit 2\n")
-+	record := processRecord{PID: os.Getpid(), Platform: "posix", Started: "then", Command: "it"}
-+	err := awaitGone(context.Background(), record, 300*time.Millisecond, 10*time.Millisecond)
-+	require.Error(t, err)
-+	assert.Contains(t, err.Error(), "termination not confirmed within 300ms of being killed: ")
-+	assert.Contains(t, err.Error(), "exit status 2")
-+}
-+
- // alive reports whether a pid still names a process.
- func alive(pid int) bool {
- 	return syscall.Kill(pid, 0) == nil
+ FEATURE: `zrok2 share public --basic-auth-from-stdin` reads one `<username:password>` from the first line of stdin instead of `--basic-auth`, so a supervising process can pass the credential without it appearing in the process command line or environment, where other local users and endpoint monitoring can read it. It cannot be combined with `--basic-auth` or `--oauth-provider`, and an empty or unreadable stdin fails with exit 2 before the share is created.
 ```
 
 ---
 
-### Incident Patch 2: `bc9a8598` (2026-11-16)
-**Commit Message**: agent smoke workflow fix
+### Incident Patch 2: `f3a7f26f` (2026-11-16)
+**Commit Message**: v2.0.10
 
-**File**: `docs/journal/2026-11-16.md` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -3,3 +3,5 @@
- - A live functional check of the basic authentication work ran on 2026-11-13 from a scratch home with its own environment, and passed. It corrected one claim the documents had from reading alone: a `v2.0.9` agent does not start on a version 3 registry (a failed import is fatal; it exits 1 and leaves the file). The changelog entry and `docs/current/agent-share-lifecycle.md` now say so. The `v2.0.8` reaction is still from reading only.
- - Two things that check observed and nobody acted on. For a moment after the agent creates a public share and before its worker is serving, a request with valid credentials gets 502 while one without gets 401; this follows from the agent creating the share before it launches the worker, and predates this work. A failed start at registry replay shows in `zrok2 agent status` and writes nothing to the agent's log.
- - A test that runs `zrok2 share public` against a real controller without `--force-agent` runs locally when no agent answers, and creates a share. Check the agent is reachable first, or force agent routing.
-+- The agent smoke workflow's offline harness step failed on the macOS row with one test, `TestUnresolvedProcessFailsCleanup/termination_unconfirmed`. It was a race in the harness, not in the product: `awaitGone` in `tests/agent-smoke/process_unix.go` bounds its polling with a context that also cancels a `ps` it catches running, and that killed `ps` was reported as an inspection failure, so the message depended on where the deadline fell. It now reports only an inspection that finished inside the bound. Every other `ERROR` line in that step's log is a failure scenario asserting a failure. Windows waits on handles and has no such path.
-+- The live scenario did not run in that workflow run, so no native platform check of the v2.0.10 work has happened yet. Dispatch the workflow again once this fix is on the branch it runs from.
-```
-
-**File**: `tests/agent-smoke/process_unix.go` (modified, +9/-3)
-```diff
-@@ -169,19 +169,25 @@ func processGone(ctx context.Context, record processRecord) (bool, error) {
- }
+@@ -2,6 +2,8 @@
  
- // awaitGone polls until a killed recorded process is confirmed gone, within bound. inspection failures are
--// retried until the bound expires.
-+// retried until the bound expires. the bound also cancels an inspection it catches running, and that ps then
-+// fails because it was killed, which says nothing about the recorded process; only the result of an inspection
-+// that finished inside the bound is reported as an inspection failure.
- func awaitGone(ctx context.Context, record processRecord, bound, poll time.Duration) error {
- 	ctx, cancel := context.WithTimeout(ctx, bound)
- 	defer cancel()
-+	var inspectErr error
- 	for {
- 		gone, err := processGone(ctx, record)
- 		if err == nil && gone {
- 			return nil
- 		}
-+		if ctx.Err() == nil {
-+			inspectErr = err
-+		}
- 		select {
- 		case <-ctx.Done():
--			if err != nil {
--				return fmt.Errorf("termination not confirmed within %v of being killed: %w", bound, err)
-+			if inspectErr != nil {
-+				return fmt.Errorf("termination not confirmed within %v of being killed: %w", bound, inspectErr)
- 			}
- 			return fmt.Errorf("not confirmed terminated within %v of being killed", bound)
- 		case <-time.After(poll):
-```
-
-**File**: `tests/agent-smoke/process_unix_test.go` (modified, +33/-0)
-```diff
-@@ -3,13 +3,15 @@
- package main
+ ## Unreleased
  
- import (
-+	"context"
- 	"fmt"
- 	"io/fs"
- 	"os"
- 	"os/exec"
- 	"path/filepath"
- 	"syscall"
- 	"testing"
-+	"time"
- 
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-@@ -44,13 +46,44 @@ func fakePS(t *testing.T, started, command string) {
- 	if started != "" {
- 		script = fmt.Sprintf("#!/bin/sh\ncase \"$2\" in\nlstart=) echo '%v' ;;\nargs=) echo '%v' ;;\n*) echo S ;;\nesac\n", started, command)
- 	}
-+	installPS(t, script)
-+}
++## v2.0.10
 +
-+// installPS makes script the only ps on PATH for the rest of the test.
-+func installPS(t *testing.T, script string) {
- 	dir := t.TempDir()
- 	if err := os.WriteFile(filepath.Join(dir, "ps"), []byte(script), 0o755); err != nil {
- 		t.Fatal(err)
- 	}
- 	t.Setenv("PATH", dir)
- }
+ CHANGE: **The agent registry (`agent-registry.json`) is now version 3, which agents from v2.0.9 and earlier cannot read.** The agent reads an existing version 2 registry as it is and saves it as version 3 at the end of its first startup, so upgrading needs no manual step. A v2.0.9 agent will not start on a version 3 registry: it reports the unsupported version, exits 1 and leaves the file as it was. Rolling back to v2.0.9 or earlier therefore needs a manual edit of the registry before the older agent will run; the procedure is in `docs/current/agent-share-lifecycle.md`. A v2.0.8 agent does start, with nothing restored, and replaces the registry with an empty one at its next save, so for v2.0.8 make the edit before starting it.
  
-+// the bound catching an inspection mid-run is the bound expiring, not an inspection failure. a ps that always
-+// outlasts the bound makes that happen on every run; left to chance, it depends on where the deadline falls among
-+// the polls, which is how a loaded runner came to report the killed ps as the reason.
-+func TestAwaitGoneDoesNotReportTheInspectionItInterrupted(t *testing.T) {
-+	// exec, so the kill reaches the sleeper itself and no child is left holding the output pipe open.
-+	installPS(t, "#!/bin/sh\nexec /bin/sleep 30\n")
-+	record := processRecord{PID: os.Getpid(), Platform: "posix", Started: "then", Command: "it"}
-+	bound := 200 * time.Millisecond
-+	start := time.Now()
-+	err := awaitGone(context.Background(), record, bound, 10*time.Millisecond)
-+	require.Error(t, err)
-+	assert.Equal(t, "not confirmed terminated within 200ms of being killed", err.Error())
-+	assert.Less(t, time.Since(start), 5*time.Second, "the interrupted inspection must not outlive the bound by long")
-+}
-+
-+// an inspection that fails inside the bound is still reported with its cause, including when a later inspection
-+// is the one the bound interrupts.
-+func TestAwaitGoneReportsAnInspectionFailure(t *testing.T) {
-+	installPS(t, "#!/bin/sh\nexit 2\n")
-+	record := processRecord{PID: os.Getpid(), Platform: "posix", Started: "then", Command: "it"}
-+	err := awaitGone(context.Background(), record, 300*time.Millisecond, 10*time.Millisecond)
-+	require.Error(t, err)
-+	assert.Contains(t, err.Error(), "termination not confirmed within 300ms of being killed: ")
-+	assert.Contains(t, err.Error(), "exit status 2")
-+}
-+
- // alive reports whether a pid still names a process.
- func alive(pid int) bool {
- 	return syscall.Kill(pid, 0) == nil
+ FEATURE: `zrok2 share public --basic-auth-from-stdin` reads one `<username:password>` from the first line of stdin instead of `--basic-auth`, so a supervising process can pass the credential without it appearing in the process command line or environment, where other local users and endpoint monitoring can read it. It cannot be combined with `--basic-auth` or `--oauth-provider`, and an empty or unreadable stdin fails with exit 2 before the share is created.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1290** (2026-11-16): v2.0.10 (@michaelquigley)
 - **PR #1289** (2026-11-16): agent smoke workflow fix (@michaelquigley)
 - **PR #1288** (2026-11-16): V2_0_10_basic_auth_file (@michaelquigley)
 - **PR #1287** (2026-11-12): Add --basic-auth-from-stdin to share public (@aaeekaayyyyyy)
 - **PR #1286** (2026-10-30): fixes-209 (@michaelquigley)
 - **PR #1284** (2026-10-08): fall-fixes-208 (@michaelquigley)
-- **PR #1283** (2026-10-03): rate limiting is counted and answered with 503; access and enable compensate (@michaelquigley)
 
 ---
 
@@ -1672,22 +1484,22 @@ agent smoke workflow fix
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in 2026-11-16.md
+## X. Empirical Invariant Guard in CHANGELOG.md
 
 **RULE**:
-When implementing operations in `docs/journal/2026-11-16.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openziti/zrok. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openziti/zrok. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c87b271`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c23df62`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/journal/2026-11-16.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- The agent smoke workflow's offline harness step failed on the macOS row with one test, `TestUnresolvedProcessFailsCleanup/termination_unconfirmed`. It was a race in the harness, not in the product: `awaitGone` in `tests/agent-smoke/process_unix.go` bounds its polling with a context that also cancels a `ps` it catches running, and that killed `ps` was reported as an inspection failure, so the message depended on where the deadline fell. It now reports only an inspection that finished inside the bound. Every other `ERROR` line in that step's log is a failure scenario asserting a failure. Windows waits on handles and has no such path.
-- The live scenario did not run in that workflow run, so no native platform check of the v2.0.10 work has happened yet. Dispatch the workflow again once this fix is on the branch it runs from.
+## v2.0.10
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1697,7 +1509,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c87b271` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c23df62` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T01:41:54.064Z",
-    "lastVerified": "2026-11-17T01:41:54.064Z",
+    "lastChecked": "2026-11-17T01:54:51.110Z",
+    "lastVerified": "2026-11-17T01:54:51.110Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-17T00:56:07.347Z",
-    "lastVerified": "2026-11-17T00:56:07.347Z",
+    "lastChecked": "2026-11-17T01:54:44.461Z",
+    "lastVerified": "2026-11-17T01:54:44.461Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -436,14 +436,14 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-16T18:46:51.619Z",
-    "lastVerified": "2026-11-16T18:46:51.619Z",
+    "lastChecked": "2026-11-17T01:54:44.789Z",
+    "lastVerified": "2026-11-17T01:54:44.789Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
-    "contentHash": "8b4818c23295eaf7be25afa05195c1170e3b73e8d1a2b930aca32ee58d93627a",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "f7fc70c2ec5b84b7dfeb180e64e6756bcf3337610bd9b70a2d6ce779fe01efb8",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3191,9 +3191,9 @@
   "litmuschaos-litmus": {
     "name": "litmus",
     "officialUrl": "https://github.com/litmuschaos/litmus",
-    "lastChecked": "2026-11-15T19:12:04.964Z",
+    "lastChecked": "2026-11-17T01:54:36.983Z",
     "revisionIdentifier": "97a397fb",
-    "lastVerified": "2026-11-15T19:12:04.964Z"
+    "lastVerified": "2026-11-17T01:54:36.983Z"
   },
   "pinecone-io-examples": {
     "name": "examples",
@@ -3292,9 +3292,9 @@
   "xampprocky-tokei": {
     "name": "tokei",
     "officialUrl": "https://github.com/XAMPPRocky/tokei",
-    "lastChecked": "2026-11-15T06:45:00.101Z",
+    "lastChecked": "2026-11-17T01:54:29.401Z",
     "revisionIdentifier": "c14f7447",
-    "lastVerified": "2026-11-15T06:45:00.101Z"
+    "lastVerified": "2026-11-17T01:54:29.401Z"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "name": "Alissonerdx/BFS-Best-Face-Swap",
@@ -4025,14 +4025,14 @@
     "officialUrl": "https://github.com/doobidoo/mcp-memory-service",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-15T17:31:54.480Z",
-    "lastVerified": "2026-11-15T17:31:54.480Z",
+    "lastChecked": "2026-11-17T01:54:47.002Z",
+    "lastVerified": "2026-11-17T01:54:47.002Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "12804ed099922fe56c2a104e6275af839e48755167193ae0e3013cdb761a2d1b",
+    "contentHash": "bcbb81d4df96828d852949442ad13f8866d4920f236c6950368b6fb51c4fcf2a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12161,14 +12161,14 @@
     "officialUrl": "https://github.com/digitalbazaar/pyld",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T08:27:44.076Z",
-    "lastVerified": "2026-11-12T08:27:44.076Z",
+    "lastChecked": "2026-11-17T01:54:37.013Z",
+    "lastVerified": "2026-11-17T01:54:37.013Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-digitalbazaar-pyld",
-    "contentHash": "6810c558f2f5ef27323167fad03fa8492984fe61e578460f95e64206be87aac2",
+    "contentHash": "7528960e9a243753995d110dddd85c91e96e8dbb9dba44b0495e9d79721e3f04",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12575,9 +12575,9 @@
   "rafsoh-dimeapp": {
     "name": "dimeApp",
     "officialUrl": "https://github.com/rafsoh/dimeApp",
-    "lastChecked": "2026-11-13T12:24:13.642Z",
+    "lastChecked": "2026-11-17T01:54:34.400Z",
     "revisionIdentifier": "0463cb8c",
-    "lastVerified": "2026-11-13T12:24:13.642Z"
+    "lastVerified": "2026-11-17T01:54:34.400Z"
   },
   "preactjs-preact": {
     "name": "preactjs/preact",
