@@ -4,22 +4,22 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "6e7fbbd6",
+  "source_version": "3bd9f72f",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T15:51:33.389Z",
+  "timestamp": "2026-11-17T19:45:01.270Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `6e7fbbd6`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T15:51:33.389Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `3bd9f72f`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T19:45:01.270Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `freenet/freenet-core` (Commit: `6e7fbbd6`)
+- **Target Repository**: `freenet/freenet-core` (Commit: `3bd9f72f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:51:32.208Z  
+> **Harvest Timestamp**: 2026-11-17T19:45:00.213Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1749,11 +1749,14 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6258** (2026-11-17): **test(quic): pin the crash-breaker marker lock and correct its doc**
-  *Symptoms*: ## Problem  Two leftovers from the review of #6256: - `MARKER_UPDATE` orders the Windows short-run clear and the endpoint-death record, so that in either order the death record survives to the next start. Deleting either lock left every behaviour test green, because a single-threaded test cannot interleave the two writers. - The lock's doc said it covered each read-and-change of the marker. Arming and the Windows panic-hook write do not take it.  ## Approach  Test and documentation only; no behaviour change.  - A source pin, `the_marker_update_lock_is_taken_by_the_clear_and_the_record`, checks that both writers take the lock before reading the marker: `short_runs::clear_short_run`, and both write paths of `note_endpoint_down_exit_with`. - The lock's doc now says it orders exactly those two writers, and why the others do not need it:   - arming, and a death recorded before arming, are ordered by `PENDING`, and the clear timer starts only after arming;   - the Windows panic hook takes no lock. A caught socket-adapter panic writes before the endpoint goes down; an unrelated QUIC panic at the same moment could cost one free restart;   - a clean exit's clear does not run on a death. - A comment on `clear_short_run` notes that a clock stepped back during a run can date a death before the run's start. The clear then removes the marker, and that one death restarts the gateway without counting.  This does not change #6184. An earlier version of this PR also hardened the QUIC runtime a
+- **Issue #6262** (2026-11-17): **fix(quic): breaker review carry-overs from #6259**
+  *Symptoms*: ## Problem  The re-review of #6259 carried several precision items into the next breaker PR. None of them changes whether QUIC runs; they correct what telemetry reports and what the docs and tests claim:  - `panic_place` trusted any directory above `src` whose name looked versioned (`name-1.2.3`), so a home or project directory named like `bob-2.0` reached telemetry. - The docs said a peer's breaker trips before the post-update rollback. That holds only when a release's crashes are all QUIC panics: the rollback counts every crash. - A legacy shadow left by this release before a rollback, and read again after a return to the same release on the same boot, passes the version and boot checks. - No real-process test started a Windows peer, and no on-disk test covered a Tripped main marker at the shadow's first start.  ## Approach  - **`panic_place`** keeps the directory above the last `src` only when it is a known crate name (quinn's crates, `core`, `alloc`, `std`) or sits where cargo puts crates (`.cargo/registry/src/<index>/<crate>`, `.cargo/git/checkouts/...`). The shape of a name is no longer trusted, so `/home/bob-2.0/src/x.rs` reports `src/x.rs`. - **The trip-first claim is narrowed** in the constant's doc, the binary's pin test doc and `transport.md`: one unrelated crash (an out-of-memory kill, a SIGKILL) before two QUIC panics still lets the rollback act first. - **The shadow's rollback-and-return case is documented as a known inaccuracy** (`read_legacy_shadow`): rare, an
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, transport.md **Files reviewed:** 5  No rule violations detected.  - **`fix:` regression tests:** The `panic_place` change comes with new cases in the `panic_place` table test:   - Home directories named `bob-2.0` on Linux, macOS and Windows.   - macOS and Windows cargo registry paths.   - An extra assertion that `bob` never appears in the output.    The shadow-file reading fix is covered by `the_legacy_shadow_ignores_a_tripped_main_marker_on_disk`. The peer trip threshold is covered by `a_peer_trips_after_two_quic_panics_in_a_row`. - **Edge cases:** The tests cover the cases that would catch the bugs, namely a lookalike home directory name, both registry layouts, and the Armed versus Tripped main marker. - **Docs:** The changed behaviour is documented in `transport.md`, the `short_runs.rs` doc comments and the `freenet.rs` test doc. They agree with each other and
+  > Review at 429b0a795, Light tier. The lead read the code, and Codex found nothing actionable. - `panic_place` keeps the directory above `src` only for a known crate name or a cargo registry or git-checkout path. A versioned home or project directory is dropped, with Linux, macOS and Windows tests. - The on-disk test shows a Tripped main marker is not shadow evidence, while an Armed one still trips the shadow. - The trip-first claim is narrowed. - The rollback-and-return shadow inaccuracy is documented as telemetry-only. - The Windows peer real-process test runs in the Windows CI job.  Approved at 429b0a795, once CI on this SHA is green, including Windows and the rule review.  [AI-assisted - Claude]
 
-- **Issue #6257** (2026-11-17): **feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot**
-  *Symptoms*: ## Problem The transport snapshot says how much QUIC paths lost but not how fast or how far away they are. Judging QUIC as the default (and the removal of UDP) needs the distribution of path round-trip times and send rates across the fleet, which the snapshot does not carry.  ## Approach Two gauge families, both of live QUIC paths that carry data (a path that carries none, such as an idle shadow path, is in neither, and a path that stops carrying leaves), moved at each acknowledgement-watch tick (about 2 s) and left when the path ends, as the existing `quic_loss_rate_<bucket>` gauges are. They live under the `loss` lock and in the same `PathLossWindow`, so a path is in at most one bucket of each and a snapshot reads them consistently; the bucket moves are their own critical section, not written together with a loss report's sums. Observe-only: no transport behaviour changes. - `quic_srtt_<bucket>`: quinn's `PathStats::rtt`. Buckets `lt_10ms`, `lt_25ms`, `lt_50ms`, `lt_100ms`, `lt_200ms`, `lt_400ms`, `ge_400ms`. - `quic_tx_bps_<bucket>`: UDP payload bits per second sent over the last tick. Buckets `lt_10kbps`, `lt_100kbps`, `lt_1mbps`, `lt_10mbps`, `lt_100mbps`, `ge_100mbps`. A tick of 0 ms leaves the path in its bucket.  `tx_bps` counts the datagram bytes quinn built (`udp_tx.bytes`): retransmissions, acknowledgements, padding and keepalives included. It is neither goodput nor capacity. These gauges describe path conditions; the speed of QUIC against UDP is answered from tran
+- **Issue #6260** (2026-11-17): **feat(quic): add ProvenClientKey, a client verifier for a key nobody named**
+  *Symptoms*: ## Problem  Phase B of #5940 lets a joiner dial a gateway's QUIC endpoint directly for its first connection (a native join). Every QUIC server check today is pinned: the node accepts a client only if it was told in advance which key that client holds (`PinnedClientKey`). A gateway accepting a joiner it has never heard of has no key to pin, so it needs a client verifier that accepts the key the client proves it holds.  ## Approach  `ProvenClientKey` (`transport/quic/identity.rs`), a rustls `ClientCertVerifier`: - It accepts only what the pinned verifier accepts, minus the pin. The parser, `peer_key_presented`, takes exactly an Ed25519 SubjectPublicKeyInfo (our 12-byte prefix plus 32 bytes) with no chain. The key must have sign bit 0, XEdDSA's convention, so a transport key has exactly one presented form. It must be a key `PeerKey::of` accepts (no small-order point, no torsion component), in its canonical encoding. The transport key it proves is the Montgomery form of that point. - The handshake signature must be Ed25519 under that key. The presented bytes and the scheme are checked before ring verifies anything. - The verifier keeps no state. Both checks derive the key from the certificate rustls passes them, so one server configuration serves any number of handshakes. - `proven_client_key(&quinn::Connection)` reads the identity after the handshake from the connection's `peer_identity()` and parses it again with `peer_key_presented`. The identity therefore belongs to that conn
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1770,738 +1773,1053 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01e05980` (2026-11-17)
-**Commit Message**: test(quic): pin the crash-breaker marker lock and correct its doc (#6258)
+### Incident Patch 1: `17141a5c` (2026-11-17)
+**Commit Message**: fix(quic): peers trip the crash breaker only on QUIC-panic short runs (#6259)
 
-**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +59/-5)
+**File**: `.claude/rules/transport.md` (modified, +31/-14)
 ```diff
-@@ -385,11 +385,25 @@ static PENDING: parking_lot::Mutex<Pending> = parking_lot::Mutex::new(Pending {
- /// start would restart the node without bound.
- static OVERRIDDEN: AtomicBool = AtomicBool::new(false);
+@@ -496,10 +496,13 @@ inbound session key (`handshake_unauthenticated_dropped`), QUIC endpoint deaths
+ (`quic_endpoint_down`), panics the QUIC socket adapter caught
+ (`quic_adapter_panicked`, once per endpoint; the process keeps running
+ and no breaker state is left), QUIC crash-loop breaker trips at startup
+-(`quic_breaker_trips`, on unix counted for any abnormal end of a QUIC-enabled
+-run, not only a QUIC fault, and on Windows for three runs in a row that ended
++(`quic_breaker_trips`; for every peer, and a gateway on Windows, counted for
++runs in a row (two on a peer while UDP exists, so it trips before the
++post-update rollback's three crashes; three on a gateway) that ended
+ within ten minutes after recording a panic in QUIC code (quinn, quinn-proto or
+-transport/quic, by panic location), each starting within 24 h of the one before;
++transport/quic, by panic location), each starting within 24 h of the one before,
++and for a unix gateway for any abnormal end of a QUIC-enabled run, not only a
++QUIC fault;
+ a trip keeps QUIC off for 24 h on a peer and 15 min on a gateway (`BreakerRole`),
+ doubling on repeat trips up to 4 h, and a gateway run with FREENET_SUPERVISED=1
+ restarts itself at the cooldown's end; see
+@@ -1181,7 +1184,7 @@ it must not wait unless it is a pacing point.
  
--/// Held across each read-and-change of this run's marker by the Windows
--/// short-run clear ([`short_runs`]) and by [`note_endpoint_down_exit`], so
--/// in either order the death record survives: a clear that comes first is
--/// followed by the record written again, and a record written first makes
--/// the clear leave the marker.
-+/// Orders exactly two writers of this run's marker: the Windows short-run
-+/// clear (`short_runs::clear_short_run`) and the endpoint-death record
-+/// ([`note_endpoint_down_exit_with`]). Each holds it across its
-+/// read-and-change, so in either order the death record survives: a clear
-+/// that comes first is followed by the record written again, and a record
-+/// written first makes the clear leave the marker. Pinned by
-+/// `the_marker_update_lock_is_taken_by_the_clear_and_the_record`.
-+///
-+/// The other writers do not take it, and it does not order them:
-+/// - arming ([`arm`]) runs under [`PENDING`], as does the record of a death
-+///   before arming, so those two are ordered by that lock instead, and the
-+///   clear timer starts only after arming;
-+/// - the Windows panic hook (`short_runs::mark_quic_panic`) takes no lock,
-+///   since it runs inside a panic. A caught socket-adapter panic marks the
-+///   marker before the endpoint goes down, so its write lands before the
-+///   death record; an unrelated QUIC panic on another thread at the same
-+///   moment could overwrite the record, which then costs one free restart;
-+/// - a clean exit's removal ([`clear_if_owned`]) does not run on a death,
-+///   which ends the process without a clean exit.
- pub(super) static MARKER_UPDATE: parking_lot::Mutex<()> = parking_lot::Mutex::new(());
+ `transport-quic` (config key: `off`, `shadow` or `prefer`; unset is
+ `QuicMode::default_mode`, prefer on Linux, macOS and Windows and off
+-elsewhere, since the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
++elsewhere, since a gateway's breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
+ `prefer` negotiates data with the share of pairs the ramp gives at the time ("Data
+ slice" below; `upgrade::policy::log_startup` reports the share at INFO once per
+ node, and each band the ramp enters is logged at INFO), and a pair with both bits
+@@ -1954,7 +1957,8 @@ config value per node (off unless set, whatever the node default: the
+ harness writes `off` into every node's config; an unknown value panics;
+ tests that start nodes outside SimNetwork, in `crates/core/tests` and through
+ freenet-test-network, get the platform default on purpose, as production does,
+-except where a restart after SIGKILL would trip the breaker), and the
++except where a restart after SIGKILL would trip a unix gateway's breaker; a
++peer's short-run rule does not count a SIGKILL), and the
+ endpoint runs on the network's VirtualTime (`get_socket_virtual_time`;
+ RealTime in production, pinned by
+ `the_transport_endpoint_runs_on_virtual_time_only_in_simulation`). Its
+@@ -2012,7 +2016,10 @@ every rate), endpoint-down, panics and breaker trips, RSS against
+ `quic_paths_active`, CPU and egress, and NAT success, connections and transfers.
+ From the first release with the Windows default, the release watch also reads
+ Windows separately: `quic_adapter_panicked` and `quic_breaker_trips` by version
+-against the previous release, and peers with `quic_breaker_suppressed`. A
++against the previous release, and peers with `quic_breaker_suppressed`. Since
++unix peers moved to the short-run rule (#6151), it also reads
++`quic_breaker_start` by version: trips with their `quic_panic_at`, and on unix
++peers how often `legacy_verdict` and `verdict` disagree. A
+ Windows QUIC panic in the field is read (location, version) before the next
+ release goes out.
  
- /// The marker this process armed, as armed, for a Windows run that must
-@@ -1913,6 +1927,46 @@ mod tests {
-         }
+@@ -3633,21 +3640,31 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
+     deterministic fault recurs once per start. The exception is a
+     supervised gateway, which records the death in the breaker marker and
+     exits (see above). A panic that is not
+-    contained aborts the process. On unix the next start trips the breaker
+-    (quic_breaker_trips, see quic/breaker.rs): QUIC off for 24 h on a peer,
+-    15 min on a gateway (doubling on repeat trips up to 4 h), which, when
+-    supervised, restarts itself with exit 42 at the cooldown's end
+-    (breaker::quic_restore_at). On Windows the
++    contained aborts the process. On a unix gateway the next start trips the
++    breaker (quic_breaker_trips, see quic/breaker.rs): QUIC off for 15 min
++    (doubling on repeat trips up to 4 h), and a supervised gateway restarts
++    itself with exit 42 at the cooldown's end (breaker::quic_restore_at).
++    Every peer (24 h cooldown; on unix since #6151) and a Windows gateway
++    decide by short runs instead: the
+     breaker does not look at how a run ended: a panic hook records a panic located in QUIC
+     code in the run's marker, and it counts runs that lasted under 10 minutes
+-    and recorded one, so the fourth start after three such aborts in a row
+-    trips it. An ordinary stop records no panic and never counts; an abort
++    and recorded one, so the start after two such aborts in a row trips a
++    peer while UDP exists (one below the rollback's three crashes,
+```
+
+**File**: `.github/workflows/ci-cache-warm.yml` (modified, +1/-1)
+```diff
+@@ -128,7 +128,7 @@ jobs:
+         run: |
+           cargo nextest run --workspace --exclude freenet-ping-types \
+             --no-default-features \
+-            --features trace,websocket,redb,wasmtime-backend,testing \
++            --features trace,websocket,redb,wasmtime-backend,testing,freenet/quic-panic-injection \
+             --profile ci --no-run
+           cargo nextest run -p freenet-ping-app \
+             --features testing --profile ci --no-run
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +6/-1)
+```diff
+@@ -1103,12 +1103,17 @@ jobs:
+         # feature, breaking test code that uses Ping::insert().
+         # Skip blocked_peers tests (run serially below — they spin up 3 real
+         # nodes each and timeout under parallel resource contention).
++        # `quic-panic-injection` (test builds only; it refuses to build without
++        # debug assertions) lets graceful_shutdown_exit_code abort a unix peer
++        # on an injected QUIC panic, the only real-process test of the peer
++        # crash-loop breaker on unix (#6151). It does nothing unless a test
++        # sets FREENET_TEST_QUIC_PANIC.
+         # nextest retries only failed tests (via .config/nextest.toml [profile.ci]),
+         # avoiding the 10-15 min penalty of re-running the entire workspace.
+         run: |
+           cargo nextest run --workspace --exclude freenet-ping-types \
+             --no-default-features \
+-            --features trace,websocket,redb,wasmtime-backend,testing \
++            --features trace,websocket,redb,wasmtime-backend,testing,freenet/quic-panic-injection \
+             --profile ci -E 'not test(blocked_peers)'
+ 
+       - name: Test blocked-peers (serial)
+```
+
+**File**: `crates/core/src/bin/freenet.rs` (modified, +22/-2)
+```diff
+@@ -269,8 +269,8 @@ async fn run_network(config: Config) -> anyhow::Result<()> {
+         ));
      }
  
-+    /// Both writers [`MARKER_UPDATE`] orders take it before they read the
-+    /// marker. Deleting either lock leaves every behaviour test green (a
-+    /// single-threaded test cannot interleave them), so this pins the lines.
+-    // The QUIC crash-loop breaker (#5940): if a run with QUIC enabled ended
+-    // abnormally, QUIC stays off for a cooldown. Enabled here, before the node
++    // The QUIC crash-loop breaker (#5940): if runs with QUIC enabled keep
++    // ending in a QUIC fault, QUIC stays off for a cooldown. Enabled here, before the node
+     // is built, because only this binary marks its clean exits (see `main`).
+     freenet::enable_quic_crash_breaker();
+ 
+@@ -2092,6 +2092,26 @@ mod tests {
+         );
+     }
+ 
++    /// #6151: while UDP exists, a peer's QUIC crash-loop breaker trips, and
++    /// the peer falls back to UDP, before the post-update crash-loop rollback
++    /// restores the previous release and pins this one as bad. Each run the
++    /// breaker counts ended in a crash the rollback also counts; the start
++    /// that trips runs with QUIC off, so it adds no QUIC crash. At that point
++    /// the rollback's count must still be short of its threshold.
 +    #[test]
-+    fn the_marker_update_lock_is_taken_by_the_clear_and_the_record() {
-+        let flat = |src: &str, signature: &str| -> String {
-+            production_fn_body(src, signature)
-+                .lines()
-+                .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
-+                .collect::<String>()
-+                .split_whitespace()
-+                .collect()
-+        };
-+        let clear = flat(include_str!("breaker/short_runs.rs"), "fn clear_short_run(");
-+        let lock = clear
-+            .find("let_update=super::MARKER_UPDATE.lock();")
-+            .expect("the clear takes the lock");
-+        let read = clear.find("read_previous(path)").expect("the read");
-+        assert!(lock < read, "before it reads the marker: {clear}");
-+        assert!(clear[lock..].contains("clear_if_owned(path,nonce)"));
-+
-+        let record = flat(
-+            include_str!("breaker.rs"),
-+            "fn note_endpoint_down_exit_with(",
-+        );
-+        let lock = record
-+            .find("let_update=MARKER_UPDATE.lock();")
-+            .expect("the record takes the lock");
-+        let armed = record
-+            .find("ifletSome((path,nonce))=armed{")
-+            .expect("the armed-marker path");
-+        let pending = record
-+            .find("letmutpending=pending.lock();")
-+            .expect("the pending-marker path");
++    fn peer_breaker_trips_before_the_crash_loop_rollback() {
++        let crashes_when_the_breaker_trips = freenet::PEER_SHORT_RUNS_TO_TRIP_WITH_UDP;
++        assert!(crashes_when_the_breaker_trips >= 1);
 +        assert!(
-+            lock < armed && lock < pending,
-+            "before either write path: {record}"
++            !crate::commands::rollback::should_rollback(crashes_when_the_breaker_trips),
++            "the rollback would act at {crashes_when_the_breaker_trips} crashes, no later than \
++             the peer breaker"
++        );
++        assert!(crate::commands::rollback::should_rollback(
++            crate::commands::rollback::ROLLBACK_CRASH_THRESHOLD
++        ));
++    }
++
+     /// #5940: a gateway's restarts to restore QUIC stay under the start
+     /// limit of the units `freenet service install` writes, which counts
+     /// every start, exit 42 included, and the first start too. In any window
+```
+
+**File**: `crates/core/src/config.rs` (modified, +7/-6)
+```diff
+@@ -2646,12 +2646,13 @@ pub struct NetworkArgs {
+ 
+     /// Run QUIC even when the crash-loop breaker would keep it off.
+     ///
+-    /// On unix, if a run with QUIC enabled ends abnormally, the node starts
+-    /// with QUIC off for 24 hours (15 minutes on a gateway, doubling on
+-    /// repeat trips up to 4 hours; a gateway whose service unit sets
+-    /// FREENET_SUPERVISED=1 restarts itself at the end). On
+-    /// Windows the same happens after three short runs in a row that each
+-    /// panicked in QUIC code. Set this to run QUIC anyway. A start with this
++    /// After two short runs in a row that each panicked in QUIC code, a
++    /// peer starts with QUIC off for 24 hours. A gateway on unix does so
++    /// when a run with QUIC enabled ends abnormally, and a gateway on
++    /// Windows after three such short runs, in both cases for 15
++    /// minutes, doubling on repeat trips up to 4 hours (a gateway whose
++    /// service unit sets FREENET_SUPERVISED=1 restarts itself at the end).
++    /// Set this to run QUIC anyway. A start with this
+     /// set erases the trip: removing it later does not bring the cooldown
+     /// back. Default: false.
+     ///
+```
+
+**File**: `crates/core/src/lib.rs` (modified, +3/-1)
+```diff
+@@ -34,7 +34,9 @@ pub use node::{
+ #[doc(hidden)]
+ pub use transport::connection_handler::QUIC_RESTORE_MIN_UPTIME;
+ #[doc(hidden)]
+-pub use transport::quic::breaker::{ENDPOINT_DOWN_EXITS_TO_TRIP, GATEWAY_QUIC_BREAKER_COOLDOWN};
++pub use transport::quic::breaker::{
++    ENDPOINT_DOWN_EXITS_TO_TRIP, GATEWAY_QUIC_BREAKER_COOLDOWN, PEER_SHORT_RUNS_TO_TRIP_WITH_UDP,
++};
+ pub use transport::quic::breaker::{
+     STOP_NOTE_ENV_VAR as QUIC_BREAKER_STOP_NOTE_ENV_VAR,
+     STOP_NOTE_FILE as QUIC_BREAKER_STOP_NOTE_FILE, enable_quic_crash_breaker,
+```
+
+**File**: `crates/core/src/node/p2p_impl.rs` (modified, +50/-0)
+```diff
+@@ -1026,6 +1026,18 @@ impl NodeP2P {
+         )
+         .await?;
+ 
++        // `quic_breaker_start` (#6151): what the QUIC crash-loop breaker
++        // decided at this start (`P2pConnManager::build` runs it), once per
++        // start, including, on a unix peer, what the legacy exit-status rule
++        // would have decided. Sending is a no-op unless telemetry is enabled.
++        if let Some(report) = crate::transport::quic::breaker::take_start_report() {
++            crate::tracing::telemetry::send_standalone_event_with_peer_id(
++                "quic_breaker_start",
++                &config.local_peer_id_string(),
++                report.to_json(),
++            );
++        }
++
+         let parent_span = tracing::Span::current();
+         let contract_executor_handle = GlobalExecutor::spawn({
+             let task = async move {
+@@ -1166,6 +1178,44 @@ mod tests {
+         );
+     }
+ 
++    /// #6151: `NodeP2P::build` sends what the crash-loop breaker decided as
++    /// the `quic_breaker_start` event, after `P2pConnManager::build` (which
++    /// runs the breaker), so the report exists when it is taken.
++    #[test]
++    fn build_sends_the_quic_breaker_start_report_after_the_breaker_ran() {
++        let all = include_str!("p2p_impl.rs");
++        let production = &all[..all
++            .find("\n#[cfg(test)]\nmod tests {")
++            .expect("test module not located; this pin cannot verify anything")];
++        let code: String = production
++            .lines()
++            .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
++            .collect::<Vec<_>>()
++            .join("\n");
++        let start = code
++            .find("pub(crate) async fn build<")
++            .expect("NodeP2P::build not found");
++        let (build, _) = code[start..]
++            .split_once("\n    }\n")
++            .expect("could not locate the end of NodeP2P::build");
++        let squeezed: String = build.chars().filter(|c| !c.is_whitespace()).collect();
++        let at = |needle: &str| {
++            squeezed
++                .find(needle)
++                .unwrap_or_else(|| panic!("NodeP2P::build must contain {needle}"))
++        };
++        let breaker_ran = at("letconn_manager=P2pConnManager::build(");
++        let taken = at(
++            "iflet Some(report)=crate::transport::quic::breaker::take_start_report()"
++                .replace(' ', "")
++                .as_str(),
++        );
++        let sent = at(
++            "send_standalone_event_with_peer_id(\"quic_breaker_start\",&config.local_peer_id_string(),report.to_json(),)",
++        );
++        assert!(breaker_ran < taken && taken < sent);
++    }
++
+     /// #4549: the fast-exit watchdog (`process::exit(42)` on a fatal listener exit)
+     /// is gated by `listener_exit_is_graceful`. A regression in this predicate is
+     /// dangerous in BOTH directions: classifying a graceful shutdown as fatal would
+```
+
+**File**: `crates/core/src/tracing/telemetry.rs` (modified, +15/-6)
+```diff
+@@ -541,7 +541,7 @@ fn priority_for_event_type(event_type: &str) -> EventPriority {
+ /// final `other` row, so the exported cardinality never depends on what a
+ /// producer names its event. A non-zero `other` means an event type is
+ /// missing from this list.
+-pub(crate) const KNOWN_EVENT_TYPES: [&str; 76] = [
++pub(crate) const KNOWN_EVENT_TYPES: [&str; 77] = [
+     // `event_kind_to_string`, in its order.
+     "connect_start",
+     "connect_connected",
+@@ -619,6 +619,7 @@ pub(crate) const KNOWN_EVENT_TYPES: [&str; 76] = [
+     crate::ring::FLAG_TELEMETRY_EVENT,
+     "join_versions",
+     "auto_update_state",
++    "quic_breaker_start",
+     // Must stay last.
+     "other",
+ ];
+@@ -4670,11 +4671,17 @@ mod tests {
+         // = 147: measured 15342, still within this limit. Raised by #6001 for
+         // the 149 counters of `tel_t` and `tel`: measured 18629. Raised for
+         // the 4 `recv_ap` counters (already-applied skips): measured 18725.
+-        const MAX_WORST_CASE_JSON_BYTES: usize = 18_816;
++        // Raised by #6151 for the `quic_breaker_start` row of `tel_t` (2
++        // counters, 42 bytes at u64::MAX): measured 18857. At #6151 the busy
++        // JSON block measured 6789, the empty one 2479, and the busy OTLP
++        // marginal 6865, all within their budgets.
++        const MAX_WORST_CASE_JSON_BYTES: usize = 19_072;
+         // Raised from 2_048 by #5647 for the same 7 new counters, about 2 bytes
+         // each in an all-zero block (a digit and a comma): measured 2057.
+         // Raised again by #6001 for `tel_t` and `tel`: measured 2515.
+-        const MAX_EMPTY_OTLP_MARGINAL_BYTES: usize = 2_560;
++        // Raised by #6151 for the `quic_breaker_start` row of `tel_t`
++        // (measured 2555 with that row, 5 bytes under the old 2_560).
++        const MAX_EMPTY_OTLP_MARGINAL_BYTES: usize = 2_816;
+         // Raised from 5_120 (2026-08-07) to admit `ms_size` + `ms_unt_age`,
+         // the two counters added for #5153. The budget exists to force this
+         // arithmetic, not to forbid growth, so here it is:
+@@ -4707,8 +4714,10 @@ mod tests {
+         // MAX_WORST_CASE_JSON_BYTES (147 bytes at u64::MAX): measured 15414.
+         // Raised by #6001 for `tel_t` and `tel`: measured 18703. Raised for the
+         // `join_versions` row of `tel_t` (2 counters, 44 bytes at u64::MAX):
+-        // measured 18845.
+-        const MAX_WORST_OTLP_MARGINAL_BYTES: usize = 18_944;
++        // measured 18845. Raised by #6151 for the `quic_breaker_start` row
++        // (2 counters at u64::MAX): measured 18933, 11 bytes under the old
++        // 18_944.
++        const MAX_WORST_OTLP_MARGINAL_BYTES: usize = 19_200;
+         const MAX_NULL_OTLP_MARGINAL_BYTES: usize = 64;
+ 
+         let diagnostic = |value| crate::router::NetworkEfficiencyV1 {
+@@ -7437,7 +7446,7 @@ mod tests {
+         // Exact count of call sites with a literal event type (production and
+         // test). A new producer changes it: bump it deliberately after giving
+         // the event its own `KNOWN_EVENT_TYPES` row.
+-        const EXPECTED_LITERAL_STANDALONE_CALLS: usize = 18;
++        const EXPECTED_LITERAL_STANDALONE_CALLS: usize = 19;
+         assert_eq!(
+             literal_names.len(),
+             EXPECTED_LITERAL_STANDALONE_CALLS,
+```
+
+---
+
+### Incident Patch 2: `3bd9f72f` (2026-11-17)
+**Commit Message**: fix(quic): breaker review carry-overs from #6259 (#6262)
+
+**File**: `.claude/rules/transport.md` (modified, +6/-4)
+```diff
+@@ -497,8 +497,9 @@ inbound session key (`handshake_unauthenticated_dropped`), QUIC endpoint deaths
+ (`quic_adapter_panicked`, once per endpoint; the process keeps running
+ and no breaker state is left), QUIC crash-loop breaker trips at startup
+ (`quic_breaker_trips`; for every peer, and a gateway on Windows, counted for
+-runs in a row (two on a peer while UDP exists, so it trips before the
+-post-update rollback's three crashes; three on a gateway) that ended
++runs in a row (two on a peer while UDP exists, so that when a release's
++crashes are all QUIC panics it trips before the post-update rollback's three
++crashes, which count any crash; three on a gateway) that ended
+ within ten minutes after recording a panic in QUIC code (quinn, quinn-proto or
+ transport/quic, by panic location), each starting within 24 h of the one before,
+ and for a unix gateway for any abnormal end of a QUIC-enabled run, not only a
+@@ -3662,8 +3663,9 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
+     code in the run's marker, and it counts runs that lasted under 10 minutes
+     and recorded one, so the start after two such aborts in a row trips a
+     peer while UDP exists (one below the rollback's three crashes, pinned by
+-    the binary's peer_breaker_trips_before_the_crash_loop_rollback; back to
+-    three when UDP is removed) and the start after three trips a gateway. An ordinary stop records no panic and never counts; an abort
++    the binary's peer_breaker_trips_before_the_crash_loop_rollback; the
++    rollback counts any crash, so an unrelated crash before two QUIC panics
++    still lets it act first; back to three when UDP is removed) and the start after three trips a gateway. An ordinary stop records no panic and never counts; an abort
+     after 10 minutes or more never does, nor do aborts a day apart
+     (quic/breaker/short_runs.rs). A panic counts as QUIC's when the thread
+     is inside a QuicCode guard (quinn's driver polls in runtime.rs, the socket
+```
+
+**File**: `crates/core/src/bin/freenet.rs` (modified, +4/-1)
+```diff
+@@ -2097,7 +2097,10 @@ mod tests {
+     /// restores the previous release and pins this one as bad. Each run the
+     /// breaker counts ended in a crash the rollback also counts; the start
+     /// that trips runs with QUIC off, so it adds no QUIC crash. At that point
+-    /// the rollback's count must still be short of its threshold.
++    /// the rollback's count must still be short of its threshold. This holds
++    /// for a release whose crashes are all QUIC panics; the rollback also
++    /// counts unrelated crashes, which the breaker does not, so one of those
++    /// before the panics lets the rollback act first.
+     #[test]
+     fn peer_breaker_trips_before_the_crash_loop_rollback() {
+         let crashes_when_the_breaker_trips = freenet::PEER_SHORT_RUNS_TO_TRIP_WITH_UDP;
+```
+
+**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +69/-0)
+```diff
+@@ -1405,6 +1405,15 @@ pub(crate) struct LegacyShadowFile {
+ /// old rule never read one as a crash); a Tripped one still holds, as the
+ /// old rule's trip did across a reboot. A file that does not parse is no
+ /// evidence; one that cannot be read is [`Previous::Unreadable`].
++///
++/// Known inaccuracy, telemetry only: a rollback to an earlier release and a
++/// return to this same release on the same boot is not detected. An Armed
++/// marker this release left before the rollback then passes both checks,
++/// and the next start reports a legacy trip for that run, whether or not it
++/// crashed. It is rare (a rollback and return within one boot) and changes
++/// nothing but `legacy_verdict`. Tying the file to the run before it would
++/// need the main marker to outlive a long run, which the short-run timer
++/// deletes on purpose.
+ fn read_legacy_shadow(path: &Path, version: &str, boot_id: Option<&str>) -> Previous {
+     match std::fs::read(path) {
+         Ok(bytes) => match serde_json::from_slice::<LegacyShadowFile>(&bytes) {
+@@ -3539,6 +3548,66 @@ mod tests {
+         assert_eq!(read(), Previous::Unreadable);
+     }
+ 
++    /// On disk, at the first start with no shadow file: a Tripped marker in
++    /// the breaker's own file (which may be the short-run rule's own trip)
++    /// is not the shadow's evidence, so the shadow arms rather than cooling
++    /// or tripping, and the breaker's file is left as it was; an Armed one
++    /// there (0.2.159's) is, and trips the shadow.
++    #[test]
++    fn the_legacy_shadow_ignores_a_tripped_main_marker_on_disk() {
++        let dir = tempfile::tempdir().unwrap();
++        let main = marker_path(dir.path());
++        let shadow = legacy_shadow_path(dir.path());
++        let pending = parking_lot::Mutex::new(Pending {
++            marker: None,
++            shadow: None,
++            quic_up: false,
++            signals_ready: false,
++            registrar: None,
++        });
++        let dead = |_| false;
++        let tripped = Marker::Tripped {
++            tripped_at_secs: T0 + 30,
++            trips: 1,
++        };
++        write_marker(&main, &tripped).unwrap();
++        let decided = legacy_shadow_at(
++            true,
++            dir.path(),
++            None,
++            false,
++            legacy_start(&[], false),
++            dead,
++            &pending,
++        );
++        assert_eq!(decided, Some(Verdict::Arm));
++        assert!(!shadow.exists(), "nothing written before QUIC is up");
++        assert_eq!(
++            pending.lock().shadow.take(),
++            Some((shadow.clone(), stamped(legacy_armed().unwrap())))
++        );
++        assert_eq!(read_previous(&main), Previous::Marker(tripped));
++
++        write_marker(&main, &marker_of(armed(PID, Some(BOOT)))).unwrap();
++        let decided = legacy_shadow_at(
++            true,
++            dir.path(),
++            None,
++            false,
++            legacy_start(&[], false),
++            dead,
++            &pending,
++        );
++        assert_eq!(decided, Some(Verdict::Trip));
++        assert_eq!(
++            read_legacy_shadow(&shadow, crate::config::PCK_VERSION, Some(BOOT)),
++            Previous::Marker(Marker::Tripped {
++                tripped_at_secs: T0 + 60,
++                trips: 1
++            })
 +        );
 +    }
 +
-     /// The Windows rewrite of a cleared marker is wired end to end: arming
-     /// keeps the marker as armed, and the endpoint-death record passes it on
-     /// off unix. Neither runs in a unix unit test (arming writes through
+     /// The shadow with QUIC off decides nothing and writes nothing, but still
+     /// reconciles the stop note, as the old rule did on every start; with
+     /// QUIC on, a crash it finds trips it, and a trip it cannot write is lost
 ```
 
-**File**: `crates/core/src/transport/quic/breaker/short_runs.rs` (modified, +5/-0)
+**File**: `crates/core/src/transport/quic/breaker/short_runs.rs` (modified, +40/-18)
 ```diff
-@@ -501,6 +501,11 @@ fn in_quic_code() -> bool {
- /// (`super::endpoint_down_verdict`). Runs under [`super::MARKER_UPDATE`],
- /// which the record is written under too, so the two cannot interleave.
- /// Returns whether it removed the marker.
-+///
-+/// A clock stepped back during the run can date the death before
-+/// `started_at_secs`; the clear then takes it for an earlier run's and
-+/// removes the marker, so that death restarts the gateway once without
-+/// counting (`super::endpoint_down_verdict` applies the same test).
- fn clear_short_run(path: &Path, nonce: u64) -> std::io::Result<bool> {
-     let _update = super::MARKER_UPDATE.lock();
-     if let Previous::Marker(Marker::ShortRuns {
-```
-
----
-
-### Incident Patch 2: `6e7fbbd6` (2026-11-17)
-**Commit Message**: fix(connect): one survivor rule for native and UDP connections to one peer (gates 18-19) (#6255)
-
-**File**: `.claude/rules/transport.md` (modified, +42/-12)
-```diff
-@@ -521,9 +521,10 @@ dropped unanswered past the per-CONNECT cap on refused acceptors,
- turned its own native connects off,
- `connect_native_rescued_by_udp_{joiner,acceptor}` for each UDP dial after a
- failed native setup that connected (R5: a connection a node without UDP
--would not have made), `connect_native_both_dials_connected_kept_{udp,native}`
--for a native dial and the UDP dial beside it that both connected (the first
--kept), and the last offer as states
-+would not have made), `connect_native_both_dials_connected_{udp,native}_first`
-+for a native dial and the UDP dial beside it that both connected (the native
-+one kept), `connect_native_survivor_{swapped,udp_dropped}` for each
-+survivor-rule decision, and the last offer as states
- `connect_native_offer_{level,percent,ready}`; see
- `operations/connect/native.rs`) and the shadow-mode upgrade
- telemetry (below, "Upgrade telemetry"). Each label set is declared once in a
-@@ -2284,15 +2285,44 @@ Fallback: a failed native setup is followed by today's UDP dial to the same
-   it with the native dial, and not held back, which punched late. An
-   outcome answers only its own transport's callbacks, except that a kept
-   connection answers both dials' requesters, since all asked for a
--  connection to that peer (never answered Ok without a kept connection). If
--  both connect, the one established first is kept and the later one is
--  closed without touching the ring or the transient budget
--  (connect_native_both_dials_connected_kept_{udp,native}); whether the two
--  sides can disagree on which survives is open (design note 10.2 item 18).
--  A UDP dial beside a native one that fails never backs off (a 30 s backoff
--  would refuse the native dial's own fallback); while the native dial is
--  pending it also marks nothing, and once the native dial has ended without
--  a connection it takes the ordinary failure path apart from the backoff. A
-+  connection to that peer (never answered Ok without a kept connection).
-+  SURVIVOR RULE (design note 10.2 item 18): when a node holds, or is handed,
-+  a native and a UDP connection to one peer key, it keeps the native one,
-+  whichever came first and whether the UDP one was dialled or arrived
-+  inbound (matched key looked up by key, else the address:
-+  native_holds_peer), as long as the native entry is LIVE (heard from within
-+  identity::HOLD_WINDOW, 30 s). A quiet native entry (peer restarted, NAT
-+  rebound) does not hold the peer: the UDP connection takes the ordinary
-+  replace, or it would be refused until the 120 s QUIC idle timeout. Both
-+  ends apply the rule, so they normally agree with no message. Residual:
-+  each end judges liveness on its OWN receipt stamp, so a UDP connection
-+  arriving just as one end's native connection crosses HOLD_WINDOW can be
-+  kept at one end and dropped at the other; that needs the native
-+  connection silent for about two keepalive intervals (HOLD_WINDOW >= 2 x
-+  KEEPALIVE_INTERVAL is a const assert in identity.rs), so about two lost
-+  keepalives. Rare; a gate before native is enabled (design note 10.2 item
-+  18). Native second: replace_transport_in_place swaps only the
-+  transport (listener, sender, connection id, receipt, remote version) and
-+  keeps identity, ring membership, transient status, ReadyState,
-+  connected-since and health (no promotion, prune or budget call); the old
-+  listener's close carries the old id and is ignored. UDP second: dropped,
-+  nothing else touched. A native dial onto an entry bound to ANOTHER key
-+  takes the ordinary replace (the entry is stale). Two UDP connections keep
-+  the old later-replaces-earlier behaviour. record_success runs before any
-+  keep/swap/drop. A dropped UDP dial's requesters are answered with the
-+  native holder's address, and an unused reservation at the dial's own
-+  address is released. Counted: connect_native_survivor_{swapped,udp_dropped},
-+  connect_native_both_dials_connected_{udp,native}_first (beside pair only).
-+  One-sided native setups (one end connected, the other's setup failed;
-+  10.2 item 20) are NOT counted locally: no counter at one end can see them
-+  (a "native won then closed soon" counter was tried in #6255 and both
-+  missed them and counted unrelated closes). They are measured by joining
-+  both ends' setup outcomes by the CONNECT transaction (in simulation, the
-+  native wire trace's native_setup_pairs).
-+  A UDP dial beside a native one that fails while the native dial is
-+  pending neither backs off (a 30 s backoff would refuse the native dial's
-+  own fallback) nor marks anything; once the native dial has ended without
-+  a connection it takes the ordinary failure path, backoff included. A
-   native failure marks
-   no failed address and records no peer backoff, so the fallback is not
-   refused. Until UDP is removed a failed native setup never costs the join
-```
-
-**File**: `crates/core/src/node/network_bridge/in_memory.rs` (modified, +8/-0)
-```diff
-@@ -113,6 +113,12 @@ pub struct FaultInjectorState {
-     /// each with the bytes it has let through so far. Kept here rather than in
-     /// [`FaultConfig`], whose rules are values.
-     pub quic_datagram_cuts: Vec<(crate::simulation::QuicDatagramCut, u64)>,
-+    /// One-way delay added to every QUIC-class datagram
-+    /// (`SimNetwork::delay_quic_datagrams`), if any.
-+    pub quic_datagram_delay: Option<std::time::Duration>,
-+    /// One-way delay added to every legacy UDP intro datagram, the packets
-+    /// that open a UDP connection (`SimNetwork::delay_udp_intros`), if any.
-+    pub udp_intro_delay: Option<std::time::Duration>,
+@@ -174,7 +174,12 @@ pub(super) const SHORT_RUNS_TO_TRIP: u32 = 3;
+ /// rollback counts enough crashes to restore the previous release and pin
+ /// this one as bad. A start that trips runs with QUIC off, so it adds no
+ /// crash. The binary pins the order
+-/// (`peer_breaker_trips_before_the_crash_loop_rollback`). Goes back to
++/// (`peer_breaker_trips_before_the_crash_loop_rollback`). The order holds
++/// only when the release's crashes are all QUIC panics: the rollback counts
++/// every crash (an out-of-memory kill, a SIGKILL, a crash elsewhere), while
++/// the breaker counts consecutive short runs that panicked in QUIC code, so
++/// one unrelated crash followed by two QUIC panics still lets the rollback
++/// act first. Goes back to
+ /// [`SHORT_RUNS_TO_TRIP`] when UDP is removed, when there is no UDP to fall
+ /// back to and a rollback is the better outcome.
+ pub const PEER_SHORT_RUNS_TO_TRIP_WITH_UDP: u32 = 2;
+@@ -679,10 +684,11 @@ const MAX_PANIC_PLACE: usize = 160;
+ 
+ /// A panic location as telemetry reports it, `file:line`, with no path
+ /// from the build machine: the file is cut at its last `src` directory,
+-/// keeping the directory above it only when that names a crate
+-/// ([`crate_dir`]: `quinn-proto-0.11.9/src/connection/mod.rs`,
+-/// `core/src/transport/quic/socket.rs`) and dropping it otherwise
+-/// (`/home/alice/src/x.rs` gives `src/x.rs`). A file under a `target`
++/// keeping the directory above it only when that is known to name a crate
++/// ([`crate_dir`]: `quinn-proto-0.11.9/src/connection/mod.rs` from the
++/// cargo registry, `core/src/transport/quic/socket.rs`) and dropping it
++/// otherwise (`/home/alice/src/x.rs` and `/home/bob-2.0/src/x.rs` give
++/// `src/x.rs`). A file under a `target`
+ /// directory (generated code) and a file with no `src` directory keep only
+ /// their name. At most [`MAX_PANIC_PLACE`] bytes ([`cap_place`]).
+ pub(super) fn panic_place(file: &str, line: u32) -> String {
+@@ -693,7 +699,7 @@ pub(super) fn panic_place(file: &str, line: u32) -> String {
+         _ if parts.contains(&"target") => name.to_string(),
+         Some(src) => {
+             let from = match src.checked_sub(1) {
+-                Some(above) if crate_dir(parts[above]) => above,
++                Some(above) if crate_dir(&parts, above) => above,
+                 Some(_) | None => src,
+             };
+             parts[from..].join("/")
+@@ -703,18 +709,19 @@ pub(super) fn panic_place(file: &str, line: u32) -> String {
+     cap_place(&format!("{place}:{line}"))
  }
  
- impl FaultInjectorState {
-@@ -127,6 +133,8 @@ impl FaultInjectorState {
-             network_name: None,
-             enforce_fault_drops: false,
-             quic_datagram_cuts: Vec::new(),
-+            quic_datagram_delay: None,
-+            udp_intro_delay: None,
-         }
-     }
- 
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +17/-5)
-```diff
-@@ -564,6 +564,11 @@ struct ConnectionEntry {
-     /// `None` when the version wasn't exchanged (e.g. joiner->gateway path).
-     /// Used to gate version-dependent message types (e.g. SubscribeHint).
-     remote_version: Option<(u8, u8, u16)>,
-+    /// Whether this transport is a QUIC-native connection rather than a
-+    /// legacy UDP one. The survivor rule reads it: when a node holds, or is
-+    /// handed, a native and a UDP connection to one peer, it keeps the
-+    /// native one (`P2pConnManager::replace_transport_in_place`).
-+    native: bool,
+-/// Whether a directory name above `src` names a crate rather than a place on
+-/// the build machine: a registry or vendored crate directory
+-/// (`name-1.2.3`), quinn's crates, the standard library's (`core`, `alloc`,
+-/// `std`), or this crate (`crates/core`).
+-fn crate_dir(name: &str) -> bool {
++/// Whether `parts[at]`, the directory above a `src`, names a crate rather
++/// than a place on the build machine. Only two things are trusted, never the
++/// shape of the name (a home directory may be called `bob-2.0`): a known
++/// name (quinn's crates, the standard library's `core`, `alloc` and `std`,
++/// and this crate, `crates/core`), or a crate directory in cargo's registry
++/// (`.cargo/registry/src/<index>/<crate>`) or its git checkouts
++/// (`.cargo/git/checkouts/...`), whose layout cargo chooses.
++fn crate_dir(parts: &[&str], at: usize) -> bool {
+     const KNOWN: [&str; 6] = ["core", "alloc", "std", "quinn", "quinn-proto", "quinn-udp"];
+-    let versioned = name.rsplit_once('-').is_some_and(|(crate_name, version)| {
+-        !crate_name.is_empty()
+-            && version.contains('.')
+-            && version.starts_with(|c: char| c.is_ascii_digit())
+-    });
+-    versioned || KNOWN.contains(&name)
++    let before = &parts[..at];
++    let registry = before.len() >= 3 && before[before.len() - 3..][..2] == ["registry", "src"];
++    let git_checkout = before.windows(2).any(|pair| pair == ["git", "checkouts"]);
++    KNOWN.contains(&parts[at]) || registry || git_checkout
  }
  
- impl ConnectionEntry {
-@@ -1265,7 +1270,12 @@ impl P2pConnManager {
- 
-     /// Removes a transport from the connection map and the open-transport set.
-     fn remove_connection(&mut self, addr: SocketAddr) -> Option<ConnectionEntry> {
--        self.connections.remove(addr)
-+        let removed = self.connections.remove(addr);
-+        #[cfg(any(test, feature = "testing"))]
-+        if removed.is_some() {
-+            self.trace_transport(addr, None);
-+        }
-+        removed
-     }
- 
-     pub(in crate::node) fn listening_port(&self) -> u16 {
-@@ -3379,10 +3389,10 @@ struct EventListenerState {
-     /// remote peer's, so the bound is the dial's.
-     udp_beside_native: HashMap<SocketAddr, Vec<BesideUdpRequester>>,
-     /// Addresses whose UDP dial beside a still-pending native dial connected
--    /// first. If the native dial then connects too, its connection is closed
--    /// (the first established is kept) and counted as
--    /// `connect_native_both_dials_connected_kept_udp`. Cleared when the native
--    /// dial ends.
-+    /// first. If the native dial then connects too, it is swapped in for the
-+    /// UDP connection (the survivor rule keeps native) and counted as
-+    /// `connect_native_both_dials_connected_udp_first`. Cleared when the
-+    /// native dial ends.
-     beside_udp_connected: HashSet<SocketAddr>,
-     pending_op_results: HashMap<Transaction, Sender<WaiterReply>>,
-     /// Last time pending_op_results was scanned for closed senders.
-@@ -5895,6 +5905,7 @@ pub(crate) mod tests {
-                 created_at: Instant::now(),
-                 link_use: super::zombie_sweep::LinkUseStamp::new(Instant::now()),
-                 remote_version: None,
-+                native: false,
-             },
-         );
-         let (tx2, _rx2) = mpsc::channel(1);
-@@ -5908,6 +5919,7 @@ pub(crate) mod tests {
-                 created_at: Instant::now(),
-                 link_use: super::zombie_sweep::LinkUseStamp::new(Instant::now()),
-                 remote_version: None,
-+                native: false,
-             },
-         );
- 
+ /// `place` cut to its last [`MAX_PANIC_PLACE`] bytes, on a character
+@@ -1638,8 +1645,22 @@ mod tests {
+                 "/rustc/48a229ce/library/alloc/src/raw_vec/mod.rs",
+                 "alloc/src/raw_vec/mod.rs:7",
+             ),
+-            // A user's own `src` directory: the name above it is dropped.
++            // A user's own `src` directory: the name above it is dropped,
++            // whatever it looks like.
+             ("/home/alice/src/x.rs", "src/x.rs:7"),
++            ("/home/bob-2.0/src/x.rs", "src/x.rs:7"),
++            ("/Users/bob-2.0/src/x.rs", "src/x.rs:7"),
++            (r"C:\Users\bob-2.0\src\x.rs", "src/x.rs:7"),
++            ("/home/someone/projects/bob-2.0/src/x.rs", "src/x.rs:7"),
++            // macOS and Windows cargo registries.
++            (
++                "/Users/someone/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quinn-0.11.12/src/endpoint.rs",
++                "quinn-0.11.12/src/endpoint.rs:7",
++           
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +437/-116)
+**File**: `crates/core/tests/quic_breaker_windows.rs` (modified, +67/-2)
 ```diff
-@@ -1247,6 +1247,37 @@ impl P2pConnManager {
-                     }
-                 };
+@@ -46,6 +46,10 @@ const START_LIMIT: Duration = Duration::from_secs(40);
+ /// What turns QUIC on for a test node.
+ const QUIC_ON: &[&str] = &["--transport-quic", "prefer"];
  
-+                // The survivor rule (`native_holds_peer`): an inbound UDP
-+                // connection from a peer a native connection holds is dropped,
-+                // leaving the native entry, the ring and the transient budget
-+                // untouched. The peer applies the same rule to its own copy
-+                // of this pair, so it normally keeps the native connection
-+                // too; see `native_holds_peer` for when the two ends can
-+                // decide differently.
-+                if let Some(holder) =
-+                    self.native_holds_peer(remote_addr, peer.as_ref().map(|p| p.pub_key()))
-+                {
-+                    tracing::info!(
-+                        remote = %remote_addr,
-+                        %holder,
-+                        transient,
-+                        transaction = ?transaction,
-+                        "Inbound UDP connection from a peer a native connection holds; \
-+                         keeping the native connection"
-+                    );
-+                    TRANSPORT_METRICS.record_connect_native_survivor(false);
-+                    #[cfg(any(test, feature = "testing"))]
-+                    crate::operations::connect::native_wire_trace::record_at(
-+                        remote_addr,
-+                        crate::operations::connect::native_wire_trace::NativeWireEvent::Survivor {
-+                            swapped: false,
-+                            inbound: true,
-+                        },
-+                    );
-+                    drop(connection);
-+                    return Ok(());
-+                }
++/// An `extra_args` entry that starts the node as a peer: it is not passed
++/// on, and `--is-gateway` is left out. A peer also needs `--gateway`.
++const AS_PEER: &str = "<as-peer>";
 +
-                 tracing::info!(
-                     remote = %remote_addr,
-                     peer_known = peer.is_some(),
-@@ -1304,30 +1335,70 @@ impl P2pConnManager {
-                     transaction = %transaction,
-                     "Outbound connection established"
-                 );
--                // A UDP dial beside a native one connected.
-                 if !transport.is_native() {
--                    if let Some(beside) = state.udp_beside_native.remove(&peer_addr) {
--                        // The native dial connected first: the connection
--                        // established first is kept. This one is closed (dropped)
--                        // without touching the ring or the transient budget, and
--                        // this dial's requesters are answered with the kept one.
--                        if self.connections.contains_key(&peer_addr) {
--                            tracing::info!(
--                                remote = %peer_addr,
--                                transaction = %transaction,
--                                "UDP dial beside a native dial connected after the native one; \
--                                 keeping the native connection"
--                            );
-+                    let beside = state.udp_beside_native.remove(&peer_addr);
-+                    // The survivor rule (`native_holds_peer`): a UDP dial to a
-+                    // peer a native connection holds is dropped without
-+                    // touching the ring or the transient budget, whether it
-+                    // ran beside that native dial or not, and its requesters
-+                    // are answered with the native connection.
-+                    if let Some(holder) = self.native_holds_peer(peer_addr, Some(peer.pub_key())) {
-+                        // The in-transit reservation this dial made at its
-+                        // own address is not used: the peer is held at
-+                        // `holder`. At the holder's own address it is the
-+                        // ring entry, which stays.
-+                        // Not while a native dial to that address is
-+                        // pending: the reservation is that dial's too.
-+                        if holder != peer_addr && !state.native_pending.contains(&peer_addr) {
-+                            let cm = &self.bridge.op_manager.ring.connection_manager;
-+                            if !cm.is_in_ring(peer_addr) && cm.has_connection_or_pending(peer_addr)
-+                            {
-+                                cm.prune_in_transit_connection(peer_addr);
-+                            }
-+                        }
-+                        tracing::info!(
-+                            %holder,
-+                            remote = %peer_addr,
-+                            transaction = %transaction,
-+                            beside = beside.is_some(),
-+                            "UDP dial connected to a peer a native connection holds; \
-+                             keeping the native connection"
-+                        );
-+                        TRANSPORT_METRICS.record_connect_native_survivor(false);
-+                        #[cfg(any(test, feature = "testing"))]
-+                        crate::operations:
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle/tests.rs` (modified, +643/-12)
-```diff
-@@ -4062,11 +4062,15 @@ async fn native_then_udp_both_connect_keeps_the_native_connection() {
-     let mut h = Harness::new("beside-native-then-udp").await;
-     let addr: SocketAddr = "203.0.113.236:6281".parse().unwrap();
-     let before = both_connected_here();
-+    let survivors = survivor_here();
-     let (peer, mut native, mut udp) = beside::dials(&mut h, addr).await;
-     h.handshake_event(beside::established(&peer, true)).await;
-     let id = h.mgr.connections[&addr].connection_id;
-+    let pair = PairState::of(&h, addr);
-     h.handshake_event(beside::established(&peer, false)).await;
-     assert_eq!(both_connected_here(), (before.0, before.1 + 1));
-+    assert_eq!(survivor_here(), (survivors.0 + 1, survivors.1));
-+    assert_eq!(PairState::of(&h, addr), pair, "nothing else changed");
-     assert_eq!(native.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(udp.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(
-@@ -4085,26 +4089,37 @@ fn both_connected_here() -> (u64, u64) {
-     (udp, native)
+ /// A free TCP port, also free for UDP right now.
+ fn free_port() -> anyhow::Result<u16> {
+     for _ in 0..100 {
+@@ -111,12 +115,12 @@ impl Node {
+             .args(["--network-port", &network_port])
+             .args(["--public-network-address", "127.0.0.1"])
+             .args(["--public-network-port", &network_port])
+-            .arg("--is-gateway")
++            .args((!extra_args.contains(&AS_PEER)).then_some("--is-gateway"))
+             .arg("--skip-load-from-network")
+             .arg("--ignore-protocol-checking")
+             .arg("--disable-auto-update")
+             .args(["--location", "0.5"])
+-            .args(extra_args)
++            .args(extra_args.iter().filter(|arg| **arg != AS_PEER))
+             .args(["--config-dir", &dir.to_string_lossy()])
+             .args(["--data-dir", &dir.to_string_lossy()])
+             .args(["--log-dir", &log_dir.to_string_lossy()])
+@@ -314,6 +318,67 @@ fn three_quic_panics_keep_quic_off_for_the_cooldown() -> anyhow::Result<()> {
+     Ok(())
  }
  
--/// #6253 review round 2: both dials connect, the UDP one first. The first
--/// connection is kept: the native one is closed without touching the ring
--/// (no prune, so no second DropConnection) and counted, and the native
--/// dial's requesters were answered by the UDP connection.
-+/// Gate 18: both dials connect, the UDP one first. The survivor rule keeps
-+/// the native connection: it is swapped in for the UDP one in place, without
-+/// promotion, prune (so no second DropConnection) or transient budget call,
-+/// and counted. What the ring and the connection manager hold for the peer
-+/// survives the swap: ring entry, ReadyState, connected-since, health record
-+/// and transient count (the in-place switch #6253 removed lost these).
- #[tokio::test]
--async fn udp_then_native_both_connect_keeps_the_udp_connection() {
-+async fn udp_then_native_both_connect_swaps_in_the_native_connection() {
-     let mut h = Harness::new("beside-udp-then-native").await;
-     let addr: SocketAddr = "203.0.113.236:6282".parse().unwrap();
-     let before = both_connected_here();
-+    let survivors = survivor_here();
-     let (peer, mut native, mut udp) = beside::dials(&mut h, addr).await;
-     h.handshake_event(beside::established(&peer, false)).await;
-     assert_eq!(native.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(udp.try_recv(), Ok(Ok((addr, None))));
-     let udp_id = h.mgr.connections[&addr].connection_id;
-+    assert!(!h.mgr.connections[&addr].native, "premise: a UDP entry");
-+    let cm = &h.mgr.bridge.op_manager.ring.connection_manager;
-+    cm.mark_peer_ready(addr);
-+    cm.peer_health.lock().record_success(addr);
-+    let pair = PairState::of(&h, addr);
-+    assert!(pair.marked_ready && pair.connected_since.is_some() && pair.health == Some((1, 0)));
-     while h.handshake_rx.try_recv().is_ok() {}
-     h.handshake_event(beside::established(&peer, true)).await;
--    assert_eq!(
--        h.mgr.connections[&addr].connection_id, udp_id,
--        "the UDP connection, established first, stays"
-+    let entry = &h.mgr.connections[&addr];
-+    assert_ne!(
-+        entry.connection_id, udp_id,
-+        "the native connection took the entry"
-     );
-+    assert!(entry.native);
-     let mut drops = 0;
-     while let Ok(command) = h.handshake_rx.try_recv() {
-         if matches!(command, HandshakeCommand::DropConnection { addr: a } if a == addr) {
-@@ -4114,10 +4129,88 @@ async fn udp_then_native_both_connect_keeps_the_udp_connection() {
-     // The arm drops the address's expectation once, as for any outbound
-     // connection; a replacement would prune and send a second.
-     assert_eq!(drops, 1, "nothing was pruned or replaced");
--    assert_eq!(h.ring_key_at(addr).as_ref(), Some(peer.pub_key()));
--    assert_eq!(h_count(&h), 1);
-+    assert_eq!(PairState::of(&h, addr), pair, "everything else survived");
-     assert_eq!(both_connected_here(), (before.0 + 1, before.1));
-+    assert_eq!(survivor_here(), (survivors.0, survivors.1 + 1));
-     beside::assert_clear(&h, addr);
-+    // The UDP listener's close carries the old id and is ignored.
-+    h.mgr
-+        .handle_transport_event(
-+            Some(ConnEvent::TransportClosed {
-+                remote_addr: addr,
-+                error: TransportError::ConnectionClosed(addr),
-+                connection_id: udp_id,
-+                reason: crate::tracing::DisconnectReason::Timeout,
-+            }),
-+            &mut h.state,
-+            &h.handshake,
-+        )
-+        .await
-+        .expect("handle_transport_event");
-+    assert!(
-+        h.mgr.connections[&addr].native,
-+        "the stale close is ignored"
-+    );
-+    assert_eq!(PairState::of(&h, addr), pair);
-+    // The old UDP listener itself ended: its sender was dropped, so it
-+    // reports its close, under the old id.
-+    let ended = tokio::time::timeout(Duration::from_secs(5), async {
-+        loop {
-+            match h._conn_events_rx.recv().await {
-+                Some(ConnEvent::TransportClo
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_map.rs` (modified, +1/-0)
-```diff
-@@ -132,6 +132,7 @@ mod tests {
-             created_at: now,
-             link_use: LinkUseStamp::new(now),
-             remote_version: None,
-+            native: false,
-         }
-     }
- 
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/identity.rs` (modified, +19/-6)
-```diff
-@@ -188,6 +188,23 @@ pub(super) enum BindOutcome {
- /// count too, stamped at the path's next 2 s watch tick.
- pub(super) const HOLD_WINDOW: std::time::Duration = std::time::Duration::from_secs(30);
- 
-+// The survivor rule treats a native connection silent for HOLD_WINDOW as
-+// gone; with keepalives at KEEPALIVE_INTERVAL that takes at least two lost
-+// keepalives in a row, not one.
-+const _: () = assert!(
-+    HOLD_WINDOW.as_nanos() >= 2 * crate::transport::quic::config::KEEPALIVE_INTERVAL.as_nanos()
-+);
-+
-+/// Whether `entry`'s transport received an authenticated packet within
-+/// [`HOLD_WINDOW`]. A transport that does not report receipt (a test double)
-+/// counts as heard from.
-+pub(super) fn heard_from_recently(entry: &ConnectionEntry) -> bool {
-+    entry
-+        .receipt
-+        .as_ref()
-+        .is_none_or(|stamp| stamp.since_last_receipt() <= HOLD_WINDOW)
-+}
-+
- /// The connection, other than `exclude`, bound to `key`, and whether it was
- /// heard from within [`HOLD_WINDOW`]. A connection whose transport does not
- /// report receipt (a test double) counts as heard from.
-@@ -196,12 +213,7 @@ pub(super) fn key_holder(
-     exclude: Option<SocketAddr>,
-     key: &TransportPublicKey,
- ) -> Option<(SocketAddr, bool)> {
--    let live = |entry: &ConnectionEntry| {
--        entry
--            .receipt
--            .as_ref()
--            .is_none_or(|stamp| stamp.since_last_receipt() <= HOLD_WINDOW)
--    };
-+    let live = heard_from_recently;
-     let mut quiet = None;
-     for (addr, entry) in connections {
-         if Some(*addr) == exclude || entry.identity.key() != Some(key) {
-@@ -492,6 +504,7 @@ mod tests {
-                     created_at: now,
-                     link_use: super::super::zombie_sweep::LinkUseStamp::new(now),
-                     remote_version: None,
-+                    native: false,
-                 },
-             );
-         }
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/zombie_sweep.rs` (modified, +3/-0)
-```diff
-@@ -1648,6 +1648,7 @@ mod tests {
-                     created_at: created,
-                     link_use: LinkUseStamp::new(created),
-                     remote_version: None,
-+                    native: false,
-                 },
-             );
-         }
-@@ -1716,6 +1717,7 @@ mod tests {
-             created_at,
-             link_use,
-             remote_version: None,
-+            native: false,
-         }
-     }
- 
-@@ -2511,6 +2513,7 @@ mod tests {
-                 created_at: created,
-                 link_use: link_use.clone(),
-                 remote_version: None,
-+                native: false,
-             },
-         );
- 
-```
-
----
-
-### Incident Patch 3: `340dbf84` (2026-11-17)
-**Commit Message**: feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot (#6257)
-
-**File**: `.claude/rules/transport.md` (modified, +6/-1)
-```diff
-@@ -1526,7 +1526,12 @@ a test passes its own; tests read their own, never the global).
-   both are recorded in one record_path_loss call under the one loss lock, the
-   exception the bug-prevention rule on a metric re-derived at the call site
-   allows (as for broadcast_payload_mix). The single keys are not under quic_carrying_, which the two carrying
--  families share. Packets in flight at close are dropped by quinn, not declared
-+  families share.
-+  Two more gauges of live paths, moved at each watch tick under the same lock and
-+  left by the window's drop: quic_srtt_<bucket> (quinn's PathStats::rtt) and
-+  quic_tx_bps_<bucket> (UDP payload bits per second over the last tick), every
-+  bucket uploaded at 0; both are one tick's reading, so they describe the fleet's
-+  distribution, not a path's throughput. Packets in flight at close are dropped by quinn, not declared
-   lost, so a final bucket can understate the loss at the end. The rate is quinn's lost over
-   sent (quinn-proto 0.11.19), not a measurement of the link: sent counts every
-   packet quinn built, acknowledgement-only ones included; lost counts quinn's
-```
-
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +2/-0)
-```diff
-@@ -8030,6 +8030,8 @@ mod tests {
-         data.pipe_source = (1108..1112).collect();
-         data.pipe_dropped = (1112..1115).collect();
-         data.late_end = (1121..1124).collect();
-+        data.path_srtt = (1124..1131).collect();
-+        data.path_tx_bps = (1131..1137).collect();
-         let want: std::collections::BTreeMap<String, u64> =
-             snapshot.quic_data.keys().into_iter().collect();
-         assert!(want.values().all(|value| *value != 0));
-```
-
-**File**: `crates/core/src/transport/metrics/quic_data.rs` (modified, +272/-6)
-```diff
-@@ -26,6 +26,8 @@
- //! | `quic_ended_paths_below_floor` | paths that ended in the period before sending 200 packets, so in no bucket |
- //! | `quic_carried_packets_sent`, `quic_carried_packets_lost` | the period's packets sent, and declared lost, while their path carried data (a subset of `quic_sent_packets` and `quic_lost_packets`; the shadow share is the difference, a reconciliation residual: both operands are recorded by `record_path_loss` under the one `loss` lock, the exception the bug-prevention rule "metric describing a filtering decision, re-derived at the call site" allows, as for `broadcast_payload_mix`) |
- //! | `quic_carrying_loss_rate_<bucket>`, `quic_carrying_ended_loss_rate_<bucket>`, `quic_carried_paths_ended_below_floor` | the same three as for every path, for paths that carry data, by their loss counted from the first report that found the path carrying (a path whose data bit came on after it started starts its carrying count then); every gauge bucket sent every period |
-+//! | `quic_srtt_<bucket>` | live QUIC paths that carry data, by their smoothed round-trip time (quinn's `PathStats::rtt`) at their last tick (a gauge, not reset, every bucket sent every period, 0 included): `lt_10ms`, `lt_25ms`, `lt_50ms`, `lt_100ms`, `lt_200ms`, `lt_400ms`, `ge_400ms`. A path is in a bucket from its first tick as a data path (it is built from an established connection, which has an RTT sample), and leaves when it stops carrying or ends; paths that carry no data are in none |
-+//! | `quic_tx_bps_<bucket>` | live QUIC paths that carry data, by the datagram bits per second quinn built on them over their last tick (about 2 s; a gauge, not reset, every bucket sent every period, 0 included): `lt_10kbps`, `lt_100kbps`, `lt_1mbps`, `lt_10mbps`, `lt_100mbps`, `ge_100mbps`. The bytes are UDP payload as quinn counts them (`udp_tx.bytes`): retransmissions, acknowledgements, padding and keepalives included, so it is neither goodput nor capacity. These two gauges describe path conditions; the speed of QUIC against UDP is answered from transfer events (bytes over duration, by transport and release), not from them. One tick's rate, sampled when the snapshot is taken, so it describes the fleet's distribution rather than one path's throughput; a tick of 0 ms is not counted |
- //! | `quic_streams_sampled_paths`, `quic_streams_open_ge_<n>`, `quic_streams_peak_max` | per path and period, the peak of inbound streams read at once: the paths sampled, those whose peak reached each level, and the highest peak |
- //! | `quic_gate_loss_<verdict>` | congestion events by the loss gate's verdict (`recycle::loss_gate`): passed to Cubic as `queue`, `share` (loss share above the ceiling), `persistent`, `ecn` (a congestion mark), `no_sample`, or `ignored` as random loss; summed over the node's paths up to each path's last tick. Over a path's life they sum to its `quic_congestion_events`; within one period they can differ by the events between the two reads of a tick |
- //! | `quic_gate_ended_queue_<bucket>` | paths that ended in the period after at least 20 gate verdicts, by the share of them passed as `queue`: `lt_10pct`, `lt_50pct`, `ge_50pct`. A path whose losses mostly read as a queue runs as plain Cubic, whether the queue is real or jitter |
-@@ -164,6 +166,53 @@ fn loss_rate_bucket(lost: u64, sent: u64) -> usize {
-         .count()
- }
- 
-+/// The per-path round-trip-time gauges' prefix; every bucket is uploaded in
-+/// every snapshot.
-+const PATH_SRTT_PREFIX: &str = "quic_srtt_";
-+
-+/// The upper bounds of the round-trip-time buckets, in milliseconds; the last
-+/// bucket is `ge_400ms`.
-+const PATH_SRTT_BOUNDS_MS: [u128; 6] = [10, 25, 50, 100, 200, 400];
-+
-+/// The round-trip-time buckets' labels (`quic_srtt_<label>`), in order.
-+pub(crate) const PATH_SRTT_LABELS: [&str; 7] = [
-+    "lt_10ms", "lt_25ms", "lt_50ms", "lt_100ms", "lt_200ms", "lt_400ms", "ge_400ms",
-+];
-+
-+fn path_srtt_bucket(rtt: std::time::Duration) -> usize {
-+    let ms = rtt.as_millis();
-+    PATH_SRTT_BOUNDS_MS
-+        .iter()
-+        .take_while(|bound| ms >= **bound)
-+        .count()
-+}
-+
-+/// The per-path send-rate gauges' prefix; uploaded like [`PATH_SRTT_PREFIX`].
-+const PATH_TX_BPS_PREFIX: &str = "quic_tx_bps_";
-+
-+/// The upper bounds of the send-rate buckets, in bits per second; the last
-+/// bucket is `ge_100mbps`.
-+const PATH_TX_BPS_BOUNDS: [u128; 5] = [10_000, 100_000, 1_000_000, 10_000_000, 100_000_000];
-+
-+/// The send-rate buckets' labels (`quic_tx_bps_<label>`), in order.
-+pub(crate) const PATH_TX_BPS_LABELS: [&str; 6] = [
-+    "lt_10kbps",
-+    "lt_100kbps",
-+    "lt_1mbps",
-+    "lt_10mbps",
-+    "lt_100mbps",
-+    "ge_100mbps",
-+];
-+
-+/// The bucket of `bytes` sent in `ms` (not 0) milliseconds.
-+fn path_tx_bps_bucket(bytes: u64, ms: u64) -> usize {
-+    let bits_per_second = u128::from(bytes) * 8 * 1000 / u128::from(ms);
-+    PATH_TX_BPS_BOUNDS
-+        .iter()
-+        .take_while(|bound| bits_per_second >= **bound)
-+        .count()
-+}
-+
- ///
-```
-
-**File**: `crates/core/src/transport/quic/recycle.rs` (modified, +10/-0)
-```diff
-@@ -2297,9 +2297,11 @@ impl PathReport {
-     /// on drop, has no clock, so a path's last tick to its end (under
-     /// [`ACK_WATCH_TICK`]) is not counted.
-     fn report(&mut self, now: Option<u64>) {
-+        let mut tick_ms = None;
-         if let Some(now) = now {
-             // Whole milliseconds, carrying the rest to the next report.
-             let ms = now.saturating_sub(self.timed_at) / 1_000_000;
-+            tick_ms = Some(ms);
-             self.timed_at = self.timed_at.saturating_add(ms * 1_000_000);
-             self.node.record_path_time(ms);
-             if let Some(meter) = &self.meter {
-@@ -2320,6 +2322,14 @@ impl PathReport {
-         self.node
-             .record_path_loss(&mut self.window, delta, carrying);
-         self.loss = next;
-+        // The round-trip time and send-rate gauges of data paths
-+        // (`quic_srtt_<bucket>`, `quic_tx_bps_<bucket>`), at each timed tick.
-+        // The final report has no clock, and the window's drop takes the path
-+        // out of them.
-+        if let Some(ms) = tick_ms {
-+            self.node
-+                .record_path_rates(&mut self.window, stats.path.rtt, sent, ms, carrying);
-+        }
-         if let Some((verdicts, seen)) = &mut self.gate {
-             let now = verdicts.read();
-             let delta: [u64; loss_gate::GATE_VERDICTS] =
-```
-
-**File**: `crates/core/src/transport/quic/recycle/tests.rs` (modified, +35/-0)
-```diff
-@@ -1329,6 +1329,41 @@ fn ack_counting_implements_every_controller_method() {
-     assert_eq!(ours, trait_methods);
- }
- 
-+/// Pin: each timed tick of a path's report passes the path's smoothed RTT, the
-+/// bytes it sent since the last report, the milliseconds since it and whether
-+/// it carries data to the
-+/// per-path gauges (`quic_srtt_<bucket>`, `quic_tx_bps_<bucket>`), and the final
-+/// report, which has no clock, does not. Deleting the call, or passing another
-+/// RTT, leaves every unit test of the gauges green while the fleet reads 0.
++/// #6151: a Windows peer trips at two runs that abort on a QUIC panic while
++/// UDP exists (`PEER_SHORT_RUNS_TO_TRIP_WITH_UDP`), one fewer than a
++/// gateway: the third start trips and runs with QUIC off. The other tests
++/// here start gateways.
++#[cfg(feature = "quic-panic-injection")]
 +#[test]
-+fn a_timed_report_feeds_the_per_path_gauges() {
-+    let code: String = include_str!("../recycle.rs")
-+        .lines()
-+        .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
-+        .collect::<Vec<_>>()
-+        .join("\n");
-+    let start = code
-+        .find("fn report(&mut self, now: Option<u64>)")
-+        .expect("PathReport::report not found");
-+    let (body, _) = code[start..]
-+        .split_once("\n    }\n")
-+        .expect("could not locate the end of PathReport::report");
-+    let body: String = body.chars().filter(|c| !c.is_whitespace()).collect();
-+    assert!(
-+        body.contains("iflet Some(now)=now{".replace(' ', "").as_str())
-+            && body.contains("tick_ms=Some(ms);"),
-+        "the timed tick must record the milliseconds it covers"
++fn a_peer_trips_after_two_quic_panics_in_a_row() -> anyhow::Result<()> {
++    let dir = tempfile::tempdir()?;
++    // A peer needs a gateway to start; this one is never reached.
++    let gateway = format!("127.0.0.1:9,{}", "11".repeat(32));
++    let peer = [
++        QUIC_ON[0],
++        QUIC_ON[1],
++        AS_PEER,
++        "--gateway",
++        gateway.as_str(),
++    ];
++    let trip_at = u64::from(freenet::PEER_SHORT_RUNS_TO_TRIP_WITH_UDP);
++    assert_eq!(trip_at, 2);
++    let inject = [("FREENET_TEST_QUIC_PANIC", "abort:2")];
++    for short_runs in 0..trip_at {
++        let logs = dir.path().join(format!("logs-{short_runs}"));
++        let mut node = Node::start_with_env(dir.path(), logs, &peer, &inject)?;
++        node.wait_for_log(QUIC_BUILT)?;
++        node.wait_for_marker(dir.path(), short_runs)?;
++        let status = loop {
++            if let Some(status) = node.child.try_wait()? {
++                break status;
++            }
++            anyhow::ensure!(
++                Instant::now() < node.deadline,
++                "the injected panic did not end the node:\n{}",
++                node.logs()
++            );
++            std::thread::sleep(Duration::from_millis(100));
++        };
++        assert!(!status.success(), "an abort: {status:?}");
++        let marker = read_marker(dir.path())?;
++        assert_eq!(
++            marker
++                .as_ref()
++                .map(|marker| marker["quic_panicked"].clone()),
++            Some(true.into()),
++            "the hook marked the run before the abort: {marker:?}\n{}",
++            node.logs()
++        );
++    }
++
++    let third = Node::start(dir.path(), dir.path().join("logs-trip"), &peer)?;
++    let logs = third.logs();
++    assert!(logs.contains(TRIP_WARN), "{logs}");
++    assert!(!logs.contains(QUIC_BUILT), "{logs}");
++    let tripped = read_marker(dir.path())?;
++    assert_eq!(
++        tripped.as_ref().map(|marker| marker["state"].clone()),
++        Some("tripped".into()),
++        "{logs}"
 +    );
-+    assert!(
-+        body.contains(
-+            "iflet Some(ms)=tick_ms{self.node.record_path_rates(&mutself.window,stats.path.rtt,sent,ms,carrying);}"
-+                .replace(' ', "")
-+                .as_str()
-+        ),
-+        "a timed report must pass the path's rtt, sent bytes and ms to record_path_rates"
-+    );
++    Ok(())
 +}
 +
- /// Each report is the change since the last one, sent and received kept apart,
- /// and the next is taken from the state it hands back; a count that went down
- /// reports 0.
+ /// QUIC is on by default on Windows (prefer, as on Linux and macOS), now that
+ /// the breaker has been confirmed on a real Windows machine (#6031): a node
+ /// with no `transport-quic` builds the endpoint and arms the breaker's marker.
+```
+
+---
+
+### Incident Patch 3: `8f41ca75` (2026-11-17)
+**Commit Message**: feat(quic): add ProvenClientKey, a client verifier for a key nobody named (#6260)
+
+**File**: `.claude/rules/transport.md` (modified, +12/-0)
+```diff
+@@ -2133,6 +2133,18 @@ no extra message, no exporter proof.
+     never as "any key". An inbound transport's key is the key the node
+     bound from the peer's claim, not one the transport authenticated; the
+     QUIC handshake is what checks it.
++  → A client nobody named (a gateway admitting a native join, A7b; no
++    production caller yet): ProvenClientKey takes the key the client
++    presents instead of pinning one. peer_key_presented accepts only an
++    exact Ed25519 SPKI (prefix + 32 bytes) with sign bit 0, no chain, a key
++    PeerKey::of accepts, in its canonical encoding; the signature must be
++    Ed25519 under that key (scheme and bytes checked before ring). The
++    verifier keeps no state, so one server_tls_proven configuration serves
++    any number of handshakes; the identity is read after the handshake from
++    the connection's peer_identity() (proven_client_key, which parses it
++    with peer_key_presented again), so it belongs to that connection and a
++    completed handshake. server_tls_proven offers freenet-quic/2 only. It
++    proves possession of the key's secret, nothing more.
+ Tests: conversion vs curve25519-dalek 5 (random keys, bit 255 set, u = -1),
+ signer key == verifier key over many keypairs with both natural sign bits,
+ signatures verified by ed25519-dalek and refused with any bit flipped,
+```
+
+**File**: `crates/core/proptest-regressions/transport/quic/identity/tests.txt` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++# Seeds for failure cases proptest has generated in the past. It is
++# automatically read and these particular cases re-run before any
++# novel cases are generated.
++#
++# It is recommended to check this file in to source control so that
++# everyone who runs the test benefits from these saved cases.
++#
++# The case below is for `peer_key_presented_takes_any_point`. Its `key` is
++# the sign-bit-1 encoding of a valid node key: it decompresses to a
++# torsion-free point that `PeerKey::of` accepts, whose presented form is the
++# same bytes with bit 255 cleared. `peer_key_presented` must refuse it (the
++# sign-bit check, and the canonical-form check behind it). Proptest wrote it
++# during development when a mutation made that refusal fail. It is kept on
++# purpose: a random 32-byte array decodes to a point about half the time and
++# to a torsion-free one about one time in sixteen, so this fixed case makes
++# every run check the sign-bit twin of a real key.
++cc be6e71b1881c70cb424efce401d560980085dca6fdce0c14a4f4e2cbd678e866 # shrinks to key = [126, 175, 47, 4, 131, 230, 23, 17, 186, 196, 97, 107, 210, 3, 51, 38, 77, 234, 231, 33, 191, 184, 12, 143, 36, 34, 176, 23, 82, 207, 214, 216]
+```
+
+**File**: `crates/core/src/transport/quic.rs` (modified, +3/-2)
+```diff
+@@ -682,8 +682,9 @@ impl QuicEndpoint {
+ 
+     /// Panic in the socket adapter at the endpoint's next receive, caught as
+     /// any adapter panic is: the endpoint goes `Down` with the node still
+-    /// running (tests, including the real binary built with `testing`).
+-    #[cfg(any(test, feature = "testing"))]
++    /// running. Only the real binary built with `testing` calls it
++    /// (`connection_handler::fail_endpoint_from_env`).
++    #[cfg(feature = "testing")]
+     pub(crate) fn panic_adapter(&self) {
+         self.faults.panic_receive();
+     }
+```
+
+**File**: `crates/core/src/transport/quic/identity.rs` (modified, +159/-0)
+```diff
+@@ -25,6 +25,17 @@
+ //! A man in the middle that terminates the handshake cannot sign as the
+ //! expected key, and the TLS 1.3 signature covers the transcript, so a
+ //! relayed handshake cannot be completed with a different peer either.
++//!
++//! **A client no one named** ([`ProvenClientKey`]). A gateway accepting a
++//! native join from an address it was not told about has no key to pin. It
++//! takes the key the client presents instead, under the same rules: exactly
++//! an Ed25519 SubjectPublicKeyInfo with sign bit 0, no chain, a key
++//! [`PeerKey::of`] accepts, and an Ed25519 signature checked with ring
++//! against that key. The verifier keeps no state: after the handshake the
++//! connection's identity is read from the connection itself
++//! ([`proven_client_key`]), so it is tied to that connection and to a
++//! handshake that completed. This proves only that the client holds the
++//! secret of the key it presents.
+ 
+ use std::sync::Arc;
+ 
+@@ -120,6 +131,40 @@ fn spki_of(ed25519: &[u8; 32]) -> [u8; ED25519_SPKI_LEN] {
+     spki
+ }
+ 
++/// The identity a raw public key `presented` proves, if it is one a node can
++/// hold: exactly an Ed25519 SubjectPublicKeyInfo ([`ED25519_SPKI_PREFIX`]
++/// and 32 bytes) whose key has sign bit 0 (XEdDSA's convention, so one
++/// transport key has one presented form) and is the Edwards form of a
++/// transport key [`PeerKey::of`] accepts, in its canonical encoding. Every
++/// other input is refused, before any signature is looked at.
++pub(crate) fn peer_key_presented(presented: &[u8]) -> Result<PeerKey, UnusableKey> {
++    let Some(key) = presented.strip_prefix(&ED25519_SPKI_PREFIX[..]) else {
++        return Err(UnusableKey);
++    };
++    let Ok(ed25519) = <[u8; 32]>::try_from(key) else {
++        return Err(UnusableKey);
++    };
++    if ed25519[31] >> 7 != XEDDSA_SIGN_BIT {
++        return Err(UnusableKey);
++    }
++    let point = curve25519_dalek_v4::edwards::CompressedEdwardsY(ed25519)
++        .decompress()
++        .ok_or(UnusableKey)?;
++    let transport = TransportPublicKey::from_bytes(point.to_montgomery().to_bytes());
++    let peer = PeerKey::of(&transport)?;
++    // The second of two guards: the output's presented form must equal the
++    // input. It refuses a sign-bit-1 encoding as well (the form rebuilt from
++    // the transport key has bit 255 clear), so it also backs the sign-bit
++    // check above. For a non-canonical encoding it is not reached today: that
++    // is y + p with y < 19, and every such point is small-order or has a
++    // torsion component, so `PeerKey::of` refuses it first
++    // (`only_a_node_keys_exact_presented_form_is_accepted` checks all 19).
++    if peer.ed25519 != ed25519 {
++        return Err(UnusableKey);
++    }
++    Ok(peer)
++}
++
+ /// The raw public key a peer is expected to present: the Edwards form of its
+ /// transport key, kept with that transport key.
+ #[derive(Clone)]
+@@ -322,6 +367,22 @@ impl QuicIdentity {
+         )
+     }
+ 
++    /// TLS for accepting a native connection from a client this node has no
++    /// key for: it offers only [`Alpn::Native`] and accepts the key the
++    /// client proves ([`ProvenClientKey`]). The key is read from the
++    /// connection after the handshake ([`proven_client_key`]). One
++    /// configuration serves any number of connections.
++    #[cfg_attr(not(test), allow(dead_code))] // Used by gateway admission (A7b), dark until then.
++    pub(crate) fn server_tls_proven(
++        &self,
++    ) -> Result<quinn::crypto::rustls::QuicServerConfig, TlsConfigError> {
++        config::tls_server_config(
++            self.certified_key(),
++            Arc::new(ProvenClientKey),
++            Alpn::Native,
++        )
++    }
++
+     /// TLS that completes no handshake: the endpoint's default server
+     /// configuration, used only for an attempt the endpoint accepted
+     /// without a configuration of its own (`QuicEndpoint::accept` never does).
+@@ -607,6 +668,104 @@ impl ClientCertVerifier for PinnedClientKey {
+     }
+ }
+ 
++/// A server's check of a client it has no key for (a gateway admitting a
++/// native join, #5940): the client may present any key [`peer_key_presented`]
++/// accepts, and its handshake signature must verify under that key. It keeps
++/// no state, so one verifier serves every handshake of a configuration; both
++/// checks derive the key from the certificate rustls passes them, and the
++/// caller reads the proven key from the finished connection
++/// ([`proven_client_key`]).
++#[cfg_attr(not(test), allow(dead_code))] // Used by gateway admission (A7b), dark until then.
++#[derive(Debug, Default, Clone, Copy)]
++pub(crate) struct ProvenClientKey;
++
++#[cfg_attr(not(test), allow(dead_code))] // Used by gateway admission (A7b), dark until then.
++impl ProvenClientKey {
++    /// Check the handshake signature over the parts of a
++    /// `DigitallySignedStruct` under the key `presented` carries. The
++    /// presented bytes are parsed and the scheme checked before ring
++    /// ve
+```
+
+**File**: `crates/core/src/transport/quic/identity/tests.rs` (modified, +332/-0)
+```diff
+@@ -519,3 +519,335 @@ fn a_key_with_a_torsion_component_is_refused() {
+     }
+     assert_eq!(refused, 32);
+ }
++
++/// Every node's presented key is accepted by `peer_key_presented` and gives
++/// back that node's transport key, and `ProvenClientKey` accepts it and a
++/// handshake signature by that node under it.
++#[test]
++fn a_proven_key_is_the_presenting_nodes_transport_key() {
++    let _seed = GlobalRng::seed_guard(SEED);
++    let now = rustls::pki_types::UnixTime::now();
++    for _ in 0..256 {
++        let keys = TransportKeypair::new();
++        let peer = PeerKey::of(keys.public()).unwrap();
++        let parsed = peer_key_presented(peer.spki()).expect("a node's key");
++        assert_eq!(parsed.transport_key(), keys.public());
++        assert_eq!(parsed, peer);
++
++        let presented = cert(peer.spki());
++        assert!(
++            ProvenClientKey
++                .verify_client_cert(&presented, &[], now)
++                .is_ok()
++        );
++        let message = b"transcript";
++        assert!(
++            ProvenClientKey::verify_signature(
++                message,
++                &presented,
++                SignatureScheme::ED25519,
++                &handshake_sign(&keys, message)
++            )
++            .is_ok()
++        );
++    }
++}
++
++/// `peer_key_presented` refuses everything but one node key's exact
++/// presented form: other encodings and lengths, the sign-bit-1 twin, a
++/// non-canonical encoding of the point, and the points `PeerKey::of`
++/// refuses (small order, a torsion component).
++#[test]
++fn only_a_node_keys_exact_presented_form_is_accepted() {
++    use curve25519_dalek::constants::EIGHT_TORSION;
++    use curve25519_dalek::edwards::CompressedEdwardsY;
++    let _seed = GlobalRng::seed_guard(SEED);
++    let keys = TransportKeypair::new();
++    let peer = PeerKey::of(keys.public()).unwrap();
++    let spki = |ed25519: &[u8]| [&ED25519_SPKI_PREFIX[..], ed25519].concat();
++
++    let mut negated = peer.spki().to_vec();
++    negated[ED25519_SPKI_LEN - 1] ^= 0x80;
++    // The identity point (y = 1) and y = -1, both of small order, with
++    // sign bit 0.
++    let mut identity = [0u8; 32];
++    identity[0] = 1;
++    let mut minus_one = FIELD_PRIME;
++    minus_one[0] -= 1;
++    let honest = CompressedEdwardsY(*peer.ed25519()).decompress().unwrap();
++    let torsioned = (honest + EIGHT_TORSION[1]).compress().to_bytes();
++    let mut refused: Vec<(&str, Vec<u8>)> = vec![
++        ("the sign-bit-1 twin", negated),
++        ("truncated", peer.spki()[..ED25519_SPKI_LEN - 1].to_vec()),
++        ("extended", [&peer.spki()[..], &[0]].concat()),
++        ("empty", Vec::new()),
++        ("the bare key", peer.ed25519().to_vec()),
++        ("the prefix alone", ED25519_SPKI_PREFIX.to_vec()),
++        ("the identity point", spki(&identity)),
++        ("y = -1", spki(&minus_one)),
++        ("a torsion component", spki(&torsioned)),
++        (
++            "arbitrary DER",
++            vec![0x30, 0x82, 0x01, 0x0a, 0x30, 0x81, 0xb5],
++        ),
++    ];
++    for byte in 0..ED25519_SPKI_PREFIX.len() {
++        let mut flipped = peer.spki().to_vec();
++        flipped[byte] ^= 1;
++        refused.push(("a flipped prefix bit", flipped));
++    }
++    // Every non-canonical encoding with sign bit 0: y + p for y < 19
++    // (y + p < 2^255).
++    // Each is refused by `PeerKey::of` already (small order or a torsion
++    // component), before the canonical-encoding backstop in
++    // `peer_key_presented` is reached: shown here for every one of them, so
++    // the backstop's comment ("not reachable today") stays checked.
++    for y in 0..19u8 {
++        let mut encoded = FIELD_PRIME;
++        encoded[0] += y;
++        if let Some(point) = CompressedEdwardsY(encoded).decompress() {
++            let transport = TransportPublicKey::from_bytes(point.to_montgomery().to_bytes());
++            assert!(
++                PeerKey::of(&transport).is_err(),
++                "y + p for y = {y}: PeerKey::of accepted it, so only the backstop refuses it"
++            );
++        }
++        refused.push(("a non-canonical y", spki(&encoded)));
++    }
++    let now = rustls::pki_types::UnixTime::now();
++    for (what, bytes) in &refused {
++        assert!(peer_key_presented(bytes).is_err(), "{what} accepted");
++        assert!(
++            ProvenClientKey
++                .verify_client_cert(&cert(bytes), &[], now)
++                .is_err(),
++            "the verifier accepted {what}"
++        );
++    }
++    // Not even an accepted key with a chain.
++    let verifier = ProvenClientKey;
++    let exact = cert(peer.spki());
++    assert!(
++        verifier
++            .verify_client_cert(&exact, std::slice::from_ref(&exact), now)
++            .is_err()
++    );
++    assert!(verifier.verify_client_cert(&exact, &[], now).is_ok());
++    assert!(verifier.requires_raw_public_keys());
++    assert!(verifier.offer_client_auth() && verifier.client_auth_mandatory());
++    assert_eq!(
++        verifier.supported_verify_schemes(),
++   
+```
+
+**File**: `crates/core/src/transport/quic/tests.rs` (modified, +63/-5)
+```diff
+@@ -715,6 +715,8 @@ enum ServerTls {
+     Pinned,
+     /// With this rustls configuration instead (an impostor's).
+     Custom(Box<rustls::ServerConfig>),
++    /// With this QUIC TLS configuration, which may serve several attempts.
++    Shared(Arc<quinn::crypto::rustls::QuicServerConfig>),
+ }
+ 
+ /// `client` connects to `server` at `server_addr` with `client_config`,
+@@ -736,12 +738,16 @@ async fn attempt(
+                 let incoming = server.accept().await.expect("an incoming attempt");
+                 match server_tls {
+                     ServerTls::Pinned => incoming.establish().await,
+-                    ServerTls::Custom(tls) => {
++                    ServerTls::Custom(_) | ServerTls::Shared(_) => {
+                         let mut config = (*server.server).clone();
+-                        config.crypto = Arc::new(
+-                            quinn::crypto::rustls::QuicServerConfig::try_from(Arc::new(*tls))
+-                                .unwrap(),
+-                        );
++                        config.crypto = match server_tls {
++                            ServerTls::Custom(tls) => Arc::new(
++                                quinn::crypto::rustls::QuicServerConfig::try_from(Arc::new(*tls))
++                                    .unwrap(),
++                            ),
++                            ServerTls::Shared(tls) => tls,
++                            ServerTls::Pinned => unreachable!("matched above"),
++                        };
+                         let connection =
+                             super::socket::with_poller_holds(&incoming.cap_holds, || {
+                                 incoming.incoming.accept_with(Arc::new(config))
+@@ -5270,3 +5276,55 @@ fn the_bind_records_its_endpoint_state() {
+         "recorded before the result is used, for both arms"
+     );
+ }
++
++/// A real QUIC handshake under `server_tls_proven`: two clients with
++/// different keys connect through ONE server configuration, each is
++/// accepted, the key read from each connection (`proven_client_key`) is that
++/// client's own, and the ALPN agreed is the native one. A verifier that kept
++/// the first client's key would refuse the second.
++#[test]
++fn a_proven_server_config_accepts_each_client_by_its_own_key() {
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let net = crate::transport::test_net::subnet();
++        let pair = pair("quic-identity-proven", net.addr(1), net.addr(2), None).await;
++        // The attempt reaches `accept` only from an allowed address; the key
++        // it is allowed with is not used by this server configuration.
++        let _permit = pair.b.allow_peer(pair.a_addr, &pair.a_key()).unwrap();
++        let shared = Arc::new(pair.b.identity.server_tls_proven().unwrap());
++        let server_peer = PeerKey::of(pair.b_keys.public()).unwrap();
++        let second_keys = TransportKeypair::new();
++        let second = Arc::new(QuicIdentity::new(&second_keys).unwrap());
++        let clients = [
++            (&pair.a.identity, pair.a_keys.public()),
++            (&second, second_keys.public()),
++        ];
++        for (identity, expected) in clients {
++            let tls = identity
++                .client_tls_for(&server_peer, config::Alpn::Native)
++                .unwrap();
++            let (client, server) = attempt(
++                &pair.time,
++                &pair.a,
++                &pair.b,
++                pair.b_addr,
++                (pair.a.client_config(Arc::new(tls)), server_peer.clone()),
++                ServerTls::Shared(shared.clone()),
++            )
++            .await;
++            let client = client.expect("the client connects");
++            let server = server.expect("the server accepts");
++            let proven = super::identity::proven_client_key(server.inner())
++                .expect("the connection carries the proven key");
++            assert_eq!(proven.transport_key(), expected);
++            let protocol = server
++                .inner()
++                .handshake_data()
++                .and_then(|data| data.downcast::<quinn::crypto::rustls::HandshakeData>().ok())
++                .and_then(|data| data.protocol);
++            assert_eq!(protocol.as_deref(), Some(config::NATIVE_ALPN));
++            client.inner().close(0u32.into(), b"");
++            server.inner().close(0u32.into(), b"");
++        }
++    })
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6262** (2026-11-17): fix(quic): breaker review carry-overs from #6259 (@sanity)
+- **PR #6260** (2026-11-17): feat(quic): add ProvenClientKey, a client verifier for a key nobody named (@sanity)
+- **PR #6259** (2026-11-17): fix(quic): peers trip the crash breaker only on QUIC-panic short runs (@sanity)
 - **PR #6258** (2026-11-17): test(quic): pin the crash-breaker marker lock and correct its doc (@sanity)
 - **PR #6257** (2026-11-17): feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot (@sanity)
 - **PR #6256** (2026-11-17): fix(quic): keep a Windows endpoint-death record past the short-run clear (@sanity)
-- **PR #6255** (2026-11-17): fix(connect): one survivor rule for native and UDP connections to one peer (gates 18-19) (@sanity)
-- **PR #6254** (2026-11-17): fix(telemetry): fill peer_startup's commit and report auto-update state (#5975) (@sanity)
-- **PR #6253** (2026-11-17): fix(connect): native dial timing gates, a NAT model, and UDP dials beside native ones (@sanity)
 
 ---
 
@@ -2521,52 +2839,59 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(quic): pin the crash-breaker marker lock and correct its doc
+## X. quic): peers trip the crash breaker only on QUIC-panic short runs
 
 **RULE**:
-When implementing operations in `crates/core/src/transport/quic/breaker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01e05980`: test(quic): pin the crash-breaker marker lock and correct its doc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17141a5c`: quic): peers trip the crash breaker only on QUIC-panic short runs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/quic/breaker.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Orders exactly two writers of this run's marker: the Windows short-run
-/// clear (`short_runs::clear_short_run`) and the endpoint-death record
-/// ([`note_endpoint_down_exit_with`]). Each holds it across its
-/// read-and-change, so in either order the death record survives: a clear
-/// that comes first is followed by the record written again, and a record
-/// written first makes the clear leave the marker. Pinned by
-/// `the_marker_update_lock_is_taken_by_the_clear_and_the_record`.
-///
-/// The other writers do not take it, and it does not order them:
-/// - arming ([`arm`]) runs under [`PENDING`], as does the record of a death
-///   before arming, so those two are ordered by that lock instead, and the
-///   clear timer starts only after arming;
-/// - the Windows panic hook (`short_runs::mark_quic_panic`) takes no lock,
-///   since it runs inside a panic. A caught socket-adapter panic marks the
-///   marker before the endpoint goes down, so its write lands before the
-///   death record; an unrelated QUIC panic on another thread at the same
-///   moment could overwrite the record, which then costs one free restart;
-/// - a clean exit's removal ([`clear_if_owned`]) does not run on 
+(`quic_breaker_trips`; for every peer, and a gateway on Windows, counted for
+runs in a row (two on a peer while UDP exists, so it trips before the
+post-update rollback's three crashes; three on a gateway) that ended
+transport/quic, by panic location), each starting within 24 h of the one before,
+and for a unix gateway for any abnormal end of a QUIC-enabled run, not only a
+QUIC fault;
+elsewhere, since a gateway's breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
+except where a restart after SIGKILL would trip a unix gateway's breaker; a
+peer's short-run rule does not count a SIGKILL), and the
+against the previous release, and peers with `quic_breaker_suppressed`. Since
+unix peers moved to the short-run rule (#6151), it also reads
+`quic_breaker_start` by version: trips with their `quic_panic_at`, and on unix
+peers how often `legacy_verdict` and `verdict` disagree. A
+    contained aborts the process. On a unix gateway the next start trips the
+    breaker (quic_breaker_trips, see quic/breaker.rs): QUIC off for 15 min
+    (doubling on repeat trips up to 4 h), and a supervised gateway restarts
+    itself with ex
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// Held across each read-and-change of this run's marker by the Windows
-/// short-run clear ([`short_runs`]) and by [`note_endpoint_down_exit`], so
-/// in either order the death record survives: a clear that comes first is
-/// followed by the record written again, and a record written first makes
-/// the clear leave the marker.
+(`quic_breaker_trips`, on unix counted for any abnormal end of a QUIC-enabled
+run, not only a QUIC fault, and on Windows for three runs in a row that ended
+transport/quic, by panic location), each starting within 24 h of the one before;
+elsewhere, since the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
+except where a restart after SIGKILL would trip the breaker), and the
+against the previous release, and peers with `quic_breaker_suppressed`. A
+    contained aborts the process. On unix the next start trips the breaker
+    (quic_breaker_trips, see quic/breaker.rs): QUIC off for 24 h on a peer,
+    15 min on a gateway (doubling on repeat trips up to 4 h), which, when
+    supervised, restarts itself with exit 42 at the cooldown's end
+    (breaker::quic_restore_at). On Windows the
+    and recorded one, so the fourth start after three such aborts in a row
+    trips it. An ordinary stop records no panic and never counts; an abort
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01e05980` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17141a5c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

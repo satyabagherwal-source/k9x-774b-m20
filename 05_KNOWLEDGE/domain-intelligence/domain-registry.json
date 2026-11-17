@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T19:37:08.926Z",
-  "total_records": 1667,
+  "last_updated": "2026-11-17T19:45:05.480Z",
+  "total_records": 1669,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 717,
+      "total": 719,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -766,7 +766,9 @@
         "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-2-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-2-learnings-core-invarian",
         "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-3d-coder-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva"
+        "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva",
+        "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-learnings-core-invariants"
       ]
     },
     "E": {
@@ -9033,8 +9035,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "1f4cac6c51c6e961b4e7c1541df3eef279ea184cd7b37e724af2a2ea1bbebb0f",
-      "created_at": "2026-11-17T15:51:33.516Z"
+      "content_hash": "ad2ad389ea51081ba7ae04c61dac0a26d951a3fd22375acf618966e600186b9c",
+      "created_at": "2026-11-17T19:45:01.388Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -12276,8 +12278,8 @@
       "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
       "repository": "loft-sh/vcluster",
-      "content_hash": "0ba553c91a5d6ff0c096ccd2a7807e0def53ac3391c4fd289fff740f87487cb7",
-      "created_at": "2026-11-14T03:01:50.088Z"
+      "content_hash": "44aec0256a65e89beb3d90385c9c0158d04b4f5ec5f09805504b8889edebf782",
+      "created_at": "2026-11-17T19:44:57.289Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants",
@@ -12345,8 +12347,8 @@
       "title": "Deployment & Operations Intelligence: loft-sh-vcluster-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-learnings-deployment-operations-intelligence-loft-sh-vcluster-l.md",
       "repository": "loft-sh-vcluster-learnings",
-      "content_hash": "e92d612c99209dd288855d2ef62c8a9c1e2861412e0ed808c9a7e893487c5208",
-      "created_at": "2026-11-14T03:02:23.239Z"
+      "content_hash": "9263bc9e5e5a661c151e4d552d031e5e922a1bd141bebcf2c1ab874a5ec761e0",
+      "created_at": "2026-11-17T19:45:05.480Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria",
@@ -14485,8 +14487,8 @@
       "title": "Architecture Intelligence: software-mansion/react-native-gesture-handler Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-software-mansion-react-native-gesture-handler-architecture-intelligence-software.md",
       "repository": "software-mansion/react-native-gesture-handler",
-      "content_hash": "7cccfae596fdcea35fb422d9cea4b4a969af73bef0ef756a1c42aea92f2b3b52",
-      "created_at": "2026-11-14T10:16:38.638Z"
+      "content_hash": "8d5eb935f481c43b17ef8905ee1c37a9a87b8f57dd3f4881768473a254ec814c",
+      "created_at": "2026-11-17T19:44:54.778Z"
     },
     "domain_intelligence-human-need-intelligence-kumahq-kuma-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-kumahq-kuma-core-invariants",
@@ -14563,8 +14565,8 @@
       "title": "Architecture Intelligence: software-mansion-react-native-gesture-handler-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-software-mansion-react-native-gesture-handler-learnings-architecture-intelligenc.md",
       "repository": "software-mansion-react-native-gesture-handler-learnings",
-      "content_hash": "33b531bf143f347d81e4a1df34900784910b50f16e09e790e07b5aabad122847",
-      "created_at": "2026-11-14T10:17:20.152Z"
+      "content_hash": "3060ef0a410914b1e500ad477f85647d7d1508589a3c992b19aa1b75b8d80461",
+      "created_at": "2026-11-17T19:45:04.879Z"
     },
     "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-2-core-invariants",
@@ -28265,6 +28267,24 @@
       "repository": "hf-ccore-qwen3.5-4b-3d-coder-learnings",
       "content_hash": "59a4b1e9d1f5743c9e46ab2f58d64a15c55ebaa8ca1b09352ec2c3174814b2df",
       "created_at": "2026-11-17T19:37:07.728Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-1.7B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-research-knowledge-intelligence-liquidai-lfm3-1-7b-core-in.md",
+      "repository": "LiquidAI/LFM3-1.7B",
+      "content_hash": "50ab617d6ff5e92291d1440905e95cd587b70b1ad7cc6ecc5957f986669a9d4c",
+      "created_at": "2026-11-17T19:44:53.649Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-1.7b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-learnings-research-knowledge-intelligence-hf-liquidai-lfm3.md",
+      "repository": "hf-liquidai-lfm3-1.7b-learnings",
+      "content_hash": "2485758a72823db03c7a292b328a7d9404c4d5f6548d0def1994ba50717bc583",
+      "created_at": "2026-11-17T19:45:04.421Z"
     }
   }
 }

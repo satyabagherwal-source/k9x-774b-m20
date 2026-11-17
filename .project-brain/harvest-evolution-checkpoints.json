@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T19:37:09.152Z",
+  "last_updated": "2026-11-17T19:45:05.714Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T19:12:36.114Z",
@@ -473,7 +473,7 @@
       "staged_for_review": 1
     },
     "loft-sh-vcluster-learnings.md": {
-      "processed_at": "2026-11-14T03:02:22.897Z",
+      "processed_at": "2026-11-17T19:45:05.120Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1683,8 +1683,8 @@
       "staged_for_review": 0
     },
     "hf-liquidai-lfm3-1.7b-learnings.md": {
-      "processed_at": "2026-11-13T08:56:48.339Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T19:45:04.260Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-thinkingmachines-inkling-2-small-learnings.md": {
@@ -2538,7 +2538,7 @@
       "staged_for_review": 0
     },
     "software-mansion-react-native-gesture-handler-learnings.md": {
-      "processed_at": "2026-11-14T10:17:19.782Z",
+      "processed_at": "2026-11-17T19:45:04.563Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3358,7 +3358,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1689,
+  "total_dossiers_evaluated": 1692,
   "total_canonical_promoted": 324,
-  "total_staged_for_review": 1322
+  "total_staged_for_review": 1324
 }

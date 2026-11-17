@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "6e7fbbd6",
+    "sourceVersion": "3bd9f72f",
     "license": "NOASSERTION",
-    "contentHash": "79f4da1cd84d6cd9a3e3cdea451bf06385e072e191f25ecd26c95166c4037dbf",
-    "lastHarvestedAt": "2026-11-17T15:51:33.182Z",
+    "contentHash": "b3c856d1e0d5a83e8a720cf40b3a9b3d075abc5668c7c7d9c48cb594fed68dc4",
+    "lastHarvestedAt": "2026-11-17T19:45:01.097Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4793,10 +4793,10 @@
     "repository": "software-mansion/react-native-gesture-handler",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-gesture-handler",
-    "sourceVersion": "b9b1140e",
+    "sourceVersion": "c09aaa6a",
     "license": "MIT",
-    "contentHash": "75f613d0f67068d1462a12079509ccbf026e2572f3b613fe7c60ec818745f1a5",
-    "lastHarvestedAt": "2026-11-14T10:16:38.302Z",
+    "contentHash": "ec37422986d7b7ccd4be18b8dc746489c0dc0cdfcc0e272dc1d1b16d2c45600e",
+    "lastHarvestedAt": "2026-11-17T19:44:54.488Z",
     "learningId": "learn-github-software-mansion-react-native-gesture-handler"
   },
   "aws-aws-cdk": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "3a0085b6",
+    "sourceVersion": "92186138",
     "license": "Apache-2.0",
-    "contentHash": "1a3b0847f53aede32e63edf82a0fefbcd5a7ca1ddf1ea8288ffa2eee75020a1c",
-    "lastHarvestedAt": "2026-11-14T03:01:49.844Z",
+    "contentHash": "ceb0afc426f6e16a07255392e239584becb2c49151beaef0663a8946896f8175",
+    "lastHarvestedAt": "2026-11-17T19:44:57.003Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {
@@ -11365,8 +11365,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B",
     "sourceVersion": "hf-liquidai-lfm3-1.7b",
     "license": "Open-Source",
-    "contentHash": "73c3b58137ecc2c9069eaf582b25b6481dbf48f05edc6aed10aa2f2783e10172",
-    "lastHarvestedAt": "2026-11-13T08:55:38.376Z",
+    "contentHash": "105480e9bebdf0b51bddd58645ae63f965e71d7077fde7d0fcbd33fcb6682ff3",
+    "lastHarvestedAt": "2026-11-17T19:44:53.477Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b"
   },
   "michael-denyer-pstack-claude": {

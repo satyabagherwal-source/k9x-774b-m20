@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-GLZG",
-    "timestamp": "2026-11-15T17:14:09.868Z",
-    "repository": "actix/actix-web",
-    "learningId": "learn-github-actix-actix-web",
-    "contentHash": "05cffc2b3cf2ce22c380579f7803f999bb7f140254c7fc8a496d6c2f653b4c6c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-GW9Y",
-    "timestamp": "2026-11-15T17:14:23.206Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "a9c8e8a62cebac898d9c99e56cfc9cf8109027c7f3699056a1591bd7f88be5c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-RKDZ",
-    "timestamp": "2026-11-15T17:22:41.015Z",
-    "repository": "mistralai/Mistral-Large-4-1T-A52B",
-    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-    "contentHash": "bffacc603781bdf8786b7f53dc45e277e511805981a8b642dea27e34401b836e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-3BM4",
-    "timestamp": "2026-11-15T17:31:49.516Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "f93038c0942d1c0eca7e152baa513454bde13e231e6b5bcdee94c3fe81d71706",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-3G0S",
     "timestamp": "2026-11-15T17:31:55.228Z",
     "repository": "doobidoo/mcp-memory-service",
@@ -7492,6 +7432,66 @@
     "contentHash": "4d92418a6659616a684ea1bc01873f4960e3f0863382c7b28b81baaac2d36f5b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-Q5EP",
+    "timestamp": "2026-11-17T19:44:53.473Z",
+    "repository": "LiquidAI/LFM3-1.7B",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
+    "contentHash": "105480e9bebdf0b51bddd58645ae63f965e71d7077fde7d0fcbd33fcb6682ff3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-Q66T",
+    "timestamp": "2026-11-17T19:44:54.485Z",
+    "repository": "software-mansion/react-native-gesture-handler",
+    "learningId": "learn-github-software-mansion-react-native-gesture-handler",
+    "contentHash": "ec37422986d7b7ccd4be18b8dc746489c0dc0cdfcc0e272dc1d1b16d2c45600e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-Q84O",
+    "timestamp": "2026-11-17T19:44:57.000Z",
+    "repository": "loft-sh/vcluster",
+    "learningId": "learn-github-loft-sh-vcluster",
+    "contentHash": "ceb0afc426f6e16a07255392e239584becb2c49151beaef0663a8946896f8175",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-QBAE",
+    "timestamp": "2026-11-17T19:45:01.094Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "b3c856d1e0d5a83e8a720cf40b3a9b3d075abc5668c7c7d9c48cb594fed68dc4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

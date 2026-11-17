@@ -10714,3 +10714,7 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `582fb8e9` | Multi-dimensional audit evidence | 2026-11-17T19:27:30.668Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `16af7297` | Multi-dimensional audit evidence | 2026-11-17T19:27:35.979Z |
 | `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-17T19:37:04.595Z |
+| `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-17T19:44:53.477Z |
+| `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `c09aaa6a` | Multi-dimensional audit evidence | 2026-11-17T19:44:54.488Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `92186138` | Multi-dimensional audit evidence | 2026-11-17T19:44:57.003Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3bd9f72f` | Multi-dimensional audit evidence | 2026-11-17T19:45:01.097Z |

@@ -4,22 +4,22 @@
 {
   "source_repository": "loft-sh/vcluster",
   "source_url": "https://github.com/loft-sh/vcluster",
-  "source_version": "3a0085b6",
+  "source_version": "92186138",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T03:01:50.004Z",
+  "timestamp": "2026-11-17T19:44:57.175Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-loft-sh-vcluster",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [loft-sh/vcluster](https://github.com/loft-sh/vcluster) (Revision: `3a0085b6`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T03:01:50.004Z`  
+> **Provenance**: Harvested from [loft-sh/vcluster](https://github.com/loft-sh/vcluster) (Revision: `92186138`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T19:44:57.175Z`  
 > **Learning ID**: `learn-github-loft-sh-vcluster`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `loft-sh/vcluster` (Commit: `3a0085b6`)
+- **Target Repository**: `loft-sh/vcluster` (Commit: `92186138`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:01:48.752Z  
+> **Harvest Timestamp**: 2026-11-17T19:44:56.133Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: vCluster creates tenant clusters: fully isolated environments delivered as managed Kubernetes, or as the foundation for Slurm, Ray, Run:ai and inference clusters. Each gets its own API server, CRDs and RBAC, and runs on an existing cluster or standalone on bare metal. CNCF Certified Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11378 stars
+- **Stars / Engagement**: 11380 stars
 
 ---
 
@@ -1485,486 +1485,368 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe70eda6` (2026-11-13)
-**Commit Message**: fix(cli): deprecate --docker-login instead of reading image pull secrets (#2730)
+### Incident Patch 1: `92186138` (2026-11-17)
+**Commit Message**: fix(kubeletproxy): match allowed node proxy subpaths exactly (#2742)
 
-* fix(cli): ignore --docker-login instead of reading image pull secrets
+* fix(kubeletproxy): match allowed node proxy subpaths exactly
 
-vCluster Platform 5.0 removed image pull secrets on users and teams, and
-the shared secrets they pointed to. --docker-login read them to write
-registry credentials to the local Docker config, so against 5.0 it no
-longer did anything.
+* fix(kubeletproxy): adds AI suggestion to e2e tests
 
-Remove that code and pkg/docker, but keep the flag on vcluster login
-and vcluster platform login as a hidden flag that does nothing, so
-scripts that pass it keep working. Setting it explicitly prints:
-"--docker-login only works with shared secrets. Support for shared
-secrets was removed in vCluster CLI v0.38." Users on Platform 4.12 LTS
-stay on vCluster CLI 0.37.
+Monorepo-Commit: 662030ef7d51b35d2e9baecf990e8a4d1c89a57a
 
-Behavior change: --docker-login=false used to return before the
---use-driver switch, so the two flags together never switched the
-driver. The switch now always runs.
-
-Closes ENGPLAT-1460
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* refactor(cli): declare the deprecated --docker-login flag inline
-
-It is a deprecation, so keep the flag where it was declared, bound to
-the existing DockerLogin field, rather than behind exported helpe
-
-**File**: `cmd/vclusterctl/cmd/login.go` (modified, +1/-0)
+**File**: `e2e/test_security/kubeletproxy/test_kubelet_proxy.go` (modified, +145/-20)
 ```diff
-@@ -54,6 +54,7 @@ vcluster platform login https://my-vcluster-platform.com --access-key myaccesske
- 	loginCmd.Flags().StringVar(&cmd.AccessKey, "access-key", "", "The access key to use")
- 	loginCmd.Flags().BoolVar(&cmd.Insecure, "insecure", true, product.Replace("Allow login into an insecure Loft instance"))
- 	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
-+	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
- 
- 	return loginCmd, nil
- }
-```
-
-**File**: `cmd/vclusterctl/cmd/login_test.go` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+package cmd
-+
-+import (
-+	"testing"
-+
-+	"github.com/loft-sh/vcluster/pkg/cli/flags"
-+)
-+
-+func TestDeprecatedLoginKeepsDeprecatedDockerLoginFlag(t *testing.T) {
-+	cmd, err := NewLoginCmd(&flags.GlobalFlags{})
-+	if err != nil {
-+		t.Fatalf("NewLoginCmd: %v", err)
-+	}
-+	if err := cmd.ParseFlags([]string{"--docker-login=false"}); err != nil {
-+		t.Fatalf("--docker-login=false no longer parses: %v", err)
-+	}
-+	if f := cmd.Flags().Lookup("docker-login"); f.Deprecated == "" || !f.Hidden {
-+		t.Errorf("--docker-login: deprecated %q, hidden %v; want deprecated and hidden", f.Deprecated, f.Hidden)
-+	}
-+}
-```
-
-**File**: `cmd/vclusterctl/cmd/platform/login.go` (modified, +1/-135)
-```diff
-@@ -1,31 +1,22 @@
- package platform
+@@ -2,6 +2,7 @@
+ package kubeletproxy
  
  import (
--	"bytes"
++	"bytes"
  	"context"
+ 	"encoding/json"
  	"fmt"
- 	"os"
- 	"strings"
- 
--	dockerconfig "github.com/docker/cli/cli/config"
--	"github.com/docker/cli/cli/config/configfile"
--	managementv1 "github.com/loft-sh/api/v5/pkg/apis/management/v1"
--	storagev1 "github.com/loft-sh/api/v5/pkg/apis/storage/v1"
- 	"github.com/loft-sh/api/v5/pkg/product"
- 	"github.com/loft-sh/log"
- 	"github.com/loft-sh/vcluster/cmd/vclusterctl/cmd/use"
--	"github.com/loft-sh/vcluster/pkg/cli/config"
- 	"github.com/loft-sh/vcluster/pkg/cli/flags"
--	"github.com/loft-sh/vcluster/pkg/docker"
- 	"github.com/loft-sh/vcluster/pkg/platform"
- 	"github.com/loft-sh/vcluster/pkg/platform/clihelper"
--	"github.com/loft-sh/vcluster/pkg/platform/kube"
- 	"github.com/loft-sh/vcluster/pkg/upgrade"
- 	"github.com/mgutz/ansi"
- 	"github.com/pkg/errors"
- 	"github.com/sirupsen/logrus"
- 	"github.com/spf13/cobra"
--	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+@@ -15,11 +16,14 @@ import (
+ 	"github.com/loft-sh/vcluster/pkg/util/random"
+ 	. "github.com/onsi/ginkgo/v2"
+ 	. "github.com/onsi/gomega"
++	"github.com/prometheus/common/expfmt"
++	"github.com/prometheus/common/model"
+ 	corev1 "k8s.io/api/core/v1"
+ 	kerrors "k8s.io/apimachinery/pkg/api/errors"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/client-go/kubernetes"
+ 	"k8s.io/client-go/rest"
++	statsv1alpha1 "k8s.io/kubelet/pkg/apis/stats/v1alpha1"
  )
  
- const PlatformURL = "VCLUSTER_PLATFORM_URL"
-@@ -79,6 +70,7 @@ vcluster platform login https://my-vcluster-platform.com --access-key myaccesske
- 	loginCmd.Flags().StringVar(&cmd.AccessKey, "access-key", "", "The access key to use")
- 	loginCmd.Flags().BoolVar(&cmd.Insecure, "insecure", false, product.Replace("Allow login into an insecure Loft instance"))
- 	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
-+	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
+ // KubeletProxySpec registers the spec.
+@@ -38,15 +42,7 @@ func KubeletProxySpec() {
+ 			})
  
- 	return loginCmd
- }
-@@ -142,16 +134,6 @@ func (cmd *LoginCmd) Run(ctx context.Context, args []string) error {
- 	}
- 	cmd.Log.Donef(product.Replace("Successfully logged into Loft instance %s"), ansi.Color(url, "white+b"))
+ 			It("GET /healthz via node proxy returns ok for every virtual node", func(ctx context.Context) {
+-				var nodes *corev1.NodeList
+-				By("waiting for at least one virtual node to be registered", func() {
+-					Eventually(func(g Gomega) {
+-						var err error
+-						nodes, err = vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+-						g.Expect(err).To(Succeed(), "failed to list virtual nodes")
+-						g.Expect(nodes.Items).NotTo(BeEmpty(), "expected at least one virtual node")
+-					}).WithPolling(constants.PollingInterval).WithTimeout(constants.PollingTimeout).Should(Succeed())
+-				})
++				nodes := waitForVirtualNodes(ctx, vClusterClientset)
  
--	// skip log into docker registries?
--	if !cmd.DockerLogin {
--		return nil
--	}
--
--	err = dockerLogin(ctx, cmd.LoadedConfig(cmd.Log), cmd.Log)
--	if err != nil {
--		return err
--	}
--
- 	// should switch driver
- 	if cmd.Driver != "" {
- 		err := use.SwitchDriver(ctx, cfg, cmd.Driver, log.GetInstance())
-@@ -189,119 +171,3 @@ func (cmd *LoginCmd) printLoginDetails(ctx context.Context) error {
- 	}
- 	return nil
- }
--
--func dockerLogin(ctx context.Context, config *config.CLI, log log.Logger) error {
--	platformClient := platform.NewClientFromConfig(config)
--
--	managementClient, err := platformClient.Management()
--	if err != nil {
--		return err
--	}
--
--	// get user name
--	userName, teamName, err := platform.GetCurrentUser(ctx, managementClient)
--	if err != nil {
--		return err
--	}
--
--	// collect image pull secrets from team or user
--	dockerConfigs := []*configfile.ConfigFile{}
--	if userName != nil {
--		// get image pull secrets from user
--		user, err := managementClient.Loft().ManagementV1().Users().Get(ctx, userName.Name, metav1.GetOptions{})
--		if err != nil {
--			return err
--		}
--		dockerConfigs = append(dockerConfigs, collectImagePullSecrets(ctx, managementClient, user.Spec.ImagePullSecrets, log)...)
--
--		// get image pull secrets from teams
--		for _, teamName := range user.Status.Teams {
--			team, err := managementClient.Loft().ManagementV1().Teams().Get(ctx, teamName, metav1.GetOptions{})
--			if err != nil {
--				return err
--			}
--
--			dockerConfigs = append(dockerConfigs, collectImagePullSecrets(ctx, managementClient, team.Spec.ImagePullSecrets, log)...)
--		}
--	} else if teamName != nil {
--		// get image pull secrets from team
--		team, err := managementClient.Loft().ManagementV1().Teams().Get(ctx, teamName.Name, metav1.GetOptions{})
--		if err != nil {
--			return err
--		}
--		dockerConfigs = append(dockerConfigs, collectImagePullSecrets(ctx, managementClient, team.Spec.ImagePullSecrets, log)...)
--	}
--
--	// store docker configs
--	if len(dockerConfigs) > 0 {
--		dockerConfig, err := docker.NewDockerConfig()
--		if err != nil {
--			return err
--		}
--
--		// log into registries locally
--		for _, config := range dockerConfigs {
--			for registry, authConfig := range config.AuthConfigs {
--				err = dockerConfig.Store(registry, authConfig)
--				if err != nil {
--					return err
--				}
--
--				if registry == "https://index.docker.io/v1/" {
--					registry = "docker hub"
--				}
--
--				log.Donef("Successfully logged into docker registry '%s'", registry)
--			}
--		}
--
--		err = dockerConfig.Save()
--		if err != nil {
--			return errors.Wrap(err, "save docker config")
--		}
--	}
--
--	return nil
--}
--
--func collectImagePullSecrets(ctx context.Context, managementClient kube.Interface, imagePullSecrets []*storagev1.KindSecretRef, log log.Logger) []*configfile.ConfigFile {
--	retConfigFiles := []*configfile.ConfigFile{}
--	for _, imagePullSecret := range imagePullSecrets {
--		// unknown image pull secret type?
--		if imagePullSecret.Kind != "SharedSecret" || (imagePullSecret.APIGroup != storagev1.SchemeGroupVersion.Group && imagePullSecret.APIGroup != managementv1.SchemeGroupVersion.Group) {
--			continue
--		} else if imagePullSecret.SecretName == "" || imagePullSecret.Secret
+ 				By("checking /healthz returns ok for each node", func() {
+ 					for _, node := range nodes.Items {
+@@ -60,9 +56,7 @@ func KubeletProxySpec() {
+ 			})
+ 
+ 			It("GET /pods via node proxy returns only pods belonging to this vcluster", func(ctx context.Context) {
+-				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+-				Expect(err).To(Succeed())
+-				Expect(nodes.Items).NotTo(BeEmpty())
++				nodes := waitForVirtualNodes(ctx, vClusterClientset)
+ 
+ 				var virtualPodKeys map[string]bool
+ 				By("collecting all virtual pod identities", func() {
+@@ -94,9 +88,7 @@ func KubeletProxySpec() {
+ 			})
+ 
+ 			It("GET /runningpods via node proxy returns only pods belonging to this vcluster", func(ctx context.Context) {
+-				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+-				Expect(err).To(Succeed())
+-				Expect(nodes.Items).NotTo(BeEmpty())
++				nodes := waitForVirtualNodes(ctx, vClusterClientset)
+ 
+ 				virtualPods, err := vClusterClientset.CoreV1().Pods("").List(ctx, metav1.ListOptions{})
+ 				Expect(err).To(Succeed())
+@@ -125,9 +117,7 @@ func KubeletProxySpec() {
+ 			})
+ 
+ 			It("GET /containerLogs for a non-existent pod returns 403 Forbidden", func(ctx context.Context) {
+-				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+-				Expect(err).To(Succeed())
+-				Expect(nodes.Items).NotTo(BeEmpty())
++				nodes := waitForVirtualNodes(ctx, vClusterClientset)
+ 
+ 				By("requesting container logs for a pod that does not exist in the virtual cluster", func() {
+ 					_, err := vClusterClientset.RESTClient().Get().
+@@ -140,8 +130,37 @@ func KubeletProxySpec() {
+ 				})
+ 			})
+ 
+-			// The following two specs share a running pod, so they run sequentially in an Ordered
+-			// context. BeforeAll creates the pod once; both It blocks depend on it existing.
++			// A single-encoded %2e%2e decodes to a literal ".." segment and is rejected with 400 before
++			// the path is classified. The double-encoded form decodes to a literal "%2e%2e" segment, so
++			// it passes the dot-segment check and only the exact subpath match rejects it.
++			It("GET with a double-encoded traversal ending in /healthz returns 403 Forbidden", func(ctx context.Context) {
++				nodes := waitForVirtualNodes(ctx, vClusterClientset)
++
++				By("requesting a path that names /configz but ends in the allowed /healthz", func() {
++					rawPath := fmt.Sprintf("/api/v1/nodes/%s/proxy/configz/%%252e%%252e/healthz", nodes.Items[0].Name)
++					code, body := getRawPath(ctx, rawPath)
++					Expect(code).To(Equal(http.StatusForbidden),
++						"expected 403 for %q, got %d: %s", rawPath, code, body)
++					Expect(body).To(ContainSubstring("proxy subpath not permitted in shared mode"),
++						"unexpected response body for %q", rawPath)
++				})
++			})
++
++			It("GET a path that only ends in /healthz returns 403 Forbidden", func(ctx context.Context) {
++				nodes := waitForVirtualNodes(ctx, vClusterClientset)
++
++				By("requesting a kubelet /logs path whose last segment is healthz", func() {
++					_, err := vClusterClientset.RESTClient().Get().
++						AbsPath(fmt.Sprintf("/api/v1/nodes/%s/proxy/logs/x/healthz", nodes.Items[0].Name)).
++						DoRaw(ctx)
++					Expect(err).To(HaveOccurred(), "expected 403 for a path that only ends in /healthz")
++					Expect(kerrors.IsForbidden(err)).To(BeTrue(),
++						"expected 403 Forbidden, got: %v", err)
++				})
++			})
++
++			// The following specs share a running pod, so they run sequentially in an Ordered
++			// context. BeforeAll creates the pod once; every It block depends on it existing.
+ 			Context("with a running test pod", Ordered, func() {
+ 				va
 ```
 
-**File**: `cmd/vclusterctl/cmd/platform/login_test.go` (added, +17/-0)
+**File**: `pkg/server/filters/metrics.go` (modified, +47/-5)
 ```diff
-@@ -0,0 +1,17 @@
-+package platform
-+
-+import (
-+	"testing"
-+
-+	"github.com/loft-sh/vcluster/pkg/cli/flags"
-+)
-+
-+func TestPlatformLoginKeepsDeprecatedDockerLoginFlag(t *testing.T) {
-+	cmd := NewCobraLoginCmd(&flags.GlobalFlags{})
-+	if err := cmd.ParseFlags([]string{"--docker-login=false"}); err != nil {
-+		t.Fatalf("--docker-login=false no longer parses: %v", err)
+@@ -133,13 +133,26 @@ func enforceKubeletSubpathAllowlist(
+ 		return false
+ 	}
+ 
++	// reject empty segments before classifying the path: "/proxy/%2Fpods" decodes to "//pods"
++	if hasEmptySegment(reqPath) {
++		responsewriters.ErrorNegotiated(
++			kerrors.NewBadRequest("proxy path must not contain empty segments"),
++			s, corev1.SchemeGroupVersion, w, req,
++		)
++		return false
 +	}
-+	if f := cmd.Flags().Lookup("docker-login"); f.Deprecated == "" || !f.Hidden {
-+		t.Errorf("--docker-login: deprecated %q, hidden %v; want deprecated and hidden", f.Deprecated, f.Hidden)
-+	}
++
+ 	switch {
+ 	case IsKubeletHealthz(reqPath):
+ 		// allowed — health check, no tenant data, forward as-is in all modes
++		// drop the client-supplied encoding so the proxied URL is built from the validated path
++		req.URL.RawPath = ""
+ 		return true
+ 
+ 	case IsKubeletMetrics(reqPath), IsKubeletStats(reqPath), IsKubeletPods(reqPath):
+ 		// allowed — response is filtered tenant-scoped inside handleNodeRequest
++		// drop the client-supplied encoding so the proxied URL is built from the validated path
++		req.URL.RawPath = ""
+ 		return true
+ 
+ 	case IsKubeletContainerLogs(reqPath):
+@@ -367,21 +380,44 @@ func isNodesProxy(r *request.RequestInfo) bool {
+ 		r.Subresource == "proxy"
+ }
+ 
++var kubeletMetricsSubpaths = map[string]bool{
++	"/metrics":                   true,
++	"/metrics/cadvisor":          true,
++	"/metrics/probes":            true,
++	"/metrics/resource":          true,
++	"/metrics/resource/v1alpha1": true,
++	"/metrics/resource/v1beta1":  true,
 +}
++
++// kubeletSubpath returns the kubelet-local path for p. A node proxy path
++// (/api/v1/nodes/{node}/proxy/...) is reduced to the part after /proxy; any other
++// path is returned unchanged and treated as already kubelet-local.
++func kubeletSubpath(p string) string {
++	parts := strings.SplitN(p, "/", 7)
++	if len(parts) < 6 || parts[0] != "" || parts[1] != "api" || parts[2] != "v1" || parts[3] != "nodes" || parts[4] == "" || parts[5] != "proxy" {
++		return p
++	}
++	if len(parts) == 6 {
++		return ""
++	}
++	return "/" + parts[6]
++}
++
+ func IsKubeletHealthz(path string) bool {
+-	return strings.HasSuffix(path, "/healthz")
++	return kubeletSubpath(path) == "/healthz"
+ }
+ 
+ func IsKubeletStats(path string) bool {
+-	return strings.HasSuffix(path, "/stats/summary")
++	return kubeletSubpath(path) == "/stats/summary"
+ }
+ 
+ func IsKubeletMetrics(path string) bool {
+-	return strings.HasSuffix(path, "/metrics") || strings.HasSuffix(path, "/metrics/cadvisor") || strings.HasSuffix(path, "/metrics/probes") || strings.HasSuffix(path, "/metrics/resource") || strings.HasSuffix(path, "/metrics/resource/v1alpha1") || strings.HasSuffix(path, "/metrics/resource/v1beta1")
++	return kubeletMetricsSubpaths[kubeletSubpath(path)]
+ }
+ 
+ func IsKubeletPods(path string) bool {
+-	p := strings.TrimRight(path, "/")
+-	return strings.HasSuffix(p, "/pods") || strings.HasSuffix(p, "/runningpods")
++	p := strings.TrimRight(kubeletSubpath(path), "/")
++	return p == "/pods" || p == "/runningpods"
+ }
+ 
+ const kubeletContainerLogsSegment = "/proxy/containerLogs/"
+@@ -431,6 +467,12 @@ func hasDotSegment(reqPath string) bool {
+ 	return false
+ }
+ 
++// hasEmptySegment reports whether reqPath contains an empty "/"-separated segment, such as the
++// one in "/proxy//pods"
++func hasEmptySegment(reqPath string) bool {
++	return strings.Contains(reqPath, "//")
++}
++
+ func rewritePods(ctx *synccontext.SyncContext, data []byte) ([]byte, error) {
+ 	podList := &corev1.PodList{}
+ 	if err := json.Unmarshal(data, podList); err != nil {
 ```
 
-**File**: `go.mod` (modified, +2/-2)
+**File**: `pkg/server/filters/metrics_test.go` (modified, +296/-1)
 ```diff
-@@ -6,8 +6,6 @@ require (
- 	github.com/blang/semver v3.5.1+incompatible
- 	github.com/blang/semver/v4 v4.0.0
- 	github.com/denisbrodbeck/machineid v1.0.1
--	github.com/docker/cli v29.8.0+incompatible
--	github.com/docker/docker v28.5.2+incompatible
- 	github.com/dustin/go-humanize v1.0.1
- 	github.com/evanphx/json-patch/v5 v5.9.11
- 	github.com/ghodss/yaml v1.0.0
-@@ -123,7 +121,9 @@ require (
- 	github.com/containers/storage v1.58.1-0.20250515004000-78f4258b2bd9 // indirect
- 	github.com/creack/pty v1.1.21 // indirect
- 	github.com/distribution/reference v0.6.0 // indirect
-+	github.com/docker/cli v29.8.0+incompatible // indirect
- 	github.com/docker/distribution v2.8.3+incompatible // indirect
-+	github.com/docker/docker v28.5.2+incompatible // indirect
- 	github.com/docker/docker-credential-helpers v0.9.3 // indirect
- 	github.com/docker/go-connections v0.5.0 // indirect
- 	github.com/docker/go-units v0.5.0 // indirect
-```
-
-**File**: `pkg/docker/config.go` (removed, +0/-66)
-```diff
-@@ -1,66 +0,0 @@
--package docker
--
--import (
--	"os"
--	"path/filepath"
--
--	"github.com/docker/docker/pkg/homedir"
--
--	dockerconfig "github.com/docker/cli/cli/config"
--	"github.com/docker/cli/cli/config/configfile"
--	"github.com/docker/cli/cli/config/types"
--	"github.com/pkg/errors"
--)
--
--const dockerFileFolder = ".docker"
--
--// Config is the interface to interact with the docker config
--type Config interface {
--	// Store saves credentials for the given registry into the local config file
--	Store(registry string, authConfig types.AuthConfig) error
--
--	// Save persists the locally changed config file to file
--	Save() error
--}
--
--// NewDockerConfig creates a new docker client
--func NewDockerConfig() (Config, error) {
--	configFile, err := loadDockerConfig()
--	if err != nil {
--		return nil, err
--	}
--
--	return &config{
--		DockerConfig: configFile,
--	}, nil
--}
--
--type config struct {
--	DockerConfig *configfile.ConfigFile
--}
--
--func (c *config) Store(registry string, authConfig types.AuthConfig) error {
--	if registry == "" {
--		return nil
--	}
--
--	err := c.DockerConfig.GetCredentialsStore(registry).Store(authConfig)
--	if err != nil {
--		return errors.Wrapf(err, "store credentials for registry %s", registry)
--	}
--
--	return nil
--}
--
--func (c *config) Save() error {
--	return c.DockerConfig.Save()
--}
--
--func loadDockerConfig() (*configfile.ConfigFile, error) {
--	configDir := os.Getenv("DOCKER_CONFIG")
--	if configDir == "" {
--		configDir = filepath.Join(homedir.Get(), dockerFileFolder)
--	}
--
--	return dockerconfig.Load(configDir)
--}
-```
-
-**File**: `vendor/github.com/docker/docker/pkg/homedir/homedir.go` (removed, +0/-28)
-```diff
-@@ -1,28 +0,0 @@
--package homedir
--
--import (
--	"os"
--	"os/user"
--	"runtime"
--)
--
--// Get returns the home directory of the current user with the help of
--// environment variables depending on the target operating system.
--// Returned path should be used with "path/filepath" to form new paths.
--//
--// On non-Windows platforms, it falls back to nss lookups, if the home
--// directory cannot be obtained from environment-variables.
--//
--// If linking statically with cgo enabled against glibc, ensure the
--// osusergo build tag is used.
--//
--// If needing to do nss lookups, do not disable cgo or set osusergo.
--func Get() string {
--	home, _ := os.UserHomeDir()
--	if home == "" && runtime.GOOS != "windows" {
--		if u, err := user.Current(); err == nil {
--			return u.HomeDir
--		}
--	}
--	return home
--}
-```
-
-**File**: `vendor/github.com/docker/docker/pkg/homedir/homedir_linux.go` (removed, +0/-105)
-```diff
-@@ -1,105 +0,0 @@
--package homedir
--
--import (
--	"errors"
--	"os"
--	"path/filepath"
--	"strings"
--)
--
--// GetRuntimeDir returns XDG_RUNTIME_DIR.
--// XDG_RUNTIME_DIR is typically configured via pam_systemd.
--// GetRuntimeDir returns non-nil error if XDG_RUNTIME_DIR is not set.
--//
--// See also https://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
--func GetRuntimeDir() (string, error) {
--	if xdgRuntimeDir := os.Getenv("XDG_RUNTIME_DIR"); xdgRuntimeDir != "" {
--		return xdgRuntimeDir, nil
--	}
--	return "", errors.New("could not get XDG_RUNTIME_DIR")
--}
--
--// StickRuntimeDirContents sets the sticky bit on files that are under
--// XDG_RUNTIME_DIR, so that the files won't be periodically removed by the system.
--//
--// StickyRuntimeDir returns slice of sticked files.
--// StickyRuntimeDir returns nil error if XDG_RUNTIME_DIR is not set.
--//
--// See also https://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
--func StickRuntimeDirContents(files []string) ([]string, error) {
--	runtimeDir, err := GetRuntimeDir()
--	if err != nil {
--		// ignore error if runtimeDir is empty
--		return nil, nil
--	}
--	runtimeDir, err = filepath.Abs(runtimeDir)
--	if err != nil {
--		return nil, err
--	}
--	var sticked []string
--	for _, f := range files {
--		f, err = filepath.Abs(f)
--		if err != nil {
--			return sticked, err
--		}
--		if strings.HasPrefix(f, runtimeDir+"/") {
--			if err = stick(f); err != nil {
--				return sticked, err
--			}
--			sticked = append(sticked, f)
--		}
--	}
--	return sticked, nil
--}
--
--func stick(f string) error {
--	st, err := os.Stat(f)
--	if err != nil {
--		return err
--	}
--	m := st.Mode()
--	m |= os.ModeSticky
--	return os.Chmod(f, m)
--}
--
--// GetDataHome returns XDG_DATA_HOME.
--// GetDataHome returns $HOME/.local/share and nil error if XDG_DATA_HOME is not set.
--// If HOME and XDG_DATA_HOME are not set, getpwent(3) is consulted to determine the users home directory.
--//
--// See also https://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
--func GetDataHome() (string, error) {
--	if xdgDataHome := os.Getenv("XDG_DATA_HOME"); xdgDataHome != "" {
--		return xdgDataHome, nil
--	}
--	home := Get()
--	if home == "" {
--		return "", errors.New("could not get either XDG_DATA_HOME or HOME")
--	}
--	return filepath.Join(home, ".local", "share"), nil
--}
--
--// GetConfigHome returns XDG_CONFIG_HOME.
--// GetConfigHome returns $HOME/.config and nil error if XDG_CONFIG_HOME is not set.
--// If HOME and XDG_CONFIG_HOME are not set, getpwent(3) is consulted to determine the users home directory.
--//
--// See also https://standards.freedesktop.org/basedir-spec/latest/ar01s03.html
--func GetConfigHome() (string, error) {
--	if xdgConfigHome := os.Getenv("XDG_CONFIG_HOME"); xdgConfigHome != "" {
--		return xdgConfigHome, nil
--	}
--	home := Get()
--	if home == "" {
--		return "", errors.New("could not get either XDG_CONFIG_HOME or HOME")
--	}
--	return filepath.Join(home, ".config"), nil
--}
--
--// GetLibHome returns $HOME/.local/lib
--// If HOME is not set, getpwent(3) is consulted to determine the users home directory.
--func GetLibHome() (string, error) {
--	home := Get()
--	if home == "" {
--		return "", errors.New("could not get HOME")
--	}
--	return filepath.Join(home, ".local/lib"), nil
--}
+@@ -142,12 +142,109 @@ func TestEnforceKubeletSubpathAllowlistRejectsUnvalidatedPaths(t *testing.T) {
+ 			sharedNode: false,
+ 			wantStatus: http.StatusForbidden,
+ 		},
++		// percent-encoded dot segments are decoded into req.URL.Path by the URL parser,
++		// so they must be rejected exactly like literal ones
++		{
++			name:       "encoded traversal ending in an allowed suffix",
++			path:       "/api/v1/nodes/node-1/proxy/configz/%2e%2e/healthz",
++			sharedNode: true,
++			wantStatus: http.StatusBadRequest,
++		},
++		{
++			name:       "uppercase encoded traversal to pods",
++			path:       "/api/v1/nodes/node-1/proxy/configz/%2E%2E/pods",
++			sharedNode: true,
++			wantStatus: http.StatusBadRequest,
++		},
++		{
++			name:       "mixed literal and encoded dot segment",
++			path:       "/api/v1/nodes/node-1/proxy/configz/.%2e/metrics",
++			sharedNode: true,
++			wantStatus: http.StatusBadRequest,
++		},
++		{
++			name:       "containerLogs with encoded traversal to pods",
++			path:       "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container/%2e%2e/%2e%2e/%2e%2e/%2e%2e/pods",
++			sharedNode: true,
++			wantStatus: http.StatusBadRequest,
++		},
++		{
++			name:       "containerLogs with encoded slashes and dots",
++			path:       "/api/v1/nodes/node-1/proxy/containerLogs/ns/pod/container%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2fpods",
++			sharedNode: true,
++			wantStatus: http.StatusBadRequest,
++		},
++		// double encoding decodes to a literal "%2e%2e" segment; it is not a dot segment,
++		// but the path no longer exactly matches an allowed subpath
++		{
++			name:       "double-encoded traversal ending in an allowed suffix",
++			path:       "/api/v1/nodes/node-1/proxy/configz/%252e%252e/healthz",
++			sharedNode: true,
++			wantStatus: http.StatusForbidden,
++		},
++		// an encoded slash right after /proxy decodes to an empty segment; with host node sync
++		// off, unknown subpaths are forwarded, so these must be rejected before classification
++		{
++			name:       "encoded slash before pods on dedicated nodes",
++			path:       "/api/v1/nodes/node-1/proxy/%2Fpods",
++			sharedNode: false,
++			wantStatus: http.StatusBadRequest,
++		},
++		{
++			name:       "encoded slash before stats summary on dedicated nodes",
++			path:       "/api/v1/nodes/node-1/proxy/%2Fstats/summary",
++			sharedNode: false,
++			wantStatus: http.StatusBadRequest,
++		},
++		{
++			name:       "encoded slash before metrics cadvisor on dedicated nodes",
++			path:       "/api/v1/nodes/node-1/proxy/%2Fmetrics/cadvisor",
++			sharedNode: false,
++			wantStatus: http.StatusBadRequest,
++		},
++		{
++			name:       "empty segment inside an allowed subpath on dedicated nodes",
++			path:       "/api/v1/nodes/node-1/proxy/stats%2F%2Fsummary",
++			sharedNode: false,
++			wantStatus: http.StatusBadRequest,
++		},
++		{
++			name:       "encoded slash before pods",
++			path:       "/api/v1/nodes/node-1/proxy/%2Fpods",
++			sharedNode: true,
++			wantStatus: http.StatusBadRequest,
++		},
++		// paths that only end in an allowed subpath must not be classified as that subpath
++		{
++			name:       "suffix-only healthz under kubelet logs",
++			path:       "/api/v1/nodes/node-1/proxy/logs/x/healthz",
++			sharedNode: true,
++			wantStatus: http.StatusForbidden,
++		},
++		{
++			name:       "suffix-only pods",
++			path:       "/api/v1/nodes/node-1/proxy/configz/pods",
++			sharedNode: true,
++			wantStatus: http.StatusForbidden,
++		},
++		{
++			name:       "suffix-only metrics",
++			path:       "/api/v1/nodes/node-1/proxy/debug/metrics",
++			sharedNode: true,
++			wantStatus: http.StatusForbidden,
++		},
++		{
++			name:       "suffix-only stats",
++			path:       "/api/v1/nodes/node-1/proxy/logs/stats/summary",
++			sharedNode: true,
++			wantStatus: http.StatusForbidden,
++		},
+ 	}
+ 
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
++			// the URL parser decodes the path the same way the vcluster's HTTP server does
+ 			req := httptest.NewRequest(http.MethodGet, "http://vcluster.local"+tt.path, nil)
+-			req.URL.Path = tt.path
+ 			w := httptest.NewRecorder()
+ 
+ 			// a nil register context proves the request is rejected before any lookup or forwarding
+@@ -161,6 +258,204 @@ func TestEnforceKubeletSubpathAllowlistRejectsUnvalidatedPaths(t *testing.T) {
+ 	}
+ }
+ 
++// With host node sync off the nodes are dedicated to the virtual cluster, so unknown subpaths are
++// forwarded by design. Paths that only end in an allowed subpath, or hide one behind double
++// encoding, are unknown subpaths: they must be forwarded as sent and must not be classified as an
++// allowed subpath, so handleNodeRequest applies no pods, stats or metrics rewrite to them.
++func TestEnforceKubeletSubpathAllowlistForwardsUnknownPathsOnDedicatedNodes(t *testing.T) {
++	s := serializer.NewCodecFactory(scheme.Scheme)
++	tests := []struct {
++		name string
++		path string
++	}{
++		{
++			name: "suffix-only healthz under kubelet logs",
++			path: "/api/v1/nodes/node-1/proxy/logs/x/healthz",
++		},
++		{
++			name: "suffix-only pods",
++			path: "/
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4281** (closed): sync: add envVars injection for host-synced pods (@dlenrow)
 - **PR #4270** (2026-11-11): [v0.35] chore: bump minimum platform version to v4.10.10 (@deniseschannon)
 - **PR #4269** (2026-11-11): [v0.36] chore: bump minimum platform version to v4.11.5 (@deniseschannon)
 - **PR #4268** (2026-11-11): [v0.37] chore: bump minimum platform version to v4.12.6 (@deniseschannon)
 - **PR #4263** (2026-11-04): ci: point free-disk-space at its new owner lumbroso-commons (v0.32) (@Piotr1215)
 - **PR #4262** (2026-11-04): ci: point free-disk-space at its new owner lumbroso-commons (v0.33) (@Piotr1215)
-- **PR #4261** (2026-11-04): ci: point free-disk-space at its new owner lumbroso-commons (v0.34) (@Piotr1215)
 
 ---
 
@@ -1984,31 +1866,69 @@ the existing DockerLogin field, rather than behind exported helpe
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): deprecate --docker-login instead of reading image pull secrets
+## X. kubeletproxy): match allowed node proxy subpaths exactly
 
 **RULE**:
-When implementing operations in `cmd/vclusterctl/cmd/login.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e/test_security/kubeletproxy/test_kubelet_proxy.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe70eda6`: cli): deprecate --docker-login instead of reading image pull secrets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `92186138`: kubeletproxy): match allowed node proxy subpaths exactly. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/vclusterctl/cmd/login.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/test_security/kubeletproxy/test_kubelet_proxy.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
+	"bytes"
+	"github.com/prometheus/common/expfmt"
+	"github.com/prometheus/common/model"
+	statsv1alpha1 "k8s.io/kubelet/pkg/apis/stats/v1alpha1"
+				nodes := waitForVirtualNodes(ctx, vClusterClientset)
+				nodes := waitForVirtualNodes(ctx, vClusterClientset)
+				nodes := waitForVirtualNodes(ctx, vClusterClientset)
+				nodes := waitForVirtualNodes(ctx, vClusterClientset)
+			// A single-encoded %2e%2e decodes to a literal ".." segment and is rejected with 400 before
+			// the path is classified. The double-encoded form decodes to a literal "%2e%2e" segment, so
+			// it passes the dot-segment check and only the exact subpath match rejects it.
+			It("GET with a double-encoded traversal ending in /healthz returns 403 Forbidden", func(ctx context.Context) {
+				nodes := waitForVirtualNodes(ctx, vClusterClientset)
+
+				By("requesting a path that names /configz but ends in the allowed /healthz", func() {
+					rawPath := fmt.Sprintf("/api/v1/nodes/%s/proxy/configz/%%252e%%252e/healthz", nodes.Items[0].Name)
+					code, body := getRawPath(ctx, rawPath)
+					Expect(code).To(Equal(http.StatusForbidden),
+						"expected 403 for %q, got %d: %s", rawPath, code, body)
+					Expect(body).To(ContainSubst
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+				var nodes *corev1.NodeList
+				By("waiting for at least one virtual node to be registered", func() {
+					Eventually(func(g Gomega) {
+						var err error
+						nodes, err = vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+						g.Expect(err).To(Succeed(), "failed to list virtual nodes")
+						g.Expect(nodes.Items).NotTo(BeEmpty(), "expected at least one virtual node")
+					}).WithPolling(constants.PollingInterval).WithTimeout(constants.PollingTimeout).Should(Succeed())
+				})
+				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+				Expect(err).To(Succeed())
+				Expect(nodes.Items).NotTo(BeEmpty())
+				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+				Expect(err).To(Succeed())
+				Expect(nodes.Items).NotTo(BeEmpty())
+				nodes, err := vClusterClientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+				Expect(err).To(Succeed())
+				Expect(nodes.Items).NotTo(BeEmpty())
+			// The following two specs share a running pod, so they run sequentially in an Ordered
+			// context. BeforeAll creates the pod once; both It blocks depend on it existing.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe70eda6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `92186138` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

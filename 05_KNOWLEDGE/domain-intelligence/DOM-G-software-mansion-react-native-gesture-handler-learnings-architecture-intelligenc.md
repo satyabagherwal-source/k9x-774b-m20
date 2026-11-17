@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T10:17:19.919Z",
+  "timestamp": "2026-11-17T19:45:04.650Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-software-mansion-react-native-gesture-handler-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [software-mansion-react-native-gesture-handler-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T10:17:19.919Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T19:45:04.650Z`  
 > **Learning ID**: `LEARN-EVO-software-mansion-react-native-gesture-handler-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from software-mansion-react-native-gesture-handler-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
-> **Source Version**: `b9b1140e`  
+> **Source Version**: `c09aaa6a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T10:16:37.297Z  
+> **Timestamp**: 2026-11-17T19:44:53.581Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-gesture-handler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T10:16:37.290Z  
+> **Harvest Timestamp**: 2026-11-17T19:44:53.576Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Declarative API exposing platform native touch and gesture system to React Native.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6804 stars
+- **Stars / Engagement**: 6807 stars
 
 ---
 
@@ -1416,90 +1416,205 @@ class LongPressGestureHandler(context: Context) : GestureHandler() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b9b1140e` (2026-11-13)
-**Commit Message**: [iOS] Fix worklet callbacks running on the JS thread when `enabled` turns off mid-gesture (#4691)
+### Incident Patch 1: `0bf533d4` (2026-11-16)
+**Commit Message**: [Jest] Fix `fireEvent.press` being dropped by detectors (#4694)
 
 ## Description
 
-On iOS, when React state turns `enabled` to `false` while a gesture is
-active, the gesture's worklet callbacks for the end of the gesture
-(`onDeactivate`, `onFinalize`) run on the JS thread. A worklet that
-needs the UI runtime then throws, and a release build crashes with
-`TypeError: undefined is not a function`.
+`fireEvent.press` from `@testing-library/react-native` on an element
+inside an `InterceptingGestureDetector` did not reach the `onPress` of a
+`Touchable` above the detector. The same happened with a plain
+`GestureDetector`.
 
-`setConfig:` runs `resetConfig`, then `updateConfig:`. `resetConfig`
-clears `dispatchesAnimatedEvents` and `dispatchesReanimatedEvents`, and
-`updateConfig:` applied `enabled` first, through the setter that writes
-`recognizer.enabled`. Disabling an active recognizer cancels it
-synchronously, so the cancellation event was sent while both flags were
-still `NO`, and it went to the JS handler. A `SharedValue` for `enabled`
-arrives through `updateConfig:` alone, where the flags keep their
-values, which is why that case works.
+Both detectors put the handler from `useJSResponderHandler` on their
+host view as `onStartShouldSetResponder`. The handler only marks the
+event for an enclosing `ScrollView` and always returns `false`.
+Testing-library takes the nearest host element with
+`onStartShouldSetResponder` as the touch responder, and when it returns
+`false` it treats the press as declined and skips every `onPress` above
+it. `GestureDetector` has had the prop since #4158,
+`InterceptingGestureDetector` since #4530. On a device nothing is
+affected, since `Touchable` does not go through the JS responder system.
 
-Like #4520, `resetConfig` and `updateConfig:` now only store `enabled`.
-The recognizer is synced once, at the end of `updateConfig:`, and only
-when its value differs. `setConfig:` goes through `updateConfig:`, so
-both paths are covered.
+The detectors now mark the event through
+`onStartShouldSetResponderCapture`, like `VirtualGestureDetector` and
+`Touchable` already do. Testing-library does not look at capture
+handlers. At runtime the order still holds: the `ScrollView` wrapper
+resets the flag in its own capture handler, which runs befo
 
-Note
-
-**File**: `packages/react-native-gesture-handler/apple/RNGestureHandler.mm` (modified, +16/-2)
+**File**: `packages/react-native-gesture-handler/src/__tests__/api_v3.test.tsx` (modified, +67/-13)
 ```diff
-@@ -114,7 +114,9 @@ - (instancetype)initWithTag:(NSNumber *)tag
+@@ -5,7 +5,7 @@ import {
+   screen,
+ } from '@testing-library/react-native';
+ import { act } from 'react';
+-import { Keyboard, TextInput, View } from 'react-native';
++import { Keyboard, Text, TextInput, View } from 'react-native';
  
- - (void)resetConfig
- {
--  self.enabled = YES;
-+  // Only the stored value is reset here. The recognizer is synced once the new config is applied,
-+  // see `syncRecognizerEnabled`.
-+  _enabled = YES;
-   self.testID = nil;
-   _manualActivation = NO;
-   _shouldCancelWhenOutside = NO;
-@@ -139,7 +141,7 @@ - (void)updateConfig:(NSDictionary *)config
- {
-   id prop = config[@"enabled"];
-   if (prop != nil) {
--    self.enabled = [RCTConvert BOOL:prop];
-+    _enabled = [RCTConvert BOOL:prop];
-   }
+ import GestureHandlerRootView from '../components/GestureHandlerRootView';
+ import { fireGestureHandler, getByGestureTestId } from '../jestUtils';
+@@ -205,7 +205,7 @@ describe('[API v3] Components', () => {
+     views: ReturnType<typeof render>['UNSAFE_getAllByType']
+   ) => {
+     return views(View).filter(
+-      ({ props }) => props.handlerTags && props.onStartShouldSetResponder
++      ({ props }) => props.handlerTags && props.onStartShouldSetResponderCapture
+     );
+   };
  
-   prop = config[@"testID"];
-@@ -202,6 +204,8 @@ - (void)updateConfig:(NSDictionary *)config
-   } else if (prop != nil) {
-     _hitSlop = RNGHHitSlopEmpty;
-   }
+@@ -512,7 +512,9 @@ describe('[API v3] Components', () => {
+       expect(
+         scrollViewResponder?.props.onStartShouldSetResponderCapture()
+       ).toBe(false);
+-      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
++      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
++        false
++      );
+       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(true);
+     });
+ 
+@@ -605,9 +607,9 @@ describe('[API v3] Components', () => {
+       expect(
+         scrollViewResponder?.props.onStartShouldSetResponderCapture()
+       ).toBe(false);
+-      expect(interceptingDetector?.props.onStartShouldSetResponder()).toBe(
+-        false
+-      );
++      expect(
++        interceptingDetector?.props.onStartShouldSetResponderCapture()
++      ).toBe(false);
+       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(true);
+     });
+ 
+@@ -631,9 +633,9 @@ describe('[API v3] Components', () => {
+       expect(
+         scrollViewResponder?.props.onStartShouldSetResponderCapture()
+       ).toBe(false);
+-      expect(interceptingDetector?.props.onStartShouldSetResponder()).toBe(
+-        false
+-      );
++      expect(
++        interceptingDetector?.props.onStartShouldSetResponderCapture()
++      ).toBe(false);
+       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(
+         false
+       );
+@@ -653,7 +655,9 @@ describe('[API v3] Components', () => {
+ 
+       expect(scrollViewDetector).toBeDefined();
+       expect(scrollViewResponder).toBeDefined();
+-      expect(scrollViewDetector?.props.onStartShouldSetResponder()).toBe(false);
++      expect(scrollViewDetector?.props.onStartShouldSetResponderCapture()).toBe(
++        false
++      );
+       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(
+         false
+       );
+@@ -678,7 +682,9 @@ describe('[API v3] Components', () => {
+       expect(
+         scrollViewResponder?.props.onStartShouldSetResponderCapture()
+       ).toBe(false);
+-      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
++      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
++        false
++      );
+       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(
+         false
+       );
+@@ -750,7 +756,9 @@ describe('[API v3] Components', () => {
+       expect(
+         scrollViewResponder?.props.onStartShouldSetResponderCapture()
+       ).toBe(false);
+-      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
++      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
++        false
++      );
+       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(true);
+     });
+ 
+@@ -773,7 +781,9 @@ describe('[API v3] Components', () => {
+       expect(
+         scrollViewResponder?.props.onStartShouldSetResponderCapture()
+       ).toBe(false);
+-      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
++      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
++        false
++      );
+       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(
+         false
+       );
+@@ -1100,5 +1110,49 @@ describe('[API v3] Components', () => {
+       expect(longPressFn).toHaveBeenCalledTimes(1);
+       expect(pressFn).not.toHaveBeenCalled();
+     });
 +
-+  [self syncRecognizerEnabled];
- }
- 
- - (void)updateRelations:(NSDictionary *)relations
-@@ -217,6 +221,16 @@ - (void)setEnabled:(BOOL)enabled
-   self.recognizer.enabled = enabled;
- }
- 
-+// Disabling an active recognizer cancels it synchronously, and the cancellation event is sent right away.
-+// The recognizer is therefore synced at the end of `updateConfig:`, once `dispatchesAnimatedEvents` and
-+// `dispatchesReanimatedEvents` hold their new values, so that the event reaches the right handler type.
-+- (void)syncRecognizerEnabled
-+{
-+  if (self.recognizer.enabled != _enabled) {
-+    self.recognizer.enabled = _enabled;
-+  }
-+}
++    // testing-library drops a press when the nearest host view with a
++    // bubble-phase `onStartShouldSetResponder` returns false (#4689)
++    test('fireEvent.press reaches onPress from inside an InterceptingGestureDetector', () => {
++      const pressFn = jest.fn();
 +
- - (void)setCurrentPointerType:(RNGestureHandlerPointerType)pointerType
- {
-   _pointerType = pointerType;
++      render(
++        <GestureHandlerRootView>
++          <Touchable onPress={pressFn}>
++            <InterceptingGestureDetector>
++              <Text>Press me</Text>
++            </InterceptingGestureDetector>
++          </Touchable>
++        </GestureHandlerRootView>
++      );
++
++      fireEvent.press(screen.getByText('Press me'));
++
++      expect(pressFn).toHaveBeenCalledTimes(1);
++    });
++
++    test('fireEvent.press reaches onPress from inside a GestureDetector', () => {
++      const pressFn = jest.fn();
++
++      const Example = () => {
++        const pan = usePanGesture({ disableReanimated: true });
++
++        return (
++          
+```
+
+**File**: `packages/react-native-gesture-handler/src/v3/detectors/NativeDetector.tsx` (modified, +3/-1)
+```diff
+@@ -74,7 +74,9 @@ export function NativeDetector<
+ 
+   return (
+     <NativeDetectorComponent
+-      onStartShouldSetResponder={handleStartShouldSetResponder}
++      // Capture phase: a bubble-phase handler returning `false` makes
++      // testing-library treat presses on the children as declined (#4689)
++      onStartShouldSetResponderCapture={handleStartShouldSetResponder}
+       touchAction={touchAction}
+       userSelect={userSelect}
+       enableContextMenu={enableContextMenu}
+```
+
+**File**: `packages/react-native-gesture-handler/src/v3/detectors/VirtualDetector/InterceptingGestureDetector.tsx` (modified, +3/-1)
+```diff
+@@ -306,7 +306,9 @@ export function InterceptingGestureDetector<
+             : undefined
+         }
+         handlerTags={handlerTags}
+-        onStartShouldSetResponder={handleStartShouldSetResponder}
++        // Capture phase: a bubble-phase handler returning `false` makes
++        // testing-library treat presses on the children as declined (#4689)
++        onStartShouldSetResponderCapture={handleStartShouldSetResponder}
+         style={nativeDetectorStyles.detector}
+         virtualChildren={strippedVirtualChildren}
+         moduleId={getModuleId()}>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4699** (2026-11-16): Bump addressable from 2.9.0 to 2.9.1 in /apps/macos-example (@dependabot[bot])
+- **PR #4695** (2026-11-16): [docs] Clarify `immediatePressOut` description (@m-bert)
+- **PR #4694** (2026-11-16): [Jest] Fix `fireEvent.press` being dropped by detectors (@m-bert)
+- **PR #4692** (2026-11-16): [Web] Keep the browser context menu when enableContextMenu is not set (@lassiecoder)
 - **PR #4691** (2026-11-13): [iOS] Fix worklet callbacks running on the JS thread when `enabled` turns off mid-gesture (@shahjahanpak)
-- **PR #4684** (2026-11-09): Bump brace-expansion from 1.1.18 to 1.1.21 in /packages/docs-gesture-handler (@dependabot[bot])
-- **PR #4683** (2026-11-09): Restore the scroll responder claim for `ScrollView` with `keyboardShouldPersistTaps="handled"` (@m-bert)
-- **PR #4682** (2026-11-09): [Web] Skip config updates for a dropped handler (@chocky335)
-- **PR #4681** (2026-11-09): [Web] Track velocity separately for each pointer (@ChandraChaan)
-- **PR #4679** (2026-11-09): [iOS] Fix callback crashes from detached gesture recognizers (@theeket)
+- **PR #4685** (2026-11-16): [Android] Dismiss the keyboard when a held press on a button is dropped (@m-bert)
 
 ---
 
@@ -1519,47 +1634,74 @@ Note
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [iOS] Fix worklet callbacks running on the JS thread when `enabled` turns off mi
+## X. [Jest] Fix `fireEvent.press` being dropped by detectors
 
 **RULE**:
-When implementing operations in `packages/react-native-gesture-handler/apple/RNGestureHandler.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-gesture-handler/src/__tests__/api_v3.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b9b1140e`: [iOS] Fix worklet callbacks running on the JS thread when `enabled` turns off mid-gesture. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0bf533d4`: [Jest] Fix `fireEvent.press` being dropped by detectors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/apple/RNGestureHandler.mm`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/src/__tests__/api_v3.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  // Only the stored value is reset here. The recognizer is synced once the new config is applied,
-  // see `syncRecognizerEnabled`.
-  _enabled = YES;
-    _enabled = [RCTConvert BOOL:prop];
+import { Keyboard, Text, TextInput, View } from 'react-native';
+      ({ props }) => props.handlerTags && props.onStartShouldSetResponderCapture
+      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
+        false
+      );
+      expect(
+        interceptingDetector?.props.onStartShouldSetResponderCapture()
+      ).toBe(false);
+      expect(
+        interceptingDetector?.props.onStartShouldSetResponderCapture()
+      ).toBe(false);
+      expect(scrollViewDetector?.props.onStartShouldSetResponderCapture()).toBe(
+        false
+      );
+      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
+        false
+      );
+      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
+        false
+      );
+      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
+        false
+      );
 
-  [self syncRecognizerEnabled];
-// Disabling an active recognizer cancels it synchronously, and the cancellation event is sent right away.
-// The recognizer is therefore synced at the end of `updateConfig:`, once `dispatchesAnimatedEvents` and
-// `dispatchesReanimatedEvents` hold their new values, so that the event reaches the right handler type.
-- (void)syncRecognizerEnabled
-{
-  if (self.recognizer.enabled != _enabled) {
-    self.recognizer.enabled = _enabled;
-  }
-}
+    // testing-library drops a press when the nearest host view with a
+    // bubble-phase `onStartShouldSetResponder` returns false (#4689)
+    test('fireEvent.press reaches onPress from inside an InterceptingGestureDetector', () => {
+      const pressFn = jest.fn();
 
+      render(
+        <GestureHandlerRootView>
+          <Touchable 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-  self.enabled = YES;
-    self.enabled = [RCTConvert BOOL:prop];
+import { Keyboard, TextInput, View } from 'react-native';
+      ({ props }) => props.handlerTags && props.onStartShouldSetResponder
+      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
+      expect(interceptingDetector?.props.onStartShouldSetResponder()).toBe(
+        false
+      );
+      expect(interceptingDetector?.props.onStartShouldSetResponder()).toBe(
+        false
+      );
+      expect(scrollViewDetector?.props.onStartShouldSetResponder()).toBe(false);
+      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
+      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
+      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b9b1140e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0bf533d4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
