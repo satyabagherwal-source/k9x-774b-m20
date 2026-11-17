@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T20:17:52.668Z",
+  "last_updated": "2026-11-17T20:25:43.054Z",
   "directives": [
     {
       "id": "CD-001",
@@ -25969,6 +25969,59 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-6B49",
+      "directive_title": "Keep focus when background threads auto-send queued messages",
+      "source_repo": "zed-industries/zed",
+      "source_commit": "4122f44f",
+      "staged_file": "11_INBOX/candidate-directives/CD-6B49-keep-focus-when-background-threads-auto-send-queued-messages.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-6NIM",
+      "directive_title": "统一空状态展示并整理通用工具",
+      "source_repo": "czy0729-bangumi-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6NIM-.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-6KE3",
+      "directive_title": "spann index, filter push-down, unified maintenance accounting",
+      "source_repo": "infiniflow/infinity",
+      "source_commit": "f16f3c56",
+      "staged_file": "11_INBOX/candidate-directives/CD-6KE3-spann-index-filter-push-down-unified-maintenance-accounting.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-6MX2",
+      "directive_title": "agent_ui: Keep focus when background threads auto-send queued messages",
+      "source_repo": "zed-industries-zed-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6MX2-agent_ui-keep-focus-when-background-threads-auto-send-queued-messages.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-E2E3E5",
+      "directive_title": "统一空状态展示并整理通用工具",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "czy0729-bangumi",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E2E3E5--.md",
+      "staged_date": "2026-11-17"
     }
   ]
 }

@@ -10699,3 +10699,7 @@
 | `CYCLE-20261117-W6VX` | `2026-11-17T20:17:34.941Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9054` | Yes (`aeea49b1...`) |
 | `CYCLE-20261117-WB20` | `2026-11-17T20:17:40.344Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9055` | Yes (`18e94ac6...`) |
 | `CYCLE-20261117-WGIF` | `2026-11-17T20:17:47.415Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9056` | Yes (`121b80ec...`) |
+| `CYCLE-20261117-69IJ` | `2026-11-17T20:25:24.907Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`e5bd54e0...`) |
+| `CYCLE-20261117-6AZG` | `2026-11-17T20:25:26.812Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9057` | Yes (`adf62c1b...`) |
+| `CYCLE-20261117-6FUA` | `2026-11-17T20:25:33.106Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9058` | Yes (`5dd2d236...`) |
+| `CYCLE-20261117-6K9I` | `2026-11-17T20:25:38.838Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9059` | Yes (`d81733dc...`) |

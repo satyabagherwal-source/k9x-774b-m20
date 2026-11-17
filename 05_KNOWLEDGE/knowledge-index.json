@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T20:17:52.941Z",
-  "total_verified_learnings": 8937,
+  "last_updated": "2026-11-17T20:25:43.261Z",
+  "total_verified_learnings": 8938,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20596,
+  "total_items": 20606,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217797,8 +217797,8 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "46dbc57a",
-      "content_hash": "8f9f812ad22e81d3e4844ae053f12f2a11487ee262d9bf8e39529682d1a1f914",
+      "source_version": "f16f3c56",
+      "content_hash": "d81733dc2b032fcae2f7a1bd1097675f437803a4cf96a233c07383689fb5bdfd",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
@@ -217816,6 +217816,11 @@
           "number": 8796,
           "title": "invalidate fulltext index reader cache on compact and import commit",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9059,
+          "title": "spann index, filter push-down, unified maintenance accounting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217823,7 +217828,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T21:55:37.839Z",
+      "verified_at": "2026-11-17T20:25:38.664Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217865,10 +217870,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-architecture-intelligence-infiniflow-infinity-core-invariant.md",
       "title": "Architecture Intelligence: infiniflow/infinity Core Invariants",
       "repository": "infiniflow/infinity",
-      "source_version": "46dbc57a",
-      "content_hash": "0b4dde8aefe2b6ff95e73c4158f80d5814d4141ce22451b3788a8b482f588443",
+      "source_version": "f16f3c56",
+      "content_hash": "b921b4b7a39d79c7116a15d2e225f8459ac38740657f8daf05ed44e4064dbe6f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T21:55:38.399Z"
+      "persisted_at": "2026-11-17T20:25:39.112Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-infiniflow-infinity",
@@ -217877,10 +217882,10 @@
       "relative_path": "08_VERIFICATION/infiniflow-infinity-verification-protocol-empirical-defect-shield-for-infiniflow.md",
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow/infinity",
       "repository": "infiniflow/infinity",
-      "source_version": "46dbc57a",
-      "content_hash": "b9d797df0491cf70ba3a3e067d1f073259f3b52686c787af0a739e7a64cd64be",
+      "source_version": "f16f3c56",
+      "content_hash": "22f6545695ff08a583be0e4459e60903eb06e710cbfa37683d20619cb5b0d454",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:55:38.548Z"
+      "persisted_at": "2026-11-17T20:25:39.225Z"
     },
     "learn-github-bitterbot-ai-bitterbot-desktop": {
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -228493,14 +228498,19 @@
       "slug": "czy0729-bangumi",
       "platform": "github",
       "source_url": "https://github.com/czy0729/Bangumi",
-      "source_version": "a8184acd",
-      "content_hash": "2af58ca950b49fd840bfda2a184b49d215df4d524deedbf0cb2c434a637d4d28",
+      "source_version": "ad576e32",
+      "content_hash": "5dd2d236e81f639b77d596357ed11e5ac9a6c2f96a75e4c76c8d2c55bcd46bfe",
       "dossier_path": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "promoted_rules": [
         {
           "number": 8484,
           "title": "- [安卓] 修复带表情的遮幕展开后整段文字段落会出现遮罩错位的问题 (fixed #396)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9058,
+          "title": "统一空状态展示并整理通用工具",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -228509,7 +228519,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T12:04:13.628Z",
+      "verified_at": "2026-11-17T20:25:32.968Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228551,10 +228561,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-czy0729-bangumi-technical-construction-intelligence-czy0729-bangumi-core-invaria.md",
       "title": "Technical Construction Intelligence: czy0729/Bangumi Core Invariants",
       "repository": "czy0729/Bangumi",
-      "source_version": "a8184acd",
-      "content_hash": "16d525aca4a0689151b3ac3d2eb1d7383a3e1529fb326b1f4fbbfaba2d85e647",
+      "source_version": "ad576e32",
+      "content_hash": "dc499df86b1767397359229840cfac1107d5abbaf6e44a1b90b2becf7fba80af",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T12:04:14.167Z"
+      "persisted_at": "2026-11-17T20:25:33.358Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi",
@@ -228563,10 +228573,10 @@
       "relative_path": "08_VERIFICATION/czy0729-bangumi-verification-protocol-empirical-defect-shield-for-czy0729-bangum.md",
       "title": "Verification Protocol: Empirical Defect Shield for czy0729/Bangumi",
       "repository": "czy0729/Bangumi",
-      "source_version": "a8184acd",
-      "content_hash": "3a62e633f0d3186d4cbdc8ee1bfae7479628c89768b153af0970e00b98909802",
+      "source_version": "ad576e32",
+      "content_hash": "60b24ddd0b88958145933b2a4ca9ece33e884d49bccbea83419673367d7d6bc1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T12:04:14.288Z"
+      "persisted_at": "2026-11-17T20:25:33.479Z"
     },
     "learn-github-peerdb-io-peerdb": {
       "learning_id": "learn-github-peerdb-io-peerdb",
@@ -228707,9 +228717,9 @@
       "title": "Technical Construction Intelligence: czy0729-bangumi-learnings Core Invariants",
       "repository": "czy0729-bangumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "849d581155296051ba2ab6fde12ea6bd8fabda56d44f31edc0d0165ab729ddf9",
+      "content_hash": "6583cb5f061114da9fa7eaa14681ab5fdcbb1d12cda007a14f776de6dcd9bbb8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T12:04:53.861Z"
+      "persisted_at": "2026-11-17T20:25:43.153Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi-learnings",
@@ -228719,9 +228729,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for czy0729-bangumi-learnings",
       "repository": "czy0729-bangumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "bd91aaf24ef0ddbb17ac00a45aa54804374e8ec3fd614a62e8b0f987b4eabe83",
+      "content_hash": "c0c09c58e31e109a9976fa796775ca65609a9b965d2775f90b86dc7e9f030ceb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T12:04:53.996Z"
+      "persisted_at": "2026-11-17T20:25:43.261Z"
     },
     "learn-huggingface-intfloat-multilingual-e5-small": {
       "learning_id": "learn-huggingface-intfloat-multilingual-e5-small",
@@ -231416,8 +231426,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "a57e2fdc",
-      "content_hash": "b1d9abf3e5bbda3730582bf8ebeee6786e9ca44054f38093f3bf88134b05d9e5",
+      "source_version": "4122f44f",
+      "content_hash": "adf62c1bd9b075e55b2f9ee619518b1abc063eebe429d862de539b5e0ba4793e",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -231430,6 +231440,11 @@
           "number": 8728,
           "title": "Check for an empty message without copying the text",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9057,
+          "title": "Keep focus when background threads auto-send queued messages",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231437,7 +231452,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T08:11:19.422Z",
+      "verified_at": "2026-11-17T20:25:26.680Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231479,10 +231494,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "repository": "zed-industries/zed",
-      "source_version": "a57e2fdc",
-      "content_hash": "57a0000263e9cddb02faac159bf18d46e36bffc75423b09bb66331d41cbd5cf2",
+      "source_version": "4122f44f",
+      "content_hash": "06bb0bede422cf90134b62e6cddd77d7e1ef00e7c891993db5bcb92b07d235af",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T08:11:20.038Z"
+      "persisted_at": "2026-11-17T20:25:27.090Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed",
@@ -231491,10 +231506,10 @@
       "relative_path": "08_VERIFICATION/zed-industries-zed-verification-protocol-empirical-defect-shield-for-zed-industr.md",
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries/zed",
       "repository": "zed-industries/zed",
-      "source_version": "a57e2fdc",
-      "content_hash": "d3e882ac31607bbb4a13467eb60d19506af9c5a85d3e7a58dd848db1f57d5489",
+      "source_version": "4122f44f",
+      "content_hash": "2058662d3058f0d1453bc268241bed78787e813cf6cdea9eb1d190058601d096",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T08:11:20.197Z"
+      "persisted_at": "2026-11-17T20:25:27.197Z"
     },
     "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp": {
       "item_id": "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp",
@@ -231516,9 +231531,9 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "677ded067faacaa943cc1543a27eab6b24af409fd6417d35643737c3daf20c3d",
+      "content_hash": "9d3633d50339b7b56102163f8a140e2ce46cee8a9b589087571d0b57501a3922",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T08:11:23.601Z"
+      "persisted_at": "2026-11-17T20:25:42.381Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings",
@@ -231528,9 +231543,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries-zed-learnings",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "40b7e488501310f6f081a2b02f8b1a72957e2cfec859ea7a36c1555fbdba828f",
+      "content_hash": "fb7977dbe5dfd38cd1e854399a620e4d0cd438428955d455dbab4ddd0a953d7e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T08:11:23.761Z"
+      "persisted_at": "2026-11-17T20:25:42.492Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor",
@@ -276621,6 +276636,147 @@
       "content_hash": "94d604e52954d292b6321ac15e7bf2c474608760df0e74eaeb8e90030eaf6426",
       "domain_letter": "I",
       "persisted_at": "2026-11-17T20:17:52.668Z"
+    },
+    "learn-huggingface-edge0-audio8-asr-infinite": {
+      "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Edge0/Audio8-ASR-Infinite",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "slug": "hf-edge0-audio8-asr-infinite",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "content_hash": "e5bd54e00e5904a7608f5f3febd67bb0163342beebf709b22d950505d144eb74",
+      "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T20:25:24.764Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-edge0-audio8-asr-infinite-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-edge0-audio8-asr-infinite-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-asr-infinite-research-knowledge-intelligence-edge0-audio8-asr-in.md",
+      "title": "Research & Knowledge Intelligence: Edge0/Audio8-ASR-Infinite Core Invariants",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "content_hash": "27492e0d116ff69fc1060041e438bf06a243583aa8fbfebf3b014faacc5f0f46",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T20:25:25.055Z"
+    },
+    "rule-9057": {
+      "learning_id": "rule-9057",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9057,
+      "title": "Keep focus when background threads auto-send queued messages",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "4122f44f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T20:25:26.680Z"
+    },
+    "candidate_directive-keep-focus-when-background-threads-auto-send-queued-messages": {
+      "item_id": "candidate_directive-keep-focus-when-background-threads-auto-send-queued-messages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6B49-keep-focus-when-background-threads-auto-send-queued-messages.md",
+      "title": "Keep focus when background threads auto-send queued messages",
+      "repository": "zed-industries/zed",
+      "source_version": "4122f44f",
+      "content_hash": "0fc329744da7f42450a303928dc6088ece86956a15024a6777aba018489c379d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T20:25:26.990Z"
+    },
+    "rule-9058": {
+      "learning_id": "rule-9058",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9058,
+      "title": "统一空状态展示并整理通用工具",
+      "source_url": "https://github.com/czy0729/Bangumi",
+      "source_version": "ad576e32",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T20:25:32.968Z"
+    },
+    "candidate_directive-": {
+      "item_id": "candidate_directive-",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6NIM-.md",
+      "title": "统一空状态展示并整理通用工具",
+      "repository": "czy0729-bangumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "550473b5df38c265ef8651f080b71b86e59907468186f9bec05c023cd069534b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T20:25:43.054Z"
+    },
+    "rule-9059": {
+      "learning_id": "rule-9059",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9059,
+      "title": "spann index, filter push-down, unified maintenance accounting",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "f16f3c56",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T20:25:38.664Z"
+    },
+    "candidate_directive-spann-index-filter-push-down-unified-maintenance-accounting": {
+      "item_id": "candidate_directive-spann-index-filter-push-down-unified-maintenance-accounting",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6KE3-spann-index-filter-push-down-unified-maintenance-accounting.md",
+      "title": "spann index, filter push-down, unified maintenance accounting",
+      "repository": "infiniflow/infinity",
+      "source_version": "f16f3c56",
+      "content_hash": "e4481daeecacc57b0a33240d1465190958c9344b597bb789fe79329695da74ce",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T20:25:39.004Z"
+    },
+    "candidate_directive-agent_ui-keep-focus-when-background-threads-auto-send-queued-messages": {
+      "item_id": "candidate_directive-agent_ui-keep-focus-when-background-threads-auto-send-queued-messages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6MX2-agent_ui-keep-focus-when-background-threads-auto-send-queued-messages.md",
+      "title": "agent_ui: Keep focus when background threads auto-send queued messages",
+      "repository": "zed-industries-zed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3cbe050bd04de78c801233706cfb450c89b50084808355b074093b896bf1f7d6",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T20:25:42.283Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-asr-infinite-learnings-core-inva": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-asr-infinite-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-asr-infinite-learnings-research-knowledge-intelligence-hf-edge0-.md",
+      "title": "Research & Knowledge Intelligence: hf-edge0-audio8-asr-infinite-learnings Core Invariants",
+      "repository": "hf-edge0-audio8-asr-infinite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ccbb7193a512e5c79faa42730b7df3ee433409c1c36b85ac28a245397cba470f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T20:25:42.720Z"
     }
   },
   "ai-builder-brain": {

@@ -10732,3 +10732,7 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `7c39be07` | Multi-dimensional audit evidence | 2026-11-17T20:17:34.946Z |
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `d8eaa141` | Multi-dimensional audit evidence | 2026-11-17T20:17:40.348Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d6fb6afa` | Multi-dimensional audit evidence | 2026-11-17T20:17:47.419Z |
+| `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-17T20:25:24.910Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `4122f44f` | Multi-dimensional audit evidence | 2026-11-17T20:25:26.815Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `ad576e32` | Multi-dimensional audit evidence | 2026-11-17T20:25:33.109Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `f16f3c56` | Multi-dimensional audit evidence | 2026-11-17T20:25:38.841Z |

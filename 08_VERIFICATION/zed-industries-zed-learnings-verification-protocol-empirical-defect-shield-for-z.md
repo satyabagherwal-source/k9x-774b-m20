@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T08:11:23.312Z",
+  "timestamp": "2026-11-17T20:25:42.202Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zed-industries-zed-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zed-industries-zed-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T08:11:23.312Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T20:25:42.202Z`  
 > **Learning ID**: `LEARN-EVO-zed-industries-zed-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `a57e2fdc`  
+> **Source Version**: `4122f44f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T08:11:18.483Z  
+> **Timestamp**: 2026-11-17T20:25:26.094Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T08:01:17.118Z  
+> **Harvest Timestamp**: 2026-11-17T20:25:26.089Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 95120 stars
+- **Stars / Engagement**: 95223 stars
 
 ---
 
@@ -2359,282 +2359,593 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `053d91cb` (2026-11-16)
-**Commit Message**: agent_ui: Check for an empty message without copying the text (#67020)
+### Incident Patch 1: `d39178f6` (2026-11-16)
+**Commit Message**: agent_ui: Keep focus when background threads auto-send queued messages (#66787)
 
 ## Summary
 
-`MessageEditor::is_empty` copied the whole draft with `text(cx)` to
-check whether it was blank. It now reads characters from the buffer
-until one isn't whitespace. `str::trim` removes exactly the characters
-that `char::is_whitespace` matches, so the result is the same.
+Typing in one conversation no longer loses keyboard focus when a
+different, background conversation finishes a turn and automatically
+sends its next queued follow-up. Sending a queued message yourself (Send
+Now, or fast-tracking the next queued message by pressing Send in the
+empty composer) still returns focus to that thread's composer.
 
-The thread view calls it on every render, through `render_send_button`.
-The thread view's observer on the message editor also copied the text
-each time the editor notified, to check for an empty draft. It now uses
-`Editor::is_empty`, which reads the buffer length.
+The focus decision stays in the shared queued-entry dispatch. Each
+caller now passes an explicit source (automatic or manual), and the
+dispatch focuses the composer only for manual sends. Queue validation,
+cancellation, sending and error recovery are unchanged.
 
-Both `is_empty` checks timed on a `rope::Rope` in a release build,
-median per call:
-
-| Draft size | Before | After | Speedup |
-|---|---|---|---|
-| 1 KB | 112 ns | 22 ns | 5x |
-| 16 KB | 1.1 µs | 24 ns | 46x |
-| 256 KB | 16.6 µs | 28 ns | 590x |
-| 4 MB | 271 µs | 33 ns | 8,200x |
+Closes #66416
 
 ## Testing
 
-- `cargo test -p agent_ui --lib message_editor` passes.
-- `cargo test -p agent_ui --lib conversation_view` passes.
-- `./script/clippy -p agent_ui` passes.
+Automated checks run locally on the initial fixed implementation:
 
-## Self-review
+- New regression test for automatic sends failed without the fix (at the
+foreground composer focus assertion) and passes with it. A second new
+test covers manual sends keeping focus. Both passed scheduler seeds
+0-19.
+- All `agent_ui` and `gpui_apple` tests passed, `cargo fmt --check` and
+`./script/clippy -p agent_ui -p gpui_apple` passed, and a full
+development build succeeded.
+- The full workspace suite a
 
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[chec
-
-**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +1/-1)
+**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +101/-0)
 ```diff
-@@ -1229,7 +1229,7 @@ impl ThreadView {
-                 this._draft_resolve_task.take();
-                 return;
-             }
--            let is_empty = editor.read(cx).text(cx).is_empty();
-+            let is_empty = editor.read(cx).editor().read(cx).is_empty(cx);
-             let draft_contents_task = if is_empty {
-                 None
-             } else {
-```
-
-**File**: `crates/agent_ui/src/message_editor.rs` (modified, +7/-1)
-```diff
-@@ -759,7 +759,13 @@ impl MessageEditor {
+@@ -5082,6 +5082,107 @@ pub(crate) mod tests {
+         );
      }
  
-     pub fn is_empty(&self, cx: &App) -> bool {
--        self.editor.read(cx).text(cx).trim().is_empty()
-+        self.editor
-+            .read(cx)
-+            .buffer()
-+            .read(cx)
-+            .read(cx)
-+            .chars_at(MultiBufferOffset(0))
-+            .all(char::is_whitespace)
-     }
- 
-     pub fn is_completions_menu_visible(&self, cx: &App) -> bool {
-```
-
----
-
-### Incident Patch 2: `4cc3e27d` (2026-11-14)
-**Commit Message**: editor: Build completion sort keys once per match (#66959)
-
-## Summary
-
-The completions menu sorts its matches on the main thread on every
-keystroke while it is open. `sort_unstable_by_key` builds the sort key
-twice per comparison, and the key clones the match positions and scans
-the candidate. `sort_by_cached_key` builds each key once.
-
-The sort is now stable: ties keep the fuzzy matcher order.
-
-A copy of the key function outside Zed, sorting 1000 synthetic matches:
-1.75 ms before, 0.13 ms after (about 20,500 key builds down to 1,000).
-
-## Testing
-
-`cargo test -p editor --lib completion` passes, including the sort-order
-tests in `code_completion_tests.rs`.
-
-## Self-review
-
-- [x] I have reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [x] Tests cover the new or changed behavior.
-
-Release Notes:
-
-- Improved responsiveness of the completions menu with many matches
-
-**File**: `crates/editor/src/code_completion_tests.rs` (modified, +63/-3)
-```diff
-@@ -393,6 +393,58 @@ async fn test_semver_label_sort_by_latest_version(cx: &mut TestAppContext) {
-     }
- }
- 
-+#[gpui::test]
-+async fn test_sort_keeps_order_of_equal_keys(cx: &mut TestAppContext) {
-+    // Overloads share filter text, sort text and kind, so their sort keys are equal.
-+    // An unstable sort only reorders equal elements in longer slices,
-+    // hence the number of overloads.
-+    let functions = ["eprint", "println", "print"];
-+    let completions = (0..16)
-+        .flat_map(|arity| {
-+            functions.map(|function| {
-+                CompletionBuilder::function(
-+                    &format!("{function}/{arity}"),
-+                    Some(function),
-+                    "80000000",
++    #[gpui::test]
++    async fn test_auto_sending_queued_messages_preserves_focus(cx: &mut TestAppContext) {
++        init_test(cx);
++
++        let connection = StubAgentConnection::new();
++        let (background_conversation, cx) =
++            setup_conversation_view(StubAgentServer::new(connection.clone()), cx).await;
++        add_to_workspace(background_conversation.clone(), cx);
++        let background_thread = active_thread(&background_conversation, cx);
++        message_editor(&background_conversation, cx).update_in(cx, |editor, window, cx| {
++            editor.set_text("first", window, cx);
++        });
++        background_thread.update_in(cx, |view, window, cx| view.send(window, cx));
++        cx.run_until_parked();
++
++        let session_id = background_thread.update_in(cx, |view, window, cx| {
++            view.add_to_queue(vec!["second".into()], vec![], window, cx);
++            view.add_to_queue(vec!["third".into()], vec![], window, cx);
++            view.thread.read(cx).session_id().clone()
++        });
++
++        let foreground_conversation = background_conversation.update_in(cx, |view, window, cx| {
++            cx.new(|cx| {
++                ConversationView::new(
++                    view.agent.clone(),
++                    view.connection_store.clone(),
++                    view.connection_key.clone(),
++                    None,
++                    None,
++                    None,
++                    None,
++                    None,
++                    view.workspace.clone(),
++                    view.project.clone(),
++                    view.thread_store.clone(),
++                    AgentThreadSource::AgentPanel,
++                    window,
++                    cx,
 +                )
 +            })
-+        })
-+        .collect::<Vec<_>>();
++        });
++        cx.run_until_parked();
++        add_to_workspace(foreground_conversation.clone(), cx);
++        let foreground_editor = message_editor(&foreground_conversation, cx);
++        foreground_editor.update_in(cx, |editor, window, cx| {
++            editor.focus_handle(cx).focus(window, cx);
++        });
++        cx.simulate_input("before");
 +
-+    let query = "print";
-+    let mut matches = filter_matches(query, &completions, cx).await;
-+    assert_eq!(matches.len(), completions.len());
-+    // The matcher returns its results ordered by score, which is close to the sorted order.
-+    // Interleave the functions instead, to spread each group of equal keys over the input.
-+    matches.sort_by_key(|string_match| string_match.candidate_id);
-+    let unsorted_matches = matches.clone();
++        for (remaining, expected_text) in [(1, "before typing"), (0, "before typing typing")] {
++            connection.end_turn(session_id.clone(), acp_v1::StopReason::EndTurn);
++            cx.run_until_parked();
 +
-+    let sorted_matches = CompletionsMenu::sort_string_matches(
-+        matches,
-+        Some(query),
-+        SnippetSortOrder::default(),
-+        &completions,
-+    );
-+
-+    // The exact match goes first, the match that does not start a word goes last.
-+    let mut expected_candidate_ids = Vec::new();
-+    for function in ["print", "println", "eprint"] {
-+        expected_candidate_ids.extend(
-+            unsorted_matches
-+                .iter()
-+                .filter(|string_match| string_match.string == function)
-+                .map(|string_match| string_match.candidate_id),
-+        );
++            background_thread.read_with(cx, |view, cx| {
++                assert_eq!(view.message_queue.len(), remaining);
++                assert_eq!(view.thread.read(cx).status(), ThreadStatus::Generating);
++            });
++            foreground_editor.update_in(cx, |editor, window, cx| {
++                assert!(editor.focus_handle(cx).is_focused(window));
++            });
++            cx.simulate_input(" typing");
++            assert_eq!(
++                foreground_editor.read_with(cx, |editor, cx| editor.text(cx)),
++                expected_text
++            );
++            assert!(
++                message_editor(&background_conversation, cx)
++                    .read_with(cx, |editor, cx| { editor.is_empty(cx) })
++            );
++        }
 +    }
-+    assert_eq!(
-+        sorted_matches
-+            .iter()
-+            .map(|string_match| string_match.candidate_id)
-+            .collect::<Vec<_>>(),
-+        expected_candidate_ids
-+    );
-+}
 +
- async fn test_for_each_prefix<F>(
-     target: &str,
-     completions: &Vec<Completion>,
-@@ -497,6 +549,15 @@ async fn filter_and_sort_matches(
-     completions: &Vec<Completion>,
-     snippet_sort_order: SnippetSortOrder,
-     cx: &mut TestAppContext,
-+) -> Vec<StringMatch> {
-+    let matches = filter_matches(query, completions, cx).await;
-+    CompletionsMenu::sort_string_matches(matches, Some(query), snippet_sort_order, completions)
-+}
++    #[gpui::test]
++    async fn test_manual_queued_message_sends_focus_composer(cx: &mut TestAppContext) {
++        init_test(cx);
 +
-+async fn filter_matches(
-+    query: &str,
-+    completions: &Vec<Completion>,
-+    cx: &mut TestAppContext,
- ) -> Vec<StringMatch> {
-     let candidates: Arc<[StringMatchCandidate]> = completions
-         .iter()
-@@ -505,7 +566,7 @@ async fn filter_and_sort_matches(
-         .collect();
-     let cancel_flag = Arc::new(AtomicBool::new(false));
-     let background_executor = cx.executor();
--    let matches = fuzzy::match_strings(
-+    fuzzy::match_strings(
-         &candidates,
-         query,
-         query.chars().any(|c| c.is_uppercase()),
-@@ -514,6 +575,5 @@ async fn filter_and_sort_matches(
-         &cancel_flag,
-         background_executor,
-     )
--    .await;
--    CompletionsMenu::sort_string_matches(matches, Some(query), snippet_sort_order, completions)
-+    .await
- }
++        for send_now in [false, true] {
++            let (conversation, cx) =
++                setup_conversation_view(StubAgentServer::default_response(), cx).await;
++            add_to_workspace(conversation.clone(), cx);
++            let thread_view = active_thread(&conversation, cx);
++            thread_view.update_in(cx, |view, window, cx| {
++                view.add_to_queue(vec!["queued".into()], vec![], window, cx);
++                let entry = view.message_queue.first().expect("queued message");
++                let id = entry.id;
++                entry.editor.focus_handle(cx).focus(window, cx);
++                if send_now {
++                    view.send_queued_message_now(id, window, cx);
++                } else {
++                    view.send(window, cx);
++                }
++                assert!(view.message_queue.is_empty());
++                assert!(view.message_editor.focus_handle(cx).is_focused(window));
++            });
++            cx.run_until_parked();
++            message_editor(&conversation, cx).update_in(cx, |editor, window, cx| {
++                assert!(editor.focus_handle(cx).is_focused(window));
++            });
++        }
++    }
++
+     #[gpui::test]
+     async fn test_queued_message_steer_defaults_off_and_toggles(cx: &mut TestAppContext) {
+         init_test(cx);
 ```
 
-**File**: `crates/editor/src/code_context_menus.rs` (modified, +2/-1)
+**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +15/-4)
 ```diff
-@@ -1550,7 +1550,8 @@ impl CompletionsMenu {
-                 .retain(|string_match| !completions[string_match.candidate_id].is_snippet_kind());
+@@ -842,6 +842,11 @@ pub struct TurnFields {
+     pub reported_activity_generation: Option<u64>,
+ }
+ 
++enum QueuedMessageDispatchSource {
++    Automatic,
++    Manual,
++}
++
+ enum ThreadControlsPosition {
+     /// Below a finalized assistant message.
+     TurnEnd {
+@@ -2216,7 +2221,7 @@ impl ThreadView {
+                 return;
+             }
+             if let Some(entry) = self.message_queue.try_fast_track(is_generating) {
+-                self.dispatch_queued_entry(entry, window, cx);
++                self.dispatch_queued_entry(entry, QueuedMessageDispatchSource::Manual, window, cx);
+             }
+             return;
          }
+@@ -3102,7 +3107,7 @@ impl ThreadView {
+             .message_queue
+             .on_generation_stopped(is_first_editor_focused)
+         {
+-            self.dispatch_queued_entry(entry, window, cx);
++            self.dispatch_queued_entry(entry, QueuedMessageDispatchSource::Automatic, window, cx);
+             true
+         } else {
+             false
+@@ -3120,7 +3125,7 @@ impl ThreadView {
+         }
+         let is_generating = self.thread.read(cx).status() == acp_thread::ThreadStatus::Generating;
+         if let Some(entry) = self.message_queue.send_now(id, is_generating) {
+-            self.dispatch_queued_entry(entry, window, cx);
++            self.dispatch_queued_entry(entry, QueuedMessageDispatchSource::Manual, window, cx);
+         }
+     }
  
--        matches.sort_unstable_by_key(|string_match| {
-+        // The key allocates, so build it once per match.
-+        matches.sort_by_cached_key(|string_match| {
-             let completion = &completions[string_match.candidate_id];
+@@ -3130,14 +3135,20 @@ impl ThreadView {
+     fn dispatch_queued_entry(
+         &mut self,
+         entry: QueueEntry,
++        source: QueuedMessageDispatchSource,
+         window: &mut Window,
+         cx: &mut Context<Self>,
+     ) {
+         self.sync_queue_flag_to_native_thread(cx);
  
-             let sort_text = match &completion.source {
+         cx.emit(AcpThreadViewEvent::Interacted);
+ 
+-        self.message_editor.focus_handle(cx).focus(window, cx);
++        match source {
++            QueuedMessageDispatchSource::Automatic => {}
++            QueuedMessageDispatchSource::Manual => {
++                self.message_editor.focus_handle(cx).focus(window, cx);
++            }
++        }
+ 
+         // A queued message can itself be a built-in command (e.g. the user typed
+         // `/compact` while a turn was generating). Detect that so we run it as a
 ```
 
 ---
 
-### Incident Patch 3: `24d37721` (2026-11-15)
-**Commit Message**: fs: Fix wrong cfg guard for fast path for macos only  (#67006)
+### Incident Patch 2: `430a7810` (2026-11-16)
+**Commit Message**: Fix duplicate language server notifications (#67021)
 
 ## Summary
 
-In https://github.com/zed-industries/zed/pull/66973 I introduced a
-faster path for matching on macos, but I actually guarded it for linux
-also, but that is not correct. Since the following code (what expensive
-is on macos) was only guarded on macos.
+Repeated language server messages could stack identical notifications
+while previewing themes.
 
-So we should make the parent also guard for macos only.. this was a
-mistake from me.
+- Skip an actionless prompt when a visible prompt has the same server
+name, level, and message.
+- Compare those fields directly while retaining per-request numeric IDs
+and keeping action-bearing prompts independent.
+- Preserve the existing notification and its dismissal timer when
+discarding a duplicate.
+- Move LSP-specific auto-dismiss setup into the prompt instead of
+generic notification handling.
 
+Implementation:
+[`show_language_server_prompt`](https://github.com/zed-industries/zed/blob/ffaa5fbe8c30bc819c3d118e688b28c1f1a64fe1/crates/workspace/src/notifications.rs#L228-L253)
+and
+[`LanguageServerPrompt::new`](https://github.com/zed-industries/zed/blob/ffaa5fbe8c30bc819c3d118e688b28c1f1a64fe1/crates/workspace/src/notifications.rs#L274-L303).
 
-https://github.com/zed-industries/zed/blob/596dfdcf32d85d4d8d17a8887b4d0979ec7c5e14/crates/fs/src/fs_watcher.rs#L561-L577
+This changes visible-notification handling, not the upstream
+settings-to-LSP configuration refresh path.
+
+![Original reproduction
+screenshot](https://github.com/user-attachments/assets/c3cce22e-e1b8-4047-ad44-8eda72bca659)
 
 ## Testing
 
-This changes nothing for macos, just so we don't also do the same path
-for linux.
+### Automated validation
 
-## Self-review
+- `cargo test --offlin
 
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [x] Tests cover the new or changed behavior.
-
-Release Notes:
-
-- N/A
-
-**File**: `crates/fs/src/fs_watcher.rs` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -881,13 +881,13 @@ impl WatchPaths {
-                 ids.extend_from_slice(&registration.watcher_ids);
-             }
+@@ -22013,6 +22013,7 @@ dependencies = [
+  "itertools 0.14.0",
+  "language",
+  "log",
++ "lsp",
+  "markdown",
+  "menu",
+  "node_runtime",
+```
+
+**File**: `crates/workspace/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -78,6 +78,7 @@ client = { workspace = true, features = ["test-support"] }
+ db = { workspace = true, features = ["test-support"] }
+ fs = { workspace = true, features = ["test-support"] }
+ gpui = { workspace = true, features = ["test-support"] }
++lsp.workspace = true
+ project = { workspace = true, features = ["test-support"] }
+ remote = { workspace = true, features = ["test-support"] }
+ session = { workspace = true, features = ["test-support"] }
+```
+
+**File**: `crates/workspace/src/notifications.rs` (modified, +207/-40)
+```diff
+@@ -3,13 +3,13 @@ use crate::{
+ };
+ use anyhow::Context as _;
+ use gpui::{
+-    AnyEntity, AnyView, App, AppContext as _, AsyncApp, AsyncWindowContext, ClickEvent, Context,
+-    DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, PromptLevel, Render, ScrollHandle,
+-    Task, TextStyleRefinement, UnderlineStyle, WeakEntity,
++    AnyView, App, AppContext as _, AsyncApp, AsyncWindowContext, ClickEvent, Context, DismissEvent,
++    Entity, EventEmitter, FocusHandle, Focusable, PromptLevel, Render, ScrollHandle, Task,
++    TextStyleRefinement, UnderlineStyle, WeakEntity,
+ };
+ use markdown::{CopyButtonVisibility, Markdown, MarkdownElement, MarkdownStyle};
+ use parking_lot::Mutex;
+-use project::project_settings::ProjectSettings;
++use project::{LanguageServerPromptRequest, project_settings::ProjectSettings};
+ use settings::Settings;
+ use theme_settings::ThemeSettings;
  
--            #[cfg(target_os = "windows")]
-+            #[cfg(not(target_os = "macos"))]
-             if let Some(registration) = self.0.get(&WatchKey::folded(ancestor)) {
-                 ids.extend_from_slice(&registration.watcher_ids);
+@@ -117,39 +117,6 @@ impl Workspace {
+             })
+             .detach();
+ 
+-            if let Ok(prompt) =
+-                AnyEntity::from(notification.clone()).downcast::<LanguageServerPrompt>()
+-            {
+-                let is_prompt_without_actions = prompt
+-                    .read(cx)
+-                    .request
+-                    .as_ref()
+-                    .is_some_and(|request| request.actions.is_empty());
+-
+-                let dismiss_timeout_ms = ProjectSettings::get_global(cx)
+-                    .global_lsp_settings
+-                    .notifications
+-                    .dismiss_timeout_ms;
+-
+-                if is_prompt_without_actions {
+-                    if let Some(dismiss_duration_ms) = dismiss_timeout_ms.filter(|&ms| ms > 0) {
+-                        let task = cx.spawn({
+-                            let id = id.clone();
+-                            async move |this, cx| {
+-                                cx.background_executor()
+-                                    .timer(Duration::from_millis(dismiss_duration_ms))
+-                                    .await;
+-                                let _ = this.update(cx, |workspace, cx| {
+-                                    workspace.dismiss_notification(&id, cx);
+-                                });
+-                            }
+-                        });
+-                        prompt.update(cx, |prompt, _| {
+-                            prompt.dismiss_task = Some(task);
+-                        });
+-                    }
+-                }
+-            }
+             notification.into()
+         });
+     }
+@@ -257,6 +224,34 @@ impl Workspace {
+             });
+         }
+     }
++
++    pub(crate) fn show_language_server_prompt(
++        &mut self,
++        request: &LanguageServerPromptRequest,
++        cx: &mut Context<Self>,
++    ) {
++        if request.actions.is_empty()
++            && self.notifications.iter().any(|(_, view)| {
++                let Ok(prompt) = view.clone().downcast::<LanguageServerPrompt>() else {
++                    return false;
++                };
++                prompt.read(cx).request.as_ref().is_some_and(|existing| {
++                    existing.actions.is_empty()
++                        && existing.level == request.level
++                        && existing.lsp_name == request.lsp_name
++                        && existing.message == request.message
++                })
++            })
++        {
++            return;
++        }
++
++        self.show_notification(
++            NotificationId::composite::<LanguageServerPrompt>(request.id),
++            cx,
++            |cx| cx.new(|cx| LanguageServerPrompt::new(request.clone(), cx)),
++        );
++    }
+ }
+ 
+ pub struct LanguageServerPrompt {
+@@ -276,15 +271,34 @@ impl Focusable for LanguageServerPrompt {
+ impl Notification for LanguageServerPrompt {}
+ 
+ impl LanguageServerPrompt {
+-    pub fn new(request: project::LanguageServerPromptRequest, cx: &mut App) -> Self {
++    pub fn new(request: project::LanguageServerPromptRequest, cx: &mut Context<Self>) -> Self {
+         let markdown = cx.new(|cx| Markdown::new(request.message.clone().into(), None, None, cx));
++        let dismiss_task = if request.actions.is_empty() {
++            ProjectSettings::get_global(cx)
++                .global_lsp_settings
++                .notifications
++                .dismiss_timeout_ms
++                .filter(|&duration| duration > 0)
++                .map(|dismiss_duration_ms| {
++                    cx.spawn(async move |prompt, cx| {
++                        cx.background_executor()
++                            .timer(Duration::from_millis(dismiss_duration_ms))
++                            .await;
++                        prompt
++                            .update(cx, |prompt, cx| prompt.dismiss_notification(cx))
++                            .ok();
++                    })
++                })
++        } else {
++            None
++        };
+ 
+         Self {
+             focus_handle: cx.focus_handle(),
+             request: Some(request),
+             scroll_handle: ScrollHandle::ne
+```
+
+**File**: `crates/workspace/src/workspace.rs` (modified, +1/-11)
+```diff
+@@ -1920,17 +1920,7 @@ impl Workspace {
+                 }
+ 
+                 project::Event::LanguageServerPrompt(request) => {
+-                    struct LanguageServerPrompt;
+-
+-                    this.show_notification(
+-                        NotificationId::composite::<LanguageServerPrompt>(request.id),
+-                        cx,
+-                        |cx| {
+-                            cx.new(|cx| {
+-                                notifications::LanguageServerPrompt::new(request.clone(), cx)
+-                            })
+-                        },
+-                    );
++                    return this.show_language_server_prompt(request, cx);
+                 }
+ 
+                 project::Event::AgentLocationChanged => {
+```
+
+---
+
+### Incident Patch 3: `4191aeaf` (2026-11-16)
+**Commit Message**: agent_ui: Check only the clicked pattern in pipeline permission dropdown (#56492)
+
+Closes #55523
+
+When the agent proposes a [chained
+command](https://github.com/zed-industries/zed/issues/55523) like `ls &&
+git status && git log`, the permission dropdown lists an "Always for `X`
+commands" checkbox per sub-command. Clicking one checkbox activates
+pattern mode with *all* patterns pre-checked, so the user appeared to be
+approving every command in the pipeline even though they had only
+clicked one. Pressing Allow then allow-listed every sub-command.
+
+Fix: the first click activates pattern mode with only the clicked
+pattern checked. Additional patterns require explicit checks.
+
+**Note**: I've rebased onto `main` after #65039, which moved the
+dropdown's selection state into `Conversation`. The dropdown's click
+handler and the `ToggleCommandPattern` action handler now both call
+`Conversation::toggle_permission_pattern`, so the fix lives in one
+place. The duplicated fix and the one-click-behind workaround from the
+previous version of this PR are gone.
+
+**Self-Review Checklist**
+
+- [x] I've reviewed my own diff for quality, security, and reliability
+- [x] Unsafe blocks (if any) have justifyi
+
+**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +63/-10)
+```diff
+@@ -400,26 +400,26 @@ impl Conversation {
+         pattern_index: usize,
+         cx: &mut Context<Self>,
+     ) {
+-        let Some(request) = self.permission_request(session_id, request_id, cx) else {
++        let Some(PermissionOptions::DropdownWithPatterns { patterns, .. }) = self
++            .permission_request(session_id, request_id, cx)
++            .and_then(PermissionRequest::legacy_options)
++        else {
+             return;
+         };
+-        let Some(options) = request.legacy_options() else {
++        if pattern_index >= patterns.len() {
+             return;
+-        };
+-        let pattern_count = match options {
+-            PermissionOptions::DropdownWithPatterns { patterns, .. } => patterns.len(),
+-            _ => 0,
+-        };
++        }
+         match self.permission_selections.get_mut(&request_id) {
+             Some(selection @ thread_view::PermissionSelection::SelectedPatterns(_)) => {
+                 selection.toggle_pattern(pattern_index);
++                if !selection.has_any_checked_patterns() {
++                    self.permission_selections.remove(&request_id);
++                }
+             }
+             _ => {
+                 self.permission_selections.insert(
+                     request_id,
+-                    thread_view::PermissionSelection::SelectedPatterns(
+-                        (0..pattern_count).collect(),
+-                    ),
++                    thread_view::PermissionSelection::SelectedPatterns(vec![pattern_index]),
+                 );
              }
          }
+@@ -16959,6 +16959,53 @@ pub(crate) mod tests {
+         });
+     }
  
--        #[cfg(not(target_os = "windows"))]
-+        #[cfg(target_os = "macos")]
-         {
-             let folded_path = WatchKey::folded_path(path);
-             for ancestor in Path::new(&folded_path).ancestors() {
++    #[gpui::test]
++    async fn test_toggle_command_pattern_toggles_only_clicked_pattern(cx: &mut TestAppContext) {
++        init_test(cx);
++        let (conversation_view, cx) =
++            setup_conversation_view(StubAgentServer::default_response(), cx).await;
++        let (thread, conversation) = active_thread(&conversation_view, cx)
++            .read_with(cx, |view, _| {
++                (view.thread.clone(), view.conversation.clone())
++            });
++        let session_id = thread.read_with(cx, |thread, _| thread.session_id().clone());
++        // A chained command gets one pattern row per sub-command (`ls`, `git status`, `git log`).
++        let options = ToolPermissionContext::new(
++            TerminalTool::NAME,
++            vec!["ls && git status && git log".into()],
++        )
++        .build_permission_options();
++        let (request_id, _response) =
++            request_test_tool_authorization_with_options(&thread, "pipeline", options, cx);
++
++        let toggle = |pattern_index, cx: &mut VisualTestContext| {
++            conversation.update(cx, |conversation, cx| {
++                conversation.toggle_permission_pattern(&session_id, request_id, pattern_index, cx);
++                match conversation.permission_selections.get(&request_id) {
++                    Some(thread_view::PermissionSelection::SelectedPatterns(checked)) => {
++                        let mut checked = checked.clone();
++                        checked.sort();
++                        Some(checked)
++                    }
++                    Some(thread_view::PermissionSelection::Choice(_)) => {
++                        panic!("toggling a pattern must not select a dropdown choice")
++                    }
++                    None => None,
++                }
++            })
++        };
++        // An index with no matching row must not enter pattern mode.
++        assert_eq!(toggle(99, cx), None);
++        // The first click on a row other than the first checks only that row.
++        assert_eq!(toggle(1, cx), Some(vec![1]));
++        // Later clicks add only their own row...
++        assert_eq!(toggle(0, cx), Some(vec![0, 1]));
++        // ...and remove only their own row.
++        assert_eq!(toggle(1, cx), Some(vec![0]));
++        // Unchecking the last row goes back to the default selection.
++        assert_eq!(toggle(0, cx), None);
++    }
++
+     #[gpui::test]
+     async fn test_allow_button_uses_selected_granularity(cx: &mut TestAppContext) {
+         init_test(cx);
+@@ -17669,6 +17716,12 @@ pub(crate) mod tests {
+         cx.run_until_parked();
+ 
+         if with_patterns {
++            let pattern = cx
++                .debug_bounds("MENU_ITEM-Always for `cargo test` commands")
++                .expect("the rendered persistent dropdown should offer the cargo pattern");
++            cx.simulate_click(pattern.center(), gpui::Modifiers::default());
++            cx.run_until_parked();
++            // Toggling `sort` on and off must leave only `cargo test` checked.
+             for _ in 0..2 {
+                 let pattern = cx
+                     .debug_bounds("MENU_ITEM-Always for `sort` commands")
+```
+
+**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +3/-2)
+```diff
+@@ -691,7 +691,8 @@ pub(crate) enum PermissionSelection {
+     Choice(usize),
+     /// "Select options…" mode where individual command patterns can be toggled.
+     /// Contains the indices of checked patterns in the `patterns` list.
+-    /// All patterns start checked when this mode is first activated.
++    /// Only the pattern the user clicked is checked when this mode is first activated;
++    /// the user must explicitly check any additional patterns.
+     SelectedPatterns(Vec<usize>),
+ }
+ 
+@@ -712,7 +713,7 @@ impl PermissionSelection {
+         }
+     }
+ 
+-    fn has_any_checked_patterns(&self) -> bool {
++    pub(super) fn has_any_checked_patterns(&self) -> bool {
+         match self {
+             Self::SelectedPatterns(checked) => !checked.is_empty(),
+             _ => false,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #67020** (2026-11-16): agent_ui: Check for an empty message without copying the text (@ptweezy)
-- **PR #67019** (2026-11-16): util: Avoid allocating when sorting paths by extension (@ptweezy)
-- **PR #67016** (2026-11-16): util: Return early from natural_sort for equal strings (@ptweezy)
-- **PR #67014** (2026-11-15): language: Split buffer operations in linear time (@ptweezy)
-- **PR #67013** (2026-11-15): terminal_view: Avoid cloning text runs before shaping (@ptweezy)
-- **PR #67006** (2026-11-15): fs: Fix wrong cfg guard for fast path for macos only  (@RemcoSmitsDev)
+- **PR #67101** (2026-11-17): helix: Honor `use_system_clipboard` (#66906) (cherry-pick to stable) (@zed-zippy[bot])
+- **PR #67100** (2026-11-17): helix: Honor `use_system_clipboard` (#66906) (cherry-pick to preview) (@zed-zippy[bot])
+- **PR #67093** (2026-11-17): Fix empty strip at bottom of commit modal (#67090) (cherry-pick to preview) (@zed-zippy[bot])
+- **PR #67090** (2026-11-17): Fix empty strip at bottom of commit modal (@keantx)
+- **PR #67088** (closed): gpui: Add TextLayout::try_bounds (@TriptoAfsin)
+- **PR #67079** (2026-11-17): onboarding: Keep header pinned while scrolling (@aakashbapna)
 
 ---
 
@@ -2654,31 +2965,55 @@ Release Notes:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent_ui: Check for an empty message without copying the text
+## X. agent_ui: Keep focus when background threads auto-send queued messages
 
 **RULE**:
-When implementing operations in `crates/agent_ui/src/conversation_view/thread_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/agent_ui/src/conversation_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `053d91cb`: agent_ui: Check for an empty message without copying the text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d39178f6`: agent_ui: Keep focus when background threads auto-send queued messages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/conversation_view/thread_view.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/conversation_view.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            let is_empty = editor.read(cx).editor().read(cx).is_empty(cx);
+    #[gpui::test]
+    async fn test_auto_sending_queued_messages_preserves_focus(cx: &mut TestAppContext) {
+        init_test(cx);
+
+        let connection = StubAgentConnection::new();
+        let (background_conversation, cx) =
+            setup_conversation_view(StubAgentServer::new(connection.clone()), cx).await;
+        add_to_workspace(background_conversation.clone(), cx);
+        let background_thread = active_thread(&background_conversation, cx);
+        message_editor(&background_conversation, cx).update_in(cx, |editor, window, cx| {
+            editor.set_text("first", window, cx);
+        });
+        background_thread.update_in(cx, |view, window, cx| view.send(window, cx));
+        cx.run_until_parked();
+
+        let session_id = background_thread.update_in(cx, |view, window, cx| {
+            view.add_to_queue(vec!["second".into()], vec![], window, cx);
+            view.add_to_queue(vec!["third".into()], vec![], window, cx);
+            view.thread.read(cx).session_id().clone()
+        });
+
+        let foreground_conversation = background_conversation.update_in(cx, |view, window, cx| {
+            cx.new(|cx| {
+                ConversationView::new(
+                    v
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            let is_empty = editor.read(cx).text(cx).is_empty();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `053d91cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d39178f6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

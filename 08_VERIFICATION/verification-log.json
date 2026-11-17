@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-7408",
-    "timestamp": "2026-11-15T20:22:43.976Z",
-    "repository": "nsh07/Tomato",
-    "learningId": "learn-github-nsh07-tomato",
-    "contentHash": "31202766d1bf3fe11d5f8aac8011f8f7ed3da43a3b010c3358a5031ee3928fef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-VQNH",
-    "timestamp": "2026-11-15T20:41:53.069Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "5cf71739e5225697a324f0122805dddc6e9187d86e8dd928a5d4c4ceb70df743",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-VUIN",
-    "timestamp": "2026-11-15T20:41:58.079Z",
-    "repository": "modelcontextprotocol/kotlin-sdk",
-    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-    "contentHash": "753e4a1064160c57f6ab152f63a89647e2520964814fd49b204e3051b35babf1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-W0MN",
-    "timestamp": "2026-11-15T20:42:05.999Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "f47afe19e35374ed4468061e2b76cd05197217b0680bb6fa78f85213e404265f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-7A9O",
     "timestamp": "2026-11-15T20:50:51.708Z",
     "repository": "mlua-rs/mlua",
@@ -7490,6 +7430,66 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "121b80ec33bd23938835e4bf48c44feda5c841aa2fb7d479385e69593ddacea1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-69IJ",
+    "timestamp": "2026-11-17T20:25:24.907Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "e5bd54e00e5904a7608f5f3febd67bb0163342beebf709b22d950505d144eb74",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-6AZG",
+    "timestamp": "2026-11-17T20:25:26.812Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "adf62c1bd9b075e55b2f9ee619518b1abc063eebe429d862de539b5e0ba4793e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-6FUA",
+    "timestamp": "2026-11-17T20:25:33.106Z",
+    "repository": "czy0729/Bangumi",
+    "learningId": "learn-github-czy0729-bangumi",
+    "contentHash": "5dd2d236e81f639b77d596357ed11e5ac9a6c2f96a75e4c76c8d2c55bcd46bfe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-6K9I",
+    "timestamp": "2026-11-17T20:25:38.838Z",
+    "repository": "infiniflow/infinity",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "d81733dc2b032fcae2f7a1bd1097675f437803a4cf96a233c07383689fb5bdfd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

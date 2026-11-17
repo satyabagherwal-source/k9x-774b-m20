@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T20:17:47.424Z",
-  "total_cycles_completed": 10253,
-  "total_learnings_persisted": 10253,
-  "total_rules_promoted": 9802,
+  "last_updated": "2026-11-17T20:25:38.846Z",
+  "total_cycles_completed": 10257,
+  "total_learnings_persisted": 10257,
+  "total_rules_promoted": 9805,
   "history": [
-    {
-      "timestamp": "2026-11-17T07:20:19.592Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T07:28:07.955Z",
-      "repository": "transact-rs/sqlx",
-      "learningId": "learn-github-transact-rs-sqlx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T07:28:15.839Z",
-      "repository": "clastix/kamaji",
-      "learningId": "learn-github-clastix-kamaji",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T07:28:20.966Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T07:40:14.233Z",
       "repository": "appwrite/appwrite",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-17T20:17:47.424Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T20:25:24.915Z",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T20:25:26.819Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T20:25:33.113Z",
+      "repository": "czy0729/Bangumi",
+      "learningId": "learn-github-czy0729-bangumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T20:25:38.846Z",
+      "repository": "infiniflow/infinity",
+      "learningId": "learn-github-infiniflow-infinity",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

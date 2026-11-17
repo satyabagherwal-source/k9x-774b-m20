@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T20:17:47.428Z",
+  "last_updated": "2026-11-17T20:25:38.849Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -52,14 +52,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
-      "content_hash": "9c71f232f031bd8abef7a91f189c040557d80e73564de39fe5c81920d0b6e348",
-      "verified_at": "2026-11-13T09:56:48.460Z",
+      "content_hash": "e5bd54e00e5904a7608f5f3febd67bb0163342beebf709b22d950505d144eb74",
+      "verified_at": "2026-11-17T20:25:24.917Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T09:56:48.460Z"
+      "last_updated": "2026-11-17T20:25:24.917Z"
     },
     "abenzerps/Qwen-Image-2.1-Uncensored-GGUF": {
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -8076,14 +8076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-czy0729-bangumi",
-      "content_hash": "2af58ca950b49fd840bfda2a184b49d215df4d524deedbf0cb2c434a637d4d28",
-      "verified_at": "2026-11-14T12:04:13.836Z",
+      "content_hash": "5dd2d236e81f639b77d596357ed11e5ac9a6c2f96a75e4c76c8d2c55bcd46bfe",
+      "verified_at": "2026-11-17T20:25:33.115Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T12:04:13.836Z"
+      "last_updated": "2026-11-17T20:25:33.115Z"
     },
     "aquasecurity/tfsec": {
       "repository": "aquasecurity/tfsec",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "8f9f812ad22e81d3e4844ae053f12f2a11487ee262d9bf8e39529682d1a1f914",
-      "verified_at": "2026-11-16T21:55:38.044Z",
+      "content_hash": "d81733dc2b032fcae2f7a1bd1097675f437803a4cf96a233c07383689fb5bdfd",
+      "verified_at": "2026-11-17T20:25:38.849Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T21:55:38.044Z"
+      "last_updated": "2026-11-17T20:25:38.849Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "b1d9abf3e5bbda3730582bf8ebeee6786e9ca44054f38093f3bf88134b05d9e5",
-      "verified_at": "2026-11-16T08:11:19.665Z",
+      "content_hash": "adf62c1bd9b075e55b2f9ee619518b1abc063eebe429d862de539b5e0ba4793e",
+      "verified_at": "2026-11-17T20:25:26.822Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T08:11:19.665Z"
+      "last_updated": "2026-11-17T20:25:26.822Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",

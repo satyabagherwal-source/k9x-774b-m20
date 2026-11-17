@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T20:17:51.364Z",
+  "updated_at": "2026-11-17T20:25:42.897Z",
   "stats": {
-    "total_discovered": 5144,
-    "approved_pending_harvest": 4855,
+    "total_discovered": 5148,
+    "approved_pending_harvest": 4859,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4840,
+      "COMMUNITY_AND_EXPERT": 4844,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -111166,6 +111166,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
         "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-0704B3C54A1F": {
+      "id": "SRC-0704B3C54A1F",
+      "url": "https://github.com/zed-industries/zed/blob/ffaa5fbe8c30bc819c3d118e688b28c1f1a64fe1/crates/workspace/src/notifications.rs",
+      "title": "https://github.com/zed-industries/zed/blob/ffaa5fbe8c30bc819c3d118e688b28c1f1a64fe1/crates/workspace/src/notifications.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T20:25:42.062Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-A458A9C7B094": {
+      "id": "SRC-A458A9C7B094",
+      "url": "https://github.com/user-attachments/assets/c3cce22e-e1b8-4047-ad44-8eda72bca659",
+      "title": "https://github.com/user-attachments/assets/c3cce22e-e1b8-4047-ad44-8eda72bca659",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T20:25:42.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-4F8A169F768F": {
+      "id": "SRC-4F8A169F768F",
+      "url": "https://github.com/zed-industries/zed/issues/55523",
+      "title": "https://github.com/zed-industries/zed/issues/55523",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T20:25:42.118Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-E8F54EB9C435": {
+      "id": "SRC-E8F54EB9C435",
+      "url": "https://github.com/Q16KBreak/Bangumi/tree/docs/passkey-docs/docs/passkey-login",
+      "title": "https://github.com/Q16KBreak/Bangumi/tree/docs/passkey-docs/docs/passkey-login",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T20:25:42.897Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
       }
     }
   }

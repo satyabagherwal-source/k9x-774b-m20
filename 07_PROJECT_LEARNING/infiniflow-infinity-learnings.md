@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `46dbc57a`  
+> **Source Version**: `f16f3c56`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T21:55:36.968Z  
+> **Timestamp**: 2026-11-17T20:25:38.075Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:55:36.961Z  
+> **Harvest Timestamp**: 2026-11-17T20:25:38.071Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4766 stars
+- **Stars / Engagement**: 4769 stars
 
 ---
 
@@ -1349,639 +1349,233 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f807c52` (2026-11-15)
-**Commit Message**: Fix: invalidate fulltext index reader cache on compact and import commit (#3424)
+### Incident Patch 1: `f16f3c56` (2026-11-17)
+**Commit Message**: rust_engine: spann index, filter push-down, unified maintenance accounting (#3571)
 
-## What problem does this PR solve?
-
-Follow-up to #3418, complementary to #3423 (different hole, no
-overlapping files).
-
-The per-table `TableIndexReaderCache` is invalidated on fulltext index
-create/drop/dump/optimize (`PrepareCommitDumpIndex`) and on cleanup.
-**Compaction and import never invalidate it**: their fulltext chunk
-infos travel through the compact/import txn stores without emitting a
-`WalCmdDumpIndexV2`, so none of the existing invalidation call sites
-fire.
-
-Because the cache freshness test (`begin_ts >= cache_ts_`) is satisfied
-by every transaction once the cache has been built, the consequences
-are:
-
-- **After COMPACT commits**: fulltext queries keep being answered by
-cached `ColumnIndexReader`s over the *deprecated* segments, and never
-see the compacted segment — silently wrong results. When the cleanup
-task later physically frees the deprecated chunks, the cached readers
-dangle, which is the same failure mode as the server crash in #3418.
-- **After IMPORT commits**: the imported rows are invisible to fulltext
-search until an unrelated append/dump/cleanup happens to invalidate the
-cache
-
-**File**: `src/storage/new_txn/new_txn_data_impl.cpp` (modified, +48/-0)
+**File**: `CONTRIBUTING.md` (modified, +1/-1)
 ```diff
-@@ -36,6 +36,7 @@ import :block_meta;
- import :segment_meta;
- import :table_meta;
- import :table_index_meta;
-+import :index_base;
- import :segment_index_meta;
- import :new_catalog;
- import :meta_key;
-@@ -67,6 +68,7 @@ import third_party;
- import column_def;
- import row_id;
- import constant_expr;
-+import create_index_info;
- import data_type;
- 
- namespace infinity {
-@@ -1735,6 +1737,34 @@ Status NewTxn::PrepareCommitImport(WalCmdImportV2 *import_cmd) {
- 
-     BuildFastRoughFilterTask::ExecuteOnNewSealedSegment(&segment_meta);
- 
-+    {
-+        // The imported segment's fulltext index chunks are carried by the import txn store,
-+        // not by a WalCmdDumpIndexV2, so the invalidation in PrepareCommitDumpIndex never
-+        // fires here: without this, cached readers keep serving a chunk list that misses
-+        // the imported segment.
-+        std::vector<std::string> *index_id_strs_ptr = nullptr;
-+        std::vector<std::string> *index_name_strs_ptr = nullptr;
-+        status = table_meta.GetIndexIDs(index_id_strs_ptr, &index_name_strs_ptr);
-+        if (!status.ok()) {
-+            return status;
-+        }
-+        size_t index_count = index_id_strs_ptr->size();
-+        for (size_t idx = 0; idx < index_count; ++idx) {
-+            TableIndexMeta table_index_meta(index_id_strs_ptr->at(idx), index_name_strs_ptr->at(idx), table_meta);
-+            auto [index_base, index_status] = table_index_meta.GetIndexBase();
-+            if (!index_status.ok()) {
-+                return index_status;
-+            }
-+            if (index_base->index_type_ == IndexType::kFullText) {
-+                status = table_meta.InvalidateFtIndexCache();
-+                if (!status.ok()) {
-+                    return status;
-+                }
-+                break;
-+            }
-+        }
-+    }
-+
-     PersistenceManager *pm = InfinityContext::instance().persistence_manager();
-     if (pm != nullptr) {
-         // When all data and index is write to disk, try to finalize the
-@@ -2060,12 +2090,30 @@ Status NewTxn::PrepareCommitCompact(WalCmdCompactV2 *compact_cmd) {
-         if (!status.ok()) {
-             return status;
-         }
-+        bool ft_index_cache_invalidated = false;
-         size_t index_count = index_id_strs_ptr->size();
-         for (size_t idx = 0; idx < index_count; ++idx) {
-             const std::string &index_id_str = index_id_strs_ptr->at(idx);
-             const std::string &index_name_str = index_name_strs_ptr->at(idx);
- 
-             TableIndexMeta table_index_meta(index_id_str, index_name_str, table_meta);
-+
-+            auto [index_base, index_status] = table_index_meta.GetIndexBase();
-+            if (!index_status.ok()) {
-+                return index_status;
-+            }
-+            if (index_base->index_type_ == IndexType::kFullText && !ft_index_cache_invalidated) {
-+                // The compacted segment's fulltext index chunks are carried by the compact txn
-+                // store, not by a WalCmdDumpIndexV2, so the invalidation in
-+                // PrepareCommitDumpIndex never fires here: without this, cached readers keep
-+                // serving the deprecated segments and never see the compacted one.
-+                status = table_meta.InvalidateFtIndexCache();
-+                if (!status.ok()) {
-+                    return status;
-+                }
-+                ft_index_cache_invalidated = true;
-+            }
-+
-             std::vector<SegmentID> *segment_ids_ptr = nullptr;
-             std::tie(segment_ids_ptr, status) = table_index_meta.GetSegmentIndexIDs1();
-             if (!status.ok()) {
-```
-
----
-
-### Incident Patch 2: `91e45e52` (2026-11-15)
-**Commit Message**: Fix: invalidate fulltext index reader cache on chunk-level cleanup (server crash, #3418) (#3423)
-
-## What & why
-
-Fixes the server-killing fulltext crash reported in #3418 (full
-root-cause analysis in [this
-comment](https://github.com/infiniflow/infinity/issues/3418#issuecomment-5446559296)).
-
-`CleanSegmentIndex` invalidates `TableIndexReaderCache` before
-destroying segment index data, but `CleanChunkIndex` did not — while
-**chunk-level cleanup is the normal path for merged-away fulltext
-chunks**. `ChunkIndexMeta::UninitSet` deletes the chunk's `.pos`/`.dic`
-files and releases its column-length `BufferObj` (later destroyed by
-`BufferManager::RemoveClean`), yet the reader cache kept serving
-`DiskIndexSegmentReader`s (raw mmap pointers) and raw `BufferObj*`s over
-that freed data — `GetIndexReader`'s `begin_ts >= cache_ts_` test never
-expires on its own. The first fulltext query after the cleanup commit
-(Begin TS == cleanup KV commit TS in our production logs) then decoded
-garbage postings and crashed the whole server inside
-`FastPForLib::simdunpack` (via `TermDocIterator::BM25Score`),
-deterministically per term.
-
-## Change
-
-Mirror the exact guarded invalidation `CleanSegmentIndex` alr
-
-**File**: `src/storage/catalog/new_catalog.cppm` (modified, +1/-1)
-```diff
-@@ -326,7 +326,7 @@ public:
- 
-     static Status LoadFlushedChunkIndex1(SegmentIndexMeta &segment_index_meta, const WalChunkIndexInfo &chunk_info, NewTxn *new_txn);
- 
--    static Status CleanChunkIndex(ChunkIndexMeta &chunk_index_meta, UsageFlag usage_flag);
-+    static Status CleanChunkIndex(ChunkIndexMeta &chunk_index_meta, UsageFlag usage_flag, bool invalidate_ft_cache = true);
- 
-     static Status GetColumnVector(ColumnMeta &column_meta,
-                                   const std::shared_ptr<ColumnDef> &col_def,
-```
-
-**File**: `src/storage/catalog/new_catalog_static_impl.cpp` (modified, +19/-2)
-```diff
-@@ -1037,7 +1037,7 @@ Status NewCatalog::CleanSegmentIndex(SegmentIndexMeta &segment_index_meta, Usage
-     }
-     for (ChunkID chunk_id : *chunk_ids_ptr) {
-         ChunkIndexMeta chunk_index_meta(chunk_id, segment_index_meta);
--        status = NewCatalog::CleanChunkIndex(chunk_index_meta, usage_flag);
-+        status = NewCatalog::CleanChunkIndex(chunk_index_meta, usage_flag, /*invalidate_ft_cache=*/false);
-         if (!status.ok()) {
-             return status;
-         }
-@@ -1149,12 +1149,29 @@ Status NewCatalog::LoadFlushedChunkIndex1(SegmentIndexMeta &segment_index_meta,
-     return Status::OK();
- }
- 
--Status NewCatalog::CleanChunkIndex(ChunkIndexMeta &chunk_index_meta, UsageFlag usage_flag) {
-+Status NewCatalog::CleanChunkIndex(ChunkIndexMeta &chunk_index_meta, UsageFlag usage_flag, bool invalidate_ft_cache) {
-     LOG_TRACE(fmt::format("CleanChunkIndex: cleaning table id: {}, segment_id: {}, index_id: {}, chunk_id: {}",
-                           chunk_index_meta.segment_index_meta().table_index_meta().table_meta().table_id_str(),
-                           chunk_index_meta.segment_index_meta().segment_id(),
-                           chunk_index_meta.segment_index_meta().table_index_meta().index_id_str(),
-                           chunk_index_meta.chunk_id()));
-+    if (usage_flag != UsageFlag::kTransform && invalidate_ft_cache) {
-+        // Invalidate the fulltext index reader cache before the chunk's data
-+        // (posting/dictionary files, column-length buffer) is physically
-+        // destroyed below. Chunk-level cleanups (the normal path for
-+        // merged-away fulltext chunks) did not do this:
-+        // TableIndexReaderCache::GetIndexReader would keep serving cached
-+        // DiskIndexSegmentReaders and raw BufferObj pointers over freed data,
-+        // and the first fulltext query after the cleanup commit crashed the
-+        // server in the posting decoder (see issue #3418).
-+        // CleanSegmentIndex invalidates once for the whole segment and passes
-+        // invalidate_ft_cache = false to skip the redundant per-chunk calls.
-+        TableMeta &table_meta = chunk_index_meta.segment_index_meta().table_index_meta().table_meta();
-+        Status invalidate_status = table_meta.InvalidateFtIndexCache();
-+        if (!invalidate_status.ok()) {
-+            return invalidate_status;
-+        }
-+    }
-     chunk_index_meta.RestoreSet();
-     Status status;
+@@ -48,7 +48,7 @@ lefthook install   # once per clone; writes .git/hooks/pre-commit
+ |---|---|
+ | `clang-format` | `clang-format-20` (Clang 20+, see the build requirements) |
+ | `rustfmt` | `cargo fmt` for the `rust_engine` workspace |
+-| `ruff`, `ruff-format` | `uvx ruff` |
++| `ruff`, `ruff-format` | `uvx ruff` (the generated Thrift bindings are excluded) |
+ | `end-of-file-fixer`, `trailing-whitespace`, `mixed-line-ending` | `tools/hooks/check_files.py` |
+ | `check-yaml`, `check-json`, `check-case-conflict`, `check-merge-conflict` | `tools/hooks/check_files.py` |
  
 ```
 
----
-
-### Incident Patch 3: `e07b634a` (2026-11-15)
-**Commit Message**: Rust engine: make HNSW usable at 1M rows (memory-segment training, index-only query path, reference-aligned LSG) (#3564)
-
-## What
-
-Three HNSW changes in the Rust engine, all measured end-to-end (`SEARCH
-MATCH VECTOR`, 128-dim, `M=16`, `ef_construction=200`, LVQ):
-
-1. **Train the memory segment before its first batch** — a fresh `CREATE
-INDEX` used to build rows over an untrained store (LVQ mean / RaBitQ
-centroid / LSG state all zero), so recall was visibly worse than the
-same index after a restart.
-2. **Zero-copy batch build + parallel LSG averages** — the graph build
-borrows the batch instead of cloning it, and the per-row LSG averages
-(`rows × samples × dims`) are computed across cores.
-3. **Reference-aligned LSG, and a query path that never touches the
-whole table.**
-
-## Why
-
-### LSG diverged from the reference
-
-The reference parses/validates/persists `lsg_config` and constructs an
-`HnswLSGBuilder` for `build_type=lsg` (`hnsw_handler_impl.cpp:218`), but
-**no production path trains it**: `InsertSampleVecs` / `InsertLSAvg` /
-`SetLSGParam` appear only in `test_lsg_build_ut.cpp`, and
-`HnswHandler::InsertVecs` (`hnsw_handler.cppm:151`) goes straight from
-`StoreData` to `Build`. So `L
-
-**File**: `rust_engine/crates/analyzer/src/core.rs` (modified, +16/-3)
+**File**: `go/index.go` (modified, +5/-0)
 ```diff
-@@ -80,6 +80,18 @@ thread_local! {
- /// C++: the shipped resource root (`InfinityContext::config()` fallback).
- pub const DEFAULT_RESOURCE_PATH: &str = "/usr/share/infinity/resource";
+@@ -30,6 +30,9 @@ const (
+ 	IndexTypeDiskAnn             IndexType = 8
+ 	IndexTypePLAID               IndexType = 9
+ 	IndexTypeSMVE                IndexType = 10
++	// IndexTypeCSPANN is the port's cluster-based vector index
++	// (rust_engine/docs/CSPANN_DESIGN.md).
++	IndexTypeCSPANN IndexType = 11
+ )
  
-+/// The resource root [`AnalyzerPool::instance`] loads its dictionaries from.
-+///
-+/// `INFINITY_RESOURCE_PATH` names a checkout of the resource tree, the way a
-+/// host that does not install to the shipped location points at its copy; it
-+/// falls back to [`DEFAULT_RESOURCE_PATH`]. The same variable is what
-+/// `crates/analyzer-ffi/tests/c_api.rs` uses, so one setting drives both.
-+pub fn resource_path() -> std::path::PathBuf {
-+    std::env::var_os("INFINITY_RESOURCE_PATH")
-+        .map(std::path::PathBuf::from)
-+        .unwrap_or_else(|| std::path::PathBuf::from(DEFAULT_RESOURCE_PATH))
+ func (it IndexType) String() string {
+@@ -54,6 +57,8 @@ func (it IndexType) String() string {
+ 		return "PLAID"
+ 	case IndexTypeSMVE:
+ 		return "SMVE"
++	case IndexTypeCSPANN:
++		return "CSPANN"
+ 	default:
+ 		return "Unknown"
+ 	}
+```
+
+**File**: `go/index_test.go` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++// Copyright 2024 The InfiniFlow Authors. All Rights Reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package infinity
++
++import (
++	"testing"
++
++	thriftapi "github.com/infiniflow/infinity-go-sdk/internal/thrift"
++)
++
++// The SDK enum is 1-based and the thrift one is 0-based, so the two ordinals of a
++// kind are deliberately different; only the *names* line up.
++func TestIndexTypeCSPANNNamesMatchTheThriftEnum(t *testing.T) {
++	if got := IndexTypeCSPANN.String(); got != "CSPANN" {
++		t.Fatalf("IndexTypeCSPANN.String() = %q, want CSPANN", got)
++	}
++	if got := thriftapi.IndexType_CSPANN.String(); got != "CSPANN" {
++		t.Fatalf("thrift IndexType_CSPANN.String() = %q, want CSPANN", got)
++	}
++	if int64(thriftapi.IndexType_CSPANN) != 10 {
++		t.Fatalf("thrift CSPANN ordinal = %d, want 10 (appended to the IDL)", thriftapi.IndexType_CSPANN)
++	}
++	parsed, err := thriftapi.IndexTypeFromString("CSPANN")
++	if err != nil {
++		t.Fatalf("IndexTypeFromString(CSPANN): %v", err)
++	}
++	if parsed != thriftapi.IndexType_CSPANN {
++		t.Fatalf("round trip = %v, want CSPANN", parsed)
++	}
 +}
 +
- /// C++: `AnalyzerPool` (`analyzer_pool.cppm`) — parses an analyzer name and
- /// hands out a fresh analyzer.
- ///
-@@ -503,11 +515,12 @@ pub fn is_constructible_analyzer_name(name: &str) -> bool {
- impl AnalyzerPool {
-     /// C++: `Singleton<AnalyzerPool>::instance()`.
-     ///
--    /// Loads from the shipped resource root; a host that keeps the dictionaries
--    /// elsewhere builds its own with [`Self::with_resource_path`].
-+    /// Loads from [`resource_path`] (`INFINITY_RESOURCE_PATH`, else the shipped
-+    /// root); a host that needs several roots builds its own with
-+    /// [`Self::with_resource_path`].
-     pub fn instance() -> &'static AnalyzerPool {
-         static INSTANCE: OnceLock<AnalyzerPool> = OnceLock::new();
--        INSTANCE.get_or_init(|| Self::with_resource_path(DEFAULT_RESOURCE_PATH))
-+        INSTANCE.get_or_init(|| Self::with_resource_path(resource_path()))
-     }
++// Every known thrift value has a name: a new enum entry that is missing from the
++// String() switch shows up here rather than as "<UNSET>" in a SHOW INDEX row.
++func TestEveryThriftIndexTypeHasAName(t *testing.T) {
++	for value := range thriftapi.IndexTypeValues() {
++		if name := value.String(); name == "<UNSET>" {
++			t.Fatalf("thrift IndexType %d has no name", int64(value))
++		}
++	}
++}
+```
+
+**File**: `go/internal/thrift/infinity.go` (modified, +6/-0)
+```diff
+@@ -1166,6 +1166,7 @@ const (
+ 	IndexType_DiskAnn             IndexType = 7
+ 	IndexType_PLAID               IndexType = 8
+ 	IndexType_SMVE                IndexType = 9
++	IndexType_CSPANN              IndexType = 10
+ )
  
-     /// A pool whose dictionary-driven families load from `dir`.
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +30/-6)
-```diff
-@@ -3565,6 +3565,11 @@ impl Engine {
-     /// The buffered rows among `ids`, looked up once for the whole batch: the
-     /// per-row `pending_row` paid a `table_key` (a formatted, lowercased
-     /// string) and a lock for every id.
-+    ///
-+    /// The walk runs over `ids`, not over the buffer: the buffer holds every
-+    /// row written since the last checkpoint, so scanning it made a query that
-+    /// needs ten rows pay for the whole table (`pending_pos` / the id-sorted
-+    /// buffer answer a lookup in O(1)/O(log n)).
-     pub(crate) fn buffered_rows_for(
-         &self,
-         table: &str,
-@@ -3578,11 +3583,12 @@ impl Engine {
-         if entry.pending_rows.is_empty() {
-             return Default::default();
-         }
--        entry
--            .pending_rows
--            .iter()
--            .filter(|(seq, _)| ids.contains(seq))
--            .map(|(seq, values)| (*seq, values.clone()))
-+        ids.iter()
-+            .filter_map(|seq| {
-+                entry
-+                    .buffered_row(*seq)
-+                    .map(|values| (*seq, values.clone()))
-+            })
-             .collect()
-     }
-     /// One row of the append buffer. The point-read path must not clone the
-@@ -4336,7 +4342,18 @@ impl Engine {
-         // A table whose first commit has not reached a checkpoint yet has no
-         // block file at all: its rows are in the append buffer, and that is
-         // still a readable table.
--        let buffered = self.pending_rows_of(&table);
-+        //
-+        // An index already named the rows, so the buffer is probed for those
-+        // ids only. Cloning the whole buffer here is O(table) per query: a
-+        // 200k-row table kept every row in the append buffer until its first
-+        // checkpoint, and each KNN query deep-cloned all of them (each row
-+        // carrying its embedding text) before dropping all but ten. That was
-+        // the query path's cost, not the graph search (measured 33.6 ms vs
-+        // 0.38 ms for the same search called directly).
-+        let buffered: std::collections::HashMap<usize, Vec<Value>> = match rows_wanted {
-+            Some(rows) => self.buffered_rows_for(&table, rows),
-+            None => self.pending_rows_of(&table).into_iter().collect(),
-+        };
-         if blocks.is_empty() && buffered.is_empty() {
-             return Err(Error::NotFound(format!("no blocks for table '{table}'")));
-         }
-@@ -4581,6 +4598,13 @@ impl Engine {
-     /// `dense_index_building_worker`: the reference's dense-index pool size,
-     /// `hardware_concurrency() / 2` clamped to at least 2 (`config_impl.cpp:516-518`).
-     pub(crate) fn hnsw_build_workers(&self) -> usize {
-+        if let Some(n) = std::env::var("INFINITY_HNSW_BUILD_WORKERS")
-+            .ok()
-+            .and_then(|v| v.parse::<usize>().ok())
-+            .filter(|n| *n > 0)
-+        {
-+            return n;
-+        }
-         std::thread::available_parallelism()
-             .map(|count| count.get() / 2)
-             .unwrap_or(1)
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/index_chunk.rs` (modified, +42/-0)
-```diff
-@@ -49,6 +49,48 @@ pub(crate) struct HnswOptions {
-     pub(crate) lsg: Option<index::lsg::LsgConfig>,
+ var knownIndexTypeValues = []IndexType{
+@@ -1179,6 +1180,7 @@ var knownIndexTypeValues = []IndexType{
+ 	IndexType_DiskAnn,
+ 	IndexType_PLAID,
+ 	IndexType_SMVE,
++	IndexType_CSPANN,
  }
  
-+impl HnswOptions {
-+    /// The `WITH (...)` options a `CREATE INDEX ... USING HNSW` stored.
-+    ///
-+    /// `build_type='lsg'` is what turns the index into a local-scaling one; the
-+    /// reference then requires `lsg_config` and falls back to `LSGConfig`'s own
-+    /// defaults (`0.01 / 10 / 1`) when it is missing.
-+    pub(crate) fn from_options(options: &[(String, String)]) -> Self {
-+        let raw = |name: &str| {
-+            options
-+                .iter()
-+                .find(|(k, _)| k.eq_ignore_ascii_case(name))
-+                .map(|(_, v)| v.as_str())
-+        };
-+        let num = |name: &str, default: usize| {
-+            raw(name)
-+                .and_then(|v| v.trim().parse().ok())
-+                .unwrap_or(default)
-+        };
-+        let lsg = match raw("build_type") {
-+            Some(t)
-+                if t.trim()
-+                    .trim_matches(['\'', '"'])
-+                    .eq_ignore_ascii_case("lsg") =>
-+            {
-+                Some(
-+                    raw("lsg_config")
-+                        .and_then(index::lsg::LsgConfig::parse)
-+                        .unwrap_or_default(),
-+                )
-+            }
-+            _ => None,
-+        };
-+        Self {
-+            m: num("M", 16),
-+            ef_construction: num("EF_CONSTRUCTION", 200),
-+            metric: index::vector::Metric::parse(raw("metric").unwrap_or("l2")),
-+            encoding: index::vector::HnswEncoding::parse(raw("encode").unwrap_or_default()),
-+            lsg,
-+        }
-+    }
-+}
-+
- pub struct LoadedVectorIndex {
-     pub index: HnswHandler,
-     pub labels: Vec<u32>,
+ func IndexTypeValues() iter.Seq[IndexType] {
+@@ -1212,6 +1214,8 @@ func (p IndexType) String() string {
+ 		return "PLAID"
+ 	case IndexType_SMVE:
+ 		return "SMVE"
++	case IndexType_CSPANN:
++		return "CSPANN"
+ 	}
+ 	return "<UNSET>"
+ }
+@@ -1238,6 +1242,8 @@ func IndexTypeFromString(s string) (IndexType, error) {
+ 		return IndexType_PLAID, nil
+ 	case "SMVE":
+ 		return IndexType_SMVE, nil
++	case "CSPANN":
++		return IndexType_CSPANN, nil
+ 	}
+ 	return IndexType(0), fmt.Errorf("not a valid IndexType string")
+ }
 ```
 
-**File**: `rust_engine/crates/executor/src/blocks/misc.rs` (modified, +78/-2)
+**File**: `go/table.go` (modified, +2/-0)
 ```diff
-@@ -111,6 +111,10 @@ pub(crate) struct BlockCursor<'a> {
-     pub(crate) types: Vec<i32>,
-     /// `(segment, block)` of the blocks a reader may see.
-     pub(crate) visible: std::collections::HashSet<(u32, u16)>,
-+    /// The block map `visible` came from: a different `Arc` is a writer that
-+    /// rescanned (`BlockCursor::refresh_visible`), the same one cannot hold a
-+    /// block the snapshot is missing.
-+    pub(crate) index: Option<Arc<std::sync::Mutex<storage::block_index::BlockIndex>>>,
-     pub(crate) root: PathBuf,
-     /// The block last decoded, with the `version` that says which of its slots
-     /// are live.
-@@ -139,6 +143,7 @@ impl<'a> BlockCursor<'a> {
-                     "a column of '{table}' has no C++ block layout, so its rows are not in blocks"
-                 ))
-             })?;
-+        let index = engine.block_index_for(&table);
-         let visible = engine
-             .visible_block_ids(&table)
-             .into_iter()
-@@ -153,18 +158,76 @@ impl<'a> BlockCursor<'a> {
-             meta,
-             types,
-             visible,
-+            index,
-             root: engine.blocks_root(),
-             block: None,
-             dead,
-         })
-     }
+@@ -124,6 +124,8 @@ func (t *Table) CreateIndex(indexName string, indexInfo *IndexInfo, conflictType
+ 		thriftIndexType = thriftapi.IndexType_PLAID
+ 	case IndexTypeSMVE:
+ 		thriftIndexType = thriftapi.IndexType_SMVE
++	case IndexTypeCSPANN:
++		thriftIndexType = thriftapi.IndexType_CSPANN
+ 	default:
+ 		return nil, NewInfinityException(int(ErrorCodeInvalidIndexType), "Invalid index type")
+ 	}
+```
+
+**File**: `lefthook.yml` (modified, +8/-4)
+```diff
+@@ -112,23 +112,27 @@ pre-commit:
+     # --- Python: ruff + ruff-format (the configuration is in pyproject.toml) --
+     # `uvx` runs the project's pinned Python tooling without installing it into
+     # the SDK's virtualenv; `uv` is the only package manager this repo uses.
++    # The Thrift-compiler output (`infinity_thrift_rpc/`) is excluded through
++    # `[tool.ruff] extend-exclude`, and both jobs pass `--force-exclude` because
++    # lefthook hands ruff an explicit file list, for which ruff otherwise
++    # ignores `exclude`/`extend-exclude`.
+     - name: ruff
+       glob: "*.py"
+       stage_fixed: true
+       run: |
+         if [ "${LEFTHOOK_CHECK_ONLY:-}" = "1" ]; then
+-          uvx ruff check {staged_files}
++          uvx ruff check --force-exclude {staged_files}
+         else
+-          uvx ruff check --fix {staged_files}
++          uvx ruff check --force-exclude --fix {staged_files}
+         fi
+     - name: ruff-format
+       glob: "*.py"
+       stage_fixed: true
+       run: |
+         if [ "${LEFTHOOK_CHECK_ONLY:-}" = "1" ]; then
+-          uvx ruff format --check {staged_files}
++          uvx ruff format --force-exclude --check {staged_files}
+         else
+-          uvx ruff format {staged_files}
++          uvx ruff format --force-exclude {staged_files}
+         fi
  
-+    /// Re-reads the visible blocks and the delete journal, if the writer rescanned
-+    /// its block map since this cursor was created.
-+    ///
-+    /// The block writer moves rows from the append buffer into a block **without**
-+    /// any ordering against a reader: it writes the block's files and only then
-+    /// retires the buffered copies, so a cursor that snapshotted the block set
-+    /// before that write sees neither the buffer's row nor the block that now
-+    /// holds it. A full-text hit list lands exactly there - a compaction renumbers
-+    /// the postings under a statement that started before the merge, and the
-+    /// merged rows are the ids the cache names. Re-reading the set is what turns
-+    /// the miss back into a hit.
-+    ///
-+    /// The block writer replaces the table's map with a fresh `Arc` once its files
-+    /// are on disk (`write_blocks_mode_with`), so an unchanged `Arc` means no
-+    /// block can have been added: the answer stays short and nothing is rescanned.
-+    fn refresh_visible(&mut self) -> bool {
-+        let Some(index) = self.engine.block_index_for(&self.table) else {
-+            return false;
-+        };
-+        if self
-+            .index
-+            .as_ref()
-+            .is_some_and(|seen| Arc::ptr_eq(seen, &index))
-+        {
-+            return false;
-+        }
-+        self.visible = self
-+            .engine
-+            .visible_block_ids(&self.table)
-+            .into_iter()
-+            .map(|id| (id.segment_id, id.block_id))
-+            .collect();
-+        self.dead = self
-+            .engine
-+            .tombstone_set_at(&self.table, crate::read_ts())
-+            .unwrap_or_default();
-+        self.index = Some(index);
-+        self.block = None;
-+        true
-+    }
+ # CI-only hook: the checks that cost a workspace compile and therefore do not
+```
+
+**File**: `pyproject.toml` (modified, +9/-0)
+```diff
+@@ -71,6 +71,15 @@ filterwarnings = [
+     'ignore:function ham\(\) is deprecated:DeprecationWarning',
+ ]
+ 
++[tool.ruff]
++# The Thrift compiler's Python output (`options string: py`) is checked in
++# verbatim and regenerated by `tools/generate_rpc_code.py`; it is not ours to
++# lint or reformat (`ruff check` reports UP004/PIE790/F401/I001 there and
++# `ruff format` would rewrite all four files). Lefthook passes staged paths
++# explicitly, so its ruff jobs also pass `--force-exclude`, without which ruff
++# ignores exclusions for named paths.
++extend-exclude = ["python/infinity_sdk/infinity/remote_thrift/infinity_thrift_rpc"]
 +
-     /// Many rows at once, in id order.
-     ///
-     /// The ids are grouped by block and each block is decoded once, instead of
-     /// once per row: a 5k-row `UPDATE` names 5k ids that all live in one block,
-     /// and decoding the block per id was most of its scan.
-+    ///
-+    /// A short answer is retried once against a fresh block set (see
-+    /// [`Self::refresh_visible`]): a writer that mirrored the rows between this
-+    /// cursor's snapshot and this call leaves them in a block the snapshot does
-+    /// not name, and the buffered copy is already retired.
-     pub(crate) fn rows(&mut self, ids: &[u64]) -> Result<Vec<(usize, Vec<Value>)>> {
-+        let mut complete = true;
-+        let mut out = self.rows_of(ids, &mut complete)?;
-+        if !complete && self.refresh_visible() {
-+            out = self.rows_of(ids, &mut complete)?;
-+        }
-+        Ok(out)
-+    }
-+
-+    /// [`Self::rows`] against the snapshot the cursor holds. `complete` says every
-+    /// id was accounted for (decoded, buffered, or deleted).
-+    fn rows_of(&mut self, ids: &[u64], complete: &mut bool) -> Result<Vec<(usize, Vec<Value>)>> {
-         let mut sorted: Vec<usize> = ids.iter().map(|id| *id as usize).collect();
-         sorted.sort_unstable();
-         sorted.dedup();
-@@ -198,7 +261,11 @@ impl<'a> BlockCursor<'a> {
-                 }
-                 wanted.insert(*seq);
-             }
--            if wanted.is_empty() || !self.visible.contains(&(segment, block_no)) {
-+            if wanted.is_empty() {
-+                continue;
-+            }
-+            if !self.visible.contains(&(segment, block_no)) {
-+                *complete = false;
-                 continue;
-             }
-             let id = BlockId {
-@@ -214,6 +281,7 @@ impl<'a> BlockCursor<'a> {
-                 .unwrap_or(true)
-             {
-                 let Ok(block) = self.engine.block_map(&self.table, &self.root, id) else {
-+                    *complete = false;
-                     continue;
-                 };
-    
+ [tool.ruff.lint]
+ ignore = [
+     "RUF059",
 ```
 
-**File**: `rust_engine/crates/executor/src/engine/dml.rs` (modified, +3/-19)
+**File**: `python/infinity_sdk/infinity/http_utils.py` (modified, +6/-0)
 ```diff
-@@ -1526,27 +1526,11 @@ impl Engine {
-                     let Some(dims) = types.get(ci).and_then(|t| type_dim(t)) else {
-                         continue;
-                     };
--                    let opt = |name: &str| -> Option<usize> {
--                        im.options
--                            .iter()
--                            .find(|(k, _)| k.eq_ignore_ascii_case(name))
--                            .and_then(|(_, v)| v.parse().ok())
--                    };
--                    let m = opt("M").unwrap_or(16);
--                    let efc = opt("EF_CONSTRUCTION").unwrap_or(200);
--                    let opt = |name: &str| {
--                        im.options
--                            .iter()
--                            .find(|(k, _)| k.eq_ignore_ascii_case(name))
--                            .map(|(_, v)| v.clone())
--                    };
--                    let metric =
--                        index::vector::Metric::parse(&opt("metric").unwrap_or_else(|| "l2".into()));
--                    let encoding =
--                        index::vector::HnswEncoding::parse(&opt("encode").unwrap_or_default());
-+                    let options =
-+                        crate::blocks::index_chunk::HnswOptions::from_options(&im.options);
-                     entry.hnsw_mem.entry(im.id).or_insert_with(|| {
-                         Arc::new(Mutex::new(crate::hnsw_mem::HnswIndexInMem::new_with(
--                            dims, m, efc, metric, encoding,
-+                            dims, &options,
-                         )))
-                     });
-                 }
-```
-
-**File**: `rust_engine/crates/executor/src/engine/import.rs` (modified, +12/-0)
-```diff
-@@ -305,6 +305,15 @@ impl Engine {
-             // statement opened.
-             self.commit_import_chunk(table, t, &segments, &encoded_rows, &batches_all)
-                 .await?;
-+            // `live_rows` is what the query path's cache freshness and index
-+            // coverage gates compare against, and it adds a *delta* to a
-+            // published count - so every write path has to report its rows.
-+            // `INSERT` does (`note_live_rows` in the commit hook), `COPY` did
-+            // not: a table loaded by `COPY` kept the count of whatever last
-+            // published it (`row_count`, or a vector cache build over the rows
-+            // of the time), which made a stale vector cache look fresh and let
-+            // an index that covers part of the table pass the coverage gate.
-+            self.note_live_rows(table, staged as isize);
-         } else {
-             drop(t);
-         }
-@@ -501,6 +510,9 @@ impl Engine {
-         let t3 = std::time::Instant::now();
-         let _visible = BottomGuard::new(&self.txn, ts);
-         self.note_append(table, rows.len(), true, Some(ts));
-+        // The published live-row count, as `INSERT` reports it: the cache
-+        // freshness and index coverage gates compare against it.
-+        self.note_live_rows(table, rows.len() as isize);
-         let segment = (base >> 32) as u32;
-         let imported = self.segment_rows(table, segment as usize) as u64;
-         self.note_import_rows(table, segment, imported);
-```
-
-**File**: `rust_engine/crates/executor/src/engine/query.rs` (modified, +16/-0)
-```diff
-@@ -2105,6 +2105,22 @@ impl Engine {
-                         returns.clone().unwrap_or_default(),
-                     ));
-                 }
-+                // The catalog record stores the `WITH (...)` text as written,
-+                // and the C++ engine reads `lsg_config` back with
-+                // `LSGConfig::FromString`, which only knows the spelling it
-+                // writes itself (`sample_raito`). Accepting `sample_ratio` in SQL
-+                // but persisting it verbatim made such a directory abort the C++
-+                // engine (`Invalid index parameter type: sample_ratio`), so the
-+                // value is normalised to `LSGConfig::ToString` before it is
-+                // stored. `LsgConfig::parse` takes both spellings.
-+                if let Some(pos) = index_opts
-+                    .iter()
-+                    .position(|(k, _)| k.eq_ignore_ascii_case("lsg_config"))
-+                {
-+                    if let Some(config) = index::lsg::LsgConfig::parse(&index_opts[pos].1) {
-+                        index_opts[pos].1 = config.to_string();
-+                    }
-+                }
-                 self.ddl_commit_typed(
-                     TxnOp::CreateIndex {
-                         table: table.clone(),
-```
-
-**File**: `rust_engine/crates/executor/src/engine/state.rs` (modified, +11/-0)
-```diff
-@@ -7565,6 +7565,17 @@ pub(crate) fn parse_vec_str(s: &str) -> Vec<f64> {
-         .collect()
+@@ -299,6 +299,12 @@ def is_datetime(str_input):
+     5: "SECONDARYFUNCTIONAL",
+     6: "EMVB",
+     7: "BMP",
++    8: "DISKANN",
++    9: "PLAID",
++    10: "SMVE",
++    # `IndexType.CSPANN` in `infinity.index` (the SDK enum is 1-based; the thrift
++    # one is 0-based, which is why this table is separate).
++    11: "CSPANN",
  }
  
-+/// [`parse_vec_str`] straight into `f32`: the HNSW build and its append hook
-+/// feed an `f32` graph, and going through `f64` parsed into one vector only to
-+/// copy every element into another doubled the work on a 10k-row build.
-+pub(crate) fn parse_vec_f32(s: &str) -> Vec<f32> {
-+    let t = s.trim().trim_start_matches('[').trim_end_matches(']');
-+    t.split([',', ' '])
-+        .filter(|x| !x.is_empty())
-+        .filter_map(|x| x.parse::<f32>().ok())
-+        .collect()
-+}
-+
- /// Splits a stored multi-vector value into `dims`-sized token rows. Bit
- /// columns are scored as hamming and are not part of the MaxSim index.
- pub(crate) fn parse_multivector_doc(text: &str, dims: usize) -> Option<Vec<Vec<f32>>> {
+ baseResponse = {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3571** (2026-11-17): rust_engine: spann index, filter push-down, unified maintenance accounting (@yingfeng)
 - **PR #3570** (2026-11-16): executor: record each full-text chunk name once, and name the row a MATCH lost (@yingfeng)
 - **PR #3569** (closed): executor: record each full-text chunk name once, and name the row a MATCH lost (@yingfeng)
 - **PR #3568** (2026-11-16): executor: column-wise WHERE/ORDER BY, per-request panic bounds, night… (@yingfeng)
 - **PR #3566** (2026-11-16): executor: carry results as a columnar DataBlock instead of Value rows (@yingfeng)
 - **PR #3565** (2026-11-16): executor: fix the commit/dump deadlock and render insert cells once (@yingfeng)
-- **PR #3564** (2026-11-15): Rust engine: make HNSW usable at 1M rows (memory-segment training, index-only query path, reference-aligned LSG) (@yingfeng)
 
 ---
 
@@ -2001,51 +1595,28 @@ The reference parses/validates/persists `lsg_config` and constructs an
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. invalidate fulltext index reader cache on compact and import commit
+## X. rust_engine: spann index, filter push-down, unified maintenance accounting
 
 **RULE**:
-When implementing operations in `src/storage/new_txn/new_txn_data_impl.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9f807c52`: invalidate fulltext index reader cache on compact and import commit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f16f3c56`: rust_engine: spann index, filter push-down, unified maintenance accounting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/new_txn/new_txn_data_impl.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-import :index_base;
-import create_index_info;
-    {
-        // The imported segment's fulltext index chunks are carried by the import txn store,
-        // not by a WalCmdDumpIndexV2, so the invalidation in PrepareCommitDumpIndex never
-        // fires here: without this, cached readers keep serving a chunk list that misses
-        // the imported segment.
-        std::vector<std::string> *index_id_strs_ptr = nullptr;
-        std::vector<std::string> *index_name_strs_ptr = nullptr;
-        status = table_meta.GetIndexIDs(index_id_strs_ptr, &index_name_strs_ptr);
-        if (!status.ok()) {
-            return status;
-        }
-        size_t index_count = index_id_strs_ptr->size();
-        for (size_t idx = 0; idx < index_count; ++idx) {
-            TableIndexMeta table_index_meta(index_id_strs_ptr->at(idx), index_name_strs_ptr->at(idx), table_meta);
-            auto [index_base, index_status] = table_index_meta.GetIndexBase();
-            if (!index_status.ok()) {
-                return index_status;
-            }
-            if (index_base->index_type_ == IndexType::kFullText) {
-                status = table_meta.InvalidateFtIndexCache();
-                if (!status.ok()) {
-     
+| `ruff`, `ruff-format` | `uvx ruff` (the generated Thrift bindings are excluded) |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+| `ruff`, `ruff-format` | `uvx ruff` |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9f807c52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f16f3c56` are properly handled with clean fallback behavior.

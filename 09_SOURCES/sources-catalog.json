@@ -125,8 +125,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceVersion": "hf-edge0-audio8-asr-infinite",
     "license": "Open-Source",
-    "contentHash": "9c71f232f031bd8abef7a91f189c040557d80e73564de39fe5c81920d0b6e348",
-    "lastHarvestedAt": "2026-11-13T09:56:48.450Z",
+    "contentHash": "e5bd54e00e5904a7608f5f3febd67bb0163342beebf709b22d950505d144eb74",
+    "lastHarvestedAt": "2026-11-17T20:25:24.910Z",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
@@ -5303,10 +5303,10 @@
     "repository": "czy0729/Bangumi",
     "platform": "github",
     "sourceUrl": "https://github.com/czy0729/Bangumi",
-    "sourceVersion": "a8184acd",
+    "sourceVersion": "ad576e32",
     "license": "MIT",
-    "contentHash": "2af58ca950b49fd840bfda2a184b49d215df4d524deedbf0cb2c434a637d4d28",
-    "lastHarvestedAt": "2026-11-14T12:04:13.826Z",
+    "contentHash": "5dd2d236e81f639b77d596357ed11e5ac9a6c2f96a75e4c76c8d2c55bcd46bfe",
+    "lastHarvestedAt": "2026-11-17T20:25:33.109Z",
     "learningId": "learn-github-czy0729-bangumi"
   },
   "aquasecurity-tfsec": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "46dbc57a",
+    "sourceVersion": "f16f3c56",
     "license": "Apache-2.0",
-    "contentHash": "8f9f812ad22e81d3e4844ae053f12f2a11487ee262d9bf8e39529682d1a1f914",
-    "lastHarvestedAt": "2026-11-16T21:55:38.034Z",
+    "contentHash": "d81733dc2b032fcae2f7a1bd1097675f437803a4cf96a233c07383689fb5bdfd",
+    "lastHarvestedAt": "2026-11-17T20:25:38.841Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "a57e2fdc",
+    "sourceVersion": "4122f44f",
     "license": "NOASSERTION",
-    "contentHash": "b1d9abf3e5bbda3730582bf8ebeee6786e9ca44054f38093f3bf88134b05d9e5",
-    "lastHarvestedAt": "2026-11-16T08:11:19.652Z",
+    "contentHash": "adf62c1bd9b075e55b2f9ee619518b1abc063eebe429d862de539b5e0ba4793e",
+    "lastHarvestedAt": "2026-11-17T20:25:26.815Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

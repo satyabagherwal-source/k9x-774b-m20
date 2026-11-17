@@ -4,24 +4,24 @@
 {
   "source_repository": "czy0729/Bangumi",
   "source_url": "https://github.com/czy0729/Bangumi",
-  "source_version": "a8184acd",
+  "source_version": "ad576e32",
   "license": "MIT",
-  "timestamp": "2026-11-14T12:04:14.044Z",
+  "timestamp": "2026-11-17T20:25:33.257Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-czy0729-bangumi",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [czy0729/Bangumi](https://github.com/czy0729/Bangumi) (Revision: `a8184acd`).  
-> **License**: MIT | **Timestamp**: `2026-11-14T12:04:14.044Z`  
+> **Provenance**: Harvested from [czy0729/Bangumi](https://github.com/czy0729/Bangumi) (Revision: `ad576e32`).  
+> **License**: MIT | **Timestamp**: `2026-11-17T20:25:33.257Z`  
 > **Learning ID**: `learn-github-czy0729-bangumi`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), E (Creative Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from czy0729/Bangumi:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T12:04:12.796Z  
+> **Harvest Timestamp**: 2026-11-17T20:25:32.368Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: :electron: An unofficial https://bgm.tv ui first app client for Android and iOS, built with React Native. 一个无广告、以爱好为驱动、不以盈利为目的、专门做 ACG 的类似豆瓣的追番记录，bgm.tv 第三方客户端。为移动端重新设计，内置大量加强的网页端难以实现的功能，且提供了相当的自定义选项。 目前已适配 iOS / Android。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 6243 stars
+- **Stars / Engagement**: 6255 stars
 
 ---
 
@@ -834,6 +834,7 @@ export function textwrapper(
  * @Last Modified by: czy0729
  * @Last Modified time: 2026-09-01 03:00:01
  */
+import { mapStringLeaves } from '@utils/utils'
 import { syncSpacing } from '@utils/async'
 
 import type { ReactElement } from 'react'
@@ -854,11 +855,7 @@ export function optimizeComputeTextStyles(styles: TextStyle) {
 export function formatSpacing(
   children: SpacingChild | SpacingChild[]
 ): SpacingChild | SpacingChild[] {
-  if (typeof children === 'string') return syncSpacing(children)
-
-  if (Array.isArray(children)) return children.map(formatSpacing)
-
-  return children
+  return mapStringLeaves(children, syncSpacing) as SpacingChild | SpacingChild[]
 }
 
 ```
@@ -1219,17 +1216,17 @@ export const useActionSheet = (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #422** (2026-11-17): **passkey登录全流程文档**
+  *Symptoms*: #419  https://github.com/Q16KBreak/Bangumi/tree/docs/passkey-docs/docs/passkey-login
+  **Post-Mortem & Fix Analysis**:
+  > 可以试试这个教程，看看哪里需要补充的
+  > 我猜不行的大概是直接用了没单独授权的，迟点我会搬到语雀，还有给客户端加跳转连接，github 看会太慢
+
 - **Issue #419** (2026-11-11): **- [登录] Passkey支持**
   *Symptoms*: fix #402
   **Post-Mortem & Fix Analysis**:
   > 虽然合并了，但是我手头并不能测，我在ai整理了代码后打包了，可以试试 https://czy0729.lanzoub.com/ij57K4fkiena 
   > > 虽然合并了，但是我手头并不能测，我在ai整理了代码后打包了，可以试试 https://czy0729.lanzoub.com/ij57K4fkiena  UI有点问题，功能没问题 <img width="1080" height="2400" alt="Screenshot_20261113-161003_Bangumi" src="https://github.com/user-attachments/assets/ec946e0b-1d46-49d4-b84a-8cf38f056890" /> 
-
-- **Issue #417** (2026-11-11): **V8.40+版本的ipa，ios15.5闪退无法打开**
-  *Symptoms*: V8.40+版本的ipa，ios15.5闪退无法打开，是否没兼容低版本ios
-  **Post-Mortem & Fix Analysis**:
-  > @czy0729 
-  > 16.4 是 iOS 目前框架要求的最低版本，我基本没有办法能降回去 15
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1246,432 +1243,776 @@ export const useActionSheet = (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f5f8382` (2026-11-11)
-**Commit Message**: - [安卓] 修复带表情的遮幕展开后整段文字段落会出现遮罩错位的问题 (fixed #396)
+### Incident Patch 1: `ad576e32` (2026-11-17)
+**Commit Message**: refactor: 统一空状态展示并整理通用工具
 
-**File**: `src/components/render-html/mask-text/__tests__/utils.test.ts` (modified, +16/-4)
+**File**: `jest/setup.js` (modified, +9/-0)
 ```diff
-@@ -2,7 +2,7 @@
-  * @Author: czy0729
-  * @Date: 2026-05-31 00:00:00
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-09-05 20:29:45
-+ * @Last Modified time: 2026-11-12 06:48:48
-  */
- import React from 'react'
- import { getMaskTextStyle, MASK_BACKGROUND_COLOR, MASK_TEXT_COLOR, maskRichText } from '../utils'
-@@ -93,6 +93,16 @@ describe('maskRichText', () => {
-     expect(lastStyle(result)).toEqual({ color: MASK_TEXT_COLOR })
-   })
- 
-+  it('展开时给表情 span 固定行高', () => {
-+    const emoji = React.createElement(EmojiText, { index: 38, size: 24 }, '38')
-+
-+    const result = maskRichText([emoji], true, 30) as any[]
-+    const styles = result[0].props.style as any[]
-+
-+    expect(styles[styles.length - 1]).toEqual({ lineHeight: 30 })
-+    expect(styles[styles.length - 2]).toEqual({ color: MASK_TEXT_COLOR })
-+  })
-+
-   it('收起时混合内容中表情替换为全角空白', () => {
-     const children = [
-       '前缀',
-@@ -110,7 +120,7 @@ describe('maskRichText', () => {
-   it('收起与展开保持相同结构', () => {
-     const children = [
-       '前缀',
--      React.createElement('Text', { key: 'link', onPress: jest.fn() }, '链接'),
-+      React.createElement('Text', { key: 'link', onPress: jest.fn() } as any, '链接'),
-       React.createElement('Text', { key: 'br' }, '\n'),
-       React.createElement('Text', { key: 'text' }, '正文')
-     ]
-@@ -119,8 +129,10 @@ describe('maskRichText', () => {
-     const visible = maskRichText(children, true) as any[]
- 
-     expect(hidden).toHaveLength(visible.length)
--    expect(hidden.map(item => (React.isValidElement(item) ? item.props.children : item))).toEqual(
--      visible.map(item => (React.isValidElement(item) ? item.props.children : item))
-+    expect(
-+      hidden.map((item: any) => (React.isValidElement(item) ? (item as any).props.children : item))
-+    ).toEqual(
-+      visible.map((item: any) => (React.isValidElement(item) ? (item as any).props.children : item))
-     )
-   })
- })
+@@ -17,6 +17,15 @@ jest.mock('expo-constants', () => ({
+   getWebViewUserAgentAsync: jest.fn()
+ }))
+ jest.mock('expo-haptics', () => ({}))
++// 覆盖真实 expo-device: 其副作用加载 expo/build/Expo.fx 需要 RN 的 ErrorUtils 全局, node 环境没有;
++// 字段覆盖 src/constants/env.ts 与 home/v2 store 的全部读取
++jest.mock('expo-device', () => ({
++  brand: 'test',
++  deviceYearClass: 2026,
++  modelId: 'test',
++  modelName: 'test',
++  osVersion: '1.0'
++}))
+ jest.mock('mobx', () => ({
+   isObservableArray: () => false
+ }))
 ```
 
-**File**: `src/components/render-html/mask-text/index.tsx` (modified, +6/-6)
+**File**: `src/components/@/react-native-render-html/src/utils.ts` (modified, +2/-5)
 ```diff
-@@ -2,7 +2,7 @@
-  * @Author: czy0729
-  * @Date: 2019-08-14 10:03:12
+@@ -4,6 +4,7 @@
   * @Last Modified by: czy0729
-- * @Last Modified time: 2026-07-16 22:33:44
-+ * @Last Modified time: 2026-11-12 06:48:42
+  * @Last Modified time: 2026-09-01 03:00:01
   */
- import React, { useCallback, useState } from 'react'
- import { observer } from 'mobx-react'
-@@ -22,17 +22,17 @@ function MaskText({ style, children }: Props) {
-   }, [])
++import { mapStringLeaves } from '@utils/utils'
+ import { syncSpacing } from '@utils/async'
  
-   const flattenStyle = _.flatten(style)
--  const childrenValue = maskRichText(children, show)
-+  const lineHeight =
-+    flattenStyle?.lineHeight ||
-+    (flattenStyle?.fontSize ? Math.floor(flattenStyle.fontSize * 1.5) : 0)
-+  const childrenValue = maskRichText(children, show, lineHeight)
- 
-   return (
-     <Text
-       style={stl(
-         flattenStyle,
-         show ? styles.blockTextShow : styles.blockText,
--        flattenStyle?.fontSize &&
--          !flattenStyle?.lineHeight && {
--            lineHeight: Math.floor(flattenStyle.fontSize * 1.5)
--          }
-+        lineHeight ? { lineHeight } : undefined
-       )}
-       onPress={handlePress}
-     >
+ import type { ReactElement } from 'react'
+@@ -24,9 +25,5 @@ export function optimizeComputeTextStyles(styles: TextStyle) {
+ export function formatSpacing(
+   children: SpacingChild | SpacingChild[]
+ ): SpacingChild | SpacingChild[] {
+-  if (typeof children === 'string') return syncSpacing(children)
+-
+-  if (Array.isArray(children)) return children.map(formatSpacing)
+-
+-  return children
++  return mapStringLeaves(children, syncSpacing) as SpacingChild | SpacingChild[]
+ }
 ```
 
-**File**: `src/components/render-html/mask-text/utils.ts` (modified, +22/-6)
+**File**: `src/components/text/__tests__/utils.test.ts` (modified, +9/-2)
 ```diff
 @@ -2,7 +2,7 @@
   * @Author: czy0729
-  * @Date: 2026-02-26 21:45:43
+  * @Date: 2026-08-18 16:30:00
   * @Last Modified by: czy0729
-- * @Last Modified time: 2026-09-05 20:29:39
-+ * @Last Modified time: 2026-11-12 06:48:53
+- * @Last Modified time: 2026-08-18 16:30:00
++ * @Last Modified time: 2026-11-17 06:08:00
   */
- import React from 'react'
- import { IOS, MEIZU } from '@constants'
-@@ -24,8 +24,12 @@ export function getMaskTextStyle(show: boolean): TextStyle {
-   }
- }
  
--export function maskRichText(children: ReactNode, show: boolean): ReactNode {
--  return maskChildren(children, show, getMaskTextStyle(show))
-+export function maskRichText(
-+  children: ReactNode,
-+  show: boolean,
-+  lineHeight: number = 0
-+): ReactNode {
-+  return maskChildren(children, show, getMaskTextStyle(show), lineHeight)
- }
+ // 可变的 theme / setting 状态, 便于用例切换
+@@ -70,9 +70,16 @@ jest.mock('@constants', () => ({
+   WEB: false
+ }))
  
- /** 元素 props 的可访问字段 */
-@@ -35,7 +39,12 @@ type ElementProps = {
-   children?: ReactNode
- }
- 
--function maskChildren(children: ReactNode, show: boolean, style: TextStyle): ReactNode {
-+function maskChildren(
-+  children: ReactNode,
-+  show: boolean,
-+  style: TextStyle,
-+  lineHeight: number
-+): ReactNode {
-   if (children == null || typeof children === 'boolean') return children
- 
-   if (typeof children === 'string' || typeof children === 'number') {
-@@ -47,7 +56,7 @@ function maskChildren(children: ReactNode, show: boolean, style: TextStyle): Rea
-   }
- 
-   if (Array.isArray(children))
--    return (children as ReactNode[]).map(item => maskChildren(item, show, style))
-+    return (children as ReactNode[]).map(item => maskChildren(item, show, style, lineHeight))
- 
-   if (React.isValidElement(children)) {
-     const element = children as ReactElement<ElementProps>
-@@ -64,8 +73,15 @@ function maskChildren(children: ReactNode, show: boolean, style: TextStyle): Rea
-     } = {}
- 
-     if (element.type !== React.Fragment) nextProps.style = [props.style, style]
++const mockMapStringLeaves = (children, transform) => {
++  if (typeof children === 'string') return transform(children)
++  if (Array.isArray(children)) return children.map(item => mockMapStringLeaves(item, transform))
++  return children
++}
 +
-+    // 安卓展开态固定表情 span 行高
-+    if (show && !IOS && element.type === EmojiText && lineHeight > 0) {
-+      nextProps.style = [props.style, style, { lineHeight }]
-+    }
-+
-     if (!show && props.onPress) nextProps.onPress = undefined
--    if ('children' in props) nextProps.children = maskChildren(props.children, show, style)
-+    if ('children' in props)
-+      nextProps.children = maskChildren(props.children, show, style, lineHeight)
+ jest.mock('@utils', () => ({
+   setDefaultProps: jest.fn(),
+-  titleCase: str => (str ? str[0].toUpperCase() + str.slice(1) : str)
++  titleCase: str => (str ? str[0].toUpperCase() + str.slice(1) : str),
++  mapStringLeaves: mockMapStringLeaves
+ }))
  
-     return React.cloneElement(element, nextProps as Record<string, unknown>)
-   }
+ jest.mock('@utils/thirdParty/open-cc', () => ({
+```
+
+**File**: `src/components/text/utils.ts` (modified, +3/-11)
+```diff
+@@ -6,7 +6,7 @@
+  */
+ import { Text, TextInput } from 'react-native'
+ import { _ } from '@stores'
+-import { setDefaultProps, titleCase } from '@utils'
++import { mapStringLeaves, setDefaultProps, titleCase } from '@utils'
+ import { s2t } from '@utils/thirdParty/open-cc'
+ import { spacing } from '@utils/thirdParty/pangu-lite'
+ import { IOS, WEB } from '@constants'
+@@ -43,20 +43,12 @@ export function computedLineHeight(
+ 
+ /** 文字递归简转繁 */
+ export function formatS2T(children: TextProps['children']): ReactNode {
+-  if (typeof children === 'string') return s2t(children)
+-
+-  if (Array.isArray(children)) return (children as ReactNode[]).map(item => formatS2T(item))
+-
+-  return children
++  return mapStringLeaves(children, s2t)
+ }
+ 
+ /** 文字递归文案排版 */
+ export function formatSpacing(children: TextProps['children']): ReactNode {
+-  if (typeof children === 'string') return spacing(children)
+-
+-  if (Array.isArray(children)) return (children as ReactNode[]).map(item => formatSpacing(item))
+-
+-  return children
++  return mapStringLeaves(children, spacing)
+ }
+ 
+ /**
+```
+
+**File**: `src/config/app.ts` (modified, +3/-0)
+```diff
+@@ -18,6 +18,9 @@ export const INIT_DEV_DARK = ''
+ /** BottomTabNavigator 初始路由 */
+ export const INIT_ROUTE = 'Home'
+ 
++/** 根 Stack 首屏名 (包裹 BottomTabNavigator, 由 native-stacks 注册) */
++export const ROUTE_HOME_TAB = 'HomeTab'
++
+ /** 是否带字体打包 */
+ export const FONT_FAMILY = true
+ 
+```
+
+**File**: `src/config/routes.ts` (modified, +2/-2)
+```diff
+@@ -8,11 +8,11 @@
+  */
+ import type { Configs } from '@types'
+ 
+-import { DEV } from './dev'
++import { ROUTE_HOME_TAB } from './app'
+ 
+ /** 路由覆盖配置 */
+ const CONFIGS: Configs = {
+-  initialRouteName: DEV ? 'HomeTab' : 'HomeTab',
++  initialRouteName: ROUTE_HOME_TAB,
+   initialRouteParams: {
+     // subjectId: 552533
+     // topicId: 'group/438017'
+```
+
+**File**: `src/navigations/bottom-tab-navigator/utils.tsx` (modified, +28/-39)
+```diff
+@@ -4,56 +4,45 @@
+  * @Last Modified by: czy0729
+  * @Last Modified time: 2025-03-06 17:47:41
+  */
+-import React from 'react'
+ import { systemStore } from '@stores'
+ import { Discovery, Home, Rakuen, Timeline, Tinygrail, User } from '@screens'
++import { INIT_ROUTE } from '@src/config'
+ import TabBar from '../tab-bar'
++import { BOTTOM_TABS } from '../tab-bar/config'
+ 
+ export const renderTabBar = (props: any) => <TabBar {...props} />
+ 
++/** Tab 名 → 屏幕组件 */
++const TAB_COMPONENTS = {
++  Discovery,
++  Timeline,
++  Home,
++  Rakuen,
++  User,
++  Tinygrail
++}
++
+ /** 启动默认 BottomTab 路由 */
+ export function getInitialRouteName() {
+-  const initialPage = systemStore.setting.initialPage || 'Home'
++  const initialPage = systemStore.setting.initialPage || INIT_ROUTE
+   let initialRouteName = systemStore.setting.homeRenderTabs.includes(initialPage)
+     ? initialPage
+-    : 'Home'
+-  if (!systemStore.setting.tinygrail && initialRouteName === 'Tinygrail') initialRouteName = 'Home'
++    : INIT_ROUTE
++  if (!systemStore.setting.tinygrail && initialRouteName === 'Tinygrail') {
++    initialRouteName = INIT_ROUTE
++  }
+   return initialRouteName
+ }
+ 
+-export const getTabConfig = (isTinygrailEnabled: boolean) => [
+-  {
+-    name: 'Discovery',
+-    component: Discovery,
+-    showCondition: (homeRenderTabs: string[]) => homeRenderTabs.includes('Discovery')
+-  },
+-  {
+-    name: 'Timeline',
+-    component: Timeline,
+-    showCondition: (homeRenderTabs: string[]) => homeRenderTabs.includes('Timeline')
+-  },
+-  {
+-    name: 'Home',
+-    component: Home,
+-    showCondition: () => true
+-  },
+-  {
+-    name: 'Rakuen',
+-    component: Rakuen,
+-    showCondition: (homeRenderTabs: string[]) => homeRenderTabs.includes('Rakuen')
+-  },
+-  {
+-    name: 'User',
+-    component: User,
+-    showCondition: () => true
+-  },
+-  {
+-    name: 'Tinygrail',
+-    component: Tinygrail,
++/** 由 BOTTOM_TABS 派生屏幕挂载配置 (顺序即展示顺序, 显示条件与初始参数在此层注入) */
++export const getTabConfig = (isTinygrailEnabled: boolean) =>
++  BOTTOM_TABS.map(tab => ({
++    name: tab.name,
++    component: TAB_COMPONENTS[tab.name],
+     showCondition: (homeRenderTabs: string[]) =>
+-      homeRenderTabs.includes('Tinygrail') && isTinygrailEnabled,
+-    initialParams: {
+-      fromBottomTab: true
+-    }
+-  }
+-]
++      tab.fixed ||
++      (tab.name === 'Tinygrail'
++        ? homeRenderTabs.includes(tab.name) && isTinygrailEnabled
++        : homeRenderTabs.includes(tab.name)),
++    initialParams: tab.name === 'Tinygrail' ? { fromBottomTab: true } : undefined
++  }))
+```
+
+**File**: `src/navigations/native-stacks/index.tsx` (modified, +3/-3)
+```diff
+@@ -12,7 +12,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
+ import { urlStringify } from '@utils'
+ import { DEV } from '@constants'
+ import * as Screens from '@screens'
+-import navigationsParams from '@src/config'
++import navigationsParams, { ROUTE_HOME_TAB } from '@src/config'
+ import BottomTabNavigator from '../bottom-tab-navigator'
+ import NavigationContainer from '../navigation-container'
+ import { getOptions, getScreenOptions, Placeholder, useAutoHideSplashScreen } from './utils'
+@@ -30,7 +30,7 @@ function NativeStacks({ isLoadingComplete }: { isLoadingComplete: boolean }) {
+   const isReady = isLoadingComplete && hideSplashScreen
+ 
+   /** 开发环境且初始路由不是首页 */
+-  const isDevNonHomeStart = DEV && initialRouteName !== 'HomeTab'
++  const isDevNonHomeStart = DEV && initialRouteName !== ROUTE_HOME_TAB
+ 
+   /** 开发时跳过首页注册 (此时不能 navigate 到 HomeTab) */
+   const skipHomeTab = isDevNonHomeStart && !!initialRouteName
+@@ -69,7 +69,7 @@ function NativeStacks({ isLoadingComplete }: { isLoadingComplete: boolean }) {
+         screenOptions={getScreenOptions(isFullScreen)}
+         initialRouteName={initialRouteName}
+       >
+-        {!skipHomeTab && <Stack.Screen name='HomeTab' getComponent={handleGetComponent} />}
++        {!skipHomeTab && <Stack.Screen name={ROUTE_HOME_TAB} getComponent={handleGetComponent} />}
+         {elScreens}
+       </Stack.Navigator>
+     </NavigationContainer>
 ```
 
 ---
 
-### Incident Patch 2: `a4e9dabe` (2026-11-11)
-**Commit Message**: - [时光机] 重写网站评分排序改为批量读取评分，修复切换排序后不重排、翻页失效 (fixed #384)
+### Incident Patch 2: `1ab2ce0b` (2026-11-17)
+**Commit Message**: - [安卓] Passkey 登录在 ECH 代理下改为弹窗引导切换直连，并修复部分机型校验失败的问题
 
-**File**: `packages/ios/package.json` (modified, +6/-3)
+**File**: `android/app/src/main/java/com/czy0729/bangumi/passkey/BangumiPasskeyModule.java` (modified, +2/-1)
 ```diff
-@@ -95,6 +95,7 @@
-     "@typescript-eslint/eslint-plugin": "^8.59.0",
-     "@typescript-eslint/parser": "^8.59.0",
-     "babel-plugin-module-resolver": "^5.0.2",
-+    "babel-preset-expo": "~58.0.24",
-     "cheerio": "1.0.0",
-     "cheerio-without-node-native": "0.20.2",
-     "crypto-js": "^4.2.0",
-@@ -111,8 +112,7 @@
-     "prettier": "^2.6.2",
-     "protobufjs": "^8.8.0",
-     "stream-browserify": "^3.0.0",
--    "typescript": "^6.0.3",
--    "babel-preset-expo": "~58.0.24"
-+    "typescript": "^6.0.3"
-   },
-   "expo": {
-     "autolinking": {
-@@ -124,5 +124,8 @@
-       }
+@@ -115,7 +115,8 @@ public void onSuccess(String json) {
+                             return;
+                         }
+                         try {
+-                            String verified = PasskeyProtocol.validateResponse(json, operation.request);
++                            String verified = PasskeyProtocol.validateResponse(
++                                    json, operation.request, getReactApplicationContext().getPackageName());
+                             finish(operation, verified, null);
+                         } catch (Exception ignored) {
+                             finish(operation, null, "E_PASSKEY_INVALID_RESPONSE");
+```
+
+**File**: `android/app/src/main/java/com/czy0729/bangumi/passkey/PasskeyProtocol.java` (modified, +11/-5)
+```diff
+@@ -110,7 +110,7 @@ static Request parseRequest(String json) throws Exception {
      }
-   },
--  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
-+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
-+  "engines": {
-+    "node": ">=22.13.0"
+ 
+     /** Does not verify the signature: that must be verified by bgm.tv, which owns the public key. */
+-    static String validateResponse(String json, Request request) throws Exception {
++    static String validateResponse(String json, Request request, String packageName) throws Exception {
+         JSONObject credential = object(json);
+         require("public-key".equals(string(credential, "type")));
+         String id = canonical(string(credential, "id"));
+@@ -156,13 +156,19 @@ static String validateResponse(String json, Request request) throws Exception {
+         require(ORIGIN.equals(string(clientData, "origin")));
+         if (clientData.has("crossOrigin")) require(Boolean.FALSE.equals(clientData.get("crossOrigin")));
+         require(!clientData.has("topOrigin"));
++
++        // Keyguard includes the calling package even when signing our supplied clientDataHash.
++        // Check the runtime package name, including any build variant suffix.
++        if (clientData.has("androidPackageName")) {
++            require(string(clientData, "androidPackageName").equals(packageName));
++        }
++
+         if (!MessageDigest.isEqual(sha256(clientDataBytes), request.clientDataHash)) {
+-            // Provider may sign the caller-supplied hash while returning its own serialization.
+-            // Only the exact bytes handed to the provider keep that signature valid, so restore
+-            // them, and only when the returned document has no field we did not generate.
++            // Providers may sign our supplied hash while returning a different serialization.
++            // Restore the exact bytes after checking all fields, including the optional package.
+             Iterator<String> clientDataKeys = clientData.keys();
+             while (clientDataKeys.hasNext()) {
+-                require(Arrays.asList("type", "challenge", "origin", "crossOrigin")
++                require(Arrays.asList("type", "challenge", "origin", "crossOrigin", "androidPackageName")
+                         .contains(clientDataKeys.next()));
+             }
+             response.put("clientDataJSON", encode(request.clientDataJson.getBytes(StandardCharsets.UTF_8)));
+```
+
+**File**: `src/screens/login/v2/passkey/direct.ts` (added, +59/-0)
+```diff
+@@ -0,0 +1,59 @@
++/*
++ * @Author: czy0729
++ * @Date: 2026-11-17
++ *
++ * Passkey 登录的直连辅助：默认模式切换与临时直连窗口
++ */
++import { systemStore } from '@stores'
++import { feedback } from '@utils'
++import {
++  disableEchProxy,
++  enableEchProxy,
++  isEchProxyRunning,
++  setEchAutoRestorePaused
++} from '@utils/proxy/ech'
++
++/** 空恢复函数 (无需变更网络时使用) */
++const noopRestore = async () => {}
++
++/**
++ * 把默认代理模式切换为直连 (永久, 可在「设置 → 代理」改回)
++ * 行为对齐设置页 useProxyMode.setProxyMode('disabled'), 但不依赖组件
++ */
++export async function switchDefaultToDirect(): Promise<void> {
++  feedback(true)
++
++  if (systemStore.setting.echProxyEnabled) {
++    await disableEchProxy()
++    systemStore.switchSetting('echProxyEnabled')
 +  }
++
++  if (!systemStore.setting.workerProxyDisabled) {
++    systemStore.switchSetting('workerProxyDisabled')
++  }
++}
++
++/**
++ * 开启临时直连窗口, 登录结束自动恢复, 不修改默认设置
++ * - ECH 接管中: 先暂停生命周期自动重建再停掉本地代理, 请求才能直达 bgm.tv
++ * - 仅镜像 / 反代开启: direct 请求本来不经它, 无需变更网络
++ *
++ * 返回恢复函数, 无论登录成败都必须调用一次
++ */
++export async function beginTempDirect(): Promise<() => Promise<void>> {
++  const wasRunning = isEchProxyRunning()
++  const echSettingEnabled = systemStore.setting.echProxyEnabled === true
++
++  if (!wasRunning && !echSettingEnabled) return noopRestore
++
++  // 暂停自动重建, 防止切后台选凭据回来时代理被中途拉起
++  setEchAutoRestorePaused(true)
++
++  if (wasRunning) await disableEchProxy()
++
++  return async () => {
++    // enable 失败时内部自行回滚并返回 0, 下次回前台由生命周期自动重建
++    if (wasRunning) await enableEchProxy()
++    setEchAutoRestorePaused(false)
++  }
++}
+```
+
+**File**: `src/screens/login/v2/passkey/guard.ts` (modified, +27/-7)
+```diff
+@@ -1,11 +1,12 @@
+ /*
+  * @Author: Q16KBreak
+  * @Date: 2026-11-11
+- * @Last Modified by: Q16KBreak
+- * @Last Modified time: 2026-11-11 23:10:00
++ * @Last Modified by: czy0729
++ * @Last Modified time: 2026-11-17
+  *
+  * Passkey 登录的直连门禁：请求必须直达 bgm.tv，不能被节点反代改写地址或请求头
+  */
++import { syncSystemStore } from '@utils/async'
+ import { getProxyStrategy } from '@utils/proxy'
+ import { passkeyFailure } from './errors'
+ 
+@@ -16,22 +17,41 @@ type DirectState = {
+ 
+   /** 策略读取是否失败 */
+   failed: boolean
++
++  /** ECH 本地代理是否接管中 (临时直连需要停掉它) */
++  echRunning: boolean
+ }
+ 
+ /** 读取当前代理策略 */
+ function readDirectState(): DirectState {
+   try {
+     const { disabled, ech } = getProxyStrategy()
++    // 设置态也算非直连: echProxyEnabled 开但进程没起来时, 生命周期可能在登录中途把代理拉起
++    const echSettingEnabled = syncSystemStore()?.setting?.echProxyEnabled === true
+ 
+-    return { direct: disabled && !ech, failed: false }
++    return {
++      direct: disabled && !ech && !echSettingEnabled,
++      failed: false,
++      echRunning: ech
++    }
+   } catch {
+-    return { direct: false, failed: true }
++    return { direct: false, failed: true, echRunning: false }
+   }
+ }
+ 
+-/** 非直连模式拒绝发起登录 */
+-export function assertPasskeyDirect() {
++/** 读取 Passkey 登录的直连状态 (不抛错, 供 UI 询问用户) */
++export function getPasskeyDirectState(): DirectState {
++  return readDirectState()
++}
++
++/**
++ * 非直连模式拒绝发起登录
++ *
++ * @param options.tempDirect 临时直连窗口内跳过模式检查
++ * (ECH 已停掉; 镜像 / 反代只改写 axiosWithProxy 路径, direct 请求本来不经它)
++ */
++export function assertPasskeyDirect(options: { tempDirect?: boolean } = {}) {
+   const { direct, failed } = readDirectState()
+   if (failed) throw passkeyFailure('E_PASSKEY_FAILED')
+-  if (!direct) throw passkeyFailure('E_PASSKEY_PROXY')
++  if (!direct && !options.tempDirect) throw passkeyFailure('E_PASSKEY_PROXY')
  }
 ```
 
-**File**: `src/components/loading/index.tsx` (modified, +2/-3)
+**File**: `src/screens/login/v2/passkey/hooks.ts` (modified, +99/-28)
 ```diff
-@@ -4,7 +4,6 @@
+@@ -2,12 +2,16 @@
+  * @Author: Q16KBreak
+  * @Date: 2026-11-01
   * @Last Modified by: czy0729
-  * @Last Modified time: 2026-07-26 04:19:30
+- * @Last Modified time: 2026-11-11 21:16:27
++ * @Last Modified time: 2026-11-17 00:00:00
+  *
+  * Passkey 登录编排：独立会话、单次用户交互、取消和离页后作废
   */
--import React from 'react'
- import { ActivityIndicator } from 'react-native'
- import { observer } from 'mobx-react'
- import { _ } from '@stores'
-@@ -25,10 +24,10 @@ const Raw = observer(({ color, size = 'large' }: LoadingProps) => {
- })
+ import { useCallback, useEffect, useRef, useState } from 'react'
++import { Alert } from 'react-native'
++import { syncS2T } from '@utils/async'
++import { switchDefaultToDirect } from './direct'
+ import { passkeyErrorMessage, passkeyFailure } from './errors'
++import { getPasskeyDirectState } from './guard'
+ import { cancelPasskeyAssertion, canUsePasskey, isPasskeyModuleAvailable } from './native'
+ import { runPasskeyLogin } from './run'
  
- /** Loading (中) */
--const Normal = observer(({ color, size = 'small' }: LoadingProps) => {
-+const Normal = observer(({ style, color, size = 'small' }: LoadingProps) => {
-   r(COMPONENT)
+@@ -74,38 +78,105 @@ export function usePasskeyLogin(params: PasskeyLoginParams): PasskeyLoginView {
+         throw passkeyFailure('E_PASSKEY_CANCELLED')
+       }
+     }
++    const release = () => {
++      if (runId.current !== id) return
++      busy.current = false
++      latest.current.loginLock.current = false
++      if (mounted.current) setLoading(false)
++    }
++
++    const startRun = async (tempDirect: boolean) => {
++      // 弹窗期间可能已离页或取消, 失效则只释放占用的锁
++      if (!mounted.current || runId.current !== id) {
++        release()
++        return
++      }
++      setMessage('正在准备 Passkey 登录...')
++
++      try {
++        await runPasskeyLogin({
++          assertActive,
++          getContext: () => latest.current,
++          onProgress: text => {
++            assertActive()
++            setMessage(text)
++          },
++          onNativeRequest: pending => {
++            if (runId.current === id) nativeRun.current = pending ? id : null
++          },
++          onSuccess: () => {
++            if (runId.current === id) {
++              done.current = true
++              setMessage('')
++            }
++          },
++          tempDirect
++        })
++      } catch (error) {
++        if (mounted.current && runId.current === id) {
++          setMessage(passkeyErrorMessage(error))
++        }
++      } finally {
++        release()
++      }
++    }
++
++    // 先置 loading, 弹窗期间密码登录按钮呈禁用态, 避免静默无响应
+     setLoading(true)
+-    setMessage('正在准备 Passkey 登录...')
+-
+-    try {
+-      await runPasskeyLogin({
+-        assertActive,
+-        getContext: () => latest.current,
+-        onProgress: text => {
+-          assertActive()
+-          setMessage(text)
++
++    const { direct, failed, echRunning } = getPasskeyDirectState()
++    if (direct || failed) {
++      await startRun(false)
++      return
++    }
++
++    // 无需弹窗的非直连场景, 静默以临时直连放行:
++    // - 仅镜像 / 反代: 它只改写 axiosWithProxy 路径, direct 请求本来直达 bgm.tv
++    // - ECH 设置开但进程没起来: 网络层已是直连, beginTempDirect 会暂停生命周期防止登录中途拉起
++    if (!echRunning) {
++      await startRun(true)
++      return
++    }
++
++    // ECH 接管中: OkHttp 全局接管, 必须临时停掉本地代理, 询问本次登录方式
++    setMessage('请在弹窗中选择本次登录方式。')
++    Alert.alert(
++      syncS2T('提示'),
++      syncS2T(
++        'Passkey 登录需要请求直达 bgm.tv，当前处于 ECH 模式。\n' +
++          '\n「本次直连验证」仅在本次登录临时停用 ECH，结束后自动恢复。' +
++          '\n「切换为直连模式」会修改默认设置，可随时在「设置 → 代理」改回。'
++      ),
++      [
++        {
++          text: syncS2T('取消'),
++          style: 'cancel',
++          onPress: () => {
++            release()
++            if (mounted.current) setMessage('')
++          }
+         },
+-        onNativeRequest: pending => {
+-          if (runId.current === id) nativeRun.current = pending ? id : null
++        {
++          text: syncS2T('本次直连验证'),
++          onPress: () => {
++            void startRun(true)
++          }
+         },
+-        onSuccess: () => {
+-          if (runId.current === id) {
+-            done.current = true
+-            setMessage('')
++        {
++          text: syncS2T('切换为直连模式'),
++          onPress: () => {
++            void (async () => {
++              await switchDefaultToDirect()
++              if (mounted.current && runId.current === id) {
++                await startRun(false)
++              } else {
++                release()
++              }
++            })()
+           }
+         }
+-      })
+-    } catch (error) {
+-      if (mounted.current && runId.current === id) {
+-        setMessage(passkeyErrorMessage(error))
+-      }
+-    } finally {
+-      if (runId.current === id) {
+-        busy.current = false
+-        latest.current.loginLock.current = false
+-        if (mounted.current) setLoading(false)
+-      }
+-    }
++      ]
++    )
+   }, [])
  
--  return <ActivityIndicator color={color || _.colorSub} size={size} />
-+  return <ActivityIndicator style={style} color={color || _.colorSub} size={size} />
- })
- 
- /** Loading (中) */
+   return {
 ```
 
-**File**: `src/components/tool-bar/popover/index.tsx` (modified, +40/-13)
+**File**: `src/screens/login/v2/passkey/run.ts` (modified, +45/-28)
 ```diff
-@@ -2,18 +2,20 @@
-  * @Author: czy0729
-  * @Date: 2022-05-05 19:38:11
+@@ -2,11 +2,12 @@
+  * @Author: Q16KBreak
+  * @Date: 2026-11-01
   * @Last Modified by: czy0729
-- * @Last Modified time: 2026-10-30 05:13:51
-+ * @Last Modified time: 2026-11-12 05:20:19
+- * @Last Modified time: 2026-11-11 21:15:55
++ * @Last Modified time: 2026-11-17 00:00:00
+  *
+  * 单次 Passkey 登录管线：可独立测试，完成全部授权后才提交用户状态
   */
-+import { View } from 'react-native'
- import { observer } from 'mobx-react'
- import { _ } from '@stores'
- import { stl } from '@utils'
- import { memoStyles } from '../styles'
- import { Flex } from '../../flex'
- import { Heatmap } from '../../heatmap'
- import { Iconfont } from '../../iconfont'
-+import { Loading } from '../../loading'
- import { Popover } from '../../popover'
- import { Text } from '../../text'
--import { styles as opacityStyles } from './styles'
-+import { styles as localStyles } from './styles'
- 
- import type { PopoverData } from '../../popover'
- import type { Props } from './types'
-@@ -28,25 +30,50 @@ function ToolBarPopover<Data extends PopoverData>({
-   iconSize = 18,
-   type = 'sub',
-   text,
-+  loading,
-+  disabled,
-   heatmap,
-   transparent,
-   onSelect
- }: Props<Data>) {
-   const styles = memoStyles()
- 
-+  const elContent = (
-+    <Flex style={stl(styles.item, transparent && localStyles.opacity, itemStyle)} justify='center'>
-+      {loading ? (
-+        <View style={stl(localStyles.loading, { width: iconSize, height: iconSize })}>
-+          <Loading.Normal style={localStyles.loadingIcon} />
-+        </View>
-+      ) : (
-+        !!icon && <Iconfont name={icon} size={iconSize} color={iconColor} />
-+      )}
-+      {!!text && (
-+        <Text
-+          style={stl((icon || loading) && _.ml.xs)}
-+          type={type}
-+          size={12}
-+          bold
-+          noWrap
-+          selectable={false}
-+        >
-+          {text}
-+        </Text>
-+      )}
-+    </Flex>
-+  )
+ import { saveLoginResult } from '../utils'
++import { beginTempDirect } from './direct'
+ import { passkeyFailure } from './errors'
+ import { assertPasskeyDirect } from './guard'
+ import { canUsePasskey, getPasskeyAssertion, isPasskeyAvailable, isPasskeyOS } from './native'
+@@ -21,44 +22,60 @@ import type { PasskeyRunParams } from './types'
+  * @param getContext 延迟读取的页面上下文
+  * @param onProgress 流程提示
+  * @param onNativeRequest 原生凭据 UI 状态回调
++ * @param tempDirect 临时直连窗口内登录 (绕过门禁, 结束后恢复原代理模式)
+  */
+ export async function runPasskeyLogin({
+   assertActive,
+   getContext,
+   onProgress,
+   onNativeRequest,
+-  onSuccess
++  onSuccess,
++  tempDirect = false
+ }: PasskeyRunParams): Promise<void> {
+   assertActive()
+   if (!canUsePasskey()) throw passkeyFailure('E_PASSKEY_UNSUPPORTED')
+   if (!isPasskeyOS()) throw passkeyFailure('E_PASSKEY_UNSUPPORTED')
+-  assertPasskeyDirect()
++  assertPasskeyDirect({ tempDirect })
+   if (!(await isPasskeyAvailable())) throw passkeyFailure('E_PASSKEY_PROVIDER')
+   assertActive()
+-  const service = new PasskeyLoginService(assertActive)
+-  const options = await service.prepare()
+-  assertActive()
+-  onProgress('请在凭据管理器中信任本应用，选择 bgm.tv 的 Passkey 并完成验证。')
+-  onNativeRequest(true)
+-  let assertion: string
+-  try {
+-    assertion = await getPasskeyAssertion(options)
+-  } finally {
+-    onNativeRequest(false)
 +
-+  if (disabled) {
-+    return (
-+      <View style={stl(styles.touch, style)}>
-+        {elContent}
-+        {!!heatmap && <Heatmap id={heatmap} />}
-+      </View>
-+    )
++  const execute = async (): Promise<void> => {
++    const service = new PasskeyLoginService(assertActive)
++    const options = await service.prepare()
++    assertActive()
++    onProgress('请在凭据管理器中信任本应用，选择 bgm.tv 的 Passkey 并完成验证。')
++    onNativeRequest(true)
++    let assertion: string
++    try {
++      assertion = await getPasskeyAssertion(options)
++    } finally {
++      onNativeRequest(false)
++    }
++    assertActive()
++    onProgress('正在向主站验证 Passkey...')
++    await service.verify(assertion)
++    assertActive()
++    onProgress('正在完成客户端授权...')
++    await service.finish()
++    assertActive()
++    onSuccess()
++    saveLoginResult({
++      cookie: service.cookieString,
++      userAgent: service.userAgent,
++      accessToken: service.accessToken,
++      navigation: getContext().navigation,
++      isSyncSetting: () => getContext().isSyncSetting
++    })
 +  }
 +
-   return (
-     <Popover style={stl(styles.touch, style)} data={data} value={value} onSelect={onSelect}>
--      <Flex
--        style={stl(styles.item, transparent && opacityStyles.opacity, itemStyle)}
--        justify='center'
--      >
--        {!!icon && <Iconfont name={icon} size={iconSize} color={iconColor} />}
--        {!!text && (
--          <Text style={stl(icon && _.ml.xs)} type={type} size={12} bold noWrap selectable={false}>
--            {text}
--          </Text>
--        )}
--      </Flex>
-+      {elContent}
-       {!!heatmap && <Heatmap id={heatmap} />}
-     </Popover>
-   )
-```
-
-**File**: `src/components/tool-bar/popover/styles.ts` (modified, +13/-1)
-```diff
-@@ -2,7 +2,7 @@
-  * @Author: czy0729
-  * @Date: 2022-05-05 19:38:11
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-09-02 23:15:46
-+ * @Last Modified time: 2026-11-12 00:49:54
-  */
- import { _ } from '@stores'
- 
-@@ -11,5 +11,17 @@ export const styles = _.create({
-     marginRight: -24,
-     marginLeft: -8,
-     backgroundColor: 'transparent'
-+  },
-+  loading: {
-+    alignItems: 'center',
-+    justifyContent: 'center',
-+    overflow: 'hidden'
-+  },
-+  loadingIcon: {
-+    transform: [
-+      {
-+        scale: 0.75
-+      }
-+    ]
++  if (tempDirect) {
++    const restore = await beginTempDirect()
++    try {
++      await execute()
++    } finally {
++      await restore()
++    }
++  } else {
++    await execute()
    }
- })
+-  assertActive()
+-  onProgress('正在向主站验证 Passkey...')
+-  await service.verify(assertion)
+-  assertActive()
+-  onProgress('正在完成客户端授权...')
+-  await service.finish()
+-  assertActive()
+-  onSuccess()
+-  saveLoginResult({
+-    cookie: service.cookieString,
+-    userAgent: service.userAgent,
+-    accessToken: service.accessToken,
+-    navigation: getContext().navigation,
+-    isSyncSetting: () => getContext().isSyncSetting
+-  })
+ }
 ```
 
-**File**: `src/components/tool-bar/popover/types.ts` (modified, +6/-0)
+**File**: `src/screens/login/v2/passkey/types.ts` (modified, +3/-0)
 ```diff
-@@ -39,6 +39,12 @@ export type Props<T extends PopoverData> = {
-   /** 按钮文本，false 时不显示文本 */
-   text?: string | number | false
+@@ -94,6 +94,9 @@ export type PasskeyRunParams = {
+   /** 延迟读取导航和同步选项，避免异步闭包过期 */
+   getContext: () => Pick<PasskeyLoginParams, 'navigation' | 'isSyncSetting'>
  
-+  /** 替换左侧图标显示加载指示器 */
-+  loading?: boolean
++  /** 临时直连窗口内登录: 绕过直连门禁, 结束后自动恢复原代理模式 */
++  tempDirect?: boolean
 +
-+  /** 禁止展开菜单 */
-+  disabled?: boolean
+   /** 更新不包含敏感数据的流程提示 */
+   onProgress: (message: string) => void
+ 
+```
+
+**File**: `src/utils/proxy/ech/index.ts` (modified, +12/-0)
+```diff
+@@ -24,6 +24,9 @@ let _running = false
+ /** 生命周期监听是否已注册 */
+ let _lifecycleSetup = false
+ 
++/** 是否暂停后台回前台时的自动重建 (临时直连窗口期间使用) */
++let _autoRestorePaused = false
 +
-   /** 埋点事件 key */
-   heatmap?: EventKeys
+ /**
+  * 启动 ECH 代理
+  * - 在 Android 上启动本地 HTTP 代理进程 (ECH + DoH)
+@@ -119,6 +122,14 @@ export async function getEchProxyLogs(): Promise<EchProxyLog[]> {
+   return nativeGetLogs()
+ }
  
-```
-
-**File**: `src/screens/home/subject/store/fetch/oss.ts` (modified, +5/-1)
-```diff
-@@ -134,7 +134,11 @@ export default class Oss extends Computed {
-         rank: this.subject.rank || '',
-         character: this.crt,
-         staff: this.staff,
--        titleLabel: this.titleLabel
-+        titleLabel: this.titleLabel,
-+        // 与本地 fetchRanks 的判定保持一致: v0 兜底请求失败(name 为空)不算 NSFW
-+        nsfw:
-+          subjectStore.subjectV2(this.subjectId)?.nsfw ||
-+          (this.subject.v0 === true && !!this.subject.name)
-       })
-     }, 10000)
-   }
-```
-
-**File**: `src/screens/home/subject/types.ts` (modified, +1/-0)
-```diff
-@@ -94,6 +94,7 @@ export type SubjectSnapshot = Override<
-     character: Crt[]
-     staff: Staff[]
-     titleLabel: string
-+    nsfw?: boolean
-     _loaded: Loaded
-   }
- >
-```
-
-**File**: `src/screens/user/v2/component/tool-bar/sort.tsx` (modified, +4/-2)
-```diff
-@@ -2,7 +2,7 @@
-  * @Author: czy0729
-  * @Date: 2022-06-06 06:10:32
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-03-22 06:13:47
-+ * @Last Modified time: 2026-11-12 03:59:40
-  */
- import { useMemo } from 'react'
- import { observer } from 'mobx-react'
-@@ -18,7 +18,7 @@ function Sort() {
++/**
++ * 暂停 / 恢复后台回前台时的代理自动重建
++ * - 临时直连窗口 (如 Passkey 登录) 期间暂停, 防止切后台选凭据回来时代理被中途拉起
++ */
++export function setEchAutoRestorePaused(paused: boolean): void {
++  _autoRestorePaused = paused
++}
++
+ /**
+  * 注册 AppState 生命周期监听
+  * - 后台→前台时自动检查 ECH 代理状态，已死则重建
+@@ -131,6 +142,7 @@ export function setupEchLifecycle(): void {
  
-   const memoData = useMemo(() => COLLECTIONS_ORDERBY.map(item => item.label), [])
+   AppState.addEventListener('change', (state: string) => {
+     if (state !== 'active') return
++    if (_autoRestorePaused) return
  
--  const { order } = $.state
-+  const { order, scoreFetching } = $.state
- 
-   return (
-     <ToolBar.Popover
-@@ -27,7 +27,9 @@ function Sort() {
-       icon='md-sort'
-       iconColor={_.colorDesc}
-       text={order ? MODEL_COLLECTIONS_ORDERBY.getLabel<CollectionsOrderCn>(order) : '收藏时间'}
-+      loading={scoreFetching}
-       type='desc'
-+      disabled={scoreFetching}
-       heatmap='我的.筛选选择'
-       onSelect={$.onOrderSelect}
-     />
+     const setting = syncSystemStore()?.setting
+     if (!setting?.echProxyEnabled) return
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #422** (2026-11-17): passkey登录全流程文档 (@Q16KBreak)
 - **PR #419** (2026-11-11): - [登录] Passkey支持 (@Q16KBreak)
 - **PR #412** (closed): feat: 将 unsigned IPA workflow 升级到 Expo 54 (@AvalonUltra)
 - **PR #411** (2026-08-27): fix: 修复 IPA workflow 的 worklets 打包失败 (@AvalonUltra)
 - **PR #398** (2026-07-27): 改正`buildVersion`类型，更新`alt_store.json`版本 (@BrandenXia)
 - **PR #397** (2026-07-26): Update alt_store.json to 8.37.3 (@BrandenXia)
-- **PR #395** (closed): [iOS] 使用系统原生底栏适配 Liquid Glass (@Souitou-iop)
 
 ---
 
@@ -1691,49 +2032,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. - [安卓] 修复带表情的遮幕展开后整段文字段落会出现遮罩错位的问题 (fixed #396)
+## X. 统一空状态展示并整理通用工具
 
 **RULE**:
-When implementing operations in `src/components/render-html/mask-text/__tests__/utils.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `jest/setup.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f5f8382`: - [安卓] 修复带表情的遮幕展开后整段文字段落会出现遮罩错位的问题 (fixed #396). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad576e32`: 统一空状态展示并整理通用工具. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/components/render-html/mask-text/__tests__/utils.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `jest/setup.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
- * @Last Modified time: 2026-11-12 06:48:48
-  it('展开时给表情 span 固定行高', () => {
-    const emoji = React.createElement(EmojiText, { index: 38, size: 24 }, '38')
-
-    const result = maskRichText([emoji], true, 30) as any[]
-    const styles = result[0].props.style as any[]
-
-    expect(styles[styles.length - 1]).toEqual({ lineHeight: 30 })
-    expect(styles[styles.length - 2]).toEqual({ color: MASK_TEXT_COLOR })
-  })
-
-      React.createElement('Text', { key: 'link', onPress: jest.fn() } as any, '链接'),
-    expect(
-      hidden.map((item: any) => (React.isValidElement(item) ? (item as any).props.children : item))
-    ).toEqual(
-      visible.map((item: any) => (React.isValidElement(item) ? (item as any).props.children : item))
+// 覆盖真实 expo-device: 其副作用加载 expo/build/Expo.fx 需要 RN 的 ErrorUtils 全局, node 环境没有;
+// 字段覆盖 src/constants/env.ts 与 home/v2 store 的全部读取
+jest.mock('expo-device', () => ({
+  brand: 'test',
+  deviceYearClass: 2026,
+  modelId: 'test',
+  modelName: 'test',
+  osVersion: '1.0'
+}))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
- * @Last Modified time: 2026-09-05 20:29:45
-      React.createElement('Text', { key: 'link', onPress: jest.fn() }, '链接'),
-    expect(hidden.map(item => (React.isValidElement(item) ? item.props.children : item))).toEqual(
-      visible.map(item => (React.isValidElement(item) ? item.props.children : item))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f5f8382` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad576e32` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
