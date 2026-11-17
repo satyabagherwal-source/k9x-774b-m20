@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T06:20:47.169Z",
-  "total_verified_learnings": 8853,
+  "last_updated": "2026-11-17T06:28:37.143Z",
+  "total_verified_learnings": 8855,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19844,
+  "total_items": 19859,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-O5XD-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-A4S2-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "402d6508537f647fa622845e5c1a50f3cf9ec0dfe860c0053a71667ecd6d5f51",
+      "content_hash": "e6392bca895caf18b6239b373c6b5fea9c16b79300c3256008a1b7871a581ec8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:11:31.981Z"
+      "persisted_at": "2026-11-17T06:28:36.917Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fa25aa047b0a57946ee78e1add8b82ae89faef7ed82edc83a54282d7c31e605f",
+      "content_hash": "44048888777696d2a94934d834301af74e3aa4c0694442d0e3671119af831e40",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:11:32.106Z"
+      "persisted_at": "2026-11-17T06:28:37.028Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "453c365d57fdddded6825dab14948b701f6e9532a6f0a1d5f6fefcbbecd166ab",
+      "content_hash": "1a1c5fa6e88499c79de7a0b6e69e5873aa8722f576b7c96a48c73ac41df70e2d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:11:32.254Z"
+      "persisted_at": "2026-11-17T06:28:37.143Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -265149,6 +265149,232 @@
       "content_hash": "b6a02014d1c1b3d0c53a827b9200cc1ecb8e7bca10c7f150b7de7e1fc166d80e",
       "domain_letter": "G",
       "persisted_at": "2026-11-17T06:20:47.030Z"
+    },
+    "learn-github-cypress-io-cypress": {
+      "learning_id": "learn-github-cypress-io-cypress",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "cypress-io/cypress",
+      "repository": "cypress-io/cypress",
+      "slug": "cypress-io-cypress",
+      "platform": "github",
+      "source_url": "https://github.com/cypress-io/cypress",
+      "source_version": "9962c4fe",
+      "content_hash": "6b3122ddcd6f579dbaded99a31809e867bfb43ac2e619dcb8602d817c00f2de7",
+      "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8891,
+          "title": "update dependency rollup to v4.59.0 [security]",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T06:28:22.621Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8891": {
+      "learning_id": "rule-8891",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8891,
+      "title": "update dependency rollup to v4.59.0 [security]",
+      "source_url": "https://github.com/cypress-io/cypress",
+      "source_version": "9962c4fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:28:22.621Z"
+    },
+    "candidate_directive-update-dependency-rollup-to-v4-59-0-security": {
+      "item_id": "candidate_directive-update-dependency-rollup-to-v4-59-0-security",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9U03-update-dependency-rollup-to-v4-59-0-security.md",
+      "title": "update dependency rollup to v4.59.0 [security]",
+      "repository": "cypress-io/cypress",
+      "source_version": "9962c4fe",
+      "content_hash": "dea2dc0316a27a225b9dc74245c1e6675824c133270da2339cdbefc4cee06c32",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-17T06:28:22.948Z"
+    },
+    "domain_intelligence-design-intelligence-cypress-io-cypress-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-cypress-io-cypress-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-cypress-io-cypress-design-intelligence-cypress-io-cypress-core-invariants.md",
+      "title": "Design Intelligence: cypress-io/cypress Core Invariants",
+      "repository": "cypress-io/cypress",
+      "source_version": "9962c4fe",
+      "content_hash": "38505e3d56db30a6c4c3a1c4aef0b998179f39b548c0884172c22af923c1329c",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-17T06:28:23.064Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/cypress-io-cypress-verification-protocol-empirical-defect-shield-for-cypress-io-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for cypress-io/cypress",
+      "repository": "cypress-io/cypress",
+      "source_version": "9962c4fe",
+      "content_hash": "c3b1e34933e401ce5bd3fd3289a6832a67fb2291a4feeb1c7ab4338c10f08d14",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:28:23.181Z"
+    },
+    "learn-github-gluesql-gluesql": {
+      "learning_id": "learn-github-gluesql-gluesql",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "gluesql/gluesql",
+      "repository": "gluesql/gluesql",
+      "slug": "gluesql-gluesql",
+      "platform": "github",
+      "source_url": "https://github.com/gluesql/gluesql",
+      "source_version": "dda0280a",
+      "content_hash": "9a410d07cd3ae58d1a98aa7bb8cb743b9093ba9ce0914821bdc22255da13b128",
+      "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8892,
+          "title": "Isolate JSON storage error fixtures by scenario",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T06:28:31.195Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8892": {
+      "learning_id": "rule-8892",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8892,
+      "title": "Isolate JSON storage error fixtures by scenario",
+      "source_url": "https://github.com/gluesql/gluesql",
+      "source_version": "dda0280a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:28:31.195Z"
+    },
+    "candidate_directive-isolate-json-storage-error-fixtures-by-scenario": {
+      "item_id": "candidate_directive-isolate-json-storage-error-fixtures-by-scenario",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A4AD-isolate-json-storage-error-fixtures-by-scenario.md",
+      "title": "Isolate JSON storage error fixtures by scenario",
+      "repository": "gluesql-gluesql-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6c604e3068a2f49c13de1d596bf414158311af1287d039ccbf624ed4dcc2b5e3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:28:36.279Z"
+    },
+    "domain_intelligence-architecture-intelligence-gluesql-gluesql-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-gluesql-gluesql-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gluesql-gluesql-architecture-intelligence-gluesql-gluesql-core-invariants.md",
+      "title": "Architecture Intelligence: gluesql/gluesql Core Invariants",
+      "repository": "gluesql/gluesql",
+      "source_version": "dda0280a",
+      "content_hash": "cbeab920b39c00441629baa8fb296a4cb009aaa50f2c23329207fdf6be308e5f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:28:31.635Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-gluesql-gluesql": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gluesql-gluesql",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/gluesql-gluesql-verification-protocol-empirical-defect-shield-for-gluesql-gluesq.md",
+      "title": "Verification Protocol: Empirical Defect Shield for gluesql/gluesql",
+      "repository": "gluesql/gluesql",
+      "source_version": "dda0280a",
+      "content_hash": "abcc3e66d7eadcd01e888f03195f5b844ec0fef87cac1f6f9566bbb32d8e5724",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:28:31.743Z"
+    },
+    "candidate_directive-deps-update-dependency-rollup-to-v4-59-0-security": {
+      "item_id": "candidate_directive-deps-update-dependency-rollup-to-v4-59-0-security",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A3WZ-deps-update-dependency-rollup-to-v4-59-0-security.md",
+      "title": "deps): update dependency rollup to v4.59.0 [security]",
+      "repository": "cypress-io-cypress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cfc34b79558fbe34af03bb8bc6a5e7dd9d2ae75071b5e2551f46784beeaf533f",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-17T06:28:35.796Z"
+    },
+    "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-cypress-io-cypress-learnings-design-intelligence-cypress-io-cypress-learnings-co.md",
+      "title": "Design Intelligence: cypress-io-cypress-learnings Core Invariants",
+      "repository": "cypress-io-cypress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "43aa4ccc03a89dae5512a4ff9deadfbd0615c2b0f91b3ef52d29b3cafaa9bf97",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-17T06:28:35.903Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cypress-io-cypress-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/cypress-io-cypress-learnings-verification-protocol-empirical-defect-shield-for-c.md",
+      "title": "Verification Protocol: Empirical Defect Shield for cypress-io-cypress-learnings",
+      "repository": "cypress-io-cypress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fb0a4025c3b2b6e0294015607fa1b109fc2236bc32228f18aebb26c2f6d319a4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:28:36.014Z"
+    },
+    "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gluesql-gluesql-learnings-architecture-intelligence-gluesql-gluesql-learnings-co.md",
+      "title": "Architecture Intelligence: gluesql-gluesql-learnings Core Invariants",
+      "repository": "gluesql-gluesql-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c9ea87822c46021d2c03000aa3f57829691ba48d28e96f7eaf8eab325da3ae6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:28:36.391Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-gluesql-gluesql-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gluesql-gluesql-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/gluesql-gluesql-learnings-verification-protocol-empirical-defect-shield-for-glue.md",
+      "title": "Verification Protocol: Empirical Defect Shield for gluesql-gluesql-learnings",
+      "repository": "gluesql-gluesql-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1d8d2992c44beacc8f54c81e2395d0132cfc1af2a81b6b4f319c0d8d63c9ca1c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:28:36.504Z"
     }
   },
   "ai-builder-brain": {

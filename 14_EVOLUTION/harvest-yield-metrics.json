@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T06:20:40.410Z",
-  "total_cycles_completed": 10041,
-  "total_learnings_persisted": 10041,
-  "total_rules_promoted": 9630,
+  "last_updated": "2026-11-17T06:28:31.352Z",
+  "total_cycles_completed": 10043,
+  "total_learnings_persisted": 10043,
+  "total_rules_promoted": 9632,
   "history": [
-    {
-      "timestamp": "2026-11-16T05:29:09.045Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T05:41:32.348Z",
-      "repository": "joreilly/Confetti",
-      "learningId": "learn-github-joreilly-confetti",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T05:41:38.506Z",
       "repository": "dragonflydb/dragonfly",
@@ -1403,6 +1389,20 @@
       "repository": "vitest-dev/vitest",
       "learningId": "learn-github-vitest-dev-vitest",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T06:28:22.787Z",
+      "repository": "cypress-io/cypress",
+      "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T06:28:31.352Z",
+      "repository": "gluesql/gluesql",
+      "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

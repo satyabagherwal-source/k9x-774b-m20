@@ -4,45 +4,31 @@
 {
   "source_repository": "gluesql/gluesql",
   "source_url": "https://github.com/gluesql/gluesql",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "dda0280a",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-17T06:28:31.524Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-gluesql-gluesql",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gluesql/gluesql](https://github.com/gluesql/gluesql) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [gluesql/gluesql](https://github.com/gluesql/gluesql) (Revision: `dda0280a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T06:28:31.524Z`  
+> **Learning ID**: `learn-github-gluesql-gluesql`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gluesql/gluesql` (Commit: `historical`)
+- **Target Repository**: `gluesql/gluesql` (Commit: `dda0280a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
-> **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `fce8d5b9`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T01:23:23.139Z  
-> **Learning ID**: `learn-github-gluesql-gluesql`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): gluesql/gluesql
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T01:23:23.132Z  
+> **Harvest Timestamp**: 2026-11-17T06:28:30.487Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: GlueSQL is quite sticky. It sticks to anything.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3136 stars
+- **Stars / Engagement**: 3139 stars
 
 ---
 
@@ -2083,629 +2069,121 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fce8d5b9` (2026-11-11)
-**Commit Message**: Unify Query Builder result assertions (#2075)
+### Incident Patch 1: `dda0280a` (2026-11-16)
+**Commit Message**: Isolate JSON storage error fixtures by scenario (#2081)
 
-Share payload comparison between SQL fixtures and Query Builder cases so
-floating-point results use the same tolerances. Route builder assertions
-through a local test macro and preserve the failing call site.
+Give each error scenario its own fixture directory so schema discovery
+cannot return an unrelated error based on filesystem iteration order.
 
-**File**: `test-suite/src/fixture.rs` (modified, +1/-142)
+**File**: `storages/json-storage/tests/error.rs` (modified, +35/-32)
 ```diff
-@@ -1,5 +1,5 @@
- use {
--    crate::{Tester, test_indexes},
-+    crate::{Tester, test_indexes, tester::assertions::assert_payload},
-     chrono::{NaiveDate, NaiveDateTime, NaiveTime},
-     gluesql_core::{
-         ast::{DataType, IndexOperator},
-@@ -19,8 +19,6 @@ use {
+@@ -4,62 +4,65 @@ use {
+         prelude::{Error, Glue},
+     },
+     gluesql_json_storage::{JsonStorage, error::JsonStorageError},
++    std::path::Path,
+ };
  
- static FIXTURES: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/fixtures");
+ #[test]
+ fn json_error() {
+-    let path = "./tests/samples/";
+-    let json_storage = JsonStorage::new(path).unwrap();
+-    let mut glue = Glue::new(json_storage);
+-
+-    let cases = vec![
++    let cases = [
+         (
+-            glue.execute("SELECT * FROM WrongFormatJsonl"),
+-            Err(ValueError::InvalidJsonString("[".to_owned()).into()),
++            "wrong-format-jsonl",
++            "SELECT * FROM WrongFormatJsonl",
++            ValueError::InvalidJsonString("[".to_owned()).into(),
+         ),
+         (
+-            glue.execute("SELECT * FROM WrongFormatJson"),
+-            Err(Error::StorageMsg(
++            "wrong-format-json",
++            "SELECT * FROM WrongFormatJson",
++            Error::StorageMsg(
+                 JsonStorageError::InvalidJsonContent("WrongFormatJson.json".to_owned()).to_string(),
+-            )),
++            ),
+         ),
+         (
+-            glue.execute("SELECT * FROM WrongSchema"),
+-            Err(Error::Schema(SchemaParseError::CannotParseDDL)),
++            "wrong-schema",
++            "SELECT * FROM WrongSchema",
++            Error::Schema(SchemaParseError::CannotParseDDL),
+         ),
+         (
+-            glue.execute("SELECT * FROM WrongTableName"),
+-            Err(Error::StorageMsg(
+-                JsonStorageError::TableNameDoesNotMatchWithFile.to_string(),
+-            )),
++            "wrong-table-name",
++            "SELECT * FROM WrongTableName",
++            Error::StorageMsg(JsonStorageError::TableNameDoesNotMatchWithFile.to_string()),
+         ),
+         (
+-            glue.execute("SELECT * FROM Duplicated"),
+-            Err(Error::StorageMsg(
++            "duplicated",
++            "SELECT * FROM Duplicated",
++            Error::StorageMsg(
+                 JsonStorageError::BothJsonlAndJsonExist("Duplicated".to_owned()).to_string(),
+-            )),
++            ),
+         ),
+         (
+-            glue.execute("DROP TABLE Duplicated"),
+-            Err(Error::StorageMsg(
++            "duplicated",
++            "DROP TABLE Duplicated",
++            Error::StorageMsg(
+                 JsonStorageError::BothJsonlAndJsonExist("Duplicated".to_owned()).to_string(),
+-            )),
++            ),
+         ),
+         (
+-            glue.execute("SELECT * FROM JsonObjectTypeRequired"),
+-            Err(Error::StorageMsg(
+-                JsonStorageError::JsonObjectTypeRequired.to_string(),
+-            )),
++            "json-object-type-required",
++            "SELECT * FROM JsonObjectTypeRequired",
++            Error::StorageMsg(JsonStorageError::JsonObjectTypeRequired.to_string()),
+         ),
+         (
+-            glue.execute("SELECT * FROM JsonArrayTypeRequired"),
+-            Err(Error::StorageMsg(
+-                JsonStorageError::JsonArrayTypeRequired.to_string(),
+-            )),
++            "json-array-type-required",
++            "SELECT * FROM JsonArrayTypeRequired",
++            Error::StorageMsg(JsonStorageError::JsonArrayTypeRequired.to_string()),
+         ),
+     ];
  
--const F32_TOLERANCE: f64 = 1e-6;
--const F64_TOLERANCE: f64 = 1e-12;
- const F32_DECIMAL_PLACES: usize = 6;
- const F64_DECIMAL_PLACES: usize = 12;
- 
-@@ -144,118 +142,6 @@ where
+-    for (actual, expected) in cases {
+-        assert_eq!(actual.map(|mut payloads| payloads.remove(0)), expected);
++    let samples = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/samples/errors");
++
++    for (directory, sql, expected) in cases {
++        let storage = JsonStorage::new(samples.join(directory)).unwrap();
++        let mut glue = Glue::new(storage);
++        assert_eq!(glue.execute(sql).unwrap_err(), expected, "{sql}");
      }
  }
- 
--fn assert_payload(actual: &Payload, expected: &Payload, context: &str) {
--    match (actual, expected) {
--        (
--            Payload::Select {
--                labels: actual_labels,
--                rows: actual_rows,
--            },
--            Payload::Select {
--                labels: expected_labels,
--                rows: expected_rows,
--            },
--        ) => {
--            pretty_assert_eq!(actual_labels, expected_labels, "{context}\nlabel mismatch");
--            pretty_assert_eq!(
--                actual_rows.len(),
--                expected_rows.len(),
--                "{context}\nrow count mismatch"
--            );
--
--            for (row_index, (actual_row, expected_row)) in
--                actual_rows.iter().zip(expected_rows).enumerate()
--            {
--                pretty_assert_eq!(
--                    actual_row.len(),
--                    expected_row.len(),
--                    "{context}\ncolumn count mismatch in row {row_index}"
--                );
--
--                for (column_index, (actual, expected)) in
--                    actual_row.iter().zip(expected_row).enumerate()
--                {
--                    let label = &expected_labels[column_index];
--                    assert_value(
--                        actual,
--                        expected,
--                        &format!(
--                            "{context}\nvalue mismatch in row {row_index}, column {column_index} ({label})"
--                        ),
--                    );
--                }
--            }
--        }
--        (Payload::SelectMap(actual_rows), Payload::SelectMap(expected_rows)) => {
--            pretty_assert_eq!(
--                actual_rows.len(),
--                expected_rows.len(),
--                "{context}\nrow count mismatch"
--            );
--
--            for (row_index, (actual, expected)) in actual_rows.iter().zip(expected_rows).enumerate()
--            {
--                assert_value(
--                    &Value::Map(actual.clone()),
--                    &Value::Map(expected.clone()),
--                    &format!("{context}\nvalue mismatch in map row {row_index}"),
--                );
--            }
--        }
--        _ => pretty_assert_eq!(actual, expected, "{context}\npayload mismatch"),
--    }
--}
--
--fn assert_value(actual: &Value, expected: &Value, context: &str) {
--    match (actual, expected) {
--        (Value::F32(actual), Value::F32(expected)) => {
--            assert_float(
--                f64::from(*actual),
--                f64::from(*expected),
--                F32_TOLERANCE,
--                context,
--            );
--        }
--        (Value::F64(actual), Value::F64(expected)) => {
--            assert_float(*actual, *expected, F64_TOLERANCE, context);
--        }
--        (Value::Map(actual), Value::Map(expected)) => {
--            let actual_keys = actual.keys().collect::<Vec<_>>();
--            let expected_keys = expected.keys().collect::<Vec<_>>();
--            pretty_assert_eq!(actual_keys, expected_keys, "{context}\nmap key mismatch");
--
--            for (key, expected) in expected {
--                assert_value(&actual[key], expected, &format!("{context}, key {key:?}"));
--            }
--        }
--        (Value::List(actual), Value::List(expected)) => {
--            pretty_assert_eq!(
--                actual.len(),
--                expected.len(),
--                "{context}\nlist length mismatch"
--            );
--
--            for (index, (actual, expected)) in actual.iter().zip(expected).enumerate() {
--                assert_value(actual, expected, &format!("{context}, list index {index}"));
--            }
--        }
--        _ => pretty_assert_eq!(actual, expected, "{context}"),
--    }
--}
--
--fn assert_float(actual: f64, expected: f64, tolerance: f64, context: &str) {
--    let matches = (actual.is_nan() && expected.is_nan())
--        || actual == expected
--        || (actual.is_finite()
--            && expected.is_finite()
--            && (actual - expected).abs() <= tolerance * actual.abs().max(expected.abs()).max(1.0));
--
--    assert!(
--        matches,
--        "{context}\nexpected {expected:?}, found {actual:?}, tolerance {tolerance:e}"
--    );
--}
--
- fn assert_indexes_with_context(
-     statement: &gluesql_core::plan::StatementPlan,
-     indexes: Vec<TableAccessPlan>,
-@@ -1061,33 +947,6 @@ SELECT * FROM Example;
-         assert!(rows.is_empty());
-     }
- 
--    #[test]
--    fn compares_float_values_with_toler
-```
-
-**File**: `test-suite/src/query_builder.rs` (modified, +6/-0)
-```diff
-@@ -1,3 +1,9 @@
-+macro_rules! test {
-+    ($actual:expr, $expected:expr, $name:literal $(,)?) => {
-+        $crate::tester::assertions::assert_result(&$actual, &$expected, &format!($name));
-+    };
-+}
-+
- pub mod alias_as;
- pub mod basic;
- pub mod delete;
-```
-
-**File**: `test-suite/src/query_builder/alias_as.rs` (modified, +26/-21)
-```diff
-@@ -13,7 +13,7 @@ test_case!(alias_as, {
-         .add_column("category_name TEXT")
-         .execute(glue);
-     let expected = Ok(Payload::Create);
--    assert_eq!(actual, expected, "create table - Category");
-+    test!(actual, expected, "create table - Category");
- 
-     // create table - Item
-     let actual = table("Item")
-@@ -24,15 +24,15 @@ test_case!(alias_as, {
-         .add_column("price INTEGER")
-         .execute(glue);
-     let expected = Ok(Payload::Create);
--    assert_eq!(actual, expected, "create table - Item");
-+    test!(actual, expected, "create table - Item");
- 
-     // insert into Category
-     let actual = table("Category")
-         .insert()
-         .values(vec!["1, 'Fruit'", "2, 'Meat'", "3, 'Drink'"])
-         .execute(glue);
-     let expected = Ok(Payload::Insert(3));
--    assert_eq!(actual, expected, "insert into Category");
-+    test!(actual, expected, "insert into Category");
- 
-     // insert into Item
-     let actual = table("Item")
-@@ -46,7 +46,7 @@ test_case!(alias_as, {
-         ])
-         .execute(glue);
-     let expected = Ok(Payload::Insert(5));
--    assert_eq!(actual, expected, "insert into Item");
-+    test!(actual, expected, "insert into Item");
- 
-     // select -> derived subquery
-     let actual = table("Item")
-@@ -63,7 +63,7 @@ test_case!(alias_as, {
-         400        3             "Coffee".to_owned()         25;
-         500        3             "Orange juice".to_owned()   60
-     ));
--    assert_eq!(actual, expected, "select -> derived subquery");
-+    test!(actual, expected, "select -> derived subquery");
- 
-     // select -> filter -> derived subquery
-     let actual = table("Item")
-@@ -77,7 +77,7 @@ test_case!(alias_as, {
-         I64      | I64         | Str                     | I64;
-         300        1             "Strawberry".to_owned()   30
-     ));
--    assert_eq!(actual, expected, "select -> filter -> derived subquery");
-+    test!(actual, expected, "select -> filter -> derived subquery");
- 
-     // select -> project -> derived subquery
-     let actual = table("Item")
-@@ -95,7 +95,7 @@ test_case!(alias_as, {
-         400;
-         500
-     ));
--    assert_eq!(actual, expected, "select -> project -> derived subquery");
-+    test!(actual, expected, "select -> project -> derived subquery");
- 
-     // select -> join(cartesian) -> derived subquery
-     let actual = table("Item")
-@@ -124,8 +124,9 @@ test_case!(alias_as, {
-         500       3             "Orange juice".to_owned()   60      2             "Meat".to_owned();
-         500       3             "Orange juice".to_owned()   60      3             "Drink".to_owned()
-     ));
--    assert_eq!(
--        actual, expected,
-+    test!(
-+        actual,
-+        expected,
-         "select -> join(cartesian) -> derived subquery"
-     );
- 
-@@ -149,7 +150,7 @@ test_case!(alias_as, {
-         "Coffee".to_owned()         "Drink".to_owned();
-         "Orange juice".to_owned()   "Drink".to_owned()
-     ));
--    assert_eq!(actual, expected, "select -> join -> on -> derived subquery");
-+    test!(actual, expected, "select -> join -> on -> derived subquery");
- 
-     // select -> join -> hash -> derived subquery
-     let actual = table("Item")
-@@ -170,8 +171,9 @@ test_case!(alias_as, {
-         "Coffee".to_owned()         "Drink".to_owned();
-         "Orange juice".to_owned()   "Drink".to_owned()
-     ));
--    assert_eq!(
--        actual, expected,
-+    test!(
-+        actual,
-+        expected,
-         "select -> join -> hash -> derived subquery"
-     );
- 
-@@ -192,8 +194,9 @@ test_case!(alias_as, {
-         "Meat".to_owned();
-         "Drink".to_owned()
-     ));
--    assert_eq!(
--        actual, expected,
-+    test!(
-+        actual,
-+        expected,
-         "select -> project -> derived subquery -> select -> group_by -> derived subquery"
-     );
- 
-@@ -213,8 +216,9 @@ test_case!(alias_as, {
-         Str;
-         "Meat".to_owned()
-     ));
--    assert_eq!(
--        actual, expected,
-+    test!(
-+        actual,
-+        expected,
-         "select -> project -> derived subquery -> select -> group_by -> having -> derived subquery"
-     );
- 
-@@ -234,7 +238,7 @@ test_case!(alias_as, {
-         300        1             "Strawberry".to_owned()     30;
-         400        3             "Coffee".to_owned()         25
-     ));
--    assert_eq!(actual, expected, "select -> order_by -> derived subquery");
-+    test!(actual, expected, "select -> order_by -> derived subquery");
- 
-     // select -> offset -> derived subquery
-     let actual = table("Item")
-@@ -248,7 +252,7 @@ test_case!(alias_as, {
-         I64      | I64         | Str                       | I64;
-         500        3             "Orange juice".to_owned()   60
-     ));
--    assert_eq!(actual, expected, "select -> offset -> derived subquery");
-+    test!(actual, expected, "select -> offset -> derived subquery");
- 
-     // select -> limit -> derived subquery
-     let actual = table("Item")
-@@ -262,7 +266,7 @@ test_case!(alias_as, {
-         I64      | I64    
-```
-
-**File**: `test-suite/src/query_builder/basic.rs` (modified, +9/-9)
-```diff
-@@ -12,7 +12,7 @@ test_case!(basic, {
-         .add_column("name TEXT")
-         .execute(glue);
-     let expected = Ok(Payload::Create);
--    assert_eq!(actual, expected, "create table");
-+    test!(actual, expected, "create table");
- 
-     let actual = table("Foo")
-         .insert()
-@@ -23,7 +23,7 @@ test_case!(basic, {
-         ])
-         .execute(glue);
-     let expected = Ok(Payload::Insert(2));
--    assert_eq!(actual, expected, "insert");
-+    test!(actual, expected, "insert");
- 
-     let actual = table("Foo").select().project("id, name").execute(glue);
-     let expected = Ok(select!(
-@@ -32,15 +32,15 @@ test_case!(basic, {
-         100   "Pickle".to_owned();
-         200   "Lemon".to_owned()
-     ));
--    assert_eq!(actual, expected, "select");
-+    test!(actual, expected, "select");
- 
-     let actual = table("Foo")
-         .update()
-         .filter(col("id").eq(200))
-         .set("id", col("id").mul(2))
-         .execute(glue);
-     let expected = Ok(Payload::Update(1));
--    assert_eq!(actual, expected, "update");
-+    test!(actual, expected, "update");
- 
-     let actual = table("Foo")
-         .select()
-@@ -52,31 +52,31 @@ test_case!(basic, {
-         I64 | Str;
-         400   "Lemon".to_owned()
-     ));
--    assert_eq!(actual, expected, "select after update");
-+    test!(actual, expected, "select after update");
- 
-     let actual = table("Foo")
-         .delete()
-         .filter(col("id").gt(200))
-         .execute(glue);
-     let expected = Ok(Payload::Delete(1));
--    assert_eq!(actual, expected, "delete");
-+    test!(actual, expected, "delete");
- 
-     let actual = table("Foo").select().execute(glue);
-     let expected = Ok(select!(
-         id  | name
-         I64 | Str;
-         100   "Pickle".to_owned()
-     ));
--    assert_eq!(actual, expected, "select after delete");
-+    test!(actual, expected, "select after delete");
- 
-     let actual = table("Foo").drop_table().execute(glue);
-     let expected = Ok(Payload::DropTable(1));
--    assert_eq!(actual, expected, "drop table");
-+    test!(actual, expected, "drop table");
- 
-     let actual = table("Foo")
-         .select()
-         .filter(num("NAN").gt(300))
-         .execute(glue);
-     let expected = Err(QueryBuilderError::FailedToParseNumeric("NAN".to_owned()).into());
--    assert_eq!(actual, expected, "error");
-+    test!(actual, expected, "error");
- });
-```
-
-**File**: `test-suite/src/query_builder/delete.rs` (modified, +7/-7)
-```diff
-@@ -13,7 +13,7 @@ test_case!(delete, {
-         .add_column("flag BOOLEAN")
-         .execute(glue);
-     let expected = Ok(Payload::Create);
--    assert_eq!(actual, expected, "create table - Foo");
-+    test!(actual, expected, "create table - Foo");
- 
-     let actual = table("Foo")
-         .insert()
-@@ -24,7 +24,7 @@ test_case!(delete, {
-         ])
-         .execute(glue);
-     let expected = Ok(Payload::Insert(3));
--    assert_eq!(actual, expected, "insert into Foo");
-+    test!(actual, expected, "insert into Foo");
- 
-     let actual = table("Foo").select().execute(glue);
-     let expected = Ok(select!(
-@@ -34,15 +34,15 @@ test_case!(delete, {
-         2     300     false;
-         3     700     true
-     ));
--    assert_eq!(actual, expected, "select * from Foo");
-+    test!(actual, expected, "select * from Foo");
- 
-     // delete using filter
-     let actual = table("Foo")
-         .delete()
-         .filter(col("flag").eq(false))
-         .execute(glue);
-     let expected = Ok(Payload::Delete(1));
--    assert_eq!(actual, expected, "delete using filter");
-+    test!(actual, expected, "delete using filter");
- 
-     let actual = table("Foo").select().execute(glue);
-     let expected = Ok(select!(
-@@ -51,17 +51,17 @@ test_case!(delete, {
-         1     100     true;
-         3     700     true
-     ));
--    assert_eq!(actual, expected, "select * from Foo");
-+    test!(actual, expected, "select * from Foo");
- 
-     // delete all
-     let actual = table("Foo").delete().execute(glue);
-     let expected = Ok(Payload::Delete(2));
--    assert_eq!(actual, expected, "delete all");
-+    test!(actual, expected, "delete all");
- 
-     let actual = table("Foo").select().execute(glue);
-     let expected = Ok(Payload::Select {
-         labels: vec!["id".to_owned(), "score".to_owned(), "flag".to_owned()],
-         rows: vec![],
-     });
--    assert_eq!(actual, expected, "select * from Foo");
-+    test!(actual, expected, "select * from Foo");
- });
-```
-
-**File**: `test-suite/src/query_builder/expr/pattern_matching.rs` (modified, +10/-10)
-```diff
-@@ -13,15 +13,15 @@ test_case!(pattern_matching, {
-         .add_column("name TEXT")
-         .execute(glue);
-     let expected = Ok(Payload::Create);
--    assert_eq!(actual, expected, "create table - Category");
-+    test!(actual, expected, "create table - Category");
- 
-     // insert into Category
-     let actual = table("Category")
-         .insert()
-         .values(vec!["1, 'Meat'", "2, 'meat'", "3, 'Drink'", "4, 'drink'"])
-         .execute(glue);
-     let expected = Ok(Payload::Insert(4));
--    assert_eq!(actual, expected, "insert into - Category");
-+    test!(actual, expected, "insert into - Category");
- 
-     // like
-     let actual = table("Category")
-@@ -38,7 +38,7 @@ test_case!(pattern_matching, {
-         1     "Meat".to_owned();
-         3     "Drink".to_owned()
-     ));
--    assert_eq!(actual, expected, "like");
-+    test!(actual, expected, "like");
- 
-     // ilike
-     let actual = table("Category")
-@@ -57,7 +57,7 @@ test_case!(pattern_matching, {
-         3     "Drink".to_owned();
-         4     "drink".to_owned()
-     ));
--    assert_eq!(actual, expected, "ilike");
-+    test!(actual, expected, "ilike");
- 
-     // not_like
-     let actual = table("Category")
-@@ -74,7 +74,7 @@ test_case!(pattern_matching, {
-         2     "meat".to_owned();
-         4     "drink".to_owned()
-     ));
--    assert_eq!(actual, expected, "not_like");
-+    test!(actual, expected, "not_like");
- 
-     // not_ilike
-     let actual = table("Category")
-@@ -89,7 +89,7 @@ test_case!(pattern_matching, {
-         labels: vec!["id".to_owned(), "name".to_owned()],
-         rows: vec![],
-     });
--    assert_eq!(actual, expected, "not_ilike");
-+    test!(actual, expected, "not_ilike");
- 
-     // regex
-     let actual = table("Category")
-@@ -101,7 +101,7 @@ test_case!(pattern_matching, {
-         I64 | Str;
-         1     "Meat".to_owned()
-     ));
--    assert_eq!(actual, expected, "regex");
-+    test!(actual, expected, "regex");
- 
-     // iregex
-     let actual = table("Category")
-@@ -114,7 +114,7 @@ test_case!(pattern_matching, {
-         1     "Meat".to_owned();
-         2     "meat".to_owned()
-     ));
--    assert_eq!(actual, expected, "iregex");
-+    test!(actual, expected, "iregex");
- 
-     // not_regex
-     let actual = table("Category")
-@@ -128,7 +128,7 @@ test_case!(pattern_matching, {
-         3     "Drink".to_owned();
-         4     "drink".to_owned()
-     ));
--    assert_eq!(actual, expected, "not_regex");
-+    test!(actual, expected, "not_regex");
- 
-     // not_iregex
-     let actual = table("Category")
-@@ -139,5 +139,5 @@ test_case!(pattern_matching, {
-         labels: vec!["id".to_owned(), "name".to_owned()],
-         rows: vec![],
-     });
--    assert_eq!(actual, expected, "not_iregex");
-+    test!(actual, expected, "not_iregex");
- });
-```
-
-**File**: `test-suite/src/query_builder/function/datetime/conversion.rs` (modified, +5/-5)
-```diff
-@@ -20,7 +20,7 @@ test_case!(conversion, {
-         .add_column("visit_time_stamp TEXT")
-         .execute(glue);
-     let expected = Ok(Payload::Create);
--    assert_eq!(actual, expected, "create table - Visitor");
-+    test!(actual, expected, "create table - Visitor");
- 
-     let actual = table("Visitor")
-         .insert()
-@@ -30,7 +30,7 @@ test_case!(conversion, {
-         ])
-         .execute(glue);
-     let expected = Ok(Payload::Insert(2));
--    assert_eq!(actual, expected, "insert - Visitor");
-+    test!(actual, expected, "insert - Visitor");
- 
-     // Date
-     let actual = table("Visitor")
-@@ -46,7 +46,7 @@ test_case!(conversion, {
-         1    "Bryanna".to_owned()   NaiveDate::from_ymd_opt(2022, 12, 23).unwrap()   NaiveDate::from_ymd_opt(2022, 12, 23).unwrap();
-         2    "Ash".to_owned()       NaiveDate::from_ymd_opt(2023, 4, 1).unwrap()     NaiveDate::from_ymd_opt(2023, 4, 1).unwrap()
-     ));
--    assert_eq!(actual, expected, "to_date");
-+    test!(actual, expected, "to_date");
- 
-     // Time
-     let actual = table("Visitor")
-@@ -62,7 +62,7 @@ test_case!(conversion, {
-         1    "Bryanna".to_owned()   NaiveTime::from_hms_opt(13, 5, 26).unwrap()   NaiveTime::from_hms_opt(13, 5, 26).unwrap();
-         2    "Ash".to_owned()       NaiveTime::from_hms_opt(23, 24, 11).unwrap()  NaiveTime::from_hms_opt(23, 24, 11).unwrap()
-     ));
--    assert_eq!(actual, expected, "to_time");
-+    test!(actual, expected, "to_time");
- 
-     // Timestamp
-     let actual = table("Visitor")
-@@ -78,5 +78,5 @@ test_case!(conversion, {
-         1    "Bryanna".to_owned()    NaiveDate::from_ymd_opt(2022, 12, 23).unwrap().and_hms_opt(13, 5, 26).unwrap()   NaiveDate::from_ymd_opt(2022, 12, 23).unwrap().and_hms_opt(13, 5, 26).unwrap();
-         2    "Ash".to_owned()        NaiveDate::from_ymd_opt(2023, 4, 1).unwrap().and_hms_opt(23, 24, 11).unwrap()    NaiveDate::from_ymd_opt(2023, 4, 1).unwrap().and_hms_opt(23, 24, 11).unwrap()
-     ));
--    assert_eq!(actual, expected, "to_timestamp");
-+    test!(actual, expected, "to_timestamp");
- });
-```
-
-**File**: `test-suite/src/query_builder/function/datetime/current_date_and_time.rs` (modified, +3/-3)
-```diff
-@@ -21,7 +21,7 @@ test_case!(current_date_and_time, {
-         .add_column("time_stamp TIMESTAMP")
-         .execute(glue);
-     let expected = Ok(Payload::Create);
--    assert_eq!(actual, expected, "create table - Record");
-+    test!(actual, expected, "create table - Record");
- 
-     let actual = table("Record")
-         .insert()
-@@ -32,7 +32,7 @@ test_case!(current_date_and_time, {
-         ])
-         .execute(glue);
-     let expected = Ok(Payload::Insert(3));
--    assert_eq!(actual, expected, "insert - Record");
-+    test!(actual, expected, "insert - Record");
- 
-     // Now
-     let actual = table("Record")
-@@ -45,5 +45,5 @@ test_case!(current_date_and_time, {
-         I64 | Timestamp;
-         3     t!("9999-12-31T23:59:40.364832862")
-     ));
--    assert_eq!(actual, expected, "now");
-+    test!(actual, expected, "now");
- });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2081** (2026-11-16): Isolate JSON storage error fixtures by scenario (@panarch)
+- **PR #2080** (closed): json-storage: isolate the duplicate-file error test from shared fixtures (@chiliec)
+- **PR #2077** (2026-11-12): Make CREATE INDEX validation opt-in for storage planners (@panarch)
+- **PR #2076** (2026-11-12): Align NULL evaluation with common SQL semantics (@panarch)
 - **PR #2075** (2026-11-11): Unify Query Builder result assertions (@panarch)
 - **PR #2074** (2026-11-11): Simplify numeric samples in floating-point examples (@panarch)
-- **PR #2073** (2026-11-11): Stop publishing coverage reports to gluesql.org (@panarch)
-- **PR #2072** (2026-11-11): Plan source columns for projected storage scans (@panarch)
-- **PR #2071** (2026-11-09): Clarify test responsibilities and maintenance costs (@panarch)
-- **PR #2070** (2026-11-09): Update storage guides and automate README release links (@panarch)
 
 ---
 
@@ -2725,63 +2203,88 @@ through a local test macro and preserve the failing call site.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Unify Query Builder result assertions (#2075)
+## X. Isolate JSON storage error fixtures by scenario
 
 **RULE**:
-When implementing operations in `test-suite/src/fixture.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `storages/json-storage/tests/error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fce8d5b9`: Unify Query Builder result assertions (#2075). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dda0280a`: Isolate JSON storage error fixtures by scenario. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `test-suite/src/fixture.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `storages/json-storage/tests/error.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    crate::{Tester, test_indexes, tester::assertions::assert_payload},
+    std::path::Path,
+    let cases = [
+            "wrong-format-jsonl",
+            "SELECT * FROM WrongFormatJsonl",
+            ValueError::InvalidJsonString("[".to_owned()).into(),
+            "wrong-format-json",
+            "SELECT * FROM WrongFormatJson",
+            Error::StorageMsg(
+            ),
+            "wrong-schema",
+            "SELECT * FROM WrongSchema",
+            Error::Schema(SchemaParseError::CannotParseDDL),
+            "wrong-table-name",
+            "SELECT * FROM WrongTableName",
+            Error::StorageMsg(JsonStorageError::TableNameDoesNotMatchWithFile.to_string()),
+            "duplicated",
+            "SELECT * FROM Duplicated",
+            Error::StorageMsg(
+            ),
+            "duplicated",
+            "DROP TABLE Duplicated",
+            Error::StorageMsg(
+            ),
+            "json-object-type-required",
+            "SELECT * FROM JsonObjectTypeRequired",
+            Error::StorageMsg(JsonStorageError::JsonObjectTypeRequired.to_string()),
+            "json-array-type-required",
+            "SELECT * FROM JsonArrayTypeRequired",
+            Error::StorageMsg(JsonStorageError::JsonArrayTypeRequired.to_string()),
+    let samples = P
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-    crate::{Tester, test_indexes},
-const F32_TOLERANCE: f64 = 1e-6;
-const F64_TOLERANCE: f64 = 1e-12;
-fn assert_payload(actual: &Payload, expected: &Payload, context: &str) {
-    match (actual, expected) {
-        (
-            Payload::Select {
-                labels: actual_labels,
-                rows: actual_rows,
-            },
-            Payload::Select {
-                labels: expected_labels,
-                rows: expected_rows,
-            },
-        ) => {
-            pretty_assert_eq!(actual_labels, expected_labels, "{context}\nlabel mismatch");
-            pretty_assert_eq!(
-                actual_rows.len(),
-                expected_rows.len(),
-                "{context}\nrow count mismatch"
-            );
+// Induced defect failure mode:
+    let path = "./tests/samples/";
+    let json_storage = JsonStorage::new(path).unwrap();
+    let mut glue = Glue::new(json_storage);
 
-            for (row_index, (actual_row, expected_row)) in
-                actual_rows.iter().zip(expected_rows).enumerate()
-            {
-                pretty_assert_eq!(
-                    actual_row.len(),
-                    expected_row.len(),
-                    "{context}\ncolumn count mismatch in row {row_index}"
-                );
+    let cases = vec![
+            glue.execute("SELECT * FROM WrongFormatJsonl"),
+            Err(ValueError::InvalidJsonString("[".to_owned()).into()),
+            glue.execute("SELECT * FROM WrongFormatJson"),
+            Err(Error::StorageMsg(
+            )),
+            glue.execute("SELECT * FROM WrongSchema"),
+            Err(Error::Schema(SchemaParseError::CannotParseDDL)),
+            glue.execute("SELECT * FROM WrongTableName"),
+            Err(Error::StorageMsg(
+                JsonStorageError::TableNameDoesNotMatchWithFile.to_string(),
+            )),
+            glue.execute("SELECT * FROM Duplicated"),
+            Err(Error::StorageMsg(
+            )),
+            glue.execute("DROP TABLE Duplicated"),
+            Err(Error::StorageMsg(
+            )),
+            glue.execute("SELECT * FROM JsonObjectTypeRequired"),
+            Err(Error::StorageMsg(
+                JsonStorageError::JsonObjectTypeRequired.to_string(),
+            )),
+            glue.execute("SELECT * FROM JsonArrayTypeRequired"),
+            Err(Error::StorageMsg(
 
-                for (column_index, (actual, expected)) in
-                    actual_row.iter().zip(expected_row).enumerat
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fce8d5b9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dda0280a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

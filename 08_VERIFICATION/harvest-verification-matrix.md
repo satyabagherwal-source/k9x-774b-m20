@@ -10462,3 +10462,5 @@
 | `CYCLE-20261117-YLXC` | `2026-11-17T06:19:39.264Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`720f849a...`) |
 | `CYCLE-20261117-ZVJD` | `2026-11-17T06:20:38.377Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8885, Rule 8886, Rule 8887` | Yes (`20e7b053...`) |
 | `CYCLE-20261117-ZX3J` | `2026-11-17T06:20:40.399Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8888, Rule 8889, Rule 8890` | Yes (`ed46ab07...`) |
+| `CYCLE-20261117-9TVF` | `2026-11-17T06:28:22.779Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8891` | Yes (`6b3122dd...`) |
+| `CYCLE-20261117-A0HB` | `2026-11-17T06:28:31.343Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8892` | Yes (`9a410d07...`) |

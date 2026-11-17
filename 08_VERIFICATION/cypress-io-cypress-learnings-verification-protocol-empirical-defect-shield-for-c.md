@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:44.212Z",
+  "timestamp": "2026-11-17T06:28:35.690Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-cypress-io-cypress-learnings",
+  "learning_id": "LEARN-EVO-cypress-io-cypress-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cypress-io-cypress-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:44.212Z`  
-> **Learning ID**: `LEARN-REEXTRACT-cypress-io-cypress-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T06:28:35.690Z`  
+> **Learning ID**: `LEARN-EVO-cypress-io-cypress-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source**: github ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
-> **Source Version**: `3443896f`  
+> **Source Version**: `9962c4fe`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T14:59:32.446Z  
+> **Timestamp**: 2026-11-17T06:28:21.913Z  
 > **Learning ID**: `learn-github-cypress-io-cypress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T14:59:28.476Z  
+> **Harvest Timestamp**: 2026-11-17T06:28:21.583Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1006,11 +1006,11 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35361** (2026-11-12): **chore: lint Vitest specs with @vitest/eslint-plugin**
-  *Symptoms*: - Closes N/A. This is one slice of the ESLint 10 and plugin-major upgrade of `@packages/eslint-config`.  ### Additional details  This adds `@vitest/eslint-plugin` 1.6 to `@packages/eslint-config` as an opt-in `vitestConfig` export, alongside `jsonConfig` and `nodeConfig`. It applies the plugin's `recommended` rules to `**/*.{test,spec}.{ts,tsx,js}` and `test/**`, skipping `fixtures/` and `__fixtures__/`. On top of those, `no-focused-tests`, `no-disabled-tests` and `hoisted-apis-on-top` are errors. `vitest/unbound-method`, the plugin's one type-aware rule, is left out. Its TypeScript 6 and `@typescript-eslint/eslint-plugin` peers are optional and only serve that rule, so the rest runs on our TypeScript 5.4.5.  All 32 workspaces with `vitest` in their `package.json` opt in. `@packages/server` narrows the config to `test/unit/**`, because its integration and performance specs run on mocha.  **What the plugin reported first,** across those workspaces. These counts include server's mocha specs and the bundled fixtures, which are now out of scope:  | Rule | Hits | Outcome | | --- | --- | --- | | `expect-expect` | 682 | Off: specs assert through sinon/chai helpers or by not throwing | | `no-conditional-expect` | 282 | Off: assertions in `catch` blocks and platform branches; style | | `valid-expect` | 135 | Fixed (below); allows Vitest's message argument | | `prefer-called-exactly-once-with` | 47 | Off: style | | `no-standalone-expect` | 34 | All in hooks or fixtures; assertions in h
+- **Issue #35440** (2026-11-16): **chore: run v8 snapshot cache PRs through the path-filtered PR workflow**
+  *Symptoms*: <!-- Thanks for contributing! PLEASE... - Before writing any code, confirm an open issue exists for this work and that you have commented on it to indicate your intent. See: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#pull-requests - Read our contributing guidelines: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md  - Read our Code Review Checklist on coding standards and what needs to be done before a PR can be merged: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#Code-Review-Checklist - Mark this PR as "Draft" if it is not ready for review. - Make sure you set the correct base branch based on what packages you're changing: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#branches -->  - Closes N/A  ### Additional details  The automated V8 snapshot metadata PRs (branch `update-v8-snapshot-cache-on-develop`) were allowlisted in CircleCI the same way as `develop`, so each one ran the full `linux-x64` workflow, the Windows/arm64/macOS platform workflows, the binary/staging/kitchensink jobs, and every path-filtered job (forced on by `generate-pipeline-parameters.sh`).  This removes the branch from: - `&full-workflow-filters` and `&mainBuildFilters` in `@main.yml` - the exclusion list in `pull-request.yml` - the run-everything branch override in `generate-pipeline-parameters.sh`  The branch now runs the regular PR workflow. Its changes are under `tooling/v8-snapshot/cache/`, which path filtering maps 
 
-- **Issue #35360** (2026-11-12): **perf: sniff cy.intercept stubbed-response HTML in linear time**
-  *Symptoms*: <!-- Thanks for contributing! PLEASE... - Before writing any code, confirm an open issue exists for this work and that you have commented on it to indicate your intent. See: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#pull-requests - Read our contributing guidelines: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md  - Read our Code Review Checklist on coding standards and what needs to be done before a PR can be merged: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#Code-Review-Checklist - Mark this PR as "Draft" if it is not ready for review. - Make sure you set the correct base branch based on what packages you're changing: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#branches -->  - Closes N/A (no issue; this came out of a ReDoS audit of regexes that run on user-controlled input)  ### Additional details  `parseContentType` in `packages/net-stubbing/lib/server/util.ts` picks a `Content-Type` for a [`cy.intercept()`](https://on.cypress.io/intercept) response stubbed with a fixture or a static `body` and no `Content-Type` header. It decided whether the body was HTML with `/<.+>[\s\S]+<\/.+>/`, which backtracks polynomially on bodies with many `<` and `>` characters. Those bodies are user fixtures, so they can be large.  This PR replaces the regex with `isHtmlLike()`, a hand-written scan with two forward passes that gives exactly the same answers:  - An opening `<…>` and a later closing `</…>`, 
+- **Issue #35438** (2026-11-17): **chore(config): migrate Renovate config**
+  *Symptoms*: The Renovate config in this repository needs migrating. Typically this is because one or more configuration options you are using have been renamed.    You don't need to merge this PR right away, because Renovate will continue to migrate these fields internally each time it runs. But later some of these fields may be fully deprecated and the migrations removed. So it's a good idea to merge this migration PR soon.       🔕 **Ignore**: Close this PR and you won't be reminded about config migration again, but one day your current config may no longer be valid.  ❓ Got questions? Does something look wrong to you? Please don't hesitate to [request help here](https://redirect.github.com/renovatebot/renovate/discussions).   ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/cypress-io/cypress).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1027,699 +1027,313 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e4d77771` (2026-11-11)
-**Commit Message**: fix: accept consecutive arrow keys in cy.type() on date-like inputs (#35352)
+### Incident Patch 1: `a6b5a3d8` (2026-11-16)
+**Commit Message**: chore(deps): update dependency rollup to v4.59.0 [security] (#35400)
 
-* fix: accept consecutive arrow keys in cy.type() on date-like inputs
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: Matthew Schile <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-Typing more than one {upArrow} or {downArrow} in a row into a date,
-month, week, time, or datetime-local input failed validation with an
-invalid_* format error, even though a single arrow worked.
-
-validateTyping() matched the arrow regex against every key from the
-current index to the end of the string, and the regex was anchored at
-the end, so it only matched when exactly one arrow remained. Dropping
-the end anchor lets each arrow be accepted as typing reaches it, so
-the value steps once per arrow. A non-arrow sequence such as
-{upArrow}{leftArrow} still throws the existing error when typing
-reaches the non-arrow key.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01WUv8r4w5uzy9X1Ca4MUQ3W
-
-* chore: move cy.type() arrow-key changelog entry to 16.3.1
-
-16.3.0 shipped while this branch was open, so the entry now belongs
-under the next unreleased version.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01WUv8r4w5uzy9X1Ca4MUQ3W
-
-* chore: se
-
-**File**: `cli/CHANGELOG.md` (modified, +4/-0)
+**File**: `packages/telemetry/package.json` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,10 @@
- <!-- See ../guides/writing-the-cypress-changelog.md for details on writing the changelog. -->
- ## 16.3.1
- 
-+**Bugfixes:**
-+
-+- [`.type()`](https://on.cypress.io/type) now accepts consecutive `{upArrow}` and `{downArrow}` sequences, such as `{upArrow}{upArrow}`, on `date`, `month`, `week`, `time`, and `datetime-local` inputs, and steps the value once per arrow. Previously, a single arrow worked but more than one in a row failed with an error saying the input required a valid date, month, week, time, or datetime. Fixed in [#35352](https://github.com/cypress-io/cypress/pull/35352).
-+
- **Misc:**
- 
- - Firefox launched by Cypress no longer starts its remote debugging server. Addressed in [#35284](https://github.com/cypress-io/cypress/pull/35284).
+@@ -49,7 +49,7 @@
+     "eslint": "^10.14.0",
+     "jiti": "^2.4.2",
+     "rimraf": "6.1.1",
+-    "rollup": "4.52.0",
++    "rollup": "4.59.0",
+     "typescript": "5.6.3",
+     "vitest": "^3.2.4"
+   },
 ```
 
-**File**: `packages/driver/cypress/e2e/commands/actions/type.cy.ts` (modified, +94/-0)
+**File**: `yarn.lock` (modified, +132/-114)
 ```diff
-@@ -3226,6 +3226,32 @@ describe('src/cy/commands/actions/type - #type', () => {
-           cy.get('#date-without-value').should('have.value', '1999-12-31')
-         })
+@@ -7529,10 +7529,10 @@
+     estree-walker "^2.0.2"
+     picomatch "^4.0.2"
  
-+        it('consecutive {upArrow} increases day once per arrow', () => {
-+          cy.get('#date-without-value').type('1999-12-30').type('{upArrow}{upArrow}')
-+          cy.get('#date-without-value').should('have.value', '2000-01-01')
-+        })
-+
-+        it('consecutive {downArrow} decreases day once per arrow', () => {
-+          cy.get('#date-without-value').type('2000-01-01').type('{downArrow}{downArrow}')
-+          cy.get('#date-without-value').should('have.value', '1999-12-30')
-+        })
-+
-+        it('mixed {upArrow} and {downArrow} step the day in order', () => {
-+          cy.get('#date-without-value').type('2000-01-01').type('{upArrow}{downArrow}{upArrow}')
-+          cy.get('#date-without-value').should('have.value', '2000-01-02')
-+        })
-+
-+        it('throws when {upArrow} is followed by a key that is not an arrow', (done) => {
-+          cy.on('fail', (err) => {
-+            expect(err.message).to.include('requires a valid date')
-+            expect(err.message).to.include('{ArrowUp}{ArrowLeft}')
-+
-+            done()
-+          })
-+
-+          cy.get('#date-without-value').type('{upArrow}{leftArrow}')
-+        })
-+
-         it('{upArrow} triggers events on input', () => {
-           cy.get('#date-with-value')
-           .then(($input) => {
-@@ -3271,6 +3297,23 @@ describe('src/cy/commands/actions/type - #type', () => {
-           cy.get('#month-without-value').should('have.value', '1999-12')
-         })
+-"@rollup/rollup-android-arm-eabi@4.52.0":
+-  version "4.52.0"
+-  resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.52.0.tgz#dfcddfa85a3cba8a0e95483b4a7255ab9e4cdf4d"
+-  integrity sha512-VxDYCDqOaR7NXzAtvRx7G1u54d2kEHopb28YH/pKzY6y0qmogP3gG7CSiWsq9WvDFxOQMpNEyjVAHZFXfH3o/A==
++"@rollup/rollup-android-arm-eabi@4.59.0":
++  version "4.59.0"
++  resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.59.0.tgz#a6742c74c7d9d6d604ef8a48f99326b4ecda3d82"
++  integrity sha512-upnNBkA6ZH2VKGcBj9Fyl9IGNPULcjXRlg0LLeaioQWueH30p6IXtJEbKAgvyv+mJaMxSm1l6xwDXYjpEMiLMg==
  
-+        it('consecutive {upArrow} and {downArrow} step the month once per arrow', () => {
-+          cy.get('#month-without-value').type('1999-11').type('{upArrow}{upArrow}')
-+          cy.get('#month-without-value').should('have.value', '2000-01')
-+          cy.get('#month-without-value').type('{downArrow}{downArrow}{upArrow}')
-+          cy.get('#month-without-value').should('have.value', '1999-12')
-+        })
-+
-+        it('throws when {upArrow} is followed by a key that is not an arrow', (done) => {
-+          cy.on('fail', (err) => {
-+            expect(err.message).to.include('requires a valid month')
-+
-+            done()
-+          })
-+
-+          cy.get('#month-without-value').type('{upArrow}{leftArrow}')
-+        })
-+
-         it('{upArrow} triggers events on input', () => {
-           cy.get('#month-with-value')
-           .then(($input) => {
-@@ -3316,6 +3359,23 @@ describe('src/cy/commands/actions/type - #type', () => {
-           cy.get('#week-without-value').should('have.value', '2017-W04')
-         })
+ "@rollup/rollup-android-arm-eabi@4.60.2":
+   version "4.60.2"
+@@ -7544,10 +7544,10 @@
+   resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.62.2.tgz#5e9849b661c2229cf967a08dbe2dbbe9e8c991e5"
+   integrity sha512-6o7ZLZK+BeenkZCFNDXqpbjw9bD6nuWonvS/lwQJp7NoVVxm6p3qE7qQ5jGuBjiFsgvqjD8mZAU5oWxTmbOeOg==
  
-+        it('consecutive {upArrow} and {downArrow} step the week once per arrow', () => {
-+          cy.get('#week-without-value').type('2017-W05').type('{upArrow}{upArrow}')
-+          cy.get('#week-without-value').should('have.value', '2017-W07')
-+          cy.get('#week-without-value').type('{downArrow}{downArrow}{upArrow}')
-+          cy.get('#week-without-value').should('have.value', '2017-W06')
-+        })
-+
-+        it('throws when {upArrow} is followed by a key that is not an arrow', (done) => {
-+          cy.on('fail', (err) => {
-+            expect(err.message).to.include('requires a valid week')
-+
-+            done()
-+          })
-+
-+          cy.get('#week-without-value').type('{upArrow}{leftArrow}')
-+        })
-+
-         it('{upArrow} triggers events on input', () => {
-           cy.get('#week-with-value')
-           .then(($input) => {
-@@ -3361,6 +3421,23 @@ describe('src/cy/commands/actions/type - #type', () => {
-           cy.get('#time-without-value').should('have.value', '01:22')
-         })
+-"@rollup/rollup-android-arm64@4.52.0":
+-  version "4.52.0"
+-  resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.52.0.tgz#f37b4a8741a7f42d2f2921bd621e7e824a262f0c"
+-  integrity sha512-pqDirm8koABIKvzL59YI9W9DWbRlTX7RWhN+auR8HXJxo89m4mjqbah7nJZjeKNTNYopqL+yGg+0mhCpf3xZtQ==
++"@rollup/rollup-android-arm64@4.59.0":
++  version "4.59.0"
++  resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.59.0.tgz#97247be098de4df0c11971089fd2edf80a5da8cf"
++  integrity sha512-hZ+Zxj3SySm4A/DylsDKZAeVg0mvi++0PYVceVyX7hemkw7OreKdCvW2oQ3T1FMZvCaQXqOTHb8qmBShoqk69Q==
  
-+        it('consecutive {upArrow} and {downArrow} step the minute once per arrow', () => {
-+          cy.get('#time-without-value').type('01:59').type('{upArrow}{upArrow}')
-+          cy.get('#time-without-value').should('have.value', '02:01')
-+          cy.get('#time-without-value').type('{downArrow}{downArrow}{upArrow}')
-+          cy.get('#time-without-value').should('have.value', '02:00')
-+        })
-+
-+        it('throws when {upArrow} is followed by a key that is not an arrow', (done) => {
-+          cy.on('fail', (err) => {
-+            expect(err.message).to.include('requires a valid time')
-+
-+            done()
-+          })
-+
-+          cy.get('#time-without-value').type('{upArrow}{leftArrow}')
-+        })
-+
-         it('{upArrow} triggers events on input', () => {
-           cy.get('#time-with-value')
-           .then(($input) => {
-@@ -3402,6 +3479,23 @@ describe('src/cy/commands/actions/type - #type', () => {
-           cy.get('#datetime-local-without-value').type('{downArrow}')
-         })
+ "@rollup/rollup-android-arm64@4.60.2":
+   version "4.60.2"
+@@ -7559,10 +7559,10 @@
+   resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.62.2.tgz#5b0699ee5dd484b222c9ed74aff43c91ea8b17f8"
+   integrity sha512-BaH7BllCACHoH1LguOU56UItGfUWjujlO65kS9LAodViaN4bwIKd7oeW/ZHJ/4ljr/7MIiENnNy3HJ0zXv8Zkw==
  
-+        it('consecutive {upArrow} and {downArrow} step the value once per arrow', () => {
-+          cy.get('#datetime-local-without-value').type('2000-01-01T01:30').type('{upArrow}{upArrow}')
-+          cy.get('#datetime-local-without-value').should('have.value', '2000-01-01T01:32')
-+    
-```
-
-**File**: `packages/driver/src/cy/keyboard.ts` (modified, +3/-1)
-```diff
-@@ -68,7 +68,9 @@ const dateTimeRe = /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?(\.
- const numberRe = /^-?(\d+|\d+\.\d+|\.\d+)([eE][-+]?\d+)?$/i
- const charsBetweenCurlyBracesRe = /({.+?})/
- const isValidNumberInputChar = /[-+eE\d.]/
--const arrowKeysRe = /^\{(ArrowUp|ArrowDown)\}$/
-+// Unanchored at the end so that each arrow in a run such as
-+// {upArrow}{upArrow} is accepted on its own as typing reaches it
-+const arrowKeysRe = /^\{(ArrowUp|ArrowDown)\}/
+-"@rollup/rollup-darwin-arm64@4.52.0":
+-  version "4.52.0"
+-  resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.52.0.tgz#fda8701d38d9888039c1a0e040c026daec908a3f"
+-  integrity sha512-YCdWlY/8ltN6H78HnMsRHYlPiKvqKagBP1r+D7SSylxX+HnsgXGCmLiV3Y4nSyY9hW8qr8U9LDUx/Lo7M6MfmQ==
++"@rollup/rollup-darwin-arm64@4.59.0":
++  version "4.59.0"
++  resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.59.0.tgz#674852cf14cf11b8056e0b1a2f4e872b523576cf"
++  integrity sha512-W2Psnbh1J8ZJw0xKAd8zdNgF9HRLkdWwwdWqubSVk0pUuQkoHnv7rx4GiF9rT4t5DIZGAsConRE3AxCdJ4m8rg==
  
- const INITIAL_MODIFIERS = {
-   alt: false,
+ "@rollup/rollup-darwin-arm64@4.60.2":
+   version "4.60.2"
+@@ -7574,10 +7574,10 @@
+   resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.62.2.tgz#8bc52c9d7a3ce8d0533c351a9c935de781daa06f"
+   integrity sha512-v39RCCvj4He82I9sFmk+M1VZ0PLM9sfsLVikjfx2hYBNALhrrOR2D3JjQA6AhlaSOgcR+RzrKY7e1+bT6SUO/A==
+ 
+-"@rollup/rollup-darwin-x64@4.52.0":
+-  version "4.52.0"
+-  resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.52.0.tgz#c6008839852a33a686080957d296f727af9ca80d"
+-  integrity sha512-z4nw6y1j+OOSGzuVbSWdIp1IUks9qNw4dc7z7lWuWDKojY38VMWBlEN7F9jk5UXOkUcp97vA1N213DF+Lz8BRg==
++"@rollup/rollup-darwin-x64@4.59.0":
++  version "4.59.0"
++  resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.59.0.tgz#36dfd7ed0aaf4d9d89d9ef983af72632455b0246"
++  integrity sha512-ZW2KkwlS4lwTv7ZVsYDiARfFCnSGhzYPdiOU4IM2fDbL+QGlyAbjgSFuqNRbSthybLbIJ915UtZBtmuLrQAT/w==
+ 
+ "@rollup/rollup-darwin-x64@4.60.2":
+   version "4.60.2"
+@@ -7589,10 +7589,10 @@
+   resolved "https://registry.yarnpkg.com/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.62.2.tgz#ba2ef3e8fb310f0af35588f270cfa5aa96e48764"
+   integrity sha512-yl0y2vq3S3lHeuXhEdss6TWfKW8vkujImO12tn4ZkG/4oghr09LvdYm2RElVjokTQiUvDUGXLGsYeLqUMCKpGA==
+ 
+-"@rollup/rollup-freebsd-arm64@4.52.0":
+-  version "4.52.0"
+-  resolved "https://registry.yarnpkg.com/@rollup/rollup-freebsd-arm64/-/rollup-freebsd-arm64-4.52.0.tgz#2b3ee9028493fd58245ded2137de0bc5d6b8f1e4"
+-  integrity sha512-Q/dv9Yvyr5rKlK8WQJZVrp5g2SOYeZUs9u/t2f9cQ2E0gJjYB/BWoedXfUT0EcDJefi2zzVfhcOj8drWCzTviw==
++"@rollup/rollup-freebsd-arm64@4.59.0":
++  version "4.59.0"
++  resolved "https://registry.yarnpkg.com/@rollup/rollup-freebsd-arm64/-/rollup-freebsd-arm64-4.59.0.tgz#2f87c2074b4220260fdb52a9996246edfc633c22"
++  integrity sha512-EsKaJ5ytAu9jI3lonzn3BgG8iRBjV4LxZexygcQbpiU0wU0ATxhNVEpXKfUa0pS05gTcSDMKpn3Sx+QB9RlTTA==
+ 
+ "@rollup/rollup-freebsd-arm64@4.60.2":
+   version "4.60.2"
+@@ -7604,10 +7604,10 @@
+   resolved "https://registry.yarnpkg.com/@rollup/rollup-freebsd-arm64/-/rollup-freebsd-arm64-4.62.2.tgz#93b10bdbfe8ada226b8bc0c02ef6b7f544474d96"
+   integrity sha512-tT4pvt4qXD+vEoezupCWi+a1F0vvDiksiHc+PxRlYTOH1I6/X4id9jPxTP+Fg+545euaFT1jJVs4CEdHZAU1vw==
+ 
+-"@rollup/rollup-freebsd-x64@4.52.0":
+-  version "4
 ```
 
 ---
 
-### Incident Patch 2: `e9aaccd2` (2026-11-11)
-**Commit Message**: fix(server): apply intercepted redirect header changes (#35295)
+### Incident Patch 2: `3d72114a` (2026-11-16)
+**Commit Message**: chore(deps): update dependency react-router to v6.30.6 [security] (#35399)
 
-- Fulfill a paused redirect in Chromium when a cy.intercept response handler changes, adds or removes its Location or Referrer-Policy header. Previously the change went out through Fetch.continueResponse, which Chrome ignores at a redirect pause, so the browser followed the redirect as the origin sent it.
-- Classify a redirect pause once in the CDP transport and pass it to the codec as a redirectPause flag, instead of both modules checking separately
-- Add isRedirectStatus to @packages/network-interception so the proxy and the CDP transport share one list of redirect status codes
-- Add codec, transport and system tests covering rewritten, removed and added Location and Referrer-Policy headers, POST redirects by status, cross-site redirects, redirect chains and EventSource
-- Add a changelog entry
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: Matthew Schile <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-Fixes #34704
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `cli/CHANGELOG.md` (modified, +1/-0)
+**File**: `npm/react/package.json` (modified, +2/-2)
 ```diff
-@@ -32,6 +32,7 @@
- **Bugfixes:**
- 
- - Fixed a regression in [16.0.0](#16-0-0) where changes a [`cy.intercept()`](https://on.cypress.io/intercept) response handler made to `Set-Cookie` headers did not reach the browser in Chromium-based browsers. The browser stored the cookies exactly as the server sent them, so a handler that rewrote a cookie's attributes, such as adding `SameSite=None` so a cross-site login cookie is accepted, or that removed a cookie, had no effect. Cookies in the browser now match the `Set-Cookie` headers the handler leaves on the response. Fixes [#34902](https://github.com/cypress-io/cypress/issues/34902).
-+- Fixed a regression in [16.0.0](#16-0-0) where a [`cy.intercept()`](https://on.cypress.io/intercept) response handler that changed the `Location` or `Referrer-Policy` header of a redirect had no effect in Chromium-based browsers. The browser followed the redirect as the server sent it, to the server's URL and with the server's referrer policy. Fixes [#34704](https://github.com/cypress-io/cypress/issues/34704).
- - Fixed an issue where Cypress could use a port that browsers refuse to load, such as 10080, when the [`port`](https://on.cypress.io/configuration) option was not set. The runner then failed with `ERR_UNSAFE_PORT`. Cypress now redraws a blocked randomly assigned port, and a blocked port in configuration is reported as a configuration error that names the port before the runner server starts. Fixes [#30869](https://github.com/cypress-io/cypress/issues/30869).
- - Fixed an issue where a spec whose bundled file includes a large inline source map could crash the browser tab, leaving `cypress run` hanging with no error until it was killed. The crash could happen while the spec first loaded, or when it loaded again after its first [`cy.visit()`](https://on.cypress.io/visit) to another origin. Specs with inline source maps now also load faster and use less memory. Fixes [#35201](https://github.com/cypress-io/cypress/issues/35201).
- - Fixed an issue where `cypress run` could hang until it was killed, or exit with an unrelated `socket hang up` error, when the process that loads your config file and runs your [Node events](https://docs.cypress.io/app/plugins/plugins-guide) exited, for example because the operating system ran out of memory or `setupNodeEvents` called `process.exit()`. In component testing this process also runs the dev server. Cypress now stops the run with an error that says the process exited, with its exit code or signal. Fixes [#25507](https://github.com/cypress-io/cypress/issues/25507) and [#35223](https://github.com/cypress-io/cypress/issues/35223).
+@@ -52,8 +52,8 @@
+     "prop-types": "15.8.1",
+     "react": "18.3.1",
+     "react-dom": "18.3.1",
+-    "react-router": "6.28.0",
+-    "react-router-dom": "6.28.0",
++    "react-router": "6.30.6",
++    "react-router-dom": "6.30.6",
+     "rollup": "^4.60.2",
+     "typescript": "~5.4.5",
+     "vite": "^8.0.9"
 ```
 
-**File**: `packages/network-interception/lib/core/index.ts` (modified, +2/-0)
+**File**: `npm/vite-plugin-cypress-esm/package.json` (modified, +2/-2)
 ```diff
-@@ -10,6 +10,8 @@ export * from './document-preparation'
- 
- export * from './request-logging'
- 
-+export * from './redirect-status'
-+
- export * from './network-interception-core'
- 
- export * from './http-intercept'
+@@ -41,8 +41,8 @@
+     "jiti": "^2.4.2",
+     "react": "18.3.1",
+     "react-dom": "18.3.1",
+-    "react-router": "6.28.0",
+-    "react-router-dom": "6.28.0",
++    "react-router": "6.30.6",
++    "react-router-dom": "6.30.6",
+     "vite": "^8.0.9"
+   },
+   "publishConfig": {
 ```
 
-**File**: `packages/network-interception/lib/core/redirect-status.ts` (added, +9/-0)
+**File**: `yarn.lock` (modified, +15/-15)
 ```diff
-@@ -0,0 +1,9 @@
-+const REDIRECT_STATUS_CODES: ReadonlySet<number> = new Set([301, 302, 303, 307, 308])
-+
-+/**
-+ * Whether a browser follows the response's Location header. The proxy and the
-+ * CDP transport both use this, so they agree on which responses are redirects.
-+ */
-+export function isRedirectStatus (statusCode: number | undefined): boolean {
-+  return statusCode !== undefined && REDIRECT_STATUS_CODES.has(statusCode)
-+}
-```
-
-**File**: `packages/network-interception/test/unit/redirect-status.spec.ts` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+import { describe, it, expect } from 'vitest'
-+import { isRedirectStatus } from '../../lib/core/redirect-status'
-+
-+describe('core/redirect-status', () => {
-+  it.each([301, 302, 303, 307, 308])('treats %i as a redirect', (statusCode) => {
-+    expect(isRedirectStatus(statusCode)).toBe(true)
-+  })
-+
-+  // 300 and 305 are 3xx, but browsers don't follow their Location; 304 has none.
-+  it.each([200, 300, 304, 305, 400, undefined])('does not treat %s as a redirect', (statusCode) => {
-+    expect(isRedirectStatus(statusCode)).toBe(false)
-+  })
-+})
-```
-
-**File**: `packages/proxy/lib/http/response-middleware.ts` (modified, +2/-3)
-```diff
-@@ -5,6 +5,7 @@ import { PassThrough } from 'stream'
- import { URL } from 'url'
- import zlib from 'zlib'
- import { InterceptResponse } from '@packages/net-stubbing'
-+import { isRedirectStatus } from '@packages/network-interception'
- import { concatStream, httpUtils } from '@packages/network'
- import { telemetry } from '@packages/telemetry'
- import { hasServiceWorkerHeader, isVerboseTelemetry as isVerbose } from '.'
-@@ -505,16 +506,14 @@ const MaybeCopyCookiesFromIncomingRes: ResponseMiddleware = async function () {
-   return this.networkInterceptionCore.copyCookiesFromResponse(this)
- }
+@@ -7361,10 +7361,10 @@
+     tslib "^2.0.0"
+     warning "^4.0.3"
  
--const REDIRECT_STATUS_CODES: any[] = [301, 302, 303, 307, 308]
--
- // TODO: this shouldn't really even be necessary?
- const MaybeSendRedirectToClient: ResponseMiddleware = async function () {
-   const span = telemetry.startSpan({ name: 'maybe:send:redirect:to:client', parentSpan: this.resMiddlewareSpan, isVerbose })
+-"@remix-run/router@1.21.0":
+-  version "1.21.0"
+-  resolved "https://registry.npmjs.org/@remix-run/router/-/router-1.21.0.tgz#c65ae4262bdcfe415dbd4f64ec87676e4a56e2b5"
+-  integrity sha512-xfSkCAchbdG5PnbrKqFWwia4Bi61nH+wm8wLEqfHDyp7Y3dZzgqS2itV8i4gAq9pC2HsTpwyBC6Ds8VHZ96JlA==
++"@remix-run/router@1.23.4":
++  version "1.23.4"
++  resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.23.4.tgz#d2becd2afca4a40c30a659d913b9b0bcc28bced8"
++  integrity sha512-q7j5geK7xs3UJSdm9/iytUNclBnLmYx1EnSeCFXHPeutdqgIMeFeHtUZgS3EhlKxdBEAu8OwtJCwmLrEzpSs7Q==
  
-   const { statusCode, headers } = this.incomingRes
-   const newUrl = headers['location']
+ "@repeaterjs/repeater@^3.0.4":
+   version "3.1.0"
+@@ -27793,20 +27793,20 @@ react-remove-scroll@^2.3.0:
+     use-callback-ref "^1.2.3"
+     use-sidecar "^1.0.1"
  
--  const isRedirectNeeded = !REDIRECT_STATUS_CODES.includes(statusCode) || !newUrl
-+  const isRedirectNeeded = !isRedirectStatus(statusCode) || !newUrl
+-react-router-dom@6.28.0:
+-  version "6.28.0"
+-  resolved "https://registry.npmjs.org/react-router-dom/-/react-router-dom-6.28.0.tgz#f73ebb3490e59ac9f299377062ad1d10a9f579e6"
+-  integrity sha512-kQ7Unsl5YdyOltsPGl31zOjLrDv+m2VcIEcIHqYYD3Lp0UppLjrzcfJqDJwXxFw3TH/yvapbnUvPlAj7Kx5nbg==
++react-router-dom@6.30.6:
++  version "6.30.6"
++  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.30.6.tgz#acaf0db65efeddabd0840616243c97f578b3baf3"
++  integrity sha512-0RHKZz7wwffvkU+2MFVT2NnjK44ssLEV+m0CAJaS2Ksmorrwj7WxH00jO0SOCW26/tINUnJHToXblDs33I38YQ==
+   dependencies:
+-    "@remix-run/router" "1.21.0"
+-    react-router "6.28.0"
++    "@remix-run/router" "1.23.4"
++    react-router "6.30.6"
  
-   span?.setAttributes({
-     isRedirectNeeded,
-```
-
-**File**: `packages/server/lib/browsers/cdp-protocol/cdp-fetch-codec.ts` (modified, +32/-14)
-```diff
-@@ -125,9 +125,7 @@ function headerEntriesChanged (left: Protocol.Fetch.HeaderEntry[], right: Protoc
-  * stale length headers. The pause-header fallback describes the wire body, not
-  * the decoded body we fulfill with, so its encoding headers are stripped too.
-  */
--function toFulfilledHeaders (headers?: HttpHeaders, pauseHeaders?: Protocol.Fetch.HeaderEntry[]): Protocol.Fetch.HeaderEntry[] | undefined {
--  const middlewareHeaders = toResponseHeaders(headers)
--
-+function toFulfilledHeaders (middlewareHeaders?: Protocol.Fetch.HeaderEntry[], pauseHeaders?: Protocol.Fetch.HeaderEntry[]): Protocol.Fetch.HeaderEntry[] | undefined {
-   if (middlewareHeaders) {
-     return stripHeaderEntries(middlewareHeaders, WIRE_LENGTH_HEADERS)
-   }
-@@ -143,9 +141,7 @@ function toFulfilledHeaders (headers?: HttpHeaders, pauseHeaders?: Protocol.Fetc
-  * lowercased, re-folded reconstruction — the same "don't override what you
-  * didn't touch" rule continueRequestHeaders applies at the request stage.
-  */
--function toContinuedHeaders (headers?: HttpHeaders, pauseHeaders?: Protocol.Fetch.HeaderEntry[]): Protocol.Fetch.HeaderEntry[] | undefined {
--  const middlewareHeaders = toResponseHeaders(headers)
--
-+function toContinuedHeaders (middlewareHeaders?: Protocol.Fetch.HeaderEntry[], pauseHeaders?: Protocol.Fetch.HeaderEntry[]): Protocol.Fetch.HeaderEntry[] | undefined {
-   if (!middlewareHeaders) {
-     return undefined
-   }
-@@ -200,14 +196,19 @@ function toPausePostData (entries?: Protocol.Network.PostDataEntry[]): Buffer |
-   return Buffer.concat(entries.map(({ bytes }) => Buffer.from(bytes!, 'base64')))
- }
+-react-router@6.28.0:
+-  version "6.28.0"
+-  resolved "https://registry.npmjs.org/react-router/-/react-router-6.28.0.tgz#29247c86d7ba901d7e5a13aa79a96723c3e59d0d"
+-  integrity sha512-HrYdIFqdrnhDw0PqG/AKjAqEqM7AvxCz0DQ4h2W8k6nqmc5uRBYDag0SBxx9iYz5G8gnuNVLzUe13wl9eAsXXg==
++react-router@6.30.6:
++  version "6.30.6"
++  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.30.6.tgz#a2ad70f3472de61c61e44182b3e5a25fd91f9f68"
++  integrity sha512-5HfK7k5im7LTOB0EqCQmfvy4C13G92Ssj1VTmouTK3AJvyjKTnFuCV0vcMAD/JS+JC4DvDIBRrlAeJIFjh5VWg==
+   dependencies:
+-    "@remix-run/router" "1.21.0"
++    "@remix-run/router" "1.23.4"
  
--function contentTypeOf (entries?: Protocol.Fetch.HeaderEntry[]): string | undefined {
-+function headerValueOf (entries: Protocol.Fetch.HeaderEntry[] | undefined, headerName: string): string | undefined {
-   const values = entries
--  ?.filter(({ name }) => name.toLowerCase() === 'content-type')
-+  ?.filter(({ name }) => name.toLowerCase() === headerName)
-   .map(({ value }) => value)
- 
-   return values?.length ? values.join(', ') : undefined
- }
- 
-+// Headers that decide where and how Chrome follows a redirect. Only these are
-+// compared, because the pipeline drops hop-by-hop headers such as Connection,
-+// so a full comparison would flag every HTTP/1.1 redirect as changed.
-+const REDIRECT_FOLLOW_HEADERS = ['location', 'referrer-policy']
-+
- /**
-  * Fulfill only when continueResponse would leave the Network record out of
-  * sync with what the page received; continue everything else, since
-@@ -223,6 +224,14 @@ function contentTypeOf (entries?: Protocol.Fetch.HeaderEntry[]): string | undefi
-  * Fetch.fulfillRequest:
-  *   - the body, which no longer matches the origin bytes
-  *   - the content-type, which mimeType and charset are derived from
-+ *
-+ * A redirect whose location or referrer-policy changed is fulfilled too. At a
-+ * redirect pause, Chrome records overridden headers but follows the redirect
-+ * as the origin sent it: to the origin's location, with the referrer policy
-+ * the origin set. CDP cannot read a redirect's body, so it is fulfilled empty.
-+ * A handler that removes the location therefore gets an empty body here, where
-+ * the MITM path sends the origin's.
-+ *
-  * Spy-only, status, and other header intercepts stay on continueResponse.
-  * If Chrome ever derives another Network.responseReceived field from a header
-  * without recomputing it for overrides, that header joins the fulfill list.
-@@ -234,20 +243,29 @@ function encodePausedResponse (
-   { originalBodyDigest, ...pausedResponse }: CdpFetchTransportResponse,
-   response: CdpFetchHttpResponse,
- ): CdpFetchTransportResponse {
-+  const middlewareHeaders = toResponseHeaders(response.headers)
-   const bodyModified = response.body !== undefined && !isOriginBody(response.body, originalBodyDigest)
--  const middlewareContentType = contentTypeOf(toResponseHeaders(response.headers))
-+  const middlewareContentType = headerValueOf(middlewareHeaders, 'content-type')
-   const contentTypeModified = middlewareContentType !== undefined
--    && middlewareContentType !== contentTypeOf(pausedResponse.responseHeaders)
-+    && middlewareContentType !== headerValueOf(pausedResponse.responseHeaders, 'content-type')
-+
-+  // A header the middleware removed counts as changed; middleware that
-+  // reported no headers at all changed nothing.
-+  const redirectModified = pausedResponse.redirectPause === true
-+    && middlewareHeaders !== undefined
-+    && REDIRECT_FOLLOW_HEADERS.some((headerName) => {
-+      return headerValueOf(middlewareHeaders, headerName) !== headerValueOf(pausedResponse.responseHeaders, headerName)
-+    })
- 
--  const fulfilled = bodyModified || (contentTypeModified && response.body !== undefined)
-+  const fulfilled = bodyModified || (contentTypeModified && response.body !== undefined) || redirectModified
- 
-   return {
-     ...pausedResponse,
-     fulfilled,
-     responseCode: response.statusCode ?? pausedResponse.responseCode,
-     responseHeaders: fulfilled
-- 
-```
-
-**File**: `packages/server/lib/browsers/cdp-protocol/cdp-fetch-transport.ts` (modified, +11/-7)
-```diff
-@@ -3,7 +3,7 @@ import debugModule from 'debug'
- import { STATUS_CODES } from 'http'
- import { Readable } from 'stream'
- import type { ForHttpIntercept, HttpRequest } from '@packages/network-interception'
--import { HttpIntercept } from '@packages/network-interception'
-+import { HttpIntercept, isRedirectStatus } from '@packages/network-interception'
- import type { ResourceType } from '@packages/proxy'
- import type { BodyDigest } from './body-digest'
- import { digestBody } from './body-digest'
-@@ -23,7 +23,6 @@ type CdpFetchClient = Pick<ICriClient, 'send' | 'on' | 'off'>
- 
- type CdpFetchRequest = Protocol.Fetch.RequestPausedEvent['request']
- const RESPONSE_PAUSE_TIMEOUT_MS = 30000
--const REDIRECT_STATUS_CODES = [301, 302, 303, 307, 308]
- 
- const setCookieHeaders = (headers: Protocol.Fetch.HeaderEntry[]): string[] => {
-   return headers
-@@ -55,7 +54,7 @@ const FETCH_PATTERNS: Protocol.Fetch.EnableRequest = {
- // so an untouched 3xx continues natively while a middleware that writes a body
- // onto one falls back to fulfill.
- const isRedirectPause = (event: Protocol.Fetch.RequestPausedEvent): boolean => {
--  return REDIRECT_STATUS_CODES.includes(event.responseStatusCode as number)
-+  return isRedirectStatus(event.responseStatusCode)
-     && !!event.responseHeaders?.some(({ name }) => name.toLowerCase() === 'location')
- }
- 
-@@ -170,6 +169,9 @@ export interface CdpFetchTransportResponse extends CdpFetchTransportRequest {
-   captureStream?: Readable
-   fulfilled?: boolean
-   originalBodyDigest?: BodyDigest
-+  // Paused in the redirect-received state, where Chrome ignores
-+  // continueResponse overrides
-+  redirectPause?: boolean
-   // Chrome's cookie handling before cy.intercept ran: the baseline the
-   // response's final Set-Cookie headers are synced against
-   cookiesBeforeIntercept?: CookiesBeforeIntercept
-@@ -852,6 +854,7 @@ export class CdpFetchTransport {
- 
-     // no predicate composed → materialize everything
-     const bodySkipped = this.options.shouldStreamBody?.(event, { hasMatchingRoute: deferred.hadMatchingRoutes ?? false }) ?? false
-+    const redirectPause = isRedirectPause(event)
-     let originalBody: Buffer
-     let captureStream: Readable | undefined
- 
-@@ -863,7 +866,7 @@ export class CdpFetchTransport {
-       // already be listening before that happens or its opening bytes are lost.
-       // Redirect pauses never arm: their hop emits no loadingFinished, so an
-       // armed entry would sit unread until the transport resets.
--      if (event.networkId && !isRedirectPause(event) && this.options.shouldCaptureBody?.()) {
-+      if (event.networkId && !redirectPause && this.options.shouldCaptureBody?.()) {
-         captureStream = await this.bodyCapture.arm(event.networkId, sessionId)
- 
-         // The flow may have been rejected while arming awaited CDP, by
-@@ -894,7 +897,7 @@ export class CdpFetchTransport {
-       originalBody = Buffer.alloc(0)
-     } else {
-       try {
--        originalBody = await this.fetchResponseBody(event, sessionId)
-+        originalBody = await this.fetchResponseBody(event, redirectPause, sessionId)
-       } catch (err) {
-         deferred.reject(new Error(`CDP Fetch response body unavailable for ${event.request.url}: ${(err as Error).message}`))
- 
-@@ -935,6 +938,7 @@ export class CdpFetchTransport {
-       ...(cookiesBeforeIntercept ? { cookiesBeforeIntercept } : {}),
-       sessionId,
-       ...(bodySkipped ? { bodySkipped: true } : {}),
-+      ...(redirectPause ? { redirectPause: true } : {}),
-       ...(captureStream ? { captureStream } : {}),
-     })
-   }
-@@ -1054,8 +1058,8 @@ export class CdpFetchTransport {
-     })
-   }
- 
--  private fetchResponseBody = async (event: Protocol.Fetch.RequestPausedEvent, sessionId?: string): Promise<Buffer> => {
--    if (isRedirectPause(event)) {
-+  private fetchResponseBody = async (event: Protocol.Fetch.RequestPausedEvent, redirectPause: boolean, sessionId?: string): Promise<Buffer> => {
-+    if (redirectPause) {
-       return Buffer.alloc(0)
-     }
- 
-```
-
-**File**: `packages/server/test/unit/browsers/cdp-fetch-transport.spec.ts` (modified, +200/-0)
-```diff
-@@ -855,6 +855,133 @@ describe('CdpFetchTransport', () => {
-       expect(encoded.body).toBe(Buffer.from('stubbed').toString('base64'))
-     })
- 
-+    // https://github.com/cypress-io/cypress/issues/34704
-+    // At a redirect pause Chrome follows the redirect as the origin sent it even
-+    // when continueResponse overrides its headers, so a changed location or
-+    // referrer-policy has to be fulfilled.
-+    describe('encoding a redirect', () => {
-+      const decodePausedResponse = (codec: ReturnType<typeof createCdpFetchCodec>, options: {
-+        responseHeaders?: Protocol.Fetch.HeaderEntry[]
-+        redirectPause?: boolean
-+      } = {}) => {
-+        const request: CdpFetchTransportRequest = {
-+          id: 'network-1',
-+          url: 'https://example.test/redirect',
-+          method: 'GET',
-+          headers: {},
-+          initialPriority: 'High',
-+          referrerPolicy: 'strict-origin-when-cross-origin',
-+        }
-+
-+        codec.decodeRequest(request)
-+
-+        return codec.decodeResponse({
-+          ...request,
-+          requestId: 'fetch-request',
-+          responseCode: 302,
-+          responseStatusText: 'Found',
-+          responseHeaders: options.responseHeaders ?? [
-+            { name: 'Location', value: '/original' },
-+            { name: 'Date', value: 'today' },
-+          ],
-+          ...(options.redirectPause ?? true ? { redirectPause: true } : {}),
-+          originalBodyDigest: digestBody(Buffer.alloc(0)),
-+        })
-+      }
-+
-+      const toHeaderEntries = (headers: Record<string, string>) => Object.entries(headers).map(([name, value]) => ({ name, value }))
-+
-+      it.each([
-+        { change: 'changed', headers: { location: '/rewritten', date: 'today' } },
-+        { change: 'removed', headers: { date: 'today' } },
-+      ])('fulfills a redirect whose location middleware $change', ({ headers }) => {
-+        const codec = createCdpFetchCodec()
-+        const response = decodePausedResponse(codec)
-+
-+        expect(response.headers).toStrictEqual({ location: '/original', date: 'today' })
-+
-+        const encoded = codec.encodeResponse({ ...response, body: '', headers })
-+
-+        expect(encoded.fulfilled).toBe(true)
-+        expect(encoded.responseCode).toBe(302)
-+        expect(encoded.responseHeaders).toStrictEqual(toHeaderEntries(headers))
-+        expect(encoded.body).toBe('')
-+      })
-+
-+      // Chrome applies a redirect's Referrer-Policy to the request it follows
-+      // the redirect with, and ignores a continueResponse override of it.
-+      it.each([
-+        { change: 'added', originPolicy: undefined, policy: 'no-referrer' },
-+        { change: 'changed', originPolicy: 'unsafe-url', policy: 'no-referrer' },
-+        { change: 'removed', originPolicy: 'no-referrer', policy: undefined },
-+      ])('fulfills a redirect whose referrer-policy middleware $change', ({ originPolicy, policy }) => {
-+        const codec = createCdpFetchCodec()
-+        const response = decodePausedResponse(codec, {
-+          responseHeaders: [
-+            { name: 'Location', value: '/original' },
-+            ...(originPolicy ? [{ name: 'Referrer-Policy', value: originPolicy }] : []),
-+          ],
-+        })
-+
-+        const headers = { location: '/original', ...(policy ? { 'referrer-policy': policy } : {}) }
-+        const encoded = codec.encodeResponse({ ...response, body: '', headers })
-+
-+        expect(encoded.fulfilled).toBe(true)
-+        expect(encoded.responseHeaders).toStrictEqual(toHeaderEntries(headers))
-+        expect(encoded.body).toBe('')
-+      })
-+
-+      // The origin's casing differs from the middleware view, which a plain
-+      // string comparison of the header lists would mistake for a change.
-+      it('continues a redirect that middleware passed through untouched', () => {
-+        const codec = createCdpFetchCodec()
-+        const response = decodePausedResponse(codec)
-+
-+        const encoded = codec.encodeResponse({ ...response, body: '' })
-+
-+        expect(encoded.fulfilled).toBe(false)
-+        expect(encoded.responseHeaders).toBeUndefined()
-+      })
-+
-+      it('continues a redirect when middleware changed a header that does not affect how it is followed', () => {
-+        const codec = createCdpFetchCodec()
-+        const response = decodePausedResponse(codec)
-+
-+        const headers = { 'location': '/original', 'date': 'today', 'x-custom': 'yes' }
-+        const encoded = codec.encodeResponse({ ...response, body: '', headers })
-+
-+        expect(encoded.fulfilled).toBe(false)
-+        expect(encoded.responseHeaders).toStrictEqual(toHeaderEntries(headers))
-+      })
-+
-+      it('continues a redirect when middleware reported no headers', () => {
-+        const codec = createCdpFetchCodec()
-+        const response = decodePausedResponse(codec)
-+
-+        const encoded = codec.encodeResponse({
-+          ...response,
-+          body: '',
-+          headers: undefined,
-+        })
-+
-+        expect(encoded.fulfilled).toBe(false)
-+      })
+ react-style-singleton@^2.1.0:
+   version "2.1.1"
 ```
 
 ---
 
-### Incident Patch 3: `8811f2e2` (2026-11-10)
-**Commit Message**: test: drive graceful-exit step timeout specs with fake timers (#35340)
+### Incident Patch 3: `5e4c5b0b` (2026-11-16)
+**Commit Message**: chore(deps): update dependency svelte to v5.55.7 [security] (#35401)
 
-Two specs measured a real setTimeout with Date.now() and asserted a lower
-bound equal to the timeout. libuv truncates a timer's start to whole
-milliseconds, so the timer can fire just under the requested delay and
-Date.now() reads 99 for a 100ms step. Fake timers assert the boundary
-exactly and drop ~1.7s of real waiting.
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: Matthew Schile <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/server/test/unit/util/graceful_exit.spec.ts` (modified, +19/-34)
+**File**: `yarn.lock` (modified, +35/-23)
 ```diff
-@@ -43,6 +43,7 @@ describe('lib/util/graceful-exit', () => {
+@@ -5256,7 +5256,7 @@
+     "@jridgewell/sourcemap-codec" "^1.5.0"
+     "@jridgewell/trace-mapping" "^0.3.24"
  
-   afterEach(() => {
-     GracefulExit.resetForTesting()
-+    vi.useRealTimers()
-     delete process.env.CYPRESS_INTERNAL_TEARDOWN_TIMEOUT
-     vi.restoreAllMocks()
-   })
-@@ -253,13 +254,9 @@ describe('lib/util/graceful-exit', () => {
-   it('abandons a hung step on its own budget so the remaining steps still complete', async () => {
-     process.env.CYPRESS_INTERNAL_TEARDOWN_TIMEOUT = '1000'
+-"@jridgewell/remapping@^2.3.5":
++"@jridgewell/remapping@^2.3.4", "@jridgewell/remapping@^2.3.5":
+   version "2.3.5"
+   resolved "https://registry.yarnpkg.com/@jridgewell/remapping/-/remapping-2.3.5.tgz#375c476d1972947851ba1e15ae8f123047445aa1"
+   integrity sha512-LI9u/+laYG4Ds1TDKSJW2YPrIlcVYOwi2fUC6xB43lueCjgxV4lffOCZCtYFiH6TNOX+tQKXx97T4IKHbhyHEQ==
+@@ -8749,6 +8749,11 @@
+     estraverse "^5.3.0"
+     picomatch "^4.0.3"
  
--    const startedAt = Date.now()
--    let exitedAfter: number | undefined
--    const exitStub = vi.spyOn(process, 'exit').mockImplementation(() => {
--      exitedAfter = exitedAfter ?? Date.now() - startedAt
-+    vi.useFakeTimers()
- 
--      return undefined as never
--    })
-+    const exitStub = stubExit()
-     const logStub = stubLog()
- 
-     let quickStepRan = false
-@@ -272,22 +269,21 @@ describe('lib/util/graceful-exit', () => {
- 
-     void GracefulExit.exitGracefully(0)
- 
--    await new Promise((r) => setTimeout(r, 1200))
--
--    const logged = logStub.mock.calls.flat().join('\n')
--
--    logStub.mockRestore()
-+    // 0.8 of the 1000ms budget, so teardown settles before the shared force-exit timer can fire
-+    await vi.advanceTimersByTimeAsync(800)
- 
-     expect(quickStepRan, 'the quick step is not cut off by the hung one').toBe(true)
--    // 0.8 of the 1000ms budget, so teardown settles before the shared force-exit timer can fire
--    expect(exitedAfter).toBeGreaterThanOrEqual(800)
--    expect(exitedAfter).toBeLessThanOrEqual(999)
-+    expect(exitStub).toHaveBeenCalledTimes(1)
-     expect(exitStub).toHaveBeenCalledWith(0)
++"@sveltejs/acorn-typescript@^1.0.5":
++  version "1.0.13"
++  resolved "https://registry.yarnpkg.com/@sveltejs/acorn-typescript/-/acorn-typescript-1.0.13.tgz#8c7c3cc7014e212f2e8fccee0159dbecfe602405"
++  integrity sha512-wgKggnhZVL9Bfx1OaKKTrYY9BFRk6C8UAkQNUcIv1+llzYrIqy+RZm5HPKzn0NpEBvTVhTqB4kQyllZywsRBRQ==
 +
-+    await vi.advanceTimersByTimeAsync(1000)
+ "@svgr/babel-plugin-add-jsx-attribute@8.0.0":
+   version "8.0.0"
+   resolved "https://registry.yarnpkg.com/@svgr/babel-plugin-add-jsx-attribute/-/babel-plugin-add-jsx-attribute-8.0.0.tgz#4001f5d5dd87fa13303e36ee106e3ff3a7eb8b22"
+@@ -9279,7 +9284,7 @@
+   resolved "https://registry.yarnpkg.com/@types/esrecurse/-/esrecurse-4.3.1.tgz#6f636af962fbe6191b830bd676ba5986926bccec"
+   integrity sha512-xJBAbDifo5hpffDBuHl0Y8ywswbiAp/Wi7Y/GtAgSlZyIABppyurxVueOPE8LUQOxdlgi6Zqce7uoEpqNTeiUw==
+ 
+-"@types/estree@*", "@types/estree@1.0.9", "@types/estree@^1.0.0", "@types/estree@^1.0.1", "@types/estree@^1.0.5", "@types/estree@^1.0.6", "@types/estree@^1.0.8":
++"@types/estree@*", "@types/estree@1.0.9", "@types/estree@^1.0.0", "@types/estree@^1.0.5", "@types/estree@^1.0.6", "@types/estree@^1.0.8":
+   version "1.0.9"
+   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.9.tgz#cf3f0e876d7bee15a93ab925b82bf570a3904a24"
+   integrity sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==
+@@ -9902,6 +9907,11 @@
+   resolved "https://registry.yarnpkg.com/@types/tough-cookie/-/tough-cookie-4.0.0.tgz#fef1904e4668b6e5ecee60c52cc6a078ffa6697d"
+   integrity sha512-I99sngh224D0M7XgW1s120zxCt3VYQ3IQsuw3P3jbq5GG4yc79+ZjyKznyOGIQrflfylLgcfekeZW/vk0yng6A==
+ 
++"@types/trusted-types@^2.0.7":
++  version "2.0.7"
++  resolved "https://registry.yarnpkg.com/@types/trusted-types/-/trusted-types-2.0.7.tgz#baccb07a970b91707df3a3e8ba6896c57ead2d11"
++  integrity sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==
 +
-+    const logged = logStub.mock.calls.flat().join('\n')
+ "@types/underscore.string@0.0.42":
+   version "0.0.42"
+   resolved "https://registry.yarnpkg.com/@types/underscore.string/-/underscore.string-0.0.42.tgz#aab74808623f3f765ca0cd1deabf8fcd4840d443"
+@@ -11278,11 +11288,6 @@ acorn-node@^1.2.0:
+     acorn-walk "^7.0.0"
+     xtend "^4.0.2"
+ 
+-acorn-typescript@^1.4.13:
+-  version "1.4.13"
+-  resolved "https://registry.npmjs.org/acorn-typescript/-/acorn-typescript-1.4.13.tgz#5f851c8bdda0aa716ffdd5f6ac084df8acc6f5ea"
+-  integrity sha512-xsc9Xv0xlVfwp2o7sQ+GCQ1PgbkdcpWdTzrwXxO3xDMTAywVS3oXVOcOHuRjAPkS4P9b+yc/qNF15460v+jp4Q==
+-
+ acorn-walk@^7.0.0:
+   version "7.2.0"
+   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-7.2.0.tgz#0de889a601203909b0fbe07b8938dc21d2e967bc"
+@@ -11752,10 +11757,10 @@ aria-query@5.3.0:
+   dependencies:
+     dequal "^2.0.3"
+ 
+-aria-query@^5.3.1:
+-  version "5.3.2"
+-  resolved "https://registry.yarnpkg.com/aria-query/-/aria-query-5.3.2.tgz#93f81a43480e33a338f19163a3d10a50c01dcd59"
+-  integrity sha512-COROpnaoap1E2F000S62r6A60uHZnmlvomhfyT2DlTcrY1OrBKn2UhH7qn5wTC9zMvD0AY7csdPSNwKP+7WiQw==
++aria-query@5.3.1:
++  version "5.3.1"
++  resolved "https://registry.yarnpkg.com/aria-query/-/aria-query-5.3.1.tgz#ebcb2c0d7fc43e68e4cb22f774d1209cb627ab42"
++  integrity sha512-Z/ZeOgVl7bcSYZ/u/rh0fOpvEpq//LZmdbkXyc7syVzjPAhfOa9ebsdTSjEBDU4vs5nC98Kfduj1uFo0qyET3g==
+ 
+ arr-diff@^1.0.1:
+   version "1.1.0"
+@@ -15603,6 +15608,11 @@ detect-node@^2.0.4:
+   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.1.0.tgz#c9c70775a49c3d03bc2c06d9a73be550f978f8b1"
+   integrity sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==
+ 
++devalue@^5.8.1:
++  version "5.9.4"
++  resolved "https://registry.yarnpkg.com/devalue/-/devalue-5.9.4.tgz#f6ccb639568f50233936c8c48b92a690cfb22c34"
++  integrity sha512-sPAT4pztbu6586/hrhOnMKS17IJrvg12mXiSPSS3W5qDeN2RGgvZ0diZCm31dBbnevfVmujNO3IM2wrS4Y2Rhg==
 +
-+    expect(exitStub).toHaveBeenCalledTimes(1)
-     expect(logged).toContain('The "hang" teardown step did not finish within 800ms')
-     expect(logged).not.toContain('Failed to gracefully exit')
--
--    exitStub.mockRestore()
--  }, 5000)
-+  })
+ devtools-protocol@0.0.1608973, devtools-protocol@0.0.1687809, devtools-protocol@0.0.927104:
+   version "0.0.1687809"
+   resolved "https://registry.yarnpkg.com/devtools-protocol/-/devtools-protocol-0.0.1687809.tgz#871dac8265503b23ddf55b74128ffe0361b55d03"
+@@ -16967,13 +16977,12 @@ esquery@^1.6.0, esquery@^1.7.0:
+   dependencies:
+     estraverse "^5.1.0"
  
-   it('a reset cancels the step bounds of an in-flight teardown', async () => {
-     process.env.CYPRESS_INTERNAL_TEARDOWN_TIMEOUT = '200'
-@@ -352,30 +348,19 @@ describe('lib/util/graceful-exit', () => {
-   it('honors a step-specific timeout shorter than the shared budget', async () => {
-     process.env.CYPRESS_INTERNAL_TEARDOWN_TIMEOUT = '2000'
- 
--    const startedAt = Date.now()
--    let exitedAfter: number | undefined
--    const exitStub = vi.spyOn(process, 'exit').mockImplementation(() => {
--      exitedAfter = exitedAfter ?? Date.now() - startedAt
-+    vi.useFakeTimers()
- 
--      return undefined as never
--    })
-+    const exitStub = stubExit()
-     const logStub = stubLog()
- 
-     GracefulExit.addStep(() => new Promise(() => {}), 'best-effort', 100)
- 
-     void GracefulExit.exitGracefully(0)
- 
--    await new Promise((r) => setTimeout(r, 500))
--
--    const logged = logStub.mock.calls.flat().join('\n')
-+    await vi.advanceTimersByTimeAsync(100)
- 
--    logStub.mockRestore()
--
--    expect(exitedAfter).toBeGreaterThanOrEqual(100)
--    expect(exitedAfter).toBeLessThanOrEqual(400)
-+    expect(exitStub).toHaveBeenCalledTimes(1)
-     expect(exitStub).toHaveBeenCalledWith(0)
--    expect(logged).toContain('The "best-effort" teardown step did not finish within 100ms')
--
--    exitStub.mockRestore()
--  }, 5000)
-+    expect(logStub.mock.calls.flat().join('\n')).toContain('The "best-effort" teardown step did not finish within 100ms')
-+  })
- })
+-esrap@^1.2.3:
+-  version "1.2.3"
+-  resolved "https://registry.npmjs.org/esrap/-/esrap-1.2.3.tgz#abe6c0cffeee013aaa8396ad8eaa7c0553768323"
+-  integrity sha512-ZlQmCCK+n7SGoqo7DnfKaP1sJZa49P01/dXzmjCASSo04p72w8EksT2NMK8CEX8DhKsfJXANioIw8VyHNsBfvQ==
++esrap@^2.2.4:
++  version "2.4.0"
++
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35361** (2026-11-12): chore: lint Vitest specs with @vitest/eslint-plugin (@jennifer-shehane)
-- **PR #35360** (2026-11-12): perf: sniff cy.intercept stubbed-response HTML in linear time (@jennifer-shehane)
-- **PR #35358** (2026-11-12): dependency: update qs to 6.16.2 (@mschile)
-- **PR #35357** (2026-11-12): dependency: update js-yaml to 3.15.2 (@mschile)
-- **PR #35356** (2026-11-11): chore: document that vN pushes build platforms from the schedule (@mschile)
-- **PR #35354** (2026-11-11): chore: update js-yaml to 4.3.2 (@mschile)
+- **PR #35440** (2026-11-16): chore: run v8 snapshot cache PRs through the path-filtered PR workflow (@mschile)
+- **PR #35438** (2026-11-17): chore(config): migrate Renovate config (@renovate[bot])
+- **PR #35436** (2026-11-16): chore: verify the V8 snapshot script with default stack formatting (@mschile)
+- **PR #35434** (2026-11-16): chore: keep source-map-support from hiding V8 snapshot errors (@mschile)
+- **PR #35433** (2026-11-16): chore: disable Renovate security update PRs (@mschile)
+- **PR #35431** (2026-11-16): chore: log the underlying error when V8 snapshot generation fails (@mschile)
 
 ---
 
@@ -1739,34 +1353,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. accept consecutive arrow keys in cy.type() on date-like inputs (#35352)
+## X. deps): update dependency rollup to v4.59.0 [security]
 
 **RULE**:
-When implementing operations in `cli/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/telemetry/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e4d77771`: accept consecutive arrow keys in cy.type() on date-like inputs (#35352). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a6b5a3d8`: deps): update dependency rollup to v4.59.0 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/telemetry/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-**Bugfixes:**
-
-- [`.type()`](https://on.cypress.io/type) now accepts consecutive `{upArrow}` and `{downArrow}` sequences, such as `{upArrow}{upArrow}`, on `date`, `month`, `week`, `time`, and `datetime-local` inputs, and steps the value once per arrow. Previously, a single arrow worked but more than one in a row failed with an error saying the input required a valid date, month, week, time, or datetime. Fixed in [#35352](https://github.com/cypress-io/cypress/pull/35352).
-
+    "rollup": "4.59.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    "rollup": "4.52.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e4d77771` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a6b5a3d8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

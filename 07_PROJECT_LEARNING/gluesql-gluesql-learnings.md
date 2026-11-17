@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `0e0b0958`  
+> **Source Version**: `dda0280a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T07:25:39.420Z  
+> **Timestamp**: 2026-11-17T06:28:30.492Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T07:25:39.415Z  
+> **Harvest Timestamp**: 2026-11-17T06:28:30.487Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GlueSQL is quite sticky. It sticks to anything.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3137 stars
+- **Stars / Engagement**: 3139 stars
 
 ---
 
@@ -2058,458 +2058,121 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d19e619d` (2026-11-12)
-**Commit Message**: Align NULL evaluation with common SQL semantics (#2076)
+### Incident Patch 1: `dda0280a` (2026-11-16)
+**Commit Message**: Isolate JSON storage error fixtures by scenario (#2081)
 
-Use the NULL behavior shared by PostgreSQL, MySQL, and SQLite for
-AND/OR, IN/NOT IN, BETWEEN/NOT BETWEEN, and LIKE/ILIKE.
+Give each error scenario its own fixture directory so schema discovery
+cannot return an unrelated error based on filesystem iteration order.
 
-AND and OR no longer return NULL just because one operand is NULL.
-FALSE AND NULL returns FALSE, and TRUE OR NULL returns TRUE.
-The same rules apply with the operands reversed. Other boolean
-combinations involving NULL still return NULL.
-
-IN now keeps NULL comparison results instead of ignoring them.
-A match returns TRUE. If nothing matches, the result is NULL when
-any comparison returned NULL, or FALSE otherwise. This applies to
-both lists and subqueries. NOT IN reverses TRUE and FALSE while
-leaving NULL unchanged. Empty subqueries return FALSE for IN and
-TRUE for NOT IN, even when the value being checked is NULL.
-
-BETWEEN now checks each bound separately and combines the results
-with AND. A value outside either bound returns FALSE even if the
-other bound is NULL. For example, 1 BETWEEN 2 AND NULL returns FALSE.
-NOT BETWEEN reverses the result while leaving NULL unchanged.
-
-LIKE now returns NULL when the text or pattern is NULL instead of
-reporting a type error. NOT LIKE, ILIKE, and NOT ILIKE follow the
-
-
-**File**: `core/src/data/tribool.rs` (modified, +46/-0)
+**File**: `storages/json-storage/tests/error.rs` (modified, +35/-32)
 ```diff
-@@ -17,6 +17,22 @@ impl Tribool {
-     pub fn is_null(self) -> bool {
-         matches!(self, Self::Null)
-     }
-+
-+    pub(crate) fn and(self, other: Self) -> Self {
-+        match (self, other) {
-+            (Self::False, _) | (_, Self::False) => Self::False,
-+            (Self::True, Self::True) => Self::True,
-+            _ => Self::Null,
-+        }
-+    }
-+
-+    pub(crate) fn or(self, other: Self) -> Self {
-+        match (self, other) {
-+            (Self::True, _) | (_, Self::True) => Self::True,
-+            (Self::False, Self::False) => Self::False,
-+            _ => Self::Null,
-+        }
-+    }
- }
- 
- impl std::ops::Not for Tribool {
-@@ -72,4 +88,34 @@ mod tests {
-         assert_eq!(!Tribool::False, Tribool::True);
-         assert_eq!(!Tribool::Null, Tribool::Null);
-     }
-+
-+    #[test]
-+    fn test_and() {
-+        use Tribool::{False, Null, True};
-+
-+        assert_eq!(True.and(True), True);
-+        assert_eq!(True.and(False), False);
-+        assert_eq!(True.and(Null), Null);
-+        assert_eq!(False.and(True), False);
-+        assert_eq!(False.and(False), False);
-+        assert_eq!(False.and(Null), False);
-+        assert_eq!(Null.and(True), Null);
-+        assert_eq!(Null.and(False), False);
-+        assert_eq!(Null.and(Null), Null);
-+    }
-+
-+    #[test]
-+    fn test_or() {
-+        use Tribool::{False, Null, True};
-+
-+        assert_eq!(True.or(True), True);
-+        assert_eq!(True.or(False), True);
-+        assert_eq!(True.or(Null), True);
-+        assert_eq!(False.or(True), True);
-+        assert_eq!(False.or(False), False);
-+        assert_eq!(False.or(Null), Null);
-+        assert_eq!(Null.or(True), True);
-+        assert_eq!(Null.or(False), Null);
-+        assert_eq!(Null.or(Null), Null);
-+    }
- }
-```
-
-**File**: `core/src/data/value.rs` (modified, +36/-0)
-```diff
-@@ -702,6 +702,7 @@ impl Value {
- 
-         match (self, other) {
-             (Str(a), Str(b)) => a.like(b, case_sensitive).map(Bool),
-+            (Null, Str(_) | Null) | (Str(_), Null) => Ok(Null),
-             _ => Err(ValueError::LikeOnNonString {
-                 base: self.clone(),
-                 pattern: other.clone(),
-@@ -3187,6 +3188,41 @@ mod tests {
-         assert_eq!(Map(map1), Map(map2));
-     }
- 
-+    #[test]
-+    fn like() {
-+        let str = |value: &str| Str(value.to_owned());
-+
-+        // Case-sensitive and case-insensitive matching
-+        assert_eq!(str("Hello").like(&str("H%"), true), Ok(Bool(true)));
-+        assert_eq!(str("Hello").like(&str("h%"), true), Ok(Bool(false)));
-+        assert_eq!(str("Hello").like(&str("h%"), false), Ok(Bool(true)));
-+
-+        // NULL operands
-+        assert_eq!(Null.like(&str("h%"), true), Ok(Null));
-+        assert_eq!(str("Hello").like(&Null, true), Ok(Null));
-+        assert_eq!(Null.like(&Null, true), Ok(Null));
-+
-+        // Non-string operands
-+        assert_eq!(
-+            I64(1).like(&str("%"), true),
-+            Err(ValueError::LikeOnNonString {
-+                base: I64(1),
-+                pattern: str("%"),
-+                case_sensitive: true,
-+            }
-+            .into())
-+        );
-+        assert_eq!(
-+            str("Hello").like(&I64(1), false),
-+            Err(ValueError::LikeOnNonString {
-+                base: str("Hello"),
-+                pattern: I64(1),
-+                case_sensitive: false,
-+            }
-+            .into())
-+        );
-+    }
-+
-     #[test]
-     fn regex() {
-         let str = |value: &str| Value::Str(value.to_owned());
-```
-
-**File**: `core/src/executor/evaluate.rs` (modified, +18/-12)
-```diff
-@@ -10,7 +10,7 @@ use {
-         query,
+@@ -4,62 +4,65 @@ use {
+         prelude::{Error, Glue},
      },
-     crate::{
--        data::{Interval, Row, Value},
-+        data::{Interval, Row, Tribool, Value},
-         mock::MockStorage,
-         plan::{ExprPlan, FunctionPlan, ProjectionPlan},
-         result::{Error, Result},
-@@ -164,14 +164,18 @@ where
-                 return Ok(target);
-             }
+     gluesql_json_storage::{JsonStorage, error::JsonStorageError},
++    std::path::Path,
+ };
  
--            let matched = list
--                .iter()
--                .map(eval)
--                .collect::<Result<Vec<_>>>()?
--                .into_iter()
--                .any(|v| v.evaluate_eq(&target).is_true());
-+            let values = list.iter().map(eval).collect::<Result<Vec<_>>>()?;
-+            let mut matched = Tribool::False;
+ #[test]
+ fn json_error() {
+-    let path = "./tests/samples/";
+-    let json_storage = JsonStorage::new(path).unwrap();
+-    let mut glue = Glue::new(json_storage);
+-
+-    let cases = vec![
++    let cases = [
+         (
+-            glue.execute("SELECT * FROM WrongFormatJsonl"),
+-            Err(ValueError::InvalidJsonString("[".to_owned()).into()),
++            "wrong-format-jsonl",
++            "SELECT * FROM WrongFormatJsonl",
++            ValueError::InvalidJsonString("[".to_owned()).into(),
+         ),
+         (
+-            glue.execute("SELECT * FROM WrongFormatJson"),
+-            Err(Error::StorageMsg(
++            "wrong-format-json",
++            "SELECT * FROM WrongFormatJson",
++            Error::StorageMsg(
+                 JsonStorageError::InvalidJsonContent("WrongFormatJson.json".to_owned()).to_string(),
+-            )),
++            ),
+         ),
+         (
+-            glue.execute("SELECT * FROM WrongSchema"),
+-            Err(Error::Schema(SchemaParseError::CannotParseDDL)),
++            "wrong-schema",
++            "SELECT * FROM WrongSchema",
++            Error::Schema(SchemaParseError::CannotParseDDL),
+         ),
+         (
+-            glue.execute("SELECT * FROM WrongTableName"),
+-            Err(Error::StorageMsg(
+-                JsonStorageError::TableNameDoesNotMatchWithFile.to_string(),
+-            )),
++            "wrong-table-name",
++            "SELECT * FROM WrongTableName",
++            Error::StorageMsg(JsonStorageError::TableNameDoesNotMatchWithFile.to_string()),
+         ),
+         (
+-            glue.execute("SELECT * FROM Duplicated"),
+-            Err(Error::StorageMsg(
++            "duplicated",
++            "SELECT * FROM Duplicated",
++            Error::StorageMsg(
+                 JsonStorageError::BothJsonlAndJsonExist("Duplicated".to_owned()).to_string(),
+-            )),
++            ),
+         ),
+         (
+-            glue.execute("DROP TABLE Duplicated"),
+-            Err(Error::StorageMsg(
++            "duplicated",
++            "DROP TABLE Duplicated",
++            Error::StorageMsg(
+                 JsonStorageError::BothJsonlAndJsonExist("Duplicated".to_owned()).to_string(),
+-            )),
++            ),
+         ),
+         (
+-            glue.execute("SELECT * FROM JsonObjectTypeRequired"),
+-            Err(Error::StorageMsg(
+-                JsonStorageError::JsonObjectTypeRequired.to_string(),
+-            )),
++            "json-object-type-required",
++            "SELECT * FROM JsonObjectTypeRequired",
++            Error::StorageMsg(JsonStorageError::JsonObjectTypeRequired.to_string()),
+         ),
+         (
+-            glue.execute("SELECT * FROM JsonArrayTypeRequired"),
+-            Err(Error::StorageMsg(
+-                JsonStorageError::JsonArrayTypeRequired.to_string(),
+-            )),
++            "json-array-type-required",
++            "SELECT * FROM JsonArrayTypeRequired",
++            Error::StorageMsg(JsonStorageError::JsonArrayTypeRequired.to_string()),
+         ),
+     ];
+ 
+-    for (actual, expected) in cases {
+-        assert_eq!(actual.map(|mut payloads| payloads.remove(0)), expected);
++    let samples = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/samples/errors");
 +
-+            for value in values {
-+                matched = matched.or(value.evaluate_eq(&target));
-+
-+                if matched.is_true() {
-+                    break;
-+                }
-+            }
- 
--            Ok(Evaluated::Value(Cow::Owned(Value::Bool(matched ^ negated))))
-+            Ok(Evaluated::from(if negated { !matched } else { matched }))
-         }
-         ExprPlan::InSubquery {
-             expr: target_expr,
-@@ -192,18 +196,20 @@ where
-                 return Err(EvaluateError::InSubqueryMustReturnOneColumn.into());
-             }
- 
--            let mut matched = false;
-+            let mut matched = Tribool::False;
-+
-             for row in rows {
-                 let value = row?.into_values().into_iter().next().unwrap_or(Value::Null);
-                 let evaluated = Evaluated::Value(Cow::Owned(value));
- 
--                if evaluated.evaluate_eq(&target).is_true() {
--                    matched = true;
-+                matched = matched.or(evaluated.evaluate_eq(&target));
-+
-+                if matched.is_true() {
-                     break;
-                 }
-             }
- 
--            Ok(Evaluated::Value(Cow::Owned(Value::Bool(matched ^ negated))))
-+            Ok(Evaluated::from(if *negated { !matched } else { matched }))
-         }
-         ExprPlan::Between {
-             expr,
-```
-
-**File**: `core/src/executor/evaluate/expr.rs` (modified, +26/-9)
-```diff
-@@ -2,7 +2,7 @@ use {
-     super::{EvaluateError, Evaluated},
-     crate::{
-         ast::{BinaryOperator, DataType, Literal, UnaryOperator},
--        data::Value,
-+        data::{Tribool, Value},
-         executor::evaluate::evaluated::convert::text_to_value,
-         result::Result,
-     },
-@@ -42,7 +42,18 @@ pub fn binary_op<'a>(
++    for (directory, sql, expected) in cases {
++        let storage = JsonStorage::new(samples.join(directory)).unwrap();
++        let mut glue = Glue::new(storage);
++        assert_eq!(glue.execute(sql).unwrap_err(), expected, "{sql}");
      }
- 
-     if l.is_null() || r.is_null() {
--        return Ok(Evaluated::Value(Cow::Owned(Value::Null)));
-+        let other = if l.is_null() { r } else { l };
-+        let Evaluated::Value(value) = other else {
-+            return Ok(Evaluated::from(Tribool::Null));
-+        };
-+
-+        let result = match (op, value.as_ref()) {
-+            (BinaryOperator::And, Value::Bool(false)) => Tribool::False,
-+            (BinaryOperator::Or, Value::Bool(true)) => Tribool::True,
-+            _ => Tribool::Null,
-+        };
-+
-+        return Ok(Evaluated::from(result));
-     }
- 
-     match op {
-@@ -91,15 +102,21 @@ pub fn between<'a>(
-     low: &Evaluated<'a>,
-     high: &Evaluated<'a>,
- ) -> Evaluated<'a> {
--    if target.is_null() || low.is_null() || high.is_null() {
--        return Evaluated::Value(Cow::Owned(Value::Null));
--    }
-+    let lower = if low.is_null() || target.is_null() {
-+        Tribool::Null
-+    } else {
-+        Tribool::from(low.evaluate_cmp(target) != Some(Ordering::Greater))
-+    };
-+
-+    let upper = if target.is_null() || high.is_null() {
-+        Tribool::Null
-+    } else {
-+        Tribool::from(target.evaluate_cmp(high) != Some(Ordering::Greater))
-+    };
- 
--    let v = low.evaluate_cmp(target) != Some(Ordering::Greater)
--        && target.evaluate_cmp(high) != Some(Ordering::Greater);
--    let v = negated ^ v;
-+    let matched = lower.and(upper);
- 
--    Evaluated::Value(Cow::Owned(Value::Bool(v)))
-+    Evaluated::from(if negated { !matched } else { matched })
  }
- 
- pub fn array_index<'a>(obj: Evaluated<'a>, indexes: Vec<Evaluated<'a>>) -> Result<Evaluated<'a>> {
-```
-
-**File**: `test-suite/fixtures/aggregate/having.sql` (modified, +10/-0)
-```diff
-@@ -40,6 +40,16 @@ SELECT SUM(quantity), COUNT(*), city FROM Item GROUP BY city HAVING COUNT(*) > 1
- -- | ------------------ | ------------- | --------- |
- -- | 21                 | 2             | "Seoul"   |
- 
-+-- @name: HAVING retains a TRUE aggregate condition combined with NULL
-+SELECT city, COUNT(*) AS count
-+FROM Item
-+GROUP BY city
-+HAVING COUNT(*) > 1 OR NULL;
-+-- @expect:
-+-- | city: Str | count: I64 |
-+-- | --------- | ---------- |
-+-- | "Seoul"   | 2          |
-+
- SELECT city FROM Item GROUP BY city HAVING COALESCE(COUNT(*), 0) > 1
- -- @expect:
- -- | city: Str |
-```
-
-**File**: `test-suite/fixtures/delete.sql` (modified, +14/-0)
-```diff
-@@ -24,6 +24,20 @@ SELECT * FROM Foo
- -- | 2       | 300        | false      |
- -- | 3       | 700        | true       |
- 
-+-- @name: DELETE preserves rows when NOT IN is FALSE or unknown
-+DELETE FROM Foo
-+WHERE id NOT IN (1, NULL);
-+-- @expect: payload Delete
-+-- @json: 0
-+
-+SELECT * FROM Foo;
-+-- @expect:
-+-- | id: I64 | score: I64 | flag: Bool |
-+-- | ------- | ---------- | ---------- |
-+-- | 1       | 100        | true       |
-+-- | 2       | 300        | false      |
-+-- | 3       | 700        | true       |
-+
- -- @name: delete using WHERE
- DELETE FROM Foo WHERE flag = FALSE
- -- @expect: payload Delete
-```
-
-**File**: `test-suite/fixtures/expr/between.sql` (modified, +39/-16)
-```diff
-@@ -96,19 +96,19 @@ SELECT -170141183460469231731687303715884105728 BETWEEN NULL AND 170141183460469
- -- | ---- |
- -- | NULL |
- 
---- @name: '2 BETWEEN NULL AND 1' should return NULL
-+-- @name: '2 BETWEEN NULL AND 1' should return false
- SELECT 2 BETWEEN NULL AND 1 as res;
- -- @expect:
---- | res  |
---- | ---- |
---- | NULL |
-+-- | res: Bool |
-+-- | --------- |
-+-- | false     |
- 
---- @name: '170141183460469231731687303715884105727 BETWEEN NULL AND -170141183460469231731687303715884105728' should return NULL
-+-- @name: '170141183460469231731687303715884105727 BETWEEN NULL AND -170141183460469231731687303715884105728' should return false
- SELECT 170141183460469231731687303715884105727 BETWEEN NULL AND -170141183460469231731687303715884105728 as res;
- -- @expect:
---- | res  |
---- | ---- |
---- | NULL |
-+-- | res: Bool |
-+-- | --------- |
-+-- | false     |
- 
- -- @name: '1 BETWEEN 1 AND NULL' should return NULL
- SELECT 1 BETWEEN 1 AND NULL as res;
-@@ -131,19 +131,19 @@ SELECT -1 BETWEEN -1 AND NULL as res;
- -- | ---- |
- -- | NULL |
- 
---- @name: '1 BETWEEN 2 AND NULL' should return NULL
-+-- @name: '1 BETWEEN 2 AND NULL' should return false
- SELECT 1 BETWEEN 2 AND NULL as res;
- -- @expect:
---- | res  |
---- | ---- |
---- | NULL |
-+-- | res: Bool |
-+-- | --------- |
-+-- | false     |
- 
---- @name: '-170141183460469231731687303715884105728 BETWEEN 170141183460469231731687303715884105727 AND NULL' should return NULL
-+-- @name: '-170141183460469231731687303715884105728 BETWEEN 170141183460469231731687303715884105727 AND NULL' should return false
- SELECT -170141183460469231731687303715884105728 BETWEEN 170141183460469231731687303715884105727 AND NULL as res;
- -- @expect:
---- | res  |
---- | ---- |
---- | NULL |
-+-- | res: Bool |
-+-- | --------- |
-+-- | false     |
- 
- -- @name: '2 BETWEEN 1 AND NULL' should return NULL
- SELECT 2 BETWEEN 1 AND NULL as res;
-@@ -158,3 +158,26 @@ SELECT 170141183460469231731687303715884105727 BETWEEN -170141183460469231731687
- -- | res  |
- -- | ---- |
- -- | NULL |
-+
-+-- @name: NOT BETWEEN returns TRUE when either known bound excludes the value
-+SELECT
-+    0 NOT BETWEEN 1 AND NULL AS below_lower,
-+    2 NOT BETWEEN NULL AND 1 AS above_upper;
-+-- @expect:
-+-- | below_lower: Bool | above_upper: Bool |
-+-- | ----------------- | ----------------- |
-+-- | true              | true              |
-+
-+-- @name: NOT BETWEEN preserves an unknown result
-+SELECT 1 NOT BETWEEN 0 AND NULL AS res;
-+-- @expect:
-+-- | res  |
-+-- | ---- |
-+-- | NULL |
-+
-+-- @name: NOT BETWEEN returns FALSE for a value inside known bounds
-+SELECT 1 NOT BETWEEN 0 AND 2 AS res;
-+-- @expect:
-+-- | res: Bool |
-+-- | --------- |
-+-- | false     |
-```
-
-**File**: `test-suite/fixtures/expr/in_list.sql` (modified, +35/-0)
-```diff
-@@ -11,3 +11,38 @@ SELECT NULL IN (1, 2, 3, NULL) as res
- -- | res  |
- -- | ---- |
- -- | NULL |
-+
-+-- @name: a matching value determines IN regardless of NULL position
-+SELECT
-+    1 IN (1, NULL) AS match_first,
-+    1 IN (NULL, 1) AS match_last,
-+    1 NOT IN (NULL, 1) AS negated;
-+-- @expect:
-+-- | match_first: Bool | match_last: Bool | negated: Bool |
-+-- | ----------------- | ---------------- | ------------- |
-+-- | true              | true             | false         |
-+
-+-- @name: an unmatched value is unknown when the list contains NULL
-+SELECT
-+    2 IN (1, NULL) AS included,
-+    2 NOT IN (1, NULL) AS excluded;
-+-- @expect:
-+-- | included | excluded |
-+-- | -------- | -------- |
-+-- | NULL     | NULL     |
-+
-+-- @name: an unmatched value is FALSE when all list values are known
-+SELECT
-+    2 IN (1, 3) AS included,
-+    2 NOT IN (1, 3) AS excluded;
-+-- @expect:
-+-- | included: Bool | excluded: Bool |
-+-- | -------------- | -------------- |
-+-- | false          | true           |
-+
-+-- @name: NOT IN preserves an unknown target
-+SELECT NULL NOT IN (1, 2, 3) AS res;
-+-- @expect:
-+-- | res  |
-+-- | ---- |
-+-- | NULL |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2081** (2026-11-16): Isolate JSON storage error fixtures by scenario (@panarch)
+- **PR #2080** (closed): json-storage: isolate the duplicate-file error test from shared fixtures (@chiliec)
 - **PR #2077** (2026-11-12): Make CREATE INDEX validation opt-in for storage planners (@panarch)
 - **PR #2076** (2026-11-12): Align NULL evaluation with common SQL semantics (@panarch)
 - **PR #2075** (2026-11-11): Unify Query Builder result assertions (@panarch)
 - **PR #2074** (2026-11-11): Simplify numeric samples in floating-point examples (@panarch)
-- **PR #2073** (2026-11-11): Stop publishing coverage reports to gluesql.org (@panarch)
-- **PR #2072** (2026-11-11): Plan source columns for projected storage scans (@panarch)
 
 ---
 
@@ -2529,68 +2192,85 @@ reporting a type error. NOT LIKE, ILIKE, and NOT ILIKE follow the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Align NULL evaluation with common SQL semantics (#2076)
+## X. Isolate JSON storage error fixtures by scenario
 
 **RULE**:
-When implementing operations in `core/src/data/tribool.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `storages/json-storage/tests/error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d19e619d`: Align NULL evaluation with common SQL semantics (#2076). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dda0280a`: Isolate JSON storage error fixtures by scenario. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/data/tribool.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `storages/json-storage/tests/error.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-    pub(crate) fn and(self, other: Self) -> Self {
-        match (self, other) {
-            (Self::False, _) | (_, Self::False) => Self::False,
-            (Self::True, Self::True) => Self::True,
-            _ => Self::Null,
-        }
-    }
-
-    pub(crate) fn or(self, other: Self) -> Self {
-        match (self, other) {
-            (Self::True, _) | (_, Self::True) => Self::True,
-            (Self::False, Self::False) => Self::False,
-            _ => Self::Null,
-        }
-    }
-
-    #[test]
-    fn test_and() {
-        use Tribool::{False, Null, True};
-
-        assert_eq!(True.and(True), True);
-        assert_eq!(True.and(False), False);
-        assert_eq!(True.and(Null), Null);
-        assert_eq!(False.and(True), False);
-        assert_eq!(False.and(False), False);
-        assert_eq!(False.and(Null), False);
-        assert_eq!(Null.and(True), Null);
-        assert_eq!(Null.and(False), False);
-        assert_eq!(Null.and(Null), Null);
-    }
-
-    #[test]
-    fn test_or() {
-        use Tribool::{False, Null, True};
-
-        assert_eq!(True.or(True), True);
-        assert_eq!(True.or(False), True);
-        assert_eq!(True.or(Null), True);
-        assert_eq!(False.or(True), True);
-   
+    std::path::Path,
+    let cases = [
+            "wrong-format-jsonl",
+            "SELECT * FROM WrongFormatJsonl",
+            ValueError::InvalidJsonString("[".to_owned()).into(),
+            "wrong-format-json",
+            "SELECT * FROM WrongFormatJson",
+            Error::StorageMsg(
+            ),
+            "wrong-schema",
+            "SELECT * FROM WrongSchema",
+            Error::Schema(SchemaParseError::CannotParseDDL),
+            "wrong-table-name",
+            "SELECT * FROM WrongTableName",
+            Error::StorageMsg(JsonStorageError::TableNameDoesNotMatchWithFile.to_string()),
+            "duplicated",
+            "SELECT * FROM Duplicated",
+            Error::StorageMsg(
+            ),
+            "duplicated",
+            "DROP TABLE Duplicated",
+            Error::StorageMsg(
+            ),
+            "json-object-type-required",
+            "SELECT * FROM JsonObjectTypeRequired",
+            Error::StorageMsg(JsonStorageError::JsonObjectTypeRequired.to_string()),
+            "json-array-type-required",
+            "SELECT * FROM JsonArrayTypeRequired",
+            Error::StorageMsg(JsonStorageError::JsonArrayTypeRequired.to_string()),
+    let samples = P
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    let path = "./tests/samples/";
+    let json_storage = JsonStorage::new(path).unwrap();
+    let mut glue = Glue::new(json_storage);
+
+    let cases = vec![
+            glue.execute("SELECT * FROM WrongFormatJsonl"),
+            Err(ValueError::InvalidJsonString("[".to_owned()).into()),
+            glue.execute("SELECT * FROM WrongFormatJson"),
+            Err(Error::StorageMsg(
+            )),
+            glue.execute("SELECT * FROM WrongSchema"),
+            Err(Error::Schema(SchemaParseError::CannotParseDDL)),
+            glue.execute("SELECT * FROM WrongTableName"),
+            Err(Error::StorageMsg(
+                JsonStorageError::TableNameDoesNotMatchWithFile.to_string(),
+            )),
+            glue.execute("SELECT * FROM Duplicated"),
+            Err(Error::StorageMsg(
+            )),
+            glue.execute("DROP TABLE Duplicated"),
+            Err(Error::StorageMsg(
+            )),
+            glue.execute("SELECT * FROM JsonObjectTypeRequired"),
+            Err(Error::StorageMsg(
+                JsonStorageError::JsonObjectTypeRequired.to_string(),
+            )),
+            glue.execute("SELECT * FROM JsonArrayTypeRequired"),
+            Err(Error::StorageMsg(
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d19e619d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dda0280a` are properly handled with clean fallback behavior.

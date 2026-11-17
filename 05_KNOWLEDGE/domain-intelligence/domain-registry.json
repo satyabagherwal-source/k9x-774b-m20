@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T06:20:46.878Z",
-  "total_records": 1455,
+  "last_updated": "2026-11-17T06:28:37.028Z",
+  "total_records": 1459,
   "domains": {
     "A": {
       "total": 9,
@@ -677,7 +677,7 @@
       ]
     },
     "F": {
-      "total": 34,
+      "total": 36,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -712,11 +712,13 @@
         "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants",
         "domain_intelligence-design-intelligence-sharkdp-bat-core-invariants",
         "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
-        "DOM-F-3EF61085"
+        "DOM-F-3EF61085",
+        "domain_intelligence-design-intelligence-cypress-io-cypress-core-invariants",
+        "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants"
       ]
     },
     "G": {
-      "total": 269,
+      "total": 271,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -986,7 +988,9 @@
         "domain_intelligence-architecture-intelligence-preactjs-preact-core-invariants",
         "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants",
         "domain_intelligence-architecture-intelligence-preactjs-preact-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-gluesql-gluesql-core-invariants",
+        "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8188,8 +8192,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "fa25aa047b0a57946ee78e1add8b82ae89faef7ed82edc83a54282d7c31e605f",
-      "created_at": "2026-11-17T06:11:32.106Z"
+      "content_hash": "44048888777696d2a94934d834301af74e3aa4c0694442d0e3671119af831e40",
+      "created_at": "2026-11-17T06:28:37.028Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -25410,6 +25414,42 @@
       "repository": "vitest-dev-vitest-learnings",
       "content_hash": "568ef209ab082429c75ef6c1f66a45bad34463e538b026fcdd6a2d158f9fc1e7",
       "created_at": "2026-11-17T06:20:44.923Z"
+    },
+    "domain_intelligence-design-intelligence-cypress-io-cypress-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-cypress-io-cypress-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: cypress-io/cypress Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-cypress-io-cypress-design-intelligence-cypress-io-cypress-core-invariants.md",
+      "repository": "cypress-io/cypress",
+      "content_hash": "38505e3d56db30a6c4c3a1c4aef0b998179f39b548c0884172c22af923c1329c",
+      "created_at": "2026-11-17T06:28:23.064Z"
+    },
+    "domain_intelligence-architecture-intelligence-gluesql-gluesql-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-gluesql-gluesql-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: gluesql/gluesql Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gluesql-gluesql-architecture-intelligence-gluesql-gluesql-core-invariants.md",
+      "repository": "gluesql/gluesql",
+      "content_hash": "cbeab920b39c00441629baa8fb296a4cb009aaa50f2c23329207fdf6be308e5f",
+      "created_at": "2026-11-17T06:28:31.635Z"
+    },
+    "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: cypress-io-cypress-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-cypress-io-cypress-learnings-design-intelligence-cypress-io-cypress-learnings-co.md",
+      "repository": "cypress-io-cypress-learnings",
+      "content_hash": "43aa4ccc03a89dae5512a4ff9deadfbd0615c2b0f91b3ef52d29b3cafaa9bf97",
+      "created_at": "2026-11-17T06:28:35.903Z"
+    },
+    "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: gluesql-gluesql-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gluesql-gluesql-learnings-architecture-intelligence-gluesql-gluesql-learnings-co.md",
+      "repository": "gluesql-gluesql-learnings",
+      "content_hash": "0c9ea87822c46021d2c03000aa3f57829691ba48d28e96f7eaf8eab325da3ae6",
+      "created_at": "2026-11-17T06:28:36.391Z"
     }
   }
 }

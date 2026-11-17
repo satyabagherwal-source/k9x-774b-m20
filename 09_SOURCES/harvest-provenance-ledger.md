@@ -10495,3 +10495,5 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `a33d49c4` | Multi-dimensional audit evidence | 2026-11-17T06:19:39.268Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `161cab6a` | Multi-dimensional audit evidence | 2026-11-17T06:20:38.382Z |
 | `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `4e905a1b` | Multi-dimensional audit evidence | 2026-11-17T06:20:40.403Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `9962c4fe` | Multi-dimensional audit evidence | 2026-11-17T06:28:22.782Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `dda0280a` | Multi-dimensional audit evidence | 2026-11-17T06:28:31.347Z |

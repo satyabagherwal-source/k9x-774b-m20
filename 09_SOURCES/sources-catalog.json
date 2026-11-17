@@ -1923,10 +1923,10 @@
     "repository": "cypress-io/cypress",
     "platform": "github",
     "sourceUrl": "https://github.com/cypress-io/cypress",
-    "sourceVersion": "3443896f",
+    "sourceVersion": "9962c4fe",
     "license": "MIT",
-    "contentHash": "f04ec34028214dbc8d1c405eecd7d916dfb2609b1418738fe0dcb8e94573fba6",
-    "lastHarvestedAt": "2026-11-12T14:59:50.293Z",
+    "contentHash": "6b3122ddcd6f579dbaded99a31809e867bfb43ac2e619dcb8602d817c00f2de7",
+    "lastHarvestedAt": "2026-11-17T06:28:22.782Z",
     "learningId": "learn-github-cypress-io-cypress"
   },
   "syntax-tree-unist": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "0e0b0958",
+    "sourceVersion": "dda0280a",
     "license": "Apache-2.0",
-    "contentHash": "7c398043ce45bc2883e4f75bceeef97f613e4d2534bf5f759262cf01ff1389a5",
-    "lastHarvestedAt": "2026-11-13T07:25:49.344Z",
+    "contentHash": "9a410d07cd3ae58d1a98aa7bb8cb743b9093ba9ce0914821bdc22255da13b128",
+    "lastHarvestedAt": "2026-11-17T06:28:31.347Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
