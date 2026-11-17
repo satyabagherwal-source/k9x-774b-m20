@@ -7043,10 +7043,10 @@
     "repository": "flux-iac/tofu-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/flux-iac/tofu-controller",
-    "sourceVersion": "1445ac44",
+    "sourceVersion": "aaa5de9c",
     "license": "Apache-2.0",
-    "contentHash": "1ff4c45825202f42d328ad77b49bacd5e4cffa6332c25b4e17983304c4c906cb",
-    "lastHarvestedAt": "2026-11-16T20:21:03.870Z",
+    "contentHash": "8acc18560681ec72135f7298af5ad10f46a0fe1800db6bb1830adf4591aeb6f2",
+    "lastHarvestedAt": "2026-11-17T18:35:35.705Z",
     "learningId": "learn-github-flux-iac-tofu-controller"
   },
   "clockworklabs-spacetimedb": {
@@ -10665,8 +10665,8 @@
     "sourceUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
     "sourceVersion": "hf-huggingfacebio-carbon-x",
     "license": "Open-Source",
-    "contentHash": "4fc4869052406968871df10a7999b844a0c86f75191060589a270ba33a4fbc2d",
-    "lastHarvestedAt": "2026-11-13T07:17:56.722Z",
+    "contentHash": "8703cf17354348dbddbd4a803082e9431b2df475e24e7008e7e128d0af1257ac",
+    "lastHarvestedAt": "2026-11-17T18:35:24.783Z",
     "learningId": "learn-huggingface-huggingfacebio-carbon-x"
   },
   "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf": {
@@ -12808,5 +12808,15 @@
     "contentHash": "a26e8e39aeec134b66f5c690ad0fbdedf881753836da0b1455b309fdf72e3815",
     "lastHarvestedAt": "2026-11-17T16:46:31.203Z",
     "learningId": "learn-huggingface-sensenova-sensenova-loop-9b"
+  },
+  "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored": {
+    "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+    "sourceVersion": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored",
+    "license": "Open-Source",
+    "contentHash": "c0e790dd9f2b8f83b1b3ab17d80f10d146249b19ed131bf6c9eac91da2909810",
+    "lastHarvestedAt": "2026-11-17T18:35:22.272Z",
+    "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored"
   }
 }

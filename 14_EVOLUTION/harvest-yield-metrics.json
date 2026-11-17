@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T18:26:39.604Z",
-  "total_cycles_completed": 10215,
-  "total_learnings_persisted": 10215,
-  "total_rules_promoted": 9772,
+  "last_updated": "2026-11-17T18:35:35.711Z",
+  "total_cycles_completed": 10218,
+  "total_learnings_persisted": 10218,
+  "total_rules_promoted": 9773,
   "history": [
-    {
-      "timestamp": "2026-11-17T03:58:03.342Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T04:05:40.194Z",
-      "repository": "vitejs/vite",
-      "learningId": "learn-github-vitejs-vite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T04:05:43.459Z",
-      "repository": "tauri-apps/tauri",
-      "learningId": "learn-github-tauri-apps-tauri",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T04:05:44.916Z",
       "repository": "fabio-rovai/open-ontologies",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T18:26:39.604Z",
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:35:22.279Z",
+      "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+      "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:35:24.790Z",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:35:35.711Z",
+      "repository": "flux-iac/tofu-controller",
+      "learningId": "learn-github-flux-iac-tofu-controller",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-D2M0",
-    "timestamp": "2026-11-15T13:27:27.864Z",
-    "repository": "zeromicro/go-zero",
-    "learningId": "learn-github-zeromicro-go-zero",
-    "contentHash": "7f90b2af7ff56247c587a151bfcf35c953ef072682965115f513b1ee2077e30f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-SPUM",
-    "timestamp": "2026-11-15T13:39:37.822Z",
-    "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
-    "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-    "contentHash": "c0c86b7118fcc68b8ee90dd0fa84d0d8f2bad0ae7677e3c0c4ca25e7c11bc66e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-S3LP",
-    "timestamp": "2026-11-15T14:07:08.605Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "cd3e3a4c8ceaac1a655f979698e61d35b2a97641407eb9fd602f30bb00003240",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-FX04",
     "timestamp": "2026-11-15T14:25:39.796Z",
     "repository": "Tencent/LoopForge",
@@ -7490,6 +7445,51 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "dcecdebe64f01f4b424fe4e711263b9ebe5a54ae552b554e3c842c2b30d00ec0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-8QVW",
+    "timestamp": "2026-11-17T18:35:22.268Z",
+    "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+    "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
+    "contentHash": "c0e790dd9f2b8f83b1b3ab17d80f10d146249b19ed131bf6c9eac91da2909810",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-8STN",
+    "timestamp": "2026-11-17T18:35:24.779Z",
+    "repository": "HuggingFaceBio/Carbon-X",
+    "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+    "contentHash": "8703cf17354348dbddbd4a803082e9431b2df475e24e7008e7e128d0af1257ac",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-9190",
+    "timestamp": "2026-11-17T18:35:35.700Z",
+    "repository": "flux-iac/tofu-controller",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "8acc18560681ec72135f7298af5ad10f46a0fe1800db6bb1830adf4591aeb6f2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

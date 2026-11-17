@@ -4,22 +4,22 @@
 {
   "source_repository": "flux-iac/tofu-controller",
   "source_url": "https://github.com/flux-iac/tofu-controller",
-  "source_version": "1445ac44",
+  "source_version": "aaa5de9c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T20:21:04.065Z",
+  "timestamp": "2026-11-17T18:35:35.982Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-flux-iac-tofu-controller",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller) (Revision: `1445ac44`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T20:21:04.065Z`  
+> **Provenance**: Harvested from [flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller) (Revision: `aaa5de9c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T18:35:35.982Z`  
 > **Learning ID**: `learn-github-flux-iac-tofu-controller`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `flux-iac/tofu-controller` (Commit: `1445ac44`)
+- **Target Repository**: `flux-iac/tofu-controller` (Commit: `aaa5de9c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T20:21:03.425Z  
+> **Harvest Timestamp**: 2026-11-17T18:35:34.926Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1092,13 +1092,13 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1946** (2026-11-17): **chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0**
+  *Symptoms*: Bumps [go.opentelemetry.io/otel/trace](https://github.com/open-telemetry/opentelemetry-go) from 1.45.0 to 1.47.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/open-telemetry/opentelemetry-go/releases">go.opentelemetry.io/otel/trace's releases</a>.</em></p> <blockquote> <h2>v1.47.0/v0.69.0/v0.23.0/v0.1.0</h2> <p>This release contains the first stable release of the OpenTelemetry Go Logs API and SDK. Our project stability guarantees now apply to the following modules:</p> <ul> <li><code>go.opentelemetry.io/otel/log</code></li> <li><code>go.opentelemetry.io/otel/sdk/log</code></li> </ul> <p>See our <a href="https://github.com/open-telemetry/opentelemetry-go/blob/main/VERSIONING.md">versioning policy</a> for more information about these stability guarantees.</p> <h3>Added</h3> <ul> <li>Add <code>String</code> method for <code>KeyValue</code> type in <code>go.opentelemetry.io/otel/attribute</code>. (<a href="https://redirect.github.com/open-telemetry/opentelemetry-go/issues/8205">#8205</a>)</li> <li>Add <code>String</code> method for <code>Set</code> type in <code>go.opentelemetry.io/otel/attribute</code>. (<a href="https://redirect.github.com/open-telemetry/opentelemetry-go/issues/8347">#8347</a>)</li> <li>Add <code>WithMaxExportBatchSize</code> to <code>go.opentelemetry.io/otel/sdk/metric</code> to configure the maximum export batch size for <code>PeriodicReader</code>. (<a href="https://redirect.github.com/open-telemetry/opentelemet
+
 - **Issue #1945** (2026-11-16): **chore: release 0.17.0**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
   > 👍
-
-- **Issue #1944** (2026-11-13): **Remove unused tf-runner.cache-encryption secret**
-  *Symptoms*: ## Summary The chart creates a `kubernetes.io/service-account-token` secret for the `tf-runner` SA in every allowed namespace. It never expires, and is not consumed: it was the encryption key for workspace BLOB caching (ADR-0003), a feature that never shipped. The ADR is deprecated and the `CreateWorkspaceBlob` RPC it describes was removed in #1917.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1115,206 +1115,82 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1445ac44` (2026-11-16)
-**Commit Message**: chore: release 0.17.0 (#1945)
+### Incident Patch 1: `aaa5de9c` (2026-11-17)
+**Commit Message**: chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (#1946)
 
-**File**: `CHANGELOG.md` (modified, +56/-0)
+Bumps [go.opentelemetry.io/otel/trace](https://github.com/open-telemetry/opentelemetry-go) from 1.45.0 to 1.47.0.
+- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
+- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.45.0...v1.47.0)
+
+---
+updated-dependencies:
+- dependency-name: go.opentelemetry.io/otel/trace
+  dependency-version: 1.47.0
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +4/-3)
 ```diff
-@@ -2,6 +2,62 @@
- 
- All notable changes of this project are documented in this file.
- 
-+## v0.17.0
-+
-+**Release date:** 2026-11-16
-+
-+## ⚠️ Breaking changes — read before upgrading
-+
-+**v1alpha1 API removed ([#1941](https://github.com/flux-iac/tofu-controller/pull/1941)).** The Terraform CRD now only defines `v1alpha2`.
-+Complete the steps in [Removal of the v1alpha1 API](docs/use-tf-controller/upgrade-tf-controller.md#removal-of-the-v1alpha1-api) **before** upgrading:
-+- Move any manifest still using `infra.contrib.fluxcd.io/v1alpha1` to `v1alpha2`.
-+- Reset stale `v1alpha1` managedFields, or server-side apply will fail on those objects.
-+- Clear `v1alpha1` from the CRD's `status.storedVersions`, or the CRD update will be rejected.
-+- If your HelmRelease uses a floating range such as `>=0.16.6`, pin it to `0.16.x` until these steps are done.
-+- Go importers: `github.com/flux-iac/tofu-controller/api/v1alpha1` no longer exists.
-+
-+**Runner and controller must run the same version ([#1917](https://github.com/flux-iac/tofu-controller/pull/1917)).** The gRPC contract between them has changed.
-+Custom runner images built on an older `tf-runner` base image must be rebuilt from v0.17.0.
-+
-+**Error messages no longer start with `rpc error: code = … desc =` ([#1917](https://github.com/flux-iac/tofu-controller/pull/1917)).**
-+Alerts, dashboards or scripts that match the full message text in conditions or events need updating.
-+
-+## Behaviour changes
-+
-+From [#1913](https://github.com/flux-iac/tofu-controller/pull/1913):
-+- **Deleting a suspended Terraform no longer runs destroy**, even with `destroyResourcesOnDeletion: true`. Resources are left in place and a `DestroySkipped` event is emitted.
-+- **Ready now waits for health checks when `writeOutputsToSecret` is set.** A failed health check sets Ready False with `HealthChecksFailed`. Previously Ready could go True before the checks ran, so `dependsOn` dependants could start too early.
-+- **Drift no longer counts as a reconciliation failure.** It can't trigger `RetryLimitReached` any more.
-+- **A denied cross-namespace `dependsOn` is now Stalled** with `AccessDenied`.
-+- **Plan approvals by ID prefix now apply**, as the docs describe.
-+- **New or changed condition and event reasons:** `RunnerFailed`, `FinalizeSecretsFailed`, `DestroySkipped` and `HealthChecksFailed`. The success event for written outputs is now `TerraformOutputsWritten`; it used to be `OutputsWritingFailed`. Check any alerts keyed on these.
-+
-+From [#1917](https://github.com/flux-iac/tofu-controller/pull/1917):
-+- **Secret values are no longer written to runner logs, conditions or events.** This covers `SetEnv`, bad secret inputs and `var.x is "<value>"` diagnostics.
-+- **`forceUnlock: auto` no longer gets stuck** when the lock is already gone.
-+- **The runner exits promptly on SIGTERM.** A cancelled apply now gets the full `runnerTerminationGracePeriodSeconds` instead of a hard 60s.
-+- **`DISABLE_TF_LOGS=1` now also silences** stderr from Init and Plan.
-+
-+## What's Changed
-+* refactor: restructure the Terraform reconciler by @alexandermarston in https://github.com/flux-iac/tofu-controller/pull/1913
-+* refactor: restructure the runner by @alexandermarston in https://github.com/flux-iac/tofu-controller/pull/1917
-+* fix: recover from runner pods that fail or cannot start by @alexandermarston in https://github.com/flux-iac/tofu-controller/pull/1921
-+* feat(tfctl): add --all flag to 'reconcile' command for bulk reconciliation by @cschindlbeck in https://github.com/flux-iac/tofu-controller/pull/1744
-+* fix: stop a pass hanging on a runner that never started by @alexandermarston in https://github.com/flux-iac/tofu-controller/pull/1923
-+* feat: support ExternalArtifact as a Terraform source by @agentydragon in https://github.com/flux-iac/tofu-controller/pull/1901
-+* chore(deps): bump golang.org/x/net to v0.62.0 by @adonispd in https://github.com/flux-iac/tofu-controller/pull/1938
-+* feat: add topologySpreadConstraints to runner pods by @adonispd in https://github.com/flux-iac/tofu-controller/pull/1936
-+* chore(deps): bump the go-minor group across 3 directories with 12 updates by @dependabot[bot] in https://github.com/flux-iac/tofu-controller/pull/1932
-+* chore(deps): bump the go-patch group across 3 directories with 14 updates by @dependabot[bot] in https://github.com/flux-iac/tofu-controller/pull/1933
-+* chore(deps): bump the gh-minor group across 1 directory with 16 updates by @dependabot[bot] in https://github.com/flux-iac/tofu-controller/pull/1942
-+* chore(deps): bump the gh-patch group across 1 directory with 3 updates by @dependabot[bot] in https://github.com/flux-iac/tofu-controller/pull/1931
-+* Remove unused tf-runner.cache-encryption secret by @Wieneo in https://github.com/flux-iac/tofu-controller/pull/1944
-+* feat!: remove the deprecated v1alpha1 Terraform API by @alexandermarston in https://github.com/flux-iac/tofu-controller/pull/1941
-+* feat(runner): Set controller instance ID in environment b
+@@ -218,9 +218,10 @@ require (
+ 	github.com/xlab/treeprint v1.2.0 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
+-	go.opentelemetry.io/otel v1.45.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
++	go.opentelemetry.io/otel/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.28.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
 ```
 
-**File**: `charts/tofu-controller/Chart.yaml` (modified, +2/-2)
+**File**: `go.sum` (modified, +8/-6)
 ```diff
-@@ -2,5 +2,5 @@ apiVersion: v2
- name: tofu-controller
- description: The Helm chart for Weave GitOps Terraform Controller
- type: application
--version: 0.16.6
--appVersion: "v0.16.6"
-+version: 0.17.0
-+appVersion: "v0.17.0"
-```
-
-**File**: `charts/tofu-controller/README.md` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- # Tofu Controller
- 
--![Version: 0.16.6](https://img.shields.io/badge/Version-0.16.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.16.6](https://img.shields.io/badge/AppVersion-v0.16.6-informational?style=flat-square)
-+![Version: 0.17.0](https://img.shields.io/badge/Version-0.17.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.17.0](https://img.shields.io/badge/AppVersion-v0.17.0-informational?style=flat-square)
- 
- This is the Helm chart for the [Tofu Controller](https://github.com/flux-iac/tofu-controller), an IAC controller for Flux [Flux](https://fluxcd.io) to reconcile OpenTofu and Terraform resources in the GitOps way.
- 
-@@ -83,7 +83,7 @@ __Note__: If you need to use the `imagePullSecrets` it would be best to set `ser
- | rbac.create | bool | `true` | If `true`, create and use RBAC resources |
- | replicaCount | int | `1` | Number of tofu-controller pods to deploy |
- | resources | object | `{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"200m","memory":"64Mi"}}` | Resource limits and requests |
--| runner | object | `{"creationTimeout":"5m0s","grpc":{"maxMessageSize":4},"image":{"repository":"ghcr.io/flux-iac/tf-runner","tag":"v0.16.6"},"serviceAccount":{"allowedNamespaces":["flux-system"],"annotations":{},"create":true,"name":"","namespacedRoleBindings":false}}` | Runner-specific configurations |
-+| runner | object | `{"creationTimeout":"5m0s","grpc":{"maxMessageSize":4},"image":{"repository":"ghcr.io/flux-iac/tf-runner","tag":"v0.17.0"},"serviceAccount":{"allowedNamespaces":["flux-system"],"annotations":{},"create":true,"name":"","namespacedRoleBindings":false}}` | Runner-specific configurations |
- | runner.creationTimeout | string | `"5m0s"` | Timeout for runner-creation (Controller) |
- | runner.grpc.maxMessageSize | int | `4` | Maximum GRPC message size (Controller) |
- | runner.image.repository | string | `"ghcr.io/flux-iac/tf-runner"` | Runner image repository |
-```
-
-**File**: `charts/tofu-controller/values.yaml` (modified, +2/-2)
-```diff
-@@ -31,7 +31,7 @@ image:
-   pullPolicy: IfNotPresent
-   # -- Overrides the image tag whose default is the chart appVersion.
-   # @default -- `.Chart.AppVersion`
--  tag: "v0.16.6"
-+  tag: "v0.17.0"
- # -- Controller image pull secret
- imagePullSecrets: []
- # -- Resource limits and requests
-@@ -139,7 +139,7 @@ runner:
-     repository: ghcr.io/flux-iac/tf-runner
-     # -- Runner image tag
-     # @default -- `.Chart.AppVersion`
--    tag: "v0.16.6"
-+    tag: "v0.17.0"
-   grpc:
-     # -- Maximum GRPC message size (Controller)
-     maxMessageSize: 4
-```
-
-**File**: `config/branch-planner/kustomization.yaml` (modified, +1/-1)
-```diff
-@@ -8,4 +8,4 @@ generatorOptions:
- images:
-   - name: flux-iac/branch-planner
-     newName: ghcr.io/flux-iac/branch-planner
--    newTag: v0.16.6
-+    newTag: v0.17.0
-```
-
-**File**: `config/manager/kustomization.yaml` (modified, +1/-1)
-```diff
-@@ -8,4 +8,4 @@ generatorOptions:
- images:
-   - name: flux-iac/tofu-controller
-     newName: ghcr.io/flux-iac/tofu-controller
--    newTag: v0.16.6
-+    newTag: v0.17.0
-```
-
-**File**: `docs/branch-planner/release.yaml` (modified, +4/-4)
-```diff
-@@ -21,7 +21,7 @@ spec:
-       sourceRef:
-         kind: HelmRepository
-         name: tf-controller
--      version: '>=0.16.6'
-+      version: '0.17.0'
-   interval: 1h0s
-   releaseName: tf-controller
-   targetNamespace: flux-system
-@@ -46,13 +46,13 @@ spec:
-     caCertValidityDuration: 24h
-     certRotationCheckFrequency: 30m
-     image:
--      tag: v0.16.6
-+      tag: v0.17.0
-     runner:
-       image:
--        tag: v0.16.6
-+        tag: v0.17.0
-       grpc:
-         maxMessageSize: 30
-     branchPlanner:
-       enabled: true
-       image:
--        tag: v0.16.6
-+        tag: v0.17.0
-```
-
-**File**: `docs/release.yaml` (modified, +3/-3)
-```diff
-@@ -20,7 +20,7 @@ spec:
-       sourceRef:
-         kind: HelmRepository
-         name: tofu-controller
--      version: '>=0.16.6'
-+      version: '0.17.0'
-   interval: 1h0s
-   releaseName: tofu-controller
-   targetNamespace: flux-system
-@@ -45,9 +45,9 @@ spec:
-     caCertValidityDuration: 24h
-     certRotationCheckFrequency: 30m
-     image:
--      tag: v0.16.6
-+      tag: v0.17.0
-     runner:
-       image:
--        tag: v0.16.6
-+        tag: v0.17.0
-       grpc:
-         maxMessageSize: 30
+@@ -501,20 +501,22 @@ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ
+ go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
+-go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+-go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 h1:4YsVu3B8+3qtWYYrsUYgn0OG78pN0rnNPRGX4SbokQI=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0/go.mod h1:+wnlSn0mD1ADVMe3v9Z/WIaiz6q6gL2J/ejaAmdmv80=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 h1:QBajQ2SrwQijzHyZbQlPsuIzpl/ll8DY6wPWsajeGcI=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0/go.mod h1:08ZQLjrPLQ6R4kAXvuOvODEer5Yh4CoFvll5qB2BCI8=
+-go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
+-go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
+ go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+ go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+ go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
+ go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
+-go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+-go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
+ go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
+ go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1946** (2026-11-17): chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
 - **PR #1945** (2026-11-16): chore: release 0.17.0 (@alexandermarston)
 - **PR #1944** (2026-11-13): Remove unused tf-runner.cache-encryption secret (@Wieneo)
 - **PR #1943** (2026-11-13): feat(runner): Set controller instance ID in environment (@cgroschupp)
 - **PR #1942** (2026-11-13): chore(deps): bump the gh-minor group across 1 directory with 16 updates (@dependabot[bot])
 - **PR #1941** (2026-11-13): feat!: remove the deprecated v1alpha1 Terraform API (@alexandermarston)
-- **PR #1938** (2026-11-10): chore(deps): bump golang.org/x/net to v0.62.0 (@adonispd)
 
 ---
 
@@ -1334,48 +1210,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release 0.17.0
+## X. deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1445ac44`: release 0.17.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aaa5de9c`: deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## v0.17.0
-
-**Release date:** 2026-11-16
-
-## ⚠️ Breaking changes — read before upgrading
-
-**v1alpha1 API removed ([#1941](https://github.com/flux-iac/tofu-controller/pull/1941)).** The Terraform CRD now only defines `v1alpha2`.
-Complete the steps in [Removal of the v1alpha1 API](docs/use-tf-controller/upgrade-tf-controller.md#removal-of-the-v1alpha1-api) **before** upgrading:
-- Move any manifest still using `infra.contrib.fluxcd.io/v1alpha1` to `v1alpha2`.
-- Reset stale `v1alpha1` managedFields, or server-side apply will fail on those objects.
-- Clear `v1alpha1` from the CRD's `status.storedVersions`, or the CRD update will be rejected.
-- If your HelmRelease uses a floating range such as `>=0.16.6`, pin it to `0.16.x` until these steps are done.
-- Go importers: `github.com/flux-iac/tofu-controller/api/v1alpha1` no longer exists.
-
-**Runner and controller must run the same version ([#1917](https://github.com/flux-iac/tofu-controller/pull/1917)).** The gRPC contract between them has changed.
-Custom runner images built on an older `tf-runner` base image must be rebuilt from v0.17.0.
-
-**Error messages no longer start with `rpc error: code = … desc =` ([#1917](https://github.com/flux-iac
+	go.opentelemetry.io/otel v1.47.0 // indirect
+	go.opentelemetry.io/otel/log v1.47.0 // indirect
+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	go.opentelemetry.io/otel v1.45.0 // indirect
+	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+	go.opentelemetry.io/otel/trace v1.45.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1445ac44` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aaa5de9c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

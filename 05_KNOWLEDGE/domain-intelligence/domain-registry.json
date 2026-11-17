@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T18:26:43.978Z",
-  "total_records": 1641,
+  "last_updated": "2026-11-17T18:35:40.747Z",
+  "total_records": 1647,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 701,
+      "total": 705,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -750,7 +750,11 @@
         "domain_intelligence-research-knowledge-intelligence-orcarouter-deepseek-v4-1-flash-1017-abliterated-",
         "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-deepseek-v4-1-flash-1017-abliterat",
         "domain_intelligence-research-knowledge-intelligence-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-co",
-        "domain_intelligence-research-knowledge-intelligence-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf"
+        "domain_intelligence-research-knowledge-intelligence-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
+        "domain_intelligence-research-knowledge-intelligence-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-",
+        "domain_intelligence-research-knowledge-intelligence-huggingfacebio-carbon-x-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor",
+        "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari"
       ]
     },
     "E": {
@@ -1103,7 +1107,7 @@
       ]
     },
     "H": {
-      "total": 390,
+      "total": 392,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1494,7 +1498,9 @@
         "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-core-inva",
         "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-learnings",
         "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv"
+        "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv",
+        "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva"
       ]
     },
     "I": {
@@ -27980,6 +27986,60 @@
       "repository": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings",
       "content_hash": "1c10c057fd0447be37b5bfd0c3b39e389fbdc8a9d9605dd383cf8630c0cb9e17",
       "created_at": "2026-11-17T18:26:43.558Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-research-knowledge-intelligen.md",
+      "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+      "content_hash": "791a40d6297e5365f872100fe17e38d945b9680f16e6cd74f355ecd2f6ffc695",
+      "created_at": "2026-11-17T18:35:22.512Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-huggingfacebio-carbon-x-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-huggingfacebio-carbon-x-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: HuggingFaceBio/Carbon-X Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacebio-carbon-x-research-knowledge-intelligence-huggingfacebio-carbon.md",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "content_hash": "c262aa35f0791d08bc2c70380f1dd910f908d2803bbb034ee8eae69cffed91fe",
+      "created_at": "2026-11-17T18:35:25.018Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: flux-iac/tofu-controller Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-flux-iac-tofu-controller-technical-construction-intelligence-flux-iac-tofu-contr.md",
+      "repository": "flux-iac/tofu-controller",
+      "content_hash": "0055f36b2016bc84c4726355a1d74c86f43fa5801661ce9ca0df1334b341f7f5",
+      "created_at": "2026-11-17T18:35:36.152Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-learnings-research-knowledge-.md",
+      "repository": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings",
+      "content_hash": "3c513d266d26c434c0314a50d456ce0ac78aa28fc39313766b7e3da67044d43e",
+      "created_at": "2026-11-17T18:35:39.432Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-huggingfacebio-carbon-x-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacebio-carbon-x-learnings-research-knowledge-intelligence-hf-huggingf.md",
+      "repository": "hf-huggingfacebio-carbon-x-learnings",
+      "content_hash": "c29f91fc4da0e7727daa23138ec2bf10d67ff044482b5e9e220f690eb51d1929",
+      "created_at": "2026-11-17T18:35:39.852Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: flux-iac-tofu-controller-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-flux-iac-tofu-controller-learnings-technical-construction-intelligence-flux-iac-.md",
+      "repository": "flux-iac-tofu-controller-learnings",
+      "content_hash": "ffed364d75f3d0d57b99566cf54ed1d7d3289a556f8a462dcf4e49b86f368e00",
+      "created_at": "2026-11-17T18:35:40.747Z"
     }
   }
 }

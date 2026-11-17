@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T18:26:44.219Z",
+  "last_updated": "2026-11-17T18:35:41.095Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -388,7 +388,7 @@
       "staged_for_review": 1
     },
     "flux-iac-tofu-controller-learnings.md": {
-      "processed_at": "2026-11-16T20:21:11.595Z",
+      "processed_at": "2026-11-17T18:35:40.043Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1623,8 +1623,8 @@
       "staged_for_review": 1
     },
     "hf-huggingfacebio-carbon-x-learnings.md": {
-      "processed_at": "2026-11-13T07:18:15.856Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T18:35:39.631Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-nanbeige-nanbeige4.3-33b-learnings.md": {
@@ -3346,9 +3346,14 @@
       "processed_at": "2026-11-17T17:11:37.731Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md": {
+      "processed_at": "2026-11-17T18:35:39.185Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1665,
+  "total_dossiers_evaluated": 1668,
   "total_canonical_promoted": 323,
-  "total_staged_for_review": 1306
+  "total_staged_for_review": 1308
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T18:26:42.856Z",
+  "updated_at": "2026-11-17T18:35:40.303Z",
   "stats": {
-    "total_discovered": 5103,
-    "approved_pending_harvest": 4814,
+    "total_discovered": 5108,
+    "approved_pending_harvest": 4819,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4801,
+      "COMMUNITY_AND_EXPERT": 4806,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -110264,6 +110264,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
         "fileName": "zenbu-labs-terminal-browser-learnings.md"
+      }
+    },
+    "SRC-72A3FC8A898A": {
+      "id": "SRC-72A3FC8A898A",
+      "url": "https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+      "title": "https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:35:39.210Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md",
+        "fileName": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md"
+      }
+    },
+    "SRC-DD58B00A8A7E": {
+      "id": "SRC-DD58B00A8A7E",
+      "url": "https://github.com/open-telemetry/opentelemetry-go/blob/main/VERSIONING.md",
+      "title": "https://github.com/open-telemetry/opentelemetry-go/blob/main/VERSIONING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:35:40.164Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-B9B9FEA2CFB4": {
+      "id": "SRC-B9B9FEA2CFB4",
+      "url": "https://redirect.github.com/open-telemetry/opentelemetry-go/issues/8205",
+      "title": "https://redirect.github.com/open-telemetry/opentelemetry-go/issues/8205",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:35:40.213Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-CE5BBBB9CF1F": {
+      "id": "SRC-CE5BBBB9CF1F",
+      "url": "https://redirect.github.com/open-telemetry/opentelemetry-go/issues/8347",
+      "title": "https://redirect.github.com/open-telemetry/opentelemetry-go/issues/8347",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:35:40.255Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
+      }
+    },
+    "SRC-A840DE98601A": {
+      "id": "SRC-A840DE98601A",
+      "url": "https://redirect.github.com/open-telemetry/opentelemet",
+      "title": "https://redirect.github.com/open-telemetry/opentelemet",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:35:40.303Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
       }
     }
   }

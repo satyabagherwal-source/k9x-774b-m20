@@ -10693,3 +10693,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf` | `https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF` | `hf-huihui-` | Multi-dimensional audit evidence | 2026-11-17T18:26:24.172Z |
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `77abba97` | Multi-dimensional audit evidence | 2026-11-17T18:26:25.978Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `eacef66c` | Multi-dimensional audit evidence | 2026-11-17T18:26:39.599Z |
+| `learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored` | `https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored` | `hf-moonmat` | Multi-dimensional audit evidence | 2026-11-17T18:35:22.272Z |
+| `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-17T18:35:24.783Z |
+| `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `aaa5de9c` | Multi-dimensional audit evidence | 2026-11-17T18:35:35.705Z |

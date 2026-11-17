@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T18:26:39.607Z",
+  "last_updated": "2026-11-17T18:35:35.716Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10611,14 +10611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flux-iac-tofu-controller",
-      "content_hash": "1ff4c45825202f42d328ad77b49bacd5e4cffa6332c25b4e17983304c4c906cb",
-      "verified_at": "2026-11-16T20:21:03.887Z",
+      "content_hash": "8acc18560681ec72135f7298af5ad10f46a0fe1800db6bb1830adf4591aeb6f2",
+      "verified_at": "2026-11-17T18:35:35.715Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T20:21:03.887Z"
+      "last_updated": "2026-11-17T18:35:35.715Z"
     },
     "clockworklabs/SpacetimeDB": {
       "repository": "clockworklabs/SpacetimeDB",
@@ -16026,14 +16026,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-huggingfacebio-carbon-x",
-      "content_hash": "4fc4869052406968871df10a7999b844a0c86f75191060589a270ba33a4fbc2d",
-      "verified_at": "2026-11-13T07:17:56.729Z",
+      "content_hash": "8703cf17354348dbddbd4a803082e9431b2df475e24e7008e7e128d0af1257ac",
+      "verified_at": "2026-11-17T18:35:24.793Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T07:17:56.729Z"
+      "last_updated": "2026-11-17T18:35:24.793Z"
     },
     "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF": {
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
@@ -19304,6 +19304,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-17T16:46:31.211Z"
+    },
+    "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored": {
+      "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
+      "content_hash": "c0e790dd9f2b8f83b1b3ab17d80f10d146249b19ed131bf6c9eac91da2909810",
+      "verified_at": "2026-11-17T18:35:22.283Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-17T18:35:22.283Z"
     }
   },
   "repos": {

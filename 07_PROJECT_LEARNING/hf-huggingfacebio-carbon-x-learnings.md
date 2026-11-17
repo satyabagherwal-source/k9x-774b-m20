@@ -3,7 +3,7 @@
 > **Source Version**: `hf-huggingfa`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T07:17:56.516Z  
+> **Timestamp**: 2026-11-17T18:35:24.239Z  
 > **Learning ID**: `learn-huggingface-huggingfacebio-carbon-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/HuggingFaceBio/Carbon-X](https://huggingface.co/HuggingFaceBio/Carbon-X))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T07:17:56.513Z  
+> **Harvest Timestamp**: 2026-11-17T18:35:24.233Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5018 downloads | 304 likes
+- **Stars / Engagement**: 5414 downloads | 308 likes
 
 ---
 

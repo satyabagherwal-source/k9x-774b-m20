@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T18:26:44.099Z",
-  "total_verified_learnings": 8923,
+  "last_updated": "2026-11-17T18:35:40.935Z",
+  "total_verified_learnings": 8925,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20473,
+  "total_items": 20482,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219696,8 +219696,8 @@
       "slug": "flux-iac-tofu-controller",
       "platform": "github",
       "source_url": "https://github.com/flux-iac/tofu-controller",
-      "source_version": "1445ac44",
-      "content_hash": "1ff4c45825202f42d328ad77b49bacd5e4cffa6332c25b4e17983304c4c906cb",
+      "source_version": "aaa5de9c",
+      "content_hash": "8acc18560681ec72135f7298af5ad10f46a0fe1800db6bb1830adf4591aeb6f2",
       "dossier_path": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
       "promoted_rules": [
@@ -219705,6 +219705,11 @@
           "number": 8412,
           "title": "Set controller instance ID in environment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8770,
+          "title": "bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219712,7 +219717,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T20:21:03.684Z",
+      "verified_at": "2026-11-17T18:35:35.499Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219766,10 +219771,10 @@
       "relative_path": "08_VERIFICATION/flux-iac-tofu-controller-verification-protocol-empirical-defect-shield-for-flux-.md",
       "title": "Verification Protocol: Empirical Defect Shield for flux-iac/tofu-controller",
       "repository": "flux-iac/tofu-controller",
-      "source_version": "1445ac44",
-      "content_hash": "bb63ccae6b7d79e6d7c14b2b91f646f31ad4b558fbefc343420e359987a4b9fc",
+      "source_version": "aaa5de9c",
+      "content_hash": "255fac547078ca9df0a7ce26992d5a879898b8172ee3609a86007b5ee6a3ad45",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T20:21:04.310Z"
+      "persisted_at": "2026-11-17T18:35:36.333Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co",
@@ -219815,9 +219820,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for flux-iac-tofu-controller-learnings",
       "repository": "flux-iac-tofu-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "098cc60eff25afc723f24e474f8af4baa929d82c65ac3ed4177cf139b09b9224",
+      "content_hash": "2e10dedd74cca6ac6ded251b335a9769197b0584131189046517072cd36569e3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T20:21:12.627Z"
+      "persisted_at": "2026-11-17T18:35:40.935Z"
     },
     "learn-huggingface-scantist-glm-5-3-slim-gguf": {
       "learning_id": "learn-huggingface-scantist-glm-5-3-slim-gguf",
@@ -257000,26 +257005,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8770,
       "title": "bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0",
-      "source_url": "https://github.com/open-policy-agent/gatekeeper",
-      "source_version": "874cc793",
+      "source_url": "https://github.com/flux-iac/tofu-controller",
+      "source_version": "aaa5de9c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-16T18:27:12.503Z"
+      "verified_at": "2026-11-17T18:35:35.499Z"
     },
     "candidate_directive-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0": {
       "item_id": "candidate_directive-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-IMQW-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-91GT-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0.md",
       "title": "bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0",
-      "repository": "open-policy-agent-gatekeeper-learnings",
-      "source_version": "HEAD",
-      "content_hash": "f615e25279a3dda93b2f05425f58ae904276e77deee639360ca720f324407447",
-      "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:27:23.433Z"
+      "repository": "flux-iac/tofu-controller",
+      "source_version": "aaa5de9c",
+      "content_hash": "6f869787b68e3d7059a66803b326bd1dda88766d58101dcdbb93ff841b8a013d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T18:35:35.982Z"
     },
     "learn-github-seaql-sea-orm": {
       "learning_id": "learn-github-seaql-sea-orm",
@@ -274726,6 +274731,144 @@
       "content_hash": "af3c176e50a6d3cd0f24279c3ca532e14010bf204dc269ffe32317ab66449c2d",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T18:26:43.862Z"
+    },
+    "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored": {
+      "learning_id": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+      "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+      "slug": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+      "source_version": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored",
+      "content_hash": "c0e790dd9f2b8f83b1b3ab17d80f10d146249b19ed131bf6c9eac91da2909810",
+      "dossier_path": "07_PROJECT_LEARNING/hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T18:35:22.030Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-research-knowledge-intelligen.md",
+      "title": "Research & Knowledge Intelligence: MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored Core Invariants",
+      "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+      "source_version": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored",
+      "content_hash": "791a40d6297e5365f872100fe17e38d945b9680f16e6cd74f355ecd2f6ffc695",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T18:35:22.512Z"
+    },
+    "learn-huggingface-huggingfacebio-carbon-x": {
+      "learning_id": "learn-huggingface-huggingfacebio-carbon-x",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "HuggingFaceBio/Carbon-X",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "slug": "hf-huggingfacebio-carbon-x",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "content_hash": "8703cf17354348dbddbd4a803082e9431b2df475e24e7008e7e128d0af1257ac",
+      "dossier_path": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T18:35:24.537Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-huggingfacebio-carbon-x-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-huggingfacebio-carbon-x-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacebio-carbon-x-research-knowledge-intelligence-huggingfacebio-carbon.md",
+      "title": "Research & Knowledge Intelligence: HuggingFaceBio/Carbon-X Core Invariants",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "source_version": "hf-huggingfacebio-carbon-x",
+      "content_hash": "c262aa35f0791d08bc2c70380f1dd910f908d2803bbb034ee8eae69cffed91fe",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T18:35:25.018Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-flux-iac-tofu-controller-technical-construction-intelligence-flux-iac-tofu-contr.md",
+      "title": "Technical Construction Intelligence: flux-iac/tofu-controller Core Invariants",
+      "repository": "flux-iac/tofu-controller",
+      "source_version": "aaa5de9c",
+      "content_hash": "0055f36b2016bc84c4726355a1d74c86f43fa5801661ce9ca0df1334b341f7f5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T18:35:36.152Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-learnings-research-knowledge-.md",
+      "title": "Research & Knowledge Intelligence: hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings Core Invariants",
+      "repository": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3c513d266d26c434c0314a50d456ce0ac78aa28fc39313766b7e3da67044d43e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T18:35:39.432Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacebio-carbon-x-learnings-research-knowledge-intelligence-hf-huggingf.md",
+      "title": "Research & Knowledge Intelligence: hf-huggingfacebio-carbon-x-learnings Core Invariants",
+      "repository": "hf-huggingfacebio-carbon-x-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c29f91fc4da0e7727daa23138ec2bf10d67ff044482b5e9e220f690eb51d1929",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T18:35:39.852Z"
+    },
+    "candidate_directive-deps-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0": {
+      "item_id": "candidate_directive-deps-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-950E-deps-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0.md",
+      "title": "deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0",
+      "repository": "flux-iac-tofu-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "40bb68ee818419ea87e374acd6e604c240df97061dc407cc39fa7fdc6a6ea8db",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T18:35:40.575Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-flux-iac-tofu-controller-learnings-technical-construction-intelligence-flux-iac-.md",
+      "title": "Technical Construction Intelligence: flux-iac-tofu-controller-learnings Core Invariants",
+      "repository": "flux-iac-tofu-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ffed364d75f3d0d57b99566cf54ed1d7d3289a556f8a462dcf4e49b86f368e00",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T18:35:40.747Z"
     }
   },
   "ai-builder-brain": {

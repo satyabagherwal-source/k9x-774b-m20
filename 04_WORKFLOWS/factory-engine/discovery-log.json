@@ -21439,5 +21439,17 @@
     "downloads": 0,
     "qualityScore": 830,
     "discoveredAt": "2026-11-17T16:44:16.712Z"
+  },
+  {
+    "name": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+    "fullName": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+    "url": "https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored (143 likes, 1683 downloads)",
+    "likes": 143,
+    "downloads": 1683,
+    "qualityScore": 3113,
+    "discoveredAt": "2026-11-17T18:33:06.948Z"
   }
 ]

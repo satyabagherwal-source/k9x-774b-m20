@@ -10660,3 +10660,6 @@
 | `CYCLE-20261117-X7OO` | `2026-11-17T18:26:24.168Z` | `huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md` | Yes (`d36045fa...`) |
 | `CYCLE-20261117-X92U` | `2026-11-17T18:26:25.974Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9027` | Yes (`509372e2...`) |
 | `CYCLE-20261117-XJL7` | `2026-11-17T18:26:39.595Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9028` | Yes (`dcecdebe...`) |
+| `CYCLE-20261117-8QVW` | `2026-11-17T18:35:22.268Z` | `MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md` | Yes (`c0e790dd...`) |
+| `CYCLE-20261117-8STN` | `2026-11-17T18:35:24.779Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md` | Yes (`8703cf17...`) |
+| `CYCLE-20261117-9190` | `2026-11-17T18:35:35.700Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8770` | Yes (`8acc1856...`) |
