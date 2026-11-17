@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T13:48:13.278Z",
-    "lastVerified": "2026-11-17T13:48:13.278Z",
+    "lastChecked": "2026-11-17T14:01:54.997Z",
+    "lastVerified": "2026-11-17T14:01:54.997Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -115,22 +115,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "gravitl-netmaker": {
-    "name": "netmaker",
+    "name": "gravitl/netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-17T06:36:05.381Z",
-    "lastVerified": "2026-11-17T06:36:05.381Z",
+    "lastChecked": "2026-11-17T14:01:46.174Z",
+    "lastVerified": "2026-11-17T14:01:46.174Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "22cd038f42c7c8da2eda25e00ff51b97d577192bff3dbc13a6d1291c27192b42",
+    "contentHash": "40d5bd4500aefafe945ab9fd418e17583ec277d064d80e1f85d1bd2f2206d9a1",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5485d954"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mintplex-labs-anything-llm": {
     "name": "anything-llm",
@@ -468,12 +467,12 @@
     "revisionIdentifier": "99d7433f"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T12:41:08.308Z",
-    "lastVerified": "2026-11-17T12:41:08.308Z",
+    "lastChecked": "2026-11-17T14:01:45.923Z",
+    "lastVerified": "2026-11-17T14:01:45.923Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -482,7 +481,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e1506250"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -2406,9 +2406,9 @@
   "danilowoz-react-content-loader": {
     "name": "react-content-loader",
     "officialUrl": "https://github.com/danilowoz/react-content-loader",
-    "lastChecked": "2026-11-13T22:17:33.375Z",
+    "lastChecked": "2026-11-17T14:01:35.966Z",
     "revisionIdentifier": "c8a6b6c6",
-    "lastVerified": "2026-11-13T22:17:33.375Z"
+    "lastVerified": "2026-11-17T14:01:35.966Z"
   },
   "chaos-mesh-chaos-mesh": {
     "name": "chaos-mesh/chaos-mesh",
@@ -6536,12 +6536,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dicklesworthstone-destructive_command_guard": {
-    "name": "Dicklesworthstone/destructive_command_guard",
+    "name": "destructive_command_guard",
     "officialUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T22:39:41.685Z",
-    "lastVerified": "2026-11-15T22:39:41.685Z",
+    "lastChecked": "2026-11-17T14:01:30.874Z",
+    "lastVerified": "2026-11-17T14:01:30.874Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
@@ -6550,7 +6550,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "37d14736"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
     "name": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -6655,9 +6656,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-16T06:17:32.825Z",
+    "lastChecked": "2026-11-17T14:01:38.402Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-16T06:17:32.825Z"
+    "lastVerified": "2026-11-17T14:01:38.402Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -7465,14 +7466,14 @@
     "officialUrl": "https://github.com/vespa-engine/vespa",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-16T04:53:29.958Z",
-    "lastVerified": "2026-11-16T04:53:29.958Z",
+    "lastChecked": "2026-11-17T14:01:51.750Z",
+    "lastVerified": "2026-11-17T14:01:51.750Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "552f7b88e0bf0150047334219654d85e6a1d39b8ab0d8bcd0c8d7dc2fe194a98",
+    "contentHash": "ed8694ce56ce5e85ad3d84dbc8789b3cd6c5b2397612b1744d0d1b2b4f74ca1f",
     "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13321,9 +13322,9 @@
   "unjs-ofetch": {
     "name": "ofetch",
     "officialUrl": "https://github.com/unjs/ofetch",
-    "lastChecked": "2026-11-13T00:43:08.063Z",
+    "lastChecked": "2026-11-17T14:01:33.398Z",
     "revisionIdentifier": "1dbc37fd",
-    "lastVerified": "2026-11-13T00:43:08.063Z"
+    "lastVerified": "2026-11-17T14:01:33.398Z"
   },
   "unjs-ufo": {
     "name": "ufo",

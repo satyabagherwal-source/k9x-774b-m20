@@ -10592,3 +10592,6 @@ Every entry in this ledger must capture:
 | `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `749b12bc` | Multi-dimensional audit evidence | 2026-11-17T13:29:49.608Z |
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `beb9a36f` | Multi-dimensional audit evidence | 2026-11-17T13:29:50.951Z |
 | `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `655fbcc5` | Multi-dimensional audit evidence | 2026-11-17T13:29:52.616Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `28560362` | Multi-dimensional audit evidence | 2026-11-17T14:01:47.336Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `6dfc8f2d` | Multi-dimensional audit evidence | 2026-11-17T14:01:52.102Z |
+| `learn-dom-d-8e8b1bed` | `project://vespa-engine-vespa` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md` | 2026-11-17T14:02:19.603Z |

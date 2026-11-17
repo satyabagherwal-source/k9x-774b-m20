@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-17T12:26:13.624Z",
+  "updated_at": "2026-11-17T14:02:19.601Z",
   "statistics": {
-    "total_nodes": 317,
+    "total_nodes": 318,
     "total_edges": 156,
     "domain_distribution": {
-      "D": 228,
+      "D": 229,
       "M": 1,
       "H": 39,
       "J": 12,
@@ -7100,6 +7100,28 @@
       ],
       "created_at": "2026-11-17T12:26:13.624Z",
       "updated_at": "2026-11-17T12:26:13.624Z"
+    },
+    "DOM-D-8E8B1BED": {
+      "id": "DOM-D-8E8B1BED",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): vespa-engine/vespa",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  \n> **Source**: github ([https://github.com/vespa-e -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  \n> **Source**: github ([https://github.com/vespa-e",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://vespa-engine-vespa/vespa-engine-vespa-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T14:01:55.618Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (vespa-engine-vespa)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-17T14:02:19.601Z",
+      "updated_at": "2026-11-17T14:02:19.601Z"
     }
   },
   "edges": [

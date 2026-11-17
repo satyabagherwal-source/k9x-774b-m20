@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-AISV",
-    "timestamp": "2026-11-14T22:57:40.783Z",
-    "repository": "apollographql/apollo-kotlin",
-    "learningId": "learn-github-apollographql-apollo-kotlin",
-    "contentHash": "5ac98586e71360a14e396e840ec05b56428a368b37f3162b79d91bfec9042aa8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-APZS",
-    "timestamp": "2026-11-14T22:57:50.104Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "ff1b6b9750f8b2ee9178b6b47f0f187d757656aaf6929a8e033d66c6416c458a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-AQO8",
     "timestamp": "2026-11-14T22:57:50.984Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7460,36 @@
     "repository": "callstack/react-native-paper",
     "learningId": "learn-github-callstack-react-native-paper",
     "contentHash": "40659ff18d941994ef45b324a3d4e0060261977289ed9675fde2baf55ca35366",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-GX1H",
+    "timestamp": "2026-11-17T14:01:47.333Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "40d5bd4500aefafe945ab9fd418e17583ec277d064d80e1f85d1bd2f2206d9a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-H0PV",
+    "timestamp": "2026-11-17T14:01:52.099Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "ed8694ce56ce5e85ad3d84dbc8789b3cd6c5b2397612b1744d0d1b2b4f74ca1f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

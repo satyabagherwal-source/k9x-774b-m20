@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T13:48:15.751Z",
-  "total_records": 1553,
+  "last_updated": "2026-11-17T14:02:20.429Z",
+  "total_records": 1555,
   "domains": {
     "A": {
       "total": 11,
@@ -47,7 +47,7 @@
       ]
     },
     "D": {
-      "total": 642,
+      "total": 643,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -690,7 +690,8 @@
         "DOM-D-46E6B1DB",
         "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-pe-learnings-core-",
         "DOM-D-84284456",
-        "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar",
+        "DOM-D-8E8B1BED"
       ]
     },
     "E": {
@@ -1416,7 +1417,7 @@
       ]
     },
     "I": {
-      "total": 77,
+      "total": 78,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1494,7 +1495,8 @@
         "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
         "DOM-I-6DA6494F",
         "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-learnings-core-i",
-        "domain_intelligence-content-information-intelligence-apache-pinot-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-apache-pinot-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-gravitl-netmaker-core-invariants"
       ]
     },
     "J": {
@@ -14344,8 +14346,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "131b4cec6d0c8a2e4250fee2cd486e02798eb0b9e874293698c130b1a32db484",
-      "created_at": "2026-11-17T06:47:46.823Z"
+      "content_hash": "94ba682a43325965ce36123af182e104dff1f1cc7aaa1db4afea51e052798995",
+      "created_at": "2026-11-17T14:02:20.429Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -17239,8 +17241,8 @@
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "repository": "vespa-engine/vespa",
-      "content_hash": "20783c1b1255af86583a9a4a59cbfc32d452de56bbf4ecaa16c6c00689b1b987",
-      "created_at": "2026-11-16T04:53:30.835Z"
+      "content_hash": "3de7e89265aa166a8cb53220bf627322b95eb13ad10e53c356c8265ed4e62a27",
+      "created_at": "2026-11-17T14:01:52.262Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
@@ -17309,8 +17311,8 @@
       "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-learnings-architecture-intelligence-vespa-engine-vespa-learni.md",
       "repository": "vespa-engine-vespa-learnings",
-      "content_hash": "ef508f1e7fa00cb245089dd04426d130ea30b3f1e9bd918ffa4c810a85c13530",
-      "created_at": "2026-11-16T04:53:37.102Z"
+      "content_hash": "308b4bc079f44645d703b58f2b6ffc882c19dfeb50a87d520cd6c10148599aad",
+      "created_at": "2026-11-17T14:02:19.817Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in",
@@ -19880,8 +19882,8 @@
       "title": "Content & Information Intelligence: gravitl-netmaker-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gravitl-netmaker-learnings-content-information-intelligence-gravitl-netmaker-lea.md",
       "repository": "gravitl-netmaker-learnings",
-      "content_hash": "49cad1117f24027b1727c417187c68536f36f1114225a50160f64d4c13df472c",
-      "created_at": "2026-11-15T07:42:33.499Z"
+      "content_hash": "684444c0548e613000752b974967069bb5098a730c9756384e76a82defed8234",
+      "created_at": "2026-11-17T14:01:55.403Z"
     },
     "domain_intelligence-architecture-intelligence-tuist-tuist-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tuist-tuist-core-invariants",
@@ -27001,6 +27003,57 @@
       "repository": "unjs-nitro-learnings",
       "content_hash": "231aff6dcdb4e51155ab00e5d7aa0cc1d5ebfba66382daec7c2ecb81e3c541a3",
       "created_at": "2026-11-17T13:29:56.944Z"
+    },
+    "domain_intelligence-content-information-intelligence-gravitl-netmaker-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-gravitl-netmaker-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: gravitl/netmaker Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gravitl-netmaker-content-information-intelligence-gravitl-netmaker-core-invarian.md",
+      "repository": "gravitl/netmaker",
+      "content_hash": "76370b57a968d8af63c80b995fe9c53909ae3afd75d0c6b993cc1ad3eeb13312",
+      "created_at": "2026-11-17T14:01:47.616Z"
+    },
+    "DOM-D-8E8B1BED": {
+      "record_id": "DOM-D-8E8B1BED",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): vespa-engine/vespa",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  \n> **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  \n> **Source Version**: `6dfc8f2d`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structura",
+      "content_hash": "2ce16cc211b3e5725d3319bc6f33c2cc73035b5977764090cc8712d9b0ff51d1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  \n> **Source**: github ([https://github.com/vespa-e -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  \n> **Source**: github ([https://github.com/vespa-e",
+      "provenance": {
+        "source_uri": "project://vespa-engine-vespa/vespa-engine-vespa-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T14:01:55.618Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (vespa-engine-vespa)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of vespa-engine-vespa"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T14:02:19.584Z"
     }
   }
 }

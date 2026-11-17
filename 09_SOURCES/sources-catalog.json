@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "5485d954",
+    "sourceVersion": "28560362",
     "license": "NOASSERTION",
-    "contentHash": "22cd038f42c7c8da2eda25e00ff51b97d577192bff3dbc13a6d1291c27192b42",
-    "lastHarvestedAt": "2026-11-16T18:18:58.412Z",
+    "contentHash": "40d5bd4500aefafe945ab9fd418e17583ec277d064d80e1f85d1bd2f2206d9a1",
+    "lastHarvestedAt": "2026-11-17T14:01:47.336Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "149cd0ad",
+    "sourceVersion": "6dfc8f2d",
     "license": "Apache-2.0",
-    "contentHash": "552f7b88e0bf0150047334219654d85e6a1d39b8ab0d8bcd0c8d7dc2fe194a98",
-    "lastHarvestedAt": "2026-11-16T04:53:30.434Z",
+    "contentHash": "ed8694ce56ce5e85ad3d84dbc8789b3cd6c5b2397612b1744d0d1b2b4f74ca1f",
+    "lastHarvestedAt": "2026-11-17T14:01:52.102Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {

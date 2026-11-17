@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T13:29:52.636Z",
+  "last_updated": "2026-11-17T14:01:52.110Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "22cd038f42c7c8da2eda25e00ff51b97d577192bff3dbc13a6d1291c27192b42",
-      "verified_at": "2026-11-16T18:18:58.422Z",
+      "content_hash": "40d5bd4500aefafe945ab9fd418e17583ec277d064d80e1f85d1bd2f2206d9a1",
+      "verified_at": "2026-11-17T14:01:47.342Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:18:58.422Z"
+      "last_updated": "2026-11-17T14:01:47.342Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "552f7b88e0bf0150047334219654d85e6a1d39b8ab0d8bcd0c8d7dc2fe194a98",
-      "verified_at": "2026-11-16T04:53:30.458Z",
+      "content_hash": "ed8694ce56ce5e85ad3d84dbc8789b3cd6c5b2397612b1744d0d1b2b4f74ca1f",
+      "verified_at": "2026-11-17T14:01:52.109Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T04:53:30.458Z"
+      "last_updated": "2026-11-17T14:01:52.109Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",

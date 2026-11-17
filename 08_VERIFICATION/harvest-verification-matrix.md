@@ -10559,3 +10559,6 @@
 | `CYCLE-20261117-BTB8` | `2026-11-17T13:29:49.604Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8969` | Yes (`ce910241...`) |
 | `CYCLE-20261117-BUCJ` | `2026-11-17T13:29:50.947Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8970` | Yes (`f4e3668a...`) |
 | `CYCLE-20261117-BVMT` | `2026-11-17T13:29:52.613Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md` | Yes (`40659ff1...`) |
+| `CYCLE-20261117-GX1H` | `2026-11-17T14:01:47.333Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8971` | Yes (`40d5bd45...`) |
+| `CYCLE-20261117-H0PV` | `2026-11-17T14:01:52.099Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md` | Yes (`ed8694ce...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T14:02:19.603Z` | `vespa-engine-vespa` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8E8B1BED` [Domain D] | Yes (`2ce16cc2...`) |

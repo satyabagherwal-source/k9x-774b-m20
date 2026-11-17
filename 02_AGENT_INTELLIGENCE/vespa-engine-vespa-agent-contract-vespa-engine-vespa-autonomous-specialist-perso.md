@@ -4,17 +4,17 @@
 {
   "source_repository": "vespa-engine/vespa",
   "source_url": "https://github.com/vespa-engine/vespa",
-  "source_version": "149cd0ad",
+  "source_version": "6dfc8f2d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T04:53:30.685Z",
+  "timestamp": "2026-11-17T14:01:52.261Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vespa-engine-vespa",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [vespa-engine/vespa](https://github.com/vespa-engine/vespa) (Revision: `149cd0ad`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T04:53:30.685Z`  
+> **Provenance**: Harvested from [vespa-engine/vespa](https://github.com/vespa-engine/vespa) (Revision: `6dfc8f2d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T14:01:52.261Z`  
 > **Learning ID**: `learn-github-vespa-engine-vespa`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T04:53:29.958Z  
+> **Harvest Timestamp**: 2026-11-17T14:01:51.750Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7180 stars
+- **Stars / Engagement**: 7181 stars
 
 ---
 
@@ -1077,455 +1077,242 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `149cd0ad` (2026-11-15)
-**Commit Message**: Merge pull request #38532 from vespa-engine/chore/update-attributions
+### Incident Patch 1: `af7abe85` (2026-11-16)
+**Commit Message**: Merge pull request #38545 from vespa-engine/revert-38539-arnej/bitvector-only-aggregated-weight
 
-chore: update third-party attributions
+Revert "Report min/max weight [1, 1] for bitvector-only posting lists"
 
-**File**: `ATTRIBUTIONS.md` (modified, +37/-55)
+**File**: `searchlib/src/tests/attribute/posting_store/posting_store_test.cpp` (modified, +0/-15)
 ```diff
-@@ -6,7 +6,7 @@ dependencies of Vespa detected by scanning package manifests.
- For the hand-maintained list of vendored C/C++ libraries (Boost, OpenSSL,
- ICU, etc.), see [`NOTICES`](NOTICES).
- 
--Last updated: 2026-11-14
-+Last updated: 2026-11-15
- 
- ---
- 
-@@ -94,29 +94,28 @@ Last updated: 2026-11-14
- 
- ---
- 
--## addressable 2.9.0 — Apache 2.0
-+## addressable 2.9.2 — Apache 2.0
- 
- - Homepage: <https://github.com/sporkmonger/addressable>
- - Copyright Bob Aman</dd>
- 
- ---
- 
--## afm 0.2.2 — MIT
-+## afm 1.0.1 — MIT
- 
- - Homepage: <http://github.com/halfbyte/afm>
--- Copyright 2010 Jan Krutisch
--- Copyright 2009 Jan Krutisch
-+- Copyright Jan Krutisch
- 
- ---
- 
--## Ascii85 1.1.1 — Adobe Postscript AFM
-+## Ascii85 2.0.1 — Adobe Postscript AFM
- 
- - Homepage: <https://github.com/DataWraith/ascii85gem/>
- - Copyright 2009 Johannes Holzfuß
- 
- ---
- 
--## Ascii85 1.1.1 — MIT
-+## Ascii85 2.0.1 — MIT
- 
- - Homepage: <https://github.com/DataWraith/ascii85gem/>
- - Copyright 2009 Johannes Holzfuß
-@@ -131,13 +130,9 @@ Last updated: 2026-11-14
- 
- ---
- 
--## async 2.39.0 — MIT
-+## async 2.46.0 — MIT
- 
- - Homepage: <https://github.com/socketry/async>
---  by Kent Gruber
--- Copyright 2024
--- Copyright 2017
---  by Patrik Wenger
- 
- ---
- 
-@@ -209,14 +204,15 @@ Last updated: 2026-11-14
- 
- ---
- 
--## com.fasterxml.jackson.core 2.22 — Apache 2.0
-+## com.fasterxml.jackson.core 2.23 — Apache 2.0
- 
--- Homepage: <https://github.com/FasterXML/jackson>
-+- Homepage: <http://fasterxml.com/>
-+- Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
- - FasterXML
- 
- ---
- 
--## com.fasterxml.jackson.core 2.22.4 — Apache 2.0
-+## com.fasterxml.jackson.core 2.23.0 — Apache 2.0
- 
- - Homepage: <http://fasterxml.com/>
- - Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
-@@ -297,28 +293,26 @@ Last updated: 2026-11-14
- 
- ---
- 
--## console 1.35.1 — MIT
-+## console 1.38.0 — MIT
- 
--- Homepage: <https://socketry.github.io/console>
---  by Samuel Williams
--- Copyright 2022
-+- Homepage: <https://github.com/socketry/console>
- 
- ---
- 
--## csv 3.3.6 — BSD 2
-+## csv 3.3.7 — BSD 2
- 
- - Homepage: <https://github.com/ruby/csv>
- - Copyright 2007-2017 Yukihiro Matsumoto
- - Copyright 2017 pavel
--- Copyright 2018 Vladislav
- - Copyright 2018 Kouhei Sutou
-+- Copyright 2018 Vladislav
- - Copyright 2017-2018 Steven Daniels
- - Copyright 2017 Espartaco Palma
- - Copyright 2018 Tomohiro Ogoke
--- Copyright 2017 Marcus Stollsteimer
--- Copyright 2005-2016 James Edward Gray II
- - Copyright 2017 SHIBATA Hiroshi
- - Copyright 2017 Olivier Lacan
-+- Copyright 2005-2016 James Edward Gray II
-+- Copyright 2017 Marcus Stollsteimer
- - Copyright 2018 Mitsutaka Mimura
- 
- ---
-@@ -344,7 +338,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## ethon 0.18.0 — MIT
-+## ethon 0.19.2 — MIT
- 
- - Homepage: <https://github.com/typhoeus/ethon>
- - Copyright 2012-2016 Hans Hasselberg
-@@ -389,10 +383,10 @@ Last updated: 2026-11-14
- 
- ---
- 
--## fiber-storage 0.1.2 — MIT
-+## fiber-storage 1.0.1 — MIT
- 
--- Homepage: <https://github.com/socketry/fiber-storage>
--- Copyright, 2022-2023, by Samuel Williams.
-+- Homepage: <https://github.com/ioquatix/fiber-storage>
-+- Copyright, 2022-2025, by Samuel Williams.
- 
- ---
- 
-@@ -627,9 +621,10 @@ Last updated: 2026-11-14
- 
- ---
- 
--## html-proofer 5.2.2 — MIT
-+## html-proofer 5.2.3 — MIT
- 
- - Homepage: <https://github.com/gjtorikian/html-proofer>
-+- Copyright 2013 Garen Torikian
- 
- ---
- 
-@@ -655,7 +650,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## io-event 1.16.4 — MIT
-+## io-event 1.22.3 — MIT
- 
- - Homepage: <https://github.com/socketry/io-event>
- -  by Wander Hillen
-@@ -711,7 +706,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## jekyll-seo-tag 2.8.0 — MIT
-+## jekyll-seo-tag 2.9.1 — MIT
- 
- - Homepage: <https://github.com/jekyll/jekyll-seo-tag>
- - Copyright 2015 Ben Balter and the jekyll-seo-tag contributors
-@@ -783,17 +778,17 @@ Last updated: 2026-11-14
- 
- ---
- 
--## mercenary 0.4.0 — MIT
-+## mdast-util-to-hast 13.2.2 — MIT
- 
--- Homepage: <https://github.com/jekyll/mercenary>
--- Copyright 2013 Parker Moore and the mercenary contributors
-+- Homepage: <https://github.com/syntax-tree/mdast-util-to-hast#readme>
-+- Copyright Titus Wormer <tituswormer@gmail.com>
- 
- ---
- 
--## metrics 0.15.0 — MIT
-+## mercenary 0.4.0 — MIT
- 
--- Homepage: <https://github.com/socketry/metrics>
--- Copyright, 2021-2025, by Samuel Williams.
-+- Homepage: <https://github.com/jekyll/mercenary>
-+- Copyright 2013 Parker Moore and the mercenary contributors
- 
- ---
- 
-@@ -850,12 +845,13 @@ Last updated: 2026-11-14
- 
- ---
- 
--## nokogiri 1.19.4 — MIT
-+## nokogiri 1.19.7 — MIT
- 
- - Homepage: <https://nokogiri.org>
- - Copyright 2008-2023 Mike Dalessio
--- Copyright 1998-2012 Daniel Veillard
- - Copyright 1995-2017 Jean-loup Gailly and Mark Adler
-+- Copyright 1998-2012 Daniel Veillard
-+- Copyright 2020 Joshua J Baker
- - Copyright 2001-2003 Thai Open Source Software Center Ltd
- - Copyright 2001-2002 SourceForge ISO-RELAX Project
- - Copyright 2001-2002 Thomas Broyer
-@@ -1042,7 +1038,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## pdf-reader 2.15.1 — MIT
-+## pd
+@@ -245,21 +245,6 @@ TEST_P(PostingStoreTest, require_that_bitvectors_are_compacted) {
+     test_compact_sequence(huge_sequence_length);
+ }
+ 
+-TEST_P(PostingStoreTest, require_that_aggregated_min_max_is_correct_for_bitvector) {
+-    auto root = add_sequence(4, 4 + huge_sequence_length);
+-    ASSERT_TRUE(_store.has_bitvector(root));
+-    auto aggregated = _store.getAggregated(root);
+-    if (GetParam().enable_only_bitvector) {
+-        EXPECT_FALSE(_store.has_btree(root));
+-        EXPECT_EQ(MyPostingStore::AggregatedType(1, 1), aggregated);
+-    } else {
+-        EXPECT_TRUE(_store.has_btree(root));
+-        // All weights in the btree are 0 (see add_sequence())
+-        EXPECT_EQ(MyPostingStore::AggregatedType(0, 0), aggregated);
+-    }
+-    _store.clear(root);
+-}
+-
+ namespace {
+ 
+ /*
+```
+
+**File**: `searchlib/src/vespa/searchlib/attribute/postingstore.cpp` (modified, +1/-6)
+```diff
+@@ -492,12 +492,7 @@ typename PostingStore<DataT>::AggregatedType PostingStore<DataT>::getAggregated(
+                 const BTreeType* tree = getTreeEntry(iRef2);
+                 return tree->getAggregated(_allocator);
+             }
+-            if constexpr (AggrCalcType::hasAggregated()) {
+-                // Bitvector without btree: all postings implicitly have bitVectorWeight()
+-                return AggregatedType(bitVectorWeight(), bitVectorWeight());
+-            } else {
+-                return AggregatedType();
+-            }
++            return AggregatedType();
+         }
+         const BTreeType* tree = getTreeEntry(iRef);
+         return tree->getAggregated(_allocator);
 ```
 
 ---
 
-### Incident Patch 2: `be01309c` (2026-11-15)
-**Commit Message**: chore: update third-party attributions
+### Incident Patch 2: `cda3d8ef` (2026-11-16)
+**Commit Message**: Revert "Report min/max weight [1, 1] for bitvector-only posting lists"
 
-**File**: `ATTRIBUTIONS.md` (modified, +37/-55)
+**File**: `searchlib/src/tests/attribute/posting_store/posting_store_test.cpp` (modified, +0/-15)
 ```diff
-@@ -6,7 +6,7 @@ dependencies of Vespa detected by scanning package manifests.
- For the hand-maintained list of vendored C/C++ libraries (Boost, OpenSSL,
- ICU, etc.), see [`NOTICES`](NOTICES).
- 
--Last updated: 2026-11-14
-+Last updated: 2026-11-15
- 
- ---
- 
-@@ -94,29 +94,28 @@ Last updated: 2026-11-14
- 
- ---
- 
--## addressable 2.9.0 — Apache 2.0
-+## addressable 2.9.2 — Apache 2.0
- 
- - Homepage: <https://github.com/sporkmonger/addressable>
- - Copyright Bob Aman</dd>
- 
- ---
- 
--## afm 0.2.2 — MIT
-+## afm 1.0.1 — MIT
- 
- - Homepage: <http://github.com/halfbyte/afm>
--- Copyright 2010 Jan Krutisch
--- Copyright 2009 Jan Krutisch
-+- Copyright Jan Krutisch
- 
- ---
- 
--## Ascii85 1.1.1 — Adobe Postscript AFM
-+## Ascii85 2.0.1 — Adobe Postscript AFM
- 
- - Homepage: <https://github.com/DataWraith/ascii85gem/>
- - Copyright 2009 Johannes Holzfuß
- 
- ---
- 
--## Ascii85 1.1.1 — MIT
-+## Ascii85 2.0.1 — MIT
- 
- - Homepage: <https://github.com/DataWraith/ascii85gem/>
- - Copyright 2009 Johannes Holzfuß
-@@ -131,13 +130,9 @@ Last updated: 2026-11-14
- 
- ---
- 
--## async 2.39.0 — MIT
-+## async 2.46.0 — MIT
- 
- - Homepage: <https://github.com/socketry/async>
---  by Kent Gruber
--- Copyright 2024
--- Copyright 2017
---  by Patrik Wenger
- 
- ---
- 
-@@ -209,14 +204,15 @@ Last updated: 2026-11-14
- 
- ---
- 
--## com.fasterxml.jackson.core 2.22 — Apache 2.0
-+## com.fasterxml.jackson.core 2.23 — Apache 2.0
- 
--- Homepage: <https://github.com/FasterXML/jackson>
-+- Homepage: <http://fasterxml.com/>
-+- Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
- - FasterXML
- 
- ---
- 
--## com.fasterxml.jackson.core 2.22.4 — Apache 2.0
-+## com.fasterxml.jackson.core 2.23.0 — Apache 2.0
- 
- - Homepage: <http://fasterxml.com/>
- - Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
-@@ -297,28 +293,26 @@ Last updated: 2026-11-14
- 
- ---
- 
--## console 1.35.1 — MIT
-+## console 1.38.0 — MIT
- 
--- Homepage: <https://socketry.github.io/console>
---  by Samuel Williams
--- Copyright 2022
-+- Homepage: <https://github.com/socketry/console>
- 
- ---
- 
--## csv 3.3.6 — BSD 2
-+## csv 3.3.7 — BSD 2
- 
- - Homepage: <https://github.com/ruby/csv>
- - Copyright 2007-2017 Yukihiro Matsumoto
- - Copyright 2017 pavel
--- Copyright 2018 Vladislav
- - Copyright 2018 Kouhei Sutou
-+- Copyright 2018 Vladislav
- - Copyright 2017-2018 Steven Daniels
- - Copyright 2017 Espartaco Palma
- - Copyright 2018 Tomohiro Ogoke
--- Copyright 2017 Marcus Stollsteimer
--- Copyright 2005-2016 James Edward Gray II
- - Copyright 2017 SHIBATA Hiroshi
- - Copyright 2017 Olivier Lacan
-+- Copyright 2005-2016 James Edward Gray II
-+- Copyright 2017 Marcus Stollsteimer
- - Copyright 2018 Mitsutaka Mimura
- 
- ---
-@@ -344,7 +338,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## ethon 0.18.0 — MIT
-+## ethon 0.19.2 — MIT
- 
- - Homepage: <https://github.com/typhoeus/ethon>
- - Copyright 2012-2016 Hans Hasselberg
-@@ -389,10 +383,10 @@ Last updated: 2026-11-14
- 
- ---
- 
--## fiber-storage 0.1.2 — MIT
-+## fiber-storage 1.0.1 — MIT
- 
--- Homepage: <https://github.com/socketry/fiber-storage>
--- Copyright, 2022-2023, by Samuel Williams.
-+- Homepage: <https://github.com/ioquatix/fiber-storage>
-+- Copyright, 2022-2025, by Samuel Williams.
- 
- ---
- 
-@@ -627,9 +621,10 @@ Last updated: 2026-11-14
- 
- ---
- 
--## html-proofer 5.2.2 — MIT
-+## html-proofer 5.2.3 — MIT
- 
- - Homepage: <https://github.com/gjtorikian/html-proofer>
-+- Copyright 2013 Garen Torikian
- 
- ---
- 
-@@ -655,7 +650,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## io-event 1.16.4 — MIT
-+## io-event 1.22.3 — MIT
- 
- - Homepage: <https://github.com/socketry/io-event>
- -  by Wander Hillen
-@@ -711,7 +706,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## jekyll-seo-tag 2.8.0 — MIT
-+## jekyll-seo-tag 2.9.1 — MIT
- 
- - Homepage: <https://github.com/jekyll/jekyll-seo-tag>
- - Copyright 2015 Ben Balter and the jekyll-seo-tag contributors
-@@ -783,17 +778,17 @@ Last updated: 2026-11-14
- 
- ---
- 
--## mercenary 0.4.0 — MIT
-+## mdast-util-to-hast 13.2.2 — MIT
- 
--- Homepage: <https://github.com/jekyll/mercenary>
--- Copyright 2013 Parker Moore and the mercenary contributors
-+- Homepage: <https://github.com/syntax-tree/mdast-util-to-hast#readme>
-+- Copyright Titus Wormer <tituswormer@gmail.com>
- 
- ---
- 
--## metrics 0.15.0 — MIT
-+## mercenary 0.4.0 — MIT
- 
--- Homepage: <https://github.com/socketry/metrics>
--- Copyright, 2021-2025, by Samuel Williams.
-+- Homepage: <https://github.com/jekyll/mercenary>
-+- Copyright 2013 Parker Moore and the mercenary contributors
- 
- ---
- 
-@@ -850,12 +845,13 @@ Last updated: 2026-11-14
- 
- ---
- 
--## nokogiri 1.19.4 — MIT
-+## nokogiri 1.19.7 — MIT
- 
- - Homepage: <https://nokogiri.org>
- - Copyright 2008-2023 Mike Dalessio
--- Copyright 1998-2012 Daniel Veillard
- - Copyright 1995-2017 Jean-loup Gailly and Mark Adler
-+- Copyright 1998-2012 Daniel Veillard
-+- Copyright 2020 Joshua J Baker
- - Copyright 2001-2003 Thai Open Source Software Center Ltd
- - Copyright 2001-2002 SourceForge ISO-RELAX Project
- - Copyright 2001-2002 Thomas Broyer
-@@ -1042,7 +1038,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## pdf-reader 2.15.1 — MIT
-+## pd
+@@ -245,21 +245,6 @@ TEST_P(PostingStoreTest, require_that_bitvectors_are_compacted) {
+     test_compact_sequence(huge_sequence_length);
+ }
+ 
+-TEST_P(PostingStoreTest, require_that_aggregated_min_max_is_correct_for_bitvector) {
+-    auto root = add_sequence(4, 4 + huge_sequence_length);
+-    ASSERT_TRUE(_store.has_bitvector(root));
+-    auto aggregated = _store.getAggregated(root);
+-    if (GetParam().enable_only_bitvector) {
+-        EXPECT_FALSE(_store.has_btree(root));
+-        EXPECT_EQ(MyPostingStore::AggregatedType(1, 1), aggregated);
+-    } else {
+-        EXPECT_TRUE(_store.has_btree(root));
+-        // All weights in the btree are 0 (see add_sequence())
+-        EXPECT_EQ(MyPostingStore::AggregatedType(0, 0), aggregated);
+-    }
+-    _store.clear(root);
+-}
+-
+ namespace {
+ 
+ /*
+```
+
+**File**: `searchlib/src/vespa/searchlib/attribute/postingstore.cpp` (modified, +1/-6)
+```diff
+@@ -492,12 +492,7 @@ typename PostingStore<DataT>::AggregatedType PostingStore<DataT>::getAggregated(
+                 const BTreeType* tree = getTreeEntry(iRef2);
+                 return tree->getAggregated(_allocator);
+             }
+-            if constexpr (AggrCalcType::hasAggregated()) {
+-                // Bitvector without btree: all postings implicitly have bitVectorWeight()
+-                return AggregatedType(bitVectorWeight(), bitVectorWeight());
+-            } else {
+-                return AggregatedType();
+-            }
++            return AggregatedType();
+         }
+         const BTreeType* tree = getTreeEntry(iRef);
+         return tree->getAggregated(_allocator);
+```
+
+---
+
+### Incident Patch 3: `aad0655a` (2026-11-16)
+**Commit Message**: Merge pull request #38542 from vespa-engine/toregge/add-trace-spans-for-initializer-tasks
+
+Add trace spans for initializer tasks.
+
+**File**: `opentelemetry/src/vespa/opentelemetry/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -4,6 +4,7 @@ vespa_add_library(vespa_opentelemetry
+     opentelemetry_tracer_providers.cpp
+     proto_telemetry_server_carrier.cpp
+     rpc_request_telemetry_context.cpp
++    span_attribute_names.cpp
+     INSTALL lib64
+     DEPENDS
+     opentelemetry-cpp::api
+```
+
+**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++// Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
++
++#include "span_attribute_names.h"
++
++namespace vespa_opentelemetry::span_attribute_names {
++
++const std::string attribute("ai.vespa.searchlib.attribute");
++const std::string ddb_prev_state("ai.vespa.proton.ddb.prev_state");
++const std::string document_type("ai.vespa.document_type");
++const std::string subdb("ai.vespa.proton.subdb");
++
++} // namespace vespa_opentelemetry::span_attribute_names
+```
+
+**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.h` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++// Copyright Vespa.ai. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
++
++#pragma once
++
++#include <string>
++
++namespace vespa_opentelemetry::span_attribute_names {
++
++extern const std::string attribute;
++extern const std::string ddb_prev_state;
++extern const std::string document_type;
++extern const std::string subdb;
++
++} // namespace vespa_opentelemetry::span_attribute_names
+```
+
+**File**: `searchcore/src/tests/proton/attribute/attribute_initializer/attribute_initializer_test.cpp` (modified, +3/-2)
+```diff
+@@ -118,8 +118,9 @@ Fixture::~Fixture() = default;
+ 
+ std::unique_ptr<AttributeInitializer> Fixture::createInitializer(AttributeSpec&&          spec,
+                                                                  std::optional<SerialNum> serialNum) {
+-    return std::make_unique<AttributeInitializer>(_diskLayout->createAttributeDir(spec.getName()), "test.subdb",
+-                                                  std::move(spec), serialNum, _factory, _executor);
++    return std::make_unique<AttributeInitializer>(_diskLayout->createAttributeDir(spec.getName()),
++                                                  DocTypeName("test"), "subdb", std::move(spec), serialNum, _factory,
++                                                  _executor);
+ }
+ 
+ class AttributeInitializerTest : public ::testing::Test {
+```
+
+**File**: `searchcore/src/tests/proton/attribute/attribute_manager/attribute_manager_test.cpp` (modified, +1/-1)
+```diff
+@@ -157,7 +157,7 @@ struct BaseFixture {
+     ~BaseFixture();
+     proton::AttributeManager::SP make_manager() {
+         return std::make_shared<proton::AttributeManager>(
+-            test_dir, "test.subdb", TuneFileAttributes(), _fileHeaderContext,
++            test_dir, DocTypeName("test"), "subdb", TuneFileAttributes(), _fileHeaderContext,
+             std::make_shared<search::attribute::Interlock>(), _attributeFieldWriter, _shared, _hwInfo);
+     }
+ };
+```
+
+**File**: `searchcore/src/tests/proton/attribute/attribute_populator/attribute_populator_test.cpp` (modified, +3/-3)
+```diff
+@@ -79,9 +79,9 @@ AttributePopulatorTest::AttributePopulatorTest()
+       _attributeFieldWriter(),
+       _shared(),
+       _hwInfo(),
+-      _mgr(std::make_shared<AttributeManager>(TEST_DIR, "test.subdb", TuneFileAttributes(), _fileHeader,
+-                                              std::make_shared<search::attribute::Interlock>(), _attributeFieldWriter,
+-                                              _shared, _hwInfo)),
++      _mgr(std::make_shared<AttributeManager>(TEST_DIR, DocTypeName("test"), "subdb", TuneFileAttributes(),
++                                              _fileHeader, std::make_shared<search::attribute::Interlock>(),
++                                              _attributeFieldWriter, _shared, _hwInfo)),
+       _pop(),
+       _ctx() {
+     _mgr->addAttribute({"a1", AVConfig(AVBasicType::INT32)}, CREATE_SERIAL_NUM);
+```
+
+**File**: `searchcore/src/tests/proton/attribute/attribute_test.cpp` (modified, +2/-2)
+```diff
+@@ -592,8 +592,8 @@ class FilterAttributeManagerTest : public ::testing::Test {
+           _attributeFieldWriter(),
+           _shared(),
+           _hwInfo(),
+-          _baseMgr(new proton::AttributeManager(test_dir, "test.subdb", TuneFileAttributes(), _fileHeaderContext,
+-                                                std::make_shared<search::attribute::Interlock>(),
++          _baseMgr(new proton::AttributeManager(test_dir, DocTypeName("test"), "subdb", TuneFileAttributes(),
++                                                _fileHeaderContext, std::make_shared<search::attribute::Interlock>(),
+                                                 _attributeFieldWriter, _shared, _hwInfo)),
+           _filterMgr(ACCEPTED_ATTRIBUTES, _baseMgr) {
+         _baseMgr->addAttribute({"a1", INT32_SINGLE}, createSerialNum);
+```
+
+**File**: `searchcore/src/tests/proton/attribute/attributeflush_test.cpp` (modified, +2/-2)
+```diff
+@@ -224,8 +224,8 @@ struct AttributeManagerFixture {
+ };
+ 
+ AttributeManagerFixture::AttributeManagerFixture(BaseFixture& bf)
+-    : _msp(std::make_shared<AttributeManager>(test_dir, "test.subdb", TuneFileAttributes(), bf._fileHeaderContext,
+-                                              std::make_shared<search::attribute::Interlock>(),
++    : _msp(std::make_shared<AttributeManager>(test_dir, DocTypeName("test"), "subdb", TuneFileAttributes(),
++                                              bf._fileHeaderContext, std::make_shared<search::attribute::Interlock>(),
+                                               bf._attributeFieldWriter, bf._shared, bf._hwInfo)),
+       _m(*_msp) {
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38532** (2026-11-15): chore: update third-party attributions (@github-actions[bot])
-- **PR #38531** (2026-11-14): fix(deps): update jackson monorepo (@renovate[bot])
-- **PR #38530** (2026-11-14): chore: update third-party attributions (@github-actions[bot])
-- **PR #38529** (2026-11-14): Place early provision (@hakonhall)
-- **PR #38528** (2026-11-13): Add trace spans for document db init and shutdown. (@toregge)
-- **PR #38525** (2026-11-14): Support index settings in struct-field blocks for struct field indexes (@arnej27959)
+- **PR #38559** (2026-11-17): disable document store cache for sub-dbs other than READY (@arnej27959)
+- **PR #38553** (2026-11-17): add comment to UpdateStats (@johansolbakken)
+- **PR #38552** (2026-11-17): Adjust executor comments. (@toregge)
+- **PR #38551** (2026-11-17): Do not pull moved documents into the summary cache on lid compaction (@arnej27959)
+- **PR #38550** (2026-11-17): Bump @azure/msal-node and @azure/identity in /integration/schema-language-server/clients/vscode (@dependabot[bot])
+- **PR #38549** (2026-11-17): Bump undici from 7.30.0 to 7.30.2 in /integration/schema-language-server/clients/vscode (@dependabot[bot])
 
 ---
 
@@ -1539,107 +1326,6 @@ chore: update third-party attributions
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Empirical Invariant Guard in ATTRIBUTIONS.md
-
-**RULE**:
-When implementing operations in `ATTRIBUTIONS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `149cd0ad`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `ATTRIBUTIONS.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```java
-// Verified production-grade fix pattern:
-Last updated: 2026-11-15
-## addressable 2.9.2 — Apache 2.0
-## afm 1.0.1 — MIT
-- Copyright Jan Krutisch
-## Ascii85 2.0.1 — Adobe Postscript AFM
-## Ascii85 2.0.1 — MIT
-## async 2.46.0 — MIT
-## com.fasterxml.jackson.core 2.23 — Apache 2.0
-- Homepage: <http://fasterxml.com/>
-- Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
-## com.fasterxml.jackson.core 2.23.0 — Apache 2.0
-## console 1.38.0 — MIT
-- Homepage: <https://github.com/socketry/console>
-## csv 3.3.7 — BSD 2
-- Copyright 2018 Vladislav
-- Copyright 2005-2016 James Edward Gray II
-- Copyright 2017 Marcus Stollsteimer
-## ethon 0.19.2 — MIT
-## fiber-storage 1.0.1 — MIT
-- Homepage: <https://github.com/ioquatix/fiber-storage>
-- Copyright, 2022-2025, by Samuel Williams.
-## html-proofer 5.2.3 — MIT
-- Copyright 2013 Garen Torikian
-## io-event 1.22.3 — MIT
-## jekyll-seo-tag 2.9.1 — MIT
-## mdast-util-to-hast 13.2.2 — MIT
-- Homepage: <https://github.com/syntax-tree/mdast-util-to-hast#readme>
-- Copyright Titus Wormer <tituswormer@gmail.com>
-## mercenary 0.4.0 — MIT
-- Homepage: <https://github.com/jekyll/mercenary>
-- Copyright 2013 Parker Moore and the mercenary contributors
-## nokogiri 1.19.7 — MIT
-- Copyright 1998-2012 Daniel Veillard
-- 
-```
-
-**NEGATIVE CONSTRAINT**:
-```java
-// Induced defect failure mode:
-Last updated: 2026-11-14
-## addressable 2.9.0 — Apache 2.0
-## afm 0.2.2 — MIT
-- Copyright 2010 Jan Krutisch
-- Copyright 2009 Jan Krutisch
-## Ascii85 1.1.1 — Adobe Postscript AFM
-## Ascii85 1.1.1 — MIT
-## async 2.39.0 — MIT
--  by Kent Gruber
-- Copyright 2024
-- Copyright 2017
--  by Patrik Wenger
-## com.fasterxml.jackson.core 2.22 — Apache 2.0
-- Homepage: <https://github.com/FasterXML/jackson>
-## com.fasterxml.jackson.core 2.22.4 — Apache 2.0
-## console 1.35.1 — MIT
-- Homepage: <https://socketry.github.io/console>
--  by Samuel Williams
-- Copyright 2022
-## csv 3.3.6 — BSD 2
-- Copyright 2018 Vladislav
-- Copyright 2017 Marcus Stollsteimer
-- Copyright 2005-2016 James Edward Gray II
-## ethon 0.18.0 — MIT
-## fiber-storage 0.1.2 — MIT
-- Homepage: <https://github.com/socketry/fiber-storage>
-- Copyright, 2022-2023, by Samuel Williams.
-## html-proofer 5.2.2 — MIT
-## io-event 1.16.4 — MIT
-## jekyll-seo-tag 2.8.0 — MIT
-## mercenary 0.4.0 — MIT
-- Homepage: <https://github.com/jekyll/mercenary>
-- Copyright 2013 Parker Moore and the mercenary contributors
-## metrics 0.15.0 — MIT
-- Homepage: <https://github.com/socketry/metrics>
-- Copyright, 2021-2025, by Samuel Williams.
-## nokogiri 1.19.4 — MIT
-- C
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `149cd0ad` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

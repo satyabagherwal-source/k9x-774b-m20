@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T13:48:16.071Z",
+  "last_updated": "2026-11-17T14:02:20.559Z",
   "total_verified_learnings": 8886,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20188,
+  "total_items": 20192,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -227009,13 +227009,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YRYL-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HMHJ-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "98d2b2f2e007e53975a1d1a358dfa3da33a452b97d6486eab73095f62570dd5e",
+      "content_hash": "dbf7c2991da4f468c8a9384554888e7b53a86dafaf43d12c2085ef4e6d2ad661",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:47:46.701Z"
+      "persisted_at": "2026-11-17T14:02:20.311Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -227025,9 +227025,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "131b4cec6d0c8a2e4250fee2cd486e02798eb0b9e874293698c130b1a32db484",
+      "content_hash": "94ba682a43325965ce36123af182e104dff1f1cc7aaa1db4afea51e052798995",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:47:46.823Z"
+      "persisted_at": "2026-11-17T14:02:20.429Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -227037,9 +227037,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "6314fbdb13115215b7bba65f4093c0af740e0be923911c40fa5808a97e837ab5",
+      "content_hash": "e0926212d2c34d504e5fbd7515d5cbbe18a273d5ef27f8dacadc221f542029f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:47:46.961Z"
+      "persisted_at": "2026-11-17T14:02:20.559Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -234818,8 +234818,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "149cd0ad",
-      "content_hash": "552f7b88e0bf0150047334219654d85e6a1d39b8ab0d8bcd0c8d7dc2fe194a98",
+      "source_version": "6dfc8f2d",
+      "content_hash": "ed8694ce56ce5e85ad3d84dbc8789b3cd6c5b2397612b1744d0d1b2b4f74ca1f",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -234834,7 +234834,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T04:53:30.230Z",
+      "verified_at": "2026-11-17T14:01:51.947Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234876,10 +234876,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "repository": "vespa-engine/vespa",
-      "source_version": "149cd0ad",
-      "content_hash": "20783c1b1255af86583a9a4a59cbfc32d452de56bbf4ecaa16c6c00689b1b987",
+      "source_version": "6dfc8f2d",
+      "content_hash": "3de7e89265aa166a8cb53220bf627322b95eb13ad10e53c356c8265ed4e62a27",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T04:53:30.835Z"
+      "persisted_at": "2026-11-17T14:01:52.262Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona",
@@ -234888,10 +234888,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/vespa-engine-vespa-agent-contract-vespa-engine-vespa-autonomous-specialist-perso.md",
       "title": "Agent Contract: vespa-engine/vespa Autonomous Specialist Persona",
       "repository": "vespa-engine/vespa",
-      "source_version": "149cd0ad",
-      "content_hash": "73c8370e7e3d7940de30dbcf7037970721f8e3e1afc79e45c338394cbb9a2527",
+      "source_version": "6dfc8f2d",
+      "content_hash": "3e3c8b1cc9add3245512ec68381873293ae18a082136428a4f64c10528af9520",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T04:53:30.985Z"
+      "persisted_at": "2026-11-17T14:01:52.376Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa",
@@ -235111,9 +235111,9 @@
       "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "ef508f1e7fa00cb245089dd04426d130ea30b3f1e9bd918ffa4c810a85c13530",
+      "content_hash": "308b4bc079f44645d703b58f2b6ffc882c19dfeb50a87d520cd6c10148599aad",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T04:53:37.102Z"
+      "persisted_at": "2026-11-17T14:02:19.817Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona",
@@ -235123,9 +235123,9 @@
       "title": "Agent Contract: vespa-engine-vespa-learnings Autonomous Specialist Persona",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "4ce62bcc7f094479bf32d1ec1c5d1c36b74eafc68891ea16439acb85ae19b363",
+      "content_hash": "42b1e6aefdc784dd0e8224b2d15ac5618937bc21d7e47c7864031da9504909cd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T04:53:37.254Z"
+      "persisted_at": "2026-11-17T14:02:19.951Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings",
@@ -241938,8 +241938,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "5485d954",
-      "content_hash": "22cd038f42c7c8da2eda25e00ff51b97d577192bff3dbc13a6d1291c27192b42",
+      "source_version": "28560362",
+      "content_hash": "40d5bd4500aefafe945ab9fd418e17583ec277d064d80e1f85d1bd2f2206d9a1",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -241952,6 +241952,11 @@
           "number": 8588,
           "title": "Enable CE user ACL policies with All Users and per-user sources",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8971,
+          "title": "Fix device join/pull when host.Nodes drifts from live nodes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241959,7 +241964,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:18:58.220Z",
+      "verified_at": "2026-11-17T14:01:47.183Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242013,10 +242018,10 @@
       "relative_path": "08_VERIFICATION/gravitl-netmaker-verification-protocol-empirical-defect-shield-for-gravitl-netma.md",
       "title": "Verification Protocol: Empirical Defect Shield for gravitl/netmaker",
       "repository": "gravitl/netmaker",
-      "source_version": "5485d954",
-      "content_hash": "3b3bd693c8217cb38ca7492cb4431b5ba41a182c1274b783db488bf136dabe29",
+      "source_version": "28560362",
+      "content_hash": "b8dc87c560573043fdb5e42645469bf767c585d3da7fc2a95130580f1134f2a4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:18:58.928Z"
+      "persisted_at": "2026-11-17T14:01:47.735Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-core",
@@ -242074,9 +242079,9 @@
       "title": "Content & Information Intelligence: gravitl-netmaker-learnings Core Invariants",
       "repository": "gravitl-netmaker-learnings",
       "source_version": "HEAD",
-      "content_hash": "49cad1117f24027b1727c417187c68536f36f1114225a50160f64d4c13df472c",
+      "content_hash": "684444c0548e613000752b974967069bb5098a730c9756384e76a82defed8234",
       "domain_letter": "I",
-      "persisted_at": "2026-11-15T07:42:33.499Z"
+      "persisted_at": "2026-11-17T14:01:55.403Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gravitl-netmaker-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gravitl-netmaker-learnings",
@@ -242086,9 +242091,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gravitl-netmaker-learnings",
       "repository": "gravitl-netmaker-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a4104883a3a33dacb04fe1b34aab2ca03b55bcc7a6bca7c3912546c5a9af9ad",
+      "content_hash": "46336c50c97faabfa32f7ceb53672a743fb1e753700888b5168d457d9b65a2b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:19:03.461Z"
+      "persisted_at": "2026-11-17T14:01:55.514Z"
     },
     "learn-github-tuist-tuist": {
       "learning_id": "learn-github-tuist-tuist",
@@ -270344,6 +270349,56 @@
       "content_hash": "80ec983347a6e644246db9a41dab98e3865b071005b5f75c45ce6cde11168de8",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T13:29:57.071Z"
+    },
+    "rule-8971": {
+      "learning_id": "rule-8971",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8971,
+      "title": "Fix device join/pull when host.Nodes drifts from live nodes",
+      "source_url": "https://github.com/gravitl/netmaker",
+      "source_version": "28560362",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T14:01:47.183Z"
+    },
+    "candidate_directive-fix-device-join-pull-when-host-nodes-drifts-from-live-nodes": {
+      "item_id": "candidate_directive-fix-device-join-pull-when-host-nodes-drifts-from-live-nodes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GX68-fix-device-join-pull-when-host-nodes-drifts-from-live-nodes.md",
+      "title": "Fix device join/pull when host.Nodes drifts from live nodes",
+      "repository": "gravitl/netmaker",
+      "source_version": "28560362",
+      "content_hash": "1c8a0846c572c217286b0271c3733068ada2d53f8d1b8e900d39385533e546cc",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T14:01:47.505Z"
+    },
+    "domain_intelligence-content-information-intelligence-gravitl-netmaker-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-gravitl-netmaker-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gravitl-netmaker-content-information-intelligence-gravitl-netmaker-core-invarian.md",
+      "title": "Content & Information Intelligence: gravitl/netmaker Core Invariants",
+      "repository": "gravitl/netmaker",
+      "source_version": "28560362",
+      "content_hash": "76370b57a968d8af63c80b995fe9c53909ae3afd75d0c6b993cc1ad3eeb13312",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T14:01:47.616Z"
+    },
+    "candidate_directive-nm-356-fix-device-join-pull-when-host-nodes-drifts-from-live-nodes": {
+      "item_id": "candidate_directive-nm-356-fix-device-join-pull-when-host-nodes-drifts-from-live-nodes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H36P-nm-356-fix-device-join-pull-when-host-nodes-drifts-from-live-nodes.md",
+      "title": "NM-356: Fix device join/pull when host.Nodes drifts from live nodes",
+      "repository": "gravitl-netmaker-learnings",
+      "source_version": "HEAD",
+      "content_hash": "207b93beb3b8e0beb79adfa13904a3702cb0f6dcec41fe12c646c5e8bda99d37",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T14:01:55.297Z"
     }
   },
   "ai-builder-brain": {

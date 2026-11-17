@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T13:29:52.633Z",
-  "total_cycles_completed": 10117,
-  "total_learnings_persisted": 10117,
-  "total_rules_promoted": 9709,
+  "last_updated": "2026-11-17T14:01:52.107Z",
+  "total_cycles_completed": 10119,
+  "total_learnings_persisted": 10119,
+  "total_rules_promoted": 9710,
   "history": [
-    {
-      "timestamp": "2026-11-16T18:55:50.863Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:55:52.031Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T20:02:34.451Z",
       "repository": "fb55/css-select",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-17T13:29:52.633Z",
       "repository": "callstack/react-native-paper",
       "learningId": "learn-github-callstack-react-native-paper",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:01:47.340Z",
+      "repository": "gravitl/netmaker",
+      "learningId": "learn-github-gravitl-netmaker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:01:52.107Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

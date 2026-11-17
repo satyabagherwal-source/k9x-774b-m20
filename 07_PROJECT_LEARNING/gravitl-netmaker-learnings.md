@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `5485d954`  
+> **Source Version**: `28560362`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T18:18:57.687Z  
+> **Timestamp**: 2026-11-17T14:01:46.505Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:18:57.681Z  
+> **Harvest Timestamp**: 2026-11-17T14:01:46.174Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1017,295 +1017,303 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5485d954` (2026-11-16)
-**Commit Message**: Pre-Release Fixes v1.8.0 (#4232)
+### Incident Patch 1: `28560362` (2026-11-17)
+**Commit Message**: NM-356: Fix device join/pull when host.Nodes drifts from live nodes (#4235)
 
-* fix(go): validate traffic public key;
+* NM-356: add username filter to nodes api
 
-* feat(go): rekey tenant idp sync hook;
+* NM-356: disconnect user devices and force Desktop logout on disable/delete
 
-* feat(go): check if membership exists before creating;
+When a user is disabled or deleted (including IdP sync), disconnect their
+nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
 
-* feat(go): parse node addr without cidr as well;
+* NM-356: rm force logout from delete user path
 
-* feat(go): only check for orphans before the cursor;
+* NM-356: keep AllowAll when both default ACL policies are open
 
-* feat(go): normalize usernames in idp synced users;
+Uni/proto-scoped policies were defeating FwUpdate.AllowAll even with All
+Resources and All Users enabled, leaving clients on DROP + per-peer ACCEPT
+rules. Short-circuit on open defaults only, and document the constraint.
 
-* feat(go): allow patch method;
+* fix: enrich topology and connections with location, is_gw, and egresses
 
-* feat(go): allow master user to list all tenants;
+Add location/country and is_gw on topology vertices and connection peers,
+with egresses listing egress vs internet_gateway (exit). Also classify paths
+through a peer's RelayedBy as relayed even when that relay is an exit router.
 
-* feat(go): publish server sync for non-master pods on idp sync hook rekey;
+* add update fallback ns error
 
-* feat(go): add before peer can be skipped;
+* fix: require network query on network-scoped mutations for network admins
 
-* feat(go): ignore vendor dir;
+ACL/egress/nameserver/tags/posture create-update-delete ignored ?network=
+after NM-378, so auth fell through
 
-* fix(go): use normalized usernames when verifying auth request;
-
-* fix(go): return error on user device host sso callback if user is disabled;
-
-* fix(go): reset auto relayed peers on inet gw creation;
-
-* feat(go): reset host owner_username field;
-
-* feat(go): return user-auth host registration unsupported error;
-
-* feat(go): remove unused file;
-
-* feat(go): move auto relayed peers reset to callers;
-
-* feat(go): allow updating static port;
-
-* feat(go): set net id is passed for flow logs;
-
-* feat(go): validate egress node firewall; optimize db queries on egress validation;
-
-* fix(go): add exclusion filter to list host api
-
-**File**: `go.mod` (modified, +3/-0)
+**File**: `controllers/hosts.go` (modified, +10/-1)
 ```diff
-@@ -46,6 +46,7 @@ require (
- 	github.com/klauspost/compress v1.20.3
- 	github.com/matryer/is v1.4.1
- 	github.com/pquerna/otp v1.5.0
-+	github.com/sams96/rgeo v1.3.0
- 	github.com/spf13/cobra v1.10.2
- 	golang.org/x/time v0.15.0
- 	google.golang.org/api v0.272.0
-@@ -76,6 +77,7 @@ require (
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-sql-driver/mysql v1.8.1 // indirect
- 	github.com/goccy/go-json v0.10.6 // indirect
-+	github.com/golang/geo v0.0.0-20230421003525-6adc56603217 // indirect
- 	github.com/google/s2a-go v0.1.9 // indirect
- 	github.com/googleapis/enterprise-certificate-proxy v0.3.14 // indirect
- 	github.com/googleapis/gax-go/v2 v2.18.0 // indirect
-@@ -94,6 +96,7 @@ require (
- 	github.com/segmentio/asm v1.2.1 // indirect
- 	github.com/shopspring/decimal v1.4.0 // indirect
- 	github.com/spf13/pflag v1.0.9 // indirect
-+	github.com/twpayne/go-geom v1.6.0 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
- 	go.opentelemetry.io/otel v1.46.0 // indirect
-```
-
-**File**: `go.sum` (modified, +14/-0)
-```diff
-@@ -12,6 +12,10 @@ github.com/ClickHouse/clickhouse-go/v2 v2.49.0 h1:HgiLTraLGgMe8kYivQ6RzMHDUkU/uF
- github.com/ClickHouse/clickhouse-go/v2 v2.49.0/go.mod h1:o8dSgGJGxY7CeWFNiKusF9a5RnLpgzuo7OaNyH0NQPE=
- github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAwZ/2OOE=
- github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
-+github.com/alecthomas/assert/v2 v2.10.0 h1:jjRCHsj6hBJhkmhznrCzoNpbA3zqy0fYiUcYZP/GkPY=
-+github.com/alecthomas/assert/v2 v2.10.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
-+github.com/alecthomas/repr v0.4.0 h1:GhI2A8MACjfegCPVq9f1FLvIBS+DrQ2KQBFZP1iFzXc=
-+github.com/alecthomas/repr v0.4.0/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
- github.com/andybalholm/brotli v1.2.6 h1:ftYnfj6usCp+UGV5kSJ3+chpMQgU+gJf/AxsUQ52REI=
- github.com/andybalholm/brotli v1.2.6/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
- github.com/biter777/countries v1.7.5 h1:MJ+n3+rSxWQdqVJU8eBy9RqcdH6ePPn4PJHocVWUa+Q=
-@@ -59,6 +63,8 @@ github.com/go-playground/validator/v10 v10.30.5/go.mod h1:wEqiaov48pXX1kjhc3Da8y
- github.com/go-sql-driver/mysql v1.7.0/go.mod h1:OXbVy3sEdcQ2Doequ6Z5BW6fXNQTmx+9S1MCJN5yJMI=
- github.com/go-sql-driver/mysql v1.8.1 h1:LedoTUt/eveggdHS9qUFC1EFSa8bU2+1pZjSRpvNJ1Y=
- github.com/go-sql-driver/mysql v1.8.1/go.mod h1:wEBSXgmK//2ZFJyE+qWnIsVGmvmEKlqwuVSjsCm7DZg=
-+github.com/go-test/deep v1.1.1 h1:0r/53hagsehfO4bzD2Pgr/+RgHqhmf+k1Bpse2cTu1U=
-+github.com/go-test/deep v1.1.1/go.mod h1:5C2ZWiW0ErCdrYzpqxLbTX7MG14M9iiw8DgHncVwcsE=
- github.com/goccy/go-json v0.10.6 h1:p8HrPJzOakx/mn/bQtjgNjdTcN+/S6FcG2CTtQOrHVU=
- github.com/goccy/go-json v0.10.6/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
- github.com/golang-jwt/jwt/v4 v4.5.2 h1:YtQM7lnr8iZ+j5q71MGKkNw9Mn7AjHM68uc9g5fXeUI=
-@@ -67,6 +73,8 @@ github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 h1:au07oEsX2xN0kt
- github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9/go.mod h1:8vg3r2VgvsThLBIFL93Qb5yWzgyZWhEmBwUJWevAkK0=
- github.com/golang-sql/sqlexp v0.1.0 h1:ZCD6MBpcuOVfGVqsEmY5/4FtYiKz6tSyUv9LPEDei6A=
- github.com/golang-sql/sqlexp v0.1.0/go.mod h1:J4ad9Vo8ZCWQ2GMrC4UCQy1JpCbwU9m3EOqtpKwwwHI=
-+github.com/golang/geo v0.0.0-20230421003525-6adc56603217 h1:HKlyj6in2JV6wVkmQ4XmG/EIm+SCYlPZ+V4GWit7Z+I=
-+github.com/golang/geo v0.0.0-20230421003525-6adc56603217/go.mod h1:8wI0hitZ3a1IxZfeH3/5I97CI8i5cLGsYe7xNhQGs9U=
- github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
- github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
- github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
-@@ -99,6 +107,8 @@ github.com/hashicorp/go-version v1.9.0 h1:CeOIz6k+LoN3qX9Z0tyQrPtiB1DFYRPfCIBtaX
- github.com/hashicorp/go-version v1.9.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09ZGVZPK5anwXA=
- github.com/hashicorp/golang-lru/v2 v2.0.7 h1:a+bsQ5rvGLjzHuww6tVxozPZFVghXaHOwFs4luLUK2k=
- github.com/hashicorp/golang-lru/v2 v2.0.7/go.mod h1:QeFd9opnmA6QUJc5vARoKUSoFhyfM2/ZepoAG6RGpeM=
-+github.com/hexops/gotextdiff v1.0.3 h1:gitA9+qJrrTCsiCl7+kh75nPqQt1cx4ZkudSTLoUqJM=
-+github.com/hexops/gotextdiff v1.0.3/go.mod h1:pSWU5MAI3yDq+fZBTazCSJysOMbxWL1BSow5/V2vxeg=
- github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
- github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
- github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
-@@ -151,6 +161,8 @@ github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJ
- github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
- github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
- github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
-+github.com/sams96/rgeo v1.3.0 h1:IkXcEPP5fRU8t0tRj5FBqqPnd2XDoxROwY3EKQlLEvQ=
-+github.com/sams96/rgeo v1.3.0/go.mod h1:iSKFW5MpJ1Ow02Jzcm5UYUg/jrrSZp7mzRrWis0K9Qg=
- github.com/segmentio/asm v1.2.1 h1:DTNbBqs57ioxAD4PrArqftgypG4/qNpXoJx8TVXxPR0=
- github.com/segmentio/asm v1.2.1/go.mod h1:BqMnlJP91P8d+4ibuonYZw9mfnzI9HfxselHZr5aAcs=
- github.com/shopspring/decimal v1.4.0 h1:bxl37RwXBklmTi0C79JfXCEBD1cqqHt0bbgBAGFp81k=
-@@ -166,6 +178,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
- github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
- github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
- github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
-+github.com/twpayne/go-geom v1.6.0 h1:WPOJLCdd8OdcnHvKQepLKwOZrn5BzVlNxtQB59IDHRE=
-+github.com/twpayne/go-geom v1.6.0/go.mod h1:Kr+Nly6BswFsKM5sd31YaoWS5PeDDH2NftJTK7Gd028=
- github.com/xyproto/randomstring v1.0.5 h1:YtlWPoRdgMu3NZtP45drfy1GKoojuR7hmRcnhZqKjWU=
- github.com/xyproto/randomstring v1.0.5/go.mod h1:rg
-```
-
-**File**: `logic/auto_relay.go` (modified, +10/-18)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"net"
- 
- 	"github.com/gravitl/netmaker/db"
-+	"github.com/gravitl/netmaker/db/expr"
- 	"github.com/gravitl/netmaker/logger"
- 	"github.com/gravitl/netmaker/models"
- 	"github.com/gravitl/netmaker/schema"
-@@ -112,28 +113,19 @@ func ResetAutoRelayedPeer(ctx context.Context, autoRelayedNode *models.Node) err
- 	return nil
- }
- 
--// ResetAutoRelay - reset autorelayed peers
- func ResetAutoRelay(ctx context.Context, autoRelayNode *models.Node) error {
--	// Unset autorelayed peers
--	nodes, err := GetNetworkNodes(ctx, autoRelayNode.Network)
-+	autoRelayNodeID := autoRelayNode.ID.String()
-+	_node := &schema.Node{ID: autoRelayNodeID}
-+	err := _node.Get(ctx)
- 	if err != nil {
- 		return err
- 	}
--	for _, node := range nodes {
--		for autoRelayedPeerID, autoRelayID := range node.AutoRelayedPeers {
--			if autoRelayID != autoRelayNode.ID.String() {
--				continue
--			}
--			delete(node.AutoRelayedPeers, autoRelayedPeerID)
--			UpsertNode(&node)
--			peer, err := GetNodeByID(autoRelayedPeerID)
--			if err == nil {
--				delete(peer.AutoRelayedPeers, node.ID.String())
--				UpsertNode(&peer)
--			}
--		}
--	}
--	return nil
-+
-+	return db.FromContext(ctx).Model(&schema.Node{}).
-+		Where("network_id = ?", _node.NetworkID).
-+		Where(expr.WhereHasValue("auto_relayed_peers", autoRelayNodeID)).
-+		UpdateColumn("auto_relayed_peers", expr.RemoveByValue("auto_relayed_peers", autoRelayNodeID)).
-+		Error
- }
- 
- // GetAutoRelayPeerIps - adds the autorelayed peerIps by the peer
-```
-
-**File**: `mq/handlers.go` (modified, +4/-0)
-```diff
-@@ -187,6 +187,10 @@ func DeleteAndCleanupHost(h *schema.Host) {
- 		slog.Error("failed to delete host", "id", h.ID, "error", err)
+@@ -347,6 +347,15 @@ func pull(w http.ResponseWriter, r *http.Request) {
+ 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "internal"))
  		return
  	}
-+	// delete if any pending reqs
-+	if err := (&schema.PendingHost{HostID: h.ID.String()}).DeleteAllPendingHosts(ctx); err != nil {
-+		slog.Error("failed to delete pending host reqs", "id", h.ID, "error", err)
++	// Sync before peer calc (PeerUpdateForHost walks host.Nodes) and reuse the
++	// returned list for HostPull.Nodes — one host_id query, no second GetHostNodes.
++	hostNodes, syncErr := logic.SyncHostNodesFromDB(r.Context(), host)
++	if syncErr != nil {
++		logger.Log(0, "pull: host.Nodes reconcile failed", hostIDStr, syncErr.Error())
++		if hostNodes == nil {
++			hostNodes = logic.GetHostNodes(host)
++		}
 +	}
- }
  
- func SignalPeer(signal models.Signal) {
+ 	resetFailovered := r.URL.Query().Get("reset_failovered") == "true"
+ 	refresh := r.URL.Query().Get("refresh") == "true"
+@@ -381,7 +390,7 @@ func pull(w http.ResponseWriter, r *http.Request) {
+ 
+ 	response := models.HostPull{
+ 		Host:                    *host,
+-		Nodes:                   logic.GetHostNodes(host),
++		Nodes:                   hostNodes,
+ 		ServerConfig:            hPU.ServerConfig,
+ 		Peers:                   hPU.Peers,
+ 		PeerIDs:                 hPU.PeerIDs,
 ```
 
-**File**: `utils/geoinfo.go` (modified, +58/-1)
+**File**: `logic/device.go` (modified, +36/-0)
 ```diff
-@@ -6,9 +6,12 @@ import (
- 	"fmt"
- 	"net"
- 	"net/http"
-+	"strconv"
- 	"strings"
- 	"sync"
- 	"time"
-+
-+	"github.com/sams96/rgeo"
- )
- 
- type GeoInfo struct {
-@@ -21,10 +24,64 @@ type GeoInfo struct {
- func GetGeoInfo(ip ...net.IP) (*GeoInfo, error) {
- 	geoInfo, err := getGeoInfoFromIPAPI(ip...)
- 	if err == nil && geoInfo.HasUsableGeo() {
-+		geoInfo.fillCountryCodeFromLocation()
- 		return geoInfo, nil
+@@ -356,6 +356,11 @@ func JoinDeviceNetwork(ctx context.Context, user *schema.User, host *schema.Host
+ 		if err := reconnectUserDeviceNode(ctx, host, networkID); err != nil {
+ 			return empty, err
+ 		}
++		// Orphan nodes (row exists, ID missing from host.Nodes) must be linked
++		// or the next host pull will omit the network.
++		if err := ensureDeviceNodeLinkedToHost(ctx, host, networkID); err != nil {
++			return empty, err
++		}
+ 		return models.DeviceJoinResult{Status: models.DeviceJoinStatusJoined}, nil
  	}
  
--	return getGeoInfoFromIpInfo(ip...)
-+	geoInfo, err = getGeoInfoFromIpInfo(ip...)
-+	if err == nil {
-+		geoInfo.fillCountryCodeFromLocation()
+@@ -392,9 +397,40 @@ func JoinDeviceNetwork(ctx context.Context, user *schema.User, host *schema.Host
+ 		Networks:           []string{networkID},
+ 		SkipDeviceApproval: true,
+ 	}, host, user.Username)
++	// JoinHostToNetworks swallows CreateNode errors; only return joined when the
++	// host actually has a node on this network (and it is listed on host.Nodes).
++	if err := ensureDeviceNodeLinkedToHost(ctx, host, networkID); err != nil {
++		return empty, fmt.Errorf("failed to join network %s: %w", networkID, err)
 +	}
-+	return geoInfo, err
-+}
-+
-+var (
-+	countryReverseGeocoder     *rgeo.Rgeo
-+	countryReverseGeocoderOnce sync.Once
-+)
-+
-+// fillCountryCodeFromLocation resolves CountryCode from Location via offline
-+// reverse geocoding when the geo source returned coordinates but no code
-+// (e.g. ipapi.is's free tier, which only returns a full country name).
-+func (g *GeoInfo) fillCountryCodeFromLocation() {
-+	if g == nil || g.CountryCode != "" {
-+		return
-+	}
-+	lat, lon, ok := parseLatLon(g.Location)
-+	if !ok {
-+		return
-+	}
-+
-+	countryReverseGeocoderOnce.Do(func() {
-+		r, err := rgeo.New(rgeo.Countries110)
-+		if err != nil {
-+			return
-+		}
-+		countryReverseGeocoder = r
-+	})
-+	if countryReverseGeocoder == nil {
-+		return
-+	}
-+
-+	loc, err := countryReverseGeocoder.ReverseGeocode([]float64{lon, lat})
-+	if err != nil {
-+		return
-+	}
-+	g.CountryCode = loc.CountryCode2
-+}
-+
-+// parseLatLon parses a "lat,lon" formatted Location string.
-+func parseLatLon(location string) (lat, lon float64, ok bool) {
-+	parts := strings.SplitN(strings.TrimSpace(location), ",", 2)
-+	if len(parts) != 2 {
-+		return 0, 0, false
-+	}
-+	lat, err1 := strconv.ParseFloat(strings.TrimSpace(parts[0]), 64)
-+	lon, err2 := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
-+	if err1 != nil || err2 != nil {
-+		return 0, 0, false
-+	}
-+	return lat, lon, true
+ 	return models.DeviceJoinResult{Status: models.DeviceJoinStatusJoined}, nil
  }
  
- // HasUsableGeo reports whether payload contains meaningful geo data.
++// ensureDeviceNodeLinkedToHost verifies a node exists for host+network and that
++// its ID is on host.Nodes (required for GET /api/v1/host Nodes / peer updates).
++func ensureDeviceNodeLinkedToHost(ctx context.Context, host *schema.Host, networkID string) error {
++	nodeSchema, err := getHostNodeOnNetwork(ctx, host, networkID)
++	if err != nil {
++		return fmt.Errorf("host node missing on network: %w", err)
++	}
++	fresh := &schema.Host{ID: host.ID}
++	if err := fresh.Get(ctx); err != nil {
++		return err
++	}
++	if StringSliceContains(fresh.Nodes, nodeSchema.ID) {
++		host.Nodes = fresh.Nodes
++		return nil
++	}
++	modelsNode, err := GetNodeByID(nodeSchema.ID)
++	if err != nil {
++		return err
++	}
++	if err := AssociateNodeToHost(&modelsNode, fresh); err != nil {
++		return err
++	}
++	host.Nodes = fresh.Nodes
++	return nil
++}
++
+ // reconnectUserDeviceNode sets Connected=true on an existing host node after a
+ // new JIT grant (node was left enrolled but disconnected when the prior grant ended).
+ func reconnectUserDeviceNode(ctx context.Context, host *schema.Host, networkID string) error {
+```
+
+**File**: `logic/device_test.go` (modified, +16/-1)
+```diff
+@@ -427,8 +427,23 @@ func TestDeviceJoinSkipsApprovalWhenJITAppliesToUser(t *testing.T) {
+ 	joined := false
+ 	origJoin := JoinHostToNetworks
+ 	t.Cleanup(func() { JoinHostToNetworks = origJoin })
+-	JoinHostToNetworks = func(context.Context, models.EnrollmentKey, *schema.Host, string) {
++	JoinHostToNetworks = func(ctx context.Context, key models.EnrollmentKey, h *schema.Host, _ string) {
+ 		joined = true
++		// Mimic CreateNode: ensure post-join verify finds a host node.
++		net := &schema.Network{Name: key.Networks[0]}
++		require.NoError(t, net.Get(ctx))
++		n := &schema.Node{
++			ID:        uuid.NewString(),
++			TenantID:  scope.ID(ctx),
++			HostID:    h.ID.String(),
++			NetworkID: net.ID,
++			Address:   "10.98.0.50",
++			Connected: true,
++			Status:    schema.OnlineSt,
++		}
++		require.NoError(t, n.Create(ctx))
++		h.Nodes = append(h.Nodes, n.ID)
++		require.NoError(t, h.Upsert(ctx))
+ 	}
+ 
+ 	networks, err := GetDeviceNetworks(ctx, user, host)
+```
+
+**File**: `logic/nodes.go` (modified, +121/-6)
+```diff
+@@ -37,18 +37,133 @@ func GetNetworkNodes(ctx context.Context, network string) ([]models.Node, error)
+ 	return GetNetworkNodesMemory(allnodes, network), nil
+ }
+ 
+-// GetHostNodes - fetches all nodes part of the host
++// GetHostNodes fetches all nodes that belong to the host.
++// Source of truth is the nodes table (host_id), not host.Nodes — that JSON
++// slice can retain stale IDs after leave/delete drift and omit live nodes.
++// Read-only: callers that need host.Nodes repaired use SyncHostNodesFromDB
++// (pull) or membership write paths (join/associate).
+ func GetHostNodes(host *schema.Host) []models.Node {
+-	nodes := []models.Node{}
+-	for _, nodeID := range host.Nodes {
+-		node, err := GetNodeByID(nodeID)
+-		if err == nil {
+-			nodes = append(nodes, node)
++	if host == nil || host.ID == uuid.Nil {
++		return []models.Node{}
++	}
++	ctx := hostNodesContext(host)
++	schemaNodes, err := listHostSchemaNodes(ctx, host.ID.String())
++	if err != nil {
++		// Fall back to the denormalized ID list if the query fails.
++		nodes := []models.Node{}
++		for _, nodeID := range host.Nodes {
++			node, err := GetNodeByID(nodeID)
++			if err == nil {
++				nodes = append(nodes, node)
++			}
+ 		}
++		return nodes
++	}
++	nodes := make([]models.Node, 0, len(schemaNodes))
++	for i := range schemaNodes {
++		n := ConvertSchemaNodeToModelsNode(&schemaNodes[i])
++		ensureNodeMutex(n)
++		nodes = append(nodes, *n)
+ 	}
+ 	return nodes
+ }
+ 
++func hostNodesContext(host *schema.Host) context.Context {
++	ctx := db.WithContext(context.Background())
++	if host != nil && host.TenantID != "" {
++		ctx = scope.WithContext(ctx, scope.TenantScope, host.TenantID)
++	}
++	return ctx
++}
++
++func listHostSchemaNodes(ctx context.Context, hostID string) ([]schema.Node, error) {
++	return (&schema.Node{}).ListAll(
++		ctx,
++		dbtypes.WithFilter("host_id", hostID),
++		dbtypes.WithAllPreloads(),
++	)
++}
++
++// ReconcileHostNodeIDs rewrites host.Nodes to match live node IDs when they drift.
++// Peer updates and pull both walk host.Nodes, so stale/missing IDs break joins.
++// Uses a column-scoped UPDATE (not full-row Save) so a stale host snapshot cannot
++// clobber concurrent field updates. HA-safe locking would need a DB CAS/advisory
++// lock; this only avoids Save-wide clobber.
++func ReconcileHostNodeIDs(ctx context.Context, host *schema.Host, liveIDs []string) error {
++	if host == nil || host.ID == uuid.Nil {
++		return nil
++	}
++	fresh := &schema.Host{ID: host.ID}
++	if err := fresh.Get(ctx); err != nil {
++		return err
++	}
++	if hostNodeIDSetsEqual(fresh.Nodes, liveIDs) {
++		host.Nodes = append([]string(nil), fresh.Nodes...)
++		return nil
++	}
++	prev := append([]string(nil), fresh.Nodes...)
++	nodesCol := datatypes.JSONSlice[string](append([]string(nil), liveIDs...))
++	if err := db.FromContext(ctx).Model(&schema.Host{}).
++		Where("id = ?", host.ID).
++		Update("nodes", nodesCol).Error; err != nil {
++		slog.Warn("failed to reconcile host.Nodes",
++			"host", host.ID.String(), "error", err)
++		return err
++	}
++	host.Nodes = append([]string(nil), liveIDs...)
++	slog.Info("reconciled host.Nodes with live nodes",
++		"host", host.ID.String(),
++		"before", len(prev),
++		"after", len(liveIDs))
++	return nil
++}
++
++// SyncHostNodesFromDB loads nodes by host_id, updates host.Nodes if needed, and
++// returns the same node list for reuse (e.g. HostPull.Nodes) so callers avoid a
++// second preloaded query via GetHostNodes. Call before PeerUpdateForHost.
++func SyncHostNodesFromDB(ctx context.Context, host *schema.Host) ([]models.Node, error) {
++	if host == nil || host.ID == uuid.Nil {
++		return nil, nil
++	}
++	if ctx == nil {
++		ctx = hostNodesContext(host)
++	} else if scope.ID(ctx) == "" && host.TenantID != "" {
++		ctx = scope.WithContext(ctx, scope.TenantScope, host.TenantID)
++	}
++	schemaNodes, err := listHostSchemaNodes(ctx, host.ID.String())
++	if err != nil {
++		return nil, err
++	}
++	nodes := make([]models.Node, 0, len(schemaNodes))
++	ids := make([]string, 0, len(schemaNodes))
++	for i := range schemaNodes {
++		n := ConvertSchemaNodeToModelsNode(&schemaNodes[i])
++		ensureNodeMutex(n)
++		nodes = append(nodes, *n)
++		ids = append(ids, schemaNodes[i].ID)
++	}
++	if err := ReconcileHostNodeIDs(ctx, host, ids); err != nil {
++		return nodes, err
++	}
++	return nodes, nil
++}
++
++func hostNodeIDSetsEqual(a, b []string) bool {
++	if len(a) != len(b) {
++		return false
++	}
++	seen := make(map[string]struct{}, len(a))
++	for _, id := range a {
++		seen[id] = struct{}{}
++	}
++	for _, id := range b {
++		if _, ok := seen[id]; !ok {
++			return false
++		}
++	}
++	return true
++}
++
+ // GetNetworkNodesMemory - gets all nodes belonging to a network from list in memory
+ func GetNetworkNodesMemory(allNodes []models.Node, network string) []models.Node {
+ 	var nodes = make([]models.Node, 0, len(allNodes))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4235** (2026-11-17): NM-356: Fix device join/pull when host.Nodes drifts from live nodes (@abhishek9686)
 - **PR #4232** (2026-11-16): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4231** (2026-11-14): NM-356: Enable CE user ACL policies with All Users and per-user sources (@abhishek9686)
 - **PR #4230** (2026-11-12): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4225** (2026-11-12): NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (@abhishek9686)
 - **PR #4224** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
-- **PR #4223** (closed): Release v1.7.0 (@abhishek9686)
 
 ---
 
@@ -1325,30 +1333,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pre-Release Fixes v1.8.0
+## X. NM-356: Fix device join/pull when host.Nodes drifts from live nodes
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/hosts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5485d954`: Pre-Release Fixes v1.8.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28560362`: NM-356: Fix device join/pull when host.Nodes drifts from live nodes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/hosts.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/sams96/rgeo v1.3.0
-	github.com/golang/geo v0.0.0-20230421003525-6adc56603217 // indirect
-	github.com/twpayne/go-geom v1.6.0 // indirect
+	// Sync before peer calc (PeerUpdateForHost walks host.Nodes) and reuse the
+	// returned list for HostPull.Nodes — one host_id query, no second GetHostNodes.
+	hostNodes, syncErr := logic.SyncHostNodesFromDB(r.Context(), host)
+	if syncErr != nil {
+		logger.Log(0, "pull: host.Nodes reconcile failed", hostIDStr, syncErr.Error())
+		if hostNodes == nil {
+			hostNodes = logic.GetHostNodes(host)
+		}
+	}
+		Nodes:                   hostNodes,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		Nodes:                   logic.GetHostNodes(host),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5485d954` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28560362` are properly handled with clean fallback behavior.
