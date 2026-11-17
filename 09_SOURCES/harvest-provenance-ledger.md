@@ -10454,3 +10454,6 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `2280c280` | Multi-dimensional audit evidence | 2026-11-17T03:26:16.839Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `a33d49c4` | Multi-dimensional audit evidence | 2026-11-17T03:26:20.708Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `5b172d1a` | Multi-dimensional audit evidence | 2026-11-17T03:26:22.190Z |
+| `learn-huggingface-microsoft-mage-vl-cowork` | `https://huggingface.co/microsoft/Mage-VL-Cowork` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-17T03:34:08.366Z |
+| `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `4b5b7817` | Multi-dimensional audit evidence | 2026-11-17T03:34:15.611Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `61ba4ac1` | Multi-dimensional audit evidence | 2026-11-17T03:34:20.219Z |

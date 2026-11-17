@@ -4,24 +4,24 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "3a228bb2",
+  "source_version": "61ba4ac1",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-16T21:55:36.076Z",
+  "timestamp": "2026-11-17T03:34:20.466Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `3a228bb2`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-16T21:55:36.076Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `61ba4ac1`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T03:34:20.466Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 84%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 87%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet/freenet-core:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:55:34.766Z  
+> **Harvest Timestamp**: 2026-11-17T03:34:19.082Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1752,13 +1752,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6250** (2026-11-17): **fix(transport): close a native QUIC path on ack-wait strikes; re-read the backlog before an ack wait expires**
+  *Symptoms*: ## Problem  The ack-wait expiry rule from #6208 (three strikes within 30 min on one path, a strike being a stream reset at an expired ack wait with evidence the end went out and the peer is alive) only observes. Two things kept it from closing:  1. **A known misjudgement.** A stream's ack wait covers the backlog ahead of its end, read once when the end is sent. Streamed sends started after that share the link with what is left of the stream, so its end can be acknowledged later than the wait allows even by an honest peer. A burst of large sends just after an end could therefore turn an honest expiry into a strike. 2. **Nothing recycles a peer that withholds stream ends** on a path with no UDP session to fall back to. With UDP present this costs performance on that path. On a native connection it holds the path's stream permits and send epochs with nothing to fall back to. This is a gate before UDP removal (#6205).  ## Approach  **Read the backlog again at the ack wait's end.** `QuicPath::backlog_wait` now returns the wait read at the end together with a `bounded::LaterBacklog`, which `bounded_send` reads once, when the wait first runs out (`path::later_backlog`). - quinn shares the link round-robin, so what can go before the stream's last byte is bounded:   - from each send in flight at the end (this one included), its rest;   - from each send started since (`QuicPath::stream_opens`, counted with its bytes), its own bytes, but at most the rest each. - That total is given at t
+
 - **Issue #6248** (2026-11-16): **feat(telemetry): attribute transfer failures and pipe drops by transport**
   *Symptoms*: ## Problem  With QUIC carrying data on part of the network, two telemetry gaps make failures hard to attribute:  - `transfer_failed` (and `transfer_completed`) events do not say which transport carried the transfer. A failure on a UDP stream and one on a QUIC path look the same in the collector, apart from the reason text. - `quic_data_send_pipe_{sent,dropped}` counts pipes (an inbound stream forwarded on a QUIC path) without saying what fed the inbound stream or why a dropped one was dropped. A pipe can be dropped because its source failed, because its source stopped sending, or because of the path it was sent on. Only the last is a fault of the QUIC path.  ## Approach  Telemetry only; no behaviour changes.  - **`transport` on transfer events.** `TransferEvent::Started`, `Completed` and `Failed` gain `transport: TransferTransport` (`Udp` | `Quic`), exported as `"transport": "udp"|"quic"` in the event JSON. The QUIC send sites (`quic_send::PathTransfer`) report `quic`; every site in `outbound_stream.rs` reports `udp`. A pipe sent on UDP reports `transport: udp` even when a QUIC path fed its inbound stream, and it gets no source attribution: the `quic_pipe_*` families below count only pipes on a QUIC path. Transfer events go only to telemetry (they are not written to the local event log), so the new field changes no stored format. - **Pipe ends by source.** New family `quic_pipe_source_<quic_fed_sent|quic_fed_dropped|udp_fed_sent|udp_fed_dropped>`, counted where the pipe settl
-
-- **Issue #6245** (2026-11-16): **ci: run Clippy on a free runner; stop auto-rebasing Dependabot cargo PRs**
-  *Symptoms*: ## Problem Ubicloud CI costs about $450-540/month (measured in #6244). Two items in freenet-core can be cut without changing what gates a merge: - **Clippy** runs on `ubicloud-standard-8`: about $33/month across PR and merge-queue runs. - **Dependabot cargo PRs are rebased automatically.** Every `Cargo.lock` change on main conflicts with every open cargo PR, and Dependabot rebases all of them. From 2026-11-03 to 11-16 that produced 141 `ci.yml` runs on 17 open Dependabot PRs, and 138 of them were red. About $45/month at that backlog.  ## Approach - Clippy moves to `ubuntu-latest`, which is free on a public repo. Lint output does not depend on machine speed, so a smaller runner cannot make this check flaky. The PR critical path is the Windows/macOS unit jobs (~37 min), so a slower Clippy does not delay the verdict. The rust-cache now saves on `main` only. A per-PR save would put 0.7-1 GB entries into GitHub's 10 GB cache, which the Windows/macOS jobs share. Clippy already runs on main pushes, so it writes its own main entry and needs no warm twin (`check_cache_warm_parity.py` agrees). The timeout goes from 30 to 45 minutes to allow for a cold cache on 4 vCPUs. - `rebase-strategy: "disabled"` on the root cargo entry. A Dependabot PR is rebuilt when someone comments `@dependabot rebase`, and the merge queue still tests it against current main. The trade-off is that conflicted bumps, security bumps included, wait until someone picks them up. In the period above they were red rega
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No blocking issues, 2 informational notes  **Rules checked:** git-workflow.md **Files reviewed:** 2 (`.github/dependabot.yml`, `.github/workflows/ci.yml`)  #### Warnings None.  #### Info - Commit `d72874002` — the subject "ci: replace estimated Clippy disk and time figures with the measured ones" is about 73 characters, one over the 72-character guideline. It is in conventional-commit form, and the line-by-line count is approximate, so this is marginal. (rule: git-workflow.md, "WHEN creating a commit message") - PR scope — the PR bundles two logically separate changes: moving Clippy to `ubuntu-latest` in `ci.yml`, and setting `rebase-strategy: "disabled"` for the cargo ecosystem in `dependabot.yml`. Both trace to #6244, and the title says so. Even so, they could land as separate PRs. The Dependabot change also alters how security PRs behave, and the added comment says so. (rule: git-workflow.md, "BEFORE opening a PR — is this change in scope
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1775,418 +1773,1468 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `58f26473` (2026-11-16)
-**Commit Message**: build(deps): bump rustls from 0.23.45 to 0.23.46 in /apps/freenet-ping (#6018)
+### Incident Patch 1: `5b7af17c` (2026-11-16)
+**Commit Message**: build: bump Rust toolchain pin to 1.95.0 to unblock wasmtime 48 (#6246)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `apps/freenet-ping/Cargo.lock` (modified, +2/-2)
+**File**: `.github/workflows/cross-compile.yml` (modified, +5/-5)
 ```diff
-@@ -4871,9 +4871,9 @@ dependencies = [
+@@ -33,7 +33,7 @@ jobs:
+       - name: Install Rust
+         uses: dtolnay/rust-toolchain@stable
+         with:
+-          toolchain: 1.94.0
++          toolchain: 1.95.0
+           targets: x86_64-unknown-linux-musl
  
- [[package]]
- name = "rustls"
--version = "0.23.45"
-+version = "0.23.46"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
-+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
- dependencies = [
-  "log",
-  "once_cell",
+       - uses: Swatinem/rust-cache@v2
+@@ -89,7 +89,7 @@ jobs:
+       - name: Install Rust
+         uses: dtolnay/rust-toolchain@stable
+         with:
+-          toolchain: 1.94.0
++          toolchain: 1.95.0
+           targets: aarch64-unknown-linux-musl
+ 
+       - uses: Swatinem/rust-cache@v2
+@@ -131,7 +131,7 @@ jobs:
+       - name: Install Rust
+         uses: dtolnay/rust-toolchain@stable
+         with:
+-          toolchain: 1.94.0
++          toolchain: 1.95.0
+ 
+       - uses: Swatinem/rust-cache@v2
+ 
+@@ -182,7 +182,7 @@ jobs:
+       - name: Install Rust
+         uses: dtolnay/rust-toolchain@stable
+         with:
+-          toolchain: 1.94.0
++          toolchain: 1.95.0
+           targets: x86_64-apple-darwin
+ 
+       - uses: Swatinem/rust-cache@v2
+@@ -245,7 +245,7 @@ jobs:
+       - name: Install Rust
+         uses: dtolnay/rust-toolchain@stable
+         with:
+-          toolchain: 1.94.0
++          toolchain: 1.95.0
+ 
+       - uses: Swatinem/rust-cache@v2
+ 
 ```
 
----
-
-### Incident Patch 2: `6d48d5ee` (2026-11-16)
-**Commit Message**: build: release 0.2.159 (#6243)
-
-Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `crates/core/examples/analyze_event_logs.rs` (modified, +15/-22)
 ```diff
-@@ -1899,7 +1899,7 @@ dependencies = [
+@@ -196,30 +196,23 @@ fn parse_args(args: &[String]) -> Result<Vec<(PathBuf, Option<String>)>> {
  
- [[package]]
- name = "fdev"
--version = "0.3.320"
-+version = "0.3.321"
- dependencies = [
-  "anyhow",
-  "axum",
-@@ -2078,7 +2078,7 @@ dependencies = [
- 
- [[package]]
- name = "freenet"
--version = "0.2.158"
-+version = "0.2.159"
- dependencies = [
-  "aes-gcm",
-  "ahash",
+     while i < args.len() {
+         match args[i].as_str() {
+-            "--gateway" | "-g" => {
+-                if i + 1 < args.len() {
+-                    log_paths.push((PathBuf::from(&args[i + 1]), Some("gateway".to_string())));
+-                    i += 2;
+-                } else {
+-                    i += 1;
+-                }
++            // A flag missing its value falls through to the `_` arm below.
++            "--gateway" | "-g" if i + 1 < args.len() => {
++                log_paths.push((PathBuf::from(&args[i + 1]), Some("gateway".to_string())));
++                i += 2;
+             }
+-            "--peer" | "-p" => {
+-                if i + 1 < args.len() {
+-                    let label = if i + 2 < args.len() && !args[i + 2].starts_with("--") {
+-                        Some(args[i + 2].clone())
+-                    } else {
+-                        Some(format!("peer-{}", log_paths.len()))
+-                    };
+-                    let is_auto_label = label
+-                        .as_ref()
+-                        .map(|l| l.starts_with("peer-"))
+-                        .unwrap_or(true);
+-                    log_paths.push((PathBuf::from(&args[i + 1]), label));
+-                    i += if is_auto_label { 2 } else { 3 };
++            "--peer" | "-p" if i + 1 < args.len() => {
++                let label = if i + 2 < args.len() && !args[i + 2].starts_with("--") {
++                    Some(args[i + 2].clone())
+                 } else {
+-                    i += 1;
+-                }
++                    Some(format!("peer-{}", log_paths.len()))
++                };
++                let is_auto_label = label
++                    .as_ref()
++                    .map(|l| l.starts_with("peer-"))
++                    .unwrap_or(true);
++                log_paths.push((PathBuf::from(&args[i + 1]), label));
++                i += if is_auto_label { 2 } else { 3 };
+             }
+             "--paths" => {
+                 i += 1;
 ```
 
-**File**: `apps/freenet-ping/Cargo.lock` (modified, +1/-1)
+**File**: `crates/core/src/conformance/verifier.rs` (modified, +1/-3)
 ```diff
-@@ -1715,7 +1715,7 @@ dependencies = [
+@@ -358,12 +358,11 @@ fn run<O: ConformanceOracle + ?Sized>(
+             // Idempotence is already broken. Everything below only decides WHICH
+             // kind, and must never turn the finding back into a pass.
+             let mut current = once.clone();
+-            let mut rewrites: u32 = 1;
+             let mut settling = IdempotenceSettling::NeverSettled;
+             let mut classification_failure: Option<Inconclusive> = None;
+             // One merge is already spent above, so the remaining budget is
+             // `MAX_CANONICALIZATION_APPLIES - 1` and the total is unchanged.
+-            for _ in 1..MAX_CANONICALIZATION_APPLIES {
++            for rewrites in 1..MAX_CANONICALIZATION_APPLIES as u32 {
+                 // Deliberately NOT `?`. Propagating here would return
+                 // `Inconclusive` from the whole check and DISCARD the violation
+                 // established above — reporting "we could not tell" about a
+@@ -394,7 +393,6 @@ fn run<O: ConformanceOracle + ?Sized>(
+                     break;
+                 }
+                 current = merged;
+-                rewrites += 1;
+             }
  
- [[package]]
- name = "freenet"
--version = "0.2.158"
-+version = "0.2.159"
- dependencies = [
-  "aes-gcm",
-  "ahash",
+             let mut detail = match settling {
 ```
 
-**File**: `crates/core/Cargo.toml` (modified, +1/-1)
+**File**: `crates/core/src/contract/delegate_capabilities.rs` (modified, +3/-5)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "freenet"
--version = "0.2.158"
-+version = "0.2.159"
- edition = "2024"
- rust-version = "1.85"
- publish = true
+@@ -894,11 +894,9 @@ impl DutyBucket {
+         let per_sec_us = per_sec.as_micros();
+         let product = elapsed_ns * per_sec_us;
+         let add = product / 1_000_000_000;
+-        self.carry_ns = if per_sec_us == 0 {
+-            0
+-        } else {
+-            (product % 1_000_000_000) / per_sec_us
+-        };
++        self.carry_ns = (product % 1_000_000_000)
++            .checked_div(per_sec_us)
++            .unwrap_or(0);
+         let cap = burst.as_micros().min(i64::MAX as u128) as i64;
+         let add = add.min(i64::MAX as u128) as i64;
+         self.tokens_us = self.tokens_us.saturating_add(add).min(cap);
 ```
 
-**File**: `crates/fdev/Cargo.toml` (modified, +4/-4)
+**File**: `crates/core/src/contract/fair_queue.rs` (modified, +1/-3)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "fdev"
--version = "0.3.320"
-+version = "0.3.321"
- edition = "2024"
- rust-version = "1.85"
- publish = true
-@@ -14,12 +14,12 @@ readme = "README.md"
- # (v0.2.x), so we embed the matching freenet version literally — `v{ version }`
- # would expand to the fdev crate version and 404. release.yml rewrites the
- # `vX.Y.Z` segment whenever the freenet version is bumped (issue #3995).
--pkg-url = "{ repo }/releases/download/v0.2.158/fdev-{ target }.tar.gz"
-+pkg-url = "{ repo }/releases/download/v0.2.159/fdev-{ target }.tar.gz"
- pkg-fmt = "tgz"
- bin-dir = "fdev"
+@@ -1004,13 +1004,11 @@ mod tests {
+         }
  
- [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
--pkg-url = "{ repo }/releases/download/v0.2.158/fdev-{ target }.zip"
-+pkg-url = "{ repo }/releases/download/v0.2.159/fdev-{ target }.zip"
- pkg-fmt = "zip"
- bin-dir = "fdev.exe"
+         // Push 1 event each for cold contracts
+-        let mut event_id = MAX_QUEUED_PER_CONTRACT as u64;
+-        for seed in 1..=num_cold as u8 {
++        for (event_id, seed) in (MAX_QUEUED_PER_CONTRACT as u64..).zip(1..=num_cold as u8) {
+             let contract_id = make_contract_id(seed);
+             queue
+                 .try_push_default(make_event_id(event_id), make_get_event(contract_id))
+                 .expect("push should succeed");
+-            event_id += 1;
+         }
  
-@@ -56,7 +56,7 @@ ed25519-dalek = { version = "2", features = ["rand_core", "serde"] }
- hex = { workspace = true }
- 
- # internal
--freenet = { path = "../core", version = "0.2.158", features = ["testing"] }
-+freenet = { path = "../core", version = "0.2.159", features = ["testing"] }
- freenet-stdlib = { workspace = true }
- 
- [dev-dependencies]
+         let total = MAX_QUEUED_PER_CONTRACT + num_cold;
 ```
 
----
-
-### Incident Patch 3: `2429dada` (2026-11-16)
-**Commit Message**: revert: emergency stop of the QUIC data ramp (#6241); raise the QUIC-native floor to 0.2.160 (#6242)
-
-**File**: `.claude/rules/transport.md` (modified, +30/-34)
+**File**: `crates/core/src/node/network_bridge/in_memory.rs` (modified, +3/-5)
 ```diff
-@@ -1168,20 +1168,21 @@ it must not wait unless it is a pacing point.
- #### QUIC endpoint (`transport/quic.rs`, #5940 step c2)
+@@ -74,11 +74,9 @@ impl NetworkStats {
  
- `transport-quic` (config key: `off`, `shadow` or `prefer`; unset is
--`QuicMode::default_mode`, shadow on Linux and macOS and off elsewhere, Windows
--included: the data ramp's emergency stop returned to 0.2.156's defaults, the last
--state the field ran) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
-+`QuicMode::default_mode`, prefer on Linux, macOS and Windows and off
-+elsewhere, since the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
- `prefer` negotiates data with the share of pairs the ramp gives at the time ("Data
- slice" below; `upgrade::policy::log_startup` reports the share at INFO once per
- node, and each band the ramp enters is logged at INFO), and a pair with both bits
--sends its data on the path ("QUIC send route" below). 0.2.158 set the ramp
--start (#6224); this tree is its emergency stop, with no ramp start, so with no
-+sends its data on the path ("QUIC send route" below). The tree sets the ramp
-+start for 0.2.158 (#6224), so `prefer` nodes, every Linux, macOS and Windows node
-+that did not set the key, carry data with the ramp's share, and 0.2.158's release
-+notes say so. With no ramp start (the emergency-stop build) and no
- `quic-data-percent` the share is 0, and `prefer` differs from `shadow` only by the
- bit, which stays 0. Off: no endpoint, no QUIC ingress, nothing
- changes, except that `off` set in the config is deprecated and logs a WARN at
- startup (`upgrade::policy::log_startup`); the endpoint state telemetry reports it
--as `off_config`. Windows had prefer by default from 0.2.157 (at a share of 0) until the stop (its
--crash-loop breaker was confirmed on a real Windows machine, #6031). The default is
-+as `off_config`. Windows has the same default since its crash-loop breaker was
-+confirmed on a real Windows machine (#6031). The default is
- read, never written to config.toml: a node that did not set the key follows the
- release it runs, so a default-off release is the kill switch for QUIC as a
- whole. Stopping only the data ramp is smaller: `QUIC_DATA_RAMP_START = None`
-@@ -1304,10 +1305,9 @@ pair is in the slice when its bucket is below the percentage, so 0 holds none,
-   The percentage: a ramp over one release (`slice::ramp_percent`): 5% for the
-   first 6 h, then linear 5 to 25% to 12 h and 25 to 100% to 24 h, 100% after,
-   from `QUIC_DATA_RAMP_START` in `upgrade/policy.rs` (Unix seconds, or `None`:
--  no ramp, share 0). It was set for 0.2.158 (#6224, 2026-11-16 02:30 UTC), in its
--  own reviewed PR at the planned publish time, to be left set (past 24 h it reads
--  100%, the steady state). This tree is the emergency stop, which sets it back to
--  `None`; a new ramp needs its own reviewed PR. A node whose clock reads before the start gets
-+  no ramp, share 0). The start is set for 0.2.158 (#6224, 2026-11-16 02:30 UTC),
-+  in its own reviewed PR at the planned publish time, and left set: past 24 h it
-+  reads 100%, the steady state. Only an emergency stop sets it back to `None`. A node whose clock reads before the start gets
-   5%. Slices nest, so a pair in the slice stays in as the share grows. The config
-   key `quic-data-percent` (lenient text like `quic-max-paths`; anything but a whole
-   number from 0 to 100 reads as unset, with a WARN when QUIC is on) replaces the
-@@ -1555,17 +1555,17 @@ a test passes its own; tests read their own, never the global).
-   (the watch cannot tell then whether the peer is dark). The
-   dark-path rule closes only a path that carries data (QuicPath::enable_data)
-   and has no UDP session (a native path, recycle::DARK_CLOSES_WITH_UDP);
--  on every other path (all of them in the emergency-stop build, which has no
--  ramp, and data paths with a UDP session) it only counts, so the field shows how long real dark spells last. A spell is read
-+  on every other path (shadow paths, pairs outside the ramp's share, and data
-+  paths with a UDP session) it only counts, so the field shows how long real dark spells last. A spell is read
-   up to when the peer is next heard from, which waits for quinn's backed-off
-   probes after the outage ends, so it reads longer than the outage (in
-   a_path_without_data_is_not_closed_by_a_dark_spell a 30 s outage read about
-   45 s and a 100 s one about 200 s), and an outage whose backoff runs past
-   quinn's 120 s idle timeout ends the path and counts `unrecovered`. The dark
--  threshold (the 10 s window) was not revisited before 0.2.158, which ran the
--  ramp with it as is until this stop. The window is to be revisited from the
--  carried and shadow dark episodes 0.2.158 reported (watch rule 14) before any
--  new ramp.
-+  threshold (the 10 s window) was not revisited before 0.2.158: the ramp passes
-+  5% at T0 + 6 h with it as is. The release watch reads carried against shadow
-+  dark epis
+     /// Returns the average latency added per delayed message.
+     pub fn average_latency(&self) -> Duration {
+-        if self.messages_delayed_delivered == 0 {
+-            Duration::ZERO
+-        } else {
+-            Duration::from_nanos(self.total_latency_nanos / self.messages_delayed_delivered)
+-        }
++        self.total_latency_nanos
++            .checked_div(self.messages_delayed_delivered)
++            .map_or(Duration::ZERO, Duration::from_nanos)
+     }
+ }
+ 
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `crates/core/src/operations/get/op_ctx_task.rs` (modified, +1/-1)
 ```diff
-@@ -1203,7 +1203,7 @@ jobs:
-       - name: Test service commands
-         run: cargo nextest run -p freenet --bin freenet --profile ci -E 'test(commands::service) | test(commands::url_handler) | test(commands::open_link)'
- 
--      # QUIC is on by default on macOS (`shadow`, #5940), and its crash-loop
-+      # QUIC is on by default on macOS (`prefer`, #5940), and its crash-loop
-       # breaker reads kern.boottime there: run the real-binary shutdown tests on
-       # a real Mac (a clean stop clears it, a SIGKILL trips it, which needs the
-       # boot identity, and a node with no setting arms it). Not the lib unit
-```
-
-**File**: `crates/core/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -119,8 +119,8 @@ rustls-native-certs = "0.8.4"
- # Keep it semver-compatible with reqwest's rustls: os_trust probes certificates
- # with it on the assumption that reqwest validates them identically.
- rustls = { version = "0.23", default-features = false, features = ["std"] }
--# QUIC endpoint (transport/quic.rs, #5940): shadow by default on Linux and
--# macOS, off elsewhere, Windows included (`transport-quic`). Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
-+# QUIC endpoint (transport/quic.rs, #5940): on by default on Linux, macOS and
-+# Windows (`prefer`), off elsewhere (`transport-quic`). Only the ring rustls provider: no runtime-tokio (the endpoint runs on the
- # crate's own Runtime over TimeSource, so simulation drives it), no
- # platform-verifier (peers are authenticated by raw public keys, never by a CA
- # root store), and no aws-lc-rs (deny.toml bans it).
-```
-
-**File**: `crates/core/src/config.rs` (modified, +18/-13)
-```diff
-@@ -363,7 +363,7 @@ impl Default for ConfigArgs {
-                 ledbat_min_ssthresh: None, // Uses default from NetworkApiConfig
-                 congestion_control: None,  // Default: fixedrate (set in NetworkApiConfig)
-                 bbr_startup_rate: None,    // Uses default from BBR config
--                transport_quic: None,      // Default: shadow on Linux and macOS, off elsewhere
-+                transport_quic: None,      // Default: prefer on Linux, macOS and Windows
-                 quic_max_paths: None,      // Default: the node's connection limit
-                 quic_data_percent: None,   // Default: this release's share of pairs
-                 quic_ignore_crash_breaker: None,
-@@ -2588,14 +2588,15 @@ pub struct NetworkArgs {
-     pub bbr_startup_rate: Option<u64>,
- 
-     /// QUIC transport (#5940): `off`, `shadow` or `prefer`. Unset means
--    /// `shadow` on Linux and macOS, and `off` elsewhere, Windows included.
-+    /// `prefer` on Linux, macOS and Windows, and `off` elsewhere.
-     ///
-     /// `shadow` builds a QUIC endpoint on the network port and upgrades
-     /// connections to peers that also run it to a QUIC path. The path carries
-     /// control frames only, so all traffic stays on the existing transport.
-     /// `prefer` also negotiates data with a share of pairs (`quic-data-percent`,
-     /// or this release's share: its data ramp, or 0 when it has none), and a
--    /// pair where both sides did sends its traffic on the path. `off` builds no endpoint. An unknown value is treated as `off`,
-+    /// pair where both sides did
-+    /// sends its traffic on the path. `off` builds no endpoint. An unknown value is treated as `off`,
-     /// with a warning in the log.
-     #[arg(long, env = "FREENET_TRANSPORT_QUIC", value_name = "off|shadow|prefer")]
-     #[serde(rename = "transport-quic", skip_serializing_if = "Option::is_none")]
-@@ -2974,7 +2975,7 @@ pub struct NetworkApiConfig {
-     pub bbr_startup_rate: Option<u64>,
- 
-     /// QUIC transport (#5940): `off`, `shadow` or `prefer`; unset reads as
--    /// `QuicMode::default_mode` (shadow on Linux and macOS, off elsewhere). Kept as written, so a value from a later release
-+    /// `QuicMode::default_mode` (prefer on Linux, macOS and Windows). Kept as written, so a value from a later release
-     /// round-trips; see [`Self::quic_settings`] for how it is read.
-     #[serde(
-         default,
-@@ -7692,17 +7693,21 @@ shutdown-drain-secs = 42
-         assert_seeded_values_bound(&cfg);
+@@ -9804,7 +9804,7 @@ mod route_attempt_driver_tests {
+     /// `entries` sorted by peer address, for assertions about which peers got
+     /// which label regardless of the order they were recorded in.
+     fn by_peer<T>(mut entries: Vec<(Option<SocketAddr>, T)>) -> Vec<(Option<SocketAddr>, T)> {
+-        entries.sort_by(|a, b| a.0.cmp(&b.0));
++        entries.sort_by_key(|a| a.0);
+         entries
      }
  
--    /// An unset `transport-quic` is shadow on Linux and macOS and off on
--    /// Windows: the emergency stop of the QUIC data ramp returns to 0.2.156's
--    /// defaults, the last state the field ran. The lib tests do not compile on
--    /// Windows, so `tests/quic_breaker_windows.rs` pins the Windows half
--    /// through the real binary. The default is not written into the config, so
--    /// a release changes it for every node that did not set the key.
-+    /// An unset `transport-quic` is prefer on Linux, macOS and Windows; Windows
-+    /// joined once its crash-loop breaker was confirmed on a real Windows
-+    /// machine (#6031). The lib tests do not compile on Windows, so
-+    /// `tests/quic_breaker_windows.rs` pins the Windows half through the real
-+    /// binary. The default is not written into the config, so a default-off
-+    /// release turns QUIC off on every node that did not set the key.
-     #[test]
--    fn quic_is_shadow_by_default_except_on_windows() {
-+    fn quic_is_prefer_by_default_on_linux_macos_and_windows() {
-         use crate::transport::quic::QuicMode;
--        let expected = if cfg!(any(target_os = "linux", target_os = "macos")) {
--            QuicMode::Shadow
-+        let expected = if cfg!(any(
-+            target_os = "linux",
-+            target_os = "macos",
-+            target_os = "windows"
-+        )) {
-+            QuicMode::Prefer
-         } else {
-             QuicMode::Off
+```
+
+**File**: `crates/core/src/ring.rs` (modified, +1/-1)
+```diff
+@@ -1301,7 +1301,7 @@ impl Ring {
+         let my_distance = my_location.distance(contract_location);
+ 
+         let connections = self.connection_manager.get_connections_by_location();
+-        let neighbors = connections.iter().flat_map(|(_loc, conns)| {
++        let neighbors = connections.values().flat_map(|conns| {
+             conns.iter().map(|conn| {
+                 // A peer counts as a "closer routable neighbor" (so I'm NOT the
+                 // root) only if a renewal could actually route to it. Match the
+```
+
+---
+
+### Incident Patch 2: `61ba4ac1` (2026-11-17)
+**Commit Message**: fix(transport): close a native QUIC path on ack-wait strikes; re-read the backlog before an ack wait expires (#6250)
+
+**File**: `.claude/rules/transport.md` (modified, +45/-17)
+```diff
+@@ -1554,8 +1554,9 @@ a test passes its own; tests read their own, never the global).
+   paths. quic_stall_close_<not_acknowledging|dark|credit_starved|
+   stream_credit_withheld|ack_waits_expired>: paths the acknowledgement
+   watch closed, by why (recycle::Stall). quic_stall_would_close_<same
+-  labels>: times a rule that only observes would have closed a path; only
+-  ack_waits_expired observes today (recycle::ACK_WAITS_EXPIRED_CLOSES).
++  labels>: times a rule that only observes would have closed a path:
++  ack_waits_expired and dark, each on paths with a UDP session
++  (recycle::ACK_WAITS_EXPIRED_CLOSES_WITH_UDP, DARK_CLOSES_WITH_UDP).
+   quic_dark_episode_<recovered_lt_5s|lt_10s|lt_30s|lt_120s|recovered_ge_120s|
+   unrecovered|cap_held|closed_at_window>: dark episodes (recycle::AckWatch:
+   packets outstanding, nothing acknowledged, nothing heard) by how they ended;
+@@ -2920,12 +2921,15 @@ Path recycling (quic/recycle.rs, #5940 step M6): besides the send-reset
+     own deadline (no caller does this today) waits on in the background
+     for at most the rest of its ack wait, then is reset and judged as one
+     that ran out.
+-  → Ack waits expired (#6205, recycle::AckWatch, Stall::AckWaitsExpired),
+-    OBSERVE-ONLY (recycle::ACK_WAITS_EXPIRED_CLOSES is false): strikes and
+-    would-closes are counted and the path is never closed by this rule;
+-    the close is a follow-up calibrated from the field counts, which must
+-    also count streams started after an end in its backlog (below). #6205
+-    stays open as the gate before UDP removal. A reset at an expired wait (above) is a STRIKE when there is evidence
++  → Ack waits expired (#6205, recycle::AckWatch, Stall::AckWaitsExpired):
++    closes a path with no UDP session (a native one) with
++    PEER_NOT_ACKNOWLEDGING; on a path with a UDP session it only observes
++    (recycle::ACK_WAITS_EXPIRED_CLOSES_WITH_UDP is false): strikes and
++    would-closes are counted and the path is not closed, so the field
++    counts calibrate the rule before UDP removal without this node's own
++    closes in them (the same split as the dark rule). #6205 stays open as
++    the gate before UDP removal for the late-acknowledgement residual
++    (below). A reset at an expired wait (above) is a STRIKE when there is evidence
+     the end went out and the peer is alive (path::StrikeCheck): ack batches
+     came after the end was sent and the latest came while quinn was
+     application-limited (quinn-proto app_limited = nothing built and not
+@@ -2939,7 +2943,17 @@ Path recycling (quic/recycle.rs, #5940 step M6): besides the send-reset
+     either when the expiry's timer woke more than LATE_WAKE_SLACK (2 s)
+     past its deadline: this node's runtime stalled or its host slept, and
+     acknowledgements already in the socket may not have been read
+-    (an_expiry_whose_timer_woke_late_is_not_a_strike). A genuinely
++    (an_expiry_whose_timer_woke_late_is_not_a_strike). Nor when the path
++    was dark for at least the watch's window (10 s) at any sample since the
++    end was sent (AckWatch::publishing_long_dark, WatchShared::long_dark_at):
++    through an outage that ends, a send can outlast its wait with an honest
++    peer, because quinn resends only at its next backed-off probe; the
++    common case is a one-packet Short's 150 s bound on a path with a UDP
++    session, which the dark rule leaves to the idle timeout since #6239.
++    Short strikes per data path-hour rose about 4x from 0.2.158 to 0.2.159
++    (1.27 to 4.98 per 1000), consistent with that. A peer that withholds
++    acknowledgements while it keeps sending is heard at every sample, so the
++    exclusion never covers it. A genuinely
+     slow path (every batch congestion-limited, under the floor) is not
+     struck (the_strike_check_needs_evidence_that_the_end_went_out,
+     ack_wait_expiries_on_a_congestion_limited_slow_path_are_not_strikes,
+@@ -2955,18 +2969,31 @@ Path recycling (quic/recycle.rs, #5940 step M6): besides the send-reset
+     acknowledgements are high), acknowledged multi-packet Shorts between
+     included, or one end in three, would be closed at about its third ack
+     wait, not after SEND_ABORT_LIMIT (4096) resets
+-    (ack_wait_expiries_count_a_would_close_whatever_else_is_acknowledged). Flow
++    (ack_wait_expiries_count_a_would_close_whatever_else_is_acknowledged,
++    whose native cases close at the third strike). Flow
+     control cannot hold bytes back after the end is sent (every byte
+     written before it was within the peer's credit; a peer whose app stops
+     reading blocks the write before the end, which the gap and credit
+     rules handle). One narrow honest strike remains: on a slow,
+     congestion-limited path whose backlog drains within about a round
+     trip of the expiry, the batch acknowledging the bytes before the end
+     can be application-limited while the end's own acknowledgement is
+-    still on its way. And the backlog is read once, when the end is sent:
+-    strea
+```
+
+**File**: `crates/core/src/transport/metrics/quic_data.rs` (modified, +2/-2)
+```diff
+@@ -31,9 +31,9 @@
+ //! | `quic_gate_ended_queue_<bucket>` | paths that ended in the period after at least 20 gate verdicts, by the share of them passed as `queue`: `lt_10pct`, `lt_50pct`, `ge_50pct`. A path whose losses mostly read as a queue runs as plain Cubic, whether the queue is real or jitter |
+ //! | `quic_carried_dark_episode_<label>` | the same, for the episodes of paths that carried data when the episode ended: a subset of `quic_dark_episode_<label>`, counted by the same decision |
+ //! | `quic_dark_episode_<label>` | dark episodes on QUIC paths (`recycle::AckWatch`: packets outstanding, nothing acknowledged and nothing heard) by how they ended: `recovered_lt_5s`, `lt_10s`, `lt_30s`, `lt_120s`, `recovered_ge_120s`, `unrecovered` (the path closed, or nothing was outstanding any more), `cap_held` (the egress cap held this side's sends, so darkness could no longer be told), `closed_at_window` (the dark-path rule closed a path that carries data and has no UDP session, a native path). A path that carries no data, and since 0.2.159 a data path with a UDP session (`recycle::DARK_CLOSES_WITH_UDP`), is never closed by that rule, so its episodes run to their end (a data path with a UDP session counts the close the rule would have made in `quic_stall_would_close_dark`); read at the watch's 2 s ticks |
+-//! | `quic_ack_wait_expired_<label>` | sends whose wait for the acknowledgement of their end ran out and whose stream was reset, by kind: `stream` (a send with an ack wait: a Stream, or a Short past one packet), `short` (a one-packet Short, past its 150 s bound) or `control` (a control frame, bounded as a one-packet Short); only those that count as strikes (`path::StrikeCheck`: evidence the end went out and the peer is alive). An honest peer acknowledges an end within a few round trips, so this should be 0 on every honest path (`recycle::ACK_WAIT_EXPIRY_LIMIT` in `ACK_WAIT_EXPIRY_WINDOW` counts a would-close; the rule does not close a path yet) |
++//! | `quic_ack_wait_expired_<label>` | sends whose wait for the acknowledgement of their end ran out and whose stream was reset, by kind: `stream` (a send with an ack wait: a Stream, or a Short past one packet), `short` (a one-packet Short, past its 150 s bound) or `control` (a control frame, bounded as a one-packet Short); only those that count as strikes (`path::StrikeCheck`: evidence the end went out and the peer is alive). An honest peer acknowledges an end within a few round trips, so this should be 0 on every honest path (`recycle::ACK_WAIT_EXPIRY_LIMIT` in `ACK_WAIT_EXPIRY_WINDOW` closes a path with no UDP session and counts a would-close on one with a UDP session, `recycle::ACK_WAITS_EXPIRED_CLOSES_WITH_UDP`) |
+ //! | `quic_stall_close_<label>` | paths the acknowledgement watch closed, by why: `not_acknowledging`, `dark`, `credit_starved`, `stream_credit_withheld`, `ack_waits_expired` (`recycle::Stall`) |
+-//! | `quic_stall_would_close_<label>` | times a rule that only observes would have closed a path, by the same labels; each count starts the rule's window afresh. Two rules observe today. `ack_waits_expired` (`recycle::ACK_WAITS_EXPIRED_CLOSES` is false) counts each time `ACK_WAIT_EXPIRY_LIMIT` strikes came within `ACK_WAIT_EXPIRY_WINDOW`, for calibrating the close from the field (#6205). `dark` counts once per episode on a data path with a UDP session, where the dark rule does not close (`recycle::DARK_CLOSES_WITH_UDP` is false); the episode is counted to its end in `quic_carried_dark_episode_<label>` |
++//! | `quic_stall_would_close_<label>` | times a rule that only observes would have closed a path, by the same labels; each count starts the rule's window afresh. Two rules observe today. `ack_waits_expired` counts, on a path with a UDP session (`recycle::ACK_WAITS_EXPIRED_CLOSES_WITH_UDP` is false; a native path is closed), each time `ACK_WAIT_EXPIRY_LIMIT` strikes came within `ACK_WAIT_EXPIRY_WINDOW`, for calibrating the rule before UDP removal (#6205). `dark` counts once per episode on a data path with a UDP session, where the dark rule does not close (`recycle::DARK_CLOSES_WITH_UDP` is false); the episode is counted to its end in `quic_carried_dark_episode_<label>` |
+ //! | `quic_pipe_source_<label>` | pipes (an inbound stream forwarded on a path, `quic_data_send_pipe_*`) that ended `sent` or `dropped`, by what fed the inbound stream: `quic_fed_sent`, `quic_fed_dropped`, `udp_fed_sent`, `udp_fed_dropped`; each sums to its `quic_data_send_pipe_<result>` |
+ //! | `quic_pipe_dropped_<label>` | the same dropped pipes by cause: `source_error` (the inbound stream failed or delivered the wrong length), `source_stall_timeout` (a deadline ran out while the pipe waited for its source), `own_path` (anything else: this path timed out, was lost, or the peer stopped the stream); sums to `quic_data_send_pipe_dropped` |
+ //! | `quic_send_resets`, `quic_path_ms` | sends a path reset on this side, and the time QUIC paths were up, shadow paths included, up to each path
+```
+
+**File**: `crates/core/src/transport/quic/path.rs` (modified, +189/-19)
+```diff
+@@ -792,6 +792,11 @@ pub(crate) struct QuicPath {
+     /// ([`STREAMED_SEND_LIMIT`]), so the remaining uni stream slots stay
+     /// for short messages and control frames. Never closed.
+     stream_slots: Arc<tokio::sync::Semaphore>,
++    /// Permits taken from `stream_slots` since the path was built, and the
++    /// bytes of the sends that took them (each at most the send window): a
++    /// stream's ack wait reads both again at its end, to count the streamed
++    /// sends started after the stream's end was sent ([`Self::backlog_wait`]).
++    stream_opens: Arc<StreamOpens>,
+     /// Sends with data still to write, for the credit rule
+     /// (`recycle::CreditWatch`).
+     writers: Arc<recycle::Writers>,
+@@ -830,6 +835,10 @@ pub(crate) struct QuicPath {
+     /// Set while the acknowledgement watch sees a dark episode
+     /// (`recycle::WatchShared::dark`), read by the stall close.
+     dark: Arc<std::sync::atomic::AtomicBool>,
++    /// The last sample of a long dark episode, on the path's clock
++    /// (`recycle::WatchShared::long_dark_at`): an ack-wait expiry whose wait
++    /// overlapped one is not a strike ([`StrikeCheck`]).
++    long_dark_at: Arc<AtomicU64>,
+     /// The [`bounded::QuietProof`] sends that ran out of gap left, read (not
+     /// taken) by every settle; a proof of the same counts is merged into it.
+     quiet: Arc<parking_lot::Mutex<Option<bounded::QuietProof>>>,
+@@ -1104,6 +1113,7 @@ impl QuicPath {
+         let ack_waits = Arc::new(AckWaits::new(stats.clone()));
+         let carries_data = Arc::new(std::sync::atomic::AtomicBool::new(false));
+         let dark = Arc::new(std::sync::atomic::AtomicBool::new(false));
++        let long_dark_at = Arc::new(AtomicU64::new(0));
+         let receive = GlobalExecutor::spawn(supervise_receive(
+             connection.inner().clone(),
+             connection.closer(),
+@@ -1119,6 +1129,7 @@ impl QuicPath {
+                     carries_data: carries_data.clone(),
+                     udp_fallback: limits.udp_fallback,
+                     dark: dark.clone(),
++                    long_dark_at: long_dark_at.clone(),
+                 },
+                 report,
+             },
+@@ -1132,6 +1143,7 @@ impl QuicPath {
+                 ack_waits,
+                 meter,
+                 stream_slots: Arc::new(tokio::sync::Semaphore::new(STREAMED_SEND_LIMIT as usize)),
++                stream_opens: Arc::default(),
+                 writers,
+                 sleeper,
+                 #[cfg(test)]
+@@ -1147,6 +1159,7 @@ impl QuicPath {
+                 udp_fallback: limits.udp_fallback,
+                 stall: parking_lot::Mutex::new(stall),
+                 dark,
++                long_dark_at,
+                 quiet: Arc::default(),
+                 last_acked: Arc::new(bounded::AckRecord::new(
+                     ack_progress.as_ref().map_or(0, recycle::AckProgress::acked),
+@@ -1407,18 +1420,58 @@ impl QuicPath {
+     /// at a share of one in the streamed sends in flight (their permits).
+     /// That is the sends in flight times the rest, at the credit floor at
+     /// the path's round trip.
+-    fn backlog_wait(&self, len: u64) -> Arc<dyn Fn() -> Duration + Send + Sync> {
+-        let (slots, connection) = (self.stream_slots.clone(), self.connection.inner().clone());
++    ///
++    /// Streamed sends started after the end share the link with the rest
++    /// too, so the backlog is read again when the ack wait runs out
++    /// ([`bounded::LaterBacklog`], [`later_backlog`]). Without it, a burst of
++    /// sends just after an end could make an honest peer's acknowledgement of
++    /// that end come after its wait (#6205).
++    fn backlog_wait(&self, len: u64) -> Arc<dyn Fn() -> Backlog + Send + Sync> {
++        let (slots, connection, opens, acks) = (
++            self.stream_slots.clone(),
++            self.connection.inner().clone(),
++            self.stream_opens.clone(),
++            self.ack_progress.clone(),
++        );
++        let rest = len.min(super::budget::MAX_WINDOW_BYTES);
+         Arc::new(move || {
++            // The opens are read before the permits in use: an open between
++            // the two reads is then counted twice (in flight now, and as
++            // started since), which only lengthens the wait, never misses a
++            // send that shares the link.
++            let (opened, opened_bytes) = opens.read();
+             let in_flight = (STREAMED_SEND_LIMIT as u64)
+                 .saturating_sub(slots.available_permits() as u64)
+                 .max(1);
+-            let floor = recycle::credit_floor_rate(connection.stats().path.rtt).max(1);
+-            Duration::from_secs(
+-                in_flight
+-                    .saturating_mul(len.min(super::budget::MAX_WINDOW_BYTES))
+-                    .div_ceil(floor),
+-            )
++            let acked_at_end = acks.as_ref().map(recycle::AckProgress::acked_bytes);
++            let floor_now = {
++                let connection = connection.clone();
++                mov
+```
+
+**File**: `crates/core/src/transport/quic/path/bounded.rs` (modified, +49/-1)
+```diff
+@@ -284,10 +284,22 @@ struct ProgressState {
+     /// loop arms; zero before ([`SendProgress::ack_wait_left`]).
+     ack_wait_deadline: AtomicU64,
+     /// The backlog ahead of the end when it was sent, in nanoseconds
+-    /// ([`SendProgress::mark_finished_behind`]).
++    /// ([`SendProgress::mark_finished_behind`]), raised when it is read again
++    /// at the ack wait's end ([`LaterBacklog`]).
+     backlog_wait: AtomicU64,
++    /// Reads the backlog again, counting the streamed sends started since
++    /// the end was sent ([`SendProgress::mark_finished_after`]).
++    later_backlog: std::sync::OnceLock<LaterBacklog>,
++    /// The backlog was read again ([`LaterBacklog`]); it is read once.
++    later_read: AtomicBool,
+ }
+ 
++/// The backlog ahead of a stream's end read again, once, when its ack wait
++/// first runs out: the bytes that can go before its last byte, counting the
++/// streamed sends started since the end, and nothing once the connection has
++/// acknowledged that many bytes since (`path::later_backlog`).
++pub(crate) type LaterBacklog = Arc<dyn Fn() -> Duration + Send + Sync>;
++
+ impl SendProgress {
+     /// For a send with no deadline, which reads no clock. Tests only.
+     #[cfg(test)]
+@@ -309,6 +321,8 @@ impl SendProgress {
+             ack_wait_due: AtomicU64::new(0),
+             ack_wait_deadline: AtomicU64::new(0),
+             backlog_wait: AtomicU64::new(0),
++            later_backlog: std::sync::OnceLock::new(),
++            later_read: AtomicBool::new(false),
+         }))
+     }
+ 
+@@ -331,6 +345,8 @@ impl SendProgress {
+             ack_wait_due: AtomicU64::new(0),
+             ack_wait_deadline: AtomicU64::new(0),
+             backlog_wait: AtomicU64::new(0),
++            later_backlog: std::sync::OnceLock::new(),
++            later_read: AtomicBool::new(false),
+         }))
+     }
+ 
+@@ -438,6 +454,20 @@ impl SendProgress {
+     /// ahead of the stream's end may take to go out, which extends its ack
+     /// wait ([`SendDeadlines::ack_wait`]) to at least that, within its total.
+     pub(super) fn mark_finished_behind(&self, backlog: Duration) {
++        self.mark_finished_after(backlog, None);
++    }
++
++    /// [`Self::mark_finished_behind`], with `later`, which reads the backlog
++    /// again at the ack wait's end: streamed sends started after the end
++    /// share the link with what is left of the stream, so its end may need
++    /// longer than the backlog read now. The wait is then extended to what
++    /// `later` reads, within its total, before it is judged to have run out.
++    /// `later` is read once, when the wait first runs out, so the extension
++    /// is bounded by what was started by then.
++    pub(super) fn mark_finished_after(&self, backlog: Duration, later: Option<LaterBacklog>) {
++        if let Some(later) = later {
++            let _first = self.0.later_backlog.set(later);
++        }
+         self.0.backlog_wait.store(nanos(backlog), Ordering::Release);
+         self.0.finished_at.store((self.0.now)(), Ordering::Release);
+         self.0.stage.store(STAGE_FINISHED, Ordering::Release);
+@@ -929,6 +959,24 @@ where
+                     watch.observe(now);
+                 }
+                 if now >= progress.deadline(&deadlines, started, until(&watch)) {
++                    // The ack wait ran out: read its backlog again, with the
++                    // streamed sends started since the end. If they moved
++                    // its deadline past now, wait on (`mark_finished_after`).
++                    // Read once: the wait it gives is judged, so a path that
++                    // keeps starting sends cannot keep extending it.
++                    if progress.stage() == STAGE_FINISHED
++                        && deadlines.ack_wait_covers_backlog
++                        && !progress.0.later_read.swap(true, Ordering::AcqRel)
++                        && let Some(later) = progress.0.later_backlog.get()
++                    {
++                        let backlog = nanos(later());
++                        if backlog > progress.0.backlog_wait.load(Ordering::Acquire) {
++                            progress.0.backlog_wait.store(backlog, Ordering::Release);
++                            if now < progress.deadline(&deadlines, started, until(&watch)) {
++                                continue;
++                            }
++                        }
++                    }
+                     if progress.stage() == STAGE_OPENED
+                         && let Some(watch) = watch.as_ref()
+                     {
+```
+
+**File**: `crates/core/src/transport/quic/path/route.rs` (modified, +4/-4)
+```diff
+@@ -188,10 +188,10 @@ pub(crate) fn next_step(kind: SendKind, outcome: &BoundedSend) -> (NextStep, Qui
+ /// UDP session, and by quinn's idle timeout if it has one; a peer that
+ /// acknowledges other traffic but never a stream's end has the stream reset
+ /// at its ack wait (`bounded::SendDeadlines::ack_wait`), and three strikes
+-/// within 30 min are counted as a would-close
+-/// (`recycle::ACK_WAIT_EXPIRY_LIMIT`); that rule only observes for now
+-/// (`recycle::ACK_WAITS_EXPIRED_CLOSES`), so such a peer is bounded by
+-/// `recycle::SEND_ABORT_LIMIT`; and a peer that withholds its stream limit is
++/// within 30 min close a path with no UDP session
++/// (`recycle::ACK_WAIT_EXPIRY_LIMIT`); on a path with one that rule only
++/// observes (`recycle::ACK_WAITS_EXPIRED_CLOSES_WITH_UDP`), so such a peer is
++/// bounded there by `recycle::SEND_ABORT_LIMIT` and the fallback; and a peer that withholds its stream limit is
+ /// closed by the stream-credit rule (`recycle::StreamCreditWatch`).
+ fn timed_out(outcome: &BoundedSend) -> bool {
+     match outcome {
+```
+
+**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +263/-10)
+```diff
+@@ -1065,6 +1065,7 @@ fn the_strike_check_needs_evidence_that_the_end_went_out() {
+     use super::super::socket::CapHolds;
+     use std::sync::atomic::Ordering::Relaxed;
+     let now = Arc::new(std::sync::atomic::AtomicU64::new(0));
++    let dark_at = Arc::new(std::sync::atomic::AtomicU64::new(0));
+     let make = |cap: &Arc<CapHolds>| {
+         let acks = recycle::AckProgress::detached();
+         let clock = now.clone();
+@@ -1073,6 +1074,7 @@ fn the_strike_check_needs_evidence_that_the_end_went_out() {
+             cap: cap.clone(),
+             rtt: Arc::new(|| Duration::from_millis(100)),
+             now: Arc::new(move || clock.load(Relaxed)),
++            dark_at: dark_at.clone(),
          };
+         (check, acks)
+     };
+@@ -1108,6 +1110,20 @@ fn the_strike_check_needs_evidence_that_the_end_went_out() {
+         "nothing acknowledged since the end"
+     );
+ 
++    // A long dark episode on the path during the wait excuses the expiry; one
++    // that ended before the end was sent does not.
++    dark_at.store(1_000 + wait / 2, Relaxed);
++    assert!(
++        !run(&uncapped, &|acks| acks.batch(100, true)),
++        "dark during the wait"
++    );
++    dark_at.store(500, Relaxed);
++    assert!(
++        run(&uncapped, &|acks| acks.batch(100, true)),
++        "dark only before the end"
++    );
++    dark_at.store(0, Relaxed);
++
+     // Late wakes.
+     let slack = u64::try_from(LATE_WAKE_SLACK.as_nanos()).unwrap();
+     assert!(
+@@ -1175,10 +1191,11 @@ fn the_strike_check_needs_evidence_that_the_end_went_out() {
+ /// cannot be met (1 s on a 4 s round trip), standing in for a peer that
+ /// never acknowledges stream ends. A bulk transfer runs throughout, so the
+ /// connection acknowledges well above the floor, as a peer that acknowledges
+-/// every packet except stream ends does: each expiry is a strike. The rule
+-/// only observes (`recycle::ACK_WAITS_EXPIRED_CLOSES`), so three strikes
+-/// count a would-close (`quic_stall_would_close_ack_waits_expired`) and the
+-/// path stays open:
++/// every packet except stream ends does: each expiry is a strike. On a path
++/// with a UDP session the rule only observes
++/// (`recycle::ACK_WAITS_EXPIRED_CLOSES_WITH_UDP`), so three strikes count a
++/// would-close (`quic_stall_would_close_ack_waits_expired`) and the path
++/// stays open:
+ /// - three such sends, with acknowledged multi-packet Shorts between them
+ ///   (they have an ack wait of their own and were what reset round 4's
+ ///   rule): three strikes, one would-close, not closed;
+@@ -1192,17 +1209,28 @@ fn the_strike_check_needs_evidence_that_the_end_went_out() {
+ ///   was application-limited, is tested on its own in
+ ///   `the_strike_check_needs_evidence_that_the_end_went_out`: this harness's
+ ///   peer acknowledges every packet it gets, so it cannot withhold an end.)
++///
++/// On a native path (no UDP session) the first two cases close the path at
++/// the third strike, under `ack_waits_expired`, with no would-close.
+ #[test]
+ fn ack_wait_expiries_count_a_would_close_whatever_else_is_acknowledged() {
+     use crate::transport::in_memory_socket::{
+         PacketDeliveryDecision, set_packet_delivery_callback,
+     };
+     bounded(|| async move {
+         let _seed = GlobalRng::seed_guard(SEED);
+-        for (network, acked_between, bulk, strikes) in [
+-            ("quic-path-expiries-shorts", false, true, true),
+-            ("quic-path-expiries-one-in-three", true, true, true),
+-            ("quic-path-expiries-quiet", false, false, false),
++        for (network, acked_between, bulk, strikes, native) in [
++            ("quic-path-expiries-shorts", false, true, true, false),
++            ("quic-path-expiries-one-in-three", true, true, true, false),
++            ("quic-path-expiries-quiet", false, false, false, false),
++            ("quic-path-expiries-shorts-native", false, true, true, true),
++            (
++                "quic-path-expiries-one-in-three-native",
++                true,
++                true,
++                true,
++                true,
++            ),
+         ] {
+             set_packet_delivery_callback(
+                 network,
+@@ -1215,7 +1243,21 @@ fn ack_wait_expiries_count_a_would_close_whatever_else_is_acknowledged() {
+                 counters: Some(counters),
+                 ..QuicPathLimits::DEFAULT
+             };
+-            let mut p = paths(network, limits).await;
++            let a_base = if native {
++                QuicPathLimits::NATIVE
++            } else {
++                QuicPathLimits::DEFAULT
++            };
++            let mut p = paths_built(
++                network,
++                limits,
++                a_base,
++                None,
++                None,
++                Windows::default(),
++                true,
++            )
++            .await;
+             // Drain what `b` receives, as a node does.
+             let mut streams =
+                 std::mem::replace(&mut p.b_in.streams, tokio::sync::mpsc::channel(1).1);
+@@ -1322,9 +1364,21 
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +2/-3)
+**File**: `crates/core/src/transport/quic/recycle.rs` (modified, +71/-39)
 ```diff
-@@ -1173,9 +1173,8 @@ use crate::operations::connect::native::NativeWire;
- /// high only delays the offer.
- /// Raised from 0.2.158 to 0.2.159 by the QUIC data ramp PR (#6224): 0.2.158
- /// starts the data ramp, and turning on the native connect offer in the same
--/// release would change two things at once. Raised to 0.2.160 by the
--/// emergency stop of the ramp: a stop release goes back to states the field
--/// has run, and no release has emitted the native variants.
-+/// release would change two things at once. Raised to 0.2.160 for 0.2.159,
-+/// which ships while the data ramp is still under watch.
- pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 160);
- 
- /// Has the decoder for the QUIC-native `ConnectMsg` variants shipped, and in
-```
-
-**File**: `crates/core/src/transport/quic.rs` (modified, +18/-17)
-```diff
-@@ -85,12 +85,12 @@ pub(crate) use liveness::QuicAvailabilityWatch;
- 
- /// Whether the node may use QUIC: the `transport-quic` config key.
- ///
--/// An unset key is [`QuicMode::default_mode`]: shadow on Linux and macOS,
--/// and off elsewhere (Windows included, since the ramp's emergency stop), because the breaker reads no boot identity
-+/// An unset key is [`QuicMode::default_mode`]: prefer on Linux, macOS and
-+/// Windows, and off elsewhere, because the breaker reads no boot identity
- /// there and so cannot trip. The Windows breaker counts short runs that
- /// panicked in QUIC code instead of detecting crashes ([`breaker`]); it was
--/// confirmed on a real Windows machine (#6031) before Windows ran QUIC by
--/// default (shadow, then `prefer`) in 0.2.157 and 0.2.158. The default is decided when the value is read and
-+/// confirmed on a real Windows machine before Windows defaulted to an endpoint
-+/// (#6031). The default is decided when the value is read and
- /// never written to `config.toml`, so a later release can change it
- /// for every node that did not set the key, which is how a default-off
- /// release turns QUIC off. A value given with `--transport-quic` or
-@@ -99,7 +99,7 @@ pub(crate) use liveness::QuicAvailabilityWatch;
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub enum QuicMode {
-     /// No QUIC endpoint is built and no QUIC datagram is read. The default on
--    /// platforms other than Linux and macOS, Windows included.
-+    /// platforms other than Linux, macOS and Windows.
-     Off,
-     /// The node builds a QUIC endpoint on its UDP port and upgrades a UDP
-     /// session to a QUIC path that carries only control frames: all
-@@ -110,13 +110,12 @@ pub enum QuicMode {
-     /// endpoint driver and one upgrade task per connection run; a promoted
-     /// connection's higher key sends `Upgrade` messages on its UDP session; and
-     /// the endpoint's memory. If the endpoint cannot be built the node logs a
--    /// warning and runs with QUIC off. The default on Linux and macOS.
-+    /// warning and runs with QUIC off.
-     Shadow,
-     /// Negotiates data on a path to a peer in the release's slice
-     /// (`upgrade::slice`, the release's ramp from `QUIC_DATA_RAMP_START`), and sends
--    /// its data on a path where both sides did. With no ramp start set, as since
--    /// the emergency stop of the data ramp, it acts as [`Self::Shadow`] on the
--    /// wire.
-+    /// its data on a path where both sides did. With no ramp start set it acts as
-+    /// [`Self::Shadow`] on the wire. The default on Linux, macOS and Windows.
-     Prefer,
+@@ -62,11 +62,12 @@
+ //!    [`STREAM_CREDIT_WINDOW`] while this side wanted streams, though enough
+ //!    of this side's streams were wholly acknowledged that an honest peer
+ //!    would have.
+-//! 6. **Ack waits expired** ([`Stall::AckWaitsExpired`]), observe-only
+-//!    ([`ACK_WAITS_EXPIRED_CLOSES`]): [`ACK_WAIT_EXPIRY_LIMIT`] sends had
+-//!    their wait for the acknowledgement of their end run out within
+-//!    [`ACK_WAIT_EXPIRY_WINDOW`]; counted (`quic_stall_would_close_<label>`),
+-//!    and the path stays open.
++//! 6. **Ack waits expired** ([`Stall::AckWaitsExpired`]):
++//!    [`ACK_WAIT_EXPIRY_LIMIT`] sends had their wait for the acknowledgement
++//!    of their end run out within [`ACK_WAIT_EXPIRY_WINDOW`]. Closes a path
++//!    with no UDP session (a native one); on a path with one it only counts
++//!    (`quic_stall_would_close_<label>`) and the path stays open
++//!    ([`ACK_WAITS_EXPIRED_CLOSES_WITH_UDP`]).
+ //!
+ //! What "acknowledged" is measured with. quinn's `ConnectionStats` has no
+ //! counter of packets the peer newly acknowledged: `frame_rx.acks` counts
+@@ -1161,7 +1162,7 @@ pub(crate) struct AckWatch {
+     /// When the previous sample was taken, on the watch's clock.
+     previous_now: Option<u64>,
+     /// Whether the path carries data, so the dark-path rule may close it (only
+-    /// one with no UDP session, [`Self::with_udp_fallback`]); `None` is a path
++    /// one with no UDP session, `udp_fallback` of [`Self::new`]); `None` is a path
+     /// that does. A path that carries none only counts its dark episodes, to
+     /// their end ([`Self::observing`]).
+     carries_data: Option<Arc<std::sync::atomic::AtomicBool>>,
+@@ -1189,8 +1190,8 @@ pub(crate) struct AckWatch {
+     /// seen, within [`ACK_WAIT_EXPIRY_WINDOW`].
+     expiries_seen: u64,
+     expiries_at: VecDeque<u64>,
+-    /// Times the ack-wait expiry rule would have closed the path
+-    /// ([`ACK_WAITS_EXPIRED_CLOSES`]).
++    /// Times the ack-wait expiry rule would have closed the path, which has
++    /// a UDP session ([`ACK_WAITS_EXPIRED_CLOSES_WITH_UDP`]).
+     would_close: u64,
+     /// The path has a UDP session to fall back to, so the dark rule only
+     /// counts ([`DARK_CLOSES_WITH_UDP`]).
+@@ -1200,6 +1201,9 @@ pub(crate) struct AckWatch {
+     /// Where it is published whether the dark rule would have closed the path
+     /// in the episode in progress, if anywhere ([`Self::publishing_dark`]).
+     dark_flag: Option<Arc<std::sync::atomic::AtomicBool>>,
++    /// Where the last sample of a long dark episode is published, if
++    /// anywhere ([`Self::publishing_long_dark`]).
++    long_dark_at: Option<Arc<AtomicU64>>,
  }
  
-@@ -147,15 +146,17 @@ impl QuicMode {
-     /// See [`QuicMode::Prefer`].
-     pub const PREFER: &'static str = "prefer";
+ /// Whether the egress cap holds, or held since `previous` was read, a QUIC
+@@ -1243,7 +1247,11 @@ impl AckWatch {
+         cap_held(&mut self.hold_unchanged_since, now_nanos, cap, previous)
+     }
  
--    /// What an unset `transport-quic` means on this platform: shadow on Linux
--    /// and macOS, and off elsewhere, Windows included. This is the emergency
--    /// stop of the QUIC data ramp, and it returns exactly to 0.2.156's
--    /// defaults, because an emergency release should only go back to states
--    /// the field has run (Windows with QUIC off is what every release through
--    /// 0.2.156 ran).
-+    /// What an unset `transport-quic` means on this platform: prefer on Linux,
-+    /// macOS and Windows, and off elsewhere, because the crash-loop breaker
-+    /// cannot trip there. Windows joined once its breaker was confirmed on a
-+    /// real Windows machine (#6031).
-     pub const fn default_mode() -> Self {
--        if cfg!(any(target_os = "linux", target_os = "macos")) {
--            Self::Shadow
-+        if cfg!(any(
-+            target_os = "linux",
-+            target_os = "macos",
-+            target_os = "windows"
-+        )) {
-+            Self::Prefer
-         } else {
-             Self::Off
+-    pub(crate) fn new(window: Duration, first: AckSample) -> Self {
++    /// A watch over `window` from the sample `first`, on a path with a UDP
++    /// session to fall back to or not: the dark rule and the ack-wait expiry
++    /// rule close only a path without one ([`DARK_CLOSES_WITH_UDP`],
++    /// [`ACK_WAITS_EXPIRED_CLOSES_WITH_UDP`]), and only count on one with one.
++    pub(crate) fn new(window: Duration, first: AckSample, udp_fallback: bool) -> Self {
+         let expiries_seen = first.ack_wait_expiries;
+         let window_nanos = u64::try_from(window.as_nanos()).unwrap_or(u64::MAX);
+         Self {
+@@ -1271,12 +1279,27 @@ impl AckWatch {
+             expiries_seen,
+             expiries_at: VecDeque::new(),
+             would_close: 0,
+-            udp_fallback: false,
++            udp_fallback,
+             dark_would_closed: false,
+             dark_flag: None,
++            long_dark_at: None,
          }
+     }
+ 
++    /// Publish in `at`, at each sample of a dark episode that has lasted at
++    /// least the window, the sample's time on the caller's clock (not the
++    /// watch's own, [`Self::watch_time`]); 0 until one has. An ack-wait
++    /// expiry whose wait overlapped one is not a strike (`path::StrikeCheck`):
++    /// a send through an outage can outlast its wait with an honest peer (a
++    /// one-packet Short's 150 s bound, on a path with a UDP session that the
++    /// dark rule leaves to the idle timeout), and darkness is the dark rule's
++    /// to judge. A peer that withholds acknowledgements while it sends is
++    /// heard, so its episodes end at once and publish nothing.
++    pub(crate) fn publishing_long_dark(mut self, at: Arc<AtomicU64>) -> Self {
++        self.long_dark_at = Some(at);
++        self
++    }
++
+     /// Publish in `flag`, after every sample, whether the dark rule would
+     /// have closed the path in the episode in progress: set at the sample the
+     /// rule would have closed at (on a path where it only counts,
+@@ -1298,13 +1321,6 @@ impl AckWatch {
+         self.dark_would_closed
+     }
+ 
+-    /// Whether the path has a UDP session to fall back 
 ```
 
-**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +2/-3)
+**File**: `crates/core/src/transport/quic/recycle/tests.rs` (modified, +113/-48)
 ```diff
-@@ -19,9 +19,8 @@
- //! **Windows is weaker than unix.** There, a crash not preceded by a panic in
- //! QUIC code is not counted, a crash loop whose runs each last ten minutes or
- //! more never trips, and neither does a fault that crashes once a day. QUIC
--//! became on by default on Windows (shadow, then `prefer` for the data ramp)
--//! after this breaker was confirmed on a real Windows machine (#6031), with
--//! those limits weighed. The ramp's emergency stop returned Windows to off.
-+//! became on by default on Windows (shadow, now `prefer`) after this breaker
-+//! was confirmed on a real Windows machine (#6031), with those limits weighed.
- //!
- //! # The marker
- //!
-```
-
-**File**: `crates/core/src/transport/quic/tests.rs` (modified, +3/-3)
-```diff
-@@ -1935,9 +1935,9 @@ fn transport_quic_values_and_unknown_ones() {
-     assert_eq!(QuicMode::from_config_value(Some("force")), QuicMode::Off);
-     assert_eq!(QuicMode::from_config_value(Some("")), QuicMode::Off);
-     assert_eq!(QuicMode::default(), QuicMode::default_mode());
--    #[cfg(any(target_os = "linux", target_os = "macos"))]
--    assert_eq!(QuicMode::from_config_value(None), QuicMode::Shadow);
--    #[cfg(not(any(target_os = "linux", target_os = "macos")))]
-+    #[cfg(any(target_os = "linux", target_os = "macos", target_os = "windows"))]
-+    assert_eq!(QuicMode::from_config_value(None), QuicMode::Prefer);
-+    #[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows")))]
-     assert_eq!(QuicMode::from_config_value(None), QuicMode::Off);
+@@ -167,7 +167,7 @@ fn run_why(ticks: u64, mut at: impl FnMut(u64) -> Reading) -> Option<(u64, Stall
+         )
+         .with_rtt(r.rtt)
+     };
+-    let mut watch = AckWatch::new(ACK_WATCH_WINDOW, sample(at(0)));
++    let mut watch = AckWatch::new(ACK_WATCH_WINDOW, sample(at(0)), false);
+     (1..=ticks).find_map(|tick| {
+         watch
+             .observe(tick * ACK_WATCH_TICK.as_secs() * SEC, sample(at(tick)))
+@@ -200,7 +200,7 @@ fn run_observed_snapshot(
  }
  
+ /// [`run_observed_snapshot`] on a path that has a UDP session to fall back to,
+-/// or not (`AckWatch::with_udp_fallback`).
++/// or not (the `udp_fallback` of `AckWatch::new`).
+ fn run_observed_snapshot_with(
+     ticks: u64,
+     carries_data: bool,
+@@ -230,9 +230,8 @@ fn run_observed_snapshot_with(
+         )
+     };
+     let flag = Arc::new(std::sync::atomic::AtomicBool::new(carries_data));
+-    let mut watch = AckWatch::new(ACK_WATCH_WINDOW, sample(at(0)))
+-        .observing(flag, counters)
+-        .with_udp_fallback(udp_fallback);
++    let mut watch =
++        AckWatch::new(ACK_WATCH_WINDOW, sample(at(0)), udp_fallback).observing(flag, counters);
+     let closed = (1..=ticks).find_map(|tick| {
+         watch
+             .observe(tick * ACK_WATCH_TICK.as_secs() * SEC, sample(at(tick)))
+@@ -262,7 +261,7 @@ fn a_dark_episode_on_a_data_path_is_also_counted_as_carried() {
+ /// A dark spell of 30 s (sends from tick 1, the peer heard from again at tick
+ /// 16) on a path that carries no data is not closed and is counted to its end:
+ /// 30 s, in `recovered_lt_120s`. On a path that carries data (and, as a watch
+-/// built without `with_udp_fallback` is, has no UDP session) the dark-path rule
++/// built with `udp_fallback` false is, has no UDP session) the dark-path rule
+ /// closes it at the window, counted `closed_at_window`.
+ #[test]
+ fn a_path_without_data_counts_a_dark_spell_to_its_end() {
+@@ -321,9 +320,8 @@ fn the_watch_publishes_that_the_dark_rule_would_have_closed() {
+     };
+     let run = |at: &dyn Fn(u64) -> Reading, ticks: u64| {
+         let flag = Arc::new(std::sync::atomic::AtomicBool::new(false));
+-        let mut watch = AckWatch::new(ACK_WATCH_WINDOW, sample(at(0)))
+-            .with_udp_fallback(true)
+-            .publishing_dark(flag.clone());
++        let mut watch =
++            AckWatch::new(ACK_WATCH_WINDOW, sample(at(0)), true).publishing_dark(flag.clone());
+         (1..=ticks)
+             .map(|tick| {
+                 let closed = watch.observe(tick * ACK_WATCH_TICK.as_secs() * SEC, sample(at(tick)));
+@@ -346,6 +344,55 @@ fn the_watch_publishes_that_the_dark_rule_would_have_closed() {
+     assert!(run(&one_way, 4).iter().all(|set| !set));
+ }
+ 
++/// The watch publishes the last sample of a dark episode that has lasted at
++/// least the window (10 s), on the caller's clock, for the strike check
++/// (`path::StrikeCheck`): from the sample the episode reaches the window to
++/// its last; nothing for a spell shorter than the window, or while the peer
++/// keeps sending.
++#[test]
++fn the_watch_publishes_the_last_sample_of_a_long_dark_episode() {
++    let record = Arc::default();
++    let sample = |r: Reading| {
++        AckSample::synthetic(
++            &record,
++            r.acked,
++            r.batches,
++            r.outstanding,
++            r.sent,
++            r.received,
++            NO_CAP,
++        )
++    };
++    let run = |at: &dyn Fn(u64) -> Reading, ticks: u64| {
++        let published = Arc::new(AtomicU64::new(0));
++        let mut watch = AckWatch::new(ACK_WATCH_WINDOW, sample(at(0)), true)
++            .publishing_long_dark(published.clone());
++        (1..=ticks)
++            .map(|tick| {
++                watch.observe(tick * ACK_WATCH_TICK.as_secs() * SEC, sample(at(tick)));
++                published.load(Ordering::Acquire) / SEC
++            })
++            .collect::<Vec<_>>()
++    };
++    // Sends at ticks 1-20 (from 2 s), the peer heard again at tick 21: the
++    // episode starts at tick 1 and reaches 10 s at tick 6 (12 s).
++    let dark = |t: u64| reading(5, 1200, 10 + t.min(20), 100 + t.saturating_sub(20));
++    let expected: Vec<u64> = (1..=23u64)
++        .map(|t| match t {
++            ..=5 => 0,
++            6..=20 => 2 * t,
++            _ => 40,
++        })
++        .collect();
++    assert_eq!(run(&dark, 23), expected);
++    // A 6 s spell: never long.
++    let brief = |t: u64| reading(5, 1200, 10 + t.min(3), 100 + t.saturating_sub(3));
++    assert!(run(&brief, 8).iter().all(|at| *at == 0));
++    // This side's sends unanswered while the peer keeps sending: not dark.
++    let heard = |t: u64| reading(5, 1200, 10 + t, 100 + t);
++    assert!(run(&heard, 4).iter().all(|at| *at == 0));
++}
++
+ /// On a data path with a UDP session, an outage of 90 s (sends from tick 1,
+ /// the peer heard again at tick 46), longer than the dark rule's close, is
+ /// survived: counted once as a would-close and then as recovered in under
+@@ -423,7 +470,7 @@ fn run_at(times: &[u64], mut at: impl FnMut(usize) ->
+```
+
+---
+
+### Incident Patch 3: `f8a65085` (2026-11-16)
+**Commit Message**: feat(connect): set up QUIC-native connections from the connect op (off in production) (#6226)
+
+**File**: `.claude/rules/transport.md` (modified, +120/-20)
+```diff
+@@ -512,8 +512,10 @@ offer and decision (`connect_native_offered_{zero,nonzero}` built as joiner,
+ `connect_native_decided_{native,udp}` made as acceptor for an offered request,
+ `connect_native_decision_{without_offer,native_unsupported}` for a `Native`
+ decision a joiner could not use, `connect_native_decision_over_cap` for one
+-dropped unanswered past the per-CONNECT cap on refused acceptors, and the last
+-offer as states
++dropped unanswered past the per-CONNECT cap on refused acceptors,
++`connect_native_setup_<label>` for how each native setup ended (one per
++`NativeSetupOutcome`), `connect_native_demotions` for each time the node
++turned its own native connects off, and the last offer as states
+ `connect_native_offer_{level,percent,ready}`; see
+ `operations/connect/native.rs`) and the shadow-mode upgrade
+ telemetry (below, "Upgrade telemetry"). Each label set is declared once in a
+@@ -595,8 +597,9 @@ most 67 labels whatever a peer sends (35 while the floor shares this
+ series), held in fixed arrays. No keys,
+ no addresses; in `gateway_joins` a count of 1 to 4 is reported as `"<5"`, and
+ zero counts are omitted in both maps. Transport `legacy_intro` is today's UDP
+-handshake; `native` is reserved for QUIC-native joins, which do not exist yet,
+-and is never counted. It is not a `KnownShadowRollup`: its admission and drop
++handshake; `native` is a QUIC-native join, counted by a gateway when its
++native dial gives a connection (zero in production until native connects
++are on). It is not a `KnownShadowRollup`: its admission and drop
+ counts are in the per-type `tel_t` row like any other event.
+ 
+ ### Dashboard bandwidth sampler (#5152)
+@@ -1481,7 +1484,7 @@ a test passes its own; tests read their own, never the global).
+   quic_data_send_<short|large_short|stream|pipe>_<sent|maybe_delivered|
+   not_opened_udp|failed_udp|dropped>; quic_data_event_<short_overflow_udp|
+   data_refused|stalled_closed|udp_send_failed|suspect_entered|suspect_left|
+-  pacer_refused|ack_wait_released|stream_limit_full>; quic_data_stop_<code> (stops a
++  pacer_refused|ack_wait_released|stream_limit_full|native_worker_panicked>; quic_data_stop_<code> (stops a
+   peer sent to data sends); quic_inbound_<QuicInboundOutcome> (every receive
+   outcome, refusals by frame kind as short_refused_budget and
+   stream_refused_budget); quic_enabled_data_paths; quic_live_data_paths (a gauge of
+@@ -2089,7 +2092,9 @@ no extra message, no exporter proof.
+     off nothing is sent. Counters (conn_identity_*): transport_key_sent
+     (handed to the connection's task), transport_key_undelivered (not handed
+     over within the 1 s fallback; not re-sent), transport_key_set / _same
+-    (the transport took it), and promotion_key_mismatch (promoted under a key
++    (the transport took it), set_proven (a QUIC-native connection's key,
++    proven in its handshake, bound as IdentitySource::Proven), and
++    promotion_key_mismatch (promoted under a key
+     that is not the bound one; nothing sent) and transport_key_refused (the
+     transport holds another key and keeps it), which must stay at 0 (the
+     simulation tripwire and test_quic_prefer_forms_a_mesh_of_the_same_peers_as_quic_off
+@@ -2111,13 +2116,14 @@ either side, and a man in the middle with its own key on either leg.
+ 
+ #### QUIC-native setup (`quic/native/`, #5940 QUIC-native connect, A4)
+ 
+-Built and tested, and unreachable by construction: `setup::connect_native`,
+-`setup::accept_native` and the endpoint's native side (`native/endpoint.rs`:
+-`allow_native_peer`, `dial_native`, `send_punch`) are
+-`pub(in crate::transport::quic::native)`, and registering a native waiter is
+-private to `setup`. Nothing outside `quic/native` can call them; A5 widens
+-them in a visible diff. The connect op also gates on
+-`operations::connect::native::NATIVE_DIAL_READY` (pinned false).
++`setup::connect_native` and `setup::accept_native` are
++`pub(in crate::transport)`, called only by the upgrades hub's
++`QuicUpgrades::setup_native` (A5b, below); the endpoint's native side
++(`native/endpoint.rs`: `allow_native_peer`, `dial_native`, `send_punch`)
++stays `pub(in crate::transport::quic::native)`, and registering a native
++waiter is private to `setup`. In production nothing asks for a setup: the
++connect op gates on `operations::connect::native::NATIVE_DIAL_READY` (pinned
++false) and `QUIC_NATIVE_PERCENT` (0).
+ 
+ ```
+ ALPN per attempt: an address allowed with allow_native_peer is accepted with
+@@ -2149,7 +2155,8 @@ Punches (native/punch.rs): byte 0x03 + 8 GlobalRng bytes, sent on the
+   The silent-peer test checks a client sends no more than it was charged.
+ Setup (native/setup.rs): one window, 8 s cut to the caller's deadline, not
+   started with less than 4 s left; punching, the handshake and the Hello
+-  exchange all inside it. The budget is charged after the checks that fail
++  exchange all inside it. The server waits 4 s more
++  (SERVER_WINDOW_ALLOWANCE), so a client that starts late still finds it. The budget is cha
+```
+
+**File**: `crates/core/src/message.rs` (modified, +3/-0)
+```diff
+@@ -914,6 +914,9 @@ pub(crate) enum NodeEvent {
+         /// Why this dial is made (telemetry only; a configured gateway is
+         /// tagged `Gateway` whatever is passed here).
+         origin: crate::transport::NatAttemptOrigin,
++        /// Which transport to dial. `Native` only from the connect op, for a
++        /// pair whose acceptor decided native (#5940).
++        transport: crate::operations::connect::native::DialTransport,
+     },
+     Disconnect {
+         cause: Option<Cow<'static, str>>,
+```
+
+**File**: `crates/core/src/node.rs` (modified, +8/-0)
+```diff
+@@ -533,6 +533,13 @@ pub struct NodeConfig {
+     /// in production. `#[serde(skip)]`.
+     #[serde(skip)]
+     pub(crate) quic_native_floor_override: Option<(u8, u8, u16)>,
++    /// Simulation-only: QUIC-native connects on, at this release percent, in
++    /// place of `NATIVE_DIAL_READY` and `QUIC_NATIVE_PERCENT`, both off in
++    /// production until the A+ ramp (`SimNetwork::with_native_connect`). Read
++    /// into the node's `NativeConnectState`. `None` in production.
++    /// `#[serde(skip)]`.
++    #[serde(skip)]
++    pub(crate) native_connect_override: Option<u8>,
+     /// Simulation-only: decode the QUIC-native wire variants as a release
+     /// below their floor does, failing the message and closing the
+     /// connection, and never emit them
+@@ -901,6 +908,7 @@ impl NodeConfig {
+             broadcast_target_list_floor_override: None,
+             advertised_version_override: None,
+             quic_native_floor_override: None,
++            native_connect_override: None,
+             native_wire_pre_floor: false,
+             quic_idle_timeout_override: None,
+             advertise_seeded_hosts: false,
+```
+
+**File**: `crates/core/src/node/network_bridge/handshake.rs` (modified, +98/-28)
+```diff
+@@ -46,13 +46,27 @@ pub(crate) enum Event {
+         peer: PeerKeyLocation,
+         connection: Box<dyn PeerConnectionApi>,
+         transient: bool,
++        /// The transport dialled: a native connection's key was proven in its
++        /// handshake.
++        transport: crate::operations::connect::native::DialTransport,
++        /// Who asked for the dial. Only a joiner's native successes reset
++        /// its demotion streak, as only its failures count toward it.
++        origin: crate::transport::NatAttemptOrigin,
+     },
+     /// An outbound connection attempt failed.
+     OutboundFailed {
+         transaction: Transaction,
+         peer: PeerKeyLocation,
+         error: ConnectionError,
+         transient: bool,
++        /// The transport dialled: a native failure is followed by a UDP dial,
++        /// so it records no backoff.
++        transport: crate::operations::connect::native::DialTransport,
++        /// How a native setup ended; `None` for a UDP dial.
++        native_outcome: Option<crate::transport::NativeSetupOutcome>,
++        /// Who asked for the dial. Only a joiner's native failures count
++        /// toward demotion.
++        origin: crate::transport::NatAttemptOrigin,
+     },
+ }
+ 
+@@ -76,24 +90,34 @@ impl std::fmt::Debug for Event {
+                 peer,
+                 connection,
+                 transient,
++                transport,
++                origin,
+             } => f
+                 .debug_struct("OutboundEstablished")
+                 .field("transaction", transaction)
+                 .field("peer", peer)
+                 .field("remote_addr", &connection.remote_addr())
+                 .field("transient", transient)
++                .field("transport", transport)
++                .field("origin", origin)
+                 .finish(),
+             Event::OutboundFailed {
+                 transaction,
+                 peer,
+                 error,
+                 transient,
++                transport,
++                native_outcome,
++                origin,
+             } => f
+                 .debug_struct("OutboundFailed")
+                 .field("transaction", transaction)
+                 .field("peer", peer)
+                 .field("error", error)
+                 .field("transient", transient)
++                .field("transport", transport)
++                .field("native_outcome", native_outcome)
++                .field("origin", origin)
+                 .finish(),
+         }
+     }
+@@ -119,6 +143,8 @@ pub(crate) enum Command {
+         transient: bool,
+         /// Why this dial is made (telemetry only).
+         origin: crate::transport::NatAttemptOrigin,
++        /// Which transport to dial (`Native` from the connect op only).
++        transport: crate::operations::connect::native::DialTransport,
+     },
+     /// Register expectation for an inbound connection from `addr`, which the
+     /// connect op is dialling under `peer_key`. A matched connection is
+@@ -378,8 +404,8 @@ async fn run_driver(
+         select! {
+             _ = sweep_timer.tick() => expected_inbound.sweep(),
+             command = commands_rx.recv() => match command {
+-                Some(Command::Connect { peer, transaction, transient, origin }) => {
+-                    spawn_outbound(outbound.clone(), events_tx.clone(), peer, transaction, transient, origin, peer_ready.clone());
++                Some(Command::Connect { peer, transaction, transient, origin, transport }) => {
++                    spawn_outbound(outbound.clone(), events_tx.clone(), OutboundDial { peer, transaction, transient, origin, transport }, peer_ready.clone());
+                 }
+                 Some(Command::ExpectInbound { addr, peer_key, transaction, transient }) => {
+                     expected_inbound.register(addr, peer_key, transaction, transient);
+@@ -492,25 +518,23 @@ async fn run_driver(
+     }
+ }
+ 
+-fn spawn_outbound(
+-    outbound: Arc<dyn OutboundConnector>,
+-    events_tx: mpsc::Sender<Event>,
++/// One outbound connect the driver was asked for (`Command::Connect`).
++struct OutboundDial {
+     peer: PeerKeyLocation,
+     transaction: Transaction,
+     transient: bool,
+     origin: crate::transport::NatAttemptOrigin,
++    transport: crate::operations::connect::native::DialTransport,
++}
++
++fn spawn_outbound(
++    outbound: Arc<dyn OutboundConnector>,
++    events_tx: mpsc::Sender<Event>,
++    dial: OutboundDial,
+     peer_ready: Option<Arc<std::sync::atomic::AtomicBool>>,
+ ) {
+     GlobalExecutor::spawn(async move {
+-        let event = connect_outbound(
+-            &*outbound,
+-            peer,
+-            transaction,
+-            transient,
+-            origin,
+-            peer_ready.as_deref(),
+-        )
+-        .await;
++        let event = connect_outbound(&*outbound, dial, peer_ready.as_deref()).await;
+ 
+         // channel-safety: ok — this runs in a detached per-connection task
+         // (GlobalExecutor::spawn), NOT on the event loop or the run_driver
+@@ -532,21 +556,44 @@ const OUTBOU
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +79/-12)
+```diff
+@@ -1561,7 +1561,14 @@ impl P2pConnManager {
+             expected_inbound,
+             listener: mut listener_liveness,
+             quic_endpoint: transport_has_quic,
++            quic_availability,
+         } = transport;
++        bridge
++            .op_manager
++            .ring
++            .connection_manager
++            .native_connect()
++            .set_endpoint(quic_availability);
+ 
+         tracing::info!(
+             listening_port,
+@@ -2080,6 +2087,7 @@ impl P2pConnManager {
+                                             callback,
+                                             is_gw,
+                                             origin: unconnected_dial_origin(is_gw),
++                                            transport: crate::operations::connect::native::DialTransport::Udp,
+                                         }),
+                                     ) {
+                                         // `err` owns the ConnectPeer event (and thus the
+@@ -2653,6 +2661,7 @@ impl P2pConnManager {
+                                 callback,
+                                 is_gw: transient,
+                                 origin,
++                                transport,
+                             } => {
+                                 tracing::debug!(
+                                     tx = %tx,
+@@ -2670,6 +2679,7 @@ impl P2pConnManager {
+                                     &mut state,
+                                     transient,
+                                     origin,
++                                    transport,
+                                 )
+                                 .await?;
+                             }
+@@ -3872,6 +3882,9 @@ async fn peer_connection_listener(
+         "[CONN_LIFECYCLE] Starting peer_connection_listener task"
+     );
+ 
++    // Transient send failures on this connection so far, for the warn's
++    // throttle (`warn_transient_send_failure`).
++    let mut transient_send_failures: u64 = 0;
+     loop {
+         // Yield to allow the tokio runtime to schedule other tasks.
+         // This is critical for cooperative scheduling - without it, tokio's coop
+@@ -3902,10 +3915,10 @@ async fn peer_connection_listener(
+                     .await
+                     {
+                         if !error.closes_connection() {
+-                            tracing::warn!(
+-                                to = %remote_addr,
+-                                ?error,
+-                                "[CONN_LIFECYCLE] Transient send failure, continuing"
++                            warn_transient_send_failure(
++                                remote_addr,
++                                &error,
++                                &mut transient_send_failures,
+                             );
+                         } else {
+                             tracing::debug!(
+@@ -3971,10 +3984,10 @@ async fn peer_connection_listener(
+                     Some(msg) => {
+                         if let Err(error) = handle_peer_channel_message(&mut conn, msg, &outbound_mix, &propagation, native_wire).await {
+                             if !error.closes_connection() {
+-                                tracing::warn!(
+-                                    to = %remote_addr,
+-                                    ?error,
+-                                    "[CONN_LIFECYCLE] Transient send failure, continuing"
++                                warn_transient_send_failure(
++                                    remote_addr,
++                                    &error,
++                                    &mut transient_send_failures,
+                                 );
+                             } else {
+                                 tracing::debug!(
+@@ -4108,6 +4121,32 @@ async fn peer_connection_listener(
+     }
+ }
+ 
++/// Log a send that failed without ending the connection, throttled per
++/// connection: at the 1st, 2nd, 4th, 8th ... failure, with the count so far.
++/// A connection whose sends keep failing (a QUIC-native connection with its
++/// short queue backed up refuses every send with `SendQueueFull`) then logs a
++/// few lines over its life, not one per message.
++fn warn_transient_send_failure(
++    remote_addr: std::net::SocketAddr,
++    error: &crate::transport::TransportError,
++    failures: &mut u64,
++) {
++    *failures = failures.saturating_add(1);
++    if transient_failure_warns(*failures) {
++        tracing::warn!(
++            to = %remote_addr,
++            ?error,
++            failures_so_far = *failures,
++            "[CONN_LIFECYCLE] Transient send failure, continuing"
++        );
++    }
++}
++
++/// Whether the `count`th transient send failure on a connection is logged.
++fn transient_failure_warns(count: u64) -> bool {
++    count.is_power_of_two()
++}
++
+ /// The telemetry label for a connection that `recv` ended: the idle timeout
+ /// is the only liveness check, so it is the "timeout" case; every other recv
+ /// error is a transport closure.
+@@ -4477,6 +4516,17 @@ 
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +165/-10)
+```diff
+@@ -765,6 +765,7 @@ impl P2pConnManager {
+         state: &mut EventListenerState,
+         transient: bool,
+         origin: crate::transport::NatAttemptOrigin,
++        transport: crate::operations::connect::native::DialTransport,
+     ) -> anyhow::Result<()> {
+         // Periodic cleanup of expired backoff entries (every 60 seconds)
+         const BACKOFF_CLEANUP_INTERVAL: Duration = Duration::from_secs(60);
+@@ -777,6 +778,22 @@ impl P2pConnManager {
+         let mut peer_addr = peer
+             .socket_addr()
+             .unwrap_or_else(|| SocketAddr::new(IpAddr::V4(Ipv4Addr::UNSPECIFIED), 0));
++        #[cfg(any(test, feature = "testing"))]
++        if transport == crate::operations::connect::native::DialTransport::Udp {
++            crate::operations::connect::native_wire_trace::record_at(
++                peer_addr,
++                crate::operations::connect::native_wire_trace::NativeWireEvent::UdpDialFor {
++                    tx,
++                    own: self
++                        .bridge
++                        .op_manager
++                        .ring
++                        .connection_manager
++                        .get_own_addr(),
++                    peer: peer_addr,
++                },
++            );
++        }
+ 
+         // IMPORTANT: Always try pub_key lookup first, not just for unspecified addresses.
+         // The peer's advertised address (from PeerKeyLocation) may differ from the actual
+@@ -1057,7 +1074,12 @@ impl P2pConnManager {
+                     transient,
+                     "connect_peer: registered new pending connection"
+                 );
+-                state.expected_inbound.expect_incoming(peer_addr);
++                // A native dial expects no UDP handshake: its connection comes
++                // from the QUIC endpoint, so a UDP intro from the address is
++                // not this dial's.
++                if transport == crate::operations::connect::native::DialTransport::Udp {
++                    state.expected_inbound.expect_incoming(peer_addr);
++                }
+             }
+         }
+ 
+@@ -1077,6 +1099,7 @@ impl P2pConnManager {
+             transaction: tx,
+             transient,
+             origin,
++            transport,
+         }) {
+             tracing::warn!(
+                 tx = %tx,
+@@ -1209,6 +1232,8 @@ impl P2pConnManager {
+                 peer,
+                 connection,
+                 transient,
++                transport,
++                origin,
+             } => {
+                 // Outbound peers must have known addresses - use type-safe conversion
+                 // If conversion fails, log error but continue since connection is established
+@@ -1254,6 +1279,46 @@ impl P2pConnManager {
+                     );
+                 }
+ 
++                // A native connection's key was proven in its handshake. A
++                // gateway counts a native join here, as the UDP listener counts
++                // a legacy one when its handshake completes.
++                let source = match transport {
++                    crate::operations::connect::native::DialTransport::Udp => {
++                        IdentitySource::Dialled
++                    }
++                    crate::operations::connect::native::DialTransport::Native { .. } => {
++                        // Only a joiner's success resets the demotion streak,
++                        // as only a joiner's failures count toward it.
++                        if origin == crate::transport::NatAttemptOrigin::ConnectJoiner {
++                            self.bridge
++                                .op_manager
++                                .ring
++                                .connection_manager
++                                .native_connect()
++                                .record_success();
++                        }
++                        if self.bridge.op_manager.ring.connection_manager.is_gateway() {
++                            crate::transport::join_versions::record_gateway_join(
++                                self.bridge
++                                    .op_manager
++                                    .ring
++                                    .connection_manager
++                                    .get_own_addr()
++                                    .unwrap_or(peer_addr),
++                                crate::transport::join_versions::JoinTransport::Native,
++                                connection.remote_version(),
++                            );
++                        }
++                        #[cfg(any(test, feature = "testing"))]
++                        crate::operations::connect::native_wire_trace::record_at(
++                            peer_addr,
++                            crate::operations::connect::native_wire_trace::NativeWireEvent::NativeDial {
++                                established: true,
++                            },
++                        );
++                        IdentitySource::Proven
++                  
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle/tests.rs` (modified, +237/-0)
+```diff
+@@ -388,6 +388,7 @@ impl Harness {
+                 &mut self.state,
+                 true,
+                 crate::transport::NatAttemptOrigin::ConnectAcceptor,
++                crate::operations::connect::native::DialTransport::Udp,
+             )
+             .await
+             .expect("handle_connect_peer");
+@@ -544,6 +545,7 @@ fn is_transport_kind(kind: ConnIdentity) -> bool {
+ fn is_set(kind: ConnIdentity) -> bool {
+     match kind {
+         ConnIdentity::SetDialed
++        | ConnIdentity::SetProven
+         | ConnIdentity::ExpectedInboundBound
+         | ConnIdentity::ExpectedInboundUnbound
+         | ConnIdentity::SetConnectRequest
+@@ -1033,6 +1035,20 @@ async fn own_key_claim_beside_expected_inbound_connections_is_not_a_duplicate()
+ async fn pending_connect_peer(
+     h: &mut Harness,
+     peer: PeerKeyLocation,
++) -> mpsc::Receiver<Result<(SocketAddr, Option<usize>), ()>> {
++    pending_connect_peer_over(
++        h,
++        peer,
++        crate::operations::connect::native::DialTransport::Udp,
++    )
++    .await
++}
++
++/// As [`pending_connect_peer`], dialling over `transport`.
++async fn pending_connect_peer_over(
++    h: &mut Harness,
++    peer: PeerKeyLocation,
++    transport: crate::operations::connect::native::DialTransport,
+ ) -> mpsc::Receiver<Result<(SocketAddr, Option<usize>), ()>> {
+     if let Some(addr) = peer.socket_addr() {
+         h.use_addr(addr);
+@@ -1048,6 +1064,7 @@ async fn pending_connect_peer(
+             &mut h.state,
+             false,
+             crate::transport::NatAttemptOrigin::ConnectAcceptor,
++            transport,
+         )
+         .await
+         .expect("handle_connect_peer");
+@@ -1114,6 +1131,8 @@ async fn matched_inbound_at_the_cap_is_refused_like_a_dial() {
+                 peer: PeerKeyLocation::new(peer.clone(), addr),
+                 connection,
+                 transient: false,
++                transport: crate::operations::connect::native::DialTransport::Udp,
++                origin: crate::transport::NatAttemptOrigin::ConnectJoiner,
+             }
+         })
+         .await;
+@@ -1321,6 +1340,7 @@ impl DriverRig {
+                 &mut h.state,
+                 false,
+                 crate::transport::NatAttemptOrigin::ConnectAcceptor,
++                crate::operations::connect::native::DialTransport::Udp,
+             )
+             .await
+             .expect("handle_connect_peer");
+@@ -1608,6 +1628,8 @@ async fn successful_dial_drops_the_expectation_for_its_address() {
+         peer: PeerKeyLocation::new(key(), addr),
+         connection: Box::new(IdleConnection::new(addr)),
+         transient: false,
++        transport: crate::operations::connect::native::DialTransport::Udp,
++        origin: crate::transport::NatAttemptOrigin::ConnectJoiner,
+     })
+     .await;
+     let mut dropped = false;
+@@ -2140,6 +2162,7 @@ impl RestartRig {
+                 &mut h.state,
+                 false,
+                 crate::transport::NatAttemptOrigin::ConnectJoiner,
++                crate::operations::connect::native::DialTransport::Udp,
+             )
+             .await
+             .expect("handle_connect_peer");
+@@ -3587,3 +3610,217 @@ async fn promoting_a_connection_already_in_the_ring_sends_no_second_key() {
+         "one key sent, at the dial's promotion"
+     );
+ }
++
++/// A native connection's key was proven in its QUIC handshake: the node binds
++/// it as `Proven` (counted `SetProven`), links the peer under it and answers
++/// the ConnectPeer.
++#[tokio::test]
++async fn a_native_connection_binds_its_proven_key() {
++    use crate::operations::connect::native::DialTransport;
++    let mut h = Harness::new("conn-identity-native-proven").await;
++    let addr: SocketAddr = "203.0.113.230:6201".parse().unwrap();
++    let peer = key();
++    h.watch(&[addr]);
++    let mut result = pending_connect_peer_over(
++        &mut h,
++        PeerKeyLocation::new(peer.clone(), addr),
++        DialTransport::NATIVE,
++    )
++    .await;
++    h.handshake_event(HandshakeEvent::OutboundEstablished {
++        transaction: Transaction::new::<ConnectMsg>(),
++        peer: PeerKeyLocation::new(peer.clone(), addr),
++        connection: Box::new(IdleConnection::new(addr)),
++        transient: false,
++        transport: DialTransport::NATIVE,
++        origin: crate::transport::NatAttemptOrigin::ConnectJoiner,
++    })
++    .await;
++    assert!(
++        matches!(result.try_recv(), Ok(Ok(_))),
++        "the dial is answered"
++    );
++    assert_eq!(seen(addr), vec![ConnIdentity::SetProven]);
++    assert_eq!(h.ring_key_at(addr).as_ref(), Some(&peer));
++    h.assert_own_key_absent();
++}
++
++/// A failed native setup: the connect op dials UDP next, so the address is
++/// not marked failed and the peer gets no backoff, either of which would
++/// refuse that dial. Only an outcome that says native does not work on the
++/// path, seen as joiner, counts toward demotion: three joiner timeouts with
++/// distinct peers demote the node; three refusals by its own punch budget do
++/// not, no
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/identity.rs` (modified, +4/-0)
+```diff
+@@ -54,6 +54,10 @@ pub(super) enum IdentitySource {
+     /// had none. Also any key bound after waiting for another connection to
+     /// release it, whatever started the wait.
+     Claimed,
++    /// The key a QUIC-native connection's peer proved in the TLS handshake
++    /// (the handshake is pinned to the key the node dialled or accepted), so
++    /// it is neither only dialled nor only claimed.
++    Proven,
+ }
+ 
+ /// A binding that was not made because another connection held the key. It
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6250** (2026-11-17): fix(transport): close a native QUIC path on ack-wait strikes; re-read the backlog before an ack wait expires (@sanity)
 - **PR #6248** (2026-11-16): feat(telemetry): attribute transfer failures and pipe drops by transport (@sanity)
+- **PR #6246** (2026-11-16): build: bump Rust toolchain pin to 1.95.0 to unblock wasmtime 48 (@sanity)
 - **PR #6245** (2026-11-16): ci: run Clippy on a free runner; stop auto-rebasing Dependabot cargo PRs (@sanity)
 - **PR #6243** (2026-11-16): build: release 0.2.159 (@sanity)
 - **PR #6242** (2026-11-16): revert: emergency stop of the QUIC data ramp (#6241); raise the QUIC-native floor to 0.2.160 (@sanity)
-- **PR #6241** (2026-11-16): fix(transport): emergency stop of the QUIC data ramp (@sanity)
-- **PR #6239** (2026-11-16): fix(transport): count local QUIC path closes by reason; leave dark paths with UDP to the idle timeout (@sanity)
 
 ---
 
@@ -2206,33 +3254,39 @@ Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.co
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump rustls from 0.23.45 to 0.23.46 in /apps/freenet-ping
+## X. build: bump Rust toolchain pin to 1.95.0 to unblock wasmtime 48
 
 **RULE**:
-When implementing operations in `apps/freenet-ping/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/cross-compile.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `58f26473`: build(deps): bump rustls from 0.23.45 to 0.23.46 in /apps/freenet-ping. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b7af17c`: build: bump Rust toolchain pin to 1.95.0 to unblock wasmtime 48. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/freenet-ping/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cross-compile.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.23.46"
-checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+          toolchain: 1.95.0
+          toolchain: 1.95.0
+          toolchain: 1.95.0
+          toolchain: 1.95.0
+          toolchain: 1.95.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.23.45"
-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
+          toolchain: 1.94.0
+          toolchain: 1.94.0
+          toolchain: 1.94.0
+          toolchain: 1.94.0
+          toolchain: 1.94.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `58f26473` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b7af17c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

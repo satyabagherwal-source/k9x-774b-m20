@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "3a228bb2",
+    "sourceVersion": "61ba4ac1",
     "license": "NOASSERTION",
-    "contentHash": "e148775acc6e33f1ba7b0035bd5a47ef11857fc6d2d153e14863ec14aded5d39",
-    "lastHarvestedAt": "2026-11-16T21:55:35.852Z",
+    "contentHash": "05dcb4edca579c23469b578b195d7daf3bcceae3fa41b9240bb999a1506991b3",
+    "lastHarvestedAt": "2026-11-17T03:34:20.219Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -10183,10 +10183,10 @@
     "repository": "sweetpad-dev/sweetpad",
     "platform": "github",
     "sourceUrl": "https://github.com/sweetpad-dev/sweetpad",
-    "sourceVersion": "a253d2c4",
+    "sourceVersion": "4b5b7817",
     "license": "MIT",
-    "contentHash": "c02472f39e4c8a8a321e0b72740d0d84f76a7d2743ad71d2a5cbe92873107fc6",
-    "lastHarvestedAt": "2026-11-13T13:50:34.707Z",
+    "contentHash": "826af8c52fd7dcd7ae74123b629ab5d8657efc0bdafc5bd46aca77994cdf4a23",
+    "lastHarvestedAt": "2026-11-17T03:34:15.611Z",
     "learningId": "learn-github-sweetpad-dev-sweetpad"
   },
   "wcandillon-react-native-skia": {
@@ -11855,8 +11855,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/Mage-VL-Cowork",
     "sourceVersion": "hf-microsoft-mage-vl-cowork",
     "license": "Open-Source",
-    "contentHash": "4a1a7f61529e9901abf9e151b6244b5dafa044bd4737e84cde591b5bfc35a73d",
-    "lastHarvestedAt": "2026-11-12T11:18:20.345Z",
+    "contentHash": "ea548b8587b790f0bdfa397e7706e4e759c8cffa4a46cb04540bc4c5ba976508",
+    "lastHarvestedAt": "2026-11-17T03:34:08.366Z",
     "learningId": "learn-huggingface-microsoft-mage-vl-cowork"
   },
   "hf-qwen-qwen3-embedding-0.6b": {

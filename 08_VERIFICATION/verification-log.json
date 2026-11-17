@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-T62F",
-    "timestamp": "2026-11-14T11:04:20.727Z",
-    "repository": "Qwen/Qwen3-VL-8B-Instruct",
-    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-    "contentHash": "e486097125cac99d7028f760b9a58e49ca7f3016f38a23e74b0ba34ed305dc6c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-T72U",
-    "timestamp": "2026-11-14T11:04:22.038Z",
-    "repository": "zenbu-labs/terminal-browser",
-    "learningId": "learn-github-zenbu-labs-terminal-browser",
-    "contentHash": "534c4d3311007b7508fec808c3f7abb6052016e609a1323b8ca9cce7a7bfc2a2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-TE9Q",
-    "timestamp": "2026-11-14T11:04:31.358Z",
-    "repository": "okteto/okteto",
-    "learningId": "learn-github-okteto-okteto",
-    "contentHash": "ab7f5d884ffb207daff2aad15968d43e1b73320a30836041c8540431c7c4f22c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-TGWT",
     "timestamp": "2026-11-14T11:04:34.781Z",
     "repository": "slatedb/slatedb",
@@ -7490,6 +7445,51 @@
     "repository": "risingwavelabs/risingwave",
     "learningId": "learn-github-risingwavelabs-risingwave",
     "contentHash": "2bd29a48078f0c87f357becf39afab60b42c37a36a2574b34e4976463e559f40",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-1R6X",
+    "timestamp": "2026-11-17T03:34:08.361Z",
+    "repository": "microsoft/Mage-VL-Cowork",
+    "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
+    "contentHash": "ea548b8587b790f0bdfa397e7706e4e759c8cffa4a46cb04540bc4c5ba976508",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-1WS7",
+    "timestamp": "2026-11-17T03:34:15.607Z",
+    "repository": "sweetpad-dev/sweetpad",
+    "learningId": "learn-github-sweetpad-dev-sweetpad",
+    "contentHash": "826af8c52fd7dcd7ae74123b629ab5d8657efc0bdafc5bd46aca77994cdf4a23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-20C7",
+    "timestamp": "2026-11-17T03:34:20.215Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "05dcb4edca579c23469b578b195d7daf3bcceae3fa41b9240bb999a1506991b3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T03:26:22.200Z",
+  "last_updated": "2026-11-17T03:34:20.231Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "e148775acc6e33f1ba7b0035bd5a47ef11857fc6d2d153e14863ec14aded5d39",
-      "verified_at": "2026-11-16T21:55:35.862Z",
+      "content_hash": "05dcb4edca579c23469b578b195d7daf3bcceae3fa41b9240bb999a1506991b3",
+      "verified_at": "2026-11-17T03:34:20.230Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T21:55:35.862Z"
+      "last_updated": "2026-11-17T03:34:20.230Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -15321,14 +15321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sweetpad-dev-sweetpad",
-      "content_hash": "c02472f39e4c8a8a321e0b72740d0d84f76a7d2743ad71d2a5cbe92873107fc6",
-      "verified_at": "2026-11-13T13:50:34.719Z",
+      "content_hash": "826af8c52fd7dcd7ae74123b629ab5d8657efc0bdafc5bd46aca77994cdf4a23",
+      "verified_at": "2026-11-17T03:34:15.621Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:50:34.719Z"
+      "last_updated": "2026-11-17T03:34:15.621Z"
     },
     "testing-library/dom-testing-library": {
       "repository": "testing-library/dom-testing-library",
@@ -17841,14 +17841,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-mage-vl-cowork",
-      "content_hash": "4a1a7f61529e9901abf9e151b6244b5dafa044bd4737e84cde591b5bfc35a73d",
-      "verified_at": "2026-11-12T11:18:20.356Z",
+      "content_hash": "ea548b8587b790f0bdfa397e7706e4e759c8cffa4a46cb04540bc4c5ba976508",
+      "verified_at": "2026-11-17T03:34:08.377Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T11:18:20.356Z"
+      "last_updated": "2026-11-17T03:34:08.377Z"
     },
     "Qwen/Qwen3-Embedding-0.6B": {
       "repository": "Qwen/Qwen3-Embedding-0.6B",

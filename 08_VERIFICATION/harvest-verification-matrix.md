@@ -10421,3 +10421,6 @@
 | `CYCLE-20261117-RNCZ` | `2026-11-17T03:26:16.835Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8851` | Yes (`3bb76767...`) |
 | `CYCLE-20261117-RQCG` | `2026-11-17T03:26:20.704Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8852` | Yes (`d9d6d6be...`) |
 | `CYCLE-20261117-RRHM` | `2026-11-17T03:26:22.186Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8853` | Yes (`2bd29a48...`) |
+| `CYCLE-20261117-1R6X` | `2026-11-17T03:34:08.361Z` | `microsoft/Mage-VL-Cowork` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md` | Yes (`ea548b85...`) |
+| `CYCLE-20261117-1WS7` | `2026-11-17T03:34:15.607Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8854` | Yes (`826af8c5...`) |
+| `CYCLE-20261117-20C7` | `2026-11-17T03:34:20.215Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8855` | Yes (`05dcb4ed...`) |

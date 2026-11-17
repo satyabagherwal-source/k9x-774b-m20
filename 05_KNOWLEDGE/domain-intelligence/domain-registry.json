@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T03:26:28.110Z",
-  "total_records": 1409,
+  "last_updated": "2026-11-17T03:34:25.085Z",
+  "total_records": 1413,
   "domains": {
     "A": {
       "total": 9,
@@ -42,7 +42,7 @@
       ]
     },
     "D": {
-      "total": 611,
+      "total": 613,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -654,7 +654,9 @@
         "domain_intelligence-research-knowledge-intelligence-viggle-viggle-remake-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant",
         "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-microsoft-mage-vl-cowork-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-microsoft-mage-vl-cowork-learnings-core-invar"
       ]
     },
     "E": {
@@ -704,7 +706,7 @@
       ]
     },
     "G": {
-      "total": 261,
+      "total": 263,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -966,7 +968,9 @@
         "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-core-invariants",
         "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-signerlabs-klee-core-invariants",
-        "domain_intelligence-architecture-intelligence-signerlabs-klee-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-signerlabs-klee-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-core-invariants",
+        "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8775,8 +8779,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "ed5778c4b08eaffb93acfc9caa676212c711f00f311e9b1cb2b72ab96d90d868",
-      "created_at": "2026-11-16T21:55:36.230Z"
+      "content_hash": "46e10ac8c2852967c92f5ec7b44b5586e5fedaeb551acc45a24041c6cad3b25c",
+      "created_at": "2026-11-17T03:34:20.620Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -8853,8 +8857,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "a67219cb4fe1f3a548817a05e2b7e352091aa82ef2ad0308cbf1730b3e2e0eb3",
-      "created_at": "2026-11-16T21:55:42.905Z"
+      "content_hash": "f4a97a07260641fd551e8c71dfc04d21e3f07445da8659a775fadc869a36be21",
+      "created_at": "2026-11-17T03:34:25.085Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -24859,6 +24863,42 @@
       "repository": "signerlabs-klee-learnings",
       "content_hash": "4c105e49fece305cd592b3d03575b9f9a1d4e291fd2cb9f7ef129e899a71baf0",
       "created_at": "2026-11-17T03:26:27.291Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-microsoft-mage-vl-cowork-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-microsoft-mage-vl-cowork-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: microsoft/Mage-VL-Cowork Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-mage-vl-cowork-research-knowledge-intelligence-microsoft-mage-vl-co.md",
+      "repository": "microsoft/Mage-VL-Cowork",
+      "content_hash": "344578ce2fdf3dfa27704e45286f26302240a4982ba9dcd71cb7a64ba67fb8a9",
+      "created_at": "2026-11-17T03:34:08.582Z"
+    },
+    "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: sweetpad-dev/sweetpad Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sweetpad-dev-sweetpad-architecture-intelligence-sweetpad-dev-sweetpad-core-invar.md",
+      "repository": "sweetpad-dev/sweetpad",
+      "content_hash": "a86242db67288f551b858cf42b82a18da14d96e626fbf9c8b78730c812d19068",
+      "created_at": "2026-11-17T03:34:15.995Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-microsoft-mage-vl-cowork-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-mage-vl-cowork-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-microsoft-mage-vl-cowork-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-mage-vl-cowork-learnings-research-knowledge-intelligence-hf-microso.md",
+      "repository": "hf-microsoft-mage-vl-cowork-learnings",
+      "content_hash": "654fd8db8d279510054926e90f781d53a09191d90ff588d3d42c8063f1b1ee67",
+      "created_at": "2026-11-17T03:34:23.851Z"
+    },
+    "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: sweetpad-dev-sweetpad-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sweetpad-dev-sweetpad-learnings-architecture-intelligence-sweetpad-dev-sweetpad-.md",
+      "repository": "sweetpad-dev-sweetpad-learnings",
+      "content_hash": "9dee2f644f1390cb16ba0b6e68258e9240d44b67473a445839ce5fb521047845",
+      "created_at": "2026-11-17T03:34:24.397Z"
     }
   }
 }

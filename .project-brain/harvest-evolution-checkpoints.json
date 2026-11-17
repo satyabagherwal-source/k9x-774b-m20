@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T03:26:28.400Z",
+  "last_updated": "2026-11-17T03:34:25.385Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T03:08:05.768Z",
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-16T21:55:42.541Z",
+      "processed_at": "2026-11-17T03:34:24.709Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1053,8 +1053,8 @@
       "staged_for_review": 1
     },
     "hf-microsoft-mage-vl-cowork-learnings.md": {
-      "processed_at": "2026-11-12T11:19:08.436Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T03:34:23.629Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "meshery-meshery-learnings.md": {
@@ -1863,7 +1863,7 @@
       "staged_for_review": 0
     },
     "sweetpad-dev-sweetpad-learnings.md": {
-      "processed_at": "2026-11-13T13:51:05.161Z",
+      "processed_at": "2026-11-17T03:34:24.027Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3243,7 +3243,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1446,
+  "total_dossiers_evaluated": 1449,
   "total_canonical_promoted": 296,
-  "total_staged_for_review": 1137
+  "total_staged_for_review": 1139
 }
