@@ -3,7 +3,7 @@
 > **Source Version**: `hf-internsci`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T05:07:31.080Z  
+> **Timestamp**: 2026-11-17T16:46:33.410Z  
 > **Learning ID**: `learn-huggingface-internscience-sage-a1-5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/InternScience/Sage-A1.5](https://huggingface.co/InternScience/Sage-A1.5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T05:07:30.870Z  
+> **Harvest Timestamp**: 2026-11-17T16:46:33.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 22224 downloads | 404 likes
+- **Stars / Engagement**: 25027 downloads | 410 likes
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T16:38:58.438Z",
+  "last_updated": "2026-11-17T16:47:26.067Z",
   "directives": [
     {
       "id": "CD-001",
@@ -24895,6 +24895,61 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2C4C95-empirical-invariant-guard-in-write-otlp-.md",
       "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-CZDZ",
+      "directive_title": "apply per-frame EIS camera compensation",
+      "source_repo": "sceneview/sceneview",
+      "source_commit": "0600bf13",
+      "staged_file": "11_INBOX/candidate-directives/CD-CZDZ-apply-per-frame-eis-camera-compensation.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-D279",
+      "directive_title": "Require new bundle format for attest",
+      "source_repo": "sigstore/cosign",
+      "source_commit": "2ec8094c",
+      "staged_file": "11_INBOX/candidate-directives/CD-D279-require-new-bundle-format-for-attest.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-D4NR",
+      "directive_title": "PageIndexClient.build_index() is named build_outline_index(), and its errors say",
+      "source_repo": "VectifyAI/PageIndex",
+      "source_commit": "996349a5",
+      "staged_file": "11_INBOX/candidate-directives/CD-D4NR-pageindexclient-build_index-is-named-build_outline_index-and-its-errors-say.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-D89G",
+      "directive_title": "bump golang.org/x/net to v0.62.0 on v2 for CVE-2026-78661 and CVE-2026-97045",
+      "source_repo": "stakater/Reloader",
+      "source_commit": "5f3fdbdc",
+      "staged_file": "11_INBOX/candidate-directives/CD-D89G-bump-golang-org-x-net-to-v0-62-0-on-v2-for-cve-2026-78661-and-cve-2026-97045.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-DXT3",
+      "directive_title": "ar): apply per-frame EIS camera compensation",
+      "source_repo": "sceneview-sceneview-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DXT3-ar-apply-per-frame-eis-camera-compensation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
     }
   ]
 }

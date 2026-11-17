@@ -5158,3 +5158,7 @@ https://huggingface.co/internlm/Sage-S2.1-Flash
 # --- Automatically Discovered by AI Scout Engine [2026-11-17T14:14:57.995Z] ---
 # [HUGGINGFACE-AI-MODELS] xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic (4040 score) - Verified Hugging Face Model: xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-her
 https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-17T16:46:25.155Z] ---
+# [HUGGINGFACE-AI-MODELS] sensenova/SenseNova-Loop-9B (830 score) - Verified Hugging Face Model: sensenova/SenseNova-Loop-9B (83 likes, 0 downloads)
+https://huggingface.co/sensenova/SenseNova-Loop-9B

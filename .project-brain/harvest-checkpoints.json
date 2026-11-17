@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T16:38:53.787Z",
+  "last_updated": "2026-11-17T16:46:52.773Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "b79b24c85211c584c21e984399872ea56490bc49b7e93c0d4815cb2fbe0d9819",
-      "verified_at": "2026-11-17T04:43:55.374Z",
+      "content_hash": "c03a65280d7f4db365ed6c9016aca058e899d567ee5531b89f486b3ad43460b8",
+      "verified_at": "2026-11-17T16:46:44.915Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T04:43:55.374Z"
+      "last_updated": "2026-11-17T16:46:44.915Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -9861,14 +9861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stakater-reloader",
-      "content_hash": "5aff2201e1ace9bc3f256e5add2958930706152065a496ef2b40a0b231ae312e",
-      "verified_at": "2026-11-16T16:08:59.595Z",
+      "content_hash": "af427e774b3eeae9ef0ad50307353136b733ad2cd6294081a6db36cb2c696460",
+      "verified_at": "2026-11-17T16:46:52.773Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T16:08:59.595Z"
+      "last_updated": "2026-11-17T16:46:52.773Z"
     },
     "amir1376/ab-download-manager": {
       "repository": "amir1376/ab-download-manager",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "1b41c5586786a0798db6391e609849129596f004728a7084b07e88fe0eb1e904",
-      "verified_at": "2026-11-16T14:34:58.478Z",
+      "content_hash": "81a98ea5e0834e5b9e92a8c1a1e901a05cdf54b61cc03376f81bb9c447043e1a",
+      "verified_at": "2026-11-17T16:46:48.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T14:34:58.478Z"
+      "last_updated": "2026-11-17T16:46:48.106Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",
@@ -15786,14 +15786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-internscience-sage-a1-5",
-      "content_hash": "559c49342e224b2cc779e9546c40df8e0b39a029df9258ac04c5bcf00203788e",
-      "verified_at": "2026-11-13T05:07:31.382Z",
+      "content_hash": "1c12b9937c6eda0892cd429b17ea10d2625ed8e7369e577fb1bdc7542d4e2329",
+      "verified_at": "2026-11-17T16:46:33.826Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T05:07:31.382Z"
+      "last_updated": "2026-11-17T16:46:33.826Z"
     },
     "RecursiveSI/flint": {
       "repository": "RecursiveSI/flint",
@@ -18441,14 +18441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sceneview-sceneview",
-      "content_hash": "426658dc88674ca07192c6eb1c60a46de46aff7c0ebdd7e74914dbd877158ba1",
-      "verified_at": "2026-11-14T03:49:12.141Z",
+      "content_hash": "7d38ec63829696c2dbbbcb86c8da71dc44512725736ff2714d1690da2da9e687",
+      "verified_at": "2026-11-17T16:46:41.262Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T03:49:12.141Z"
+      "last_updated": "2026-11-17T16:46:41.262Z"
     },
     "tencent/Qwen3.8-27B-DSpine-b16": {
       "repository": "tencent/Qwen3.8-27B-DSpine-b16",
@@ -19289,6 +19289,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-17T14:15:11.820Z"
+    },
+    "sensenova/SenseNova-Loop-9B": {
+      "repository": "sensenova/SenseNova-Loop-9B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-sensenova-sensenova-loop-9b",
+      "content_hash": "a26e8e39aeec134b66f5c690ad0fbdedf881753836da0b1455b309fdf72e3815",
+      "verified_at": "2026-11-17T16:46:31.211Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-17T16:46:31.211Z"
     }
   },
   "repos": {

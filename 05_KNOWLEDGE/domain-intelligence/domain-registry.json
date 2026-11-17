@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T16:38:58.567Z",
-  "total_records": 1609,
+  "last_updated": "2026-11-17T16:47:26.195Z",
+  "total_records": 1615,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 677,
+      "total": 682,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -726,7 +726,12 @@
         "domain_intelligence-research-knowledge-intelligence-recursivesi-flint-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-recursivesi-flint-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-learnings-core-invarian"
+        "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-learnings-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-internscience-sage-a1-5-core-invariants",
+        "DOM-D-66A27B84",
+        "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-hf-internscience-sage-a1-5-learnings-core-invari"
       ]
     },
     "E": {
@@ -778,7 +783,7 @@
       ]
     },
     "G": {
-      "total": 292,
+      "total": 293,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1071,7 +1076,8 @@
         "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants",
         "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-learnings-core-invarian",
-        "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-stakater-reloader-core-invariants"
       ]
     },
     "H": {
@@ -12541,8 +12547,8 @@
       "title": "Quality & Verification Intelligence: sceneview/sceneview Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sceneview-sceneview-quality-verification-intelligence-sceneview-sceneview-core-i.md",
       "repository": "sceneview/sceneview",
-      "content_hash": "c5cd2f70488c6998d5fa5fe7ff1f218737a3393ec3c4c75797d82b68a65b4a69",
-      "created_at": "2026-11-14T03:49:12.457Z"
+      "content_hash": "ef30f044d386404d90522cf2617c2ec2c6222fe0115ca07d6f83e236a4437b2e",
+      "created_at": "2026-11-17T16:46:41.575Z"
     },
     "domain_intelligence-content-information-intelligence-higress-group-higress-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-higress-group-higress-core-invariants",
@@ -12619,8 +12625,8 @@
       "title": "Quality & Verification Intelligence: sceneview-sceneview-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sceneview-sceneview-learnings-quality-verification-intelligence-sceneview-scenev.md",
       "repository": "sceneview-sceneview-learnings",
-      "content_hash": "aa82ea8474ac5e63017f6b86b02e608dd37551d5dbf7835f407593cfff0f065a",
-      "created_at": "2026-11-14T03:49:59.280Z"
+      "content_hash": "4bc89f8e2b12620ad274e47292e0f6a3631908195079e10be04936c5fb22b24a",
+      "created_at": "2026-11-17T16:47:26.195Z"
     },
     "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants",
@@ -23416,8 +23422,8 @@
       "title": "Content & Information Intelligence: VectifyAI/PageIndex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vectifyai-pageindex-content-information-intelligence-vectifyai-pageindex-core-in.md",
       "repository": "VectifyAI/PageIndex",
-      "content_hash": "15a841fdcc30f0a350d922687ecd37730d4f2fe8eea63a901a9b3fd1ee6ea3dd",
-      "created_at": "2026-11-16T14:34:58.743Z"
+      "content_hash": "3d0b47979fbc7ee70c6e8966e28d09af20325b2631ef7e2c0d744c3eccaa8a9e",
+      "created_at": "2026-11-17T16:46:48.405Z"
     },
     "DOM-D-3870AF12": {
       "record_id": "DOM-D-3870AF12",
@@ -24395,8 +24401,8 @@
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "repository": "sigstore/cosign",
-      "content_hash": "92def6dfd6fac4502ef2d93bac02ba89fe4c2394526ace1ab76c60d4024d4ec9",
-      "created_at": "2026-11-17T04:43:55.649Z"
+      "content_hash": "e1f912416f6fe35d81244c0aedcd0362859c459a315a1c9ff0879bd9841beec7",
+      "created_at": "2026-11-17T16:46:45.218Z"
     },
     "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
@@ -27627,6 +27633,93 @@
       "repository": "hf-xhtoken-spark-x2.6-4b-learnings",
       "content_hash": "0471c32079f73966a1af40d844f86c43d8f070ab5fd5f0d4bb956d04c651f057",
       "created_at": "2026-11-17T16:38:58.022Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sensenova/SenseNova-Loop-9B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sensenova-sensenova-loop-9b-research-knowledge-intelligence-sensenova-senseno.md",
+      "repository": "sensenova/SenseNova-Loop-9B",
+      "content_hash": "8d1e407d867fcc47ce21cf2a7549050a4fd32e042487e6d4933113333335fdf7",
+      "created_at": "2026-11-17T16:46:31.378Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-internscience-sage-a1-5-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-internscience-sage-a1-5-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: InternScience/Sage-A1.5 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internscience-sage-a1-5-research-knowledge-intelligence-internscience-sage-a1.md",
+      "repository": "InternScience/Sage-A1.5",
+      "content_hash": "5944b92376f99caa2866af7eb2b9f2d776eedf588fffa3ffc3d3b447684f0183",
+      "created_at": "2026-11-17T16:46:33.999Z"
+    },
+    "domain_intelligence-architecture-intelligence-stakater-reloader-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-stakater-reloader-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: stakater/Reloader Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-stakater-reloader-architecture-intelligence-stakater-reloader-core-invariants.md",
+      "repository": "stakater/Reloader",
+      "content_hash": "bd09aee83f351787457bf9642aa05b35e55231d03d73ca5e7cdd6f9617a30471",
+      "created_at": "2026-11-17T16:46:53.070Z"
+    },
+    "DOM-D-66A27B84": {
+      "record_id": "DOM-D-66A27B84",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): sensenova/SenseNova-Loop-9B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/sensenova/SenseNova-Loop-9B](https://huggingface.co/sensenova/SenseNova-Loop-9B))  \n> **Source Version**: `hf-sensenova`  \n> **License**: Open-Sou",
+      "content_hash": "2fc9aeab03ae8a12551b34e8f30747b8fd0c2a551cd5fd42ed5a11ceb3c64019",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-sensenova-sensenova-loop-9b/hf-sensenova-sensenova-loop-9b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T16:46:55.963Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-sensenova-sensenova-loop-9b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-sensenova-sensenova-loop-9b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T16:47:24.990Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-sensenova-sensenova-loop-9b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sensenova-sensenova-loop-9b-learnings-research-knowledge-intelligence-hf-sens.md",
+      "repository": "hf-sensenova-sensenova-loop-9b-learnings",
+      "content_hash": "61035c6a312363e362d3f6f5d6019a959c935956a09d63dc12753478caeb6af1",
+      "created_at": "2026-11-17T16:47:25.237Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-internscience-sage-a1-5-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-internscience-sage-a1-5-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-internscience-sage-a1.5-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internscience-sage-a1-5-learnings-research-knowledge-intelligence-hf-internsc.md",
+      "repository": "hf-internscience-sage-a1.5-learnings",
+      "content_hash": "8e829be7c19f511facebab12d06021611174a77f82100ab0094a6911c56e86cb",
+      "created_at": "2026-11-17T16:47:25.599Z"
     }
   }
 }

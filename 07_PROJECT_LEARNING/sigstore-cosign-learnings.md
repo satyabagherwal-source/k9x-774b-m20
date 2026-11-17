@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `8404f23a`  
+> **Source Version**: `2ec8094c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T04:43:54.510Z  
+> **Timestamp**: 2026-11-17T16:46:43.986Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T04:43:54.505Z  
+> **Harvest Timestamp**: 2026-11-17T16:46:43.981Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6444 stars
+- **Stars / Engagement**: 6445 stars
 
 ---
 
@@ -1797,358 +1797,63 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8404f23a` (2026-11-16)
-**Commit Message**: Require new bundle format for image signing and verification (#5093)
-
-* Require new bundle format for sign
+### Incident Patch 1: `2ec8094c` (2026-11-17)
+**Commit Message**: Require new bundle format for attest (#5108)
 
 Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
-* Verify images exclusively via sigstore-go
-
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
-
-* Remove duplicate AllowCertificateChain field from VerifyCommand
-
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
-
-**File**: `cmd/cosign/cli/dockerfile.go` (modified, +2/-7)
+**File**: `cmd/cosign/cli/attest.go` (modified, +15/-27)
 ```diff
-@@ -87,29 +87,24 @@ Shell-like variables in the Dockerfile's FROM lines will be substituted with val
- 				VerifyCommand: verify.VerifyCommand{
- 					RegistryOptions:              o.Registry,
- 					CertVerifyOptions:            o.CertVerify,
-+					CommonVerifyOptions:          o.CommonVerifyOptions,
- 					CheckClaims:                  o.CheckClaims,
- 					KeyRef:                       o.Key,
--					CertRef:                      o.CertVerify.Cert,
- 					CertGithubWorkflowTrigger:    o.CertVerify.CertGithubWorkflowTrigger,
- 					CertGithubWorkflowSha:        o.CertVerify.CertGithubWorkflowSha,
- 					CertGithubWorkflowName:       o.CertVerify.CertGithubWorkflowName,
- 					CertGithubWorkflowRepository: o.CertVerify.CertGithubWorkflowRepository,
- 					CertGithubWorkflowRef:        o.CertVerify.CertGithubWorkflowRef,
--					CertChain:                    o.CertVerify.CertChain,
- 					IgnoreSCT:                    o.CertVerify.IgnoreSCT,
--					SCTRef:                       o.CertVerify.SCT,
- 					Sk:                           o.SecurityKey.Use,
- 					Slot:                         o.SecurityKey.Slot,
- 					Output:                       o.Output,
--					RekorURL:                     o.Rekor.URL,
--					Attachment:                   o.Attachment,
- 					Annotations:                  annotations,
- 					LocalImage:                   o.LocalImage,
--					CommonVerifyOptions:          o.CommonVerifyOptions,
- 					Offline:                      o.CommonVerifyOptions.Offline,
--					TSACertChainPath:             o.CommonVerifyOptions.TSACertChainPath,
- 					IgnoreTlog:                   o.CommonVerifyOptions.IgnoreTlog,
- 					MaxWorkers:                   o.CommonVerifyOptions.MaxWorkers,
-+					UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
- 				},
- 				BaseOnly: o.BaseImageOnly,
- 			}
-```
-
-**File**: `cmd/cosign/cli/manifest.go` (modified, +2/-7)
-```diff
-@@ -82,29 +82,24 @@ against the transparency log.`,
- 				VerifyCommand: verify.VerifyCommand{
- 					RegistryOptions:              o.Registry,
- 					CertVerifyOptions:            o.CertVerify,
-+					CommonVerifyOptions:          o.CommonVerifyOptions,
- 					CheckClaims:                  o.CheckClaims,
- 					KeyRef:                       o.Key,
--					CertRef:                      o.CertVerify.Cert,
- 					CertGithubWorkflowTrigger:    o.CertVerify.CertGithubWorkflowTrigger,
- 					CertGithubWorkflowSha:        o.CertVerify.CertGithubWorkflowSha,
- 					CertGithubWorkflowName:       o.CertVerify.CertGithubWorkflowName,
- 					CertGithubWorkflowRepository: o.CertVerify.CertGithubWorkflowRepository,
- 					CertGithubWorkflowRef:        o.CertVerify.CertGithubWorkflowRef,
--					CertChain:                    o.CertVerify.CertChain,
- 					IgnoreSCT:                    o.CertVerify.IgnoreSCT,
--					SCTRef:                       o.CertVerify.SCT,
- 					Sk:                           o.SecurityKey.Use,
- 					Slot:                         o.SecurityKey.Slot,
- 					Output:                       o.Output,
--					RekorURL:                     o.Rekor.URL,
--					Attachment:                   o.Attachment,
- 					Annotations:                  annotations,
- 					LocalImage:                   o.LocalImage,
--					CommonVerifyOptions:          o.CommonVerifyOptions,
- 					Offline:                      o.CommonVerifyOptions.Offline,
--					TSACertChainPath:             o.CommonVerifyOptions.TSACertChainPath,
- 					IgnoreTlog:                   o.CommonVerifyOptions.IgnoreTlog,
- 					MaxWorkers:                   o.CommonVerifyOptions.MaxWorkers,
-+					UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
- 				},
- 			}
+@@ -31,7 +31,7 @@ func Attest() *cobra.Command {
+ 	cmd := &cobra.Command{
+ 		Use:   "attest",
+ 		Short: "Attest the supplied container image",
+-		Example: `  cosign attest --key <key path>|<kms uri> [--predicate <path>] [--a key=value] [--no-upload=true|false] [--record-creation-timestamp=true|false] [--f] [--r] <image uri>
++		Example: `  cosign attest [--key <key path>|<kms uri>] [--predicate <path>] [--no-upload=true|false] [-y] <image uri>
  
-```
-
-**File**: `cmd/cosign/cli/options/sign.go` (modified, +17/-75)
-```diff
-@@ -21,53 +21,38 @@ import (
+   # attach an attestation to a container image Google sign-in
+   cosign attest --timeout 90s --predicate <FILE> --type <TYPE> <IMAGE>
+@@ -52,7 +52,7 @@ func Attest() *cobra.Command {
+   cosign attest --predicate <FILE> --type <TYPE> --key hashivault://[KEY] <IMAGE>
  
- // SignOptions is the top level wrapper for the sign command.
- type SignOptions struct {
--	Key                     string
--	Cert                    string
--	CertChain               string
--	Upload                  bool
--	Output                  string // deprecated: TODO remove when the output flag is fully deprecated
--	OutputSignature         string // TODO: this should be the root output file arg.
--	OutputPayload           string
--	OutputCertificate       string
--	BundlePath              string
--	PayloadPath             string
--	Recursive               bool
--	Attachment              string
--	SkipConfirmation        bool
--	TlogUpload              bool
--	TSAClientCACert         string
--	TSAClientCert           string
--	TSAClientKey            string
--	TSAServerName           string
--	TSAServerURL            string
--	IssueCertificate        bool
--	SignContainerIdentities []string
--	RecordCreationTimestamp bool
--	NewBundleFormat         bool
--	UseSigningConfig        bool
--	SigningConfigPath       string
--	TrustedRootPath         string
+   # attach an attestation to a container image with a local key pair file, including a certificate and certificate chain
+-  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --cert cosign.crt --cert-chain chain.crt <IMAGE>
++  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --certificate cosign.crt --certificate-chain chain.crt <IMAGE>
+ 
+   # attach an attestation to a container image which does not fully support OCI media types
+   COSIGN_DOCKER_MEDIA_TYPES=1 cosign attest --predicate <FILE> --type <TYPE> --key cosign.key legacy-registry.example.com/my/image
+@@ -61,16 +61,13 @@ func Attest() *cobra.Command {
+   echo <PAYLOAD> | cosign attest --predicate - <IMAGE>
+ 
+   # write attestation to stdout
+-  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --no-upload true <IMAGE>
 -
--	Rekor       RekorOptions
-+	Key               string
-+	Cert              string
-+	CertChain         string
-+	Upload            bool
-+	BundlePath        string
-+	Recursive         bool
-+	SkipConfirmation  bool
-+	TSAClientCACert   string
-+	TSAClientCert     string
-+	TSAClientKey      string
-+	TSAServerName     string
-+	IssueCertificate  bool
-+	UseSigningConfig  bool
-+	SigningConfigPath string
-+	TrustedRootPath   string
-+
- 	Fulcio      FulcioOptions
- 	OIDC        OIDCOptions
- 	SecurityKey SecurityKeyOptions
- 	AnnotationOptions
--	Registry             RegistryOptions
--	RegistryExperimental RegistryExperimentalOptions
-+	Registry RegistryOptions
- }
- 
- var _ Interface = (*SignOptions)(nil)
- 
- // AddFlags implements Interface
- func (o *SignOptions) AddFlags(cmd *cobra.Command) {
--	o.Rekor.AddFlags(cmd)
- 	o.Fulcio.AddFlags(cmd)
- 	o.OIDC.AddFlags(cmd)
- 	o.SecurityKey.AddFlags(cmd)
- 	o.AnnotationOptions.AddFlags(cmd)
- 	o.Registry.AddFlags(cmd)
--	o.RegistryExperimental.AddFlags(cmd)
- 
- 	cmd.Flags().StringVar(&o.Key, "key", "",
- 		"path to the private key file, KMS URI or Kubernetes Secret")
-@@ -87,45 +72,16 @@ func (o *SignOptions) AddFlags(cmd *cobra.Command) {
- 	cmd.Flags().BoolVar(&o.Upload, "upload", true,
- 		"whether to upload the signature")
- 
--	cmd.Flags().StringVar(&o.OutputSignature, "output-signature", "",
--		"write the signature to FILE")
--	_ = cmd.MarkFlagFilename("output-signature", signatureExts...)
--	_ = cmd.Flags().MarkDeprecated("output-signature", "please use --bundle to provide the output bundle location, which will include the signature")
--
--	cmd.Flags().StringVar(&o.OutputPayload, "output-payload", "",
--		"write the signed payload to FILE")
--	// _ = cmd.MarkFlagFilename("output-payload") // no typical extensions
--	_ = cmd.Flags().MarkDeprecated("output-payload", "please use --bundle to provide the output bundle location, which will include the payload")
--
--	cmd.Flags().StringVar(&o.OutputCertificate, "output-certificate", "",
--		"write the certificate to FILE")
--	_ = cmd.MarkFlagFilename("output-certificate", certificateExts...)
--	_ = cmd.Flags().MarkDeprecated("output-certificate", "please use --bundle to provide the output bundle location, which will include the certificate")
--
- 	cmd.Flags().StringVar(&o.BundlePath, "bundle", "",
- 		"write everything required to verify the image to FILE")
- 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
- 
--	cmd.Flags().StringVar(&o.PayloadPath, "payload", "",
--		"path to a payload file to use rather than generating one")
--	// _ = cmd.MarkFlagFilename("payload") // no typical extensions
--	_ = cmd.Flags().MarkDeprecated("payload", "payload will always be generated automatically in future versions")
--
- 	cmd.Flags().BoolVarP(&o.Recursive, "recursive", "r", false,
- 		"if a multi-arch image is specified, additionally sign each discrete image")
- 
--	cmd.Flags().StringVar(&o.Attachment, "attachment", "",
--		"DEPRECATED, related image attachment to sign (sbom), default none")
--	_ = cmd.MarkFlagFilename("attachment", sbomExts...)
--	_ = cmd.Flags().MarkDeprecated("attachment", "please use OCI referrers for attachments; see `cosign attach sbom --registry-referrers-mode=oci-1-1 --help`")
--
- 	cmd.Flags().BoolVarP(&o.SkipConfirmation, "yes", "y", false,
- 		"skip confirmation prompts for non-destructive operations")
- 
--	cmd.Flags().BoolVar(&o.TlogUpload, "tlog-upload", true,
--		"whether or not to upload to the tlog")
--	_ = cmd.Flags().MarkDeprecated("tlog-upload", "prefer using a --signing-config file with no transparency log services")
--
- 	cmd.Flags().StringVar(&o.TSAClientCACert, "timestamp-client-cacert", "",
- 		"path to the X.509 CA certificate file in PEM format to be used for the connection to the TSA Server")
- 	_ = cmd.MarkFlagFilename("timestamp-client-cacert", certificateExts...)
-@@ -141,26 +97,12 @@ func (o *SignOptions) AddFlags(cmd *cobra.Command) {
- 	cmd.Flags().StringVar(&o.TSAServerName, "timestamp
-```
-
-**File**: `cmd/cosign/cli/options/verify.go` (modified, +4/-28)
-```diff
-@@ -84,20 +84,15 @@ var verifyOutputTypes = []string{"json", "text"} // First one is the default
- 
- // VerifyOptions is the top level wrapper for the `verify` command.
- type VerifyOptions struct {
--	Key          string
--	CheckClaims  bool
--	Attachment   string
--	Output       string
--	SignatureRef string
--	PayloadRef   string
--	LocalImage   bool
-+	Key         string
-+	CheckClaims bool
-+	Output      string
-+	LocalImage  bool
- 
- 	CommonVerifyOptions CommonVerifyOptions
- 	SecurityKey         SecurityKeyOptions
- 	CertVerify          CertVerifyOptions
--	Rekor               RekorOptions
- 	Registry            RegistryOptions
--	SignatureDigest     SignatureDigestOptions
- 
- 	AnnotationOptions
- }
-@@ -107,41 +102,22 @@ var _ Interface = (*VerifyOptions)(nil)
- // AddFlags implements Interface
- func (o *VerifyOptions) AddFlags(cmd *cobra.Command) {
- 	o.SecurityKey.AddFlags(cmd)
--	o.Rekor.AddFlags(cmd)
- 	o.CertVerify.AddFlags(cmd)
- 	o.Registry.AddFlags(cmd)
--	o.SignatureDigest.AddFlags(cmd)
- 	o.AnnotationOptions.AddFlags(cmd)
- 	o.CommonVerifyOptions.AddFlags(cmd)
- 
--	_ = cmd.Flags().MarkDeprecated("rekor-url", "please use --bundle, which includes the Rekor inclusion proof")
--
- 	cmd.Flags().StringVar(&o.Key, "key", "",
- 		"path to the public key file, KMS URI or Kubernetes Secret")
- 	_ = cmd.MarkFlagFilename("key", publicKeyExts...)
- 
- 	cmd.Flags().BoolVar(&o.CheckClaims, "check-claims", true,
- 		"whether to check the claims found")
- 
--	cmd.Flags().StringVar(&o.Attachment, "attachment", "",
--		"DEPRECATED, related image attachment to verify (sbom), default none")
--	_ = cmd.MarkFlagFilename("attachment", sbomExts...)
--	_ = cmd.Flags().MarkDeprecated("attachment", "please use OCI referrers for attachments and verify with `--experimental-oci11`")
--
- 	cmd.Flags().StringVarP(&o.Output, "output", "o", verifyOutputTypes[0],
- 		"output format for the signing image information ("+strings.Join(verifyOutputTypes, "|")+")")
- 	_ = cmd.RegisterFlagCompletionFunc("output", cobra.FixedCompletions(verifyOutputTypes, cobra.ShellCompDirectiveNoFileComp))
- 
--	cmd.Flags().StringVar(&o.SignatureRef, "signature", "",
--		"signature content or path or remote URL")
--	_ = cmd.MarkFlagFilename("signature", signatureExts...)
--	_ = cmd.Flags().MarkDeprecated("signature", "signatures are automatically fetched from the OCI registry during image verification")
--
--	cmd.Flags().StringVar(&o.PayloadRef, "payload", "",
--		"payload path or remote URL")
--	// _ = cmd.MarkFlagFilename("payload") // no typical extensions
--	_ = cmd.Flags().MarkDeprecated("payload", "payload will always be verified from the bundle in future versions")
--
- 	cmd.Flags().BoolVar(&o.LocalImage, "local-image", false,
- 		"whether the specified image is a path to an image saved locally via 'cosign save'")
- }
-```
-
-**File**: `cmd/cosign/cli/sign.go` (modified, +8/-31)
-```diff
-@@ -17,7 +17,6 @@ package cli
- 
- import (
- 	"fmt"
--	"os"
- 
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/generate"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
-@@ -38,7 +37,7 @@ Make sure to sign the image by its digest (@sha256:...) rather than by tag
- (:latest) so that you actually sign what you think you're signing! This prevents
- race conditions or (worse) malicious tampering.
- `,
--		Example: `  cosign sign --key <key path>|<kms uri> [-a key=value] [--upload=true|false] [-f] [-r] <image digest uri>
-+		Example: `  cosign sign [--key <key path>|<kms uri>] [-a key=value] [--upload=true|false] [-y] [-r] <image digest uri>
- 
-   # sign a container image with the Sigstore OIDC flow
-   cosign sign <IMAGE DIGEST>
-@@ -77,19 +76,13 @@ race conditions or (worse) malicious tampering.
-   COSIGN_DOCKER_MEDIA_TYPES=1 cosign sign --key cosign.key legacy-registry.example.com/my/image@<DIGEST>
- 
-   # sign a container image and upload to the transparency log
--  cosign sign --key cosign.key <IMAGE DIGEST>
--
--  # sign a container image and skip uploading to the transparency log
--  cosign sign --key cosign.key --tlog-upload=false <IMAGE DIGEST>
--
--  # sign a container image and honor the creation timestamp of the signature
--  cosign sign --key cosign.key --record-creation-timestamp <IMAGE DIGEST>`,
-+  cosign sign --key cosign.key <IMAGE DIGEST>`,
+-  # attach an attestation to a container image and honor the creation timestamp of the signature
+-  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --record-creation-timestamp <IMAGE>`,
++  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --no-upload true <IMAGE>`,
  
  		Args:             cobra.MinimumNArgs(1),
  		PersistentPreRun: options.BindViper,
  		PreRunE: func(_ *cobra.Command, args []string) error {
--			if o.NewBundleFormat && !o.Upload && o.BundlePath == "" {
+-			if o.NewBundleFormat && o.NoUpload && o.BundlePath == "" {
 -				return fmt.Errorf("must enable upload to the OCI registry or specify a local --bundle path with --new-bundle-format")
-+			if !o.Upload && o.BundlePath == "" {
++			if o.NoUpload && o.BundlePath == "" {
 +				return fmt.Errorf("must enable upload to the OCI registry or specify a local --bundle path")
  			}
- 			if o.BundlePath != "" && (len(args) > 1 || o.Recursive) {
- 				return fmt.Errorf("cannot use --bundle when signing multiple images or with --recursive")
-@@ -98,20 +91,12 @@ race conditions or (worse) malicious tampering.
+ 			if o.BundlePath != "" && len(args) > 1 {
+ 				return fmt.Errorf("cannot use --bundle when attesting multiple images")
+@@ -79,8 +76,8 @@ func Attest() *cobra.Command {
  		},
  		RunE: func(cmd *cobra.Command, args []string) error {
  			if err := signcommon.ValidateSigningOptions(cmd.Context(), o.UseSigningConfig, o.SigningConfigPath,
 -				o.Rekor.URL, o.Fulcio.URL, o.OIDC.Issuer, o.TSAServerURL,
 -				o.TlogUpload, o.NewBundleFormat, o.BundlePath,
--				o.Output, "", o.OutputCertificate, o.OutputPayload, o.OutputSignature, ""); err != nil {
 +				"", o.Fulcio.URL, o.OIDC.Issuer, "",
 +				true, true, o.BundlePath,
-+				"", "", "", "", "", ""); err != nil {
+ 				"", "", "", "", "", ""); err != nil {
  				return err
  			}
- 
--			switch o.Attachment {
--			case "sbom":
--				fmt.Fprintln(os.Stderr, options.SBOMAttachmentDeprecation)
--			case "":
--				break
--			default:
--				return fmt.Errorf("specified image attachment %s not specified. Can be 'sbom'", o.Attachment)
--			}
- 			oidcClientSecret, err := o.OIDC.ClientSecret()
- 			if err != nil {
- 				return err
-@@ -122,11 +107,8 @@ race conditions or (worse) malicious tampering.
+@@ -95,11 +92,8 @@ func Attest() *cobra.Command {
  				PassFunc:                       generate.GetPass,
  				Sk:                             o.SecurityKey.Use,
  				Slot:                           o.SecurityKey.Slot,
@@ -2160,268 +1865,536 @@ Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
  				OIDCClientID:                   o.OIDC.ClientID,
  				OIDCClientSecret:               oidcClientSecret,
  				OIDCRedirectURL:                o.OIDC.RedirectURL,
-@@ -138,19 +120,14 @@ race conditions or (worse) malicious tampering.
- 				TSAClientCert:                  o.TSAClientCert,
+@@ -110,28 +104,22 @@ func Attest() *cobra.Command {
  				TSAClientKey:                   o.TSAClientKey,
+ 				TSAClientCert:                  o.TSAClientCert,
  				TSAServerName:                  o.TSAServerName,
 -				TSAServerURL:                   o.TSAServerURL,
  				IssueCertificateForExistingKey: o.IssueCertificate,
+ 				BundlePath:                     o.BundlePath,
 -				NewBundleFormat:                o.NewBundleFormat,
  			}
  			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
  				return err
  			}
  
- 			if err := sign.SignCmd(cmd.Context(), ro, ko, *o, args); err != nil {
--				if o.Attachment == "" {
--					return fmt.Errorf("signing %v: %w", args, err)
--				}
--				return fmt.Errorf("signing attachment %s for image %v: %w", o.Attachment, args, err)
-+				return fmt.Errorf("signing %v: %w", args, err)
- 			}
- 			return nil
- 		},
+ 			attestCommand := attest.AttestCommand{
+-				KeyOpts:                 ko,
+-				RegistryOptions:         o.Registry,
+-				CertPath:                o.Cert,
+-				CertChainPath:           o.CertChain,
+-				NoUpload:                o.NoUpload,
+-				PredicatePath:           o.Predicate.Path,
+-				PredicateType:           o.Predicate.Type,
+-				Replace:                 o.Replace,
+-				Timeout:                 ro.Timeout,
+-				TlogUpload:              o.TlogUpload,
+-				RekorEntryType:          o.RekorEntryType,
+-				RecordCreationTimestamp: o.RecordCreationTimestamp,
++				KeyOpts:         ko,
++				RegistryOptions: o.Registry,
++				CertPath:        o.Cert,
++				CertChainPath:   o.CertChain,
++				NoUpload:        o.NoUpload,
++				PredicatePath:   o.Predicate.Path,
++				PredicateType:   o.Predicate.Type,
++				Tim
 ```
 
-**File**: `cmd/cosign/cli/sign/sign.go` (modified, +14/-321)
+**File**: `cmd/cosign/cli/attest/attest.go` (modified, +18/-122)
 ```diff
-@@ -16,54 +16,29 @@
- package sign
- 
- import (
--	"bytes"
- 	"context"
--	"encoding/base64"
--	"encoding/json"
- 	"fmt"
--	"net/http"
- 	"os"
--	"path/filepath"
- 	"strings"
--	"time"
+@@ -24,37 +24,24 @@ import (
  
  	"github.com/google/go-containerregistry/pkg/name"
  	v1 "github.com/google/go-containerregistry/pkg/v1"
- 	intotov1 "github.com/in-toto/attestation/go/v1"
+-	"google.golang.org/protobuf/encoding/protojson"
+ 
  	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
  	"github.com/sigstore/cosign/v3/cmd/cosign/cli/signcommon"
--	"github.com/sigstore/cosign/v3/internal/pkg/cosign/tsa/client"
  	"github.com/sigstore/cosign/v3/internal/ui"
--	"github.com/sigstore/cosign/v3/pkg/cosign"
+ 	"github.com/sigstore/cosign/v3/pkg/cosign/attestation"
 -	cbundle "github.com/sigstore/cosign/v3/pkg/cosign/bundle"
 -	cremote "github.com/sigstore/cosign/v3/pkg/cosign/remote"
- 	"github.com/sigstore/cosign/v3/pkg/oci"
- 	"github.com/sigstore/cosign/v3/pkg/oci/mutate"
+-	"github.com/sigstore/cosign/v3/pkg/oci/mutate"
  	ociremote "github.com/sigstore/cosign/v3/pkg/oci/remote"
 -	"github.com/sigstore/cosign/v3/pkg/oci/static"
- 	"github.com/sigstore/cosign/v3/pkg/oci/walk"
- 	"github.com/sigstore/cosign/v3/pkg/types"
+-	"github.com/sigstore/cosign/v3/pkg/types"
 -	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
--	"github.com/sigstore/sigstore-go/pkg/sign"
 -	"github.com/sigstore/sigstore/pkg/signature"
--	sigPayload "github.com/sigstore/sigstore/pkg/signature/payload"
- 	"google.golang.org/protobuf/encoding/protojson"
- 	"google.golang.org/protobuf/types/known/structpb"
- 
- 	// Loads OIDC providers
- 	_ "github.com/sigstore/cosign/v3/pkg/providers/all"
  )
  
--func GetAttachedImageRef(ref name.Reference, attachment string, opts ...ociremote.Option) (name.Reference, error) {
--	if attachment == "" {
--		return ref, nil
+ // nolint
+ type AttestCommand struct {
+ 	options.KeyOpts
+ 	options.RegistryOptions
+-	CertPath                string
+-	CertChainPath           string
+-	NoUpload                bool
+-	PredicatePath           string
+-	PredicateType           string
+-	Replace                 bool
+-	Timeout                 time.Duration
+-	TlogUpload              bool
+-	TSAServerURL            string
+-	RekorEntryType          string
+-	RecordCreationTimestamp bool
++	CertPath      string
++	CertChainPath string
++	NoUpload      bool
++	PredicatePath string
++	PredicateType string
++	Timeout       time.Duration
+ }
+ 
+ // nolint
+@@ -68,10 +55,6 @@ func (c *AttestCommand) Exec(ctx context.Context, imageRef string) error {
+ 		return fmt.Errorf("predicate cannot be empty")
+ 	}
+ 
+-	if c.RekorEntryType != "dsse" && c.RekorEntryType != "intoto" {
+-		return fmt.Errorf("unknown value for rekor-entry-type")
 -	}
--	if attachment == "sbom" {
--		return ociremote.SBOMTag(ref, opts...)
+-
+ 	predicateURI, err := options.ParsePredicateType(c.PredicateType)
+ 	if err != nil {
+ 		return err
+@@ -135,121 +118,34 @@ func (c *AttestCommand) Exec(ctx context.Context, imageRef string) error {
+ 	}
+ 
+ 	if c.SigningConfig == nil {
+-		c.SigningConfig, err = signcommon.NewSigningConfigFromKeyOpts(c.KeyOpts)
+-		if err != nil {
+-			return fmt.Errorf("creating signing config: %w", err)
+-		}
++		c.SigningConfig = signcommon.NewEmptySigningConfig()
+ 	}
+-	if !signcommon.ShouldUploadToTlog(ctx, c.KeyOpts, digest, c.TlogUpload) {
++	if err := signcommon.RequireFulcioForCertificate(c.KeyOpts); err != nil {
++		return err
++	}
++	if !signcommon.ShouldUploadToTlog(ctx, c.KeyOpts, digest, len(c.SigningConfig.RekorLogURLs()) > 0) {
+ 		c.SigningConfig = c.SigningConfig.WithRekorLogURLs()
+ 	}
+ 	if err := signcommon.ConfirmPrivacyStatement(ctx, c.KeyOpts); err != nil {
+ 		return err
+ 	}
+ 
+-	bundleBytes, pubKey, hashAlgProto, err := signcommon.NewAttestationBundle(ctx, c.KeyOpts, c.CertPath, c.CertChainPath, bundleOpts, c.SigningConfig, c.TrustedMaterial)
++	bundleBytes, _, _, err := signcommon.NewAttestationBundle(ctx, c.KeyOpts, c.CertPath, c.CertChainPath, bundleOpts, c.SigningConfig, c.TrustedMaterial)
+ 	if err != nil {
+ 		return fmt.Errorf("creating bundle: %w", err)
+ 	}
+ 
+-	if c.NewBundleFormat {
+-		if c.BundlePath != "" {
+-			if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
+-				return fmt.Errorf("create bundle file: %w", err)
+-			}
+-			ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
+-		}
+-
+-		if !c.NoUpload {
+-			if err := ociremote.WriteAttestationNewBundleFormat(digest, bundleBytes, bundleOpts.PredicateType, ociremoteOpts...); err != nil {
+-				return fmt.Errorf("writing bundle: %w", err)
+-			}
+-		}
+-		return nil
 -	}
--	return nil, fmt.Errorf("unknown attachment type %s", attachment)
+-
+-	var pb protobundle.Bundle
+-	if err := protojson.Unmarshal(bundleBytes, &pb); err != nil {
+-		return fmt.Errorf("unmarshalling bundle: %w", err)
+-	}
+-
+-	bundleComponents, err := signcommon.ExtractComponentsFromProtoBundle(&pb)
+-	if err != nil {
+-		return fmt.Errorf("extracting components from bundle: %w", err)
+-	}
+-
+-	legacyBundleBytes, err := signcommon.NewLegacyBundleFromProtoBundleComponents(bundleComponents)
+-	if err != nil {
+-		return fmt.Errorf("creating legacy bundle: %w", err)
+-	}
+-
+ 	if c.BundlePath != "" {
+-		if err := os.WriteFile(c.BundlePath, legacyBundleBytes, 0600); err != nil {
++		if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
+ 			return fmt.Errorf("create bundle file: %w", err)
+ 		}
+ 		ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
+ 	}
+ 
+-	if c.NoUpload {
+-		return nil
+-	}
+-
+-	certPem, chainPem := signcommon.EncodeCertificatesToPEM(bundleComponents.Certificates)
+-
+-	opts := []static.Option{
+-		static.WithLayerMediaType(types.DssePayloadType),
+-		static.WithAnnotations(map[string]string{
+-			"predicateType": predicateURI,
+-		}),
+-	}
+-	if certPem != nil {
+-		opts = append(opts, static.WithCertChain(certPem, chainPem))
+-	}
+-
+-	if len(bundleComponents.RFC3161Timestamps) > 0 {
+-		opts = append(opts, static.WithRFC3161Timestamp(cbundle.TimestampToRFC3161Timestamp(bundleComponents.RFC3161Timestamps[0].GetSignedTimestamp())))
+-	}
+-
+-	predicateTypeAnnotation := map[string]string{
+-		"predicateType": predicateURI,
+-	}
+-	// Add predicat
+```
+
+**File**: `cmd/cosign/cli/options/attest.go` (modified, +15/-49)
+```diff
+@@ -16,35 +16,26 @@
+ package options
+ 
+ import (
+-	"strings"
+-
+ 	"github.com/spf13/cobra"
+ )
+ 
+ // AttestOptions is the top level wrapper for the attest command.
+ type AttestOptions struct {
+-	Key                     string
+-	Cert                    string
+-	CertChain               string
+-	IssueCertificate        bool
+-	NoUpload                bool
+-	Replace                 bool
+-	SkipConfirmation        bool
+-	TlogUpload              bool
+-	TSAClientCACert         string
+-	TSAClientCert           string
+-	TSAClientKey            string
+-	TSAServerName           string
+-	TSAServerURL            string
+-	RekorEntryType          string
+-	RecordCreationTimestamp bool
+-	BundlePath              string
+-	NewBundleFormat         bool
+-	UseSigningConfig        bool
+-	SigningConfigPath       string
+-	TrustedRootPath         string
+-
+-	Rekor       RekorOptions
++	Key               string
++	Cert              string
++	CertChain         string
++	IssueCertificate  bool
++	NoUpload          bool
++	SkipConfirmation  bool
++	TSAClientCACert   string
++	TSAClientCert     string
++	TSAClientKey      string
++	TSAServerName     string
++	BundlePath        string
++	UseSigningConfig  bool
++	SigningConfigPath string
++	TrustedRootPath   string
++
+ 	Fulcio      FulcioOptions
+ 	OIDC        OIDCOptions
+ 	SecurityKey SecurityKeyOptions
+@@ -60,7 +51,6 @@ func (o *AttestOptions) AddFlags(cmd *cobra.Command) {
+ 	o.Predicate.AddFlags(cmd)
+ 	o.Fulcio.AddFlags(cmd)
+ 	o.OIDC.AddFlags(cmd)
+-	o.Rekor.AddFlags(cmd)
+ 	o.Registry.AddFlags(cmd)
+ 
+ 	cmd.Flags().StringVar(&o.Key, "key", "",
+@@ -80,22 +70,10 @@ func (o *AttestOptions) AddFlags(cmd *cobra.Command) {
+ 
+ 	cmd.Flags().BoolVar(&o.NoUpload, "no-upload", false,
+ 		"do not upload the generated attestation, but send the attestation output to STDOUT")
+-	cmd.Flags().BoolVarP(&o.Replace, "replace", "", false,
+-		"")
+-	_ = cmd.Flags().MarkDeprecated("replace", "not needed when OCI referrers become the default behavior")
+ 
+ 	cmd.Flags().BoolVarP(&o.SkipConfirmation, "yes", "y", false,
+ 		"skip confirmation prompts for non-destructive operations")
+ 
+-	cmd.Flags().BoolVar(&o.TlogUpload, "tlog-upload", true,
+-		"whether or not to upload to the tlog")
+-	_ = cmd.Flags().MarkDeprecated("tlog-upload", "prefer using a --signing-config file with no transparency log services")
+-
+-	cmd.Flags().StringVar(&o.RekorEntryType, "rekor-entry-type", rekorEntryTypes[0],
+-		"specifies the type to be used for a rekor entry upload ("+strings.Join(rekorEntryTypes, "|")+")")
+-	_ = cmd.RegisterFlagCompletionFunc("rekor-entry-type", cobra.FixedCompletions(rekorEntryTypes, cobra.ShellCompDirectiveNoFileComp))
+-	_ = cmd.Flags().MarkDeprecated("rekor-entry-type", "support for this flag will be removed in the future. it is strongly discouraged to rely on Rekor for attestation storage, and in future releases of Rekor, this functionality will be removed.")
+-
+ 	cmd.Flags().StringVar(&o.TSAClientCACert, "timestamp-client-cacert", "",
+ 		"path to the X.509 CA certificate file in PEM format to be used for the connection to the TSA Server")
+ 
+@@ -109,15 +87,6 @@ func (o *AttestOptions) AddFlags(cmd *cobra.Command) {
+ 		"SAN name to use as the 'ServerName' tls.Config field to verify the mTLS connection to the TSA Server")
+ 	_ = cmd.RegisterFlagCompletionFunc("timestamp-server-name", cobra.NoFileCompletions)
+ 
+-	cmd.Flags().StringVar(&o.TSAServerURL, "timestamp-server-url", "",
+-		"url to the Timestamp RFC3161 server, default none. Must be the path to the API to request timestamp responses, e.g. https://freetsa.org/tsr")
+-	_ = cmd.RegisterFlagCompletionFunc("timestamp-server-url", cobra.NoFileCompletions)
+-	_ = cmd.Flags().MarkDeprecated("timestamp-server-url", "please use a signing config to specify a timestamp server url; see `cosign signing-config --help`")
+-
+-	cmd.Flags().BoolVar(&o.RecordCreationTimestamp, "record-creation-timestamp", false,
+-		"set the createdAt timestamp in the attestation artifact to the time it was created; by default, cosign sets this to the zero value")
+-	_ = cmd.Flags().MarkDeprecated("record-creation-timestamp", "not used with the new bundle format")
+-
+ 	cmd.Flags().BoolVar(&o.IssueCertificate, "issue-certificate", false,
+ 		"issue a code signing certificate from Fulcio, even if a key is provided")
+ 	_ = cmd.Flags().MarkDeprecated("issue-certificate", "support for this flag will be removed in the future")
+@@ -126,9 +95,6 @@ func (o *AttestOptions) AddFlags(cmd *cobra.Command) {
+ 		"write everything required to verify the blob to a FILE")
+ 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
+ 
+-	cmd.Flags().BoolVar(&o.NewBundleFormat, "new-bundle-format", true, "attach a Sigstore bundle using OCI referrers API")
+-	_ = cmd.Flags().MarkDeprecated("new-bundle-format", "this will be the only supported format in future versions")
+-
+ 	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
+ 		"whether to use a TUF-provided signing config for the service URLs")
+ 	_ = cmd.Flags().MarkDeprecated("use-signing-conf
+```
+
+**File**: `cmd/cosign/cli/options/options.go` (modified, +0/-5)
+```diff
+@@ -56,11 +56,6 @@ var wasmExts = []string{
+ 	"wasm",
+ }
+ 
+-var rekorEntryTypes = []string{
+-	"dsse", // first one is the default
+-	"intoto",
 -}
 -
- // nolint
- func SignCmd(ctx context.Context, ro *options.RootOptions, ko options.KeyOpts, signOpts options.SignOptions, imgs []string) error {
- 	if options.NOf(ko.KeyRef, ko.Sk) > 1 {
-@@ -73,26 +48,19 @@ func SignCmd(ctx context.Context, ro *options.RootOptions, ko options.KeyOpts, s
- 	ctx, cancel := context.WithTimeout(ctx, ro.Timeout)
- 	defer cancel()
- 
--	var staticPayload []byte
--	var err error
--	if signOpts.PayloadPath != "" {
--		ui.Infof(ctx, "Using payload from: %s", signOpts.PayloadPath)
--		staticPayload, err = os.ReadFile(filepath.Clean(signOpts.PayloadPath))
--		if err != nil {
--			return fmt.Errorf("payload from file: %w", err)
--		}
--	}
--
- 	// Set up an ErrDone consideration to return along "success" paths
- 	var ErrDone error
- 	if !signOpts.Recursive {
- 		ErrDone = mutate.ErrSkipChildren
- 	}
- 	regOpts := signOpts.Registry
--	opts, err := regOpts.ClientOpts(ctx)
-+	ociremoteOpts, err := regOpts.ClientOpts(ctx)
- 	if err != nil {
- 		return fmt.Errorf("constructing client options: %w", err)
- 	}
-+	if regOpts.AllowHTTPRegistry || regOpts.AllowInsecure {
-+		ociremoteOpts = append(ociremoteOpts, ociremote.WithNameOptions(name.Insecure))
-+	}
- 	am, err := signOpts.AnnotationsMap()
- 	if err != nil {
- 		return fmt.Errorf("getting annotations: %w", err)
-@@ -103,30 +71,16 @@ func SignCmd(ctx context.Context, ro *options.RootOptions, ko options.KeyOpts, s
- 		if err != nil {
- 			return err
- 		}
--		ref, err = GetAttachedImageRef(ref, signOpts.Attachment, opts...)
--		if err != nil {
--			return fmt.Errorf("unable to resolve attachment %s for image %s", signOpts.Attachment, inputImg)
--		}
- 
- 		if digest, ok := ref.(name.Digest); ok && !signOpts.Recursive {
--			se, err := ociremote.SignedEntity(ref, opts...)
--			if _, isEntityNotFoundErr := err.(*ociremote.EntityNotFoundError); isEntityNotFoundErr {
--				se = ociremote.SignedUnknown(digest)
--			} else if err != nil {
--				return fmt.Errorf("accessing image: %w", err)
--			}
--			if signOpts.NewBundleFormat {
--				err = signDigestBundle(ctx, digest, ko, signOpts, annotations)
--			} else {
--				err = signDigest(ctx, digest, staticPayload, ko, signOpts, annotations, se)
--			}
-+			err = signDigestBundle(ctx, digest, ko, signOpts, annotations, ociremoteOpts)
- 			if err != nil {
- 				return fmt.Errorf("signing digest: %w", err)
- 			}
- 			continue
- 		}
- 
--		se, err := ociremote.SignedEntity(ref, opts...)
-+		se, err := ociremote.SignedEntity(ref, ociremoteOpts...)
- 		if err != nil {
- 			return fmt.Errorf("accessing entity: %w", err)
- 		}
-@@ -138,11 +92,7 @@ func SignCmd(ctx context.Context, ro *options.RootOptions, ko options.KeyOpts, s
- 				return fmt.Errorf("computing digest: %w", err)
- 			}
- 			digest := ref.Context().Digest(d.String())
--			if signOpts.NewBundleFormat {
--				err = signDigestBundle(ctx, digest, ko, signOpts, annotations)
--			} else {
--				err = signDigest(ctx, digest, staticPayload, ko, signOpts, annotations, se)
--			}
-+			err = signDigestBundle(ctx, digest, ko, signOpts, annotations, ociremoteOpts)
- 			if err != nil {
- 				return fmt.Errorf("signing digest: %w", err)
- 			}
-@@ -155,7 +105,7 @@ func SignCmd(ctx context.Context, ro *options.RootOptions, ko options.KeyOpts, s
- 	return nil
- }
- 
--func signDigestBundle(ctx context.Context, digest name.Digest, 
+ var securityKeySlots = []string{
+ 	"authentication",
+ 	"signature",
 ```
 
-**File**: `cmd/cosign/cli/verify.go` (modified, +0/-18)
+**File**: `doc/cosign_attest.md` (modified, +2/-5)
 ```diff
-@@ -89,45 +89,27 @@ against the transparency log.`,
- 				return err
- 			}
+@@ -9,7 +9,7 @@ cosign attest [flags]
+ ### Examples
  
--			hashAlgorithm, err := o.SignatureDigest.HashAlgorithm()
--			if err != nil {
--				return err
--			}
+ ```
+-  cosign attest --key <key path>|<kms uri> [--predicate <path>] [--a key=value] [--no-upload=true|false] [--record-creation-timestamp=true|false] [--f] [--r] <image uri>
++  cosign attest [--key <key path>|<kms uri>] [--predicate <path>] [--no-upload=true|false] [-y] <image uri>
+ 
+   # attach an attestation to a container image Google sign-in
+   cosign attest --timeout 90s --predicate <FILE> --type <TYPE> <IMAGE>
+@@ -30,7 +30,7 @@ cosign attest [flags]
+   cosign attest --predicate <FILE> --type <TYPE> --key hashivault://[KEY] <IMAGE>
+ 
+   # attach an attestation to a container image with a local key pair file, including a certificate and certificate chain
+-  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --cert cosign.crt --cert-chain chain.crt <IMAGE>
++  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --certificate cosign.crt --certificate-chain chain.crt <IMAGE>
+ 
+   # attach an attestation to a container image which does not fully support OCI media types
+   COSIGN_DOCKER_MEDIA_TYPES=1 cosign attest --predicate <FILE> --type <TYPE> --key cosign.key legacy-registry.example.com/my/image
+@@ -40,9 +40,6 @@ cosign attest [flags]
+ 
+   # write attestation to stdout
+   cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --no-upload true <IMAGE>
 -
- 			v := &verify.VerifyCommand{
- 				RegistryOptions:              o.Registry,
- 				CertVerifyOptions:            o.CertVerify,
- 				CommonVerifyOptions:          o.CommonVerifyOptions,
- 				CheckClaims:                  o.CheckClaims,
- 				KeyRef:                       o.Key,
--				CertRef:                      o.CertVerify.Cert,
--				CertChain:                    o.CertVerify.CertChain,
--				CAIntermediates:              o.CertVerify.CAIntermediates,
--				CARoots:                      o.CertVerify.CARoots,
- 				CertGithubWorkflowTrigger:    o.CertVerify.CertGithubWorkflowTrigger,
- 				CertGithubWorkflowSha:        o.CertVerify.CertGithubWorkflowSha,
- 				CertGithubWorkflowName:       o.CertVerify.CertGithubWorkflowName,
- 				CertGithubWorkflowRepository: o.CertVerify.CertGithubWorkflowRepository,
- 				CertGithubWorkflowRef:        o.CertVerify.CertGithubWorkflowRef,
- 				IgnoreSCT:                    o.CertVerify.IgnoreSCT,
--				SCTRef:                       o.CertVerify.SCT,
- 				Sk:                           o.SecurityKey.Use,
- 				Slot:                         o.SecurityKey.Slot,
- 				Output:                       o.Output,
--				RekorURL:                     o.Rekor.URL,
--				Attachment:                   o.Attachment,
- 				Annotations:                  annotations,
--				HashAlgorithm:                hashAlgorithm,
--				SignatureRef:                 o.SignatureRef,
--				PayloadRef:                   o.PayloadRef,
- 				LocalImage:                   o.LocalImage,
- 				Offline:                      o.CommonVerifyOptions.Offline,
--				TSACertChainPath:             o.CommonVerifyOptions.TSACertChainPath,
- 				IgnoreTlog:                   o.CommonVerifyOptions.IgnoreTlog,
- 				MaxWorkers:                   o.CommonVerifyOptions.MaxWorkers,
--				ExperimentalOCI11:            o.CommonVerifyOptions.ExperimentalOCI11,
- 				UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
--				NewBundleFormat:              o.CommonVerifyOptions.NewBundleFormat,
- 			}
+-  # attach an attestation to a container image and honor the creation timestamp of the signature
+-  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --record-creation-timestamp <IMAGE>
+ ```
  
- 			if o.CommonVerifyOptions.MaxWorkers == 0 {
+ ### Options
 ```
 
-**File**: `cmd/cosign/cli/verify/common.go` (modified, +6/-14)
+**File**: `test/e2e_insecure_registry_test.go` (modified, +4/-8)
 ```diff
-@@ -26,12 +26,10 @@ import (
- 	"reflect"
- 
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/fulcio"
--	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/rekor"
- 	"github.com/sigstore/cosign/v3/internal/ui"
- 	"github.com/sigstore/cosign/v3/pkg/blob"
- 	"github.com/sigstore/cosign/v3/pkg/cosign"
--	"github.com/sigstore/cosign/v3/pkg/cosign/env"
- 	"github.com/sigstore/cosign/v3/pkg/cosign/pivkey"
- 	"github.com/sigstore/cosign/v3/pkg/cosign/pkcs11key"
- 	"github.com/sigstore/cosign/v3/pkg/oci"
-@@ -203,7 +201,7 @@ func SetLegacyClientsAndKeys(ctx context.Context, ignoreTlog, shouldVerifySCT, k
- 
- // SetTrustedMaterial sets TrustedMaterial on CheckOpts, either from the provided trusted root path or from TUF.
- // It does not set TrustedMaterial if the user provided trusted material via other flags or environment variables.
--func SetTrustedMaterial(ctx context.Context, trustedRootPath, certChain, caRoots, caIntermediates, tsaCertChainPath string, verifyOnlyWithKey bool, co *cosign.CheckOpts) error {
-+func SetTrustedMaterial(ctx context.Context, trustedRootPath, _, _, _, _ string, verifyOnlyWithKey bool, co *cosign.CheckOpts) error {
- 	var err error
- 	if trustedRootPath != "" {
- 		co.TrustedMaterial, err = root.NewTrustedRootFromPath(trustedRootPath)
-@@ -215,18 +213,12 @@ func SetTrustedMaterial(ctx context.Context, trustedRootPath, certChain, caRoots
- 	if verifyOnlyWithKey {
- 		return nil
+@@ -180,12 +180,10 @@ func TestAttestInsecureRegistry(t *testing.T) {
  	}
--	if options.NOf(certChain, caRoots, caIntermediates, tsaCertChainPath) == 0 &&
--		env.Getenv(env.VariableSigstoreCTLogPublicKeyFile) == "" &&
--		env.Getenv(env.VariableSigstoreRootFile) == "" &&
--		env.Getenv(env.VariableSigstoreRekorPublicKey) == "" &&
--		env.Getenv(env.VariableSigstoreTSACertificateFile) == "" {
--		co.TrustedMaterial, err = cosign.TrustedRoot()
--		if err != nil {
--			if co.NewBundleFormat {
--				return fmt.Errorf("getting trusted root from TUF for new bundle verification: %w", err)
--			}
--			ui.Warnf(ctx, "Could not fetch trusted_root.json from the TUF repository. Continuing with individual targets. Error from TUF: %v", err)
-+	co.TrustedMaterial, err = cosign.TrustedRoot()
-+	if err != nil {
-+		if co.NewBundleFormat {
-+			return fmt.Errorf("getting trusted root from TUF for bundle verification: %w", err)
- 		}
-+		ui.Warnf(ctx, "Could not fetch trusted_root.json from the TUF repository. Continuing with individual targets. Error from TUF: %v", err)
+ 
+ 	attestCmd := attest.AttestCommand{
+-		KeyOpts:        ko,
+-		PredicatePath:  slsaAttestationPath,
+-		PredicateType:  "slsaprovenance",
+-		Timeout:        30 * time.Second,
+-		RekorEntryType: "dsse",
+-		TlogUpload:     true,
++		KeyOpts:       ko,
++		PredicatePath: slsaAttestationPath,
++		PredicateType: "slsaprovenance",
++		Timeout:       30 * time.Second,
+ 		RegistryOptions: options.RegistryOptions{
+ 			AllowInsecure:     true,
+ 			AllowHTTPRegistry: true,
+@@ -260,8 +258,6 @@ func TestAttachInsecureRegistry(t *testing.T) {
+ 		PredicatePath:   slsaAttestationPath,
+ 		PredicateType:   "slsaprovenance",
+ 		Timeout:         30 * time.Second,
+-		RekorEntryType:  "dsse",
+-		TlogUpload:      true,
+ 		NoUpload:        true,
  	}
- 	return nil
+ 	must(attestCmd.Exec(ctx, imgName), t)
+```
+
+**File**: `test/e2e_test.go` (modified, +79/-230)
+```diff
+@@ -1002,12 +1002,10 @@ func TestSignAttestVerifyContainerWithSigningConfig(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 	attestCmd := attest.AttestCommand{
+-		KeyOpts:        ko,
+-		PredicatePath:  predicatePath,
+-		PredicateType:  "slsaprovenance",
+-		Timeout:        30 * time.Second,
+-		RekorEntryType: "dsse",
+-		TlogUpload:     true,
++		KeyOpts:       ko,
++		PredicatePath: predicatePath,
++		PredicateType: "slsaprovenance",
++		Timeout:       30 * time.Second,
+ 	}
+ 	must(attestCmd.Exec(ctx, imgName), t)
+ 
+@@ -1203,14 +1201,12 @@ func TestSignVerifyContainerWithCertificateChain(t *testing.T) {
+ 			var verifyErr error
+ 			if tc.attestation {
+ 				attestCmd := attest.AttestCommand{
+-					KeyOpts:        ko,
+-					CertPath:       leafCertPath,
+-					CertChainPath:  signChainPath,
+-					PredicatePath:  predicatePath,
+-					PredicateType:  predicateType,
+-					Timeout:        30 * time.Second,
+-					RekorEntryType: "dsse",
+-					TlogUpload:     false,
++					KeyOpts:       ko,
++					CertPath:      leafCertPath,
++					CertChainPath: signChainPath,
++					PredicatePath: predicatePath,
++					PredicateType: predicateType,
++					Timeout:       30 * time.Second,
+ 				}
+ 				must(attestCmd.Exec(ctx, imgName), t)
+ 
+@@ -1538,12 +1534,10 @@ func TestSignAttestVerifyRekorV2(t *testing.T) {
+ 	ko.BundlePath = filepath.Join(t.TempDir(), "att.bundle")
+ 	ko.NewBundleFormat = true
+ 	must((&attest.AttestCommand{
+-		KeyOpts:        ko,
+-		PredicatePath:  predicatePath,
+-		PredicateType:  "slsaprovenance",
+-		Timeout:        30 * time.Second,
+-		RekorEntryType: "dsse",
+-		TlogUpload:     true,
++		KeyOpts:       ko,
++		PredicatePath: predicatePath,
++		PredicateType: "slsaprovenance",
++		Timeout:       30 * time.Second,
+ 	}).Exec(ctx, imgName), t)
+ 	assertRekorV2HashedrekordEntry(t, ko.BundlePath)
+ 
+@@ -2156,10 +2150,9 @@ func attestVerify(t *testing.T, predicateType, attestation, goodCue, badCue stri
+ 			PassFunc:        passFunc,
+ 			NewBundleFormat: true,
+ 		},
+-		PredicatePath:  attestationPath,
+-		PredicateType:  predicateType,
+-		Timeout:        30 * time.Second,
+-		RekorEntryType: "dsse",
++		PredicatePath: attestationPath,
++		PredicateType: predicateType,
++		Timeout:       30 * time.Second,
+ 	}
+ 	must(attestCmd.Exec(ctx, imgName), t)
+ 
+@@ -2250,36 +2243,32 @@ func TestAttestationDownload(t *testing.T) {
+ 
+ 	// Attest to create a slsa attestation
+ 	attestCommand := attest.AttestCommand{
+-		KeyOpts:        ko,
+-		PredicatePath:  slsaAttestationPath,
+-		PredicateType:  "slsaprovenance",
+-		Timeout:        30 * time.Second,
+-		Replace:        true,
+-		RekorEntryType: "dsse",
++		KeyOpts:       ko,
++		PredicatePath: slsaAttestationPath,
++		PredicateType: "slsaprovenance",
++		Timeout:       30 * time.Second,
+ 	}
+ 	must(attestCommand.Exec(ctx, imgName), t)
+ 
+ 	// Attest to create a vuln attestation
+ 	attestCommand = attest.AttestCommand{
+-		KeyOpts:        ko,
+-		PredicatePath:  vulnAttestationPath,
+-		PredicateType:  "vuln",
+-		Timeout:        30 * time.Second,
+-		Replace:        true,
+-		RekorEntryType: "dsse",
++		KeyOpts:       ko,
++		PredicatePath: vulnAttestationPath,
++		PredicateType: "vuln",
++		Timeout:       30 * time.Second,
+ 	}
+ 	must(attestCommand.Exec(ctx, imgName), t)
+ 
+ 	// Call download.AttestationCmd() to ensure success
+ 	attOpts := options.AttestationDownloadOptions{}
+ 	must(download.AttestationCmd(ctx, regOpts, attOpts, imgName, os.Stdout), t)
+ 
+-	attestations, err := cosign.FetchAttestationsForReference(ctx, ref, attOpts.PredicateType, ociremoteOpts...)
++	bundles, _, err := cosign.GetBundles(ctx, ref, ociremoteOpts)
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
+-	if len(attestations) != 2 {
+-		t.Fatal(fmt.Errorf("expected len(attestations) == 2, got %d", len(attestations)))
++	if len(bundles) != 2 {
++		t.Fatal(fmt.Errorf("expected len(bundles) == 2, got %d", len(bundles)))
+ 	}
  }
+ 
+@@ -2349,23 +2338,19 @@ func TestAttestationDownloadWithPredicateType(t *testing.T) {
+ 
+ 	// Attest to create a slsa attestation
+ 	attestCommand := attest.AttestCommand{
+-		KeyOpts:        ko,
+-		PredicatePath:  slsaAttestationPath,
+-		PredicateType:  "slsaprovenance",
+-		Timeout:        30 * time.Second,
+-		Replace:        true,
+-		RekorEntryType: "dsse",
++		KeyOpts:       ko,
++		PredicatePath: slsaAttestationPath,
++		PredicateType: "slsaprovenance",
++		Timeout:       30 * time.Second,
+ 	}
+ 	must(attestCommand.Exec(ctx, imgName), t)
+ 
+ 	// Attest to create a vuln attestation
+ 	attestCommand = attest.AttestCommand{
+-		KeyOpts:        ko,
+-		PredicatePath:  vulnAttestationPath,
+-		PredicateType:  "vuln",
+-		Timeout:        30 * time.Second,
+-		Replace:        true,
+-		RekorEntryType: "dsse",
++		KeyOpts:       ko,
++		PredicatePath: vulnAttestationPath,
++		PredicateType: "vuln",
++		Timeout:       30 * time.Second,
+ 	}
+ 	must(attestCommand.Exec(ctx, imgName), t)
+ 
+@@ -2376,12 +2361,22 @@ func TestAttestationDownloadWithPredicateType(t *testing.T) {
+ 	must(download.AttestationCmd(ctx, regOpts, attOpts, imgName, os.Stdout), t)
+ 
+ 	predicateType, _ := options.Par
 ```
 
 #### Recent Merged Pull Requests:
@@ -2450,35 +2423,58 @@ Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require new bundle format for image signing and verification
+## X. Require new bundle format for attest
 
 **RULE**:
-When implementing operations in `cmd/cosign/cli/dockerfile.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/cosign/cli/attest.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8404f23a`: Require new bundle format for image signing and verification. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2ec8094c`: Require new bundle format for attest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/dockerfile.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/attest.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-					CommonVerifyOptions:          o.CommonVerifyOptions,
-					UseSignedTimestamps:          o.CommonVerifyOptions.UseSignedTimestamps,
+		Example: `  cosign attest [--key <key path>|<kms uri>] [--predicate <path>] [--no-upload=true|false] [-y] <image uri>
+  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --certificate cosign.crt --certificate-chain chain.crt <IMAGE>
+  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --no-upload true <IMAGE>`,
+			if o.NoUpload && o.BundlePath == "" {
+				return fmt.Errorf("must enable upload to the OCI registry or specify a local --bundle path")
+				"", o.Fulcio.URL, o.OIDC.Issuer, "",
+				true, true, o.BundlePath,
+				KeyOpts:         ko,
+				RegistryOptions: o.Registry,
+				CertPath:        o.Cert,
+				CertChainPath:   o.CertChain,
+				NoUpload:        o.NoUpload,
+				PredicatePath:   o.Predicate.Path,
+				PredicateType:   o.Predicate.Type,
+				Tim
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-					CertRef:                      o.CertVerify.Cert,
-					CertChain:                    o.CertVerify.CertChain,
-					SCTRef:                       o.CertVerify.SCT,
-					RekorURL:                     o.Rekor.URL,
-					Attachment:                   o.Attachment,
-					CommonVerifyOptions:          o.CommonVerifyOptions,
-					TSACertChainPath:             o.CommonVerifyOptions.TSACertChainPath,
+		Example: `  cosign attest --key <key path>|<kms uri> [--predicate <path>] [--a key=value] [--no-upload=true|false] [--record-creation-timestamp=true|false] [--f] [--r] <image uri>
+  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --cert cosign.crt --cert-chain chain.crt <IMAGE>
+  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --no-upload true <IMAGE>
+
+  # attach an attestation to a container image and honor the creation timestamp of the signature
+  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --record-creation-timestamp <IMAGE>`,
+			if o.NewBundleFormat && o.NoUpload && o.BundlePath == "" {
+				return fmt.Errorf("must enable upload to the OCI registry or specify a local --bundle path with --new-bundle-format")
+				o.Rekor.URL, o.Fulcio.URL, o.OIDC.Issuer, o.TSAServerURL,
+				o.TlogUpload, o.NewBundleFormat, o.BundlePath,
+				FulcioURL:                      o.Fulcio.URL,
+				RekorURL:                       o.Rekor.URL,
+				OIDCIssuer:                     o.OIDC.Issuer,
+				TSAServerURL:                   o.TSAServerURL,
+				NewBundleFormat:                o.NewBundleFormat,
+				KeyOpts:                 ko,
+				RegistryOptions:   
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8404f23a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2ec8094c` are properly handled with clean fallback behavior.

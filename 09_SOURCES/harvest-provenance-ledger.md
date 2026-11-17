@@ -10653,3 +10653,10 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `620819d1` | Multi-dimensional audit evidence | 2026-11-17T16:38:47.964Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `16249fae` | Multi-dimensional audit evidence | 2026-11-17T16:38:51.366Z |
 | `learn-github-surrealdb-surrealdb` | `https://github.com/surrealdb/surrealdb` | `1b73f91b` | Multi-dimensional audit evidence | 2026-11-17T16:38:53.777Z |
+| `learn-huggingface-sensenova-sensenova-loop-9b` | `https://huggingface.co/sensenova/SenseNova-Loop-9B` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-17T16:46:31.203Z |
+| `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-11-17T16:46:33.818Z |
+| `learn-github-sceneview-sceneview` | `https://github.com/sceneview/sceneview` | `0600bf13` | Multi-dimensional audit evidence | 2026-11-17T16:46:41.254Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `2ec8094c` | Multi-dimensional audit evidence | 2026-11-17T16:46:44.908Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `996349a5` | Multi-dimensional audit evidence | 2026-11-17T16:46:48.098Z |
+| `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `5f3fdbdc` | Multi-dimensional audit evidence | 2026-11-17T16:46:52.765Z |
+| `learn-dom-d-66a27b84` | `project://hf-sensenova-sensenova-loop-9b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md` | 2026-11-17T16:47:25.011Z |

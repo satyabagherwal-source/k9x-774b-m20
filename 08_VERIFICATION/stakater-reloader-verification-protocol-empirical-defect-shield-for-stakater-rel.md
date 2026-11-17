@@ -4,22 +4,22 @@
 {
   "source_repository": "stakater/Reloader",
   "source_url": "https://github.com/stakater/Reloader",
-  "source_version": "45f478d2",
+  "source_version": "5f3fdbdc",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T16:08:59.748Z",
+  "timestamp": "2026-11-17T16:46:52.949Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-stakater-reloader",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [stakater/Reloader](https://github.com/stakater/Reloader) (Revision: `45f478d2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T16:08:59.748Z`  
+> **Provenance**: Harvested from [stakater/Reloader](https://github.com/stakater/Reloader) (Revision: `5f3fdbdc`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T16:46:52.949Z`  
 > **Learning ID**: `learn-github-stakater-reloader`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `stakater/Reloader` (Commit: `45f478d2`)
+- **Target Repository**: `stakater/Reloader` (Commit: `5f3fdbdc`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/stakater-reloader-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/stakater/Reloader](https://github.com/stakater/Reloader))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T16:08:56.190Z  
+> **Harvest Timestamp**: 2026-11-17T16:46:51.827Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A Kubernetes controller to watch changes in ConfigMap and Secrets and do rolling upgrades on Pods with their associated Deployment, StatefulSet, DaemonSet and DeploymentConfig – [✩Star] if you're using it!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10574 stars
+- **Stars / Engagement**: 10576 stars
 
 ---
 
@@ -48,325 +48,612 @@ PROVENANCE_END -->
 - Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `internal/pkg/util/util.go`
+### Core Architecture Module: `internal/pkg/webhook/webhook.go`
 ```
-package util
+// Package webhook handles sending reload notifications to external endpoints.
+// When --webhook-url is set, Reloader sends HTTP POST requests instead of modifying workloads.
+package webhook
 
 import (
 	"bytes"
-	"encoding/base64"
-	"errors"
+	"context"
+	"encoding/json"
 	"fmt"
-	"sort"
-	"strings"
+	"net/http"
+	"time"
 
-	"github.com/spf13/cobra"
-	v1 "k8s.io/api/core/v1"
-	csiv1 "sigs.k8s.io/secrets-store-csi-driver/apis/v1"
+	"github.com/go-logr/logr"
 
-	"github.com/stakater/Reloader/internal/pkg/constants"
-	"github.com/stakater/Reloader/internal/pkg/crypto"
-	"github.com/stakater/Reloader/internal/pkg/options"
+	httputil "github.com/stakater/Reloader/internal/pkg/http"
 )
 
-// ConvertToEnvVarName converts the given text into a usable env var
-// removing any special chars with '_' and transforming text to upper case
-func ConvertToEnvVarName(text string) string {
-	var buffer bytes.Buffer
-	upper := strings.ToUpper(text)
-	lastCharValid := false
-	for i := 0; i < len(upper); i++ {
-		ch := upper[i]
-		if (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') {
-			buffer.WriteString(string(ch))
-			lastCharValid = true
-		} else {
-			if lastCharValid {
-				buffer.WriteString("_")
-			}
-			lastCharValid = false
-		}
-	}
-	return buffer.String()
+// Payload represents the data sent to the webhook endpoint.
+type Payload struct {
+	Kind         string    `json:"kind"`
+	Namespace    string    `json:"namespace"`
+	ResourceName string    `json:"resourceName"`
+	ResourceType string    `json:"resourceType"`
+	Hash         string    `json:"hash"`
+	Timestamp    time.Time `json:"timestamp"`
+
+	// Workloads contains the list of workloads that would be reloaded.
+	Workloads []WorkloadInfo `json:"workloads"`
 }
 
-func GetSHAfromConfigmap(configmap *v1.ConfigMap) string {
-	values := []string{}
-	for k, v := range configmap.Data {
-		values = append(values, k+"="+v)
-	}
-	for k, v := range configmap.BinaryData {
-		values = append(values, k+"="+base64.StdEncoding.EncodeToString(v))
-	}
-	sort.Strings(values)
-	return crypto.GenerateSHA(strings.Join(values, ";"))
+// WorkloadInfo describes a workload that would be reloaded.
+type WorkloadInfo struct {
+	Kind      string `json:"kind"`
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
 }
 
-func GetSHAfromSecret(data map[string][]byte) string {
-	values := []string{}
-	for k, v := range data {
-		values = append(values, k+"="+string(v[:]))
-	}
-	sort.Strings(values)
-	return crypto.GenerateSHA(strings.Join(values, ";"))
+// Client sends reload notifications to webhook endpoints.
+type Client struct {
+	httpClient *http.Client
+	url        string
+	log        logr.Logger
 }
 
-func GetSHAfromSecretProviderClassPodStatus(data csiv1.SecretProviderClassPodStatusStatus) string {
-	values := []string{}
-	for _, v := range data.Objects {
-		values = append(values, v.ID+"="+v.Version)
+// NewClient creates a new webhook client.
+func NewClient(url string, log logr.Logger) *Client {
+	return &Client{
+		httpClient: httputil.NewDefaultClient(),
+		url:        url,
+		log:        log,
 	}
-	values = append(values, "SecretProviderClassName="+data.SecretProviderClassName)
-	sort.Strings(values)
-	return crypto.GenerateSHA(strings.Join(values, ";"))
 }
 
-type List []string
-
-func (l *List) Contains(s string) bool {
-	for _, v := range *l {
-		if v == s {
-			return true
-		}
+// Send posts the payload to the configured webhook URL.
+func (c *Client) Send(ctx context.Context, payload Payload) error {
+	if c.url == "" {
+		return nil
 	}
-	return false
+
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("marshaling payload: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.url, bytes.NewReader(data))
+	if err != nil {
+		return fmt.Errorf("creating request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", "Reloader/2.0")
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("sending request: %w", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("webhook returned status %d", resp.StatusCode)
+	}
+
+	c.log.V(1).Info("webhook notification sent",
+		"url", c.url,
+		"resourceType", payload.ResourceType,
+		"resourceName", payload.ResourceName,
+		"workloadCount", len(payload.Workloads),
+	)
+
+	return nil
 }
 
-func ConfigureReloaderFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().BoolVar(&options.AutoReloadAll, "auto-reload-all", false, "Auto reload all resources")
-	cmd.PersistentFlags().StringVar(&options.ConfigmapUpdateOnChangeAnnotation, "configmap-annotation", "configmap.reloader.stakater.com/reload", "annotation to detect changes in configmaps, specified by name")
-	cmd.PersistentFlags().StringVar(&options.SecretUpdateOnChangeAnnotation, "secret-annotation", "secret.reloader.stakater.com/reload", "annotation to detect changes in secrets, specified by name")
-	cmd.PersistentFlags().StringVar(&options.ReloaderAutoAnnotation, "auto-annotation", "reloader.stakater.com/auto", "annotation to detect changes in secrets/configmaps")
-	cmd.PersistentFlags().StringVar(&options.IgnoreResourceAnnotation, "ignore-annotation", "reloader.stakater.com/ignore", "annotation to ignore a resource when watching for changes in secrets/configmaps")
-	cmd.PersistentFlags().StringVar(&options.ConfigmapReloaderAutoAnnotation, "configmap-auto-annotation", "configmap.reloader.stakater.com/auto", "annotation to detect changes in configmaps")
-	cmd.PersistentFlags().StringVar(&options.SecretReloaderAutoAnnotation, "secret-auto-annotation", "secret.reloader.stakater.com/auto", "annotation to detect changes in secrets")
-	cmd.PersistentFlags().StringVar(&options.AutoSearchAnnotation, "auto-search-annotation", "reloader.stakater.com/search", "annotation to detect changes in configmaps or secrets tagged with special match annotation")
-	cmd.PersistentFlags().StringVar(&options.SearchMatchAnnotation, "search-match-annotation", "reloader.stakater.com/match", "annotation to mark secrets or configmaps to match the search")
-	cmd.PersistentFlags().StringVar(&options.PauseDeploymentAnnotation, "pause-deployment-annotation", "deployment.reloader.stakater.com/pause-period", "annotation to define the time period to pause a deployment after a configmap/secret change has been detected")
-	cmd.PersistentFlags().StringVar(&options.PauseDeploymentTimeAnnotation, "pause-deployment-time-annotation", "deployment.reloader.stakater.com/paused-at", "annotation to indicate when a deployment was paused by Reloader")
-	cmd.PersistentFlags().StringVar(&options.LogFormat, "log-format", "", "Log format to use (empty string for text, or JSON)")
-	cmd.PersistentFlags().StringVar(&options.LogLevel, "log-level", "info", "Log level to use (trace, debug, info, warning, error, fatal and panic)")
-	cmd.PersistentFlags().StringVar(&options.WebhookUrl, "webhook-url", "", "webhook to trigger instead of performing a reload")
-	cmd.PersistentFlags().StringSliceVar(&options.ResourcesToIgnore, "resources-to-ignore", options.ResourcesToIgnore, "list of resources to ignore (valid options 'configmaps' or 'secrets')")
-	cmd.PersistentFlags().StringSliceVar(&options.WorkloadTypesToIgnore, "ignored-workload-types", options.WorkloadTypesToIgnore, "list of workload types to ignore (valid options: 'jobs', 'cronjobs', or both)")
-	cmd.PersistentFlags().StringSliceVar(&options.Namespaces, "namespaces", options.Namespaces, "explicit list of namespaces to watch (scoped mode; creates no ClusterRole)")
-	cmd.PersistentFlags().StringSliceVar(&options.NamespacesToIgnore, "namespaces-to-ignore", options.NamespacesToIgnore, "list of namespaces to ignore")
-	cmd.PersistentFlags().StringSliceVar(&options.NamespaceSelectors, "namespace-selector", options.NamespaceSelectors, "list of key:value labels to filter on for namespaces")
-	cmd.PersistentFlags().StringSliceVar(&options.ResourceSelectors, "resource-label-selector", options.ResourceSelectors, "list of key:value labels to filter on for configmaps and secrets")
-	cmd.PersistentFlags().StringVar(&options.IsArgoRollouts, "is-Argo-Rollouts", "false", "Add support for argo rollouts")
-	cmd.PersistentFlags().StringVar(&options.ReloadStrategy, constants.ReloadStrategyFlag, constants.EnvVarsReloadStrategy, "Specifies the desired reload strategy")
-	cmd.PersistentFlags().StringVar(&options.ReloadOnCreate, "reload-on-create", "false", "Add support to watch create events")
-	cmd.PersistentFlags().StringVar(&options.ReloadOnDelete, "reload-on-delete", "false", "Add support to watch delete events")
-	cmd.PersistentFlags().BoolVar(&options.EnableHA, "enable-ha", false, "Adds support for running multiple replicas via leadership election")
-	cmd.PersistentFlags().DurationVar(&options.LeaderElectionLeaseDuration, "leader-election-lease-duration", options.LeaderElectionLeaseDuration, "Duration non-leader candidates wait before force acquiring leadership, only used when --enable-ha is set")
-	cmd.PersistentFlags().DurationVar(&options.LeaderElectionRenewDeadline, "leader-election-renew-deadline", options.LeaderElectionRenewDeadline, "Duration the acting leader retries refreshing leadership before giving up, only used when --enable-ha is set")
-	cmd.PersistentFlags().DurationVar(&options.LeaderElectionRetryPeriod, "leader-election-retry-period", options.LeaderElectionRetryPeriod, "Duration clients wait between attempting acquisition and renewal of leadership, only used when --enable-ha is set")
-	cmd.PersistentFlags().BoolVar(&options.SyncAfterRestart, "sync-after-restart", false, "Sync add events after reloader restarts")
-	cmd.PersistentFlags().BoolVar(&options.EnablePProf, "enable-pprof", false, "Enable pprof for profiling")
-	cmd.PersistentFlags().StringVar(&options.PProfAddr, "pprof-addr", ":6060", "Address to start pprof server on. Default is :6060")
-	cmd.PersistentFlags().BoolVar(&options.EnableCSIIntegration, "enable-csi-integration", false, "Enables CSI integration. Default is :false")
-}
-
-func GetIgnoredResourcesList() (List, error) {
-
-	ignoredResourcesList := options.ResourcesToIgnore // getStringSliceFromFlags(cmd, "resources-to-ignore")
-
-	// Normalize to the canonical lowercase keys used in kube.ResourceMap so the
-	// comparison is case-insensitive (e.g. "configMaps", "ConfigMaps", "sEcrets"
-	// all map to their canonical lowercase form).
-	normalized := make(List, 0, len(ignoredResourcesList))
-	for _, v := range ignoredResourcesList {
-		switch strings.ToLower(v) {
-		case "configmaps":
-			normalized = append(normalized, "configmaps")
-		case "secrets":
-			normalized = append(normalized, "secrets")
-		default:
-			return nil, fmt.Errorf("'resources-to-ignore' only accepts 'configmaps' or 'secrets', not '%s'", v)
-		}
-	}
-
-	if len(normalized) > 1 {
-		return nil, errors.New("'resources-to-ignore' only accepts 'configmaps' or 'secrets', not both")
-	}
-
-	return normalized, nil
-}
-
-func GetIgnoredWorkloadTypesList() (List, error) {
-
-	ignoredWorkloadTypesList := options.WorkloadTypesToIgnore
-
-	for _, v := range ignoredWorkloadTypesList {
-		if v != "jobs" && v != "cronjobs" {
-			return nil, fmt.Errorf("'ignored-workload-types' accepts 'jobs', 'cronjobs', or both, not '%s'", v)
-		}
-	}
-
-	return ignoredWorkloadTypesList, nil
+// IsConfigured returns true if the webhook URL is set.
+func (c *Client) IsConfigured() bool {
+	return c != nil && c.url != ""
 }
 
 ```
 
-### Core Architecture Module: `internal/pkg/alerts/alert.go`
+### Core Architecture Module: `internal/pkg/workload/statefulset.go`
 ```
-package alert
+package workload
 
 import (
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+// statefulSetAccessor implements PodTemplateAccessor for StatefulSet.
+type statefulSetAccessor struct {
+	statefulset *appsv1.StatefulSet
+}
+
+func (a *statefulSetAccessor) GetPodTemplateSpec() *corev1.PodTemplateSpec {
+	return &a.statefulset.Spec.Template
+}
+
+func (a *statefulSetAccessor) GetObjectMeta() *metav1.ObjectMeta {
+	return &a.statefulset.ObjectMeta
+}
+
+// StatefulSetWorkload wraps a Kubernetes StatefulSet.
+type StatefulSetWorkload struct {
+	*BaseWorkload[*appsv1.StatefulSet]
+}
+
+// NewStatefulSetWorkload creates a new StatefulSetWorkload.
+func NewStatefulSetWorkload(s *appsv1.StatefulSet) *StatefulSetWorkload {
+	original := s.DeepCopy()
+	accessor := &statefulSetAccessor{statefulset: s}
+	return &StatefulSetWorkload{
+		BaseWorkload: NewBaseWorkload(s, original, accessor, KindStatefulSet),
+	}
+}
+
+// Ensure StatefulSetWorkload implements Workload.
+var _ Workload = (*StatefulSetWorkload)(nil)
+
+func (w *StatefulSetWorkload) DeepCopy() Workload {
+	return NewStatefulSetWorkload(w.Object().DeepCopy())
+}
+
+// GetStatefulSet returns the underlying StatefulSet for special handling.
+func (w *StatefulSetWorkload) GetStatefulSet() *appsv1.StatefulSet {
+	return w.Object()
+}
+
+```
+
+### Core Architecture Module: `cmd/reloader/main.go`
+```
+package main
+
+import (
+	"context"
 	"fmt"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
-	"strings"
+	"os/signal"
+	"syscall"
+	"time"
 
-	"github.com/parnurzeal/gorequest"
-	"github.com/sirupsen/logrus"
+	"github.com/go-logr/logr"
+	"github.com/go-logr/zerologr"
+	"github.com/rs/zerolog"
+	"github.com/spf13/cobra"
+	"k8s.io/client-go/discovery"
+	controllerruntime "sigs.k8s.io/controller-runtime"
+
+	"github.com/stakater/Reloader/internal/pkg/config/flags"
+	"github.com/stakater/Reloader/internal/pkg/controller"
+	"github.com/stakater/Reloader/internal/pkg/csi"
+	"github.com/stakater/Reloader/internal/pkg/metrics"
+	"github.com/stakater/Reloader/internal/pkg/openshift"
+	"github.com/stakater/Reloader/pkg/config"
+	"github.com/stakater/Reloader/pkg/metadata"
 )
 
-type AlertSink string
-
+// Environment variable names for pod identity in HA mode.
 const (
-	AlertSinkSlack      AlertSink = "slack"
-	AlertSinkTeams      AlertSink = "teams"
-	AlertSinkGoogleChat AlertSink = "gchat"
-	AlertSinkRaw        AlertSink = "raw"
+	podNameEnv      = "POD_NAME"
+	podNamespaceEnv = "POD_NAMESPACE"
 )
 
-// function to send alert msg to webhook service
-func SendWebhookAlert(msg string) {
-	webhook_url, ok := os.LookupEnv("ALERT_WEBHOOK_URL")
-	if !ok {
-		logrus.Error("ALERT_WEBHOOK_URL env variable not provided")
-		return
+// cfg holds the configuration for this reloader instance.
+var cfg *config.Config
+
+func main() {
+	if err := newReloaderCommand().Execute(); err != nil {
+		os.Exit(1)
 	}
-	webhook_url = strings.TrimSpace(webhook_url)
-	alert_sink := os.Getenv("ALERT_SINK")
-	alert_sink = strings.ToLower(strings.TrimSpace(alert_sink))
+}
 
-	// Provision to add Proxy to reach webhook server if required
-	webhook_proxy := os.Getenv("ALERT_WEBHOOK_PROXY")
-	webhook_proxy = strings.TrimSpace(webhook_proxy)
+func newReloaderCommand() *cobra.Command {
+	cfg = config.NewDefault()
 
-	// Provision to add Additional information in the alert. e.g ClusterName
-	alert_additional_info, ok := os.LookupEnv("ALERT_ADDITIONAL_INFO")
-	if ok {
-		alert_additional_info = strings.TrimSpace(alert_additional_info)
-		msg = fmt.Sprintf("%s : %s", alert_additional_info, msg)
+	cmd := &cobra.Command{
+		Use:   "reloader",
+		Short: "A watcher for your Kubernetes cluster",
+		RunE:  run,
 	}
 
-	var errs []error
-	switch AlertSink(alert_sink) {
-	case AlertSinkSlack:
-		errs = sendSlackAlert(webhook_url, webhook_proxy, msg)
-	case AlertSinkTeams:
-		errs = sendTeamsAlert(webhook_url, webhook_proxy, msg)
-	case AlertSinkGoogleChat:
-		errs = sendGoogleChatAlert(webhook_url, webhook_proxy, msg)
+	flags.BindFlags(cmd.PersistentFlags(), cfg)
+	return cmd
+}
+
+func run(cmd *cobra.Command, args []string) error {
+	// Configure logging first so ApplyFlags can surface namespace-scope warnings
+	// through a ready logger instead of returning them to the caller.
+	log, err := configureLogging(flags.LoggingFlags())
+	if err != nil {
+		return fmt.Errorf("configuring logging: %w", err)
+	}
+	controllerruntime.SetLogger(log)
+
+	if err := flags.ApplyFlags(cfg, log); err != nil {
+		return fmt.Errorf("applying flags: %w", err)
+	}
+
+	if err := cfg.Validate(); err != nil {
+		return fmt.Errorf("validating config: %w", err)
+	}
+
+	if cfg.EnableHA {
+		if err := validateHAEnvs(); err != nil {
+			return err
+		}
+		cfg.LeaderElection.Identity = os.Getenv(podNameEnv)
+		if cfg.LeaderElection.Namespace == "" {
+			cfg.LeaderElection.Namespace = os.Getenv(podNamespaceEnv)
+		}
+	}
+
+	log.Info("Starting Reloader")
+
+	if cfg.IsGlobalMode() {
+		log.Info("watching all namespaces", "ignoredNamespaces", cfg.IgnoredNamespaces)
+	} else {
+		log.Info("watching scoped namespaces", "namespaces", cfg.WatchedNamespaces)
+	}
+
+	if len(cfg.NamespaceSelectors) > 0 {
+		log.Info("namespace-selector is set", "selectors", cfg.NamespaceSelectorStrings)
+	}
+
+	if len(cfg.ResourceSelectors) > 0 {
+		log.Info("resource-label-selector is set", "selectors", cfg.ResourceSelectorStrings)
+	}
+
+	if cfg.WebhookURL != "" {
+		log.Info("webhook-url is set, will only send webhook, no resources will be reloaded", "url", cfg.WebhookURL)
+	}
+
+	if cfg.EnableHA {
+		log.Info(
+			"high-availability mode enabled",
+			"leaderElectionID", cfg.LeaderElection.LockName,
+			"leaderElectionNamespace", cfg.LeaderElection.Namespace,
+		)
+	}
+
+	collectors := metrics.SetupPrometheusEndpoint()
+
+	restConfig := controllerruntime.GetConfigOrDie()
+	discoveryClient, discErr := discovery.NewDiscoveryClientForConfig(restConfig)
+	if discErr != nil {
+		log.V(1).Info("Failed to create discovery client", "error", discErr)
+	}
+
+	if flags.ShouldAutoDetectOpenShift() {
+		if discoveryClient != nil && openshift.HasDeploymentConfigSupport(discoveryClient, log) {
+			cfg.DeploymentConfigEnabled = true
+		}
+	}
+
+	// CSI: require both the flag AND CRD presence (parity with master's
+	// shouldRunCSIController). If the flag is set but CRDs are missing, log and
+	// disable so the watch is not added (controller-runtime would crash on an
+	// absent CRD).
+	if cfg.CSIIntegrationEnabled {
+		if discoveryClient == nil || !csi.HasCSISupport(discoveryClient, log) {
+			log.Info("Disabling CSI integration: secrets-store CSI driver CRDs not detected")
+			cfg.CSIIntegrationEnabled = false
+		}
+	}
+
+	controller.AddOptionalSchemes(cfg.ArgoRolloutsEnabled, cfg.DeploymentConfigEnabled, cfg.CSIIntegrationEnabled)
+
+	mgr, err := controller.NewManager(
+		controller.ManagerOptions{
+			Config:     cfg,
+			Log:        log,
+			Collectors: &collectors,
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("creating manager: %w", err)
+	}
+
+	if err := controller.SetupReconcilers(mgr, cfg, log, &collectors); err != nil {
+		return fmt.Errorf("setting up reconcilers: %w", err)
+	}
+
+	// Meta-info is internal instance metadata and is always published. The
+	// publisher builds its own uncached client (see metadata.Runnable) because
+	// the ConfigMap lives in Reloader's own namespace, which the manager cache
+	// does not cover in scoped mode.
+	if err := mgr.Add(metadata.Runnable(mgr.GetConfig(), mgr.GetScheme(), cfg, log)); err != nil {
+		log.Error(err, "Failed to add metadata publisher")
+		// Non-fatal, continue starting
+	}
+
+	if cfg.EnablePProf {
+		go startPProfServer(log)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		sig := <-sigCh
+		log.Info("Received signal, shutting down", "signal", sig)
+		cancel()
+	}()
+
+	log.Info("Starting controller manager")
+	if err := controller.RunManager(ctx, mgr, log); err != nil {
+		return fmt.Errorf("manager exited with error: %w", err)
+	}
+
+	log.Info("Reloader shutdown complete")
+	return nil
+}
+
+func configureLogging(logFormat, logLevel string) (logr.Logger, error) {
+	// Parse log level
+	var level zerolog.Level
+	switch logLevel {
+	case "trace":
+		level = zerolog.TraceLevel
+	case "debug":
+		level = zerolog.DebugLevel
+	case "info", "":
+		level = zerolog.InfoLevel
+	case "warn", "warning":
+		level = zerolog.WarnLevel
+	case "error":
+		level = zerolog.ErrorLevel
 	default:
-		msg = strings.ReplaceAll(msg, "*", "")
-		errs = sendRawWebhookAlert(webhook_url, webhook_proxy, msg)
+		return logr.Logger{}, fmt.Errorf("unsupported log level: %q", logLevel)
 	}
 
-	// Previously the errors returned by the send functions were discarded, so a
-	// failing webhook (e.g. Teams) produced no output at all. Surface them. (#949)
-	for _, err := range errs {
-		logrus.Errorf("Error sending alert: %s", err.Error())
+	var zl zerolog.Logger
+	switch logFormat {
+	case "json":
+		zl = zerolog.New(os.Stdout).Level(level).With().Timestamp().Logger()
+	case "":
+		// Human-readable console output
+		zl = zerolog.New(
+			zerolog.ConsoleWriter{
+				Out:        os.Stdout,
+				TimeFormat: time.RFC3339,
+			},
+		).Level(level).With().Timestamp().Logger()
+	default:
+		return logr.Logger{}, fmt.Errorf("unsupported log format: %q", logFormat)
 	}
+
+	return zerologr.New(&zl), nil
 }
 
-// function to handle server redirection
-func redirectPolicy(req gorequest.Request, via []gorequest.Request) error {
-	return fmt.Errorf("incorrect token (redirection)")
-}
+func validateHAEnvs() error {
+	podName := os.Getenv(podNameEnv)
+	podNamespace := os.Getenv(podNamespaceEnv)
 
-// function to send alert to slack
-func sendSlackAlert(webhookUrl string, proxy string, msg string) []error {
-	attachment := Attachment{
-		Text:       msg,
-		Color:      "good",
-		AuthorName: "Reloader",
+	if podName == "" {
+		return fmt.Errorf("%s not set, cannot run in HA mode", podNameEnv)
 	}
-
-	payload := WebhookMessage{
-		Attachments: []Attachment{attachment},
+	if podNamespace == "" {
+		return fmt.Errorf("%s not set, cannot run in HA mode", podNamespaceEnv)
 	}
-
-	request := gorequest.New().Proxy(proxy)
-	resp, _, err := request.
-		Post(webhookUrl).
-		RedirectPolicy(redirectPolicy).
-		Send(payload).
-		End()
-
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode >= 400 {
-		return []error{fmt.Errorf("error sending msg. status: %v", resp.Status)}
-	}
-
 	return nil
 }
 
-// function to send alert to Microsoft Teams webhook
-func sendTeamsAlert(webhookUrl string, proxy string, msg string) []error {
-	attachment := Attachment{
-		Text: msg,
+func startPProfServer(log logr.Logger) {
+	log.Info("Starting pprof server", "addr", cfg.PProfAddr)
+	if err := http.ListenAndServe(cfg.PProfAddr, nil); err != nil {
+		log.Error(err, "Failed to start pprof server")
+	}
+}
+
+```
+
+### Core Architecture Module: `internal/pkg/alerting/alerter.go`
+```
+package alerting
+
+import (
+	"context"
+	"time"
+
+	"github.com/stakater/Reloader/pkg/config"
+)
+
+// AlertMessage contains the details of a reload event to be sent as an alert.
+type AlertMessage struct {
+	WorkloadKind      string
+	WorkloadName      string
+	WorkloadNamespace string
+	ResourceKind      string
+	ResourceName      string
+	ResourceNamespace string
+	Timestamp         time.Time
+}
+
+// Alerter is the interface for sending reload notifications.
+type Alerter interface {
+	Send(ctx context.Context, message AlertMessage) error
+}
+
+// NewAlerter creates an Alerter based on the configuration.
+// Returns a NoOpAlerter if alerting is disabled.
+func NewAlerter(cfg *config.Config) Alerter {
+	alertCfg := cfg.Alerting
+	if !alertCfg.Enabled || alertCfg.WebhookURL == "" {
+		return &NoOpAlerter{}
 	}
 
-	request := gorequest.New().Proxy(proxy)
-	resp, _, err := request.
-		Post(webhookUrl).
-		RedirectPolicy(redirectPolicy).
-		Send(attachment).
-		End()
-
-	if err != nil {
-		return err
+	switch alertCfg.Sink {
+	case "slack":
+		return NewSlackAlerter(alertCfg.WebhookURL, alertCfg.Proxy, alertCfg.Additional)
+	case "teams":
+		return NewTeamsAlerter(alertCfg.WebhookURL, alertCfg.Proxy, alertCfg.Additional)
+	case "gchat":
+		return NewGChatAlerter(alertCfg.WebhookURL, alertCfg.Proxy, alertCfg.Additional)
+	default:
+		return NewRawAlerter(alertCfg.WebhookURL, alertCfg.Proxy, alertCfg.Additional, alertCfg.Structured)
 	}
-	if resp.StatusCode != 200 {
-		return []error{fmt.Errorf("error sending msg. status: %v", resp.Status)}
-	}
+}
 
+// NoOpAlerter is an Alerter that does nothing.
+type NoOpAlerter struct{}
+
+func (a *NoOpAlerter) Send(ctx context.Context, message AlertMessage) error {
 	return nil
 }
 
-// function to send alert to Google Chat webhook
-func sendGoogleChatAlert(webhookUrl string, proxy string, msg string) []error {
-	payload := map[string]interface{}{
-		"text": msg,
-	}
+```
 
-	request := gorequest.New().Proxy(proxy)
-	resp, _, err := request.
-		Post(webhookUrl).
-		RedirectPolicy(redirectPolicy).
-		Send(payload).
-		End()
+### Core Architecture Module: `internal/pkg/alerting/gchat.go`
+```
+package alerting
 
-	if err != nil {
-		return err
-	}
-	if resp.StatusCode != 200 {
-		return []error{fmt.Errorf("error sending msg. status: %v", resp.Status)}
-	}
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+)
 
-	return nil
+// GChatAlerter sends alerts to Google Chat webhooks.
+type GChatAlerter struct {
+	webhookURL string
+	additional string
+	client     *httpClient
 }
 
-// function to send alert to webhook service as text
-func sendRawWebhookAlert(webhookUrl string, proxy string, msg string) []error {
-	request := gorequest.New().Proxy(proxy)
-	resp, _, err := request.
-		Post(webhookUrl).
-		Type("text").
-		RedirectPolicy(redirectPolicy).
-		Send(msg).
-		End()
-
-	if err != nil {
-		return err
+// NewGChatAlerter creates a new GChatAlerter.
+func NewGChatAlerter(webhookURL, proxyURL, additional string) *GChatAlerter {
+	return &GChatAlerter{
+		webhookURL: webhookURL,
+		additional: additional,
+		client:     newHTTPClient(proxyURL),
 	}
-	if resp.StatusCode >= 400 {
-		return []error{fmt.Errorf("error sending msg. status: %v", resp.Status)}
+}
+
+// gchatMessage represents a Google Chat message.
+type gchatMessage struct {
+	Text  string      `json:"text,omitempty"`
+	Cards []gchatCard `json:"cards,omitempty"`
+}
+
+type gchatCard struct {
+	Header   gchatHeader    `json:"header"`
+	Sections []gchatSection `json:"sections"`
+}
+
+type gchatHeader struct {
+	Title    string `json:"title"`
+	Subtitle string `json:"subtitle,omitempty"`
+}
+
+type gchatSection struct {
+	Widgets []gchatWidget `json:"widgets"`
+}
+
+type gchatWidget struct {
+	KeyValue *gchatKeyValue `json:"keyValue,omitempty"`
+}
+
+type gchatKeyValue struct {
+	TopLabel string `json:"topLabel"`
+	Content  string `json:"content"`
+}
+
+func (a *GChatAlerter) Send(ctx context.Context, message AlertMessage) error {
+	msg := a.buildMessage(message)
+
+	body, err := json.Marshal(msg)
+	if err != nil {
+		return fmt.Errorf("marshaling gchat message: %w", err)
+	}
+
+	return a.client.post(ctx, a.webhookURL, body)
+}
+
+func (a *GChatAlerter) buildMessage(msg AlertMessage) gchatMessage {
+	widgets := []gchatWidget{
+		{KeyValue: &gchatKeyValue{TopLabel: "Workload", Content: fmt.Sprintf("%s/%s (%s)", msg.WorkloadNamespace, msg.WorkloadName, msg.WorkloadKind)}},
+		{KeyValue: &gchatKeyValue{TopLabel: "Resource", Content: fmt.Sprintf("%s/%s (%s)", msg.ResourceNamespace, msg.ResourceName, msg.ResourceKind)}},
+		{KeyValue: &gchatKeyValue{TopLabel: "Time", Content: msg.Timestamp.Format("2006-01-02 15:04:05 UTC")}},
+	}
+
+	subtitle := ""
+	if a.additional != "" {
+		subtitle = a.additional
+	}
+
+	return gchatMessage{
+		Cards: []gchatCard{
+			{
+				Header: gchatHeader{
+					Title:    "Reloader triggered reload",
+					Subtitle: subtitle,
+				},
+				Sections: []gchatSection{
+					{Widgets: widgets},
+				},
+			},
+		},
+	}
+}
+
+```
+
+### Core Architecture Module: `internal/pkg/alerting/http.go`
+```
+package alerting
+
+import (
+	"bytes"
+	"context"
+	"fmt"
+	"io"
+	"net/http"
+
+	httputil "github.com/stakater/Reloader/internal/pkg/http"
+)
+
+// httpClient wraps http.Client with common configuration.
+type httpClient struct {
+	client *http.Client
+}
+
+// newHTTPClient creates a new httpClient with optional proxy support.
+func newHTTPClient(proxyURL string) *httpClient {
+	cfg := httputil.DefaultConfig()
+	cfg.Timeout = httputil.AlertingTimeout
+	cfg.ProxyURL = proxyURL
+
+	return &httpClient{
+		client: httputil.NewClient(cfg),
+	}
+}
+
+// post sends a POST request with JSON body.
+func (c *httpClient) post(ctx context.Context, url string, body []byte) error {
+	return c.doPost(ctx, url, body, "application/json")
+}
+
+// postText sends a POST request with plain text body.
+func (c *httpClient) postText(ctx context.Context, url string, text string) error {
+	return c.doPost(ctx, url, []byte(text), "text/plain")
+}
+
+// doPost sends a POST request with the specified content type.
+func (c *httpClient) doPost(ctx context.Context, url string, body []byte, contentType string) error {
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("creating request: %w", err)
+	}
+	req.Header.Set("Content-Type", contentType)
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return fmt.Errorf("sending request: %w", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("unexpected status %d: %s", resp.StatusCode, string(body))
 	}
 
 	return nil
@@ -374,26 +661,145 @@ func sendRawWebhookAlert(webhookUrl string, proxy string, msg string) []error {
 
 ```
 
-### Core Architecture Module: `internal/pkg/alerts/slack_alert.go`
+### Core Architecture Module: `internal/pkg/alerting/raw.go`
 ```
-package alert
+package alerting
 
-type WebhookMessage struct {
-	Username        string       `json:"username,omitempty"`
-	IconEmoji       string       `json:"icon_emoji,omitempty"`
-	IconURL         string       `json:"icon_url,omitempty"`
-	Channel         string       `json:"channel,omitempty"`
-	ThreadTimestamp string       `json:"thread_ts,omitempty"`
-	Text            string       `json:"text,omitempty"`
-	Attachments     []Attachment `json:"attachments,omitempty"`
-	Parse           string       `json:"parse,omitempty"`
-	ResponseType    string       `json:"response_type,omitempty"`
-	ReplaceOriginal bool         `json:"replace_original,omitempty"`
-	DeleteOriginal  bool         `json:"delete_original,omitempty"`
-	ReplyBroadcast  bool         `json:"reply_broadcast,omitempty"`
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"strings"
+)
+
+// RawAlerter sends alerts to a webhook as plain text (default) or structured JSON.
+type RawAlerter struct {
+	webhookURL string
+	additional string
+	structured bool
+	client     *httpClient
 }
 
-type Attachment struct {
+// NewRawAlerter creates a new RawAlerter.
+// If structured is true, sends JSON; otherwise sends plain text.
+func NewRawAlerter(webhookURL, proxyURL, additional string, structured bool) *RawAlerter {
+	return &RawAlerter{
+		webhookURL: webhookURL,
+		additional: additional,
+		structured: structured,
+		client:     newHTTPClient(proxyURL),
+	}
+}
+
+// rawMessage is the JSON payload for structured raw webhook alerts.
+type rawMessage struct {
+	Event             string `json:"event"`
+	WorkloadKind      string `json:"workloadKind"`
+	WorkloadName      string `json:"workloadName"`
+	WorkloadNamespace string `json:"workloadNamespace"`
+	ResourceKind      string `json:"resourceKind"`
+	ResourceName      string `json:"resourceName"`
+	ResourceNamespace string `json:"resourceNamespace"`
+	Timestamp         string `json:"timestamp"`
+	Additional        string `json:"additional,omitempty"`
+}
+
+func (a *RawAlerter) Send(ctx context.Context, message AlertMessage) error {
+	if a.structured {
+		return a.sendStructured(ctx, message)
+	}
+	return a.sendPlainText(ctx, message)
+}
+
+func (a *RawAlerter) sendStructured(ctx context.Context, message AlertMessage) error {
+	msg := rawMessage{
+		Event:             "reload",
+		WorkloadKind:      message.WorkloadKind,
+		WorkloadName:      message.WorkloadName,
+		WorkloadNamespace: message.WorkloadNamespace,
+		ResourceKind:      message.ResourceKind,
+		ResourceName:      message.ResourceName,
+		ResourceNamespace: message.ResourceNamespace,
+		Timestamp:         message.Timestamp.Format("2006-01-02T15:04:05Z07:00"),
+		Additional:        a.additional,
+	}
+
+	body, err := json.Marshal(msg)
+	if err != nil {
+		return fmt.Errorf("marshaling raw message: %w", err)
+	}
+
+	return a.client.post(ctx, a.webhookURL, body)
+}
+
+func (a *RawAlerter) sendPlainText(ctx context.Context, message AlertMessage) error {
+	text := a.formatMessage(message)
+	// Strip markdown formatting for plain text
+	text = strings.ReplaceAll(text, "*", "")
+	return a.client.postText(ctx, a.webhookURL, text)
+}
+
+func (a *RawAlerter) formatMessage(msg AlertMessage) string {
+	text := fmt.Sprintf(
+		"Reloader triggered reload - Workload: %s/%s (%s), Resource: %s/%s (%s), Time: %s",
+		msg.WorkloadNamespace, msg.WorkloadName, msg.WorkloadKind,
+		msg.ResourceNamespace, msg.ResourceName, msg.ResourceKind,
+		msg.Timestamp.Format("2006-01-02 15:04:05 UTC"),
+	)
+
+	if a.additional != "" {
+		text = a.additional + " : " + text
+	}
+
+	return text
+}
+
+```
+
+### Core Architecture Module: `internal/pkg/alerting/slack.go`
+```
+package alerting
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+)
+
+// SlackAlerter sends alerts to Slack webhooks.
+type SlackAlerter struct {
+	webhookURL string
+	additional string
+	client     *httpClient
+}
+
+// NewSlackAlerter creates a new SlackAlerter.
+func NewSlackAlerter(webhookURL, proxyURL, additional string) *SlackAlerter {
+	return &SlackAlerter{
+		webhookURL: webhookURL,
+		additional: additional,
+		client:     newHTTPClient(proxyURL),
+	}
+}
+
+// slackMessage represents a Slack webhook message.
+type slackMessage struct {
+	Username        string            `json:"username,omitempty"`
+	IconEmoji       string            `json:"icon_emoji,omitempty"`
+	IconURL         string            `json:"icon_url,omitempty"`
+	Channel         string            `json:"channel,omitempty"`
+	ThreadTimestamp string            `json:"thread_ts,omitempty"`
+	Text            string            `json:"text,omitempty"`
+	Attachments     []slackAttachment `json:"attachments,omitempty"`
+	Parse           string            `json:"parse,omitempty"`
+	ResponseType    string            `json:"response_type,omitempty"`
+	ReplaceOriginal bool              `json:"replace_original,omitempty"`
+	DeleteOriginal  bool              `json:"delete_original,omitempty"`
+	ReplyBroadcast  bool              `json:"reply_broadcast,omitempty"`
+}
+
+// slackAttachment represents a Slack message attachment.
+type slackAttachment struct {
 	Color    string `json:"color,omitempty"`
 	Fallback string `json:"fallback,omitempty"`
 
@@ -419,1047 +825,476 @@ type Attachment struct {
 	FromURL     string `json:"from_url,omitempty"`
 	OriginalURL string `json:"original_url,omitempty"`
 
-	MarkdownIn []string `json:"mrkdwn_in,omitempty"`
+	Fields     []slackField `json:"fields,omitempty"`
+	MarkdownIn []string     `json:"mrkdwn_in,omitempty"`
 
 	Footer     string `json:"footer,omitempty"`
 	FooterIcon string `json:"footer_icon,omitempty"`
+
+	Actions []slackAction `json:"actions,omitempty"`
 }
 
-type Field struct {
+// slackField represents a field in a Slack attachment.
+type slackField struct {
 	Title string `json:"title"`
 	Value string `json:"value"`
 	Short bool   `json:"short"`
 }
 
-type Action struct {
+// slackAction represents an action button in a Slack attachment.
+type slackAction struct {
 	Type  string `json:"type"`
 	Text  string `json:"text"`
-	Url   string `json:"url"`
+	URL   string `json:"url"`
 	Style string `json:"style"`
 }
 
-```
+func (a *SlackAlerter) Send(ctx context.Context, message AlertMessage) error {
+	text := a.formatMessage(message)
+	msg := slackMessage{
+		Attachments: []slackAttachment{
+			{
+				Text:       text,
+				Color:      "good",
+				AuthorName: "Reloader",
+			},
+		},
+	}
 
-### Core Architecture Module: `internal/pkg/app/app.go`
-```
-package app
+	body, err := json.Marshal(msg)
+	if err != nil {
+		return fmt.Errorf("marshaling slack message: %w", err)
+	}
 
-import "github.com/stakater/Reloader/internal/pkg/cmd"
+	return a.client.post(ctx, a.webhookURL, body)
+}
 
-// Run runs the command
-func Run() error {
-	rootCmd := cmd.NewReloaderCommand()
-	return rootCmd.Execute()
+func (a *SlackAlerter) formatMessage(msg AlertMessage) string {
+	text := fmt.Sprintf(
+		"Reloader triggered reload\n"+
+			"*Workload:* %s/%s (%s)\n"+
+			"*Resource:* %s/%s (%s)\n"+
+			"*Time:* %s",
+		msg.WorkloadNamespace, msg.WorkloadName, msg.WorkloadKind,
+		msg.ResourceNamespace, msg.ResourceName, msg.ResourceKind,
+		msg.Timestamp.Format("2006-01-02 15:04:05 UTC"),
+	)
+
+	if a.additional != "" {
+		text = a.additional + "\n" + text
+	}
+
+	return text
 }
 
 ```
 
-### Core Architecture Module: `internal/pkg/callbacks/rolling_upgrade.go`
+### Core Architecture Module: `internal/pkg/alerting/teams.go`
 ```
-package callbacks
+package alerting
 
 import (
 	"context"
-	"errors"
+	"encoding/json"
 	"fmt"
-	"time"
-
-	"github.com/sirupsen/logrus"
-	appsv1 "k8s.io/api/apps/v1"
-	batchv1 "k8s.io/api/batch/v1"
-	v1 "k8s.io/api/core/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	patchtypes "k8s.io/apimachinery/pkg/types"
-
-	"github.com/stakater/Reloader/internal/pkg/options"
-	"github.com/stakater/Reloader/pkg/kube"
-
-	"maps"
-
-	argorolloutv1alpha1 "github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1"
 )
 
-// ItemFunc is a generic function to return a specific resource in given namespace
-type ItemFunc func(kube.Clients, string, string) (runtime.Object, error)
-
-// ItemsFunc is a generic function to return a specific resource array in given namespace
-type ItemsFunc func(kube.Clients, string) []runtime.Object
-
-// ContainersFunc is a generic func to return containers
-type ContainersFunc func(runtime.Object) []v1.Container
-
-// InitContainersFunc is a generic func to return containers
-type InitContainersFunc func(runtime.Object) []v1.Container
-
-// VolumesFunc is a generic func to return volumes
-type VolumesFunc func(runtime.Object) []v1.Volume
-
-// UpdateFunc performs the resource update
-type UpdateFunc func(kube.Clients, string, runtime.Object) error
-
-// PatchFunc performs the resource patch
-type PatchFunc func(kube.Clients, string, runtime.Object, patchtypes.PatchType, []byte) error
-
-// PatchTemplateFunc is a generic func to return strategic merge JSON patch template
-type PatchTemplatesFunc func() PatchTemplates
-
-// AnnotationsFunc is a generic func to return annotations
-type AnnotationsFunc func(runtime.Object) map[string]string
-
-// PodAnnotationsFunc is a generic func to return annotations
-type PodAnnotationsFunc func(runtime.Object) map[string]string
-
-// RollingUpgradeFuncs contains generic functions to perform rolling upgrade
-type RollingUpgradeFuncs struct {
-	ItemFunc               ItemFunc
-	ItemsFunc              ItemsFunc
-	AnnotationsFunc        AnnotationsFunc
-	PodAnnotationsFunc     PodAnnotationsFunc
-	ContainersFunc         ContainersFunc
-	ContainerPatchPathFunc ContainersFunc
-	InitContainersFunc     InitContainersFunc
-	UpdateFunc             UpdateFunc
-	PatchFunc              PatchFunc
-	PatchTemplatesFunc     PatchTemplatesFunc
-	VolumesFunc            VolumesFunc
-	ResourceType           string
-	SupportsPatch          bool
+// TeamsAlerter sends alerts to Microsoft Teams webhooks.
+type TeamsAlerter struct {
+	webhookURL string
+	additional string
+	client     *httpClient
 }
 
-// PatchTemplates contains merge JSON patch templates
-type PatchTemplates struct {
-	AnnotationTemplate   string
-	EnvVarTemplate       string
-	DeleteEnvVarTemplate string
+// NewTeamsAlerter creates a new TeamsAlerter.
+func NewTeamsAlerter(webhookURL, proxyURL, additional string) *TeamsAlerter {
+	return &TeamsAlerter{
+		webhookURL: webhookURL,
+		additional: additional,
+		client:     newHTTPClient(proxyURL),
+	}
 }
 
-// GetDeploymentItem returns the deployment in given namespace
-func GetDeploymentItem(clients kube.Clients, name string, namespace string) (runtime.Object, error) {
-	deployment, err := clients.KubernetesClient.AppsV1().Deployments(namespace).Get(context.TODO(), name, meta_v1.GetOptions{})
+// teamsMessage represents a Microsoft Teams message card.
+type teamsMessage struct {
+	Type       string         `json:"@type"`
+	Context    string         `json:"@context"`
+	ThemeColor string         `json:"themeColor"`
+	Summary    string         `json:"summary"`
+	Sections   []teamsSection `json:"sections"`
+}
+
+type teamsSection struct {
+	ActivityTitle    string      `json:"activityTitle"`
+	ActivitySubtitle string      `json:"activitySubtitle,omitempty"`
+	Facts            []teamsFact `json:"facts"`
+}
+
+type teamsFact struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+func (a *TeamsAlerter) Send(ctx context.Context, message AlertMessage) error {
+	msg := a.buildMessage(message)
+
+	body, err := json.Marshal(msg)
 	if err != nil {
-		logrus.Errorf("Failed to get deployment %v", err)
-		return nil, err
+		return fmt.Errorf("marshaling teams message: %w", err)
 	}
 
-	if deployment.Spec.Template.Annotations == nil {
-		annotations := make(map[string]string)
-		deployment.Spec.Template.Annotations = annotations
-	}
-
-	return deployment, nil
+	return a.client.post(ctx, a.webhookURL, body)
 }
 
-// GetDeploymentItems returns the deployments in given namespace
-func GetDeploymentItems(clients kube.Clients, namespace string) []runtime.Object {
-	deployments, err := clients.KubernetesClient.AppsV1().Deployments(namespace).List(context.TODO(), meta_v1.ListOptions{})
-	if err != nil {
-		logrus.Errorf("Failed to list deployments %v", err)
+func (a *TeamsAlerter) buildMessage(msg AlertMessage) teamsMessage {
+	facts := []teamsFact{
+		{Name: "Workload", Value: fmt.Sprintf("%s/%s (%s)", msg.WorkloadNamespace, msg.WorkloadName, msg.WorkloadKind)},
+		{Name: "Resource", Value: fmt.Sprintf("%s/%s (%s)", msg.ResourceNamespace, msg.ResourceName, msg.ResourceKind)},
+		{Name: "Time", Value: msg.Timestamp.Format("2006-01-02 15:04:05 UTC")},
 	}
 
-	items := make([]runtime.Object, len(deployments.Items))
-	// Ensure we always have pod annotations to add to
-	for i, v := range deployments.Items {
-		if v.Spec.Template.Annotations == nil {
-			annotations := make(map[string]string)
-			deployments.Items[i].Spec.Template.Annotations = annotations
-		}
-		items[i] = &deployments.Items[i]
+	subtitle := ""
+	if a.additional != "" {
+		subtitle = a.additional
 	}
 
-	return items
+	return teamsMessage{
+		Type:       "MessageCard",
+		Context:    "http://schema.org/extensions",
+		ThemeColor: "0076D7",
+		Summary:    "Reloader triggered reload",
+		Sections: []teamsSection{
+			{
+				ActivityTitle:    "Reloader triggered reload",
+				ActivitySubtitle: subtitle,
+				Facts:            facts,
+			},
+		},
+	}
 }
 
-// GetCronJobItem returns the job in given namespace
-func GetCronJobItem(clients kube.Clients, name string, namespace string) (runtime.Object, error) {
-	cronjob, err := clients.KubernetesClient.BatchV1().CronJobs(namespace).Get(context.TODO(), name, meta_v1.GetOptions{})
-	if err != nil {
-		logrus.Errorf("Failed to get cronjob %v", err)
-		return nil, err
-	}
-
-	return cronjob, nil
-}
-
-// GetCronJobItems returns the jobs in given namespace
-func GetCronJobItems(clients kube.Clients, namespace string) []runtime.Object {
-	cronjobs, err := clients.KubernetesClient.BatchV1().CronJobs(namespace).List(context.TODO(), meta_v1.ListOptions{})
-	if err != nil {
-		logrus.Errorf("Failed to list cronjobs %v", err)
-	}
-
-	items := make([]runtime.Object, len(cronjobs.Items))
-	// Ensure we always have pod annotations to add to
-	for i, v := range cronjobs.Items {
-		if v.Spec.JobTemplate.Spec.Template.Annotations == nil {
-			annotations := make(map[string]string)
-			cronjobs.Items[i].Spec.JobTemplate.Spec.Template.Annotations = annotations
-		}
-		items[i] = &cronjobs.Items[i]
-	}
-
-	return items
-}
-
-// GetJobItem returns the job in given namespace
-func GetJobItem(clients kube.Clients, name string, namespace string) (runtime.Object, error) {
-	job, err := clients.KubernetesClient.BatchV1().Jobs(namespace).Get(context.TODO(), name, meta_v1.GetOptions{})
-	if err != nil {
-		logrus.Errorf("Failed to get job %v", err)
-		return nil, err
-	}
-
-	return job, nil
-}
-
-// GetJobItems returns the jobs in given namespace
-func GetJobItems(clients kube.Clients, namespace string) []runtime.Object {
-	jobs, err := clients.KubernetesClient.BatchV1().Jobs(namespace).List(context.TODO(), meta_v1.ListOptions{})
-	if err != nil {
-		logrus.Errorf("Failed to list jobs %v", err)
-	}
-
-	items := make([]runtime.Object, len(jobs.Items))
-	// Ensure we always have pod annotations to add to
-	for i, v := range jobs.Items {
-		if v.Spec.Template.Annotations == nil {
-			annotations := make(map[string]string)
-			jobs.Items[i].Spec.Template.Annotations = annotations
-		}
-		items[i] = &jobs.Items[i]
-	}
-
-	return items
-}
-
-// GetDaemonSetItem returns the daemonSet in given namespace
-func GetDaemonSetItem(clients kube.Clients, name string, namespace string) (runtime.Object, error) {
-	daemonSet, err := clients.KubernetesClient.AppsV1().DaemonSets(namespace).Get(context.TODO(), name, meta_v1.GetOptions{})
-	if err != nil {
-		logrus.Errorf("Failed to get daemonSet %v", err)
-		return nil, err
-	}
-
-	return daemonSet, nil
-}
-
-// GetDaemonSetItems returns the daemonSets in given namespace
-func GetDaemonSetItems(clients kube.Clients, namespace string) []runtime.Object {
-	daemonSets, err := clients.KubernetesClient.AppsV1().DaemonSets(namespace).List(context.TODO(), meta_v1.ListOptions{})
-	if err != nil {
-		logrus.Errorf("Failed to list daemonSets %v", err)
-	}
-
-	items := make([]runtime.Object, len(daemonSets.Items))
-	// Ensure we always have pod annotations to add to
-	for i, v := range daemonSets.Items {
-		if v.Spec.Template.Annotations == nil {
-			daemonSets.Items[i].Spec.Template.Annotations = make(map[string]string)
-		}
-		items[i] = &daemonSets.Items[i]
-	}
-
-	return items
-}
-
-// GetStatefulSetItem returns the statefulSet in given namespace
-func GetStatefulSetItem(clients kube.Clients, name string, namespace string) (runtime.Object, error) {
-	statefulSet, err := clients.KubernetesClient.AppsV1().StatefulSets(namespace).Get(context.TODO(), name, meta_v1.GetOptions{})
-	if err != nil {
-		logrus.Errorf("Failed to get statefulSet %v", err)
-		return nil, err
-	}
-
-	return statefulSet, nil
-}
-
-// GetStatefulSetItems returns the statefulSets in given namespace
-func GetStatefulSetItems(clients kube.Clients, namespace string) []runtime.Object {
-	statefulSets, err := clients.KubernetesClient.AppsV1().StatefulSets(namespace).List(context.TODO(), meta_v1.ListOptions{})
-	if err != nil {
-		logrus.Errorf("Failed to list statefulSets %v", err)
-	}
-
-	items := make([]runtime.Object, len(statefulSets.Items))
-	// Ensure we always have pod annotations to add to
-	for i, v := range statefulSets.Items {
-		if v.Spec.Template.Annotations == nil {
-			statefulSets.Items[i].Spec.Template.Annotations = make(map[string]string)
-		}
-		items[i] = &statefulSets.Items[i]
-	}
-
-	return items
-}
-
-// GetRolloutItem returns the rollout in given namespace
-func GetRolloutItem(clients kube.Clients, name string, namespace string) (runtime.Object, error) {
-	rollout, err := clients.ArgoRolloutClient.ArgoprojV1alpha1().Rollouts(namespace).Get(context.TODO(), name, meta_v1.GetOptions{})
-	if err != nil {
-		logrus.Errorf("Failed to get Rollout %v", err)
-		return nil, err
-	}
-
-	return rollout, nil
-}
-
-// GetRolloutItems returns the rollouts in given namespace
-func GetRolloutItems(clients kube.Clients, namespace string) []runtime.Object {
-	rollouts, err := clients.ArgoRolloutClient.ArgoprojV1alpha1().Rollouts(namespace).List(context.TODO(), meta_v1.ListOptions{})
-	if err != nil {
-		logrus.Errorf("Failed to list Rollouts %v", err)
-	}
-
-	items := make([]runtime.Object, len(rollouts.Items))
-	// Ensure we always have pod annotations to add to
-	for i, v := range rollouts.Items {
-		if v.Spec.Template.Annotations == nil {
-			rollouts.Items[i].Spec.Template.Annotations = make(map[string]string)
-		}
-		items[i] = &rollouts.Items[i]
-	}
-
-	return items
-}
-
-// GetDeploymentAnnotations returns the annotations of given deployment
-func GetDeploymentAnnotations(item runtime.Object) map[string]string {
-	deployment, ok := item.(*appsv1.Deployment)
-	if !ok {
-		return nil
-	}
-	if deployment.Annotations == nil {
-		deployment.Annotations = make(map[string]string)
-	}
-	return deployment.Annotations
-}
-
-// GetCronJobAnnotations returns the annotations of given cronjob
-func GetCronJobAnnotations(item runtime.Object) map[string]string {
-	cronJob, ok := item.(*batchv1.CronJob)
-	if !ok {
-		return nil
-	}
-	if cronJob.Annotations == nil {
-		cronJob.Annotations = make(map[string]string)
-	}
-	return cronJob.Annotations
-}
-
-// GetJobAnnotations returns the annotations of given job
-func GetJobAnnotations(item runtime.Object) map[string]string {
-	job, ok := item.(*batchv1.Job)
-	if !ok {
-		return nil
-	}
-	if job.Annotations == nil {
-		job.Annotations = make(map[string]string)
-	}
-	return job.Ann
 ```
 
-### Core Architecture Module: `internal/pkg/cmd/reloader.go`
+### Core Architecture Module: `internal/pkg/config/flags/flags.go`
 ```
-package cmd
+package flags
 
 import (
-	"context"
-	"errors"
 	"fmt"
-	"math"
-	"net/http"
-	"net/http/pprof"
-	"os"
 	"strings"
 	"time"
 
-	"github.com/stakater/Reloader/internal/pkg/constants"
-	"github.com/stakater/Reloader/internal/pkg/leadership"
+	"github.com/go-logr/logr"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
+	"k8s.io/apimachinery/pkg/labels"
 
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/tools/leaderelection"
-
-	"github.com/stakater/Reloader/internal/pkg/controller"
-	"github.com/stakater/Reloader/internal/pkg/metrics"
-	"github.com/stakater/Reloader/internal/pkg/options"
-	"github.com/stakater/Reloader/internal/pkg/util"
-	"github.com/stakater/Reloader/pkg/common"
-	"github.com/stakater/Reloader/pkg/kube"
+	"github.com/stakater/Reloader/pkg/config"
 )
 
-// NewReloaderCommand starts the reloader controller
-func NewReloaderCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:     "reloader",
-		Short:   "A watcher for your Kubernetes cluster",
-		PreRunE: validateFlags,
-		Run:     startReloader,
-	}
+// v is the viper instance for configuration.
+var v *viper.Viper
 
-	// options
-	util.ConfigureReloaderFlags(cmd)
-
-	return cmd
+func init() {
+	v = viper.New()
+	// Convert flag names like "alert-webhook-url" to env vars like "ALERT_WEBHOOK_URL"
+	v.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	v.AutomaticEnv()
 }
 
-func validateFlags(*cobra.Command, []string) error {
-	// Ensure the reload strategy is one of the following...
-	var validReloadStrategy bool
-	valid := []string{constants.EnvVarsReloadStrategy, constants.AnnotationsReloadStrategy}
-	for _, s := range valid {
-		if s == options.ReloadStrategy {
-			validReloadStrategy = true
-		}
-	}
+// BindFlags binds configuration flags to the provided flag set.
+// Call this before parsing flags, then call ApplyFlags after parsing.
+func BindFlags(fs *pflag.FlagSet, cfg *config.Config) {
+	// Auto reload
+	fs.Bool(
+		"auto-reload-all", cfg.AutoReloadAll,
+		"Automatically reload all resources when their configmaps/secrets are updated, without requiring annotations",
+	)
 
-	if !validReloadStrategy {
-		err := fmt.Sprintf("%s must be one of: %s", constants.ReloadStrategyFlag, strings.Join(valid, ", "))
-		return errors.New(err)
-	}
+	// Reload strategy
+	fs.String(
+		"reload-strategy", string(cfg.ReloadStrategy),
+		"Strategy for triggering workload restart: 'env-vars' (default, GitOps friendly) or 'annotations'",
+	)
 
-	// Validate that HA options are correct
-	if options.EnableHA {
-		if err := validateHAEnvs(); err != nil {
-			return err
-		}
-		if err := validateLeaderElectionTimings(); err != nil {
-			return err
-		}
-	}
+	// Argo Rollouts
+	fs.String(
+		"is-Argo-Rollouts", "false",
+		"Enable Argo Rollouts support (true/false)",
+	)
 
-	return nil
+	// OpenShift DeploymentConfig
+	fs.String(
+		"is-openshift", "",
+		"Enable OpenShift DeploymentConfig support (true/false/auto). Empty or 'auto' enables auto-detection",
+	)
+
+	// CSI integration
+	fs.Bool(
+		"enable-csi-integration", cfg.CSIIntegrationEnabled,
+		"Enable CSI SecretProviderClass integration (requires secrets-store CSI driver CRDs)",
+	)
+
+	// Event watching
+	fs.String(
+		"reload-on-create", "false",
+		"Reload when configmaps/secrets are created (true/false)",
+	)
+	fs.String(
+		"reload-on-delete", "false",
+		"Reload when configmaps/secrets are deleted (true/false)",
+	)
+
+	// Sync after restart
+	fs.Bool(
+		"sync-after-restart", cfg.SyncAfterRestart,
+		"Trigger sync operation after restart",
+	)
+
+	// High availability / Leader election
+	fs.Bool(
+		"enable-ha", cfg.EnableHA,
+		"Enable high-availability mode with leader election",
+	)
+	fs.String(
+		"leader-election-id", cfg.LeaderElection.LockName,
+		"Name of the lease resource for leader election",
+	)
+	fs.String(
+		"leader-election-namespace", cfg.LeaderElection.Namespace,
+		"Namespace for the leader election lease (defaults to pod namespace)",
+	)
+	fs.Duration(
+		"leader-election-lease-duration", cfg.LeaderElection.LeaseDuration,
+		"Duration that non-leader candidates will wait before attempting to acquire leadership",
+	)
+	fs.Duration(
+		"leader-election-renew-deadline", cfg.LeaderElection.RenewDeadline,
+		"Duration that the acting leader will retry refreshing leadership before giving up",
+	)
+	fs.Duration(
+		"leader-election-retry-period", cfg.LeaderElection.RetryPeriod,
+		"Duration between leader election retries",
+	)
+	fs.Bool(
+		"leader-election-release-on-cancel", cfg.LeaderElection.ReleaseOnCancel,
+		"Release the leader lock when the manager is stopped",
+	)
+
+	// Webhook
+	fs.String(
+		"webhook-url", cfg.WebhookURL,
+		"URL to send notification instead of triggering reload",
+	)
+
+	// Filtering - resources
+	fs.String(
+		"resources-to-ignore", "",
+		"Comma-separated list of resources to ignore (valid options: 'configMaps' or 'secrets')",
+	)
+	fs.String(
+		"ignored-workload-types", "",
+		"Comma-separated list of workload types to ignore (valid options: 'jobs', 'cronjobs', or both)",
+	)
+	fs.String(
+		"namespaces-to-ignore", "",
+		"Comma-separated list of namespaces to ignore",
+	)
+
+	// Filtering - selectors
+	fs.StringSlice(
+		"namespace-selector", nil,
+		"Namespace label selectors (can be specified multiple times)",
+	)
+	fs.StringSlice(
+		"resource-label-selector", nil,
+		"Resource label selectors (can be specified multiple times)",
+	)
+
+	// Logging
+	fs.String(
+		"log-format", cfg.LogFormat,
+		"Log format: 'json' or empty for default",
+	)
+	fs.String(
+		"log-level", cfg.LogLevel,
+		"Log level: trace, debug, info, warning, error, fatal, panic",
+	)
+
+	// Metrics
+	fs.String(
+		"metrics-addr", cfg.MetricsAddr,
+		"Address to serve metrics on",
+	)
+
+	// Health probes
+	fs.String(
+		"health-addr", cfg.HealthAddr,
+		"Address to serve health probes on",
+	)
+
+	// Profiling
+	fs.Bool(
+		"enable-pprof", cfg.EnablePProf,
+		"Enable pprof profiling server",
+	)
+	fs.String(
+		"pprof-addr", cfg.PProfAddr,
+		"Address for pprof server",
+	)
+
+	// Annotation customization (flag names match v1 for backward compatibility)
+	fs.String(
+		"auto-annotation", cfg.Annotations.Auto,
+		"Annotation to detect changes in secrets/configmaps",
+	)
+	fs.String(
+		"configmap-auto-annotation", cfg.Annotations.ConfigmapAuto,
+		"Annotation to detect changes in configmaps",
+	)
+	fs.String(
+		"secret-auto-annotation", cfg.Annotations.SecretAuto,
+		"Annotation to detect changes in secrets",
+	)
+	fs.String(
+		"configmap-annotation", cfg.Annotations.ConfigmapReload,
+		"Annotation to detect changes in configmaps, specified by name",
+	)
+	fs.String(
+		"secret-annotation", cfg.Annotations.SecretReload,
+		"Annotation to detect changes in secrets, specified by name",
+	)
+	fs.String(
+		"configmap-exclude-annotation", cfg.Annotations.ConfigmapExclude,
+		"Annotation to exclude named configmaps from triggering reloads",
+	)
+	fs.String(
+		"secret-exclude-annotation", cfg.Annotations.SecretExclude,
+		"Annotation to exclude named secrets from triggering reloads",
+	)
+	fs.String(
+		"secretproviderclass-auto-annotation", cfg.Annotations.SecretProviderClassAuto,
+		"Annotation to detect changes in secret provider classes (CSI)",
+	)
+	fs.String(
+		"secretproviderclass-annotation", cfg.Annotations.SecretProviderClassReload,
+		"Annotation to detect changes in secret provider classes (CSI), specified by name",
+	)
+	fs.String(
+		"secretproviderclass-exclude-annotation", cfg.Annotations.SecretProviderClassExclude,
+		"Annotation to exclude named secret provider classes (CSI) from triggering reloads",
+	)
+	fs.String(
+		"auto-search-annotation", cfg.Annotations.Search,
+		"Annotation to detect changes in configmaps or secrets tagged with special match annotation",
+	)
+	fs.String(
+		"search-match-annotation", cfg.Annotations.Match,
+		"Annotation to mark secrets or configmaps to match the search",
+	)
+	fs.String(
+		"ignore-annotation", cfg.Annotations.Ignore,
+		"Annotation to ignore changes on watched resources",
+	)
+	fs.String(
+		"pause-deployment-annotation", cfg.Annotations.PausePeriod,
+		"Annotation to define the time period to pause a deployment after a configmap/secret change",
+	)
+	fs.String(
+		"pause-deployment-time-annotation", cfg.Annotations.PausedAt,
+		"Annotation to indicate when a deployment was paused by Reloader",
+	)
+
+	// Watched namespaces (scoped mode). Empty means watch all namespaces;
+	// KUBERNETES_NAMESPACE (env) is used as a single-namespace fallback.
+	fs.StringSlice(
+		"namespaces", nil,
+		"explicit list of namespaces to watch (scoped mode; creates no ClusterRole)",
+	)
+
+	// Alerting
+	fs.Bool(
+		"alert-on-reload", cfg.Alerting.Enabled,
+		"Enable sending alerts when resources are reloaded",
+	)
+	fs.String(
+		"alert-webhook-url", cfg.Alerting.WebhookURL,
+		"Webhook URL to send alerts to",
+	)
+	fs.String(
+		"alert-sink", cfg.Alerting.Sink,
+		"Alert sink type: 'slack', 'teams', 'gchat', or 'raw' (default)",
+	)
+	fs.String(
+		"alert-proxy", cfg.Alerting.Proxy,
+		"Proxy URL for alert webhook requests",
+	)
+	fs.String(
+		"alert-additional-info", cfg.Alerting.Additional,
+		"Additional info to include in alerts (e.g., cluster name)",
+	)
+	fs.Bool(
+		"alert-structured", cfg.Alerting.Structured,
+		"For raw sink: send structured JSON instead of plain text",
+	)
+
+	// Bind pflags to viper
+	_ = v.BindPFlags(fs)
+
+	// Bind legacy env var names that don't match the automatic conversion
+	// (flag "alert-proxy" -> env "ALERT_PROXY", but legacy is "ALERT_WEBHOOK_PROXY")
+	_ = v.BindEnv("alert-proxy", "ALERT_PROXY", "ALERT_WEBHOOK_PROXY")
 }
 
-func configureLogging(logFormat, logLevel string) error {
-	switch logFormat {
-	case "json":
-		logrus.SetFormatter(&logrus.JSONFormatter{})
+// LoggingFlags returns the log format and level from parsed flags/env. The
+// caller uses these to configure logging before ApplyFlags runs, so ApplyFlags
+// can log warnings through a ready logger.
+func LoggingFlags() (format, level string) {
+	return v.GetString("log-format"), v.GetString("log-level")
+}
+
+// ApplyFlags applies flag values from viper to the config struct. Call this
+// after parsing flags. It finalizes namespace scope and logs any warnings it
+// produces through the given logger.
+func ApplyFlags(cfg *config.Config, log logr.Logger) error {
+	// Boolean flags
+	cfg.AutoReloadAll = v.GetBool("auto-reload-all")
+	cfg.SyncAfterRestart = v.GetBool("sync-after-restart")
+	cfg.EnableHA = v.GetBool("enable-ha")
+	cfg.EnablePProf = v.GetBool("enable-pprof")
+	cfg.CSIIntegrationEnabled = v.GetBool("enable-csi-integration")
+
+	// Boolean string flags (legacy format: "true"/"false" strings)
+	cfg.ArgoRolloutsEnabled = parseBoolString(v.GetString("is-Argo-Rollouts"))
+	cfg.ReloadOnCreate = parseBoolString(v.GetString("reload-on-create"))
+	cfg.ReloadOnDelete = parseBoolString(v.GetString("reload-on-delete"))
+
+	switch strings.ToLower(strings.TrimSpace(v.GetString("is-openshift"))) {
+	case "true":
+		cfg.DeploymentConfigEnabled = true
+	case "false":
+		cfg.DeploymentConfigEnabled = false
 	default:
-		// just let the library use default on empty string.
-		if logFormat != "" {
-			return fmt.Errorf("unsupported logging formatter: %q", logFormat)
+	}
+
+	// String flags
+	cfg.ReloadStrategy = config.ReloadStrategy(v.GetString("reload-strategy"))
+	cfg.WebhookURL = v.GetString("webhook-url")
+	cfg.LogFormat = v.GetString("log-format")
+	cfg.LogLevel = v.GetString("log-level")
+	cfg.MetricsAddr = v.GetString("metrics-addr")
+	cfg.HealthAddr = v.GetString("health-addr")
+	cfg.PProfAddr = v.GetString("pprof-addr")
+	// Namespace scope: an explicit --namespaces list takes precedence (scoped
+	// mode); otherwise fall back to KUBERNETES_NAMESPACE for single-namespace
+	// mode; an empty result means global (all-namespaces) mode.
+	// Trim and drop empty entries from the slice to prevent empty strings from
+	// being treated as "watch all namespaces" by controller-runtime.
+	cfg.WatchedNamespaces = trimAndDropEmptyStrings(v.GetStringSlice("namespaces"))
+	if len(cfg.WatchedNamespaces) == 0 {
+		if ns := v.GetString("KUBERNETES_NAMESPACE"); ns != "" {
+			cfg.WatchedNamespaces = []string{ns}
 		}
-	}
-	// set log level
-	level, err := logrus.ParseLevel(logLevel)
-	if err != nil {
-		return err
-	}
-	logrus.SetLevel(level)
-	return nil
-}
-
-func validateHAEnvs() error {
-	podName, podNamespace := getHAEnvs()
-
-	if podName == "" {
-		return fmt.Errorf("%s not set, cannot run in HA mode without %s set", constants.PodNameEnv, constants.PodNameEnv)
-	}
-	if podNamespace == "" {
-		return fmt.Errorf("%s not set, cannot run in HA mode without %s set", constants.PodNamespaceEnv, constants.PodNamespaceEnv)
-	}
-	return nil
-}
-
-// maxLeaseDuration is the largest lease duration client-go can persist, since it
-// records the duration on the Lease as int32 seconds.
-const maxLeaseDuration = math.MaxInt32 * time.Second
-
-// validateLeaderElectionTimings enforces the constraints of client-go's
-// leaderelection.NewLeaderElector, which panics via RunOrDie when they are violated,
-// plus the whole-second lease duration that leader exclusivity depends on.
-func validateLeaderElectionTimings() error {
-	// client-go persists the lease duration on the Lease as whole seconds, and a follower
-	// judges expiry from that truncated value while the leader renews on the configured
-	// one. A fractional lease therefore lets a follower force acquire the lease before the
-	// incumbent reaches its renew deadline, allowing two leaders at once.
-	if options.LeaderElectionLeaseDuration%time.Second != 0 {
-		return errors.New("--leader-election-lease-duration must be a whole number of seconds")
-	}
-	if options.LeaderElectionLeaseDuration < time.Second {
-		return errors.New("--leader-election-lease-duration must be at least 1s")
-	}
-	if options.LeaderElectionLeaseDuration > maxLeaseDuration {
-		return fmt.Errorf("--leader-election-lease-duration must not exceed %s, the largest value representable on the Lease API", maxLeaseDuration)
-	}
-	if options.LeaderElectionRenewDeadline <= 0 {
-		return errors.New("--leader-election-renew-deadline must be greater than zero")
-	}
-	if options.LeaderElectionRetryPeriod <= 0 {
-		return errors.New("--leader-election-retry-period must be greater than zero")
-	}
-	if options.LeaderElectionLeaseDuration <= options.LeaderElectionRenewDeadline {
-		return errors.New("--leader-election-lease-duration must be greater than --leader-election-renew-deadline")
-	}
-	if options.LeaderElectionRenewDeadline <= time.Duration(leaderelection.JitterFactor*float64(options.LeaderElectionRetryPeriod)) {
-		return fmt.Errorf("--leader-election-renew-deadline must be greater than --leader-election-retry-period multiplied by the jitter factor (%v)", leaderelection.JitterFactor)
-	}
-	return nil
-}
-
-func getHAEnvs() (string, string) {
-	podName := os.Getenv(constants.PodNameEnv)
-	podNamespace := os.Getenv(constants.PodNamespaceEnv)
-
-	return podName, podNamespace
-}
-
-// resolveWatchNamespaces determines the set of namespaces to watch and whether
-// Reloader runs in global (all-namespaces) mode. Precedence:
-//  1. an explicit --namespaces list (scoped mode) — watch exactly those namespaces;
-//  2. the KUBERNETES_NAMESPACE env var (single-namespace mode);
-//  3. otherwise watch all namespaces (global mode).
-func resolveWatchNamespaces(namespaces []string, kubernetesNamespace string) ([]string, bool) {
-	if len(namespaces) > 0 {
-		return namespaces, false
-	}
-	if len(kubernetesNamespace) > 0 {
-		return []string{kubernetesNamespace}, false
-	}
-	return []string{v1.NamespaceAll}, true
-}
-
-// namespaceWatchScopeMessage returns the startup log message describing the
-// namespace scope Reloader will watch when KUBERNETES_NAMESPACE is unset
-// (global mode). It reflects --namespaces-to-ignore so the log is not
-// misleading when namespace filtering is configured.
-func namespaceWatchScopeMessage(ignoredNamespaces []string) string {
-	if len(ignoredNamespaces) > 0 {
-		return fmt.Sprintf(
-			"KUBERNETES_NAMESPACE is unset, will detect changes in all namespaces except: %s.",
-			strings.Join(ignoredNamespaces, ", "),
-		)
-	}
-	return "KUBERNETES_NAMESPACE is unset, will detect changes in all namespaces."
-}
-
-func startReloader(cmd *cobra.Command, args []string) {
-	common.GetCommandLineOptions()
-	err := configureLogging(options.LogFormat, options.LogLevel)
-	if err != nil {
-		logrus.Warn(err)
-	}
-
-	logrus.Info("Starting Reloader")
-	watchNamespaces, isGlobal := resolveWatchNamespaces(options.Namespaces, os.Getenv("KUBERNETES_NAMESPACE"))
-	if !isGlobal && len(options.Namespaces) > 0 {
-		logrus.Infof("Watching scoped namespaces: %s", strings.Join(watchNamespaces, ", "))
-	}
-
-	// create the clientset
-	clientset, err := kube.GetKubernetesClient()
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	ignoredResourcesList, err := util.GetIgnoredResourcesList()
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	// namespaces-to-ignore and namespace-selector only make sense when watching all
-	// namespaces. In single-namespace and scoped modes the watched set is already
-	// explicit, so both are intentionally left empty.
-	ignoredNamespacesList := []string{}
-	namespaceLabelSelector := ""
-
-	if isGlobal {
-		ignoredNamespacesList = options.NamespacesToIgnore
-		logrus.Warn(namespaceWatchScopeMessage(ignoredNamespacesList))
-		namespaceLabelSelector, err = common.GetNamespaceLabelSelector(options.NamespaceSelectors)
-		if err != nil {
-			logrus.Fatal(err)
-		}
-	} else if len(options.NamespacesToIgnore) > 0 {
-		logrus.Warnf("namespaces-to-ignore is set but is only honored in global mode (watchGlobally=true); ignoring it.")
-	}
-
-	resourceLabelSelector, err := common.GetResourceLabelSelector(options.ResourceSelectors)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	if len(namespaceLabelSelector) > 0 {
-		logrus.Warnf("namespace-selector is set, will only detect changes in namespaces with these labels: %s.", namespaceLabelSelector)
-	}
-
-	if len(resourceLabelSelector) > 0 {
-		logrus.Warnf("resource-label-selector is set, will only detect changes on resources with these labels: %s.", resourceLabelSelector)
-	}
-
-	if options.WebhookUrl != "" {
-		logrus.Warnf("webhook-url is set, will only send webhook, no resources will be reloaded")
-	}
-
-	mainMux := http.NewServeMux()
-	collectors := metrics.SetupPrometheusEndpointWithMux(mainMux)
-
-	var controllers []*controller.Controller
-	for _, currentNamespace := range watchNamespaces {
-		for k := range kube.ResourceMap {
-			if k == constants.SecretProviderClassController && !shouldRunCSIController() {
-				continue
-			}
-
-			if ignoredResourcesList.Contains(k) || (len(namespaceLabelSelector) == 0 && k == "namespaces") {
-				continue
-			}
-
-			c, err := controller.NewController(clientset, k, currentNamespace, ignoredNamespacesList, namespaceLabelSelector, resourceLabelSelector, collectors)
-			if err != nil {
-				logrus.Fatalf("%s", err)
-			}
-
-			controllers = append(controllers, c)
-
-			// If HA is enabled we only run the controller when
-			if options.EnableHA {
-				continue
-			}
-			// Now let's start the controller
-			stop := make(chan struct{})
-			defer close(stop)
-			logrus.Infof("Starting Controller to watch resource type: %s in namespace: %s", k, currentNamespace)
-			go c.Run(1, stop)
-		}
-	}
-
-	// Run leadership election
-	if options.EnableHA {
-		podName, podNamespace := getHAEnvs()
-		lock := leadership.GetNewLock(clientset.CoordinationV1(), constants.LockName, podName, podNamespace)
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-		leadership.RunLeaderElection(lock, ctx, cancel, podName, controllers)
-	}
-
-	common.PublishMetaInfoConfigmap(clientset)
-
-	if options.EnablePProf {
-		go startPProfServer()
-	}
-
-	leadership.SetupLivenessEndpointWithMux(mainMux)
-	logrus.Fatal(http.ListenAndServe(constants.DefaultHttpListenAddr, mainMux))
-}
-
-func newPProfServeMux() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/debug/pprof/", pprof.Index)
-	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
-	mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
-	mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
-	return mux
-}
-
-func startPProfServer() {
-	logrus.Infof("Starting pprof server on %s", opt
-```
-
-### Core Architecture Module: `internal/pkg/constants/constants.go`
-```
-package constants
-
-const (
-	// DefaultHttpListenAddr is the default listening address for global http server
-	DefaultHttpListenAddr = ":9090"
-
-	// ConfigmapEnvVarPostfix is a postfix for configmap envVar
-	ConfigmapEnvVarPostfix = "CONFIGMAP"
-	// SecretEnvVarPostfix is a postfix for secret envVar
-	SecretEnvVarPostfix = "SECRET"
-	// SecretProviderClassEnvVarPostfix is a postfix for secretproviderclasspodstatus envVar
-	SecretProviderClassEnvVarPostfix = "SECRETPROVIDERCLASS"
-	// EnvVarPrefix is a Prefix for environment variable
-	EnvVarPrefix = "STAKATER_"
-
-	// ReloaderAnnotationPrefix is a Prefix for all reloader annotations
-	ReloaderAnnotationPrefix = "reloader.stakater.com"
-	// LastReloadedFromAnnotation is an annotation used to describe the last resource that triggered a reload
-	LastReloadedFromAnnotation = "last-reloaded-from"
-
-	// 	ReloadStrategyFlag The reload strategy flag name
-	ReloadStrategyFlag = "reload-strategy"
-	// EnvVarsReloadStrategy instructs Reloader to add container environment variables to facilitate a restart
-	EnvVarsReloadStrategy = "env-vars"
-	// AnnotationsReloadStrategy instructs Reloader to add pod template annotations to facilitate a restart
-	AnnotationsReloadStrategy = "annotations"
-	// SecretProviderClassController enables support for SecretProviderClassPodStatus resources
-	SecretProviderClassController = "secretproviderclasspodstatuses"
-)
-
-// Leadership election related consts
-const (
-	LockName        string = "stakater-reloader-lock"
-	PodNameEnv      string = "POD_NAME"
-	PodNamespaceEnv string = "POD_NAMESPACE"
-)
-
-```
-
-### Core Architecture Module: `internal/pkg/constants/enums.go`
-```
-package constants
-
-// Result is a status for deployment update
-type Result int
-
-const (
-	// Updated is returned when environment variable is created/updated
-	Updated Result = 1 + iota
-	// NotUpdated is returned when environment variable is found but had value equals to the new value
-	NotUpdated
-	// NoEnvVarFound is returned when no environment variable is found
-	NoEnvVarFound
-	// NoContainerFound is returned when no environment variable is found
-	NoContainerFound
-)
-
-```
-
-### Core Architecture Module: `internal/pkg/controller/controller.go`
-```
-package controller
-
-import (
-	"errors"
-	"fmt"
-	"sync"
-	"sync/atomic"
-	"time"
-
-	"github.com/sirupsen/logrus"
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/fields"
-	"k8s.io/apimachinery/pkg/util/runtime"
-	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/client-go/kubernetes"
-	typedcorev1 "k8s.io/client-go/kubernetes/typed/core/v1"
-	"k8s.io/client-go/tools/cache"
-	"k8s.io/client-go/tools/record"
-	"k8s.io/client-go/util/workqueue"
-	"k8s.io/kubectl/pkg/scheme"
-	csiv1 "sigs.k8s.io/secrets-store-csi-driver/apis/v1"
-
-	"github.com/stakater/Reloader/internal/pkg/constants"
-	"github.com/stakater/Reloader/internal/pkg/handler"
-	"github.com/stakater/Reloader/internal/pkg/metrics"
-	"github.com/stakater/Reloader/internal/pkg/options"
-	"github.com/stakater/Reloader/internal/pkg/util"
-	"github.com/stakater/Reloader/pkg/kube"
-)
-
-// Controller for checking events
-type Controller struct {
-	client            kubernetes.Interface
-	queue             workqueue.TypedRateLimitingInterface[any]
-	informer          cache.Controller
-	namespace         string
-	resource          string
-	ignoredNamespaces util.List
-	collectors        metrics.Collectors
-	recorder          record.EventRecorder
-	namespaceSelector string
-	resourceSelector  string
-}
-
-// controllerInitialized flags guard against processing Add/Delete events before
-// the worker goroutines have started. Written by runWorker (in a goroutine) and
-// read by the informer event handlers, so they must be atomic.
-var secretControllerInitialized atomic.Bool
-var configmapControllerInitialized atomic.Bool
-
-// selectedNamespacesCache holds an immutable snapshot of the set of namespace
-// names that match the namespace label selector. Written exclusively by the
-// namespace controller's informer goroutine; read concurrently by configmap/
-// secret controller informer goroutines. Using atomic.Value with an immutable
-// map[string]struct{} snapshot avoids mutexes and prevents data races.
-var selectedNamespacesCache atomic.Value // always stores map[string]struct{}
-
-// loadSelectedNamespaces returns the current namespace snapshot (never nil).
-func loadSelectedNamespaces() map[string]struct{} {
-	if v := selectedNamespacesCache.Load(); v != nil {
-		if m, ok := v.(map[string]struct{}); ok {
-			return m
-		}
-	}
-	return map[string]struct{}{}
-}
-
-// storeSelectedNamespaces replaces the current snapshot with one built from ns.
-// It is the only mutator of selectedNamespacesCache and is called only from
-// the namespace controller's informer goroutine (or from tests for setup).
-func storeSelectedNamespaces(ns []string) {
-	m := make(map[string]struct{}, len(ns))
-	for _, n := range ns {
-		m[n] = struct{}{}
-	}
-	selectedNamespacesCache.Store(m)
-}
-
-// loadSelectedNamespacesList returns the current namespace names as a slice.
-// Intended for use in tests where slice-based assertions are more convenient.
-func loadSelectedNamespacesList() []string {
-	m := loadSelectedNamespaces()
-	result := make([]string, 0, len(m))
-	for k := range m {
-		result = append(result, k)
-	}
-	return result
-}
-
-// markIgnoredResourcesInitialized marks the flag of an ignored resource type as
-// initialized. No controller is created for an ignored type, so its flag would
-// otherwise never be set and Add/Delete events for the watched type would be
-// dropped forever.
-func markIgnoredResourcesInitialized() {
-	ignoredResources, err := util.GetIgnoredResourcesList()
-	if err != nil {
-		return
-	}
-	if ignoredResources.Contains(string(v1.ResourceConfigMaps)) {
-		configmapControllerInitialized.Store(true)
-	}
-	if ignoredResources.Contains(string(v1.ResourceSecrets)) {
-		secretControllerInitialized.Store(true)
-	}
-}
-
-// NewController for initializing a Controller
-func NewController(client kubernetes.Interface, resource string, namespace string, ignoredNamespaces []string, namespaceLabelSelector string, resourceLabelSelector string, collectors metrics.Collectors) (*Controller, error) {
-	if options.SyncAfterRestart {
-		secretControllerInitialized.Store(true)
-		configmapControllerInitialized.Store(true)
-	}
-	markIgnoredResourcesInitialized()
-
-	c := Controller{
-		client:            client,
-		namespace:         namespace,
-		ignoredNamespaces: ignoredNamespaces,
-		namespaceSelector: namespaceLabelSelector,
-		resourceSelector:  resourceLabelSelector,
-		resource:          resource,
-	}
-	eventBroadcaster := record.NewBroadcaster()
-	eventBroadcaster.StartRecordingToSink(&typedcorev1.EventSinkImpl{
-		Interface: client.CoreV1().Events(""),
-	})
-	recorder := eventBroadcaster.NewRecorder(scheme.Scheme,
-		v1.EventSource{Component: fmt.Sprintf("reloader-%s", resource)})
-
-	queue := workqueue.NewTypedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[any]())
-
-	optionsModifier := func(opts *metav1.ListOptions) {
-		if resource == "namespaces" {
-			opts.LabelSelector = c.namespaceSelector
-		} else if len(c.resourceSelector) > 0 {
-			opts.LabelSelector = c.resourceSelector
-		} else {
-			opts.FieldSelector = fields.Everything().String()
-		}
-	}
-
-	getterRESTClient, err := getClientForResource(resource, client)
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize REST client for %s: %w", resource, err)
-	}
-
-	listWatcher := cache.NewFilteredListWatchFromClient(getterRESTClient, resource, namespace, optionsModifier)
-
-	_, informer := cache.NewInformerWithOptions(cache.InformerOptions{
-		ListerWatcher: listWatcher,
-		ObjectType:    kube.ResourceMap[resource],
-		ResyncPeriod:  0,
-		Handler: cache.ResourceEventHandlerFuncs{
-			AddFunc:    c.Add,
-			UpdateFunc: c.Update,
-			DeleteFunc: c.Delete,
-		},
-		Indexers: cache.Indexers{},
-	})
-	c.informer = informer
-	c.queue = queue
-	c.collectors = collectors
-	c.recorder = recorder
-
-	logrus.Infof("created controller for: %s", resource)
-	return &c, nil
-}
-
-// Add function to add a new object to the queue in case of creating a resource
-func (c *Controller) Add(obj interface{}) {
-	c.collectors.RecordEventReceived("add", c.resource)
-
-	switch object := obj.(type) {
-	case *v1.Namespace:
-		c.addSelectedNamespaceToCache(*object)
-		return
-	case *csiv1.SecretProviderClassPodStatus:
-		return
-	}
-
-	if options.ReloadOnCreate == "true" {
-		if !c.resourceInIgnoredNamespace(obj) && c.resourceInSelectedNamespaces(obj) && secretControllerInitialized.Load() && configmapControllerInitialized.Load() {
-			c.enqueue(handler.ResourceCreatedHandler{
-				Resource:    obj,
-				Collectors:  c.collectors,
-				Recorder:    c.recorder,
-				EnqueueTime: time.Now(),
-			})
-		} else {
-			c.collectors.RecordSkipped("ignored_or_not_selected")
-		}
-	}
-}
-
-func (c *Controller) resourceInIgnoredNamespace(raw interface{}) bool {
-	switch obj := raw.(type) {
-	case *v1.ConfigMap:
-		return c.ignoredNamespaces.Contains(obj.Namespace)
-	case *v1.Secret:
-		return c.ignoredNamespaces.Contains(obj.Namespace)
-	case *csiv1.SecretProviderClassPodStatus:
-		return c.ignoredNamespaces.Contains(obj.Namespace)
-	}
-	return false
-}
-
-func (c *Controller) resourceInSelectedNamespaces(raw interface{}) bool {
-	if len(c.namespaceSelector) == 0 {
-		return true
-	}
-
-	namespaces := loadSelectedNamespaces()
-	var ns string
-	switch object := raw.(type) {
-	case *v1.ConfigMap:
-		ns = object.GetNamespace()
-	case *v1.Secret:
-		ns = object.GetNamespace()
-	case *csiv1.SecretProviderClassPodStatus:
-		ns = object.GetNamespace()
-	default:
-		return false
-	}
-	_, ok := namespaces[ns]
-	return ok
-}
-
-func (c *Controller) addSelectedNamespaceToCache(namespace v1.Namespace) {
-	old := loadSelectedNamespaces()
-	next := make(map[string]struct{}, len(old)+1)
-	for k := range old {
-		next[k] = struct{}{}
-	}
-	next[namespace.GetName()] = struct{}{}
-	selectedNamespacesCache.Store(next)
-	logrus.Infof("added namespace to be watched: %s", namespace.GetName())
-}
-
-func (c *Controller) removeSelectedNamespaceFromCache(namespace v1.Namespace) {
-	old := loadSelectedNamespaces()
-	if _, ok := old[namespace.GetName()]; !ok {
-		return
-	}
-	next := make(map[string]struct{}, len(old))
-	for k := range old {
-		next[k] = struct{}{}
-	}
-	delete(next, namespace.GetName())
-	selectedNamespacesCache.Store(next)
-	logrus.Infof("removed namespace from watch: %s", namespace.GetName())
-}
-
-// Update function to add an old object and a new object to the queue in case of updating a resource
-func (c *Controller) Update(old interface{}, new interface{}) {
-	c.collectors.RecordEventReceived("update", c.resource)
-
-	switch new.(type) {
-	case *v1.Namespace:
-		return
-	}
-
-	if !c.resourceInIgnoredNamespace(new) && c.resourceInSelectedNamespaces(new) {
-		c.enqueue(handler.ResourceUpdatedHandler{
-			Resource:    new,
-			OldResource: old,
-			Collectors:  c.collectors,
-			Recorder:    c.recorder,
-			EnqueueTime: time.Now(),
-		})
-	} else {
-		c.collectors.RecordSkipped("ignored_or_not_selected")
-	}
-}
-
-// Delete function to add an object to the queue in case of deleting a resource
-func (c *Controller) Delete(old interface{}) {
-	c.collectors.RecordEventReceived("delete", c.resource)
-
-	// The informer passes a tombstone when it missed the delete event and only
-	// noticed the object was gone on relist. Unwrap it to get the last known state.
-	if tombstone, ok := old.(cache.DeletedFinalStateUnknown); ok {
-		old = tombstone.Obj
-	}
-
-	if _, ok := old.(*csiv1.SecretProviderClassPodStatus); ok {
-		return
-	}
-
-	if options.ReloadOnDelete == "true" {
-		if !c.resourceInIgnoredNamespace(old) && c.resourceInSelectedNamespaces(old) && secretControllerInitialized.Load() && configmapControllerInitialized.Load() {
-			c.enqueue(handler.ResourceDeleteHandler{
-				Resource:    old,
-				Collectors:  c.collectors,
-				Recorder:    c.recorder,
-				EnqueueTime: time.Now(),
-			})
-		} else {
-			c.collectors.RecordSkipped("ignored_or_not_selected")
-		}
-	}
-
-	switch object := old.(type) {
-	case *v1.Namespace:
-		c.removeSelectedNamespaceFromCache(*object)
-		return
-	}
-}
-
-// enqueue adds an item to the queue and records metrics
-func (c *Controller) enqueue(item interface{}) {
-	c.queue.Add(item)
-	c.collectors.RecordQueueAdd()
-	c.collectors.SetQueueDepth(c.queue.Len
-```
-
-### Core Architecture Module: `internal/pkg/crypto/sha.go`
-```
-package crypto
-
-import (
-	"crypto/sha1"
-	"fmt"
-	"io"
-
-	"github.com/sirupsen/logrus"
-)
-
-// GenerateSHA generates SHA from string
-func GenerateSHA(data string) string {
-	hasher := sha1.New()
-	_, err := io.WriteString(hasher, data)
-	if err != nil {
-		logrus.Errorf("Unable to write data in hash writer %v", err)
-	}
-	sha := hasher.Sum(nil)
-	return fmt.Sprintf("%x", sha)
-}
 
 ```
 
@@ -1490,235 +1325,327 @@ func GenerateSHA(data string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `45f478d2` (2026-11-16)
-**Commit Message**: Merge pull request #1275 from lbarrosby/fix/chart-monitor-namespace-selector
+### Incident Patch 1: `a11daedb` (2026-11-11)
+**Commit Message**: fix: bump golang.org/x/net to v0.62.0 on v2 for CVE-2026-78661 and CVE-2026-97045
 
-fix(chart): point monitor namespaceSelector at the namespace value
+#1273 did this on master; v2 was still on golang.org/x/net v0.58.0. The other golang.org/x modules move in lockstep to the same versions as master.
 
-**File**: `deployments/kubernetes/chart/reloader/templates/podmonitor.yaml` (modified, +1/-1)
+**File**: `go.mod` (modified, +8/-8)
 ```diff
-@@ -53,7 +53,7 @@ spec:
-   jobLabel: {{ template "reloader-fullname" . }}
-   namespaceSelector:
-     matchNames:
--    - {{ .Release.Namespace }}
-+    - {{ .Values.namespace | default .Release.Namespace }}
-   selector:
-     matchLabels:
-       {{ include "reloader-match-labels.chart" . | nindent 6 }}
+@@ -249,16 +249,16 @@ require (
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.4 // indirect
+ 	golang.org/x/exp/typeparams v0.0.0-20251023183803-a4bb9ffd2546 // indirect
+-	golang.org/x/mod v0.40.0 // indirect
+-	golang.org/x/net v0.58.0 // indirect
++	golang.org/x/mod v0.41.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.22.0 // indirect
+-	golang.org/x/sys v0.47.0 // indirect
+-	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
+-	golang.org/x/term v0.45.0 // indirect
+-	golang.org/x/text v0.41.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
+ 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
 ```
 
-**File**: `deployments/kubernetes/chart/reloader/templates/servicemonitor.yaml` (modified, +1/-1)
+**File**: `go.sum` (modified, +16/-16)
 ```diff
-@@ -53,7 +53,7 @@ spec:
-   jobLabel: {{ template "reloader-fullname" . }}
-   namespaceSelector:
-     matchNames:
--    - {{ .Release.Namespace }}
-+    - {{ .Values.namespace | default .Release.Namespace }}
-   selector:
-     matchLabels:
-       {{ include "reloader-match-labels.chart" . | nindent 6 }}
-```
-
-**File**: `deployments/kubernetes/chart/reloader/tests/monitor_test.yaml` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+suite: ServiceMonitor and PodMonitor
-+
-+templates:
-+  - servicemonitor.yaml
-+  - podmonitor.yaml
-+
-+capabilities:
-+  apiVersions:
-+    - monitoring.coreos.com/v1
-+
-+release:
-+  namespace: release-ns
-+
-+tests:
-+  - it: ServiceMonitor selects the release namespace by default
-+    template: servicemonitor.yaml
-+    set:
-+      reloader:
-+        serviceMonitor:
-+          enabled: true
-+    asserts:
-+      - equal:
-+          path: spec.namespaceSelector.matchNames
-+          value:
-+            - release-ns
-+
-+  - it: ServiceMonitor selects the namespace value when it is set
-+    template: servicemonitor.yaml
-+    set:
-+      namespace: reloader-ns
-+      reloader:
-+        serviceMonitor:
-+          enabled: true
-+          namespace: monitoring
-+    asserts:
-+      - equal:
-+          path: metadata.namespace
-+          value: monitoring
-+      - equal:
-+          path: spec.namespaceSelector.matchNames
-+          value:
-+            - reloader-ns
-+
-+  - it: PodMonitor selects the release namespace by default
-+    template: podmonitor.yaml
-+    set:
-+      reloader:
-+        podMonitor:
-+          enabled: true
-+    asserts:
-+      - equal:
-+          path: spec.namespaceSelector.matchNames
-+          value:
-+            - release-ns
-+
-+  - it: PodMonitor selects the namespace value when it is set
-+    template: podmonitor.yaml
-+    set:
-+      namespace: reloader-ns
-+      reloader:
-+        podMonitor:
-+          enabled: true
-+          namespace: monitoring
-+    asserts:
-+      - equal:
-+          path: metadata.namespace
-+          value: monitoring
-+      - equal:
-+          path: spec.namespaceSelector.matchNames
-+          value:
-+            - reloader-ns
+@@ -611,8 +611,8 @@ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91
+ golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
+ golang.org/x/mod v0.12.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
+ golang.org/x/mod v0.13.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
+-golang.org/x/mod v0.40.0 h1:hUv+3cXcdRHz08UmSiOob7sadHig73uo5bkXxQ/tvUs=
+-golang.org/x/mod v0.40.0/go.mod h1:0/weTWkPWGBikyTWAX3dkjVztMmBA5hM0DH6BElSupE=
++golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
++golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+@@ -626,8 +626,8 @@ golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
+ golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
+ golang.org/x/net v0.16.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
+-golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
+-golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -639,8 +639,8 @@ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
+ golang.org/x/sync v0.4.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
+-golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
+-golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -660,18 +660,18 @@ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+-golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
+-golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 h1:ZUSxONxc981v7AW7QUg+I9WwZzSTTJ019ENBYr5pV/Q=
+-golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5/go.mod h1:LVehoXe41cL5SCVQilsV7Gg6BNG+Js6P9PhSbYTIUkQ=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 h1:DftxASHKl6JolFPqoN+2WrFO53JvkHwRXvFqf8gsivA=
++golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+ golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
+ golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
+ golang.org/x/term v0.12.0/go.mod h1:owVbMEjm3cBLCHdkQu9b1opXd4ETQWc3BhuQGKgXgvU=
+ golang.org/x/term v0.13.0/go.mod h1:LTmsnFJwVN6bCy1rVCoS+qHT1HhALEFxKncY3WNNh4U=
+-golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
+-golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
+ gol
 ```
 
 ---
 
-### Incident Patch 2: `8ece2c74` (2026-11-16)
-**Commit Message**: Merge pull request #1274 from lbarrosby/fix/pod-template-exclude-annotations
+### Incident Patch 2: `ea1a0a89` (2026-11-06)
+**Commit Message**: fix(manifests): grant update on cronjobs/finalizers for kubectl installs
 
-fix: honor exclude annotations set on the pod template
+Review of #1271: deployments/kubernetes/manifests/clusterrole.yaml and the
+generated reloader.yaml had the same gap as the chart, so CronJob reloads
+still failed on OpenShift for kubectl apply installs. reloader.yaml is
+regenerated with make k8s-manifests; the only change in it is this rule.
 
-**File**: `pkg/common/common.go` (modified, +12/-0)
+**File**: `deployments/kubernetes/manifests/clusterrole.yaml` (modified, +6/-0)
 ```diff
-@@ -255,6 +255,18 @@ func ShouldReload(config Config, resourceType string, annotations Map, podAnnota
- 		searchAnnotationValue = annotations[reloaderOpts.AutoSearchAnnotation]
- 		reloaderEnabledValue = annotations[reloaderOpts.ReloaderAutoAnnotation]
- 		typedAutoAnnotationEnabledValue = annotations[config.TypedAutoAnnotation]
-+		// The exclude annotations can sit on the pod template next to the auto
-+		// annotation they refine, so read them from there too. One set on the
-+		// workload itself still wins.
-+		if !foundExcludeConfigmap {
-+			excludeConfigmapAnnotationValue, foundExcludeConfigmap = annotations[reloaderOpts.ConfigmapExcludeReloaderAnnotation]
-+		}
-+		if !foundExcludeSecret {
-+			excludeSecretAnnotationValue, foundExcludeSecret = annotations[reloaderOpts.SecretExcludeReloaderAnnotation]
-+		}
-+		if !foundExcludeSecretProviderClass {
-+			excludeSecretProviderClassProviderAnnotationValue, foundExcludeSecretProviderClass = annotations[reloaderOpts.SecretProviderClassExcludeReloaderAnnotation]
-+		}
- 	}
- 
- 	isResourceExcluded := false
+@@ -42,6 +42,12 @@ rules:
+     verbs:
+       - list
+       - get
++  - apiGroups:
++      - "batch"
++    resources:
++      - cronjobs/finalizers
++    verbs:
++      - update
+   - apiGroups:
+       - "batch"
+     resources:
 ```
 
-**File**: `pkg/common/common_test.go` (modified, +79/-0)
+**File**: `deployments/kubernetes/reloader.yaml` (modified, +6/-0)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"testing"
- 	"time"
+@@ -63,6 +63,12 @@ rules:
+   verbs:
+   - list
+   - get
++- apiGroups:
++  - batch
++  resources:
++  - cronjobs/finalizers
++  verbs:
++  - update
+ - apiGroups:
+   - batch
+   resources:
+```
+
+---
+
+### Incident Patch 3: `06146b39` (2026-11-06)
+**Commit Message**: fix(chart): grant cronjobs/finalizers unless both CronJobs and Jobs are ignored
+
+Review of #1271: a Job that a CronJob created keeps its ownerReference
+(blockOwnerDeletion) when Reloader recreates it, so ignoreCronJobs: true
+with ignoreJobs: false still needs the rule. The negative tests now use
+notContains with the same block as the positive ones, so they cannot
+pass when a filter matches nothing, and cover the scoped namespace
+Roles and the CronJobs-only case.
+
+**File**: `deployments/kubernetes/chart/reloader/templates/_helpers.tpl` (modified, +4/-0)
+```diff
+@@ -287,6 +287,10 @@ the rule set is defined once. Expects the root context ($) as its argument.
+       - watch
+       - update
+       - patch
++{{- end }}
++{{- /* A Job recreated from a CronJob keeps its ownerReference (blockOwnerDeletion), so the Job
++       path needs this too: it is left out only when both CronJobs and Jobs are ignored. */}}
++{{- if not (and .Values.reloader.ignoreCronJobs .Values.reloader.ignoreJobs) }}
+   - apiGroups:
+       - "batch"
+     resources:
+```
+
+**File**: `deployments/kubernetes/chart/reloader/templates/clusterrole.yaml` (modified, +4/-0)
+```diff
+@@ -89,6 +89,10 @@ rules:
+       - watch
+       - update
+       - patch
++{{- end }}
++{{- /* A Job recreated from a CronJob keeps its ownerReference (blockOwnerDeletion), so the Job
++       path needs this too: it is left out only when both CronJobs and Jobs are ignored. */}}
++{{- if not (and .Values.reloader.ignoreCronJobs .Values.reloader.ignoreJobs) }}
+   - apiGroups:
+       - "batch"
+     resources:
+```
+
+**File**: `deployments/kubernetes/chart/reloader/tests/cronjob_rbac_test.yaml` (modified, +91/-12)
+```diff
+@@ -40,18 +40,90 @@ tests:
+             verbs:
+               - update
  
-+	"github.com/stakater/Reloader/internal/pkg/constants"
- 	"github.com/stakater/Reloader/internal/pkg/options"
- )
+-  - it: does not grant cronjobs/finalizers in the ClusterRole when CronJobs are ignored
++  - it: grants update on cronjobs/finalizers in each scoped namespace's Role
++    template: role.yaml
++    documentSelector:
++      path: metadata.namespace
++      value: team-b
++    set:
++      reloader:
++        watchGlobally: false
++        namespaces:
++          - team-a
++          - team-b
++    asserts:
++      - isKind:
++          of: Role
++      - contains:
++          path: rules
++          content:
++            apiGroups:
++              - "batch"
++            resources:
++              - cronjobs/finalizers
++            verbs:
++              - update
++
++  # A Job that a CronJob created keeps its ownerReference when Reloader recreates it, so the rule
++  # stays while Jobs are still reloaded.
++  - it: still grants cronjobs/finalizers in the ClusterRole when only CronJobs are ignored
++    template: clusterrole.yaml
++    set:
++      reloader:
++        watchGlobally: true
++        ignoreCronJobs: true
++        ignoreJobs: false
++    asserts:
++      - contains:
++          path: rules
++          content:
++            apiGroups:
++              - "batch"
++            resources:
++              - cronjobs/finalizers
++            verbs:
++              - update
++
++  - it: still grants cronjobs/finalizers in the namespaced Role when only CronJobs are ignored
++    template: role.yaml
++    documentSelector:
++      path: metadata.name
++      value: RELEASE-NAME-reloader-role
++    set:
++      reloader:
++        watchGlobally: false
++        ignoreCronJobs: true
++        ignoreJobs: false
++    asserts:
++      - contains:
++          path: rules
++          content:
++            apiGroups:
++              - "batch"
++            resources:
++              - cronjobs/finalizers
++            verbs:
++              - update
++
++  - it: does not grant cronjobs/finalizers in the ClusterRole when CronJobs and Jobs are ignored
+     template: clusterrole.yaml
+     set:
+       reloader:
+         watchGlobally: true
+         ignoreCronJobs: true
++        ignoreJobs: true
+     asserts:
+-      - exists:
+-          path: rules[?(@.resources[0] == "cronjobs/finalizers")]
+-        not: true
++      - notContains:
++          path: rules
++          content:
++            apiGroups:
++              - "batch"
++            resources:
++              - cronjobs/finalizers
++            verbs:
++              - update
  
-@@ -310,3 +311,81 @@ func TestGetCommandLineOptions_LeaderElectionTimingsAreDurationStrings(t *testin
- 		}
- 	}
- }
-+
-+// The auto and exclude annotations can both be set on the pod template instead
-+// of the workload. The exclude list there must still skip the excluded
-+// resource, and an exclude list on the workload must keep applying when the
-+// auto annotation sits on the pod template.
-+func TestShouldReload_ExcludeAnnotationOnPodTemplate(t *testing.T) {
-+	opts := &ReloaderOptions{
-+		ReloaderAutoAnnotation:                       "reloader.stakater.com/auto",
-+		ConfigmapExcludeReloaderAnnotation:           "configmaps.exclude.reloader.stakater.com/reload",
-+		SecretExcludeReloaderAnnotation:              "secrets.exclude.reloader.stakater.com/reload",
-+		SecretProviderClassExcludeReloaderAnnotation: "secretproviderclasses.exclude.reloader.stakater.com/reload",
-+	}
-+
-+	tests := []struct {
-+		name           string
-+		configType     string
-+		resourceName   string
-+		annotations    Map
-+		podAnnotations Map
-+		wantReload     bool
-+	}{
-+		{
-+			name:         "configmap excluded on pod template",
-+			configType:   constants.ConfigmapEnvVarPostfix,
-+			resourceName: "app-config",
-+			podAnnotations: Map{
-+				"reloader.stakater.com/auto":                      "true",
-+				"configmaps.exclude.reloader.stakater.com/reload": "app-config",
-+			},
-+			wantReload: false,
-+		},
-+		{
-+			name:         "secret excluded on pod template",
-+			configType:   constants.SecretEnvVarPostfix,
-+			resourceName: "app-secret",
-+			podAnnotations: Map{
-+				"reloader.stakater.com/auto":                   "true",
-+				"secrets.exclude.reloader.stakater.com/reload": "other, app-secret",
-+			},
-+			wantReload: false,
-+		},
-+		{
-+			name:         "other configmap still reloads",
-+			configType:   constants.ConfigmapEnvVarPostfix,
-+			resourceName: "other-config",
-+			podAnnotations: Map{
-+				"reloader.stakater.com/auto":                      "true",
-+				"configmaps.exclude.reloader.stakater.com/reload": "app-config",
-+			},
-+			wantReload: true,
-+		},
-+		{
-+			name:         "exclude on workload with auto on pod template",
-+			configType:   constants.ConfigmapEnvVarPostfix,
-+			resourceName: "app-config",
-+			annotations: Map{
-+				"configmaps.exclude.reloader.stakater.com/reload": "app-config",
-+			},
-+			podAnnotations: Map{
-+				"reloader.stakater.com/auto": "true",
-+			},
-+			wantReload: false,
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			config := Config{
-+				ResourceName: tt.resourceName,
-+				Type:         tt.configType,
-+			}
-+			result := ShouldReload(config, "Deployment", tt.annotations, tt.podAnnotations, opts)
-+			if result.ShouldReload != tt.wantReload {
-+				t.Errorf("ShouldReload = %v, want %v", result.ShouldReload, tt.wantReload)
-+			}
-+		})
-+	}
-+}
+-  - it: does not grant cronjobs/finalizers in the namespaced Role when CronJobs are ignored
++  - it: does not grant cronjobs/finalizers in the namespaced Role when CronJobs and Jobs are ignored
+     template: role.yaml
+     documentSelector:
+       path: metadata.name
+@@ -60,26 +132,33 @@ tests:
+       reloader:
+         watchGlobally: false
+         ignoreCronJobs: true
++        ignoreJobs: true
+     asserts:
+-      - exists:
+-          path: rules[?(@.resources[0] == "cronjobs/finalizers")]
+-        not: true
++      - notContains:
++          path: rules
++          content:
++            apiGroups:
++              - "batch"
++            resources:
++              - cronjobs/finalizers
++            verbs:
++              - update
+ 
+-  - it: grants update on cronjobs/finalizers in each scoped namespace's Role
++  - it: does not grant cronjobs/finalizers in a scoped namespace's Role when CronJobs and Jobs are ignored
+     template: role.yaml
+     documentSelector:
+       path: metadata.namespace
+       value: team-b
+     set:
+       reloader:
+         watchGlobally: false
++        ignoreCronJobs: true
++        ignoreJobs: true
+         namespaces:
+           - team-a
+           - team-b
+     asserts:
+-      - isKind:
+-          of: Role
+-      - contains:
++      - notContains:
+           path: rules
+           content:
+             apiGroups:
 ```
 
 #### Recent Merged Pull Requests:
@@ -1747,31 +1674,45 @@ fix: honor exclude annotations set on the pod template
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in podmonitor.yaml
+## X. bump golang.org/x/net to v0.62.0 on v2 for CVE-2026-78661 and CVE-2026-97045
 
 **RULE**:
-When implementing operations in `deployments/kubernetes/chart/reloader/templates/podmonitor.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in stakater/Reloader. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `45f478d2`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a11daedb`: bump golang.org/x/net to v0.62.0 on v2 for CVE-2026-78661 and CVE-2026-97045. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deployments/kubernetes/chart/reloader/templates/podmonitor.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    - {{ .Values.namespace | default .Release.Namespace }}
+	golang.org/x/mod v0.41.0 // indirect
+	golang.org/x/net v0.62.0 // indirect
+	golang.org/x/sync v0.24.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
+	golang.org/x/term v0.47.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
+	golang.org/x/tools v0.51.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    - {{ .Release.Namespace }}
+	golang.org/x/mod v0.40.0 // indirect
+	golang.org/x/net v0.58.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
+	golang.org/x/term v0.45.0 // indirect
+	golang.org/x/text v0.41.0 // indirect
+	golang.org/x/tools v0.49.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `45f478d2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a11daedb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

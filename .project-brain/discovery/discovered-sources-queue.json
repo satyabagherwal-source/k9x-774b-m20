@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T16:38:58.249Z",
+  "updated_at": "2026-11-17T16:47:25.848Z",
   "stats": {
-    "total_discovered": 5042,
-    "approved_pending_harvest": 4754,
+    "total_discovered": 5045,
+    "approved_pending_harvest": 4757,
     "harvested_count": 0,
     "rejected_count": 288,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4742,
+      "COMMUNITY_AND_EXPERT": 4745,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -108929,6 +108929,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
         "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-254490329344": {
+      "id": "SRC-254490329344",
+      "url": "https://huggingface.co/sensenova/SenseNova-Loop-9B",
+      "title": "https://huggingface.co/sensenova/SenseNova-Loop-9B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:47:25.028Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md",
+        "fileName": "hf-sensenova-sensenova-loop-9b-learnings.md"
+      }
+    },
+    "SRC-C09C08AC7FB5": {
+      "id": "SRC-C09C08AC7FB5",
+      "url": "https://github.com/sceneview/sceneview/pull/5138",
+      "title": "https://github.com/sceneview/sceneview/pull/5138",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:47:25.815Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+        "fileName": "sceneview-sceneview-learnings.md"
+      }
+    },
+    "SRC-A76360818817": {
+      "id": "SRC-A76360818817",
+      "url": "https://github.com/sceneview/sceneview/issues/4461",
+      "title": "https://github.com/sceneview/sceneview/issues/4461",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:47:25.848Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+        "fileName": "sceneview-sceneview-learnings.md"
       }
     }
   }

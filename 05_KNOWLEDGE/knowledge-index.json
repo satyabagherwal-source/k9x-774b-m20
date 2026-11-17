@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T16:38:58.713Z",
-  "total_verified_learnings": 8908,
+  "last_updated": "2026-11-17T16:47:26.353Z",
+  "total_verified_learnings": 8910,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20369,
+  "total_items": 20385,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -222340,14 +222340,19 @@
       "slug": "sceneview-sceneview",
       "platform": "github",
       "source_url": "https://github.com/sceneview/sceneview",
-      "source_version": "868f9185",
-      "content_hash": "426658dc88674ca07192c6eb1c60a46de46aff7c0ebdd7e74914dbd877158ba1",
+      "source_version": "0600bf13",
+      "content_hash": "7d38ec63829696c2dbbbcb86c8da71dc44512725736ff2714d1690da2da9e687",
       "dossier_path": "07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
       "promoted_rules": [
         {
           "number": 8433,
           "title": "3D Scan shows a result at once, on a real example, with its film back",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9007,
+          "title": "apply per-frame EIS camera compensation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -222356,7 +222361,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:49:11.966Z",
+      "verified_at": "2026-11-17T16:46:41.077Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222398,10 +222403,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sceneview-sceneview-quality-verification-intelligence-sceneview-sceneview-core-i.md",
       "title": "Quality & Verification Intelligence: sceneview/sceneview Core Invariants",
       "repository": "sceneview/sceneview",
-      "source_version": "868f9185",
-      "content_hash": "c5cd2f70488c6998d5fa5fe7ff1f218737a3393ec3c4c75797d82b68a65b4a69",
+      "source_version": "0600bf13",
+      "content_hash": "ef30f044d386404d90522cf2617c2ec2c6222fe0115ca07d6f83e236a4437b2e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:49:12.457Z"
+      "persisted_at": "2026-11-17T16:46:41.575Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview",
@@ -222410,10 +222415,10 @@
       "relative_path": "08_VERIFICATION/sceneview-sceneview-verification-protocol-empirical-defect-shield-for-sceneview-.md",
       "title": "Verification Protocol: Empirical Defect Shield for sceneview/sceneview",
       "repository": "sceneview/sceneview",
-      "source_version": "868f9185",
-      "content_hash": "de216b86fc17c8ffb825d310cab2aa1b2238bbf64f2987260f681c1c5cf4b5de",
+      "source_version": "0600bf13",
+      "content_hash": "05e46097982aacbc436977203aa18f449e2db3d5942fe85ba4e0e6486135254a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:49:12.576Z"
+      "persisted_at": "2026-11-17T16:46:41.708Z"
     },
     "learn-github-higress-group-higress": {
       "learning_id": "learn-github-higress-group-higress",
@@ -222704,9 +222709,9 @@
       "title": "Quality & Verification Intelligence: sceneview-sceneview-learnings Core Invariants",
       "repository": "sceneview-sceneview-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa82ea8474ac5e63017f6b86b02e608dd37551d5dbf7835f407593cfff0f065a",
+      "content_hash": "4bc89f8e2b12620ad274e47292e0f6a3631908195079e10be04936c5fb22b24a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:49:59.280Z"
+      "persisted_at": "2026-11-17T16:47:26.195Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview-learnings",
@@ -222716,9 +222721,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sceneview-sceneview-learnings",
       "repository": "sceneview-sceneview-learnings",
       "source_version": "HEAD",
-      "content_hash": "a04ed3833ab63e2170000055f29bdc532e93207cc4f81b66811008b8cac4a2dc",
+      "content_hash": "dcf1d2e56eeaefefccc04e1357d09d941d4c9e5c492a4f50d7d76609eab5df55",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:49:59.410Z"
+      "persisted_at": "2026-11-17T16:47:26.353Z"
     },
     "candidate_directive-mcp-server-preserve-proxy-tool-input-schemas": {
       "item_id": "candidate_directive-mcp-server-preserve-proxy-tool-input-schemas",
@@ -239659,8 +239664,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "c9f1a879",
-      "content_hash": "1b41c5586786a0798db6391e609849129596f004728a7084b07e88fe0eb1e904",
+      "source_version": "996349a5",
+      "content_hash": "81a98ea5e0834e5b9e92a8c1a1e901a05cdf54b61cc03376f81bb9c447043e1a",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -239673,6 +239678,11 @@
           "number": 8744,
           "title": "the client searches pages and documents, extracts JSON from a PDF, and returns a",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9009,
+          "title": "PageIndexClient.build_index() is named build_outline_index(), and its errors say",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239680,7 +239690,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T14:34:58.321Z",
+      "verified_at": "2026-11-17T16:46:47.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239734,10 +239744,10 @@
       "relative_path": "08_VERIFICATION/vectifyai-pageindex-verification-protocol-empirical-defect-shield-for-vectifyai-.md",
       "title": "Verification Protocol: Empirical Defect Shield for VectifyAI/PageIndex",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "c9f1a879",
-      "content_hash": "f9d04024202bf4a67b1ea9bb976aa4472b1300651b86c8bf5e03851490580083",
+      "source_version": "996349a5",
+      "content_hash": "ebbb109c1f0614bd7dd68b2eddbb87828d186579dc44b038b43b3771d48dd020",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T14:34:58.848Z"
+      "persisted_at": "2026-11-17T16:46:48.540Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning",
@@ -254649,10 +254659,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vectifyai-pageindex-content-information-intelligence-vectifyai-pageindex-core-in.md",
       "title": "Content & Information Intelligence: VectifyAI/PageIndex Core Invariants",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "c9f1a879",
-      "content_hash": "15a841fdcc30f0a350d922687ecd37730d4f2fe8eea63a901a9b3fd1ee6ea3dd",
+      "source_version": "996349a5",
+      "content_hash": "3d0b47979fbc7ee70c6e8966e28d09af20325b2631ef7e2c0d744c3eccaa8a9e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T14:34:58.743Z"
+      "persisted_at": "2026-11-17T16:46:48.405Z"
     },
     "rule-8745": {
       "learning_id": "rule-8745",
@@ -255827,14 +255837,19 @@
       "slug": "stakater-reloader",
       "platform": "github",
       "source_url": "https://github.com/stakater/Reloader",
-      "source_version": "45f478d2",
-      "content_hash": "5aff2201e1ace9bc3f256e5add2958930706152065a496ef2b40a0b231ae312e",
+      "source_version": "5f3fdbdc",
+      "content_hash": "af427e774b3eeae9ef0ad50307353136b733ad2cd6294081a6db36cb2c696460",
       "dossier_path": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stakater-reloader-learnings.md",
       "promoted_rules": [
         {
           "number": 8759,
           "title": "Empirical Invariant Guard in podmonitor.yaml",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9010,
+          "title": "bump golang.org/x/net to v0.62.0 on v2 for CVE-2026-78661 and CVE-2026-97045",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -255843,7 +255858,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T16:08:59.415Z",
+      "verified_at": "2026-11-17T16:46:52.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255897,10 +255912,10 @@
       "relative_path": "08_VERIFICATION/stakater-reloader-verification-protocol-empirical-defect-shield-for-stakater-rel.md",
       "title": "Verification Protocol: Empirical Defect Shield for stakater/Reloader",
       "repository": "stakater/Reloader",
-      "source_version": "45f478d2",
-      "content_hash": "faf40feb850540382baa8c7fe6263d1451a686cb2ca63ee70c50cac868da7811",
+      "source_version": "5f3fdbdc",
+      "content_hash": "e83fb3d578e911888f9684f1157cdf211c6bb205e1457133f4ba06a4b71c3e0c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T16:08:59.943Z"
+      "persisted_at": "2026-11-17T16:46:53.204Z"
     },
     "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf": {
       "learning_id": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
@@ -259674,8 +259689,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "8404f23a",
-      "content_hash": "b79b24c85211c584c21e984399872ea56490bc49b7e93c0d4815cb2fbe0d9819",
+      "source_version": "2ec8094c",
+      "content_hash": "c03a65280d7f4db365ed6c9016aca058e899d567ee5531b89f486b3ad43460b8",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -259688,6 +259703,11 @@
           "number": 8870,
           "title": "Require new bundle format for image signing and verification",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9008,
+          "title": "Require new bundle format for attest",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -259695,7 +259715,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T04:43:55.207Z",
+      "verified_at": "2026-11-17T16:46:44.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259737,10 +259757,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "repository": "sigstore/cosign",
-      "source_version": "8404f23a",
-      "content_hash": "92def6dfd6fac4502ef2d93bac02ba89fe4c2394526ace1ab76c60d4024d4ec9",
+      "source_version": "2ec8094c",
+      "content_hash": "e1f912416f6fe35d81244c0aedcd0362859c459a315a1c9ff0879bd9841beec7",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T04:43:55.649Z"
+      "persisted_at": "2026-11-17T16:46:45.218Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign",
@@ -259749,10 +259769,10 @@
       "relative_path": "08_VERIFICATION/sigstore-cosign-verification-protocol-empirical-defect-shield-for-sigstore-cosig.md",
       "title": "Verification Protocol: Empirical Defect Shield for sigstore/cosign",
       "repository": "sigstore/cosign",
-      "source_version": "8404f23a",
-      "content_hash": "11bf5b5ba3fd378ade55482afda51f9532109d4ffa0888255aa01bea222d8363",
+      "source_version": "2ec8094c",
+      "content_hash": "ad88430edc1ec89a882fc809d4b8fdc281bf673de98023234c4da1d8b418ed28",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:43:55.766Z"
+      "persisted_at": "2026-11-17T16:46:45.351Z"
     },
     "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized": {
       "item_id": "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized",
@@ -273097,6 +273117,236 @@
       "content_hash": "0471c32079f73966a1af40d844f86c43d8f070ab5fd5f0d4bb956d04c651f057",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T16:38:58.022Z"
+    },
+    "learn-huggingface-sensenova-sensenova-loop-9b": {
+      "learning_id": "learn-huggingface-sensenova-sensenova-loop-9b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sensenova/SenseNova-Loop-9B",
+      "repository": "sensenova/SenseNova-Loop-9B",
+      "slug": "hf-sensenova-sensenova-loop-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/sensenova/SenseNova-Loop-9B",
+      "source_version": "hf-sensenova-sensenova-loop-9b",
+      "content_hash": "a26e8e39aeec134b66f5c690ad0fbdedf881753836da0b1455b309fdf72e3815",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T16:46:31.006Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-sensenova-sensenova-loop-9b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sensenova-sensenova-loop-9b-research-knowledge-intelligence-sensenova-senseno.md",
+      "title": "Research & Knowledge Intelligence: sensenova/SenseNova-Loop-9B Core Invariants",
+      "repository": "sensenova/SenseNova-Loop-9B",
+      "source_version": "hf-sensenova-sensenova-loop-9b",
+      "content_hash": "8d1e407d867fcc47ce21cf2a7549050a4fd32e042487e6d4933113333335fdf7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:46:31.378Z"
+    },
+    "learn-huggingface-internscience-sage-a1-5": {
+      "learning_id": "learn-huggingface-internscience-sage-a1-5",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "InternScience/Sage-A1.5",
+      "repository": "InternScience/Sage-A1.5",
+      "slug": "hf-internscience-sage-a1.5",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
+      "source_version": "hf-internscience-sage-a1.5",
+      "content_hash": "1c12b9937c6eda0892cd429b17ea10d2625ed8e7369e577fb1bdc7542d4e2329",
+      "dossier_path": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T16:46:33.639Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-internscience-sage-a1-5-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-internscience-sage-a1-5-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internscience-sage-a1-5-research-knowledge-intelligence-internscience-sage-a1.md",
+      "title": "Research & Knowledge Intelligence: InternScience/Sage-A1.5 Core Invariants",
+      "repository": "InternScience/Sage-A1.5",
+      "source_version": "hf-internscience-sage-a1.5",
+      "content_hash": "5944b92376f99caa2866af7eb2b9f2d776eedf588fffa3ffc3d3b447684f0183",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:46:33.999Z"
+    },
+    "rule-9007": {
+      "learning_id": "rule-9007",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9007,
+      "title": "apply per-frame EIS camera compensation",
+      "source_url": "https://github.com/sceneview/sceneview",
+      "source_version": "0600bf13",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:46:41.077Z"
+    },
+    "candidate_directive-apply-per-frame-eis-camera-compensation": {
+      "item_id": "candidate_directive-apply-per-frame-eis-camera-compensation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CZDZ-apply-per-frame-eis-camera-compensation.md",
+      "title": "apply per-frame EIS camera compensation",
+      "repository": "sceneview/sceneview",
+      "source_version": "0600bf13",
+      "content_hash": "76e34e4fbded3e874cd1e0ce4d2ea0ffe858742afbe94016e9ee79901317f4d7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T16:46:41.451Z"
+    },
+    "rule-9008": {
+      "learning_id": "rule-9008",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9008,
+      "title": "Require new bundle format for attest",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "2ec8094c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:46:44.735Z"
+    },
+    "candidate_directive-require-new-bundle-format-for-attest": {
+      "item_id": "candidate_directive-require-new-bundle-format-for-attest",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D279-require-new-bundle-format-for-attest.md",
+      "title": "Require new bundle format for attest",
+      "repository": "sigstore/cosign",
+      "source_version": "2ec8094c",
+      "content_hash": "761a1ff00c771ab65bd656162d582f0abcc1b3b8d7c3f87767a61bfef4581351",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T16:46:45.094Z"
+    },
+    "rule-9009": {
+      "learning_id": "rule-9009",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9009,
+      "title": "PageIndexClient.build_index() is named build_outline_index(), and its errors say",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "996349a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:46:47.923Z"
+    },
+    "candidate_directive-pageindexclient-build_index-is-named-build_outline_index-and-its-errors-say": {
+      "item_id": "candidate_directive-pageindexclient-build_index-is-named-build_outline_index-and-its-errors-say",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D4NR-pageindexclient-build_index-is-named-build_outline_index-and-its-errors-say.md",
+      "title": "PageIndexClient.build_index() is named build_outline_index(), and its errors say",
+      "repository": "VectifyAI/PageIndex",
+      "source_version": "996349a5",
+      "content_hash": "9fe7a78268294eeac6fcac68c37afd63314fdbcaa86698505c9badf8bd915e80",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T16:46:48.283Z"
+    },
+    "rule-9010": {
+      "learning_id": "rule-9010",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9010,
+      "title": "bump golang.org/x/net to v0.62.0 on v2 for CVE-2026-78661 and CVE-2026-97045",
+      "source_url": "https://github.com/stakater/Reloader",
+      "source_version": "5f3fdbdc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:46:52.590Z"
+    },
+    "candidate_directive-bump-golang-org-x-net-to-v0-62-0-on-v2-for-cve-2026-78661-and-cve-2026-97045": {
+      "item_id": "candidate_directive-bump-golang-org-x-net-to-v0-62-0-on-v2-for-cve-2026-78661-and-cve-2026-97045",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D89G-bump-golang-org-x-net-to-v0-62-0-on-v2-for-cve-2026-78661-and-cve-2026-97045.md",
+      "title": "bump golang.org/x/net to v0.62.0 on v2 for CVE-2026-78661 and CVE-2026-97045",
+      "repository": "stakater/Reloader",
+      "source_version": "5f3fdbdc",
+      "content_hash": "8faa21e74183fb634bf2c46ff5995df644e70f5672f7974f7b27f136c5e832ae",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T16:46:52.949Z"
+    },
+    "domain_intelligence-architecture-intelligence-stakater-reloader-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-stakater-reloader-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-stakater-reloader-architecture-intelligence-stakater-reloader-core-invariants.md",
+      "title": "Architecture Intelligence: stakater/Reloader Core Invariants",
+      "repository": "stakater/Reloader",
+      "source_version": "5f3fdbdc",
+      "content_hash": "bd09aee83f351787457bf9642aa05b35e55231d03d73ca5e7cdd6f9617a30471",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T16:46:53.070Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-learnings-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-learnings-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sensenova-sensenova-loop-9b-learnings-research-knowledge-intelligence-hf-sens.md",
+      "title": "Research & Knowledge Intelligence: hf-sensenova-sensenova-loop-9b-learnings Core Invariants",
+      "repository": "hf-sensenova-sensenova-loop-9b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "61035c6a312363e362d3f6f5d6019a959c935956a09d63dc12753478caeb6af1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:47:25.237Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-internscience-sage-a1-5-learnings-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-internscience-sage-a1-5-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internscience-sage-a1-5-learnings-research-knowledge-intelligence-hf-internsc.md",
+      "title": "Research & Knowledge Intelligence: hf-internscience-sage-a1.5-learnings Core Invariants",
+      "repository": "hf-internscience-sage-a1.5-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8e829be7c19f511facebab12d06021611174a77f82100ab0094a6911c56e86cb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:47:25.599Z"
+    },
+    "candidate_directive-ar-apply-per-frame-eis-camera-compensation": {
+      "item_id": "candidate_directive-ar-apply-per-frame-eis-camera-compensation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DXT3-ar-apply-per-frame-eis-camera-compensation.md",
+      "title": "ar): apply per-frame EIS camera compensation",
+      "repository": "sceneview-sceneview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dcadc4f32702c0feecb255220ae81740c0d205464e1bffe138b8865e0f0dee49",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T16:47:26.067Z"
     }
   },
   "ai-builder-brain": {

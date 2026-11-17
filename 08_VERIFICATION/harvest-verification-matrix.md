@@ -10620,3 +10620,10 @@
 | `CYCLE-20261117-2U1K` | `2026-11-17T16:38:47.960Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9004` | Yes (`d1cf5c7c...`) |
 | `CYCLE-20261117-2WO2` | `2026-11-17T16:38:51.362Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9005` | Yes (`96132406...`) |
 | `CYCLE-20261117-2YJ2` | `2026-11-17T16:38:53.774Z` | `surrealdb/surrealdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9006` | Yes (`8de3dd7b...`) |
+| `CYCLE-20261117-CRHA` | `2026-11-17T16:46:31.198Z` | `sensenova/SenseNova-Loop-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md` | Yes (`a26e8e39...`) |
+| `CYCLE-20261117-CTHY` | `2026-11-17T16:46:33.814Z` | `InternScience/Sage-A1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md` | Yes (`1c12b993...`) |
+| `CYCLE-20261117-CZ8I` | `2026-11-17T16:46:41.250Z` | `sceneview/sceneview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9007` | Yes (`7d38ec63...`) |
+| `CYCLE-20261117-D220` | `2026-11-17T16:46:44.904Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9008` | Yes (`c03a6528...`) |
+| `CYCLE-20261117-D4IM` | `2026-11-17T16:46:48.094Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9009` | Yes (`81a98ea5...`) |
+| `CYCLE-20261117-D849` | `2026-11-17T16:46:52.762Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9010` | Yes (`af427e77...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T16:47:25.011Z` | `hf-sensenova-sensenova-loop-9b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-66A27B84` [Domain D] | Yes (`2fc9aeab...`) |

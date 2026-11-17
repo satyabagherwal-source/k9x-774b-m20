@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T03:49:59.022Z",
+  "timestamp": "2026-11-17T16:47:25.938Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-sceneview-sceneview-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sceneview-sceneview-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T03:49:59.022Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T16:47:25.938Z`  
 > **Learning ID**: `LEARN-EVO-sceneview-sceneview-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sceneview-sceneview-learnings.md`  
 > **Source**: github ([https://github.com/sceneview/sceneview](https://github.com/sceneview/sceneview))  
-> **Source Version**: `868f9185`  
+> **Source Version**: `0600bf13`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T03:49:11.082Z  
+> **Timestamp**: 2026-11-17T16:46:40.285Z  
 > **Learning ID**: `learn-github-sceneview-sceneview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sceneview-sceneview-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sceneview/sceneview](https://github.com/sceneview/sceneview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:49:11.074Z  
+> **Harvest Timestamp**: 2026-11-17T16:46:40.278Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 3D & AR SDK for Jetpack Compose (Filament, ARCore), Compose Multiplatform, SwiftUI (RealityKit, ARKit) and the web, with Flutter and React Native bridges. The maintained successor to Google Sceneform. Opens glTF/GLB and USDZ, at real size in AR. Assistant-ready: MCP server, AGENTS.md and llms.txt.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1366 stars
+- **Stars / Engagement**: 1376 stars
 
 ---
 
@@ -504,6 +504,8 @@ struct RenderSurfaceResizer: UIViewRepresentable {
 
 ### Core Architecture Module: `arsceneview/src/main/java/io/github/sceneview/ar/ARCore.kt`
 ```
+@file:OptIn(io.github.sceneview.ExperimentalSceneViewApi::class)
+
 package io.github.sceneview.ar
 
 import android.content.Context
@@ -512,8 +514,12 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.MainThread
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.google.ar.core.ArCoreApk.Availability
 import com.google.ar.core.Config
+import com.google.ar.core.Frame
 import com.google.ar.core.RecordingStatus
 import com.google.ar.core.Session
 import com.google.ar.core.TrackingFailureReason
@@ -542,7 +548,8 @@ const val kDefaultHitTestInstantDistance = 2.0f
  * @param onSessionPaused      Called each time the session pauses.
  * @param onArSessionFailed    Called when session creation or resume fails, once per failed
  *                             attempt: every host resume, permission grant or [retrySession]
- *                             that cannot resume the session reports again.
+ *                             that cannot resume the session reports again. A fatal frame-update
+ *                             error closes the session and reports once, without per-frame retries.
  * @param onSessionConfigChanged Called when the session configuration changes.
  */
 class ARCore(
@@ -565,23 +572,33 @@ class ARCore(
     var permissionHandler: ARPermissionHandler? = null
 
     /**
-     * Called on the main thread when the user denies the camera permission (#3308).
+     * Legacy two-action camera denial callback, called on the main thread.
      *
-     * `permanentlyDenied` is `true` when the system will no longer show the permission dialog
-     * ("Don't ask again" / second denial on Android 11+); the only way forward is then
-     * [openAppSettings]. Otherwise [retryCameraPermission] shows the dialog again.
+     * The historical `permanentlyDenied` argument recommends settings when `true`, including
+     * ambiguous answers for which settings is a fallback. It does not prove Android has
+     * stopped showing the dialog. `false` offers another [retryCameraPermission] request.
+     * This conservative mapping keeps existing hosts from retrying a suppressed dialog
+     * forever. Nothing opens automatically; call [openAppSettings] from a user action.
      *
-     * Nothing is opened automatically any more: before #3308 a denial jumped straight to the
-     * system App Info screen with a toast, backgrounding the activity with no explanation.
-     * [ARSceneView] wires this to its built-in `cameraPermissionOverlay`.
-     *
-     * Since #4452 it is invoked each time the verdict changes — from "ask again" to "open
-     * settings" and back — and `permanentlyDenied` no longer mirrors
-     * [ARPermissionHandler.shouldShowPermissionRationale] alone: a dialog the user dismissed
-     * without answering leaves no rationale flag either, and is not a permanent denial (see
-     * [isCameraPromptBlocked]).
+     * This boolean cannot distinguish an ambiguous answer from a confirmed settings-only
+     * denial, and is only notified when its own value changes. [ARSceneView] hosts receive
+     * the complete recovery through `onCameraPermissionStateChanged` instead.
      */
     var onCameraPermissionDenied: ((permanentlyDenied: Boolean) -> Unit)? = null
+
+    /**
+     * Called on the main thread whenever [cameraPermissionRecovery] changes.
+     *
+     * [ARCameraPermissionRecovery.Request] offers [retryCameraPermission];
+     * [ARCameraPermissionRecovery.RequestWithSettings] keeps that action and also offers
+     * [openAppSettings] with neutral copy; [ARCameraPermissionRecovery.Settings] offers
+     * settings alone. `null` clears the denial after permission is granted, including on
+     * return from settings. The property is updated before this callback runs.
+     *
+     * No initial value is replayed when the callback is assigned: read the property when
+     * attaching to an existing instance. [ARSceneView] uses this callback for its card.
+     */
+    internal var onCameraPermissionRecoveryChanged: ((recovery: ARCameraPermissionRecovery?) -> Unit)? = null
 
     /**
      * Called on the main thread when a denial reported through [onCameraPermissionDenied] no
@@ -603,14 +620,26 @@ class ARCore(
     /** The last verdict sent to [onCameraPermissionDenied]; `null` while nothing is denied. */
     private var publishedCameraDenial: Boolean? = null
 
+    /**
+     * Current camera recovery, published through [onCameraPermissionRecoveryChanged].
+     * `null` before any denial and after permission is granted. Used by [ARSceneView] to
+     * retain both actions without changing the legacy callback's boolean contract.
+     */
+    internal var cameraPermissionRecovery: ARCameraPermissionRecovery? = null
+        private set
+
     /** The camera request that has not been answered yet, if any. */
     private var cameraRequest: CameraRequest? = null
 
-    /** Refusals in a row that came back with no rationale flag — see [isCameraPromptBlocked]. */
+    /** Refusals in a row that came back with no rationale flag — see [cameraPermissionRecovery]. */
     private var unexplainedCameraRefusals = 0
 
     /** `true` between [resume] and [pause]. */
     private var isHostResumed = false
+
+    /** Observable by [ARSceneView]: another resumed scene currently owns the camera (#4491). */
+    internal var isCameraInUseByAnotherSession by mutableStateOf(false)
+        private set
 
     /** `true` from [detachHost] until the next [create]: nothing may start or publish. */
     private var isHostDetached = false
@@ -672,73 +701,29 @@ class ARCore(
     internal var session: ARSession? = null
         private set
 
+    /** Releases SDK-owned session objects on the main thread, before native close begins. */
+    internal var onSessionClosing: ((ARSession) -> Unit)? = null
+
+    /** Updates only the native session, outside the host's per-frame callbacks. */
+    @MainThread
+    internal fun updateSessionOrNull(): Frame? = try {
+        session?.updateOrNull()
+    } catch (exception: FatalException) {
+        // A fatal native session cannot recover on the next frame (#4501). Close it before
+        // notifying the host, so even a throwing callback cannot leave the retry loop running.
+        destroy()
+        publishAvailability(ARCoreAvailability.SessionFailed)
+        Log.e("ARCore", "ARCore session update failed; the session was closed", exception)
+        onException(exception)
+        null
+    }
+
     /**
      * Initializes the ARCore session lifecycle.
      *
      * @param context  Android context for session creation.
      * @param handler  Permission handler for camera permission and ARCore install checks.
-     *                 Pass `null` to skip all permission checks (useful for tests or
-     *                 contexts where the camera permission is guaranteed).
-     * @param features ARCore session features to enable.
-     */
-    fun create(context: Context, handler: ARPermissionHandler?, features: Set<Session.Feature>) {
-        this.features = features
-        this.permissionHandler = handler
-        isHostDetached = false
-        // A host that comes back after [detachHost] finds its registration released (#4467).
-        (handler as? ActivityARPermissionHandler)?.register()
-
-        if (handler != null) {
-            if (checkPermissionAndInstall(handler)) {
-                createSession(context)
-            }
-        } else {
-            createSession(context)
-        }
-    }
-
-    /**
-     * Resumes the ARCore session, creating it first if necessary.
-     *
-     * @param context Android context for session creation.
-     * @param handler Permission handler, or `null` to skip permission checks.
-     */
-    @MainThread
-    fun resume(context: Context, handler: ARPermissionHandler?) {
-        isHostResumed = true
-        resumeContext = context
-        if (session == null) {
-            if (handler == null || checkPermissionAndInstall(handler)) {
-                createSession(context)
-            }
-        }
-        resumeSession()
-    }
-
-    /**
-     * Pauses the current ARCore session.
-     *
-     * The session also gives up its turn for the camera. Another session it had taken the
-     * camera from, and that is still resumed, runs again right after the current main-thread
-     * dispatch (see [CameraArbiter.pause]).
-     */
-    @MainThread
-    fun pause() {
-        isHostResumed = false
-        cameraRequest?.hostPausedSince = true
-        cameraArbiter.pause(cameraClient)
-    }
-
-    /**
-     * Resumes the session after the one that was running has paused.
-     *
-     * Two `ARSceneView`s are composed together while one AR screen animates into another, and
-     * both follow a resumed activity. The device has a single camera for ARCore, so the session
-     * that resumes last takes it and the other one keeps its last frame for the rest of its
-     * transition.
-     *
-     * A resume that throws (`CameraNotAvailableException` when another app holds the camera) is
-     * reported through [o
+     *      
 ```
 
 ### Core Architecture Module: `arsceneview/src/main/java/io/github/sceneview/ar/ARCoreAvailabilityOverlay.kt`
@@ -746,10 +731,12 @@ class ARCore(
 package io.github.sceneview.ar
 
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.google.ar.core.ArCoreApk
 import com.google.ar.core.exceptions.UnavailableApkTooOldException
 import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException
@@ -784,8 +771,9 @@ enum class ARCoreAvailability {
     CheckFailed,
 
     /**
-     * ARCore is installed, but session creation or resume failed. A busy camera can cause
-     * this after returning to the app too. Retryable; a successful resume clears the state.
+     * ARCore is installed, but session creation, resume or a fatal frame update failed. A busy
+     * camera can cause this after returning to the app too. Retryable; a successful resume clears
+     * the state. A fatal update closes the failed session so a retry creates a new one.
      */
     SessionFailed,
 }
@@ -903,11 +891,15 @@ internal fun ARCoreAvailability.actionRes(): Int? = when (this) {
  *
  * Public so hosts that pass their own `arCoreAvailabilityOverlay` can still reuse it, and so
  * previews can render every variant without an ARCore session.
+ *
+ * @param contentPadding space occupied by the host's chrome. In a short remaining band, the
+ *   card's vertical margin and padding yield so its recovery action remains usable.
  */
 @Composable
 fun BoxScope.ARCoreAvailabilityOverlay(
     state: ARCoreAvailabilityState,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     AROverlayCard(
         title = stringResource(state.availability.titleRes()),
@@ -917,8 +909,17 @@ fun BoxScope.ARCoreAvailabilityOverlay(
         cardTag = ARCoreAvailabilityOverlayTags.CARD,
         actionTag = ARCoreAvailabilityOverlayTags.ACTION,
         modifier = modifier,
+        contentPadding = contentPadding,
     )
 }
+
+/** Binary-compatibility shim for the pre-`contentPadding` descriptor. */
+@Deprecated("Use the overload that takes contentPadding.", level = DeprecationLevel.HIDDEN)
+@Composable
+fun BoxScope.ARCoreAvailabilityOverlay(
+    state: ARCoreAvailabilityState,
+    modifier: Modifier = Modifier,
+) = ARCoreAvailabilityOverlay(state, modifier, contentPadding = PaddingValues(0.dp))
 
 ```
 
@@ -1353,11 +1354,11 @@ suspend fun ArCoreApk.awaitAvailability(context: Context): Availability =
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5098** (2026-11-15): **3D Scan: a kept scan reopened stays on an empty stage when animations are off**
+  *Symptoms*: ## What happens  With the phone's animations off (Settings › Accessibility › Remove animations, or `animator_duration_scale` 0), a kept scan reopened from "Your scans" can stay on an empty stage for good: the title card and the bottom bar are there, the model never shows and there is no Photo | Model | Plan.  Pixel 4a, Android 13, build of `main` at 9f635f50c2, animator scale 0, kept scans reopened from the list:  | Scan | Result | |---|---| | Outdoor area, try 1 | Empty stage at 20 s, still empty at 45 s | | Outdoor area, try 2 | Empty stage at 20 s, still empty at 45 s | | Room, try 1 | Empty at 20 s, shown at 45 s | | Room, try 2 | Shown within 20 s |  With animations on, the same build showed the same scans 5 times out of 5.  ## Why  A kept scan's stored model and its points are read in parallel. When the model is on screen first, the result is staged again on the points once they arrive: `stageKey` goes from the model to the points, and `shown` (`remember(stageKey)`) starts over at `false`.  `ScanResultCinematics.frameDrawn` lets a view be seen once: it returns `true` a single time, then never again. The cinematics is remembered on `(orbit, entersLow)`. With animations on, `entersLow` flips when the points arrive, so a new cinematics is made and the second stage is let seen. With animations off, `entersLow` stays `false`, the same cinematics is kept across the two stages, `frameDrawn` never says "seen" again, and the stage stays behind its veil.  ## Fix  Remember the cin
+
 - **Issue #4926** (2026-11-03): **Demo home hero: SSR blur shader fails to compile on some GPUs, crash loop on launch**
   *Symptoms*: ## Crash  Firebase Crashlytics, `android-demo`: 29 events, 8 users, on 4.62 (3), 4.63 (5) and 4.64 (21). None on 4.65 so far. Devices: Motorola (Moto G Stylus 5G 2024) 42 %, Honor (Pad 9) 31 %, Xreal 17 %, Vivo 10 %.  Crashlytics groups it under `std::underflow_error` because of wrong symbols; the tombstone reads:  ``` Postcondition in operator():371 reason: OpenGL program separableGaussianBlur failed to link or compile ```  `separableGaussianBlur` is the shader Filament uses to build the mip chain of screen-space reflections. Only the home hero's top rung, `HeroTier.Cinematic`, turns SSR on (`applyNightLook` → `ssr.enabled = tier.reflections`). The panic is raised on the render thread and cannot be caught, so the app aborts on its first hero frames — and since nothing records it, it aborts again on every launch: a crash loop.  ## Fix  - A rung is written down as *on trial* (synchronous `commit`) before its first frame, and cleared once it has drawn 120 textured frames, or when the home is left or the app stopped. - A mark still there at the next launch means the process died on that rung: it is promoted to a `tier_crashed` key (not versioned — the failing shader is Filament's) and `HeroTier.forDevice(crashed = …)` caps the pick one rung below it from then on. - The affected devices lose reflections on the home hero after one crash instead of crashing forever. 
-
-- **Issue #4771** (2026-10-21): **Demo: main thread stalls ~0.5 s on Back from an AR screen, hiding the exit animation**
-  *Symptoms*: Seen on a Pixel 4a while proving #4315, on both current main and the PR build: right after Back on an AR demo, the main thread stalls about 0.5 s (`Choreographer: Skipped 31 frames`), so the navigation slide-out never reaches the screen — the AR screen jumps straight to the catalogue.  #4315 keeps the camera image live until the screen leaves; this stall is what still makes the exit look abrupt.  To find: what runs on the main thread between the Back press and the next frame (ARCore session pause, Filament engine/view teardown, material or texture destruction). A Perfetto trace of one Back on the Surfaces demo should name it.  Done when: Back from an AR demo on the 4a shows the slide-out animation, with no skipped-frames warning above a few frames.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1374,1375 +1375,1371 @@ suspend fun ArCoreApk.awaitAvailability(context: Context): Availability =
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47046b55` (2026-11-12)
-**Commit Message**: fix(demo): 3D Scan shows a result at once, on a real example, with its film back (#5028)
+### Incident Patch 1: `d07b968a` (2026-11-17)
+**Commit Message**: fix(ar): apply per-frame EIS camera compensation (#5091)
 
-* fix(demo): 3D Scan shows a result at once, on a real example, with its film back
+* fix(ar): apply per-frame EIS camera compensation
 
-Traced on a Pixel 4a across 4.63.0-4.69.0: no release showed a scan's
-result at once (a blocking sheet until 4.65, an empty stage for 12-20 s
-since 4.66), #4899 removed the tour and the film, the Photo layer was
-debug-only, and "See an example" stayed a sparse recording with no
-result to open.
+* fix(ar): keep EIS camera background at the far plane
 
-- The example is a real dense scan (a garden path, 235 000 surfels,
-  152 photos, 7.5 MB, built by tools/make-scan-example.py) and opens on
-  its result; its replay stays in More > Watch capture.
-- A result opens on the scan's own surfels (the Photo layer, growing in
-  capture order) while the model is built; the finished model takes its
-  place by itself with the wireframe reveal.
-- The Photo layer is offered in every build.
-- A Video button films the result (reveal, turn, plan) and shares it.
-- Fixes a native crash when the Photo layer's dispose read a model
-  instance already destroyed.
+* fix(ar): preserve EIS-off rendering and reuse camera uploads
 
-Tests: ScanExampleTest (JVM), ScanExampleResultTest (instrumented).
+* fix(ar): dispatch camera upload completion callbacks
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+* fix(ar): resolve the EIS material flag at bind time, not per frame
 
-* docs(cha
+On a Pixel 4a (ARCore 1.57, Filament 1.77.3) no AR demo showed the camera:
+update() called materialInstance.material.hasParameter(...) every frame, and
+since Filament 1.77 the MaterialInstance read back from the renderable is
+wrapped without its Material. The NullPointerException fired on every frame
+before the camera quad was revealed, so ARSceneView logged "ARCore session
+update failed" and showed "Camera couldn't start", EIS on or off.
 
-**File**: `.claude/scripts/generate-credits.py` (modified, +23/-0)
+- Override setMaterialInstanceAt, the one path every binding goes through,
+  and decide there (through materialOrNull) whether the bound material
+  declares imageStabilizationEnabled. The flag is written only when the
+  binding or its value changes; update() never reads the bound material.
+- Hoist the two ARCore transform lambdas into fields so update() no longer
+  allocates them every frame, and 
+
+**File**: `arsceneview/src/main/java/io/github/sceneview/ar/camera/ARCameraStream.kt` (modified, +109/-34)
 ```diff
-@@ -326,6 +326,29 @@
-         "sourceUrl": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
-         "note": "Lens, plane textures and media index of `ARRerunDemo`'s replay",
-     },
-+    # 3D Scan's "See an example": a garden path scanned with the demo itself by the project's
-+    # own Pixel, lightened for shipping by `tools/make-scan-example.py`.
-+    "example-session.jsonl": {
-+        "name": "example-session.jsonl",
-+        "author": "SceneView project",
-+        "license": "Apache-2.0",
-+        "sourceUrl": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
-+        "note": "Timeline of a garden path scanned with the demo (camera path, planes, depth totals) — 3D Scan's example",
-+    },
-+    "example-media.bin": {
-+        "name": "example-media.bin",
-+        "author": "SceneView project",
-+        "license": "Apache-2.0",
-+        "sourceUrl": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
-+        "note": "Dense cloud and camera photos of the same scan, packed for 3D Scan's example",
-+    },
-+    "example-manifest.json": {
-+        "name": "example-manifest.json",
-+        "author": "SceneView project",
-+        "license": "Apache-2.0",
-+        "sourceUrl": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
-+        "note": "Lens, dense cloud and media index of 3D Scan's example",
-+    },
-     # Compiled in-repo from `samples/android-demo/src/main/materials/*.mat` by matc (#3538).
-     "studio_glass.filamat": {
-         "name": "studio_glass.filamat",
-```
-
-**File**: `changelog.d/5028-scan-result-at-once.md` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+<!-- category: Fixed -->
-+- **Demo: 3D Scan shows a scan's result from its first second — the place itself, growing as it was scanned, while its model is built — on a real, dense example; the result films itself again as a short video to share, and the Photo layer is offered to everyone ([#5028](https://github.com/sceneview/sceneview/pull/5028)).**
-```
-
-**File**: `samples/android-demo/src/androidTest/java/io/github/sceneview/demo/demos/ScanExampleResultTest.kt` (added, +193/-0)
-```diff
-@@ -0,0 +1,193 @@
-+package io.github.sceneview.demo.demos
+@@ -15,6 +15,7 @@ import com.google.android.filament.TextureSampler
+ import com.google.android.filament.VertexBuffer
+ import com.google.ar.core.Config
+ import com.google.ar.core.Coordinates2d
++import com.google.ar.core.Coordinates3d
+ import com.google.ar.core.Frame
+ import com.google.ar.core.Session
+ import com.google.ar.core.TrackingState
+@@ -27,6 +28,7 @@ import io.github.sceneview.components.RenderableComponent
+ import io.github.sceneview.components.RenderableInstance
+ import io.github.sceneview.loaders.MaterialLoader
+ import io.github.sceneview.managers.safeDestroy
++import io.github.sceneview.material.materialOrNull
+ import io.github.sceneview.material.setExternalTexture
+ import io.github.sceneview.material.setParameter
+ import io.github.sceneview.material.setTexture
+@@ -37,12 +39,12 @@ import io.github.sceneview.safeRecycleEntity
+ import io.github.sceneview.safeDestroyTexture
+ import io.github.sceneview.safeDestroyVertexBuffer
+ import io.github.sceneview.utils.OpenGL
+-import io.github.sceneview.utils.clone
+ import java.nio.ByteBuffer
+ import java.nio.ByteOrder
+ import java.nio.FloatBuffer
+ import java.nio.ShortBuffer
+ import java.util.concurrent.ConcurrentLinkedQueue
++import java.util.concurrent.Executor
+ 
+ const val kUVTransformParameter = "uvTransform"
+ const val kCameraTextureParameter = "cameraTexture"
+@@ -67,6 +69,10 @@ const val kFogEndParameter = "fogEnd"
+ internal const val kGroundContactParameter = "groundContact"
+ internal const val kGroundNormalParameter = "groundNormal"
+ 
++// Electronic image stabilization (#2728): `true` makes the camera materials sample the
++// homogeneous EIS coordinates in CUSTOM0 instead of UV0. Absent from custom legacy materials.
++internal const val kImageStabilizationParameter = "imageStabilizationEnabled"
 +
-+import android.graphics.Bitmap
-+import android.graphics.BitmapFactory
-+import android.graphics.Color
-+import androidx.test.ext.junit.runners.AndroidJUnit4
-+import androidx.test.platform.app.InstrumentationRegistry
-+import androidx.test.uiautomator.By
-+import androidx.test.uiautomator.UiDevice
-+import androidx.test.uiautomator.Until
-+import io.github.sceneview.demo.mainActivityComponent
-+import org.junit.After
-+import org.junit.Assert.assertNotNull
-+import org.junit.Assert.assertTrue
-+import org.junit.Before
-+import org.junit.Test
-+import org.junit.runner.RunWith
-+import java.io.File
-+import kotlin.math.abs
-+
-+/**
-+ * 3D Scan › See an example, as someone who just installed the app sees it — no QA mode, no state
-+ * forced: it opens on a result, the result is on screen at once (its Photo layer, while the model
-+ * is built behind it), the finished model takes its place, and Photo and Model are two pictures
-+ * of the same place.
-+ *
-+ * Until 4.69 the example was a sparse recording with no result to open, the Photo layer was
-+ * offered in debug builds only, and a scan's result was a bare stage for as long as its model
-+ * took. Each step below fails on one of those.
-+ */
-+@RunWith(AndroidJUnit4::class)
-+class ScanExampleResultTest {
-+    private lateinit var device: UiDevice
-+
-+    @Before
-+    fun setUp() {
-+        device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-+        device.wakeUp()
-+        device.executeShellCommand("wm dismiss-keyguard")
-+        device.executeShellCommand("cmd uimode night no")
+ /**
+  * Renders the live AR camera feed as the scene background using Filament.
+  *
+@@ -76,6 +82,8 @@ internal const val kGroundNormalParameter = "groundNormal"
+  * behind real-world surfaces using the ARCore depth image — and **people occlusion**
+  * ([isPersonOcclusionEnabled], #1761) — virtual content is hidden behind real people using
+  * the ARCore Scene Semantics `PERSON`-class segmentation mask.
++ * Electronic image stabilization uses ARCore's per-frame compensated geometry and homogeneous
++ * camera texture coordinates, so live EIS configuration changes preserve registration (#2728).
+  *
+  * Typically created via [rememberARCameraStream] and passed to `ARSceneView(cameraStream = ...)`.
+  *
+@@ -387,6 +395,15 @@ open class ARCameraStream(
+         super.setMaterialInstances(materialInstance)
+     }
+ 
++    /**
++     * Every binding path ([setMaterialInstances], the [materialInstance] and [materialInstances]
++     * setters) ends here, so this is where the EIS flag learns which instance to drive (#5091).
++     */
++    override fun setMaterialInstanceAt(primitiveIndex: Int, materialInstance: MaterialInstance) {
++        super.setMaterialInstanceAt(primitiveIndex, materialInstance)
++        if (primitiveIndex == 0) stabilizationFlag.bind(materialInstance)
 +    }
 +
-+    @After
-+    fun tearDown() {
-+        device.executeShellCommand("cmd uimode night auto")
+     /**
+      * ### Enable the depth occlusion material
+      *
+@@ -587,8 +604,36 @@ open class ARCameraStream(
+         )
+     }
+ 
++    private val coordinates = CameraStreamCoordinates(CAMERA_VERTICES)
++    private val coordinateUploads = CameraStreamUploadRing(VERTEX_COUNT)
++    private var pendingDisplayGeometryChange = false
++
++    // Whether the bound material declares the EIS flag is resolved when it is bound, never per
++    // frame: since Filament 1.77 the `materialInstance` read back from the renderable has a null
++    // `material`, and the per-frame `hasParameter` on it threw on every frame (#5091).
++    private val stabilizationFlag = CameraStreamStabilizationFlag<MaterialInstance>(
++        accepts = ::acceptsImageStabilizationFlag,
++        write = { instance, enabled -> instance.setParameter(kImageStabilizationParameter, enabled) },
++    )
++
++    // Allocated once: [update] points them at the current frame instead of capturing it in two
++    // new lambdas every frame.
++    private var transformFrame: Frame? = null
++    private val transform3d: (FloatBuffer, Coordinates3d, FloatBuffer) -> Unit =
++        { input, outputType, output ->
++            checkNotNull(transformFrame).transformCoordinates3d(
++                Coordinates2d.OPENGL_NORMALIZED_DEVICE_COORDINATES, input, outputType, output
++            )
++        }
++    private val transform2d: (Coordinates2d, FloatBuffer, FloatBuffer) -> Unit =
++        { inputType, input, output ->
++            checkNotNull(transformFrame).transformCoordinates2d(
++                inputType, input, Coordinates2d.TEXTURE_NORMALIZED, output
++            )
++        }
++
+     private val vertexBuffer: VertexBuffer =
+-        VertexBuffer.Builder().vertexCount(VERTEX_COUNT).bufferCount(2).attribute(
++        VertexBuffer.Builder().vertexCount(VERTEX_COUNT).bufferCount(3).attribute(
+             VertexBuffer.VertexAttribute.POSITION,
+             POSIT
+```
+
+**File**: `arsceneview/src/main/java/io/github/sceneview/ar/camera/CameraStreamCoordinates.kt` (added, +158/-0)
+```diff
+@@ -0,0 +1,158 @@
++package io.github.sceneview.ar.camera
++
++import com.google.ar.core.Config
++import com.google.ar.core.Coordinates2d
++import com.google.ar.core.Coordinates3d
++import java.nio.ByteBuffer
++import java.nio.ByteOrder
++import java.nio.FloatBuffer
++import java.util.concurrent.atomic.AtomicInteger
++
++/** EIS geometry and the original display-transformed 2D UVs used while stabilization is off. */
++internal class CameraStreamCoordinates(private val vertices: FloatArray) {
++    private val vertexCount = vertices.size / 3
++    private val ndc = buffer(vertexCount * 2).apply {
++        for (i in 0 until vertexCount) {
++            put(vertices[i * 3])
++            put(vertices[i * 3 + 1])
++        }
++        rewind()
++    }
++    private val screenNdc = buffer(vertexCount * 2)
++    private val viewUvs = buffer(vertexCount * 2)
++    private var initialized = false
++    private var stabilized = false
++    val positions: FloatBuffer = buffer(vertices.size).apply { put(vertices); rewind() }
++    val cameraUvs: FloatBuffer = buffer(vertices.size)
++    val imageUvs: FloatBuffer = buffer(vertexCount * 2)
++
++    init {
++        for (i in 0 until vertexCount) {
++            val u = (vertices[i * 3] + 1f) / 2f
++            val v = (1f - vertices[i * 3 + 1]) / 2f
++            cameraUvs.put(u).put(1f - v).put(1f)
++            imageUvs.put(u).put(v)
++            viewUvs.put(u).put(v)
++        }
++        cameraUvs.rewind()
++        imageUvs.rewind()
++        viewUvs.rewind()
++    }
++
++    /** Returns whether the vertex data changed and needs uploading. */
++    fun update(
++        mode: Config.ImageStabilizationMode,
++        displayGeometryChanged: Boolean,
++        transform3d: (FloatBuffer, Coordinates3d, FloatBuffer) -> Unit,
++        transform2d: (Coordinates2d, FloatBuffer, FloatBuffer) -> Unit,
++    ): Boolean {
++        val eis = mode == Config.ImageStabilizationMode.EIS
++        if (!eis && initialized && !stabilized && !displayGeometryChanged) return false
++        positions.rewind()
++        imageUvs.rewind()
++        if (eis) {
++            ndc.rewind()
++            transform3d(ndc, Coordinates3d.EIS_NORMALIZED_DEVICE_COORDINATES, positions)
++            // Device-domain Filament shaders take raster depth directly from POSITION.
++            for (i in 0 until vertexCount) positions.put(i * 3 + 2, 1f)
++            ndc.rewind()
++            cameraUvs.rewind()
++            transform3d(ndc, Coordinates3d.EIS_TEXTURE_NORMALIZED, cameraUvs)
++
++            // Retain UV0 for custom materials that use the physical-camera mapping.
++            screenNdc.rewind()
++            for (i in 0 until vertexCount) {
++                screenNdc.put(positions[i * 3])
++                screenNdc.put(positions[i * 3 + 1])
++            }
++            screenNdc.rewind()
++            transform2d(Coordinates2d.OPENGL_NORMALIZED_DEVICE_COORDINATES, screenNdc, imageUvs)
++        } else {
++            // Match main exactly: original geometry, VIEW_NORMALIZED input, same Y flip.
++            // Never ask ARCore for EIS coordinates while OFF (#2728).
++            positions.put(vertices)
++            viewUvs.rewind()
++            transform2d(Coordinates2d.VIEW_NORMALIZED, viewUvs, imageUvs)
++        }
++        for (i in 0 until vertexCount) {
++            imageUvs.put(i * 2 + 1, 1f - imageUvs[i * 2 + 1])
++        }
++        positions.rewind()
++        cameraUvs.rewind()
++        imageUvs.rewind()
++        initialized = true
++        stabilized = eis
++        return true
++    }
++}
++
++/** A bounded ring: a slot stays immutable until all three asynchronous uploads complete. */
++internal class CameraStreamUploadRing(vertexCount: Int, size: Int = 3) {
++    class Slot(vertexCount: Int) {
++        val positions = buffer(vertexCount * 3)
++        val imageUvs = buffer(vertexCount * 2)
++        val cameraUvs = buffer(vertexCount * 3)
++        private val pending = AtomicInteger(0)
++        val onConsumed = Runnable { pending.decrementAndGet() }
++
++        fun acquire(): Boolean = pending.compareAndSet(0, 3)
++        fun cancel() { pending.set(0) }
++
++        fun copyFrom(coordinates: CameraStreamCoordinates) {
++            copy(coordinates.positions, positions)
++            copy(coordinates.imageUvs, imageUvs)
++            copy(coordinates.cameraUvs, cameraUvs)
++        }
++
++        private fun copy(source: FloatBuffer, target: FloatBuffer) {
++            target.clear()
++            target.put(source.duplicate())
++            target.flip()
++        }
++    }
++
++    private val slots = Array(size) { Slot(vertexCount) }
++    private var next = 0
++
++    fun acquire(): Slot? {
++        repeat(slots.size) {
++            val slot = slots[next]
++            next = (next + 1) % slots.size
++            if (slot.acquire()) return slot
++        }
++        // Keep the last geometry if the renderer falls behind; never overwrite an upload.
++        return null
++    }
++}
++
++/**
++ * The EIS flag of the camera material bound to primitive 0 (#5091).
++ *
++ * Whether t
+```
+
+**File**: `arsceneview/src/main/materials/camera_stream_depth.mat` (modified, +19/-5)
+```diff
+@@ -23,6 +23,10 @@ material {
+     culling : none,
+     vertexDomain : device,
+     parameters : [
++        {
++            type : bool,
++            name : imageStabilizationEnabled
++        },
+         {
+             type : samplerExternal,
+             name : cameraTexture
+@@ -87,13 +91,14 @@ material {
+         }
+     ],
+     variables : [
++        { name : cameraUv, precision : high },
+         {
+             name : groundRay,
+             precision : high
+         }
+     ],
+     requires : [
+-        uv0
++        uv0, custom0
+     ]
+ }
+ 
+@@ -231,16 +236,20 @@ fragment {
+ 
+     void material(inout MaterialInputs material) {
+         prepareMaterial(material);
++        // EIS supplies homogeneous texture coordinates. Divide AFTER interpolation (#2728).
++        // OFF samples UV0 exactly as before EIS support, without a second Y flip.
++        highp vec2 cameraUv = materialParams.imageStabilizationEnabled
++                ? variable_cameraUv.xy / variable_cameraUv.z : getUV0();
+         vec3 camera = Inverse_Tonemap_Filmic(
+-                srgbToLinearExact(texture(materialParams_cameraTexture, getUV0()).rgb));
+-        vec2 packed_depth = texture(materialParams_depthTexture, getUV0()).xy;
++                srgbToLinearExact(texture(materialParams_cameraTexture, cameraUv).rgb));
++        vec2 packed_depth = texture(materialParams_depthTexture, cameraUv).xy;
+         float depth_mm = dot(packed_depth, vec2(255.f, 256.f * 255.f));
+         float depth_m = depth_mm / 1000.f;
+         // The bilinear sample blends a hole (0xFFFF, 65.5 m) with its neighbour into any
+         // depth from 5 to 60 m, which the fog would read as valid: a ring of near-full fog
+         // around every hole. The fog reads the unfiltered texel for validity and never a
+         // depth farther than it.
+-        ivec2 depth_texel = ivec2(getUV0() * vec2(textureSize(materialParams_depthTexture, 0)));
++        ivec2 depth_texel = ivec2(cameraUv * vec2(textureSize(materialParams_depthTexture, 0)));
+         float nearest_m = dot(texelFetch(materialParams_depthTexture, depth_texel, 0).xy,
+                               vec2(255.f, 256.f * 255.f)) / 1000.f;
+         float fog_m = min(depth_m, nearest_m);
+@@ -284,7 +293,7 @@ fragment {
+         // depth near the far plane under whatever convention the active projection
+         // uses — no division by zero, no clamped infinity, and "no data" degrades to
+         // "occludes nothing", which is the documented intent.
+-        float occlusion_m = occlusionDepthMeters(getUV0());
++        float occlusion_m = occlusionDepthMeters(cameraUv);
+         float occlusion_valid = step(0.001f, occlusion_m) * step(occlusion_m, kMaxValidDepthMeters);
+         vec2 ground = groundSurface(variable_groundRay.xyz / variable_groundRay.w);
+         float occlusion_depth_m = occluderDistance(occlusion_m, occlusion_valid,
+@@ -297,6 +306,11 @@ fragment {
+ 
+ vertex {
+     void materialVertex(inout MaterialVertexInputs material) {
++        // CUSTOM0 is already in GPU texture orientation (unlike Filament's flipped UV0).
++        highp vec3 cameraUv = getCustom0().xyz;
++        material.cameraUv = vec4(
++            (materialParams.uvTransform * vec4(cameraUv.xy, 0.f, cameraUv.z)).xy,
++            cameraUv.z, 0.f);
+         material.uv0 = mulMat4x4Float3(materialParams.uvTransform, vec3(material.uv0.x, material.uv0.y, 0.f)).xy;
+         vec4 clip = getPosition();
+         clip.z = 0.9999f;
+```
+
+**File**: `arsceneview/src/main/materials/camera_stream_flat.mat` (modified, +18/-2)
+```diff
+@@ -14,6 +14,10 @@ material {
+     blending : opaque,
+     culling : none,
+     parameters : [
++        {
++            type : bool,
++            name : imageStabilizationEnabled
++        },
+         {
+             type : samplerExternal,
+             name : cameraTexture
+@@ -23,8 +27,11 @@ material {
+             name : uvTransform
+         }
+     ],
++    variables : [
++        { name : cameraUv, precision : high }
++    ],
+     requires : [
+-        uv0
++        uv0, custom0
+     ]
+ }
+ 
+@@ -56,17 +63,26 @@ fragment {
+ 
+     void material(inout MaterialInputs material) {
+         prepareMaterial(material);
++        // EIS supplies homogeneous texture coordinates. Divide AFTER interpolation (#2728).
++        // OFF samples UV0 exactly as before EIS support, without a second Y flip.
++        highp vec2 cameraUv = materialParams.imageStabilizationEnabled
++                ? variable_cameraUv.xy / variable_cameraUv.z : getUV0();
+         // Inverse_Tonemap_Filmic is the exact analytic inverse of ToneMapper.Filmic,
+         // which createARView() installs on the View — that leg already cancelled and is
+         // kept as-is. Only the transfer-function leg changes (#3338).
+-        vec3 camera = texture(materialParams_cameraTexture, getUV0()).rgb;
++        vec3 camera = texture(materialParams_cameraTexture, cameraUv).rgb;
+         material.baseColor.rgb = Inverse_Tonemap_Filmic(srgbToLinearExact(camera));
+         material.baseColor.a = 1.f;
+     }
+ }
+ 
+ vertex {
+     void materialVertex(inout MaterialVertexInputs material) {
++        // CUSTOM0 is already in GPU texture orientation (unlike Filament's flipped UV0).
++        highp vec3 cameraUv = getCustom0().xyz;
++        material.cameraUv = vec4(
++            (materialParams.uvTransform * vec4(cameraUv.xy, 0.f, cameraUv.z)).xy,
++            cameraUv.z, 0.f);
+         material.uv0 = mulMat4x4Float3(materialParams.uvTransform, vec3(material.uv0.x, material.uv0.y, 0.f)).xy;
+         vec4 clip = getPosition();
+         clip.z = 0.9999f;
+```
+
+**File**: `arsceneview/src/main/materials/camera_stream_person_occlusion.mat` (modified, +20/-6)
+```diff
+@@ -27,6 +27,10 @@ material {
+     culling : none,
+     vertexDomain : device,
+     parameters : [
++        {
++            type : bool,
++            name : imageStabilizationEnabled
++        },
+         {
+             type : samplerExternal,
+             name : cameraTexture
+@@ -83,13 +87,14 @@ material {
+         }
+     ],
+     variables : [
++        { name : cameraUv, precision : high },
+         {
+             name : groundRay,
+             precision : high
+         }
+     ],
+     requires : [
+-        uv0
++        uv0, custom0
+     ]
+ }
+ 
+@@ -224,16 +229,20 @@ fragment {
+ 
+     void material(inout MaterialInputs material) {
+         prepareMaterial(material);
++        // EIS supplies homogeneous texture coordinates. Divide AFTER interpolation (#2728).
++        // OFF samples UV0 exactly as before EIS support, without a second Y flip.
++        highp vec2 cameraUv = materialParams.imageStabilizationEnabled
++                ? variable_cameraUv.xy / variable_cameraUv.z : getUV0();
+         vec3 camera = Inverse_Tonemap_Filmic(
+-                srgbToLinearExact(texture(materialParams_cameraTexture, getUV0()).rgb));
+-        vec2 packed_depth = texture(materialParams_depthTexture, getUV0()).xy;
++                srgbToLinearExact(texture(materialParams_cameraTexture, cameraUv).rgb));
++        vec2 packed_depth = texture(materialParams_depthTexture, cameraUv).xy;
+         float depth_mm = dot(packed_depth, vec2(255.f, 256.f * 255.f));
+         float depth_m = depth_mm / 1000.f;
+         // The bilinear sample blends a hole (0xFFFF, 65.5 m) with its neighbour into any
+         // depth from 5 to 60 m, which the fog would read as valid: a ring of near-full fog
+         // around every hole. The fog reads the unfiltered texel for validity and never a
+         // depth farther than it.
+-        ivec2 depth_texel = ivec2(getUV0() * vec2(textureSize(materialParams_depthTexture, 0)));
++        ivec2 depth_texel = ivec2(cameraUv * vec2(textureSize(materialParams_depthTexture, 0)));
+         float nearest_m = dot(texelFetch(materialParams_depthTexture, depth_texel, 0).xy,
+                               vec2(255.f, 256.f * 255.f)) / 1000.f;
+         float fog_m = min(depth_m, nearest_m);
+@@ -253,7 +262,7 @@ fragment {
+         // ARCore depth are pushed to `kNoDepthDistanceMeters` rather than left at 0,
+         // which would divide by `view.w == 0` and clamp to the near plane, occluding
+         // everything. Same fix, same reason as `camera_stream_depth.mat` (#3340).
+-        float occlusion_m = occlusionDepthMeters(getUV0());
++        float occlusion_m = occlusionDepthMeters(cameraUv);
+         float occlusion_valid = step(0.001f, occlusion_m) * step(occlusion_m, kMaxValidDepthMeters);
+         vec2 ground = groundSurface(variable_groundRay.xyz / variable_groundRay.w);
+         float occlusion_depth_m = occluderDistance(occlusion_m, occlusion_valid,
+@@ -277,13 +286,18 @@ fragment {
+         // stereo depth is unreliable on a moving person (thin limbs, fast motion), so the
+         // semantic mask is the authoritative people cue. Where there is NO person we keep
+         // the genuine `ndc_depth`, so static real-world geometry still occludes correctly.
+-        float is_person = step(0.5f, texture(materialParams_personTexture, getUV0()).r);
++        float is_person = step(0.5f, texture(materialParams_personTexture, cameraUv).r);
+         gl_FragDepth = mix(ndc_depth, kNdcNearPlane, is_person);
+     }
+ }
+ 
+ vertex {
+     void materialVertex(inout MaterialVertexInputs material) {
++        // CUSTOM0 is already in GPU texture orientation (unlike Filament's flipped UV0).
++        highp vec3 cameraUv = getCustom0().xyz;
++        material.cameraUv = vec4(
++            (materialParams.uvTransform * vec4(cameraUv.xy, 0.f, cameraUv.z)).xy,
++            cameraUv.z, 0.f);
+         material.uv0 = mulMat4x4Float3(materialParams.uvTransform, vec3(material.uv0.x, material.uv0.y, 0.f)).xy;
+         vec4 clip = getPosition();
+         clip.z = 0.9999f;
+```
+
+**File**: `arsceneview/src/test/java/io/github/sceneview/ar/camera/CameraStreamCoordinatesTest.kt` (added, +239/-0)
+```diff
+@@ -0,0 +1,239 @@
++package io.github.sceneview.ar.camera
++
++import com.google.ar.core.Config
++import com.google.ar.core.Coordinates2d
++import com.google.ar.core.Coordinates3d
++import org.junit.Assert.assertArrayEquals
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
++import org.junit.Assert.assertNull
++import org.junit.Assert.assertSame
++import org.junit.Assert.assertTrue
++import org.junit.Test
++import java.nio.FloatBuffer
++
++class CameraStreamCoordinatesTest {
++    private val vertices = floatArrayOf(-1f, 1f, 1f, -1f, -3f, 1f, 3f, 1f, 1f)
++    private val ndc = floatArrayOf(-1f, 1f, -1f, -3f, 3f, 1f)
++
++    @Test
++    fun `OFF is bit identical to main and never requests EIS coordinates`() {
++        val coordinates = CameraStreamCoordinates(vertices)
++        val viewUvs = floatArrayOf(0f, 0f, 0f, 2f, 2f, 0f)
++        // Include values whose second Y flip would lose precision.
++        val transformed = floatArrayOf(0.125f, 0.00000001f, -0.2f, 0.3f, 1.2f, 1.0000001f)
++        val mainUvs = transformed.copyOf().apply {
++            for (i in 1 until size step 2) this[i] = 1f - this[i]
++        }
++        assertTrue(coordinates.update(
++            mode = Config.ImageStabilizationMode.OFF,
++            displayGeometryChanged = false,
++            transform3d = { _, _, _ -> error("OFF must not request EIS coordinates") },
++            transform2d = { type, input, output ->
++                assertEquals(Coordinates2d.VIEW_NORMALIZED, type)
++                assertArrayEquals(viewUvs, input.values(), 0f)
++                output.put(transformed)
++            },
++        ))
++        assertArrayEquals(vertices.map { it.toRawBits() }.toIntArray(),
++            coordinates.positions.values().map { it.toRawBits() }.toIntArray())
++        assertArrayEquals(mainUvs.map { it.toRawBits() }.toIntArray(),
++            coordinates.imageUvs.values().map { it.toRawBits() }.toIntArray())
++
++        assertFalse(coordinates.update(
++            mode = Config.ImageStabilizationMode.OFF,
++            displayGeometryChanged = false,
++            transform3d = { _, _, _ -> error("Unexpected 3D transform") },
++            transform2d = { _, _, _ -> error("OFF must cache unchanged display geometry") },
++        ))
 +    }
 +
 +    @Test
-+    fun theExampleOpensOnAResultSeenAtOnce() {
-+        device.executeShellCommand(
-+            "am start -n $mainActivityComponent -f 0x14000000 --es demo ar-rerun --es telemetry_consent denied",
++    fun `OFF recomputes legacy UVs on rotation and restores the triangle after EIS`() {
++        val coordinates = CameraStreamCoordinates(vertices)
++        update(coordinates, shift = 0.2f)
++        var transforms = 0
++        fun off(displayChanged: Boolean): Boolean = coordinates.update(
++            mode = Config.ImageStabilizationMode.OFF,
++            displayGeometryChanged = displayChanged,
++            transform3d = { _, _, _ -> error("OFF must not request EIS coordinates") },
++            transform2d = { type, input, output ->
++                assertEquals(Coordinates2d.VIEW_NORMALIZED, type)
++                transforms++
++                output.put(input)
++            },
 +        )
-+        val example = device.wait(Until.findObject(By.text(SEE_AN_EXAMPLE)), OPEN_TIMEOUT_MS)
-+        assertNotNull("3D Scan never offered its example", example)
-+        example.click()
-+
-+        // It opens on its result, seen at once: the place itself, well before its model is built.
-+        assertNotNull(
-+            "the example has no result to open, or its result no film to share",
-+            device.wait(Until.findObject(By.text(VIDEO)), OPEN_TIMEOUT_MS),
-+        )
-+        Thread.sleep(FIRST_PICTURE_MS)
-+        val first = drawnShare(capture("result-first"))
-+        assertTrue("the result opened on a bare stage ($first of it drawn)", first > MIN_DRAWN_SHARE)
-+
-+        // Photo and Model, once the model is there: two pictures of the same place.
-+        assertNotNull(
-+            "the result's layer switch never appeared",
-+            device.wait(Until.findObject(By.text(MODEL)), MODEL_TIMEOUT_MS),
-+        )
-+        device.wait(Until.gone(By.textStartsWith(CREATING)), MODEL_TIMEOUT_MS)
-+        assertTrue(
-+            "the model never finished",
-+            device.wait(Until.gone(By.textStartsWith(FINISHING)), MODEL_TIMEOUT_MS) == true,
-+        )
-+        // The finished model has taken the preview's place by itself; a touch stops the slow turn,
-+        // which would make any two captures differ.
-+        device.click(device.displayWidth / 2, device.displayHeight / 2)
-+        Thread.sleep(REVEAL_MS)
-+        val model = capture("result-model")
-+        assertTrue("the model draws next to nothing", drawnShare(model) > MIN_DRAWN_SHARE)
-+        assertTrue("Photo never took", pick(PHOTO) { device.hasObject(By.text(PHOTO_NOTE)) })
-+        Thread.sleep(SETTLE_MS)
-+        val photo = capture("result-photo")
-+        assertTrue("the Photo layer draws next to nothing", drawnShare(photo) > MIN_DRAWN_SHARE)
-+        val swapped = changedShare(model, photo)
-+        assertTrue("Photo and Model are the same picture ($swapped of its pixels differ)", swapped > MIN_SWAP_SHARE)
-+
-+        // The result films itself: a take is recorded, and a video file is what gets shared.
-+        val film = File(InstrumentationRegistry.getInstrumentation().targetContext.cacheDir, FILM_PATH)
-+        film.delete()
-+        device.findObject(By.text(VIDEO)).click()
-+        assertNotNull("Video started no take", device.wait(Until.findObject(By.text(FILMING)), TAP_WAIT_MS))
-+        assertTrue("the take never ended", device.wait(Until.gone(By.text(FILMING)), FILM_TIMEOUT_MS) == true)
-+        assertTrue("the take left no video (${film.length()} bytes)", film.length() > MIN_FILM_BYTES)
-+        device.pressBack()
++        assertTrue(off(false))
++        assertArrayEquals(vertices, coordinates.positions.values(), 0f)
++        assertArrayEquals(floatArrayOf(0f, 1f, 0f, -1f, 2f, 1f), coordinates.imageUvs.values(), 0f)
++        assertFalse(off(false))
++        assertTrue(off(true))
++        assertEquals(2, transforms)
++        update(coordinates, shift = 0.3f)
++        assertEquals(-0.7f, coordinates.positions[0], 0f)
++        assertTrue(off(false))
++        assertArrayEquals(vertices, coordinates.positions.values(), 0f)
 +    }
 +
-+    /** Taps [label] until [took], the switch ignoring taps until the model is seen. */
-+    private fun pick(label: String, took: () -> Boolean): Boolean {
-+        val deadline = System.currentTimeMillis() + MODEL_TIMEOUT_MS
-+        while (System.currentTimeMillis() < deadline) {
-+            device.findObject(By.text(label))?.click()
-+            val tapDeadline = System.curr
++    @Test
++    fun `EIS screen Z never moves the uploaded camera background off the far plane`() {
++        val coordinates = CameraStreamCoordinates(vertices)
++        for (screenZ in listOf(0f, 0.25f, -0.5f, 0f)) {
++            coordinates.update(
++                mode = Config.ImageStabilizationMode.EIS,
++                displayGeometryChanged = false,
++                transform3d = { _, type, output ->
++                    if (type == Coordinates3d.EIS_NORMALIZED_DEVICE_COORDINATES) {
++                        output.put(floatArrayOf(-0.8f, 0.9f, screenZ, -0.9f, -2.8f, screenZ, 3.1f, 1.2f, screenZ))
++                    } else {
++                        output.put(floatArrayOf(0.4f, 0.3f, 2f, 0.8f, 1.4f, 3f, 1.8f, 0.6f, 4f))
++                    }
++                },
++                transform2d = { _, _, output -> output.put(FloatArray(6)) },
++            )
++            val upload = requireNotNull(CameraStreamUploadRing(3).acquire()).apply { copyFrom(coordinates) }
++            // Device-domain Filament shaders take raster depth directly from POSITION.
++            // Assert the actual upload: XY must retain EIS compensation, Z must stay at 1.
++            assertArrayEquals(
++                floatArrayOf(-0.8f, 0.9f, 1f, -0.9f, -2.8f, 1f, 3.1f, 1.2f, 1f),
++                upload.positions.values(),
++                0f,
++            )
++            // The independent homogeneous texture denominator must retain its ARCore value.
++            assertArrayEquals(
++               
 ```
 
-**File**: `samples/android-demo/src/main/assets/CREDITS.md` (modified, +7/-1)
+**File**: `arsceneview/src/test/java/io/github/sceneview/ar/camera/CameraStreamStabilizationContractTest.kt` (added, +46/-0)
 ```diff
-@@ -15,7 +15,7 @@ Re-run that script after adding, removing or re-compressing a bundled asset;
- `ci.yml` → `build` (step "Check asset credits") fails if this file and the
- assets disagree.
- 
--Assets bundled: **68**.
-+Assets bundled: **71**.
- 
- > **Optimization note (#934, #2305).** The bundled GLBs and HDRs are compressed
- > for a lean APK while preserving on-device visual quality:
-@@ -140,6 +140,12 @@ Assets bundled: **68**.
-   Compiled from `samples/android-demo/src/main/materials/viewer_grid.mat` (3D viewers' ground grid, #4651)
- - `mediapipe/pose_landmarker_lite.task` — **[MediaPipe Pose Landmarker (lite)](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker)** by Google LLC — [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) (5.8 MB)  
-   On-device pose model bundle used by `ARBodyTrackerDemo`
-+- `rerun/example/example-manifest.json` — **[example-manifest.json](https://github.com/sceneview/sceneview/blob/main/LICENSE)** by SceneView project — [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) (10 KB)  
-+  Lens, dense cloud and media index of 3D Scan's example
-+- `rerun/example/example-media.bin` — **[example-media.bin](https://github.com/sceneview/sceneview/blob/main/LICENSE)** by SceneView project — [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) (6.6 MB)  
-+  Dense cloud and camera photos of the same scan, packed for 3D Scan's example
-+- `rerun/example/example-session.jsonl` — **[example-session.jsonl](https://github.com/sceneview/sceneview/blob/main/LICENSE)** by SceneView project — [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) (1.0 MB)  
-+  Timeline of a garden path scanned with the demo (camera path, planes, depth totals) — 3D Scan's example
- - `rerun/sample-session.jsonl` — **[sample-session.jsonl](https://github.com/sceneview/sceneview/blob/main/LICENSE)** by SceneView project — [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) (176 KB)  
-   Synthetic room walk in the Rerun bridge wire format — QA fixture of `ARRerunDemo`'s in-app 3D view (#3950)
- - `rerun/showcase/showcase-manifest.json` — **[showcase-manifest.json](https://github.com/sceneview/sceneview/blob/main/LICENSE)** by SceneView project — [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) (11 KB)  
-```
-
-**File**: `samples/android-demo/src/main/assets/rerun/example/example-manifest.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"version":2,"device":{"platform":"android","model":"Pixel 9","tier":"depth","depthSource":"arcore_raw_depth"},"dense":{"path":"dense/points.bin","count":234847,"voxelM":0.02,"normals":true,"bounds":[-2.5660021,-1.5691359,-8.864997,3.1278675,0.71107835,-0.0938326]},"built":{"denseMs":284},"intrinsics":{"width":0.7725721,"height":1.3653445,"fx":1.0,"fy":1.0},"frameRate":3.2724867,"frames":152,"floorY":-1.4970865,"textures":[],"media":[{"path":"scan/frame-0001.jpg","offset":0,"length":16111},{"path":"scan/frame-0002.jpg","offset":16111,"length":104519},{"path":"scan/frame-0003.jpg","offset":120630,"length":16380},{"path":"scan/frame-0004.jpg","offset":137010,"length":15402},{"path":"scan/frame-0007.jpg","offset":152412,"length":15674},{"path":"scan/frame-0008.jpg","offset":168086,"length":16084},{"path":"scan/frame-0009.jpg","offset":184170,"length":15079},{"path":"scan/frame-0010.jpg","offset":199249,"length":15862},{"path":"scan/frame-0011.jpg","offset":215111,"length":15296},{"path":"scan/frame-0012.jpg","offset":230407,"length":15355},{"path":"scan/frame-0013.jpg","offset":245762,"length":16427},{"path":"scan/frame-0014.jpg","offset":262189,"length":17585},{"path":"scan/frame-0015.jpg","offset":279774,"length":19790},{"path":"scan/frame-0016.jpg","offset":299564,"length":21155},{"path":"scan/frame-0017.jpg","offset":320719,"length":22276},{"path":"scan/frame-0018.jpg","offset":342995,"length":22632},{"path":"scan/frame-0019.jpg","offset":365627,"length":22867},{"path":"scan/frame-0020.jpg","offset":388494,"length":22100},{"path":"scan/frame-0021.jpg","offset":410594,"length":19880},{"path":"scan/frame-0034.jpg","offset":430474,"length":21375},{"path":"scan/frame-0035.jpg","offset":451849,"length":22850},{"path":"scan/frame-0036.jpg","offset":474699,"length":18905},{"path":"scan/frame-0037.jpg","offset":493604,"length":19541},{"path":"scan/frame-0038.jpg","offset":513145,"length":20236},{"path":"scan/frame-0039.jpg","offset":533381,"length":20382},{"path":"scan/frame-0040.jpg","offset":553763,"length":20424},{"path":"scan/frame-0041.jpg","offset":574187,"length":20234},{"path":"scan/frame-0042.jpg","offset":594421,"length":20228},{"path":"scan/frame-0043.jpg","offset":614649,"length":19795},{"path":"scan/frame-0044.jpg","offset":634444,"length":19932},{"path":"scan/frame-0045.jpg","offset":654376,"length":122837},{"path":"scan/frame-0046.jpg","offset":777213,"length":19504},{"path":"scan/frame-0047.jpg","offset":796717,"length":18536},{"path":"scan/frame-0048.jpg","offset":815253,"length":21612},{"path":"scan/frame-0049.jpg","offset":836865,"length":18836},{"path":"scan/frame-0050.jpg","offset":855701,"length":17323},{"path":"scan/frame-0051.jpg","offset":873024,"length":16537},{"path":"scan/frame-0052.jpg","offset":889561,"length":15800},{"path":"scan/frame-0061.jpg","offset":905361,"length":14855},{"path":"scan/frame-0062.jpg","offset":920216,"length":15332},{"path":"scan/frame-0063.jpg","offset":935548,"length":16219},{"path":"scan/frame-0064.jpg","offset":951767,"length":16459},{"path":"scan/frame-0065.jpg","offset":968226,"length":16253},{"path":"scan/frame-0066.jpg","offset":984479,"length":110764},{"path":"scan/frame-0067.jpg","offset":1095243,"length":17300},{"path":"scan/frame-0068.jpg","offset":1112543,"length":17325},{"path":"scan/frame-0069.jpg","offset":1129868,"length":17011},{"path":"scan/frame-0070.jpg","offset":1146879,"length":17485},{"path":"scan/frame-0071.jpg","offset":1164364,"length":18518},{"path":"scan/frame-0072.jpg","offset":1182882,"length":20528},{"path":"scan/frame-0073.jpg","offset":1203410,"length":21975},{"path":"scan/frame-0074.jpg","offset":1225385,"length":20661},{"path":"scan/frame-0075.jpg","offset":1246046,"length":20048},{"path":"scan/frame-0076.jpg","offset":1266094,"length":18720},{"path":"scan/frame-0077.jpg","offset":1284814,"length":17045},{"path":"scan/frame-0078.jpg","offset":1301859,"length":16870},{"path":"scan/frame-0079.jpg","offset":1318729,"length":17971},{"path":"scan/frame-0080.jpg","offset":1336700,"length":19319},{"path":"scan/frame-0081.jpg","offset":1356019,"length":21251},{"path":"scan/frame-0087.jpg","offset":1377270,"length":19283},{"path":"scan/frame-0088.jpg","offset":1396553,"length":125197},{"path":"scan/frame-0089.jpg","offset":1521750,"length":18463},{"path":"scan/frame-0090.jpg","offset":1540213,"length":20077},{"path":"scan/frame-0091.jpg","offset":1560290,"length":21984},{"path":"scan/frame-0092.jpg","offset":1582274,"length":23293},{"path":"scan/frame-0093.jpg","offset":1605567,"length":24494},{"path":"scan/frame-0094.jpg","offset":1630061,"length":19285},{"path":"scan/frame-0095.jpg","offset":1649346,"length":19911},{"path":"scan/frame-0096.jpg","offset":1669257,"length":20860},{"path":"scan/frame-0097.jpg","offset":1690117,"length":18800},{"path":"scan/frame-0098.jpg","offset":1708917,"length":23937},{"path":"scan/frame-0099.jpg","offset":1732854,"length":20758},{"path":"scan/frame-0100.jpg","offset":1753612,"length":1
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARRerunDemo.kt` (modified, +84/-19)
-```diff
-@@ -175,6 +175,8 @@ import io.github.sceneview.demo.demos.internal.RerunShareCopy
- import io.github.sceneview.demo.demos.internal.ScanWallWalk
- import io.github.sceneview.demo.demos.internal.DebugPose
- import io.github.sceneview.demo.demos.internal.ScanDetail
-+import io.github.sceneview.demo.demos.internal.model.SplatFaces
-+import io.github.sceneview.demo.demos.internal.model.SurfelSplats
- import io.github.sceneview.demo.demos.internal.turnedBy
- import kotlin.math.PI
- import kotlin.math.sin
-@@ -277,10 +279,27 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
-     }
-     var mode by remember { mutableStateOf(qaReplay?.mode ?: RerunMode.Scene) }
- 
--    // The sample lives here, above every screen: the landing turns it, the replay plays it, and
--    // the QA record take is fed from it.
-+    // Reading the example takes the landing's first second: asked for before that, it opens the
-+    // moment it is read — on its result, not on the replay an example that failed to read falls
-+    // back on.
-+    var exampleRead by remember { mutableStateOf(false) }
-+    var exampleAsked by remember { mutableStateOf(false) }
-+    // The example lives here, above every screen: a real scan, read as any scan is, and opened
-+    // on its result as your own scans are.
-+    val example by produceState<RerunReplayMedia?>(null) {
-+        value = runCatching { loadRerunExample(context) }.getOrNull()
-+        exampleRead = true
-+    }
-+    // Its Photo layer, made ready while the landing is read: the example's first picture is its
-+    // first frame, not the half second the splats take to build once it is opened.
-+    val examplePhoto by produceState<SplatFaces?>(null, example) {
-+        value = example?.dense?.cloud?.takeIf { it.normals != null }?.let { cloud ->
-+            withContext(Dispatchers.Default) { runCatching { SplatFaces.of(SurfelSplats.of(cloud)) }.getOrNull() }
+@@ -0,0 +1,46 @@
++package io.github.sceneview.ar.camera
++
++import org.junit.Assert.assertTrue
++import org.junit.Test
++import java.io.File
++
++/** The perspective divide must happen after interpolation, in every camera material (#2728). */
++class CameraStreamStabilizationContractTest {
++    @Test
++    fun `camera materials sample homogeneous EIS coordinates in the fragment shader`() {
++        for (name in listOf("flat", "depth", "person_occlusion")) {
++            val source = File("src/main/materials/camera_stream_$name.mat").readText()
++            val fragment = source.substringAfter("fragment {").substringBefore("vertex {")
++            assertTrue(
++                "$name must divide interpolated camera coordinates by their homogeneous Z",
++                fragment.contains("variable_cameraUv.xy / variable_cameraUv.z"),
++            )
++            assertTrue(
++                "$name must use the compensated coordinates to sample the camera",
++                fragment.contains("texture(materialParams_cameraTexture, cameraUv)"),
++            )
++            assertTrue(
++                "$name must preserve main's UV0 sampling while EIS is OFF",
++                fragment.contains("materialParams.imageStabilizationEnabled\n") &&
++                    fragment.contains("? variable_cameraUv.xy / variable_cameraUv.z : getUV0()"),
++            )
++            assertTrue("$name must receive all three camera coordinates", source.contains("getCustom0()"))
 +        }
 +    }
-+    // QA only: the sparse room the staged replay and capture states are fed from.
-     val sample by produceState<RerunReplayMedia?>(null) {
--        value = runCatching { loadRerunReplay(context) }.getOrNull()
-+        if (qaState != null) value = runCatching { loadRerunReplay(context) }.getOrNull()
-     }
- 
-     // The sessions kept on this phone, re-read whenever one is saved, opened from a file or deleted.
-@@ -315,9 +334,14 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
-     var opening by remember { mutableStateOf<Job?>(null) }
-     // Bumped on every open, so reopening the same replay frames and plays it afresh.
-     var openCount by remember { mutableIntStateOf(0) }
--    val media = if (showingScan) scanMedia else sample
-+    val media = when {
-+        showingScan -> scanMedia
-+        qaState != null -> sample
-+        else -> example
-+    }
-     // The scan's result (RerunModelUi.kt): your room as one model, kept with the scan. Picked once
--    // when a scan opens, so the build is not restarted by a recomposition. The sample has none.
-+    // when a scan opens, so the build is not restarted by a recomposition. The example's is built
-+    // from its surfels as a scan opened from a file is.
-     var modelSource by remember {
-         mutableStateOf<RerunModelSource?>(
-             when (qaState) {
-@@ -340,7 +364,7 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
-     LaunchedEffect(media, openCount) {
-         val replay = media ?: return@LaunchedEffect
-         replaySession.trace = replay.trace
--        // Held until the stage is on screen: the sample then plays from its first frame; your own
-+        // Held until the stage is on screen: the example then plays from its first frame; your own
-         // scan opens whole, on its last frame, ready to be turned with a finger.
-         val at = if (showingScan) 1f else qaReplay?.pauseAt ?: 0f
-         replaySession.scrubTo(replay.trace.duration * at)
-@@ -438,22 +462,38 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
-             toLanding()
-         }
-     }
-+    // Whether Back from the replay goes to the scan's result: a scan's capture or the example's,
-+    // watched from it; never a staged QA replay, which has no result behind it.
-+    val replayOfResult = { hasResult && (showingScan || qaState == null) }
-     BackHandler(enabled = screen != RerunScreen.Landing) {
-         when (screen) {
-             RerunScreen.Dollhouse -> leaveDollhouse()
-             RerunScreen.Live -> leaveLive()
--            RerunScreen.Replay -> if (showingScan && hasResult) screen = RerunScreen.Model else toLanding()
-+            RerunScreen.Replay -> if (replayOfResult()) screen = RerunScreen.Model else toLanding()
-             RerunScreen.Plan -> leavePlan()
-             RerunScreen.HomePlan -> screen = RerunScreen.Home
-             else -> toLanding()
-         }
-     }
- 
-+    // The example opens where a scan of yours lands: on its result, the place itself, seen at
-+    // once. Its mod
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunExportSheet.kt` (modified, +4/-4)
-```diff
-@@ -80,7 +80,7 @@ import io.github.sceneview.demo.demos.internal.RerunExportScene
- import io.github.sceneview.demo.demos.internal.RerunExportSource
- import io.github.sceneview.demo.demos.internal.RerunGlbWriter
- import io.github.sceneview.demo.demos.internal.RerunPlyWriter
--import io.github.sceneview.demo.demos.internal.RerunReplayAssets
-+import io.github.sceneview.demo.demos.internal.RerunExampleAssets
- import io.github.sceneview.demo.demos.internal.RerunResultView
- import io.github.sceneview.demo.demos.internal.RerunRrdWriter
- import io.github.sceneview.demo.demos.internal.RerunScanFile
-@@ -111,9 +111,9 @@ import java.util.UUID
- internal fun sampleCapturePack(context: Context): RerunCapturePack {
-     val assets = context.assets
-     return RerunCapturePack(
--        manifest = assets.open(RerunReplayAssets.MANIFEST).use { it.readBytes() },
--        log = assets.open(RerunReplayAssets.LOG).use { it.readBytes() },
--        media = assets.open(RerunReplayAssets.MEDIA).use { it.readBytes() },
-+        manifest = assets.open(RerunExampleAssets.MANIFEST).use { it.readBytes() },
-+        log = assets.open(RerunExampleAssets.LOG).use { it.readBytes() },
-+        media = assets.open(RerunExampleAssets.MEDIA).use { it.readBytes() },
-     )
- }
- 
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunModelUi.kt` (modified, +201/-43)
-```diff
-@@ -2,6 +2,7 @@ package io.github.sceneview.demo.demos
- 
- import android.graphics.Bitmap
- import android.util.Log
-+import android.widget.Toast
- import androidx.annotation.StringRes
- import androidx.compose.animation.core.animateFloatAsState
- import androidx.compose.animation.core.snap
-@@ -24,11 +25,12 @@ import androidx.compose.foundation.layout.size
- import androidx.compose.foundation.layout.widthIn
- import androidx.compose.foundation.shape.RoundedCornerShape
- import androidx.compose.material.icons.Icons
-+import androidx.compose.material.icons.rounded.Check
- import androidx.compose.material.icons.rounded.Edit
- import androidx.compose.material.icons.rounded.IosShare
- import androidx.compose.material.icons.rounded.Map
--import androidx.compose.material.icons.rounded.Check
- import androidx.compose.material.icons.rounded.MoreHoriz
-+import androidx.compose.material.icons.rounded.Movie
- import androidx.compose.material.icons.rounded.PlayCircle
- import androidx.compose.material.icons.rounded.Straighten
- import androidx.compose.material.icons.rounded.ViewInAr
-@@ -47,19 +49,22 @@ import androidx.compose.runtime.RememberObserver
- import androidx.compose.runtime.SideEffect
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.key
-+import androidx.compose.runtime.mutableIntStateOf
- import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.produceState
- import androidx.compose.runtime.remember
- import androidx.compose.runtime.rememberUpdatedState
- import androidx.compose.runtime.setValue
- import androidx.compose.runtime.snapshotFlow
-+import androidx.compose.runtime.withFrameNanos
- import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.draw.alpha
- import androidx.compose.ui.draw.clip
- import androidx.compose.ui.graphics.luminance
- import androidx.compose.ui.graphics.toArgb
- import androidx.compose.ui.graphics.vector.ImageVector
-+import androidx.compose.ui.platform.LocalContext
- import androidx.compose.ui.platform.LocalLayoutDirection
- import androidx.compose.ui.platform.testTag
- import androidx.compose.ui.res.stringResource
-@@ -68,9 +73,11 @@ import androidx.compose.ui.semantics.Role
- import androidx.compose.ui.semantics.clearAndSetSemantics
- import androidx.compose.ui.semantics.contentDescription
- import androidx.compose.ui.semantics.liveRegion
--import androidx.compose.ui.semantics.semantics
- import androidx.compose.ui.semantics.selected
-+import androidx.compose.ui.semantics.semantics
- import androidx.compose.ui.text.style.TextOverflow
-+import androidx.lifecycle.Lifecycle
-+import androidx.lifecycle.compose.LocalLifecycleOwner
- import com.google.android.filament.ColorGrading
- import com.google.android.filament.Engine
- import com.google.android.filament.Skybox
-@@ -87,17 +94,18 @@ import io.github.sceneview.demo.DemoSettings
- import io.github.sceneview.demo.DockItem
- import io.github.sceneview.demo.LocalDemoSceneRestingCover
- import io.github.sceneview.demo.R
-+import io.github.sceneview.demo.common.qaStateOverridesAllowed
- import io.github.sceneview.demo.demoContentPadding
- import io.github.sceneview.demo.demos.internal.ArDebugFraming
- import io.github.sceneview.demo.demos.internal.ArDebugOrbitCamera
-+import io.github.sceneview.demo.demos.internal.ArDebugStyle
- import io.github.sceneview.demo.demos.internal.BakePhoto
- import io.github.sceneview.demo.demos.internal.CameraRig
- import io.github.sceneview.demo.demos.internal.DebugPose
- import io.github.sceneview.demo.demos.internal.DenseCloud
- import io.github.sceneview.demo.demos.internal.DenseFusion
- import io.github.sceneview.demo.demos.internal.DepthBackProjection
- import io.github.sceneview.demo.demos.internal.DepthFrame
--import io.github.sceneview.demo.demos.internal.ArDebugStyle
- import io.github.sceneview.demo.demos.internal.DollhouseOpening
- import io.github.sceneview.demo.demos.internal.FramingInsets
- import io.github.sceneview.demo.demos.internal.LightingStage
-@@ -112,17 +120,17 @@ import io.github.sceneview.demo.demos.internal.RerunScanModel
- import io.github.sceneview.demo.demos.internal.RerunSessionStore
- import io.github.sceneview.demo.demos.internal.RerunSyntheticRoom
- import io.github.sceneview.demo.demos.internal.RerunTsdf
-+import io.github.sceneview.demo.demos.internal.ResultFilm
- import io.github.sceneview.demo.demos.internal.ResultFloor
-+import io.github.sceneview.demo.demos.internal.ResultShading
- import io.github.sceneview.demo.demos.internal.ScanGround
- import io.github.sceneview.demo.demos.internal.ScanGroundMeshes
- import io.github.sceneview.demo.demos.internal.ScanPreset
- import io.github.sceneview.demo.demos.internal.ScanResultCinematics
-+import io.github.sceneview.demo.demos.internal.ScanResultCut
- import io.github.sceneview.demo.demos.internal.ScanResultFrame
- import io.github.sceneview.demo.demos.internal.ScanResultFraming
--import io.github.sceneview.demo.demos.internal.ScanResultCut
- import io.github.sceneview.demo.demos.internal.ScanResultTurntable
--import
-```
-
----
-
-### Incident Patch 2: `2d7b646c` (2026-11-12)
-**Commit Message**: fix(sceneview): never fall back to a blocking teardown behind a stale fence (#4997)
-
-* fix(sceneview): never fall back to a blocking teardown behind a stale fence (#4969)
-
-Mitigates #4969
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* fix: address the independent review of this change
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* test: mark the renderer shadow's constant return as intended
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* fix(sceneview): a deferred teardown wait resets once its queue drains
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(demo): the showroom reflection Renderer waits for its backend before it is destroyed
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* chore: changelog for the public renderer teardown
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/4969-defer-stale-fence.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+<!-- category: Fixed -->
-+- **Android teardown deferral (#4969).** The five-second warning no longer authorizes destruction on a stale fence. Retiring engines accept a reached fence regardless of polling cadence, so slow loopers do not retain an engine and EGL context per screen; shared engines still require freshness. Teardowns share one poll and probe per engine, back off at a bounded cadence after a single warning, reset their wait state when the queue drains, and replace errored fences. Off-main callers log and retain the previous calling-thread fallback. Native destruction and command submission remain synchronous and can still block; this does not guarantee an ANR-free teardown or establish the cause of the reported ANRs.
-+- **`Engine.destroyRendererWhenBackendIdle` is public (#4969).** An app that creates its own `Renderer` on SceneView's engine can hand it to the same deferred teardown instead of calling `destroyRenderer` on the main thread. The demo's showroom reflection did the latter, and its blocking destroy was an ANR seen when a viewer screen closed under load.
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/ui/viewer/ShowroomReflection.kt` (modified, +4/-1)
-```diff
-@@ -13,6 +13,7 @@ import com.google.android.filament.Texture
- import com.google.android.filament.TextureSampler
- import com.google.android.filament.View
- import com.google.android.filament.Viewport
-+import io.github.sceneview.destroyRendererWhenBackendIdle
- import io.github.sceneview.math.Position
- import kotlin.math.cos
- import kotlin.math.max
-@@ -270,7 +271,9 @@ internal class ShowroomReflection(private val engine: Engine, private val mainVi
-         runCatching { engine.destroyView(view) }
-         runCatching { engine.destroyCameraComponent(cameraEntity) }
-         EntityManager.get().destroy(cameraEntity)
--        runCatching { engine.destroyRenderer(renderer) }
-+        // A second Renderer waits for its backend like SceneView's own (#4969): a blocking
-+        // destroy here stalled the main thread when a screen left under load.
-+        engine.destroyRendererWhenBackendIdle(renderer)
-     }
- 
-     companion object {
-```
-
-**File**: `sceneview/api/sceneview.api` (modified, +1/-0)
-```diff
-@@ -181,6 +181,7 @@ public final class io/github/sceneview/EngineKt {
- 	public static final fun destroyGeometry (Lcom/google/android/filament/Engine;Lio/github/sceneview/geometries/Geometry;)V
- 	public static final fun destroyLight (Lcom/google/android/filament/Engine;I)V
- 	public static final fun destroyRenderable (Lcom/google/android/filament/Engine;I)V
-+	public static final fun destroyRendererWhenBackendIdle (Lcom/google/android/filament/Engine;Lcom/google/android/filament/Renderer;)V
- 	public static final fun destroyTransformable (Lcom/google/android/filament/Engine;I)V
- 	public static final fun drainFramePipeline (Lcom/google/android/filament/Engine;)V
- 	public static final fun isValid (Lcom/google/android/filament/Engine;)Z
-```
-
-**File**: `sceneview/src/main/java/io/github/sceneview/BackendIdleTeardowns.kt` (modified, +106/-65)
-```diff
-@@ -1,35 +1,46 @@
- package io.github.sceneview
- 
-+/** Polling backs off after the diagnostic, without authorizing a blocking release. */
-+internal const val BACKEND_IDLE_BACKOFF_MS = 1_000L
 +
- /**
-- * Teardowns waiting for one engine's backend to go idle, tracked so that the engine's own teardown
-- * can run the ones still pending first (#3799, #3885).
-+ * One engine's deferred releases, sharing one scheduled poll and one backend probe.
-  *
-- * Several Filament releases wait on the calling thread for every command already queued on the
-- * backend: `Engine.destroy()` joins the driver thread, and `FRenderer::terminate` (reached from
-- * `Engine.destroyRenderer` and from an `IBLPrefilterContext`'s destructor) waits on a fence. When a
-- * scene is disposed right after it appeared, that queue still holds its shader links and prefilter
-- * passes — seconds on an emulator, an ANR on the main thread. So those releases are [defer]red:
-- * the backend is polled with a zero-timeout fence wait once per frame, and the release runs once it
-- * is idle, when its inner wait has nothing left to drain.
-+ * A shared engine requires a fresh fence because another screen can keep submitting work.
-+ * Registering its own destruction ([defer] with `runsLast`) marks it RETIRING: producers must
-+ * have stopped, so any reached fence suffices, even on a slow looper. Other readiness conditions
-+ * (in particular model decoders) still apply, and the engine always runs last.
-  *
-- * The engine must outlive everything it owns: an `IBLPrefilterContext` destroyed after its engine
-- * reads freed memory. `Engine.safeDestroy()` therefore calls [runPending] right before
-- * `Engine.destroy()`. Each teardown runs exactly once — from its own poll or from [runPending],
-- * whichever comes first — and a poll whose teardown already ran stops without touching anything.
-+ * A release can enqueue more commands. Its fence is invalidated before it runs, and the next
-+ * backend check waits for the next poll; a later release must cover those commands too.
-+ * [runPending] is the explicit, potentially blocking `Engine.safeDestroy()` path, never a timeout
-+ * fallback. Each release runs once, and a dead engine's probe is never touched.
-  *
-- * Filament-free so it can be tested on the JVM; `Engine.whenBackendIdle()` is the Filament binding.
-- * Main thread only, like every Filament call.
-+ * Filament-free for JVM tests. Confined to the engine's calling thread.
-  */
--internal class BackendIdleTeardowns {
--
--    private inner class Teardown(val runsLast: Boolean, private val action: () -> Unit) {
-+internal class BackendIdleTeardowns(
-+    private val probe: FreshFenceProbe<*>? = null,
-+    private val onEmpty: (BackendIdleTeardowns) -> Unit = {},
-+) {
-+    private inner class Teardown(
-+        val runsLast: Boolean,
-+        val isEngineAlive: () -> Boolean,
-+        val isBusy: () -> Boolean,
-+        val onEngineGone: () -> Unit,
-+        val action: (Boolean) -> Unit,
-+    ) {
-         var isDone = false
-             private set
- 
--        fun run() {
-+        fun run(deferred: Boolean = true) {
-             if (isDone) return
-             drop()
--            action()
-+            if (isEngineAlive()) {
-+                invalidateProbe()
-+                action(deferred)
-+            } else {
-+                onEngineGone()
++    @Test
++    fun `depth fog and person masks use the same coordinates as the camera`() {
++        for (name in listOf("depth", "person_occlusion")) {
++            val source = File("src/main/materials/camera_stream_$name.mat").readText()
++            val fragment = source.substringAfter("fragment {").substringBefore("vertex {")
++            assertTrue(fragment.contains("texture(materialParams_depthTexture, cameraUv)"))
++            assertTrue(fragment.contains("ivec2(cameraUv * vec2(textureSize(materialParams_depthTexture, 0)))"))
++            assertTrue(fragment.contains("occlusionDepthMeters(cameraUv)"))
++            // UV0 may appear only in the OFF fallback, never at a mask lookup.
++            assertTrue(fragment.split("getUV0()").size == 2)
++            if (name == "person_occlusion") {
++                assertTrue(fragment.contains("texture(materialParams_personTexture, cameraUv)"))
 +            }
-         }
- 
-         fun drop() {
-@@ -39,34 +50,42 @@ internal class BackendIdleTeardowns {
-     }
- 
-     private val pending = ArrayDeque<Teardown>()
-+    private var retiring = false
-+    private var pollScheduled = false
-+    private var polling = false
-+    private var backendBusy: Boolean? = null
-+    private var shortConfirmation = false
- 
--    /** Number of teardowns still waiting for the backend. */
-     val size: Int get() = pending.size
- 
-+    private fun finishWait() {
-+        // Reset only when the whole queue drains: re-arming a stale fence or registering
-+        // another resource during this wait must not restart diagnostics or fast polling.
-+        retiring = false
-+        backendBusy = null
-+        shortConfirmation = false
-+        probe?.resetWait()
-+        onEmpty(this)
++        }
 +    }
-+
-+    /** Shared by fence-dependent releases and stalled model loads, at most once per poll. */
-+    fun isBackendBusy(): Boolean = backendBusy ?: checkNotNull(probe)
-+        .isBusy(requireFresh = !retiring).also { backendBusy = it }
-+
-+    private fun invalidateProbe() {
-+        probe?.release()
-+        // The action may queue work: do not reuse readiness or flush again in this poll.
-+        backendBusy = true
-+    }
-+
-     /**
--     * Runs [teardown] now when [isBackendBusy] is already `false` (`deferred = false`).
--     * Otherwise registers it and re-checks every [intervalMs] through [schedule]; it runs with
--     * `deferred = true` once [isBackendBusy] turns `false` or [runPending] claims it. Never waits.
--     *
--     * If [isEngineAlive] turns `false` first — the engine destroyed without [runPending], by 
-```
-
-**File**: `sceneview/src/main/java/io/github/sceneview/Engine.kt` (modified, +66/-79)
-```diff
-@@ -29,6 +29,7 @@ import io.github.sceneview.loaders.MaterialLoader
- import io.github.sceneview.loaders.ModelLoader
- import io.github.sceneview.material.materialRegistry
- import io.github.sceneview.model.Model
-+import java.util.Collections
- import java.util.WeakHashMap
- 
- typealias Entity = Int
-@@ -99,17 +100,18 @@ internal fun Engine.drainFramePipeline(timeoutNanos: Long): Boolean {
- internal const val BACKEND_IDLE_POLL_MS = 16L
- 
- /**
-- * Destroys this engine once its backend has executed everything already queued, **without
-- * blocking the calling thread on that drain**.
-+ * Destroys this engine once its backend has executed everything already queued, polling the backlog first.
-+ * Native destruction itself still has no timeout.
-  *
-  * [Engine.destroy] joins the driver thread after it has run every pending command
-  * (`FEngine::shutdown`: "wait for all pending commands to be executed and the thread to exit").
-  * When a scene is disposed right after it appeared, those pending commands include its lazy
-  * shader compilation, and the join blocks the main thread for as long as that takes — an ANR on
-  * an emulator (#3799). Instead the engine is destroyed through [whenBackendIdle], on the calling
-  * thread (Filament requires it). When the backend is already idle — the usual case — the destroy
-- * happens one poll later, once a fence has made the round trip to the backend, exactly as
-- * [safeDestroy] would.
-+ * happens after a fence has made the round trip to the backend. This marks the engine RETIRING:
-+ * its producers must have stopped, and all pending releases accept a reached fence regardless of
-+ * its age. Slow main-thread polling therefore cannot retain the engine and its EGL context.
-  *
-  * @param onDestroyed runs right after the engine is destroyed — release whatever must outlive
-  * it (its shared EGL context, say) here.
-@@ -127,8 +129,8 @@ internal fun Engine.destroyWhenBackendIdle(onDestroyed: () -> Unit = {}) {
- }
- 
- /**
-- * Destroys [renderer] once this engine's backend has executed everything already queued, **without
-- * blocking the calling thread on that drain**.
-+ * Destroys [renderer] once this engine's backend has executed everything already queued, polling the backlog first.
-+ * Native destruction itself still has no timeout.
-  *
-  * [Engine.destroyRenderer] is not a plain handle release: `FRenderer::terminate` first waits for
-  * "all pending commands" to execute (`Fence::waitAndDestroy(engine.createFence())`, Filament
-@@ -143,13 +145,14 @@ internal fun Engine.destroyWhenBackendIdle(onDestroyed: () -> Unit = {}) {
-  * without ruling it out.
-  * When the backend is already idle — the usual case — the renderer is destroyed one poll later,
-  * once that fence has made the round trip to the backend, exactly as [safeDestroyRenderer] would.
-- * A main thread polling less often than every 48 ms never finds a fence fresh: the destroy then
-- * waits for the 5 s fallback ([FRESH_FENCE_GIVE_UP_MS]).
-+ * On a shared engine, polling less often than every 48 ms keeps the destroy pending. Once the
-+ * engine is retiring, a reached fence suffices. Five seconds triggers a warning and slower polls,
-+ * never permission to destroy behind a busy fence.
-  *
-  * `FRenderer::terminate` then joins the frame-info job thread, parked in a GPU fence wait unless
-  * the engine was built without the GPU frame-complete metric — see [createEngine].
-  */
--internal fun Engine.destroyRendererWhenBackendIdle(renderer: Renderer) {
-+fun Engine.destroyRendererWhenBackendIdle(renderer: Renderer) {
-     val startedAt = SystemClock.uptimeMillis()
-     whenBackendIdle { deferred ->
-         safeDestroyRenderer(renderer)
-@@ -162,85 +165,69 @@ internal fun logDeferredTeardown(what: String, startedAt: Long) = Log.i(
-     "$what destroyed after its backend drained (${SystemClock.uptimeMillis() - startedAt} ms, #3799)"
- )
- 
--/**
-- * The deferred teardowns of each live engine, run by [safeDestroy] before the engine goes.
-- * Weak keys: a registry holds no reference to its engine once its teardowns have run.
-- */
--private val backendIdleTeardowns = WeakHashMap<Engine, BackendIdleTeardowns>()
-+/** Pending registries are removed when empty: their probe callbacks capture the engine. */
-+private val backendIdleTeardowns = Collections.synchronizedMap(
-+    WeakHashMap<Engine, BackendIdleTeardowns>()
-+)
-+
-+private fun Engine.teardowns(): BackendIdleTeardowns = backendIdleTeardowns.getOrPut(this) {
-+    BackendIdleTeardowns(
-+        probe = freshFenceProbe(),
-+        onEmpty = { empty -> backendIdleTeardowns.remove(this, empty) },
-+    )
 +}
+```
+
+**File**: `arsceneview/src/test/java/io/github/sceneview/ar/camera/CameraStreamStabilizationFlagTest.kt` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++package io.github.sceneview.ar.camera
 +
-+/** The same fence check used by deferred releases and stalled model loads. */
-+internal fun Engine.isBackendBusy(): Boolean = teardowns().isBackendBusy()
- 
- /**
-- * Runs [onIdle] on the calling thread once this engine's backend has caught up with everything
-- * queued on it, polling fences from the calling thread's [Looper] every [BACKEND_IDLE_POLL_MS]
-- * instead of waiting on them (#3799).
-```
-
-**File**: `sceneview/src/main/java/io/github/sceneview/FreshFenceProbe.kt` (modified, +54/-52)
-```diff
-@@ -1,84 +1,80 @@
- package io.github.sceneview
- 
- /**
-- * How old a fence may be when it is found reached and still count as fresh: two
-- * [BACKEND_IDLE_POLL_MS] polls plus one of slack for a late `Handler`.
-+ * Maximum age of a reached fence on a shared engine: two polls plus one of slack for a late
-+ * Handler. This bounds main-thread queuing time, not backend work. A shader compilation queued
-+ * in these 48 ms still costs its full price when a native destructor waits for it.
-  *
-- * This bounds main-thread time, not backend work: a fresh fence was reached at most this long after
-- * it was created, so what can still be queued behind it is what the main thread queued in those
-- * 48 ms. That is usually a frame or two, but a single expensive command — a shader compilation —
-- * queued in that window still costs its full price when the release waits. The window narrows the
-- * chance of a blocking release; it does not rule it out.
-- *
-- * Fixed, and measured on the clock rather than in polls. A window that widened with the observed
-- * gap between polls let a fence armed before a long main-thread pass — the next screen composing
-- * and queuing its shaders — pass for fresh at the poll right after it, whenever the pass was not
-- * much longer than the usual gap. So when the main thread polls less often than every 48 ms (a
-- * steady 15 fps jank), no fence is ever fresh and teardowns wait for [FRESH_FENCE_GIVE_UP_MS]:
-- * usually a late release rather than one that blocks — a shader compilation queued just before
-- * the give-up is still waited for.
-+ * Keep this window fixed: widening it with the observed poll gap accepts the very backlog a long
-+ * main-thread pass just queued. Steady polls more than 48 ms apart cannot satisfy it; an engine
-+ * retiring after its producers stop instead accepts any reached fence, regardless of its age.
-  */
- internal const val FRESH_FENCE_MAX_AGE_MS = 3 * BACKEND_IDLE_POLL_MS
- 
--/**
-- * After this long, counted from the probe's first poll, [FreshFenceProbe] accepts any reached
-- * fence, fresh or not: a backend that never catches up must not hold a teardown forever. That is
-- * the behaviour before the probe existed.
-- */
--internal const val FRESH_FENCE_GIVE_UP_MS = 5_000L
-+/** Diagnostic threshold only: elapsed time never makes a stale fence safe. */
-+internal const val FRESH_FENCE_WARN_AFTER_MS = 5_000L
- 
- /**
-- * Answers, poll after poll, "would a release that waits for everything queued on the backend
-- * return at once right now?" for a teardown deferred by `Engine.whenBackendIdle`.
-+ * Polls the backend backlog on the engine's thread, without waiting for a fence.
-  *
-- * A fence created when the teardown was deferred only says the backend executed what was queued
-- * *before* it. `Engine.destroyRenderer` and gltfio's `asyncCancelLoad` wait for everything queued
-- * *when they run* — on a shared engine, the next screen's shader compilations queued in between.
-- * Releasing as soon as that first fence is reached moved the wait instead of removing it: the
-- * release still blocked the main thread, now from a `Handler` callback.
-+ * A dispose-time fence covers commands queued before it. `destroyRenderer` and `asyncCancelLoad`
-+ * wait for everything queued when they run, including a new screen's shaders on a shared engine.
-+ * Accepting an old fence there merely moves the blocking wait into a Handler callback. A reached
-+ * fence older than [maxFreshAgeMs] is therefore replaced. Freshness narrows that gap; it cannot
-+ * bound native destruction, or command submission itself, which can block on a full stream.
-  *
-- * So a reached fence only counts when it is found reached soon after it was created, on [now]'s
-- * monotonic clock: within [maxFreshAgeMs], 48 ms ([FRESH_FENCE_MAX_AGE_MS]). Behind it there is
-- * then at most what the main thread queued in that time. An older one is replaced by a new one and
-- * the probe keeps polling; how far apart the polls are is not up to the probe (a janking main
-- * thread, a slow main-thread pass, or a caller that skips polls while something else holds the
-- * teardown). Polls steadily more than 48 ms apart never find a fresh fence, and only [giveUpMs]
-- * ends them.
-+ * Once the owner marks the engine RETIRING, its producers must have stopped. [isBusy] can then
-+ * accept a plain reached fence: main-thread cadence must not retain the engine and EGL context.
-+ * The owner invalidates the fence when another teardown is registered or runs, so subsequent
-+ * releases cover that teardown's commands too. Other conditions, such as decoders, still apply.
-  *
-- * [giveUpMs] runs from the probe's first poll, not from its creation: a caller that only starts
-- * polling once something else has settled (a model load, which may take seconds) still gets the
-- * freshness check for that long, rather than a fallback already expired. After it any reached
-- * fence counts, so a backend that never catches up gets the previous behaviour, never a leak.
-+ 
-```
-
-**File**: `sceneview/src/main/java/io/github/sceneview/SceneView.kt` (modified, +4/-3)
-```diff
-@@ -1561,9 +1561,10 @@ fun rememberEngine(
-         onDispose {
-             // Not `safeDestroy()` inline: Engine.destroy() joins the backend thread after it has
-             // run every queued command, and a scene disposed right after it appeared still has
--            // its shader compiles queued — seconds on the main thread, an ANR (#3799). Destroy
--            // once the backend is idle instead, polled from the main looper; on an idle backend
--            // that is one poll after onDispose returns.
-+            // its shader compiles queued — seconds on the main thread, an ANR (#3799).
-+            // Mark it RETIRING after the scene's producers stop. Pending releases then accept
-+            // a reached fence regardless of age, so a slow main looper cannot retain this engine
-+            // and its EGL context. Other conditions (model decoders) still delay destruction.
-             engine.destroyWhenBackendIdle { eglContext.destroy() }
-         }
-     }
-```
-
-**File**: `sceneview/src/main/java/io/github/sceneview/loaders/ModelLoader.kt` (modified, +5/-7)
-```diff
-@@ -24,8 +24,8 @@ import io.github.sceneview.core.obj.ObjLoader
- import io.github.sceneview.core.ply.PlyLoader
- import io.github.sceneview.core.threemf.ThreeMfLoader
- import io.github.sceneview.GltfioTextureTables
--import io.github.sceneview.freshFenceProbe
- import io.github.sceneview.isAsyncLoadPending
-+import io.github.sceneview.isBackendBusy
- import io.github.sceneview.isValid
- import io.github.sceneview.model.Model
- import io.github.sceneview.model.ModelInstance
-@@ -1579,19 +1579,16 @@ private class SettlingDestroys(private val engine: Engine) {
-     private var pending = 0
- 
-     fun defer(isInFlight: () -> Boolean, pumpedProgress: () -> Float, destroy: () -> Unit) {
--        // A fresh fence, not one created at the first poll: asyncCancelLoad's flushAndWait covers
--        // what is queued when it runs, the next screen's shader compilations included.
--        val probe = engine.freshFenceProbe()
-+        // Share the engine's probe: freshness while shared, a reached fence once retiring.
-         val gate = AsyncLoadSettleGate(
-             isInFlight = isInFlight,
-             pumpedProgress = pumpedProgress,
--            isBackendBusy = probe::isBusy,
-+            isBackendBusy = engine::isBackendBusy,
-             now = SystemClock::uptimeMillis,
-         )
-         pending++
-         engine.whenIdle(isBusy = gate::isBusy, onEngineGone = { pending-- }) {
-             pending--
--            probe.release()
-             destroy()
-         }
-     }
-@@ -1617,7 +1614,8 @@ private class SettlingDestroys(private val engine: Engine) {
-  * [stallTimeoutMs] stops holding the destroy. That one is cancelled for real, so the gate then
-  * waits for [isBackendBusy] to say the backend recently caught up: the cancel's `flushAndWait`
-  * then only waits for what the main thread queued since. [isBackendBusy] is first asked at that
-- * point, which is where a [io.github.sceneview.FreshFenceProbe] starts its give-up delay.
-+ * point, sharing the engine's probe and diagnostic delay with other pending releases. A retiring
-+ * engine only needs a reached fence; elapsed time alone never authorizes the cancel.
-  *
-  * Filament-free so the ordering can be pinned in a JVM test. Main thread only.
-  */
++import com.google.android.filament.MaterialInstance
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
++import org.junit.Assert.assertNull
++import org.junit.Assert.assertTrue
++import org.junit.Test
++import java.io.File
++
++/**
++ * The EIS material flag is resolved at bind time and never read from the bound material per
++ * frame (#5091).
++ *
++ * On a Pixel 4a with Filament 1.77.3, `update()` called
++ * `materialInstance.material.hasParameter(...)` every frame. `materialInstance` is read back
++ * from the renderable, and Filament 1.77 builds that wrapper without its `Material`: the call threw
++ * a NullPointerException on every frame, so the camera quad was never revealed and every AR demo
++ * showed "Camera couldn't start". The JVM tests had no Filament to see it.
++ */
++class CameraStreamStabilizationFlagTest {
++
++    private class FakeInstance(val name: String, val declaresFlag: Boolean)
++
++    private val writes = mutableListOf<Pair<String, Boolean>>()
++    private val flag = CameraStreamStabilizationFlag<FakeInstance>(
++        accepts = { it.declaresFlag },
++        write = { instance, enabled -> writes += instance.name to enabled },
++    )
++
++    @Test
++    fun `a wrapper read back from a renderable has no material and is not a flag target`() {
++        // What `RenderableManager.getMaterialInstanceAt` returns since Filament 1.77: no natives
++        // are needed to build it, and its `material` is null.
++        val readBack = MaterialInstance.wrap(42L)
++        assertNull(readBack.material)
++        val threw = runCatching { readBack.material.hasParameter(kImageStabilizationParameter) }
++            .exceptionOrNull()
++        assertTrue("the pre-#5091 per-frame call throws here", threw is NullPointerException)
++
++        assertFalse(acceptsImageStabilizationFlag(readBack))
++    }
++
++    @Test
++    fun `binding a material that declares the flag writes the current value once`() {
++        flag.enabled = true
++        assertEquals(emptyList<Pair<String, Boolean>>(), writes)
++
++        flag.bind(FakeInstance("depth", declaresFlag = true))
++        assertEquals(listOf("depth" to true), writes)
++    }
++
++    @Test
++    fun `an unchanged value writes nothing, however many frames pass`() {
++        flag.bind(FakeInstance("flat", declaresFlag = true))
++        writes.clear()
++
++        repeat(300) { flag.enabled = false }
++        assertEquals(emptyList<Pair<String, Boolean>>(), writes)
++
++        flag.enabled = true
++        repeat(300) { flag.enabled = true }
++        assertEquals(listOf("flat" to true), writes)
++    }
++
++    @Test
++    fun `a legacy material without the flag is never written`() {
++        flag.bind(FakeInstance("legacy", declaresFlag = false))
++        flag.enabled = true
++        flag.enabled = false
++        assertEquals(emptyList<Pair<String, Boolean>>(), writes)
++    }
++
++    @Test
++    fun `switching material carries the current value to the new one`() {
++        flag.bind(FakeInstance("flat", declaresFlag = true))
++        flag.enabled = true
++        flag.bind(FakeInstance("legacy", declaresFlag = false))
++        flag.bind(FakeInstance("person", declaresFlag = true))
++        assertEquals(listOf("flat" to false, "flat" to true, "person" to true), writes)
++    }
++
++    @Test
++    fun `the per-frame update never reads the bound material`() {
++        val source = File("src/main/java/io/github/sceneview/ar/camera/ARCameraStream.kt").readText()
++        val update = source.substringAfter("fun update(session: Session, frame: Frame) {")
++            .substringBefore("\n    fun ")
++            .substringBefore("\n    private fun ")
++        assertTrue("update() body not found", update.contains("coordinateUploads.acquire()"))
++        for (forbidden in listOf(".material.", ".material)", "materialOrNull", "hasParameter")) {
++            assertFalse("update() must not call `$forbidden` per frame (#5091)", update.contains(forbidden))
++        }
++    }
++}
 ```
 
 ---
 
-### Incident Patch 3: `a34ca1a5` (2026-11-12)
-**Commit Message**: fix(sceneview): one shared wait budget when a recorded scene is disposed (#4998)
+### Incident Patch 2: `987a4be5` (2026-11-17)
+**Commit Message**: fix(demo): Matter material switch plays fully, never locks the chips or the press (#5138)
 
-* fix(sceneview): one shared wait budget when a recorded scene is disposed (#4864)
+* fix(demo): Matter material switch plays fully, never locks the chips or the press
 
-Closes #4864
+Switching material in Matter could show the new title over the old solid for
+up to two seconds and then pop the new one in at rest: the slide ran on a
+450 ms wall-clock tween, and the first draw of a sample stalls the renderer
+(1.5 s per material on emulator-5554), so the whole slide elapsed on one
+frozen frame. The chip row also greyed out on every switch and dropped taps
+and flings made during it, a press started during a switch stayed dead until
+the finger lifted, and selecting a chip scrolled the row so the first chips
+(Memory foam) left the screen.
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+- MatterSwitch: a pure state machine advanced once per presented frame. The
+  incoming solid is drawn from the first frame at its hidden pose under the
+  floor, the slide steps by the presented-frame interval capped at 34 ms, and
+  it waits on the empty stage until the incoming solid has been drawn twice.
+- Requests are never refused: until the incoming solid shows, a new one
+  replaces it; once it rises, the latest one waits for it to land. Flings
+  step fro
 
-* fix: address the independent review of this change
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* fix(sceneview): share the detach budget across the whole main-thread message
-
-Compose detaches the surface before onDispose, so the window detach and
-destroy() ran with separate 1 s budgets. The detach now leaves its budget
-for destroy() until the queue advances, and keeps 250 ms for the mirror
-release (#4860). Tests cover the real order: detach first, then destroy.
-
-Co-Authored-By: Codex <[REDACTED_EMAIL]>
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-Co-authored-by: Codex <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/4864-shared-surface-wait.md` (added, +2/-0)
+**File**: `changelog.d/5138-matter-switch.md` (added, +2/-0)
 ```diff
 @@ -0,0 +1,2 @@
 +<!-- category: Fixed -->
-+- **Android recording disposal (#4864).** Window detach and mirror teardown share one second of backend waits within the same main-thread message, including Compose detaching the view before disposal. Window detach reserves 250 ms of that budget for mirrors before the recorder surface is released (#4860). Recorder finalisation and other teardown work are excluded; busy-window warnings report both the last and cumulative wait durations.
++- **Demo app: Matter's material switch plays fully ([#5138](https://github.com/sceneview/sceneview/pull/5138)).** Selecting another material now always shows the full slide. Before, the first draw of each material could freeze the old solid under the new title and then pop the new one in. The chips stay enabled during a switch, and taps or flings made during it queue instead of being dropped. A finger held through a switch presses the new solid as soon as it lands, and choosing a chip no longer scrolls the first chips off screen.
 ```
 
-**File**: `sceneview/src/main/java/io/github/sceneview/SceneRenderer.kt` (modified, +47/-16)
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/FeelDemo.kt` (modified, +94/-83)
 ```diff
-@@ -3,6 +3,8 @@ package io.github.sceneview
- import android.content.Context
- import android.graphics.PixelFormat
- import android.os.Build
-+import android.os.Handler
-+import android.os.Looper
- import android.view.Display
+@@ -7,12 +7,11 @@ import android.view.ViewTreeObserver
  import android.view.MotionEvent
- import android.view.Surface
-@@ -382,27 +384,40 @@ class SceneRenderer(
- 
-     // ── Cleanup ─────────────────────────────────────────────────────────────────────────────────
- 
-+    // Compose removes the view before onDispose, in the same main-thread message (#3799).
-+    // Keep its wait budget until the queue advances so destroy() cannot start a second one.
-+    private var surfaceDetachBudget: SurfaceDetachBudget? = null
-+    private val surfaceDetachHandler = Handler(Looper.getMainLooper())
-+
-     /**
-      * Detaches from the current surface and releases all native resources.
-      *
-      * Safe to call multiple times.
-      */
-     fun destroy() {
--        // Release mirror swap chains first — they were created on the engine the mirrorer
--        // bound at its first mirrored frame.
--        surfaceMirrorer?.destroy()
--        surfaceMirrorer = null
--        renderViewRef = null
--        votableSurfaceRef.set(null)
--        votedFrameRate = 0f
--        uiHelper.detach()
--        swapChainRef.getAndSet(null)?.let {
--            runCatching { engine.destroySwapChain(it) }
--                .onFailure { e -> android.util.Log.w("SceneRenderer", "Failed to destroy SwapChain", e) }
-+        // UiHelper.detach invokes onDetachedFromSurface synchronously. Its wait shares the
-+        // mirror wait's budget, excluding time spent in onHostLost.
-+        val budget = surfaceDetachBudget ?: SurfaceDetachBudget()
-+        surfaceDetachBudget = budget
-+        try {
-+            // Release mirror swap chains first — they were created on the engine the mirrorer
-+            // bound at its first mirrored frame.
-+            surfaceMirrorer?.destroy(budget)
-+            surfaceMirrorer = null
-+            renderViewRef = null
-+            votableSurfaceRef.set(null)
-+            votedFrameRate = 0f
-+            uiHelper.detach()
-+            swapChainRef.getAndSet(null)?.let {
-+                runCatching { engine.destroySwapChain(it) }
-+                    .onFailure { e -> android.util.Log.w("SceneRenderer", "Failed to destroy SwapChain", e) }
-+            }
-+            displayHelper?.detach()
-+            displayHelper = null
-+            display = null
-+        } finally {
-+            surfaceDetachBudget = null
-         }
--        displayHelper?.detach()
--        displayHelper = null
--        display = null
+ import android.view.VelocityTracker
+ import android.view.ViewConfiguration
+-import androidx.compose.animation.core.Animatable
+-import androidx.compose.animation.core.LinearEasing
+-import androidx.compose.animation.core.tween
+ import androidx.compose.foundation.background
++import androidx.compose.foundation.gestures.animateScrollBy
+ import androidx.compose.foundation.gestures.awaitEachGesture
+ import androidx.compose.foundation.gestures.awaitFirstDown
++import androidx.compose.foundation.gestures.scrollBy
+ import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Box
+ import androidx.compose.foundation.layout.Column
+@@ -81,6 +80,7 @@ import io.github.sceneview.demo.demos.internal.feel.MatterIdentity
+ import io.github.sceneview.demo.demos.internal.feel.MatterOpening
+ import io.github.sceneview.demo.demos.internal.feel.MatterStage
+ import io.github.sceneview.demo.demos.internal.feel.MatterPreparation
++import io.github.sceneview.demo.demos.internal.feel.MatterSwitch
+ import io.github.sceneview.demo.demos.internal.feel.MatterTransition
+ import io.github.sceneview.demo.demos.internal.feel.MatterSurfaces
+ import io.github.sceneview.demo.recording.rememberDemoSceneRecorder
+@@ -295,12 +295,8 @@ fun FeelDemo(onBack: () -> Unit) {
      }
- 
-     // ── Internal ────────────────────────────────────────────────────────────────────────────────
-@@ -472,11 +487,24 @@ class SceneRenderer(
-             // the backlog reaches it; frames queued before it meet an abandoned surface, which
-             // PlatformEGL tolerates (a failed eglMakeCurrent is logged, eglSwapBuffers' result
-             // is ignored) and which drops those frames — nothing is on screen any more anyway.
--            if (!engine.flushAndWait(SURFACE_DETACH_WAIT_NANOS)) {
-+            val budget = surfaceDetachBudget ?: SurfaceDetachBudget().also {
-+                surfaceDetachBudget = it
-+            }
-+            surfaceDetachHandler.post {
-+                if (surfaceDetachBudget === budget) surfaceDetachBudget = null
-+            }
-+            // Reserve 250 ms of the shared second for mirror destruction before onHostLost
-+            // releases the recorder Surface. A zero-time mirror flush risks the native abort
-+            // in #4860. Window detach may drop queued frames safely (#3799); mirrors must get
-+            // a chance to finish first. This is a bounded opportunity, not a completion guarantee.
-+            val mirrorReserve = if (surfaceMirrorer != null) MIRROR_RELEASE_RESERVE_NANOS else 0L
-+            if (!budget.waitFor(reservedNanos = mirrorReserve) { engine.flushAndWait(it) }) {
-                 android.util.Log.w(
-                     "SceneRenderer",
-                     "Surface detached, backend still busy after " +
--                        "${SURFACE_DETACH_WAIT_NANOS / 1_000_000} ms; not waiting longer (#3799)"
-+                        "${budget.lastWaitNanos / 1_000_000} ms " +
-+                        "(cumulative wait ${budget.totalWaitNanos / 1_000_000} ms); " +
-+                        "not waiting longer (#3799)"
-                 )
+     val pads = remember { arrayOfNulls<Node>(FeelMaterial.entries.size) }
+     val mark = remember { arrayOfNulls<Node>(1) }
+-    var selected by remember { mutableStateOf(FeelMaterial.MemoryFoam) }
+-    var displayed by remember { mutableStateOf(selected) }
+-    var outgoing by remember { mutableStateOf<FeelMaterial?>(null) }
+-    val slide = remember { Animatable(1f) }
+-    var transitionStarted by remember { mutableStateOf<Long?>(null) }
+-    val switching = selected != displayed || outgoing != null
++    // Selection, the solid on stage and the slide between them, advanced per presented frame.
++    val switch = remember { MatterSwitch() }
+     var openingPrepared by remember(materials) { mutableStateOf(false) }
+     // Only the opening belongs behind the cover. Never draw another sample to warm it:
+     // Material.compile queues backend work without putting its slab in the visible set.
+@@ -340,41 +336,22 @@ fun FeelDemo(onBack: () -> Unit) {
+             if (BuildConfig.DEBUG) Log.d("Matter", "Background material ready: ${kind.name}")
+         }
+         launch {
+-            snapshotFlow { selected }.collect { kind ->
++            snapshotFlow { switch.selected }.collect { kind ->
+                 if (kind != FeelMaterial.MemoryFoam) prepareSample(kind)
              }
          }
-@@ -506,3 +534,6 @@ internal const val SURFACE_DETACH_WAIT_NANOS = 1_000_000_000L
- 
- /** Upper bound on the main-thread frame-pipeline drain after a surface resize (#3799). */
- internal const val SURFACE_RESIZE_WAIT_NANOS = 250_000_000L
-+
-+/** Reserved within the shared second for mirror release before the recorder surface (#4860). */
-+internal const val MIRROR_RELEASE_RESERVE_NANOS = 250_000_000L
+         while (true) {
+             // Space background submissions out. Explicit selections may overtake a slow bake.
+             repeat(MatterPreparation.FRAMES_BETWEEN_MATERIALS) { withFrameNanos { } }
+-            val kind = preparation.next(selected, revealed = firstFrame.sceneReady.value) ?: break
++            val kind = preparation.next(switch.selected, revealed = firstFrame.sceneReady.value) ?: break
+             prepareSample(kind).await()
+         }
+     }
+-    val targetReady = selected in materials.samples
+-    LaunchedEffect(selected, targetReady, motion, materials) {
+-        if (!targetReady) return@LaunchedEffect
+-        val target = selected
+-        wakeRender()
+-        val previous = displayed
+-        if (!motion || previous == target) {
+-            displayed = target; outgoing = null; slide.snapTo(1f)
+-            transitionStarted = null
+-        } else {
+-            transitionStarted = SystemClock.uptimeMillis()
+-            idle.touch(transitionStarted!!, down = false)
+-            slide.snapTo(0f)
+-            outgoing = previous
+-            displayed = target
+-            slide.animateTo(1f, tween(SceneViewTokens.Motion.containerMillis, easing = LinearEasing))
+-            outgoing = null
+-        }
+-    }
++    // Never refused while a slide runs: the chips stay enabled and the latest request queues.
+     val choose: (FeelMaterial) -> Unit = { next ->
+-        if (firstFrame.sceneReady.value && next != selected && outgoing == null) {
++        if (firstFrame.sceneReady.value && switch.request(next)) {
+             touch.cancel()
+             simulation.select(next, SystemClock.uptimeMillis())
+-            selected = next
+             wakeRender()
+         }
+     }
+@@ -400,16 +377,23 @@ fun FeelDemo(onBack: () -> Unit) {
+     // Changing state is read by the FIRST SceneView callbacks through these updated delegates.
+     val onTouchNow by rememberUpdatedState<(MotionEvent) -> Boolean>({ event ->
+         wakeRender()
+-        firstFrame.sceneReady.value && touch.onEvent(event, displayed, switching, choose)
++        firstFrame.sceneReady.value && touch.onEvent(event, switch, choose)
+     })
+     val onFrameNow by rememberUpdatedState<(Long) -> Unit>({ nanos ->
+         val now = SystemClock.uptimeMillis()
+         if (BuildConfig.DEBUG && firstFrame.
 ```
 
-**File**: `sceneview/src/main/java/io/github/sceneview/SurfaceDetachBudget.kt` (added, +35/-0)
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/feel/MatterPresentation.kt` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,35 @@
-+package io.github.sceneview
+@@ -7,6 +7,8 @@ import kotlin.math.sin
+ 
+ /** Product-shot travel in model space. The caller supplies the 450 ms motion-token clock. */
+ internal object MatterTransition {
++    /** Progress at which the outgoing solid has left and the incoming one waits under the floor. */
++    const val HIDDEN = .40f
+     private fun smooth(t: Float) = t.coerceIn(0f, 1f).let { it * it * (3f - 2f * it) }
+     fun outgoingTravel(progress: Float): Float = (progress / .40f).coerceIn(0f, 1f).let { it * it }
+     fun incomingTravel(progress: Float): Float = 1f - smooth((progress - .40f) / .42f)
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/feel/MatterSwitch.kt` (added, +121/-0)
+```diff
+@@ -0,0 +1,121 @@
++package io.github.sceneview.demo.demos.internal.feel
++
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.setValue
 +
 +/**
-+ * One wait budget for surface teardown in a main-thread message, including mirrors.
++ * Chip selection → solid on stage. Main thread only, advanced once per PRESENTED frame.
 + *
-+ * Only time spent inside waits consumes the budget; callbacks and other JNI calls do not.
-+ * A disposal without swap chains consumes nothing. A zero remaining budget must still
-+ * be passed to flushAndWait: it submits queued swap-chain destruction without another wait.
++ * The first frame that draws a sample can stall for hundreds of milliseconds while the backend
++ * links its program (up to 1.5 s per material on emulator-5554). A wall-clock tween spent that
++ * stall on a frozen picture and popped the new solid in at rest. Here the slide advances only by
++ * the presented-frame interval, capped at [MAX_STEP_MILLIS], so a hitch slows it down but never
++ * skips it; and the incoming solid is drawn from the first frame at its hidden pose under the
++ * floor, so its first draw happens while the outgoing one leaves. The slide waits at
++ * [MatterTransition.HIDDEN], on an empty stage, until the incoming solid has been drawn for
++ * [PRIME_FRAMES] presented frames.
++ *
++ * Requests are never refused. Until the incoming solid shows, a new request replaces it; once
++ * it is rising, the latest request waits for it to land.
 + */
-+internal class SurfaceDetachBudget(
-+    timeoutNanos: Long = SURFACE_DETACH_WAIT_NANOS,
-+    private val nanoTime: () -> Long = System::nanoTime,
-+) {
-+    private var remaining = timeoutNanos.coerceAtLeast(0L)
-+
-+    var lastWaitNanos: Long = 0L
++internal class MatterSwitch(initial: FeelMaterial = FeelMaterial.MemoryFoam) {
++    /** The chip, the title and the readout. Changes on every request. */
++    var selected by mutableStateOf(initial)
 +        private set
-+
-+    var totalWaitNanos: Long = 0L
++    /** The solid that owns touch and the readout; the INCOMING one during a slide. */
++    var displayed by mutableStateOf(initial)
 +        private set
++    var outgoing by mutableStateOf<FeelMaterial?>(null)
++        private set
++    /** 0 at the start of a slide, 1 at rest. */
++    var progress = 1f
++        private set
++    /** +1 when the outgoing solid leaves towards the next material, -1 towards the previous. */
++    var direction = 1f
++        private set
++    /** Uptime when the current or last slide began, null before any switch. */
++    var startedAt: Long? = null
++        private set
++    /** Uptime when the incoming solid reached its rest height ([ARRIVE]). */
++    var landedAt: Long? = null
++        private set
++    private var primeLeft = 0
++    private var lastFrame = 0L
 +
-+    fun remainingNanos(): Long = remaining
++    val switching: Boolean get() = selected != displayed || outgoing != null
++    /** The incoming solid has not yet been drawn (hidden) for [PRIME_FRAMES] presented frames. */
++    val priming: Boolean get() = outgoing != null && primeLeft > 0
 +
-+    /** Leaves [reservedNanos] available for a later mirror wait in this message (#4860). */
-+    fun waitFor(reservedNanos: Long = 0L, flushAndWait: (timeoutNanos: Long) -> Boolean): Boolean {
-+        val start = nanoTime()
-+        try {
-+            return flushAndWait((remaining - reservedNanos).coerceAtLeast(0L))
-+        } finally {
-+            lastWaitNanos = (nanoTime() - start).coerceAtLeast(0L)
-+            totalWaitNanos += lastWaitNanos
-+            remaining = (remaining - lastWaitNanos).coerceAtLeast(0L)
-+        }
++    /** A chip tap or a fling. Returns false only for the material already requested. */
++    fun request(kind: FeelMaterial): Boolean {
++        if (kind == selected) return false
++        selected = kind
++        return true
 +    }
-+}
++
++    /**
++     * Returns true on the frame a slide starts. [ready]: the selected solid exists and can be
++     * drawn. While a slide runs, the frame step is the interval since the previous presented frame.
++     */
++    fun advance(now: Long, ready: Boolean, motion: Boolean): Boolean {
++        val leaving = outgoing
++        if (leaving == null) {
++            if (selected == displayed || !ready) return false
++            direction = if (selected.ordinal >= displayed.ordinal) 1f else -1f
++            outgoing = displayed
++            displayed = selected
++            progress = 0f
++            primeLeft = PRIME_FRAMES
++            startedAt = now
++            landedAt = null
++            lastFrame = now
++            return true
++        }
++        if (selected != displayed && selected != leaving && progress < MatterTransition.HIDDEN && ready) {
++            // The previous target is still under the floor: replace it, keep the exit direction.
++            // Back to the solid that is leaving queues instead: it cannot leave and rise at once.
++            displayed = selected
++            primeLeft = PRIME_FRAMES
++        }
++        val step = (now - lastFrame).coerceIn(0L, MAX_STEP_MILLIS)
++        lastFrame = now
++        val primed = primeLeft == 0
++        if (primeLeft > 0) primeLeft--
++        progress = when {
++            !motion -> if (primed) 1f else 0f
++            !primed -> (progress + step / DURATION_MILLIS.toFloat()).coerceAtMost(MatterTransition.HIDDEN)
++            else -> (progress + step / DURATION_MILLIS.toFloat()).coerceAtMost(1f)
++        }
++        if (progress >= ARRIVE && landedAt == null) landedAt = now
++        if (progress >= 1f) outgoing = null
++        return false
++    }
++
++    /** Seconds since the incoming solid landed, negative before. Drives the settle wobble. */
++    fun landingAge(now: Long): Float = landedAt?.let { (now - it) / 1000f } ?: -1f
++
++    companion object {
++        /** Same as SceneViewTokens.Motion.containerMillis, kept here for the JVM tests. */
++        const val DURATION_MILLIS = 450L
++        const val MAX_STEP_MILLIS = 34L
++        const val PRIME_FRAMES = 2
++        const val ARRIVE = .82f
++
++        /** A horizontal fling on the empty stage: leftwards is the next material. */
++        fun flingTarget(selected: FeelMater
 ```
 
-**File**: `sceneview/src/main/java/io/github/sceneview/utils/SurfaceMirrorer.kt` (modified, +21/-20)
+**File**: `samples/android-demo/src/test/java/io/github/sceneview/demo/demos/internal/feel/MatterSwitchTest.kt` (added, +177/-0)
 ```diff
-@@ -9,6 +9,7 @@ import com.google.android.filament.SwapChain
- import com.google.android.filament.View
- import com.google.android.filament.Viewport
- import io.github.sceneview.SURFACE_DETACH_WAIT_NANOS
-+import io.github.sceneview.SurfaceDetachBudget
- import io.github.sceneview.destroyRendererWhenBackendIdle
+@@ -0,0 +1,177 @@
++package io.github.sceneview.demo.demos.internal.feel
++
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
++import org.junit.Assert.assertNull
++import org.junit.Assert.assertTrue
++import org.junit.Test
++
++class MatterSwitchTest {
++    private fun MatterSwitch.frames(from: Long, count: Int, step: Long = 16L, motion: Boolean = true): Long {
++        var now = from
++        repeat(count) { now += step; advance(now, ready = true, motion = motion) }
++        return now
++    }
++
++    private fun MatterSwitch.untilLanded(from: Long): Long {
++        var now = from
++        while (outgoing != null) { now += 16L; advance(now, ready = true, motion = true) }
++        return now
++    }
++
++    @Test fun aStalledFirstDrawCannotSwallowTheSlide() {
++        val switch = MatterSwitch()
++        assertTrue(switch.request(FeelMaterial.Leather))
++        assertTrue(switch.advance(1_000L, ready = true, motion = true))
++        assertEquals(0f, switch.progress, 0f)
++        assertTrue(switch.priming)
++        // Emulator-5554 measured 1.5 s between the presented frames around the first Leather
++        // draw. The old 450 ms wall-clock tween was over before the next frame: a pop at rest.
++        switch.advance(2_500L, ready = true, motion = true)
++        val perStep = MatterSwitch.MAX_STEP_MILLIS / MatterSwitch.DURATION_MILLIS.toFloat()
++        assertEquals(perStep, switch.progress, 1e-6f)
++        assertEquals(FeelMaterial.MemoryFoam, switch.outgoing)
++        // Another hitch mid-slide costs at most one capped step too.
++        var now = switch.frames(2_500L, 5)
++        val before = switch.progress
++        now += 1_000L
++        switch.advance(now, ready = true, motion = true)
++        assertEquals(before + perStep, switch.progress, 1e-6f)
++        // At 60 Hz the rest of the slide still takes its presented frames.
++        var frames = 0
++        while (switch.outgoing != null) { now += 16L; frames++; switch.advance(now, ready = true, motion = true) }
++        assertTrue("$frames frames", frames >= 15)
++        assertEquals(1f, switch.progress, 0f)
++        assertEquals(FeelMaterial.Leather, switch.displayed)
++        assertFalse(switch.switching)
++    }
++
++    @Test fun theStageWaitsEmptyUntilTheIncomingSolidHasBeenDrawn() {
++        val switch = MatterSwitch()
++        switch.request(FeelMaterial.Gel)
++        switch.advance(0L, ready = true, motion = true)
++        var now = 0L
++        while (switch.progress < .35f) { now += 16L; switch.advance(now, ready = true, motion = true) }
++        // A late replacement: the foam has nearly left, velvet has never been drawn.
++        switch.request(FeelMaterial.Velvet)
++        now += 34L; switch.advance(now, ready = true, motion = true)
++        assertEquals(FeelMaterial.Velvet, switch.displayed)
++        assertEquals(MatterTransition.HIDDEN, switch.progress, 1e-6f)
++        now += 34L; switch.advance(now, ready = true, motion = true)
++        assertEquals(MatterTransition.HIDDEN, switch.progress, 1e-6f)
++        assertFalse(switch.priming)
++        now += 34L; switch.advance(now, ready = true, motion = true)
++        assertTrue(switch.progress > MatterTransition.HIDDEN)
++    }
++
++    @Test fun requestsAreNeverRefusedAndReplaceATargetStillUnderTheFloor() {
++        val switch = MatterSwitch()
++        switch.request(FeelMaterial.Gel)
++        switch.advance(0L, ready = true, motion = true)
++        var now = switch.frames(0L, 3)
++        assertTrue(switch.progress < MatterTransition.HIDDEN)
++        // Two quick taps while the foam is still leaving: the chip follows each one, and the
++        // solid that rises is the last one, primed again before it may rise.
++        assertTrue(switch.request(FeelMaterial.Velvet))
++        assertTrue(switch.request(FeelMaterial.Marble))
++        now += 16L
++        switch.advance(now, ready = true, motion = true)
++        assertEquals(FeelMaterial.Marble, switch.displayed)
++        assertEquals(FeelMaterial.MemoryFoam, switch.outgoing)
++        assertEquals(1f, switch.direction, 0f)
++        assertTrue(switch.priming)
++        now = switch.untilLanded(now)
++        assertEquals(FeelMaterial.Marble, switch.displayed)
++        assertFalse(switch.switching)
++        assertFalse(switch.request(FeelMaterial.Marble))
++    }
++
++    @Test fun aRequestOnceTheSolidRisesWaitsForItToLand() {
++        val switch = MatterSwitch()
++        switch.request(FeelMaterial.Gel)
++        switch.advance(0L, ready = true, motion = true)
++        var now = 0L
++        while (switch.progress < .6f) { now += 16L; switch.advance(now, ready = true, motion = true) }
++        switch.request(FeelMaterial.Leather)
++        now = switch.untilLanded(now)
++        assertEquals(FeelMaterial.Gel, switch.displayed)
++        assertTrue(switch.switching)
++        now += 16L
++        assertTrue(switch.advance(now, ready = true, motion = true))
++        assertEquals(FeelMaterial.Gel, switch.outgoing)
++        assertEquals(FeelMaterial.Lea
+```
+
+---
+
+### Incident Patch 3: `810eca5f` (2026-11-16)
+**Commit Message**: fix(demo): decode launcher previews off the main thread (#5095)
+
+Launcher preview images (AR View grid, Explore carousel, featured pager) are decoded on Dispatchers.IO into a bounded cache cleared on trim; a cache miss shows a neutral placeholder and a short fade instead of jumping from the category icon. On a Pixel 4a the ~0.9 s stall when opening the AR View tab cold is unchanged and exists on main too, so #4461 stays open. Refs #4461.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/4461-ar-preview-decoding.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++<!-- category: Fixed -->
++- **Demo app: decode AR launcher previews in the background ([#4461](https://github.com/sceneview/sceneview/issues/4461)).** Show a neutral placeholder while uncached card pictures load, then fade them in. Cached pictures still appear immediately when returning from a demo.
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/DemoPreviews.kt` (modified, +54/-7)
+```diff
+@@ -3,15 +3,28 @@ package io.github.sceneview.demo
+ import android.content.res.Resources
+ import android.util.LruCache
+ import androidx.annotation.DrawableRes
++import androidx.compose.animation.core.animateFloatAsState
+ import androidx.compose.foundation.isSystemInDarkTheme
+ import androidx.compose.runtime.Composable
++import androidx.compose.runtime.State
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.key
++import androidx.compose.runtime.produceState
+ import androidx.compose.runtime.remember
++import androidx.compose.ui.geometry.Size
++import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.graphics.ImageBitmap
+ import androidx.compose.ui.graphics.asAndroidBitmap
++import androidx.compose.ui.graphics.drawscope.DrawScope
+ import androidx.compose.ui.graphics.painter.BitmapPainter
+ import androidx.compose.ui.graphics.painter.Painter
+ import androidx.compose.ui.platform.LocalContext
+ import androidx.compose.ui.res.imageResource
++import io.github.sceneview.demo.theme.SceneViewTokens
++import io.github.sceneview.demo.theme.md_theme_dark_surfaceContainer
++import io.github.sceneview.demo.theme.md_theme_light_surfaceContainer
++import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.withContext
  
  /**
-@@ -236,17 +237,22 @@ class SurfaceMirrorer {
+  * Captured preview images for the home grid, keyed by [DemoEntry.id].
+@@ -90,17 +103,23 @@ object DemoPreviews {
+      * platform's own drawable cache holds weak references, so by the time a demo is closed
+      * the list behind it has lost every picture and decodes them again, on the main thread,
+      * in the one frame that starts the exit transition (about 8 ms a card on a Pixel 4a).
+-     * Holding the last few screens of pictures here makes coming back to a list free.
++     * Holding the last few screens of pictures here avoids decoding again on Back. A cache
++     * miss (including after memory pressure) is decoded off the main thread by [bitmap].
+      *
+      * Bounded by size, not by count: [PREVIEW_CACHE_BYTES] is about sixteen 800x640 captures.
+      */
+     private val decoded = object : LruCache<Int, ImageBitmap>(PREVIEW_CACHE_BYTES) {
+         override fun sizeOf(key: Int, value: ImageBitmap): Int = value.asAndroidBitmap().allocationByteCount
      }
  
-     /** [releaseSwapChains] on [engine]'s backend, with a warning when the bound expires. */
--    private fun release(engine: Engine, swapChains: List<SwapChain>) {
-+    private fun release(
-+        engine: Engine,
-+        swapChains: List<SwapChain>,
-+        waitBudget: SurfaceDetachBudget = SurfaceDetachBudget(),
-+    ) {
-         val caughtUp = releaseSwapChains(
-             swapChains,
-             destroySwapChain = { runCatching { engine.destroySwapChain(it) } },
-             flushAndWait = { runCatching { engine.flushAndWait(it) }.getOrDefault(false) },
-+            waitBudget = waitBudget,
-         )
-         if (!caughtUp) {
-             android.util.Log.w(
-                 "SurfaceMirrorer",
-                 "Mirroring stopped, backend still busy after " +
--                    "${SURFACE_DETACH_WAIT_NANOS / 1_000_000} ms; not waiting longer"
-+                    "${waitBudget.lastWaitNanos / 1_000_000} ms; not waiting longer"
-             )
-         }
-     }
-@@ -306,10 +312,10 @@ class SurfaceMirrorer {
-      * mirrored recording ends with the view that feeds it, and [onHostLost] is called. The
-      * recording releases its surface from there, so the swap chains must be gone first; a scene
-      * disposed with no mirror, or before a mirror's first frame, waits for nothing. Teardown waits
--     * on the backend are bounded (#4828), not banned: this is the same one-second bound as the
--     * scene's own surface detach.
-+     * on the backend are bounded (#3799, #3854, #4828), not banned: scene disposal passes the
-+     * same one-second [waitBudget] to mirror release and window detach, whichever runs first.
-      */
--    internal fun destroy() {
-+    internal fun destroy(waitBudget: SurfaceDetachBudget = SurfaceDetachBudget()) {
-         val (engine, swapChains, renderer) = synchronized(surfaceMirrors) {
-             val swapChains = surfaceMirrors.mapNotNull { mirror ->
-                 mirror.swapChain.also { mirror.swapChain = null }
-@@ -318,17 +324,9 @@ class SurfaceMirrorer {
-             Triple(engine, swapChains, mirrorRenderer.also { mirrorRenderer = null })
-         }
-         this.engine = null
--        if (engine != null) release(engine, swapChains)
--        // Not `destroyRenderer` on the spot: Filament's renderer teardown first waits, with no
--        // bound, for every command already queued on the backend — the scene's last mirror passes
--        // and, right after it appeared, its shader links. A recorded scene disposed then parked the
--        // main thread on that whole queue (#3799). The release now always runs from a later
--        // main-thread message, at the next poll at the earliest, once the backend is found to have
--        // caught up recently (`Engine.whenBackendIdle`), or after its 5 s fallback; the engine
--        // outlives it (its own destroy runs pending releases first). `FRenderer::terminate` still
--        // creates and waits on its own fence then, so it waits for whatever the main thread queued
--        // in the last 48 ms: usually a frame or two, not the whole backlog — the same limit as the
--        // scene's own renderer (#3854).
-+        if (engine != null) release(engine, swapChains, waitBudget)
-+        // Renderer destruction has an unbounded native wait. Defer it until a fresh fence is
-+        // reached (any reached fence after the 5 s fallback). The engine must outlive the release.
-         if (renderer != null) engine?.destroyRendererWhenBackendIdle(renderer)
-         onHostLost?.invoke()
-     }
-@@ -352,9 +350,11 @@ class SurfaceMirrorer {
+-    /** The picture for [res], decoded once and kept while the cache has room for it. */
+-    internal fun bitmap(resources: Resources, @DrawableRes res: Int): ImageBitmap =
+-        decoded[res] ?: ImageBitmap.imageResource(resources, res).also { decoded.put(res, it) }
++    /** A picture that can be drawn immediately, without decoding on the composition thread. */
++    internal fun cachedBitmap(@DrawableRes res: Int): ImageBitmap? = decoded[res]
++
++    /** The picture for [res], decoded off the main thread and kept while the cache has room. */
++    internal suspend fun bitmap(resources: Resources, @DrawableRes res: Int): ImageBitmap =
++        withContext(Dispatchers.IO) {
++            decoded[res] ?: ImageBitmap.imageResource(resources, res).also { decoded.put(res, it) }
++        }
+ 
+     /** Lets go of every decoded picture; the next card to need one decodes it again. */
+     fun trimMemory() = decoded.evictAll()
+@@ -109,8 +128,9 @@ object DemoPreviews {
  }
  
  /**
-- * Destroys the [swapChains] of stopped mirrors, then, when there was any, waits up to
-- * [SURFACE_DETACH_WAIT_NANOS] for the backend to execute everything queued so far: their creation
-- * and their destruction, the two backend commands that use the mirrored surface. Apart from its
-+ * Destroys the [swapChains] of stopped mirrors, then, when there was any, waits within the
-+ * remaining [waitBudget] for the backend to execute everything queued so far: their creation
-+ * and their destruction, the two backend commands that use the mirrored surface. The default
-+ * budget is [SURFACE_DETACH_WAIT_NANOS]; scene disposal shares it with window detach and reserves
-+ * a mirror-release floor before the recorder surface is released (#4860). Kept apart from its
-  * Filament calls so that a JVM test can pin it.
+- * The captured preview for this demo in the current colour scheme, or `null`
+- * when the pipeline has not produced one — callers draw the icon tile instead.
++ * The captured preview for this demo in the current colour scheme, or `null` when no
++ * capture exists. An uncached picture fades in over a neutral placeholder after loading.
++ * Cached pictures are available in the first composition, including on Back.
   *
-  * @return `false` when the backend was still busy at the bound — the commands still run, in
-@@ -364,8 +364,9 @@ internal fun <S> releaseSwapChains(
-     swapChains: List<S>,
-     destroySwapChain: (S) -> Unit,
-     flushAn
+  * [dark] picks the capture explicitly. A surface that is dark in both themes — the
+  * home hero band over the live stage — passes `true`, so its white copy never sits
+@@ -120,5 +140,32 @@ object DemoPreviews {
+ fun DemoEntry.previewPainter(dark: Boolean = isSystemInDarkTheme()): Painter? =
+     DemoPreviews.resourceFor(id, dark = dark)?.let { res ->
+         val resources = LocalContext.current.resources
+-        remember(res, resources) { BitmapPainter(DemoPreviews.bitmap(resources, res)) }
++        key(res, resources) {
++            val bitmap by produceState<ImageBitmap?>(initialValue = DemoPreviews.cachedBitmap(res)) {
++                if (value == null) value = DemoPreviews.bitmap(resources, res)
++            }
++            val alpha = animateFloatAsState(
++                targetValue = if (bitmap == null) 0f else 1f,
++                animationSpec = SceneViewTokens.Motion.fade(),
++                label = "previewFade",
++            )
++            val placeholder = if (dark) md_theme_dark_surfaceContainer else md_theme_light_surfaceContainer
++            remember(bitmap, placeholder) {
++                PreviewPainter(bitmap?.let { BitmapPainter(it) }, placeholder, alpha)
++            }
++        }
+     }
++
++/** The same loading treatment for grid, carousel and pager, without changing their layout. */
++private class PreviewPai
 ```
 
-**File**: `sceneview/src/test/java/io/github/sceneview/SceneRendererDestroyTest.kt` (added, +248/-0)
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/ui/home/DemoMediaCard.kt` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,248 @@
-+package io.github.sceneview
+@@ -80,7 +80,7 @@ import io.github.sceneview.sample.ui.DemoCategoryAccent
+  * One demo on the home grid (design spec §2, "Card").
+  *
+  * Anatomy, top to bottom: a square picture ([SceneViewTokens.Home.cardMediaAspect])
+- * showing the captured preview when the image pipeline has produced one
++ * showing a neutral placeholder that fades into the captured preview when available
+  * ([DemoEntry.previewPainter]) and the category-tinted [DemoEntry.icon] tile
+  * otherwise; then title (`type-card`) and subtitle (`type-caption`, weight 400), never
+  * truncated. There is no white box under the picture any more: the caption sits on
+```
+
+**File**: `samples/android-demo/src/test/java/io/github/sceneview/demo/DemoPreviewsTest.kt` (added, +227/-0)
+```diff
+@@ -0,0 +1,227 @@
++package io.github.sceneview.demo
 +
-+import android.graphics.SurfaceTexture
++import android.content.Context
++import android.content.ContextWrapper
++import android.content.res.Resources
++import android.graphics.drawable.Drawable
 +import android.os.Looper
-+import android.view.Surface
-+import com.google.android.filament.Engine
-+import com.google.android.filament.Renderer
-+import com.google.android.filament.SwapChain
-+import com.google.android.filament.View
-+import com.google.android.filament.android.UiHelper
-+import io.github.sceneview.node.FilamentWithoutJni
-+import io.github.sceneview.testing.ShadowFilamentEngine
-+import io.github.sceneview.utils.SurfaceMirrorer
++import androidx.compose.runtime.CompositionLocalProvider
++import androidx.compose.runtime.SideEffect
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.setValue
++import androidx.compose.ui.geometry.Size
++import androidx.compose.ui.graphics.Canvas
++import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.graphics.ImageBitmap
++import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
++import androidx.compose.ui.graphics.painter.BitmapPainter
++import androidx.compose.ui.graphics.painter.Painter
++import androidx.compose.ui.graphics.toPixelMap
++import androidx.compose.ui.platform.LocalContext
++import androidx.compose.ui.test.junit4.createComposeRule
++import androidx.compose.ui.unit.Density
++import androidx.compose.ui.unit.LayoutDirection
++import androidx.test.core.app.ApplicationProvider
++import io.github.sceneview.demo.theme.SceneViewTokens
++import io.github.sceneview.demo.theme.md_theme_dark_surfaceContainer
++import io.github.sceneview.demo.theme.md_theme_light_surfaceContainer
++import kotlinx.coroutines.runBlocking
++import org.junit.After
 +import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
 +import org.junit.Assert.assertNotNull
-+import org.junit.Assert.assertNotSame
 +import org.junit.Assert.assertNull
 +import org.junit.Assert.assertSame
++import org.junit.Assert.assertTrue
 +import org.junit.Before
++import org.junit.Rule
 +import org.junit.Test
 +import org.junit.runner.RunWith
 +import org.robolectric.RobolectricTestRunner
 +import org.robolectric.annotation.Config
-+import org.robolectric.annotation.Implementation
-+import org.robolectric.annotation.Implements
-+import org.robolectric.annotation.LooperMode
-+import org.robolectric.Shadows.shadowOf
-+import org.robolectric.shadow.api.Shadow
-+import org.robolectric.shadows.ShadowLog
-+import java.util.concurrent.atomic.AtomicReference
++import org.robolectric.annotation.GraphicsMode
++import java.util.concurrent.CopyOnWriteArrayList
++import java.util.concurrent.CountDownLatch
++import java.util.concurrent.TimeUnit
 +
-+/** Exercises real destroy/callback wiring with already-created swap chains and no Filament JNI. */
++/** A cold preview cache must not hold up the first frame of Back from an AR demo (#4461). */
 +@RunWith(RobolectricTestRunner::class)
-+@LooperMode(LooperMode.Mode.PAUSED)
-+@Config(
-+    instrumentedPackages = ["com.google.android.filament"],
-+    shadows = [SceneRendererDestroyTest.RecordingEngine::class],
-+)
-+class SceneRendererDestroyTest {
-+    private lateinit var sceneRenderer: SceneRenderer
-+    private lateinit var mirrorer: SurfaceMirrorer
-+    private lateinit var callback: UiHelper.RendererCallback
-+    private lateinit var backend: RecordingEngine
-+    private val calls = mutableListOf<String>()
++@Config(sdk = [34])
++@GraphicsMode(GraphicsMode.Mode.NATIVE)
++class DemoPreviewsTest {
++    @get:Rule
++    val composeRule = createComposeRule()
++
++    private val decodeThreads = CopyOnWriteArrayList<Thread>()
++    private var decodeGate: CountDownLatch? = null
++    private val context = ApplicationProvider.getApplicationContext<Context>()
++    private val baseResources = context.resources
++
++    @Suppress("DEPRECATION")
++    private val resources = object : Resources(
++        baseResources.assets, baseResources.displayMetrics, baseResources.configuration,
++    ) {
++        override fun getDrawable(id: Int, theme: Theme?): Drawable {
++            decodeThreads += Thread.currentThread()
++            check(decodeGate?.await(TIMEOUT_MS, TimeUnit.MILLISECONDS) != false) { "decode gate timed out" }
++            return super.getDrawable(id, theme)
++        }
++    }
 +
 +    @Before
-+    fun setUp() {
-+        val engine = FilamentWithoutJni.engine()
-+        backend = Shadow.extract(engine)
-+        val view = View::class.java.getDeclaredConstructor(Long::class.javaPrimitiveType)
-+            .apply { isAccessible = true }.newInstance(1L)
-+        val renderer = Renderer::class.java
-+            .getDeclaredConstructor(Long::class.javaPrimitiveType, Engine::class.java)
-+            .apply { isAccessible = true }.newInstance(1L, engine)
-+        sceneRenderer = SceneRenderer(engine, view, renderer)
++    fun clearCache() = DemoPreviews.trimMemory()
 +
-+        val surface = Surface(SurfaceTexture(0))
-+        fun chain() = SwapChain::class.java
-+            .getDeclaredConstructor(Long::class.javaPrimitiveType, Any::class.java)
-+            .apply { isAccessible = true }.newInstance(1L, surface)
-+        val mirrorChain = chain()
-+        val windowChain = chain()
-+        mirrorer = SurfaceMirrorer().apply { startMirroring(surface) }
-+        field(mirrorer, "engine").set(mirrorer, engine)
-+        val mirrors = field(mirrorer, "surfaceMirrors").get(mirrorer) as List<*>
-+        val mirror = mirrors.single()!!
-+        field(mirror, "swapChain").set(mirror, mirrorChain)
-+        sceneRenderer.surfaceMirrorer = mirrorer
-+
-+        @Suppress("UNCHECKED_CAST")
-+        val window = field(sceneRenderer, "swapChainRef").get(sceneRenderer)
-+            as AtomicReference<SwapChain?>
-+        window.set(windowChain)
-+        // Use the production callback and UiHelper.detach(), without attaching a native window.
-+        callback = SceneRenderer::class.java.getDeclaredMethod(
-+            "makeRendererCallback", Function0::class.java, Boolean::class.javaPrimitiveType,
-+        ).apply { isAccessible = true }.invoke(sceneRenderer, { 1 }, false)
-+            as UiHelper.RendererCallback
-+        val uiHelper = field(sceneRenderer, "uiHelper").get(sceneRenderer) as UiHelper
-+        uiHelper.renderCallback = callback
-+        backend.onDestroy = { calls += if (it === mirrorChain) "mirror" else "window" }
++    @After
++    fun releaseCache() {
++        decodeGate?.countDown()
++        DemoPreviews.trimMemory()
 +    }
 +
 +    @Test
-+    fun destroyCreatesOneScopedBudgetAndRepeatedDestroyDoesNotWait() {
-+        val budgets = mutableListOf<SurfaceDetachBudget?>()
-+        backend.onWait = {
-+            budgets += field(sceneRenderer, "surfaceDetachBudget").get(sceneRenderer)
-+                as SurfaceDetachBudget?
-+            true
-+        }
++    fun `a cache miss decodes off the main thread`() = runBlocking {
++        val bitmap = DemoPreviews.bitmap(resources, R.drawable.preview_ar_placement_light)
 +
-+        sceneRenderer.destroy()
-+        sceneRenderer.destroy()
-+
-+        assertEquals(listOf("mirror", "window"), calls)
-+        assertEquals(2, budgets.size)
-+        assertNotNull(budgets[0])
-+        assertSame(budgets[0], budgets[1])
-+        assertNull(field(sceneRenderer, "surfaceDetachBudget").get(sceneRenderer))
++        assertTrue(bitmap.width > 0)
++        assertFalse("the probe must observe the real drawable decode", decodeThreads.isEmpty())
++        assertTrue("decoding must leave the UI thread", decodeThreads.all { it != Looper.getMainLooper().thread })
 +    }
 +
 +    @Test
-+    fun slowHostLossDoesNotConsumeTheWindowWaitAfterAHealthyMirrorWait() {
-+        destroyWithWait(mirrorWaitNanos = 750_000_000L, mirrorCaughtUp = true)
-+        assertEquals(emptyList<String>(), warnings("SurfaceMirrorer"))
++    fun `a cached bitmap is reused until memory is trimmed`() = runBlocking {
++        val res = R.drawable.preview_ar_placement_light
++        val first = DemoPreviews.bitmap(resources, res)
++        val decodes = decodeThreads.size
++
++        assertSame(first, DemoPreviews.bitmap(resources, res))
++        assertEquals("a cache hit must not decode again", decodes, decodeThreads.size)
++
++        DemoPreviews.trimMemory()
++        DemoPreviews.bitmap(resources, res)
++        assertTrue("trimmed previews must be decoded again", decodeThreads.size > decodes)
++    }
++
++    @Test
++    fun `a cold preview fades from a neutral placeholder to the picture`() {
++        composeRule.mainClock.autoAdvance = false
++        decodeGate = CountDownLatch(1)
++        val observed = observePreview()
++
++        val placeholder = List(64) { md_theme_light_surfaceContainer }
 +        assertEquals(
-+            listOf("Surface detached, backend still busy after 250 ms (cumulative wait 1000 ms); not waiting longer (#3799)"),
-+            warnings("SceneRenderer"),
++            "the first frame must be neutral without waiting for a decode",
++            placeholder,
++            pixels(observed.first()!!),
 +        )
-+    }
-+
-+    @Test
-+    fun exhauste
-```
-
-**File**: `sceneview/src/test/java/io/github/sceneview/SurfaceDetachBudgetTest.kt` (added, +123/-0)
-```diff
-@@ -0,0 +1,123 @@
-+package io.github.sceneview
-+
-+import io.github.sceneview.utils.releaseSwapChains
-+import org.junit.Assert.assertEquals
-+import org.junit.Assert.assertFalse
-+import org.junit.Assert.assertThrows
-+import org.junit.Test
-+
-+class SurfaceDetachBudgetTest {
-+    private val second = SURFACE_DETACH_WAIT_NANOS
-+
-+    @Test
-+    fun mirrorAndWindowShareOnlyTimeSpentWaiting() {
-+        var now = 0L
-+        val budget = SurfaceDetachBudget(nanoTime = { now })
-+        val calls = mutableListOf<String>()
-+        releaseSwapChains(
-+            listOf("mirror"),
-+            destroySwapChain = { calls += "destroy $it" },
-+            flushAndWait = {
-+                calls += "wait $it"
-+                now += second * 3 / 4
-+                false
-+            },
-+            waitBudget = budget,
-+        )
-+        // A slow recorder finalisation must not consume the window's remaining wait.
-+        calls += "host lost"
-+        now += 10 * second
-+        releaseSwapChains(
-+            listOf("window"),
-+            destroySwapChain = { calls += "destroy $it"; now += second },
-+            flushAndWait = { calls += "wait $it"; true },
-+            waitBudget = budget,
-+        )
-+        assertEquals(
-+            listOf(
-+                "destroy mirror", "wait $second", "host lost",
-+                "destroy window", "wait ${second / 4}",
-+            ),
-+            calls,
-+        )
-+    }
-+
-+    @Test
-+    fun anExpiredBudgetStillFlushesTheSecondDestructionWithZeroTimeout() {
-+        var now = 0L
-+        val budget = SurfaceDetachBudget(nanoTime = { now })
-+        val timeouts = mutableListOf<Long>()
-+        repeat(2) {
-+            releaseSwapChains(
-+                listOf(it),
-+                destroySwapChain = {},
-+                flushAndWait = { timeout ->
-+                    timeouts += timeout
-+                    now += second + 1
-+                    false
-+                },
-+                waitBudget = budget,
-+            )
++        decodeGate!!.countDown()
++        composeRule.waitUntil(timeoutMillis = TIMEOUT_MS) {
++            DemoPreviews.cachedBitmap(R.drawable.preview_ar_placement_light) != null
 +        }
-+        assertEquals(listOf(second, 0L), timeouts)
-+    }
-+
-+    @Test
-+    fun mirrorsWithNoSwapChainLeaveTheWholeBudgetForTheWindow() {
-+        var now = 0L
-+        val budget = SurfaceDetachBudget(nanoTime = { now })
-+        releaseSwapChains(
-+            emptyList<Int>(),
-+            destroySwapChain = { error("No chain") },
-+            flushAndWait = { error("No wait") },
-+            waitBudget = budget,
-+        )
-+        now += 10 * second
-+        assertEquals(second, budget.remainingNanos())
-+    }
-+
-+    @Test
-+    fun separateDisposalsGetSeparateBudgets() {
-+        var now = 0L
-+        val first = SurfaceDetachBudget(nanoTime = { now })
-+        first.waitFor { now += second; false }
-+        assertEquals(0L, first.remainingNanos())
-+        assertEquals(second, SurfaceDetachBudget(nanoTime = { now }).remainingNanos())
-+    }
-+
-+    @Test
-+    fun aHealthyBackendOnlyConsumesItsActualWait() {
-+        var now = 0L
-+        val budget = SurfaceDetachBudget(nanoTime = { now })
-+        budget.waitFor { now += second / 10; true }
-+        now += 10 * second
-+        assertEquals(second * 9 / 10, budget.remainingNanos())
-+        assertEquals(second / 10, budget.lastWaitNanos)
-+    }
-+
-+    @Test
-+    fun theReportedDurationIsTheLastWaitNotItsTimeoutOrTheTotal() {
-+        var now = 0L
-+        val budget = SurfaceDetachBudget(nanoTime = { now })
-+        budget.waitFor { now += second * 3 / 4; true }
-+        assertFalse(budget.waitFor { now += second / 4; false })
-+        assertEquals(second / 4, budget.lastWaitNanos)
-+        assertEquals(second, budget.totalWaitNanos)
-+        assertFalse(budget.waitFor { timeout ->
-+            assertEquals(0L, timeout)
-+            false
-+        })
-+        assertEquals(0L, budget.lastWaitNanos)
-+    }
-+
-+    @Test
-+    fun aThrowingWaitStillConsumesItsElapsedTime() {
-+        var now = 0L
-+        val budget = SurfaceDetachBudget(nanoTime = { now })
-+        assertThrows(IllegalStateException::class.java) {
-+            budget.waitFor { now += second / 4; error("Backend failed") }
-+        }
-+        assertEquals(second * 3 / 4, budget.remainingNanos())
-+        assertEquals(second / 4, budget.lastWaitNanos)
-+    }
-+}
++        composeRule.waitUntil(timeoutMillis = TIMEOUT_MS) {
++            composeRule.mainClock.advanceTimeByFrame()
++            observed.size > 1
++     
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5044** (2026-11-13): docs(agents): Codex carries tasks end to end, real AR runs on the Pixel 4a (@ThomasGorisse)
-- **PR #5041** (2026-11-13): docs(design): remove style rules, keep theme facts (@ThomasGorisse)
-- **PR #5039** (2026-11-13): release: 4.69.5 — version bump + changelog collate (@github-actions[bot])
-- **PR #5038** (2026-11-13): feat(sceneview): animation envelopes from glTF data for framing animated models (@ThomasGorisse)
-- **PR #5037** (2026-11-13): feat(sceneview): opt-in FitMode.Silhouette for fitToBounds and auto-fit (@ThomasGorisse)
-- **PR #5036** (2026-11-13): release: 4.69.4 — version bump + changelog collate (@github-actions[bot])
+- **PR #5138** (2026-11-17): fix(demo): Matter material switch plays fully, never locks the chips or the press (@ThomasGorisse)
+- **PR #5136** (2026-11-17): docs: add Volkswagen Group and Philips Hue apps to the Used in wall (@ThomasGorisse)
+- **PR #5131** (2026-11-17): docs(store): List Matter under Start here in the demo's Play description (@ThomasGorisse)
+- **PR #5129** (2026-11-17): release: 4.69.6 — version bump + changelog collate (@github-actions[bot])
+- **PR #5128** (2026-11-17): ci(release): publish to npm through OIDC only, no NPM_TOKEN (@ThomasGorisse)
+- **PR #5127** (2026-11-17): feat(demo): Matter v15 — smooth finger wells, a seamless studio, truer velvet and marble (@ThomasGorisse)
 
 ---
 
@@ -2762,53 +2759,52 @@ Co-authored-by: Codex <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. demo): 3D Scan shows a result at once, on a real example, with its film back
+## X. ar): apply per-frame EIS camera compensation
 
 **RULE**:
-When implementing operations in `.claude/scripts/generate-credits.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sceneview/sceneview. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arsceneview/src/main/java/io/github/sceneview/ar/camera/ARCameraStream.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sceneview/sceneview. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47046b55`: demo): 3D Scan shows a result at once, on a real example, with its film back. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d07b968a`: ar): apply per-frame EIS camera compensation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/scripts/generate-credits.py`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `arsceneview/src/main/java/io/github/sceneview/ar/camera/ARCameraStream.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    # 3D Scan's "See an example": a garden path scanned with the demo itself by the project's
-    # own Pixel, lightened for shipping by `tools/make-scan-example.py`.
-    "example-session.jsonl": {
-        "name": "example-session.jsonl",
-        "author": "SceneView project",
-        "license": "Apache-2.0",
-        "sourceUrl": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
-        "note": "Timeline of a garden path scanned with the demo (camera path, planes, depth totals) — 3D Scan's example",
-    },
-    "example-media.bin": {
-        "name": "example-media.bin",
-        "author": "SceneView project",
-        "license": "Apache-2.0",
-        "sourceUrl": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
-        "note": "Dense cloud and camera photos of the same scan, packed for 3D Scan's example",
-    },
-    "example-manifest.json": {
-        "name": "example-manifest.json",
-        "author": "SceneView project",
-        "license": "Apache-2.0",
-        "sourceUrl": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
-        "note": "Lens, dense cloud and media index of 3D Scan's example",
-    },
+import com.google.ar.core.Coordinates3d
+import io.github.sceneview.material.materialOrNull
+import java.util.concurrent.Executor
+// Electronic image stabilization (#2728): `true` makes the camera materials sample the
+// homogeneous EIS coordinates in CUSTOM0 instead of UV0. Absent from custom legacy materials.
+internal const val kImageStabilizationParameter = "imageStabilizationEnabled"
+
+ * Electronic image stabilization uses ARCore's per-frame compensated geometry and homogeneous
+ * camera texture coordinates, so live EIS configuration changes preserve registration (#2728).
+    /**
+     * Every binding path ([setMaterialInstances], the [materialInstance] and [materialInstances]
+     * setters) ends here, so this is where the EIS flag learns which instance to drive (#5091).
+     */
+    override fun setMaterialInstanceAt(primitiveIndex: Int, materialInstance: MaterialInstance) {
+        super.setMaterialInstanceAt(primitiveIndex, materialInstance)
+        if (primitiveIndex == 0) stabilizationFlag.bind(materialInstance)
+    }
+
+    private val coordinates = CameraStreamCoordinates(CAMERA_VERTICES)
+    private val coordinateUploads = CameraStreamUploadRing(VERTEX_COUNT)
+    private var
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+import io.github.sceneview.utils.clone
+        VertexBuffer.Builder().vertexCount(VERTEX_COUNT).bufferCount(2).attribute(
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47046b55` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d07b968a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

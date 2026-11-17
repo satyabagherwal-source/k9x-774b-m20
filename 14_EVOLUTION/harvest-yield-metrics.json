@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T16:38:53.783Z",
-  "total_cycles_completed": 10176,
-  "total_learnings_persisted": 10176,
-  "total_rules_promoted": 9747,
+  "last_updated": "2026-11-17T16:46:52.770Z",
+  "total_cycles_completed": 10182,
+  "total_learnings_persisted": 10182,
+  "total_rules_promoted": 9751,
   "history": [
-    {
-      "timestamp": "2026-11-17T00:55:57.323Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T00:56:00.938Z",
-      "repository": "rdfjs/N3.js",
-      "learningId": "learn-github-rdfjs-n3-js",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T00:56:05.508Z",
-      "repository": "Permify/permify",
-      "learningId": "learn-github-permify-permify",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T01:33:53.052Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T01:34:01.377Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T01:34:09.093Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T01:54:38.237Z",
       "repository": "digitalbazaar/pyld",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-11-17T16:38:53.783Z",
       "repository": "surrealdb/surrealdb",
       "learningId": "learn-github-surrealdb-surrealdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:46:31.208Z",
+      "repository": "sensenova/SenseNova-Loop-9B",
+      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:46:33.824Z",
+      "repository": "InternScience/Sage-A1.5",
+      "learningId": "learn-huggingface-internscience-sage-a1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:46:41.259Z",
+      "repository": "sceneview/sceneview",
+      "learningId": "learn-github-sceneview-sceneview",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:46:44.913Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:46:48.103Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:46:52.770Z",
+      "repository": "stakater/Reloader",
+      "learningId": "learn-github-stakater-reloader",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

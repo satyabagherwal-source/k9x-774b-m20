@@ -21427,5 +21427,17 @@
     "downloads": 21167,
     "qualityScore": 4040,
     "discoveredAt": "2026-11-17T14:12:49.324Z"
+  },
+  {
+    "name": "sensenova/SenseNova-Loop-9B",
+    "fullName": "sensenova/SenseNova-Loop-9B",
+    "url": "https://huggingface.co/sensenova/SenseNova-Loop-9B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: sensenova/SenseNova-Loop-9B (83 likes, 0 downloads)",
+    "likes": 83,
+    "downloads": 0,
+    "qualityScore": 830,
+    "discoveredAt": "2026-11-17T16:44:16.712Z"
   }
 ]
