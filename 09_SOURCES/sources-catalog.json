@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "573ca53b",
+    "sourceVersion": "f96b2a28",
     "license": "Apache-2.0",
-    "contentHash": "14b8cde10666b0b0e2b23bbb74f10d94c5a24948d34ff505a8a2190fb9b2cefe",
-    "lastHarvestedAt": "2026-11-16T15:33:23.278Z",
+    "contentHash": "accba9fc5ac566076bae0967dc11236820c9a7c876d6fc2496a4316376aba384",
+    "lastHarvestedAt": "2026-11-17T16:21:59.879Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "9aab6ffc",
+    "sourceVersion": "e8fbc3b9",
     "license": "GPL-3.0",
-    "contentHash": "729d4e13040c5b1b66b7440ce16e8bedc2393e570b3f55309067a9e1a2b3221b",
-    "lastHarvestedAt": "2026-11-16T01:32:44.580Z",
+    "contentHash": "639b87b8936e8ae8b4786e451bef1f8ee2eae15bc33ddff891eb582c53b89d5b",
+    "lastHarvestedAt": "2026-11-17T16:21:51.446Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {
@@ -10435,8 +10435,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
     "sourceVersion": "hf-orcarouter-orcacyber-nano-1.0",
     "license": "Open-Source",
-    "contentHash": "ceee6b1d81d9f822bc97f014f582ce36857c34e110dbe3bddca47f86c4874b59",
-    "lastHarvestedAt": "2026-11-13T04:31:02.600Z",
+    "contentHash": "33d70abd753a633350052cd4d73adeb78f3b6bcbb0e0ab0d8f0b0174c92de5cb",
+    "lastHarvestedAt": "2026-11-17T16:21:48.510Z",
     "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0"
   },
   "ryder-sun-meldwork": {

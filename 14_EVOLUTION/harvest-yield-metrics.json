@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T16:14:17.034Z",
-  "total_cycles_completed": 10164,
-  "total_learnings_persisted": 10164,
-  "total_rules_promoted": 9738,
+  "last_updated": "2026-11-17T16:21:59.884Z",
+  "total_cycles_completed": 10167,
+  "total_learnings_persisted": 10167,
+  "total_rules_promoted": 9740,
   "history": [
-    {
-      "timestamp": "2026-11-16T23:52:55.866Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T00:10:43.070Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T00:10:52.181Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T00:10:52.906Z",
       "repository": "tailscale/tailscale",
@@ -1403,6 +1382,27 @@
       "repository": "SynaLinks/synalinks-skills",
       "learningId": "learn-github-synalinks-synalinks-skills",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:21:48.516Z",
+      "repository": "orcarouter/OrcaCyber-Nano-1.0",
+      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:21:51.450Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:21:59.884Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

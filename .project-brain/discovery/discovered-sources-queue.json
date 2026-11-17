@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T16:14:20.464Z",
+  "updated_at": "2026-11-17T16:22:04.043Z",
   "stats": {
-    "total_discovered": 5039,
-    "approved_pending_harvest": 4751,
+    "total_discovered": 5041,
+    "approved_pending_harvest": 4753,
     "harvested_count": 0,
     "rejected_count": 288,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4739,
+      "COMMUNITY_AND_EXPERT": 4741,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -108863,6 +108863,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
         "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-702DEC430B01": {
+      "id": "SRC-702DEC430B01",
+      "url": "https://github.com/asottile/all-repos",
+      "title": "https://github.com/asottile/all-repos",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:22:03.116Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
+        "fileName": "topgrade-rs-topgrade-learnings.md"
+      }
+    },
+    "SRC-4A14D6887B4A": {
+      "id": "SRC-4A14D6887B4A",
+      "url": "https://github.com/proxy-wasm/proxy-wasm-cpp-host/blob/f2db56af443571e92a31c0b877106d9ea96e19ef/include/proxy-wasm/word.h",
+      "title": "https://github.com/proxy-wasm/proxy-wasm-cpp-host/blob/f2db56af443571e92a31c0b877106d9ea96e19ef/include/proxy-wasm/word.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:22:04.043Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
       }
     }
   }

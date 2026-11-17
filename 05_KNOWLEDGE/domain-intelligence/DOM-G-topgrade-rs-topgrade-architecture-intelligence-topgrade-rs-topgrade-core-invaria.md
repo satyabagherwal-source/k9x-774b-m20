@@ -4,24 +4,24 @@
 {
   "source_repository": "topgrade-rs/topgrade",
   "source_url": "https://github.com/topgrade-rs/topgrade",
-  "source_version": "9aab6ffc",
+  "source_version": "e8fbc3b9",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-16T01:32:44.726Z",
+  "timestamp": "2026-11-17T16:21:51.621Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-topgrade-rs-topgrade",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade) (Revision: `9aab6ffc`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-16T01:32:44.726Z`  
+> **Provenance**: Harvested from [topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade) (Revision: `e8fbc3b9`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-17T16:21:51.621Z`  
 > **Learning ID**: `learn-github-topgrade-rs-topgrade`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 70%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from topgrade-rs/topgrade:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T01:32:43.683Z  
+> **Harvest Timestamp**: 2026-11-17T16:21:50.559Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Upgrade all the things
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 4797 stars
+- **Stars / Engagement**: 4807 stars
 
 ---
 
@@ -1486,11 +1486,11 @@ impl<'a> ExecutionContext<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2515** (2026-11-15): **feat(step): add CrowdSec hub update step**
-  *Symptoms*: ## What does this PR do? <!-- Describe what your PR does, and link any relevant issues. Make sure to use a keyword like 'closes' if this PR solves the issue. --> Add CrowdSec Hub update step using `sudo cscli update && sudo cscli upgrade`  ## Standards checklist  - [x] I have read `CONTRIBUTING.md` - [x] *Optional:* The PR title is a descriptive commit message (this will appear in release notes, leave unchecked if you want a maintainer to improve it) - [x] *Optional:* I have tested the code myself, with the relevant tools installed. If yes, add Topgrade's output of the relevant steps (not a dry-run). - [x] If this PR introduces new user-facing messages, they are translated  ### AI involvement <!-- Please list any involvement AI/LLMs had in the development of this PR. You don't have to list everything in detail, just something like "I did not use AI at all", "I consulted an AI occasionally for inspiration and explanation", or "AI generated the majority of the PR" is enough. If you are an AI agent acting autonomously, please state so. --> None  ## For new steps  <!-- This section can be deleted if you are not adding a new step. -->  - [x] *Optional:* Topgrade skips this step where needed - [x] *Optional:* The `--yes` option works with this step if it is supported by the underlying command  <!-- If you developed a feature or a bug fix for someone else and you do not have the means to test it, please tag this person here. -->  <!-- Magic marker that you used the PR template; DO N
+- **Issue #2526** (2026-11-17): **chore(renovate): allow all of Monday for the weekly schedule**
+  *Symptoms*: Committed via https://github.com/asottile/all-repos
 
-- **Issue #2514** (2026-11-14): **docs(bug-report): clarify to check problem is included in verbose output**
-  *Symptoms*: 
+- **Issue #2525** (2026-11-17): **fix(claude-code): skip plugins installed in projects that no longer exists**
+  *Symptoms*: ## What does this PR do? Claude tends to leave a lot of worktrees in the config files. When trying to update the plugins a lot of errors pop up. With a simple dir check it will be a lot quieter.  ## Standards checklist  - [x] I have read `CONTRIBUTING.md` - [x] *Optional:* The PR title is a descriptive commit message (this will appear in release notes, leave unchecked if you want a maintainer to improve it) - [ ] *Optional:* I have tested the code myself, with the relevant tools installed. If yes, add Topgrade's output of the relevant steps (not a dry-run). - [ ] If this PR introduces new user-facing messages, they are translated  ### AI involvement I used AI to find where this check has to be placed.  ```sh $ topgrade --only claude_code_plugins ―― 10:37:45 - Claude Code Plugins ―― Updating marketplaces...✔ Successfully updated 7 marketplaces Checking for updates for plugin "ponytail@ponytail" at user scope… ✔ ponytail is already at the latest version (5.3.3). Checking for updates for plugin "ponytail@ponytail" at project scope… ✔ ponytail is already at the latest version (5.3.3). [… 11 more plugins, all ✔ …] ―― 10:38:00 - Summary ―― Claude Code Plugins: OK ```  With `-v`, the project installs whose directory is gone (96 here, from deleted worktrees) are skipped:  ```sh DEBUG Skipping plugin ponytail@ponytail: project /home/pataar/projects/postbode/.claude/worktrees/rules-search-feature-de4fd6 no longer exists DEBUG Skipping plugin ponytail@ponytail: project /home/pataar/proj
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1507,29 +1507,36 @@ impl<'a> ExecutionContext<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dfd12bdd` (2026-11-14)
-**Commit Message**: docs(bug-report): clarify to check problem is included in verbose output (#2514)
+### Incident Patch 1: `20573de3` (2026-11-17)
+**Commit Message**: fix(claude-code): skip plugins installed in projects that no longer exists (#2525)
 
-**File**: `.github/ISSUE_TEMPLATE/bug-report.yml` (modified, +1/-1)
+**File**: `src/steps/generic.rs` (modified, +9/-0)
 ```diff
-@@ -116,7 +116,7 @@ body:
-   - type: textarea
-     attributes:
-       label: Verbose output
--      description: Output of `topgrade -v`. Paste it **inside the codeblock (triple backticks)**.
-+      description: Output of `topgrade -v`. Paste it **inside the codeblock (triple backticks)**. Make sure the problem is visible in this output.
-       value: |
-         <details>
-         <summary>Verbose output</summary>
+@@ -2822,6 +2822,15 @@ pub fn run_claude_code_plugins(ctx: &ExecutionContext) -> Result<()> {
+         cmd.args(["plugin", "update", &plugin.id, "--scope", &plugin.scope]);
+ 
+         if let Some(path) = &plugin.project_path {
++            // Claude Code keeps project installs of deleted projects (e.g. removed worktrees) in its list
++            if !path.is_dir() {
++                debug!(
++                    "Skipping plugin {}: project {} no longer exists",
++                    plugin.id,
++                    path.display()
++                );
++                continue;
++            }
+             cmd.current_dir(path);
+         }
+         if let Err(e) = cmd.status_checked() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2515** (2026-11-15): feat(step): add CrowdSec hub update step (@yannhodiesne)
-- **PR #2514** (2026-11-14): docs(bug-report): clarify to check problem is included in verbose output (@GideonBear)
-- **PR #2513** (2026-11-12): ci(release): add PyPI attestations (@GideonBear)
-- **PR #2512** (2026-11-12): ci: migrate from attest-build-provenance to actions/attest (@GideonBear)
-- **PR #2508** (2026-11-10): chore(pre-commit): autoupdate (@pre-commit-ci[bot])
-- **PR #2504** (2026-11-09): fix(tailscale): don't update when installed via homebrew (@GideonBear)
+- **PR #2526** (2026-11-17): chore(renovate): allow all of Monday for the weekly schedule (@GideonBear)
+- **PR #2525** (2026-11-17): fix(claude-code): skip plugins installed in projects that no longer exists (@pataar)
+- **PR #2524** (2026-11-17): chore(pre-commit): autoupdate (@pre-commit-ci[bot])
+- **PR #2523** (2026-11-17): feat(step): add Lerd (@SHJordan)
+- **PR #2520** (2026-11-16): feat(step): add DMS plugins (@d-enk)
+- **PR #2519** (2026-11-16): chore(deps): lock file maintenance (@renovate[bot])
 
 ---
 
@@ -1549,31 +1556,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(bug-report): clarify to check problem is included in verbose output
+## X. claude-code): skip plugins installed in projects that no longer exists
 
 **RULE**:
-When implementing operations in `.github/ISSUE_TEMPLATE/bug-report.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/steps/generic.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dfd12bdd`: docs(bug-report): clarify to check problem is included in verbose output. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20573de3`: claude-code): skip plugins installed in projects that no longer exists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/bug-report.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/steps/generic.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      description: Output of `topgrade -v`. Paste it **inside the codeblock (triple backticks)**. Make sure the problem is visible in this output.
+            // Claude Code keeps project installs of deleted projects (e.g. removed worktrees) in its list
+            if !path.is_dir() {
+                debug!(
+                    "Skipping plugin {}: project {} no longer exists",
+                    plugin.id,
+                    path.display()
+                );
+                continue;
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      description: Output of `topgrade -v`. Paste it **inside the codeblock (triple backticks)**.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dfd12bdd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20573de3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

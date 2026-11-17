@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T16:14:21.861Z",
-  "total_records": 1601,
+  "last_updated": "2026-11-17T16:22:04.333Z",
+  "total_records": 1603,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 671,
+      "total": 673,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -720,7 +720,9 @@
         "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-lodestones-kromoss-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core",
-        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-l"
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-l",
+        "domain_intelligence-research-knowledge-intelligence-orcarouter-orcacyber-nano-1-0-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-"
       ]
     },
     "E": {
@@ -10053,8 +10055,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "2d7f0a974cda020271b4521b73bdf19b28b6629bb937b1696ef216370102f0df",
-      "created_at": "2026-11-16T15:33:23.588Z"
+      "content_hash": "4213fb8c619a64fe1a8fcb18abd7abe4e53efd26e95da5e112c78997216f3c3d",
+      "created_at": "2026-11-17T16:22:00.175Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -10173,8 +10175,8 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
       "repository": "envoyproxy-envoy-learnings",
-      "content_hash": "3adc4c1cc7bce63712d5a8a9b1ada9ee66745079a7d7b50bf6bac2b0d8d1d87e",
-      "created_at": "2026-11-16T15:33:28.609Z"
+      "content_hash": "878b8b170b92b8a6a389ee013ba722530e07bafa5dbeea422a7d531537f4ade0",
+      "created_at": "2026-11-17T16:22:04.333Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
@@ -22568,8 +22570,8 @@
       "title": "Architecture Intelligence: topgrade-rs/topgrade Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-architecture-intelligence-topgrade-rs-topgrade-core-invaria.md",
       "repository": "topgrade-rs/topgrade",
-      "content_hash": "244450a72dbca33dcd50e6a6c671b4454bef107a7f4e6a9e274edd25f2de9244",
-      "created_at": "2026-11-16T01:32:44.814Z"
+      "content_hash": "0cf4d528293988ab9f2e1f6330de654df504ab77bd435221275f5d42fd699c01",
+      "created_at": "2026-11-17T16:21:51.740Z"
     },
     "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants",
@@ -22577,8 +22579,8 @@
       "title": "Architecture Intelligence: topgrade-rs-topgrade-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-learnings-architecture-intelligence-topgrade-rs-topgrade-le.md",
       "repository": "topgrade-rs-topgrade-learnings",
-      "content_hash": "de92f29c09c742003a85022e0a3c47442b62fa3bd8c6a5978e990ecba69cf48c",
-      "created_at": "2026-11-16T01:33:01.217Z"
+      "content_hash": "81f968e9c573928540db5d719eb2ac4460a8ce3b3a71a23175deb301f0d97a32",
+      "created_at": "2026-11-17T16:22:03.423Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-relayvsr-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-relayvsr-core-invariants",
@@ -27547,6 +27549,24 @@
       "repository": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings",
       "content_hash": "58c392d624ea3627c24b9293081978bddcef9426c684d7637ed5ca11d4bc919b",
       "created_at": "2026-11-17T16:14:21.389Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-orcarouter-orcacyber-nano-1-0-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcacyber-nano-1-0-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: orcarouter/OrcaCyber-Nano-1.0 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcacyber-nano-1-0-research-knowledge-intelligence-orcarouter-orca.md",
+      "repository": "orcarouter/OrcaCyber-Nano-1.0",
+      "content_hash": "ecec7be6bd0c01f45a0b2b28c1d8bef1b2b01d9234f6a54846f386292137e95c",
+      "created_at": "2026-11-17T16:21:48.682Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-orcarouter-orcacyber-nano-1.0-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcacyber-nano-1-0-learnings-research-knowledge-intelligence-hf-or.md",
+      "repository": "hf-orcarouter-orcacyber-nano-1.0-learnings",
+      "content_hash": "06932dbbd022f31337ff72401b36b188f9e961153af84415e0feeefc77a73051",
+      "created_at": "2026-11-17T16:22:03.846Z"
     }
   }
 }

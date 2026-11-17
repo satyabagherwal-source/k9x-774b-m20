@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T16:14:21.994Z",
-  "total_verified_learnings": 8904,
+  "last_updated": "2026-11-17T16:22:04.459Z",
+  "total_verified_learnings": 8905,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20336,
+  "total_items": 20345,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215386,8 +215386,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "573ca53b",
-      "content_hash": "14b8cde10666b0b0e2b23bbb74f10d94c5a24948d34ff505a8a2190fb9b2cefe",
+      "source_version": "f96b2a28",
+      "content_hash": "accba9fc5ac566076bae0967dc11236820c9a7c876d6fc2496a4316376aba384",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -215400,6 +215400,11 @@
           "number": 8752,
           "title": "changes to let the downstream drain gracefully",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8999,
+          "title": "deflake QuicInplaceLdsIntegrationTest drain waits",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215407,7 +215412,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T15:33:23.113Z",
+      "verified_at": "2026-11-17T16:21:59.691Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215449,10 +215454,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "repository": "envoyproxy/envoy",
-      "source_version": "573ca53b",
-      "content_hash": "2d7f0a974cda020271b4521b73bdf19b28b6629bb937b1696ef216370102f0df",
+      "source_version": "f96b2a28",
+      "content_hash": "4213fb8c619a64fe1a8fcb18abd7abe4e53efd26e95da5e112c78997216f3c3d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T15:33:23.588Z"
+      "persisted_at": "2026-11-17T16:22:00.175Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy",
@@ -215461,10 +215466,10 @@
       "relative_path": "08_VERIFICATION/envoyproxy-envoy-verification-protocol-empirical-defect-shield-for-envoyproxy-en.md",
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy/envoy",
       "repository": "envoyproxy/envoy",
-      "source_version": "573ca53b",
-      "content_hash": "76d8ab8482067f0a2f4d1f9df59fa4f0a602954157a60d984cebb571ec156f46",
+      "source_version": "f96b2a28",
+      "content_hash": "d80566526f1e151efa4f06fc84c4d8c27c222c67707f25bd21dcfed0e7d10236",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T15:33:23.715Z"
+      "persisted_at": "2026-11-17T16:22:00.302Z"
     },
     "learn-github-aleo-labs-protocol-snarkos": {
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
@@ -215665,9 +215670,9 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "3adc4c1cc7bce63712d5a8a9b1ada9ee66745079a7d7b50bf6bac2b0d8d1d87e",
+      "content_hash": "878b8b170b92b8a6a389ee013ba722530e07bafa5dbeea422a7d531537f4ade0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T15:33:28.609Z"
+      "persisted_at": "2026-11-17T16:22:04.333Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings",
@@ -215677,9 +215682,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy-envoy-learnings",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "a0f6e96ea9d51f6cb9b34e4d5fdcc641f502d0fff6ab7ceb4583949e52410845",
+      "content_hash": "d20cf0da600445f27ce36a8ec4fbad65cbd7951b24634d0ddc029151321c1555",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T15:33:28.736Z"
+      "persisted_at": "2026-11-17T16:22:04.459Z"
     },
     "learn-huggingface-google-bert-bert-base-uncased": {
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
@@ -250368,14 +250373,19 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "9aab6ffc",
-      "content_hash": "729d4e13040c5b1b66b7440ce16e8bedc2393e570b3f55309067a9e1a2b3221b",
+      "source_version": "e8fbc3b9",
+      "content_hash": "639b87b8936e8ae8b4786e451bef1f8ee2eae15bc33ddff891eb582c53b89d5b",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
         {
           "number": 8681,
           "title": "docs(bug-report): clarify to check problem is included in verbose output",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8998,
+          "title": "skip plugins installed in projects that no longer exists",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -250384,7 +250394,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T01:32:44.445Z",
+      "verified_at": "2026-11-17T16:21:51.284Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250426,10 +250436,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-architecture-intelligence-topgrade-rs-topgrade-core-invaria.md",
       "title": "Architecture Intelligence: topgrade-rs/topgrade Core Invariants",
       "repository": "topgrade-rs/topgrade",
-      "source_version": "9aab6ffc",
-      "content_hash": "244450a72dbca33dcd50e6a6c671b4454bef107a7f4e6a9e274edd25f2de9244",
+      "source_version": "e8fbc3b9",
+      "content_hash": "0cf4d528293988ab9f2e1f6330de654df504ab77bd435221275f5d42fd699c01",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T01:32:44.814Z"
+      "persisted_at": "2026-11-17T16:21:51.740Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade",
@@ -250438,10 +250448,10 @@
       "relative_path": "08_VERIFICATION/topgrade-rs-topgrade-verification-protocol-empirical-defect-shield-for-topgrade-.md",
       "title": "Verification Protocol: Empirical Defect Shield for topgrade-rs/topgrade",
       "repository": "topgrade-rs/topgrade",
-      "source_version": "9aab6ffc",
-      "content_hash": "1da46457b285beb716dd338caedd26f93d658c52790f38d1ee80095031ecee25",
+      "source_version": "e8fbc3b9",
+      "content_hash": "1bf0ba9ae6e51ecb2382859c96b041206e904039ad5d29126220127c25246cd1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T01:32:44.904Z"
+      "persisted_at": "2026-11-17T16:21:51.865Z"
     },
     "rule-8682": {
       "learning_id": "rule-8682",
@@ -250477,9 +250487,9 @@
       "title": "Architecture Intelligence: topgrade-rs-topgrade-learnings Core Invariants",
       "repository": "topgrade-rs-topgrade-learnings",
       "source_version": "HEAD",
-      "content_hash": "de92f29c09c742003a85022e0a3c47442b62fa3bd8c6a5978e990ecba69cf48c",
+      "content_hash": "81f968e9c573928540db5d719eb2ac4460a8ce3b3a71a23175deb301f0d97a32",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T01:33:01.217Z"
+      "persisted_at": "2026-11-17T16:22:03.423Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade-learnings",
@@ -250489,9 +250499,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for topgrade-rs-topgrade-learnings",
       "repository": "topgrade-rs-topgrade-learnings",
       "source_version": "HEAD",
-      "content_hash": "d465d0da11e9c7a20991082eb8980b68c97e96b50454e1cba8b0ef76f41ffa19",
+      "content_hash": "fc5347b1c8e2cbcb0b93874df75de00c47ca38a28e6fdc77929acd8c598977ae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T01:33:01.351Z"
+      "persisted_at": "2026-11-17T16:22:03.557Z"
     },
     "learn-huggingface-comfy-org-relayvsr": {
       "learning_id": "learn-huggingface-comfy-org-relayvsr",
@@ -272577,6 +272587,133 @@
       "content_hash": "58c392d624ea3627c24b9293081978bddcef9426c684d7637ed5ca11d4bc919b",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T16:14:21.389Z"
+    },
+    "learn-huggingface-orcarouter-orcacyber-nano-1-0": {
+      "learning_id": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "orcarouter/OrcaCyber-Nano-1.0",
+      "repository": "orcarouter/OrcaCyber-Nano-1.0",
+      "slug": "hf-orcarouter-orcacyber-nano-1.0",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
+      "source_version": "hf-orcarouter-orcacyber-nano-1.0",
+      "content_hash": "33d70abd753a633350052cd4d73adeb78f3b6bcbb0e0ab0d8f0b0174c92de5cb",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T16:21:48.344Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-orcarouter-orcacyber-nano-1-0-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcacyber-nano-1-0-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcacyber-nano-1-0-research-knowledge-intelligence-orcarouter-orca.md",
+      "title": "Research & Knowledge Intelligence: orcarouter/OrcaCyber-Nano-1.0 Core Invariants",
+      "repository": "orcarouter/OrcaCyber-Nano-1.0",
+      "source_version": "hf-orcarouter-orcacyber-nano-1.0",
+      "content_hash": "ecec7be6bd0c01f45a0b2b28c1d8bef1b2b01d9234f6a54846f386292137e95c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:21:48.682Z"
+    },
+    "rule-8998": {
+      "learning_id": "rule-8998",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8998,
+      "title": "skip plugins installed in projects that no longer exists",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "e8fbc3b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:21:51.284Z"
+    },
+    "candidate_directive-skip-plugins-installed-in-projects-that-no-longer-exists": {
+      "item_id": "candidate_directive-skip-plugins-installed-in-projects-that-no-longer-exists",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H1TX-skip-plugins-installed-in-projects-that-no-longer-exists.md",
+      "title": "skip plugins installed in projects that no longer exists",
+      "repository": "topgrade-rs/topgrade",
+      "source_version": "e8fbc3b9",
+      "content_hash": "f9d333e159a65eb68b6f089e0a00f34508ebd35000072df80c6421f4ac7dc60e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T16:21:51.622Z"
+    },
+    "rule-8999": {
+      "learning_id": "rule-8999",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8999,
+      "title": "deflake QuicInplaceLdsIntegrationTest drain waits",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "f96b2a28",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:21:59.691Z"
+    },
+    "candidate_directive-deflake-quicinplaceldsintegrationtest-drain-waits": {
+      "item_id": "candidate_directive-deflake-quicinplaceldsintegrationtest-drain-waits",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H8C5-deflake-quicinplaceldsintegrationtest-drain-waits.md",
+      "title": "deflake QuicInplaceLdsIntegrationTest drain waits",
+      "repository": "envoyproxy/envoy",
+      "source_version": "f96b2a28",
+      "content_hash": "809c20e9c9bc822f4d03c077e4c7520529069c8054f09e17d896191b61cb9cd4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T16:22:00.056Z"
+    },
+    "candidate_directive-claude-code-skip-plugins-installed-in-projects-that-no-longer-exists": {
+      "item_id": "candidate_directive-claude-code-skip-plugins-installed-in-projects-that-no-longer-exists",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HAU7-claude-code-skip-plugins-installed-in-projects-that-no-longer-exists.md",
+      "title": "claude-code): skip plugins installed in projects that no longer exists",
+      "repository": "topgrade-rs-topgrade-learnings",
+      "source_version": "HEAD",
+      "content_hash": "707174eb6c3f3b8f191535a6ec31bf614dc29a6d405b2bba779d0df3e5f54080",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T16:22:03.296Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcacyber-nano-1-0-learnings-research-knowledge-intelligence-hf-or.md",
+      "title": "Research & Knowledge Intelligence: hf-orcarouter-orcacyber-nano-1.0-learnings Core Invariants",
+      "repository": "hf-orcarouter-orcacyber-nano-1.0-learnings",
+      "source_version": "HEAD",
+      "content_hash": "06932dbbd022f31337ff72401b36b188f9e961153af84415e0feeefc77a73051",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:22:03.846Z"
+    },
+    "candidate_directive-test-deflake-quicinplaceldsintegrationtest-drain-waits": {
+      "item_id": "candidate_directive-test-deflake-quicinplaceldsintegrationtest-drain-waits",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HBJM-test-deflake-quicinplaceldsintegrationtest-drain-waits.md",
+      "title": "test: deflake QuicInplaceLdsIntegrationTest drain waits",
+      "repository": "envoyproxy-envoy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cd897f2dc43517b03a1575a702a7af4270884b3555a46b51104b329e9c131a00",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T16:22:04.213Z"
     }
   },
   "ai-builder-brain": {

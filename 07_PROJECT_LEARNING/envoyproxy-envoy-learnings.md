@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `573ca53b`  
+> **Source Version**: `f96b2a28`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T15:33:22.327Z  
+> **Timestamp**: 2026-11-17T16:21:58.966Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:33:22.321Z  
+> **Harvest Timestamp**: 2026-11-17T16:21:58.960Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29243 stars
+- **Stars / Engagement**: 29250 stars
 
 ---
 
@@ -1047,555 +1047,953 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80291fca` (2026-11-16)
-**Commit Message**: reverse_tunnel: changes to let the downstream drain gracefully (#48236)
+### Incident Patch 1: `8937718c` (2026-11-16)
+**Commit Message**: test: deflake QuicInplaceLdsIntegrationTest drain waits (#49300)
 
-## Commit Message 
-reverse_tunnel: changes to let the downstream drain gracefully
 
-## Description
-As described in: https://github.com/envoyproxy/envoy/pull/47717 this PR
-makes the changes to let the downstream side drain gracefully.
-We hook in the changes for the downstream drain and the upstream to send
-the data to the reporter via the connection metadata hooks added.
+The in-place LDS tests wait for
+`listener_manager.total_filter_chains_draining` to reach 1 and then 0,
+but the gauge only stays up for the 1s drain time. A test thread
+descheduled for longer than that under tsan never sees it rise and burns
+the whole wait. The next QUIC connection then times out its handshake
+straight away, because `QuicConnection` starts its handshake clock from
+the test dispatcher's cached time, which went stale during that wait.
+The tests now wait for `listener_create_success` to count one creation
+per worker per update, which the main thread only does after
+`inPlaceFilterChainUpdate()` has already started the drain, and then for
+the gauge to reach 0.
 
-## Testing
-Unit + integ tests
+Additional Description:
+This hit `EnableAndDisableResumption/IPv4` under tsan. It's the same
+timeout as #31183 (`EnableAndDisableEarlyData`) and #33453
+(`ReloadConfigUpdateDefaultFilterChain`), both closed as stale.
+`listener_in_place_updated` alone isn't enough to wait on, since it's
+bumped when the update is accepted, before the new listener warms.
 
-## Risk Level
-Medium. On listener drain, every connection on the drain-aware HTTP
-connection manager now drains gradually instead of receiving an
-immediate GOAWAY, even when none of the new fields are set. This only
-affects the reverse tunnel extensions, which are marked
-work-in-progress.
+AI Disclosure: code change created with AI assistance, fully reviewed by
+me prior to opening.
 
-## Docs Changes
-API docs updated in `drain_aware_hcm.proto` (the drain sequence and the
-new `metadata_delay` and `shutdown_notice_delay` fields) and
-`reverse_tunnel_codec.proto` (`enable_drain_with_goaway` also notifies
-the reverse tunnel reporter through the METADATA frame).
+Ris
 
-## Release Notes
-Added
-`changelogs/current/new_features/reverse_tunnel__connection-metadata-drain.rst`.
-
----------
-
-Signed-off-by: aakugan <[REDACTED_EMAI
-
-**File**: `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto` (modified, +31/-8)
+**File**: `test/integration/quic_http_integration_test.cc` (modified, +19/-21)
 ```diff
-@@ -4,7 +4,10 @@ package envoy.extensions.filters.network.reverse_tunnel.v3;
+@@ -1417,6 +1417,19 @@ class QuicInplaceLdsIntegrationTest : public QuicHttpIntegrationTest {
+     QuicHttpIntegrationTest::initialize();
+   }
  
- import "envoy/extensions/filters/network/http_connection_manager/v3/http_connection_manager.proto";
- 
-+import "google/protobuf/duration.proto";
-+
- import "udpa/annotations/status.proto";
-+import "validate/validate.proto";
- 
- option java_package = "io.envoyproxy.envoy.extensions.filters.network.reverse_tunnel.v3";
- option java_outer_classname = "DrainAwareHcmProto";
-@@ -13,23 +16,43 @@ option go_package = "github.com/envoyproxy/go-control-plane/envoy/extensions/fil
- option (udpa.annotations.file_status).package_version_status = ACTIVE;
- 
- // [#protodoc-title: Drain-Aware HTTP Connection Manager]
--// A network filter that wraps the standard HCM and sends HTTP/2 GOAWAY frames
--// on all active connections when the listener is drained (e.g. via admin
--// /drain_listeners). Intended for use on reverse-tunnel listeners so that
--// agents can detect drain and re-establish connections gracefully.
-+// A network filter that wraps the standard HCM and drains all active HTTP/2
-+// connections when the listener is drained (e.g. via admin /drain_listeners).
-+// Intended for use on reverse-tunnel listeners so that agents can detect drain
-+// and re-establish connections gracefully.
- // [#extension: envoy.filters.network.reverse_tunnel_drain_aware_http_connection_manager]
- 
- // Configuration for the drain-aware HTTP Connection Manager.
--// All HCM fields are forwarded verbatim; the only difference is that this
--// filter registers a listener-drain callback and emits a GOAWAY before the
--// connection is closed.
-+// All HCM fields are forwarded verbatim. In addition, when the listener drains,
-+// every connection is drained like an HCM graceful drain, whether or not any of
-+// the fields below are set: a soft GOAWAY (shutdown notice) is sent when the
-+// drain starts, and the final GOAWAY follows after ``hcm_config.drain_timeout``,
-+// extended by ``hcm_config.drain_timeout_jitter`` if set. With
-+// ``enable_drain_with_goaway``, a reverse tunnel instead dials a replacement
-+// when the drain starts and sends the soft GOAWAY and an optional METADATA frame
-+// at the configured delays before the final GOAWAY. Without
-+// ``shutdown_notice_delay``, such a tunnel receives no GOAWAY until the final
-+// one, so it keeps serving while the replacement is established.
- message DrainAwareHttpConnectionManager {
-   // The underlying HCM configuration to apply.
-   http_connection_manager.v3.HttpConnectionManager hcm_config = 1;
- 
-   // When true, a peer-initiated GOAWAY on a reverse tunnel makes the initiator drop the draining
-   // tunnel and dial a replacement, so capacity is restored before the old tunnel closes while its
-   // in-flight streams finish. Default false, so the behavior is opt-in and unconfigured listeners
--  // are unaffected.
-+  // are unaffected. Required by ``metadata_delay`` and ``shutdown_notice_delay``.
-   bool enable_drain_with_goaway = 2;
-+
-+  // Delay from the start of a reverse tunnel drain until a METADATA frame carrying
-+  // ``envoy.reverse_tunnel.drain: true`` is sent. Requires ``enable_drain_with_goaway`` and
-+  // ``hcm_config.http2_protocol_options.allow_metadata``. Must be less than
-+  // ``hcm_config.drain_timeout`` and, if set, ``shutdown_notice_delay``; otherwise the config is
-+  // rejected. Default: 0s (not sent).
-+  google.protobuf.Duration metadata_delay = 3 [(validate.rules).duration = {gte {}}];
-+
-+  // Delay from the start of a reverse tunnel drain until the soft GOAWAY (shutdown notice) is
-+  // sent, telling the peer to stop opening new streams on this tunnel. Requires
-+  // ``enable_drain_with_goaway``. Must be less than ``hcm_config.drain_timeout``; otherwise the
-+  // config is rejected. Default: 0s (not sent).
-+  google.protobuf.Duration shutdown_notice_delay = 4 [(validate.rules).duration = {gte {}}];
- }
-```
-
-**File**: `api/envoy/extensions/upstreams/http/reverse_tunnel/v3/reverse_tunnel_codec.proto` (modified, +3/-0)
-```diff
-@@ -22,5 +22,8 @@ option (udpa.annotations.file_status).package_version_status = ACTIVE;
- message ReverseTunnelUpstreamCodecOptions {
-   // When true, the upstream HTTP/2 client codec emits a GOAWAY when the reverse tunnel begins
-   // draining. Defaults to false, in which case the stock HTTP/2 client codec is used unchanged.
-+  // When true, a connection-level METADATA frame carrying ``envoy.reverse_tunnel.drain: true``
-+  // also notifies the reverse tunnel reporter; this requires the cluster's
-+  // ``http2_protocol_options.allow_metadata``.
-   bool enable_drain_with_goaway = 1;
- }
-```
-
-**File**: `changelogs/current/new_features/reverse_tunnel__connection-metadata-drain.rst` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+Added a gradual drain for reverse tunnels on the drain-aware HTTP connection manager. On listener
-+drain, every connection now drains like an HCM graceful drain instead of receiving an immediate
-+GOAWAY, whether or not the new fields are set: a soft GOAWAY at drain start, then the final GOAWAY
-+after ``hcm_config.drain_timeout``, extended by ``hcm_config.drain_timeout_jitter`` if set. When
-+:ref:`enable_drain_with_goaway
-+<envoy_v3_api_field_extensions.filters.network.reverse_tunnel.v3.DrainAwareHttpConnectionManager.enable_drain_with_goaway>`
-+is set, a draining tunnel instead redials a replacement at drain start and then sends, at offsets
-+from drain start: a connection-level METADATA frame carrying ``envoy.reverse_tunnel.drain: true`` at
-+:ref:`metadata_delay
-+<envoy_v3_api_field_extensions.filters.network.reverse_tunnel.v3.DrainAwareHttpConnectionManager.metadata_delay>`,
-+and a soft GOAWAY at :ref:`shutdown_notice_delay
-+<envoy_v3_api_field_extensions.filters.network.reverse_tunnel.v3.DrainAwareHttpConnectionManager.shutdown_notice_delay>`,
-+before the final GOAWAY. Unset delays skip that step, so without ``shutdown_notice_delay`` such a
-+tunnel receives no GOAWAY until the final one and keeps serving while the replacement is
-+established. Configs where a step cannot be sent in order are rejected. The upstream reverse-tunnel codec notifies the reverse tunnel reporter when it
-+receives the METADATA frame. Both sides require ``http2_protocol_options.allow_metadata`` for the
-+METADATA frame.
-```
-
-**File**: `contrib/reverse_tunnel_reporter/test/clients/grpc_client_integration_test.cc` (modified, +102/-2)
-```diff
-@@ -157,8 +157,9 @@ class GrpcClientIntegrationTest : public testing::TestWithParam<Network::Address
- 
-     auto cluster = getUpstreamCluster(localhost);
-     addCluster(getHttp2Cluster(cluster), config_helper_);
--    addCluster(getRevConnCluster(enable_tenant_isolation_), config_helper_);
--
-+    addCluster(enable_drain_metadata_ ? getRevConnClusterWithMetadata(enable_tenant_isolation_)
-+                                      : getRevConnCluster(enable_tenant_isolation_),
-+               config_helper_);
-     HttpIntegrationTest::initialize();
- 
-     current_config_ = ConfigHelper{version_, config_helper_.bootstrap()};
-@@ -311,6 +312,9 @@ class GrpcClientIntegrationTest : public testing::TestWithParam<Network::Address
- 
-   ConfigHelper current_config_{version_, config_helper_.bootstrap()};
-   bool enable_tenant_isolation_{false};
-+  // When true, initialize() enables metadata on the reverse-connection cluster's upstream codec, so
-+  // a received drain metadata frame triggers a redial + reporter event.
-+  bool enable_drain_metadata_{false};
- };
- 
- INSTANTIATE_TEST_SUITE_P(IpVersions, GrpcClientIntegrationTest,
-@@ -602,6 +606,102 @@ TEST_P(GrpcClientIntegrationTest, ListenerDrainMaxDuration) {
-   completeReq(std::chrono::milliseconds((slowRouteDelay.count() + 1) * 1000), resp);
- }
- 
-+// Three-phase metadata drain, validated as a gradual cutover: METADATA -> soft GOAWAY /
-+// shutdownNotice -> final GOAWAY, driven by max_connection_duration. The replacement tunnel is
-+// redialed at drain start. The test asserts the migration is gradual by issuing a real request
-+// and checking stats at each phase:
-+//   (1) tunnel established, nothing closed yet (reverse_tunnel_closed == 0);
-+//   (2) replacement tunnel established (established_total == 2): no GOAWAYs and no metadata yet
-+//       (close_notify == 0, goaway_sent == 0, reverse_tunnel_closed == 0), traffic still flows;
-+//   (3) METADATA received: the upstream codec matches the drain key and notifies the reporter
-+//       (reverse_tunnel_closed == 1), but no GOAWAY yet (close_notify == 0, goaway_sent == 0);
-+//   (4) soft GOAWAY received (close_notify == 1): final GOAWAY not yet (goaway_sent == 0), and
-+//       new traffic routes to the replacement tunnel;
-+//   (5) final GOAWAY sent (goaway_sent == 1): the replacement still serves traffic, and the
-+//       request still in flight on the old tunnel completes.
-+// A request is held in flight on the old tunnel from (3) onward. Without it the peer's pool closes
-+// the idle old tunnel right after the soft GOAWAY, before drain_timeout, and the final GOAWAY is
-+// never sent.
-+TEST_P(GrpcClientIntegrationTest, ListenerDrainMetadataThreePhase) {
-+  enable_drain_metadata_ = true;
-+  initialize();
-+  makeNewServer();
-+
-+  // max_connection_duration=20s triggers the drain at ~20s. Phase delays are 1s/5s/10s:
-+  // replacement tunnel redialed at ~20s (established_total==2), METADATA sent ~21s
-+  // (reverse_tunnel_closed==1), soft GOAWAY ~25s (close_notify==1), final GOAWAY ~30s
-+  // (goaway_sent==1). 20s is long enough that the request lands on a stable tunnel and the
-+  // redialed tunnel (up ~20s) does not re-drain before the test observes the full cycle (it would
-+  // drain at ~40s, after the test ends).
-+  // The in-flight request started at ~21s must outlive the final GOAWAY at ~30s. 15s leaves ~6s
-+  // of margin for slow CI machines.
-+  constexpr std::chrono::seconds inFlightRequestDelay{15};
-+  addListenerLds(getDownstreamListenerWithMetadata(
-+      "node-1", 1, std::chrono::seconds(20), std::chrono::milliseconds(1000),
-+      std::chrono::milliseconds(5000), std::chrono::seconds(10), inFlightRequestDelay));
-+  waitForActiveTunnels(1);
-+  validateEqual(std::chrono::milliseconds(sendInterval * 3), getConns({"node-1"}));
-+
-+  // Issue a /direct request through the egress listener -> reverse_connection cluster -> node-1
-+  // tunnel and expect 200. completeReq asserts the status.
-+  auto sendDirectRequest = [&]() {
-+    auto client = makeHttpConnection(egressPort);
-+    auto resp = makeClientRequest("/direct", client);
-+    completeReq(std::chrono::milliseconds(1000), resp);
-+  };
-+
-+  // Convenience aliases for the long stat names.
-+  const std::string closed_total =
-+      "envoy.extensions.reverse_tunnel.reverse_tunnel_reporting_service.reporters.event_reporter."
-+      "reverse_tunnel_closed_total";
-+  const std::string established_total =
-+      "envoy.extensions.reverse_tunnel.reverse_tunnel_reporting_service.reporters.event_reporter."
-+      "reverse_tunnel_established_total";
-+  const std::string close_notify = "cluster.reverse_connection_cluster.upstream_cx_close_notify";
-+  const std::string goaway_sent = "http2.goaway_sent";
-+
-+  // (1) Tunnel established, nothing closed yet. Baseline: the tunnel is routable.
-+  EXPECT_EQ(0, test_server_->counter(closed_total)->value());
-+  sendDirectRequest();
-+
-+  // (2) Drain starts at ~20s and redials a replacement tunnel (established_total==2). The
-+  // meta
-```
-
-**File**: `contrib/reverse_tunnel_reporter/test/clients/integration_test_utils.h` (modified, +134/-16)
-```diff
-@@ -163,6 +163,44 @@ inline Cluster getRevConnCluster(bool enable_tenant_isolation = false) {
-   return cluster;
- }
- 
-+// Same as getRevConnCluster but enables metadata on the upstream (client) codec so a received drain
-+// metadata frame triggers a redial + reporter event.
-+inline Cluster getRevConnClusterWithMetadata(bool enable_tenant_isolation = false) {
-+  Cluster cluster;
-+  cluster.set_name(revConnCluster);
-+  cluster.set_lb_policy(Cluster::CLUSTER_PROVIDED);
-+
-+  auto* cluster_type = cluster.mutable_cluster_type();
-+  cluster_type->set_name("envoy.clusters.reverse_connection");
-+  ReverseConnectionClusterConfig rc_config;
-+  rc_config.mutable_cleanup_interval()->set_seconds(60);
-+  rc_config.set_host_id_format("%REQ(x-computed-host-id)%");
-+  if (enable_tenant_isolation) {
-+    rc_config.set_tenant_id_format("%REQ(x-tenant-id)%");
++  // Waits for the workers to apply `in_place_updates` in place updates and for the filter chains
++  // they replaced to finish draining. The main thread starts the drain before it counts any worker
++  // acknowledging the update, so the drain gauge has already risen once the counter reaches the
++  // target. Waiting for the gauge itself to rise can miss its drain_time_ window.
++  void waitForInplaceUpdateDrained(uint32_t in_place_updates) {
++    test_server_->waitForCounter("listener_manager.listener_in_place_updated",
++                                 Ge(in_place_updates));
++    const uint32_t listener_creations = 1 + in_place_updates;
++    test_server_->waitForCounter("listener_manager.listener_create_success",
++                                 Ge(listener_creations * concurrency_));
++    test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
 +  }
-+  std::ignore = cluster_type->mutable_typed_config()->PackFrom(rc_config);
 +
-+  ConfigHelper::HttpProtocolOptions http_options;
-+  // The upstream (client) codec must opt into metadata frame support so it decodes and delivers
-+  // the stream-0 METADATA frame the draining downstream sends (the drain signal). Without
-+  // allow_metadata the adapter drops the METADATA frame and onMetadata never fires, so the
-+  // reporter is never notified at metadata time.
-+  auto* h2 = http_options.mutable_explicit_http_config()->mutable_http2_protocol_options();
-+  h2->set_allow_metadata(true);
-+  std::ignore = (*cluster.mutable_typed_extension_protocol_options())
-+                    ["envoy.extensions.upstreams.http.v3.HttpProtocolOptions"]
-+                        .PackFrom(http_options);
+   void makeRequestAndWaitForResponse(IntegrationCodecClient& codec_client) {
+     IntegrationStreamDecoderPtr response =
+         codec_client.makeHeaderOnlyRequest(default_request_headers_);
+@@ -1449,9 +1462,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, ReloadConfigUpdateNonDefaultFilterChain) {
+       });
+ 
+   new_config_helper.setLds("1");
+-  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
++  waitForInplaceUpdateDrained(1);
+   makeRequestAndWaitForResponse(*codec_client_0);
+   EXPECT_TRUE(codec_client_1->sawGoAway());
+   codec_client_1->close();
+@@ -1491,10 +1502,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, ReloadConfigUpdateDefaultFilterChain) {
+       });
+ 
+   new_config_helper.setLds("1");
+-  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
+-
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
++  waitForInplaceUpdateDrained(1);
+   // This connection should pick up the default filter chain.
+   auto codec_client_default =
+       makeHttpConnection(makeClientConnectionWithHost(lookupPort("http"), "lyft.com"));
+@@ -1511,9 +1519,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, ReloadConfigUpdateDefaultFilterChain) {
+   });
+ 
+   new_config_helper1.setLds("1");
+-  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(2));
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
++  waitForInplaceUpdateDrained(2);
+ 
+   makeRequestAndWaitForResponse(*codec_client_0);
+   EXPECT_TRUE(codec_client_default->sawGoAway());
+@@ -1533,9 +1539,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, ReloadConfigUpdateDefaultFilterChain) {
+       });
+ 
+   new_config_helper2.setLds("1");
+-  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(3));
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
++  waitForInplaceUpdateDrained(3);
+ 
+   makeRequestAndWaitForResponse(*codec_client_0);
+   codec_client_0->close();
+@@ -1559,10 +1563,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, EnableAndDisableEarlyData) {
+                       &new_config_helper);
+ 
+   new_config_helper.setLds("1");
+-  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
+-
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
++  waitForInplaceUpdateDrained(1);
+   // The 2nd connection should try to do 0-RTT but get rejected and QUICHE will transparently retry
+   // the request after handshake completes.
+   auto codec_client_2 = makeRawHttp3Connection(
+@@ -1592,10 +1593,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, EnableAndDisableResumption) {
+                       &new_config_helper);
+ 
+   new_config_helper.setLds("1");
+-  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
+-
+-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
++  waitForInplaceUpdateDrained(1);
+ 
+   auto codec_client_2 = makeRawHttp3Connection(
+       makeClientConnectionWithHost(lookupPort("http"), "www.lyft.com"), std::nullopt,
+```
+
+---
+
+### Incident Patch 2: `44a6cec6` (2026-11-17)
+**Commit Message**: release/ci: Build, sign and publish the release of both arches in one job (#49331)
+
+
+With `release-publish-multiarch`, the x64 Publish binary job builds
+everything published for both arches (`release.multiarch`), and uploads
+the same artifacts as the per-arch jobs did (`release.<arch>`,
+`oci.<arch>`, `packages.<arch>`); there is no arm64 job.
+
+`//distribution/publish:publish_<arch>` builds `//distribution/publish`
+for the arch's target platform, from any host. Only the target platform
+changes: everything runs on the build's execution platforms, so the
+arm64 binaries are cross-compiled on x64 (the llvm toolchain has the
+arm64 sysroot and libc++), and the exec tools (eg the Python ones, whose
+pip deps only resolve for the host) stay on the host's arch.
+
+The tools are now `bundled` too (as the container images' are), so they
+are built in the same configuration as the binaries.
+
+`release.publish` builds the host's arch, as before.
+
+The job is named `Server (multiarch)`. It sets `--//bazel:multiarch`, so
+on EngFlow the x86_64 RBE pool pins (`envoy_exec_properties`, via
+`//bazel:engflow_rbe_x86_64`) apply to the arm64 half too, as it is
+built on x86_64 workers. Without it (eg a native ar
+
+**File**: `.github/config.yml` (modified, +3/-0)
+```diff
+@@ -3,6 +3,9 @@ agent-ubuntu: ubuntu-24.04
+ # (`release.publish`). Branches without this run `release.server_only`, and the Docker OCI and
+ # Packages jobs.
+ release-publish: true
++# With `release-publish`: build both arches in the x64 job (`release.multiarch`), cross-compiling
++# the arm64 binaries, rather than a job per arch.
++release-publish-multiarch: true
+ build-image:
+   # Authoritative configuration for build image/s
+   repo: docker.io/envoyproxy/envoy-build
+```
+
+**File**: `.github/workflows/_publish_build.yml` (modified, +15/-4)
+```diff
+@@ -8,6 +8,8 @@ on:
+     secrets:
+       dockerhub-token:
+       gcp-key:
++      gpg-key:
++      gpg-key-password:
+     inputs:
+       docs:
+         type: boolean
+@@ -37,18 +39,27 @@ jobs:
+     if: inputs.server
+     secrets:
+       dockerhub-token: ${{ secrets.dockerhub-token }}
++      gpg-key: ${{ secrets.gpg-key }}
++      gpg-key-password: ${{ secrets.gpg-key-password }}
+     permissions:
+       actions: read
+       contents: read
+       packages: read
+-    name: Server
++    name: >-
++      ${{ fromJSON(inputs.request).config.release-publish
++          && fromJSON(inputs.request).config.release-publish-multiarch
++          && 'Server (multiarch)'
++          || format('Server ({0})', matrix.arch) }}
+     uses: ./.github/workflows/_publish_build_server.yml
+     strategy:
+       fail-fast: false
+       matrix:
+-        arch:
+-        - x64
+-        - arm64
++        # With `release-publish-multiarch`, the x64 job builds both arches.
++        arch: >-
++          ${{ fromJSON(inputs.request).config.release-publish
++              && fromJSON(inputs.request).config.release-publish-multiarch
++              && fromJSON('["x64"]')
++              || fromJSON('["x64", "arm64"]') }}
+     with:
+       arch: ${{ matrix.arch }}
+       request: ${{ inputs.request }}
+```
+
+**File**: `.github/workflows/_publish_build_server.yml` (modified, +47/-3)
+```diff
+@@ -7,6 +7,8 @@ on:
+   workflow_call:
+     secrets:
+       dockerhub-token:
++      gpg-key:
++      gpg-key-password:
+     inputs:
+       arch:
+         type: string
+@@ -32,6 +34,9 @@ jobs:
+   binary:
+     secrets:
+       dockerhub-token: ${{ secrets.dockerhub-token }}
++      # Only staged when signing (`signing`, below).
++      gpg-key: ${{ secrets.gpg-key }}
++      gpg-key-password: ${{ secrets.gpg-key-password }}
+     permissions:
+       actions: read
+       contents: read
+@@ -42,11 +47,34 @@ jobs:
+       arch: ${{ inputs.arch }}
+       bazel-extra: >-
+         --config=rbe
++        ${{ fromJSON(inputs.request).config.release-publish
++            && fromJSON(inputs.request).config.release-publish-multiarch
++            && fromJSON(inputs.request).run.release
++            && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
++            && !inputs.trusted
++            && '--//distribution:signing-key=snakeoil'
++            || '' }}
++      # With `release-publish-multiarch`, sign the release of both arches in the same invocation
++      # (as the release Sign packages job does otherwise).
++      signing: >-
++        ${{ fromJSON(inputs.request).config.release-publish
++            && fromJSON(inputs.request).config.release-publish-multiarch
++            && fromJSON(inputs.request).run.release
++            && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
++            && true
++            || false }}
+       target: >-
+         ${{ fromJSON(inputs.request).config.release-publish
+-            && 'release.publish'
++            && (fromJSON(inputs.request).config.release-publish-multiarch
++                && 'release.multiarch'
++                || 'release.publish')
+             || 'release.server_only' }}
+-      target-suffix: ${{ inputs.arch }}
++      # With `release-publish-multiarch`, it builds every arch (on whichever host).
++      target-suffix: >-
++        ${{ !(fromJSON(inputs.request).config.release-publish
++              && fromJSON(inputs.request).config.release-publish-multiarch)
++            && inputs.arch
++            || '' }}
+       cache-build-image: ${{ fromJSON(inputs.request).request.build-image.default }}
+       cache-build-image-key-suffix: ${{ inputs.arch == 'arm64' && '-arm64' || '' }}
+       concurrency-suffix: -${{ inputs.arch }}
+@@ -59,14 +87,30 @@ jobs:
+             || fromJSON(inputs.request).config.ci.agent-publish || fromJSON(inputs.request).config.ci.agent-ubuntu }}
+       timeout-minutes: 120
+       trusted: ${{ inputs.trusted }}
++      # With `release-publish-multiarch`, only what the pipeline uses: the images of both arches (and
++      # the signed release, below).
+       uploads: |
+-        release.${{ inputs.arch }}: {path: container/envoy/${{ inputs.arch }}/bin/, compression-level: 0}
++        ${{ !(fromJSON(inputs.request).config.release-publish
++              && fromJSON(inputs.request).config.release-publish-multiarch)
++            && format('release.{0}: {{path: container/envoy/{0}/bin/, compression-level: 0}}', inputs.arch)
++            || '' }}
+         ${{ fromJSON(inputs.request).config.release-publish
+             && format('oci.{0}: {{path: container/envoy/{0}/build_images, compression-level: 0}}', inputs.arch)
+             || '' }}
+         ${{ fromJSON(inputs.request).config.release-publish
++            && !fromJSON(inputs.request).config.release-publish-multiarch
+             && format('packages.{0}: {{path: container/envoy/{0}/packages, compression-level: 0}}', inputs.arch)
+             || '' }}
++        ${{ fromJSON(inputs.request).config.release-publish
++            && fromJSON(inputs.request).config.release-publish-multiarch
++            && 'oci.arm64: {path: container/envoy/arm64/build_images, compression-level: 0}'
++            || '' }}
++        ${{ fromJSON(inputs.request).config.release-publish
++            && fromJSON(inputs.request).config.release-publish-multiarch
++            && fromJSON(inputs.request).run.release
++            && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
++            && 'release.signed: {path: container/envoy/release.signed.tar.zst, compression-level: 0}'
++            || '' }}
+ 
+   # Branches whose binary jobs do not build the container images and packages (`release-publish`).
+   docker:
+```
+
+**File**: `.github/workflows/_publish_release.yml` (modified, +14/-2)
+```diff
+@@ -89,9 +89,12 @@ jobs:
+       actions: read
+       contents: read
+       packages: read
++    # With `release-publish-multiarch`, the release is signed in the build (`release.multiarch`).
+     if: >-
+       fromJSON(inputs.request).run.release
+       && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
++      && !(fromJSON(inputs.request).config.release-publish
++           && fromJSON(inputs.request).config.release-publish-multiarch)
+     name: Sign packages
+     uses: ./.github/workflows/_run.yml
+     with:
+@@ -203,7 +206,11 @@ jobs:
+       && fromJSON(inputs.request).run.release
+       && !fromJSON(inputs.request).request.version.dev
+       && needs.container.result == 'success'
+-      && needs.sign.result == 'success'
++      && (needs.sign.result == 'success'
++          || (needs.sign.result == 'skipped'
++              && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
++              && fromJSON(inputs.request).config.release-publish
++              && fromJSON(inputs.request).config.release-publish-multiarch))
+       && needs.docs-archive.result != 'failure'
+     name: ${{ matrix.name || matrix.target }}
+     uses: ./.github/workflows/_run.yml
+@@ -242,7 +249,11 @@ jobs:
+       !cancelled()
+       && fromJSON(inputs.request).run.release
+       && fromJSON(inputs.request).request.version.dev
+-      && needs.sign.result == 'success'
++      && (needs.sign.result == 'success'
++          || (needs.sign.result == 'skipped'
++              && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
++              && fromJSON(inputs.request).config.release-publish
++              && fromJSON(inputs.request).config.release-publish-multiarch))
+       && needs.docs-archive.result != 'failure'
+     name: github
+     uses: ./.github/workflows/_run.yml
+@@ -253,4 +264,5 @@ jobs:
+       downloads: |
+         release.signed: container/release.signed
+       request: ${{ inputs.request }}
++      runs-on: ${{ fromJSON(inputs.request).config.ci.agent-publish || fromJSON(inputs.request).config.ci.agent-ubuntu }}
+       trusted: ${{ inputs.trusted }}
+```
+
+**File**: `.github/workflows/envoy-publish.yml` (modified, +11/-0)
+```diff
+@@ -55,6 +55,17 @@ jobs:
+             && fromJSON(needs.load.outputs.trusted)
+             && secrets.GCP_SERVICE_ACCOUNT_KEY_TRUSTED
+             || secrets.GCP_SERVICE_ACCOUNT_KEY }}
++      # With `release-publish-multiarch`, the release is signed in the build (`release.multiarch`).
++      gpg-key: >-
++        ${{ needs.load.outputs.trusted
++            && fromJSON(needs.load.outputs.trusted)
++            && secrets.ENVOY_GPG_MAINTAINER_KEY
++            || secrets.ENVOY_GPG_SNAKEOIL_KEY }}
++      gpg-key-password: >-
++        ${{ needs.load.outputs.trusted
++            && fromJSON(needs.load.outputs.trusted)
++            && secrets.ENVOY_GPG_MAINTAINER_KEY_PASSWORD
++            || secrets.ENVOY_GPG_SNAKEOIL_KEY_PASSWORD }}
+     permissions:
+       actions: read
+       contents: read
+```
+
+**File**: `bazel/BUILD` (modified, +32/-1)
+```diff
+@@ -1057,14 +1057,45 @@ config_setting(
+     define_values = {"engflow_rbe": "true"},
+ )
+ 
++# Set by `ci/do_ci.sh release.multiarch`, which builds both arches from an x64 host: on EngFlow,
++# their actions run on x86_64 workers, whichever arch they target.
++bool_flag(
++    name = "multiarch",
++    build_setting_default = False,
++)
 +
-+  ReverseTunnelUpstreamCodecOptions codec_options;
-+  codec_options.set_enable_drain_with_goaway(true);
-+  std::ignore = (*cluster.mutable_typed_extension_protocol_options())
-+                    ["envoy.extensions.upstreams.http.reverse_tunnel.v3."
-+                     "ReverseTunnelUpstreamCodecOptions"]
-+                        .PackFrom(codec_options);
++config_setting(
++    name = "multiarch_build",
++    flag_values = {":multiarch": "true"},
++)
 +
-+  return cluster;
-+}
+ selects.config_setting_group(
+-    name = "engflow_rbe_x86_64",
++    name = "engflow_rbe_linux_x86_64",
+     match_all = [
+         ":engflow_rbe",
+         ":linux_x86_64",
+     ],
+ )
+ 
++selects.config_setting_group(
++    name = "engflow_rbe_multiarch",
++    match_all = [
++        ":engflow_rbe",
++        ":multiarch_build",
++    ],
++)
 +
- inline Listener getUpstreamListener(absl::string_view anyhost) {
-   Listener listener;
-   listener.set_name(upstreamListener);
-@@ -183,6 +221,33 @@ inline Listener getUpstreamListener(absl::string_view anyhost) {
-   return listener;
++# EngFlow builds whose actions run on x86_64 workers, which is what the `linux_x64_*` pools are
++# pinned for (`envoy_exec_properties`): x64 builds, and both arches of a multiarch one. A native
++# arm64 build keeps its platform's arm pool.
++selects.config_setting_group(
++    name = "engflow_rbe_x86_64",
++    match_any = [
++        ":engflow_rbe_linux_x86_64",
++        ":engflow_rbe_multiarch",
++    ],
++)
++
+ selects.config_setting_group(
+     name = "engflow_rbe_x86_64_asan",
+     match_all = [
+```
+
+**File**: `ci/do_ci.sh` (modified, +123/-59)
+```diff
+@@ -177,6 +177,40 @@ function collect_build_profile() {
+     ((build_profile_count++))
  }
  
-+// Adds a ``/slow`` route that answers 200 after `delay`, plus the fault filter that injects the
-+// delay. Tests use it to hold a stream open on a tunnel across a drain, so the tunnel stays up
-+// until the HCM's final GOAWAY instead of closing as soon as the peer's pool drains it. Must be
-+// called before the router filter is added, because the fault filter has to run ahead of it.
-+inline void addSlowRoute(
-+    envoy::config::route::v3::VirtualHost& vh,
-+    envoy::extensions::filters::network::http_connection_manager::v3::HttpConnectionManager& hcm,
-+    std::chrono::seconds delay) {
-+  auto* slow_route = vh.add_routes();
-+  slow_route->mutable_match()->set_prefix("/slow");
-+  auto* slow_resp = slow_route->mutable_direct_response();
-+  slow_resp->set_status(200);
-+  slow_resp->mutable_body()->set_inline_string("slow reverse connection listener OK");
-+  envoy::extensions::filters::http::fault::v3::HTTPFault fault_cfg;
-+  fault_cfg.mutable_delay()->mutable_fixed_delay()->set_seconds(delay.count());
-+  fault_cfg.mutable_delay()->mutable_percentage()->set_numerator(100);
-+  std::ignore =
-+      (*slow_route->mutable_typed_per_filter_config())["envoy.filters.http.fault"].PackFrom(
-+          fault_cfg);
-+
-+  // Per-route fault config above only applies if the filter is in the chain (empty default here).
-+  auto* fault_filter = hcm.add_http_filters();
-+  fault_filter->set_name("envoy.filters.http.fault");
-+  envoy::extensions::filters::http::fault::v3::HTTPFault default_fault_cfg;
-+  std::ignore = fault_filter->mutable_typed_config()->PackFrom(default_fault_cfg);
++# The bazel args that sign with the key and passphrase at `ENVOY_SIGNING_{KEY,PASSPHRASE}_PATH` (host
++# paths: their bytes never enter the action graph), in `PGP_ARGS`.
++function pgp_signing_args() {
++    local key_sha256
++    if [[ -z "${ENVOY_SIGNING_KEY_PATH}" || -z "${ENVOY_SIGNING_PASSPHRASE_PATH}" ]]; then
++        echo "FAIL: ENVOY_SIGNING_KEY_PATH and ENVOY_SIGNING_PASSPHRASE_PATH must be set" >&2
++        exit 1
++    fi
++    key_sha256="$(sha256sum "${ENVOY_SIGNING_KEY_PATH}" | cut -d' ' -f1)"
++    PGP_ARGS=(
++        "--@envoy_toolshed//pgp:key_path=${ENVOY_SIGNING_KEY_PATH}#sha256=${key_sha256}"
++        "--@envoy_toolshed//pgp:passphrase_path=${ENVOY_SIGNING_PASSPHRASE_PATH}"
++    )
 +}
 +
- inline Listener
- getDownstreamListener(const std::string& name, int num_listeners,
-                       std::chrono::seconds max_conn_duration = std::chrono::seconds(120)) {
-@@ -222,23 +287,72 @@ getDownstreamListener(const std::string& name, int num_listeners,
-   direct_response->set_status(200);
-   direct_response->mutable_body()->set_inline_string("reverse connection listener OK");
++# Audit the signing actions of the aquery (the first arg), with the bazel options given (as built).
++function pgp_signing_audit() {
++    local audit_json query="$1"
++    shift
++    echo "Auditing signing actions..."
++    audit_json="$(mktemp)"
++    bazel aquery \
++          "$@" \
++          --output=jsonproto --include_artifacts=true \
++          "$query" \
++          > "${audit_json}"
++    # NB: the passphrase is checked via `--forbid-file` (read from disk by the
++    # audit tool) so its value never appears in argv here.
++    bazel run "${BAZEL_BUILD_OPTIONS[@]}" @envoy_toolshed//pgp/audit:audit -- \
++          --forbid-file "${ENVOY_SIGNING_PASSPHRASE_PATH}" \
++          --aquery-json "${audit_json}"
++    rm -f "${audit_json}"
++}
++
+ function bazel_with_collection() {
+   local failed_logs
+   declare -r BAZEL_OUTPUT="${ENVOY_SRCDIR}"/bazel.output.txt
+@@ -1080,8 +1114,9 @@ case $CI_TARGET in
+         ;;
  
--  auto* slow_route = vh->add_routes();
--  slow_route->mutable_match()->set_prefix("/slow");
--  auto* slow_resp = slow_route->mutable_direct_response();
--  slow_resp->set_status(200);
--  slow_resp->mutable_body()->set_inline_string("slow reverse connection listener OK");
--  envoy::extensions::filters::http::fault::v3::HTTPFault fault_cfg;
--  fault_cfg.mutable_delay()->mutable_fixed_delay()->set_seconds(slowRouteDelay.count());
--  fault_cfg.mutable_delay()->mutable_percentage()->set_numerator(100);
--  std::ignore =
--      (*slow_route->mutable_typed_per_filter_config())["envoy.filters.http.fault"].PackFrom(
--          fault_cfg);
-+  addSlowRoute(*vh, hcm, slowRouteDelay);
+     # `release.server`: the release binaries and tools (`release.server_only` is the same).
+-    # `release.publish`: as `release.server`, and the container images.
+-    release|release.server|release.server_only|release.publish|release.test_only)
++    # `release.publish`: as `release.server`, and the container images and distro packages.
++    # `release.multiarch`: as `release.publish`, for each arch (x64 and arm64), from any host.
++    release|release.server|release.server_only|release.publish|release.multiarch|release.test_only)
+         if [[ "$CI_TARGET" == "release" || "$CI_TARGET" == "release.test_only" ]]; then
+             # When testing memory consumption, we want to test against exact byte-counts
+             # where possible. As these differ between platforms and compile options, we
+@@ -1137,52 +1172,102 @@ case $CI_TARGET in
+         echo "  release options:  ${BAZEL_RELEASE_OPTIONS[*]}"
+         echo "  binary dir:  ${ENVOY_BINARY_DIR}"
  
--  // Per-route fault config above only applies if the f
+-        if [[ "$CI_TARGET" == "release.publish" ]]; then
+-            # Everything published for this platform, in one invocation (`//distribution/publish`):
++        if [[ "$CI_TARGET" == "release.publish" || "$CI_TARGET" == "release.multiarch" ]]; then
++            # Everything published for an arch, in one invocation (`//distribution/publish:publish_<arch>`):
+             # the release binaries and tools (as `release.server`), the container images (named as
+-            # `docker` names them), and the distro packages (as `distribution` builds them).
+-            ENVOY_OCI_DIR="${ENVOY_BUILD_DIR}/build_images"
+-            ENVOY_PACKAGES_DIR="${ENVOY_BUILD_DIR}/packages"
+-            for dir in "$ENVOY_OCI_DIR" "$ENVOY_PACKAGES_DIR"; do
+-                if [[ -e "${dir}" ]]; then
+-                    rm -rf "${dir}"
+-                fi
+-                mkdir -p "$dir"
++            # `docker` names them), and the distro packages (as `distribution` builds them), to
++            # `<build dir>/envoy/<arch>/{bin,build_images,packages}`. The binaries of another arch are
++            # cross-compiled.
++            # `release.multiarch` (`//distribution/publish:publish_multiarch_<arch>`) builds only what
++            # the pipeline uses from it: the container images (published), and the packages and the
++            # stripped release binaries (signed in this job), not the release tarball or the tools.
++            PUBLISH_SET=publish
++            if [[ "$CI_TARGET" == "release.multiarch" ]]; then
++                PUBLISH_ARCHES=(x64 arm64)
++                PUBLISH_SET=publish_multiarch
++            elif [[ "${ENVOY_BUILD_ARCH}" == "x86_64" ]]; then
++                PUBLISH_ARCHES=(x64)
++            else
++                PUBLISH_ARCHES=(arm64)
++            fi
++            PUBLISH_TARGETS=()
++            for arch in "${PUBLISH_ARCHES[@]}"; do
++                for dir in bin build_images packages; do
++                    rm -rf "${BUILD_DIR}/envoy/${arch}/${dir}"
++                    mkdir -p "${BUILD_DIR}/envoy/${arch}/${dir}"
++                done
++                PUBLISH_TARGETS+=("//distribution/publish:${PUBLISH_SET}_${arch}")
+             done
++            PUBLISH_OPTIONS=()
++            if [[ "$CI_TARGET" == "release.multiarch" ]]; then
++                # Both arches
 ```
 
-**File**: `source/extensions/bootstrap/reverse_tunnel/common/reverse_connection_utility.h` (modified, +2/-0)
+**File**: `distribution/BUILD` (modified, +84/-8)
 ```diff
-@@ -27,6 +27,8 @@ class ReverseConnectionUtility : public Logger::Loggable<Logger::Id::connection>
-   static constexpr absl::string_view DEFAULT_REVERSE_TUNNEL_REQUEST_PATH =
-       "/reverse_connections/request";
-   static constexpr absl::string_view TENANT_SCOPE_DELIMITER = ":";
-+  static constexpr absl::string_view DRAIN_METADATA_KEY = "envoy.reverse_tunnel.drain";
-+  static constexpr absl::string_view DRAIN_METADATA_VALUE = "true";
+@@ -7,8 +7,8 @@ load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+ load("//bazel:envoy_build_system.bzl", "envoy_package")
+ load("//bazel:envoy_rbe.bzl", "envoy_exec_properties")
+ load("//distribution/binary:debug.bzl", "compressed_debug_parts")
+-load(":changes.bzl", "envoy_signed_changes")
+-load(":packages.bzl", "MAINTAINER", "envoy_pkg_distros", "release_version_for")
++load(":changes.bzl", "debian_files", "envoy_signed_changes")
++load(":packages.bzl", "MAINTAINER", "PUBLISH_PACKAGING_TAGS", "envoy_pkg_distros", "release_version_for")
  
-   // Upgrade token advertised when the handshake is negotiated as an HTTP/1.1 Upgrade.
-   // Used by both the initiator (request `Upgrade:` header) and responder (`101` response).
-```
-
-**File**: `source/extensions/filters/network/http_connection_manager/config.h` (modified, +3/-0)
-```diff
-@@ -168,6 +168,9 @@ class HttpConnectionManagerConfig : Logger::Loggable<Logger::Id::config>,
-                                         Server::OverloadManager& overload_manager) override;
-   Http::DateProvider& dateProvider() override { return date_provider_; }
-   std::chrono::milliseconds drainTimeout() const override;
-+  // The configured drain_timeout before drain_timeout_jitter is applied, for static config checks.
-+  // drainTimeout() returns a freshly jittered value on every call.
-+  std::chrono::milliseconds baseDrainTimeout() const { return drain_timeout_; }
-   FilterChainFactory& filterFactory() override { return *this; }
-   bool generateRequestId() const override { return generate_request_id_; }
-   bool preserveExternalRequestId() const override { return preserve_external_request_id_; }
-```
-
-**File**: `source/extensions/filters/network/reverse_tunnel/drain_aware_hcm/BUILD` (modified, +4/-0)
-```diff
-@@ -24,11 +24,15 @@ envoy_cc_extension(
-         "//envoy/server:factory_context_interface",
-         "//source/common/http:conn_manager_lib",
-         "//source/common/network:drain_close_util_lib",
-+        "//source/common/protobuf:utility_lib",
-         "//source/common/runtime:runtime_features_lib",
-+        "//source/extensions/bootstrap/reverse_tunnel/common:reverse_connection_utility_includes",
-         "//source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface:reverse_connection_io_handle_lib",
-         "//source/extensions/filters/network:well_known_names",
-         "//source/extensions/filters/network/common:factory_base_lib",
-         "//source/extensions/filters/network/http_connection_manager:config",
-+        "@abseil-cpp//absl/status",
-+        "@abseil-cpp//absl/status:statusor",
-         "@envoy_api//envoy/extensions/filters/network/http_connection_manager/v3:pkg_cc_proto",
-         "@envoy_api//envoy/extensions/filters/network/reverse_tunnel/v3:pkg_cc_proto",
+ licenses(["notice"])  # Apache 2
+ 
+@@ -19,7 +19,8 @@ licenses(["notice"])  # Apache 2
+ # their bytes never enter the action graph, but the rules force local,
+ # uncached execution of the signing actions themselves)
+ #
+-# All other targets are ordinary, cacheable/remotable actions - no secrets.
++# All other targets are ordinary actions - no secrets. The ones bundling the
++# release (which changes with every commit) are local (`PUBLISH_PACKAGING_TAGS`).
+ 
+ envoy_package()
+ 
+@@ -160,6 +161,32 @@ label_flag(
+     build_setting_default = ":placeholder",
+ )
+ 
++# The `.deb`/`.changes` files of each arch, signed (with `signing-inputs=debs`) instead of the
++# packages tarballs, eg when they are built in the same invocation (`ci/do_ci.sh release.multiarch`).
++label_flag(
++    name = "x64-debs",
++    build_setting_default = ":placeholder",
++)
++
++label_flag(
++    name = "arm64-debs",
++    build_setting_default = ":placeholder",
++)
++
++string_flag(
++    name = "signing-inputs",
++    build_setting_default = "tarballs",
++    values = [
++        "debs",
++        "tarballs",
++    ],
++)
++
++config_setting(
++    name = "signing_inputs_debs",
++    flag_values = {":signing-inputs": "debs"},
++)
++
+ # Which committed *public* key is bundled as `signing.key`. Deliberately a
+ # constrained string_flag, not a label_flag: an arbitrary file can not be
+ # passed in here, so key material can never enter the graph via this path.
+@@ -188,6 +215,10 @@ pgp_public_key(
+ 
+ SIGNED_CHANGES = envoy_signed_changes(
+     name = "signed_changes",
++    arch_debs = {
++        "arm64": ":arm64-debs",
++        "x64": ":x64-debs",
++    },
+     arch_packages = {
+         "arm64": ":arm64-packages",
+         "x64": ":x64-packages",
+@@ -204,12 +235,12 @@ _SIGNED_CHANGES_COPY_CMD = "\n    ".join([
+ # Bundle the per-arch debs into a single flat debs.tar.gz, replacing unsigned
+ # multi-distro `.changes` with signed per-distro `.changes`.
+ genrule(
+-    name = "multi_arch_debs",
++    name = "multi_arch_debs_tarballs",
+     srcs = [
+         ":arm64-packages",
+         ":x64-packages",
+     ] + [label for label, _dest in SIGNED_CHANGES],
+-    outs = ["debs.tar.gz"],
++    outs = ["tarballs/debs.tar.gz"],
+     cmd = """
+     tmpdir=$$(mktemp -d)
+     NEEDS_PATH=
+@@ -237,11 +268,55 @@ genrule(
+         --sort=name \
+         -C "$${tmpdir}" .
+     """ % _SIGNED_CHANGES_COPY_CMD,
++    tags = ["manual"] + PUBLISH_PACKAGING_TAGS,
++)
++
++# With `signing-inputs=debs`: the `.deb`s of both arches and the signed `.changes`, bundled directly
++# (as `multi_arch_debs_tarballs` does from the packages tarballs).
++[
++    debian_files(
++        name = "%s_debs" % arch,
++        srcs = [":%s-debs" % arch],
++        suffix = ".deb",
++        tags = ["manual"],
++    )
++    for arch in [
++        "arm64",
++        "x64",
++    ]
++]
++
++pkg_files(
++    name = "direct_debs_files",
++    srcs = [
++        ":arm64_debs",
++        ":x64_debs",
++    ] + [label for label, _dest in SIGNED_CHANGES],
++    attributes = pkg_attributes(mode = "0644"),
++    renames = {label: dest for label, dest in SIGNED_CHANGES},
++    tags = ["manual"],
++)
++
++pkg_tar(
++    name = "direct/debs",
++    srcs = [":direct_debs_files"],
++    compressor = "@envoy_toolshed//pigz",
++    compressor_args = "-n",
++    extension = "tar.gz",
++    tags = ["manual"] + PUBLISH_PACKAGING_TAGS,
++)
++
++alias(
++    name = "multi_arch_debs",
++    actual = select({
++        ":signing_inputs_debs": ":direct/debs",
++        "//conditions:default": ":multi_arch_debs_tarballs",
++    }),
+     tags = ["manual"],
+ )
+ 
+ # Extract and rename the release binaries out of the per-arch release
+-# tarballs. Ordinary, cacheable/remotable action.
++# tarballs. No secrets, but local (`PUBLISH_PACKAGING_TAGS`): the release changes with every commit.
+ genrule(
+     name = "release_binaries",
+     srcs = [
+@@ -276,6 +351,7 @@ genrule(
+         $(location envoy-%s-linux-aarch_64) \
+         $(location envoy-contrib-%s-linux-aarch_64)
+     """ % (VERSION, VERSION, VERSION, VERSION, VERSION, VERSION, VERSION, VERSION),
++    tags = PUBLISH_PACKAGING_TAGS,
+     tools = ["@zstd//:zstd_cli"],
+ )
+ 
+@@ -291,7 +367,7 @@ pgp_sign_checksums(
+         ":release_binaries",
      ],
+     checksums_out = "checksums.txt",
+-    tags = ["manual"],
++    tags = ["manual"] + PUBLISH_PACKAGING_TAGS,
+ )
+ 
+ # Final release bundle layout contract (matches prior `envoy.gpg.sign` output,
+@@ -342,5 +418,5 @@ pkg_tar(
+     compressor = "@zstd//:zstd_cli"
 ```
 
 ---
 
-### Incident Patch 2: `33ff6385` (2026-11-02)
-**Commit Message**: build(deps): bump mypy from 2.4.0 to 2.4.1 in /mobile/tools/python
+### Incident Patch 3: `f78f8d2f` (2026-11-17)
+**Commit Message**: wasm: Fix byte order and Rust toolchain selection on s390x (#49316)
 
-Bumps [mypy](https://github.com/python/mypy) from 2.4.0 to 2.4.1.
-- [Changelog](https://github.com/python/mypy/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/python/mypy/compare/v2.4.0...v2.4.1)
 
----
-updated-dependencies:
-- dependency-name: mypy
-  dependency-version: 2.4.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+Envoy previously copied numeric CEL values in host byte order, so Wasm
+plugins on s390x could decode them incorrectly. Pass the consuming VM's
+byte-order requirement to `serializeValue()` so Wasm plugins receive
+little-endian bytes and native/null plugins continue to receive
+host-order bytes.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
+Constrain the native s390x Rust toolchain and register s390x-hosted Wasm
+and WASI toolchains so Bazel builds Wasm test plugins for the correct
+target.
 
-**File**: `mobile/MODULE.bazel.lock` (modified, +52/-52)
+Additional Description: 
+`htowasm()` swaps numeric bytes only on big-endian hosts when the VM
+requires Wasm byte order.
+(https://github.com/proxy-wasm/proxy-wasm-cpp-host/blob/f2db56af443571e92a31c0b877106d9ea96e19ef/include/proxy-wasm/word.h)
+
+Update the connection ID test to derive the expected bytes from the
+64-bit value `4` as represented in the plugin’s memory: host byte order
+for native/null plugins and little-endian for Wasm plugins.
+
+Fixes Test-cases:
+```
+//test/extensions/filters/network/wasm:wasm_filter_test
+//test/extensions/filters/http/wasm:wasm_filter_headers_test
+//test/extensions/filters/http/wasm:wasm_filter_body_test
+//test/extensions/filters/http/wasm:wasm
+
+**File**: `MODULE.bazel` (modified, +28/-0)
 ```diff
-@@ -9796,58 +9796,58 @@
-             "https://files.pythonhosted.org/packages/ff/c0/a70c32ea3299ebe00f44533740cb46905717c51faf29bbd3ce8bb5886d9d/multidict-6.9.1-cp312-cp312-win32.whl": "sha256:f9dad513626a33670f17cddc6078e30e311f444c957e8dbfc5b2b4603c8b4edb"
-           },
-           "mypy": {
--            "https://files.pythonhosted.org/packages/04/09/dce2e8f6c1b31053c430ef6963f6f7a38ccb49b90c5e01e37ed0129b7d5a/mypy-2.4.0-cp315-cp315-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl": "sha256:7f38f57d344f8b6accb40e01c3d83cfc590498231724d16c07ffb7940f157818",
--            "https://files.pythonhosted.org/packages/05/af/b4978a5566cb829ca563dc08e3ad8d944f116078786ad54ba3dff2bcb64d/mypy-2.4.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl": "sha256:a96b07a49b7b1d025ce59c1b3acbcf24bead9a83da4523c4a6bde1bb94e7a0e1",
--            "https://files.pythonhosted.org/packages/10/f3/863365f7997a76a5a1dd42d7902ab05afa4124e8419089cbca1ce2554db1/mypy-2.4.0-cp315-cp315t-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": "sha256:9f459f0b4f0596d9d51fe7716b404b35287b99e77da98a7af90a65dd5fd61141",
--            "https://files.pythonhosted.org/packages/18/37/1482fdc49332b145828912b15f16eee0c4ca70a8bce0f6514ece79b14680/mypy-2.4.0-cp315-cp315-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": "sha256:fb443e81057896132d3642d6be219e6efd158691ac7883e3ba8fcb469865f05d",
--            "https://files.pythonhosted.org/packages/1c/bc/697e9e26fc2a86c094ad67ee1e419971b7f01ded66ee66231b09e9f3e12e/mypy-2.4.0-cp315-cp315t-win_arm64.whl": "sha256:5786ef987b3767e51aaa53f20aec104c0252b42ecda7aef8e8b4cbae279b05c5",
--            "https://files.pythonhosted.org/packages/26/67/e53965e67d23d48e78dd603aa7525a8d77e7818c23954cc217ccde5cd5c0/mypy-2.4.0-cp311-cp311-macosx_11_0_arm64.whl": "sha256:5d20e6c7c35fcbf2a0ebdd0eaeacfbc243009dfd33ab7822d54e213912e6dbbd",
--            "https://files.pythonhosted.org/packages/2b/43/e62d8d5c1dd737aa248968302ff7d6eabf997c3301773ed8bcb64932ca77/mypy-2.4.0-cp314-cp314t-win_arm64.whl": "sha256:3bd0e340f0ebe65c548210f53be3fd8192e83964760caf0c28bef368e68b0d37",
--            "https://files.pythonhosted.org/packages/2e/5f/335b8980055118dc131355155883fb676bb2161a0d97e08658e479c776fb/mypy-2.4.0-cp315-cp315-macosx_11_0_arm64.whl": "sha256:afa89837d9be67e0cadfa33bca3bb7efdda98c3b07e74dc3b635ebfb1c8a926a",
--            "https://files.pythonhosted.org/packages/2f/05/f1afa303c678be24cf7a266d38fb24b3de4599a024c2f9ba0d5905a3efa3/mypy-2.4.0-cp314-cp314t-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": "sha256:86d616fe84c6eab8026f8c50ab5bcb90db780d2ccd233d971e34e92bede9b359",
--            "https://files.pythonhosted.org/packages/30/7d/12d994886a922f0f1997becc9c6625198d61eeb5962558a886af7dd38d54/mypy-2.4.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": "sha256:29243242cf72582b65f9582ad9e56e8cb281566ed3519f4cd70bb8b9f2977e90",
--            "https://files.pythonhosted.org/packages/31/9c/9e4b049f0ecefbfd6817ca2a16eea55dd74a07950268edc6cffd29ccfe98/mypy-2.4.0-cp314-cp314-musllinux_1_2_x86_64.whl": "sha256:9f03a7828cca2b0adcd6662aee8f2711ff8830e1027641fdea3ab0b787483566",
--            "https://files.pythonhosted.org/packages/34/4e/64300736cf0a0373a27b94a91b664ee7382e36f77b0621bae6381da3e180/mypy-2.4.0.tar.gz": "sha256:77bdaebd452f43fcfc4cc3ba94352a3ea537cd01e3f2d0879f48673d2ec00d6e",
--            "https://files.pythonhosted.org/packages/3a/87/61ffee58b25a956532a6006fae84918a2de849ed25f397492b2e815fe7b3/mypy-2.4.0-cp314-cp314-win_amd64.whl": "sha256:2106b55105ba5ea9be4f53a24517fc5fa927ff1585edc9bc1a975abb72caef89",
--            "https://files.pythonhosted.org/packages/3e/08/32703c117e134c02efa2a82705bb40cee91eaedea10b6530e20eba651b1f/mypy-2.4.0-cp315-cp315-win_amd64.whl": "sha256:970b221ed5842213d98e3c480c08f795ace4b1f81fb21e1b126bd0476bce1c34",
--            "https://files.pythonhosted.org/packages/43/8b/5b2bbfc69e84800b78fa2dba16d995b003f93b573558e412c5490d6e6c37/mypy-2.4.0-cp315-cp315t-musllinux_1_2_x86_64.whl": "sha256:cb734b2668c1f40d07ce093bbeb4407e9527c67901627b0e1679825be3f09975",
--            "https://files.pythonhosted.org/packages/43/c5/91b68306da4cd280cb15be35dbb5ffc343cabd67c4b121b6625bf2d13177/mypy-2.4.0-cp315-cp315-musllinux_1_2_x86_64.whl": "sha256:e76172710bd4e5eeae061abfd68347e5264632e02778be61784671ae3a2132f5",
--            "https://files.pythonhosted.org/packages/44/f2/eb15183c97c69d7cbfac990a6efd33a19ecfd97dab9e714c742fa78a784f/mypy-2.4.0-cp313-cp313-macosx_11_0_arm64.whl": "sha256:7da85fbcff6dac1abcc636707bed38b45598131fb7a605d9719c70b5cc733af8",
--            "https://files.pythonhosted.org/packages/47/c0/4f7daa73270dced8e86c6f4a911c68082d03a84e6c1ec9bd916028d66131/mypy-2.4.0-cp314-cp314t-macosx_11_0_arm64.whl": "sha256:0bb95cf34899e4619c61ab0a8667804e139e580b30d5df12af2102dfe44d0c97",
--            "https://files.pythonhosted.org/packages/49/41/17b60df2d946792ef6af43
+@@ -482,7 +482,35 @@ rust.repository_set(
+     name = "rust_linux_s390x",
+     edition = "2018",
+     exec_triple = "s390x-unknown-linux-gnu",
++    exec_compatible_with = [
++        "@platforms//cpu:s390x",
++        "@platforms//os:linux",
++    ],
+     versions = ["1.97.1"],
++    target_triple = "s390x-unknown-linux-gnu",
++    target_compatible_with = [
++        "@platforms//cpu:s390x",
++        "@platforms//os:linux",
++    ],
++)
++
++rust.repository_set(
++    name = "rust_linux_s390x",
++    target_triple = "wasm32-unknown-unknown",
++    target_compatible_with = [
++        "@platforms//cpu:wasm32",
++        "@rules_rust//rust/platform/os:unknown",
++    ],
++)
++
++rust.repository_set(
++    name = "rust_linux_s390x",
++    target_triple = "wasm32-wasip1",
++    target_compatible_with = [
++        "@platforms//cpu:wasm32",
++        "@platforms//os:wasi",
++        "@rules_rust//rust/platform:wasi_preview_1",
++    ],
+ )
+ rust.toolchain(
+     edition = "2018",
 ```
 
-**File**: `mobile/tools/python/requirements.txt` (modified, +53/-53)
+**File**: `source/extensions/common/wasm/context.cc` (modified, +16/-10)
 ```diff
-@@ -400,59 +400,59 @@ librt==0.16.0 \
-     --hash=sha256:fe52bf4641069e7978a14253b036cb9002def1926317e710f2e249f8a8c47742 \
-     --hash=sha256:ff7baa55f8e7c69851419e50a666015d02a74198716fd45c0125a2112e0a389f
-     # via mypy
--mypy==2.4.0 \
--    --hash=sha256:058165f564ccf559c68c70fec2091fca5891110480210c22594635e3f6683437 \
--    --hash=sha256:0bb95cf34899e4619c61ab0a8667804e139e580b30d5df12af2102dfe44d0c97 \
--    --hash=sha256:13fa24f439c0e48a290a3922fa14ccd22f2762bae99d2142931b3e40a9055080 \
--    --hash=sha256:172e30b8fea631fe310f0c665477f52d9ea40bb4e99e0c81dc30118563b13710 \
--    --hash=sha256:1dc0f64b0a92ae27a49d2175f0bacfa56e15bdc5b420cf92e0c1f79292219cbb \
--    --hash=sha256:20e9a5cd875837520c43db98dea0b6d0c2197833d95c30127d8f570fb9b1f00b \
--    --hash=sha256:2106b55105ba5ea9be4f53a24517fc5fa927ff1585edc9bc1a975abb72caef89 \
--    --hash=sha256:236e0d68f6941992b0811128e652590f590db444ab29ad8f1324765b9298b946 \
--    --hash=sha256:29243242cf72582b65f9582ad9e56e8cb281566ed3519f4cd70bb8b9f2977e90 \
--    --hash=sha256:295ecf2e57542cd836ca537486951289678c8c7d1ee6ad74ebe29b2168a003cf \
--    --hash=sha256:29eb0b9427a6b11b992e452f6cceb8af724f4dceb47e779d0b35e405e996ea5e \
--    --hash=sha256:3011537be6cf1de4511c0255a324362a812b58184bbe61e15f59c8b31033bd74 \
--    --hash=sha256:3adef556a19eb3b630bf86a79c29d7da3d61e541472d0d897ca01b171c0abf8f \
--    --hash=sha256:3bd0e340f0ebe65c548210f53be3fd8192e83964760caf0c28bef368e68b0d37 \
--    --hash=sha256:4209da39d85cf240f762af622d8180fcdfcb4727d021f44ade62d613a1a43324 \
--    --hash=sha256:4a378fc15fb33e321f04652c166ce73eeb8833a97c3d218132844e938cd93220 \
--    --hash=sha256:502b94b0b331f7dafe32fd6b151797ddbb4f32385b362e722c783a025e5954a3 \
--    --hash=sha256:528c8744b8b5e3ecb8774f86af38d2376216816e9908317ad055f3c9c2d74799 \
--    --hash=sha256:5786ef987b3767e51aaa53f20aec104c0252b42ecda7aef8e8b4cbae279b05c5 \
--    --hash=sha256:5d20e6c7c35fcbf2a0ebdd0eaeacfbc243009dfd33ab7822d54e213912e6dbbd \
--    --hash=sha256:615b03922d40e186fd1df73156473db0ba525c639bb4fd1cf28e1694879c9b23 \
--    --hash=sha256:6306086b87cf7f8a29aa618d9fd9bffb56c59247166b9660fdb54d86d7714ecd \
--    --hash=sha256:6be721bd4bd57576193653b75b4af3461c9d0bf7dd8b528f782e9be210dc75bb \
--    --hash=sha256:720434d48542ecfe84d32d287b727569d3fc8f5769acd39051130e490a5c295c \
--    --hash=sha256:77bdaebd452f43fcfc4cc3ba94352a3ea537cd01e3f2d0879f48673d2ec00d6e \
--    --hash=sha256:7c4f8f8d1d1c0e2832d8ee7113dd08f6df6c7aad9e863fcbed9f25832be0b8c4 \
--    --hash=sha256:7da85fbcff6dac1abcc636707bed38b45598131fb7a605d9719c70b5cc733af8 \
--    --hash=sha256:7f38f57d344f8b6accb40e01c3d83cfc590498231724d16c07ffb7940f157818 \
--    --hash=sha256:82d0f94c8587ccb472622ee7795280aaa38a06640d5f45b3f16909d6dd86a989 \
--    --hash=sha256:86d616fe84c6eab8026f8c50ab5bcb90db780d2ccd233d971e34e92bede9b359 \
--    --hash=sha256:9279488933040b638c0ab739084c0ca100efeea6db581bf5d7628d8e89de53fe \
--    --hash=sha256:970b221ed5842213d98e3c480c08f795ace4b1f81fb21e1b126bd0476bce1c34 \
--    --hash=sha256:9f03a7828cca2b0adcd6662aee8f2711ff8830e1027641fdea3ab0b787483566 \
--    --hash=sha256:9f459f0b4f0596d9d51fe7716b404b35287b99e77da98a7af90a65dd5fd61141 \
--    --hash=sha256:9fa247e02b505a45a2775f69df38d360d197e3790bc60f717595db9eda358b6e \
--    --hash=sha256:a3f86fd1313dd69d013e265f1fdcd12ea7a9d606f9875b2a3db946cd334555f3 \
--    --hash=sha256:a6e851b82c0661f69f1630fc16172c68787a6a9cf0991e7c6437d60976cdcd76 \
--    --hash=sha256:a96b07a49b7b1d025ce59c1b3acbcf24bead9a83da4523c4a6bde1bb94e7a0e1 \
--    --hash=sha256:afa89837d9be67e0cadfa33bca3bb7efdda98c3b07e74dc3b635ebfb1c8a926a \
--    --hash=sha256:ba05652540bf12828e52abae807b024b09ca144ff4f75e2450a81d69c376425b \
--    --hash=sha256:bc378bdad4e9f12b5bd96466083d1e71acf00594ec9c7b2bdb5e02816f77f303 \
--    --hash=sha256:c9de622fd397495695d0598ddc789222bfcfec9d7c9ec3a1e385c855e3bc5e01 \
--    --hash=sha256:cb734b2668c1f40d07ce093bbeb4407e9527c67901627b0e1679825be3f09975 \
--    --hash=sha256:d01c5d26a352acc6d5cf3128225477e1e8465e8d3029d4c345807fbf7f3cf093 \
--    --hash=sha256:e05ff2925d8b37ad26c80c1b9dc43ae5d455da2df1e23c24c095a6425917c57e \
--    --hash=sha256:e1fde197ae65be856a034a91b70ed747a16562ca69577785f06c661548424bf1 \
--    --hash=sha256:e3ebe2f72a2a1156065a9851570ffbf50c0a93cdccadef9c6e05c508a4fd10b1 \
--    --hash=sha256:e76172710bd4e5eeae061abfd68347e5264632e02778be61784671ae3a2132f5 \
--    --hash=sha256:f83353e47ab520bf6fd4df8f5897d9fe081211f2fbc4b7d37736a3e3c166cbcf \
--    --hash=sha256:f9b028548b3af480e2b1ed8df14ccaac86f99c9f600d1580770ab7ba3dcd40f0 \
--    --hash=sha256:fb443e81057896132d3642d6be219e6efd158691ac7883e3ba8fcb469865f05d \
--    --hash=sha256:ffda5244fd1ad71a1e54405e35f50d09b80c3978efa120f58bd1252ae32c62d2
-+mypy==2.4.1 \
-+    --hash=sha256:01b7718552d017f88d1151f3cc9d6556d778a90bd58060a2c3d87d070f9099fb \
-+    --hash=sha256:0724cf95fabc87ca4a2d5b7f276b43f51afce8a3804bde704490b008e377e50b \
-+    --hash=sha256:080cf64a60b90a73435542feecf4171904cc5710658165b40c6869115d4aa100 \
-+    --hash=sha256
+@@ -359,8 +359,14 @@ void Context::onStatsUpdate(Envoy::Stats::MetricSnapshot& snapshot) {
+ 
+ // Native serializer carrying over bit representation from CEL value to the extension.
+ // This implementation assumes that the value type is static and known to the consumer.
+-WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* result) {
++// Numeric values use Wasm byte order when requested, otherwise host byte order.
++WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* result,
++                          bool swap_bytes) {
+   using Filters::Common::Expr::CelValue;
++#if defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) &&                                    \
++    __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
++  using proxy_wasm::bswap;
++#endif
+   int64_t out_int64;
+   uint64_t out_uint64;
+   double out_double;
+@@ -374,15 +380,15 @@ WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* re
+     result->assign(value.BytesOrDie().value().data(), value.BytesOrDie().value().size());
+     return WasmResult::Ok;
+   case CelValue::Type::kInt64:
+-    out_int64 = value.Int64OrDie();
++    out_int64 = htowasm(value.Int64OrDie(), swap_bytes);
+     result->assign(reinterpret_cast<const char*>(&out_int64), sizeof(int64_t));
+     return WasmResult::Ok;
+   case CelValue::Type::kUint64:
+-    out_uint64 = value.Uint64OrDie();
++    out_uint64 = htowasm(value.Uint64OrDie(), swap_bytes);
+     result->assign(reinterpret_cast<const char*>(&out_uint64), sizeof(uint64_t));
+     return WasmResult::Ok;
+   case CelValue::Type::kDouble:
+-    out_double = value.DoubleOrDie();
++    out_double = htowasm(value.DoubleOrDie(), swap_bytes);
+     result->assign(reinterpret_cast<const char*>(&out_double), sizeof(double));
+     return WasmResult::Ok;
+   case CelValue::Type::kBool:
+@@ -391,12 +397,12 @@ WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* re
+     return WasmResult::Ok;
+   case CelValue::Type::kDuration:
+     // Warning: loss of precision to nanoseconds
+-    out_int64 = absl::ToInt64Nanoseconds(value.DurationOrDie());
++    out_int64 = htowasm(absl::ToInt64Nanoseconds(value.DurationOrDie()), swap_bytes);
+     result->assign(reinterpret_cast<const char*>(&out_int64), sizeof(int64_t));
+     return WasmResult::Ok;
+   case CelValue::Type::kTimestamp:
+     // Warning: loss of precision to nanoseconds
+-    out_int64 = absl::ToUnixNanos(value.TimestampOrDie());
++    out_int64 = htowasm(absl::ToUnixNanos(value.TimestampOrDie()), swap_bytes);
+     result->assign(reinterpret_cast<const char*>(&out_int64), sizeof(int64_t));
+     return WasmResult::Ok;
+   case CelValue::Type::kMessage:
+@@ -415,10 +421,10 @@ WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* re
+     const auto& keys = *keys_list.value();
+     std::vector<std::pair<std::string, std::string>> pairs(map.size(), std::make_pair("", ""));
+     for (auto i = 0; i < map.size(); i++) {
+-      if (serializeValue(keys[i], &pairs[i].first) != WasmResult::Ok) {
++      if (serializeValue(keys[i], &pairs[i].first, swap_bytes) != WasmResult::Ok) {
+         return WasmResult::SerializationFailure;
+       }
+-      if (serializeValue(map[keys[i]].value(), &pairs[i].second) != WasmResult::Ok) {
++      if (serializeValue(map[keys[i]].value(), &pairs[i].second, swap_bytes) != WasmResult::Ok) {
+         return WasmResult::SerializationFailure;
+       }
+     }
+@@ -435,7 +441,7 @@ WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* re
+     const auto& list = *value.ListOrDie();
+     std::vector<std::pair<std::string, std::string>> pairs(list.size(), std::make_pair("", ""));
+     for (auto i = 0; i < list.size(); i++) {
+-      if (serializeValue(list[i], &pairs[i].first) != WasmResult::Ok) {
++      if (serializeValue(list[i], &pairs[i].first, swap_bytes) != WasmResult::Ok) {
+         return WasmResult::SerializationFailure;
+       }
+     }
+@@ -619,7 +625,7 @@ WasmResult Context::getProperty(std::string_view path, std::string* result) {
+     }
+   }
+ 
+-  return serializeValue(value, result);
++  return serializeValue(value, result, wasm_->wasm_vm()->usesWasmByteOrder());
+ }
+ 
+ // Header/Trailer/Metadata Maps.
 ```
 
----
-
-### Incident Patch 3: `7bf8c4a4` (2026-11-02)
-**Commit Message**: build(deps): bump pytest from 9.0.3 to 9.2.0 in /mobile/tools/python
-
-Bumps [pytest](https://github.com/pytest-dev/pytest) from 9.0.3 to 9.2.0.
-- [Release notes](https://github.com/pytest-dev/pytest/releases)
-- [Changelog](https://github.com/pytest-dev/pytest/blob/main/CHANGELOG.rst)
-- [Commits](https://github.com/pytest-dev/pytest/compare/9.0.3...9.2.0)
-
----
-updated-dependencies:
-- dependency-name: pytest
-  dependency-version: 9.2.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
-
-**File**: `mobile/MODULE.bazel.lock` (modified, +2/-2)
+**File**: `source/extensions/common/wasm/context.h` (modified, +2/-1)
 ```diff
-@@ -10366,8 +10366,8 @@
-             "https://files.pythonhosted.org/packages/51/ad/2cf6d3fa2fae5c79e1ed9960c0d42badd0f94d81dd12b50604cdc839e648/pyopenssl-26.4.0-py3-none-any.whl": "sha256:f0eb0cb2d581d3ad2b9c489468485e7f2ab6727d08401bcf9d824c3caddf3c1c"
-           },
-           "pytest": {
--            "https://files.pythonhosted.org/packages/7d/0d/549bd94f1a0a402dc8cf64563a117c0f3765662e2e668477624baeec44d5/pytest-9.0.3.tar.gz": "sha256:b86ada508af81d19edeb213c681b1d48246c1a91d304c6c81a427674c17eb91c",
--            "https://files.pythonhosted.org/packages/d4/24/a372aaf5c9b7208e7112038812994107bc65a84cd00e0354a88c2c77a617/pytest-9.0.3-py3-none-any.whl": "sha256:2c5efc453d45394fdd706ade797c0a81091eccd1d6e4bccfcd476e2b8e0ab5d9"
-+            "https://files.pythonhosted.org/packages/51/39/1f5d8c8877a0fa327db959c19341d4be61660de1ab6b7391f9eb805bcd67/pytest-9.2.0-py3-none-any.whl": "sha256:07acdcf88ec174f907dc01af70bf52d49b014bbab03faeeade31c96b18c2e588",
-+            "https://files.pythonhosted.org/packages/79/42/bb4641652e58dedeac2ec51abc1f8cae4fee4ec63899a0999016229a0f2a/pytest-9.2.0.tar.gz": "sha256:97c4f3b1f3c7414aa36465e09b8220f1d03627993bd51b1282e193753c80557b"
-           },
-           "pytest-asyncio": {
-             "https://files.pythonhosted.org/packages/27/2d/e600d8f47597a803641704aba367c7266cd621f86561ec36da9888f160ec/pytest_asyncio-1.5.0-py3-none-any.whl": "sha256:557f255ee03cc84f84a8d5f438bc9c6e0f714bf86970ae743c7ecb5a38d7e07d",
+@@ -467,7 +467,8 @@ class Context : public proxy_wasm::ContextBase,
+ };
+ using ContextSharedPtr = std::shared_ptr<Context>;
+ 
+-WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* result);
++WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* result,
++                          bool swap_bytes);
+ 
+ } // namespace Wasm
+ } // namespace Common
 ```
 
-**File**: `mobile/tools/python/requirements.txt` (modified, +3/-3)
+**File**: `source/extensions/common/wasm/foreign.cc` (modified, +2/-1)
 ```diff
-@@ -488,9 +488,9 @@ pygments==2.20.0 \
-     --hash=sha256:6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f \
-     --hash=sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176
-     # via pytest
--pytest==9.0.3 \
--    --hash=sha256:2c5efc453d45394fdd706ade797c0a81091eccd1d6e4bccfcd476e2b8e0ab5d9 \
--    --hash=sha256:b86ada508af81d19edeb213c681b1d48246c1a91d304c6c81a427674c17eb91c
-+pytest==9.2.0 \
-+    --hash=sha256:07acdcf88ec174f907dc01af70bf52d49b014bbab03faeeade31c96b18c2e588 \
-+    --hash=sha256:97c4f3b1f3c7414aa36465e09b8220f1d03627993bd51b1282e193753c80557b
-     # via
-     #   -r requirements.in
-     #   pytest-asyncio
+@@ -349,7 +349,8 @@ class EvaluateExpressionFactory : public ExpressionFactory {
+         return WasmResult::InternalFailure;
+       }
+       std::string result;
+-      auto serialize_status = serializeValue(value, &result);
++      auto serialize_status = serializeValue(
++          value, &result, proxy_wasm::current_context_->wasmVm()->usesWasmByteOrder());
+       if (serialize_status != WasmResult::Ok) {
+         return serialize_status;
+       }
+```
+
+**File**: `test/extensions/common/wasm/context_test.cc` (modified, +6/-6)
+```diff
+@@ -203,29 +203,29 @@ TEST_F(ContextTest, SerializeValueMapTest) {
+   CelValue value = CelValue::CreateMap(&mock_cel_map_);
+   EXPECT_CALL(mock_cel_map_, ListKeys())
+       .WillOnce(testing::Return(absl::UnimplementedError("CelMap::ListKeys is not implemented")));
+-  EXPECT_EQ(serializeValue(value, &result), WasmResult::SerializationFailure);
++  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::SerializationFailure);
+ 
+   EXPECT_CALL(mock_cel_list_, MockIndexOperator(_))
+       .WillOnce(testing::Return(CelValue::CreateNull()));
+   EXPECT_CALL(mock_cel_map_, size()).WillRepeatedly(testing::Return(1));
+   EXPECT_CALL(mock_cel_map_, ListKeys()).WillOnce(testing::Return(&mock_cel_list_));
+-  EXPECT_EQ(serializeValue(value, &result), WasmResult::SerializationFailure);
++  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::SerializationFailure);
+ 
+   EXPECT_CALL(mock_cel_list_, MockIndexOperator(_))
+       .Times(2)
+       .WillRepeatedly(testing::Return(CelValue::CreateStringView("test")));
+   EXPECT_CALL(mock_cel_map_, ListKeys()).WillOnce(testing::Return(&mock_cel_list_));
+   EXPECT_CALL(mock_cel_map_, MockIndexOperator(_))
+       .WillOnce(testing::Return(CelValue::CreateNull()));
+-  EXPECT_EQ(serializeValue(value, &result), WasmResult::SerializationFailure);
++  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::SerializationFailure);
+ 
+   EXPECT_CALL(mock_cel_list_, MockIndexOperator(_))
+       .Times(2)
+       .WillRepeatedly(testing::Return(CelValue::CreateStringView("test")));
+   EXPECT_CALL(mock_cel_map_, ListKeys()).WillOnce(testing::Return(&mock_cel_list_));
+   EXPECT_CALL(mock_cel_map_, MockIndexOperator(_))
+       .WillOnce(testing::Return(CelValue::CreateStringView("test")));
+-  EXPECT_EQ(serializeValue(value, &result), WasmResult::Ok);
++  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::Ok);
+ }
+ 
+ TEST_F(ContextTest, SerializeValueListTest) {
+@@ -235,12 +235,12 @@ TEST_F(ContextTest, SerializeValueListTest) {
+   EXPECT_CALL(mock_cel_list_, MockIndexOperator(_))
+       .WillOnce(testing::Return(CelValue::CreateNull()));
+   EXPECT_CALL(mock_cel_list_, size()).WillRepeatedly(testing::Return(1));
+-  EXPECT_EQ(serializeValue(value, &result), WasmResult::SerializationFailure);
++  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::SerializationFailure);
+ 
+   EXPECT_CALL(mock_cel_list_, MockIndexOperator(_))
+       .Times(1)
+       .WillRepeatedly(testing::Return(CelValue::CreateStringView("test")));
+-  EXPECT_EQ(serializeValue(value, &result), WasmResult::Ok);
++  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::Ok);
+ }
+ 
+ TEST_F(ContextTest, FindValueTest) {
+```
+
+**File**: `test/extensions/filters/http/wasm/test_data/test_cpp.cc` (modified, +5/-1)
+```diff
+@@ -603,10 +603,14 @@ void TestContext::onLog() {
+     }
+     {
+       // Some properties are defined in the stream context.
++      // The null plugin uses host byte order; a Wasm build uses little-endian memory.
++      const uint64_t connection_id_val = 4;
++      const std::string connection_id_bytes(reinterpret_cast<const char*>(&connection_id_val),
++                                            sizeof(uint64_t));
+       std::vector<std::pair<std::vector<std::string>, std::string>> properties = {
+           {{"plugin_name"}, "plugin_name"},
+           {{"plugin_vm_id"}, "vm_id"},
+-          {{"connection_id"}, std::string("\x4\0\0\0\0\0\0\0\0", 8)},
++          {{"connection_id"}, connection_id_bytes},
+           {{"connection", "requested_server_name"}, "w3.org"},
+           {{"source", "address"}, "127.0.0.1:0"},
+           {{"destination", "address"}, "127.0.0.2:0"},
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49319** (2026-11-16): deps: Bump dependabot updates (@phlax)
-- **PR #49313** (2026-11-16): bazel: Add RBE pool keys for links and more configurations (@phlax)
-- **PR #49312** (closed): build(deps): bump pytest-asyncio from 1.4.0 to 1.5.0 in /mobile/tools/python (@dependabot[bot])
-- **PR #49310** (closed): build(deps): bump moby/buildkit from v0.34.1 to v0.35.0 in /ci (@dependabot[bot])
-- **PR #49308** (2026-11-16): stats: skip tag extraction for existing histograms (@stephenamar-db)
-- **PR #49305** (2026-11-16): github/ci: Dry-run the dev publish alongside the container images (@phlax)
+- **PR #49354** (2026-11-17): distribution/docker: Use the compressed .dwps in the debug images (@phlax)
+- **PR #49350** (2026-11-17): ci/dependency: Update the rules_oci pins with the release images (@phlax)
+- **PR #49346** (closed): [WIP] quic: Respect the cached stream limit when resuming with 0-RTT (@phlax)
+- **PR #49344** (2026-11-17): docs: fix the dead cgo link in the Golang filter warnings (@farisbasha)
+- **PR #49341** (2026-11-17): test: consolidate ai_protocol_manager fuzz tests into fuzz_lib and fuzz.proto (@chentianheng604)
+- **PR #49331** (2026-11-17): release/ci: Build, sign and publish the release of both arches in one job (@phlax)
 
 ---
 
@@ -1615,54 +2013,61 @@ Signed-off-by: Ryan Northey <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reverse_tunnel: changes to let the downstream drain gracefully
+## X. test: deflake QuicInplaceLdsIntegrationTest drain waits
 
 **RULE**:
-When implementing operations in `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/integration/quic_http_integration_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `80291fca`: reverse_tunnel: changes to let the downstream drain gracefully. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8937718c`: test: deflake QuicInplaceLdsIntegrationTest drain waits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/envoy/extensions/filters/network/reverse_tunnel/v3/drain_aware_hcm.proto`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/integration/quic_http_integration_test.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-import "google/protobuf/duration.proto";
+  // Waits for the workers to apply `in_place_updates` in place updates and for the filter chains
+  // they replaced to finish draining. The main thread starts the drain before it counts any worker
+  // acknowledging the update, so the drain gauge has already risen once the counter reaches the
+  // target. Waiting for the gauge itself to rise can miss its drain_time_ window.
+  void waitForInplaceUpdateDrained(uint32_t in_place_updates) {
+    test_server_->waitForCounter("listener_manager.listener_in_place_updated",
+                                 Ge(in_place_updates));
+    const uint32_t listener_creations = 1 + in_place_updates;
+    test_server_->waitForCounter("listener_manager.listener_create_success",
+                                 Ge(listener_creations * concurrency_));
+    test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
+  }
 
-import "validate/validate.proto";
-// A network filter that wraps the standard HCM and drains all active HTTP/2
-// connections when the listener is drained (e.g. via admin /drain_listeners).
-// Intended for use on reverse-tunnel listeners so that agents can detect drain
-// and re-establish connections gracefully.
-// All HCM fields are forwarded verbatim. In addition, when the listener drains,
-// every connection is drained like an HCM graceful drain, whether or not any of
-// the fields below are set: a soft GOAWAY (shutdown notice) is sent when the
-// drain starts, and the final GOAWAY follows after ``hcm_config.drain_timeout``,
-// extended by ``hcm_config.drain_timeout_jitter`` if set. With
-// ``enable_drain_with_goaway``, a reverse tunnel instead dials a replacement
-// when the drain starts and sends the soft GOAWAY and an optional METADATA frame
-// at the configured delays before the final GOAWAY. Without
-// ``shutdown_notice_delay``, such a tunnel receives no GOAWAY until the final
-// one, so it keeps serving while the replacement is established.
-  // are unaffected. Required by ``metadata_delay`` and ``shutdown_notice_delay``.
-
-  // Del
+  waitForInplaceUpdateDrained(1);
+  waitForInplaceUpdateDrained(1);
+  waitForInplaceUpdateDrained(2);
+  waitForInplaceUpdateDrained(3);
+  waitForInplaceUpdateDrained(1);
+  waitForInplaceUpdateDrained(1);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// A network filter that wraps the standard HCM and sends HTTP/2 GOAWAY frames
-// on all active connections when the listener is drained (e.g. via admin
-// /drain_listeners). Intended for use on reverse-tunnel listeners so that
-// agents can detect drain and re-establish connections gracefully.
-// All HCM fields are forwarded verbatim; the only difference is that this
-// filter registers a listener-drain callback and emits a GOAWAY before the
-// connection is closed.
-  // are unaffected.
+  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
+  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
+  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
+  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
+  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
+
+  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
+  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(2));
+  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
+  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
+  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(3));
+  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
+  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
+  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
+  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `80291fca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8937718c` are properly handled with clean fallback behavior.

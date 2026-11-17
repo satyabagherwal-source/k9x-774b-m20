@@ -10608,3 +10608,6 @@
 | `CYCLE-20261117-70A6` | `2026-11-17T16:14:03.054Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8996` | Yes (`f1b51596...`) |
 | `CYCLE-20261117-75W2` | `2026-11-17T16:14:10.322Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8997` | Yes (`5ec636e8...`) |
 | `CYCLE-20261117-7B1X` | `2026-11-17T16:14:17.013Z` | `SynaLinks/synalinks-skills` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md` | Yes (`918569d4...`) |
+| `CYCLE-20261117-GZFE` | `2026-11-17T16:21:48.506Z` | `orcarouter/OrcaCyber-Nano-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md` | Yes (`33d70abd...`) |
+| `CYCLE-20261117-H1OY` | `2026-11-17T16:21:51.442Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8998` | Yes (`639b87b8...`) |
+| `CYCLE-20261117-H877` | `2026-11-17T16:21:59.875Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8999` | Yes (`accba9fc...`) |

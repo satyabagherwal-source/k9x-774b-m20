@@ -10641,3 +10641,6 @@ Every entry in this ledger must capture:
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `eac0a5e6` | Multi-dimensional audit evidence | 2026-11-17T16:14:03.057Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `a1e00523` | Multi-dimensional audit evidence | 2026-11-17T16:14:10.325Z |
 | `learn-github-synalinks-synalinks-skills` | `https://github.com/SynaLinks/synalinks-skills` | `17532841` | Multi-dimensional audit evidence | 2026-11-17T16:14:17.017Z |
+| `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-17T16:21:48.510Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `e8fbc3b9` | Multi-dimensional audit evidence | 2026-11-17T16:21:51.446Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `f96b2a28` | Multi-dimensional audit evidence | 2026-11-17T16:21:59.879Z |
