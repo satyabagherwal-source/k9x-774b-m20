@@ -10480,3 +10480,4 @@
 | `CYCLE-20261117-EO7F` | `2026-11-17T07:28:07.947Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8902` | Yes (`ae5f9fba...`) |
 | `CYCLE-20261117-EUAE` | `2026-11-17T07:28:15.830Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8903` | Yes (`1401fba9...`) |
 | `CYCLE-20261117-EY8T` | `2026-11-17T07:28:20.957Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8904` | Yes (`f64ed31c...`) |
+| `CYCLE-20261117-U8LU` | `2026-11-17T07:40:14.226Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8905` | Yes (`3c10f5fc...`) |

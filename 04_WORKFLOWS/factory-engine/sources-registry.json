@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T07:28:24.001Z",
-    "lastVerified": "2026-11-17T07:28:24.001Z",
+    "lastChecked": "2026-11-17T07:40:19.063Z",
+    "lastVerified": "2026-11-17T07:40:19.063Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -257,8 +257,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T06:47:15.909Z",
-    "lastVerified": "2026-11-17T06:47:15.909Z",
+    "lastChecked": "2026-11-17T07:40:19.054Z",
+    "lastVerified": "2026-11-17T07:40:19.054Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -513,14 +513,14 @@
     "officialUrl": "https://github.com/appwrite/appwrite",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-13T18:25:55.389Z",
-    "lastVerified": "2026-11-13T18:25:55.389Z",
+    "lastChecked": "2026-11-17T07:40:13.283Z",
+    "lastVerified": "2026-11-17T07:40:13.283Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "8dbfb21bb8b7e85c0acbad05c0f789e6514c430b6edb9c1885db2b35b999f2ce",
+    "contentHash": "3c10f5fcf7d8a649cc2ad8e4de9fb007f305f0513484135004ab4a8670ef3be2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 19,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -652,8 +652,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T02:11:44.268Z",
-    "lastVerified": "2026-11-17T02:11:44.268Z",
+    "lastChecked": "2026-11-17T07:40:14.096Z",
+    "lastVerified": "2026-11-17T07:40:14.096Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -5099,9 +5099,9 @@
   "nitrictech-nitric": {
     "name": "nitric",
     "officialUrl": "https://github.com/nitrictech/nitric",
-    "lastChecked": "2026-11-16T01:04:40.841Z",
+    "lastChecked": "2026-11-17T07:40:11.547Z",
     "revisionIdentifier": "8b1be250",
-    "lastVerified": "2026-11-16T01:04:40.841Z"
+    "lastVerified": "2026-11-17T07:40:11.547Z"
   },
   "qovery-replibyte": {
     "name": "Replibyte",
@@ -5115,8 +5115,8 @@
     "officialUrl": "https://github.com/grpc/grpc-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T17:40:04.432Z",
-    "lastVerified": "2026-11-15T17:40:04.432Z",
+    "lastChecked": "2026-11-17T07:40:04.039Z",
+    "lastVerified": "2026-11-17T07:40:04.039Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-grpc-grpc-rust",
@@ -5996,9 +5996,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-11-16T00:10:10.494Z",
+    "lastChecked": "2026-11-17T07:40:16.800Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-11-16T00:10:10.494Z"
+    "lastVerified": "2026-11-17T07:40:16.800Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -12813,9 +12813,9 @@
   "testing-library-dom-testing-library": {
     "name": "dom-testing-library",
     "officialUrl": "https://github.com/testing-library/dom-testing-library",
-    "lastChecked": "2026-11-12T21:10:22.160Z",
+    "lastChecked": "2026-11-17T07:40:06.551Z",
     "revisionIdentifier": "6049cc0b",
-    "lastVerified": "2026-11-12T21:10:22.160Z"
+    "lastVerified": "2026-11-17T07:40:06.551Z"
   },
   "sweetpad-dev-sweetpad": {
     "name": "sweetpad-dev/sweetpad",

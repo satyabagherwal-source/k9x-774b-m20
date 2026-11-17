@@ -4,22 +4,22 @@
 {
   "source_repository": "appwrite/appwrite",
   "source_url": "https://github.com/appwrite/appwrite",
-  "source_version": "4507a263",
+  "source_version": "8e1e6556",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-13T18:25:56.226Z",
+  "timestamp": "2026-11-17T07:40:14.385Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-appwrite-appwrite",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [appwrite/appwrite](https://github.com/appwrite/appwrite) (Revision: `4507a263`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-13T18:25:56.226Z`  
+> **Provenance**: Harvested from [appwrite/appwrite](https://github.com/appwrite/appwrite) (Revision: `8e1e6556`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-17T07:40:14.385Z`  
 > **Learning ID**: `learn-github-appwrite-appwrite`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `appwrite/appwrite` (Commit: `4507a263`)
+- **Target Repository**: `appwrite/appwrite` (Commit: `8e1e6556`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:25:55.389Z  
+> **Harvest Timestamp**: 2026-11-17T07:40:13.283Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 58082 stars
+- **Stars / Engagement**: 58087 stars
 
 ---
 
@@ -1980,268 +1980,296 @@ export function DomainsEmptyState({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f930f77` (2026-11-13)
-**Commit Message**: fix(dsn): look up getParam keys by their bytes
+### Incident Patch 1: `8e1e6556` (2026-11-17)
+**Commit Message**: Merge pull request #15698 from appwrite/fix-console-read-quota-label
 
-PHP's getParam is binary-safe: a query like ?%ff=1 has the key "\xff". The binding mapped a non-UTF-8 key to '' instead. The corpus now covers that key and a Stringable whose __toString() throws (its exception already passes through unchanged).
+fix(console): show the 1.75M read quota instead of 1.8M
 
-**File**: `crates/extension/src/dsn.rs` (modified, +1/-2)
+**File**: `apps/console/src/components/pages/projects/$projectId/databases/_components/CreateDatabaseSummary.tsx` (modified, +1/-1)
 ```diff
-@@ -303,8 +303,7 @@ impl Dsn {
-     /// `getParam(string $key, string $default = ''): string`.
-     #[php(defaults(default = "\"\""))]
-     pub fn get_param(&self, key: PhpString<'_>, default: PhpString<'_>) -> PhpResult<Param<'_>> {
--        let key = text(key.bytes(), MALFORMED).unwrap_or_default();
--        Ok(match self.dsn.param(key).map_err(thrown)? {
-+        Ok(match self.dsn.param(key.bytes()).map_err(thrown)? {
-             Some(value) => Param::Found(value),
-             None => Param::Default(default.0.into_owned()),
-         })
-```
-
-**File**: `crates/extension/tests/dsn.php` (modified, +7/-0)
-```diff
-@@ -158,6 +158,7 @@ function emit(string $case, array $result): void
- // Positional and named arguments, and getParam's default.
- emit('from positional', outcome(fn () => (string) DSN::from('redis', 'cache', 'u', 'p', 6379, 'db', ['a' => 'b'])));
- emit('getParam default', outcome(fn () => (new DSN('redis://h?a=1'))->getParam('b')));
-+emit('getParam binary key', outcome(fn () => bin2hex((new DSN('redis://h?%ff=1&=2'))->getParam("\xff"))));
- 
- // DSN.php has no strict_types: PHP converts scalar arguments, and Cloud relies on it
- // (getParam('connectTimeout', 1.0) took down staging when the binding refused it).
-@@ -177,6 +178,12 @@ public function __toString(): string
-     'getParam array default' => fn () => (new DSN('redis://h'))->getParam('x', []),
-     'getParam int key' => fn () => (new DSN('redis://h?5=a'))->getParam(5),
-     'new Stringable' => fn () => (string) new DSN($stringable),
-+    'new throwing Stringable' => fn () => new DSN(new class () {
-+        public function __toString(): string
-+        {
-+            throw new LogicException('unprintable');
-+        }
-+    }),
-     'new int' => fn () => (string) new DSN(5),
-     'new null' => fn () => (string) new DSN(null),
-     'new object' => fn () => (string) new DSN(new stdClass()),
-```
-
-**File**: `crates/utopia/dsn/src/lib.rs` (modified, +4/-3)
-```diff
-@@ -518,13 +518,13 @@ impl Dsn {
-     /// echo $dsn->getParam('from'), "\n";          // +15550100
-     /// var_dump($dsn->getParam('region'));         // string(0) ""
-     /// ```
--    pub fn param(&self, key: &str) -> Result<Option<&[u8]>, Error> {
-+    pub fn param(&self, key: impl AsRef<[u8]>) -> Result<Option<&[u8]>, Error> {
-         let query = match self.query() {
-             None | Some("" | "0") => return Ok(None),
-             Some(q) => q,
-         };
-         let params = self.params.get_or_init(|| parse_str(query.as_bytes()));
--        match params.get_str(key) {
-+        match params.get_ref(php_std::types::KeyRef::normalize(key.as_ref())) {
-             None => Ok(None),
-             Some(Value::Str(value)) => Ok(Some(value)),
-             Some(_) => {
-@@ -551,7 +551,7 @@ impl Dsn {
-     /// $dsn = new DSN('s3://key:secret@s3.amazonaws.com/backups');
-     /// echo $dsn->getParam('region', 'us-east-1'), "\n"; // us-east-1
-     /// ```
--    pub fn param_or<'a>(&'a self, key: &str, default: &'a [u8]) -> Result<&'a [u8], Error> {
-+    pub fn param_or<'a>(&'a self, key: impl AsRef<[u8]>, default: &'a [u8]) -> Result<&'a [u8], Error> {
-         Ok(self.param(key)?.unwrap_or(default))
-     }
+@@ -97,7 +97,7 @@ function formatIncludedOpsValue(
+   t: (text: string) => string,
+ ): string {
+   if (value === 'unlimited') return t('Unlimited')
+-  return `${formatCompactCount(value)} ${t('included')}`
++  return `${formatCompactCount(value, { decimals: 2 })} ${t('included')}`
  }
-@@ -664,6 +664,7 @@ mod tests {
-         assert_eq!(d.path(), b"database");
-         assert_eq!(d.param("timezone").unwrap(), Some(&b"UTC"[..]));
-         assert_eq!(d.param_or("region", b"us-east-1").unwrap(), b"us-east-1");
-+        assert_eq!(Dsn::parse("s://h?%ff=1&=2").unwrap().param(b"\xff").unwrap(), Some(&b"1"[..]));
-         let d = Dsn::parse("sms://user:sl%2Fsh%2B%24%40no%3Aher@localhost").unwrap();
-         assert_eq!(d.password(), Some(&b"sl/sh+$@no:her"[..]));
-         assert_eq!(d.path(), b"");
+ 
+ function ServerlessPlanOps({
+```
+
+**File**: `apps/console/src/components/pages/projects/$projectId/databases/_components/ServerlessSpecPrice.tsx` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ function formatOpsCount(
+   t: (text: string) => string,
+ ): string {
+   if (value === 'unlimited') return t('Unlimited')
+-  return formatCompactCount(value)
++  return formatCompactCount(value, { decimals: 2 })
+ }
+ 
+ function formatIncludedOpsLabel(
+```
+
+**File**: `apps/console/src/lib/billing/usage-plan-overages.ts` (modified, +1/-1)
+```diff
+@@ -169,7 +169,7 @@ export function formatUsagePlanOverageValue(
+     case 'gbhours':
+       return formatGbHoursValue(value)
+     default:
+-      return formatCompactCount(value)
++      return formatCompactCount(value, { decimals: 2 })
+   }
+ }
+ 
+```
+
+**File**: `apps/console/src/lib/usage/format-metric.ts` (modified, +11/-6)
+```diff
+@@ -107,14 +107,19 @@ export function formatCompactBytesAxis(bytes: number): string {
+ 
+ export interface FormatCompactCountOptions {
+   compact?: boolean
++  /**
++   * Most decimals kept below 100 of a unit; trailing zeros are dropped. Default 1.
++   * Plan quotas pass 2 so 1,750,000 reads read `1.75M`, not `1.8M`.
++   */
++  decimals?: number
+ }
+ 
+ /** Compact count formatter for requests and similar metrics (`1.2M`, `12.5K`). */
+ export function formatCompactCount(
+   num: number,
+   options: FormatCompactCountOptions = {},
+ ): string {
+-  const { compact = true } = options
++  const { compact = true, decimals = 1 } = options
+ 
+   if (!Number.isFinite(num) || num <= 0) {
+     return '0'
+@@ -125,7 +130,7 @@ export function formatCompactCount(
+     const amount =
+       scaled >= 100
+         ? Math.round(scaled).toString()
+-        : trimTrailingZeros(scaled.toFixed(1))
++        : trimTrailingZeros(scaled.toFixed(decimals))
+     return compact ? `${amount}B` : `${amount} B`
+   }
+ 
+@@ -134,7 +139,7 @@ export function formatCompactCount(
+     const amount =
+       scaled >= 100
+         ? Math.round(scaled).toString()
+-        : trimTrailingZeros(scaled.toFixed(1))
++        : trimTrailingZeros(scaled.toFixed(decimals))
+     return compact ? `${amount}M` : `${amount} M`
+   }
+ 
+@@ -143,14 +148,14 @@ export function formatCompactCount(
+     const amount =
+       scaled >= 100
+         ? Math.round(scaled).toString()
+-        : trimTrailingZeros(scaled.toFixed(1))
++        : trimTrailingZeros(scaled.toFixed(decimals))
+     return compact ? `${amount}K` : `${amount} K`
+   }
+ 
+   if (num >= 1_000) {
+     return compact
+-      ? `${trimTrailingZeros((num / 1_000).toFixed(1))}K`
+-      : `${trimTrailingZeros((num / 1_000).toFixed(1))} K`
++      ? `${trimTrailingZeros((num / 1_000).toFixed(decimals))}K`
++      : `${trimTrailingZeros((num / 1_000).toFixed(decimals))} K`
+   }
+ 
+   return Math.round(num).toLocaleString()
+```
+
+**File**: `apps/console/tests/unit/format-compact-count.test.ts` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++import { describe, expect, test } from 'bun:test'
++import { formatCompactCount } from '@/lib/usage/format-metric'
++
++describe('formatCompactCount', () => {
++  test('keeps one decimal by default', () => {
++    expect(formatCompactCount(1_750_000)).toBe('1.8M')
++    expect(formatCompactCount(12_500)).toBe('12.5K')
++    expect(formatCompactCount(2_000_000)).toBe('2M')
++  })
++
++  test('keeps a second decimal only when it is not zero', () => {
++    expect(formatCompactCount(1_750_000, { decimals: 2 })).toBe('1.75M')
++    expect(formatCompactCount(1_500_000, { decimals: 2 })).toBe('1.5M')
++    expect(formatCompactCount(2_000_000, { decimals: 2 })).toBe('2M')
++    expect(formatCompactCount(500_000, { decimals: 2 })).toBe('500K')
++    expect(formatCompactCount(1_250, { decimals: 2 })).toBe('1.25K')
++  })
++})
 ```
 
 ---
 
-### Incident Patch 2: `a5c3657e` (2026-11-13)
-**Commit Message**: Merge pull request #15596 from appwrite/fix-device-switch-blocked-user
+### Incident Patch 2: `48e7f840` (2026-11-17)
+**Commit Message**: fix(console): show the 1.75M read quota instead of 1.8M
 
-fix(account): refuse device session switch to a blocked user
+formatCompactCount rounds to one decimal, so the Pro and Scale serverless
+read quota (1750 * 1000) showed as 1.8M in the Create database wizard, the
+database summary card and the downgrade usage warning. Quota labels now keep
+a second decimal when it isn't zero. Other callers keep one decimal.
 
-**File**: `src/Appwrite/Platform/Modules/Account/Http/Account/Devices/Sessions/Update.php` (modified, +10/-2)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/console/src/components/pages/projects/$projectId/databases/_components/CreateDatabaseSummary.tsx` (modified, +1/-1)
 ```diff
-@@ -127,6 +127,16 @@ public function action(
-             throw new Exception(Exception::USER_DEVICE_SESSION_NOT_FOUND);
-         }
+@@ -97,7 +97,7 @@ function formatIncludedOpsValue(
+   t: (text: string) => string,
+ ): string {
+   if (value === 'unlimited') return t('Unlimited')
+-  return `${formatCompactCount(value)} ${t('included')}`
++  return `${formatCompactCount(value, { decimals: 2 })} ${t('included')}`
+ }
  
-+        $user = $authorization->skip(fn () => $dbForProject->getDocument('users', $session->getAttribute('userId')));
-+
-+        if ($user->isEmpty()) {
-+            throw new Exception(Exception::USER_DEVICE_SESSION_NOT_FOUND);
-+        }
-+
-+        if ($user->getAttribute('status') === false) {
-+            throw new Exception(Exception::USER_BLOCKED);
-+        }
-+
-         $protocol = $request->getProtocol();
- 
-         // Session secrets are hashed, so the original can never be put back into a cookie. Switching
-@@ -147,8 +157,6 @@ public function action(
-             'activeSessionInternalId' => $session->getSequence(),
-         ])));
- 
--        $user = $authorization->skip(fn () => $dbForProject->getDocument('users', $session->getAttribute('userId')));
--
-         $dbForProject->purgeCachedDocument('users', $session->getAttribute('userId'));
- 
-         $store = new Store();
+ function ServerlessPlanOps({
 ```
 
-**File**: `tests/e2e/Services/Account/AccountDevicesCustomClientTest.php` (modified, +39/-0)
+**File**: `apps/console/src/components/pages/projects/$projectId/databases/_components/ServerlessSpecPrice.tsx` (modified, +1/-1)
 ```diff
-@@ -724,6 +724,45 @@ public function testDeviceRefusesInvalidatedSessions(): void
-         $this->assertEquals('user_device_session_not_found', $response['body']['type']);
-     }
+@@ -24,7 +24,7 @@ function formatOpsCount(
+   t: (text: string) => string,
+ ): string {
+   if (value === 'unlimited') return t('Unlimited')
+-  return formatCompactCount(value)
++  return formatCompactCount(value, { decimals: 2 })
+ }
  
-+    public function testDeviceRefusesBlockedUsers(): void
-+    {
-+        $projectId = $this->getProject()['$id'];
-+        $deviceKey = 'a_device_' . $projectId;
-+        $headers = [
-+            'origin' => 'http://localhost',
-+            'content-type' => 'application/json',
-+            'x-appwrite-project' => $projectId,
-+        ];
+ function formatIncludedOpsLabel(
+```
+
+**File**: `apps/console/src/lib/billing/usage-plan-overages.ts` (modified, +1/-1)
+```diff
+@@ -169,7 +169,7 @@ export function formatUsagePlanOverageValue(
+     case 'gbhours':
+       return formatGbHoursValue(value)
+     default:
+-      return formatCompactCount(value)
++      return formatCompactCount(value, { decimals: 2 })
+   }
+ }
+ 
+```
+
+**File**: `apps/console/src/lib/usage/format-metric.ts` (modified, +11/-6)
+```diff
+@@ -107,14 +107,19 @@ export function formatCompactBytesAxis(bytes: number): string {
+ 
+ export interface FormatCompactCountOptions {
+   compact?: boolean
++  /**
++   * Most decimals kept below 100 of a unit; trailing zeros are dropped. Default 1.
++   * Plan quotas pass 2 so 1,750,000 reads read `1.75M`, not `1.8M`.
++   */
++  decimals?: number
+ }
+ 
+ /** Compact count formatter for requests and similar metrics (`1.2M`, `12.5K`). */
+ export function formatCompactCount(
+   num: number,
+   options: FormatCompactCountOptions = {},
+ ): string {
+-  const { compact = true } = options
++  const { compact = true, decimals = 1 } = options
+ 
+   if (!Number.isFinite(num) || num <= 0) {
+     return '0'
+@@ -125,7 +130,7 @@ export function formatCompactCount(
+     const amount =
+       scaled >= 100
+         ? Math.round(scaled).toString()
+-        : trimTrailingZeros(scaled.toFixed(1))
++        : trimTrailingZeros(scaled.toFixed(decimals))
+     return compact ? `${amount}B` : `${amount} B`
+   }
+ 
+@@ -134,7 +139,7 @@ export function formatCompactCount(
+     const amount =
+       scaled >= 100
+         ? Math.round(scaled).toString()
+-        : trimTrailingZeros(scaled.toFixed(1))
++        : trimTrailingZeros(scaled.toFixed(decimals))
+     return compact ? `${amount}M` : `${amount} M`
+   }
+ 
+@@ -143,14 +148,14 @@ export function formatCompactCount(
+     const amount =
+       scaled >= 100
+         ? Math.round(scaled).toString()
+-        : trimTrailingZeros(scaled.toFixed(1))
++        : trimTrailingZeros(scaled.toFixed(decimals))
+     return compact ? `${amount}K` : `${amount} K`
+   }
+ 
+   if (num >= 1_000) {
+     return compact
+-      ? `${trimTrailingZeros((num / 1_000).toFixed(1))}K`
+-      : `${trimTrailingZeros((num / 1_000).toFixed(1))} K`
++      ? `${trimTrailingZeros((num / 1_000).toFixed(decimals))}K`
++      : `${trimTrailingZeros((num / 1_000).toFixed(decimals))} K`
+   }
+ 
+   return Math.round(num).toLocaleString()
+```
+
+**File**: `apps/console/tests/unit/format-compact-count.test.ts` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++import { describe, expect, test } from 'bun:test'
++import { formatCompactCount } from '@/lib/usage/format-metric'
 +
-+        $email = \uniqid() . 'blocked@localhost.test';
-+        $userId = $this->createUserWithPassword($email, 'password');
-+        $deviceCookie = $this->createDevice()['cookie'];
++describe('formatCompactCount', () => {
++  test('keeps one decimal by default', () => {
++    expect(formatCompactCount(1_750_000)).toBe('1.8M')
++    expect(formatCompactCount(12_500)).toBe('12.5K')
++    expect(formatCompactCount(2_000_000)).toBe('2M')
++  })
 +
-+        $session = $this->signIn($deviceCookie, $email, 'password');
-+        $this->assertEquals(201, $session['headers']['status-code']);
-+        $deviceCookie = $session['cookies'][$deviceKey];
-+
-+        $blocked = $this->client->call(Client::METHOD_PATCH, '/users/' . $userId . '/status', [
-+            'content-type' => 'application/json',
-+            'x-appwrite-project' => $projectId,
-+            'x-appwrite-key' => $this->getProject()['apiKey'],
-+        ], [
-+            'status' => false,
-+        ]);
-+        $this->assertEquals(200, $blocked['headers']['status-code']);
-+
-+        /**
-+         * Test for FAILURE - the device still holds the session, but its user is blocked
-+         */
-+        $response = $this->client->call(Client::METHOD_PATCH, '/account/devices/current/session', \array_merge($headers, [
-+            'cookie' => $deviceKey . '=' . $deviceCookie,
-+        ]), [
-+            'sessionId' => $session['body']['$id'],
-+        ]);
-+        $this->assertEquals(403, $response['headers']['status-code']);
-+        $this->assertEquals('user_blocked', $response['body']['type']);
-+    }
-+
-     public function testFallbackCookiesCarryTheDeviceAndTheSession(): void
-     {
-         $projectId = $this->getProject()['$id'];
++  test('keeps a second decimal only when it is not zero', () => {
++    expect(formatCompactCount(1_750_000, { decimals: 2 })).toBe('1.75M')
++    expect(formatCompactCount(1_500_000, { decimals: 2 })).toBe('1.5M')
++    expect(formatCompactCount(2_000_000, { decimals: 2 })).toBe('2M')
++    expect(formatCompactCount(500_000, { decimals: 2 })).toBe('500K')
++    expect(formatCompactCount(1_250, { decimals: 2 })).toBe('1.25K')
++  })
++})
 ```
 
 ---
 
-### Incident Patch 3: `5668053c` (2026-11-13)
-**Commit Message**: fix(account): refuse device session switch to a blocked user
+### Incident Patch 3: `2465894a` (2026-11-17)
+**Commit Message**: fix(vcs): skip the authorization check when statuses are off
 
-The switch route loaded the session's owner only after rotating its secret and never checked the owner's status, so a device could still switch to a blocked account's session. Load the user first and refuse with user_blocked, as the request pipeline does for callers.
-
-**File**: `src/Appwrite/Platform/Modules/Account/Http/Account/Devices/Sessions/Update.php` (modified, +10/-2)
+**File**: `src/Appwrite/Platform/Modules/VCS/Http/GitHub/Deployment.php` (modified, +4/-0)
 ```diff
-@@ -127,6 +127,16 @@ public function action(
-             throw new Exception(Exception::USER_DEVICE_SESSION_NOT_FOUND);
-         }
+@@ -381,6 +381,10 @@ protected function createGitDeployments(
+                 }
  
-+        $user = $authorization->skip(fn () => $dbForProject->getDocument('users', $session->getAttribute('userId')));
+                 if (!$isAuthorized) {
++                    if ($resource->getAttribute('providerSilentMode', false) === true || $resource->getAttribute('providerStatuses', true) === false) {
++                        continue;
++                    }
 +
-+        if ($user->isEmpty()) {
-+            throw new Exception(Exception::USER_DEVICE_SESSION_NOT_FOUND);
-+        }
-+
-+        if ($user->getAttribute('status') === false) {
-+            throw new Exception(Exception::USER_BLOCKED);
-+        }
-+
-         $protocol = $request->getProtocol();
+                     $message = 'Authorization required for external contributor.';
  
-         // Session secrets are hashed, so the original can never be put back into a cookie. Switching
-@@ -147,8 +157,6 @@ public function action(
-             'activeSessionInternalId' => $session->getSequence(),
-         ])));
- 
--        $user = $authorization->skip(fn () => $dbForProject->getDocument('users', $session->getAttribute('userId')));
--
-         $dbForProject->purgeCachedDocument('users', $session->getAttribute('userId'));
- 
-         $store = new Store();
-```
-
-**File**: `tests/e2e/Services/Account/AccountDevicesCustomClientTest.php` (modified, +39/-0)
-```diff
-@@ -724,6 +724,45 @@ public function testDeviceRefusesInvalidatedSessions(): void
-         $this->assertEquals('user_device_session_not_found', $response['body']['type']);
-     }
- 
-+    public function testDeviceRefusesBlockedUsers(): void
-+    {
-+        $projectId = $this->getProject()['$id'];
-+        $deviceKey = 'a_device_' . $projectId;
-+        $headers = [
-+            'origin' => 'http://localhost',
-+            'content-type' => 'application/json',
-+            'x-appwrite-project' => $projectId,
-+        ];
-+
-+        $email = \uniqid() . 'blocked@localhost.test';
-+        $userId = $this->createUserWithPassword($email, 'password');
-+        $deviceCookie = $this->createDevice()['cookie'];
-+
-+        $session = $this->signIn($deviceCookie, $email, 'password');
-+        $this->assertEquals(201, $session['headers']['status-code']);
-+        $deviceCookie = $session['cookies'][$deviceKey];
-+
-+        $blocked = $this->client->call(Client::METHOD_PATCH, '/users/' . $userId . '/status', [
-+            'content-type' => 'application/json',
-+            'x-appwrite-project' => $projectId,
-+            'x-appwrite-key' => $this->getProject()['apiKey'],
-+        ], [
-+            'status' => false,
-+        ]);
-+        $this->assertEquals(200, $blocked['headers']['status-code']);
-+
-+        /**
-+         * Test for FAILURE - the device still holds the session, but its user is blocked
-+         */
-+        $response = $this->client->call(Client::METHOD_PATCH, '/account/devices/current/session', \array_merge($headers, [
-+            'cookie' => $deviceKey . '=' . $deviceCookie,
-+        ]), [
-+            'sessionId' => $session['body']['$id'],
-+        ]);
-+        $this->assertEquals(403, $response['headers']['status-code']);
-+        $this->assertEquals('user_blocked', $response['body']['type']);
-+    }
-+
-     public function testFallbackCookiesCarryTheDeviceAndTheSession(): void
-     {
-         $projectId = $this->getProject()['$id'];
+                     $providerRepositoryId = $repository->getAttribute('providerRepositoryId');
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15606** (closed): feat(console): link MCP1 in the expanded marketing footer (@eldadfux)
-- **PR #15602** (2026-11-13): feat(console): point agents at the public docs MCP server in llms.txt (@ChiragAgg5k)
-- **PR #15601** (2026-11-13): feat(console): declare Appwrite Cloud OAuth 2.0 scopes in /openapi.json (@ChiragAgg5k)
-- **PR #15600** (2026-11-13): feat(notifications): let the Beep app restyle alert pushes (@ChiragAgg5k)
-- **PR #15599** (2026-11-13): fix(extension): convert scalar arguments to DSN as PHP's weak mode does (@ChiragAgg5k)
-- **PR #15598** (2026-11-13): fix(console): start new projects with a web platform for localhost (@ChiragAgg5k)
+- **PR #15698** (2026-11-17): fix(console): show the 1.75M read quota instead of 1.8M (@eldadfux)
+- **PR #15696** (2026-11-17): docs(blog): announce encryption for files of every size (@atharvadeosthale)
+- **PR #15695** (2026-11-17): fix(console): wait a minute between verification emails (@jaysomani)
+- **PR #15694** (2026-11-17): fix(videos): bind jobs to the source file's internal IDs (@ChiragAgg5k)
+- **PR #15693** (2026-11-17): fix(console): reconcile billing project breakdown with org-level credits (@lohanidamodar)
+- **PR #15692** (2026-11-17): fix(user-agent): stop classifying native Android clients as tablets (@lohanidamodar)
 
 ---
 
@@ -2261,32 +2289,31 @@ The switch route loaded the session's owner only after rotating its secret and n
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dsn): look up getParam keys by their bytes
+## X. Empirical Invariant Guard in CreateDatabaseSummary.tsx
 
 **RULE**:
-When implementing operations in `crates/extension/src/dsn.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/console/src/components/pages/projects/$projectId/databases/_components/CreateDatabaseSummary.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f930f77`: dsn): look up getParam keys by their bytes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e1e6556`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/extension/src/dsn.rs`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/console/src/components/pages/projects/$projectId/databases/_components/CreateDatabaseSummary.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        Ok(match self.dsn.param(key.bytes()).map_err(thrown)? {
+  return `${formatCompactCount(value, { decimals: 2 })} ${t('included')}`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-        let key = text(key.bytes(), MALFORMED).unwrap_or_default();
-        Ok(match self.dsn.param(key).map_err(thrown)? {
+// Induced defect failure mode:
+  return `${formatCompactCount(value)} ${t('included')}`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f930f77` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e1e6556` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

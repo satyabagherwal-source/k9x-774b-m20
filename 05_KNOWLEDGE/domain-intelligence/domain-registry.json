@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T07:28:25.806Z",
-  "total_records": 1477,
+  "last_updated": "2026-11-17T07:40:20.633Z",
+  "total_records": 1479,
   "domains": {
     "A": {
       "total": 9,
@@ -1456,7 +1456,7 @@
       ]
     },
     "K": {
-      "total": 62,
+      "total": 64,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1519,7 +1519,9 @@
         "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-core-invariants",
         "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-mswjs-msw-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-mswjs-msw-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-learnings-core-invariants"
       ]
     },
     "L": {
@@ -8210,8 +8212,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "44048888777696d2a94934d834301af74e3aa4c0694442d0e3671119af831e40",
-      "created_at": "2026-11-17T06:28:37.028Z"
+      "content_hash": "1b16e6080826e44a2ed7af293337d0ac0162ef7e9b1abecd1ab3f38726142957",
+      "created_at": "2026-11-17T07:40:20.633Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10868,8 +10870,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "ba75530fd96745893dd0763ab8cc5b87ebcd21540c772d253daae22b96fce46e",
-      "created_at": "2026-11-17T05:19:50.922Z"
+      "content_hash": "5c63e78e9995dbac95b49af5000a037cb412dc160baf90c6546bcfcce3c61e11",
+      "created_at": "2026-11-17T07:40:20.054Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -25696,6 +25698,24 @@
       "repository": "transact-rs-sqlx-learnings",
       "content_hash": "fbeae491be9954898d20f5ba049ec3f9a1a751884b549bd0f830816d09f54d80",
       "created_at": "2026-11-17T07:28:24.445Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: appwrite/appwrite Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-appwrite-appwrite-quality-verification-intelligence-appwrite-appwrite-core-invar.md",
+      "repository": "appwrite/appwrite",
+      "content_hash": "87cece778363c116a66d9f51288168202ef1d315a5d0c875b3e107058e7ff87a",
+      "created_at": "2026-11-17T07:40:14.503Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: appwrite-appwrite-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-appwrite-appwrite-learnings-quality-verification-intelligence-appwrite-appwrite-.md",
+      "repository": "appwrite-appwrite-learnings",
+      "content_hash": "8035e84778d8e58e298758fb7ee81d52ad7089297934453742f28408314ded74",
+      "created_at": "2026-11-17T07:40:19.496Z"
     }
   }
 }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-EEEZ",
-    "timestamp": "2026-11-14T17:24:46.331Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "7a148fe4bbf963965d0cd44f9a882710eeb75b20cb17034a385b8f80d915b9e3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-EINA",
     "timestamp": "2026-11-14T17:24:51.814Z",
     "repository": "callstack/agent-device",
@@ -7490,6 +7475,21 @@
     "repository": "etcd-io/etcd",
     "learningId": "learn-github-etcd-io-etcd",
     "contentHash": "f64ed31cfcc354bd2fa132c566b7e8701614d016379bc0b48745be07c01b4cf7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-U8LU",
+    "timestamp": "2026-11-17T07:40:14.226Z",
+    "repository": "appwrite/appwrite",
+    "learningId": "learn-github-appwrite-appwrite",
+    "contentHash": "3c10f5fcf7d8a649cc2ad8e4de9fb007f305f0513484135004ab4a8670ef3be2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

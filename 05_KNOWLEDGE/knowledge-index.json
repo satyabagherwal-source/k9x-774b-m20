@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T07:28:25.931Z",
-  "total_verified_learnings": 8864,
+  "last_updated": "2026-11-17T07:40:20.736Z",
+  "total_verified_learnings": 8865,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19927,
+  "total_items": 19932,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-A4S2-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UDH3-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6392bca895caf18b6239b373c6b5fea9c16b79300c3256008a1b7871a581ec8",
+      "content_hash": "fef76f6966b335815769e62cb54e7e32cd4ea98df6b2f5ba81a528cdc9e3af82",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:28:36.917Z"
+      "persisted_at": "2026-11-17T07:40:20.539Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "44048888777696d2a94934d834301af74e3aa4c0694442d0e3671119af831e40",
+      "content_hash": "1b16e6080826e44a2ed7af293337d0ac0162ef7e9b1abecd1ab3f38726142957",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:28:37.028Z"
+      "persisted_at": "2026-11-17T07:40:20.633Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a1c5fa6e88499c79de7a0b6e69e5873aa8722f576b7c96a48c73ac41df70e2d",
+      "content_hash": "3b33618870534f0bd4b44eef71d4261a0f39d59132fa4d2408c97e25cfa4014d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:28:37.143Z"
+      "persisted_at": "2026-11-17T07:40:20.736Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114493,10 +114493,10 @@
       "relative_path": "08_VERIFICATION/appwrite-appwrite-verification-protocol-empirical-defect-shield-for-appwrite-app.md",
       "title": "Verification Protocol: Empirical Defect Shield for appwrite/appwrite",
       "repository": "appwrite/appwrite",
-      "source_version": "4507a263",
-      "content_hash": "1e601b28e67472f6243781b1b477fde29aa145e472458b56b8ccf81a859bf6b3",
+      "source_version": "8e1e6556",
+      "content_hash": "2f9dee6713f5755bc8d0a94b81838eaeaee6f61f051fb47af5becba6d75e6c44",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:25:56.419Z"
+      "persisted_at": "2026-11-17T07:40:14.658Z"
     },
     "candidate_directive-add-patch-cluster-consensus_state-api-to-fix-consensus-state-11411": {
       "item_id": "candidate_directive-add-patch-cluster-consensus_state-api-to-fix-consensus-state-11411",
@@ -114566,9 +114566,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for appwrite-appwrite-learnings",
       "repository": "appwrite-appwrite-learnings",
       "source_version": "HEAD",
-      "content_hash": "d23fa52d91912d22ad7d5e4c27346a2aeb3f6976e781caa25fcd4d5420c8544b",
+      "content_hash": "ed8e4d9b3789ddb8eb61082c37416268fb0648f5e3ccad79e24103e94be22281",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:26:51.914Z"
+      "persisted_at": "2026-11-17T07:40:19.628Z"
     },
     "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants",
@@ -218063,13 +218063,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TP26-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UCZU-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "c03a5e0319d184ccca6ddd93d3f68e4bb1489f99b049360def35f4e88b9e3dbf",
+      "content_hash": "86a44ad0ea7fb3f7996db47d9e00c4e9fea40b5143ec32be835ca2527aa7dbdf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T05:19:50.815Z"
+      "persisted_at": "2026-11-17T07:40:19.914Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218079,9 +218079,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba75530fd96745893dd0763ab8cc5b87ebcd21540c772d253daae22b96fce46e",
+      "content_hash": "5c63e78e9995dbac95b49af5000a037cb412dc160baf90c6546bcfcce3c61e11",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T05:19:50.922Z"
+      "persisted_at": "2026-11-17T07:40:20.054Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218091,9 +218091,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e770952c88f26a733267fbe7dd1b7c4843d96827a423a4de778329385a4369ad",
+      "content_hash": "17b328b0c9f6a03a624c49e628d618ae1136bf3a396b3c888f8010811acd8715",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T05:19:51.027Z"
+      "persisted_at": "2026-11-17T07:40:20.153Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -266419,6 +266419,89 @@
       "content_hash": "1e4fa5f4739d26042ce0972d357dfd94b7ef2287f7c2f43dbc4f286f937c8369",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T07:28:24.568Z"
+    },
+    "learn-github-appwrite-appwrite": {
+      "learning_id": "learn-github-appwrite-appwrite",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "appwrite/appwrite",
+      "repository": "appwrite/appwrite",
+      "slug": "appwrite-appwrite",
+      "platform": "github",
+      "source_url": "https://github.com/appwrite/appwrite",
+      "source_version": "8e1e6556",
+      "content_hash": "3c10f5fcf7d8a649cc2ad8e4de9fb007f305f0513484135004ab4a8670ef3be2",
+      "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8905,
+          "title": "Empirical Invariant Guard in CreateDatabaseSummary.tsx",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T07:40:14.092Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8905": {
+      "learning_id": "rule-8905",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8905,
+      "title": "Empirical Invariant Guard in CreateDatabaseSummary.tsx",
+      "source_url": "https://github.com/appwrite/appwrite",
+      "source_version": "8e1e6556",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T07:40:14.092Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-createdatabasesummary-tsx": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-createdatabasesummary-tsx",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UCKG-empirical-invariant-guard-in-createdatabasesummary-tsx.md",
+      "title": "Empirical Invariant Guard in CreateDatabaseSummary.tsx",
+      "repository": "appwrite-appwrite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "65ac113dc92450d03ad6ac023adcc480000a82256921645e5d514e021208f2cb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T07:40:19.365Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-appwrite-appwrite-quality-verification-intelligence-appwrite-appwrite-core-invar.md",
+      "title": "Quality & Verification Intelligence: appwrite/appwrite Core Invariants",
+      "repository": "appwrite/appwrite",
+      "source_version": "8e1e6556",
+      "content_hash": "87cece778363c116a66d9f51288168202ef1d315a5d0c875b3e107058e7ff87a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:40:14.503Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-appwrite-appwrite-learnings-quality-verification-intelligence-appwrite-appwrite-.md",
+      "title": "Quality & Verification Intelligence: appwrite-appwrite-learnings Core Invariants",
+      "repository": "appwrite-appwrite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8035e84778d8e58e298758fb7ee81d52ad7089297934453742f28408314ded74",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:40:19.496Z"
     }
   },
   "ai-builder-brain": {

@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "4507a263",
+    "sourceVersion": "8e1e6556",
     "license": "BSD-3-Clause",
-    "contentHash": "8dbfb21bb8b7e85c0acbad05c0f789e6514c430b6edb9c1885db2b35b999f2ce",
-    "lastHarvestedAt": "2026-11-13T18:25:56.000Z",
+    "contentHash": "3c10f5fcf7d8a649cc2ad8e4de9fb007f305f0513484135004ab4a8670ef3be2",
+    "lastHarvestedAt": "2026-11-17T07:40:14.229Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {

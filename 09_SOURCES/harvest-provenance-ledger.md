@@ -10513,3 +10513,4 @@ Every entry in this ledger must capture:
 | `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `488c4113` | Multi-dimensional audit evidence | 2026-11-17T07:28:07.951Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `afdb6e7a` | Multi-dimensional audit evidence | 2026-11-17T07:28:15.834Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `b32ff8a1` | Multi-dimensional audit evidence | 2026-11-17T07:28:20.961Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `8e1e6556` | Multi-dimensional audit evidence | 2026-11-17T07:40:14.229Z |

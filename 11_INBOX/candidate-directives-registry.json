@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T07:28:25.684Z",
+  "last_updated": "2026-11-17T07:40:20.539Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-A4S2",
+      "id": "CD-UDH3",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-A4S2-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-UDH3-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-TP26",
+      "id": "CD-UCZU",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-TP26-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-UCZU-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -22774,6 +22774,44 @@
       "source_repo": "etcd-io-etcd",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A178DD-empirical-invariant-guard-in-contributin.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-UCKG",
+      "directive_title": "Empirical Invariant Guard in CreateDatabaseSummary.tsx",
+      "source_repo": "appwrite-appwrite-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UCKG-empirical-invariant-guard-in-createdatabasesummary-tsx.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-E8B371",
+      "directive_title": "Empirical Invariant Guard in CreateDatabaseSummary.tsx",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "appwrite-appwrite",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E8B371-empirical-invariant-guard-in-createdatab.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-119EE2",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-119EE2-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-3C1051",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3C1051-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-17"
     }
   ]
