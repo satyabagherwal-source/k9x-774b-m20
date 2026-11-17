@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T17:28:13.502Z",
-  "total_records": 1628,
+  "last_updated": "2026-11-17T17:36:57.332Z",
+  "total_records": 1630,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 690,
+      "total": 692,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -739,7 +739,9 @@
         "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-m3-1-flash-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
         "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-ggu",
-        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-"
+        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-",
+        "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-fibo-2-0-learnings-core-invariants"
       ]
     },
     "E": {
@@ -7732,10 +7734,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "a7da7b83f0425ff748f0884f2fba752f7a22743a8c74312fb220b1fea210c702",
-      "created_at": "2026-11-17T15:43:49.305Z"
+      "content_hash": "19c96d1eedf0434edc6910647d24b0c830f7acbdf0439c34ab4b1ff335419ed2",
+      "created_at": "2026-11-17T17:36:52.453Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -20201,8 +20203,8 @@
       "title": "Quality & Verification Intelligence: open-policy-agent/gatekeeper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-quality-verification-intelligence-open-policy-agent.md",
       "repository": "open-policy-agent/gatekeeper",
-      "content_hash": "aaedbacc4203628b57d0c320d4d612f4f2ad8ad0b2f05faabf3ba47f198ab9e0",
-      "created_at": "2026-11-16T18:27:12.967Z"
+      "content_hash": "c7d3119ff3ffba9e133ebd5b8bbaf3c9debd91f7da3515da80d41090a04b97c6",
+      "created_at": "2026-11-17T17:36:50.073Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants",
@@ -20279,8 +20281,8 @@
       "title": "Quality & Verification Intelligence: open-policy-agent-gatekeeper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-learnings-quality-verification-intelligence-open-po.md",
       "repository": "open-policy-agent-gatekeeper-learnings",
-      "content_hash": "b9f21618773c16f28546a01092b5ef4b61858bdd387f04e3c8a6c7fad9242850",
-      "created_at": "2026-11-16T18:27:23.548Z"
+      "content_hash": "b4291738f7e6b895caa80fef61b7ed1bc8148549cba1e5885e6bb17fc2d8c557",
+      "created_at": "2026-11-17T17:36:56.394Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-qwen3-8-27b-dspine-b16-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-qwen3-8-27b-dspine-b16-core-invariants",
@@ -23150,8 +23152,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "5fda713ab0823c1db1dcfd2d99ed41798f1c234bdb1162295b558e59bfffc29f",
-      "created_at": "2026-11-17T06:20:46.878Z"
+      "content_hash": "6acd6e5b7173d8217a0f790efa12eb4325aa0b9f9d2e31520d2935d4fcb4b994",
+      "created_at": "2026-11-17T17:36:57.332Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -27850,6 +27852,24 @@
       "repository": "weaviate-weaviate-learnings",
       "content_hash": "5d67c03566e359c252627d45d7bc50b3d60b4d484053fa075c5fd5daeb40fee9",
       "created_at": "2026-11-17T17:28:12.918Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Comfy-Org/Fibo-2.0 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-fibo-2-0-research-knowledge-intelligence-comfy-org-fibo-2-0-core-in.md",
+      "repository": "Comfy-Org/Fibo-2.0",
+      "content_hash": "00b1513c68a0a50bc9d5f1484c6a3b52d1fdefd3672f708bb588241ac7b768cc",
+      "created_at": "2026-11-17T17:36:37.315Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-fibo-2-0-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-fibo-2-0-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-fibo-2.0-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-fibo-2-0-learnings-research-knowledge-intelligence-hf-comfy-org-fib.md",
+      "repository": "hf-comfy-org-fibo-2.0-learnings",
+      "content_hash": "0e6669e77494ed1d6b935c9a5d8060af253b1d3773c1eb1c532db46d59badca7",
+      "created_at": "2026-11-17T17:36:55.758Z"
     }
   }
 }

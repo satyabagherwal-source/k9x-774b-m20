@@ -10643,3 +10643,6 @@
 | `CYCLE-20261117-KCIZ` | `2026-11-17T17:20:24.683Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9020` | Yes (`1469bf05...`) |
 | `CYCLE-20261117-U0VS` | `2026-11-17T17:27:56.152Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md` | Yes (`e2c93e84...`) |
 | `CYCLE-20261117-UAVZ` | `2026-11-17T17:28:09.119Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9021` | Yes (`5123e103...`) |
+| `CYCLE-20261117-56TB` | `2026-11-17T17:36:37.055Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md` | Yes (`9e9c79a4...`) |
+| `CYCLE-20261117-5GJ3` | `2026-11-17T17:36:49.647Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9022` | Yes (`8780100d...`) |
+| `CYCLE-20261117-5ID7` | `2026-11-17T17:36:52.027Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`0a266536...`) |

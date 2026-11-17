@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "a33d49c4",
+    "sourceVersion": "3707bf02",
     "license": "Apache-2.0",
-    "contentHash": "720f849a7818f7fc77852a9f377d75c773909e4cce38fc724b9b13e1938a3a9f",
-    "lastHarvestedAt": "2026-11-17T06:19:39.268Z",
+    "contentHash": "0a266536445a7d2736ce7d6e6c97e47053f202576fc0548d68e09da7977ce3d5",
+    "lastHarvestedAt": "2026-11-17T17:36:52.032Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -6753,10 +6753,10 @@
     "repository": "open-policy-agent/gatekeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "sourceVersion": "874cc793",
+    "sourceVersion": "b000ecec",
     "license": "Apache-2.0",
-    "contentHash": "faed9a5296d5879fccdcac81f1e228545ac7a58e815b41d67451ab14035ec346",
-    "lastHarvestedAt": "2026-11-16T18:27:12.671Z",
+    "contentHash": "8780100db7e962f3d55589b4add70d8e3efbd621e60e7fcb694330fca667f7fd",
+    "lastHarvestedAt": "2026-11-17T17:36:49.652Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
   },
   "chakra-ui-chakra-ui": {
@@ -10615,8 +10615,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
     "sourceVersion": "hf-comfy-org-fibo-2.0",
     "license": "Open-Source",
-    "contentHash": "b602c78e67d3185f3b5daa04a6ee151d5f67e703320f599b628ebc5a0a5302f9",
-    "lastHarvestedAt": "2026-11-13T06:20:26.825Z",
+    "contentHash": "9e9c79a403c76088d00cdb7e799a64235f663592552ecb853cfe5a9863fb7a0c",
+    "lastHarvestedAt": "2026-11-17T17:36:37.060Z",
     "learningId": "learn-huggingface-comfy-org-fibo-2-0"
   },
   "hf-ornith-ai-ornith-1.5-122b": {

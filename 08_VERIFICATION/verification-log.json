@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-OBE4",
-    "timestamp": "2026-11-15T10:48:14.764Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "cda1e3381c8cff5838ada0572053b9d633b78bd6c97452dc34fab43c80559cb9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-UFNZ",
-    "timestamp": "2026-11-15T10:53:00.239Z",
-    "repository": "FusionCow/Sulphur-3",
-    "learningId": "learn-huggingface-fusioncow-sulphur-3",
-    "contentHash": "99952ab2f72cdc7e7524db333db8a7c98703ea38e88d943a741ab1ba2525fe1a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-JIFA",
-    "timestamp": "2026-11-15T11:12:30.214Z",
-    "repository": "Abiray/MiniMax-H3-Image-GGUF",
-    "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf",
-    "contentHash": "b0a7f55bab89eec331e9727ff2d676e21a5a566c44a5cebc3b7a528ed2592b45",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-JK9J",
     "timestamp": "2026-11-15T11:12:32.599Z",
     "repository": "xiaomi-research/Xiaomi-OCR-0",
@@ -7490,6 +7445,51 @@
     "repository": "weaviate/weaviate",
     "learningId": "learn-github-weaviate-weaviate",
     "contentHash": "5123e103b25cc6314830213e7ecf0a2be93d38da909a62818d5d49aa78d5ca8c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-56TB",
+    "timestamp": "2026-11-17T17:36:37.055Z",
+    "repository": "Comfy-Org/Fibo-2.0",
+    "learningId": "learn-huggingface-comfy-org-fibo-2-0",
+    "contentHash": "9e9c79a403c76088d00cdb7e799a64235f663592552ecb853cfe5a9863fb7a0c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-5GJ3",
+    "timestamp": "2026-11-17T17:36:49.647Z",
+    "repository": "open-policy-agent/gatekeeper",
+    "learningId": "learn-github-open-policy-agent-gatekeeper",
+    "contentHash": "8780100db7e962f3d55589b4add70d8e3efbd621e60e7fcb694330fca667f7fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-5ID7",
+    "timestamp": "2026-11-17T17:36:52.027Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "0a266536445a7d2736ce7d6e6c97e47053f202576fc0548d68e09da7977ce3d5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

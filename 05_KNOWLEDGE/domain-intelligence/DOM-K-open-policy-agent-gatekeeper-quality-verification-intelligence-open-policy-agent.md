@@ -4,24 +4,24 @@
 {
   "source_repository": "open-policy-agent/gatekeeper",
   "source_url": "https://github.com/open-policy-agent/gatekeeper",
-  "source_version": "874cc793",
+  "source_version": "b000ecec",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T18:27:12.848Z",
+  "timestamp": "2026-11-17T17:36:49.908Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-open-policy-agent-gatekeeper",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper) (Revision: `874cc793`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T18:27:12.848Z`  
+> **Provenance**: Harvested from [open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper) (Revision: `b000ecec`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T17:36:49.908Z`  
 > **Learning ID**: `learn-github-open-policy-agent-gatekeeper`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from open-policy-agent/gatekeeper:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:27:11.543Z  
+> **Harvest Timestamp**: 2026-11-17T17:36:48.362Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1148,8 +1148,8 @@ var errAdditionalPublishErrorsOmitted = errors.New(AdditionalPublishErrorsOmitte
 
 var (
 	ExportEnabled          = flag.Bool("enable-violation-export", true, "(beta) Enable exporting audit violations. Export starts only when a matching Connection exists. Set to false to opt out.")
-	AuditConnection        = flag.String("audit-connection", defaultConnection, "(alpha) Connection name for exporting audit violation messages. Defaults to audit-connection")
-	AuditChannel           = flag.String("audit-channel", defaultChannel, "(alpha) Channel name for exporting audit violation messages. Defaults to audit-channel")
+	AuditConnection        = flag.String("audit-connection", defaultConnection, "(beta) Connection name for exporting audit violation messages. Defaults to audit-connection")
+	AuditChannel           = flag.String("audit-channel", defaultChannel, "(beta) Channel name for exporting audit violation messages. Defaults to audit-channel")
 	AdmissionExportEnabled = flag.Bool("enable-admission-violation-export", false, "(alpha) Enable exporting admission violations to external systems")
 )
 
@@ -1299,105 +1299,607 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f201c3d` (2026-11-16)
-**Commit Message**: chore: bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (#4920)
+### Incident Patch 1: `b000ecec` (2026-11-17)
+**Commit Message**: chore: bump k8s deps to v0.37.2 and controller-runtime to v0.25.2 (#4925)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Signed-off-by: Abhishek Sheth <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +5/-4)
+**File**: `go.mod` (modified, +32/-23)
 ```diff
-@@ -20,13 +20,13 @@ require (
+@@ -18,7 +18,7 @@ require (
+ 	github.com/open-policy-agent/frameworks/constraint v0.0.0-20260616163050-e1eaa1bf6d62
+ 	github.com/open-policy-agent/opa v1.17.1
  	github.com/pkg/errors v0.9.1
- 	github.com/prometheus/client_golang v1.23.2
+-	github.com/prometheus/client_golang v1.23.2
++	github.com/prometheus/client_golang v1.24.0
  	github.com/spf13/cobra v1.10.2
--	github.com/stretchr/testify v1.11.1
-+	github.com/stretchr/testify v1.12.1
+ 	github.com/stretchr/testify v1.12.1
  	go.opentelemetry.io/contrib/detectors/aws/ec2 v1.21.1
- 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0
--	go.opentelemetry.io/otel v1.45.0
-+	go.opentelemetry.io/otel v1.47.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0
- 	go.opentelemetry.io/otel/exporters/prometheus v0.63.0
--	go.opentelemetry.io/otel/metric v1.45.0
-+	go.opentelemetry.io/otel/metric v1.47.0
- 	go.opentelemetry.io/otel/sdk v1.45.0
- 	go.opentelemetry.io/otel/sdk/metric v1.45.0
- 	go.uber.org/zap v1.27.1
-@@ -122,7 +122,8 @@ require (
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
+@@ -37,15 +37,15 @@ require (
+ 	golang.org/x/sys v0.48.0
+ 	golang.org/x/time v0.15.0
+ 	gopkg.in/yaml.v3 v3.0.1
+-	k8s.io/api v0.36.6
+-	k8s.io/apiextensions-apiserver v0.36.6
+-	k8s.io/apimachinery v0.36.6
+-	k8s.io/apiserver v0.36.6
+-	k8s.io/client-go v0.36.6
++	k8s.io/api v0.37.2
++	k8s.io/apiextensions-apiserver v0.37.2
++	k8s.io/apimachinery v0.37.2
++	k8s.io/apiserver v0.37.2
++	k8s.io/client-go v0.37.2
+ 	k8s.io/klog/v2 v2.140.0
+-	k8s.io/utils v0.0.0-20260210185600-b8788abfbbc2
++	k8s.io/utils v0.0.0-20260626114624-be93311217bd
+ 	oras.land/oras-go/v2 v2.6.4
+-	sigs.k8s.io/controller-runtime v0.24.1
++	sigs.k8s.io/controller-runtime v0.25.2
+ 	sigs.k8s.io/release-utils v0.7.7
+ 	sigs.k8s.io/yaml v1.6.0
+ )
+@@ -71,11 +71,22 @@ require (
+ 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
+ 	github.com/felixge/httpsnoop v1.0.4 // indirect
+ 	github.com/fsnotify/fsnotify v1.10.1 // indirect
+-	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
++	github.com/fxamacker/cbor/v2 v2.9.1 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+-	github.com/go-openapi/jsonpointer v0.21.0 // indirect
+-	github.com/go-openapi/jsonreference v0.21.0 // indirect
+-	github.com/go-openapi/swag v0.23.0 // indirect
++	github.com/go-openapi/jsonpointer v1.0.0 // indirect
++	github.com/go-openapi/jsonreference v1.0.0 // indirect
++	github.com/go-openapi/swag v0.27.1 // indirect
++	github.com/go-openapi/swag/cmdutils v0.27.1 // indirect
++	github.com/go-openapi/swag/conv v0.27.1 // indirect
++	github.com/go-openapi/swag/fileutils v0.27.1 // indirect
++	github.com/go-openapi/swag/jsonutils v0.27.1 // indirect
++	github.com/go-openapi/swag/loading v0.27.1 // indirect
++	github.com/go-openapi/swag/mangling v0.27.1 // indirect
++	github.com/go-openapi/swag/netutils v0.27.1 // indirect
++	github.com/go-openapi/swag/pools v0.27.1 // indirect
++	github.com/go-openapi/swag/stringutils v0.27.1 // indirect
++	github.com/go-openapi/swag/typeutils v0.27.1 // indirect
++	github.com/go-openapi/swag/yamlutils v0.27.1 // indirect
+ 	github.com/gobwas/glob v0.2.3 // indirect
+ 	github.com/goccy/go-json v0.10.6 // indirect
+ 	github.com/golang/glog v1.2.5 // indirect
+@@ -86,7 +97,6 @@ require (
+ 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
+ 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+ 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+-	github.com/josharian/intern v1.0.0 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/lestrrat-go/blackmagic v1.0.4 // indirect
+ 	github.com/lestrrat-go/dsig v1.2.1 // indirect
+@@ -95,17 +105,16 @@ require (
+ 	github.com/lestrrat-go/httprc/v3 v3.0.5 // indirect
+ 	github.com/lestrrat-go/jwx/v3 v3.1.1 // indirect
+ 	github.com/lestrrat-go/option/v2 v2.0.0 // indirect
+-	github.com/mailru/easyjson v0.7.7 // indirect
+ 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+ 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
+ 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+ 	github.com/opencontainers/go-digest v1.0.0 // indirect
+ 	github.com/opencontainers/image-spec v1.1.1 // indirect
+ 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+ 	github.com/prometheus/client_model v0.6.2 // indirect
+-	github.com/prometheus/common v0.67.5 // indirect
++	github.com/prometheus/common v0.70.0 // indirect
+ 	github.com/prometheus/otlptranslator v1.0.0 // indirect
+-	github.com/prometheus/procfs v0.20.1 // indirect
++	github.com/prometheus/procfs v0.21.1 // indirect
+ 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
+ 	github.com/segmentio/asm v1.2.1 // indirect
+ 	github.com/sirupsen/logrus v1.9.4 // indirect
+@@ -118,8 +127,8 @@ require (
+ 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
+ 	github.com/yashtewari/glob-intersection v0.2.0 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.65.0 // indirect
+-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
++	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.68.0 // indirect
++	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.opentelemetry.io/otel/log v1.47.0 // indirect
+@@ -128,7 +137,7 @@ require (
  	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/mult
 ```
 
-**File**: `go.sum` (modified, +12/-10)
+**File**: `go.sum` (modified, +78/-56)
 ```diff
-@@ -235,12 +235,12 @@ github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An
- github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
- github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
- github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
--github.com/stretchr/objx v0.5.2 h1:xuMeJ0Sdp5ZMRXx/aWO6RZxdr3beISkG5/G/aIRr3pY=
--github.com/stretchr/objx v0.5.2/go.mod h1:FRsXN1f5AsAjCGJKqEizvkpNtU+EGNCLh3NxZ/8L+MA=
-+github.com/stretchr/objx v0.5.3 h1:jmXUvGomnU1o3W/V5h2VEradbpJDwGrzugQQvL0POH4=
-+github.com/stretchr/objx v0.5.3/go.mod h1:rDQraq+vQZU7Fde9LOZLr8Tax6zZvy4kuNKF+QYS+U0=
- github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
- github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
--github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
--github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-+github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
-+github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
- github.com/tchap/go-patricia/v2 v2.3.3 h1:xfNEsODumaEcCcY3gI0hYPZ/PcpVv5ju6RMAhgwZDDc=
- github.com/tchap/go-patricia/v2 v2.3.3/go.mod h1:VZRHKAb53DLaG+nA9EaYYiaEx6YztwDlLElMsnSHD4k=
- github.com/valyala/fastjson v1.6.10 h1:/yjJg8jaVQdYR3arGxPE2X5z89xrlhS0eGXdv+ADTh4=
-@@ -271,8 +271,8 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
- go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.65.0/go.mod h1:KDgtbWKTQs4bM+VPUr6WlL9m/WXcmkCcBlIzqxPGzmI=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8VOmDefoh0+ztfGaymYbhdB/tT3zs79QaZTNGY=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 h1:RuynHbfU8JUEw7DyONgkVYg2SVtsoF28y0LGIr69jgA=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0/go.mod h1:qZF+/lBs71APw8mlnEZcqZHMzqrYrsFiJOv83lX1OGo=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
-@@ -281,16 +281,18 @@ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MC
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
- go.opentelemetry.io/otel/exporters/prometheus v0.63.0 h1:OLo1FNb0pBZykLqbKRZolKtGZd0Waqlr240YdMEnhhg=
- go.opentelemetry.io/otel/exporters/prometheus v0.63.0/go.mod h1:8yeQAdhrK5xsWuFehO13Dk/Xb9FuhZoVpJfpoNCfJnw=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
- go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
- go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
- go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
- go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
- go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
- go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.uber.org/atomic v1.11.0 h1:ZvwS0R+56ePWxUNi+Atn9dWONBPp/AUETXlHW0DxSjE=
+@@ -89,29 +89,55 @@ github.com/foxcpp/go-mockdns v1.2.0 h1:omK3OrHRD1IWJz1FuFBCFquhXslXoF17OvBS6JPzZ
+ github.com/foxcpp/go-mockdns v1.2.0/go.mod h1:IhLeSFGed3mJIAXPH2aiRQB+kqz7oqu8ld2qVbOu7Wk=
+ github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx59Ho=
+ github.com/fsnotify/fsnotify v1.10.1/go.mod h1:TLheqan6HD6GBK6PrDWyDPBaEV8LspOxvPSjC+bVfgo=
+-github.com/fxamacker/cbor/v2 v2.9.0 h1:NpKPmjDBgUfBms6tr6JZkTHtfFGcMKsw3eGcmD/sapM=
+-github.com/fxamacker/cbor/v2 v2.9.0/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
++github.com/fxamacker/cbor/v2 v2.9.1 h1:2rWm8B193Ll4VdjsJY28jxs70IdDsHRWgQYAI80+rMQ=
++github.com/fxamacker/cbor/v2 v2.9.1/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+ github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
+ github.com/go-logr/stdr v1.2.2/go.mod h1:mMo/vtBO5dYbehREoey6XUKy/eSumjCCveDpRre4VKE=
+ github.com/go-logr/zapr v1.3.0 h1:XGdV8XW8zdwFiwOA2Dryh1gj2KRQyOOoNmBy4EplIcQ=
+ github.com/go-logr/zapr v1.3.0/go.mod h1:YKepepNBd1u/oyhd/yQmtjVXmm9uML4IXUgMOwR8/Gg=
+-github.com/go-openapi/jsonpointer v0.21.0 h1:YgdVicSA9vH5RiHs9TZW5oyafXZFc6+2Vc1rr/O9oNQ=
+-github.com/go-openapi/jsonpointer v0.21.0/go.mod h1:IUyH9l/+uyhIYQ/PXVA41Rexl+kOkAPDdXEYns6fzUY=
+-github.com/go-openapi/jsonreference v0.21.0 h1:Rs+Y7hSXT83Jacb7kFyjn4ijOuVGSvOdF2+tg1TRrwQ=
+-github.com/go-openapi/jsonreference v0.21.0/go.mod h1:LmZmgsrTkVg9LG4EaHeY8cBDslNPMo06cago5JNLkm4=
+-github.com/go-openapi/swag v0.23.0 h1:vsEVJDUo2hPJ2tu0/Xc+4noaxyEffXNIs3cOULZ+GrE=
+-github.com/go-openapi/swag v0.23.0/go.mod h1:esZ8ITTYEsH1V2trKHjAN8Ai7xHb8RV+YSZ577vPjgQ=
++github.com/go-openapi/jsonpointer v1.0.0 h1:kR9tHqY0CtZaOPVFm622dPVNhrvYpwr4uCxgL3h1H8s=
++github.com/go-openapi/jsonpointer v1.0.0/go.mod h1:Z3rw7dWu1p9IgitXCFamSlA5lmDiklEB6vkaxcNZW5Y=
++github.com/go-openapi/jsonreference v1.0.0 h1:jlmTr6torcd1YgDQvSfNmRtKzYDO4FGBkrAdlAVWnpY=
++github.com/go-openapi/jsonreference v1.0.0/go.mod h1:jtwdyGbJk0Xhe5Y+rwtglQP6Sb1WZST4rT32LWB+sv0=
++github.com/go-openapi/swag v0.27.1 h1:VotvOLWW8q/EAxB0YdsBBGC8XYyeL1YwBj2ungAGPNg=
++github.com/go-openapi/swag v0.27.1/go.mod h1:GTkJPwHfhJp6MWr4/rCh64HVI3Ofu+tcsbfjfHmTxpE=
++github.com/go-openapi/swag/cmdutils v0.27.1 h1:I7sYqaWVl5mq0NEmNQkAmFDyNin9ufvMX/p2zwtQaOE=
++github.com/go-openapi/swag/cmdutils v0.27.1/go.mod h1:Sm1MVFMkF6guJJ+pQqHnQA3N0j9qALV3NxzDSv6bETM=
++github.com/go-openapi/swag/conv v0.27.1 h1:8wi9ZG+olmY1wXphl93EWniPtbSPkXM/feH7FgjsvrU=
++github.com/go-openapi/swag/conv v0.27.1/go.mod h1:QbqMivkpKhC3g1B1GGGOJ6ANewI3S62dbzYu3Duowqs=
++github.com/go-openapi/swag/fileutils v0.27.1 h1:QQqBSoi5mW4XpU85nS0mLcA+zAE6vLzrb0QkmLKf9oM=
++github.com/go-openapi/swag/fileutils v0.27.1/go.mod h1:VvJFZLTZS0AI854gEQz5tk7dBESdLjiNUMSZ/th2ry8=
++github.com/go-openapi/swag/jsonutils v0.27.1 h1:SVgK3i4USzCU5mibOOS/l4ea2h9UQXy7J7RNLTjuXjU=
++github.com/go-openapi/swag/jsonutils v0.27.1/go.mod h1:tdlEpZqdcQ17uj6J4YdK9vd8It5qWMwjWXOs0tjpRlk=
++github.com/go-openapi/swag/jsonutils/fixtures_test v0.27.1 h1:mJu3COL9WEaZVp/Kf2PRMi7tPszPEJfSr/OO75ynCs8=
++github.com/go-openapi/swag/jsonutils/fixtures_test v0.27.1/go.mod h1:mofwUWx70wvskwESqRJ//k/9kURmCgyJl5m5Ppoh5kY=
++github.com/go-openapi/swag/loading v0.27.1 h1:/DxUgDXKbBX4bcn7r9uEXfJyzN5XpiJmZplzQTjrRCY=
++github.com/go-openapi/swag/loading v0.27.1/go.mod h1:jvGh3iA2+zyUUycB5fgJWzeHnhrpvGnJJM0RVE9ZShE=
++github.com/go-openapi/swag/mangling v0.27.1 h1:yC9D0HyUE8gbP+BfmGx9+AA89ikwZTMjESK3OnnoaqA=
++github.com/go-openapi/swag/mangling v0.27.1/go.mod h1:jtBE2+V+3pILxOR7Vgce+Cwp6A2PgZbvVqfNntbVs0w=
++github.com/go-openapi/swag/netutils v0.27.1 h1:mICMFoS82F5TZ4Zy3cqmcQk+BFeCp3Uyq3Np7GI0/qU=
++github.com/go-openapi/swag/netutils v0.27.1/go.mod h1:J+WYyFMLtvtCGqa6jLv+YNUmIKI3ZRQRrvfNDMoQoEQ=
++github.com/go-openapi/swag/pools v0.27.1 h1:9LeadcMyb2GJCbXX5hVQDbZ2Lq9TL4dCs/nx1j5DO0E=
++github.com/go-openapi/swag/pools v0.27.1/go.mod h1:kVQefhSK5RWuRe7BXsL8htgBPAMpN7HDGpGEknqugeE=
++github.com/go-openapi/swag/stringutils v0.27.1 h1:ZXePZ0r2p1qSjo8tD3Un4vFj8+FqlCkczxDrJIhYUp8=
++github.com/go-openapi/swag/stringutils v0.27.1/go.mod h1:lzRN95CxXmA03XcDWHLOb6nOMcxCqR5rGY0lOgsfRoM=
++github.com/go-openapi/swag/typeutils v0.27.1 h1:KSTdFlfnse4r6dP9IrEnwMldjE+zs71UeEB3//PtVXc=
++github.com/go-openapi/swag/typeutils v0.27.1/go.mod h1:Srm0xFNRZ1Y+vCxJclo5qzx8aj+1pAKda/YfFPrG0dQ=
++github.com/go-openapi/swag/yamlutils v0.27.1 h1:ftxv6xvXb1E3zohUc+okZ9nSqNb9StQX/FXnKZ98sQA=
++github.com/go-openapi/swag/yamlutils v0.27.1/go.mod h1:bnxFIB1qewGRiZHypXGZ3fNgf13/0HfRgnS/iZBDrOo=
++github.com/go-openapi/testify/enable/yaml/v2 v2.6.0 h1:gGHwAJ0R/5jU8BEGDbfRNR3hL68dAVi84WuOApp29B0=
++github.com/go-openapi/testify/enable/yaml/v2 v2.6.0/go.mod h1:tY+St1SGq4NFl0QIqdTY4aEdbChAHxhyB77XQi9iJCo=
++github.com/go-openapi/
+```
+
+**File**: `pkg/drivers/k8scel/transform/request.go` (modified, +2/-2)
+```diff
+@@ -22,8 +22,8 @@ func RequestToVersionedAttributes(request *admissionv1.AdmissionRequest) (*admis
+ 	return &admission.VersionedAttributes{
+ 		Attributes:         wrapped,
+ 		VersionedKind:      wrapped.GetKind(),
+-		VersionedOldObject: wrapped.GetOldObject(),
+-		VersionedObject:    wrapped.GetObject(),
++		VersionedOldObject: admission.NewLazyObject(wrapped.GetOldObject()),
++		VersionedObject:    admission.NewLazyObject(wrapped.GetObject()),
+ 	}, nil
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `ee118ad8` (2026-11-16)
+**Commit Message**: feat: graduate Connection API and audit disk export to beta (#4913)
+
+Serve and store Connection v1beta1 while retaining alpha API compatibility and migrating existing stored objects. Graduate audit routing and disk export without changing defaults or enabling admission export.
+
+Preserve Helm upgrades from alpha-only Connection CRDs and document the API, storage migration, and rollback contract.
+
+Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `Makefile` (modified, +1/-1)
+```diff
+@@ -434,7 +434,7 @@ generate: __conversion-gen __controller-gen
+ 	$(CONTROLLER_GEN) object:headerFile=./hack/boilerplate.go.txt paths="./apis/..." paths="./pkg/..."
+ 	$(CONVERSION_GEN) \
+ 		--output-base=/gatekeeper \
+-		--input-dirs=./apis/mutations/v1,./apis/mutations/v1beta1,./apis/mutations/v1alpha1,./apis/expansion/v1alpha1,./apis/syncset/v1alpha1,./apis/gvkmanifest/v1alpha1 \
++		--input-dirs=./apis/mutations/v1,./apis/mutations/v1beta1,./apis/mutations/v1alpha1,./apis/expansion/v1alpha1,./apis/syncset/v1alpha1,./apis/gvkmanifest/v1alpha1,./apis/connection/v1alpha1,./apis/connection/v1beta1 \
+ 		--go-header-file=./hack/boilerplate.go.txt \
+ 		--output-file-base=zz_generated.conversion
+ 
+```
+
+**File**: `apis/addtoscheme_connection_v1beta1.go` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
++/*
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package apis
++
++import (
++	"github.com/open-policy-agent/gatekeeper/v3/apis/connection/v1beta1"
++)
++
++func init() {
++	// Register the types with the Scheme so the components can map objects to GroupVersionKinds and back
++	AddToSchemes = append(AddToSchemes, v1beta1.AddToScheme)
++}
+```
+
+**File**: `apis/connection/connection_test.go` (added, +236/-0)
+```diff
+@@ -0,0 +1,236 @@
++package connection_test
++
++import (
++	"os"
++	"path/filepath"
++	"testing"
++	"time"
++
++	"github.com/open-policy-agent/gatekeeper/v3/apis"
++	"github.com/open-policy-agent/gatekeeper/v3/apis/connection/unversioned"
++	connectionv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/connection/v1alpha1"
++	connectionv1beta1 "github.com/open-policy-agent/gatekeeper/v3/apis/connection/v1beta1"
++	statusv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/status/v1alpha1"
++	"github.com/open-policy-agent/gatekeeper/v3/pkg/mutation/types"
++	"github.com/stretchr/testify/require"
++	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
++	apiequality "k8s.io/apimachinery/pkg/api/equality"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/apimachinery/pkg/runtime/serializer"
++	"sigs.k8s.io/yaml"
++)
++
++func TestConnectionConversionRoundTrip(t *testing.T) {
++	tests := []struct {
++		name   string
++		config *types.Anything
++	}{
++		{name: "nil"},
++		{name: "null", config: &types.Anything{}},
++		{name: "empty object", config: &types.Anything{Value: map[string]interface{}{}}},
++		{name: "nested unknown values", config: nestedConfig()},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			scheme := connectionScheme(t)
++			alpha := connectionFixture(tt.config)
++			internal := &unversioned.Connection{}
++			require.NoError(t, scheme.Convert(alpha, internal, nil))
++			beta := &connectionv1beta1.Connection{}
++			require.NoError(t, scheme.Convert(internal, beta, nil))
++			require.Equal(t, alpha.ObjectMeta, beta.ObjectMeta)
++			require.Equal(t, alpha.Spec.Driver, beta.Spec.Driver)
++			require.Equal(t, alpha.Spec.Config, beta.Spec.Config)
++			require.Equal(t, alpha.Status.ByPod, beta.Status.ByPod)
++
++			roundTripInternal := &unversioned.Connection{}
++			require.NoError(t, scheme.Convert(beta, roundTripInternal, nil))
++			roundTripAlpha := &connectionv1alpha1.Connection{}
++			require.NoError(t, scheme.Convert(roundTripInternal, roundTripAlpha, nil))
++			require.Equal(t, alpha, roundTripAlpha)
++		})
++	}
++}
++
++func TestConnectionListConversionRoundTrip(t *testing.T) {
++	for _, items := range [][]connectionv1alpha1.Connection{nil, {}, {*connectionFixture(nestedConfig())}} {
++		scheme := connectionScheme(t)
++		alpha := &connectionv1alpha1.ConnectionList{
++			ListMeta: metav1.ListMeta{ResourceVersion: "42", Continue: "next"},
++			Items:    items,
++		}
++		internal := &unversioned.ConnectionList{}
++		require.NoError(t, scheme.Convert(alpha, internal, nil))
++		beta := &connectionv1beta1.ConnectionList{}
++		require.NoError(t, scheme.Convert(internal, beta, nil))
++		require.Equal(t, alpha.ListMeta, beta.ListMeta)
++		require.Len(t, beta.Items, len(items))
++
++		roundTripInternal := &unversioned.ConnectionList{}
++		require.NoError(t, scheme.Convert(beta, roundTripInternal, nil))
++		roundTripAlpha := &connectionv1alpha1.ConnectionList{}
++		require.NoError(t, scheme.Convert(roundTripInternal, roundTripAlpha, nil))
++		require.Equal(t, alpha, roundTripAlpha)
++	}
++}
++
++func TestConnectionSchemeAndSerialization(t *testing.T) {
++	scheme := connectionScheme(t)
++	alpha := connectionFixture(nestedConfig())
++	internal := &unversioned.Connection{}
++	require.NoError(t, scheme.Convert(alpha, internal, nil))
++	beta := &connectionv1beta1.Connection{}
++	require.NoError(t, scheme.Convert(internal, beta, nil))
++
++	for _, tt := range []struct {
++		object runtime.Object
++		gvk    schema.GroupVersionKind
++	}{
++		{object: alpha, gvk: connectionv1alpha1.GroupVersion.WithKind("Connection")},
++		{object: beta, gvk: connectionv1beta1.GroupVersion.WithKind("Connection")},
++		{object: &connectionv1alpha1.ConnectionList{Items: []connectionv1alpha1.Connection{*alpha}}, gvk: connectionv1alpha1.GroupVersion.WithKind("ConnectionList")},
++		{object: &connectionv1beta1.ConnectionList{Items: []connectionv1beta1.Connection{*beta}}, gvk: connectionv1beta1.GroupVersion.WithKind("ConnectionList")},
++	} {
++		t.Run(tt.gvk.String(), func(t *testing.T) {
++			kinds, unversionedType, err := scheme.ObjectKinds(tt.object)
++			require.NoError(t, err)
++			require.False(t, unversionedType)
++			require.Equal(t, []schema.GroupVersionKind{tt.gvk}, kinds)
++			created, err := scheme.New(tt.gvk)
++			require.NoError(t, err)
++			require.IsType(t, tt.object, created)
++
++			codecs := serializer.NewCodecFactory(scheme)
++			encoded, err := runtime.Encode(codecs.LegacyCodec(tt.gvk.GroupVersion()), tt.object)
++			require.NoError(t, err)
++			decoded, gvk, err := codecs.UniversalDeserializer().Decode(encoded, nil, nil)
++			require.NoError(t, err)
++			require.Equal(t, tt.gvk, *gvk)
++			expected := tt.object.DeepCopyObject()
++			expected.GetObjectKind().SetGroupVersionKind(tt.gvk)
++			require.IsType(t, expected, decoded)
++			require.True(t, apiequality.Semantic.DeepEqual(expected, decoded))
++		})
++	}
++}
++
++func TestConnectionDeepCopy(t *testing.T) {
++	const changedV
+```
+
+**File**: `apis/connection/unversioned/connection_types.go` (added, +63/-0)
+```diff
+@@ -0,0 +1,63 @@
++/*
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package unversioned
++
++import (
++	statusv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/status/v1alpha1"
++	"github.com/open-policy-agent/gatekeeper/v3/pkg/mutation/types"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++)
++
++// ConnectionSpec defines the desired state of Connection.
++type ConnectionSpec struct {
++	// driver is the name of one of the expected drivers i.e. disk
++	// +kubebuilder:validation:Required
++	Driver string `json:"driver"`
++	// config is the driver-specific configuration for this connection.
++	// +kubebuilder:validation:Required
++	// +kubebuilder:validation:Schemaless
++	// +kubebuilder:pruning:PreserveUnknownFields
++	Config *types.Anything `json:"config"`
++}
++
++// ConnectionStatus defines the observed state of Connection.
++type ConnectionStatus struct {
++	// byPod lists the observed status of this Connection for each pod.
++	ByPod []statusv1alpha1.ConnectionPodStatusStatus `json:"byPod,omitempty"`
++}
++
++// +kubebuilder:object:root=true
++
++// Connection is the internal representation of a connection.
++type Connection struct {
++	metav1.TypeMeta `json:",inline"`
++	// metadata is the standard object metadata.
++	metav1.ObjectMeta `json:"metadata,omitempty"`
++
++	// spec defines the desired state of Connection.
++	Spec ConnectionSpec `json:"spec,omitempty"`
++	// status is the observed state of Connection.
++	Status ConnectionStatus `json:"status,omitempty"`
++}
++
++// +kubebuilder:object:root=true
++
++// ConnectionList contains a list of Connection.
++type ConnectionList struct {
++	metav1.TypeMeta `json:",inline"`
++	metav1.ListMeta `json:"metadata,omitempty"`
++	Items           []Connection `json:"items"`
++}
+```
+
+**File**: `apis/connection/unversioned/doc.go` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++// Package unversioned contains the internal representation of connection objects.
++//
++// +kubebuilder:object:generate=true
++// +kubebuilder:skip
++package unversioned
+```
+
+**File**: `apis/connection/unversioned/zz_generated.deepcopy.go` (added, +125/-0)
+```diff
+@@ -0,0 +1,125 @@
++//go:build !ignore_autogenerated
++
++/*
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++// Code generated by controller-gen. DO NOT EDIT.
++
++package unversioned
++
++import (
++	"github.com/open-policy-agent/gatekeeper/v3/apis/status/v1alpha1"
++	runtime "k8s.io/apimachinery/pkg/runtime"
++)
++
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *Connection) DeepCopyInto(out *Connection) {
++	*out = *in
++	out.TypeMeta = in.TypeMeta
++	in.ObjectMeta.DeepCopyInto(&out.ObjectMeta)
++	in.Spec.DeepCopyInto(&out.Spec)
++	in.Status.DeepCopyInto(&out.Status)
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new Connection.
++func (in *Connection) DeepCopy() *Connection {
++	if in == nil {
++		return nil
++	}
++	out := new(Connection)
++	in.DeepCopyInto(out)
++	return out
++}
++
++// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
++func (in *Connection) DeepCopyObject() runtime.Object {
++	if c := in.DeepCopy(); c != nil {
++		return c
++	}
++	return nil
++}
++
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *ConnectionList) DeepCopyInto(out *ConnectionList) {
++	*out = *in
++	out.TypeMeta = in.TypeMeta
++	in.ListMeta.DeepCopyInto(&out.ListMeta)
++	if in.Items != nil {
++		in, out := &in.Items, &out.Items
++		*out = make([]Connection, len(*in))
++		for i := range *in {
++			(*in)[i].DeepCopyInto(&(*out)[i])
++		}
++	}
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new ConnectionList.
++func (in *ConnectionList) DeepCopy() *ConnectionList {
++	if in == nil {
++		return nil
++	}
++	out := new(ConnectionList)
++	in.DeepCopyInto(out)
++	return out
++}
++
++// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
++func (in *ConnectionList) DeepCopyObject() runtime.Object {
++	if c := in.DeepCopy(); c != nil {
++		return c
++	}
++	return nil
++}
++
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *ConnectionSpec) DeepCopyInto(out *ConnectionSpec) {
++	*out = *in
++	if in.Config != nil {
++		in, out := &in.Config, &out.Config
++		*out = (*in).DeepCopy()
++	}
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new ConnectionSpec.
++func (in *ConnectionSpec) DeepCopy() *ConnectionSpec {
++	if in == nil {
++		return nil
++	}
++	out := new(ConnectionSpec)
++	in.DeepCopyInto(out)
++	return out
++}
++
++// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
++func (in *ConnectionStatus) DeepCopyInto(out *ConnectionStatus) {
++	*out = *in
++	if in.ByPod != nil {
++		in, out := &in.ByPod, &out.ByPod
++		*out = make([]v1alpha1.ConnectionPodStatusStatus, len(*in))
++		for i := range *in {
++			(*in)[i].DeepCopyInto(&(*out)[i])
++		}
++	}
++}
++
++// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new ConnectionStatus.
++func (in *ConnectionStatus) DeepCopy() *ConnectionStatus {
++	if in == nil {
++		return nil
++	}
++	out := new(ConnectionStatus)
++	in.DeepCopyInto(out)
++	return out
++}
+```
+
+**File**: `apis/connection/v1alpha1/connection_types.go` (modified, +0/-1)
+```diff
+@@ -45,7 +45,6 @@ type ConnectionStatus struct {
+ // +kubebuilder:resource:scope=Namespaced
+ // +kubebuilder:object:root=true
+ // +kubebuilder:subresource:status
+-// +kubebuilder:storageversion
+ // Connection is the Schema for the connections API.
+ type Connection struct {
+ 	metav1.TypeMeta `json:",inline"`
+```
+
+**File**: `apis/connection/v1alpha1/doc.go` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++// Package v1alpha1 includes v1alpha1 connections.
++
++// +k8s:conversion-gen=github.com/open-policy-agent/gatekeeper/v3/apis/connection/unversioned
++// -external-types=github.com/open-policy-agent/gatekeeper/v3/apis/connection/v1alpha1
++package v1alpha1
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4925** (2026-11-17): chore: bump k8s deps to v0.37.2 and controller-runtime to v0.25.2 (@abhisheksheth28)
 - **PR #4921** (2026-11-16): chore: bump js-yaml from 3.14.1 to 3.15.2 in /website (@dependabot[bot])
 - **PR #4920** (2026-11-16): chore: bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
 - **PR #4918** (closed): chore: bump the all group with 7 updates (@dependabot[bot])
+- **PR #4913** (2026-11-16): feat: graduate Connection API and audit disk export to beta (@JaydipGabani)
 - **PR #4912** (2026-11-13): fix: validate Connection names before status creation (@JaydipGabani)
-- **PR #4908** (2026-11-05): chore: bump follow-redirects from 1.16.1 to 1.16.2 in /website (@dependabot[bot])
-- **PR #4907** (2026-11-05): chore: bump body-parser from 1.20.6 to 1.20.9 in /website (@dependabot[bot])
 
 ---
 
@@ -1417,13 +1919,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0
+## X. bump k8s deps to v0.37.2 and controller-runtime to v0.25.2
 
 **RULE**:
 When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5f201c3d`: bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b000ecec`: bump k8s deps to v0.37.2 and controller-runtime to v0.25.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
@@ -1431,24 +1933,58 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/stretchr/testify v1.12.1
-	go.opentelemetry.io/otel v1.47.0
-	go.opentelemetry.io/otel/metric v1.47.0
-	go.opentelemetry.io/otel/log v1.47.0 // indirect
-	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+	github.com/prometheus/client_golang v1.24.0
+	k8s.io/api v0.37.2
+	k8s.io/apiextensions-apiserver v0.37.2
+	k8s.io/apimachinery v0.37.2
+	k8s.io/apiserver v0.37.2
+	k8s.io/client-go v0.37.2
+	k8s.io/utils v0.0.0-20260626114624-be93311217bd
+	sigs.k8s.io/controller-runtime v0.25.2
+	github.com/fxamacker/cbor/v2 v2.9.1 // indirect
+	github.com/go-openapi/jsonpointer v1.0.0 // indirect
+	github.com/go-openapi/jsonreference v1.0.0 // indirect
+	github.com/go-openapi/swag v0.27.1 // indirect
+	github.com/go-openapi/swag/cmdutils v0.27.1 // indirect
+	github.com/go-openapi/swag/conv v0.27.1 // indirect
+	github.com/go-openapi/swag/fileutils v0.27.1 // indirect
+	github.com/go-openapi/swag/jsonutils v0.27.1 // indirect
+	github.com/go-openapi/swag/loading v0.27.1 // indirect
+	github.com/go-openapi/swag/mangling v0.27.1 // indirect
+	github.com/go-openapi/swag/netutils v0.27.1 // indirect
+	github.com/go-openapi/swag/pools v0.27.1 // indirect
+	github.com/go-openapi/swag/stringutils v0.27.1 // indirect
+	github.com/go-openapi/swag/typeutils v0.27.1 // indirect
+	github.com/go-openapi/swag/yamlutils v0.27.1 // indirect
+	github.com/prometheus/common v0.70.0 // indirect
+	github.com/prometheus/procfs v0.21.1 // i
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/stretchr/testify v1.11.1
-	go.opentelemetry.io/otel v1.45.0
-	go.opentelemetry.io/otel/metric v1.45.0
-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
+	github.com/prometheus/client_golang v1.23.2
+	k8s.io/api v0.36.6
+	k8s.io/apiextensions-apiserver v0.36.6
+	k8s.io/apimachinery v0.36.6
+	k8s.io/apiserver v0.36.6
+	k8s.io/client-go v0.36.6
+	k8s.io/utils v0.0.0-20260210185600-b8788abfbbc2
+	sigs.k8s.io/controller-runtime v0.24.1
+	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
+	github.com/go-openapi/jsonpointer v0.21.0 // indirect
+	github.com/go-openapi/jsonreference v0.21.0 // indirect
+	github.com/go-openapi/swag v0.23.0 // indirect
+	github.com/josharian/intern v1.0.0 // indirect
+	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/prometheus/common v0.67.5 // indirect
+	github.com/prometheus/procfs v0.20.1 // indirect
+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.65.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f201c3d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b000ecec` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

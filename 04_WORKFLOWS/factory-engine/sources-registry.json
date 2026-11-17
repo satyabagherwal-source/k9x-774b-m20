@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T17:28:12.156Z",
-    "lastVerified": "2026-11-17T17:28:12.156Z",
+    "lastChecked": "2026-11-17T17:36:55.322Z",
+    "lastVerified": "2026-11-17T17:36:55.322Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -154,8 +154,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-17T17:02:36.033Z",
-    "lastVerified": "2026-11-17T17:02:36.033Z",
+    "lastChecked": "2026-11-17T17:36:48.696Z",
+    "lastVerified": "2026-11-17T17:36:48.696Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -634,14 +634,14 @@
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-16T18:27:11.543Z",
-    "lastVerified": "2026-11-16T18:27:11.543Z",
+    "lastChecked": "2026-11-17T17:36:48.362Z",
+    "lastVerified": "2026-11-17T17:36:48.362Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-gatekeeper",
-    "contentHash": "faed9a5296d5879fccdcac81f1e228545ac7a58e815b41d67451ab14035ec346",
+    "contentHash": "8780100db7e962f3d55589b4add70d8e3efbd621e60e7fcb694330fca667f7fd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1135,9 +1135,9 @@
   "influxdata-influxdb": {
     "name": "influxdb",
     "officialUrl": "https://github.com/influxdata/influxdb",
-    "lastChecked": "2026-11-16T16:00:08.558Z",
+    "lastChecked": "2026-11-17T17:36:46.459Z",
     "revisionIdentifier": "185688a5",
-    "lastVerified": "2026-11-16T16:00:08.558Z"
+    "lastVerified": "2026-11-17T17:36:46.459Z"
   },
   "burntsushi-ripgrep": {
     "name": "ripgrep",
@@ -2519,22 +2519,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T13:29:50.947Z",
-    "lastVerified": "2026-11-17T13:29:50.947Z",
+    "lastChecked": "2026-11-17T17:36:51.165Z",
+    "lastVerified": "2026-11-17T17:36:51.165Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "720f849a7818f7fc77852a9f377d75c773909e4cce38fc724b9b13e1938a3a9f",
+    "contentHash": "0a266536445a7d2736ce7d6e6c97e47053f202576fc0548d68e09da7977ce3d5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a33d49c4"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -4140,9 +4139,9 @@
   "gorhom-react-native-bottom-sheet": {
     "name": "react-native-bottom-sheet",
     "officialUrl": "https://github.com/gorhom/react-native-bottom-sheet",
-    "lastChecked": "2026-11-14T05:31:31.837Z",
+    "lastChecked": "2026-11-17T17:36:38.872Z",
     "revisionIdentifier": "9bfbeb52",
-    "lastVerified": "2026-11-14T05:31:31.837Z"
+    "lastVerified": "2026-11-17T17:36:38.872Z"
   },
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
@@ -8089,9 +8088,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-16T03:23:11.161Z",
+    "lastChecked": "2026-11-17T17:36:33.762Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-16T03:23:11.162Z"
+    "lastVerified": "2026-11-17T17:36:33.762Z"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -13714,12 +13713,12 @@
     "officialUrl": "https://huggingface.co/Comfy-Org/Fibo-2.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T06:20:26.254Z",
-    "lastVerified": "2026-11-13T06:20:26.254Z",
+    "lastChecked": "2026-11-17T17:36:36.309Z",
+    "lastVerified": "2026-11-17T17:36:36.309Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-    "contentHash": "b602c78e67d3185f3b5daa04a6ee151d5f67e703320f599b628ebc5a0a5302f9",
+    "contentHash": "9e9c79a403c76088d00cdb7e799a64235f663592552ecb853cfe5a9863fb7a0c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

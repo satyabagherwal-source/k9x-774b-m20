@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T17:11:38.120Z",
+  "updated_at": "2026-11-17T17:36:56.917Z",
   "stats": {
-    "total_discovered": 5068,
-    "approved_pending_harvest": 4779,
+    "total_discovered": 5070,
+    "approved_pending_harvest": 4781,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4766,
+      "COMMUNITY_AND_EXPERT": 4768,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -109494,6 +109494,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
         "fileName": "arxanas-git-branchless-learnings.md"
+      }
+    },
+    "SRC-ED6C7AFDE975": {
+      "id": "SRC-ED6C7AFDE975",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:36:56.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-E7C4203DA29E": {
+      "id": "SRC-E7C4203DA29E",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:36:56.917Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
       }
     }
   }

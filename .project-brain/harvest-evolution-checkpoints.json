@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T17:28:13.855Z",
+  "last_updated": "2026-11-17T17:36:57.680Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -148,7 +148,7 @@
       "staged_for_review": 0
     },
     "aleo-labs-protocol-snarkos-learnings.md": {
-      "processed_at": "2026-11-17T06:20:46.450Z",
+      "processed_at": "2026-11-17T17:36:56.749Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1588,8 +1588,8 @@
       "staged_for_review": 1
     },
     "hf-comfy-org-fibo-2.0-learnings.md": {
-      "processed_at": "2026-11-13T06:21:14.009Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T17:36:55.504Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "stikdebug-stikdebug-learnings.md": {
@@ -2938,7 +2938,7 @@
       "staged_for_review": 0
     },
     "open-policy-agent-gatekeeper-learnings.md": {
-      "processed_at": "2026-11-16T18:27:23.251Z",
+      "processed_at": "2026-11-17T17:36:55.957Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3348,7 +3348,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1647,
+  "total_dossiers_evaluated": 1650,
   "total_canonical_promoted": 323,
-  "total_staged_for_review": 1292
+  "total_staged_for_review": 1294
 }
