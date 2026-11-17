@@ -10549,3 +10549,5 @@ Every entry in this ledger must capture:
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `1c614e7d` | Multi-dimensional audit evidence | 2026-11-17T09:22:25.882Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `4d6a58e6` | Multi-dimensional audit evidence | 2026-11-17T09:23:12.665Z |
 | `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `b6eaa4ef` | Multi-dimensional audit evidence | 2026-11-17T09:27:23.354Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `7dd4de40` | Multi-dimensional audit evidence | 2026-11-17T09:47:33.336Z |
+| `learn-dom-h-13452896` | `project://starrocks-starrocks` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md` | 2026-11-17T09:48:06.368Z |

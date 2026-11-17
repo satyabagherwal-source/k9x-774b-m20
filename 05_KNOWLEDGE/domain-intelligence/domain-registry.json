@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T09:27:28.957Z",
-  "total_records": 1515,
+  "last_updated": "2026-11-17T09:48:08.651Z",
+  "total_records": 1516,
   "domains": {
     "A": {
       "total": 9,
@@ -1013,7 +1013,7 @@
       ]
     },
     "H": {
-      "total": 362,
+      "total": 363,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1376,7 +1376,8 @@
         "DOM-H-A32D66BE",
         "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants",
         "domain_intelligence-technical-construction-intelligence-apache-zookeeper-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria",
+        "DOM-H-13452896"
       ]
     },
     "I": {
@@ -7330,8 +7331,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "19d9c2278334998808bb593ce24adaaf85de8349ea411e39353c83d992847f1c",
-      "created_at": "2026-11-17T08:09:43.102Z"
+      "content_hash": "9443957e8cedff5038c5f1bee4dd5c093a9b74a05d467169e38bbf35fc179c87",
+      "created_at": "2026-11-17T09:48:07.918Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -16076,8 +16077,8 @@
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "repository": "StarRocks/starrocks",
-      "content_hash": "1a8fcce7108832288798fe981074dd80660b19d9f7cef4fb4c83afddc37818b3",
-      "created_at": "2026-11-16T01:32:58.132Z"
+      "content_hash": "c7bc0cf4ec45de8004a056d987ed96ce16c4a64ff429c2d830db12a678e2a02e",
+      "created_at": "2026-11-17T09:47:33.967Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
@@ -16154,8 +16155,8 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-learnings-technical-construction-intelligence-starrocks-star.md",
       "repository": "starrocks-starrocks-learnings",
-      "content_hash": "eb97117d350b4960e1d975c2a853224b91583a284bf64e408603513fff305857",
-      "created_at": "2026-11-16T01:33:01.829Z"
+      "content_hash": "52c200a618e9e24aa0e722c6fd916625bf87dd56f168077118712cbd99a3b91a",
+      "created_at": "2026-11-17T09:48:07.036Z"
     },
     "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
@@ -22686,8 +22687,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "c74a0745d7383a55e76ec4e34d5a2c3e45d4cfe30698d33accba9bb1f18d7ed1",
-      "created_at": "2026-11-17T03:08:06.647Z"
+      "content_hash": "8bb9422bf7a3de8a1253d9c3c5dffb8fd8d3e7688d50bde91188dde4285bb0fa",
+      "created_at": "2026-11-17T09:48:08.651Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -26398,6 +26399,40 @@
       "repository": "citusdata/citus",
       "content_hash": "eacba3d5b4fd3c662f9a6d125ea1fbaf82594be6985d8faf6e3a0399c4cfeeec",
       "created_at": "2026-11-17T09:22:26.270Z"
+    },
+    "DOM-H-13452896": {
+      "record_id": "DOM-H-13452896",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Engineering Pattern: Pipeline Execution Engine",
+      "content": "Pipeline Execution Engine",
+      "content_hash": "f60b6597d1f373df7cd6131fc2d3581aebdd5e4323a638cad0f33b00490453c6",
+      "summary": "Pipeline Execution Engine -> Pipeline Execution Engine",
+      "provenance": {
+        "source_uri": "project://starrocks-starrocks/starrocks-starrocks-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17",
+        "author_or_entity": "AI-Builder-Brain Project Learning (starrocks-starrocks)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of starrocks-starrocks"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T09:48:06.342Z"
     }
   }
 }

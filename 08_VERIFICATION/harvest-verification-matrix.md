@@ -10516,3 +10516,5 @@
 | `CYCLE-20261117-HNTI` | `2026-11-17T09:22:25.878Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8943` | Yes (`e250e023...`) |
 | `CYCLE-20261117-INX0` | `2026-11-17T09:23:12.660Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8944` | Yes (`2d401162...`) |
 | `CYCLE-20261117-O1CM` | `2026-11-17T09:27:23.350Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8945` | Yes (`0f8fd127...`) |
+| `CYCLE-20261117-DYZ8` | `2026-11-17T09:47:33.332Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8946, Rule 8947, Rule 8948` | Yes (`8de6e941...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T09:48:06.368Z` | `starrocks-starrocks` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-13452896` [Domain H] | Yes (`f60b6597...`) |

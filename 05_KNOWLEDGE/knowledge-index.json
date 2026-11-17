@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T09:27:29.127Z",
+  "last_updated": "2026-11-17T09:48:08.951Z",
   "total_verified_learnings": 8875,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20067,
+  "total_items": 20073,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba7c3ebe932a4faad9c89f85652d793457d308fc3251314e275fac290d70c98f",
+      "content_hash": "1a0663e746342147a7eadc8a88aadde780f601320c8c535ada888bbea2aa2ffd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T03:08:06.763Z"
+      "persisted_at": "2026-11-17T09:48:08.814Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "73afa25fd3fc5582d457ac8a5dbfab080ef59d9d1b6dda311d14624aef0e8b99",
+      "content_hash": "f9b78faa64604e5a3971f45e7f395e770142d0ca8eee8bebd02b448f04e2686a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:08:06.868Z"
+      "persisted_at": "2026-11-17T09:48:08.951Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "19d9c2278334998808bb593ce24adaaf85de8349ea411e39353c83d992847f1c",
+      "content_hash": "9443957e8cedff5038c5f1bee4dd5c093a9b74a05d467169e38bbf35fc179c87",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T08:09:43.102Z"
+      "persisted_at": "2026-11-17T09:48:07.918Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "95c962db10e7030dda61876652cdfe2a27e01d2ecb1d0f7cbda4c95787d112ce",
+      "content_hash": "888f81079f136d79ccbacf9aa09ef18d9e699ee31719004c423d0a75340ddb2f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:09:43.223Z"
+      "persisted_at": "2026-11-17T09:48:08.091Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214906,13 +214906,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-W5DY-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EPIQ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "60274f611da34ce0e82adc1251a0e3a76edc160bc49cfc347b0ab2460a698807",
+      "content_hash": "24247eb329f8963257730c00a027247b3bd6a6b14d44c49994a35e2edef074aa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T08:09:42.989Z"
+      "persisted_at": "2026-11-17T09:48:07.743Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -231564,8 +231564,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "6895756f",
-      "content_hash": "8ed6e559a818509ff47b745c18c0b1c54547f1ed07947391ee7f4efc0ca62455",
+      "source_version": "7dd4de40",
+      "content_hash": "8de6e9419384b57d718f984090d6f33d5665553ec671f4a45b2fe4fe783b49a1",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -231578,6 +231578,21 @@
           "number": 8682,
           "title": "[BugFix] Send the per-session token for Iceberg REST catalogs using security=jwt",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8946,
+          "title": "Cross-Language JNI Reference Scoping and Thread-Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8947,
+          "title": "AST/Visitor Default Base Traversal Stack-Termination Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8948,
+          "title": "Numerical Serialization Output Buffer Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231585,7 +231600,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T01:32:57.747Z",
+      "verified_at": "2026-11-17T09:47:33.112Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231627,10 +231642,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "repository": "StarRocks/starrocks",
-      "source_version": "6895756f",
-      "content_hash": "1a8fcce7108832288798fe981074dd80660b19d9f7cef4fb4c83afddc37818b3",
+      "source_version": "7dd4de40",
+      "content_hash": "c7bc0cf4ec45de8004a056d987ed96ce16c4a64ff429c2d830db12a678e2a02e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T01:32:58.132Z"
+      "persisted_at": "2026-11-17T09:47:33.967Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks",
@@ -231639,10 +231654,10 @@
       "relative_path": "08_VERIFICATION/starrocks-starrocks-verification-protocol-empirical-defect-shield-for-starrocks-.md",
       "title": "Verification Protocol: Empirical Defect Shield for StarRocks/starrocks",
       "repository": "StarRocks/starrocks",
-      "source_version": "6895756f",
-      "content_hash": "26d4341c0b866e60c4c94587af9577561f0982dfdb3a1c025dbc40ff9f3b93be",
+      "source_version": "7dd4de40",
+      "content_hash": "b955711ad8ac6f12d1ad130b1218594f4522c99ec4d69e075bea7f98571fa92c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T01:32:58.224Z"
+      "persisted_at": "2026-11-17T09:47:34.103Z"
     },
     "learn-huggingface-autotrust-jev-27b-vl": {
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
@@ -231739,9 +231754,9 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb97117d350b4960e1d975c2a853224b91583a284bf64e408603513fff305857",
+      "content_hash": "52c200a618e9e24aa0e722c6fd916625bf87dd56f168077118712cbd99a3b91a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T01:33:01.829Z"
+      "persisted_at": "2026-11-17T09:48:07.036Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings",
@@ -231751,9 +231766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for starrocks-starrocks-learnings",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ad0aa84117158ff7c92d361decdee6bc5adc3d82372cec84098a5a4ee21b169",
+      "content_hash": "7e047f272ffba6c55e57c50a14eba85526349dcd59cd8b47948c8f67c95309bb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T01:33:01.921Z"
+      "persisted_at": "2026-11-17T09:48:07.328Z"
     },
     "learn-github-oven-sh-bun": {
       "learning_id": "learn-github-oven-sh-bun",
@@ -251117,13 +251132,13 @@
       "item_id": "candidate_directive-engine-detect-uv-run-script-shebangs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-4A2R-engine-detect-uv-run-script-shebangs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EQ4D-engine-detect-uv-run-script-shebangs.md",
       "title": "engine): detect uv run script shebangs",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac30b8fe0b58c49f26a0752529ce7e026f630c1d06922304967215f2a356380c",
+      "content_hash": "ae604c0b819b283f68dd667993101cd538336a649c014d361ff893f0c2db3b61",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T03:08:06.531Z"
+      "persisted_at": "2026-11-17T09:48:08.510Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -251133,9 +251148,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c74a0745d7383a55e76ec4e34d5a2c3e45d4cfe30698d33accba9bb1f18d7ed1",
+      "content_hash": "8bb9422bf7a3de8a1253d9c3c5dffb8fd8d3e7688d50bde91188dde4285bb0fa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T03:08:06.647Z"
+      "persisted_at": "2026-11-17T09:48:08.651Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -268538,6 +268553,84 @@
       "content_hash": "d50622843bd78733ae916b5bc81455c5afd4e2364102b058a70fa749dc34df02",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T09:27:28.805Z"
+    },
+    "rule-8946": {
+      "learning_id": "rule-8946",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8946,
+      "title": "Cross-Language JNI Reference Scoping and Thread-Boundary Invariant",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "7dd4de40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T09:47:33.112Z"
+    },
+    "rule-8947": {
+      "learning_id": "rule-8947",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8947,
+      "title": "AST/Visitor Default Base Traversal Stack-Termination Invariant",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "7dd4de40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T09:47:33.112Z"
+    },
+    "rule-8948": {
+      "learning_id": "rule-8948",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8948,
+      "title": "Numerical Serialization Output Buffer Boundary Invariant",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "7dd4de40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T09:47:33.112Z"
+    },
+    "candidate_directive-cross-language-jni-reference-scoping-and-thread-boundary-invariant": {
+      "item_id": "candidate_directive-cross-language-jni-reference-scoping-and-thread-boundary-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EOMV-cross-language-jni-reference-scoping-and-thread-boundary-invariant.md",
+      "title": "Cross-Language JNI Reference Scoping and Thread-Boundary Invariant",
+      "repository": "starrocks-starrocks-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a1a41ee3e6e58b49892ea84df7c172b6487017617753e73afacb9499f8806cf2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T09:48:06.585Z"
+    },
+    "candidate_directive-ast-visitor-default-base-traversal-stack-termination-invariant": {
+      "item_id": "candidate_directive-ast-visitor-default-base-traversal-stack-termination-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EOMV-ast-visitor-default-base-traversal-stack-termination-invariant.md",
+      "title": "AST/Visitor Default Base Traversal Stack-Termination Invariant",
+      "repository": "starrocks-starrocks-learnings",
+      "source_version": "HEAD",
+      "content_hash": "50bf949946a59df1dc29570f36502a986589f4b1a65fd8fba02887544f2f0790",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T09:48:06.753Z"
+    },
+    "candidate_directive-numerical-serialization-output-buffer-boundary-invariant": {
+      "item_id": "candidate_directive-numerical-serialization-output-buffer-boundary-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EOMW-numerical-serialization-output-buffer-boundary-invariant.md",
+      "title": "Numerical Serialization Output Buffer Boundary Invariant",
+      "repository": "starrocks-starrocks-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c32268da920ba16e1d1f721edd9d453b81eec74d770758a2a05341651815e077",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T09:48:06.893Z"
     }
   },
   "ai-builder-brain": {

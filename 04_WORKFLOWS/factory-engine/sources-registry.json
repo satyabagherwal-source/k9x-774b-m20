@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T09:27:26.613Z",
-    "lastVerified": "2026-11-17T09:27:26.613Z",
+    "lastChecked": "2026-11-17T09:47:36.819Z",
+    "lastVerified": "2026-11-17T09:47:36.819Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -257,8 +257,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T08:30:04.230Z",
-    "lastVerified": "2026-11-17T08:30:04.230Z",
+    "lastChecked": "2026-11-17T09:45:22.185Z",
+    "lastVerified": "2026-11-17T09:45:22.185Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1413,8 +1413,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T03:41:57.839Z",
-    "lastVerified": "2026-11-17T03:41:57.839Z",
+    "lastChecked": "2026-11-17T09:45:17.168Z",
+    "lastVerified": "2026-11-17T09:45:17.168Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -5642,8 +5642,8 @@
     "officialUrl": "https://github.com/infracost/infracost",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-16T02:44:29.168Z",
-    "lastVerified": "2026-11-16T02:44:29.168Z",
+    "lastChecked": "2026-11-17T09:45:14.685Z",
+    "lastVerified": "2026-11-17T09:45:14.685Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infracost-infracost",
@@ -5665,9 +5665,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-11-15T20:08:41.621Z",
+    "lastChecked": "2026-11-17T09:45:07.178Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-11-15T20:08:41.621Z"
+    "lastVerified": "2026-11-17T09:45:07.178Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -6587,14 +6587,14 @@
     "officialUrl": "https://github.com/StarRocks/starrocks",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-16T01:32:57.195Z",
-    "lastVerified": "2026-11-16T01:32:57.195Z",
+    "lastChecked": "2026-11-17T09:45:24.314Z",
+    "lastVerified": "2026-11-17T09:45:24.314Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "8ed6e559a818509ff47b745c18c0b1c54547f1ed07947391ee7f4efc0ca62455",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "contentHash": "8de6e9419384b57d718f984090d6f33d5665553ec671f4a45b2fe4fe783b49a1",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13034,9 +13034,9 @@
   "alecxe-scrapy-fake-useragent": {
     "name": "scrapy-fake-useragent",
     "officialUrl": "https://github.com/alecxe/scrapy-fake-useragent",
-    "lastChecked": "2026-11-12T22:33:20.697Z",
+    "lastChecked": "2026-11-17T09:45:09.662Z",
     "revisionIdentifier": "371254aa",
-    "lastVerified": "2026-11-12T22:33:20.697Z"
+    "lastVerified": "2026-11-17T09:45:09.662Z"
   },
   "iliyami-macsai": {
     "name": "MacSai",
@@ -13457,12 +13457,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "krishhgg-insomnia": {
-    "name": "krishhgg/Insomnia",
+    "name": "Insomnia",
     "officialUrl": "https://github.com/krishhgg/Insomnia",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-13T19:52:53.884Z",
-    "lastVerified": "2026-11-13T19:52:53.884Z",
+    "lastChecked": "2026-11-17T09:45:12.139Z",
+    "lastVerified": "2026-11-17T09:45:12.139Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krishhgg-insomnia",
@@ -13471,7 +13471,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3f474ff2"
   },
   "hf-lodestones-moss-image-sft-8-steps-dmd": {
     "name": "lodestones/MOSS-Image-SFT-8-steps-dmd",

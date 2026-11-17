@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T09:27:23.361Z",
-  "total_cycles_completed": 10081,
-  "total_learnings_persisted": 10081,
-  "total_rules_promoted": 9682,
+  "last_updated": "2026-11-17T09:47:33.341Z",
+  "total_cycles_completed": 10082,
+  "total_learnings_persisted": 10082,
+  "total_rules_promoted": 9685,
   "history": [
-    {
-      "timestamp": "2026-11-16T15:51:08.508Z",
-      "repository": "0xCUB3/wBlock",
-      "learningId": "learn-github-0xcub3-wblock",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T15:51:12.619Z",
       "repository": "cilium/cilium",
@@ -1403,6 +1396,13 @@
       "repository": "NervJS/taro",
       "learningId": "learn-github-nervjs-taro",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T09:47:33.341Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
