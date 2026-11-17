@@ -3,7 +3,7 @@
 > **Source Version**: `hf-facebook-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:02:16.178Z  
+> **Timestamp**: 2026-11-17T07:20:02.720Z  
 > **Learning ID**: `learn-huggingface-facebook-sam-3d-body-dinov3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/facebook/sam-3d-body-dinov3](https://huggingface.co/facebook/sam-3d-body-dinov3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:01:59.093Z  
+> **Harvest Timestamp**: 2026-11-17T07:20:02.624Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 14473 downloads | 1076 likes
+- **Stars / Engagement**: 16078 downloads | 1297 likes
 
 ---
 

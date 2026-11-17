@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-17T06:47:45.489Z",
+  "updated_at": "2026-11-17T07:20:46.790Z",
   "statistics": {
-    "total_nodes": 296,
-    "total_edges": 151,
+    "total_nodes": 297,
+    "total_edges": 152,
     "domain_distribution": {
       "D": 222,
       "M": 1,
-      "H": 30,
+      "H": 31,
       "J": 12,
       "K": 13,
       "L": 4,
@@ -20,7 +20,7 @@
       "I": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 150,
+      "CONSTRAINED_BY_ARCHITECTURE": 151,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -6642,6 +6642,29 @@
       ],
       "created_at": "2026-11-17T06:47:45.489Z",
       "updated_at": "2026-11-17T06:47:45.489Z"
+    },
+    "DOM-H-F8265FBB": {
+      "id": "DOM-H-F8265FBB",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "react): document the declaring file, and fail on a missing export",
+      "summary": "Prevents defects observed in production commit `b7a138cf`: react): document the declaring file, and fail on a missing export. Unvalidated ex -> When implementing operations in `code/renderers/react/src/componentManifest/getComponentImports.ts`, engineers MUST enforce rigorous boundar",
+      "confidence": 0.81,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://storybookjs-storybook/storybookjs-storybook-learnings.md",
+        "source_version": "5aea8b6a",
+        "observed_at": "2026-11-17T07:20:09.186Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (storybookjs-storybook)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-17T07:20:46.790Z",
+      "updated_at": "2026-11-17T07:20:46.790Z"
     }
   },
   "edges": [
@@ -8154,6 +8177,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-7AD63040 [H] with Domain G",
       "created_at": "2026-11-17T03:42:29.450Z"
+    },
+    {
+      "id": "EDGE-CCA1D24E617B",
+      "sourceId": "DOM-H-F8265FBB",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-F8265FBB [H] with Domain G",
+      "created_at": "2026-11-17T07:20:46.790Z"
     }
   ]
 }

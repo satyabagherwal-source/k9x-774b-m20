@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T07:06:54.508Z",
+  "last_updated": "2026-11-17T07:20:19.595Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "2e54951cda9c142250d2d5b53c75a3e6b763e0bd2611aa9a30501928a68e4a0d",
-      "verified_at": "2026-11-17T03:16:04.779Z",
+      "content_hash": "d8cf873c8778e59d3e419f78c566e6b6b1cc179ebb966371c35c67942691c59e",
+      "verified_at": "2026-11-17T07:20:19.595Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:16:04.779Z"
+      "last_updated": "2026-11-17T07:20:19.595Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -15456,14 +15456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-storybookjs-storybook",
-      "content_hash": "ae1bfdc3908fad183dc3067bbb72d308cfe09de12e1d08aafdfb21a1c82cdcb7",
-      "verified_at": "2026-11-13T18:05:59.243Z",
+      "content_hash": "7393efc93792d2229e11a01fb971d0f4dbc5cb63ba7472f1736c05065727bb38",
+      "verified_at": "2026-11-17T07:20:10.014Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T18:05:59.243Z"
+      "last_updated": "2026-11-17T07:20:10.014Z"
     },
     "enaqx/awesome-react": {
       "repository": "enaqx/awesome-react",
@@ -18681,14 +18681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-sam-3d-body-dinov3",
-      "content_hash": "cc5aeb88b697480d3dbaa63f4d6e51045a602ca20f898124c7df9ddada63266b",
-      "verified_at": "2026-11-12T21:02:16.607Z",
+      "content_hash": "e7764f574f5ce0415090edb814a76487afafd1a031b18a3b0331299d08a5e487",
+      "verified_at": "2026-11-17T07:20:03.072Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:02:16.607Z"
+      "last_updated": "2026-11-17T07:20:03.072Z"
     },
     "agentes-chat/agentes-chat": {
       "repository": "agentes-chat/agentes-chat",

@@ -10473,3 +10473,7 @@
 | `CYCLE-20261117-MQ0A` | `2026-11-17T07:06:23.914Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8898` | Yes (`3c2c28cb...`) |
 | `CYCLE-20261117-MSKU` | `2026-11-17T07:06:27.246Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | Yes (`86df9b1d...`) |
 | `CYCLE-20261117-NDLQ` | `2026-11-17T07:06:54.494Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8899` | Yes (`98c35604...`) |
+| `CYCLE-20261117-4A2D` | `2026-11-17T07:20:03.061Z` | `facebook/sam-3d-body-dinov3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md` | Yes (`e7764f57...`) |
+| `CYCLE-20261117-4FF9` | `2026-11-17T07:20:10.005Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8900` | Yes (`7393efc9...`) |
+| `CYCLE-20261117-4MTD` | `2026-11-17T07:20:19.585Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8901` | Yes (`d8cf873c...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T07:20:46.792Z` | `storybookjs-storybook` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F8265FBB` [Domain H] | Yes (`082c5a41...`) |

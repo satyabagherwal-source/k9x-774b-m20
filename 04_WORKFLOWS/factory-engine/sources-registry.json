@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T07:06:57.622Z",
-    "lastVerified": "2026-11-17T07:06:57.622Z",
+    "lastChecked": "2026-11-17T07:20:22.589Z",
+    "lastVerified": "2026-11-17T07:20:22.589Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -310,14 +310,14 @@
     "officialUrl": "https://github.com/storybookjs/storybook",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-13T18:05:58.647Z",
-    "lastVerified": "2026-11-13T18:05:58.647Z",
+    "lastChecked": "2026-11-17T07:20:09.182Z",
+    "lastVerified": "2026-11-17T07:20:09.182Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "ae1bfdc3908fad183dc3067bbb72d308cfe09de12e1d08aafdfb21a1c82cdcb7",
+    "contentHash": "7393efc93792d2229e11a01fb971d0f4dbc5cb63ba7472f1736c05065727bb38",
     "promotedRulesCount": 1,
-    "recentFixesCount": 12,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -432,12 +432,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "openziti-zrok": {
-    "name": "openziti/zrok",
+    "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-17T01:54:44.789Z",
-    "lastVerified": "2026-11-17T01:54:44.789Z",
+    "lastChecked": "2026-11-17T07:20:10.155Z",
+    "lastVerified": "2026-11-17T07:20:10.155Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -446,7 +446,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0c23df62"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -467,22 +468,21 @@
     "revisionIdentifier": "99d7433f"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T06:28:28.743Z",
-    "lastVerified": "2026-11-17T06:28:28.743Z",
+    "lastChecked": "2026-11-17T07:20:18.765Z",
+    "lastVerified": "2026-11-17T07:20:18.765Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "2e54951cda9c142250d2d5b53c75a3e6b763e0bd2611aa9a30501928a68e4a0d",
+    "contentHash": "d8cf873c8778e59d3e419f78c566e6b6b1cc179ebb966371c35c67942691c59e",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8f730054"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -4969,9 +4969,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-16T00:45:12.968Z",
+    "lastChecked": "2026-11-17T07:20:07.664Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-16T00:45:12.968Z"
+    "lastVerified": "2026-11-17T07:20:07.664Z"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -4983,9 +4983,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-11-15T17:22:37.777Z",
+    "lastChecked": "2026-11-17T07:20:00.181Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-11-15T17:22:37.777Z"
+    "lastVerified": "2026-11-17T07:20:00.181Z"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "name": "deepseek-ai/DeepSeek-V4-Pro",
@@ -5856,8 +5856,8 @@
     "officialUrl": "https://github.com/sqlpage/SQLPage",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T23:49:55.938Z",
-    "lastVerified": "2026-11-15T23:49:55.938Z",
+    "lastChecked": "2026-11-17T07:20:12.725Z",
+    "lastVerified": "2026-11-17T07:20:12.725Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqlpage-sqlpage",
@@ -15234,12 +15234,12 @@
     "officialUrl": "https://huggingface.co/facebook/sam-3d-body-dinov3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-12T21:01:59.093Z",
-    "lastVerified": "2026-11-12T21:01:59.093Z",
+    "lastChecked": "2026-11-17T07:20:02.624Z",
+    "lastVerified": "2026-11-17T07:20:02.624Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
-    "contentHash": "cc5aeb88b697480d3dbaa63f4d6e51045a602ca20f898124c7df9ddada63266b",
+    "contentHash": "e7764f574f5ce0415090edb814a76487afafd1a031b18a3b0331299d08a5e487",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

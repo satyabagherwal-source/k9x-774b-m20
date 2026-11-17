@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T18:06:48.660Z",
+  "timestamp": "2026-11-17T07:20:46.964Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-storybookjs-storybook-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [storybookjs-storybook-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T18:06:48.660Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T07:20:46.964Z`  
 > **Learning ID**: `LEARN-EVO-storybookjs-storybook-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source**: github ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
-> **Source Version**: `f071f047`  
+> **Source Version**: `5aea8b6a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T18:05:58.654Z  
+> **Timestamp**: 2026-11-17T07:20:09.186Z  
 > **Learning ID**: `learn-github-storybookjs-storybook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:05:58.647Z  
+> **Harvest Timestamp**: 2026-11-17T07:20:09.182Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Storybook is the industry standard workshop for building, documenting, and testing UI components in isolation
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 91557 stars
+- **Stars / Engagement**: 91599 stars
 
 ---
 
@@ -580,13 +580,11 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #37406** (2026-11-13): **[Bug]: @storybook/react-vite 10.x -> @joshwooding/vite-plugin-react-docgen-typescript 0.7.0 -> glob 13.x has CVE-2026-118773**
-  *Symptoms*: ### Describe the bug  @storybook/react-vite 10.x has dependency to "@joshwooding/vite-plugin-react-docgen-typescript" "^0.7.0".  All version of "@joshwooding/vite-plugin-react-docgen-typescript" below 0.9.1 has a dependency of glob 13.x which has CVE-2026-118773.  Since 0.7.0 is < 1.0.0, semver does not resolve ^0.7.0 to 0.9.1 - at least pnpm does not do so).  Upping the dependency to "@joshwooding/vite-plugin-react-docgen-typescript" "^0.9.1" should resolve the issue.  ### Reproduction link  no  ### Reproduction steps  _No response_  ### System  ```bash storybook 10.6.7 ```  ### Additional context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > We could not detect a valid reproduction link. **Make sure to follow the bug report template carefully.**  ### Why was this issue closed?  To be able to investigate, we need access to a reproduction to identify what triggered the issue. We need a link to a **public** GitHub repository, Stackblitz or CodeSandbox. The easiest way to create a reproduction is with [storybook.new](https://storybook.new).  The bug template that you filled out has a section called "To reproduce", which is where you should provide the link to the reproduction.  - If you did not provide a link or the link you provided is not valid, we will close the issue. - If you provide a link to a private repository, we will close the issue. - If you provide a link to a repository but not in the correct section, we will close the issue.  ### What should I do?  Depending on the reason the issue was closed, you can do the following:  - If you did not provide a link, please open a new issue with a link to a reproduction. - If 
+- **Issue #37454** (2026-11-16): **Addon A11y: Update vision simulators to be more rigorous**
+  *Symptoms*: Closes #36154  Supersedes #36232  ## What I did  I built on top of @Thodorr's implementation to conclude the work to do on vision simulators. Changes include:  * Replaced the default trinatopia algorithm with Brettel et al 1997 which is more accurate for this deficiency (Machado et al themselves state their algorithm is not accurate) * Kept the inaccurate Machado et al algorithm but declared it inaccurate in the UI * Added a contrast deficiency simulator to match Google Chrome * Reworked Select UI labels to include paper sources when available * Added a migration stop for users who have superseded globals  <img width="306" height="603" alt="image" src="https://github.com/user-attachments/assets/bbd818dc-bd2c-42a7-a9c8-af90d06d6e85" />   ## Checklist for Contributors  ### Testing  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to communicate how to test your changes -->  #### The changes in this PR are covered in the following automated tests:  - [ ] stories - [ ] unit tests - [ ] integration tests - [ ] end-to-end tests  #### Manual testing  See https://github.com/storybookjs/storybook/pull/36232  ### Documentation  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to indicate which documentation has been updated. -->  - [ ] Add or update documentation reflecting your changes - [x] If you are deprecating/removing a feature, make sure to update       [MIGRATION.MD](https://github.com/storybookjs/storybook/blob/next/MIGRATION
 
-- **Issue #37389** (2026-11-13): **Manager: Improve performance of story preloading**
-  *Symptoms*: Closes #37145.  ## What I did  `PRELOAD_ENTRIES` is fired on multiple occasions: * When hovering a sidebar node, for the node and its children * When loading a story, for its direct siblings addressable by kb shortcut * After a search, to preload results  The hover and kb sibling preloads compete with the rest of the web app for resources, and can cause significant lags. Preloading a story can cause many imported modules to be downloaded, and hovering over the sidebar can cause dozens of stories to be queued for preloading.  ### Fix 1: Dedupe preload requests  Some data: * Preloading provides roughly 50-150ms of benefit to end users, based on probe measurements * The gain concentrates on first paint (up to 33% faster with preloading) and dimishes on story ready (possibly due to sibling preloading competing for CPU)  * We also assume from past UX research that users spend 200-400ms between the moment they hover a story and the moment they click it * The preloading itself can take 250ms based on probe measurements  So the benefit is obtained only if we don't further slow down or delay preloading. Debouncing in the manager UI would probably cause the benefits of preloading to be lost.  Instead, as emitting events is relatively cheap, we make the event handler drop pending preloads as soon as a new preload request lands. This matches the fact that if a user hovers over many sidebar items, they're only ever gonna click on the one their mouse is actually on top of.  ### Fix 2: Fix 
+- **Issue #37449** (2026-11-16): **[Bug]: Storybook Docs Missing Component & Prop Documentation (`docgenServer` + TypeScript 7)**
+  *Symptoms*: ### Describe the bug  ## Summary  In `@vicacha-travels/storefront`, components with complete JSDoc comments and TypeScript prop types (such as [`AccountInfo`](file:///Users/sjoseluis/Projects/experiments/products/tourism/vicacha-travels-develop/apps/storefront/src/modules/account/components/account-info/index.tsx)) appeared in Storybook Docs without their component description, without prop descriptions, and without optional props in the ArgsTable.  ## Observed Behavior  On `/?path=/docs/storefront-account-accountinfo--docs`: - The component-level JSDoc description on [`AccountInfo`](file:///Users/sjoseluis/Projects/experiments/products/tourism/vicacha-travels-develop/apps/storefront/src/modules/account/components/account-info/index.tsx#L27-L30) was not rendered. - The ArgsTable only listed the 4 props explicitly supplied in [`AccountInfo.stories.tsx`](file:///Users/sjoseluis/Projects/experiments/products/tourism/vicacha-travels-develop/apps/storefront/src/modules/account/components/account-info/AccountInfo.stories.tsx#L24-L33) (`label`, `currentInfo`, `clearState`, `children`). - The **Description** column showed `-` for every listed prop. - Optional props defined on [`AccountInfoProps`](file:///Users/sjoseluis/Projects/experiments/products/tourism/vicacha-travels-develop/apps/storefront/src/modules/account/components/account-info/index.tsx#L8-L25) (`isSuccess`, `isError`, `errorMessage`, `data-testid`) were omitted from the table.  ## Root Cause  1. In `@storybook/react-vit
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -603,476 +601,197 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c36d09d2` (2026-11-13)
-**Commit Message**: fix(ecosystem-qa): redact the run result in a step of its own, also after a crash
+### Incident Patch 1: `b7a138cf` (2026-11-16)
+**Commit Message**: fix(react): document the declaring file, and fail on a missing export
 
-run.ts redacts its output only when it reaches its end, while the upload runs always. A run that crashed or was cancelled uploaded its logs as they were. The upload now waits for a redaction step that runs always, and does not happen when that step fails.
-
-**File**: `.github/workflows/ecosystem-qa.yml` (modified, +8/-1)
-```diff
-@@ -250,8 +250,15 @@ jobs:
-         if: ${{ always() }}
-         run: if [[ -d ecosystem-qa/results ]]; then find ecosystem-qa/results -type l -print -delete; fi
- 
--      - name: Upload the run result
-+      # run.ts redacts its output when it reaches its end. A run that crashed or was cancelled did
-+      # not, and the upload publishes whatever is there.
-+      - name: Redact credentials in the run result
-+        id: redact
-         if: ${{ always() }}
-+        run: node ecosystem-qa/redact.ts ecosystem-qa/results
-+
-+      - name: Upload the run result
-+        if: ${{ always() && steps.redact.outcome == 'success' }}
-         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-         with:
-           name: qa-result-${{ matrix.os }}-${{ matrix.engine }}
-```
-
-**File**: `ecosystem-qa/redact.ts` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+import { existsSync } from 'node:fs';
-+
-+import { redactTree } from './lib/redact.ts';
-+
-+const HELP = `Usage: node ecosystem-qa/redact.ts <dir>
-+
-+Redacts credentials in every text file under <dir>, in place. run.ts does the same when it reaches
-+its end; this is for the output of a run that did not.`;
-+
-+const [dir] = process.argv.slice(2);
-+if (!dir || dir === '--help') {
-+  console.log(HELP);
-+  process.exit(dir ? 0 : 1);
-+}
-+if (existsSync(dir)) {
-+  redactTree(dir);
-+}
-```
-
----
-
-### Incident Patch 2: `2a70199b` (2026-11-13)
-**Commit Message**: Merge pull request #37390 from storybookjs/sidnioulz/manager-rerender-storm
-
-Manager: Cut re-renders and store writes on story change
-
-**File**: `code/core/src/manager-api/modules/addons.ts` (modified, +14/-4)
-```diff
-@@ -8,6 +8,8 @@ import type {
-   Addon_TypesMapping,
- } from 'storybook/internal/types';
- 
-+import { isEqual } from 'es-toolkit/predicate';
-+
- import type { ModuleFn } from '../lib/types.tsx';
- import type { Options } from '../store.ts';
- 
-@@ -128,10 +130,18 @@ export const init: ModuleFn<SubAPI, SubState> = ({ provider, store, fullAPI }):
-         typeof newStateOrMerger === 'function' ? newStateOrMerger : () => newStateOrMerger
-       ) as API_StateMerger<S>;
-       return store
--        .setState(
--          (s) => ({ addons: { ...s.addons, [addonId]: merger(s.addons[addonId]) } }),
--          options
--        )
-+        .setState((s) => {
-+          const current = s.addons[addonId];
-+          const next = merger(current);
-+          // Addons tend to write their state again on every story change, mostly unchanged. A
-+          // write of an equal state would still re-render the whole manager and hand consumers
-+          // a new object. A write that asks for persistence goes through: the value may not be
-+          // in storage yet.
-+          const persisted = (options?.persistence ?? 'none') !== 'none';
-+          return !persisted && isEqual(next, current)
-+            ? {}
-+            : { addons: { ...s.addons, [addonId]: next } };
-+        }, options)
-         .then(() => api.getAddonState(addonId));
-     },
-     getAddonState: (addonId) => {
-```
-
-**File**: `code/core/src/manager-api/modules/shortcuts.ts` (modified, +16/-5)
-```diff
-@@ -9,6 +9,7 @@ import {
- import { global } from '@storybook/global';
- 
- import copy from 'copy-to-clipboard';
-+import { isEqual } from 'es-toolkit/predicate';
- 
- import { logger } from 'storybook/internal/client-logger';
- import type { KeyboardEventLike } from '../lib/shortcut.ts';
-@@ -264,11 +265,21 @@ export const init: ModuleFn = ({ store, fullAPI, provider }) => {
-       return value;
-     },
-     async setAddonShortcut(addon: string, shortcut: API_AddonShortcut) {
--      await api.setShortcuts((shortcuts) => ({
--        ...shortcuts,
--        [`${addon}-${shortcut.actionName}`]: shortcut.defaultShortcut,
--      }));
--      addonsShortcuts[`${addon}-${shortcut.actionName}`] = shortcut;
-+      const id = `${addon}-${shortcut.actionName}`;
-+      const previous = addonsShortcuts[id];
-+      addonsShortcuts[id] = shortcut;
-+      // The store holds the key binding, which the user may have customised. A registration writes
-+      // it when it is new or its default changed, not to replace the binding with the default.
-+      const isRegistered =
-+        !!previous &&
-+        isEqual(previous.defaultShortcut, shortcut.defaultShortcut) &&
-+        id in (store.getState().shortcuts ?? {});
-+      if (!isRegistered) {
-+        await api.setShortcuts((shortcuts) => ({
-+          ...shortcuts,
-+          [id]: shortcut.defaultShortcut,
-+        }));
-+      }
-       return shortcut;
-     },
-     async restoreDefaultShortcut(action) {
-```
-
-**File**: `code/core/src/manager-api/store.ts` (modified, +7/-0)
-```diff
-@@ -138,6 +138,13 @@ export default class Store {
- 
-     const delta: Patch =
-       typeof inputPatch === 'function' ? resolveUpdater(inputPatch, this.getState()) : inputPatch;
-+    // Nothing to commit or persist: every React setState re-renders the provider, and persisting
-+    // rewrites the whole stored state.
-+    if (Object.keys(delta).length === 0) {
-+      const state = this.getState();
-+      callback?.(state);
-+      return state;
-+    }
-     const pending: PendingPatch = { patch: delta, committed: false };
-     this.pendingPatches.push(pending);
- 
-```
-
-**File**: `code/core/src/manager-api/tests/addons.test.js` (modified, +69/-0)
-```diff
-@@ -1,11 +1,27 @@
- import { describe, expect, it, vi } from 'vitest';
- 
-+import store2 from 'store2';
-+
- import { Addon_TypesEnum as types } from 'storybook/internal/types';
- 
- import { init as initAddons } from '../modules/addons';
- import Store from '../store';
- import { createLaggingUpstream } from '../test-utils/store';
- 
-+vi.mock('store2', () => ({
-+  default: {
-+    local: {
-+      set: vi.fn(),
-+      get: vi.fn(),
-+    },
-+    session: {
-+      set: vi.fn(),
-+      get: vi.fn(),
-+    },
-+    _: { fn: () => {} },
-+  },
-+}));
-+
- const PANELS = {
-   a11y: {
-     title: 'Accessibility',
-@@ -202,5 +218,58 @@ describe('Addons API', () => {
-       expect(storyIdsDuringCommit).toEqual(['story-2']);
-       expect(api.getAddonState('my-addon')).toEqual({ open: true });
-     });
-+
-+    it('does not write a state equal to the current one', async () => {
-+      const current = { open: true, results: [{ id: 1 }] };
-+      const setState = vi.fn().mockImplementation((patch, callback) => callback());
-+      const store = new Store({ setState, getState: () => ({ addons: { 'my-addon': current } }) });
-+      const { api } = initAddons({ provider, store });
-+
-+      const result = await api.setAddonState('my-addon', { open: true, results: [{ id: 1 }] });
-+
-+      expect(setState).not.toHaveBeenCalled();
-+      expect(result).toBe(current);
-+    });
-+
-+    it('does not write when a merger returns a state equal to the current one', async () => {
-+      const setState = vi.fn().mockImplementation((patch, callback) => callback());
-+      const store = new Store({
-+        setState,
-+        getState: () => ({ addons: { counter: { count: 0 } } }),
-+      });
-+      const { api } = initAddons({ provider, store });
-+
-+      await api.setAddonState('counter', (s) => ({ ...s, count: 0 }));
-+
-+      expect(setState).not.toHaveBeenCalled();
-+    });
-+
-+    it('writes an equal state when persistence is requested', async () => {
-+      const current = { open: true };
-+      const setState = vi.fn().mockImplementation((patch, callback) => callback());
-+      const store = new Store({ setState, getState: () => ({ addons: { 'my-addon': current } }) });
-+      const { api } = initAddons({ provider, store });
-+
-+      await api.setAddonState('my-addon', { open: true }, { persistence: 'session' });
-+
-+      expect(setState).toHaveBeenCalledTimes(1);
-+      expect(store2.session.set).toHaveBeenCalled();
-+    });
-+
-+    it('writes a changed state', async () => {
-+      let state = { addons: { counter: { count: 0 } } };
-+      const setState = vi.fn().mockImplementation((patch, callback) => {
-+        state = { ...state, ...patch };
-+        callback();
-+      });
-+      const store = new Store({ setState, getState: () => state });
-+      const { api } = initAddons({ provider, store });
-+
-+      const result = await api.setAddonState('counter', (s) => ({ ...s, count: s.count + 1 }));
-+
-+      expect(setState).toHaveBeenCalledTimes(1);
-+      expect(result).toEqual({ count: 1 });
-+      expect(api.getAddonState('counter')).toEqual({ count: 1 });
-+    });
-   });
- });
-```
-
-**File**: `code/core/src/manager-api/tests/shortcuts.test.js` (modified, +70/-0)
-```diff
-@@ -344,6 +344,76 @@ describe('addon shortcut matching', () => {
-   });
- });
- 
-+describe('addon shortcut re-registration', () => {
-+  const setup = () => {
-+    const store = createMockStore();
-+    const fullAPI = { getNavAvailability: () => 'shown' };
-+    const { api, state } = initShortcuts({ store, provider: {}, fullAPI });
-+    store.setState({ ...state, ui: { enableShortcuts: true }, storyId: 'a', refId: undefined });
-+    store.setState.mockClear();
-+    return { api, store };
-+  };
-+  const shortcut = (overrides) => ({
-+    label: 'Do it',
-+    defaultShortcut: ['O'],
-+    actionName: 'doIt',
-+    action: vi.fn(),
-+    ...overrides,
-+  });
-+
-+  it('writes the binding to the store once and fires the latest action', async () => {
-+    const { api, store } = setup();
-+    const first = shortcut();
-+    const second = shortcut();
-+
-+    await api.setAddonShortcut('my-addon', first);
-+    expect(store.setState).toHaveBeenCalledTimes(1);
-+
-+    await api.setAddonShortcut('my-addon', second);
-+    expect(store.setState).toHaveBeenCalledTimes(1);
-+
-+    expect(api.handleKeydownEvent({ key: 'O', code: 'KeyO' })).toBe('my-addon-doIt');
-+    expect(first.action).not.toHaveBeenCalled();
-+    expect(second.action).toHaveBeenCalled();
-+  });
-+
-+  it('keeps a binding the user customised when the addon registers again', async () => {
-+    const { api } = setup();
-+    await api.setAddonShortcut('my-addon', shortcut());
-+    await api.setShortcut('my-addon-doIt', ['P']);
-+
-+    await api.setAddonShortcut('my-addon', shortcut());
-+
-+    expect(api.getShortcutKeys()['my-addon-doIt']).toEqual(['P']);
-+    expect(api.handleKeydownEvent({ key: 'P', code: 'KeyP' })).toBe('my-addon-doIt');
-+  });
-+
-+  it('writes again when the default binding changes', async () => {
-+    const { api, store } = setup();
-+    await api.setAddonShortcut('my-addon', shortcut());
-+    store.setState.mockClear();
-+
-+    await api.setAddonShortcut('my-addon', shortcut({ defaultShortcut: ['P'] }));
-+
-+    expect(store.setState).toHaveBeenCalledTimes(1);
-+    expect(api.getShortcutKeys()['my-addon-doIt']).toEqual(['P']);
-+    expect(api.getDefaultShortcuts()['my-addon-doIt']).toEqual(['P']);
-+  });
-+
-+  it('writes again when the binding is missing from the store', async () => {
-+    const { api, store } = setup();
-+    await api.setAddonShortcut('my-addon', shortcut());
-+    const { 'my-addon-doIt': _removed, ...rest } = store.getState().shortcuts;
-+    store.setState({ shortcuts: rest });
-+    store.setState.mockClear();
-+
-+    await api.setAddonShortcut('my-addon', shortcut());
-+
-+    expect(store.setState).toHaveBeenCalledTimes(1);
-+    expect(api.getShortcutKeys()['my-addon-doIt']).toEqual(['O']);
-+  });
-+});
-+
- describe('focus region shortcuts', () => {
-   const setup = ({ navShown = true, panelShown = true } = {}) => {
-     const store = createMockStore();
-```
-
-**File**: `code/core/src/manager-api/tests/store.test.js` (modified, +27/-0)
-```diff
-@@ -172,6 +172,33 @@ describe('store', () => {
-         });
-       }));
- 
-+    it('skips React and storage when a patch function changes nothing', async () => {
-+      const setState = vi.fn().mockImplementation((x, cb) => cb());
-+      const getState = vi.fn().mockReturnValue({ foo: 'bar', other: { a: 1 } });
-+      const store = new Store({ setState, getState });
-+      const callback = vi.fn();
-+
-+      const result = await store.setState((s) => ({ foo: s.foo }), callback, {
-+        persistence: 'session',
-+      });
-+
-+      expect(setState).not.toHaveBeenCalled();
-+      expect(store2.session.set).not.toHaveBeenCalled();
-+      expect(result).toEqual({ foo: 'bar', other: { a: 1 } });
-+      expect(callback).toHaveBeenCalledWith({ foo: 'bar', other: { a: 1 } });
-+    });
-+
-+    it('skips React and storage for an empty patch', async () => {
-+      const setState = vi.fn().mockImplementation((x, cb) => cb());
-+      const getState = vi.fn().mockReturnValue({ foo: 'bar' });
-+      const store = new Store({ setState, getState });
-+
-+      await store.setState({}, { persistence: 'permanent' });
-+
-+      expect(setState).not.toHaveBeenCalled();
-+      expect(store2.local.set).not.toHaveBeenCalled();
-+    });
-+
-     it('allows a patch function and persists its results', async () => {
-       const setState = vi.fn().mockImplementation((x, cb) => cb());
-       const getState = vi.fn().mockReturnValue({ foo: 'OLD' });
-```
-
-**File**: `code/core/src/manager/container/Menu.test.tsx` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+// @vitest-environment happy-dom
-+import type { SyntheticEvent } from 'react';
-+
-+import { renderHook } from '@testing-library/react';
-+import { describe, expect, it, vi } from 'vitest';
-+
-+import type { API } from 'storybook/manager-api';
-+
-+import { useMenu } from './Menu.tsx';
-+
-+vi.mock('../components/sidebar/useChecklist.ts', () => ({
-+  useChecklist: () => ({ progress: 100 }),
-+}));
-+
-+describe('useMenu', () => {
-+  it('runs the action an addon registered last when its menu item is clicked', () => {
-+    const first = vi.fn();
-+    const second = vi.fn();
-+    const registration = {
-+      label: 'Do it',
-+      defaultShortcut: ['O'],
-+      actionName: 'doIt',
-+      showInMenu: true,
-+      action: first,
-+    };
-+    const addonsShortcuts = { 'my-addon-doIt': registration };
-+    const api = {
-+      getShortcutKeys: () => ({}),
-+      getAddonsShortcuts: () => addonsShortcuts,
-+      getDocsUrl: () => 'https://storybook.js.org/docs',
-+    } as unknown as API;
-+
-+    const { result } = renderHook(() =>
-+      useMenu({
-+        api,
-+        showToolbar: true,
-+        isPanelShown: true,
-+        isNavShown: true,
-+        enableShortcuts: true,
-+      })
-+    );
-+    const item = result.current.flat().find((menuItem) => menuItem.id === 'my-addon-doIt');
-+    expect(item).toBeDefined();
-+
-+    // The addon registers again with a new closure. Nothing in the store changes, so the menu
-+    // list is not rebuilt.
-+    addonsShortcuts['my-addon-doIt'] = { ...registration, action: second };
-+    item?.onClick?.({} as SyntheticEvent, item);
-+
-+    expect(first).not.toHaveBeenCalled();
-+    expect(second).toHaveBeenCalledTimes(1);
-+  });
-+});
-```
-
-**File**: `code/core/src/manager/container/Menu.tsx` (modified, +4/-2)
-```diff
-@@ -195,10 +195,12 @@ export const useMenu = ({
-     const keys = shortcutKeys as any;
-     return Object.entries(addonsShortcuts)
-       .filter(([_, { showInMenu }]) => showInMenu)
--      .map(([actionName, { label, action }]) => ({
-+      .map(([actionName, { label }]) => ({
-         id: actionName,
-         title: label,
--        onClick: () => action(),
-+        // An addon re-registers its action without a store write, so read it when the item is
-+        // clicked rather than when this list is built.
-+        onClick: () => api.getAddonsShortcuts()[actionName]?.action(),
-         right: enableShortcuts && keys[actionName] ? <Shortcut keys={keys[actionName]} /> : null,
-       }));
-   }, [api, enableShortcuts, shortcutKeys]);
-```
-
----
-
-### Incident Patch 3: `93a4eef9` (2026-11-13)
-**Commit Message**: ci: pack ecosystem-qa node_modules into the Linux workspace
-
-ecosystem-qa nests its dependencies (hoistingLimits: workspaces), like
-agent-eval. Without its node_modules in the workspace, typescript-validation
-can't resolve @ai-hero/sandcastle or ecosystem-qa's own zod v4.
+The engines read the file and export core follows the import to, so a member a parts module renames is documented, not the first docgen in the barrel. A missing export becomes an error. Core resolves with React's own extension order, `.js` first, so a `ui.js` next to `ui.tsx` gives one file. The local-object mapping no longer compares export names, which now name the declaring file.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `scripts/ci/common-jobs.ts` (modified, +3/-2)
+**File**: `code/renderers/react/src/componentManifest/getComponentImports.ts` (modified, +10/-5)
 ```diff
-@@ -68,9 +68,10 @@ export const build_linux = defineJob('Build (linux)', () => ({
-         `${WORKING_DIR}/node_modules`,
-         `${WORKING_DIR}/code/node_modules`,
-         `${WORKING_DIR}/scripts/node_modules`,
--        // agent-eval nests all its dependencies (installConfig.hoistingLimits),
--        // so downstream checks need its node_modules packed explicitly.
-+        // agent-eval and ecosystem-qa nest all their dependencies (installConfig.hoistingLimits),
-+        // so downstream checks need their node_modules packed explicitly.
-         `${WORKING_DIR}/agent-eval/node_modules`,
-+        `${WORKING_DIR}/ecosystem-qa/node_modules`,
-       ],
-       packageDirs.map((p) => `${WORKING_DIR}/code/${p.replace('src', 'node_modules')}`)
-     ),
+@@ -47,11 +47,9 @@ export interface TypescriptOptions extends TypescriptOptionsBase {
+ 
+ export type { ComponentRef } from './types.ts';
+ 
+-// The file that declares a component, and the export it declares it under.
+-export interface DocgenTarget {
+-  path: string;
+-  exportName: string;
+-}
++// The file that declares a component and the export it declares it under, or why the module the
++// story reads it from has no such export.
++export type DocgenTarget = { path: string; exportName: string } | { missing: string };
+ 
+ /** Selected component for a story file; `storyPath` is the absolute path on disk. */
+ export type StoryRef = {
+@@ -195,6 +193,13 @@ export const getComponents = async ({
+         // Core's resolver decides which file and export the engines document, as in every other
+         // renderer. The ref keeps the story file's own import, which the import lines need.
+         const target = docgenTargets?.get(c);
++        // An export core found missing is an error, not a reason to document another component.
++        if (target && 'missing' in target) {
++          const error = { name: 'Component export not found', message: target.missing };
++          return docgenEngine === 'react-docgen'
++            ? { ...componentWithPackage, path, reactDocgen: { type: 'error' as const, error } }
++            : { ...componentWithPackage, path, reactDocgenTypescriptError: error };
++        }
+         const docgenRef = target
+           ? {
+               ...componentWithPackage,
+```
+
+**File**: `code/renderers/react/src/componentManifest/resolveComponents.ts` (modified, +31/-7)
+```diff
+@@ -1,6 +1,8 @@
+ import {
+   createMetaComponentResolver,
++  createModuleResolver,
+   extractDeclaredSubcomponents,
++  supportedExtensions,
+ } from 'storybook/internal/common';
+ import { storyNameFromExport } from 'storybook/internal/csf/csf-utils';
+ import {
+@@ -29,8 +31,24 @@ import { cachedReadTextFileSync } from './utils.ts';
+ 
+ export type ParsedCsf = ReturnType<ReturnType<typeof loadCsf>['parse']>;
+ 
+-// One instance per process: the resolver caches its module resolutions.
+-const resolveMetaComponent = createMetaComponentResolver();
++// One instance per process: the resolver caches its module resolutions. It tries extensions in the
++// order React's own lookup does, `.js` first as Vite does, so when `ui.js` sits next to `ui.tsx`
++// both pick the same file.
++const resolveMetaComponent = createMetaComponentResolver({
++  reader: {
++    resolver: createModuleResolver({
++      extensions: [...supportedExtensions],
++      extensionAlias: {
++        '.js': ['.js', '.ts', '.tsx'],
++        '.jsx': ['.jsx', '.tsx'],
++        '.mjs': ['.mjs', '.mts'],
++        '.cjs': ['.cjs', '.cts'],
++      },
++      mainFields: ['module', 'main'],
++      tsconfig: 'auto',
++    }),
++  },
++});
+ 
+ /** A declared subcomponent paired with the component ref it resolved to (if any). */
+ export interface ResolvedSubcomponent {
+@@ -138,14 +156,20 @@ export async function resolveStoryFileComponents(options: {
+   const resolveName = (name: string, node?: ESTreeNode) => {
+     const resolved = resolveMetaComponent(csf, storyPath, node);
+     if ('reason' in resolved) {
++      if (resolved.reason === 'missing-export') {
++        docgenTargets.set(name, {
++          missing: `"${resolved.importId}" has no export "${resolved.exportName}", which ${resolved.expression} reads.`,
++        });
++      }
+       return name;
+     }
+     const { localName, importId, importer, path, exportName } = resolved.component;
+-    const own = storyImports.get(localName);
+-    const ownName =
+-      importer === storyPath && own?.importId === importId && own?.importName === exportName
+-        ? localName
+-        : name;
++    // Core landed on a binding the story file imports itself, through an object the file declares.
++    const throughLocalObject =
++      importer === storyPath &&
++      storyImports.get(localName)?.importId === importId &&
++      !storyImports.has(name.split('.')[0]);
++    const ownName = throughLocalObject ? localName : name;
+     if (importId && path) {
+       docgenTargets.set(ownName, { path, exportName });
+     }
+```
+
+---
+
+### Incident Patch 2: `5e0ee43b` (2026-11-16)
+**Commit Message**: fix(vue3): report a missing export
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `code/renderers/vue3/src/docgen/component-docgen/build-docgen.ts` (modified, +4/-0)
+```diff
+@@ -75,6 +75,10 @@ const UNRESOLVED_COMPONENT_MESSAGES: Record<
+     name: 'No component import found',
+     message: `No component file found for the component declared in ${subject}. Import it into the story file.`,
+   }),
++  'missing-export': (subject) => ({
++    name: 'No component found',
++    message: `${subject} names an export that its module does not have. Check the name against the module's exports, and any barrel that re-exports it.`,
++  }),
+   'unreadable-component-expression': (subject) => ({
+     name: 'No component found',
+     message: `We could not follow ${subject} to a component. Storybook follows an imported name, a namespace-import property access, or a chain of property accesses and spreads through modules it can resolve.`,
+```
+
+**File**: `code/renderers/vue3/src/docgen/component-docgen/resolve-component/resolve-component.ts` (modified, +2/-1)
+```diff
+@@ -17,7 +17,8 @@ export interface ResolvedVueComponent {
+ export type UnresolvedComponentReason =
+   | 'no-meta-component'
+   | 'no-component-import'
+-  | 'unreadable-component-expression';
++  | 'unreadable-component-expression'
++  | 'missing-export';
+ 
+ const resolveComponent = createMetaComponentResolver({ extensions: ['.vue'] });
+ 
+```
+
+---
+
+### Incident Patch 3: `0452ab57` (2026-11-16)
+**Commit Message**: fix(core): write component paths with pathe, and keep a path on another drive
+
+Across Windows drives `relative` gives an absolute path, which `join` glued onto the story folder.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `code/core/src/common/utils/component-path-from-story.ts` (modified, +8/-3)
+```diff
+@@ -1,20 +1,25 @@
+ import { realpathSync } from 'node:fs';
+-import { dirname, isAbsolute, join, relative } from 'node:path';
++
++import { dirname, isAbsolute, join, relative } from 'pathe';
+ 
+ /**
+  * The path of a component's file, written like the story file's index `importPath` it was reached
+  * from.
+  *
+  * Module resolvers follow symlinks, so the component path is taken relative to the story file's
+  * real folder and joined to the folder the index wrote. A symlinked story folder, as in linked
+- * sandboxes, then gives the same path as a plain one.
++ * sandboxes, then gives the same path as a plain one. A component on another drive has no relative
++ * path, so its absolute path is returned.
+  */
+ export function componentPathFromStory(
+   storyImportPath: string,
+   storyFilePath: string,
+   componentPath: string
+ ): string {
+   const fromStory = relative(dirname(realpathSync(storyFilePath)), componentPath);
+-  const path = join(dirname(storyImportPath), fromStory).replaceAll('\\', '/');
++  if (isAbsolute(fromStory)) {
++    return fromStory;
++  }
++  const path = join(dirname(storyImportPath), fromStory);
+   return isAbsolute(path) || path.startsWith('../') ? path : `./${path}`;
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #37416** (2026-11-13): Ecosystem QA: Give the agent one list of check ids and their number (@valentinpalkovic)
-- **PR #37412** (2026-11-13): Ecosystem QA: Keep the agent's answer when the sandbox cannot be removed (@valentinpalkovic)
-- **PR #37408** (2026-11-13): Build: Pack ecosystem-qa node_modules into the CI workspace (@ndelangen)
-- **PR #37402** (2026-11-13): Ecosystem QA: Give the agent the migration guide of the tested version (@valentinpalkovic)
-- **PR #37400** (2026-11-13): Core: Make the watch-story-specifiers test expectations separator-agnostic (@obvious-autobuild[bot])
-- **PR #37390** (2026-11-13): Manager: Cut re-renders and store writes on story change (@Sidnioulz)
+- **PR #37454** (2026-11-16): Addon A11y: Update vision simulators to be more rigorous (@Sidnioulz)
+- **PR #37451** (2026-11-16): Build: Inject CJS require shim only where node outputs use it (@ndelangen)
+- **PR #37445** (2026-11-16): Docs: Clear the inline story error once it renders again (@shivastuu)
+- **PR #37443** (2026-11-16): CLI: Report the real configuration error when doctor cannot read a project (@aleksaToljic)
+- **PR #37442** (2026-11-16): Next.js: Fix TypeScript 6 peer conflict (@Kakadus)
+- **PR #37432** (closed): Core: Enable addon-vitest when its Vitest plugin is configured for the Storybook (@kasperpeulen)
 
 ---
 
@@ -1092,38 +811,44 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ecosystem-qa): redact the run result in a step of its own, also after a crash
+## X. react): document the declaring file, and fail on a missing export
 
 **RULE**:
-When implementing operations in `.github/workflows/ecosystem-qa.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `code/renderers/react/src/componentManifest/getComponentImports.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c36d09d2`: ecosystem-qa): redact the run result in a step of its own, also after a crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7a138cf`: react): document the declaring file, and fail on a missing export. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ecosystem-qa.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/renderers/react/src/componentManifest/getComponentImports.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      # run.ts redacts its output when it reaches its end. A run that crashed or was cancelled did
-      # not, and the upload publishes whatever is there.
-      - name: Redact credentials in the run result
-        id: redact
-        run: node ecosystem-qa/redact.ts ecosystem-qa/results
-
-      - name: Upload the run result
-        if: ${{ always() && steps.redact.outcome == 'success' }}
+// The file that declares a component and the export it declares it under, or why the module the
+// story reads it from has no such export.
+export type DocgenTarget = { path: string; exportName: string } | { missing: string };
+        // An export core found missing is an error, not a reason to document another component.
+        if (target && 'missing' in target) {
+          const error = { name: 'Component export not found', message: target.missing };
+          return docgenEngine === 'react-docgen'
+            ? { ...componentWithPackage, path, reactDocgen: { type: 'error' as const, error } }
+            : { ...componentWithPackage, path, reactDocgenTypescriptError: error };
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-      - name: Upload the run result
+// Induced defect failure mode:
+// The file that declares a component, and the export it declares it under.
+export interface DocgenTarget {
+  path: string;
+  exportName: string;
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c36d09d2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7a138cf` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

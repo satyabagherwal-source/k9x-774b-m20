@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T07:07:00.214Z",
+  "updated_at": "2026-11-17T07:20:47.664Z",
   "stats": {
-    "total_discovered": 4863,
-    "approved_pending_harvest": 4579,
+    "total_discovered": 4867,
+    "approved_pending_harvest": 4583,
     "harvested_count": 0,
     "rejected_count": 284,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4583,
+      "COMMUNITY_AND_EXPERT": 4587,
       "OFFICIAL_DOCUMENTATION": 150,
       "STANDARDS_AND_SPECIFICATIONS": 101,
       "ENGINEERING_BLOGS": 3,
@@ -105019,6 +105019,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
         "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-B994352D0E8F": {
+      "id": "SRC-B994352D0E8F",
+      "url": "https://github.com/user-attachments/assets/bbd818dc-bd2c-42a7-a9c8-af90d06d6e85",
+      "title": "https://github.com/user-attachments/assets/bbd818dc-bd2c-42a7-a9c8-af90d06d6e85",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:20:46.826Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
+        "fileName": "storybookjs-storybook-learnings.md"
+      }
+    },
+    "SRC-57994820926E": {
+      "id": "SRC-57994820926E",
+      "url": "https://github.com/storybookjs/storybook/pull/36232",
+      "title": "https://github.com/storybookjs/storybook/pull/36232",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:20:46.858Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
+        "fileName": "storybookjs-storybook-learnings.md"
+      }
+    },
+    "SRC-B7F6B329F1D2": {
+      "id": "SRC-B7F6B329F1D2",
+      "url": "https://github.com/storybookjs/storybook/blob/next/MIGRATION",
+      "title": "https://github.com/storybookjs/storybook/blob/next/MIGRATION",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:20:46.893Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
+        "fileName": "storybookjs-storybook-learnings.md"
+      }
+    },
+    "SRC-005934907A04": {
+      "id": "SRC-005934907A04",
+      "url": "https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq",
+      "title": "https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:20:47.664Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
       }
     }
   }

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T07:06:54.504Z",
-  "total_cycles_completed": 10051,
-  "total_learnings_persisted": 10051,
-  "total_rules_promoted": 9639,
+  "last_updated": "2026-11-17T07:20:19.592Z",
+  "total_cycles_completed": 10054,
+  "total_learnings_persisted": 10054,
+  "total_rules_promoted": 9641,
   "history": [
-    {
-      "timestamp": "2026-11-16T08:11:19.661Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T08:53:28.252Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T11:45:08.447Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T11:45:10.710Z",
       "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T07:06:54.504Z",
       "repository": "actix/actix-web",
       "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:20:03.070Z",
+      "repository": "facebook/sam-3d-body-dinov3",
+      "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:20:10.012Z",
+      "repository": "storybookjs/storybook",
+      "learningId": "learn-github-storybookjs-storybook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:20:19.592Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T07:07:00.418Z",
+  "last_updated": "2026-11-17T07:20:47.829Z",
   "directives": [
     {
       "id": "CD-001",
@@ -22670,6 +22670,48 @@
       "source_repo": "zarf-dev-zarf",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2CF0A1-paginate-registry-tag-listings.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-4FJZ",
+      "directive_title": "document the declaring file, and fail on a missing export",
+      "source_repo": "storybookjs/storybook",
+      "source_commit": "5aea8b6a",
+      "staged_file": "11_INBOX/candidate-directives/CD-4FJZ-document-the-declaring-file-and-fail-on-a-missing-export.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-58LS",
+      "directive_title": "Draft NUC 112 Node Names of Reasoning Selections",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-58LS-draft-nuc-112-node-names-of-reasoning-selections.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-580N",
+      "directive_title": "react): document the declaring file, and fail on a missing export",
+      "source_repo": "storybookjs-storybook-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-580N-react-document-the-declaring-file-and-fail-on-a-missing-export.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-4FFEF6",
+      "directive_title": "Draft NUC 112 Node Names of Reasoning Selections",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4FFEF6-draft-nuc-112-node-names-of-reasoning-se.md",
       "staged_date": "2026-11-17"
     }
   ]

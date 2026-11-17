@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "8f730054",
+    "sourceVersion": "92cbd316",
     "license": "Apache-2.0",
-    "contentHash": "2e54951cda9c142250d2d5b53c75a3e6b763e0bd2611aa9a30501928a68e4a0d",
-    "lastHarvestedAt": "2026-11-17T03:16:04.772Z",
+    "contentHash": "d8cf873c8778e59d3e419f78c566e6b6b1cc179ebb966371c35c67942691c59e",
+    "lastHarvestedAt": "2026-11-17T07:20:19.588Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -10293,10 +10293,10 @@
     "repository": "storybookjs/storybook",
     "platform": "github",
     "sourceUrl": "https://github.com/storybookjs/storybook",
-    "sourceVersion": "f071f047",
+    "sourceVersion": "5aea8b6a",
     "license": "MIT",
-    "contentHash": "ae1bfdc3908fad183dc3067bbb72d308cfe09de12e1d08aafdfb21a1c82cdcb7",
-    "lastHarvestedAt": "2026-11-13T18:05:59.223Z",
+    "contentHash": "7393efc93792d2229e11a01fb971d0f4dbc5cb63ba7472f1736c05065727bb38",
+    "lastHarvestedAt": "2026-11-17T07:20:10.008Z",
     "learningId": "learn-github-storybookjs-storybook"
   },
   "enaqx-awesome-react": {
@@ -12415,8 +12415,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam-3d-body-dinov3",
     "sourceVersion": "hf-facebook-sam-3d-body-dinov3",
     "license": "Open-Source",
-    "contentHash": "cc5aeb88b697480d3dbaa63f4d6e51045a602ca20f898124c7df9ddada63266b",
-    "lastHarvestedAt": "2026-11-12T21:02:16.598Z",
+    "contentHash": "e7764f574f5ce0415090edb814a76487afafd1a031b18a3b0331299d08a5e487",
+    "lastHarvestedAt": "2026-11-17T07:20:03.065Z",
     "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3"
   },
   "agentes-chat-agentes-chat": {

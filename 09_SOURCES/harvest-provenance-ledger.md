@@ -10506,3 +10506,7 @@ Every entry in this ledger must capture:
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `8942227e` | Multi-dimensional audit evidence | 2026-11-17T07:06:23.919Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `c52b20c0` | Multi-dimensional audit evidence | 2026-11-17T07:06:27.250Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `27cdad7b` | Multi-dimensional audit evidence | 2026-11-17T07:06:54.498Z |
+| `learn-huggingface-facebook-sam-3d-body-dinov3` | `https://huggingface.co/facebook/sam-3d-body-dinov3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-17T07:20:03.065Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `5aea8b6a` | Multi-dimensional audit evidence | 2026-11-17T07:20:10.008Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `92cbd316` | Multi-dimensional audit evidence | 2026-11-17T07:20:19.588Z |
+| `learn-dom-h-f8265fbb` | `project://storybookjs-storybook` | `5aea8b6a` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md` | 2026-11-17T07:20:46.792Z |
