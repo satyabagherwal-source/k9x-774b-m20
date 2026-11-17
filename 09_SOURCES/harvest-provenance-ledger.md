@@ -10560,3 +10560,6 @@ Every entry in this ledger must capture:
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `0f15fa2b` | Multi-dimensional audit evidence | 2026-11-17T10:41:14.208Z |
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `19e7b6bb` | Multi-dimensional audit evidence | 2026-11-17T10:51:32.012Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `48aa0ed3` | Multi-dimensional audit evidence | 2026-11-17T10:51:39.826Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `46b3069d` | Multi-dimensional audit evidence | 2026-11-17T11:09:41.403Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `723320f2` | Multi-dimensional audit evidence | 2026-11-17T11:09:50.866Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `fb116037` | Multi-dimensional audit evidence | 2026-11-17T11:09:57.803Z |

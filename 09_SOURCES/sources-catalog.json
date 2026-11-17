@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "b07e249c",
+    "sourceVersion": "723320f2",
     "license": "NOASSERTION",
-    "contentHash": "8dbf8f2bacdd79c7f37611a950a335f9f58f1de3a44a8c0c3ee55e004d68d4c0",
-    "lastHarvestedAt": "2026-11-13T19:40:01.622Z",
+    "contentHash": "4c78a8bdb0a53f6bcfa0cf676423fb1e97e3e2a5037f730cbd55ab2de1e2734c",
+    "lastHarvestedAt": "2026-11-17T11:09:50.866Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "a22ac8d6",
+    "sourceVersion": "fb116037",
     "license": "Apache-2.0",
-    "contentHash": "fa8d87e060b4c8dd7c4dc9c84338cf8963abd19a75fe269cd6a5ae57cfbce1b2",
-    "lastHarvestedAt": "2026-11-16T02:26:00.122Z",
+    "contentHash": "1898eaeb24d5d579fe940de461e09b27f194dd0774a1ec9d5e319d5d5bfa6f90",
+    "lastHarvestedAt": "2026-11-17T11:09:57.803Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "56a4ed76",
+    "sourceVersion": "46b3069d",
     "license": "Apache-2.0",
-    "contentHash": "223677ecd9c773c6ce353edce9a02d0184ed8de90e4bf88e0e9a6a9c67df894f",
-    "lastHarvestedAt": "2026-11-15T21:15:35.099Z",
+    "contentHash": "09723e7f2d7d7bd8abb45f1f703882a453b6e03d57ae8070b550dedf48909f26",
+    "lastHarvestedAt": "2026-11-17T11:09:41.403Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {

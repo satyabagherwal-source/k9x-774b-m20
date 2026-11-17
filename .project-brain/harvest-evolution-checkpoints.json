@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T10:51:45.119Z",
+  "last_updated": "2026-11-17T11:10:02.521Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T10:51:43.041Z",
@@ -73,7 +73,7 @@
       "staged_for_review": 1
     },
     "zama-ai-tfhe-rs-learnings.md": {
-      "processed_at": "2026-11-12T15:34:17.937Z",
+      "processed_at": "2026-11-17T11:10:01.558Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -843,7 +843,7 @@
       "staged_for_review": 1
     },
     "ydb-platform-ydb-learnings.md": {
-      "processed_at": "2026-11-16T02:26:03.213Z",
+      "processed_at": "2026-11-17T11:10:02.045Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1028,7 +1028,7 @@
       "staged_for_review": 1
     },
     "ntex-rs-ntex-learnings.md": {
-      "processed_at": "2026-11-15T21:15:46.406Z",
+      "processed_at": "2026-11-17T11:10:00.985Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3278,7 +3278,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1545,
+  "total_dossiers_evaluated": 1548,
   "total_canonical_promoted": 314,
-  "total_staged_for_review": 1219
+  "total_staged_for_review": 1222
 }

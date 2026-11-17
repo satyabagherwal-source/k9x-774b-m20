@@ -10527,3 +10527,6 @@
 | `CYCLE-20261117-B07W` | `2026-11-17T10:41:14.204Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8954` | Yes (`51503891...`) |
 | `CYCLE-20261117-O8X4` | `2026-11-17T10:51:32.008Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8955` | Yes (`dec91f3b...`) |
 | `CYCLE-20261117-OEY5` | `2026-11-17T10:51:39.821Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8956` | Yes (`5d715371...`) |
+| `CYCLE-20261117-BLI0` | `2026-11-17T11:09:41.400Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | Yes (`09723e7f...`) |
+| `CYCLE-20261117-BSSV` | `2026-11-17T11:09:50.863Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8957` | Yes (`4c78a8bd...`) |
+| `CYCLE-20261117-BY5K` | `2026-11-17T11:09:57.800Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8958` | Yes (`1898eaeb...`) |

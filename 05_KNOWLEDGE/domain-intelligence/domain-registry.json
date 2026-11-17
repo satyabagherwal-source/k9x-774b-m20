@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T10:51:44.861Z",
-  "total_records": 1524,
+  "last_updated": "2026-11-17T11:10:02.320Z",
+  "total_records": 1525,
   "domains": {
     "A": {
       "total": 11,
@@ -1019,7 +1019,7 @@
       ]
     },
     "H": {
-      "total": 363,
+      "total": 364,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1383,7 +1383,8 @@
         "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants",
         "domain_intelligence-technical-construction-intelligence-apache-zookeeper-core-invariants",
         "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria",
-        "DOM-H-13452896"
+        "DOM-H-13452896",
+        "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants"
       ]
     },
     "I": {
@@ -9373,8 +9374,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "f0877b0ea5d3aa92945ab27dba4c0ada5317621dffe1b11f3b936761835b8396",
-      "created_at": "2026-11-13T19:40:01.981Z"
+      "content_hash": "e44e7e0cba00558e68ab2f46602423f953a26d9c2c5379b61b2b5d6a06c09cd9",
+      "created_at": "2026-11-17T11:09:51.126Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -10495,8 +10496,8 @@
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "repository": "ntex-rs/ntex",
-      "content_hash": "9c4908c200cd612adeb06403420886bff1b47c4e720fd551aef9595e9180660d",
-      "created_at": "2026-11-15T21:15:35.416Z"
+      "content_hash": "7ac781d6aca118e8ef11fbd2f92ef8ed222c529577d1cc1a6f30f7d9b8ce8e8d",
+      "created_at": "2026-11-17T11:09:41.686Z"
     },
     "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants",
@@ -10531,8 +10532,8 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-learnings-architecture-intelligence-ntex-rs-ntex-learnings-core-inv.md",
       "repository": "ntex-rs-ntex-learnings",
-      "content_hash": "af54bf688d63baa7247d4dc68900e7d8338ef6680e8e2dee5cb540e541a216b8",
-      "created_at": "2026-11-15T21:15:46.817Z"
+      "content_hash": "38c09f59b4b83f4362192bb65ca4e888bc6fd0b555085f43663bdbccb0be1fc4",
+      "created_at": "2026-11-17T11:10:01.332Z"
     },
     "DOM-D-B528111D": {
       "record_id": "DOM-D-B528111D",
@@ -16616,8 +16617,8 @@
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "repository": "ydb-platform/ydb",
-      "content_hash": "4bf8066473f70a49cd8ea516f7a56e34b6a9d02b498aa1f1e308f7c9fdd51966",
-      "created_at": "2026-11-16T02:26:00.401Z"
+      "content_hash": "e02cfcbf4770c2cdc2bf8f9d2dcda31a2e3efef9ff905a99ee449a6aa0376cd1",
+      "created_at": "2026-11-17T11:09:58.092Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -22677,8 +22678,8 @@
       "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-learnings-technical-construction-intelligence-ydb-platform-ydb-.md",
       "repository": "ydb-platform-ydb-learnings",
-      "content_hash": "aac87f43d963fe9fb72e781f0a69c0433eaf03d994536c40550198dc60ab8cec",
-      "created_at": "2026-11-16T02:26:03.558Z"
+      "content_hash": "01171a242b6ba685b9fa2e35d22bf2066b46e916865a550c5ebf7ad2917e28dc",
+      "created_at": "2026-11-17T11:10:02.320Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invariants",
@@ -26513,6 +26514,15 @@
       "repository": "zulip-zulip-learnings",
       "content_hash": "55d541877aa53d7f38ad9dd420f90ebe2791c6b4bd842e6b87ee89c81c2b4bbc",
       "created_at": "2026-11-17T10:51:43.571Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "content_hash": "cbda81037bcaa502de095098b97ef0b9fb763f4895a6fdb9f530610acfedaee5",
+      "created_at": "2026-11-17T11:10:01.836Z"
     }
   }
 }

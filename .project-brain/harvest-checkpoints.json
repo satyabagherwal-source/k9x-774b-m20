@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T10:51:39.834Z",
+  "last_updated": "2026-11-17T11:09:57.814Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "8dbf8f2bacdd79c7f37611a950a335f9f58f1de3a44a8c0c3ee55e004d68d4c0",
-      "verified_at": "2026-11-13T19:40:01.633Z",
+      "content_hash": "4c78a8bdb0a53f6bcfa0cf676423fb1e97e3e2a5037f730cbd55ab2de1e2734c",
+      "verified_at": "2026-11-17T11:09:50.873Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:40:01.633Z"
+      "last_updated": "2026-11-17T11:09:50.873Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "fa8d87e060b4c8dd7c4dc9c84338cf8963abd19a75fe269cd6a5ae57cfbce1b2",
-      "verified_at": "2026-11-16T02:26:00.141Z",
+      "content_hash": "1898eaeb24d5d579fe940de461e09b27f194dd0774a1ec9d5e319d5d5bfa6f90",
+      "verified_at": "2026-11-17T11:09:57.812Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T02:26:00.141Z"
+      "last_updated": "2026-11-17T11:09:57.812Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "223677ecd9c773c6ce353edce9a02d0184ed8de90e4bf88e0e9a6a9c67df894f",
-      "verified_at": "2026-11-15T21:15:35.107Z",
+      "content_hash": "09723e7f2d7d7bd8abb45f1f703882a453b6e03d57ae8070b550dedf48909f26",
+      "verified_at": "2026-11-17T11:09:41.423Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T21:15:35.107Z"
+      "last_updated": "2026-11-17T11:09:41.423Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",

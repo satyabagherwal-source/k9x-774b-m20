@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T10:51:39.831Z",
-  "total_cycles_completed": 10091,
-  "total_learnings_persisted": 10091,
-  "total_rules_promoted": 9693,
+  "last_updated": "2026-11-17T11:09:57.807Z",
+  "total_cycles_completed": 10094,
+  "total_learnings_persisted": 10094,
+  "total_rules_promoted": 9695,
   "history": [
-    {
-      "timestamp": "2026-11-16T16:21:40.105Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T16:21:50.730Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T17:43:49.903Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T17:43:54.778Z",
       "repository": "ArchiveBox/ArchiveBox",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T10:51:39.831Z",
       "repository": "GreptimeTeam/greptimedb",
       "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T11:09:41.420Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T11:09:50.870Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T11:09:57.807Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

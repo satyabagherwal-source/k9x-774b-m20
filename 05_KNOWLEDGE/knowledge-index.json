@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T10:51:44.990Z",
+  "last_updated": "2026-11-17T11:10:02.428Z",
   "total_verified_learnings": 8876,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20104,
+  "total_items": 20111,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213310,14 +213310,19 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "b07e249c",
-      "content_hash": "8dbf8f2bacdd79c7f37611a950a335f9f58f1de3a44a8c0c3ee55e004d68d4c0",
+      "source_version": "723320f2",
+      "content_hash": "4c78a8bdb0a53f6bcfa0cf676423fb1e97e3e2a5037f730cbd55ab2de1e2734c",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
         {
           "number": 8366,
           "title": "signed radix squashing could pack unclean ciphertexts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8957,
+          "title": "refactor!: remove ShortintParameterSet and PublicKey",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -213326,7 +213331,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:40:01.440Z",
+      "verified_at": "2026-11-17T11:09:50.714Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213368,10 +213373,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "b07e249c",
-      "content_hash": "f0877b0ea5d3aa92945ab27dba4c0ada5317621dffe1b11f3b936761835b8396",
+      "source_version": "723320f2",
+      "content_hash": "e44e7e0cba00558e68ab2f46602423f953a26d9c2c5379b61b2b5d6a06c09cd9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T19:40:01.981Z"
+      "persisted_at": "2026-11-17T11:09:51.126Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213380,10 +213385,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "b07e249c",
-      "content_hash": "a441ceed4707ef77dd58b362273aeb5d9100ae91e95f6ad1f5e2e35c82671690",
+      "source_version": "723320f2",
+      "content_hash": "dd54ef723c5957f886e2ec0d9e5234a2e98ca51d1e8a6b3c0406de7f6780dd17",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:40:02.097Z"
+      "persisted_at": "2026-11-17T11:09:51.241Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -216689,8 +216694,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "56a4ed76",
-      "content_hash": "223677ecd9c773c6ce353edce9a02d0184ed8de90e4bf88e0e9a6a9c67df894f",
+      "source_version": "46b3069d",
+      "content_hash": "09723e7f2d7d7bd8abb45f1f703882a453b6e03d57ae8070b550dedf48909f26",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -216710,7 +216715,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T21:15:34.926Z",
+      "verified_at": "2026-11-17T11:09:41.255Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216752,10 +216757,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "repository": "ntex-rs/ntex",
-      "source_version": "56a4ed76",
-      "content_hash": "9c4908c200cd612adeb06403420886bff1b47c4e720fd551aef9595e9180660d",
+      "source_version": "46b3069d",
+      "content_hash": "7ac781d6aca118e8ef11fbd2f92ef8ed222c529577d1cc1a6f30f7d9b8ce8e8d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T21:15:35.416Z"
+      "persisted_at": "2026-11-17T11:09:41.686Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex",
@@ -216764,10 +216769,10 @@
       "relative_path": "08_VERIFICATION/ntex-rs-ntex-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex.md",
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs/ntex",
       "repository": "ntex-rs/ntex",
-      "source_version": "56a4ed76",
-      "content_hash": "ef2fa69274f7d6db4d48f4a4f86230440945e7100e8c49518a3c6a4a9f4edac8",
+      "source_version": "46b3069d",
+      "content_hash": "1e1b613bb295de9276a2b3733d307fd13d9a3e9f16c93790a2d717d790f8b3a6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:15:35.537Z"
+      "persisted_at": "2026-11-17T11:09:41.805Z"
     },
     "learn-github-callstack-react-native-paper": {
       "learning_id": "learn-github-callstack-react-native-paper",
@@ -216972,9 +216977,9 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "repository": "ntex-rs-ntex-learnings",
       "source_version": "HEAD",
-      "content_hash": "af54bf688d63baa7247d4dc68900e7d8338ef6680e8e2dee5cb540e541a216b8",
+      "content_hash": "38c09f59b4b83f4362192bb65ca4e888bc6fd0b555085f43663bdbccb0be1fc4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T21:15:46.817Z"
+      "persisted_at": "2026-11-17T11:10:01.332Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex-learnings",
@@ -216984,9 +216989,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs-ntex-learnings",
       "repository": "ntex-rs-ntex-learnings",
       "source_version": "HEAD",
-      "content_hash": "23e50847667e153b341de65dbe6d8478c54b6b2977cb50b321bbf43628ba6020",
+      "content_hash": "e0ddd6f9472cd6984d6230cb0ddf5a1a45b17d8ed4ead1d09fd190d338b59cd9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:15:46.935Z"
+      "persisted_at": "2026-11-17T11:10:01.442Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
@@ -233125,14 +233130,19 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "a22ac8d6",
-      "content_hash": "fa8d87e060b4c8dd7c4dc9c84338cf8963abd19a75fe269cd6a5ae57cfbce1b2",
+      "source_version": "fb116037",
+      "content_hash": "1898eaeb24d5d579fe940de461e09b27f194dd0774a1ec9d5e319d5d5bfa6f90",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
         {
           "number": 8518,
           "title": "fix drop-replication + describe race crash",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8958,
+          "title": "race crash between cancel and ordinary shutdown",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -233141,7 +233151,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T02:25:59.964Z",
+      "verified_at": "2026-11-17T11:09:57.620Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233183,10 +233193,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "repository": "ydb-platform/ydb",
-      "source_version": "a22ac8d6",
-      "content_hash": "4bf8066473f70a49cd8ea516f7a56e34b6a9d02b498aa1f1e308f7c9fdd51966",
+      "source_version": "fb116037",
+      "content_hash": "e02cfcbf4770c2cdc2bf8f9d2dcda31a2e3efef9ff905a99ee449a6aa0376cd1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T02:26:00.401Z"
+      "persisted_at": "2026-11-17T11:09:58.092Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb",
@@ -233195,10 +233205,10 @@
       "relative_path": "08_VERIFICATION/ydb-platform-ydb-verification-protocol-empirical-defect-shield-for-ydb-platform-.md",
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform/ydb",
       "repository": "ydb-platform/ydb",
-      "source_version": "a22ac8d6",
-      "content_hash": "a4de5c2c64ba300f00a1d5182b04041a9bf33a5d21bf71e0dab8fda3e8b5a355",
+      "source_version": "fb116037",
+      "content_hash": "72c58a611e0b523f33b0e64756b72f8050863f5833c4404dfed17569ff8f8855",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:26:00.503Z"
+      "persisted_at": "2026-11-17T11:09:58.209Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -251114,9 +251124,9 @@
       "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
       "repository": "ydb-platform-ydb-learnings",
       "source_version": "HEAD",
-      "content_hash": "aac87f43d963fe9fb72e781f0a69c0433eaf03d994536c40550198dc60ab8cec",
+      "content_hash": "01171a242b6ba685b9fa2e35d22bf2066b46e916865a550c5ebf7ad2917e28dc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T02:26:03.558Z"
+      "persisted_at": "2026-11-17T11:10:02.320Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb-learnings",
@@ -251126,9 +251136,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform-ydb-learnings",
       "repository": "ydb-platform-ydb-learnings",
       "source_version": "HEAD",
-      "content_hash": "fe0d641e49b632d1585976f5822be4d58f1e9142d2b92ef5b27f4476861ffaad",
+      "content_hash": "9a3e39b4fc0da74a7aba6eb3891dcc285cf445b1a0db34d21a09fe33c19f9e29",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:26:03.660Z"
+      "persisted_at": "2026-11-17T11:10:02.428Z"
     },
     "rule-8694": {
       "learning_id": "rule-8694",
@@ -269074,6 +269084,94 @@
       "content_hash": "b51c2b88fd3dcdbb72856f2827e4f37b3f5405b3bc48c8b68399ca17e5c3a45a",
       "domain_letter": "G",
       "persisted_at": "2026-11-17T10:51:44.048Z"
+    },
+    "candidate_directive-add-ntex-bytes-to-security-review": {
+      "item_id": "candidate_directive-add-ntex-bytes-to-security-review",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C0RY-add-ntex-bytes-to-security-review.md",
+      "title": "Add ntex-bytes to security review",
+      "repository": "ntex-rs-ntex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b64725398cbf0100777586ba9c53cd780a4d3fe046d98ef2263d34466e6e8727",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T11:10:01.204Z"
+    },
+    "rule-8957": {
+      "learning_id": "rule-8957",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8957,
+      "title": "refactor!: remove ShortintParameterSet and PublicKey",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "723320f2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T11:09:50.714Z"
+    },
+    "candidate_directive-refactor-remove-shortintparameterset-and-publickey": {
+      "item_id": "candidate_directive-refactor-remove-shortintparameterset-and-publickey",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C16V-refactor-remove-shortintparameterset-and-publickey.md",
+      "title": "refactor!: remove ShortintParameterSet and PublicKey",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "281e9b252744698b85bde56938877531b5ccf0eaa8b7bace4ab0fdd038f91d06",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T11:10:01.740Z"
+    },
+    "rule-8958": {
+      "learning_id": "rule-8958",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8958,
+      "title": "race crash between cancel and ordinary shutdown",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "fb116037",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T11:09:57.620Z"
+    },
+    "candidate_directive-race-crash-between-cancel-and-ordinary-shutdown": {
+      "item_id": "candidate_directive-race-crash-between-cancel-and-ordinary-shutdown",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C1KE-race-crash-between-cancel-and-ordinary-shutdown.md",
+      "title": "race crash between cancel and ordinary shutdown",
+      "repository": "ydb-platform-ydb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "11164dce8e11fa4fd72deaaba1e7f7eaf477f8087636407d3a869f9ad8014585",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T11:10:02.228Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
+      "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cbda81037bcaa502de095098b97ef0b9fb763f4895a6fdb9f530610acfedaee5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T11:10:01.836Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-learnings-verification-protocol-empirical-defect-shield-for-zama.md",
+      "title": "Verification Protocol: Empirical Defect Shield for zama-ai-tfhe-rs-learnings",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f53fdde4028a04ce62e8703456f3424096d3de8fd14158e12363010a4e1dc719",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T11:10:01.945Z"
     }
   },
   "ai-builder-brain": {

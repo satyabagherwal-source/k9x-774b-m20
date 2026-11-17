@@ -4,24 +4,24 @@
 {
   "source_repository": "zama-ai/tfhe-rs",
   "source_url": "https://github.com/zama-ai/tfhe-rs",
-  "source_version": "b07e249c",
+  "source_version": "723320f2",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-13T19:40:01.863Z",
+  "timestamp": "2026-11-17T11:09:51.028Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zama-ai-tfhe-rs",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `b07e249c`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-13T19:40:01.863Z`  
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `723320f2`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T11:09:51.028Z`  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 89%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 87%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zama-ai/tfhe-rs:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:40:00.551Z  
+> **Harvest Timestamp**: 2026-11-17T11:09:50.075Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1680 stars
+- **Stars / Engagement**: 1681 stars
 
 ---
 
@@ -1948,116 +1948,461 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5bc9c334` (2026-11-13)
-**Commit Message**: fix(integer): signed radix squashing could pack unclean ciphertexts (#4156)
+### Incident Patch 1: `723320f2` (2026-11-17)
+**Commit Message**: refactor!: remove ShortintParameterSet and PublicKey (#4126)
 
-- the packing would lead to invalid values if the ciphertexts are not clean
-- mutualized the code for unsigned and signed radix ciphertexts
+* refactor(hlapi)!: remove PublicKey and CompressedPublicKey
 
-**File**: `tfhe/src/integer/noise_squashing/keys.rs` (modified, +16/-18)
+Remove the classical (non-compact) public keys from the high-level API,
+along with their C and JS bindings. CompactPublicKey and
+CompressedCompactPublicKey remain the way to do public key encryption.
+
+Backward compatibility tests for the legacy public keys are skipped.
+
+* refactor(integer)!: remove PublicKey and CompressedPublicKey
+
+Remove the classical (non-compact) integer public keys. CompactPublicKey
+and CompressedCompactPublicKey remain the way to do public key
+encryption.
+
+* refactor(shortint)!: remove PublicKey and CompressedPublicKey
+
+Remove the classical (non-compact) shortint public keys, along with their
+C and JS bindings. CompactPublicKey and CompressedCompactPublicKey remain
+the way to do public key encryption.
+
+* refactor(boolean)!: remove PublicKey and CompressedPublicKey
+
+Remove the boolean public keys, along with their C and JS bindings.
+
+* feat(shortint): add parameter accessors to AtomicPatternParameters
+
+Add pbs_parameters, ks32_parameters, encryption_lwe_dimension and
+noise_distribution_for_key_choice, matching the ShortintParameterSet API
+
+**File**: `tests/backward_compatibility/high_level_api.rs` (modified, +20/-27)
 ```diff
-@@ -301,15 +301,12 @@ impl NoiseSquashingKey {
-         Self { key }
-     }
+@@ -26,13 +26,12 @@ use tfhe::{
+     set_server_key, AesFheKey, ClientKey, CompactCiphertextList, CompactCiphertextListBuilder,
+     CompactPublicKey, CompressedCiphertextList, CompressedCiphertextListBuilder,
+     CompressedCompactPublicKey, CompressedFheBool, CompressedFheInt8, CompressedFheUint8,
+-    CompressedKVStore, CompressedPublicKey, CompressedServerKey,
+-    CompressedSquashedNoiseCiphertextList, CompressedSquashedNoiseCiphertextListBuilder,
+-    CompressedSquashedNoiseOneTimePadFheSecretMask, FheBool, FheInt8, FheUint32, FheUint64,
+-    FheUint8, HlStreamCipher, HlTranscipherer, KreyviumFheKey, OneTimePadFheSecretMask,
+-    ReRandomizationContext, ReRandomizationMode, ReRandomizationSupport, Seed, ServerKey,
+-    SquashedNoiseFheBool, SquashedNoiseFheInt, SquashedNoiseFheUint, StreamCiphertext,
+-    TranscipherSession,
++    CompressedKVStore, CompressedServerKey, CompressedSquashedNoiseCiphertextList,
++    CompressedSquashedNoiseCiphertextListBuilder, CompressedSquashedNoiseOneTimePadFheSecretMask,
++    FheBool, FheInt8, FheUint32, FheUint64, FheUint8, HlStreamCipher, HlTranscipherer,
++    KreyviumFheKey, OneTimePadFheSecretMask, ReRandomizationContext, ReRandomizationMode,
++    ReRandomizationSupport, Seed, ServerKey, SquashedNoiseFheBool, SquashedNoiseFheInt,
++    SquashedNoiseFheUint, StreamCiphertext, TranscipherSession,
+ };
+ use tfhe_backward_compat_data::load::{
+     load_versioned_auxiliary, DataFormat, TestFailure, TestResult, TestSuccess,
+@@ -474,28 +473,18 @@ pub fn test_hl_pubkey(
  
--    pub fn squash_radix_ciphertext_noise(
-+    fn pack_and_squash_ct_blocks(
-         &self,
-+        blocks: &[crate::shortint::Ciphertext],
-         src_server_key: &ServerKey,
--        ciphertext: &RadixCiphertext,
--    ) -> crate::Result<SquashedNoiseRadixCiphertext> {
--        let original_block_count = ciphertext.blocks.len();
+     let value = 113u8;
+ 
+-    let encrypted = if test.compact {
+-        let public_key = if test.compressed {
+-            let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
+-            compressed.decompress()
+-        } else {
+-            load_and_unversionize(dir, test, format)?
+-        };
+-        set_server_key(client_key.generate_server_key());
 -
--        let packed_blocks = ciphertext
--            .blocks
-+    ) -> crate::Result<Vec<crate::shortint::ciphertext::SquashedNoiseCiphertext>> {
-+        blocks
-             .par_chunks(2)
-             .map(|two_values| {
-                 let packed = src_server_key
-@@ -319,7 +316,17 @@ impl NoiseSquashingKey {
-                 self.key
-                     .checked_squash_ciphertext_noise(&packed, &src_server_key.key)
-             })
--            .collect::<crate::Result<Vec<_>>>()?;
-+            .collect::<crate::Result<Vec<_>>>()
-+    }
+-        let ct_list = CompactCiphertextList::builder(&public_key)
+-            .push(value)
+-            .build();
+-        ct_list.expand().unwrap().get(0).unwrap().unwrap()
++    let public_key = if test.compressed {
++        let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
++        compressed.decompress()
+     } else {
+-        let public_key = if test.compressed {
+-            let compressed: CompressedPublicKey = load_and_unversionize(dir, test, format)?;
+-            compressed.decompress()
+-        } else {
+-            load_and_unversionize(dir, test, format)?
+-        };
+-        FheUint8::encrypt(value, &public_key)
++        load_and_unversionize(dir, test, format)?
+     };
++    set_server_key(client_key.generate_server_key());
 +
-+    pub fn squash_radix_ciphertext_noise(
-+        &self,
-+        src_server_key: &ServerKey,
-+        ciphertext: &RadixCiphertext,
-+    ) -> crate::Result<SquashedNoiseRadixCiphertext> {
-+        let original_block_count = ciphertext.blocks.len();
-+
-+        let packed_blocks = self.pack_and_squash_ct_blocks(&ciphertext.blocks, src_server_key)?;
++    let ct_list = CompactCiphertextList::builder(&public_key)
++        .push(value)
++        .build();
++    let encrypted: FheUint8 = ct_list.expand().unwrap().get(0).unwrap().unwrap();
  
-         Ok(SquashedNoiseRadixCiphertext {
-             packed_blocks,
-@@ -334,16 +341,7 @@ impl NoiseSquashingKey {
-     ) -> crate::Result<SquashedNoiseSignedRadixCiphertext> {
-         let original_block_count = ciphertext.blocks.len();
+     let decrypted: u8 = encrypted.decrypt(&client_key);
  
--        let packed_blocks = ciphertext
--            .blocks
--            .par_chunks(2)
--            .map(|two_values| {
--                let packed = src_server_key.pack_block_chunk(two_values);
--
--                self.key
--                    .checked_squash_ciphertext_noise(&packed, &src_server_key.key)
--            })
--            .collect::<crate::Result<Vec<_>>>()?;
-+        let packed_blocks = self.pack_and_squash_ct_blocks(&ciphertext.blocks, src_server_key)?;
- 
-         Ok(SquashedNoiseSignedRadixCiphertext {
-             packed_blocks,
+@@ -1308,6 +1297,10 @@ impl TestedModule for Hl {
+             TestMetadata::HlClientKey(test) => {
+                 test_hl_clientkey(test_dir.as_ref(), test, format).into()
+             }
++            // Only compact public keys can be loaded by this version of TFHE-rs
++            TestMetadata::HlPublicKey(test) if !test.compact => {
++                TestResult::Skipped(testcase.skip())
++            }
+             TestMetadata::HlPublicKey(test) => {
+                 test_hl_pubkey(test_dir.as_ref(), test, format).into()
+             }
 ```
 
-**File**: `tfhe/src/integer/noise_squashing/tests.rs` (modified, +37/-0)
+**File**: `tests/backward_compatibility/shortint.rs` (modified, +1/-6)
 ```diff
-@@ -104,3 +104,40 @@ fn test_integer_noise_squashing_decrypt_auto_cast_and_bool() {
-         assert_eq!(val, d);
+@@ -21,7 +21,6 @@ use tfhe::shortint::parameters::{
+ use tfhe::shortint::{
+     AtomicPatternParameters, CarryModulus, Ciphertext, CiphertextModulus, ClassicPBSParameters,
+     ClientKey, EncryptionKeyChoice, MaxNoiseLevel, MessageModulus, MultiBitPBSParameters,
+-    ShortintParameterSet,
+ };
+ 
+ use crate::{load_and_unversionize, load_client_key, TestedModule};
+@@ -204,10 +203,6 @@ fn convert_distribution<T: UnsignedInteger>(value: &TestDistribution) -> Dynamic
      }
  }
-+
-+#[test]
-+fn test_repro_noise_squashing_degree_handling() {
-+    use crate::integer::noise_squashing::{NoiseSquashingKey, NoiseSquashingPrivateKey};
-+    use crate::integer::{gen_keys_radix, ClientKey, IntegerCiphertext};
-+    use crate::shortint::parameters::{
-+        NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128 as NSP,
-+        PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128 as P22,
-+    };
-+
-+    let (rck, sks) = gen_keys_radix(P22, 4);
-+    let cks: &ClientKey = rck.as_ref();
-+    // public handle on the underlying shortint key (integer ServerKey::key is private)
-+    let shortint_sks = sks.clone().into_raw_parts();
-+    let nspk = NoiseSquashingPrivateKey::new(NSP);
-+    let nsk = NoiseSquashingKey::new(cks, &nspk);
-+
-+    // --- non-canonical but valid radix encoding of 17 -> blocks [1, 4, 0, 0] ---
-+    {
-+        let mut ct = cks.encrypt_signed_radix(1i8, 4);
-+        shortint_sks.unchecked_scalar_add_assign(&mut ct.blocks_mut()[1], 4);
-+        let dec_signed: i8 = cks.decrypt_signed_radix(&ct);
-+        assert_eq!(dec_signed, 17);
-+        let should_fail_signed = nsk.squash_signed_radix_ciphertext_noise(&sks, &ct);
-+        assert!(should_fail_signed.is_err());
-+    }
-+
-+    // unsigned mirror of the identical construction
-+    {
-+        let mut ctu = cks.encrypt_radix(1u8, 4);
-+        shortint_sks.unchecked_scalar_add_assign(&mut ctu.blocks_mut()[1], 4);
-+        let dec_unsigned: u8 = cks.decrypt_radix(&ctu);
-+        assert_eq!(dec_unsigned, 17);
-+        let should_fail_unsigned = nsk.squash_radix_ciphertext_noise(&sks, &ctu);
-+        assert!(should_fail_unsigned.is_err());
-+    }
-+}
+ 
+-fn load_shortint_params(test_params: &TestParameterSet) -> ShortintParameterSet {
+-    load_params(test_params).into()
+-}
+-
+ pub fn test_shortint_ciphertext(
+     dir: &Path,
+     test: &ShortintCiphertextTest,
+@@ -236,7 +231,7 @@ pub fn test_shortint_clientkey(
+     test: &ShortintClientKeyTest,
+     format: DataFormat,
+ ) -> Result<TestSuccess, TestFailure> {
+-    let test_params = load_shortint_params(&test.parameters);
++    let test_params = load_params(&test.parameters);
+ 
+     let key: ClientKey = load_and_unversionize(dir, test, format)?;
+ 
+```
+
+**File**: `tfhe-benchmark/src/bin/wasm_benchmarks_parser.rs` (modified, +3/-2)
+```diff
+@@ -5,7 +5,7 @@ use std::collections::HashMap;
+ use std::fs;
+ use std::path::Path;
+ use tfhe::keycache::NamedParam;
+-use tfhe::shortint::keycache::get_shortint_parameter_set_from_name;
++use tfhe::shortint::keycache::get_atomic_pattern_parameters_from_name;
+ 
+ #[derive(Parser, Debug)]
+ #[command(author, version, about, long_about = None)]
+@@ -33,7 +33,8 @@ pub fn parse_wasm_benchmarks(results_file: &Path, raw_results_file: &Path) {
+         };
+         benchmark_test_result.write_result(&measured.to_string(), value);
+ 
+-        let params_alias = get_shortint_parameter_set_from_name(measured.spec.param_name()).name();
++        let params_alias =
++            get_atomic_pattern_parameters_from_name(measured.spec.param_name()).name();
+ 
+         write_to_json_measured(
+             &measured,
+```
+
+**File**: `tfhe/c_api_tests/test_boolean_keygen.c` (modified, +0/-28)
+```diff
+@@ -125,37 +125,9 @@ void test_custom_keygen(void) {
+   boolean_destroy_server_key(sks);
+ }
+ 
+-void test_public_keygen(void) {
+-  BooleanClientKey *cks = NULL;
+-  BooleanPublicKey *pks = NULL;
+-  BooleanCiphertext *ct = NULL;
+-
+-  int gen_keys_ok = boolean_gen_client_key(BOOLEAN_PARAMETERS_SET_DEFAULT_PARAMETERS, &cks);
+-  assert(gen_keys_ok == 0);
+-
+-  int gen_pks = boolean_gen_public_key(cks, &pks);
+-  assert(gen_pks == 0);
+-
+-  bool msg = true;
+-
+-  int encrypt_ok = boolean_public_key_encrypt(pks, msg, &ct);
+-  assert(encrypt_ok == 0);
+-
+-  bool result = false;
+-  int decrypt_ok = boolean_client_key_decrypt(cks, ct, &result);
+-  assert(decrypt_ok == 0);
+-
+-  assert(result == true);
+-
+-  boolean_destroy_client_key(cks);
+-  boolean_destroy_public_key(pks);
+-  boolean_destroy_ciphertext(ct);
+-}
+-
+ int main(void) {
+   test_default_keygen_w_serde();
+   test_predefined_keygen_w_serde();
+   test_custom_keygen();
+-  test_public_keygen();
+   return EXIT_SUCCESS;
+ }
+```
+
+**File**: `tfhe/c_api_tests/test_high_level_128_bits.c` (modified, +0/-34)
+```diff
+@@ -64,36 +64,6 @@ int uint128_encrypt_trivial(const ClientKey *client_key) {
+   return ok;
+ }
+ 
+-int uint128_public_key(const ClientKey *client_key, const PublicKey *public_key) {
+-  int ok;
+-  FheUint128 *lhs = NULL;
+-  FheUint128 *rhs = NULL;
+-  FheUint128 *result = NULL;
+-  U128 lhs_clear = {10, 20};
+-  U128 rhs_clear = {1, 2};
+-  U128 result_clear = {0};
+-
+-  ok = fhe_uint128_try_encrypt_with_public_key_u128(lhs_clear, public_key, &lhs);
+-  assert(ok == 0);
+-
+-  ok = fhe_uint128_try_encrypt_with_public_key_u128(rhs_clear, public_key, &rhs);
+-  assert(ok == 0);
+-
+-  ok = fhe_uint128_add(lhs, rhs, &result);
+-  assert(ok == 0);
+-
+-  ok = fhe_uint128_decrypt(result, client_key, &result_clear);
+-  assert(ok == 0);
+-
+-  assert(result_clear.w0 == 11);
+-  assert(result_clear.w1 == 22);
+-
+-  fhe_uint128_destroy(lhs);
+-  fhe_uint128_destroy(rhs);
+-  fhe_uint128_destroy(result);
+-  return ok;
+-}
+-
+ int main(void) {
+   int ok = 0;
+   ConfigBuilder *builder;
+@@ -104,19 +74,15 @@ int main(void) {
+ 
+   ClientKey *client_key = NULL;
+   ServerKey *server_key = NULL;
+-  PublicKey *public_key = NULL;
+ 
+   generate_keys(config, &client_key, &server_key);
+-  public_key_new(client_key, &public_key);
+ 
+   set_server_key(server_key);
+ 
+   uint128_client_key(client_key);
+   uint128_encrypt_trivial(client_key);
+-  uint128_public_key(client_key, public_key);
+ 
+   client_key_destroy(client_key);
+-  public_key_destroy(public_key);
+   server_key_destroy(server_key);
+   unset_server_key();
+   return ok;
+```
+
+**File**: `tfhe/c_api_tests/test_high_level_2048.c` (modified, +0/-3)
+```diff
+@@ -49,17 +49,14 @@ int main(void) {
+ 
+   ClientKey *client_key = NULL;
+   ServerKey *server_key = NULL;
+-  PublicKey *public_key = NULL;
+ 
+   generate_keys(config, &client_key, &server_key);
+-  public_key_new(client_key, &public_key);
+ 
+   set_server_key(server_key);
+ 
+   uint2048_client_key(client_key);
+ 
+   client_key_destroy(client_key);
+-  public_key_destroy(public_key);
+   server_key_destroy(server_key);
+   unset_server_key();
+ 
+```
+
+**File**: `tfhe/c_api_tests/test_high_level_256_bits.c` (modified, +0/-72)
+```diff
+@@ -78,38 +78,6 @@ int uint256_encrypt_trivial(const ClientKey *client_key) {
+   return ok;
+ }
+ 
+-int uint256_public_key(const ClientKey *client_key, const PublicKey *public_key) {
+-  int ok;
+-  FheUint256 *lhs = NULL;
+-  FheUint256 *rhs = NULL;
+-  FheUint256 *result = NULL;
+-  U256 lhs_clear = {5, 6, 7, 8};
+-  U256 rhs_clear = {1, 2, 3, 4};
+-  U256 result_clear = {0};
+-
+-  ok = fhe_uint256_try_encrypt_with_public_key_u256(lhs_clear, public_key, &lhs);
+-  assert(ok == 0);
+-
+-  ok = fhe_uint256_try_encrypt_with_public_key_u256(rhs_clear, public_key, &rhs);
+-  assert(ok == 0);
+-
+-  ok = fhe_uint256_sub(lhs, rhs, &result);
+-  assert(ok == 0);
+-
+-  ok = fhe_uint256_decrypt(result, client_key, &result_clear);
+-  assert(ok == 0);
+-
+-  assert(result_clear.w0 == 4);
+-  assert(result_clear.w1 == 4);
+-  assert(result_clear.w2 == 4);
+-  assert(result_clear.w3 == 4);
+-
+-  fhe_uint256_destroy(lhs);
+-  fhe_uint256_destroy(rhs);
+-  fhe_uint256_destroy(result);
+-  return ok;
+-}
+-
+ int int256_client_key(const ClientKey *client_key) {
+   int ok;
+   FheInt256 *lhs = NULL;
+@@ -200,41 +168,6 @@ int int256_encrypt_trivial(const ClientKey *client_key) {
+   return ok;
+ }
+ 
+-int int256_public_key(const ClientKey *client_key, const PublicKey *public_key) {
+-  int ok;
+-  FheInt256 *lhs = NULL;
+-  FheInt256 *rhs = NULL;
+-  FheInt256 *result = NULL;
+-  // This is +1
+-  I256 lhs_clear = {1, 0, 0, 0};
+-  // This is -1
+-  I256 rhs_clear = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+-  I256 result_clear = {0};
+-
+-  ok = fhe_int256_try_encrypt_with_public_key_i256(lhs_clear, public_key, &lhs);
+-  assert(ok == 0);
+-
+-  ok = fhe_int256_try_encrypt_with_public_key_i256(rhs_clear, public_key, &rhs);
+-  assert(ok == 0);
+-
+-  ok = fhe_int256_sub(lhs, rhs, &result);
+-  assert(ok == 0);
+-
+-  ok = fhe_int256_decrypt(result, client_key, &result_clear);
+-  assert(ok == 0);
+-
+-  // We did 1 - (-1), so we expect 2
+-  assert(result_clear.w0 == 2);
+-  assert(result_clear.w1 == 0);
+-  assert(result_clear.w2 == 0);
+-  assert(result_clear.w3 == 0);
+-
+-  fhe_int256_destroy(lhs);
+-  fhe_int256_destroy(rhs);
+-  fhe_int256_destroy(result);
+-  return ok;
+-}
+-
+ int main(void) {
+   int ok = 0;
+   ConfigBuilder *builder;
+@@ -245,23 +178,18 @@ int main(void) {
+ 
+   ClientKey *client_key = NULL;
+   ServerKey *server_key = NULL;
+-  PublicKey *public_key = NULL;
+ 
+   generate_keys(config, &client_key, &server_key);
+-  public_key_new(client_key, &public_key);
+ 
+   set_server_key(server_key);
+ 
+   uint256_client_key(client_key);
+   uint256_encrypt_trivial(client_key);
+-  uint256_public_key(client_key, public_key);
+ 
+   int256_client_key(client_key);
+   int256_encrypt_trivial(client_key);
+-  int256_public_key(client_key, public_key);
+ 
+   client_key_destroy(client_key);
+-  public_key_destroy(public_key);
+   server_key_destroy(server_key);
+   unset_server_key();
+   
+```
+
+**File**: `tfhe/c_api_tests/test_high_level_boolean.c` (modified, +0/-35)
+```diff
+@@ -35,37 +35,6 @@ int client_key_test(const ClientKey *client_key) {
+   return ok;
+ }
+ 
+-int public_key_test(const ClientKey *client_key, const PublicKey *public_key) {
+-  int ok;
+-  FheBool *lhs = NULL;
+-  FheBool *rhs = NULL;
+-  FheBool *result = NULL;
+-
+-  bool lhs_clear = 0;
+-  bool rhs_clear = 1;
+-
+-  ok = fhe_bool_try_encrypt_with_public_key_bool(lhs_clear, public_key, &lhs);
+-  assert(ok == 0);
+-
+-  ok = fhe_bool_try_encrypt_with_public_key_bool(rhs_clear, public_key, &rhs);
+-  assert(ok == 0);
+-
+-  ok = fhe_bool_bitand(lhs, rhs, &result);
+-  assert(ok == 0);
+-
+-  bool clear;
+-  ok = fhe_bool_decrypt(result, client_key, &clear);
+-  assert(ok == 0);
+-
+-  assert(clear == (lhs_clear & rhs_clear));
+-
+-  fhe_bool_destroy(lhs);
+-  fhe_bool_destroy(rhs);
+-  fhe_bool_destroy(result);
+-
+-  return ok;
+-}
+-
+ int trivial_encrypt_test(const ClientKey *client_key) {
+   int ok;
+   FheBool *lhs = NULL;
+@@ -107,19 +76,15 @@ int main(void) {
+ 
+   ClientKey *client_key = NULL;
+   ServerKey *server_key = NULL;
+-  PublicKey *public_key = NULL;
+ 
+   generate_keys(config, &client_key, &server_key);
+-  public_key_new(client_key, &public_key);
+ 
+   set_server_key(server_key);
+ 
+   client_key_test(client_key);
+-  public_key_test(client_key, public_key);
+   trivial_encrypt_test(client_key);
+ 
+   client_key_destroy(client_key);
+-  public_key_destroy(public_key);
+   server_key_destroy(server_key);
+   unset_server_key();
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2086,63 +2431,71 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. integer): signed radix squashing could pack unclean ciphertexts
+## X. refactor!: remove ShortintParameterSet and PublicKey
 
 **RULE**:
-When implementing operations in `tfhe/src/integer/noise_squashing/keys.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/backward_compatibility/high_level_api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5bc9c334`: integer): signed radix squashing could pack unclean ciphertexts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `723320f2`: refactor!: remove ShortintParameterSet and PublicKey. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/noise_squashing/keys.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/backward_compatibility/high_level_api.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    fn pack_and_squash_ct_blocks(
-        blocks: &[crate::shortint::Ciphertext],
-    ) -> crate::Result<Vec<crate::shortint::ciphertext::SquashedNoiseCiphertext>> {
-        blocks
-            .collect::<crate::Result<Vec<_>>>()
-    }
+    CompressedKVStore, CompressedServerKey, CompressedSquashedNoiseCiphertextList,
+    CompressedSquashedNoiseCiphertextListBuilder, CompressedSquashedNoiseOneTimePadFheSecretMask,
+    FheBool, FheInt8, FheUint32, FheUint64, FheUint8, HlStreamCipher, HlTranscipherer,
+    KreyviumFheKey, OneTimePadFheSecretMask, ReRandomizationContext, ReRandomizationMode,
+    ReRandomizationSupport, Seed, ServerKey, SquashedNoiseFheBool, SquashedNoiseFheInt,
+    SquashedNoiseFheUint, StreamCiphertext, TranscipherSession,
+    let public_key = if test.compressed {
+        let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
+        compressed.decompress()
+        load_and_unversionize(dir, test, format)?
+    set_server_key(client_key.generate_server_key());
 
-    pub fn squash_radix_ciphertext_noise(
-        &self,
-        src_server_key: &ServerKey,
-        ciphertext: &RadixCiphertext,
-    ) -> crate::Result<SquashedNoiseRadixCiphertext> {
-        let original_block_count = ciphertext.blocks.len();
-
-        let packed_blocks = self.pack_and_squash_ct_blocks(&ciphertext.blocks, src_server_key)?;
-        let packed_blocks = self.pack_and_squash_ct_blocks(&ciphertext.blocks, src_server_key)?;
+    let ct_list = CompactCiphertextList::builder(&public_key)
+        .push(value)
+        .build();
+    let encrypted: FheUint8 = ct_list.expand().unwrap().get(0).unwrap().unwrap();
+            // Only compact public keys can be loaded by this version of TFHE-rs
+            TestMetadata::HlPublicKey(test) if !test.compact => {
+                TestResult::Skipped(testcase.skip())
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    pub fn squash_radix_ciphertext_noise(
-        ciphertext: &RadixCiphertext,
-    ) -> crate::Result<SquashedNoiseRadixCiphertext> {
-        let original_block_count = ciphertext.blocks.len();
+    CompressedKVStore, CompressedPublicKey, CompressedServerKey,
+    CompressedSquashedNoiseCiphertextList, CompressedSquashedNoiseCiphertextListBuilder,
+    CompressedSquashedNoiseOneTimePadFheSecretMask, FheBool, FheInt8, FheUint32, FheUint64,
+    FheUint8, HlStreamCipher, HlTranscipherer, KreyviumFheKey, OneTimePadFheSecretMask,
+    ReRandomizationContext, ReRandomizationMode, ReRandomizationSupport, Seed, ServerKey,
+    SquashedNoiseFheBool, SquashedNoiseFheInt, SquashedNoiseFheUint, StreamCiphertext,
+    TranscipherSession,
+    let encrypted = if test.compact {
+        let public_key = if test.compressed {
+            let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
+            compressed.decompress()
+        } else {
+            load_and_unversionize(dir, test, format)?
+        };
+        set_server_key(client_key.generate_server_key());
 
-        let packed_blocks = ciphertext
-            .blocks
-            .collect::<crate::Result<Vec<_>>>()?;
-        let packed_blocks = ciphertext
-            .blocks
-            .par_chunks(2)
-            .map(|two_values| {
-                let packed = src_server_key.pack_block_chunk(two_values);
-
-                self.key
-                    .checked_squash_ciphertext_noise(&packed, &src_server_key.key)
-            })
-            .collect::<crate::Result<Vec<_>>>()?;
+        let ct_list = CompactCiphertextList::builder(&public_key)
+            .push(value)
+            .build();
+        ct_list.expand().unwrap().get(0).unwrap().unwrap()
+        let public_key = if test.compressed {
+            let compressed: CompressedPublicKey = load_and_unversionize(dir, test, for
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5bc9c334` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `723320f2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

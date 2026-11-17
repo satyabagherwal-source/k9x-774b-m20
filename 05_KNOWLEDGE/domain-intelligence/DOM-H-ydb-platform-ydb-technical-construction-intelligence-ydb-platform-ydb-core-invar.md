@@ -4,24 +4,24 @@
 {
   "source_repository": "ydb-platform/ydb",
   "source_url": "https://github.com/ydb-platform/ydb",
-  "source_version": "a22ac8d6",
+  "source_version": "fb116037",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T02:26:00.297Z",
+  "timestamp": "2026-11-17T11:09:57.989Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ydb-platform-ydb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ydb-platform/ydb](https://github.com/ydb-platform/ydb) (Revision: `a22ac8d6`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T02:26:00.297Z`  
+> **Provenance**: Harvested from [ydb-platform/ydb](https://github.com/ydb-platform/ydb) (Revision: `fb116037`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T11:09:57.989Z`  
 > **Learning ID**: `learn-github-ydb-platform-ydb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ydb-platform/ydb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T02:25:59.445Z  
+> **Harvest Timestamp**: 2026-11-17T11:09:57.031Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4790 stars
+- **Stars / Engagement**: 4791 stars
 
 ---
 
@@ -2079,154 +2079,281 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `398c10ff` (2026-11-14)
-**Commit Message**: Document extended dates and Decimal precision for Hibernate and Liquibase (#58245)
+### Incident Patch 1: `dbf3e5f9` (2026-11-17)
+**Commit Message**: fix race crash between cancel and ordinary shutdown (#59455)
 
-Co-authored-by: sisyphus-dev-ai <[REDACTED_EMAIL]>
-
-**File**: `ydb/docs/ru/core/integrations/migration/liquibase.md` (modified, +59/-6)
+**File**: `ydb/core/tx/columnshard/bg_tasks/session/session.h` (modified, +4/-1)
 ```diff
-@@ -22,7 +22,7 @@ Changeset `createTable` отвечает за создание таблицы. 
+@@ -76,7 +76,10 @@ class TSession {
+     }
  
- {% endnote %}
- 
--Таблица сравнения описаний типов Liquibase с [типами {{ ydb-short-name }}](../../yql/reference/types/primitive.md):
-+Таблица сопоставлений типов Liquibase по умолчанию с [типами {{ ydb-short-name }}](../../yql/reference/types/primitive.md):
- 
- | Liquibase типы                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | {{ ydb-short-name }} тип   |
- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
-@@ -50,6 +50,59 @@ Changeset `createTable` отвечает за создание таблицы. 
- 
- `dropTable` - удаление таблицы. Пример: `<dropTable tableName="episodes"/>`
- 
-+### Расширенные типы дат и интервалов {#extended-datetime}
-+
-+Чтобы создать столбцы с расширенным диапазоном дат или интервалов, укажите нативные имена типов `Date32`, `Datetime64`, `Timestamp64` и `Interval64` в атрибуте `type`. Стандартные имена `date`, `datetime` и `timestamp` по-прежнему создают `Date`, `Datetime` и `Timestamp`; расширенные типы не выбираются автоматически.
-+
-+Например, добавьте следующий changeset в журнал миграций:
-+
-+```xml
-+<changeSet id="extended-datetime" author="example">
-+    <createTable tableName="events">
-+        <column name="id" type="Int64">
-+            <constraints primaryKey="true" nullable="false"/>
-+        </column>
-+        <column name="event_date" type="Date32"/>
-+        <column name="event_datetime" type="Datetime64"/>
-+        <column name="event_timestamp" type="Timestamp64"/>
-+        <column name="event_interval" type="Interval64"/>
-+    </createTable>
-+</changeSet>
-+```
-+
-+Те же имена типов можно использовать в `addColumn`, а также в журналах миграций в форматах YAML и JSON. Диапазоны значений и точность описаны в разделе [Дата и время](../../yql/reference/types/primitive.md#datetime).
-+
-+Используйте [JDBC-драйвер](../../reference/languages-and-apis/jdbc-driver/maven.md) версии 2.3.11 или новее: в этой версии добавлена поддержка расширенных типов. Указание типа столбца не добавляет автоматического преобразования строковых значений для `insert`, `loadData` и `loadUpdateData`. Для загрузки расширенных дат и интервалов используйте SQL-миграции с явно типизированными значениями.
-+
-+### Decimal с заданной точностью и масштабом {#decimal}
-+
-+В {{ ydb-short-name }} тип `Decimal(precision, scale)` позволяет задать общее число десятичных разрядов и число разрядов после запятой. Допустимы значения `1 ≤ precision ≤ 35` и `0 ≤ scale ≤ precision`; подробнее см. [Примитивные типы данных](../../yql/reference/types/primitive.md#numeric).
-+
-+{% note info %}
-+
-+Следующие примеры требуют `liquibase-ydb-dialect` версии [1.1.3](https://github.com/ydb-platform/ydb-java-dialects/blob/main/liquibase-dialect/CHANGELOG.md) или новее. В более ранних выпусках обработчик `decimal` использует фиксированный тип `Decimal(22,9)`, в том числе при явном указании других параметров.
-+
-+{% endnote %}
-+
-+Чтобы создать столбец с нужной точностью и масштабом, укажите оба параметра в атрибуте `type`:
-+
-+```xml
-+<changeSet id="parameterized-decimal" author="example">
-+    <createTable tableName="decimal_values">
-+        <column name="id" type="Int64">
-+            <constraints primaryKey="true" nullable="false"/>
-+        </column>
-+        <column name="amount" type="Decimal(35,10)"/>
-+    </createTable>
-+</changeSet>
-+```
-+
-+Диалект сохраняет точность и масштаб в `createTable`, `addColumn`, при записи через `insert`, `loadData` и `loadUpdateData`, а также при генерации журнала миграций из существующей схемы. Для произвольного `Decimal(precision, scale)` SQL changeset не требуется. Те же параметры поддерживаются в журналах миграций YAML и JSON и для имён `java.sql.Types.DECIMAL` и `java.math.BigDecimal`.
-+
-+Если параметры не указаны, например `type="decimal"`, используется `Decimal(22,9)`. Один параметр задаёт точность с нулевым масштабом: `type="decimal(10)"` создаёт `Decimal(10,0)`. Более двух параметров, нецелочисленные значения или значения за пределами допустимого диапазона приводят к ошибке проверки типа.
-+
-+При совместном использовании с Hibernate укажите ту же точность и
+     void FinishActor() {
+-        AFL_VERIFY(!!ActorId);
++        // Stop() or an earlier completion may have already requested actor shutdown.
++        if (!ActorId) {
++            return;
++        }
+         NActors::TActivationContext::AsActorContext().Send(*ActorId, new NActors::TEvents::TEvPoisonPill);
+         ActorId.reset();
+     }
 ```
 
-**File**: `ydb/docs/ru/core/integrations/orm/hibernate.md` (modified, +87/-2)
+**File**: `ydb/core/tx/columnshard/export/actor/ut/ut_export_actor_lifecycle.cpp` (modified, +115/-0)
 ```diff
-@@ -93,7 +93,8 @@ Hibernate - это фреймворк объектно-реляционного
- | `bool`, `Boolean`                                                           | `Bool`                      |
- | `String`, enum с аннотацией `@Enumerated(EnumType.STRING)`                  | `Text` (синоним `Utf8`)     |
- | `java.time.LocalDate`                                                       | `Date`                      |
--| `java.math.BigDecimal`, `java.math.BigInteger`                              | `Decimal(22,9)`             |
-+| `java.math.BigDecimal`                                                       | `Decimal(22,9)`             |
-+| `java.math.BigInteger`                                                       | `Decimal(22,0)` (Hibernate 6 и 7), `Decimal(22,9)` (Hibernate 5) |
- | `double`, `Double`                                                          | `Double`                    |
- | `float`, `Float`                                                            | `Float`                     |
- | `int`, `java.lang.Integer`                                                  | `Int32`                     |
-@@ -251,7 +252,91 @@ Hibernate не предназначен для управления схемам
+@@ -27,6 +27,7 @@
+ #include <library/cpp/testing/hook/hook.h>
+ #include <util/random/random.h>
  
- {% endlist %}
++#include <algorithm>
+ #include <iterator>
  
--### Пример с Spring Data JPA {#integration-with-spring-data-jpa-example}
-+## Нативные типы {{ ydb-short-name }} {#native-types}
+ namespace NKikimr {
+@@ -867,6 +868,120 @@ Y_UNIT_TEST_SUITE(TExportActorLifecycle) {
+         UNIT_ASSERT_VALUES_EQUAL(GetExportActorsAliveCounter(runtime), 0);
+     }
+ 
++    Y_UNIT_TEST(CancelDuringInFlightCursorSaveDoesNotAbort) {
++        Aws::S3::S3Client s3Client = NTestUtils::MakeS3Client();
++        NTestUtils::CreateBucket("test", s3Client);
 +
-+Таблица выше описывает сопоставления по умолчанию. Для явного выбора нативных типов дат и интервалов используйте аннотацию `@JdbcTypeCode` из `org.hibernate.annotations` и константы `YdbJdbcCode` из `tech.ydb.hibernate.dialect.code`. Точность и масштаб Decimal задаются отдельно с помощью `@Column`.
++        TTestBasicRuntime runtime;
++        TTester::Setup(runtime);
 +
-+Следующие примеры предназначены для Hibernate 6 и 7. Расширенные даты и интервалы поддерживаются в `hibernate-ydb-dialect` начиная с версии 1.5.1 для Hibernate 6 и 1.7.0 для Hibernate 7; необходим [JDBC-драйвер](../../reference/languages-and-apis/jdbc-driver/maven.md) версии 2.3.11 или новее. Произвольный Decimal поддерживается начиная с версии 1.8.0, см. [ниже](#decimal). В отдельном диалекте для Hibernate 5 эти коды не зарегистрированы, а аннотация `@JdbcTypeCode` отсутствует в API Hibernate 5.
++        const ui64 tableId = 1;
++        const std::vector<NArrow::NTest::TTestColumn> schema = { NArrow::NTest::TTestColumn("key1", TTypeInfo(NTypeIds::Uint64)),
++            NArrow::NTest::TTestColumn("key2", TTypeInfo(NTypeIds::Uint64)), NArrow::NTest::TTestColumn("field", TTypeInfo(NTypeIds::Utf8)) };
++        auto csControllerGuard = NKikimr::NYDBTest::TControllers::RegisterCSControllerGuard<NOlap::TWaitCompactionController>();
++        auto planStep = PrepareTablet(runtime, tableId, schema, 2);
++        ui64 txId = 111;
 +
-+### Расширенные типы дат и интервалов {#extended-datetime}
++        TActorId sender = runtime.AllocateEdgeActor();
 +
-+Чтобы хранить даты вне диапазона обычных `Date`, `Datetime` и `Timestamp` или расширенные интервалы, выберите соответствующий JDBC-код:
++        std::vector<ui64> writeIds;
++        ui64 writeId = 1;
++        UNIT_ASSERT(WriteData(runtime, sender, writeId++, tableId, MakeTestBlob({ 0, 5 }, schema), schema, true, &writeIds));
++        planStep = ProposeCommit(runtime, sender, ++txId, writeIds);
++        PlanCommit(runtime, sender, planStep, txId);
 +
-+| Java-тип | Аннотация | Тип {{ ydb-short-name }} |
-+|---|---|---|
-+| `java.time.LocalDate` | `@JdbcTypeCode(YdbJdbcCode.DATE_32)` | `Date32` |
-+| `java.time.LocalDateTime` | `@JdbcTypeCode(YdbJdbcCode.DATETIME_64)` | `Datetime64` |
-+| `java.time.Instant` | `@JdbcTypeCode(YdbJdbcCode.TIMESTAMP_64)` | `Timestamp64` |
-+| `java.time.Duration` | `@JdbcTypeCode(YdbJdbcCode.INTERVAL_64)` | `Interval64` |
++        const NOlap::TSnapshot backupSnapshot(planStep.Val(), txId);
++        const auto txBody = MakeBackupTxBody(tableId, backupSnapshot);
++        const ui64 backupTxId = ++txId;
 +
-+Например, добавьте следующие поля в класс сущности:
++        TActorId exportActor;
++        auto initObserver = runtime.AddObserver<NKqp::TEvKqpCompute::TEvScanInitActor>([&](auto& ev) {
++            if (!exportActor) {
++                exportActor = ev->Recipient;
++            }
++        });
++        NActors::TBlockEvents<NOlap::NBackground::TEvLocalTransactionCompleted> blocked(runtime, [&](const auto& ev) {
++            return exportActor && ev->Recipient == exportActor;
++        });
++        // Hold the pill from the first FinishActor so the second completion is
++        // handled while that actor is still alive.
++        NActors::TBlockEvents<TEvents::TEvPoisonPill> blockedPoison(runtime, [&](const auto& ev) {
++            return exportActor && ev->Recipient == exportActor;
++        });
 +
-+```java
-+@JdbcTypeCode(YdbJdbcCode.DATE_32)
-+private LocalDate eventDate;
++        const auto txIdOf = [](const auto& ev) {
++            return ev->Get()->GetInternalTxId();
++        };
++        const auto dump = [&]() {
++            TStringBuilder out;
++            for (const auto& ev : blocked) {
++                out << txIdOf(ev) << " ";
++            }
++            return TString(out);
++        };
++        std::vector<ui64> known;
++        const auto isKnown = [&](ui64 id) {
++            return std::find(known.begin(), known.end(), id) != known.end();
++        };
++        const auto waitNew = [&](const char* title) {
++            ui64 found = 0;
++            TestWaitCondition(runtime, title, [&]() {
++                for (const auto& ev : blocked) {
++                    if (!isKnown(txIdOf(ev))) {
++                        found = txIdOf(ev);
++                        return true;
++                    }
++                }
++                return false;
++            }, TDuration::Seconds(30));
++            known.push_back(found);
++            return found;
++        };
++        const auto deliver = [&](ui64 id) {
++            auto it = std::find_if(blocked.begin(), blocked.end(), [&](const auto& ev) {
++                return txIdOf(ev) == id;
++            });
++            UNIT_ASSERT_C(it != blocked.end(), "missing completion " << id << " queue=[" << dump() << "]");
++            std::iter_swap(blocked.begin(), it);
++            blocked.Unblock(1);
++            runtime.SimulateSleep(TDuration::MilliSeconds(200));
++        };
 +
-+@JdbcTypeCode(YdbJdbcCode.DATETIME_64)
-+private LocalDateTime eventDatetime;
++        ForwardToTablet(runtime, TTestTxConfig::TxTablet0, sender,
++            new TEvColumnShard::TEvProposeTransaction(NKikimrTxColumnShard::TX_KIND_BACKUP, sender, backupTxId, txBody.SerializeAsString()));
 +
-+@JdbcTypeCode(YdbJdbcCode.TIMESTAMP_64)
-+private Instant eventTimestamp;
++        const ui64 progressId = waitNew("cursor save completion");
++        UNIT_ASSERT_VALUES_EQUAL_C(blocked.size(), 1, dump());
++        UNIT_ASSERT_VALUES_EQUAL(GetExportActorCounter(runtime, "Value/Export/SaveCursor/Inflight")->Val(), 1);
 +
-+@JdbcTypeCode(YdbJdbcCode.INTERVAL_64)
-+private Duration eventInterval;
-+```
++        ForwardToTablet(runtime, TTestTxConfig::TxTablet0, sender, new TEvDataShard::TEvCancelBackup(backupTxId, tableId));
 +
-+Аннотация задаёт тип как при генерации схемы, так и при передаче значений через JDBC. Например, поле `eventDate` сможет хранить `LocalDate.of(1960, 1, 1)`, которое не входит в диапазон `Date`.
++        const ui64 stateId = waitNew("cancel state save completion");
++        deliver(stateId);
++        const ui64 finish1 = waitNew("first propose-finish completion");
++        deliver(progressId);
++        const ui64 state2 = waitNew("second state save completion");
++        deliver(state2);
++        const ui64 finish2 = waitNew("second propose-finish completion");
++        UNIT_ASSERT_VALUES_EQUAL_C(blocked.size(), 2, dump());
 +
-+Одна аннотация `@Column(columnDefinition = "Date32")` меняет определение столбца при генерации схемы, но не выбирает нужный способ передачи значений. Используйте `@JdbcTypeCode` и для существующих таблиц, созданных с помощью Liquibase или Flyway; при этом тип поля должен совпадать с типом столбца.
-+
-+Расширенный диапазон не увеличивает точность: `Datetime64` хранит секунды, а `Timestamp64` и `Interval64` — микросекунды. Значения `LocalDateTime` интерпретируются в UTC. Диапазоны значений описаны в разделе [Дата и время](../../yql/reference/types/primitive.md#datetime).
-+
-+#### Расширенные типы по умолчанию в JDBC-драйвере {#force-signed-datetimes}
-+
-+{% note tip %}
-+
-+Если в проекте не нужно смешивать обычные и расширенные типы дат, можно не аннотировать каждое поле, а включить свойство `forceSignedDatetimes=true` в [JDBC-драйвере](https://github.com/ydb-platform/ydb-jdbc-driver) версии 2.3.11 или новее, например в [JDBC URL](../../reference/languages-and-apis/jdbc-driver/properties.md#jdbc-url): `jdbc:ydb:grpc://localhost:2136/local?forceSignedDatetimes=true`. По умолчанию свойство выключено. С ним драйвер передаёт параметры стандартных JDBC-типов `DATE` и `TIMESTAMP`, а также значения `java.time.LocalDate`, `java.time.LocalDateTime`, `java.time.Instant`, `java.time.Duration`, `java.sql.Date` и `java.sql.Timestamp` как `Date32`, `Datetime64`, `Timestamp64` и `Interval64`.
-+
-+Свойство действует только на передачу значений через JDBC, поэтому в Hibernate учитывайте следующее:
-+
-+* Генерация схемы не меняется: без `@JdbcTypeCode` диалект по-прежнему создаёт столбцы `Date`, `Datetime`, `Timestamp` и `Interval`. Создавайте таблицы с расширенными типами заранее, например чере
++        deliver(finish1);
++        UNIT_ASSERT_VALUES_EQUAL(blockedPoison.size(
+```
+
+---
+
+### Incident Patch 2: `0e041d62` (2026-11-17)
+**Commit Message**: Change cpu requirements for topics tests (#59510)
+
+**File**: `ydb/tests/functional/sqs/merge_split_common_table/fifo/ya.make` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@ IF (SANITIZER_TYPE)
+     REQUIREMENTS(ram:32 cpu:4)
+ ELSE()
+     SIZE(MEDIUM)
+-    REQUIREMENTS(cpu:4)
++    REQUIREMENTS(cpu:2)
+ ENDIF()
+ 
+ DEPENDS(
+```
+
+**File**: `ydb/tests/functional/sqs/migration/compatibility/large/ya.make` (modified, +1/-0)
+```diff
+@@ -6,5 +6,6 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/large.inc)
+ 
+ FORK_SUBTESTS()
+ SPLIT_FACTOR(5)
++REQUIREMENTS(cpu:1)
+ 
+ END()
+```
+
+**File**: `ydb/tests/functional/sqs/migration/compatibility/multinode/ya.make` (modified, +1/-1)
+```diff
+@@ -7,5 +7,5 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/multinode.inc)
+ FORK_SUBTESTS()
+ SPLIT_FACTOR(20)
+ 
+-REQUIREMENTS(cpu:4)
++REQUIREMENTS(cpu:3)
+ END()
+```
+
+**File**: `ydb/tests/functional/sqs/migration/finished/large/ya.make` (modified, +1/-0)
+```diff
+@@ -6,5 +6,6 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/large.inc)
+ 
+ FORK_SUBTESTS()
+ SPLIT_FACTOR(5)
++REQUIREMENTS(cpu:1)
+ 
+ END()
+```
+
+**File**: `ydb/tests/functional/sqs/migration/suites/with_quotas.inc` (modified, +2/-3)
+```diff
+@@ -9,10 +9,9 @@ DATA(
+     arcadia/ydb/tests/functional/sqs/with_quotas
+ )
+ 
++REQUIREMENTS(cpu:1)
+ IF (SANITIZER_TYPE == "thread")
+-    REQUIREMENTS(ram:32 cpu:1)
+-ELSE()
+-    REQUIREMENTS(cpu:2)
++    REQUIREMENTS(ram:32)
+ ENDIF()
+ 
+ DEPENDS(
+```
+
+**File**: `ydb/tests/functional/sqs/migration/topic_creation/cloud/ya.make` (modified, +1/-0)
+```diff
+@@ -6,5 +6,6 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/cloud.inc)
+ 
+ FORK_SUBTESTS()
+ SPLIT_FACTOR(40)
++REQUIREMENTS(cpu:1)
+ 
+ END()
+```
+
+**File**: `ydb/tests/functional/sqs/migration/topic_creation/common/ya.make` (modified, +1/-0)
+```diff
+@@ -6,6 +6,7 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/common.inc)
+ 
+ FORK_SUBTESTS()
+ SPLIT_FACTOR(60)
++REQUIREMENTS(cpu:1)
+ 
+ TEST_SRCS(
+     ydb/tests/functional/sqs/common/test_garbage_collection.py
+```
+
+**File**: `ydb/tests/functional/sqs/migration/topic_creation/messaging/ya.make` (modified, +1/-0)
+```diff
+@@ -6,5 +6,6 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/functional/sqs/migration/suites/messaging.inc)
+ 
+ FORK_SUBTESTS()
+ SPLIT_FACTOR(60)
++REQUIREMENTS(cpu:1)
+ 
+ END()
+```
+
+---
+
+### Incident Patch 3: `dc1cd2af` (2026-11-17)
+**Commit Message**: Fix absolute Topic path fixtures (#59516)
+
+**File**: `ydb/core/persqueue/public/describer/describer_ut.cpp` (modified, +0/-16)
+```diff
+@@ -273,22 +273,6 @@ Y_UNIT_TEST_SUITE(TDescriberTests) {
+         UNIT_ASSERT_VALUES_EQUAL(topicInfo.RealPath, "/Root/topic1");
+     }
+ 
+-    Y_UNIT_TEST(TopicNotCanonizedPath) {
+-        auto setup = std::make_shared<TTopicSdkTestSetup>(TEST_CASE_NAME);
+-        EnableDescriberLogs(*setup);
+-
+-        ExecuteDDL(*setup, "CREATE TOPIC topic1");
+-
+-        auto& runtime = setup->GetRuntime();
+-        StartDescribe(runtime, {"Root/topic1"});
+-        auto topics = WaitResult(runtime);
+-
+-        UNIT_ASSERT(topics.contains("Root/topic1"));
+-        auto& topicInfo = topics["Root/topic1"];
+-        UNIT_ASSERT_VALUES_EQUAL(topicInfo.Status, NDescriber::EStatus::Success);
+-        UNIT_ASSERT_VALUES_EQUAL(topicInfo.RealPath, "/Root/topic1");
+-    }
+-
+     // -------------------------------------------------------------------------
+     // P0 — authorization
+     // -------------------------------------------------------------------------
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #59461** (2026-11-16): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #59460** (2026-11-16): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #59459** (2026-11-16): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
-- **PR #59458** (2026-11-16): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #59457** (2026-11-16): Sync branches 261115-2307: stable-26-3-1 to stable-26-3-1-ent (@ydbot)
-- **PR #59452** (closed): docs: update roadmap drafts (@fomichev3000)
+- **PR #59788** (2026-11-17): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #59777** (2026-11-17): YDBRELIABILITY-95 Add feature flag (@kuzin57)
+- **PR #59775** (2026-11-17): Remove inactive error-tags CI workflow (@maximyurchuk)
+- **PR #59771** (2026-11-17): Fix use-of-unitialized value in PDisk test (@serbel324)
+- **PR #59768** (closed): LOGBROKER-10680: [PQ] Fix exceeding the partition write quota behind a feature flag (@shokhor)
+- **PR #59766** (2026-11-17): docs: clarify default SELECT window frames (@fomichev3000)
 
 ---
 
@@ -2246,52 +2373,34 @@ Co-authored-by: sisyphus-dev-ai <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Document extended dates and Decimal precision for Hibernate and Liquibase
+## X. race crash between cancel and ordinary shutdown
 
 **RULE**:
-When implementing operations in `ydb/docs/ru/core/integrations/migration/liquibase.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/tx/columnshard/bg_tasks/session/session.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `398c10ff`: Document extended dates and Decimal precision for Hibernate and Liquibase. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dbf3e5f9`: race crash between cancel and ordinary shutdown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/docs/ru/core/integrations/migration/liquibase.md`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/columnshard/bg_tasks/session/session.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-Таблица сопоставлений типов Liquibase по умолчанию с [типами {{ ydb-short-name }}](../../yql/reference/types/primitive.md):
-### Расширенные типы дат и интервалов {#extended-datetime}
-
-Чтобы создать столбцы с расширенным диапазоном дат или интервалов, укажите нативные имена типов `Date32`, `Datetime64`, `Timestamp64` и `Interval64` в атрибуте `type`. Стандартные имена `date`, `datetime` и `timestamp` по-прежнему создают `Date`, `Datetime` и `Timestamp`; расширенные типы не выбираются автоматически.
-
-Например, добавьте следующий changeset в журнал миграций:
-
-```xml
-<changeSet id="extended-datetime" author="example">
-    <createTable tableName="events">
-        <column name="id" type="Int64">
-            <constraints primaryKey="true" nullable="false"/>
-        </column>
-        <column name="event_date" type="Date32"/>
-        <column name="event_datetime" type="Datetime64"/>
-        <column name="event_timestamp" type="Timestamp64"/>
-        <column name="event_interval" type="Interval64"/>
-    </createTable>
-</changeSet>
-```
-
-Те же имена типов можно использовать в `addColumn`, а также в журналах миграций в форматах YAML и JSON. Диапазоны значений и точность описаны в разделе [Дата 
+        // Stop() or an earlier completion may have already requested actor shutdown.
+        if (!ActorId) {
+            return;
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-Таблица сравнения описаний типов Liquibase с [типами {{ ydb-short-name }}](../../yql/reference/types/primitive.md):
+        AFL_VERIFY(!!ActorId);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `398c10ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dbf3e5f9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
