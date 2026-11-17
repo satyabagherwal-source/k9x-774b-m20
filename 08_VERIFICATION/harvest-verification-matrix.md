@@ -10383,3 +10383,5 @@
 | `CYCLE-20261117-SD43` | `2026-11-17T00:10:52.899Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | Yes (`d965a71d...`) |
 | `CYCLE-20261117-SFX3` | `2026-11-17T00:10:56.535Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8822` | Yes (`2e7d28a8...`) |
 | `CYCLE-20261117-SYWL` | `2026-11-17T00:11:21.141Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md` | Yes (`56862244...`) |
+| `CYCLE-20261117-9AZ0` | `2026-11-17T00:24:03.276Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8823` | Yes (`54f14694...`) |
+| `CYCLE-20261117-D4VN` | `2026-11-17T00:27:02.003Z` | `NousResearch/Arete-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md` | Yes (`a89f958c...`) |

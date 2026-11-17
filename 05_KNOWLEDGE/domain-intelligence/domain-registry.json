@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T00:11:25.385Z",
-  "total_records": 1370,
+  "last_updated": "2026-11-17T00:27:06.028Z",
+  "total_records": 1372,
   "domains": {
     "A": {
       "total": 9,
@@ -42,7 +42,7 @@
       ]
     },
     "D": {
-      "total": 600,
+      "total": 602,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -643,7 +643,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear",
         "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear",
         "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-",
-        "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor"
+        "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",
+        "domain_intelligence-research-knowledge-intelligence-nousresearch-arete-27b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria"
       ]
     },
     "E": {
@@ -7185,8 +7187,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "8853693076fefe1a6b6d91ec52ffdb120412f5f221176df1dd8c0453a189a771",
-      "created_at": "2026-11-16T22:34:21.329Z"
+      "content_hash": "a2396be1c0c682492fa397434289c55d50bda88fa5fea2e4176a11639232a349",
+      "created_at": "2026-11-17T00:27:06.028Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -21018,8 +21020,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats.go Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-technical-construction-intelligence-nats-io-nats-go-core-invaria.md",
       "repository": "nats-io/nats.go",
-      "content_hash": "6ed51ef3d772d3eca20768fbb755e52482cd03ffa4f8f8297bcd0538b677a51e",
-      "created_at": "2026-11-15T17:31:49.757Z"
+      "content_hash": "3f2fe3b98a7ec3bc7b3bf2c3884400aa1c73cffc86019f2b1eb73f849bf32a83",
+      "created_at": "2026-11-17T00:24:03.564Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants",
@@ -21027,8 +21029,8 @@
       "title": "Technical Construction Intelligence: nats-io-nats.go-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-learnings-technical-construction-intelligence-nats-io-nats-go-le.md",
       "repository": "nats-io-nats.go-learnings",
-      "content_hash": "34c5e41249e692c8a316ffaec8faec704fadbf9d53c73730bfbcb9ce1468bfd1",
-      "created_at": "2026-11-15T17:31:58.597Z"
+      "content_hash": "227bf2f1124af9aa88fe0ed85b9ff39f20a3e5312f8d1544acab5f7961304b3e",
+      "created_at": "2026-11-17T00:27:05.542Z"
     },
     "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i": {
       "record_id": "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i",
@@ -24320,6 +24322,24 @@
       "repository": "authzed-spicedb-learnings",
       "content_hash": "b1610d9e4ce235e75743b4b22b1239901e3a036680f17e96cf51e4484c97fc72",
       "created_at": "2026-11-17T00:11:25.385Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nousresearch-arete-27b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nousresearch-arete-27b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: NousResearch/Arete-27B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nousresearch-arete-27b-research-knowledge-intelligence-nousresearch-arete-27b.md",
+      "repository": "NousResearch/Arete-27B",
+      "content_hash": "2df7510a7acbdce741736a3fd4d88ec6d28b0c7f04d880c6e76bd226a264c30a",
+      "created_at": "2026-11-17T00:27:02.173Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nousresearch-arete-27b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nousresearch-arete-27b-learnings-research-knowledge-intelligence-hf-nousresea.md",
+      "repository": "hf-nousresearch-arete-27b-learnings",
+      "content_hash": "c2816963bc937a7bf06a7e3eef6df0f3e8df06ae6c6586d6aeed6241c8bf399f",
+      "created_at": "2026-11-17T00:27:05.090Z"
     }
   }
 }

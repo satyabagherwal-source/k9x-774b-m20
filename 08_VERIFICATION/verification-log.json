@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-54CX",
-    "timestamp": "2026-11-14T06:05:42.609Z",
-    "repository": "founded-labs/react-native-reusables",
-    "learningId": "learn-github-founded-labs-react-native-reusables",
-    "contentHash": "f18f0249bb5d2dc29dd12544090e8481ad71c3275dd25a6bf20d4abd71475c7b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-5ABX",
-    "timestamp": "2026-11-14T06:05:50.349Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "b430616fc8589cdf9a6c059b03ff0bb2702496ad42a60ce79a7754b58e187c27",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-S4K7",
     "timestamp": "2026-11-14T06:23:35.959Z",
     "repository": "zvec-ai/zvec-grep",
@@ -7490,6 +7460,36 @@
     "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
     "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
     "contentHash": "568622441e630b7d63b2a7f0a57df5dd7f184462df5895840c3c99e6524f06d1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-9AZ0",
+    "timestamp": "2026-11-17T00:24:03.276Z",
+    "repository": "nats-io/nats.go",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "54f1469449ceb0c3d47d42f5933ebb440e4c3f90b9590c9c02e029b04b0d102f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-D4VN",
+    "timestamp": "2026-11-17T00:27:02.003Z",
+    "repository": "NousResearch/Arete-27B",
+    "learningId": "learn-huggingface-nousresearch-arete-27b",
+    "contentHash": "a89f958c698b50d54d3c3377ce9136b51285207c38a1d5d947ff236825559889",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T00:11:21.151Z",
-  "total_cycles_completed": 9970,
-  "total_learnings_persisted": 9970,
-  "total_rules_promoted": 9560,
+  "last_updated": "2026-11-17T00:27:02.012Z",
+  "total_cycles_completed": 9972,
+  "total_learnings_persisted": 9972,
+  "total_rules_promoted": 9561,
   "history": [
-    {
-      "timestamp": "2026-11-15T22:14:50.537Z",
-      "repository": "fabio-rovai/open-ontologies",
-      "learningId": "learn-github-fabio-rovai-open-ontologies",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T22:24:37.556Z",
-      "repository": "Cactus-Compute/mirage",
-      "learningId": "learn-huggingface-cactus-compute-mirage",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T22:39:45.413Z",
       "repository": "Dicklesworthstone/destructive_command_guard",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-17T00:11:21.151Z",
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
       "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T00:24:03.285Z",
+      "repository": "nats-io/nats.go",
+      "learningId": "learn-github-nats-io-nats-go",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T00:27:02.012Z",
+      "repository": "NousResearch/Arete-27B",
+      "learningId": "learn-huggingface-nousresearch-arete-27b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

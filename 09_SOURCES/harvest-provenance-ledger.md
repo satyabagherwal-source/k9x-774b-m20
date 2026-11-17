@@ -10416,3 +10416,5 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `cfc3f365` | Multi-dimensional audit evidence | 2026-11-17T00:10:52.902Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `3c8cd08f` | Multi-dimensional audit evidence | 2026-11-17T00:10:56.539Z |
 | `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-17T00:11:21.145Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `1b180714` | Multi-dimensional audit evidence | 2026-11-17T00:24:03.280Z |
+| `learn-huggingface-nousresearch-arete-27b` | `https://huggingface.co/NousResearch/Arete-27B` | `hf-nousres` | Multi-dimensional audit evidence | 2026-11-17T00:27:02.007Z |

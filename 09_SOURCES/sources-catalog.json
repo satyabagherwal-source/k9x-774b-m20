@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "5f66aec1",
+    "sourceVersion": "1b180714",
     "license": "Apache-2.0",
-    "contentHash": "f93038c0942d1c0eca7e152baa513454bde13e231e6b5bcdee94c3fe81d71706",
-    "lastHarvestedAt": "2026-11-15T17:31:49.519Z",
+    "contentHash": "54f1469449ceb0c3d47d42f5933ebb440e4c3f90b9590c9c02e029b04b0d102f",
+    "lastHarvestedAt": "2026-11-17T00:24:03.280Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -12135,8 +12135,8 @@
     "sourceUrl": "https://huggingface.co/NousResearch/Arete-27B",
     "sourceVersion": "hf-nousresearch-arete-27b",
     "license": "Open-Source",
-    "contentHash": "f288ffdf6dbdeaec0c75b725893045c570d816125576bda34d04a0968ffa6305",
-    "lastHarvestedAt": "2026-11-12T07:15:23.811Z",
+    "contentHash": "a89f958c698b50d54d3c3377ce9136b51285207c38a1d5d947ff236825559889",
+    "lastHarvestedAt": "2026-11-17T00:27:02.007Z",
     "learningId": "learn-huggingface-nousresearch-arete-27b"
   },
   "hf-viggle-viggle-remake": {
