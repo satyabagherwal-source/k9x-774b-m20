@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T06:57:54.659Z",
+  "timestamp": "2026-11-17T18:18:44.274Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-shopify-react-native-skia-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [shopify-react-native-skia-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T06:57:54.659Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T18:18:44.274Z`  
 > **Learning ID**: `LEARN-EVO-shopify-react-native-skia-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from shopify-react-native-skia-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source**: github ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
-> **Source Version**: `c72569b3`  
+> **Source Version**: `0ac4f44a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T06:57:00.525Z  
+> **Timestamp**: 2026-11-17T18:18:38.136Z  
 > **Learning ID**: `learn-github-wcandillon-react-native-skia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Shopify/react-native-skia](https://github.com/Shopify/react-native-skia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T06:57:00.519Z  
+> **Harvest Timestamp**: 2026-11-17T18:18:38.129Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: High-performance React Native Graphics using Skia
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8780 stars
+- **Stars / Engagement**: 8784 stars
 
 ---
 
@@ -375,45 +375,6 @@ export const disposeWebGPURenderer = (renderer: THREE.WebGPURenderer) => {
     }
   }
 };
-
-```
-
-### Core Architecture Module: `packages/skia/apple/MetalLayerColorSpaceUtils.h`
-```
-#pragma once
-
-#import <CoreGraphics/CoreGraphics.h>
-#import <QuartzCore/CAMetalLayer.h>
-
-namespace RNSkia {
-
-// The surface writes sRGB-encoded (SDR) values regardless of the texture
-// format. With an 8-bit format a nil colorspace displays them as-is, but Core
-// Animation interprets a float-format layer with a nil colorspace as extended
-// linear sRGB, which displays the same values noticeably brighter. Tag the
-// float layer with the matching gamma-encoded (extended) colorspace so colors
-// are identical to the 8-bit path, only with more precision.
-inline void setCAMetalLayerColorSpace(CAMetalLayer *layer, bool isFloatFormat,
-                                      bool useP3ColorSpace) {
-  if (isFloatFormat) {
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(
-        useP3ColorSpace ? kCGColorSpaceExtendedDisplayP3
-                        : kCGColorSpaceExtendedSRGB);
-    layer.colorspace = colorSpace;
-    CGColorSpaceRelease(colorSpace);
-  } else if (useP3ColorSpace) {
-    CGColorSpaceRef colorSpace =
-        CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
-    layer.colorspace = colorSpace;
-    CGColorSpaceRelease(colorSpace);
-  } else if (layer.colorspace != nil) {
-    // Restore the default (no color matching) when reconfiguring a layer
-    // back to an 8-bit format.
-    layer.colorspace = nil;
-  }
-}
-
-} // namespace RNSkia
 
 ```
 
@@ -1693,17 +1654,54 @@ private:
 
 ```
 
+### Core Architecture Module: `packages/skia/cpp/utils/RNSkMeasureTime.h`
+```
+//
+// Created by Christian Falch on 24/08/2021.
+//
+
+#pragma once
+
+#include <chrono>
+#include <string>
+
+#include "RNSkLog.h"
+
+namespace RNSkia {
+
+class RNSkMeasureTime {
+public:
+  explicit RNSkMeasureTime(const std::string &name)
+      : _name(name), _start(std::chrono::high_resolution_clock::now()) {}
+
+  ~RNSkMeasureTime() {
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::milliseconds>(stop - _start)
+            .count();
+    RNSkLogger::logToConsole("%s: %lld ms\n", _name.c_str(), duration);
+  }
+
+private:
+  std::string _name;
+  std::chrono::time_point<std::chrono::steady_clock> _start;
+};
+
+}; // namespace RNSkia
+
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4467** (2026-11-17): **Android: a `SurfaceView` canvas shows its hole black until its first frame**
+  *Symptoms*: ### Description  My app met this while its opaque canvases were `SurfaceView`s; it now renders every canvas into a `TextureView`, so it no longer does. Another user reported the same in [a comment on #3713](https://github.com/wcandillon/react-native-skia/issues/3713#issuecomment-5831378034), and #4191 is the closed fix.  A `<Canvas android={{ backingView: "SurfaceView" }}>` shows its hole black when it mounts, for a frame or two on a fast device and longer while its first recording is produced, until its first frame lands. The window opens the hole once the `SurfaceView` reports its draw finished, and `SkiaSurfaceView` implements `SurfaceHolder.Callback` rather than `Callback2`, so the report goes out as soon as `surfaceChanged` returns, before anything is presented into the surface. Before Android 12 a change of `android.opaque`, which replaces the surface, can show it black for a frame too.  `GLSurfaceView` holds `surfaceRedrawNeededAsync`'s `finishDrawing` until its renderer has drawn its next frame, and Flutter's `SurfaceView` until its first frame is displayed, keeping the view transparent until then before Android 8 ([GLSurfaceView](https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/opengl/java/android/opengl/GLSurfaceView.java#550), [Flutter](https://github.com/flutter/flutter/blob/189a5db70ba4f7a652e3349e922ab38a3bca023e/engine/src/flutter/shell/platform/android/io/flutter/embedding/android/SurfaceHolderCallbackCompat.java#L141-L16
+
 - **Issue #4462** (2026-11-13): **Android 8: timed waits on `steady_clock`, the render pool's idle task among them, follow the wall clock**
   *Symptoms*: ### Description  On Android 8.0 and 8.1 (API 26 and 27, within the library's minimum SDK), `std::condition_variable::wait_until` against a `steady_clock` deadline follows the wall clock. libc++ waits on `CLOCK_MONOTONIC` only when built for API 30 or later ([`__config#L845-L846`](https://github.com/llvm/llvm-project/blob/llvmorg-20.1.0/libcxx/include/__config#L845-L846)); below that it hands `pthread_cond_timedwait` a `CLOCK_REALTIME` deadline, which bionic converts to `CLOCK_MONOTONIC` only from Android 9 ([`bionic_futex.cpp` in pie-release](https://android.googlesource.com/platform/bionic/+/refs/heads/pie-release/libc/bionic/bionic_futex.cpp#42)). A wall-clock change during such a wait, a network time sync or the user setting the clock, moves its end by the change. The library waits this way for the render pool's idle task ([`RNSkThreadPool.h#L213`](https://github.com/wcandillon/react-native-skia/blob/914fae19683edbce527bbafd0bea6d649660df0a/packages/skia/cpp/rnskia/RNSkThreadPool.h#L213)), the image reaper ([`RNImageProvider.h#L487`](https://github.com/wcandillon/react-native-skia/blob/914fae19683edbce527bbafd0bea6d649660df0a/packages/skia/cpp/rnskia/RNImageProvider.h#L487)), `waitForIdle` before the pipeline warmup compiles ([`RNSkGpuActivity.h#L62`](https://github.com/wcandillon/react-native-skia/blob/914fae19683edbce527bbafd0bea6d649660df0a/packages/skia/cpp/rnskia/RNSkGpuActivity.h#L62)) and the pipeline cache's write delay ([`RNSkPipelineWarmup.h#L259`](https://github
-
-- **Issue #4458** (2026-11-13): **e2e: an eval answered after its 30 s timeout hands its reply to the next eval**
-  *Symptoms*: ### Description  The e2e host takes the next message the device sends as the reply to its latest request ([`setup.tsx#L601-L634`](https://github.com/wcandillon/react-native-skia/blob/914fae19683edbce527bbafd0bea6d649660df0a/packages/skia/src/renderer/__tests__/setup.tsx#L601-L634)). After 30 s it stops listening and fails the case, but a reply that comes later still arrives, and nothing in it says which request it answers, so the next request takes it as its own. The app sends an eval's reply when its promise settles ([`Tests.tsx#L119-L125`](https://github.com/wcandillon/react-native-skia/blob/914fae19683edbce527bbafd0bea6d649660df0a/apps/example/src/Tests/Tests.tsx#L119-L125)), so one slow case fails the case after it with a reply that is not its own.  Expected: a reply that comes after its request timed out is dropped, and the next eval gets its own.  On `main` at 914fae196, a release build of the example on a Galaxy S23 (Android 14):  ``` checkout: 914fae196 passed: fails on its own failed: leaves the next eval its own reply   Error: expect(received).toBe(expected) // Object.is equality   Expected: "second"   Received: "first" verdict: "leaves the next eval its own reply" fails ```  ### React Native Skia Version  main at 914fae196  ### React Native Version  0.88.1 (the example app's)  ### Using New Architecture  - [x] Enabled  ### Steps to Reproduce  1. Open the example app on an Android device on its E2E tests screen, as `yarn e2e` expects; the spec reaches it on port 424
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1720,1160 +1718,789 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e2c676a` (2026-11-13)
-**Commit Message**: fix(🐙): drop an e2e reply that comes after its request timed out (#4466)
+### Incident Patch 1: `b7f2c499` (2026-11-15)
+**Commit Message**: fix(🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU on Android (#4478)
 
-* fix(🐙): drop an e2e reply that comes after its request timed out
+* fix(🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU on Android
 
-Every request now carries an id that the app echoes on its reply ($$id in
-a JSON reply, a big-endian uint32 prefix on an image), and the host only
-takes the reply to the request it is waiting for.
+One scheduler per view (rnsurface::FrameScheduler) paces its frames through
+record, submit and present, on four inputs: the frame signal of the display
+(time, interval, deadline), the deadline, the acknowledgement that the GPU is
+done with the frame presented before, and the measured time of a recording
+and of a submit.
 
-Fixes #4458
+- One present per frame of the display: a slot of the compositor gets one
+  frame; a frame ready before the deadline of a free slot goes at once, a
+  later one on the next frame signal.
+- No present without an acknowledgement on Android: a frame whose predecessor
+  the GPU is still on has its work submitted and its present held, so that
+  queueBuffer no longer waits on the present thread inside Dawn's device
+  lock. The GPU is asked without waiting, from a timer of the present thread.
+- A bounded pipeline: one frame recording, one ready, one in the window. The
+  producer's ready recording is known by identity.
+- Depth follows the measured time: one frame while a record
 
-* refactor(🐙): talk to the e2e app through a request/reply channel
-
-The host and the Tests screen now speak one protocol: the host calls a
-method of the app ({ id, method, params }) and the app answers the request
-it names ({ id, result } or { id, error }), always as JSON, with images as
-base64 PNGs.
-
-- Channel (host): one listener per socket, the calls it awaits by id, a
-  timeout per call, and a reply to a call no longer awaited is dropped.
-  It lives as long as its socket, so ids no longer need a counter shared
-  between test files, and the calls it awaits fail as soon as the socket
-  closes instead of after the timeout.
-- serve (app): runs the method a request names and replies with what it
-  resolves to or throws, so an unknown screen is now a failed call rather
-  than an exception in the message handler.
-- Tests: eval, draw an
-
-**File**: `apps/example/src/Tests/Tests.tsx` (modified, +70/-131)
+**File**: `apps/docs/docs/canvas/canvas.md` (modified, +2/-2)
 ```diff
-@@ -1,15 +1,15 @@
--import type { ComponentRef } from "react";
-+import type { ComponentRef, ReactElement } from "react";
- /* eslint-disable @typescript-eslint/no-explicit-any */
- import { Canvas, Group, Skia, useCanvasRef } from "react-native-skia";
--import React, { useCallback, useEffect, useRef, useState } from "react";
-+import React, { useEffect, useRef, useState } from "react";
- import { PixelRatio, Text, View } from "react-native";
+@@ -122,8 +122,8 @@ The children of a `Canvas` are rendered by Skia's own React renderer, and its fr
  
--import type { SerializedNode } from "./deserialize";
- import { parseNode, parseProps } from "./deserialize";
- import { forceGpuDeviceLoss, getSharedDevice } from "./GpuDevice";
- import { ScreenDoneContext } from "./ScreenDone";
- import type { Screen } from "./Screens";
- import { Screens } from "./Screens";
-+import { serve } from "./serve";
- import { useClient } from "./useClient";
- import { workletSerialization } from "./workletSerialization";
+ 1. On every React commit, the JS thread records the drawing into a native display list and hands it to the view.
+ 2. When a Reanimated value used by the drawing changes, the UI thread writes the new value into the display list. It does not draw anything.
+-3. A dedicated native thread pool replays the display list into a Graphite frame whenever its content changed, keeping at most one frame ahead of the display.
+-4. The view presents the frame on the next vsync.
++3. A dedicated native thread pool replays the display list into a Graphite frame whenever its content changed. While a replay fits in a frame of the display, the next one starts once the view has presented the previous frame; when it takes longer, replays run one frame ahead of the display, so that the canvas keeps the display's rate.
++4. The view presents one frame per frame of the display: as soon as the frame is ready when it still makes the display's deadline, on the next frame of the display otherwise. On Android, a frame presented while the GPU is still working on the previous one has its work submitted and its present deferred until the GPU is done, so that no canvas waits for another's GPU work.
  
-@@ -18,23 +18,35 @@ const s = 3;
- const scale = s / PixelRatio.get();
- const size = 256 * scale;
- const timeToDraw = CI ? 1500 : 500;
-+const noop = () => {};
- 
--// Report a failure back to the host as { $$error: message } so the matching
--// test can `.rejects` instead of hanging on a missing reply, and so the throw
--// is not surfaced as an unhandled exception that could break the socket for
--// subsequent tests.
--const errorEnvelope = (error: unknown) =>
--  JSON.stringify({
--    $$error: error instanceof Error ? error.message : String(error),
--  });
-+const sleep = (ms: number) =>
-+  new Promise<void>((resolve) => setTimeout(resolve, ms));
- 
--// JSON.stringify returns undefined for a result JSON cannot carry: undefined, a function, a symbol.
--const resultMessage = (result: unknown) => {
--  const json: string | undefined = JSON.stringify(result);
--  return json === undefined
--    ? errorEnvelope(`The snippet's result has no JSON form: ${typeof result}`)
--    : json;
--};
-+// Runs a snippet the host sent, with the app's Skia.
-+const evaluate = (
-+  { code, ctx }: { code: string; ctx: any },
-+  assets: TestsProps["assets"]
-+) =>
-+  eval(
-+    `(function Main() {
-+        const __addDisposableResource = (e, o) => { return o; };
-+        const __disposeResources = () => {};
-+        return (${code})(this.Skia, this.ctx, this.size, this.scale);
-+      })`
-+  ).call({
-+    Skia,
-+    // The worklet serializer spec needs app-side worklets (see
-+    // workletSerialization.ts), and the Gpu spec a way to lose the device;
-+    // hand them over through the context.
-+    ctx: {
-+      ...parseProps(ctx, assets),
-+      workletSerialization,
-+      forceGpuDeviceLoss,
-+    },
-+    size: size * PixelRatio.get(),
-+    scale: s,
-+  });
- 
- // The encoded pixels of a native view: React Native WebGPU rasterizes the view
- // into a texture of the shared device, and Skia wraps that texture. This is
-@@ -60,7 +72,7 @@ const encodeView = async (
-     );
-     const image = Skia.Image.MakeFromGPUTexture(texture);
-     try {
--      return await image.encodeToBytes();
-+      return image.encodeToBase64();
-     } finally {
-       image.dispose();
-     }
-@@ -77,127 +89,54 @@ export const Tests = ({ assets }: TestsProps) => {
-   const viewRef = useRef<ComponentRef<typeof View>>(null);
-   const ref = useCanvasRef();
-   const [client, hostname] = useClient();
--  const [drawing, setDrawing] = useState<any>(null);
--  // The screen shown and the key it is mounted with. Requested again, a
--  // screen that settles is mounted again, so that it settles again; any other
--  // keeps its instance and what it shows.
-+  const [drawing, setDrawing] = useState<ReactElement | null>(null);
-+  // The screen shown, the key it is mounted with, and what it calls once it
-+  // has settled (see useScreenDone). Requested again, a screen that settles is
-+  // mounted again, so that it settles again; any other keeps its instance and
-+  // what it shows.
-   const [shown, setShown] = useState<{
-     readonly screen: Screen;
-     readonly key: number;
-+    readonly done: () => void;
-   } | null>(null);
-   const screenMounts = useRef(0);
--  // Whether the screen shown has settled (see useScreenDone).
--  const [screenDone, setScreenDone] = useState(false);
--  const markScreenDone = useCallback(() => setScreenDone(true), []);
- 
-   useEffect(() => {
--    if (client !== null) {
--      // Define the message handler as a separate function
--      const handleMessage = (e: MessageEvent) => {
--        const tree: any = JSON.parse(e.data);
--        if (tree.code) {
--          try {
--            const result = eval(
--              `(function Main() {
--                  const __addDisposableResource = (e, o) => { return o; };
--                  const __disposeResources = () => {};
--                  return (${tree.code})(this.Skia, this.ctx, this.size, this.scale);
--                })`
--            ).call({
--              Skia,
--              // The worklet serializer spec needs app-side worklets (see
--              // workletSerialization.ts), and the Gpu spec a way to lose the
--              // device
+ An animation frame costs no React render, no work on the JS thread, and no drawing on the UI thread.
+ A canvas without animation values is drawn once, and the view keeps its frame.
 ```
 
-**File**: `apps/example/src/Tests/serve.ts` (added, +50/-0)
+**File**: `apps/docs/docs/canvas/graphite.md` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,50 @@
-+// The app's side of the e2e protocol, whose host side is
-+// packages/skia/src/renderer/__tests__/e2e/setup/Channel.ts. The host calls a
-+// method: { id, method, params }. The app answers with what the method
-+// resolves to, { id, result }, or with what it throws, { id, error }, so that
-+// the matching test can `.rejects` instead of waiting for a reply that never
-+// comes, and so that the throw is not an unhandled exception that could break
-+// the socket for the cases after it. Both are JSON text.
-+
-+// eslint-disable-next-line @typescript-eslint/no-explicit-any
-+export type Methods = Record<string, (params: any) => unknown>;
-+
-+const answer = async (methods: Methods, method: string, params: unknown) => {
-+  const fn = methods[method];
-+  if (fn === undefined) {
-+    throw new Error(`Unknown method: ${method}`);
-+  }
-+  const result = await fn(params);
-+  // JSON.stringify returns undefined for a result JSON cannot carry:
-+  // undefined, a function, a symbol.
-+  if (JSON.stringify(result) === undefined) {
-+    throw new Error(`The result has no JSON form: ${typeof result}`);
-+  }
-+  return result;
-+};
-+
-+// Answers the host's calls on the socket until the returned function is
-+// called.
-+export const serve = (socket: WebSocket, methods: Methods) => {
-+  const onMessage = async (e: MessageEvent) => {
-+    const { id, method, params } = JSON.parse(e.data);
-+    let reply: string;
-+    try {
-+      reply = JSON.stringify({
-+        id,
-+        result: await answer(methods, method, params),
-+      });
-+    } catch (error) {
-+      reply = JSON.stringify({
-+        id,
-+        error: error instanceof Error ? error.message : String(error),
-+      });
-+    }
-+    // The host may be gone by now (the run ended, or the app reconnected).
-+    if (socket.readyState === WebSocket.OPEN) {
-+      socket.send(reply);
-+    }
-+  };
-+  socket.addEventListener("message", onMessage);
-+  return () => socket.removeEventListener("message", onMessage);
-+};
+@@ -81,8 +81,8 @@ export const Demo = () => {
+ A few rules follow from this model:
+ 
+ - One recording is open at a time per view. Finish it before starting the next one, on any runtime.
+-- Recordings are presented in submission order and never dropped. A later frame may sample a texture an earlier frame uploaded, so when the main thread falls behind, the queued frames are replayed in order and only the last one stays visible. This holds for a frame submitted before the native view exists, whether or not you keep the context: the view owns its recording state natively for as long as it is mounted, and `getContext()` hands out a context to it at any time. A recording made for another size than the surface has by the time it is presented (recorded before the view had a surface, or the view was resized since) still shows, at the cost of an extra copy for that frame.
+-- Since nothing is dropped, a loop that submits on every display frame must keep up with the GPU, or the queue grows, and latency and memory with it. `pendingFrames` is the number of recordings submitted and not yet presented, readable from any runtime: skip a frame while it is at 2, the budget `Canvas` uses for itself.
++- Recordings are presented in submission order and never dropped. A later frame may sample a texture an earlier frame uploaded, so when the view falls behind, the queued frames are presented in order, one per frame of the display. This holds for a frame submitted before the native view exists, whether or not you keep the context: the view owns its recording state natively for as long as it is mounted, and `getContext()` hands out a context to it at any time. A recording made for another size than the surface has by the time it is presented (recorded before the view had a surface, or the view was resized since) still shows, at the cost of an extra copy for that frame.
++- Since nothing is dropped, a loop that submits on every display frame must keep up with the GPU, or the queue grows, and latency and memory with it. `pendingFrames` is the number of recordings submitted and not yet presented, readable from any runtime: skip a frame while it is at 2, the most `Canvas` keeps for itself.
+ - Dispose a recording you will not submit again. It holds the GPU buffers of its frame until it is collected, and the Reanimated UI runtime collects rarely: a loop that leaves its recordings to the garbage collector keeps growing in memory. The view holds on to a submitted recording for as long as it needs it, so disposing it right after `submit()` is safe.
+ - The producer clears the canvas. A recording draws on top of what the view shows, which also lets you record only the parts that changed.
+ - GPU-backed images (offscreen surface snapshots, native buffers, video frames, [WebGPU textures](/docs/webgpu)) can be drawn from any runtime. Their content is uploaded when they are created, so create them before the frame that uses them.
 ```
 
-**File**: `packages/skia/src/__tests__/globalSetup.spec.ts` (modified, +11/-7)
+**File**: `apps/example/benchmarks/README.md` (modified, +1/-0)
 ```diff
-@@ -25,28 +25,32 @@ const sayHello = (socket: WebSocket) =>
- const closed = (socket: WebSocket) =>
-   new Promise<void>((resolve) => socket.once("close", () => resolve()));
- 
--const harnessClient = () => {
--  const { client } = global.testConnection;
--  if (client === null) {
-+const harnessChannel = () => {
-+  const { channel } = global.testConnection;
-+  if (channel === null) {
-     throw new Error("no app said hello");
-   }
--  return client;
-+  return channel;
+@@ -48,6 +48,7 @@ then exits with status 1.
+ | `--reps` | `1` | the present FPS reported is the median over reps |
+ | `--gap` | `0` | seconds with no canvas between scenes, so heat does not carry over |
+ | `--backing` | `surface` | Android: `texture` puts the canvas on a TextureView |
++| `--pacing` | the platform's | measure another frame pacing policy on the same build: `two` (two frames in flight throughout instead of the adaptive count), `decline` or `nowait` (Android: where a frame waits while the GPU is on the previous one, before its submit or nowhere, instead of before its present with `hold`); see `packages/skia/cpp/rnskia/RNSkPacingPolicy.h` |
+ | `--label` | `local` | names the result files |
+ | `--compare` | | an earlier result JSON |
+ | `--no-build` | | reuse the installed app (its plan is the one it was built with) |
+```
+
+**File**: `apps/example/benchmarks/run.mjs` (modified, +12/-3)
+```diff
+@@ -3,7 +3,7 @@
+ //
+ //   node benchmarks/run.mjs --platform android|ios [--scenes shapes,paths]
+ //        [--reps 2] [--gap 20] [--backing surface|texture] [--label main]
+-//        [--no-build] [--compare benchmarks/results/<file>.json]
++//        [--pacing two] [--no-build] [--compare benchmarks/results/<file>.json]
+ //   node benchmarks/run.mjs --cold --platform android|ios|ios-simulator
+ //        [--scenes ...] [--reps 3] [--settle 10] [--label main] [--compare ...]
+ //
+@@ -61,6 +61,12 @@ const REPS = Number(arg("reps", "1"));
+ const GAP = Number(arg("gap", "0"));
+ const BACKING = arg("backing", "surface");
+ const LABEL = arg("label", "local");
++// The pacing policy to measure, when not the platform's own: a comma separated
++// list read by packages/skia/cpp/rnskia/RNSkPacingPolicy.h (hold, decline or
++// nowait; adaptive or two). Android reads it from a system property, set here
++// before each launch and cleared when none is asked for, so that a previous
++// run's does not leak into this one; iOS from the environment of the launch.
++const PACING = arg("pacing", "");
+ const COMPARE = arg("compare", null);
+ const COLD = flag("cold");
+ // Cold mode: seconds the app idles with no canvas after launch, and seconds
+@@ -289,6 +295,7 @@ async function threadsAndroid() {
+ async function launchAndroid() {
+   await adb("shell", "input", "keyevent", "KEYCODE_WAKEUP");
+   await adb("shell", "wm", "dismiss-keyguard");
++  await adb("shell", "setprop", "debug.rnskia.pacing", PACING === "" ? "''" : PACING);
+   const out = await adb("shell", "cmd", "package", "resolve-activity", "--brief", "-c", "android.intent.category.LAUNCHER", PACKAGE);
+   await adb("shell", "am", "start", "-n", out.trim().split("\n").at(-1).trim());
+ }
+@@ -472,7 +479,8 @@ async function measureIos(device) {
+   // Traces attach by pid: xctrace does not always find the app by name.
+   const launch = async () => {
+     const json = join(dir, "launch.json");
+-    await sh("xcrun", ["devicectl", "device", "process", "launch", "--device", device.id, "--terminate-existing", "--json-output", json, bundleId]);
++    const environment = PACING === "" ? [] : ["--environment-variables", JSON.stringify({ RNSKIA_PACING: PACING })];
++    await sh("xcrun", ["devicectl", "device", "process", "launch", "--device", device.id, "--terminate-existing", ...environment, "--json-output", json, bundleId]);
+     return JSON.parse(readFileSync(json, "utf8")).result?.process?.processIdentifier;
+   };
+   // A first launch after an install is slow (shader caches, dyld): spend it
+@@ -768,7 +776,7 @@ function report(result, previous) {
+   const lines = [
+     `# React Native Skia benchmark: ${result.label}, ${result.platform}`,
+     "",
+-    `${result.device}, react-native-skia ${result.skia}, ${result.date}. Plan: \`${result.plan}\`.`,
++    `${result.device}, react-native-skia ${result.skia}, ${result.date}. Plan: \`${result.plan}\`.${result.pacing ? ` Pacing: \`${result.pacing}\`.` : ""}`,
+     `Present FPS is the median over reps of frames the compositor showed (${TRACE_SECONDS} s per scene).`,
+     ...(result.platform === "android"
+       ? ["Render and present ms/frame: CPU time of the `RNSkia Render` pool and the `RNSkia Present` thread over the same window, divided by the frames presented (median over reps). They keep measuring when present FPS sits at the panel rate."]
+@@ -855,6 +863,7 @@ const result = {
+   skia: `${skia.name} ${skiaVersion}`,
+   date: new Date().toISOString(),
+   plan,
++  ...(PACING === "" ? {} : { pacing: PACING }),
+   ...measured,
  };
- 
--const receiverOf = (message: string, sockets: Record<string, WebSocket>) => {
-+// Which of the sockets receives a call of the method.
-+const receiverOf = (method: string, sockets: Record<string, WebSocket>) => {
-   const received = Promise.race(
-     Object.entries(sockets).map(
-       ([name, socket]) =>
-         new Promise<string>((resolve) =>
-           socket.once("message", (data) => {
--            if (data.toString() === message) {
-+            if (JSON.parse(data.toString()).method === method) {
-               resolve(name);
-             }
-           })
-         )
-     )
-   );
--  harnessClient().send(message);
-+  // Never answered: the run's teardown closes the socket, which fails it.
-+  harnessChannel()
-+    .call(method)
-+    .catch(() => {});
-   return received;
- };
- 
+ const previous = COMPARE ? JSON.parse(readFileSync(COMPARE, "utf8")) : null;
 ```
 
-**File**: `packages/skia/src/__tests__/globalSetup.ts` (modified, +7/-5)
+**File**: `packages/skia/android/cpp/jni/include/JniSkiaView.h` (modified, +90/-109)
 ```diff
-@@ -1,12 +1,14 @@
- import { execFileSync } from "child_process";
+@@ -1,19 +1,21 @@
+ #pragma once
  
--import type { WebSocket } from "ws";
- import { WebSocketServer } from "ws";
- 
-+import { Channel } from "../renderer/__tests__/e2e/setup/Channel";
-+
- declare global {
-   var testServer: WebSocketServer;
--  // Each test file keeps a global's first value, so the client is a property.
--  var testConnection: { client: WebSocket | null };
-+  // Each test file keeps a global's first value, so the channel is a property.
-+  // It is the channel to the app that said hello last (see Channel).
-+  var testConnection: { channel: Channel | null };
-   var testOS: "ios" | "android" | "web" | "node" | "macos";
- }
- 
-@@ -47,7 +49,7 @@ const globalSetup = () => {
-     }
-     const port = testPort();
-     reversePort(port);
--    global.testConnection = { client: null };
-+    global.testConnection = { channel: null };
-     global.testServer = new WebSocketServer({ port });
-     console.log(
-       `\n\nTest server listening on port ${port} (waiting for the example app to open on E2E tests screen)`
-@@ -69,7 +71,7 @@ const globalSetup = () => {
-           throw new Error("Unknown testing platform: " + OS);
-         }
-         // Only a socket that says hello is the app's, and the latest one wins.
--        global.testConnection.client = client;
-+        global.testConnection.channel = new Channel(client);
-         global.testOS = OS;
-         console.log(`${OS} device connected`);
-         resolve();
-```
-
-**File**: `packages/skia/src/renderer/__tests__/Channel.spec.ts` (added, +108/-0)
-```diff
-@@ -0,0 +1,108 @@
-+import { EventEmitter } from "events";
-+
-+import type { WebSocket } from "ws";
-+
-+import type { Request } from "./e2e/setup/Channel";
-+import { CALL_TIMEOUT_MS, Channel } from "./e2e/setup/Channel";
-+
-+class FakeSocket extends EventEmitter {
-+  readonly sent: Request[] = [];
-+  send(body: string) {
-+    this.sent.push(JSON.parse(body));
-+  }
-+  // What the example app sends back (apps/example/src/Tests/serve.ts).
-+  reply(request: Request, answer: { result: unknown } | { error: string }) {
-+    this.emit(
-+      "message",
-+      Buffer.from(JSON.stringify({ id: request.id, ...answer }))
-+    );
-+  }
-+}
-+
-+const open = () => {
-+  const socket = new FakeSocket();
-+  const channel = new Channel(socket as unknown as WebSocket);
-+  return { socket, channel };
-+};
-+
-+describe("Channel", () => {
-+  beforeEach(() => {
-+    jest.useFakeTimers();
-+  });
-+
-+  afterEach(() => {
-+    jest.useRealTimers();
-+    jest.restoreAllMocks();
-+  });
-+
-+  it("sends a call as a request with its own id", () => {
-+    const { socket, channel } = open();
-+    channel.call("draw", { type: "Fill" }).catch(() => {});
-+    channel.call("screen", { name: "GraphiteView" }).catch(() => {});
-+    expect(socket.sent).toEqual([
-+      { id: 1, method: "draw", params: { type: "Fill" } },
-+      { id: 2, method: "screen", params: { name: "GraphiteView" } },
-+    ]);
-+    channel.close();
-+  });
-+
-+  it("hands each reply to the call it names, in whatever order they come", async () => {
-+    const { socket, channel } = open();
-+    const first = channel.call("eval");
-+    const second = channel.call("eval");
-+    socket.reply(socket.sent[1], { result: "second" });
-+    socket.reply(socket.sent[0], { result: "first" });
-+    await expect(first).resolves.toBe("first");
-+    await expect(second).resolves.toBe("second");
-+    expect(channel.awaiting).toBe(0);
-+  });
-+
-+  it("rejects with the error the app reports for its call", async () => {
-+    const { socket, channel } = open();
-+    const response = channel.call("eval");
-+    socket.reply(socket.sent[0], { error: "boom" });
-+    await expect(response).rejects.toThrow("boom");
-+  });
-+
-+  it("drops a reply that comes after its call timed out", async () => {
-+    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
-+    const { socket, channel } = open();
-+    const first = channel.call("eval");
-+    jest.advanceTimersByTime(CALL_TIMEOUT_MS);
-+    await expect(first).rejects.toThrow("eval timed out");
-+    const second = channel.call("eval");
-+    socket.reply(socket.sent[0], { result: "first" });
-+    socket.reply(socket.sent[1], { result: "second" });
-+    await expect(second).resolves.toBe("second");
-+    expect(warn).toHaveBeenCalledTimes(1);
-+  });
-+
-+  it("drops a reply it can't read", async () => {
-+    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
-+    const { socket, channel } = open();
-+    const response = channel.call("eval");
-+    socket.emit("message", Buffer.from([0x89, 0x50, 0x4e, 0x47]));
-+    socket.reply(socket.sent[0], { result: 42 });
-+    await expect(response).resolves.toBe(42);
-+    expect(warn).toHaveBeenCalledTimes(1);
-+  });
-+
-+  it("fails the calls it awaits as soon as the socket closes", async () => {
-+    const { socket, channel } = open();
-+    const response = channel.call("screen");
-+    socket.emit("close");
-+    await expect(response).rejects.toThrow("screen failed");
-+    expect(jest.getTimerCount()).toBe(0);
-+    expect(socket.listenerCount("message")).toBe(0);
-+    expect(socket.listenerCount("close")).toBe(0);
-+  });
-+
-+  it("listens to its socket once, however many calls it awaits", () => {
-+    const { socket, channel } = open();
-+    for (let i = 0; i < 3; i++) {
-+      channel.call("eval").catch(() => {});
-+    }
-+    expect(socket.listenerCount("message")).toBe(1);
-+    channel.close();
-+  });
-+});
-```
-
-**File**: `packages/skia/src/renderer/__tests__/RemoteSurface.spec.ts` (modified, +25/-9)
-```diff
-@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
- 
- import type { WebSocket } from "ws";
- 
-+import { CALL_TIMEOUT_MS, Channel } from "./e2e/setup/Channel";
- import { RemoteSurface } from "./setup";
- 
- class FakeSocket extends EventEmitter {
-@@ -11,7 +12,8 @@ class FakeSocket extends EventEmitter {
-   }
- }
- 
--const asWebSocket = (socket: FakeSocket) => socket as unknown as WebSocket;
-+const channelOn = (socket: FakeSocket) =>
-+  new Channel(socket as unknown as WebSocket);
- 
- describe("RemoteSurface", () => {
-   beforeEach(() => {
-@@ -22,21 +24,35 @@ describe("RemoteSurface", () => {
-     jest.useRealTimers();
-   });
- 
--  it("times out on the socket it sent the eval to when another app says hello meanwhile", async () => {
-+  it("sends a screen request by name", async () => {
-+    const socket = new FakeSocket();
-+    const channel = channelOn(socket);
-+    global.testConnection = { channel };
-+    const response = new RemoteSurface().screen("GraphiteView");
-+    await Promise.resolve();
-+    expect(JSON.parse(socket.sent[0])).toEqual({
-+      id: 1,
-+      method: "screen",
-+      params: { name: "GraphiteView" },
-+    });
-+    channel.close();
-+    await expect(response).rejects.toThrow("screen failed");
-+  });
-+
-+  it("times out on the socket it sent the call to when another app says hello meanwhile", async () => {
-     const first = new FakeSocket();
-     const second = new FakeSocket();
--    global.testConnection = { client: asWebSocket(first) };
-+    global.testConnection = { channel: channelOn(first) };
-     const response = new RemoteSurface().screen("GraphiteView");
--    global.testConnection.client = asWebSocket(second);
--    jest.advanceTimersByTime(30 * 1000);
--    await expect(response).rejects.toThrow("eval timed out");
-+    global.testConnection.channel = channelOn(second);
-+    jest.advanceTimersByTime(CALL_TIMEOUT_MS);
-+    await expect(response).rejects.toThrow("screen timed out");
-     expect(first.sent).toHaveLength(1);
--    expect(first.listenerCount("message")).toBe(0);
--    expect(second.listenerCount("message")).toBe(0);
-+    expect(second.sent).toHaveLength(0);
-   });
- 
-   it("rejects without arming its timeout while no app has said hello", async () => {
--    global.testConnection = { client: null };
-+    global.testConnection = { channel: null };
-     await expect(new RemoteSurface().screen("GraphiteView")).rejects.toThrow(
-       "Client is not connected"
-     );
-```
-
-**File**: `packages/skia/src/renderer/__tests__/e2e/setup/Channel.ts` (added, +117/-0)
-```diff
-@@ -0,0 +1,117 @@
-+import type { WebSocket } from "ws";
-+
-+// The e2e protocol between this host and the example app's Tests screen, whose
-+// side is apps/example/src/Tests/serve.ts. The host calls a method of the app;
-+// the request carries an id, and the app's reply names the request it
-+// answers. Both are JSON text, so an image travels as a base64 PNG.
-+export interface Request {
-+  readonly id: number;
-+  readonly method: string;
-+  readonly params: unknown;
-+}
-+
-+export type Reply =
-+  | { readonly id: number; readonly result: unknown }
-+  | { readonly id: number; readonly error: string };
-+
-+interface Pending {
-+  readonly method: string;
-+  readonly resolve: (result: unknown) => void;
-+  readonly reject: (error: Error) => void;
-+  readonly timeout: ReturnType<typeof setTimeout>;
-+}
-+
-+// Guards against a call that never gets its reply (the app crashed, or threw
-+// before it could answer): without it the host would await forever and a
-+// single failing case would stall the whole serial suite.
-+export const CALL_TIMEOUT_MS = 30 * 1000;
-+
-+const parseReply = (raw: unknown): Reply | null => {
-+  try {
-+    const reply = JSON.parse(String(raw));
-+    if (typeof reply?.id !== "number") {
-+      return null;
-+    }
-+    return "error" in reply
-+      ? { id: reply.id, error: String(reply.error) }
-+      : { id: reply.id, result: reply.result };
-+  } catch {
-+    return null;
-+  }
-+};
-+
-+// The calls made to one app over one socket. It listens to the socket once,
-+// for as long as the socket is open, and hands each reply to the call it
-+// names. A reply to a call that is no longer awaited (it timed out) is
-+// dropped, so that it can't be taken as the reply to a later call. The
-+// channel lives as long as its socket rather than as long as a test file, so
-+// a late reply to a previous file's call can't match either.
-+export class Channel {
-+  private lastId = 0;
-+  private readonly pending = new Map<number, Pending>();
-+
-+  constructor(
-+    private readonly socket: WebSocket,
-+    private readonly timeoutMs = CALL_TIMEOUT_MS
-+  ) {
-+    socket.on("message", this.onMessage);
-+    socket.on("close", this.onClose);
-+  }
-+
-+  call<R>(method: string, params: unknown = {}): Promise<R> {
-+    const id = ++this.lastId;
-+    return new Promise<R>((resolve, reject) => {
-+      const timeout = setTimeout(() => {
-+        this.pending.delete(id);
-+        reject(
-+          new Error(
-+            `${method} timed out after ${this.timeoutMs}ms without a reply from the app`
-+          )
-+        );
-+      }, this.timeoutMs);
-+      this.pending.set(id, {
-+        method,
-+        resolve: resolve as (result: unknown) => void,
-+        reject,
-+        timeout,
-+      });
-+      const request: Request = { id, method, params };
-+      this.socket.send(JSON.stringify(request));
-+    });
-+  }
-+
-+  // Fails the calls still awaited and stops listening to the socket.
-+  close(reason = "The connection to the app closed") {
-+    this.socket.off("message", this.onMessage);
-+    this.socket.off("close", this.onClose);
-+    for (const { method, reject, timeout } of this.pending.values()) {
-+      clearTimeout(timeout);
-+      reject(new Error(`${method} failed: ${reason}`));
-+    }
-+    this.pending.clear();
-+  }
-+
-+  get awaiting() {
-+    return this.pending.size;
-+  }
-+
-+  private readonly onMessage = (raw: unknown) => {
-+    const reply = parseReply(raw);
-+    const pending = reply === null ? undefined : this.pending.get(reply.id);
-+    if (reply === null || pending === undefined) {
-+      console.warn(
-+        `e2e: dropped a reply to request ${reply?.id ?? "?"}, which is not awaited`
-+      );
-+      return;
-+    }
-+    this.pending.delete(reply.id);
-+    clearTimeout(pending.timeout);
-+    if ("error" in reply) {
-+      pending.reject(new Error(reply.error));
-+    } else {
-+      pending.resolve(reply.result);
-+    }
-+  };
-+
-+  private readonly onClose = () => this.close();
-+}
-```
-
-**File**: `packages/skia/src/renderer/__tests__/setup.tsx` (modified, +22/-85)
-```diff
-@@ -5,7 +5,7 @@ import path from "path";
- 
- import React from "react";
- import type { ReactNode } from "react";
--import type { WebSocket, WebSocketServer } from "ws";
-+import type { WebSocketServer } from "ws";
- 
- import type * as SkiaExports from "../../index";
- import { JsiSkApi } from "../../skia/web/JsiSkia";
-@@ -18,14 +18,15 @@ import { SkiaSGRoot } from "../../sksg/Reconciler";
- import type { Node } from "../../sksg/Node";
- 
- import { SkiaObject } from "./e2e/setup";
-+import type { Channel } from "./e2e/setup/Channel";
- 
- jest.setTimeout(180 * 1000);
- 
- type TestOS = "ios" | "android" | "web" | "node" | "macos";
- 
- declare global {
-   var testServer: WebSocketServer;
--  var testConnection: { client: WebSocket | null };
-+  var testConnection: { channel: Channel | null };
-   var testOS: TestOS;
- }
- export let surface: TestingSurface;
-@@ -178,24 +179,6 @@ export const readScreenColor = async (image: SkImage, fraction: number) =>
-     )
-   );
- 
--// Error envelopes are JSON objects starting with "{" (0x7b). PNG payloads start
--// with the 0x89 signature and base64/other JSON responses won't carry $$error,
--// so we only attempt a parse when the buffer looks like a JSON object.
--const parseErrorResponse = (raw: Buffer): string | null => {
--  if (raw[0] !== 0x7b) {
--    return null;
--  }
--  try {
--    const obj = JSON.parse(raw.toString());
--    if (obj && typeof obj === "object" && "$$error" in obj) {
--      return String(obj.$$error);
--    }
--  } catch {
--    // Not a JSON object; treat as a normal payload.
--  }
--  return null;
--};
--
- export const resolveFile = (uri: string) =>
-   fs.readFileSync(path.resolve(__dirname, `../../${uri}`));
- 
-@@ -534,8 +517,7 @@ export class RemoteSurface implements TestingSurface {
-     context?: Ctx
-   ): Promise<R> {
-     const ctx = await this.prepareContext(context);
--    const body = { code: fn.toString(), ctx };
--    return this.handleImageResponse<R>(JSON.stringify(body), true);
-+    return this.channel.call<R>("eval", { code: fn.toString(), ctx });
-   }
- 
-   async drawOffscreen<Ctx extends EvalContext>(
-@@ -556,34 +538,24 @@ canvas.restore();
- surface.flush();
- return surface.makeImageSnapshot().encodeToBase64();
- }`;
--    const body = { code, ctx };
--    const base64 = await this.handleImageResponse<string>(
--      JSON.stringify(body),
--      true
--    );
--    const Skia = global.SkiaApi;
--    const data = Skia.Data.fromBase64(base64);
--    const image = Skia.Image.MakeFromEncoded(data);
--    if (image === null) {
--      throw new Error("Unable to decode image");
--    }
--    return image;
-+    return decodeImage(await this.channel.call<string>("eval", { code, ctx }));
-   }
- 
-   async draw(node: ReactNode) {
--    return this.handleImageResponse(await serialize(node));
-+    const tree = JSON.parse(await serialize(node));
-+    return decodeImage(await this.channel.call<string>("draw", tree));
-   }
- 
--  screen(screen: string) {
--    return this.handleImageResponse(JSON.stringify({ screen }));
-+  async screen(name: string) {
-+    return decodeImage(await this.channel.call<string>("screen", { name }));
-   }
- 
--  private get client() {
--    const { client } = global.testConnection;
--    if (client === null) {
-+  private get channel() {
-+    const { channel } = global.testConnection;
-+    if (channel === null) {
-       throw new Error("Client is not connected. Did you call init?");
-     }
--    return client;
-+    return channel;
-   }
- 
-   private async prepareContext<Ctx extends EvalContext>(
-@@ -597,49 +569,14 @@ return surface.makeImageSnapshot().encodeToBase64();
-     }
-     return ctx;
-   }
-+}
- 
--  private handleImageResponse<R = SkImage>(
--    body: string,
--    json?: boolean
--  ): Promise<R> {
--    // Guard against an eval that never replies (e.g. the device threw before it
--    // could post a result back). Without this the host would await forever and
--    // a single failing case would stall the whole serial suite.
--    const EVAL_TIMEOUT_MS = 30 * 1000;
--    return new Promise((resolve, reject) => {
--      const { client } = this;
--      const onMessage = (raw: Buffer) => {
--        clearTimeout(timeout);
--        // The device reports a thrown error as { $$error: message } (always
--        // JSON, even for image responses) so the matching test can `.rejects`
--        // instead of hanging or trying to decode an error string as a PNG.
--        const error = parseErrorResponse(raw);
--        if (error !== null) {
--          reject(new Error(error));
--          return;
--        }
--        resolve(json ? JSON.parse(raw.toString()) : this.decodeImage(raw));
--      };
--      const timeout = setTimeout(() => {
--        client.off("message", onMessage);
--        reject(
--          new Error(
--            `eval timed out after ${EVAL_TIMEOUT_MS}ms without a response from the device`
--          )
--        );
--      }, EVAL_TIMEOUT_MS);
--      client.once("message", onMessage);
--      client.send(body);
--    });
--  }
--
--  private decodeImage(raw: Buffer) {
--    const Ski
-```
-
----
-
-### Incident Patch 2: `da8e112a` (2026-11-13)
-**Commit Message**: fix(🤖): follow display density changes on Android (#4448)
-
-* fix(🤖): follow display density changes on Android
-
-* fix(🤖): record each frame with the density of its own layout
-
-The display density reached the views through one global value, updated
-from an Application callback before React Native lays the views out
-again: every view was redrawn at the new density into a surface still
-sized for the old one (about 200 ms on a Pixel 8 with wm density 240).
-
-SkiaView.onLayout now sends the density of its layout along with its
-pixel size. The window keeps the density that goes with the size it
-has (attach, resize, or a density-only change), and a frame reads both
-at once through RNSkGraphiteTargetInfo. Snapshots and ViewApi.size use
-the view's density too. The view's resources also give the density of
-its own window rather than the application's.
-
-Also:
-- RNSkPlatformContext::getPixelDensity is virtual; Android reads the
-  JNI value, which removes the copy, its mutex and setPlatformContext.
-- No redraw-all on a density change: a view redraws when its own
-  density changes.
-- SkiaManager releases the platform context (and its application
-  callbacks, which kept the React context alive)
-
-**File**: `packages/skia/android/cpp/jni/JniPlatformContext.cpp` (modified, +8/-0)
-```diff
-@@ -39,6 +39,8 @@ void JniPlatformContext::registerNatives() {
-                        JniPlatformContext::setForegroundNative),
-       makeNativeMethod("setCacheDirectoryNative",
-                        JniPlatformContext::setCacheDirectoryNative),
-+      makeNativeMethod("setPixelDensityNative",
-+                       JniPlatformContext::setPixelDensity),
-   });
-   // The statics of PresentThread.java, which has no native peer of its own.
-   jni::registerNatives(
-@@ -107,6 +109,12 @@ TSelf JniPlatformContext::initHybrid(jni::alias_ref<jhybridobject> jThis,
-   return makeCxxInstance(jThis, pixelDensity);
- }
- 
-+void JniPlatformContext::setPixelDensity(float pixelDensity) {
-+  // The views follow their own layout (see SkiaView.onLayout), which React
-+  // Native updates after a density change: nothing to redraw here.
-+  _pixelDensity.store(pixelDensity);
-+}
-+
- void JniPlatformContext::performStreamOperation(
-     const std::string &sourceUri,
-     const std::function<void(std::unique_ptr<SkStreamAsset>)> &op) {
-```
-
-**File**: `packages/skia/android/cpp/jni/include/JniPlatformContext.h` (modified, +7/-2)
-```diff
-@@ -4,6 +4,7 @@
- #include <fbjni/fbjni.h>
- #include <jsi/jsi.h>
- 
-+#include <atomic>
- #include <exception>
++#include <chrono>
  #include <functional>
  #include <memory>
-@@ -60,13 +61,17 @@ class JniPlatformContext : public jni::HybridClass<JniPlatformContext> {
+ #include <utility>
  
-   static void runMainThreadTasks(jni::alias_ref<jclass>);
+-#include <android/choreographer.h>
+ #include <android/native_window.h>
+ #include <android/native_window_jni.h>
+ #include <fbjni/fbjni.h>
+ #include <jni.h>
  
--  float getPixelDensity() { return _pixelDensity; }
-+  float getPixelDensity() { return _pixelDensity.load(); }
-+
-+  // The display density changed (a configuration change, see
-+  // PlatformContext.java). Read by RNSkAndroidPlatformContext.
-+  void setPixelDensity(float pixelDensity);
+ #include "JniPresentThread.h"
+ #include "JniSkiaManager.h"
++#include "RNSkAnimationFrame.h"
+ #include "RNSkLog.h"
+ #include "RNSkPresentThread.h"
++#include "RNSkPresentThreadTimer.h"
+ #include "RNSkView.h"
+ #include "RNSkWindowSurface.h"
+ #include "rnsurface/FrameScheduler.h"
+@@ -29,9 +31,10 @@ namespace jni = facebook::jni;
+  * view posts the surface callbacks there too, as the window belongs to that
+  * thread (see RNSkWindowSurface); this object is destroyed there as well
+  * (see SkiaView.dropInstance), so no call below runs under a present. The
+- * frame scheduler lives here too (see rnsurface::FrameScheduler), with the
+- * AChoreographer of the thread as its vsync (see PresentHost); the Java view
+- * hands it the TextureView's draws.
++ * view's frame scheduler (see rnsurface::FrameScheduler) gets its inputs
++ * from here: the animation frames from the AChoreographer of the thread (see
++ * AnimationFrames), the polls for the GPU from a timer of the thread (see
++ * PresentThreadTimer), and the TextureView's draws from the Java view.
+  */
+ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+ public:
+@@ -155,13 +158,13 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+   // Present thread: the TextureView drew the frame it was given (see
+   // SkiaView.onSurfaceTextureUpdated). This object is destroyed on that
+   // thread too (see SkiaView.dropInstance), never under the call.
+-  void frameConsumed() { _scheduler->onFrameConsumed(); }
++  void frameConsumed() { _view->onFrameConsumed(); }
+ 
+   // Present thread: the view left its window, or the window lost its
+-  // surface (see SkiaView.cancelFrames). A vsync already asked for still
+-  // fires, as AChoreographer has no cancel: the host drops it, or hands it
+-  // to a request made since (see PresentHost::onVsync).
+-  void cancelScheduledFrames() { _scheduler->cancel(); }
++  // surface (see SkiaView.cancelFrames). An animation frame already asked
++  // for still fires, as AChoreographer has no cancel: it is dropped, or
++  // serves a request made since (see AnimationFrames::onFrame).
++  void cancelScheduledFrames() { _view->cancelFrames(); }
  
  private:
    friend HybridBase;
-   jni::global_ref<JniPlatformContext::javaobject> javaPart_;
- 
--  float _pixelDensity;
-+  std::atomic<float> _pixelDensity;
- 
-   explicit JniPlatformContext(
-       jni::alias_ref<JniPlatformContext::jhybridobject> jThis,
-```
-
-**File**: `packages/skia/android/cpp/jni/include/JniSkiaView.h` (modified, +15/-5)
-```diff
-@@ -103,12 +103,22 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
-   void surfaceAbandoned() { _surface->abandon(); }
- 
-   /**
--   The pixel size the backing view was laid out with. The surface it gets
--   (SurfaceView or TextureView) has exactly this size, so a frame recorded
--   before the surface exists already matches it. Main thread.
-+   The pixel size the backing view was laid out with, and the density of that
-+   layout. The surface it gets (SurfaceView or TextureView) has exactly this
-+   size, so a frame recorded before the surface exists already matches it.
-+   The density changes along with the layout (a display density change lays
-+   the view out again), so frames keep the scale of the size they are
-+   recorded for. Main thread.
-    */
--  void setLayoutSize(int width, int height) {
--    _surface->setLayoutSize(width, height);
-+  void setLayoutSize(int width, int height, float pixelDensity) {
-+    float previous = 0;
-+    bool known = _surface->getPixelDensity(&previous);
-+    _surface->setLayoutSize(width, height, pixelDensity);
-+    // A new size redraws once the surface follows it; a new density alone
-+    // does not change the surface.
-+    if (known && previous != pixelDensity) {
-+      _view->requestRedraw();
-+    }
+@@ -189,20 +192,38 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
+       surface->bindPresentingThread();
+       view->bindPresentThread();
+     });
+-    // A submitted recording goes to the scheduler, on the present thread,
+-    // which arms the Java view's frame callback (or presents on the spot,
+-    // for a window resized since the frame it shows: see
+-    // rnsurface::FrameScheduler::requestFrame). Weak: the view may outlive
+-    // this object in the registry for a moment, with the scheduler gone.
+-    _presentHost = std::make_shared<PresentHost>(javaView, _view);
+-    _scheduler = std::make_shared<rnsurface::FrameScheduler>(*_presentHost);
+-    std::weak_ptr<rnsurface::FrameScheduler> weakScheduler = _scheduler;
+-    _presentHost->setScheduler(weakScheduler);
+-    _view->setFrameScheduler([weakScheduler](bool forResizedWindow) {
+-      if (auto scheduler = weakScheduler.lock()) {
+-        scheduler->requestFrame(forResizedWindow);
++    // What the view's frame scheduler asks of the platform, on the present
++    // thread (see RNSkView::FrameHost). Weak: the view may outlive this
++    // object in the registry for a moment.
++    _animationFrames = std::make_shared<AnimationFrames>(_view);
++    std::weak_ptr<AnimationFrames> weakFrames = _animationFrames;
++    RNSkView::FrameHost host;
++    host.requestAnimationFrame = [weakFrames]() {
++      if (auto frames = weakFrames.lock()) {
++        frames->request();
+       }
+-    });
++    };
++    // The timer the view polls the GPU and waits for the end of a slot with
++    // (see RNSkView::pollSubmittedWorkDone and waitForSlotEnd).
++    host.setTimeout = [](std::chrono::nanoseconds delay,
++                         std::function<void()> task) {
++      PresentThreadTimer::getInstance().setTimeout(delay, std::move(task));
++    };
++    // The Java view's frame rate vote (see SkiaView.onFramePresented). A
++    // Java call from the native thread, which is attached (see
++    // attachPresentThread). The local reference goes with the scope: no
++    // Java frame is below to let go of it.
++    host.onFramePresented = [javaView]() {
++      callJavaFromPresentThread([&]() {
++        jni::JniLocalScope localScope(jni::Environment::current(), 4);
++        if (auto javaPart = javaView->weak->lockLocal()) {
++          static const auto method =
++              javaPart->getClass()->getMethod<void()>("onFramePresented");
++          method(javaPart);
++        }
++      });
++    };
++    _view->setFrameHost(std::move(host));
    }
  
    /**
+@@ -225,10
 ```
 
-**File**: `packages/skia/android/cpp/rnskia-android/RNSkAndroidPlatformContext.h` (modified, +5/-0)
+**File**: `packages/skia/android/cpp/rnskia-android/RNSkAnimationFrame.h` (added, +193/-0)
 ```diff
-@@ -29,6 +29,11 @@ class RNSkAndroidPlatformContext : public RNSkPlatformContext {
-                             jniPlatformContext->getPixelDensity()),
-         _jniPlatformContext(jniPlatformContext) {}
- 
-+  // Follows display density changes (see PlatformContext.java).
-+  float getPixelDensity() override {
-+    return _jniPlatformContext->getPixelDensity();
+@@ -0,0 +1,193 @@
++#pragma once
++
++#include <android/choreographer.h>
++#include <dlfcn.h>
++
++#include <cstddef>
++#include <cstdint>
++
++#include "rnsurface/FrameClock.h"
++#include "rnsurface/FrameScheduler.h"
++
++namespace RNSkia {
++
++/**
++ * The animation frames of Android (see
++ * rnsurface::FrameScheduler::AnimationFrame), from the AChoreographer of the
++ * calling thread, which calls back on that thread's looper: what the
++ * browser's rendering loop is to requestAnimationFrame().
++ *
++ * What an animation frame knows depends on the device. From API 33 on, the
++ * choreographer hands out the frame timeline it expects the app to make:
++ * when the frame started, when the compositor wakes up for it (the deadline)
++ * and when it and the one after are shown (the interval). The entry points
++ * are looked up at run time, as the library builds for API 26. Before that
++ * there is no deadline to read: the animation frame says that it ends where
++ * it starts, so that a frame only goes on an animation frame, as it did
++ * before the scheduler knew of deadlines, and the interval is the time
++ * between two animation frames in a row.
++ */
++class AnimationFrameSource {
++public:
++  using AnimationFrame = rnsurface::FrameScheduler::AnimationFrame;
++  using Callback = void (*)(const AnimationFrame &frame, void *data);
++
++  /**
++   Has `callback(frame, data)` called at the next frame of the display, on
++   the calling thread. Returns false when the thread has no choreographer
++   (no connection to the display's events): nothing is posted then.
++   */
++  static bool post(Callback callback, void *data) {
++    auto *choreographer = AChoreographer_getInstance();
++    if (choreographer == nullptr) {
++      return false;
++    }
++    auto *request = new Request{callback, data};
++    const auto &entries = api();
++    if (entries.postVsyncCallback != nullptr) {
++      entries.postVsyncCallback(choreographer, onVsync, request);
++    } else if (entries.postFrameCallback64 != nullptr) {
++      entries.postFrameCallback64(choreographer, onFrame64, request);
++    } else {
++      // The entry point of API 24: its frame time is a long, 32 bits on a
++      // 32-bit device, so the clock is read instead.
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wdeprecated-declarations"
++      AChoreographer_postFrameCallback(
++          choreographer,
++          [](long, void *data) {
++            deliver(static_cast<Request *>(data), rnsurface::frameClockNow());
++          },
++          request);
++#pragma clang diagnostic pop
++    }
++    return true;
 +  }
 +
-   ~RNSkAndroidPlatformContext() override = default;
- 
-   void performStreamOperation(
++  /**
++   An animation frame for a thread without a choreographer: a frame that
++   starts now.
++   */
++  static AnimationFrame unpaced() {
++    const auto now = rnsurface::frameClockNow();
++    return {now, kDefaultInterval, now};
++  }
++
++private:
++  struct Request {
++    Callback callback;
++    void *data;
++  };
++
++  // The frame timeline of API 33 (android/choreographer.h), opaque here.
++  struct FrameData;
++  using VsyncCallback = void (*)(const FrameData *, void *);
++  using FrameCallback64 = void (*)(int64_t, void *);
++
++  struct Api {
++    void (*postVsyncCallback)(AChoreographer *, VsyncCallback, void *);
++    void (*postFrameCallback64)(AChoreographer *, FrameCallback64, void *);
++    int64_t (*frameTime)(const FrameData *);
++    size_t (*timelinesLength)(const FrameData *);
++    size_t (*preferredTimeline)(const FrameData *);
++    int64_t (*expectedPresentationTime)(const FrameData *, size_t);
++    int64_t (*deadline)(const FrameData *, size_t);
++  };
++
++  template <typename Entry> static Entry lookUp(const char *name) {
++    return reinterpret_cast<Entry>(dlsym(RTLD_DEFAULT, name));
++  }
++
++  static const Api &api() {
++    static const Api entries = []() {
++      Api found{};
++      found.postFrameCallback64 = lookUp<decltype(found.postFrameCallback64)>(
++          "AChoreographer_postFrameCallback64");
++      found.frameTime = lookUp<decltype(found.frameTime)>(
++          "AChoreographerFrameCallbackData_getFrameTimeNanos");
++      found.timelinesLength = lookUp<decltype(found.timelinesLength)>(
++          "AChoreographerFrameCallbackData_getFrameTimelinesLength");
++      found.preferredTimeline = lookUp<decltype(found.preferredTimeline)>(
++          "AChoreographerFrameCallbackData_getPreferredFrameTimelineIndex");
++      found.expectedPresentationTime =
++          lookUp<decltype(found.expectedPresentationTime)>(
++              "AChoreographerFrameCallbackData_"
++              "getFrameTimelineExpectedPresentationTimeNanos");
++      found.deadline = lookUp<decltype(found.deadline)>(
++          "AChoreographerFrameCallbackData_getFrameTimelineDeadlineNanos");
++      // The timeline is all or nothing.
++      if (found.frameTime != nullptr && found.timelinesLength != nullptr &&
++          found.preferredTimeline != nullptr &&
++          found.expectedPresentationTime != nullptr &&
++          found.deadline != nullptr) {
++        found.postVsyncCallback = lookUp
 ```
 
-**File**: `packages/skia/android/src/main/java/com/reactnative/skia/PlatformContext.java` (modified, +26/-0)
+**File**: `packages/skia/android/cpp/rnskia-android/RNSkPresentThreadTimer.h` (added, +105/-0)
 ```diff
-@@ -1,5 +1,7 @@
- package com.reactnative.skia;
- 
-+import android.content.ComponentCallbacks;
-+import android.content.res.Configuration;
- import android.os.Handler;
- import android.os.Looper;
- import android.os.MessageQueue;
-@@ -37,6 +39,19 @@ public class PlatformContext implements LifecycleEventListener {
-     // calls no Java there.
-     private static ParcelFileDescriptor sMainThreadWakeup;
- 
-+    // The display density can change while the app runs (display size
-+    // setting, foldables): the native side follows it.
-+    private final ComponentCallbacks mComponentCallbacks = new ComponentCallbacks() {
-+        @Override
-+        public void onConfigurationChanged(Configuration newConfig) {
-+            updatePixelDensity();
-+        }
+@@ -0,0 +1,105 @@
++#pragma once
 +
-+        @Override
-+        public void onLowMemory() {
-+        }
-+    };
++#include <android/looper.h>
++#include <sys/timerfd.h>
++#include <unistd.h>
 +
-     public PlatformContext(ReactContext reactContext) {
-         listenForMainThreadTasks();
-         mContext = reactContext;
-@@ -47,16 +62,20 @@ public PlatformContext(ReactContext reactContext) {
-         // Skia.gpu.foreground follows the host activity: resumed, or not.
-         setForegroundNative(reactContext.getLifecycleState() == LifecycleState.RESUMED);
-         reactContext.addLifecycleEventListener(this);
-+        reactContext.getApplicationContext().registerComponentCallbacks(mComponentCallbacks);
-     }
- 
-     /** Stops following the host activity; the manager is going away. */
-     public void destroy() {
-         mContext.removeLifecycleEventListener(this);
-+        mContext.getApplicationContext().unregisterComponentCallbacks(mComponentCallbacks);
-     }
- 
-     @Override
-     public void onHostResume() {
-         setForegroundNative(true);
-+        // The density may have changed while the app was in the background.
-+        updatePixelDensity();
-     }
- 
-     @Override
-@@ -68,6 +87,10 @@ public void onHostPause() {
-     public void onHostDestroy() {
-     }
- 
-+    private void updatePixelDensity() {
-+        setPixelDensityNative(mContext.getResources().getDisplayMetrics().density);
++#include <algorithm>
++#include <cerrno>
++#include <chrono>
++#include <cstdint>
++#include <functional>
++#include <map>
++#include <stdexcept>
++#include <system_error>
++#include <utility>
++
++#include "RNSkPresentThread.h"
++#include "rnsurface/ThreadChecker.h"
++
++namespace RNSkia {
++
++/**
++ * Runs tasks on the present thread once their delay has passed: a timerfd on
++ * the thread's looper (see rnsurface::RenderThread), armed for the task due
++ * first: the setTimeout() of the present thread (see
++ * RNSkView::FrameHost::setTimeout). What a view polls the GPU with while its
++ * window has a present deferred, as nothing announces the GPU being done and
++ * a wait for it would hold up every submit (see DawnContext::isDone), and
++ * what it waits for the end of a slot with. One for the process, as the thread
++ * is, made on that thread at its first timeout.
++ */
++class PresentThreadTimer {
++public:
++  static PresentThreadTimer &getInstance() {
++    // Never destroyed, like the thread whose looper watches it.
++    static auto *instance = new PresentThreadTimer();
++    return *instance;
++  }
++
++  /**
++   Runs the task once `delay` has passed, after the tasks due before it and
++   never on the spot. A timeout set cannot be cleared. Present thread.
++   */
++  void setTimeout(std::chrono::nanoseconds delay, std::function<void()> task) {
++    RNSURFACE_ASSERT_THREAD(presentThread().checker(),
++                            "PresentThreadTimer::setTimeout");
++    _tasks.emplace(Clock::now() + delay, std::move(task));
++    arm();
++  }
++
++private:
++  using Clock = std::chrono::steady_clock;
++
++  PresentThreadTimer()
++      : _timer(timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK)) {
++    if (_timer == -1) {
++      throw std::system_error(errno, std::generic_category(), "timerfd_create");
 +    }
-+
-     private static synchronized void listenForMainThreadTasks() {
-         if (sMainThreadWakeup != null) {
-             return;
-@@ -159,6 +182,9 @@ public void run() {
-     // Private c++ native methods
-     private native HybridData initHybrid(float pixelDensity);
- 
-+    // The display density changed (JniPlatformContext::setPixelDensity).
-+    private native void setPixelDensityNative(float pixelDensity);
-+
-     private static native int duplicateMainThreadWakeup();
- 
-     private static native void runMainThreadTasks();
-```
-
-**File**: `packages/skia/android/src/main/java/com/reactnative/skia/SkiaManager.java` (modified, +15/-5)
-```diff
-@@ -29,11 +29,21 @@ public class SkiaManager {
-         }
- 
-         mPlatformContext = new PlatformContext(context);
--
--        mHybridData = initHybrid(context.getJavaScriptContextHolder().get(),
--                (CallInvokerHolderImpl) jsCallInvokerHolder, mPlatformContext);
--
--        initializeRuntime();
-+        try {
-+            mHybridData = initHybrid(context.getJavaScriptContextHolder().get(),
-+                    (CallInvokerHolderImpl) jsCallInvokerHolder, mPlatformContext);
-+
-+            initializeRuntime();
-+        } catch (RuntimeException e) {
-+            // destroy() is never called on a manager that failed to build: let
-+            // go of what the platform context registered (its application
-+            // callbacks would keep the React context alive for good).
-+            mPlatformContext.destroy();
-+            if (mHybridData != null) {
-+                mHybridData.resetNative();
-+            }
-+            throw e;
-+        }
-     }
- 
-     public void destroy() {
-```
-
-**File**: `packages/skia/android/src/main/java/com/reactnative/skia/SkiaView.java` (modified, +8/-3)
-```diff
-@@ -318,9 +318,14 @@ protected void onLayout(boolean changed, int left, int top, int right, int botto
-         super.onLayout(changed, left, top, right, bottom);
-         // The backing view gets this exact size, and so does its surface: tell
-         // the native side now, so that a frame recorded before the surface
--        // exists (the first one usually is) already has the right size.
-+        // exists (the first one usually is) already has the right size. The
-+        // density goes along: after a display density change, React Native
-+        // lays the view out again, and its frames follow the density from
-+        // that layout on, never drawing at one density into a size made for
-+        // another.
-         if (hasNativeView()) {
--            setLayoutSize(right - left, bottom - top);
-+            setLayoutSize(right - left, bottom - top,
-+                    getResources().getDisplayMetrics().density);
-         }
-         if (mView != null) {
-             mView.layout(0, 0, right - left, bottom - top);
-@@ -508,7 +513,7 @@ public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
- 
-     private native void surfaceAbandoned();
- 
--    private native void setLayoutSize(int width, int height);
-+    private native void setLayoutSize(int width, int height, float pixelDensity);
- 
-     private native void setSurfaceHighBitDepth(boolean highBitDepth);
- 
-```
-
-**File**: `packages/skia/cpp/rnskia/RNSkGraphiteTarget.h` (modified, +20/-8)
-```diff
-@@ -175,12 +175,14 @@ class RNSkGraphiteTarget {
- 
-   /** Current width of the target, in points. */
-   float getWidth() {
--    return resolveTargetInfo().width / _context->getPixelDensity();
-+    auto info = resolveTargetInfo();
-+    return info.width / info.pixelDensity;
-   }
- 
-   /** Current height of the target, in points. */
-   float getHeight() {
--    return resolveTargetInfo().height / _context->getPixelDensity();
-+    auto info = resolveTargetInfo();
-+    return info.height / info.pixelDensity;
-   }
- 
-   /**
-@@ -424,8 +426,7 @@ class RNSkGraphiteTarget {
-           "SkiaGraphiteView: could not create a deferred canvas.");
-     }
-     // The canvas loads whatever the target holds: the producer clears.
--    auto pd = _context->getPixelDensity();
--    canvas->scale(pd, pd);
-+    canvas->scale(target.pixelDensity, target.pixelDensity);
-     _recording = true;
-     _openRecorder = recorder;
-     _openGeneration = generation;
-@@ -460,8 +461,21 @@ class RNSkGraphiteTarget {
-     }
-     RNSkGraphiteTargetInfo info;
-     if (surface && surface->getTargetInfo(&info)) {
-+      // The density of the layout the window has the size of (see
-+      // RNSkWindowSurface::updateTargetInfo), else the platform's.
-+      if (info.pixelDensity <= 0) {
-+        info.pixelDensity = _context->getPixelDensity();
-+      }
-       return info;
-     }
-+    // The density the platform laid the view out with, which follows
-+    // display density changes along with its size (see
-+    // RNSkWindowSurface::setLayoutSize), else the platform's.
-+    float pixelDensity = 0;
-+    if (!surface || !surface->getPixelDensity(&pixelDensity)) {
-+      pixelDensity = _context->getPixelDensity();
++    const int added = ALooper_addFd(
++        ALooper_forThread(), _timer, ALOOPER_POLL_CALLBACK, ALOOPER_EVENT_INPUT,
++        [](int, int, void *data) {
++          static_cast<PresentThreadTimer *>(data)->runDue();
++          return 1;
++        },
++        this);
++    if (added != 1) {
++      close(_timer);
++      throw std::runtime_error("PresentThreadTimer: ALooper_addFd failed");
 +    }
-+    info.pixelDensity = pixelDensity;
- #if defined(__ANDROID__)
-     // The 10-bit buffer format only has 2 bits of alpha: translucent views
-     // stay 8-bit.
-@@ -482,10 +496,8 @@ class RNSkGraphiteTarget {
-       // Not laid out yet (JS gets its onLayout before the platform lays the
-       // view out): the size JS measured, in points. The layout is on the
-       // pixel grid, so the product is an integer up to rounding errors.
--      double pd = _context->getPixelDensity();
--      info.width = static_cast<int>(std::lround(width * pd));
--      info.height = static_cast<int>(std::lround(height * pd));
--    } else {
-+      info.width = static_cast<int>(std::lround(width * pixelDensity));
-+      info.height = static_cast<int>(std::lround(height * pixelDensity));
++  }
++
++  void runDue() {
++    std::uint64_t expirations = 0;
++    static_cast<void>(read(_timer, &expirations, sizeof(expirations)));
++    const auto now = Clock::now();
++    while (!_tasks.empty() && _tasks.begin()->first <= now) {
++      auto task = std::move(_tasks.begin()->second);
++      _tasks.erase(_tasks.begin());
++      task();
++    }
++    arm();
++  }
++
++  // A timerfd given a zero time is disarmed, so a task already due waits a
++  // nanosecond rather than never.
++  void arm() {
++    itimerspec next{};
++    if (!_tasks.empty()) {
++      const auto wait = std::max<std::chrono::nanoseconds>(
++          _tasks.begin()->first - Clock::now(), std::chrono::nanoseconds(1));
++      const auto seconds =
++          std::chrono::duration_cast<std::chrono::seconds>(wait);
++      next.it_value.tv_sec =
++          static_cast<decltype(next.it_value.tv_sec)>(seconds.count());
++      next.it_value.tv_nsec = static_cast<decltype(next.it_value.tv_nsec)>(
++          (wait - seconds).count());
++    }
++    timerfd_settime(_timer, 0, &next, nullptr);
++  }
++
++  std::multimap<Clock::time_point, std::function<void()>> _tasks;
++  int _timer;
++};
++
++} // namespace RNSkia
+```
+
+**File**: `packages/skia/android/src/main/java/com/reactnative/skia/SkiaView.java` (modified, +1/-1)
+```diff
+@@ -286,7 +286,7 @@ void dropInstance() {
+     // there (see dropInstance), and no native method is called from there
+     // after that, but for the one onSurfaceDestroyed makes under the hybrid
+     // data's lock. The present thread, where it is destroyed, asks the hybrid
+-    // data instead (see presentFrame).
++    // data instead (see onFrameConsumed).
+     private boolean hasNativeView() {
+         return !mDropped;
      }
-     info.colorType = highBitDepth ? DawnUtils::HighBitDepthColorType
-                                   : DawnUtils::PreferedColorType;
 ```
 
 ---
 
-### Incident Patch 3: `2087e16c` (2026-11-12)
-**Commit Message**: fix: show an opaque TextureView canvas under a rotated, rounded clip on Android 10 (#4228)
+### Incident Patch 2: `a7bc07e4` (2026-11-14)
+**Commit Message**: fix(🔤): draw <Text> with a cached text blob (#4473)
 
-* fix: show an opaque TextureView canvas under a rotated, rounded clip on Android 10
+The Text command drew with drawSimpleText(), so Graphite shaped the text and built its glyph runs again for every label on every frame. It now keeps an SkTextBlob, made again when the text or the font changes, and draws it with drawTextBlob(): Graphite caches the glyph runs by blob and reuses them under a whole pixel translation.
 
-Android 10's HWUI draws an opaque TextureView with SkBlendMode::kSrc.
-Under a rotated clip that draw has a coverage stage, and where the GL has
-neither dual-source blending nor framebuffer fetch, Skia m75 reads the
-destination from a copy, which closes the op list the clip's stencil was
-written in. A stencil-clipped draw later in the frame makes m75 clear the
-stencil at the start of the new op list, so the canvas fails its stencil
-test and shows nothing. Skia clears the stencil once per render target
-since m77 (https://skia-review.googlesource.com/c/skia/+/223970).
+Adds the textSlide benchmark scene: the 6,000 labels of the text scene, sliding by whole pixels instead of rotating.
 
-BackingViewKind.resolveOpaque now keeps a TextureView translucent on
-Android 10, whatever the GL, and SkiaView applies it when it creates the
-view and when opaque changes in place, logging that opaque has no effect
-there; the JS side warns in development and the canvas docs say so. A
-canvas that covers its bounds draws the same pixels blended, and blending
-cost a Mi MIX 3 (Android 10) no frame time past the noise floor.
-
-* fix: move the Android 
-
-**File**: `apps/docs/docs/canvas/canvas.md` (modified, +1/-0)
+**File**: `apps/example/benchmarks/README.md` (modified, +4/-3)
 ```diff
-@@ -176,6 +176,7 @@ React Native WebGPU offers it as an opt-in on Android 10 and later; React Native
+@@ -1,6 +1,6 @@
+ # Performance regression benchmark
  
- `opaque` is a compositing hint, applied in place whenever it changes.
- On a `TextureView` it calls `setOpaque`, so the UI toolkit skips blending the view; on a `SurfaceView` it picks `PixelFormat.OPAQUE` or `PixelFormat.TRANSLUCENT`, so the compositor skips blending the layer and can show it through a hardware overlay.
-+A `TextureView` always blends on Android 10, where the UI toolkit can leave an opaque one blank; a canvas that covers its bounds draws the same pixels.
- A translucent `SurfaceView` blends against what is below the window, usually black, rather than the React Native views beneath it, which are punched out: this is why a `SurfaceView` is opaque unless asked otherwise.
+-Seven scenes that stress different parts of React Native Skia, run on a real
++Eight scenes that stress different parts of React Native Skia, run on a real
+ phone, measured by the system compositor. Run it before a release and compare
+ with the previous one.
  
- ```tsx twoslash
+@@ -13,6 +13,7 @@ with the previous one.
+ | `pattern` | a repeating image shader over the whole screen |
+ | `paths` | 900 cubic squiggles, half filled, half stroked: path rendering |
+ | `text` | 6,000 short labels: glyph atlas and text draws |
++| `textSlide` | the same 6,000 labels sliding by whole pixels instead of rotating: the glyph masks stay the same from one frame to the next |
+ 
+ The layouts match `apps/benchmark` in react-native-tgfx, so the numbers can be
+ compared with that engine too (`shapeBlob` has no counterpart there; compare
+@@ -43,7 +44,7 @@ then exits with status 1.
+ |---|---|---|
+ | `--platform` | `android` | `ios` needs a paired iPhone; `ios-simulator` with `--cold` only |
+ | `--cold` | | measure the first draw after a fresh install instead of FPS (see below) |
+-| `--scenes` | all seven | e.g. `shader,paths` |
++| `--scenes` | all eight | e.g. `shader,paths` |
+ | `--reps` | `1` | the present FPS reported is the median over reps |
+ | `--gap` | `0` | seconds with no canvas between scenes, so heat does not carry over |
+ | `--backing` | `surface` | Android: `texture` puts the canvas on a TextureView |
+@@ -120,7 +121,7 @@ Logging trace.
+   `/proc/<pid>/task/*/stat`, divided by the frames presented in it. Present
+   FPS stops at the panel rate, so a scene that already runs at 120 FPS hides
+   any regression in its cost; render ms/frame does not. It is the number to
+-  watch for CPU-bound scenes (`shapes`, `shapeBlob`, `images`, `paths`, `text`). It counts
++  watch for CPU-bound scenes (`shapes`, `shapeBlob`, `images`, `paths`, `text`, `textSlide`). It counts
+   time on a core only, not time blocked on the GPU, so a GPU-bound scene
+   (`shader`, `pattern`) shows its regressions in present FPS instead.
+ - Android also reports JS/UI thread FPS, the busiest threads (% of a core)
 ```
 
-**File**: `packages/skia/android/src/main/java/com/reactnative/skia/SkiaTextureView.java` (modified, +12/-0)
+**File**: `apps/example/benchmarks/run.mjs` (modified, +1/-1)
 ```diff
-@@ -3,6 +3,7 @@
- import android.annotation.SuppressLint;
- import android.content.Context;
- import android.graphics.SurfaceTexture;
-+import android.os.Build;
- import android.util.Log;
- import android.view.TextureView;
- import androidx.annotation.NonNull;
-@@ -23,6 +24,17 @@ public SkiaTextureView(Context context, SkiaViewAPI api, boolean opaque) {
-         setSurfaceTextureListener(this);
-     }
+@@ -55,7 +55,7 @@ const arg = (name, fallback) => {
+   return at >= 0 && args[at + 1] !== undefined ? args[at + 1] : fallback;
+ };
+ const PLATFORM = arg("platform", "android");
+-const ALL_SCENES = ["shapes", "shapeBlob", "images", "shader", "pattern", "paths", "text"];
++const ALL_SCENES = ["shapes", "shapeBlob", "images", "shader", "pattern", "paths", "text", "textSlide"];
+ const SCENES = arg("scenes", ALL_SCENES.join(",")).split(",");
+ const REPS = Number(arg("reps", "1"));
+ const GAP = Number(arg("gap", "0"));
+```
+
+**File**: `apps/example/src/Examples/Benchmark/plan.ts` (modified, +3/-1)
+```diff
+@@ -1,7 +1,8 @@
+ // The run plan of the benchmark screen, as `key=value` pairs joined by `&`
+ // (the query string of a URL, without the `?`):
+ //
+-//   scenes=shapes,shapeBlob,images,shader,pattern,paths,text   (default: all)
++//   scenes=shapes,shapeBlob,images,shader,pattern,paths,text,textSlide
++//                                                    (default: all)
+ //   reps=2                                           (default: 1)
+ //   gap=30        seconds idle, no canvas, between scenes (default: 0)
+ //   backing=surface|texture   Android only: SurfaceView or TextureView
+@@ -25,6 +26,7 @@ export const SCENES = [
+   "pattern",
+   "paths",
+   "text",
++  "textSlide",
+ ] as const;
+ export type Scene = (typeof SCENES)[number];
  
-+    // Android 10 draws an opaque TextureView with SkBlendMode::kSrc, and under
-+    // a rotated, rounded clip its Skia (m75) can clear the stencil the clip was
-+    // written in before that draw, which leaves the canvas blank (fixed in
-+    // Skia m77, https://skia-review.googlesource.com/c/skia/+/223970). The
-+    // view blends on that release, whatever the GL: a canvas that covers its
-+    // bounds draws the same pixels.
-+    @Override
-+    public void setOpaque(boolean opaque) {
-+        super.setOpaque(opaque && Build.VERSION.SDK_INT != Build.VERSION_CODES.Q);
+```
+
+**File**: `apps/example/src/Examples/Benchmark/scenes.tsx` (modified, +24/-0)
+```diff
+@@ -30,6 +30,7 @@ const screen = Dimensions.get("screen");
+ export const W = Math.min(screen.width, screen.height);
+ export const H = Math.max(screen.width, screen.height);
+ const origin = vec(W / 2, H / 2);
++const PD = PixelRatio.get();
+ 
+ const PALETTE = [
+   "#FF3B30",
+@@ -180,6 +181,12 @@ export const BenchScene = ({
+     { rotate: t.value },
+     { scale: 0.03 },
+   ]);
++  // Whole pixels: Skia only reuses the glyph runs of the previous frame under
++  // a whole pixel translation.
++  const slide = useDerivedValue(() => [
++    { translateX: Math.round(40 * Math.sin(t.value) * PD) / PD },
++    { translateY: Math.round(40 * Math.cos(t.value) * PD) / PD },
++  ]);
+   const uniforms = useDerivedValue(() => ({ uTime: t.value, uSize: [W, H] }));
+   switch (scene) {
+     case "shapes":
+@@ -281,5 +288,22 @@ export const BenchScene = ({
+         </Group>
+       );
+     }
++    case "textSlide": {
++      const textFont = getFont();
++      return (
++        <Group transform={slide}>
++          {TEXTS.map((item, i) => (
++            <Text
++              key={i}
++              x={item.x}
++              y={item.y}
++              text={item.label}
++              font={textFont}
++              color={item.color}
++            />
++          ))}
++        </Group>
++      );
 +    }
+   }
+ };
+```
+
+**File**: `packages/skia/cpp/api/recorder/Drawings.h` (modified, +22/-4)
+```diff
+@@ -340,12 +340,30 @@ class TextCmd : public Command {
+ 
+   void play(DrawingCtx *ctx) override {
+     const auto &[font, text, x, y] = props;
+-    if (font.has_value()) {
+-      ctx->canvas->drawSimpleText(text.c_str(), text.length(),
+-                                  SkTextEncoding::kUTF8, x, y, font.value(),
+-                                  ctx->getPaint());
++    if (!font.has_value()) {
++      return;
++    }
++    // The same blob for as long as the text and the font stay the same, so
++    // that Graphite finds the glyph runs it made for it on the previous frame
++    // (it caches them by blob, under any whole pixel translation) and their
++    // glyphs in its atlas: drawSimpleText() shapes the text and looks up
++    // every glyph again on each frame. Played under the recorder's lock.
++    if (_blob == nullptr || _blobText != text || _blobFont != font.value()) {
++      _blob = SkTextBlob::MakeFromText(text.c_str(), text.length(),
++                                       font.value(), SkTextEncoding::kUTF8);
++      _blobText = text;
++      _blobFont = font.value();
++    }
++    // No blob for a text without glyphs.
++    if (_blob != nullptr) {
++      ctx->canvas->drawTextBlob(_blob, x, y, ctx->getPaint());
+     }
+   }
 +
-     @Override
-     protected void onWindowVisibilityChanged(int visibility) {
-         super.onWindowVisibilityChanged(visibility);
++private:
++  sk_sp<SkTextBlob> _blob;
++  std::string _blobText;
++  SkFont _blobFont;
+ };
+ 
+ struct BoxShadowCmdProps {
+```
+
+---
+
+### Incident Patch 3: `f961faf7` (2026-11-16)
+**Commit Message**: chore(🐙): refactor Android CI build (#4486)
+
+**File**: `.github/workflows/ci.yml` (modified, +110/-155)
+```diff
+@@ -1,11 +1,9 @@
+ name: CI
+ # Pushes to main/next only run the cheap ubuntu jobs (lint, test, test-web,
+-# build-library), the Android build (with its emulator run on main only), the
+-# SwiftPM build, and (on main only) the macOS build. The native builds and
+-# the emulator/simulator runs happen on pull requests and in the merge queue,
+-# so a merge does not pay for the full suite twice. The Android build runs on
+-# push because a pull request can only restore caches saved by its own
+-# earlier runs or by its base branch (see build-test-android). The SwiftPM
++# build-library), the Android build (with its emulator and device runs on main
++# only), the SwiftPM build, and (on main only) the macOS build. The native
++# builds and the emulator/simulator runs happen on pull requests and in the
++# merge queue, so a merge does not pay for the full suite twice. The SwiftPM
+ # and macOS builds run on push, and on the pull requests whose diff can
+ # affect them (see changes).
+ on:
+@@ -136,17 +134,26 @@ jobs:
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
+-  # On pull requests and in the merge queue this builds the example app and
+-  # runs the e2e suite on the emulator. On push it saves the Gradle cache and
+-  # the ccache on the base branch, where every pull request can restore them,
+-  # and on main it also runs the emulator suite, so main itself has Android
+-  # e2e coverage; on next it stops after the build. Without that producer
+-  # each pull request started cold (0 ccache hits, 28 minutes of C++) and saved
+-  # its own 1.8 GB Gradle cache, which kept the repository above its 10 GB
+-  # cache limit and evicted every entry within hours.
+-  build-test-android:
+-    runs-on: ubuntu-latest
+-    timeout-minutes: 90
++  # Builds the example APK once, for both tested ABIs (x86_64 for the
++  # emulator, arm64-v8a for the phone), and hands it to the two e2e jobs as
++  # an artifact. Rerunning a flaky e2e job ("Re-run failed jobs") downloads
++  # this run's APK instead of building it again.
++  #
++  # It runs on the self-hosted Mac: its ~/.gradle and ccache directory live
++  # on disk between runs, so the build takes 2 to 5 minutes, where the hosted
++  # ubuntu runner took 4 to 9 minutes for one ABI after restoring a 1.8 GB
++  # Gradle cache and the ccache from GitHub's cache. It uses the phone's
++  # listener (label `android-device`), so it does not queue behind
++  # build-test-ios, and build-test-android-device then runs on the same
++  # listener right after it.
++  #
++  # It runs on every push too (main and next), so the base branches keep a
++  # build check; the e2e jobs run on main pushes only.
++  build-android:
++    runs-on: [self-hosted, macOS, android-device]
++    timeout-minutes: 60
++    env:
++      ORG_GRADLE_PROJECT_reactNativeArchitectures: arm64-v8a,x86_64
+     steps:
+       - name: Checkout
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5.0.0
+@@ -158,19 +165,6 @@ jobs:
+         with:
+           github_token: ${{ secrets.GITHUB_TOKEN }}
+ 
+-      - name: Free disk space
+-        uses: jlumbroso/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6 # v2.0.0
+-        with:
+-          tool-cache: false
+-          android: false
+-          dotnet: true
+-          haskell: true
+-          large-packages: true
+-          docker-images: true
+-          # Keep the swap file: the Graphite C++ build peaks close to the
+-          # runner's 16 GB and the swap is the only headroom left.
+-          swap-storage: false
+-
+       - name: Install JDK
+         uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+         with:
+@@ -183,102 +177,85 @@ jobs:
+         with:
+           ndk-version: r27d
+ 
+-      - name: Set ANDROID_NDK
+-        run: echo "ANDROID_NDK=${{ steps.setup-ndk.outputs.ndk-path }}" >> "$GITHUB_ENV"
+-
+-      - name: Setup Android SDK
+-        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+-        with:
+-          packages: platform-tools
+-
+-      - name: Install Android SDK tools
+-        run: |
+-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+-          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
+-          echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
+-          echo "$ANDROID_HOME/emulator" >> $GITHUB_PATH
+-
+-      - name: Finalize Android SDK
+-        run: |
+-          /bin/bash -c "yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null"
+-
+-      - name: Install Android SDK
++      # The SDK is installed once on the machine (the same lookup as the
++      # react-native-webgpu workflow). Gradle downloads missing platforms and
++      # build tools into it on first use.
++      - name: Set up Android SDK
+         run: |
+-          echo "sdk.dir=$ANDROID_HOME" > $GITHUB_WORKSPACE/apps/example/android/local.properties
+-
+-      - name: Cache Gradle
+-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+-        with:
+-  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4470** (2026-11-13): docs: name the present thread and the re-attach that keeps the frame (@wcandillon)
-- **PR #4468** (2026-11-13): chore(🐙): run the e2e suite on a Pixel 8 attached to the self-hosted Mac (@wcandillon)
-- **PR #4466** (2026-11-13): fix(🐙): drop an e2e reply that comes after its request timed out (@wcandillon)
-- **PR #4465** (2026-11-13): chore(🐙): stop passing dependency lists to Reanimated hooks in the example (@wcandillon)
-- **PR #4464** (2026-11-13): chore(🐙): fail the lint on unformatted files instead of rewriting them (@wcandillon)
-- **PR #4453** (2026-11-12): fix(🏎️): fix race condition in the render thread (@wcandillon)
+- **PR #4486** (2026-11-16): chore(🐙): refactor Android CI build (@wcandillon)
+- **PR #4485** (2026-11-16): chore(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.275 (@dependabot[bot])
+- **PR #4484** (2026-11-17): feat(🤖): download the Android binaries from GitHub releases (@wcandillon)
+- **PR #4483** (2026-11-16): chore(🍏) fix macOS example, move `react-native-macos` to 0.83 (@theeket)
+- **PR #4479** (2026-11-14): Clarify agent contribution guidelines in templates and docs (@wcandillon)
+- **PR #4478** (2026-11-15): fix(🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU on Android (@wcandillon)
 
 ---
 
@@ -2893,87 +2520,33 @@ cost a Mi MIX 3 (Android 10) no frame time past the noise floor.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐙): drop an e2e reply that comes after its request timed out
+## X. 🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU o
 
 **RULE**:
-When implementing operations in `apps/example/src/Tests/Tests.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/docs/docs/canvas/canvas.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e2c676a`: 🐙): drop an e2e reply that comes after its request timed out. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b7f2c499`: 🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU on Android. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/example/src/Tests/Tests.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/docs/canvas/canvas.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import type { ComponentRef, ReactElement } from "react";
-import React, { useEffect, useRef, useState } from "react";
-import { serve } from "./serve";
-const noop = () => {};
-const sleep = (ms: number) =>
-  new Promise<void>((resolve) => setTimeout(resolve, ms));
-// Runs a snippet the host sent, with the app's Skia.
-const evaluate = (
-  { code, ctx }: { code: string; ctx: any },
-  assets: TestsProps["assets"]
-) =>
-  eval(
-    `(function Main() {
-        const __addDisposableResource = (e, o) => { return o; };
-        const __disposeResources = () => {};
-        return (${code})(this.Skia, this.ctx, this.size, this.scale);
-      })`
-  ).call({
-    Skia,
-    // The worklet serializer spec needs app-side worklets (see
-    // workletSerialization.ts), and the Gpu spec a way to lose the device;
-    // hand them over through the context.
-    ctx: {
-      ...parseProps(ctx, assets),
-      workletSerialization,
-      forceGpuDeviceLoss,
-    },
-    size: size * PixelRatio.get(),
-    scale: s,
-  });
-      return image.encodeToBase64();
-  const [drawing, setDrawing] = useState<ReactElement | null>(null);
-  // The screen shown, the key it is mounted with, and what it calls once it
-  // has settl
+3. A dedicated native thread pool replays the display list into a Graphite frame whenever its content changed. While a replay fits in a frame of the display, the next one starts once the view has presented the previous frame; when it takes longer, replays run one frame ahead of the display, so that the canvas keeps the display's rate.
+4. The view presents one frame per frame of the display: as soon as the frame is ready when it still makes the display's deadline, on the next frame of the display otherwise. On Android, a frame presented while the GPU is still working on the previous one has its work submitted and its present deferred until the GPU is done, so that no canvas waits for another's GPU work.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import type { ComponentRef } from "react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import type { SerializedNode } from "./deserialize";
-// Report a failure back to the host as { $$error: message } so the matching
-// test can `.rejects` instead of hanging on a missing reply, and so the throw
-// is not surfaced as an unhandled exception that could break the socket for
-// subsequent tests.
-const errorEnvelope = (error: unknown) =>
-  JSON.stringify({
-    $$error: error instanceof Error ? error.message : String(error),
-  });
-// JSON.stringify returns undefined for a result JSON cannot carry: undefined, a function, a symbol.
-const resultMessage = (result: unknown) => {
-  const json: string | undefined = JSON.stringify(result);
-  return json === undefined
-    ? errorEnvelope(`The snippet's result has no JSON form: ${typeof result}`)
-    : json;
-};
-      return await image.encodeToBytes();
-  const [drawing, setDrawing] = useState<any>(null);
-  // The screen shown and the key it is mounted with. Requested again, a
-  // screen that settles is mounted again, so that it settles again; any other
-  // keeps its instance and what it shows.
-  // Whether the screen 
+3. A dedicated native thread pool replays the display list into a Graphite frame whenever its content changed, keeping at most one frame ahead of the display.
+4. The view presents the frame on the next vsync.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e2c676a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b7f2c499` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

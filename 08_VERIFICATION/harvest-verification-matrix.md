@@ -10654,3 +10654,6 @@
 | `CYCLE-20261117-6921` | `2026-11-17T18:05:26.233Z` | `ornith-ai/Ornith-1.5-122B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md` | Yes (`7648d25b...`) |
 | `CYCLE-20261117-6GQA` | `2026-11-17T18:05:36.178Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9025` | Yes (`2018a88f...`) |
 | `CYCLE-20261117-6KE6` | `2026-11-17T18:05:40.926Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8985` | Yes (`f1201ca1...`) |
+| `CYCLE-20261117-N0R8` | `2026-11-17T18:18:28.628Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md` | Yes (`a6826f66...`) |
+| `CYCLE-20261117-N2RS` | `2026-11-17T18:18:31.240Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9026` | Yes (`9ea7a3ed...`) |
+| `CYCLE-20261117-N8OT` | `2026-11-17T18:18:38.909Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8858` | Yes (`bb490618...`) |

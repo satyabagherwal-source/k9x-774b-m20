@@ -10687,3 +10687,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-11-17T18:05:26.236Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `5b4079a6` | Multi-dimensional audit evidence | 2026-11-17T18:05:36.182Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `d2ecfa2f` | Multi-dimensional audit evidence | 2026-11-17T18:05:40.930Z |
+| `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-17T18:18:28.632Z |
+| `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `1125e5dc` | Multi-dimensional audit evidence | 2026-11-17T18:18:31.244Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `0ac4f44a` | Multi-dimensional audit evidence | 2026-11-17T18:18:38.913Z |

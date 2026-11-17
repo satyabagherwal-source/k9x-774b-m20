@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T18:05:45.349Z",
+  "updated_at": "2026-11-17T18:18:44.056Z",
   "stats": {
-    "total_discovered": 5092,
-    "approved_pending_harvest": 4803,
+    "total_discovered": 5102,
+    "approved_pending_harvest": 4813,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4790,
+      "COMMUNITY_AND_EXPERT": 4800,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -110022,6 +110022,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
         "fileName": "tursodatabase-turso-learnings.md"
+      }
+    },
+    "SRC-0557A10A0167": {
+      "id": "SRC-0557A10A0167",
+      "url": "https://github.com/F",
+      "title": "https://github.com/F",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:18:42.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-E3ECC9EB8E02": {
+      "id": "SRC-E3ECC9EB8E02",
+      "url": "https://crates.io/api/v1/crates/tracing-core/0.1.36/download",
+      "title": "https://crates.io/api/v1/crates/tracing-core/0.1.36/download",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:18:42.558Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-83DE37567640": {
+      "id": "SRC-83DE37567640",
+      "url": "https://crates.io/api/v1/crates/tray-icon/0.24.2/download",
+      "title": "https://crates.io/api/v1/crates/tray-icon/0.24.2/download",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:18:42.602Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-D49982B44B3E": {
+      "id": "SRC-D49982B44B3E",
+      "url": "https://crates.io/api/v1/crates/try-lock/0.2.5/download",
+      "title": "https://crates.io/api/v1/crates/try-lock/0.2.5/download",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:18:42.644Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-8122BD0DD7FA": {
+      "id": "SRC-8122BD0DD7FA",
+      "url": "https://tauri.app/",
+      "title": "https://tauri.app/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:18:42.687Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-BE11C5E03547": {
+      "id": "SRC-BE11C5E03547",
+      "url": "https://github.com/tauri-apps/tray-icon.git",
+      "title": "https://github.com/tauri-apps/tray-icon.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:18:42.731Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-EDA18CD5E740": {
+      "id": "SRC-EDA18CD5E740",
+      "url": "https://github.com/Folkbench/folkbench/releases",
+      "title": "https://github.com/Folkbench/folkbench/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:18:42.771Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
+        "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-BF0C4541CA19": {
+      "id": "SRC-BF0C4541CA19",
+      "url": "https://github.com/wcandillon/react-native-skia/issues/3713",
+      "title": "https://github.com/wcandillon/react-native-skia/issues/3713",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:18:43.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+        "fileName": "shopify-react-native-skia-learnings.md"
+      }
+    },
+    "SRC-C29DDF286740": {
+      "id": "SRC-C29DDF286740",
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/opengl/java/android/opengl/GLSurfaceView.java",
+      "title": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-14.0.0_r1/opengl/java/android/opengl/GLSurfaceView.java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:18:44.016Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+        "fileName": "shopify-react-native-skia-learnings.md"
+      }
+    },
+    "SRC-E233634DEB88": {
+      "id": "SRC-E233634DEB88",
+      "url": "https://github.com/flutter/flutter/blob/189a5db70ba4f7a652e3349e922ab38a3bca023e/engine/src/flutter/shell/platform/android/io/flutter/embedding/android/SurfaceHolderCallbackCompat.java",
+      "title": "https://github.com/flutter/flutter/blob/189a5db70ba4f7a652e3349e922ab38a3bca023e/engine/src/flutter/shell/platform/android/io/flutter/embedding/android/SurfaceHolderCallbackCompat.java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:18:44.056Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+        "fileName": "shopify-react-native-skia-learnings.md"
       }
     }
   }

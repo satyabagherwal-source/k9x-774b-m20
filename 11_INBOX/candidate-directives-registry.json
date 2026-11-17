@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T18:05:45.519Z",
+  "last_updated": "2026-11-17T18:18:44.386Z",
   "directives": [
     {
       "id": "CD-001",
@@ -21738,11 +21738,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-CI2K",
+      "id": "CD-NCWT",
       "directive_title": "🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU o",
-      "source_repo": "wcandillon-react-native-skia-learnings",
+      "source_repo": "shopify-react-native-skia-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-CI2K-pace-a-canvas-s-frames-with-one-scheduler-and-hold-a-present-for-the-gpu-o.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-NCWT-pace-a-canvas-s-frames-with-one-scheduler-and-hold-a-present-for-the-gpu-o.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -25317,6 +25317,35 @@
       "source_repo": "tursodatabase-turso",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-71FC45-postgres-list-row-level-security-policie.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-NBUL",
+      "directive_title": "Empirical Invariant Guard in README.en.md",
+      "source_repo": "folkbench-folkbench-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NBUL-empirical-invariant-guard-in-readme-en-md.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-1229E2",
+      "directive_title": "Empirical Invariant Guard in README.en.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "folkbench-folkbench",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1229E2-empirical-invariant-guard-in-readme-en-m.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-65EB6F",
+      "directive_title": "Forensic Learning Record (Deep Inspection): orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-65EB6F-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-17"
     }
   ]

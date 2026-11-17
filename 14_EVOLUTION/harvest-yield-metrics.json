@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T18:05:40.935Z",
-  "total_cycles_completed": 10209,
-  "total_learnings_persisted": 10209,
-  "total_rules_promoted": 9768,
+  "last_updated": "2026-11-17T18:18:38.919Z",
+  "total_cycles_completed": 10212,
+  "total_learnings_persisted": 10212,
+  "total_rules_promoted": 9770,
   "history": [
-    {
-      "timestamp": "2026-11-17T03:50:01.661Z",
-      "repository": "mfontanini/presenterm",
-      "learningId": "learn-github-mfontanini-presenterm",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T03:50:05.514Z",
-      "repository": "sveltejs/svelte",
-      "learningId": "learn-github-sveltejs-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T03:50:15.260Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T03:57:51.069Z",
       "repository": "solidjs/solid",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T18:05:40.935Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:18:28.638Z",
+      "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:18:31.251Z",
+      "repository": "Folkbench/folkbench",
+      "learningId": "learn-github-folkbench-folkbench",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:18:38.919Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

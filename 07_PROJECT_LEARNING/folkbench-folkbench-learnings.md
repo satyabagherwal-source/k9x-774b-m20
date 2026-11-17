@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/folkbench-folkbench-learnings.md`  
 > **Source**: github ([https://github.com/Folkbench/folkbench](https://github.com/Folkbench/folkbench))  
-> **Source Version**: `4bb39f16`  
+> **Source Version**: `1125e5dc`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T04:30:13.778Z  
+> **Timestamp**: 2026-11-17T18:18:30.105Z  
 > **Learning ID**: `learn-github-folkbench-folkbench`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/folkbench-folkbench-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Folkbench/folkbench](https://github.com/Folkbench/folkbench))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T04:30:13.775Z  
+> **Harvest Timestamp**: 2026-11-17T18:18:30.102Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `Folkbench/folkbench`
-- **Description**: AI API 中转站评测排行与切换工具：实测可用率、延迟与价格 · Open-source AI API relay benchmark, rankings & switcher for Claude Code / Codex
-- **Primary Language / Ecosystem**: Rust
+- **Description**: AI API 中转站推荐与评测：中转站排行榜、中转站检测、Claude / GPT / Gemini 中转站对比 · AI API relay rankings · Folkbench Switch for Claude Code, Codex & Gemini CLI
+- **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3878 stars
+- **Stars / Engagement**: 3950 stars
 
 ---
 
@@ -1119,13 +1119,11 @@ process.stdout.write(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10** (2026-11-16): **Upgrade Switch client to Phase 0–2 evaluation and Precision Spectrum v0.5 design system**
-  *Symptoms*: ## Changes  - Component: Switch (`apps/switch/`) - User-visible change:   - Align visual tokens, typography weights/scales, light & dark themes, and trilingual dictionaries (`en`, `zh-CN`, `zh-Hant`) with Precision Spectrum v0.5   - Expand the public catalog and Rust IPC contracts to support model degradation monitoring, official upstream status, the Data Security board (`L4`–`L0`), and extended station profiles   - Upgrade Service Discovery into four views (Leaderboard, Integrity / Degradation Monitor, cross-model Pareto Value Frontier chart, and Data Security board) plus a floating bottom comparison bar   - Add a two-station five-axis SVG radar comparison dialog and redesign the Station Detail page (four verdict cards, interactive cache-hit-rate pricing calculator, and full operational profile)   - Consolidate ranking and pricing methodology documentation into the Methods page, adding 66 frontend & algorithm unit tests alongside contract unit tests  ## Verification  - [x] `bun run check` (`check:source`, `test:repository-tools`, `check:blog`, `check:switch`, `build:blog`, and `build:switch:web` verified via `.githooks/pre-push`) - [x] Rust tests for client behavior changes (`cargo fmt --all --check` and `cargo test -p folkbench-switch-contract --locked` verified locally; full three-OS `cargo test --workspace` matrix covered by `switch-ci.yml`) - [ ] Blog build for content/build changes (N/A: no blog content changes; regression blog build verified locally) - [x] No credentia
+- **Issue #12** (2026-11-17): **Release Switch 0.1.0-beta.9 and update localized blog & README docs**
+  *Symptoms*: ## Summary - Release Switch `0.1.0-beta.9`: add named route profiles, system tray quick switching, local loopback privacy-masking proxy, and discovery/value-frontier UX refinements. - Update the Switch section across all 12 locales of the model degradation detection blog post and the feature tables in the 4 localized `README` files.  ## Release & Merge Notes - Contains two standalone commits (Switch `0.1.0-beta.9` release + blog/README documentation updates). - Merge with **Rebase and merge** or **Create a merge commit** into `main` to automatically trigger `switch-beta.yml` (cross-platform builds & macOS notarization) and `switch-publish.yml` (`switch-v0.1.0-beta.9` pre-release).
 
-- **Issue #9** (2026-11-15): **评测需求：建议覆盖 超稳API / Stable API（apiniuma.com）**
-  *Symptoms*: 希望按官网/仓库说明，申请对「超稳API / Stable API」做免费编辑评估或公开评测覆盖。这不是付费展示、赞助位或置顶申请，也未提供 API Key 或测试账号。  - 站点名称：超稳API / Stable API - 官网：https://apiniuma.com - 定价页：https://apiniuma.com/pricing - 文档：https://jqm6hiro8q.apifox.cn - OpenAI 兼容 Base URL：https://apiniuma.com/v1 - 公开注册入口：https://apiniuma.com/register - 类型：OpenAI 兼容的多模型聚合 / API 网关 - 计费：按量付费，额度不过期（以定价页为准） - 模型覆盖：定价页展示 GPT / Claude / Gemini / DeepSeek 等（以定价页实际清单为准） - 核验日期：2026-11-15（Asia/Shanghai）；上述公开页本次可访问，仅证明页面可达，不代表生成请求或注册流程实测成功  未提供任何 API key、Cookie、密码或私人账号资料。请按当前官方页面核对；不要为评测检查运行付费生成调用，除非你们使用自有探测资源。若不符合覆盖范围，直接不收录即可。  如需补充公开资料，可联系 lmj243-28a81c@mail.grokbot.com。谢谢！
-  **Post-Mortem & Fix Analysis**:
-  > 自行站内入驻
+- **Issue #11** (2026-11-17): **Convert blog article covers and inline raster figures from WebP to JPG**
+  *Symptoms*: Product changes - Convert all 20 twelve-locale public blog cover images and 15 inline raster figures across 4 articles from WebP to JPG so article pages, Open Graph metadata, structured data, and the blog content manifest emit .jpg URLs consistently. - Keep SVG vector diagrams and repository README showcase images unchanged to preserve unrelated documentation links.  Implementation - Convert and replace public/covers/*.webp (19 files), public/blog/covers/kimi-k3-1-pro-deep-dive.webp (1 file), and public/blog/figures/*/*.webp (15 files) with same-named .jpg assets in sRGB color space at quality 90 (4:2:0 subsampling). - Update references across src/lib/manifest.ts, src/lib/seo.ts, src/components/ArticleDetail.astro, src/pages/blog/[slug].astro, src/pages/[locale]/blog/[slug].astro, design/benchmark-series-covers-2026-11-14.json, public/blog/figures/kimi-k3-1-pro-deep-dive/NOTICE.txt, and 180 inline figure links across 48 localized Markdown articles.  Migration and compatibility - No database or environment variable changes; directory layouts under public/covers/ and public/blog/covers/ remain unchanged with .jpg extensions. - Reversible via git revert if WebP assets and paths ever need to be restored.  Operations - Affects only static blog build artifacts and blog-content-manifest.json cover URLs; coordinate deployment with main-site public blog assets so cached manifests and static assets stay aligned. - Scoped strictly to the public blog content and static build in this repo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1142,138 +1140,365 @@ process.stdout.write(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `af4c9d9c` (2026-10-17)
-**Commit Message**: ci(release): retry flaky Apple stapler/notarytool during Beta builds
+### Incident Patch 1: `1125e5dc` (2026-11-17)
+**Commit Message**: Merge pull request #12 from MarlaRoselyn/release/switch-v0.1.0-beta.9
 
-Ticket delivery and CloudKit lookups intermittently fail with network -1005 / missing staple; retry before failing the matrix.
+Release Switch 0.1.0-beta.9 and update localized blog & README docs
 
-**File**: `.github/workflows/switch-beta.yml` (modified, +20/-4)
+**File**: `README.en.md` (modified, +3/-0)
 ```diff
-@@ -159,20 +159,36 @@ jobs:
-           TARGET: ${{ matrix.target }}
-         run: |
-           set -euo pipefail
-+          retry() {
-+            local attempt=1
-+            local max=6
-+            local delay=15
-+            until "$@"; do
-+              if (( attempt >= max )); then
-+                echo "gave up after ${attempt} attempts: $*"
-+                return 1
-+              fi
-+              echo "attempt ${attempt} failed; sleeping ${delay}s then retrying: $*"
-+              sleep "$delay"
-+              attempt=$((attempt + 1))
-+              delay=$((delay + 15))
-+            done
-+          }
-           bundle="apps/switch/src-tauri/target/$TARGET/release/bundle"
-           app="$bundle/macos/Folkbench Switch.app"
-           codesign --verify --deep --strict "$app"
-           codesign -dv --verbose=4 "$app" 2> "$FOLKBENCH_APPLE_SIGNING_DIR/codesign-details.txt"
-           node -e 'const fs=require("node:fs"); const text=fs.readFileSync(process.env.FOLKBENCH_APPLE_SIGNING_DIR + "/codesign-details.txt", "utf8"); if (!text.split("\n").includes("TeamIdentifier=" + process.env.APPLE_TEAM_ID) || !/flags=.*\bruntime\b/.test(text)) { console.error("Application signing team or hardened runtime verification failed."); process.exit(1); }'
--          xcrun stapler validate "$app"
-+          # Ticket delivery can lag or flake on Apple's CDN; wait/retry before failing the whole matrix.
-+          retry xcrun stapler validate "$app"
-           spctl --assess --type execute "$app"
-           shopt -s nullglob
-           installers=("$bundle"/dmg/*.dmg)
-           test "${#installers[@]}" -eq 1
--          xcrun notarytool submit "${installers[0]}" --key "$APPLE_API_KEY_PATH" --key-id "$APPLE_API_KEY" --issuer "$APPLE_API_ISSUER" --wait --output-format json > "$FOLKBENCH_APPLE_SIGNING_DIR/notarization.json"
-+          retry bash -c 'xcrun notarytool submit "$0" --key "$APPLE_API_KEY_PATH" --key-id "$APPLE_API_KEY" --issuer "$APPLE_API_ISSUER" --wait --output-format json > "$FOLKBENCH_APPLE_SIGNING_DIR/notarization.json"' "${installers[0]}"
-           node -e 'const fs=require("node:fs"); if (JSON.parse(fs.readFileSync(process.env.FOLKBENCH_APPLE_SIGNING_DIR + "/notarization.json", "utf8")).status !== "Accepted") { console.error("Apple did not accept the DMG notarization."); process.exit(1); }'
--          xcrun stapler staple "${installers[0]}"
--          xcrun stapler validate "${installers[0]}"
-+          retry xcrun stapler staple "${installers[0]}"
-+          retry xcrun stapler validate "${installers[0]}"
-       - name: Collect only installers and public build metadata
-         shell: bash
-         env:
+@@ -111,6 +111,9 @@ Installers and SHA256 checksums are available in [Releases](https://github.com/F
+ | **Provider switching** | Save connection settings for multiple services and apply your selection to a supported tool. |
+ | **Configuration previews** | Review changes before writing, preserving other custom settings. Restoration capabilities depend on the tool adapter. |
+ | **Codex credential protection** | Temporarily park official OAuth credentials when switching to a third-party service and restore them when switching back. |
++| **Named profiles** | Save the routes each tool currently uses as a named profile and apply the whole set in one click. |
++| **Tray switching** | Switch profiles or individual tool services from the system tray without opening the main window. |
++| **Local privacy masking** | Optional. A local proxy replaces API keys, email addresses, public IPs and custom sensitive words with placeholders before requests leave your machine and restores them in responses; tools reconnect directly when Switch quits. |
+ | **Public route discovery** | Browse routes, availability, status windows and prices from the public catalog in the client. |
+ | **Local usage estimates** | Review session token usage and estimate cost using reference prices. |
+ 
+```
+
+**File**: `README.es.md` (modified, +3/-0)
+```diff
+@@ -111,6 +111,9 @@ Los instaladores y archivos de verificación SHA256 están en [Releases](https:/
+ | **Cambio de proveedor** | Guarda la configuración de varios servicios y aplica tu elección a una herramienta compatible. |
+ | **Vista previa de cambios** | Revisa los cambios antes de escribirlos y conserva otros ajustes personalizados. La restauración depende del adaptador de cada herramienta. |
+ | **Protección de credenciales de Codex** | Al cambiar a un tercero, guarda temporalmente las credenciales OAuth oficiales y las restaura al volver. |
++| **Perfiles con nombre** | Guarda las conexiones que usa cada herramienta como un perfil y aplica el conjunto con un clic. |
++| **Cambio desde la bandeja** | Cambia perfiles o el servicio de cada herramienta desde la bandeja del sistema sin abrir la ventana principal. |
++| **Enmascarado local de privacidad** | Opcional. Un proxy local sustituye claves API, correos, IP públicas y palabras sensibles propias por marcadores antes de enviar las solicitudes y los restaura en las respuestas; al cerrar Switch, las herramientas vuelven a la conexión directa. |
+ | **Descubrimiento de conexiones públicas** | Consulta conexiones, disponibilidad, ventanas de estado y precios del catálogo público dentro del cliente. |
+ | **Estimación de uso local** | Revisa los tokens por sesión y estima el costo con precios de referencia. |
+ 
+```
+
+**File**: `README.ja.md` (modified, +3/-0)
+```diff
+@@ -101,6 +101,9 @@ macOS のインストーラーは `.dmg`、Windows は `.exe` 形式です。
+ | **プロバイダーの切替** | 複数サービスの接続設定を保存し、選択した設定を対応ツールへ適用します。 |
+ | **設定差分の確認** | 書き込み前に変更を確認し、ほかのカスタム設定を保持します。復元できる範囲はツールのアダプターによって異なります。 |
+ | **Codex の認証情報保護** | サードパーティーへ切り替える際に公式 OAuth 認証情報を一時退避し、公式に戻すときに復元します。 |
++| **名前付きプロファイル** | 各ツールが使っている回線をプロファイルとして保存し、ワンクリックで一括適用します。 |
++| **トレイから切替** | メインウィンドウを開かずに、システムトレイからプロファイルやツールごとのサービスを切り替えます。 |
++| **ローカルプライバシーマスキング** | 任意で有効化。送信前にローカルプロキシが API キー、メールアドレス、公開 IP、任意の機密語をプレースホルダーに置き換え、応答で復元します。Switch 終了時は直接接続に戻ります。 |
+ | **公開回線の検索** | 公開カタログの回線、稼働率、状態履歴、価格をクライアントで確認できます。 |
+ | **ローカル使用量の推計** | セッションごとの Token 使用量を確認し、参考単価でコストを推計します。 |
+ 
+```
+
+**File**: `README.md` (modified, +3/-0)
+```diff
+@@ -179,6 +179,9 @@ macOS 安装包为 `.dmg`，Windows 安装包为 `.exe`。
+ | **服务商切换** | 保存多家服务的连接参数，将选择应用到目标工具。 |
+ | **配置差异预览** | 写入前检查变化，保留其他自定义设置；具体恢复能力以工具适配为准。 |
+ | **Codex 凭据保护** | 切至第三方服务时暂存官方 OAuth 凭据，切回时恢复。 |
++| **组合档案** | 把各工具当前连接的线路保存为命名组合，一键整组切换。 |
++| **托盘快速切换** | 在系统托盘切换组合或单个工具的服务，无需打开主窗口。 |
++| **本机隐私脱敏** | 可选开启。请求经本机代理发出前，把 API Key、邮箱、公网 IP 与自定义敏感词替换为占位符，并在响应中还原；退出 Switch 时恢复直连。 |
+ | **公开线路发现** | 在客户端查看公开目录中的线路、可用率、状态窗口与价格。 |
+ | **本地用量估算** | 按会话查看 Token 消耗，并以参考单价估算成本。 |
+ 
+```
+
+**File**: `apps/switch/THIRD_PARTY_LICENSES.txt` (modified, +34/-1)
+```diff
+@@ -1,6 +1,6 @@
+ Folkbench Switch — third-party license texts
+ 
+-Generated for 0.1.0-beta.3 from the locked dependency set.
++Generated for 0.1.0-beta.9 from the locked dependency set.
+ 
+ This inventory includes runtime dependencies and some build-time dependencies.
+ 
+@@ -2940,6 +2940,16 @@ Source archive: https://crates.io/api/v1/crates/tracing-core/0.1.36/download
+ LICENSE: LICENSE-898b1ae9821e98daf8964c8d6c7f61641f5f5aa78ad500020771c0939ee0dea1
+ 
+ 
++===== crate: tray-icon@0.24.2 (MIT OR Apache-2.0) =====
++
++Source archive: https://crates.io/api/v1/crates/tray-icon/0.24.2/download
++
++LICENSE-APACHE: LICENSE-a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2
++
++LICENSE-MIT: LICENSE-2ab5537b8c0cb1d475e2145b6a7994b04e7c71e6e5bd836f7f9c47c221a5ad9a
++
++LICENSE.spdx: LICENSE-44181d1db740d9841dbe6d7fa1963a23067f335567127fc15a9d050476af71a6
++
+ ===== crate: try-lock@0.2.5 (MIT) =====
+ 
+ Source archive: https://crates.io/api/v1/crates/try-lock/0.2.5/download
+@@ -18823,3 +18833,26 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
++
++
++===== LICENSE-44181d1db740d9841dbe6d7fa1963a23067f335567127fc15a9d050476af71a6 =====
++
++SPDXVersion: SPDX-2.1
++DataLicense: CC0-1.0
++PackageName: tray-icon
++DataFormat: SPDXRef-1
++PackageSupplier: Organization: The Tauri Programme in the Commons Conservancy
++PackageHomePage: https://tauri.app
++PackageLicenseDeclared: Apache-2.0
++PackageLicenseDeclared: MIT
++PackageCopyrightText: 2020-2022, The Tauri Programme in the Commons Conservancy
++PackageSummary: <text>Create tray icons for desktop applications.
++                </text>
++PackageComment: <text>The package includes the following libraries; see
++Relationship information.
++                </text>
++Created: 2022-12-05T09:00:00Z
++PackageDownloadLocation: git://github.com/tauri-apps/tray-icon
++PackageDownloadLocation: git+https://github.com/tauri-apps/tray-icon.git
++PackageDownloadLocation: git+ssh://github.com/tauri-apps/tray-icon.git
++Creator: Person: Daniel Thompson-Yvetot
+```
+
+**File**: `apps/switch/dependency-license-inventory.json` (modified, +9/-3)
+```diff
+@@ -1,10 +1,10 @@
+ {
+   "schemaVersion": 1,
+-  "version": "0.1.0-beta.8",
++  "version": "0.1.0-beta.9",
+   "hashes": {
+-    "package.json": "526d563cb6adbfd706485508808b96b241a3d2affe5eaebe690dd9ac85308ff2",
++    "package.json": "85d0f5f8cc5fb68e61f870e70d0fef4b46172650ef5c746ef800b5c85c853e94",
+     "bun.lock": "231d61a49f3f16769c2034f5e30f7fc38824d906628edc0b3bbde18cb1b1a3cd",
+-    "src-tauri/Cargo.lock": "44cabd6de3188eb17fb9ab90d4215c8296a6abb8a24938cc1afb261c37645755"
++    "src-tauri/Cargo.lock": "cdd9e6d8baeee2642b69e59589eed7449c9cd4454360da20aa9ff3dca1d6f019"
+   },
+   "packages": [
+     {
+@@ -2143,6 +2143,12 @@
+       "version": "0.1.36",
+       "license": "MIT"
+     },
++    {
++      "ecosystem": "crates.io",
++      "name": "tray-icon",
++      "version": "0.24.2",
++      "license": "MIT OR Apache-2.0"
++    },
+     {
+       "ecosystem": "crates.io",
+       "name": "try-lock",
+```
+
+**File**: `apps/switch/package.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "name": "folkbench-switch",
+   "private": true,
+-  "version": "0.1.0-beta.8",
++  "version": "0.1.0-beta.9",
+   "description": "Folkbench desktop assistant for API services the user already bought",
+   "license": "Apache-2.0",
+   "repository": {
+```
+
+**File**: `apps/switch/src-tauri/Cargo.lock` (modified, +1/-1)
+```diff
+@@ -1217,7 +1217,7 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+ 
+ [[package]]
+ name = "folkbench-switch"
+-version = "0.1.0-beta.8"
++version = "0.1.0-beta.9"
+ dependencies = [
+  "arboard",
+  "base64 0.22.1",
 ```
 
 ---
 
-### Incident Patch 2: `4c290cc3` (2026-11-01)
-**Commit Message**: fix(switch): 修复 claude-desktop connect 用例以恢复 beta.6 候选构建
+### Incident Patch 2: `1ce27cb1` (2026-11-17)
+**Commit Message**: 博客与 README 补充 Switch 0.1.0-beta.9 新功能介绍
 
-claude-desktop 已是可写适配器，旧拒绝断言导致 signed-candidate CI 失败。
+- 降智检测文章十二语言版本的 Switch 章节新增组合档案、托盘快速切换、本机隐私脱敏（可选）与按降智折算的性价比前沿介绍，并更新多线路容灾使用步骤与文章更新日期。
+- 中、英、西、日四语 README 功能表新增组合档案、托盘快速切换与本机隐私脱敏三项。
 
-**File**: `apps/switch/src-tauri/src/services/connect.rs` (modified, +3/-2)
+**File**: `README.en.md` (modified, +3/-0)
 ```diff
-@@ -638,11 +638,12 @@ mod tests {
-         let parsed = parse_connect_url(&connect_url(&sample_pairs())).unwrap();
-         assert_eq!(parsed.tool_id, "claude-code");
- 
-+        // claude-desktop is a writable adapter (beta.6+); connect links may target it.
-         let mut desktop = sample_pairs();
--        // Replace the tool value (last pair).
-         let last = desktop.len() - 1;
-         desktop[last] = ("tool", "claude-desktop");
--        assert!(parse_connect_url(&connect_url(&desktop)).is_err());
-+        let desktop_parsed = parse_connect_url(&connect_url(&desktop)).unwrap();
-+        assert_eq!(desktop_parsed.tool_id, "claude-desktop");
- 
-         let mut unknown = sample_pairs();
-         let last = unknown.len() - 1;
-```
-
----
-
-### Incident Patch 3: `4e05cbb4` (2026-10-29)
-**Commit Message**: docs: 更新智流 FluxLane 赞助商描述
-
-按 KevinX 提供的新文案替换 README 与 docs/services 中的中英文介绍，保留 /go/fluxlane 跳转链接。
-
-**File**: `README.en.md` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ These relays support Folkbench's ongoing benchmarks. [Become a sponsor →](http
- </tr>
- <tr>
- <td width="200" align="center"><a href="https://folkbench.com/go/fluxlane?source=readme_en"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/fluxlane-dark.png"><img src="docs/images/sponsors/fluxlane-light.png" alt="智流 FluxLane" width="180"></picture></a></td>
--<td><a href="https://folkbench.com/go/fluxlane?source=readme_en"><b>FluxLane (智流)</b></a><br>Extensive model catalog spanning international and domestic options with direct OpenAI SDK compatibility. Features platform-level routing, usage monitoring, latency tracking, and formal procurement support (invoices, corporate contracts, and purchase orders) for enterprises and academic institutions.</td>
-+<td><a href="https://folkbench.com/go/fluxlane?source=readme_en"><b>FluxLane (智流)</b></a><br>An AI API gateway for developers and teams: full-capability, stable access to global models, supporting GPT, Claude, Gemini, DeepSeek, GLM, and other mainstream models as well as major global model-vendor protocols. The platform provides policy-based routing and multi-route failover, making long-term integration and cost accounting easier for teams in China. For enterprise and university procurement in China, it can sign contracts, accept wire transfers, and provide invoices, purchase orders, and related materials (subject to commercial confirmation). Publishes model capability evaluation reports, with multipliers as low as 0.1×, and new registrants receive a $2 trial credit.</td>
- </tr>
- </table>
+@@ -111,6 +111,9 @@ Installers and SHA256 checksums are available in [Releases](https://github.com/F
+ | **Provider switching** | Save connection settings for multiple services and apply your selection to a supported tool. |
+ | **Configuration previews** | Review changes before writing, preserving other custom settings. Restoration capabilities depend on the tool adapter. |
+ | **Codex credential protection** | Temporarily park official OAuth credentials when switching to a third-party service and restore them when switching back. |
++| **Named profiles** | Save the routes each tool currently uses as a named profile and apply the whole set in one click. |
++| **Tray switching** | Switch profiles or individual tool services from the system tray without opening the main window. |
++| **Local privacy masking** | Optional. A local proxy replaces API keys, email addresses, public IPs and custom sensitive words with placeholders before requests leave your machine and restores them in responses; tools reconnect directly when Switch quits. |
+ | **Public route discovery** | Browse routes, availability, status windows and prices from the public catalog in the client. |
+ | **Local usage estimates** | Review session token usage and estimate cost using reference prices. |
  
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `README.es.md` (modified, +3/-0)
 ```diff
-@@ -46,7 +46,7 @@
- </tr>
- <tr>
- <td width="200" align="center"><a href="https://folkbench.com/go/fluxlane?source=readme"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/sponsors/fluxlane-dark.png"><img src="docs/images/sponsors/fluxlane-light.png" alt="智流 FluxLane" width="180"></picture></a></td>
--<td><a href="https://folkbench.com/go/fluxlane?source=readme"><b>智流 FluxLane</b></a><br>智流 FluxLane 的模型和线路比较多，国内外模型都有，接入方式也比较统一，直接兼容 OpenAI SDK。除了模型和线路比较全，它还把路由、用量、成本和延迟这些东西都做进了平台里，比较适合开发者和团队长期接入。对于企业和高校采购这方面是比较明显的优势，可以提供发票、合同、采购单。</td>
-+<td><a href="https://folkbench.com/go/fluxlane?source=readme"><b>智流 FluxLane</b></a><br>智流 FluxLane 是一个面向开发者与团队的 AI API 网关：提供满血且稳定的全球模型，支持 GPT、Claude、Gemini、Deepseek、GLM 等主流模型和全球主流模型厂商协议，平台提供策略路由与多线路容灾，方便国内团队长期接入与成本核算。面向国内企业/高校采购，可签订合同、对公转账，并提供发票、采购单等材料（具体以商务确认为准），公开模型能力检测报告，倍率低至0.1倍率，新人注册可领 2 美元体验额度。</td>
- </tr>
- </table>
+@@ -111,6 +111,9 @@ Los instaladores y archivos de verificación SHA256 están en [Releases](https:/
+ | **Cambio de proveedor** | Guarda la configuración de varios servicios y aplica tu elección a una herramienta compatible. |
+ | **Vista previa de cambios** | Revisa los cambios antes de escribirlos y conserva otros ajustes personalizados. La restauración depende del adaptador de cada herramienta. |
+ | **Protección de credenciales de Codex** | Al cambiar a un tercero, guarda temporalmente las credenciales OAuth oficiales y las restaura al volver. |
++| **Perfiles con nombre** | Guarda las conexiones que usa cada herramienta como un perfil y aplica el conjunto con un clic. |
++| **Cambio desde la bandeja** | Cambia perfiles o el servicio de cada herramienta desde la bandeja del sistema sin abrir la ventana principal. |
++| **Enmascarado local de privacidad** | Opcional. Un proxy local sustituye claves API, correos, IP públicas y palabras sensibles propias por marcadores antes de enviar las solicitudes y los restaura en las respuestas; al cerrar Switch, las herramientas vuelven a la conexión directa. |
+ | **Descubrimiento de conexiones públicas** | Consulta conexiones, disponibilidad, ventanas de estado y precios del catálogo público dentro del cliente. |
+ | **Estimación de uso local** | Revisa los tokens por sesión y estima el costo con precios de referencia. |
  
 ```
 
-**File**: `docs/services/README.en.md` (modified, +1/-1)
+**File**: `README.ja.md` (modified, +3/-0)
 ```diff
-@@ -63,6 +63,6 @@ A unified API aggregation platform for developers and teams, with published cove
+@@ -101,6 +101,9 @@ macOS のインストーラーは `.dmg`、Windows は `.exe` 形式です。
+ | **プロバイダーの切替** | 複数サービスの接続設定を保存し、選択した設定を対応ツールへ適用します。 |
+ | **設定差分の確認** | 書き込み前に変更を確認し、ほかのカスタム設定を保持します。復元できる範囲はツールのアダプターによって異なります。 |
+ | **Codex の認証情報保護** | サードパーティーへ切り替える際に公式 OAuth 認証情報を一時退避し、公式に戻すときに復元します。 |
++| **名前付きプロファイル** | 各ツールが使っている回線をプロファイルとして保存し、ワンクリックで一括適用します。 |
++| **トレイから切替** | メインウィンドウを開かずに、システムトレイからプロファイルやツールごとのサービスを切り替えます。 |
++| **ローカルプライバシーマスキング** | 任意で有効化。送信前にローカルプロキシが API キー、メールアドレス、公開 IP、任意の機密語をプレースホルダーに置き換え、応答で復元します。Switch 終了時は直接接続に戻ります。 |
+ | **公開回線の検索** | 公開カタログの回線、稼働率、状態履歴、価格をクライアントで確認できます。 |
+ | **ローカル使用量の推計** | セッションごとの Token 使用量を確認し、参考単価でコストを推計します。 |
  
- <h3><a href="https://folkbench.com/go/fluxlane?source=readme" target="_blank" rel="noopener noreferrer">智流 FluxLane</a></h3>
- 
--Its published directory is large, covering a wide range of international and domestic models across multiple channels. Support for enterprise and university procurement, invoices, and related documents is a clear use-case advantage. The current profile still lacks enough independent experience and rating fields, so verify the site’s low-multiplier, stability, and TTFT claims against the model-specific rankings and current routes.
-+FluxLane (智流) is an AI API gateway for developers and teams: it offers full-capability, stable access to global models, supporting GPT, Claude, Gemini, DeepSeek, GLM, and other mainstream models as well as major global model-vendor protocols. The platform provides policy-based routing and multi-route failover, making long-term integration and cost accounting easier for teams in China. For enterprise and university procurement in China, it can sign contracts, accept wire transfers, and provide invoices, purchase orders, and related materials (subject to commercial confirmation). It publishes model capability evaluation reports, with multipliers as low as 0.1×, and new registrants receive a $2 trial credit.
- 
- Prices, available models, protocol support, and routes can change, so check each site’s current documentation, pricing page, and terms before use.
 ```
 
-**File**: `docs/services/README.zh-CN.md` (modified, +1/-1)
+**File**: `README.md` (modified, +3/-0)
 ```diff
-@@ -37,4 +37,4 @@ Cloudbridge 比较偏海外使用场景，支持美元计费和多语言，起
+@@ -179,6 +179,9 @@ macOS 安装包为 `.dmg`，Windows 安装包为 `.exe`。
+ | **服务商切换** | 保存多家服务的连接参数，将选择应用到目标工具。 |
+ | **配置差异预览** | 写入前检查变化，保留其他自定义设置；具体恢复能力以工具适配为准。 |
+ | **Codex 凭据保护** | 切至第三方服务时暂存官方 OAuth 凭据，切回时恢复。 |
++| **组合档案** | 把各工具当前连接的线路保存为命名组合，一键整组切换。 |
++| **托盘快速切换** | 在系统托盘切换组合或单个工具的服务，无需打开主窗口。 |
++| **本机隐私脱敏** | 可选开启。请求经本机代理发出前，把 API Key、邮箱、公网 IP 与自定义敏感词替换为占位符，并在响应中还原；退出 Switch 时恢复直连。 |
+ | **公开线路发现** | 在客户端查看公开目录中的线路、可用率、状态窗口与价格。 |
+ | **本地用量估算** | 按会话查看 Token 消耗，并以参考单价估算成本。 |
  
- <h3><a href="https://folkbench.com/go/fluxlane?source=readme" target="_blank" rel="noopener noreferrer">智流 FluxLane</a></h3>
+```
+
+**File**: `src/content/articles/de/how-folkbench-detects-model-degradation.de.md` (modified, +3/-3)
+```diff
+@@ -12,7 +12,7 @@ modelIds: []
+ benchmarkSlugs: []
+ relatedSlugs: [did-the-model-get-dumber, ai-api-relay-stability-guide, api-relay-reliability-checks]
+ publishedAt: '2026-11-15'
+-updatedAt: '2026-11-15'
++updatedAt: '2026-11-17'
+ sources:
+   - id: folkbench-arena
+     label: Folkbench Integrity Monitor
+@@ -124,13 +124,13 @@ Herkömmliche KI-Portale prüfen entweder theoretische Modellwerte auf festen Da
+ 1. **Messung auf Modell- und Gruppenebene**: Jede Preis- oder Routinggruppe eines Anbieters wird getrennt bewertet, statt ein ganzes Domain-Label pauschal zusammenzufassen.
+ 2. **Vier spezialisierte Ranglisten**: **[Verfügbarkeit](/de/rankings)** (filtert Fake-`200`-Fehler und Stream-Abbrüche), **[Stabilität](/de/rankings/stability)** (Dauerlast & Stoßzeiten), **[Latenz](/de/rankings/latency)** (TTFT getrennt von Ausgabetempo) und **[Sitzungskosten](/de/rankings/cost)** (reale Arbeitskosten statt Lock-Multiplikatoren).
+ 3. **Offener [Integrity Monitor](/de/arena) & [Relay-Vergleich](/de/stations/compare)**: Kalibrierte Integritätsdaten und direkter Routenvergleich ohne eigene Test-Keys.
+-4. **Open-Source-Client [Folkbench Switch](https://github.com/Folkbench/folkbench/releases)**: Tauri-+-Rust-Desktop-App (macOS `.dmg`, Windows `.exe`) für Claude Code, Codex, Gemini CLI, Aider, OpenCode und Kimi CLI mit **Diff-Vorschau vor dem Schreiben**, **Codex-OAuth-Schutz** und lokaler Nutzungsabschätzung. *(Integritäts- und Cache-Tracking bleiben Web-Evaluationsfunktionen.)*
++4. **Open-Source-Client [Folkbench Switch](https://github.com/Folkbench/folkbench/releases)**: Tauri-+-Rust-Desktop-App (macOS `.dmg`, Windows `.exe`) für Claude Code, Codex, Gemini CLI, Aider, OpenCode und Kimi CLI mit **Diff-Vorschau vor dem Schreiben**, **Codex-OAuth-Schutz** und lokaler Nutzungsabschätzung. Neu sind **benannte Profile** für das Umschalten aller Tools mit einem Klick, ein **Schnellwechsel über das Systemtray**, eine optionale **lokale Privatsphäre-Maskierung**, die API-Schlüssel, E-Mail-Adressen, öffentliche IPs und eigene Begriffe vor dem Versand durch Platzhalter ersetzt und in Antworten (auch Streams) wiederherstellt, sowie eine standardmäßig **degradationsbereinigte Preis-Leistungs-Front**. *(Integritäts- und Cache-Tracking bleiben Web-Evaluationsfunktionen.)*
  
--智流 FluxLane 的模型和线路比较多，国内外模型都有，接入方式也比较统一，直接兼容 OpenAI SDK。除了模型和线路比较全，它还把路由、用量、成本和延迟这些东西都做进了平台里，比较适合开发者和团队长期接入。对于企业和高校采购这方面是比较明显的优势，可以提供发票、合同、采购单。
-+智流 FluxLane 是一个面向开发者与团队的 AI API 网关：提供满血且稳定的全球模型，支持 GPT、Claude、Gemini、Deepseek、GLM 等主流模型和全球主流模型厂商协议，平台提供策略路由与多线路容灾，方便国内团队长期接入与成本核算。面向国内企业/高校采购，可签订合同、对公转账，并提供发票、采购单等材料（具体以商务确认为准），公开模型能力检测报告，倍率低至0.1倍率，新人注册可领 2 美元体验额度。
+ ## Praktischer Einsatz im Alltag
+ 
+ 1. Wählen Sie passende Modell-und-Gruppen-Kandidaten über [Verfügbarkeit](/de/rankings), [Stabilität](/de/rankings/stability), [Latenz](/de/rankings/latency) und [Sitzungskosten](/de/rankings/cost).
+ 2. Prüfen Sie im [Integrity Monitor](/de/arena) die Übereinstimmung von Sonden, Reasoning-Tokens und Fingerprints mit der offiziellen Live-Baseline über mehrere Zeitfenster.
+ 3. Vergleichen Sie vor der Buchung exakt die gewünschte Gruppe unter [Relay-Vergleich](/de/stations/compare).
+-4. Verwalten Sie Haupt- und Ersatzroute in [Folkbench Switch](https://github.com/Folkbench/folkbench/releases), um bei Abweichungen per Diff-Vorschau in Sekunden umzuschalten.
++4. Speichern Sie Haupt- und Ersatzroute als benannte Profile in [Folkbench Switch](https://github.com/Folkbench/folkbench/releases), um bei Abweichungen nach Diff-Vorschau oder direkt über das Systemtray in Sekunden umzuschalten.
+ 
+ Moderne KI-Bewertung muss nicht nur zeigen, welches Modell auf dem Papier führt, sondern ob jede bezahlte Route diese Leistung tatsächlich ausliefert. Durch Aktualitäts-Sonden, Modell-Fingerprints und unabhängige offizielle Kalibrierung setzt Folkbench dafür einen transparenten Maßstab.
+```
+
+**File**: `src/content/articles/en/how-folkbench-detects-model-degradation.en.md` (modified, +5/-2)
+```diff
+@@ -12,7 +12,7 @@ modelIds: []
+ benchmarkSlugs: []
+ relatedSlugs: [did-the-model-get-dumber, ai-api-relay-stability-guide, api-relay-reliability-checks]
+ publishedAt: '2026-11-15'
+-updatedAt: '2026-11-15'
++updatedAt: '2026-11-17'
+ sources:
+   - id: folkbench-arena
+     label: Folkbench Integrity Monitor
+@@ -161,13 +161,16 @@ Most benchmark sites stop at displaying tables, leaving users to edit local JSON
+ 
+ - **Configuration diff previews**: Shows exact changes before writing local tool files while preserving unrelated custom settings.
+ - **Codex credential protection**: Safely parks official OAuth credentials when switching to a third-party relay and restores them cleanly when switching back.
++- **Named profiles and tray switching**: Save the routes each tool currently uses as named profiles such as "daily" or "backup" and apply the whole set in one click; the system tray menu switches profiles or individual tool services without opening the main window.
++- **Optional local privacy masking**: When enabled, requests pass through a local loopback proxy that replaces API keys, private keys, email addresses, public IPs, and your custom sensitive words with placeholders before they leave the machine, then restores them in responses, including streamed output. Tools fall back to direct connections when Switch quits.
++- **Degradation-adjusted value frontier**: The cross-model Pareto frontier in Discover adjusts value with published integrity-monitor data by default, and frontier routes can be registered or connected directly.
+ - **Public route discovery and local usage estimates**: Surfaces public route availability, status windows, and pricing inside the client alongside local session token cost estimates. *(Integrity monitoring and cache-compensation tracking remain web-platform evaluation features rather than client-integrated checks.)*
+ 
+ ## Putting degradation signals to work
+ 
+ 1. **Filter by operational priority**: Start with [Availability](/en/rankings), [Stability](/en/rankings/stability), [Latency](/en/rankings/latency), and [Session Cost](/en/rankings/cost) to shortlist specific model-and-group routes that match your workload.
+ 2. **Verify baseline alignment in Integrity Monitor**: Check probe agreement, reasoning tokens, and model fingerprints on the [Integrity Monitor](/en/arena) against the live official baseline—especially over consecutive windows when quality feels inconsistent.
+ 3. **Compare the exact tier before funding**: Use [Compare relays](/en/stations/compare) on the specific group you plan to purchase rather than extrapolating from another pool under the same provider.
+-4. **Maintain rapid failover via Switch**: Store primary and backup routes in [Folkbench Switch](https://github.com/Folkbench/folkbench/releases) so you can inspect the configuration diff and switch cleanly within seconds whenever route telemetry drifts.
++4. **Maintain rapid failover via Switch**: Save primary and backup routes as named profiles in [Folkbench Switch](https://github.com/Folkbench/folkbench/releases); whenever route telemetry drifts, inspect the configuration diff in the main window or switch the whole set from the system tray within seconds.
+ 
+ As production workflows increasingly rely on third-party API routing, evaluation must verify not only which model leads on paper, but whether the route you pay for actually delivers it. By bringing **current-events probes**, **model fingerprints**, and **independent direct official calibration** into continuous public view, Folkbench establishes a clearer, auditable standard for choosing AI API routes.
+```
+
+**File**: `src/content/articles/es/how-folkbench-detects-model-degradation.es.md` (modified, +3/-3)
+```diff
+@@ -12,7 +12,7 @@ modelIds: []
+ benchmarkSlugs: []
+ relatedSlugs: [did-the-model-get-dumber, ai-api-relay-stability-guide, api-relay-reliability-checks]
+ publishedAt: '2026-11-15'
+-updatedAt: '2026-11-15'
++updatedAt: '2026-11-17'
+ sources:
+   - id: folkbench-arena
+     label: Monitor de integridad de Folkbench
+@@ -137,13 +137,13 @@ Mientras los sitios convencionales solo evalúan modelos oficiales en datasets f
+ 1. **Medición por modelo y grupo exacto**: Evalúa cada grupo comercial por separado para que los pools estables no encubran recortes en grupos promocionales.
+ 2. **Cuatro rankings públicos complementarios**: **[Disponibilidad](/es/rankings)** (descarta falsos `200`, cortes de streaming y fallos de parsing), **[Estabilidad](/es/rankings/stability)** (cargas sostenidas y horas pico), **[Latencia](/es/rankings/latency)** (separa TTFT del ritmo continuo de tokens) y **[Costo por sesión](/es/rankings/cost)** (gasto real en sesiones de código).
+ 3. **[Monitor de integridad](/es/arena) y [Comparar relays](/es/stations/compare) abiertos**: Telemetría calibrada y comparación lado a lado sin necesidad de mantener múltiples claves oficiales propias.
+-4. **Cliente open source [Folkbench Switch](https://github.com/Folkbench/folkbench/releases)**: Aplicación en Tauri + Rust (macOS `.dmg` y Windows `.exe`) para Claude Code, Codex, Gemini CLI, Aider, OpenCode y Kimi CLI con **vista previa de diff**, **protección de credenciales OAuth de Codex** y estimación local de consumo. *(La detección de degradación y caché permanecen en la web como mediciones continuas.)*
++4. **Cliente open source [Folkbench Switch](https://github.com/Folkbench/folkbench/releases)**: Aplicación en Tauri + Rust (macOS `.dmg` y Windows `.exe`) para Claude Code, Codex, Gemini CLI, Aider, OpenCode y Kimi CLI con **vista previa de diff**, **protección de credenciales OAuth de Codex** y estimación local de consumo. Ahora suma **perfiles con nombre** para cambiar todas las herramientas con un clic, **cambio rápido desde la bandeja del sistema**, un **enmascarado local de privacidad** opcional que sustituye claves API, correos, IP públicas y palabras propias por marcadores antes de enviar y los restaura en las respuestas (incluido streaming), y una **frontera de valor ajustada por degradación** activada por defecto. *(La detección de degradación y caché permanecen en la web como mediciones continuas.)*
+ 
+ ## Cómo aplicar estas señales en la práctica
+ 
+ 1. Filtra grupos candidatos según tu carga de trabajo en [Disponibilidad](/es/rankings), [Estabilidad](/es/rankings/stability), [Latencia](/es/rankings/latency) y [Costo por sesión](/es/rankings/cost).
+ 2. Revisa en el [Monitor de integridad](/es/arena) la concordancia, tokens de razonamiento y huella frente a la base oficial en ventanas consecutivas.
+ 3. Contrasta el grupo exacto antes de recargar en [Comparar relays](/es/stations/compare).
+-4. Mantén una ruta principal y otra de respaldo en [Folkbench Switch](https://github.com/Folkbench/folkbench/releases) para cambiar en segundos tras revisar el diff de configuración.
++4. Guarda una ruta principal y otra de respaldo como perfiles en [Folkbench Switch](https://github.com/Folkbench/folkbench/releases) para cambiar en segundos tras revisar el diff o directamente desde la bandeja del sistema.
+ 
+ Evaluar infraestructura de IA hoy exige comprobar no solo qué modelo lidera sobre el papel, sino si cada ruta entrega exactamente lo prometido. Con sondas de actualidad, huellas de modelo y calibración oficial directa independiente, Folkbench ofrece una referencia pública verificable para elegir rutas de API con criterio.
+```
+
+**File**: `src/content/articles/fr/how-folkbench-detects-model-degradation.fr.md` (modified, +3/-3)
+```diff
+@@ -12,7 +12,7 @@ modelIds: []
+ benchmarkSlugs: []
+ relatedSlugs: [did-the-model-get-dumber, ai-api-relay-stability-guide, api-relay-reliability-checks]
+ publishedAt: '2026-11-15'
+-updatedAt: '2026-11-15'
++updatedAt: '2026-11-17'
+ sources:
+   - id: folkbench-arena
+     label: Moniteur d’intégrité Folkbench
+@@ -124,13 +124,13 @@ La plupart des sites d’évaluation se cantonnent soit aux scores théoriques s
+ 1. **Mesure par modèle et par groupe exact** : Évite qu’une seule voie haut de gamme ne représente tout un prestataire.
+ 2. **Quatre classements publics spécialisés** : **[Disponibilité](/fr/rankings)** (écarte les faux `200` et coupures de flux), **[Stabilité](/fr/rankings/stability)** (charges longues et heures de pointe), **[Latence](/fr/rankings/latency)** (TTFT distinct du débit continu) et **[Coût par session](/fr/rankings/cost)** (coût réel de travail).
+ 3. **[Moniteur d’intégrité](/fr/arena) et [Comparateur de relais](/fr/stations/compare) ouverts** : Télémétrie étalonnée et comparaison directe sans maintenir vos propres clés de référence.
+-4. **Client open source [Folkbench Switch](https://github.com/Folkbench/folkbench/releases)** : Application Tauri + Rust (macOS `.dmg`, Windows `.exe`) pour Claude Code, Codex, Gemini CLI, Aider, OpenCode et Kimi CLI avec **aperçu des diffs**, **protection des identifiants OAuth Codex** et estimation locale d’usage. *(Le suivi d’intégrité et de cache reste une fonction web continue.)*
++4. **Client open source [Folkbench Switch](https://github.com/Folkbench/folkbench/releases)** : Application Tauri + Rust (macOS `.dmg`, Windows `.exe`) pour Claude Code, Codex, Gemini CLI, Aider, OpenCode et Kimi CLI avec **aperçu des diffs**, **protection des identifiants OAuth Codex** et estimation locale d’usage. Nouveautés : des **profils nommés** pour basculer tous les outils en un clic, un **changement rapide depuis la barre système**, un **masquage local de confidentialité** optionnel qui remplace clés API, e-mails, IP publiques et termes personnalisés par des marqueurs avant envoi puis les restaure dans les réponses (streaming compris), et une **frontière de rapport qualité-prix ajustée à la dégradation** par défaut. *(Le suivi d’intégrité et de cache reste une fonction web continue.)*
+ 
+ ## Exploiter ces signaux au quotidien
+ 
+ 1. Sélectionnez vos groupes candidats sur [Disponibilité](/fr/rankings), [Stabilité](/fr/rankings/stability), [Latence](/fr/rankings/latency) et [Coût par session](/fr/rankings/cost).
+ 2. Vérifiez sur le [Moniteur d’intégrité](/fr/arena) l’alignement des sondes, tokens de réflexion et empreintes avec la référence officielle sur plusieurs fenêtres consécutives.
+ 3. Comparez exactement le groupe visé dans [Comparer les relais](/fr/stations/compare) avant de créditer un compte.
+-4. Enregistrez une route principale et une route de secours dans [Folkbench Switch](https://github.com/Folkbench/folkbench/releases) pour basculer en quelques secondes après contrôle du diff.
++4. Enregistrez une route principale et une route de secours comme profils dans [Folkbench Switch](https://github.com/Folkbench/folkbench/releases) pour basculer en quelques secondes après contrôle du diff ou directement depuis la barre système.
+ 
+ Évaluer l’IA en production ne se limite plus au score théorique d’un modèle : il faut vérifier que chaque route délivre réellement le modèle payé. Grâce aux sondes d’actualité, aux empreintes de modèle et à l’étalonnage officiel direct indépendant, Folkbench fournit un repère public et vérifiable pour choisir vos routes d’API.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12** (2026-11-17): Release Switch 0.1.0-beta.9 and update localized blog & README docs (@MarlaRoselyn)
+- **PR #11** (2026-11-17): Convert blog article covers and inline raster figures from WebP to JPG (@MarlaRoselyn)
 - **PR #10** (2026-11-16): Upgrade Switch client to Phase 0–2 evaluation and Precision Spectrum v0.5 design system (@MarlaRoselyn)
 - **PR #2** (2026-10-11): Update README.md (@sharingcoke)
 - **PR #1** (2026-10-07): Patch 1 (@sharingcoke)
@@ -1296,50 +1521,30 @@ claude-desktop 已是可写适配器，旧拒绝断言导致 signed-candidate CI
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(release): retry flaky Apple stapler/notarytool during Beta builds
+## X. Empirical Invariant Guard in README.en.md
 
 **RULE**:
-When implementing operations in `.github/workflows/switch-beta.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Folkbench/folkbench. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.en.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Folkbench/folkbench. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `af4c9d9c`: ci(release): retry flaky Apple stapler/notarytool during Beta builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1125e5dc`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/switch-beta.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.en.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```rust
+```typescript
 // Verified production-grade fix pattern:
-          retry() {
-            local attempt=1
-            local max=6
-            local delay=15
-            until "$@"; do
-              if (( attempt >= max )); then
-                echo "gave up after ${attempt} attempts: $*"
-                return 1
-              fi
-              echo "attempt ${attempt} failed; sleeping ${delay}s then retrying: $*"
-              sleep "$delay"
-              attempt=$((attempt + 1))
-              delay=$((delay + 15))
-            done
-          }
-          # Ticket delivery can lag or flake on Apple's CDN; wait/retry before failing the whole matrix.
-          retry xcrun stapler validate "$app"
-          retry bash -c 'xcrun notarytool submit "$0" --key "$APPLE_API_KEY_PATH" --key-id "$APPLE_API_KEY" --issuer "$APPLE_API_ISSUER" --wait --output-format json > "$FOLKBENCH_APPLE_SIGNING_DIR/notarization.json"' "${installers[0]}"
-          retry xcrun stapler staple "${installers[0]}"
-          retry xcrun stapler validate "${installers[0]}"
+| **Named profiles** | Save the routes each tool currently uses as a named profile and apply the whole set in one click. |
+| **Tray switching** | Switch profiles or individual tool services from the system tray without opening the main window. |
+| **Local privacy masking** | Optional. A local proxy replaces API keys, email addresses, public IPs and custom sensitive words with placeholders before requests leave your machine and restores them in responses; tools reconnect directly when Switch quits. |
 ```
 
 **NEGATIVE CONSTRAINT**:
-```rust
+```typescript
 // Induced defect failure mode:
-          xcrun stapler validate "$app"
-          xcrun notarytool submit "${installers[0]}" --key "$APPLE_API_KEY_PATH" --key-id "$APPLE_API_KEY" --issuer "$APPLE_API_ISSUER" --wait --output-format json > "$FOLKBENCH_APPLE_SIGNING_DIR/notarization.json"
-          xcrun stapler staple "${installers[0]}"
-          xcrun stapler validate "${installers[0]}"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `af4c9d9c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1125e5dc` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T18:05:45.648Z",
-  "total_records": 1637,
+  "last_updated": "2026-11-17T18:18:44.540Z",
+  "total_records": 1639,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 697,
+      "total": 699,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -746,7 +746,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in",
         "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-cod",
         "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva"
+        "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva",
+        "domain_intelligence-research-knowledge-intelligence-orcarouter-deepseek-v4-1-flash-1017-abliterated-",
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-deepseek-v4-1-flash-1017-abliterat"
       ]
     },
     "E": {
@@ -13553,10 +13555,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
       "repository": "wcandillon/react-native-skia",
-      "content_hash": "0cac70ca82a0df9cd5a5e3eb03cf677ffb2f08dce2260e509b04e0d413aa798e",
-      "created_at": "2026-11-17T03:41:59.277Z"
+      "content_hash": "b726066716e124fde3385585f31ee97dbfd51773cb61919ab678e604389de648",
+      "created_at": "2026-11-17T18:18:39.318Z"
     },
     "DOM-D-AF708B11": {
       "record_id": "DOM-D-AF708B11",
@@ -13666,8 +13668,8 @@
       "title": "Technical Construction Intelligence: shopify-react-native-skia-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-learnings-technical-construction-intelligence-shopify-.md",
       "repository": "shopify-react-native-skia-learnings",
-      "content_hash": "828b63447d53935c12d81e3cb42705e033750a6b0e1a002ceab29d86297ff3ce",
-      "created_at": "2026-11-14T06:57:54.824Z"
+      "content_hash": "b1d9cb4ab70bf8c2ee260e86ffdcda0dc9007e0e9ca1778889636d81b742964f",
+      "created_at": "2026-11-17T18:18:44.540Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pablodawson-minimax-h3-360-orbit-lora-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pablodawson-minimax-h3-360-orbit-lora-core-invar",
@@ -23105,8 +23107,8 @@
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "repository": "Folkbench/folkbench",
-      "content_hash": "97b40a878823527a906c7232a081596488b66713c39c073bc21a7f9295bc88c1",
-      "created_at": "2026-11-16T04:30:14.877Z"
+      "content_hash": "46d91bc3e9bd875cbee44fccabb0f5ca473e1c9deea6871039a9f0d47b67b825",
+      "created_at": "2026-11-17T18:18:31.648Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
@@ -23123,8 +23125,8 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-learnings-technical-construction-intelligence-folkbench-folk.md",
       "repository": "folkbench-folkbench-learnings",
-      "content_hash": "935ef76f7dfc39f24e2f9912c614bd70b7bcdf406152dbdeadb3db76382d030a",
-      "created_at": "2026-11-16T04:30:31.934Z"
+      "content_hash": "93b7b0ff1a3991e468cea6adfe4a39590fc18f12a9321454cc038994305b702e",
+      "created_at": "2026-11-17T18:18:43.170Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -27940,6 +27942,24 @@
       "repository": "hf-ornith-ai-ornith-1.5-122b-learnings",
       "content_hash": "6d743de7bf257ef396001817ff25b7490674d975a38a2cfddc9daaaae41ef1d1",
       "created_at": "2026-11-17T18:05:44.335Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-orcarouter-deepseek-v4-1-flash-1017-abliterated-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-deepseek-v4-1-flash-1017-abliterated-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf-research-knowledge-intel.md",
+      "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "content_hash": "793bfca7afbf06bdc70f70ab8cb6a170e51fbd39f9c91e7d2e51c8907bf09185",
+      "created_at": "2026-11-17T18:18:28.853Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-deepseek-v4-1-flash-1017-abliterat": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-deepseek-v4-1-flash-1017-abliterat",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf-learnings-research-knowl.md",
+      "repository": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings",
+      "content_hash": "8773c03e8fe23dd645513f04426f69ffced8ee3729ca7457f231251ea5f52e7c",
+      "created_at": "2026-11-17T18:18:43.724Z"
     }
   }
 }
