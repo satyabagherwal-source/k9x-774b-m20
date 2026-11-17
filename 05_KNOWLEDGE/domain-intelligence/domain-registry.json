@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T14:33:44.559Z",
-  "total_records": 1563,
+  "last_updated": "2026-11-17T14:41:31.486Z",
+  "total_records": 1567,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 647,
+      "total": 649,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -696,7 +696,9 @@
         "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-",
         "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor",
         "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-autogluon-chronos-2-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-autogluon-chronos-2-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-comfy-org-moss-image-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-moss-image-learnings-core-invariant"
       ]
     },
     "E": {
@@ -1508,7 +1510,7 @@
       ]
     },
     "J": {
-      "total": 22,
+      "total": 24,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1531,7 +1533,9 @@
         "DOM-J-D8ADF367",
         "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-core-invariants",
         "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-learnings-core-invariants",
-        "DOM-J-ABC3C562"
+        "DOM-J-ABC3C562",
+        "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-learnings-core-invariants"
       ]
     },
     "K": {
@@ -17213,8 +17217,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "dccd4d21b507c259c023c63d681e4b20605678cddfa71c76db8ad3c9f3c3c53a",
-      "created_at": "2026-11-17T14:22:57.318Z"
+      "content_hash": "c12722eb0620d80626c1094c5ff5950f79feb141bcfd34bbb4ef2eb9464a7732",
+      "created_at": "2026-11-17T14:41:31.486Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -27134,6 +27138,42 @@
       "repository": "hf-autogluon-chronos-2-learnings",
       "content_hash": "6d711ee43fb91c7caf127d421091d79f61413028814826d1113d6944f0d88bb4",
       "created_at": "2026-11-17T14:33:44.000Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-comfy-org-moss-image-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-moss-image-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Comfy-Org/MOSS-Image Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-moss-image-research-knowledge-intelligence-comfy-org-moss-image-cor.md",
+      "repository": "Comfy-Org/MOSS-Image",
+      "content_hash": "7dc00111593a8d565b06ea993c0c5403a302fee52350f960d36a43bffebeb3b8",
+      "created_at": "2026-11-17T14:41:22.554Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: dragonflydb/dragonfly Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-dragonflydb-dragonfly-search-distribution-intelligence-dragonflydb-dragonfly-cor.md",
+      "repository": "dragonflydb/dragonfly",
+      "content_hash": "a5a21e14b2e37b0a1a95261e1b8047f121b93a6ed0dfdadee70adb24fc9dc2c8",
+      "created_at": "2026-11-17T14:41:26.879Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-moss-image-learnings-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-moss-image-learnings-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-moss-image-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-moss-image-learnings-research-knowledge-intelligence-hf-comfy-org-m.md",
+      "repository": "hf-comfy-org-moss-image-learnings",
+      "content_hash": "63695b6000d03f0f19d6913b13ddc894ce9a90593d393c5ec70ca769142d8bf5",
+      "created_at": "2026-11-17T14:41:30.009Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-learnings-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-learnings-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-dragonflydb-dragonfly-learnings-search-distribution-intelligence-dragonflydb-dra.md",
+      "repository": "dragonflydb-dragonfly-learnings",
+      "content_hash": "b27bf5dd047580460545fc75e8c89dd2b682b1ce1319b017db85e817c6e38585",
+      "created_at": "2026-11-17T14:41:30.595Z"
     }
   }
 }

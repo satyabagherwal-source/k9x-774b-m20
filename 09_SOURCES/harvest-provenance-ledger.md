@@ -10602,3 +10602,5 @@ Every entry in this ledger must capture:
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `2012f95b` | Multi-dimensional audit evidence | 2026-11-17T14:33:28.582Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `fd2bfe48` | Multi-dimensional audit evidence | 2026-11-17T14:33:33.089Z |
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-17T14:33:39.819Z |
+| `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-17T14:41:22.367Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `17d2a726` | Multi-dimensional audit evidence | 2026-11-17T14:41:26.514Z |

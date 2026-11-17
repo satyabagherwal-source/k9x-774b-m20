@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T14:33:39.830Z",
+  "last_updated": "2026-11-17T14:41:26.523Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3261,14 +3261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-moss-image",
-      "content_hash": "9acb786a32930ca364954cd58ade9499b5f2cda4ea276035695d71a62dbd1f56",
-      "verified_at": "2026-11-13T01:38:50.928Z",
+      "content_hash": "a8cc960ba50743f202de5a9b34122c4020c7b1daddd2aa66c21e1a43082f8d72",
+      "verified_at": "2026-11-17T14:41:22.376Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T01:38:50.928Z"
+      "last_updated": "2026-11-17T14:41:22.376Z"
     },
     "bvaughn/react-virtualized": {
       "repository": "bvaughn/react-virtualized",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "acee1c479ab6f540ef735eb80e9aa0475c01f2c48ab1b3fcf8fe67ab3ce60ee7",
-      "verified_at": "2026-11-16T05:41:38.508Z",
+      "content_hash": "d220e3d8c5aa9c48413e9c682aa9a78d570ef564dfe96a186c38673dd26ac979",
+      "verified_at": "2026-11-17T14:41:26.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T05:41:38.508Z"
+      "last_updated": "2026-11-17T14:41:26.522Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",

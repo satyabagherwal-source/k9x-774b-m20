@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-V81B",
-    "timestamp": "2026-11-15T00:37:45.455Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "e64fe6a5b98aeabe04c3a271df39276e70e55172d461d37375f5bd4874d9ad59",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-BPBH",
-    "timestamp": "2026-11-15T00:50:34.349Z",
-    "repository": "openbmb/MiniCPM-V-4.7-1B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-    "contentHash": "6c95e86afce790a3094f3fa1dd3c3f97179cd06a3aed29fc053cc2c013694994",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-BQZB",
     "timestamp": "2026-11-15T00:50:36.503Z",
     "repository": "cachix/devenv",
@@ -7492,6 +7462,36 @@
     "contentHash": "619ab415cc212065470ef7cf2ad90d0664e2053df330b8f9441b80f836eb538b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-VTMJ",
+    "timestamp": "2026-11-17T14:41:22.363Z",
+    "repository": "Comfy-Org/MOSS-Image",
+    "learningId": "learn-huggingface-comfy-org-moss-image",
+    "contentHash": "a8cc960ba50743f202de5a9b34122c4020c7b1daddd2aa66c21e1a43082f8d72",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-VWTQ",
+    "timestamp": "2026-11-17T14:41:26.510Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "d220e3d8c5aa9c48413e9c682aa9a78d570ef564dfe96a186c38673dd26ac979",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

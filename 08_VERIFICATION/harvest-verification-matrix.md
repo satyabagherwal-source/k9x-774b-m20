@@ -10569,3 +10569,5 @@
 | `CYCLE-20261117-LO1U` | `2026-11-17T14:33:28.578Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8975` | Yes (`18e490d4...`) |
 | `CYCLE-20261117-LRJ1` | `2026-11-17T14:33:33.085Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8976` | Yes (`9c2a15e6...`) |
 | `CYCLE-20261117-LWPZ` | `2026-11-17T14:33:39.815Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md` | Yes (`619ab415...`) |
+| `CYCLE-20261117-VTMJ` | `2026-11-17T14:41:22.363Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | Yes (`a8cc960b...`) |
+| `CYCLE-20261117-VWTQ` | `2026-11-17T14:41:26.510Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8977` | Yes (`d220e3d8...`) |

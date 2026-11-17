@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T14:33:39.825Z",
-  "total_cycles_completed": 10126,
-  "total_learnings_persisted": 10126,
-  "total_rules_promoted": 9715,
+  "last_updated": "2026-11-17T14:41:26.519Z",
+  "total_cycles_completed": 10128,
+  "total_learnings_persisted": 10128,
+  "total_rules_promoted": 9716,
   "history": [
-    {
-      "timestamp": "2026-11-16T20:21:07.598Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T21:10:24.542Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T21:10:31.056Z",
       "repository": "pingcap/tidb",
@@ -1403,6 +1389,20 @@
       "repository": "autogluon/chronos-2",
       "learningId": "learn-huggingface-autogluon-chronos-2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:41:22.373Z",
+      "repository": "Comfy-Org/MOSS-Image",
+      "learningId": "learn-huggingface-comfy-org-moss-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:41:26.519Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

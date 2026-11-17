@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T14:33:44.903Z",
+  "last_updated": "2026-11-17T14:41:31.625Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -13,7 +13,7 @@
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-17T14:22:56.801Z",
+      "processed_at": "2026-11-17T14:41:30.873Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1418,8 +1418,8 @@
       "staged_for_review": 0
     },
     "hf-comfy-org-moss-image-learnings.md": {
-      "processed_at": "2026-11-13T01:39:34.253Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T14:41:29.824Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "biomejs-biome-learnings.md": {
@@ -1903,7 +1903,7 @@
       "staged_for_review": 1
     },
     "dragonflydb-dragonfly-learnings.md": {
-      "processed_at": "2026-11-16T05:42:06.945Z",
+      "processed_at": "2026-11-17T14:41:30.191Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3323,7 +3323,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1584,
+  "total_dossiers_evaluated": 1587,
   "total_canonical_promoted": 321,
-  "total_staged_for_review": 1249
+  "total_staged_for_review": 1251
 }
