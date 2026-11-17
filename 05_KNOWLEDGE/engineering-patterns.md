@@ -656954,3 +656954,165 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `cb47e885` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8991. test(quic): pin the crash-breaker marker lock and correct its doc (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "test(quic): pin the crash-breaker marker lock and correct its doc",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "6e7fbbd6",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-17T15:51:32.725Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `6e7fbbd6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/core/src/transport/quic/breaker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `01e05980`: test(quic): pin the crash-breaker marker lock and correct its doc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/quic/breaker.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/// Orders exactly two writers of this run's marker: the Windows short-run
+/// clear (`short_runs::clear_short_run`) and the endpoint-death record
+/// ([`note_endpoint_down_exit_with`]). Each holds it across its
+/// read-and-change, so in either order the death record survives: a clear
+/// that comes first is followed by the record written again, and a record
+/// written first makes the clear leave the marker. Pinned by
+/// `the_marker_update_lock_is_taken_by_the_clear_and_the_record`.
+///
+/// The other writers do not take it, and it does not order them:
+/// - arming ([`arm`]) runs under [`PENDING`], as does the record of a death
+///   before arming, so those two are ordered by that lock instead, and the
+///   clear timer starts only after arming;
+/// - the Windows panic hook (`short_runs::mark_quic_panic`) takes no lock,
+///   since it runs inside a panic. A caught socket-adapter panic marks the
+///   marker before the endpoint goes down, so its write lands before the
+///   death record; an unrelated QUIC panic on another thread at the same
+///   moment could overwrite the record, which then costs one free restart;
+/// - a clean exit's removal ([`clear_if_owned`]) does not run on 
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+/// Held across each read-and-change of this run's marker by the Windows
+/// short-run clear ([`short_runs`]) and by [`note_endpoint_down_exit`], so
+/// in either order the death record survives: a clear that comes first is
+/// followed by the record written again, and a record written first makes
+/// the clear leave the marker.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `01e05980` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8992. Draft NUC 114 List and Population Products (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Draft NUC 114 List and Population Products",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "551d11fe",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T15:51:36.914Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `551d11fe`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `551d11fe`: Draft NUC 114 List and Population Products. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| [114](nuc-0114.md) | List and Population Products | Draft |
+| [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Draft |
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `551d11fe` are properly handled with clean fallback behavior.

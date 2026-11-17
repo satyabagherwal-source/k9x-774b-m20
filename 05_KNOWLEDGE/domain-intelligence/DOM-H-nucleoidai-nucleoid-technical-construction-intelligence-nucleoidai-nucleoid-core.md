@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "f9c95d84",
+  "source_version": "551d11fe",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T11:25:39.912Z",
+  "timestamp": "2026-11-17T15:51:37.561Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `f9c95d84`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T11:25:39.912Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `551d11fe`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T15:51:37.561Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T11:25:39.303Z  
+> **Harvest Timestamp**: 2026-11-17T15:51:36.408Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1526,394 +1526,535 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f9c95d84` (2026-11-17)
-**Commit Message**: NUC 112 Node Names of Reasoning Selections
+### Incident Patch 1: `551d11fe` (2026-11-17)
+**Commit Message**: Draft NUC 114 List and Population Products
 
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Reasoning enhancement): the frozen candidate meets
-every hard criterion and passes every policy check, including the
-required token non-regression gate. The cycle found no stale Draft, drew
-Reasoning enhancement uniformly from the five eligible categories,
-allocated NUC 112 in 92cbd316, and completed it with fresh baselines,
-candidate, proposer, Rust improvement pass and evaluator.
+Category: Utility enhancement, drawn uniformly at random (index 2 of the
+five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
+continuous /nuc-proposal cycle, so the token non-regression gate is
+required for this category.
 
-Reasoning pipelines gain a final stage, SELECTION |> nodes, that gives
-the node names of a selection's steps in the selection's order: with a =
-1, b = a + 2 and c = b * 2, c |> why |> nodes is ["c","b","a"] and c |>
-why |> stated |> nodes is ["a"]. It is exactly the accepted
-(SELECTION).map(step => step.node), where a reference alone is its own
-one-step selection, so c |> nodes is ["c"], and an undefined selection
-stays undefined. It builds the same step records, so later anonymous
-objects keep their numbering, but records no read of their node fields,
-so a standing declaration's graph stays bounded where the accepted
-spelling adds a pending obj:N.node node per step on every eva
+Requested change: lists and class instance lists gain the read-only
+query product, the multiplicative sibling of NUC 68's sum.
+RECEIVER.product() multiplies the items and RECEIVER.product(selector)
+the values selector(item), left to right from 1, so an empty receiver
+gives 1. Values convert to numbers as sum and * convert them, an
+undefined value makes the product undefined, and for a list of numbers
+xs.product() is exactly xs.reduce((total, x) => total * x, 1). A
+selector that is not a function raises TypeError("product expects a
+function"). It follows NUC 61's shared query rules and stays live in
+declarations and class-level rules. At the accepted revision these calls
+raise TypeError("<receiver>.product is not a function"); user methods
+named product on instances keep their meaning.
 
-**File**: `README.md` (modified, +31/-0)
+This allocation changes only the Draft and its two index rows.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Cl
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -2349,6 +2349,37 @@ assert(line, "honey... 12")
-   `item + ".".repeat(8 - item.length)`, so a new item and price realign it.
-   See the [root contract](nucleoid.spec.md#reactive-string-padding).
+@@ -128,6 +128,7 @@ Created: 31-Jul-2026
+ | [105](nuc-0105.md) | List and Population Sorting by Key | Accepted |
+ | [108](nuc-0108.md) | List and Population Partitions | Accepted |
+ | [111](nuc-0111.md) | Reactive String Padding | Accepted |
++| [114](nuc-0114.md) | List and Population Products | Draft |
  
-+## Node names of reasoning selections
-+
-+**Nodes names the facts a heater rests on and what insulation moves**
-+
-+```nuc
-+outside = 4
-+target = 21
-+insulation = 0.8
-+loss = (target - outside) * insulation
-+heater = loss * 2
-+causes = heater |> why |> stated |> nodes
-+moved = insulation |> affects |> nodes
-+assert(causes, ["target", "outside", "insulation"])
-+assert(moved, ["loss", "heater"])
-+solar = 5
-+heater = loss * 2 - solar
-+assert(causes, ["solar", "target", "outside", "insulation"])
-+```
-+
-+- [NUC 112](docs/nuc-0112.md) adds the final reasoning stage `|> nodes`,
-+  which names the nodes of a selection's steps in their order.
-+  `heater |> why |> stated |> nodes` names the facts the heater rests on,
-+  and `insulation |> affects |> nodes` what a change of the insulation
-+  reaches.
-+- Both lists are the names that
-+  `(heater |> why |> stated).map(step => step.node)` and
-+  `(insulation |> affects).map(step => step.node)` give, and they stay live
-+  the same way: once the heater also accounts for the solar gain, `solar`
-+  joins the facts it rests on. See the
-+  [root contract](nucleoid.spec.md#node-names-of-reasoning-selections).
-+
- ## Reactive list flattening
+ ### Reasoning enhancement
  
- **Flat turns nested lists into one live list**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
-```diff
-@@ -767,19 +767,23 @@
- {"id":"spec-0767","description":"Nucleoid pads strings at the end with padEnd","code":"items = [\"tea\", \"jam\", \"honey\"]\nwidth = 6\nrows = items.map(item -> item.padEnd(width) + \"|\")\ntitle = \"Total\"\nrule = title.padEnd(12, \".:\")\nassert(rows, [\"tea   |\", \"jam   |\", \"honey |\"])\nassert(rule, \"Total.:.:.:.\")\nwidth = 4\ntitle = \"Sum\"\nassert(rows, [\"tea |\", \"jam |\", \"honey|\"])\nrule","return":"\"Sum.:.:.:.:.\""}
- {"id":"spec-0768","description":"Nucleoid keeps padded strings live in declarations and class level rules","code":"label = \"7\"\nwidth = 3\nfill = \"0\"\nshown = label.padStart(width, fill)\nassert(shown, \"007\")\nlabel = \"42\"\nassert(shown, \"042\")\nwidth = 5\nassert(shown, \"00042\")\nfill = \"\"\nassert(shown, \"42\")\nfill = \"*\"\nassert(shown, \"***42\")\nclass Ticket(id):\n    this.id = id\n$Ticket.code = \"T-\" + String($Ticket.id).padStart(4, \"0\")\nfirst = Ticket(7)\nsecond = Ticket(42)\nassert([first.code, second.code], [\"T-0007\", \"T-0042\"])\nfirst.id = 12345\n[first.code, second.code]","return":"[\"T-12345\",\"T-0042\"]"}
- {"id":"spec-0769","description":"Nucleoid rolls back failed updates through padded strings","code":"ids = []\ncodes = ids.map(id -> id.padStart(size, \"0\"))\nfailure = \"\"\ntry:\n    ids.push(\"7\")\ncatch error:\n    failure = error\nassert(failure, ReferenceError(\"size is not defined\"))\nassert([ids, codes], [[], []])\nsize = 3\nids.push(\"7\", \"42\")\nassert(codes, [\"007\", \"042\"])\ntry:\n    ids.push(\"5\")\n    size = 2\n    assert(codes, [\"07\", \"42\", \"05\"])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\n[codes, size]","return":"[[\"007\",\"042\"],3]"}
--{"id":"spec-0770","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0771","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0772","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0773","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0774","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0775","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
--{"id":"spec-0776","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN], false)\
-```
-
-**File**: `dataset/nucleoid.synth.76.jsonl` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-76-0001","description":"Nodes names every step of an explanation, in the explanation's order","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> nodes","return":"[\"total\",\"subtotal\",\"shipping\",\"price\",\"qty\"]"}
-+{"id":"synth-76-0002","description":"Nodes after stated names the facts that a conclusion rests on","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> stated |> nodes","return":"[\"seed\"]"}
-+{"id":"synth-76-0003","description":"Nodes after derived names the conclusions on the way to a value","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> derived |> nodes","return":"[\"result\",\"middle\"]"}
-+{"id":"synth-76-0004","description":"Nodes after affects names what a change of one fact reaches","code":"rate = 0.2\nprice = 10\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nprice |> affects |> nodes","return":"[\"subtotal\",\"tax\",\"total\"]"}
-+{"id":"synth-76-0005","description":"Nodes on the model names every node in model order and leaves out a declaration that holds reasoning","code":"a = 1\nb = a + 2\nnames = b |> why |> nodes\nmodel |> nodes","return":"[\"a\",\"b\"]"}
-+{"id":"synth-76-0006","description":"A prefix stage composes with nodes","code":"a = 1\nb = a + 2\nc = b * 2\nwhy c |> nodes","return":"[\"c\",\"b\",\"a\"]"}
-+{"id":"synth-76-0007","description":"A reference alone names its own node","code":"a = 1\nb = a + 2\nb |> nodes","return":"[\"b\"]"}
-+{"id":"synth-76-0008","description":"Nodes after depth names a conclusion and what it reads directly","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> depth(1) |> nodes","return":"[\"total\",\"subtotal\",\"shipping\"]"}
-+{"id":"synth-76-0009","description":"Nodes after path names the steps by which one value reaches another","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> path(price) |> nodes","return":"[\"total\",\"subtotal\",\"price\"]"}
-+{"id":"synth-76-0010","description":"Nodes after intersect names the causes two explanations share","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntax |> why |> intersect(shipping |> why) |> nodes","return":"[\"quantity\"]"}
-+{"id":"synth-76-0011","description":"A standing declaration of node names follows a rewiring of the graph","code":"a = 1\nb = a + 2\nc = b * 2\nnames = c |> why |> nodes\nx = 5\nb = x + 1\nnames","return":"[\"c\",\"b\",\"x\"]"}
-+{"id":"synth-76-0012","description":"A class-level rule names the nodes behind each instance's own value","code":"rate = 2\nclass Machine(load, hours):\n    this.load = load\n    this.hours = hours\n$Machine.wear = $Machine.load * $Machine.hours * rate\n$Machine.inputs = $Machine.wear |> why |> nodes\npress = Machine(5, 10)\npress.inputs","return":"[\"press.wear\",\"press.load\",\"press.hours\",\"rate\"]"}
-```
-
-**File**: `docs/README.md` (modified, +65/-2)
-```diff
-@@ -3885,6 +3885,9 @@ pace
- - A selection is an ordered list of steps with `node`, `holds`, `rule`, `state`, and `from` fields.
- - `state` is `"stated"` for an independent fact or `"derived"` for a relationship or class-level rule.
- - List functions such as `map`, `find`, and `some` can inspect the steps.
-+- `selection |> nodes` lists the steps' `node` names, as
-+  `(selection).map(step => step.node)` does for the selection the pipeline
-+  denotes ([NUC 112](nuc-0112.md)).
- 
- ```
- a = 1
-@@ -4096,6 +4099,58 @@ common.map(step => step.node)
-   [intersect and except reasoning selections](../nucleoid.spec.md#intersect-and-except-reasoning-selections)
-   section.
- 
-+### Node names of reasoning selections
-+
-+```
-+price = 10
-+qty = 3
-+shipping = 5
-+subtotal = price * qty
-+total = subtotal + shipping
-+facts = total |> why |> stated |> nodes
-+reach = price |> affects |> nodes
-+assert(facts, ["shipping", "price", "qty"])
-+assert(reach, ["subtotal", "total"])
-+base = 4
-+shipping = base + 1
-+facts
-+```
-+
-+- This is the complete `Nucleoid names the nodes of selections with nodes`
-+  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `["base","price","qty"]`.
-+- [NUC 112](nuc-0112.md) adds the final stage `selection |> nodes`. It gives
-+  the `node` names of the selection's steps as a list of strings, in their
-+  order, so `total |> why |> stated |> nodes` names the facts the total rests
-+  on and `price |> affects |> nodes` what a change of the price reaches. It is
-+  exactly `(selection).map(step => step.node)`, where `selection` is the
-+  selection that the pipeline before `nodes` denotes, read as the stages read
-+  their source.
-+- The selection is written as a pipeline's source is: a reference, which
-+  denotes its own one-step selection rather than its value, `model`, a prefix
-+  stage such as `why total`, or a pipeline of any of the stages above. So
-+  `total |> nodes` is `["total"]`, as
-+  `(total |> why |> depth(0)).map(step => step.node)` is, while
-+  `(total).map(step => step.node)` raises
-+  `TypeError("number.map is not a function")`. An empty selection gives `[]`,
-+  and a selection that a `depth(null)` makes undefined gives undefined.
-+- The stage ends the pipeline: a stage after it, or an `intersect`, `except`
-+  or `path` argument that ends with it, has a list of names rather than a
-+  selection and raises `TypeError("Cannot explain <source>")`, as it does
-+  after the accepted spelling.
-+- Only `|>` followed by `nodes` is the stage; `nodes` stays an ordinary name
-+  everywhere else, and there is no prefix form. A local or parameter,
-+  variable, function or class named `nodes` shadows the stage, as bindings
-+  shadow the state filters, `depth`, `diff`, `path`, `intersect` and
-+  `except`: the pipeline then raises `TypeError("nodes is not an operation")`
-+  before selecting its source.
-+- The list stays live through every observation its selection made, and a
-+  declaration that holds it is a reasoning observer. It renders as
-+  `selection|>nodes`.
-+- The authoritative contract is the
-+  [node names of reasoning selections](../nucleoid.spec.md#node-names-of-reasoning-selections)
-+  section.
-+
- ### Live structure
- 
- - A reasoning assignment follows both values and graph structure.
-@@ -4134,8 +4189,11 @@ c = b * 2
-   and its `before` and `after` fields, the [NUC 88](nuc-0088.md)
-   candidate adds a `path(target)` stage that NUC 11 does not plan, and the
-   [NUC 106](nuc-0106.md) candidate adds `intersect(other)` and
--  `except(other)` stages, which NUC 11 does not plan either. Other NUC 11
--  operations remain proposals, not dependencies.
-+  `except(other)` stages, which NUC 11 does not plan either, and the
-+  [NUC 112](nuc-0112.md) candidate adds a final `nodes` stage, which names
-+  the nodes of a selection and, unlike NUC 11's operations, returns a list
-+  rather than a selection. Other NUC 11 operations remain proposals, not
-+  dependencies.
- 
- ### Quantifiers
- 
-@@ -4614,6 +4672,11 @@ why a |> except(why b)                what a rests on and b does not (NUC 106)
- affects a |> intersect(affects b)     what a and b both move (NUC 106)
- selection |> intersect(other)         steps whose node other also selects (NUC 106)
- selection |> except(other)            steps whose node other does not select (NUC 106)
-+reference |> why |> nodes             the node names of an explanation, in its order (NUC 112)
-+reference |> why |> stated |> nodes   the names of the facts an explanation rests on (NUC 112)
-+reference |> affects |> nodes         the names of what a change of the reference reaches (NUC 112)
-+model |> nodes                        the names of the current model's nodes (NUC 112)
-+selection |> nodes                    the list (selection).map(step => step.node); ends the pipeline (NUC 112)
- all name in collection: condition     true when the condition holds for every member (NUC 62)
- every name in collection: condition   the same quantifier as all (NUC 98)
- any n
-```
-
-**File**: `docs/examples.md` (modified, +29/-0)
-```diff
-@@ -3874,6 +3874,35 @@ east.aisle = "EAST"
-   not padded. See [NUC 111](nuc-0111.md) and the
-   [root contract](../nucleoid.spec.md#reactive-string-padding).
- 
-+## Node names of reasoning selections
-+
-+**Nodes names the facts and rules behind a loan decision**
-+
-+```nuc
-+income = 5000
-+debt = 1200
-+score = 700
-+ratio = debt / income
-+approved = ratio < 0.4 && score > 650
-+facts = approved |> why |> stated |> nodes
-+rules = approved |> why |> derived |> nodes
-+assert([facts, rules], [["score", "debt", "income"], ["approved", "ratio"]])
-+years = 3
-+approved = ratio < 0.4 && score > 650 && years > 2
-+moved = income |> affects |> nodes
-+assert(moved, ["ratio", "approved"])
-+[facts, rules]
-+# return: [["score","years","debt","income"],["approved","ratio"]]
-+```
-+
-+- `approved |> why |> stated |> nodes` names the facts the decision rests
-+  on and `approved |> why |> derived |> nodes` the rules it passes through,
-+  each in the order of the explanation. `income |> affects |> nodes` names
-+  what a change of income reaches.
-+- The names follow the model: once the decision also asks for more than two
-+  years of history, `years` joins the facts. See [NUC 112](nuc-0112.md) and the
-+  [root contract](../nucleoid.spec.md#node-names-of-reasoning-selections).
-+
- ## Reactive list flattening
- 
- **Flattening keeps the dirty tiles of every room counted**
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -142,7 +142,7 @@ Created: 31-Jul-2026
- | [88](nuc-0088.md) | Derivation Path Selections | Accepted |
- | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
- | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
--| [112](nuc-0112.md) | Node Names of Reasoning Selections | Draft |
-+| [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
- 
- ### Language compatibility
- 
-@@ -278,7 +278,7 @@ Created: 31-Jul-2026
- | [109](nuc-0109.md) | Operator Section Arguments | Standards Track | Syntax enhancement | Accepted |
- | [110](nuc-0110.md) | Python String Method Aliases | Standards Track | Language compatibility | Accepted |
+@@ -281,6 +282,7 @@ Created: 31-Jul-2026
  | [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
--| [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Accepted |
++| [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0112.md` (modified, +1251/-22)
+**File**: `docs/nuc-0114.md` (added, +88/-0)
 ```diff
-@@ -4,65 +4,1294 @@
- NUC: 112
- Title: Node Names of Reasoning Selections
+@@ -0,0 +1,88 @@
++# NUC 114 -- List and Population Products
++
++```
++NUC: 114
++Title: List and Population Products
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Utility enhancement
++Created: 17-Nov-2026
++```
++
++## Abstract
++
++- Lists and class instance lists gain the read-only query `product`.
++  `RECEIVER.product()` returns the numeric product of the items and
++  `RECEIVER.product(selector)` the product of `selector(item)`, multiplied
++  left to right from `1`. An empty receiver gives `1`.
++- It is the multiplicative sibling of [NUC 68](nuc-0068.md)'s `sum`. Each
++  value is converted to a number as `sum` and `*` convert it: `true` counts
++  `1`, `null` and `""` count `0`, and `"3"` counts `3`. An undefined value
++  makes the product undefined, which a declaration stores as `null`, as it
++  makes a sum undefined.
++- For a list of numbers, `xs.product()` is exactly
++  `xs.reduce((total, x) => total * x, 1)`: the same order and the same
++  rounding.
++- The selector is called once for every item, in order, with only the item,
++  as `sum` calls it. A supplied selector that is not a function raises
++  `TypeError("product expects a function")`, as `sum` raises
++  `TypeError("sum expects a function")`.
++- `product` follows [NUC 61](nuc-0061.md)'s shared query rules, as `sum`
++  does. It accepts every receiver the list queries accept, reads the
++  receiver before its arguments, never writes it, and stays live in
++  declarations and class-level rules like `map` and `reduce`.
++- At the accepted revision, these calls raise
++  `TypeError("<receiver>.product is not a function")`. No syntax, keyword,
++  error type or public Rust API is added. User methods named `product`, such
++  as `calculator.product(2, 3, 4)` in accepted cases, are called on
++  instances, which the list queries never reach, so they keep their meaning.
++
++## Motivation
++
++- World models multiply as often as they add: the chance that independent
++  events all happen, growth compounded over periods, a chain of conversion
++  or scaling factors, the number of combinations of independent choices,
++  and the volume of a box from its sides. Each is a product over a list or
++  over a class's instances, and it has to stay true while the model
++  changes.
++- The accepted spelling is the accumulator `reduce`:
++  `chance = Event.reduce((total, event) => total * event.chance, 1)` is 20
++  lexer tokens where `chance = Event.product(event -> event.chance)` is 12,
++  and `volume = sides.reduce((total, side) => total * side, 1)` is 18 where
++  `volume = sides.product()` is 7.
++- The accumulator restates a running name, `*` and the initial `1` every
++  time, and it is easy to get subtly wrong. Without the initial `1`, an
++  empty list multiplies to undefined and `[true]` to `true`; an initial `0`
++  copied from a sum makes every product `0`.
++- Python's `math.prod`, NumPy's `prod`, Rust's `Iterator::product`,
++  Haskell's and Scala's `product`, R's `prod` and the spreadsheet function
++  `PRODUCT` give the same operation a name.
++- [NUC 84](nuc-0084.md) set `product` aside because accepted cases use it as
++  a user method name. That method is called on an instance, which the list
++  queries never reach, and on a class name `Calculator.product(2, 3)` raises
++  `TypeError("Calculator.product is not a function")` at the accepted
++  revision, so the name is free for lists and populations.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `1612d6cd` (2026-11-17)
+**Commit Message**: NUC 113 Implicit Receivers in Method Bodies
+
+Accepted under the automatic acceptance rule, in a continuous
+/nuc-proposal cycle (Syntax enhancement): the frozen candidate meets
+every hard criterion and passes every policy check, including the
+required token non-regression gate, which measures no savings here
+because the candidate adds no document case. The cycle found no stale
+Draft, drew Syntax enhancement uniformly from the five eligible
+categories, allocated NUC 113 in e1506250, and completed it with fresh
+baselines, candidate, proposer, Rust improvement pass and evaluator.
+
+In the code of a class body, a . that begins an operand and is directly
+followed by a name reads that property of the instance, this: def area()
+=> .w * .h is def area() => this.w * this.h, and return .total in an
+indented method body is return this.total. It covers the methods a class
+declares with def or function in every parameter form, Python-style self
+methods included, def init and def __init__ constructors and the class
+body's own statements, in subclasses too, with every suffix and inside
+template interpolations. A read builds the written-out this.NAME, so
+values, dependencies, live updates, rendering
+
+**File**: `dataset/nucleoid.synth.77.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-77-0001","description":"A method's expression body reads its own instance with leading dots","code":"class Rect(this.w, this.h):\n    def area() => .w * .h\nr = Rect(3, 4)\nassert(r.area(), 12)\nr.h = 5\nr.area()","return":"15"}
++{"id":"synth-77-0002","description":"A method's indented body reads its instance in conditions and returns","code":"class Account(this.balance):\n    def status():\n        if .balance < 0:\n            return \"overdrawn\"\n        return \"ok\"\na = Account(-5)\nb = Account(10)\nassert(a.status(), \"overdrawn\")\n[a.status(), b.status()]","return":"[\"overdrawn\",\"ok\"]"}
++{"id":"synth-77-0003","description":"Methods read their instance in templates and call its other methods","code":"class Item(this.name, this.price, this.qty):\n    def total() => .price * .qty\n    def label() => `${.name}: ${.total()}`\ni = Item(\"pen\", 2, 3)\nassert(i.label(), \"pen: 6\")\ni.qty = 4\ni.label()","return":"\"pen: 8\""}
++{"id":"synth-77-0004","description":"A Python-style self method reads its instance with leading dots","code":"class Counter:\n    def __init__(self, start):\n        self.count = start\n    def bump(self, step):\n        self.count = .count + step\n        return .count\nc = Counter(5)\nassert(c.bump(2), 7)\nc.bump(3)","return":"10"}
++{"id":"synth-77-0005","description":"A constructor body reads the instance it is building","code":"class Box(w, h):\n    this.w = w\n    this.h = h\n    if .w == .h:\n        this.kind = \"square\"\n    else:\n        this.kind = \"oblong\"\nassert(Box(2, 2).kind, \"square\")\n[Box(2, 2).kind, Box(2, 3).kind]","return":"[\"square\",\"oblong\"]"}
++{"id":"synth-77-0006","description":"Variables and destructuring declarations in a method read the instance","code":"class Pair(this.a, this.b):\n    def swapped():\n        first, second = [.b, .a]\n        total = .a + .b\n        return [first, second, total]\np = Pair(1, 2)\nassert(p.swapped()[2], 3)\np.swapped()","return":"[2,1,3]"}
++{"id":"synth-77-0007","description":"A property assignment in a method reads the object of its own target","code":"class Shop(this.markup):\n    def price(item):\n        item.final = .cost * 2\n        return item.final + .markup\nlamp = {cost: 10}\ns = Shop(1)\nassert(s.price(lamp), 21)\nlamp.final","return":"20"}
++{"id":"synth-77-0008","description":"A lambda in a method takes an instance property through a local","code":"class Scaler(this.factor):\n    def scale(xs):\n        factor = .factor\n        return xs.map(x -> x * factor)\nassert(Scaler(2).scale([5]), [10])\nScaler(3).scale([1, 2])","return":"[3,6]"}
++{"id":"synth-77-0009","description":"A comprehension source and a quantifier condition read the instance","code":"class Grades(this.scores, this.minimum):\n    def passed() => [s for s in .scores if s >= 50]\n    def all_passed() => all s in .scores: s >= .minimum\ng = Grades([40, 70, 90], 50)\nassert(g.passed(), [70, 90])\n[g.passed(), g.all_passed()]","return":"[[70,90],false]"}
++{"id":"synth-77-0010","description":"A class-level rule calls a method that reads with leading dots","code":"class Rect(this.w, this.h):\n    def area() => .w * .h\n$Rect.big = .area() > 10\nr = Rect(3, 4)\ns = Rect(2, 2)\nassert(r.big, true)\n[r.big, s.big]","return":"[true,false]"}
++{"id":"synth-77-0011","description":"A declaration that calls a reading method follows the instance","code":"class Temp(this.c):\n    def f() => .c * 9 / 5 + 32\nt = Temp(100)\nreading = t.f()\nassert(reading, 212)\nt.c = 0\nreading","return":"32"}
++{"id":"synth-77-0012","description":"A subclass method reads the properties its parent declares","code":"class Shape(this.w, this.h)\nclass Prism(this.d) extends Shape:\n    def volume() => .w * .h * .d\np = Prism(4)\np.w = 2\np.h = 3\nassert(p.volume(), 24)\np.volume()","return":"24"}
+```
+
+**File**: `docs/README.md` (modified, +24/-0)
+```diff
+@@ -1398,6 +1398,28 @@ order.label
+ - Because `is` is a name and `not` a keyword, `o.p = (1 is .a)` keeps its error while `o.p = (1 is not .a)` reads `o.a`, as `(1 is not o.a)`. Without grouping, `o.p = 1 is not .a` is the three statements `o.p = 1`, `is` and `not .a`, and keeps its error.
+ - Receivers are read only in a final parse that runs after every accepted parse has failed, so every input the accepted grammar reads keeps its reading. See the authoritative [implicit receiver properties](../nucleoid.spec.md#implicit-receiver-properties) section.
+ 
++### Implicit receivers in method bodies
++
++```
++class Rect(this.w, this.h):
++    def area() => .w * .h
++    def label():
++        return `${.w}x${.h}`
++r = Rect(2, 3)
++a = r.area()
++assert([a, r.label()], [6, "2x3"])
++r.w = 5
++[a, r.label()]
++# return: [15, "5x3"]
++```
++
++- [NUC 113](nuc-0113.md) reads a `.` that begins an operand, directly followed by a name, in the code of a class body as that property of the instance, `this`: `def area() => .w * .h` is `def area() => this.w * this.h`. `tests/method_receivers.rs` runs this program, which returns `[15, "5x3"]`.
++- The code is that of the methods a class declares with `def` or `function` in every parameter form, `self` parameters included, its `def init` and `def __init__` constructors and the statements of its own body, in subclasses too, with expression and indented bodies, every statement in them and template interpolations.
++- A property assignment keeps its own receiver, so in a method `other.p = .q` reads `other.q`, while the values of variables, label arguments and destructuring declarations read `this`. Computed, indexed and versioned targets give no receiver.
++- `this` is not defined in the lambdas, arrows, `function` expressions, operator sections, nested declarations and comprehension elements and conditions of a method, so their dots keep their errors; a comprehension's source and a quantifier's condition read the instance.
++- These keep their accepted readings and errors: a call argument that starts with `.`, which is a selector or its error; `is` values; a statement or target that starts with `.`; a dot after a name; and every dot outside a class body, such as `def f() => .a`, object functions and class-level rules.
++- A read builds the written-out `this.NAME`, so values, dependencies, live updates, `why`, `affects`, rendering, rollback and errors are those of that spelling, and only inputs that were syntax errors at the accepted revision change. See the authoritative [implicit receivers in method bodies](../nucleoid.spec.md#implicit-receivers-in-method-bodies) section.
++
+ ---
+ 
+ ## 6. Class-Level Rules
+@@ -4514,6 +4536,8 @@ class Name:
+ class Name:
+     def __init__(self, param):         Python's constructor: exactly def init(param): (NUC 107)
+     def method(self, a) => a           a leading self or this receiver: exactly def method(a) => a
++class Name(this.w, this.h):
++    def area() => .w * .h              .w reads this.w in the code of a class body (NUC 113)
+ 
+ instance = Name(param=expression)      label binding without caller assignment
+ instance = Name((param=expression))    explicit positional assignment argument
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -67,7 +67,7 @@ Created: 31-Jul-2026
+ | [102](nuc-0102.md) | Implicit Receiver Properties | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
+ | [104](nuc-0104.md) | Any and All Class References | Accepted |
+ | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
+-| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
++| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
+ 
+ ### Runtime features
+ 
+@@ -280,7 +280,7 @@ Created: 31-Jul-2026
+ | [110](nuc-0110.md) | Python String Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
+ | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+-| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
++| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0113.md` (modified, +1037/-32)
+```diff
+@@ -4,66 +4,1071 @@
+ NUC: 113
+ Title: Implicit Receivers in Method Bodies
  Author: Can Mingir <canmingir@gmail.com>
 -Status: Draft
 +Status: Accepted
  Type: Standards Track
- Category: Reasoning enhancement
+ Category: Syntax enhancement
  Created: 17-Nov-2026
-+Requires: 48, 82, 83, 88, 106
++Requires: 79, 93, 102, 107
  ```
  
  ## Abstract
  
- - Adds a final reasoning stage, `SELECTION |> nodes`, that gives the node
--  names of a selection's steps, in the selection's order. With `a = 1`,
--  `b = a + 2` and `c = b * 2`, `c |> why |> nodes` is `["c", "b", "a"]`,
--  `c |> why |> stated |> nodes` is `["a"]` and `a |> affects |> nodes` is
--  `["b", "c"]`.
--- It is exactly the accepted `(SELECTION).map(step => step.node)`, and it
--  stays live as that spelling does: a declaration
--  `names = total |> why |> nodes` follows later changes of the graph.
-+  names of a selection's steps, in the selection's order, as a list of
-+  strings. With `a = 1`, `b = a + 2` and `c = b * 2`, `c |> why |> nodes` is
-+  `["c", "b", "a"]`, `c |> why |> stated |> nodes` is `["a"]` and
-+  `a |> affects |> nodes` is `["b", "c"]`.
-+- It is exactly the accepted `(SELECTION).map(step => step.node)`, where
-+  `SELECTION` is the selection that the pipeline denotes, read as the
-+  accepted stages read their source, so a reference alone is its own
-+  one-step selection and `c |> nodes` is `["c"]`. It stays live as that
-+  spelling does: a declaration `names = total |> why |> nodes` follows later
-+  changes of the graph.
- - It ends a pipeline over any selection source the accepted stages take: a
--  reference, `model`, or a pipeline of accepted stages such as `why`,
--  `affects`, `stated`, `derived`, `depth`, `path`, `intersect` and
--  `except`. It has no prefix form, because `nodes c` already reads as two
--  juxtaposed statements.
--- Only programs that raised `TypeError("nodes is not an operation")`
--  change. A binding named `nodes` keeps that error for the pipeline, as
--  bindings named `stated` and `derived` keep theirs.
-+  reference, `model`, a prefix stage such as `why c`, or a pipeline of
-+  accepted stages such as `why`, `affects`, `stated`, `derived`, `depth`,
-+  `path`, `intersect`, `except` and `diff`. What follows it reads a list of
-+  names, not a selection, as after the accepted spelling, so
-+  `c |> why |> nodes |> why` raises `TypeError("Cannot explain c|>why|>nodes")`.
-+- It has no prefix form, because `nodes c` already reads as two juxtaposed
-+  statements. A local or parameter, state variable, function or class named
-+  `nodes` makes the pipeline raise `TypeError("nodes is not an operation")`,
-+  as bindings named `stated` and `derived` do for theirs.
-+- No keyword, lexer token, error type or message is added. Every accepted
-+  program keeps its parse and behavior. Only inputs that were parse errors at
-+  the accepted revision change: most raised the parse-time
-+  `TypeError("nodes is not an operation")`, and where the statement parser
-+  backtracks from an unpacking or object-destructuring pattern, some raised
-+  `SyntaxError("Unexpected ','")` or `SyntaxError("Unexpected '='")` first.
-+- The public `Stage` enum gains the variant `Stage::Nodes`, which needs human
-+  SemVer review. No project version is changed. The authoritative contract is
-+  [Node names of reasoning selections](../nucleoid.spec.md#node-names-of-reasoning-selections).
+-- Inside the body of a method that a class declares, a `.` that begins an
+-  operand and is followed by a property name reads that property of the
+-  instance the method runs on, its receiver `this`. So
+-  `def area() => .w * .h` is `def area() => this.w * this.h`, and
+-  `return .total - .paid` in a method's indented body is
+-  `return this.total - this.paid`.
++- In the code of a class body, a `.` that begins an operand and is directly
++  followed by a property name reads that property of the instance the code
++  runs on, its receiver `this`. So `def area() => .w * .h` is
++  `def area() => this.w * this.h`, and `return .total - .paid` in a
++  method's indented body is `return this.total - this.paid`.
+ - It completes [NUC 102](nuc-0102.md)'s implicit receivers, which read the
+-  assigned object inside the value of a property assignment, for the code
+-  of a class that is not such a value: the bodies of its methods and
+-  constructors, written with `def` directly in a class's indented body or
+-  as the class header's own indented body, with expression or indented
+-  bodies and with Python-style `self` parameters ([NUC 107](nuc-0107.md)).
+-- Every accepted reading keeps its meaning. A whole argument `.name` stays a
+-  [NUC 79](nuc-0079.md) property selector, a property assignment inside a
+-  method keeps NUC 102's receiver, a statement that starts with `.` keeps
+-  its error, a lambda or function nested in a method keeps its accepted
+-  error, since `this` is not defined there, and outside classes
+-  `def f() => .a` keeps its accepted `SyntaxError("Unexpected '.'")`.
+-- Only programs that were syntax errors at the accepted revision change.
++  assigned object inside the value of a property assignment, for the rest
++  of a class's code: the methods it declares with `def` or `function` in
++  every parameter form, the Python-style `self` methods of
++  [NUC 107](nuc-0107.md) included, its `def init` and `def __init__`
++  constructors and the statements of its own body, which make up its
++  constructor, in subclasses too, with expression and indented bodies and
++  every statement, expression and template interpolation in them.
++- A read builds `this.NAME`, the tree of the member access written out, so
++  values, dependencies, live updates, rendering, `why`, `affects`, rollback
++  and errors are those of the written-out spelling.
++- Every accepted reading keeps its meaning:
++  - A property assignment keeps NUC 102's receiver, and the innermost one
++    decides, so `other.p = .q` in a method reads `other.q`.
++  - A whole argument `.name` stays a [NUC 79](nuc-0079.md) selector, and a
++    dot that begins a call argument, a statement or an assignment target
++    keeps its accepted reading or error, as do `is` values and a dot after a
++    name.
++  - Lambdas, arrows, `function` expressions, operator sections, nested
++    declarations and the elements and conditions of comprehensions keep
++    their accepted errors, since `this` is not defined in them.
++  - Functions outside classes, object functions and class-level rules are
++    unchanged, so `def f() => .a` keeps `SyntaxError("Unexpected '.'")`.
++- Reads happen only in NUC 102's final parse, after every accepted parse
++  has failed, so only inputs that were syntax errors at the accepted
++  revision change. The probes of the juxtaposed `while` and `suppose`
++  headers of [NUC 93](nuc-0093.md) read the instance too, so such a header
++  splits as its written-out spelling does.
++- No token, keyword, syntax-tree node, error type or message, option or
++  public item is added, and no version changes. The authoritative contract
++  is [Implicit receivers in method bodies](../nucleoid.spec.md#implicit-receivers-in-method-bodies).
  
  ## Motivation
  
- - An explanation is a list of steps, and the question most programs ask of
-   it is which nodes take part: which facts support a conclusion, and what a
-   change reaches. The accepted spelling maps the steps, as in
-   `(total |> why |> stated).map(step => step.node)`, and the executable
--  documents write that mapping more than 190 times: 132 in the
--  specification's cases, 25 in the executable reference, 21 in the
--  examples and 8 each in the two READMEs.
-+  documents write that mapping 194 times: 132 in the specification's cases,
-+  25 in the executable reference, 21 in the examples and 8 each in the two
-+  READMEs.
- - At the accepted revision, `c |> why |> nodes` raises
-   `TypeError("nodes is not an operation")` while the program is parsed.
- - A stage keeps the question inside the pipeline that asks it, so a world
-   model reads its explanations as the rest of its reasoning reads, left to
-   right: `alarm |> why |> stated |> nodes` names the facts that raise an
-   alarm.
-+- The accepted spelling also builds a record object for every step and then
-+  reads one field of each. Inside a declaration, each read of a fresh
-+  record's `node` field adds a pending graph node: after
-+  `names = (why c).map(.node)` and two writes of `a`, `--graph` lists nine
-+  pending nodes, `obj:0.node` to `obj:8.node`, of which only the last three
-+  are still read. A standing declaration so grows the graph by one node for
-+  every step each time it is evaluated.
-+- The most compact accepted spelling, `(why c).map(.node)` with a
-+  [NUC 79](nuc-0079.md) selector, is 10 lexer tokens, and
-+  `(c |> why |> stated).map(.node)` is 13, against 4 for `why c |> nodes
+ - Methods read the properties of their own instance more than anything
+-  else: in the executable documents, 27 lines that give a method's value
+-  read them through `this.`, as in `return this.count` and
+-  `def combine left right => this.base + left + right`.
++  else. In the four executable documents, 53 lines that give a method's
++  value, an arrow body or a `return` value in a class body, read the
++  instance, 59 times in all: 28 lines through `this.`, as in
++  `return this.count` and `def combine left right => this.base + left + right`,
++  and 25 through `self.`, as in `def free(self) => self.capacity - self.level`.
++  - The count runs over the 1,151 cases of the four documents, duplicates
++    included. A line is in a class body when the nearest line above it
++    that begins, after its indentation, with `class ` is indented less
++    than it and than every nonblank line between them. Its value is what
++    follows the first `=>` or `->` of a line that begi
 ```
 
-**File**: `docs/nucleoid.g4` (modified, +9/-1)
+**File**: `docs/nucleoid.g4` (modified, +27/-1)
 ```diff
-@@ -489,7 +489,8 @@ stage
-     | AFFECTS
-     | STATED
-     | DERIVED
--    | DIFF                                                // Expr::Reason
-+    | DIFF
-+    | NODES                                               // Expr::Reason
-     | DEPTH LPAREN expression RPAREN                       // Expr::Depth
-     | PATH LPAREN expression RPAREN                        // Expr::Path
-     | (INTERSECT | EXCEPT) LPAREN expression RPAREN        // Expr::Combine
-@@ -869,6 +870,7 @@ enumName
-     | PATH
-     | INTERSECT
-     | EXCEPT
-+    | NODES
-     | MODEL
-     | FIRST
-     | LAST
-@@ -954,6 +956,7 @@ DEPTH            : 'depth';
- PATH             : 'path';
- INTERSECT        : 'intersect';
- EXCEPT           : 'except';
-+NODES            : 'nodes';
- MODEL            : 'model';
- FIRST            : 'first';
- LAST             : 'last';
-@@ -1143,6 +1146,11 @@ fragment REGEX_CHAR
+@@ -733,6 +733,24 @@ atVariable
+  * - It builds Expr::Member over a copy of the receiver path, the tree of
+  *   'receiver DOT property'. Postfix suffixes continue it as one chain, as
+  *   after '(' receiver ')' DOT property.
++ * Instance-read contract (NUC 113):
++ * - In the same final parse, the code of a classBody has the receiver THIS
++ *   wherever no assignment value gives it another: its methodDecls in every
++ *   parameter form, INIT and PYTHON_INIT included, and its constructor
++ *   statements, in subclasses too. A receiverRead there builds
++ *   Expr::Member over Expr::This, the tree of 'THIS DOT property'.
++ * - An assignment to a member path gives its value the receiver above, or
++ *   none for a computed or versioned target; an assignment to a name, a
++ *   label argument and a destructuring declaration keep THIS for their
++ *   values.
++ * - The bodies of lambdaExpression, arrowBody, FUNCTION parameters block,
++ *   sections, nested function declarations and the element and condition
++ *   of a comprehension have no THIS receiver, so their reads keep the
++ *   accepted error; a comprehension's source and a quantified condition
++ *   keep THIS. A classBody inside such a body has THIS again.
++ * - The NUC 93 probes of whileStmt and supposeStmt headers read THIS
++ *   receivers but no assignment receivers, as the accepted probes read the
++ *   written-out 'THIS DOT property'.
+  */
+ receiverRead
+     : DOT property                      // Expr::Member over the receiver path
+@@ -1082,7 +1100,8 @@ fragment REGEX_CHAR
+  * (DOT, then a name or keyword, after a token in operand position or at the
+  * start) or a template, one final parse reads receiverRead, with 'is'
+  * comparisons when the source holds 'is' or a template and with
+- * comprehensions when it holds 'for' or a template. When it fails too, its
++ * comprehensions when it holds 'for' or a template, and with the THIS
++ * receivers of the instance-read contract. When it fails too, its
+  * error replaces the accepted one only when it lies further into the source.
+  * Passes run and succeed or fail exactly as without the EVERY rule of the
+  * spelled-class contract. When the kept pass read an EVERY spelledClass
+@@ -1141,6 +1160,8 @@ fragment REGEX_CHAR
+  * $C is w                  -> $C.w = true, also spelled every C is w,
+  *                             any C is w and all C is w.
+  * o.p = .a + .b            -> o.p = o.a + o.b, in the final parse.
++ * def m() => .a + .b       -> def m() => this.a + this.b, in a classBody's
++ *                             final parse.
+  * new X(...)               -> X(...).
+  * for xs:                  -> iteration with the item name "it".
   * catch without a name     -> the binding "error".
-  * model directly before |> -> Expr::Model.
-  * |> intersect(model)      -> its other selection is Expr::Model; also except.
-+ * s |> nodes               -> Expr::Reason with Stage::Nodes, the node names of
-+ *                             s's selection. It ends the pipeline: a stage
-+ *                             after it, or an intersect, except or path
-+ *                             argument that ends with it, parses and then
-+ *                             raises TypeError("Cannot explain <source>").
-  * An object containing spread uses Expr::SpreadObject, with later entries
-  * winning; otherwise it uses Expr::ObjectLiteral. Numeric keys become text.
-  *
+@@ -1186,6 +1207,11 @@ fragment REGEX_CHAR
+  * src\lang\ast\parser.rs, receivers set in parser\expression.rs and
+  * parser\statement.rs, reads in parser\primary.rs and parser\postfix.rs, and
+  * the operand-position rule in src\lang\ast\lexer\token.rs.
++ * Instance receivers: parser\receiver.rs, set for class bodies in
++ * parser\class.rs, kept for variables in parser\destructuring.rs, left out
++ * of nested functions in parser\primary.rs, parser\function.rs,
++ * parser\section.rs and parser\comprehension.rs, and carried into the
++ * accepted probe in parser\statement.rs.
+  * Membership tests: relationalOperator in parser\precedence.rs, the
+  * expressionInput context in parser.rs and their evaluation in
+  * src\lang\ast\operator.rs.
+```
+
+**File**: `nucleoid.spec.md` (modified, +168/-0)
+```diff
+@@ -3675,6 +3675,174 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid rolls back failed receiver assignments` specify the executable
+   behavior. `tests/implicit_receivers.rs` executes the rest.
+ 
++## Implicit receivers in method bodies
++
++- [NUC 113](docs/nuc-0113.md) lets the code of a class read the properties
++  of its own instance with a leading dot: in a class body,
++  `def area() => .w * .h` is `def area() => this.w * this.h`, and
++  `return .total - .paid` is `return this.total - this.paid`. No token,
++  keyword, syntax tree node, error type or message is added.
++- **Where.** The receiver is `this` in the code of a class body: the methods
++  it declares with `def` or `function` in every parameter form, including
++  the `self` parameters of [Python-style self parameters](#python-style-self-parameters),
++  its `def init` and `def __init__` constructors, and the statements of its
++  own indented or same-line body, which make up its constructor. A class
++  that names its parent with `extends` or a colon reads as every class does.
++  Expression and indented bodies read in every statement and expression
++  they hold, template interpolations included.
++- **Reads.** A `.` that begins an operand, after a token in operand position
++  as [Implicit receiver properties](#implicit-receiver-properties) defines
++  it, and is directly followed by a name reads that property of `this`. The
++  operand continues with every suffix that member access takes, so
++  `.items[0]`, `.area()`, `.a.b` and `.w@first` read `this.items[0]`,
++  `this.area()`, `this.a.b` and `this.w@first`, and a keyword after the dot
++  reads its canonical spelling, as after any `.`.
++- **The innermost receiver.** A property assignment keeps the receiver of
++  [Implicit receiver properties](#implicit-receiver-properties): in a
++  method, `other.p = .q` reads `other.q` and `this.w = .h` reads `this.h`,
++  and its value keeps every rule of that section, so `this.p = (x = .a)`
++  keeps its error. The values of assignments to names, such as `x = .w`,
++  `x += .w` and `x := .w`, of label arguments such as `P(n = .w)` and of
++  destructuring declarations such as `a, b = .pair` read `this`, since no
++  target names another receiver. A computed, indexed or versioned target,
++  such as `xs[0].p`, `xs[0]` or `o.p@first`, gives its value no receiver,
++  so its dots keep their errors.
++- **Nested functions.** `this` is not defined in the functions that a
++  method's code holds, so their dots keep their accepted errors: the bodies
++  of lambdas, arrows, `function` expressions, operator sections and nested
++  `def` and `function` declarations, and the elements and conditions of
++  comprehensions. So `def twice() => [1, 2].map(i -> i * .w)` keeps
++  `SyntaxError("Unexpected '.'")`, where `i * this.w` raises
++  `ReferenceError("this is not defined")` when it runs. The source of a
++  comprehension and the condition of a quantifier are evaluated in the
++  method, so they read: `[x * 2 for x in .xs]` reads `this.xs`. A property
++  value keeps its receiver inside its functions, as
++  [Implicit receiver properties](#implicit-receiver-properties) specifies,
++  and a class declared in a function reads its own instance.
++- **Kept readings.** These dots keep their accepted readings and errors:
++  - the first token of a call argument: a whole argument `.name` is a
++    selector of [Property selector arguments](#property-selector-arguments),
++    so `[this].map(.w)` passes `v -> v.w` and `Inner(.w)` passes a
++    selector to a constructor, while `f(.w + 1)` keeps its error and
++    `f(1 + .w)` reads. The two arguments of an `assert:` statement follow
++    the same rule;
++  - every dot in the value of an `is` assignment;
++  - a dot that begins a statement or the target of an assignment, as in
++    `.count += 1`, `.items.push(x)` and `(.w = 1)`, including the first
++    statement of a same-line suite, as in `if c: .w` and
++    `suppose this.w = 5: .w * 2`;
++  - a dot after a token that is not in operand position, so `while .n > 0:`
++    keeps its accepted error while `while 0 < .n:` reads, and `x .a` stays
++    member access;
++  - every dot outside a class body: functions declared outside a class, so
++    `def f() => .a` keeps its error, object functions such as
++    `o.f = function() { return .w }`, which read `o`, and class-level rules
++    such as `$Rect.area = .w * .h`.
++- **The written-out path.** A read builds `this.NAME`, the tree of the
++  member access written out, so values, dependencies, the live updates of
++  declarations that call a method, class-level rules, rendering, `why`,
++  `affects`, `suppose`, rollback and run-time errors are those of the
++  written-out spelling. The probes that keep the juxtaposed `while` and
++  `suppose` headers of [Is assignments](#is-assignments) read the instance
++  too, so `while 1 + .n is a: b` in a method runs as the separate
++  statements of `while 1 + this.n is a: b`.
++- **Parse passes.** T
+```
+
+**File**: `src/lang/ast/parser/class.rs` (modified, +1/-1)
+```diff
+@@ -146,7 +146,7 @@ impl Parser {
+ 
+     fn class_body(&mut self, declaration: &mut ClassDecl) -> Result<()> {
+         let outer = std::mem::replace(&mut self.in_class, true);
+-        let result = self.class_contents(declaration);
++        let result = self.with_instance(|parser| parser.class_contents(declaration));
+         self.in_class = outer;
+         result
+     }
+```
+
+**File**: `src/lang/ast/parser/comprehension.rs` (modified, +26/-1)
+```diff
+@@ -29,6 +29,31 @@ impl Parser {
+         self.lists == Lists::Comprehensions && self.check(&Token::Keyword(Keyword::For))
+     }
+ 
++    pub(super) fn list_head(&mut self) -> Result<Expr> {
++        if self.holds_instance() && self.list_holds_for() {
++            return self.without_instance(|parser| parser.within(true, Self::item));
++        }
++        self.within(true, Self::item)
++    }
++
++    fn list_holds_for(&self) -> bool {
++        let mut depth = 0usize;
++        for spanned in self.tokens.iter().skip(self.position) {
++            match spanned.token {
++                Token::LeftParen | Token::LeftBracket | Token::LeftBrace => depth += 1,
++                Token::RightParen | Token::RightBracket | Token::RightBrace => {
++                    let Some(outer) = depth.checked_sub(1) else {
++                        return false;
++                    };
++                    depth = outer;
++                }
++                Token::Keyword(Keyword::For) if depth == 0 => return true,
++                _ => {}
++            }
++        }
++        false
++    }
++
+     pub(super) fn comprehension(&mut self, start: usize, element: Expr) -> Result<Expr> {
+         if let Some(variable) = self.at_variable_since(start) {
+             return self.reject_at_variable(variable);
+@@ -47,7 +72,7 @@ impl Parser {
+         })?;
+         let source = if self.eat_keyword(Keyword::If) {
+             let items = self.leave_items();
+-            let condition = self.within(true, Self::expression);
++            let condition = self.without_instance(|parser| parser.within(true, Self::expression));
+             self.items = items;
+             method_call(source, "filter", lambda(parameter.clone(), condition?))
+         } else {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1942,51 +2083,22 @@ spelling adds a pending obj:N.node node per step on every eva
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 112 Node Names of Reasoning Selections
+## X. Draft NUC 114 List and Population Products
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f9c95d84`: NUC 112 Node Names of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `551d11fe`: Draft NUC 114 List and Population Products. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Node names of reasoning selections
-
-**Nodes names the facts a heater rests on and what insulation moves**
-
-```nuc
-outside = 4
-target = 21
-insulation = 0.8
-loss = (target - outside) * insulation
-heater = loss * 2
-causes = heater |> why |> stated |> nodes
-moved = insulation |> affects |> nodes
-assert(causes, ["target", "outside", "insulation"])
-assert(moved, ["loss", "heater"])
-solar = 5
-heater = loss * 2 - solar
-assert(causes, ["solar", "target", "outside", "insulation"])
-```
-
-- [NUC 112](docs/nuc-0112.md) adds the final reasoning stage `|> nodes`,
-  which names the nodes of a selection's steps in their order.
-  `heater |> why |> stated |> nodes` names the facts the heater rests on,
-  and `insulation |> affects |> nodes` what a change of the insulation
-  reaches.
-- Both lists are the names that
-  `(heater |> why |> stated).map(step => step.node)` and
-  `(insulation |> affects).map(step => step.node)` give, and they stay live
-  the same way: once the heater also accounts for the solar gain, `solar`
-  joins the facts it rests on. See the
-  [root contract](nucleoid.spec.md#node-names-of-reasoning-selections).
-
+| [114](nuc-0114.md) | List and Population Products | Draft |
+| [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1996,7 +2108,7 @@ assert(causes, ["solar", "target", "outside", "insulation"])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f9c95d84` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `551d11fe` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-lodestone`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T03:31:20.994Z  
+> **Timestamp**: 2026-11-17T15:51:18.339Z  
 > **Learning ID**: `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd](https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T03:26:20.409Z  
+> **Harvest Timestamp**: 2026-11-17T15:51:18.107Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 333446 downloads | 258 likes
+- **Stars / Engagement**: 304674 downloads | 265 likes
 
 ---
 

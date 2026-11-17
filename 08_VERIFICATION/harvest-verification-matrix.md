@@ -10594,3 +10594,7 @@
 | `CYCLE-20261117-40J9` | `2026-11-17T15:43:43.797Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8989` | Yes (`523c66bf...`) |
 | `CYCLE-20261117-41YH` | `2026-11-17T15:43:45.641Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8990` | Yes (`6ab7bfe1...`) |
 | `CYCLE-20261117-44GV` | `2026-11-17T15:43:48.895Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`8a355564...`) |
+| `CYCLE-20261117-DRLP` | `2026-11-17T15:51:18.781Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md` | Yes (`9803d9f7...`) |
+| `CYCLE-20261117-E2PM` | `2026-11-17T15:51:33.178Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8991` | Yes (`79f4da1c...`) |
+| `CYCLE-20261117-E4EQ` | `2026-11-17T15:51:35.378Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`768823d7...`) |
+| `CYCLE-20261117-E5XS` | `2026-11-17T15:51:37.360Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8992` | Yes (`98439934...`) |

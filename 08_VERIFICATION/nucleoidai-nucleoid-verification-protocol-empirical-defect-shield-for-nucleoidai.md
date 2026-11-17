@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "e1506250",
+  "source_version": "551d11fe",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T12:46:12.553Z",
+  "timestamp": "2026-11-17T15:51:37.565Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `e1506250`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T12:46:12.553Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `551d11fe`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T15:51:37.565Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `e1506250`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `551d11fe`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T12:41:08.308Z  
+> **Harvest Timestamp**: 2026-11-17T15:51:36.408Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1523,104 +1523,120 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1506250` (2026-11-17)
-**Commit Message**: Draft NUC 113 Implicit Receivers in Method Bodies
+### Incident Patch 1: `551d11fe` (2026-11-17)
+**Commit Message**: Draft NUC 114 List and Population Products
 
-Category: Syntax enhancement, drawn uniformly at random (index 0 of the
+Category: Utility enhancement, drawn uniformly at random (index 2 of the
 five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
 continuous /nuc-proposal cycle, so the token non-regression gate is
 required for this category.
 
-Requested change: inside the bodies of a class's methods and
-constructors, a . that begins an operand and is followed by a property
-name reads that property of the receiver this, so def area() => .w * .h
-is def area() => this.w * this.h and return .total in a method's
-indented body is return this.total. It completes NUC 102's implicit
-receivers, which read the assigned object inside property values, for
-class code that is not such a value, including Python-style self
-methods. A whole argument .name stays a NUC 79 selector, property
-assignments keep NUC 102's receiver, statements starting with . keep
-their error, lambdas and functions nested in a method keep theirs, and
-def f() => .a outside classes keeps SyntaxError("Unexpected '.'"). Only
-programs that were syntax errors at the accepted revision change.
+Requested change: lists and class instance lists gain the read-only
+query product, the multiplicative sibling of NUC 68's sum.
+RECEIVER.product() multiplies the items and RECEIVER.product(selector)
+the values selector(item), left to right from 1, so an empty receiver
+gives 1. Values convert to numbers as sum and * convert them, an
+undefined value makes the product undefined, and for a list of numbers
+xs.product() is exactly xs.reduce((total, x) => total * x, 1). A
+selector that is not a function raises TypeError("product expects a
+function"). It follows NUC 61's shared query rules and stays live in
+declarations and class-level rules. At the accepted revision these calls
+raise TypeError("<receiver>.product is not a function"); user methods
+named product on instances keep their meaning.
 
 This allocation changes only the Draft and its two index rows.
 
-Co-Authored-By: Claude Opus
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Cl
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -67,6 +67,7 @@ Created: 31-Jul-2026
- | [102](nuc-0102.md) | Implicit Receiver Properties | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
- | [104](nuc-0104.md) | Any and All Class References | Accepted |
- | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
-+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
+@@ -128,6 +128,7 @@ Created: 31-Jul-2026
+ | [105](nuc-0105.md) | List and Population Sorting by Key | Accepted |
+ | [108](nuc-0108.md) | List and Population Partitions | Accepted |
+ | [111](nuc-0111.md) | Reactive String Padding | Accepted |
++| [114](nuc-0114.md) | List and Population Products | Draft |
  
- ### Runtime features
+ ### Reasoning enhancement
  
-@@ -279,6 +280,7 @@ Created: 31-Jul-2026
- | [110](nuc-0110.md) | Python String Method Aliases | Standards Track | Language compatibility | Accepted |
+@@ -281,6 +282,7 @@ Created: 31-Jul-2026
  | [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
  | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
-+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
+ | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Accepted |
++| [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0113.md` (added, +73/-0)
+**File**: `docs/nuc-0114.md` (added, +88/-0)
 ```diff
-@@ -0,0 +1,73 @@
-+# NUC 113 -- Implicit Receivers in Method Bodies
+@@ -0,0 +1,88 @@
++# NUC 114 -- List and Population Products
 +
 +```
-+NUC: 113
-+Title: Implicit Receivers in Method Bodies
++NUC: 114
++Title: List and Population Products
 +Author: Can Mingir <canmingir@gmail.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Syntax enhancement
++Category: Utility enhancement
 +Created: 17-Nov-2026
 +```
 +
 +## Abstract
 +
-+- Inside the body of a method that a class declares, a `.` that begins an
-+  operand and is followed by a property name reads that property of the
-+  instance the method runs on, its receiver `this`. So
-+  `def area() => .w * .h` is `def area() => this.w * this.h`, and
-+  `return .total - .paid` in a method's indented body is
-+  `return this.total - this.paid`.
-+- It completes [NUC 102](nuc-0102.md)'s implicit receivers, which read the
-+  assigned object inside the value of a property assignment, for the code
-+  of a class that is not such a value: the bodies of its methods and
-+  constructors, written with `def` directly in a class's indented body or
-+  as the class header's own indented body, with expression or indented
-+  bodies and with Python-style `self` parameters ([NUC 107](nuc-0107.md)).
-+- Every accepted reading keeps its meaning. A whole argument `.name` stays a
-+  [NUC 79](nuc-0079.md) property selector, a property assignment inside a
-+  method keeps NUC 102's receiver, a statement that starts with `.` keeps
-+  its error, a lambda or function nested in a method keeps its accepted
-+  error, since `this` is not defined there, and outside classes
-+  `def f() => .a` keeps its accepted `SyntaxError("Unexpected '.'")`.
-+- Only programs that were syntax errors at the accepted revision change.
++- Lists and class instance lists gain the read-only query `product`.
++  `RECEIVER.product()` returns the numeric product of the items and
++  `RECEIVER.product(selector)` the product of `selector(item)`, multiplied
++  left to right from `1`. An empty receiver gives `1`.
++- It is the multiplicative sibling of [NUC 68](nuc-0068.md)'s `sum`. Each
++  value is converted to a number as `sum` and `*` convert it: `true` counts
++  `1`, `null` and `""` count `0`, and `"3"` counts `3`. An undefined value
++  makes the product undefined, which a declaration stores as `null`, as it
++  makes a sum undefined.
++- For a list of numbers, `xs.product()` is exactly
++  `xs.reduce((total, x) => total * x, 1)`: the same order and the same
++  rounding.
++- The selector is called once for every item, in order, with only the item,
++  as `sum` calls it. A supplied selector that is not a function raises
++  `TypeError("product expects a function")`, as `sum` raises
++  `TypeError("sum expects a function")`.
++- `product` follows [NUC 61](nuc-0061.md)'s shared query rules, as `sum`
++  does. It accepts every receiver the list queries accept, reads the
++  receiver before its arguments, never writes it, and stays live in
++  declarations and class-level rules like `map` and `reduce`.
++- At the accepted revision, these calls raise
++  `TypeError("<receiver>.product is not a function")`. No syntax, keyword,
++  error type or public Rust API is added. User methods named `product`, such
++  as `calculator.product(2, 3, 4)` in accepted cases, are called on
++  instances, which the list queries never reach, so they keep their meaning.
 +
 +## Motivation
 +
-+- Methods read the properties of their own instance more than anything
-+  else: in the executable documents, 27 lines that give a method's value
-+  read them through `this.`, as in `return this.count` and
-+  `def combine left right => this.base + left + right`.
-+- NUC 102 gave class-level rules and property values the short receiver
-+  form, so `$Rect.area = .w * .h` and `this.area = .w * .h` read the
-+  receiver's properties, but a method that computes the same value still
-+  spells every read out: at the accepted revision `def area() => .w * .h`
-+  raises `SyntaxError("Unexpected '.'")` while the program is parsed.
-+- Each read saves one lexer token, `this.w` being three and `.w` two, so a
-+  world model's methods read as its rules already do.
-+- Prior art: Ruby's `@name`, CoffeeScript's `@name` and the implicit `this`
-+  of Kotlin, Swift and Java, which let a method name its own instance's
-+  members without spelling the receiver.
++- World models multiply as often as they add: the chance that independent
++  events all happen, growth compounded over periods, a chain of conversion
++  or scaling factors, the number of combinations of independent choices,
++  and the volume of a box from its sides. Each is a product over a list or
++  over a class's instances, and it has to stay true while the model
++  changes.
++- The accepted spelling is the accumulator `reduce`:
++  `chance = Event.reduce((total, event) => total * event.chance, 1)` is 20
++  lexer tokens where `chance = Event.product(event -> event.chance)` is 12,
++  and `volume = sides.reduce((total, side) => total * side, 1)` is 18 where
++  `volume = sides.product()` is 7.
++- The accumulator restates a running name, `*` and the initial `1` every
++  time, and it is easy to get subtly wrong. Without the initial `1`, an
++  empty list multiplies to undefined and `[true]` to `true`; an initial `0`
++  copied from a sum makes every product `0`.
++- Python's `math.prod`, NumPy's `prod`, Rust's `Iterator::product`,
++  Haskell's and Scala's `product`, R's `prod` and the spreadsheet function
++  `PRODUCT` give the same operation a name.
++- [NUC 84](nuc-0084.md) set `product` aside because accepted cases use it as
++  a user method name. That method is called on an instance, which the list
++  queries never reach, and on a class name `Calculator.product(2, 3)` raises
++  `TypeError("Calculator.product is not a function")` at the accepted
++  revision, so the name is free for lists and populations.
 +
 +## Rationale
 +
@@ -1644,6 +1660,398 @@ Co-Authored-By: Claude Opus
 +
 +This document is licensed under the Apache License, Version 2.0. See
 +[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `1612d6cd` (2026-11-17)
+**Commit Message**: NUC 113 Implicit Receivers in Method Bodies
+
+Accepted under the automatic acceptance rule, in a continuous
+/nuc-proposal cycle (Syntax enhancement): the frozen candidate meets
+every hard criterion and passes every policy check, including the
+required token non-regression gate, which measures no savings here
+because the candidate adds no document case. The cycle found no stale
+Draft, drew Syntax enhancement uniformly from the five eligible
+categories, allocated NUC 113 in e1506250, and completed it with fresh
+baselines, candidate, proposer, Rust improvement pass and evaluator.
+
+In the code of a class body, a . that begins an operand and is directly
+followed by a name reads that property of the instance, this: def area()
+=> .w * .h is def area() => this.w * this.h, and return .total in an
+indented method body is return this.total. It covers the methods a class
+declares with def or function in every parameter form, Python-style self
+methods included, def init and def __init__ constructors and the class
+body's own statements, in subclasses too, with every suffix and inside
+template interpolations. A read builds the written-out this.NAME, so
+values, dependencies, live updates, rendering
+
+**File**: `dataset/nucleoid.synth.77.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-77-0001","description":"A method's expression body reads its own instance with leading dots","code":"class Rect(this.w, this.h):\n    def area() => .w * .h\nr = Rect(3, 4)\nassert(r.area(), 12)\nr.h = 5\nr.area()","return":"15"}
++{"id":"synth-77-0002","description":"A method's indented body reads its instance in conditions and returns","code":"class Account(this.balance):\n    def status():\n        if .balance < 0:\n            return \"overdrawn\"\n        return \"ok\"\na = Account(-5)\nb = Account(10)\nassert(a.status(), \"overdrawn\")\n[a.status(), b.status()]","return":"[\"overdrawn\",\"ok\"]"}
++{"id":"synth-77-0003","description":"Methods read their instance in templates and call its other methods","code":"class Item(this.name, this.price, this.qty):\n    def total() => .price * .qty\n    def label() => `${.name}: ${.total()}`\ni = Item(\"pen\", 2, 3)\nassert(i.label(), \"pen: 6\")\ni.qty = 4\ni.label()","return":"\"pen: 8\""}
++{"id":"synth-77-0004","description":"A Python-style self method reads its instance with leading dots","code":"class Counter:\n    def __init__(self, start):\n        self.count = start\n    def bump(self, step):\n        self.count = .count + step\n        return .count\nc = Counter(5)\nassert(c.bump(2), 7)\nc.bump(3)","return":"10"}
++{"id":"synth-77-0005","description":"A constructor body reads the instance it is building","code":"class Box(w, h):\n    this.w = w\n    this.h = h\n    if .w == .h:\n        this.kind = \"square\"\n    else:\n        this.kind = \"oblong\"\nassert(Box(2, 2).kind, \"square\")\n[Box(2, 2).kind, Box(2, 3).kind]","return":"[\"square\",\"oblong\"]"}
++{"id":"synth-77-0006","description":"Variables and destructuring declarations in a method read the instance","code":"class Pair(this.a, this.b):\n    def swapped():\n        first, second = [.b, .a]\n        total = .a + .b\n        return [first, second, total]\np = Pair(1, 2)\nassert(p.swapped()[2], 3)\np.swapped()","return":"[2,1,3]"}
++{"id":"synth-77-0007","description":"A property assignment in a method reads the object of its own target","code":"class Shop(this.markup):\n    def price(item):\n        item.final = .cost * 2\n        return item.final + .markup\nlamp = {cost: 10}\ns = Shop(1)\nassert(s.price(lamp), 21)\nlamp.final","return":"20"}
++{"id":"synth-77-0008","description":"A lambda in a method takes an instance property through a local","code":"class Scaler(this.factor):\n    def scale(xs):\n        factor = .factor\n        return xs.map(x -> x * factor)\nassert(Scaler(2).scale([5]), [10])\nScaler(3).scale([1, 2])","return":"[3,6]"}
++{"id":"synth-77-0009","description":"A comprehension source and a quantifier condition read the instance","code":"class Grades(this.scores, this.minimum):\n    def passed() => [s for s in .scores if s >= 50]\n    def all_passed() => all s in .scores: s >= .minimum\ng = Grades([40, 70, 90], 50)\nassert(g.passed(), [70, 90])\n[g.passed(), g.all_passed()]","return":"[[70,90],false]"}
++{"id":"synth-77-0010","description":"A class-level rule calls a method that reads with leading dots","code":"class Rect(this.w, this.h):\n    def area() => .w * .h\n$Rect.big = .area() > 10\nr = Rect(3, 4)\ns = Rect(2, 2)\nassert(r.big, true)\n[r.big, s.big]","return":"[true,false]"}
++{"id":"synth-77-0011","description":"A declaration that calls a reading method follows the instance","code":"class Temp(this.c):\n    def f() => .c * 9 / 5 + 32\nt = Temp(100)\nreading = t.f()\nassert(reading, 212)\nt.c = 0\nreading","return":"32"}
++{"id":"synth-77-0012","description":"A subclass method reads the properties its parent declares","code":"class Shape(this.w, this.h)\nclass Prism(this.d) extends Shape:\n    def volume() => .w * .h * .d\np = Prism(4)\np.w = 2\np.h = 3\nassert(p.volume(), 24)\np.volume()","return":"24"}
+```
+
+**File**: `docs/README.md` (modified, +24/-0)
+```diff
+@@ -1398,6 +1398,28 @@ order.label
+ - Because `is` is a name and `not` a keyword, `o.p = (1 is .a)` keeps its error while `o.p = (1 is not .a)` reads `o.a`, as `(1 is not o.a)`. Without grouping, `o.p = 1 is not .a` is the three statements `o.p = 1`, `is` and `not .a`, and keeps its error.
+ - Receivers are read only in a final parse that runs after every accepted parse has failed, so every input the accepted grammar reads keeps its reading. See the authoritative [implicit receiver properties](../nucleoid.spec.md#implicit-receiver-properties) section.
+ 
++### Implicit receivers in method bodies
++
++```
++class Rect(this.w, this.h):
++    def area() => .w * .h
++    def label():
++        return `${.w}x${.h}`
++r = Rect(2, 3)
++a = r.area()
++assert([a, r.label()], [6, "2x3"])
++r.w = 5
++[a, r.label()]
++# return: [15, "5x3"]
++```
++
++- [NUC 113](nuc-0113.md) reads a `.` that begins an operand, directly followed by a name, in the code of a class body as that property of the instance, `this`: `def area() => .w * .h` is `def area() => this.w * this.h`. `tests/method_receivers.rs` runs this program, which returns `[15, "5x3"]`.
++- The code is that of the methods a class declares with `def` or `function` in every parameter form, `self` parameters included, its `def init` and `def __init__` constructors and the statements of its own body, in subclasses too, with expression and indented bodies, every statement in them and template interpolations.
++- A property assignment keeps its own receiver, so in a method `other.p = .q` reads `other.q`, while the values of variables, label arguments and destructuring declarations read `this`. Computed, indexed and versioned targets give no receiver.
++- `this` is not defined in the lambdas, arrows, `function` expressions, operator sections, nested declarations and comprehension elements and conditions of a method, so their dots keep their errors; a comprehension's source and a quantifier's condition read the instance.
++- These keep their accepted readings and errors: a call argument that starts with `.`, which is a selector or its error; `is` values; a statement or target that starts with `.`; a dot after a name; and every dot outside a class body, such as `def f() => .a`, object functions and class-level rules.
++- A read builds the written-out `this.NAME`, so values, dependencies, live updates, `why`, `affects`, rendering, rollback and errors are those of that spelling, and only inputs that were syntax errors at the accepted revision change. See the authoritative [implicit receivers in method bodies](../nucleoid.spec.md#implicit-receivers-in-method-bodies) section.
++
+ ---
+ 
+ ## 6. Class-Level Rules
+@@ -4514,6 +4536,8 @@ class Name:
+ class Name:
+     def __init__(self, param):         Python's constructor: exactly def init(param): (NUC 107)
+     def method(self, a) => a           a leading self or this receiver: exactly def method(a) => a
++class Name(this.w, this.h):
++    def area() => .w * .h              .w reads this.w in the code of a class body (NUC 113)
+ 
+ instance = Name(param=expression)      label binding without caller assignment
+ instance = Name((param=expression))    explicit positional assignment argument
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -67,7 +67,7 @@ Created: 31-Jul-2026
+ | [102](nuc-0102.md) | Implicit Receiver Properties | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
+ | [104](nuc-0104.md) | Any and All Class References | Accepted |
+ | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
+-| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
++| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
+ 
+ ### Runtime features
+ 
+@@ -280,7 +280,7 @@ Created: 31-Jul-2026
+ | [110](nuc-0110.md) | Python String Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
+ | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+-| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
++| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0113.md` (modified, +1037/-32)
+```diff
+@@ -4,66 +4,1071 @@
+ NUC: 113
+ Title: Implicit Receivers in Method Bodies
+ Author: Can Mingir <canmingir@gmail.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Syntax enhancement
+ Created: 17-Nov-2026
++Requires: 79, 93, 102, 107
+ ```
+ 
+ ## Abstract
+ 
+-- Inside the body of a method that a class declares, a `.` that begins an
+-  operand and is followed by a property name reads that property of the
+-  instance the method runs on, its receiver `this`. So
+-  `def area() => .w * .h` is `def area() => this.w * this.h`, and
+-  `return .total - .paid` in a method's indented body is
+-  `return this.total - this.paid`.
++- In the code of a class body, a `.` that begins an operand and is directly
++  followed by a property name reads that property of the instance the code
++  runs on, its receiver `this`. So `def area() => .w * .h` is
++  `def area() => this.w * this.h`, and `return .total - .paid` in a
++  method's indented body is `return this.total - this.paid`.
+ - It completes [NUC 102](nuc-0102.md)'s implicit receivers, which read the
+-  assigned object inside the value of a property assignment, for the code
+-  of a class that is not such a value: the bodies of its methods and
+-  constructors, written with `def` directly in a class's indented body or
+-  as the class header's own indented body, with expression or indented
+-  bodies and with Python-style `self` parameters ([NUC 107](nuc-0107.md)).
+-- Every accepted reading keeps its meaning. A whole argument `.name` stays a
+-  [NUC 79](nuc-0079.md) property selector, a property assignment inside a
+-  method keeps NUC 102's receiver, a statement that starts with `.` keeps
+-  its error, a lambda or function nested in a method keeps its accepted
+-  error, since `this` is not defined there, and outside classes
+-  `def f() => .a` keeps its accepted `SyntaxError("Unexpected '.'")`.
+-- Only programs that were syntax errors at the accepted revision change.
++  assigned object inside the value of a property assignment, for the rest
++  of a class's code: the methods it declares with `def` or `function` in
++  every parameter form, the Python-style `self` methods of
++  [NUC 107](nuc-0107.md) included, its `def init` and `def __init__`
++  constructors and the statements of its own body, which make up its
++  constructor, in subclasses too, with expression and indented bodies and
++  every statement, expression and template interpolation in them.
++- A read builds `this.NAME`, the tree of the member access written out, so
++  values, dependencies, live updates, rendering, `why`, `affects`, rollback
++  and errors are those of the written-out spelling.
++- Every accepted reading keeps its meaning:
++  - A property assignment keeps NUC 102's receiver, and the innermost one
++    decides, so `other.p = .q` in a method reads `other.q`.
++  - A whole argument `.name` stays a [NUC 79](nuc-0079.md) selector, and a
++    dot that begins a call argument, a statement or an assignment target
++    keeps its accepted reading or error, as do `is` values and a dot after a
++    name.
++  - Lambdas, arrows, `function` expressions, operator sections, nested
++    declarations and the elements and conditions of comprehensions keep
++    their accepted errors, since `this` is not defined in them.
++  - Functions outside classes, object functions and class-level rules are
++    unchanged, so `def f() => .a` keeps `SyntaxError("Unexpected '.'")`.
++- Reads happen only in NUC 102's final parse, after every accepted parse
++  has failed, so only inputs that were syntax errors at the accepted
++  revision change. The probes of the juxtaposed `while` and `suppose`
++  headers of [NUC 93](nuc-0093.md) read the instance too, so such a header
++  splits as its written-out spelling does.
++- No token, keyword, syntax-tree node, error type or message, option or
++  public item is added, and no version changes. The authoritative contract
++  is [Implicit receivers in method bodies](../nucleoid.spec.md#implicit-receivers-in-method-bodies).
+ 
+ ## Motivation
+ 
+ - Methods read the properties of their own instance more than anything
+-  else: in the executable documents, 27 lines that give a method's value
+-  read them through `this.`, as in `return this.count` and
+-  `def combine left right => this.base + left + right`.
++  else. In the four executable documents, 53 lines that give a method's
++  value, an arrow body or a `return` value in a class body, read the
++  instance, 59 times in all: 28 lines through `this.`, as in
++  `return this.count` and `def combine left right => this.base + left + right`,
++  and 25 through `self.`, as in `def free(self) => self.capacity - self.level`.
++  - The count runs over the 1,151 cases of the four documents, duplicates
++    included. A line is in a class body when the nearest line above it
++    that begins, after its indentation, with `class ` is indented less
++    than it and than every nonblank line between them. Its value is what
++    follows the first `=>` or `->` of a line that begi
+```
+
+**File**: `docs/nucleoid.g4` (modified, +27/-1)
+```diff
+@@ -733,6 +733,24 @@ atVariable
+  * - It builds Expr::Member over a copy of the receiver path, the tree of
+  *   'receiver DOT property'. Postfix suffixes continue it as one chain, as
+  *   after '(' receiver ')' DOT property.
++ * Instance-read contract (NUC 113):
++ * - In the same final parse, the code of a classBody has the receiver THIS
++ *   wherever no assignment value gives it another: its methodDecls in every
++ *   parameter form, INIT and PYTHON_INIT included, and its constructor
++ *   statements, in subclasses too. A receiverRead there builds
++ *   Expr::Member over Expr::This, the tree of 'THIS DOT property'.
++ * - An assignment to a member path gives its value the receiver above, or
++ *   none for a computed or versioned target; an assignment to a name, a
++ *   label argument and a destructuring declaration keep THIS for their
++ *   values.
++ * - The bodies of lambdaExpression, arrowBody, FUNCTION parameters block,
++ *   sections, nested function declarations and the element and condition
++ *   of a comprehension have no THIS receiver, so their reads keep the
++ *   accepted error; a comprehension's source and a quantified condition
++ *   keep THIS. A classBody inside such a body has THIS again.
++ * - The NUC 93 probes of whileStmt and supposeStmt headers read THIS
++ *   receivers but no assignment receivers, as the accepted probes read the
++ *   written-out 'THIS DOT property'.
+  */
+ receiverRead
+     : DOT property                      // Expr::Member over the receiver path
+@@ -1082,7 +1100,8 @@ fragment REGEX_CHAR
+  * (DOT, then a name or keyword, after a token in operand position or at the
+  * start) or a template, one final parse reads receiverRead, with 'is'
+  * comparisons when the source holds 'is' or a template and with
+- * comprehensions when it holds 'for' or a template. When it fails too, its
++ * comprehensions when it holds 'for' or a template, and with the THIS
++ * receivers of the instance-read contract. When it fails too, its
+  * error replaces the accepted one only when it lies further into the source.
+  * Passes run and succeed or fail exactly as without the EVERY rule of the
+  * spelled-class contract. When the kept pass read an EVERY spelledClass
+@@ -1141,6 +1160,8 @@ fragment REGEX_CHAR
+  * $C is w                  -> $C.w = true, also spelled every C is w,
+  *                             any C is w and all C is w.
+  * o.p = .a + .b            -> o.p = o.a + o.b, in the final parse.
++ * def m() => .a + .b       -> def m() => this.a + this.b, in a classBody's
++ *                             final parse.
+  * new X(...)               -> X(...).
+  * for xs:                  -> iteration with the item name "it".
+  * catch without a name     -> the binding "error".
+@@ -1186,6 +1207,11 @@ fragment REGEX_CHAR
+  * src\lang\ast\parser.rs, receivers set in parser\expression.rs and
+  * parser\statement.rs, reads in parser\primary.rs and parser\postfix.rs, and
+  * the operand-position rule in src\lang\ast\lexer\token.rs.
++ * Instance receivers: parser\receiver.rs, set for class bodies in
++ * parser\class.rs, kept for variables in parser\destructuring.rs, left out
++ * of nested functions in parser\primary.rs, parser\function.rs,
++ * parser\section.rs and parser\comprehension.rs, and carried into the
++ * accepted probe in parser\statement.rs.
+  * Membership tests: relationalOperator in parser\precedence.rs, the
+  * expressionInput context in parser.rs and their evaluation in
+  * src\lang\ast\operator.rs.
+```
+
+**File**: `nucleoid.spec.md` (modified, +168/-0)
+```diff
+@@ -3675,6 +3675,174 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid rolls back failed receiver assignments` specify the executable
+   behavior. `tests/implicit_receivers.rs` executes the rest.
+ 
++## Implicit receivers in method bodies
++
++- [NUC 113](docs/nuc-0113.md) lets the code of a class read the properties
++  of its own instance with a leading dot: in a class body,
++  `def area() => .w * .h` is `def area() => this.w * this.h`, and
++  `return .total - .paid` is `return this.total - this.paid`. No token,
++  keyword, syntax tree node, error type or message is added.
++- **Where.** The receiver is `this` in the code of a class body: the methods
++  it declares with `def` or `function` in every parameter form, including
++  the `self` parameters of [Python-style self parameters](#python-style-self-parameters),
++  its `def init` and `def __init__` constructors, and the statements of its
++  own indented or same-line body, which make up its constructor. A class
++  that names its parent with `extends` or a colon reads as every class does.
++  Expression and indented bodies read in every statement and expression
++  they hold, template interpolations included.
++- **Reads.** A `.` that begins an operand, after a token in operand position
++  as [Implicit receiver properties](#implicit-receiver-properties) defines
++  it, and is directly followed by a name reads that property of `this`. The
++  operand continues with every suffix that member access takes, so
++  `.items[0]`, `.area()`, `.a.b` and `.w@first` read `this.items[0]`,
++  `this.area()`, `this.a.b` and `this.w@first`, and a keyword after the dot
++  reads its canonical spelling, as after any `.`.
++- **The innermost receiver.** A property assignment keeps the receiver of
++  [Implicit receiver properties](#implicit-receiver-properties): in a
++  method, `other.p = .q` reads `other.q` and `this.w = .h` reads `this.h`,
++  and its value keeps every rule of that section, so `this.p = (x = .a)`
++  keeps its error. The values of assignments to names, such as `x = .w`,
++  `x += .w` and `x := .w`, of label arguments such as `P(n = .w)` and of
++  destructuring declarations such as `a, b = .pair` read `this`, since no
++  target names another receiver. A computed, indexed or versioned target,
++  such as `xs[0].p`, `xs[0]` or `o.p@first`, gives its value no receiver,
++  so its dots keep their errors.
++- **Nested functions.** `this` is not defined in the functions that a
++  method's code holds, so their dots keep their accepted errors: the bodies
++  of lambdas, arrows, `function` expressions, operator sections and nested
++  `def` and `function` declarations, and the elements and conditions of
++  comprehensions. So `def twice() => [1, 2].map(i -> i * .w)` keeps
++  `SyntaxError("Unexpected '.'")`, where `i * this.w` raises
++  `ReferenceError("this is not defined")` when it runs. The source of a
++  comprehension and the condition of a quantifier are evaluated in the
++  method, so they read: `[x * 2 for x in .xs]` reads `this.xs`. A property
++  value keeps its receiver inside its functions, as
++  [Implicit receiver properties](#implicit-receiver-properties) specifies,
++  and a class declared in a function reads its own instance.
++- **Kept readings.** These dots keep their accepted readings and errors:
++  - the first token of a call argument: a whole argument `.name` is a
++    selector of [Property selector arguments](#property-selector-arguments),
++    so `[this].map(.w)` passes `v -> v.w` and `Inner(.w)` passes a
++    selector to a constructor, while `f(.w + 1)` keeps its error and
++    `f(1 + .w)` reads. The two arguments of an `assert:` statement follow
++    the same rule;
++  - every dot in the value of an `is` assignment;
++  - a dot that begins a statement or the target of an assignment, as in
++    `.count += 1`, `.items.push(x)` and `(.w = 1)`, including the first
++    statement of a same-line suite, as in `if c: .w` and
++    `suppose this.w = 5: .w * 2`;
++  - a dot after a token that is not in operand position, so `while .n > 0:`
++    keeps its accepted error while `while 0 < .n:` reads, and `x .a` stays
++    member access;
++  - every dot outside a class body: functions declared outside a class, so
++    `def f() => .a` keeps its error, object functions such as
++    `o.f = function() { return .w }`, which read `o`, and class-level rules
++    such as `$Rect.area = .w * .h`.
++- **The written-out path.** A read builds `this.NAME`, the tree of the
++  member access written out, so values, dependencies, the live updates of
++  declarations that call a method, class-level rules, rendering, `why`,
++  `affects`, `suppose`, rollback and run-time errors are those of the
++  written-out spelling. The probes that keep the juxtaposed `while` and
++  `suppose` headers of [Is assignments](#is-assignments) read the instance
++  too, so `while 1 + .n is a: b` in a method runs as the separate
++  statements of `while 1 + this.n is a: b`.
++- **Parse passes.** T
+```
+
+**File**: `src/lang/ast/parser/class.rs` (modified, +1/-1)
+```diff
+@@ -146,7 +146,7 @@ impl Parser {
+ 
+     fn class_body(&mut self, declaration: &mut ClassDecl) -> Result<()> {
+         let outer = std::mem::replace(&mut self.in_class, true);
+-        let result = self.class_contents(declaration);
++        let result = self.with_instance(|parser| parser.class_contents(declaration));
+         self.in_class = outer;
+         result
+     }
+```
+
+**File**: `src/lang/ast/parser/comprehension.rs` (modified, +26/-1)
+```diff
+@@ -29,6 +29,31 @@ impl Parser {
+         self.lists == Lists::Comprehensions && self.check(&Token::Keyword(Keyword::For))
+     }
+ 
++    pub(super) fn list_head(&mut self) -> Result<Expr> {
++        if self.holds_instance() && self.list_holds_for() {
++            return self.without_instance(|parser| parser.within(true, Self::item));
++        }
++        self.within(true, Self::item)
++    }
++
++    fn list_holds_for(&self) -> bool {
++        let mut depth = 0usize;
++        for spanned in self.tokens.iter().skip(self.position) {
++            match spanned.token {
++                Token::LeftParen | Token::LeftBracket | Token::LeftBrace => depth += 1,
++                Token::RightParen | Token::RightBracket | Token::RightBrace => {
++                    let Some(outer) = depth.checked_sub(1) else {
++                        return false;
++                    };
++                    depth = outer;
++                }
++                Token::Keyword(Keyword::For) if depth == 0 => return true,
++                _ => {}
++            }
++        }
++        false
++    }
++
+     pub(super) fn comprehension(&mut self, start: usize, element: Expr) -> Result<Expr> {
+         if let Some(variable) = self.at_variable_since(start) {
+             return self.reject_at_variable(variable);
+@@ -47,7 +72,7 @@ impl Parser {
+         })?;
+         let source = if self.eat_keyword(Keyword::If) {
+             let items = self.leave_items();
+-            let condition = self.within(true, Self::expression);
++            let condition = self.without_instance(|parser| parser.within(true, Self::expression));
+             self.items = items;
+             method_call(source, "filter", lambda(parameter.clone(), condition?))
+         } else {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1672,13 +2080,13 @@ Co-Authored-By: Claude Opus
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 113 Implicit Receivers in Method Bodies
+## X. Draft NUC 114 List and Population Products
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e1506250`: Draft NUC 113 Implicit Receivers in Method Bodies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `551d11fe`: Draft NUC 114 List and Population Products. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1686,8 +2094,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
-| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
+| [114](nuc-0114.md) | List and Population Products | Draft |
+| [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1697,7 +2105,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1506250` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `551d11fe` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

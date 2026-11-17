@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "bfd935f4",
+    "sourceVersion": "8f113dc5",
     "license": "AGPL-3.0",
-    "contentHash": "01b2d3ce23cdef16f359cbe25f65ec6e63c8f9aed6a3eba7609f482a4388bfa4",
-    "lastHarvestedAt": "2026-11-16T08:06:43.155Z",
+    "contentHash": "768823d74f7a6487881d222fc2e8d74e4c3919ad27d996403eecf677188d9f6d",
+    "lastHarvestedAt": "2026-11-17T15:51:35.382Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "e1506250",
+    "sourceVersion": "551d11fe",
     "license": "Apache-2.0",
-    "contentHash": "c5a693b4e972a1c73ccb481c5f8c866c21e7d0850ad6ac26c7c4ae4a3d16b430",
-    "lastHarvestedAt": "2026-11-17T12:46:12.371Z",
+    "contentHash": "98439934243fc01e2973880e2c76305f356fe9c2f989933c3203ba062b1fb70f",
+    "lastHarvestedAt": "2026-11-17T15:51:37.364Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "ddf073ee",
+    "sourceVersion": "6e7fbbd6",
     "license": "NOASSERTION",
-    "contentHash": "342c07504c40fb45358cc9891013ea8b406bd9cf5c3549b1d24d9daa9ea3319e",
-    "lastHarvestedAt": "2026-11-17T09:22:24.424Z",
+    "contentHash": "79f4da1cd84d6cd9a3e3cdea451bf06385e072e191f25ecd26c95166c4037dbf",
+    "lastHarvestedAt": "2026-11-17T15:51:33.182Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -10385,8 +10385,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
     "sourceVersion": "hf-lodestones-moss-image-sft-8-steps-dmd",
     "license": "Open-Source",
-    "contentHash": "79e075ec3f54f66f117b872ec257ec6c96c3c01ced088d6ae98652564946f088",
-    "lastHarvestedAt": "2026-11-13T03:31:21.354Z",
+    "contentHash": "9803d9f70efa2f151352b8bee2acc5052cc432d3748d5f6256e73463b05f6454",
+    "lastHarvestedAt": "2026-11-17T15:51:18.784Z",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd"
   },
   "ahmadhassan-bted-autoswarm-shadow-adapter": {

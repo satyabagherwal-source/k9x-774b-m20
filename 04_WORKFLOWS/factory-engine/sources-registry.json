@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T15:43:52.334Z",
-    "lastVerified": "2026-11-17T15:43:52.334Z",
+    "lastChecked": "2026-11-17T15:51:40.500Z",
+    "lastVerified": "2026-11-17T15:51:40.500Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -466,22 +466,21 @@
     "revisionIdentifier": "99d7433f"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T15:16:37.591Z",
-    "lastVerified": "2026-11-17T15:16:37.591Z",
+    "lastChecked": "2026-11-17T15:51:36.408Z",
+    "lastVerified": "2026-11-17T15:51:36.408Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "c5a693b4e972a1c73ccb481c5f8c866c21e7d0850ad6ac26c7c4ae4a3d16b430",
+    "contentHash": "98439934243fc01e2973880e2c76305f356fe9c2f989933c3203ba062b1fb70f",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e1506250"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1305,14 +1304,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T09:22:22.905Z",
-    "lastVerified": "2026-11-17T09:22:22.905Z",
+    "lastChecked": "2026-11-17T15:51:32.208Z",
+    "lastVerified": "2026-11-17T15:51:32.208Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "342c07504c40fb45358cc9891013ea8b406bd9cf5c3549b1d24d9daa9ea3319e",
+    "contentHash": "79f4da1cd84d6cd9a3e3cdea451bf06385e072e191f25ecd26c95166c4037dbf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3320,9 +3319,9 @@
   "akveo-react-native-ui-kitten": {
     "name": "react-native-ui-kitten",
     "officialUrl": "https://github.com/akveo/react-native-ui-kitten",
-    "lastChecked": "2026-11-14T02:06:13.024Z",
+    "lastChecked": "2026-11-17T15:51:20.590Z",
     "revisionIdentifier": "e73dce62",
-    "lastVerified": "2026-11-14T02:06:13.024Z"
+    "lastVerified": "2026-11-17T15:51:20.590Z"
   },
   "beclab-olares": {
     "name": "beclab/Olares",
@@ -7301,9 +7300,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-11-16T00:45:05.452Z",
+    "lastChecked": "2026-11-17T15:51:15.458Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-11-16T00:45:05.452Z"
+    "lastVerified": "2026-11-17T15:51:15.458Z"
   },
   "hf-google-gemma-4-31b-it": {
     "name": "google/gemma-4-31B-it",
@@ -7453,9 +7452,9 @@
   "kubeshark-kubeshark": {
     "name": "kubeshark",
     "officialUrl": "https://github.com/kubeshark/kubeshark",
-    "lastChecked": "2026-11-16T14:06:57.798Z",
+    "lastChecked": "2026-11-17T15:51:23.022Z",
     "revisionIdentifier": "b79aa01a",
-    "lastVerified": "2026-11-16T14:06:57.798Z"
+    "lastVerified": "2026-11-17T15:51:23.022Z"
   },
   "vespa-engine-vespa": {
     "name": "vespa-engine/vespa",
@@ -8292,14 +8291,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-16T08:01:29.212Z",
-    "lastVerified": "2026-11-16T08:01:29.212Z",
+    "lastChecked": "2026-11-17T15:51:34.937Z",
+    "lastVerified": "2026-11-17T15:51:34.937Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "01b2d3ce23cdef16f359cbe25f65ec6e63c8f9aed6a3eba7609f482a4388bfa4",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "contentHash": "768823d74f7a6487881d222fc2e8d74e4c3919ad27d996403eecf677188d9f6d",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13486,12 +13485,12 @@
     "officialUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T03:26:20.409Z",
-    "lastVerified": "2026-11-13T03:26:20.409Z",
+    "lastChecked": "2026-11-17T15:51:18.107Z",
+    "lastVerified": "2026-11-17T15:51:18.107Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-    "contentHash": "79e075ec3f54f66f117b872ec257ec6c96c3c01ced088d6ae98652564946f088",
+    "contentHash": "9803d9f70efa2f151352b8bee2acc5052cc432d3748d5f6256e73463b05f6454",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

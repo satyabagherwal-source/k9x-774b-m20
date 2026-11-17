@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-FN5H",
-    "timestamp": "2026-11-15T03:13:36.245Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "0c484764fa28419a9aa58a873ac2577e1da15e2bc62adc0db1ba75b44b10e7b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-FRD1",
-    "timestamp": "2026-11-15T03:13:41.701Z",
-    "repository": "VectifyAI/PageIndex",
-    "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "cb37ad2263f56a04ac785fee6a40cff1300bfdef6824fecf40e4eb84ba242b1d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-6BG9",
-    "timestamp": "2026-11-15T03:34:20.793Z",
-    "repository": "pyannote/speaker-diarization-community-1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "0242fd5e465141f5f1c1423d85996b316f1452a82b725c910bb950bb6bf23b59",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-6DUH",
-    "timestamp": "2026-11-15T03:34:23.897Z",
-    "repository": "flox/flox",
-    "learningId": "learn-github-flox-flox",
-    "contentHash": "6359b612c310615b55bf97116eb146ba4ccaf6fa3d0ab602b8cc78752b70e2b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-6R85",
     "timestamp": "2026-11-15T03:34:41.237Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7430,66 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "8a3555644631603c742361cd7460e2fd1853076d79078e95f52f0b06766937e2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-DRLP",
+    "timestamp": "2026-11-17T15:51:18.781Z",
+    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+    "contentHash": "9803d9f70efa2f151352b8bee2acc5052cc432d3748d5f6256e73463b05f6454",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-E2PM",
+    "timestamp": "2026-11-17T15:51:33.178Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "79f4da1cd84d6cd9a3e3cdea451bf06385e072e191f25ecd26c95166c4037dbf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-E4EQ",
+    "timestamp": "2026-11-17T15:51:35.378Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "768823d74f7a6487881d222fc2e8d74e4c3919ad27d996403eecf677188d9f6d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-E5XS",
+    "timestamp": "2026-11-17T15:51:37.360Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "98439934243fc01e2973880e2c76305f356fe9c2f989933c3203ba062b1fb70f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

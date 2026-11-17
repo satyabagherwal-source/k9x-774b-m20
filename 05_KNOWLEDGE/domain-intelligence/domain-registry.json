@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T15:43:54.750Z",
-  "total_records": 1590,
+  "last_updated": "2026-11-17T15:51:42.054Z",
+  "total_records": 1592,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 663,
+      "total": 665,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -712,7 +712,9 @@
         "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-nvfp4-core",
         "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-nvfp4-l",
         "domain_intelligence-research-knowledge-intelligence-reflection-beam-1-0-501b-a23b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-",
+        "domain_intelligence-research-knowledge-intelligence-lodestones-moss-image-sft-8-steps-dmd-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-hf-lodestones-moss-image-sft-8-steps-dmd-learnin"
       ]
     },
     "E": {
@@ -8167,8 +8169,8 @@
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "repository": "volcengine/OpenViking",
-      "content_hash": "e86c2d8f58c4f6a43b1bdae5de918c26cee3f425f6dee2d958566dfcee8811bf",
-      "created_at": "2026-11-16T08:06:43.581Z"
+      "content_hash": "a2461bf1f53ee965c162587aefd651bfeb7f076f18b0df7558ed3a9af76350ce",
+      "created_at": "2026-11-17T15:51:35.734Z"
     },
     "DOM-D-E243BB51": {
       "record_id": "DOM-D-E243BB51",
@@ -8236,8 +8238,8 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-learnings-technical-construction-intelligence-volcengine-o.md",
       "repository": "volcengine-openviking-learnings",
-      "content_hash": "1c97967d762656fcbc37b1616a16d467193d874b45e0891e1ef783f108375b5b",
-      "created_at": "2026-11-16T08:11:24.440Z"
+      "content_hash": "132cf7fc9bceb97d3861ee2ccd27a312c4980e5aca032f0089c0d160b19cda31",
+      "created_at": "2026-11-17T15:51:42.054Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -8956,8 +8958,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "7a4b14d40a7eee6d39630f3ceeb82b3cd8315a10cdfa5856c060e803072c89ed",
-      "created_at": "2026-11-17T09:22:24.822Z"
+      "content_hash": "1f4cac6c51c6e961b4e7c1541df3eef279ea184cd7b37e724af2a2ea1bbebb0f",
+      "created_at": "2026-11-17T15:51:33.516Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9034,8 +9036,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "f419041956c0fb518282781acb7e90ad210e0b731e17b66b1f23150def679bea",
-      "created_at": "2026-11-17T09:27:28.957Z"
+      "content_hash": "5b3184e9df02ccf1f98d277ae60dc98116deee62db08d421366139bad9d05cc2",
+      "created_at": "2026-11-17T15:51:41.316Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -15353,8 +15355,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "e7301aa0fef46e96b10414ef00dea7d180a1949d6f5a27e082c5ee0092da2277",
-      "created_at": "2026-11-17T11:25:40.032Z"
+      "content_hash": "5b40666a999afac190c593f21ef0178be397a7fd0ee352536b7e8e8328015ec3",
+      "created_at": "2026-11-17T15:51:37.691Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -27437,6 +27439,24 @@
       "repository": "software-mansion-react-native-reanimated-learnings",
       "content_hash": "38a9a57af1c7c5187c0faa64498c20946dd3b1f13b2305a58ed26b1d8bc28bee",
       "created_at": "2026-11-17T15:43:54.750Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-lodestones-moss-image-sft-8-steps-dmd-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-lodestones-moss-image-sft-8-steps-dmd-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: lodestones/MOSS-Image-SFT-8-steps-dmd Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-moss-image-sft-8-steps-dmd-research-knowledge-intelligence-lodesto.md",
+      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "content_hash": "47ba55a465baf07bcbda0f0dc24021fdaf73cfc3e80bf059f92ac2e1225db4f7",
+      "created_at": "2026-11-17T15:51:18.981Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-lodestones-moss-image-sft-8-steps-dmd-learnin": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lodestones-moss-image-sft-8-steps-dmd-learnin",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-lodestones-moss-image-sft-8-steps-dmd-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-moss-image-sft-8-steps-dmd-learnings-research-knowledge-intelligen.md",
+      "repository": "hf-lodestones-moss-image-sft-8-steps-dmd-learnings",
+      "content_hash": "8a4b0464fdce060eaa25fdf6116fc51e0ce2db5a3b39a2917be1baf11c69168a",
+      "created_at": "2026-11-17T15:51:40.826Z"
     }
   }
 }

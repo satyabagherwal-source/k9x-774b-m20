@@ -10627,3 +10627,7 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `d7d1bc3f` | Multi-dimensional audit evidence | 2026-11-17T15:43:43.801Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `ee945380` | Multi-dimensional audit evidence | 2026-11-17T15:43:45.645Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `3707bf02` | Multi-dimensional audit evidence | 2026-11-17T15:43:48.900Z |
+| `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-17T15:51:18.784Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `6e7fbbd6` | Multi-dimensional audit evidence | 2026-11-17T15:51:33.182Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `8f113dc5` | Multi-dimensional audit evidence | 2026-11-17T15:51:35.382Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `551d11fe` | Multi-dimensional audit evidence | 2026-11-17T15:51:37.364Z |

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T15:43:48.907Z",
-  "total_cycles_completed": 10150,
-  "total_learnings_persisted": 10150,
-  "total_rules_promoted": 9730,
+  "last_updated": "2026-11-17T15:51:37.369Z",
+  "total_cycles_completed": 10154,
+  "total_learnings_persisted": 10154,
+  "total_rules_promoted": 9732,
   "history": [
-    {
-      "timestamp": "2026-11-16T23:03:47.279Z",
-      "repository": "higress-group/higress",
-      "learningId": "learn-github-higress-group-higress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T23:14:45.104Z",
-      "repository": "urllib3/urllib3",
-      "learningId": "learn-github-urllib3-urllib3",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T23:14:51.763Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T23:14:56.208Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T23:22:23.770Z",
       "repository": "flox/flox",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-17T15:43:48.907Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:51:18.790Z",
+      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:51:33.187Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:51:35.401Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:51:37.369Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
