@@ -10684,3 +10684,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-17T17:57:39.827Z |
 | `learn-github-founded-labs-react-native-reusables` | `https://github.com/founded-labs/react-native-reusables` | `7df9e76c` | Multi-dimensional audit evidence | 2026-11-17T17:57:48.453Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `7082c5ea` | Multi-dimensional audit evidence | 2026-11-17T17:57:56.072Z |
+| `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-11-17T18:05:26.236Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `5b4079a6` | Multi-dimensional audit evidence | 2026-11-17T18:05:36.182Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `d2ecfa2f` | Multi-dimensional audit evidence | 2026-11-17T18:05:40.930Z |

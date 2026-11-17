@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-PNC0",
-    "timestamp": "2026-11-15T12:13:15.744Z",
-    "repository": "infiniflow/infinity",
-    "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "fe7e91af040471d4905c2c499cb3bc917252b8cb73be3bb7b7ac9fe74d6abc40",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-CUZ5",
-    "timestamp": "2026-11-15T12:31:18.737Z",
-    "repository": "vi/websocat",
-    "learningId": "learn-github-vi-websocat",
-    "contentHash": "f3d51d8316b610635589ac5c59198df4d91bb43e22d36f3e82e181826211ca22",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-JB4A",
-    "timestamp": "2026-11-15T12:36:19.594Z",
-    "repository": "sensenova/SenseNova-Loop-9B-Preview",
-    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-    "contentHash": "31d59e7664099f318243d443ff74470d6a204a7aeaecb5fcb683060fed083087",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-6HTM",
     "timestamp": "2026-11-15T12:54:21.370Z",
     "repository": "MochiDiffusion/MochiDiffusion",
@@ -7492,6 +7447,51 @@
     "contentHash": "5beb8c10c469d7d81be00adbe7ff467bca2944250c82e23fd65afce6e34ad9e2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-6921",
+    "timestamp": "2026-11-17T18:05:26.233Z",
+    "repository": "ornith-ai/Ornith-1.5-122B",
+    "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+    "contentHash": "7648d25b645b564638e09fd3e405953c56efd904d74e3a1c17a01bd7f6e2643e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-6GQA",
+    "timestamp": "2026-11-17T18:05:36.178Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "2018a88fdf8e9e47e10855afb22ff91cf7044aaff22e16b569b43eb227afd095",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-6KE6",
+    "timestamp": "2026-11-17T18:05:40.926Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "f1201ca15d8279eee2877af8a8d260f3bd0a8553403bffc6324790563b0f3d50",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

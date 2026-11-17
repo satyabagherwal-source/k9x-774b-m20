@@ -4,22 +4,22 @@
 {
   "source_repository": "tursodatabase/turso",
   "source_url": "https://github.com/tursodatabase/turso",
-  "source_version": "063ca631",
+  "source_version": "d2ecfa2f",
   "license": "MIT",
-  "timestamp": "2026-11-16T17:44:00.119Z",
+  "timestamp": "2026-11-17T18:05:41.129Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tursodatabase-turso",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `063ca631`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T17:44:00.119Z`  
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `d2ecfa2f`).  
+> **License**: MIT | **Timestamp**: `2026-11-17T18:05:41.129Z`  
 > **Learning ID**: `learn-github-tursodatabase-turso`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tursodatabase/turso` (Commit: `063ca631`)
+- **Target Repository**: `tursodatabase/turso` (Commit: `d2ecfa2f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T17:43:47.547Z  
+> **Harvest Timestamp**: 2026-11-17T18:05:40.270Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25271 stars
+- **Stars / Engagement**: 25279 stars
 
 ---
 
@@ -1443,11 +1443,14 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11880** (2026-11-16): **tests: move six more MVCC tests that need only the public API out of core**
-  *Symptoms*: Six MVCC tests in core open a database, so they need a dialect. Core is to stop having one (#11816). These six need nothing private from core, so they move to `tests/integration/mvcc`. No core code changes.  | Tests | From | To | |---|---|---| | `test_non_overlapping_concurrent_inserts`, `test_overlapping_concurrent_inserts_read_your_writes` | `core/mvcc/mod.rs` | new file `concurrent_inserts.rs` | | `test_logical_log_read`, `test_logical_log_read_multiple_transactions`, `test_logical_log_read_fuzz`, `test_logical_log_read_table_and_index_rows` | `core/mvcc/persistent_storage/logical_log.rs` | new file `logical_log.rs` |  - **The two concurrent insert tests are ignored**, as they were in core (both carry a FIXME). They are moved so that `core/mvcc/mod.rs` no longer has a test module that needs a dialect. - **Test bodies** change in three ways, all to use what the integration tests already share:   - `conn.pager.load()` becomes `conn.get_pager()`.   - `commit_tx_no_conn(&db, tx, &conn)` becomes `commit_tx(db.get_mvcc_store(), &conn, tx)`. `commit_tx` in `transactions.rs` runs the same loop.   - The four logical log tests call `common::maybe_setup_tracing` where they called their own `init_tracing`. - **No new helpers.** The tests use `MvccTestDbNoConn` from `test_db.rs` and `commit_tx` and `generate_simple_string_row` from `transactions.rs`. Core's `commit_tx_no_conn` is removed, because nothing in core uses it any more.  ## Testing  - `cargo test -p core_tester --test integra
+- **Issue #11989** (2026-11-17): **fix(tursoPG): reject zero-valued parameter references**
+  *Symptoms*:   ## Description  - Reject PostgreSQL parameter reference `$0` instead of silently treating it as `$1`.  Fixes #11908 
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Autofixer reviews pull requests from outside contributors on its own. The review of `d62d8341c981` is [here](https://github.com/tursodatabase/turso/pull/11989#pullrequestreview-5942399989).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge.</sub>  <!-- autofixer:contributor-review:d62d8341c981c14d4f6cd92527678fd42349b915 --> <!-- autofixer:contributor-review-recommends:d62d8341c981c14d4f6cd92527678fd42349b915 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiYmJjNTQwYzg0MTEyZTVlYzVhZmE4MTQ0YTk1Mzc4MWJlMjM2ZTJjMiIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMTdUMTU6MTM6MDQuMjc2WiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24iOnsidmFsdWUiOiJyZWNvbW1lbmQiLCJyZWFzb24iOiJNYXRjaGVzIFBvc3RncmVTUUwgZm9yIGAkMGAgaW4gU0VMRUNULCBJTlNFUlQsIFVQREFURSBhbmQgREVGQVVMVDsgb25lLWJyYW5jaCBjaGFuZ2U7IHRoZSBuZXcgc3FsdGVzdCBmYWlscyBvbiBt
+  > ### Autofixer follow-ups  - Filed #12003: Every simple-query statement that references $N with no parameters bound…  <!-- autofixer:follow-up-filed:0:12003 --> <!-- autofixer:follow-ups-done -->
 
-- **Issue #11879** (2026-11-16): **tests: move the tests of the schema code that left util out of core**
-  *Symptoms*: `core/util.rs` had 17 unit tests that parse SQL, so they need a dialect. Core is to stop having one (#11816). This moves them to `tests/integration`.  #11878 moved the code under test into public modules (`schema::alter_table`, `schema::view`, `dialect`). The functions the tests call became public API there, so this PR needs no change to core code.  ## What moves  | Tests | From | To | |---|---|---| | 15 tests of the `ALTER TABLE` rewriting (`rewrite_view_sql_for_column_rename`, `rewrite_select_table_refs`) | `core/util.rs` | new file `tests/integration/alter_table.rs` | | 1 test of the columns of a view (`extract_view_columns`) | `core/util.rs` | `tests/integration/views.rs` | | 1 test of `sql_is_create_virtual_table` | `core/util.rs` | `tests/integration/dialect.rs` |  - No core code changes. In core only the 17 tests, the helpers that only they used, and imports are removed. - The test bodies are unchanged apart from the paths of what they call. - The view test uses three helpers of `alter_table.rs` (`schema_with_a_table_t_in_two_namespaces`, `select`, `column_names`), which are `pub(crate)` for that. Its sibling test in `alter_table.rs` uses the same fixture.  ## Testing  - `cargo test -p core_tester --test integration_tests -- alter_table:: views:: dialect::`: 39 passed. - `cargo test -p turso_core --lib util::`: 71 passed. - The test names under `core` and `tests/integration` are the same before and after (3950). - `cargo clippy --workspace --all-features --all-targets 
+- **Issue #11975** (2026-11-17): **postgres: fix pg_get_expr for integer edge cases and negative zero**
+  *Symptoms*: Replaces #11949, which was merged into the branch of #11930 instead of main.  The fix is the last two commits:  - `postgres: print -2147483648 as an integer in pg_get_expr` - `postgres: print -0.0 as 0.0 in pg_get_expr`  They change `postgres/frontend/deparse.rs`, which #11930 adds and main does not have yet, so this branch also holds the commits of #11930 (and of #11743, which #11930 is built on). It has the same content as #11930 at `888fbe11c5`. Once #11930 is merged, this pull request has nothing left to merge and can be closed; merging this one instead makes #11930 redundant.  ## What the fix does  `pg_get_expr` and `pg_get_constraintdef` printed `DEFAULT -2147483648` and `CHECK (id > -2147483648)` as `'-2147483648'::bigint`. PostgreSQL 18 prints `'-2147483648'::integer`. The printer chose the type from the positive number, and 2147483648 is a bigint; it now chooses integer or bigint from the negative number.  Also, as PostgreSQL prints them:  - `-9223372036854775808` is printed as `'-9223372036854775808'::bigint` - `-0` is printed as `0`, and `-0.0` as `0.0`  ## Tests  New cases in the `deparse.rs` unit tests, `functions.sqltest` and `catalog.sqltest`. Each fails without the change.  - `make -C postgres/conformance run`: 2606 passed, 2 skipped - `make -C postgres/conformance run-postgres` (PostgreSQL 18): 2526 passed, 82 skipped - `cargo test -p turso_pg --lib`: 118 passed - `cargo test -p turso_pg_tests --test integration_tests`: 624 passed
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1464,146 +1467,958 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e4d354c` (2026-11-13)
-**Commit Message**: core: require CREATE on the schema for the new owner of ALTER ... OWNER TO
+### Incident Patch 1: `328cd87f` (2026-11-12)
+**Commit Message**: postgres: list row-level security policies in pg_policy
 
-PostgreSQL lets a role that is not a superuser give its relation to
-another role only when it may SET ROLE to that role and that role has
-CREATE on the relation's schema. tursopg checked only the first, which
-did not matter while a role could set no role but itself. Now that a
-member may set the roles it is a member of, an owner could give its
-table to such a role where PostgreSQL refuses with "permission denied
-for schema public".
+pg_policy was always empty, so the policies of a database could not be
+listed from the catalog as in PostgreSQL.
 
-Only a superuser has CREATE on a schema until GRANT on schemas exists,
-so the new owner must be a superuser, or the role that already owns the
-relation, which changes nothing.
+pg_policy now has a row per policy, generated from the class catalog,
+with PostgreSQL's columns in PostgreSQL's order: oid, polname, polrelid,
+polcmd, polpermissive, polroles (with 0 for PUBLIC), polqual and
+polwithcheck.
 
-Tests: ownership.sqltest cases that pass on tursopg and PostgreSQL 18;
-the refused one succeeds before this change.
+polqual and polwithcheck hold the conditions as text, which pg_get_expr
+already returns unchanged, as for adbin and conbin. The catalog stores
+what the engine compiled a condition into, so the new deparse module
+prints that back the way PostgreSQL's pg_get_expr prints the condition:
+every operator in parentheses, IN as = ANY (ARRAY[...]), LIKE as ~~,
+and the casts PostgreSQL adds where types meet, such as 'x'::text,
+(v)::text for a varchar column, (1)::numeric for a numeric one and
+ARRAY[(1)::bigint, (2)::bigint] for a bigint one. It prints only the
+column types, functions and forms whose casts it knows; anything else,
+such as other functions, is shown as the engine's SQL.
 
-**File**: `core/translate/roles.rs` (modified, +45/-8)
+Tests: the pg-policy-* tests in row-security/catalog.sqltest fail
+without this change and pass against both tursopg and Pos
+
+**File**: `postgres/COMPAT.md` (modified, +4/-3)
 ```diff
-@@ -123,10 +123,26 @@ pub fn check_statement_privileges(
-                 // itself, such as a role it is a member of, as in
-                 // PostgreSQL. Anyone else must be the owner.
-                 ast::AlterTableBody::OwnerTo { role, .. } if owner => {
--                    if may_set_role(resolver, connection, role) {
--                        return Ok(());
-+                    match settable_role(resolver, connection, role) {
-+                        // As in PostgreSQL, a new owner also needs CREATE on
-+                        // the relation's schema, which only a superuser has
-+                        // until GRANT on schemas exists. Giving the relation
-+                        // to the role that owns it changes nothing.
-+                        Some(new_owner)
-+                            if resolver
-+                                .catalog
-+                                .dialect
-+                                .role_is_superuser(resolver.schema(), new_owner)
-+                                || table_owner(resolver, &alter.name) == Some(new_owner) =>
-+                        {
-+                            return Ok(())
-+                        }
-+                        Some(_) => create_in_schema_denial(&alter.name),
-+                        None => PermissionDenied::privilege(
-+                            Action::SetRole,
-+                            Object::Role(role_spec_name(role)),
-+                        ),
-                     }
--                    PermissionDenied::privilege(Action::SetRole, Object::Role(role_spec_name(role)))
-                 }
-                 ast::AlterTableBody::OwnerTo { .. } => owner_denial(),
-                 // Renaming also needs CREATE on the schema, as in
-@@ -272,17 +288,38 @@ fn may_act_as_owner(
-     })
- }
- 
--/// Whether the session may `SET ROLE` to `role`, which is what giving a
--/// relation to `role` takes.
--fn may_set_role(resolver: &Resolver, connection: &Arc<Connection>, role: &ast::RoleSpec) -> bool {
-+/// The role `role` names, if the current role may `SET ROLE` to it, which
-+/// is what giving a relation to `role` takes.
-+fn settable_role(
-+    resolver: &Resolver,
-+    connection: &Arc<Connection>,
-+    role: &ast::RoleSpec,
-+) -> Option<RoleId> {
-     let dialect = &resolver.catalog.dialect;
-     let schema = resolver.schema();
-     let target = match role {
-         ast::RoleSpec::CurrentRole => Some(connection.current_role()),
-         ast::RoleSpec::SessionUser => Some(connection.session_role()),
-         ast::RoleSpec::Name(name) => dialect.role_by_name(schema, name),
--    };
--    target.is_some_and(|target| dialect.can_set_role(schema, connection.current_role(), target))
-+    }?;
-+    dialect
-+        .can_set_role(schema, connection.current_role(), target)
-+        .then_some(target)
-+}
-+
-+/// The role that owns the table or view `name` of the main database names.
-+fn table_owner(resolver: &Resolver, name: &ast::QualifiedName) -> Option<RoleId> {
-+    let namespace = resolver.find_existing_table(name).ok().flatten()?;
-+    if namespace.database_id != MAIN_DB_ID {
-+        return None;
-+    }
-+    let normalized = crate::util::normalize_ident(name.name.as_str());
-+    resolver.with_schema(MAIN_DB_ID, |schema| {
-+        resolver
-+            .catalog
-+            .dialect
-+            .relation_owner(schema, namespace.id, &normalized)
-+    })
- }
- 
- /// The name a denial calls `role` by.
+@@ -86,8 +86,9 @@ The pg_catalog tables emulated (live, reflecting real schema): `pg_class`,
+ `pg_namespace`, `pg_attribute`, `pg_type` (builtin + array + enum types),
+ `pg_index`, `pg_constraint`, `pg_attrdef`, `pg_tables`, `pg_sequence`, `pg_sequences`,
+ `pg_database`, `pg_roles` (built-in `postgres` superuser and `pg_database_owner`, and roles from `CREATE ROLE`), `pg_auth_members` (memberships from `GRANT role TO role`), `pg_proc`, `pg_am`,
+-plus `pg_input_error_info`. Present but always empty: `pg_policy`,
+-`pg_trigger`, `pg_statistic_ext`, `pg_inherits`, `pg_rewrite`,
++`pg_policy` (row-level security policies, with `polqual` and `polwithcheck`
++as the text `pg_get_expr` prints), plus `pg_input_error_info`. Present but
++always empty: `pg_trigger`, `pg_statistic_ext`, `pg_inherits`, `pg_rewrite`,
+ `pg_foreign_table`, `pg_partitioned_table`, `pg_collation`,
+ `pg_publication*`, `pg_seclabels` (security labels are not supported).
+ `pg_description` contains the default `standard public schema` comment for
+@@ -440,7 +441,7 @@ Upgrade is not supported.
+ | Predefined roles | ❌ Not supported | |
+ | Privileges for setting configuration parameters | ❌ Not supported | |
+ | ROLES | 🟡 Partial | `CREATE ROLE name` with the options `BYPASSRLS`, `NOBYPASSRLS`, `INHERIT`, `NOINHERIT` and `NOLOGIN`, `SET [LOCAL] ROLE`, `RESET ROLE`, `SHOW role`; `GRANT role TO role` and `REVOKE role FROM role` by a superuser, shown in `pg_auth_members`, without `WITH ADMIN`, `WITH INHERIT`, `WITH SET`, `GRANTED BY` or `CASCADE`; a role may `SET ROLE` to the roles it is a member of, and with `INHERIT` has their privileges, acts as the owner of what they own, and is subject to their row-level security policies; roles that are not superusers may read and write the tables they own or were granted `SELECT`, `INSERT`, `UPDATE` and `DELETE` on, with SELECT also needed when a write reads the table's columns, and call `nextval` with `USAGE` or `UPDATE` and `setval` with `UPDATE` on the sequence, but not change the schema they do not own; `GRANT` and `REVOKE` of privileges on whole tables and sequences, `ALL` included, change `pg_class.relacl`; `TRUNCATE` needs the `TRUNCATE` privilege, and the `REFERENCES`, `TRIGGER` and `MAINTAIN` privileges let a role do nothing yet; `pg_roles` lists the built-in `postgres` superuser, `pg_database_owner`, and created roles; `DROP ROLE` is not supported; roles belong to one database file, not to the whole server as in PostgreSQL |
+-| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; `UPDATE` and `DELETE` change only the rows the policies of the command allow, with the `SELECT` policies too when the statement reads columns, and new rows of `INSERT` and `UPDATE` must pass `WITH CHECK`, and the `SELECT` policies with `RETURNING`, or the statement fails with 42501; `TRUNCATE` is not subject to policies, as in PostgreSQL; `INSERT ... ON CONFLICT DO UPDATE` checks the conflicting row against the `UPDATE` and `SELECT` policies and fails if it does not pass; a new row is checked after its `NOT NULL` constraints instead of before; `pg_policy` does not show policies; policies cannot use subqueries with `FROM`, and the columns they use cannot be renamed or dropped; `FORCE ROW LEVEL SECURITY` is not supported; views apply it as the view's owner, except that a superuser reading a view sees every row |
++| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; `UPDATE` and `DELETE` change only the rows the policies of the command allow, with the `SELECT` policies too when the statement reads columns, and new rows of `INSERT` and `UPDATE` must pass `WITH CHECK`, and the `SELECT` policies with `RETURNING`, or the statement fails with 42501; `TRUNCATE` is not subject to policies, as in PostgreSQL; `INSERT ... ON CONFLICT DO UPDATE` checks the conflicting row against the `UPDATE` and `SELECT` policies and fails if it does not pass; a new row is checked after its `NOT NULL` constraints instead of before; `pg_policy` lists the policies, with conditions printed as PostgreSQL's `pg_get_expr` prints them for common forms and as the engine's SQL otherwise; `pg_policies` does not show policies; policies cannot use subqueries with `FROM`, and the columns they use cannot be renamed or dropped; `FORCE ROW LEVEL SECURITY` is not supported; views apply it as the view's owner, except that a superuser reading a view sees every row |
+ | SCRAM-SHA-256 authentication | ❌ Not supported | |
+ | Search+bind mode operation for LDAP authentication | ❌ Not supported | |
+ | security_barrier option on views | ❌ Not supported | |
 ```
 
-**File**: `postgres/conformance/pg-sqltests/roles/ownership.sqltest` (modified, +29/-0)
+**File**: `postgres/MANUAL.md` (modified, +13/-1)
 ```diff
-@@ -504,3 +504,32 @@ test owner-may-give-its-table-to-a-role-it-is-a-member-of {
- expect {
-     postgres
- }
+@@ -170,7 +170,19 @@ runs for each row that the policy checks, and a subquery such as
+ `(SELECT auth.uid())` that reads no column of the row runs once per query,
+ so writing the call as a subquery is cheaper on large tables.
+ 
+-`pg_policy` and `pg_policies` do not show the policies yet.
++`pg_policy` lists the policies, with oids that stay the same for as long as
++the policy exists. Its `polqual` and `polwithcheck` columns hold the
++conditions as the text that `pg_get_expr(polqual, polrelid)` returns, printed
++as PostgreSQL prints them, with every operator in parentheses and casts such
++as `'x'::text` and `(1)::numeric`, rather than PostgreSQL's internal form.
++Conditions are printed this way when they use columns of type `boolean`,
++`smallint`, `integer`, `bigint`, `numeric(p, s)`, `text` or `varchar`,
++constants, comparisons, arithmetic, `AND`, `OR`, `NOT`, `IS [NOT] NULL`,
++`IN` with a list of constants, `BETWEEN`, `LIKE`, role keywords such as
++`current_user`, `lower`, `upper`, `length`, `abs`, `COALESCE` and
++`(SELECT ...)` without `FROM`; other conditions, such as ones with other
++functions, casts or `CASE`, are shown as the engine's SQL. `pg_policies`
++does not show the policies yet.
+ 
+ Materialized views store the rows of their query when they are refreshed, so
+ a role that reads a materialized view built on a table with row-level
+```
+
+**File**: `postgres/conformance/pg-sqltests/row-security/catalog.sqltest` (added, +179/-0)
+```diff
+@@ -0,0 +1,179 @@
++# How pg_policy shows row-level security policies, through the PostgreSQL
++# frontend. Oids differ between servers, so the tests compare them instead
++# of printing them. pg_get_expr prints a condition as PostgreSQL's ruleutils
++# does: every operator in parentheses, and a cast where a quoted literal
++# meets a column.
++# PostgreSQL roles belong to the whole server, so every test uses its own
++# role and table names.
 +
-+# The new owner also needs CREATE on the relation's schema, which only a
-+# superuser has here and in PostgreSQL's public schema.
-+test owner-may-not-give-its-table-to-a-role-without-create-on-the-schema {
-+    CREATE ROLE ro_no_create_owner;
-+    CREATE ROLE ro_no_create_group;
-+    CREATE TABLE ro_no_create_given (x INT);
-+    ALTER TABLE ro_no_create_given OWNER TO ro_no_create_owner;
-+    GRANT ro_no_create_group TO ro_no_create_owner;
-+    SET ROLE ro_no_create_owner;
-+    ALTER TABLE ro_no_create_given OWNER TO ro_no_create_group;
-+}
-+@sqlstate 42501
-+expect error {
-+    permission denied for schema public
-+}
++@database :memory:
 +
-+test owner-may-give-its-table-to-itself-without-create-on-the-schema {
-+    CREATE ROLE ro_same_owner;
-+    CREATE TABLE ro_same_owner_kept (x INT);
-+    ALTER TABLE ro_same_owner_kept OWNER TO ro_same_owner;
-+    SET ROLE ro_same_owner;
-+    ALTER TABLE ro_same_owner_kept OWNER TO ro_same_owner;
-+    RESET ROLE;
-+    SELECT pg_get_userbyid(relowner) FROM pg_class WHERE relname = 'ro_same_owner_kept';
++test pg-policy-shows-command-kind-roles-and-conditions {
++    CREATE ROLE pp_alice_1;
++    CREATE ROLE pp_bob_1;
++    CREATE TABLE pp_docs_1 (id INT PRIMARY KEY, owner TEXT, published BOOLEAN);
++    CREATE POLICY p_all ON pp_docs_1 USING (owner = current_user);
++    CREATE POLICY p_select ON pp_docs_1 AS RESTRICTIVE FOR SELECT TO pp_alice_1, pp_bob_1
++        USING (published);
++    CREATE POLICY p_insert ON pp_docs_1 FOR INSERT TO pp_alice_1 WITH CHECK (id > 0);
++    CREATE POLICY p_update ON pp_docs_1 FOR UPDATE
++        USING (id > 0) WITH CHECK (id < 100 AND owner IS NOT NULL);
++    CREATE POLICY p_delete ON pp_docs_1 AS PERMISSIVE FOR DELETE TO PUBLIC
++        USING (NOT published);
++    SELECT polname, polcmd, polpermissive,
++           CASE WHEN polroles = '{0}' THEN 'public' ELSE 'named roles' END,
++           pg_get_expr(polqual, polrelid), pg_get_expr(polwithcheck, polrelid)
++    FROM pg_policy
++    WHERE polrelid = (SELECT oid FROM pg_class WHERE relname = 'pp_docs_1')
++    ORDER BY polname;
++    SELECT pol.polname, r.rolname
++    FROM pg_policy pol JOIN pg_roles r ON r.oid = ANY (pol.polroles)
++    WHERE pol.polrelid = (SELECT oid FROM pg_class WHERE relname = 'pp_docs_1')
++    ORDER BY 1, 2;
 +}
 +expect {
-+    ro_same_owner
++    p_all|*|t|public|(owner = CURRENT_USER)|
++    p_delete|d|t|public|(NOT published)|
++    p_insert|a|t|named roles||(id > 0)
++    p_select|r|f|named roles|published|
++    p_update|w|t|public|(id > 0)|((id < 100) AND (owner IS NOT NULL))
++    p_insert|pp_alice_1
++    p_select|pp_alice_1
++    p_select|pp_bob_1
 +}
++
++test pg-policy-prints-conditions-as-postgres-does {
++    CREATE TABLE pp_docs_2 (id INT, owner TEXT, published BOOLEAN, n BIGINT,
++                            v VARCHAR(10), "Weird Col" INT, price NUMERIC(10, 2));
++    CREATE POLICY p1 ON pp_docs_2 USING (pp_docs_2.owner = (SELECT current_user));
++    CREATE POLICY p2 ON pp_docs_2 USING (true) WITH CHECK (false);
++    CREATE POLICY p3 ON pp_docs_2 USING (NOT published OR id IN (1, 2));
++    CREATE POLICY p4 ON pp_docs_2 USING (owner = 'a''b' AND v = 'x' AND n > 5 AND id = -1);
++    CREATE POLICY p5 ON pp_docs_2 USING ("Weird Col" IS NULL OR id IS NOT NULL);
++    CREATE POLICY p6 ON pp_docs_2
++        USING (id + 1 * 2 > 3 AND lower(owner) <> 'x' AND owner LIKE 'a%');
++    CREATE POLICY p7 ON pp_docs_2
++        USING (session_user = owner AND id BETWEEN 1 AND 3 AND price > 1.5);
++    CREATE POLICY p8 ON pp_docs_2
++        USING ((id > 0 AND id < 5) OR (id > 10 AND (id < 20 OR id = 30)));
++    CREATE POLICY p9 ON pp_docs_2
++        USING (coalesce(id, 0) = 0 AND owner IN ('a', 'b') AND id NOT IN (1) AND id != 3);
++    CREATE POLICY p10 ON pp_docs_2
++        USING (current_user = 'x' AND id = 2147483648 AND current_role = owner);
++    SELECT polname, pg_get_expr(polqual, polrelid), pg_get_expr(polwithcheck, polrelid)
++    FROM pg_policy
++    WHERE polrelid = (SELECT oid FROM pg_class WHERE relname = 'pp_docs_2')
++    ORDER BY length(polname), polname;
++}
++expect {
++    p1|(owner = ( SELECT CURRENT_USER AS "current_user"))|
++    p2|true|false
++    p3|((NOT published) OR (id = ANY (ARRAY[1, 2])))|
++    p4|((owner = 'a''b'::text) AND ((v)::text = 'x'::text) AND (n > 5) AND (id = '-1'::integer))|
++    p5|(("Weird Col" IS NULL) OR (id IS NOT NULL))|
++    p6|(((id + (1 * 2)) > 3) AND (lower(owner) <> 'x'::text) AND (owner ~~ 'a%'::text))|
++    p7|((SESSION_USER = owner) AND ((id >= 1) AND (id <= 3)) AND (price > 1.5))|
++    p8|(((id > 0) AND (id < 5)) OR ((id > 10) AND ((id < 20) OR (id = 30))))|
++    p9|((COALESCE(id, 0) = 0) AND (owner = ANY (ARRAY['a'::text, 'b'::text])) AND (id <> 1) AND (id <> 3))|
++    p10|((CURRENT_USER = 'x'::name) AND (id = '2147483648'::bigint) AND (CURRENT_ROLE = owner))|
++}
++
++# PostgreSQL casts the narrower of two number types to the wider one, the
++# elements of an IN list to the widest type of the list, and a varchar
++# argument of a text function to text, and prints each cast.
++test pg-policy-prints-implicit-casts-as-postgres-does {
++    CREATE TABLE pp_docs_9 (id INT, s SMALLINT, n BIGINT, m NUMERIC(10, 2), v VARCHAR(10),
++                            t TEXT);
++    CREATE POLICY p1 ON pp_docs_9 USING (n IN (1, -2) AND id IN (1, 3000000000));
++    CREATE POLICY p2 ON pp_docs_9 USING (m = 1 AND m = id AND m = n AND id > 1.5);
++    CREATE POLICY p3 ON pp_docs_9 USING (m + 1 > 2 AND m IN (1.5, 2) AND m BETWEEN 1 AND 2);
++    CREATE POLICY p4 ON pp_docs_9 USING (s = 1 AND s IN (1, 2) AND s = id AND id + n > 1);
++    CREATE POLICY p5 ON pp_docs_9 USING (uppe
+```
+
+**File**: `postgres/frontend/catalog.rs` (modified, +106/-4)
+```diff
+@@ -15,6 +15,7 @@ use turso_core::{
+         generated_expr_with_names, BTreeTable, GeneratedType, Schema, Sequence, Table, UniqueSet,
+         AUTOINCREMENT_SEQ_PREFIX,
+     },
++    security::policy::RowPolicy,
+     security::roles::RoleId,
+     walk_expr_mut, Connection, Dialect, Func, IOResult, LimboError, NamespaceId, NamespaceRef,
+     OpenOptions, Result, Statement, Value, WalkControl, MAIN_DB_ID,
+@@ -495,11 +496,17 @@ pub(crate) fn is_system_table_name(name: &str) -> bool {
+ /// Map a SQLite type string to a PostgreSQL type OID.
+ /// Strips parenthesized parameters (e.g. `varchar(100)` -> `VARCHAR`) before matching.
+ fn sqlite_type_to_pg_oid(ty_str: &str) -> i64 {
++    pg_type_oid(ty_str).unwrap_or(25) // default to text
++}
++
++/// The oid of the PostgreSQL type of a column declared as `ty_str`, or None
++/// for a type name tursopg does not know.
++pub(crate) fn pg_type_oid(ty_str: &str) -> Option<i64> {
+     let base = match ty_str.find('(') {
+         Some(pos) => &ty_str[..pos],
+         None => ty_str,
+     };
+-    match base.to_uppercase().as_str() {
++    let oid = match base.to_uppercase().as_str() {
+         "INTEGER" | "INT" | "INT4" => 23,
+         "SMALLINT" | "INT2" => 21,
+         "BIGINT" | "INT8" => 20,
+@@ -522,8 +529,9 @@ fn sqlite_type_to_pg_oid(ty_str: &str) -> i64 {
+         "CIDR" => 650,
+         "MACADDR" => 829,
+         "OID" => 26,
+-        _ => 25, // default to text
+-    }
++        _ => return None,
++    };
++    Some(oid)
+ }
+ 
+ /// The oid of relation `name` of `namespace`, from its stored class row.
+@@ -1564,6 +1572,100 @@ impl SnapshotRows for PgTablesTable {
+     }
+ }
+ 
++#[derive(Debug)]
++struct PgPolicyTable;
++
++impl SnapshotRows for PgPolicyTable {
++    const SCHEMA: &'static str = "CREATE TABLE pg_policy (
++            oid INTEGER,
++            polname TEXT,
++            polrelid INTEGER,
++            polcmd TEXT,
++            polpermissive BOOLEAN,
++            polroles INTEGER[],
++            polqual TEXT,
++            polwithcheck TEXT,
++            tableoid INTEGER HIDDEN
++        )";
++    /// PostgreSQL's oid of pg_policy.
++    const TABLE_OID: Option<i64> = Some(3256);
++    const ESTIMATED_COST: f64 = 100.0;
++    const ESTIMATED_ROWS: u32 = 50;
++
++    /// `polqual` and `polwithcheck` hold the conditions as text, which
++    /// `pg_get_expr` returns as it is.
++    fn load_rows(conn: &Connection) -> Vec<Vec<Value>> {
++        let schema = conn.current_schema();
++        catalog_policies(&schema)
++            .into_iter()
++            .map(|policy| {
++                let roles = policy
++                    .policy
++                    .roles
++                    .iter()
++                    .map(|role| role_oid(*role).to_string())
++                    .collect::<Vec<_>>()
++                    .join(",");
++                vec![
++                    Value::from_i64(policy.oid),
++                    Value::build_text(policy.policy.name.clone()),
++                    Value::from_i64(policy.table_oid),
++                    Value::build_text(
++                        crate::policies::command_letter(policy.policy.command).to_string(),
++                    ),
++                    Value::from_i64(i64::from(policy.policy.permissive)),
++                    Value::build_text(format!("{{{roles}}}")),
++                    policy.qual.map_or(Value::Null, Value::build_text),
++                    policy.with_check.map_or(Value::Null, Value::build_text),
++                ]
++            })
++            .collect()
++    }
++}
++
++/// A row-level security policy as the catalogs show it.
++struct CatalogPolicy<'a> {
++    oid: i64,
++    table_oid: i64,
++    policy: &'a RowPolicy,
++    /// The `USING` condition as PostgreSQL prints it.
++    qual: Option<String>,
++    /// The `WITH CHECK` condition as PostgreSQL prints it.
++    with_check: Option<String>,
++}
++
++/// The policies of every table, ordered by table oid and then as created.
++fn catalog_policies(schema: &Schema) -> Vec<CatalogPolicy<'_>> {
++    let Some(catalog) = crate::classes::class_catalog(schema) else {
++        return Vec::new();
++    };
++    let mut policies = Vec::new();
++    for class in catalog.classes() {
++        if class.relpolicies.is_empty() {
++            continue;
++        }
++        let Some(table) = schema.get_btree_table(class.relnamespace, &class.relname) else {
++            continue;
++        };
++        let condition_text = |condition: &Option<ast::Expr>| {
++            condition.as_ref().map(|condition| {
++                crate::deparse::condition_text(condition, &table)
++                    .unwrap_or_else(|| render_expr(condition))
++            })
++        };
++        for (oid, policy) in class.relpolicies.iter() {
++            policies.push(CatalogPolicy {
++                oid,
++                table_oid: class.oid,
++                policy,
++                qual: condition_text(&policy.using_expr),
++                with_check: condition_text(&policy.check_expr),
++            });
++        }
++    }
++    policies
+```
+
+**File**: `postgres/frontend/classes.rs` (modified, +5/-0)
+```diff
+@@ -201,6 +201,11 @@ impl ClassCatalog {
+         Ok(catalog)
+     }
+ 
++    /// The class rows, ordered by oid.
++    pub(crate) fn classes(&self) -> impl Iterator<Item = &RelationClass> {
++        self.by_oid.values()
++    }
++
+     pub(crate) fn get_by_name(&self, namespace: NamespaceId, name: &str) -> Option<&RelationClass> {
+         self.oids_by_name
+             .get(&(namespace, name.to_string()))
+```
+
+**File**: `postgres/frontend/deparse.rs` (added, +704/-0)
+```diff
+@@ -0,0 +1,704 @@
++//! PostgreSQL's text of a row-level security condition, as `pg_get_expr`
++//! prints it for `pg_policy.polqual` and `pg_policies.qual`.
++//!
++//! The catalog stores what the engine compiled the condition into, so this
++//! turns the engine's forms back into PostgreSQL's: `GLOB 'a*'` is printed
++//! as `~~ 'a%'::text`, `CAST (1 AS boolean)` as `true`. PostgreSQL prints the
++//! condition after resolving types, with every operator in parentheses and
++//! the casts PostgreSQL adds where types meet, such as `'x'::text`,
++//! `(v)::text` for a `varchar` column and `(1)::numeric` for a `numeric`
++//! one, so the printer follows the types of the table's columns. A form it
++//! does not know how to print as PostgreSQL does gives None.
++
++use turso_core::schema::BTreeTable;
++use turso_parser::ast;
++use turso_pg_parser::quote_identifier;
++use turso_pg_parser::translator::role_keyword;
++
++use crate::catalog::pg_type_oid;
++use crate::functions::quote_literal;
++
++/// PostgreSQL's text of `condition`, a condition on the columns of `table`,
++/// or None when it has a form this module does not print.
++pub(crate) fn condition_text(condition: &ast::Expr, table: &BTreeTable) -> Option<String> {
++    let printed = Printer { table }.expr(condition)?;
++    Some(printed.typed_text(None))
++}
++
++/// The types that decide how PostgreSQL prints an expression.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum PgType {
++    Boolean,
++    Smallint,
++    Integer,
++    Bigint,
++    Numeric,
++    Text,
++    Varchar,
++    /// The type of `current_user` and the other role keywords.
++    Name,
++    /// A quoted literal that has no type until it meets another operand.
++    UnknownLiteral,
++    Other,
++}
++
++impl PgType {
++    fn of_column(declared: &str) -> Self {
++        // tursopg shows a `char` column as `varchar`, but PostgreSQL
++        // compares it as `bpchar`, which this module does not print.
++        let base = declared.split('(').next().unwrap_or("").trim();
++        if matches!(
++            base.to_ascii_uppercase().as_str(),
++            "CHAR" | "NCHAR" | "CHARACTER"
++        ) {
++            return Self::Other;
++        }
++        match pg_type_oid(declared) {
++            Some(16) => Self::Boolean,
++            Some(21) => Self::Smallint,
++            Some(23) => Self::Integer,
++            Some(20) => Self::Bigint,
++            Some(1700) => Self::Numeric,
++            Some(25) => Self::Text,
++            Some(1043) => Self::Varchar,
++            _ => Self::Other,
++        }
++    }
++
++    /// The place of a number type in PostgreSQL's implicit casts: a value
++    /// is cast to a type further along, never back.
++    fn number_rank(self) -> Option<u8> {
++        match self {
++            Self::Smallint => Some(0),
++            Self::Integer => Some(1),
++            Self::Bigint => Some(2),
++            Self::Numeric => Some(3),
++            _ => None,
++        }
++    }
++
++    fn is_integer(self) -> bool {
++        self.number_rank().is_some_and(|rank| rank <= 2)
++    }
++
++    fn is_string(self) -> bool {
++        matches!(
++            self,
++            Self::Text | Self::Varchar | Self::Name | Self::UnknownLiteral
++        )
++    }
++
++    /// The name PostgreSQL prints in a cast to the type.
++    fn cast_name(self) -> &'static str {
++        match self {
++            Self::Smallint => "smallint",
++            Self::Integer => "integer",
++            Self::Bigint => "bigint",
++            Self::Numeric => "numeric",
++            _ => unreachable!("only number types are cast to"),
++        }
++    }
++
++    /// The type of the two number types PostgreSQL casts both to.
++    fn wider_number(self, other: Self) -> Option<Self> {
++        let rank = self.number_rank()?.max(other.number_rank()?);
++        Some(if self.number_rank() == Some(rank) {
++            self
++        } else {
++            other
++        })
++    }
++}
++
++/// An expression as PostgreSQL prints it, and its type.
++struct Printed {
++    text: String,
++    ty: PgType,
++    /// Whether the expression is a constant, such as `1`, `-1` or `'x'`.
++    constant: bool,
++}
++
++impl Printed {
++    fn new(text: impl Into<String>, ty: PgType) -> Self {
++        Self {
++            text: text.into(),
++            ty,
++            constant: false,
++        }
++    }
++
++    fn constant(text: impl Into<String>, ty: PgType) -> Self {
++        Self {
++            constant: true,
++            ..Self::new(text, ty)
++        }
++    }
++
++    /// The text of the number cast to the number type `ty`, as PostgreSQL
++    /// prints an implicit cast: `(1)::numeric`, `(id)::bigint`.
++    fn cast_text(&self, ty: PgType) -> String {
++        if self.ty == ty {
++            self.text.clone()
++        } else {
++            format!("({})::{}", self.text, ty.cast_name())
++        }
++    }
++
++    /// The text where the expression meets an operand of type `other`: a
++    /// quoted literal takes that type, `text` when there is none, and a
++    /// `varchar` column is compared as `t
+```
+
+**File**: `postgres/frontend/functions.rs` (modified, +11/-9)
+```diff
+@@ -653,19 +653,21 @@ fn exec_version() -> String {
+ /// form so the result reads back identically regardless of
+ /// standard_conforming_strings.
+ fn exec_quote_literal(value: &Value) -> Option<String> {
+-    if matches!(value, Value::Null) {
+-        return None;
++    match value {
++        Value::Null => None,
++        Value::Text(t) => Some(quote_literal(t.as_str())),
++        other => Some(quote_literal(&other.to_string())),
+     }
+-    let text = match value {
+-        Value::Text(t) => t.as_str().to_string(),
+-        other => other.to_string(),
+-    };
+-    let quoted = if text.contains('\\') {
++}
++
++/// `text` as PostgreSQL's quote_literal() writes it: in single quotes, with
++/// quotes doubled, and as an escape string when it has a backslash.
++pub(crate) fn quote_literal(text: &str) -> String {
++    if text.contains('\\') {
+         format!("E'{}'", text.replace('\\', "\\\\").replace('\'', "''"))
+     } else {
+         format!("'{}'", text.replace('\'', "''"))
+-    };
+-    Some(quoted)
++    }
+ }
+ 
+ /// PostgreSQL's json_strip_nulls(json): drops object fields whose value is null,
+```
+
+**File**: `postgres/frontend/lib.rs` (modified, +1/-0)
+```diff
+@@ -4,6 +4,7 @@ mod auth_members;
+ mod catalog;
+ mod classes;
+ mod copy;
++mod deparse;
+ mod error;
+ mod functions;
+ mod open;
+```
+
+---
+
+### Incident Patch 2: `fb8a461f` (2026-11-12)
+**Commit Message**: postgres: give each row-level security policy an oid
+
+pg_policy identifies each policy by its oid, so a policy needs one that
+stays the same for as long as it exists.
+
+CREATE POLICY takes the next oid from the counter that relations use,
+the sqlite_sequence row of __turso_internal_classes, so no oid is used
+twice in one database, and stores it with the policy in relpolicies. The
+oid is only known when the statement runs, so the stored text is built
+around it at run time.
+
+No release stored policies, so every stored policy has an oid, and a
+stored policy without one makes the catalog row invalid.
+
+Tests: policies_take_oids_from_the_relation_oid_counter_and_keep_them_across_a_reopen
+fails without this change.
+
+**File**: `postgres/frontend/classes.rs` (modified, +135/-92)
+```diff
+@@ -24,7 +24,8 @@
+ //! Oids start at 16384, PostgreSQL's `FirstNormalObjectId`, and are never
+ //! reused inside one database, even after the relation is dropped: the
+ //! highest oid ever used is kept in `sqlite_sequence` under the catalog's
+-//! own name, like an AUTOINCREMENT table's watermark.
++//! own name, like an AUTOINCREMENT table's watermark. Row-level security
++//! policies take their oids from the same counter.
+ 
+ use std::collections::{BTreeMap, HashMap};
+ use std::sync::Arc;
+@@ -55,7 +56,7 @@ use crate::auth_members::{
+ };
+ use crate::catalog::{engine_role_by_name, role_oid, role_oid_by_name};
+ use crate::error::sqlstate_error;
+-use crate::policies;
++use crate::policies::{self, TablePolicies};
+ use crate::roles::{
+     schema_roles, AUTHID_TABLE_NAME, CREATE_AUTHID_NAME_INDEX_SQL, CREATE_AUTHID_TABLE_SQL,
+ };
+@@ -143,7 +144,7 @@ pub(crate) struct RelationClass {
+     /// Whether the table has row-level security.
+     pub(crate) relrowsecurity: bool,
+     /// The table's row-level security policies.
+-    pub(crate) relpolicies: Vec<RowPolicy>,
++    pub(crate) relpolicies: TablePolicies,
+ }
+ 
+ impl RelationClass {
+@@ -244,7 +245,7 @@ impl ClassCatalog {
+                     relownedbycolumn: None,
+                     relacl: None,
+                     relrowsecurity: false,
+-                    relpolicies: Vec::new(),
++                    relpolicies: TablePolicies::default(),
+                 });
+             }
+             CatalogChange::Drop { namespace, name } => {
+@@ -427,7 +428,7 @@ fn class_from_row(row: &[Value]) -> turso_core::Result<RelationClass> {
+                 _ => return Err(corrupt_row(row)),
+             };
+             let relpolicies = match relpolicies {
+-                Value::Null => Vec::new(),
++                Value::Null => TablePolicies::default(),
+                 Value::Text(text) => {
+                     policies::parse(text.as_str()).ok_or_else(|| corrupt_row(row))?
+                 }
+@@ -596,9 +597,9 @@ fn read_back_acl(value: &Value) -> turso_core::Result<Option<Acl>> {
+     }
+ }
+ 
+-fn read_back_policies(value: &Value) -> turso_core::Result<Vec<RowPolicy>> {
++fn read_back_policies(value: &Value) -> turso_core::Result<TablePolicies> {
+     match value {
+-        Value::Null => Ok(Vec::new()),
++        Value::Null => Ok(TablePolicies::default()),
+         Value::Text(text) => policies::parse(text.as_str()).ok_or_else(|| {
+             LimboError::InternalError(format!(
+                 "the relation change read back invalid policies {text:?}"
+@@ -628,9 +629,12 @@ pub(crate) fn translate_catalog_changes(
+     connection: &Arc<Connection>,
+     changes: &[CatalogChange],
+ ) -> turso_core::Result<()> {
+-    let allocates_oids = changes
+-        .iter()
+-        .any(|change| matches!(change, CatalogChange::Create { .. }));
++    let allocates_oids = changes.iter().any(|change| {
++        matches!(
++            change,
++            CatalogChange::Create { .. } | CatalogChange::CreatePolicy { .. }
++        )
++    });
+     let changes_owner_or_privileges = changes.iter().any(|change| {
+         matches!(
+             change,
+@@ -948,11 +952,7 @@ pub(crate) fn translate_catalog_changes(
+             } => {
+                 let class = table_class(schema, *namespace, name)?;
+                 let policy_name = policy.policy_name.as_str();
+-                if class
+-                    .relpolicies
+-                    .iter()
+-                    .any(|existing| existing.name == policy_name)
+-                {
++                if class.relpolicies.contains(policy_name) {
+                     return Err(sqlstate_error(
+                         SQLSTATE_DUPLICATE_OBJECT,
+                         format!("policy \"{policy_name}\" for table \"{name}\" already exists"),
+@@ -963,20 +963,20 @@ pub(crate) fn translate_catalog_changes(
+                     .iter()
+                     .map(|role| resolve_policy_role(schema, connection, role))
+                     .collect::<turso_core::Result<Vec<_>>>()?;
+-                let mut relpolicies = class.relpolicies.clone();
+-                relpolicies.push(RowPolicy {
+-                    name: policy_name.to_string(),
+-                    permissive: policy.permissive,
+-                    command: policy.command,
+-                    roles,
+-                    using_expr: policy.using_expr.as_deref().cloned(),
+-                    check_expr: policy.check_expr.as_deref().cloned(),
+-                });
+-                let stored = policies::stored_text(&relpolicies);
++                let (before_oid, after_oid) =
++                    class.relpolicies.stored_text_around_new_oid(RowPolicy {
++                        name: policy_name.to_string(),
++                        permissive: policy.permissive,
++                        command: policy.command,
++                        roles,
++                        using_expr: policy.using_expr.as_deref().cloned(),
++                        check_expr: policy.check_expr.as_deref().cloned(),
+
+```
+
+**File**: `postgres/frontend/policies.rs` (modified, +144/-44)
+```diff
+@@ -8,6 +8,7 @@
+ //!
+ //! | key             | value                                                  |
+ //! |-----------------|--------------------------------------------------------|
++//! | `oid`           | the policy's oid                                       |
+ //! | `polname`       | policy name                                            |
+ //! | `polcmd`        | `*` for ALL, `r` SELECT, `a` INSERT, `w` UPDATE, `d` DELETE |
+ //! | `polpermissive` | `true` for `AS PERMISSIVE`, `false` for `AS RESTRICTIVE` |
+@@ -17,6 +18,9 @@
+ //!
+ //! The conditions are what the engine compiled `CREATE POLICY` into, written
+ //! out as SQL and read back with the engine's parser.
++//!
++//! Policies take their oids from the same counter as relations, so an oid
++//! is never used twice in one database.
+ 
+ use serde::{Deserialize, Serialize};
+ use turso_core::security::policy::RowPolicy;
+@@ -26,6 +30,7 @@ use turso_parser::parser::Parser;
+ 
+ #[derive(Serialize, Deserialize)]
+ struct StoredPolicy {
++    oid: i64,
+     polname: String,
+     polcmd: String,
+     polpermissive: bool,
+@@ -34,43 +39,108 @@ struct StoredPolicy {
+     polwithcheck: Option<String>,
+ }
+ 
+-/// Reads the stored form, which [`stored_text`] writes. None when it is not
+-/// valid.
+-pub(crate) fn parse(text: &str) -> Option<Vec<RowPolicy>> {
++/// The row-level security policies of a table, in the order they were
++/// created, with their oids.
++#[derive(Debug, Clone, Default, PartialEq, Eq)]
++pub(crate) struct TablePolicies {
++    policies: Vec<RowPolicy>,
++    /// The oid of each policy of `policies`.
++    oids: Vec<i64>,
++}
++
++impl TablePolicies {
++    pub(crate) fn as_slice(&self) -> &[RowPolicy] {
++        &self.policies
++    }
++
++    pub(crate) fn is_empty(&self) -> bool {
++        self.policies.is_empty()
++    }
++
++    /// The policies with their oids.
++    pub(crate) fn iter(&self) -> impl Iterator<Item = (i64, &RowPolicy)> {
++        self.oids.iter().copied().zip(&self.policies)
++    }
++
++    pub(crate) fn contains(&self, name: &str) -> bool {
++        self.policies.iter().any(|policy| policy.name == name)
++    }
++
++    /// The policies without the one named `name`.
++    pub(crate) fn without(&self, name: &str) -> Self {
++        let (oids, policies) = self
++            .iter()
++            .filter(|(_, policy)| policy.name != name)
++            .map(|(oid, policy)| (oid, policy.clone()))
++            .unzip();
++        Self { policies, oids }
++    }
++
++    /// The stored form of the policies.
++    pub(crate) fn stored_text(&self) -> String {
++        let stored: Vec<StoredPolicy> = self
++            .iter()
++            .map(|(oid, policy)| stored_policy(oid, policy))
++            .collect();
++        serde_json::to_string(&stored).expect("a policy list serializes")
++    }
++
++    /// The stored form of the policies and `added` after them, split where
++    /// the oid of `added` goes: the statement that adds it only learns its
++    /// oid when it runs.
++    pub(crate) fn stored_text_around_new_oid(&self, added: RowPolicy) -> (String, String) {
++        // No other policy has oid 0, and a quote inside a JSON string is
++        // escaped, so the marker only matches where the added policy starts.
++        const MARKER: &str = r#"{"oid":0,"#;
++        let mut with_added = self.clone();
++        with_added.policies.push(added);
++        with_added.oids.push(0);
++        let text = with_added.stored_text();
++        let added_at = text.rfind(MARKER).expect("the added policy is stored last");
++        let oid_at = added_at + r#"{"oid":"#.len();
++        (
++            text[..oid_at].to_string(),
++            text[oid_at + "0".len()..].to_string(),
++        )
++    }
++}
++
++/// Reads the stored form, which [`TablePolicies::stored_text`] writes. None
++/// when it is not valid.
++pub(crate) fn parse(text: &str) -> Option<TablePolicies> {
+     let stored: Vec<StoredPolicy> = serde_json::from_str(text).ok()?;
+-    stored
+-        .into_iter()
+-        .map(|policy| {
+-            Some(RowPolicy {
+-                name: policy.polname,
+-                permissive: policy.polpermissive,
+-                command: command_of_letter(&policy.polcmd)?,
+-                roles: policy
+-                    .polroles
+-                    .into_iter()
+-                    .map(role_of_stored)
+-                    .collect::<Option<_>>()?,
+-                using_expr: parse_optional_condition(policy.polqual.as_deref())?,
+-                check_expr: parse_optional_condition(policy.polwithcheck.as_deref())?,
+-            })
+-        })
+-        .collect()
++    let mut policies = TablePolicies::default();
++    for policy in stored {
++        if policy.oid <= 0 {
++            return None;
++        }
++        policies.oids.push(policy.oid);
++        policies.policies.push(RowPolicy {
++            name: policy.polname,
++            permissive: policy.polpermissive,
++            command: command_of_letter(&policy.polcmd)?,
++            roles: policy
++                .polroles
++
+```
+
+**File**: `postgres/tests/integration/postgres/classes.rs` (modified, +59/-0)
+```diff
+@@ -793,6 +793,65 @@ fn a_rolled_back_revoke_leaves_the_list_as_it_was(db: TempDatabase) {
+     pg.execute("SELECT x FROM t").unwrap();
+ }
+ 
++#[test]
++fn policies_take_oids_from_the_relation_oid_counter_and_keep_them_across_a_reopen() {
++    let db = TempDatabase::builder().build();
++    let pg = db.connect_postgres();
++    let conn = db.connect_limbo();
++    pg.execute("CREATE TABLE t (x INTEGER)").unwrap();
++    pg.execute("CREATE POLICY first ON t USING (x = 1)")
++        .unwrap();
++    pg.execute("CREATE POLICY second ON t USING (x = 2)")
++        .unwrap();
++    pg.execute("CREATE TABLE u (x INTEGER)").unwrap();
++    assert_eq!(
++        stored_policy_oids(&conn, "t"),
++        vec![("first".to_string(), 16385), ("second".to_string(), 16386)]
++    );
++    assert_eq!(class_row(&conn, "u").unwrap().0, 16387);
++
++    // The dropped policy had the highest oid, which is not used again.
++    pg.execute("DROP POLICY second ON t").unwrap();
++    pg.execute("CREATE POLICY third ON t USING (x = 3)")
++        .unwrap();
++    assert_eq!(
++        stored_policy_oids(&conn, "t"),
++        vec![("first".to_string(), 16385), ("third".to_string(), 16388)]
++    );
++
++    drop(pg);
++    drop(conn);
++    let db = db.reopen();
++    let pg = db.connect_postgres();
++    let conn = db.connect_limbo();
++    pg.execute("CREATE POLICY fourth ON t USING (x = 4)")
++        .unwrap();
++    assert_eq!(
++        stored_policy_oids(&conn, "t"),
++        vec![
++            ("first".to_string(), 16385),
++            ("third".to_string(), 16388),
++            ("fourth".to_string(), 16389)
++        ]
++    );
++}
++
++/// The policies of `relname` as `(polname, oid)`, read from the catalog
++/// table.
++fn stored_policy_oids(conn: &Arc<Connection>, relname: &str) -> Vec<(String, i64)> {
++    conn.prepare(format!(
++        "SELECT json_extract(p.value, '$.polname'), json_extract(p.value, '$.oid') \
++         FROM __turso_internal_classes c, json_each(c.relpolicies) p \
++         WHERE c.relname = '{relname}' ORDER BY p.key"
++    ))
++    .unwrap()
++    .run_collect_rows()
++    .unwrap()
++    .into_iter()
++    .map(|row| (row[0].to_string(), row[1].as_int().unwrap()))
++    .collect()
++}
++
+ /// A table without a class row is one the engine made for itself. Nobody
+ /// granted a role anything on it.
+ #[test]
+```
+
+---
+
+### Incident Patch 3: `6ee425e3` (2026-11-17)
+**Commit Message**: Merge 'core/alter: keep the autoindex of another table that shares the prefix' from Prabal Pratap Singh (ZeroX)
+
+Renaming a table with ALTER TABLE t RENAME TO t_old also renamed the
+auto-index of another table whose name starts with the same prefix (like
+t_word), which leaves an orphan index that real SQLite refuses to open.
+I changed the rename in core/vdbe/execute.rs to only touch indexes that
+belong to the renamed table, matching SQLite.
+
+This change was made with AI assistance.
+
+Fixes #11884.
+
+`ALTER TABLE t RENAME TO t_old` renamed every automatic index whose name
+starts with `sqlite_autoindex_t_`, including ones that belong to a
+different table. With the tables from the issue:
+
+```sql
+CREATE TABLE activity (id INTEGER PRIMARY KEY, kind TEXT UNIQUE);
+CREATE TABLE activity_word (kind TEXT NOT NULL, code TEXT NOT NULL, PRIMARY KEY (kind, code));
+ALTER TABLE activity RENAME TO activity_old;
+SELECT name, tbl_name FROM sqlite_schema WHERE type = 'index' ORDER BY name;
+```
+
+main gives `sqlite_autoindex_activity_old_word_1|activity_word`, and
+SQLite then refuses to open the file: `malformed database schema
+(sqlite_autoindex_activity_old_word_1) - orphan index`.
+
+The sqlite_schema rew
+
+**File**: `core/vdbe/execute.rs` (modified, +8/-2)
+```diff
+@@ -10595,9 +10595,15 @@ pub fn op_function(
+                     let row_namespace =
+                         crate::namespace::demangle_name(supports_namespaces, &name).0;
+ 
+-                    let new_name = if let Some(index_name) =
++                    // Only the renamed table's own automatic indexes embed its
++                    // name. Another table can share the prefix (`t` and `t_x`),
++                    // so its `sqlite_autoindex_t_x_1` must stay untouched.
++                    let renamed_autoindex = if normalize_ident(&tbl_name) == rename_from {
+                         crate::util::renamed_automatic_index_name(&name, &rename_from, &rename_to)
+-                    {
++                    } else {
++                        None
++                    };
++                    let new_name = if let Some(index_name) = renamed_autoindex {
+                         index_name
+                     } else if name == rename_from {
+                         rename_to.clone()
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/alter_table.sqltest` (modified, +12/-0)
+```diff
+@@ -48,6 +48,18 @@ expect {
+     sqlite_autoindex_t_1|t
+ }
+ 
++@cross-check-integrity
++test alter-table-rename-keeps-autoindex-of-table-with-same-prefix {
++    CREATE TABLE activity (id INTEGER PRIMARY KEY, kind TEXT UNIQUE);
++    CREATE TABLE activity_word (kind TEXT NOT NULL, code TEXT NOT NULL, PRIMARY KEY (kind, code));
++    ALTER TABLE activity RENAME TO activity_old;
++    SELECT name, tbl_name FROM sqlite_schema WHERE type = 'index' ORDER BY name;
++}
++expect {
++    sqlite_autoindex_activity_old_1|activity_old
++    sqlite_autoindex_activity_word_1|activity_word
++}
++
+ @cross-check-integrity
+ test alter-table-rename-column {
+     CREATE TABLE t (a INTEGER);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11880** (2026-11-16): tests: move six more MVCC tests that need only the public API out of core (@penberg)
-- **PR #11879** (2026-11-16): tests: move the tests of the schema code that left util out of core (@penberg)
-- **PR #11878** (2026-11-16): core: move code from util to schema (@penberg)
-- **PR #11873** (2026-11-16): tests: move the MVCC tests that need only MvStore::begin_tx out of core (@penberg)
-- **PR #11870** (2026-11-16): tests: move six MVCC tests that need only the public API out of core (@penberg)
-- **PR #11868** (2026-11-16): tests: move the pager rollback tests out of core (@penberg)
+- **PR #11989** (2026-11-17): fix(tursoPG): reject zero-valued parameter references (@Surajsuthar)
+- **PR #11975** (closed): postgres: fix pg_get_expr for integer edge cases and negative zero (@penberg)
+- **PR #11949** (2026-11-17): postgres: fix pg_get_expr for integer edge cases and negative zero (@penberg)
+- **PR #11930** (2026-11-17): postgres: print CHECK constraints and column defaults as pg_get_expr does (@penberg)
+- **PR #11929** (2026-11-17): tests: move the MVCC tests that check behaviour through SQL to tests/integration (@penberg)
+- **PR #11913** (2026-11-17): core/alter: keep the autoindex of another table that shares the prefix (@PrabalParihar)
 
 ---
 
@@ -1623,59 +2438,36 @@ the refused one succeeds before this change.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core: require CREATE on the schema for the new owner of ALTER ... OWNER TO
+## X. postgres: list row-level security policies in pg_policy
 
 **RULE**:
-When implementing operations in `core/translate/roles.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `postgres/COMPAT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e4d354c`: core: require CREATE on the schema for the new owner of ALTER ... OWNER TO. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `328cd87f`: postgres: list row-level security policies in pg_policy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/translate/roles.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `postgres/COMPAT.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                    match settable_role(resolver, connection, role) {
-                        // As in PostgreSQL, a new owner also needs CREATE on
-                        // the relation's schema, which only a superuser has
-                        // until GRANT on schemas exists. Giving the relation
-                        // to the role that owns it changes nothing.
-                        Some(new_owner)
-                            if resolver
-                                .catalog
-                                .dialect
-                                .role_is_superuser(resolver.schema(), new_owner)
-                                || table_owner(resolver, &alter.name) == Some(new_owner) =>
-                        {
-                            return Ok(())
-                        }
-                        Some(_) => create_in_schema_denial(&alter.name),
-                        None => PermissionDenied::privilege(
-                            Action::SetRole,
-                            Object::Role(role_spec_name(role)),
-                        ),
-/// The role `role` names, if the current role may `SET ROLE` to it, which
-/// is what giving a relation to `role` takes.
-fn sett
+`pg_policy` (row-level security policies, with `polqual` and `polwithcheck`
+as the text `pg_get_expr` prints), plus `pg_input_error_info`. Present but
+always empty: `pg_trigger`, `pg_statistic_ext`, `pg_inherits`, `pg_rewrite`,
+| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; `UPDATE` and `DELETE` change only the rows the policies of the command allow, with the `SELECT` policies too when the statement reads columns, and new rows of `INSERT` and `UPDATE` must pass `WITH CHECK`, and the `SELECT` policies with `RETURNING`, or the statement fails with 42501; `TRUNCATE` is not subject to policies, as in PostgreSQL; `INSERT ... ON CONFLICT DO UPDATE` checks the conflicting row against the `UPDATE` and `SELECT` policies and fails if it does not pass; a new row is checked after its `NOT NULL` constraints instead of before; `pg_policy` lists the policies, with conditions printed as PostgreSQL's `pg_get_expr` prints them for common forms and as the engine's SQL otherwise; `pg_policies` does n
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                    if may_set_role(resolver, connection, role) {
-                        return Ok(());
-                    PermissionDenied::privilege(Action::SetRole, Object::Role(role_spec_name(role)))
-/// Whether the session may `SET ROLE` to `role`, which is what giving a
-/// relation to `role` takes.
-fn may_set_role(resolver: &Resolver, connection: &Arc<Connection>, role: &ast::RoleSpec) -> bool {
-    };
-    target.is_some_and(|target| dialect.can_set_role(schema, connection.current_role(), target))
+plus `pg_input_error_info`. Present but always empty: `pg_policy`,
+`pg_trigger`, `pg_statistic_ext`, `pg_inherits`, `pg_rewrite`,
+| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; `UPDATE` and `DELETE` change only the rows the policies of the command allow, with the `SELECT` policies too when the statement reads columns, and new rows of `INSERT` and `UPDATE` must pass `WITH CHECK`, and the `SELECT` policies with `RETURNING`, or the statement fails with 42501; `TRUNCATE` is not subject to policies, as in PostgreSQL; `INSERT ... ON CONFLICT DO UPDATE` checks the conflicting row against the `UPDATE` and `SELECT` policies and fails if it does not pass; a new row is checked after its `NOT NULL` constraints instead of before; `pg_policy` does not show policies; policies cannot use subqueries with `FROM`, and the columns they use cannot be renamed or dropped; `FORCE ROW LEVEL SECURITY` is not supported; views apply it as the view's owner, except that a superuser reading a view sees every ro
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e4d354c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `328cd87f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

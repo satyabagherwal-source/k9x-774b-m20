@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T17:58:00.872Z",
-  "total_records": 1635,
+  "last_updated": "2026-11-17T18:05:45.648Z",
+  "total_records": 1637,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 695,
+      "total": 697,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -744,7 +744,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-fibo-2-0-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-preview-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in",
-        "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-cod"
+        "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-cod",
+        "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva"
       ]
     },
     "E": {
@@ -7846,8 +7848,8 @@
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "811f0a9cc543e710e16d82b2391a5615f44ee1ca3b454d6229325570534345af",
-      "created_at": "2026-11-16T17:44:00.232Z"
+      "content_hash": "e7a31d1ccbfbf55ad4f937f56b2b81d7f02a508acbdf2f79e6beff64521aa706",
+      "created_at": "2026-11-17T18:05:41.254Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -11224,8 +11226,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "6693173c19473893c9e5463d84a741e91184825da3bcd8aa2f9ce3e8998238d2",
-      "created_at": "2026-11-16T18:55:48.957Z"
+      "content_hash": "ccec46234ffc5d2b6cf8917a21cf6b59b9ce91b1dd5d055bf208c4ceaee3da71",
+      "created_at": "2026-11-17T18:05:36.495Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -11319,8 +11321,8 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-learnings-deployment-operations-intelligence-gardener-gardener.md",
       "repository": "gardener-gardener-learnings",
-      "content_hash": "16e7281a31b72a33b3f8381e37d2141a70f1506f1fdbd5d654f7217ba2b4ee84",
-      "created_at": "2026-11-13T23:45:20.841Z"
+      "content_hash": "22abed5200c9aac49123aba04d2f4d4913c66296facdbea5c5620534950669c2",
+      "created_at": "2026-11-17T18:05:45.030Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
@@ -23797,8 +23799,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-turso-learnings",
-      "content_hash": "4a4c9ec6324ad4d66dc8201c7fc8c2d0cbdb43b806010822dceb6f6e5ef7b7b1",
-      "created_at": "2026-11-16T17:44:04.083Z"
+      "content_hash": "4c983b63055efdc9b574cfcf93d17d3385255dd8f1ccfd1fe3f5428d38cb0a46",
+      "created_at": "2026-11-17T18:05:45.648Z"
     },
     "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants",
@@ -27920,6 +27922,24 @@
       "repository": "clockworklabs-spacetimedb-learnings",
       "content_hash": "feb2e7dd99d783fc57f1d063fc69ec6c50700a8199f8c5c97168b10d6427fdff",
       "created_at": "2026-11-17T17:58:00.872Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ornith-ai/Ornith-1.5-122B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ornith-ai-ornith-1-5-122b-research-knowledge-intelligence-ornith-ai-ornith-1-.md",
+      "repository": "ornith-ai/Ornith-1.5-122B",
+      "content_hash": "be4d59844d32977e81f1210656c1f401af83a5fb6f058868031af3abba8f69bf",
+      "created_at": "2026-11-17T18:05:26.418Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ornith-ai-ornith-1.5-122b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ornith-ai-ornith-1-5-122b-learnings-research-knowledge-intelligence-hf-ornith.md",
+      "repository": "hf-ornith-ai-ornith-1.5-122b-learnings",
+      "content_hash": "6d743de7bf257ef396001817ff25b7490674d975a38a2cfddc9daaaae41ef1d1",
+      "created_at": "2026-11-17T18:05:44.335Z"
     }
   }
 }

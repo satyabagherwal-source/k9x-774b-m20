@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "240592ea",
+    "sourceVersion": "5b4079a6",
     "license": "Apache-2.0",
-    "contentHash": "05ec2406f0d6b7f59130ba69697f8f9f997d29e034f49cd0df2789eae07298d9",
-    "lastHarvestedAt": "2026-11-16T18:55:48.695Z",
+    "contentHash": "2018a88fdf8e9e47e10855afb22ff91cf7044aaff22e16b569b43eb227afd095",
+    "lastHarvestedAt": "2026-11-17T18:05:36.182Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "063ca631",
+    "sourceVersion": "d2ecfa2f",
     "license": "MIT",
-    "contentHash": "f7dcf9bf2a0050220357641caf336307c1f0f87a150fbefca7dcb4ca238a0eb6",
-    "lastHarvestedAt": "2026-11-16T17:43:59.952Z",
+    "contentHash": "f1201ca15d8279eee2877af8a8d260f3bd0a8553403bffc6324790563b0f3d50",
+    "lastHarvestedAt": "2026-11-17T18:05:40.930Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -10625,8 +10625,8 @@
     "sourceUrl": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
     "sourceVersion": "hf-ornith-ai-ornith-1.5-122b",
     "license": "Open-Source",
-    "contentHash": "f8497378d391461e1411b703bc216de6885c997d4cc6a971702828645f47b8a3",
-    "lastHarvestedAt": "2026-11-13T06:58:10.233Z",
+    "contentHash": "7648d25b645b564638e09fd3e405953c56efd904d74e3a1c17a01bd7f6e2643e",
+    "lastHarvestedAt": "2026-11-17T18:05:26.236Z",
     "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b"
   },
   "lokoe-mehdi-scouter": {

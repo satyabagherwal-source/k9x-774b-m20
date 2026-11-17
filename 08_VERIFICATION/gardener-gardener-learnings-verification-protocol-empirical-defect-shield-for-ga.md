@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T23:45:20.603Z",
+  "timestamp": "2026-11-17T18:05:44.790Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gardener-gardener-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gardener-gardener-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T23:45:20.603Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T18:05:44.790Z`  
 > **Learning ID**: `LEARN-EVO-gardener-gardener-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `00b6db8f`  
+> **Source Version**: `5b4079a6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T23:41:59.660Z  
+> **Timestamp**: 2026-11-17T18:05:35.230Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T23:41:59.516Z  
+> **Harvest Timestamp**: 2026-11-17T18:05:35.225Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Homogeneous Kubernetes clusters at scale on any infrastructure using hosted control planes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3485 stars
+- **Stars / Engagement**: 3488 stars
 
 ---
 
@@ -751,17 +751,11 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16337** (2026-11-13): **Update dependency gardener/alpine-conntrack to v3.24.4**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [gardener/alpine-conntrack](https://redirect.github.com/gardener/alpine-conntrack) | patch | `3.24.2` → `3.24.4` |  ---  ### Release Notes  <details> <summary>gardener/alpine-conntrack</summary>  ### [`v3.24.4`](https://redirect.github.com/gardener/alpine-conntrack/releases/tag/3.24.4)  [Compare Source](https://redirect.github.com/gardener/alpine-conntrack/compare/3.24.2...3.24.4)  #### application/spdx+json  - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:69803d1b908c0f9851d489e0455e41b06ba9342b766d1b6ddd04ede2da27cf55` - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:71089ec8becb326c2d2196df5b79092710231183da852520403696007fcb6d38`  #### application/vnd.cyclonedx+json  - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:12805c093662513e86eb42df9df1a375c49a1f1be548c2aa963a6b0b913f8138` - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:1ae3fdb1bfdbe1bea6b17e0606cf2654446dd580f4e94ffa087edc80bcdad724`  #### Container (OCI) Images  - alpine-conntrack: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack:3.24.4`  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Au
-  **Post-Mortem & Fix Analysis**:
-  > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [timebertt](https://github.com/timebertt) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["timebertt"]} -->
+- **Issue #16374** (2026-11-17): **(docs): Use `:443` to access virtualservices in local scenario**
+  *Symptoms*: <!-- Please ensure that you do not include company internal information. -->  **How to categorize this PR?** <!-- Please select area, kind, and priority for this pull request. This helps the community categorizing it. Replace below TODOs or exchange the existing identifiers with those that fit best in your opinion. If multiple identifiers make sense you can also state the commands multiple times, e.g.   /area control-plane   /area auto-scaling   ...  If the PR affects cryptography or security mechanisms (encryption, keys, ciphers, hashes, signatures, etc.), mark it as crypto relevant. /label crypto  "/area" identifiers:     audit-logging|auto-scaling|backup|compliance|control-plane-migration|control-plane|cost|delivery|dev-productivity|disaster-recovery|documentation|high-availability|logging|metering|monitoring|networking|open-source|ops-productivity|os|performance|quality|robustness|scalability|security|storage|testing|usability|user-management "/kind" identifiers:     api-change|bug|cleanup|discussion|enhancement|epic|flake|impediment|poc|post-mortem|question|regression|task|technical-debt|test --> /area documentation /kind bugfix  **What this PR does / why we need it**: The virtualservices from the Seed can be accessed directly via port `443`, as the local setup starts a `bind` server resolving these domains.  **Which issue(s) this PR fixes**: Fixes #  **Special notes for your reviewer**:  **Release note**: <!-- Write your release note: 1. Enter your release note in the b
 
-- **Issue #16334** (2026-11-13): **Update dependency credativ/vali to v2.2.39**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [credativ/vali](https://redirect.github.com/credativ/vali) | patch | `v2.2.38` → `v2.2.39` |  > [!TIP] > Updates to this image may depend on merging a pull request in the [ci-infra](https://redirect.github.com/gardener/ci-infra/pulls?q=sort%3Aupdated-desc+is%3Apr+is%3Aopen) repository. Usually, the PRs are auto-merged. However, there is no guarantee that the PRs will be merged in time for this update. If tests fail, please check that the the PR for your component is not stuck and trigger a retest.  ---  ### Release Notes  <details> <summary>credativ/vali</summary>  ### [`v2.2.39`](https://redirect.github.com/credativ/vali/releases/tag/v2.2.39)  [Compare Source](https://redirect.github.com/credativ/vali/compare/v2.2.38...v2.2.39)  This is release v2.2.39 of Vali.  Vali is a fork of Loki 2.2.1 under the Apache 2.0 License. It is currently limited to maintenance and security updates.  ##### Notable changes  - Upgrade Alpine to 3.24.4 - Upgrade Go to 1.27.4  ##### Installation  The components of Vali are currently distributed as container images.  - `ghcr.io/credativ/vali:v2.2.39`   <https://github.com/credativ/vali/pkgs/container/vali>  - `ghcr.io/credativ/valitail:v2.2.39`   <https://github.com/credativ/vali/pkgs/container/valitail>  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defi
-  **Post-Mortem & Fix Analysis**:
-  > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [oliver-goetz](https://github.com/oliver-goetz) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["oliver-goetz"]} -->
+- **Issue #16367** (2026-11-17): **Update dependency gardener/autoscaler to v1.33.2**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [gardener/autoscaler](https://redirect.github.com/gardener/autoscaler) | patch | `v1.33.1` → `v1.33.2` |  ---  ### Release Notes  <details> <summary>gardener/autoscaler</summary>  ### [`v1.33.2`](https://redirect.github.com/gardener/autoscaler/releases/tag/v1.33.2)  [Compare Source](https://redirect.github.com/gardener/autoscaler/compare/v1.33.1...v1.33.2)  ### \[github.com/gardener/autoscaler:v1.33.2]  #### 🐛 Bug Fixes  - `[DEVELOPER]` Use namespace scoped `NewSharedInformerFactoryWithOptions` function instead of `NewSharedInformerFactory` to restrict Deployment Lister by [@&#8203;gagan16k](https://redirect.github.com/gagan16k) \[[#&#8203;450](https://redirect.github.com/gardener/autoscaler/pull/450)]  #### application/spdx+json  - cluster-autoscaler-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/autoscaler/cluster-autoscaler@sha256:028c3ad1a2a5e0c29763bf9e03e9111d05d7df73ffc0447f09971128592f8cff` - cluster-autoscaler-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/autoscaler/cluster-autoscaler@sha256:c77116aa93eb574ded5d2cbbf7ec68b90cd1329a9823123a373570cc908b9b95`  #### application/vnd.cyclonedx+json  - cluster-autoscaler-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/autoscaler/cluster-autoscaler@sha256:9763a70b88adec6ae6b2ded5ea72e0029d15993202114f3f6c3924efbe057bd1` - cluster-autoscaler-sbom-ref: `europe-docker.pkg.dev/gar
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -778,457 +772,450 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0fcc2eec` (2026-11-13)
-**Commit Message**: fix: update envoy scanning hints (#16309)
+### Incident Patch 1: `a91c7dc9` (2026-11-17)
+**Commit Message**: Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY] (#16335)
 
-Signed-off-by: Dominik Froehlich <[REDACTED_EMAIL]>
+* Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]
 
-**File**: `imagevector/containers.yaml` (modified, +4/-4)
+* Run make tidy
+
+---------
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -976,21 +976,21 @@ images:
-             teamname: 'gardener/gardener-core-networking-maintainers'
-       - name: 'cloud.gardener.cnudie/dso/scanning-hints/package-versions'
-         value:
--          # https://www.envoyproxy.io/docs/envoy/v1.39.0/intro/arch_overview/security/external_deps
-+          # https://www.envoyproxy.io/docs/envoy/v1.40.2/intro/arch_overview/security/external_deps
-           - name: 'v8'
-             version: '14.6.202.10'
-           - name: 'grpc'
--            version: '1.81.1'
-+            version: '1.83.0'
-           - name: 'luajit'
-             version: '871db2c'
-           - name: 'nghttp2'
-             version: '1.66.0'
-           - name: 'protobuf'
-             version: '35.1'
-           - name: 'fmt'
--            version: '12.1.0'
-+            version: '12.2.0'
-           - name: 'boringssl'
--            version: '0.20260413.0'
-+            version: '0.20260929.0'
-           # lua version is unclear. lua runtime is luajit.
-           # luajit is compatible with lua 5.1 but contains feature of lua 5.2 and 5.3
-           # https://luajit.org/extensions.html
+@@ -339,7 +339,7 @@ require (
+ 	go.opentelemetry.io/otel/log v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
+-	go.opentelemetry.io/otel/sdk/log v0.21.0 // indirect
++	go.opentelemetry.io/otel/sdk/log v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -875,8 +875,8 @@ go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDR
+ go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
+ go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
+ go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
+-go.opentelemetry.io/otel/sdk/log v0.21.0 h1:QsE7XSR0ktQdKmRKGnR+f1ObGF32WG+7MER/P9KgmYc=
+-go.opentelemetry.io/otel/sdk/log v0.21.0/go.mod h1:m9mApjCoD2/1QuKCAptjv+BrG9WKOvQLVdNx+iBldTo=
++go.opentelemetry.io/otel/sdk/log v1.47.0 h1:W4N/ZfgpkRRnmARnqYoQ6BrWA0mrj8IzVDNLlpmUJZY=
++go.opentelemetry.io/otel/sdk/log v1.47.0/go.mod h1:Wu74Z2EmOKXi2FleSNAb0Hyau2G+r5kubSEMJw5aAMs=
+ go.opentelemetry.io/otel/sdk/log/logtest v0.21.0 h1:X+JBBgKlswCGYsmgL0CnoUUtlE//VB345c84jYAYkdQ=
+ go.opentelemetry.io/otel/sdk/log/logtest v0.21.0/go.mod h1:HD1575K8e6sIFBBDd5tZB3t9DlMytWXq9FuR+Y4rfjE=
+ go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
 ```
 
 ---
 
-### Incident Patch 2: `107b12dd` (2026-11-13)
-**Commit Message**: Drop resource dependency graph debug handler (#16315)
+### Incident Patch 2: `4619d669` (2026-11-17)
+**Commit Message**: Fix `gardener-operator` CA rotation (#16366)
 
-* [admission-controller] Remove `enableDebugHandlers` config field
+* Fix `gardener-operator` CA rotation
 
-The field only gated the resource dependency graph debug handler, which is
-removed in a subsequent commit.
+The operator's virtual garden client is instantiated only once. After a
+credentials rotation it kept trusting the pre-rotation CA bundle and failed
+with 'certificate signed by unknown authority'.
 
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+Forward the virtual garden's CA bundle via a file on disk (instead of inline
+CA data) so that client-go transparently reloads it from disk after a rotation
+(ClientsAllowCARotation feature gate), keeping the long-lived client working
+without recreating it or restarting the operator.
 
-* [make generate]
+Signed-off-by: Tim Usner <[REDACTED_EMAIL]>
 
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+* Inline virtual garden CA for gardenlet bootstrap
 
-* [admission-controller] Drop resource dependency graph debug handler
-
-The `/debug/resource-dependency-graph` handler served an unauthenticated HTML
-dump of the entire graph and could not render it on large landscapes anyway. It
-has been unused for years, so remove it together with its wiring.
-
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
-
-* Documentation
-
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+Signed-off-by: Tim Usner <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+Signed-off-by: Tim Usner <[REDACTED_EMAIL]>
 
-**File**: `docs/deployment/gardenlet_api_access.md` (modified, +0/-52)
+**File**: `pkg/operator/controller/gardenlet/add.go` (modified, +26/-1)
 ```diff
-@@ -145,58 +145,6 @@ The `SeedAuthorizer` registers the following metrics related to the mentioned gr
- | `gardener_admission_controller_seed_authorizer_graph_update_duration_seconds` | Histogram of duration of resource dependency graph updates in seed authorizer, i.e., how long does it take to update the graph's vertices/edges when a resource is created, changed, or deleted. |
- | `gardener_admission_controller_seed_authorizer_graph_path_check_duration_seconds` | Histogram of duration of checks whether a path exists in the resource dependency graph in seed authorizer. |
+@@ -10,6 +10,7 @@ import (
+ 	"strings"
  
--#### Debug Handler
--
--When the `.server.enableDebugHandlers` field in the `gardener-admission-controller`'s component configuration is set to `true`, then it serves a handler that can be used for debugging the resource dependency graph under `/debug/resource-dependency-graph`.
--
--🚨 Only use this setting for development purposes, as it enables unauthenticated users to view all data if they have access to the `gardener-admission-controller` component.
--
--The handler renders an HTML page displaying the current graph with a list of vertices and its associated incoming and outgoing edges to other vertices.
--Depending on the size of the Gardener landscape (and consequently, the size of the graph), it might not be possible to render it in its entirety.
--If there are more than 2000 vertices, then the default filtering will selected for `kind=Seed` to prevent overloading the output.
--
--_Example output_:
--
--```text
---------------------------------------------------------------------------------
--|
--| # Seed:my-seed
--|   <- (11)
--|     BackupBucket:73972fe2-3d7e-4f61-a406-b8f9e670e6b7
--|     BackupEntry:garden-my-project/shoot--dev--my-shoot--4656a460-1a69-4f00-9372-7452cbd38ee3
--|     ControllerInstallation:dns-external-mxt8m
--|     ControllerInstallation:extension-shoot-cert-service-4qw5j
--|     ControllerInstallation:networking-calico-bgrb2
--|     ControllerInstallation:os-gardenlinux-qvb5z
--|     ControllerInstallation:provider-gcp-w4mvf
--|     Secret:garden/backup
--|     Shoot:garden-my-project/my-shoot
--|
---------------------------------------------------------------------------------
--|
--| # Shoot:garden-my-project/my-shoot
--|   <- (5)
--|     CloudProfile:gcp
--|     Namespace:garden-my-project
--|     Secret:garden-my-project/my-dns-secret
--|     SecretBinding:garden-my-project/my-credentials
--|     ShootState:garden-my-project/my-shoot
--|   -> (1)
--|     Seed:my-seed
--|
---------------------------------------------------------------------------------
--|
--| # ShootState:garden-my-project/my-shoot
--|   -> (1)
--|     Shoot:garden-my-project/my-shoot
--|
---------------------------------------------------------------------------------
--
--... (etc., similarly for the other resources)
--```
--
--There are anchor links to easily jump from one resource to another, and the page provides means for filtering the results based on the `kind`, `namespace`, and/or `name`.
--
- #### Pitfalls
+ 	apierrors "k8s.io/apimachinery/pkg/api/errors"
++	"k8s.io/client-go/rest"
+ 	"k8s.io/utils/clock"
+ 	"k8s.io/utils/ptr"
+ 	"sigs.k8s.io/controller-runtime/pkg/builder"
+@@ -39,7 +40,11 @@ func (r *Reconciler) AddToManager(ctx context.Context, mgr manager.Manager, virt
+ 		r.RuntimeCluster = mgr
+ 	}
+ 	if r.VirtualConfig == nil {
+-		r.VirtualConfig = virtualCluster.GetConfig()
++		virtualConfig, err := gardenClientRestConfigWithInlineCA(virtualCluster.GetConfig())
++		if err != nil {
++			return fmt.Errorf("failed preparing virtual garden REST config: %w", err)
++		}
++		r.VirtualConfig = virtualConfig
+ 	}
+ 	if r.VirtualClient == nil {
+ 		r.VirtualClient = virtualCluster.GetClient()
+@@ -79,6 +84,26 @@ func (r *Reconciler) AddToManager(ctx context.Context, mgr manager.Manager, virt
+ 		Complete(r)
+ }
  
- When there is a relevant update to an existing resource, i.e., when a reference to another resource is changed, then the corresponding vertex (along with all associated edges) is first deleted from the graph before it gets added again with the up-to-date edges.
++// gardenClientRestConfigWithInlineCA returns a copy of the given REST config with the virtual garden's CA bundle
++// inlined as CAData. The virtual cluster's REST config references the CA via a file on disk (so that client-go can
++// reload it after a credentials rotation), but that file only exists in the gardener-operator's filesystem.
++func gardenClientRestConfigWithInlineCA(config *rest.Config) (*rest.Config, error) {
++	gardenConfig := rest.CopyConfig(config)
++	if gardenConfig.CAFile == "" {
++		return gardenConfig, nil
++	}
++
++	// LoadTLSFiles reads the CAFile (and any cert/key files) into their respective *Data fields.
++	if err := rest.LoadTLSFiles(gardenConfig); err != nil {
++		return nil, fmt.Errorf("failed loading CA file %q: %w", gardenConfig.CAFile, err)
++	}
++	// Clear the file reference so consumers serializing this config into a kubeconfig use the inline CAData instead of
++	// the operator-local file path.
++	gardenConfig.CAFile = ""
++
++	return gardenConfig, nil
++}
++
+ // OperatorResponsiblePredicate is a predicate for checking whether the Seed object has already been created for the
+ // Gardenlet resource, and whether the kubeconfig secret ref has been removed. It also returns 'true' if the
+ // 'force-redeploy' operation annotation is set, even though the Seed object already exists.
 ```
 
-**File**: `example/20-componentconfig-gardener-admission-controller.yaml` (modified, +0/-1)
+**File**: `pkg/operator/controller/gardenlet/add_test.go` (modified, +37/-0)
 ```diff
-@@ -30,7 +30,6 @@ server:
-       name: gardener.cloud:system:seeds
-       apiGroup: rbac.authorization.k8s.io
-     operationMode: block
--  enableDebugHandlers: true
- debugging:
-   enableProfiling: false
-   enableContentionProfiling: false
-```
-
-**File**: `pkg/admissioncontroller/webhook/add.go` (modified, +2/-2)
-```diff
-@@ -91,7 +91,7 @@ func AddToManager(
- 		Logger:    mgr.GetLogger().WithName("webhook").WithName(seedauthorizer.HandlerName),
- 		ClientSet: clientSet,
- 	}
--	if err := seedAuthorizerWebhook.AddToManager(ctx, mgr, cfg.Server.EnableDebugHandlers); err != nil {
-+	if err := seedAuthorizerWebhook.AddToManager(ctx, mgr); err != nil {
- 		return fmt.Errorf("failed adding %s webhook handler: %w", seedauthorizer.HandlerName, err)
- 	}
+@@ -6,12 +6,15 @@ package gardenlet_test
  
-@@ -106,7 +106,7 @@ func AddToManager(
- 	if err := (&shootauthorizer.Webhook{
- 		Logger:    mgr.GetLogger().WithName("webhook").WithName(shootauthorizer.HandlerName),
- 		ClientSet: clientSet,
--	}).AddToManager(ctx, mgr, cfg.Server.EnableDebugHandlers, seedAuthorizerWebhook.Authorizer); err != nil {
-+	}).AddToManager(ctx, mgr, seedAuthorizerWebhook.Authorizer); err != nil {
- 		return fmt.Errorf("failed adding %s webhook handler: %w", shootauthorizer.HandlerName, err)
- 	}
- 
-```
-
-**File**: `pkg/admissioncontroller/webhook/auth/seed/add.go` (modified, +1/-7)
-```diff
-@@ -8,7 +8,6 @@ import (
+ import (
  	"context"
++	"os"
++	"path/filepath"
  
- 	"k8s.io/utils/clock"
--	"k8s.io/utils/ptr"
- 	"sigs.k8s.io/controller-runtime/pkg/manager"
- 
- 	"github.com/gardener/gardener/pkg/utils/graph"
-@@ -23,7 +22,7 @@ const (
- )
- 
- // AddToManager adds Handler to the given manager.
--func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableDebugHandlers *bool) error {
-+func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager) error {
- 	if w.Authorizer == nil {
- 		g := graph.New(mgr.GetLogger().WithName("seed-authorizer-graph"), mgr.GetClient(), false)
- 		if err := g.Setup(ctx, mgr.GetCache()); err != nil {
-@@ -35,11 +34,6 @@ func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableD
- 			g,
- 			authorizerwebhook.NewWithSelectorsChecker(ctx, w.Logger, w.ClientSet, clock.RealClock{}),
- 		)
--
--		if ptr.Deref(enableDebugHandlers, false) {
--			w.Logger.Info("Registering debug handlers")
--			mgr.GetWebhookServer().Register(graph.DebugHandlerPath, graph.NewDebugHandler(g))
--		}
- 	}
- 
- 	if w.Handler == nil {
+ 	. "github.com/onsi/ginkgo/v2"
+ 	. "github.com/onsi/gomega"
+ 	gomegatypes "github.com/onsi/gomega/types"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/rest"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	fakeclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
+ 	"sigs.k8s.io/controller-runtime/pkg/event"
+@@ -80,4 +83,38 @@ var _ = Describe("Add", func() {
+ 			})
+ 		})
+ 	})
++
++	Describe("#GardenClientRestConfigWithInlineCA", func() {
++		var caBundle = []byte("ca-data")
++
++		It("should keep the config unchanged when no CA file is referenced", func() {
++			config := &rest.Config{Host: "https://api.gardener.test", TLSClientConfig: rest.TLSClientConfig{CAData: caBundle}}
++
++			result, err := GardenClientRestConfigWithInlineCA(config)
++			Expect(err).NotTo(HaveOccurred())
++			Expect(result.CAFile).To(BeEmpty())
++			Expect(result.CAData).To(Equal(caBundle))
++		})
++
++		It("should inline the CA bundle from the referenced file and clear the file path", func() {
++			caFile := filepath.Join(GinkgoT().TempDir(), "ca.crt")
++			Expect(os.WriteFile(caFile, caBundle, 0o600)).To(Succeed())
++
++			config := &rest.Config{Host: "https://api.gardener.test", TLSClientConfig: rest.TLSClientConfig{CAFile: caFile}}
++
++			result, err := GardenClientRestConfigWithInlineCA(config)
++			Expect(err).NotTo(HaveOccurred())
++			Expect(result.CAFile).To(BeEmpty())
++			Expect(result.CAData).To(Equal(caBundle))
++			Expect(config.CAFile).To(Equal(caFile))
++			Expect(config.CAData).To(BeEmpty())
++		})
++
++		It("should return an error when the referenced CA file does not exist", func() {
++			config := &rest.Config{Host: "https://api.gardener.test", TLSClientConfig: rest.TLSClientConfig{CAFile: "/does/not/exist"}}
++
++			_, err := GardenClientRestConfigWithInlineCA(config)
++			Expect(err).To(HaveOccurred())
++		})
++	})
+ })
 ```
 
-**File**: `pkg/admissioncontroller/webhook/auth/shoot/add.go` (modified, +1/-7)
+**File**: `pkg/operator/controller/gardenlet/export_test.go` (added, +12/-0)
 ```diff
-@@ -9,7 +9,6 @@ import (
+@@ -0,0 +1,12 @@
++// SPDX-FileCopyrightText: Contributors to the Gardener project
++//
++// SPDX-License-Identifier: Apache-2.0
++
++package gardenlet
++
++import "k8s.io/client-go/rest"
++
++// GardenClientRestConfigWithInlineCA is exported for testing.
++func GardenClientRestConfigWithInlineCA(config *rest.Config) (*rest.Config, error) {
++	return gardenClientRestConfigWithInlineCA(config)
++}
+```
+
+**File**: `pkg/operator/controller/virtual/access/reconciler.go` (modified, +34/-3)
+```diff
+@@ -44,6 +44,7 @@ type Reconciler struct {
+ 	Clock           clock.Clock
  
- 	auth "k8s.io/apiserver/pkg/authorization/authorizer"
- 	"k8s.io/utils/clock"
--	"k8s.io/utils/ptr"
- 	"sigs.k8s.io/controller-runtime/pkg/manager"
+ 	tokenFilePath string
++	caFilePath    string
+ }
  
- 	"github.com/gardener/gardener/pkg/utils/graph"
-@@ -24,7 +23,7 @@ const (
- )
+ // NewVirtualClient builds a client to the virtual cluster from the given REST config. Exposed for testing.
+@@ -53,9 +54,11 @@ var NewVirtualClient = func(restConfig *rest.Config) (client.Client, error) {
  
- // AddToManager adds Handler to the given manager.
--func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableDebugHandlers *bool, seedAuthorizer auth.Authorizer) error {
-+func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, seedAuthorizer auth.Authorizer) error {
- 	if w.Handler == nil {
- 		g := graph.New(mgr.GetLogger().WithName("shoot-authorizer-graph"), mgr.GetClient(), true)
- 		if err := g.Setup(ctx, mgr.GetCache()); err != nil {
-@@ -41,11 +40,6 @@ func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableD
- 				seedAuthorizer,
- 			),
+ // Reconcile processes the given access secret in the request.
+ // It extracts the included Kubeconfig, and prepares a dedicated REST config
+-// where the inline bearer token is replaced by a bearer token file.
+-// Any subsequent reconciliation run causes the content of the BearerTokenFile to be updated with the token found
+-// in the access secret.
++// where the inline bearer token is replaced by a bearer token file and the inline CA bundle is replaced by a CA file.
++// Any subsequent reconciliation run causes the content of the BearerTokenFile and the CA file to be updated with the
++// token and CA bundle found in the access secret. Using a CA file (instead of inline CA data) allows client-go to
++// transparently reload the virtual garden's CA bundle after a credentials rotation without recreating the client (see
++// the ClientsAllowCARotation feature gate), which the virtual cluster reconciler relies on.
+ func (r *Reconciler) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
+ 	log := logf.FromContext(ctx)
+ 
+@@ -116,6 +119,18 @@ func (r *Reconciler) Reconcile(ctx context.Context, request reconcile.Request) (
+ 	restConfig.BearerToken = ""
+ 	restConfig.BearerTokenFile = r.tokenFilePath
+ 
++	// Replace the inline CA bundle with a CA file so that client-go reloads it from disk on credentials rotation
++	// instead of pinning it for the lifetime of the virtual cluster client. We only switch to the file if the
++	// kubeconfig actually carried a CA bundle, to avoid emitting a REST config that trusts no CA at all.
++	if len(restConfig.CAData) > 0 {
++		if err := r.writeCABundleToFile(log, restConfig.CAData); err != nil {
++			return reconcile.Result{}, fmt.Errorf("error writing CA bundle to file: %w", err)
++		}
++
++		restConfig.CAData = nil
++		restConfig.CAFile = r.caFilePath
++	}
++
+ 	log.Info("Notifying virtual cluster creation reconciler about new REST config")
+ 	r.Channel <- event.TypedGenericEvent[*rest.Config]{Object: restConfig}
+ 	return reconcile.Result{}, nil
+@@ -158,6 +173,22 @@ func (r *Reconciler) writeTokenToFile(log logr.Logger, token string) error {
+ 	return afero.WriteFile(r.FS, r.tokenFilePath, []byte(token), 0o600)
+ }
+ 
++func (r *Reconciler) writeCABundleToFile(log logr.Logger, caBundle []byte) error {
++	if r.caFilePath == "" {
++		caFile, err := CreateTemporaryFile(r.FS, "", "garden-access-ca")
++		if err != nil {
++			return fmt.Errorf("error creating virtual garden CA bundle file: %w", err)
++		}
++		r.caFilePath = caFile.Name()
++		if err := caFile.Close(); err != nil {
++			return fmt.Errorf("error closing virtual garden CA bundle file: %w", err)
++		}
++	}
++
++	log.Info("Writing virtual garden CA bundle to file", "path", r.caFilePath)
++	return afero.WriteFile(r.FS, r.caFilePath, caBundle, 0o600)
++}
++
+ // setBootstrapClientCertificate creates a short-lived client certificate signed by the `ca-client` CA
+ // and wires it into the given REST config. This bootstraps the virtual cluster client before the token-requestor
+ // controller has populated the gardener-internal secret with a ServiceAccount token.
+```
+
+**File**: `pkg/operator/controller/virtual/cluster/reconciler.go` (modified, +3/-0)
+```diff
+@@ -46,6 +46,9 @@ func (r *Reconciler) Reconcile(ctx context.Context, request Request) (reconcile.
+ 		restConfig = rest.CopyConfig(request.RESTConfig)
+ 	)
+ 
++	// The virtual cluster is instantiated only once. We intentionally do not rebuild it when a new REST config
++	// arrives on the channel: the access reconciler supplies the virtual garden's CA bundle via a CA file (not inline
++	// CA data), so client-go transparently reloads the CA from disk after a credentials rotation.
+ 	if r.virtualCluster == nil {
+ 		log.Info("Instantiating cluster.Cluster object for virtual cluster")
+ 		kubernetesclient.ApplyClientConnectionConfigurationToRESTConfig(&r.VirtualClientConnection, restConfig)
+```
+
+**File**: `test/integration/operator/virtual/access/access_suite_test.go` (modified, +9/-1)
+```diff
+@@ -7,6 +7,7 @@ package access_test
+ import (
+ 	"context"
+ 	"fmt"
++	"strings"
+ 	"testing"
+ 	"time"
+ 
+@@ -62,6 +63,8 @@ var (
+ 	testNamespace *corev1.Namespace
+ 	testSecret    *corev1.Secret
+ 	tokenFilePath string
++	caFilePath    string
++	caBundle      []byte
+ 
+ 	fs      afero.Fs
+ 	channel chan event.TypedGenericEvent[*rest.Config]
+@@ -144,6 +147,7 @@ var _ = BeforeSuite(func() {
+ 		CertType:   secretsutils.CACert,
+ 	}).GenerateCertificate()
+ 	Expect(err).NotTo(HaveOccurred())
++	caBundle = caCert.CertificatePEM
+ 
+ 	caSecret := &corev1.Secret{
+ 		ObjectMeta: metav1.ObjectMeta{
+@@ -196,8 +200,12 @@ var _ = BeforeSuite(func() {
+ 
+ 	fs = afero.NewMemMapFs()
+ 	tokenFilePath = testRunID + ".test"
++	caFilePath = testRunID + "-ca.test"
+ 
+-	DeferCleanup(test.WithVar(&access.CreateTemporaryFile, func(fs afero.Fs, _, _ string) (afero.File, error) {
++	DeferCleanup(test.WithVar(&access.CreateTemporaryFile, func(fs afero.Fs, _, prefix string) (afero.File, error) {
++		if strings.Contains(prefix, "ca") {
++			return fs.Create(caFilePath)
++		}
+ 		return fs.Create(tokenFilePath)
+ 	}))
+ 
+```
+
+**File**: `test/integration/operator/virtual/access/access_test.go` (modified, +14/-6)
+```diff
+@@ -31,7 +31,8 @@ var _ = Describe("Access controller tests", func() {
+ 		config.Kind = "Config"
+ 		config.APIVersion = "v1"
+ 		config.Clusters["garden"] = &clientcmdapi.Cluster{
+-			Server: "https://api.gardener.test",
++			Server:                   "https://api.gardener.test",
++			CertificateAuthorityData: caBundle,
  		}
--
--		if ptr.Deref(enableDebugHandlers, false) {
--			w.Logger.Info("Registering debug handlers")
--			mgr.GetWebhookServer().Register(graph.DebugHandlerPath+"-shoot", graph.NewDebugHandler(g))
--		}
- 	}
+ 		config.Contexts["garden"] = &clientcmdapi.Context{
+ 			Cluster:  "garden",
+@@ -107,7 +108,7 @@ var _ = Describe("Access controller tests", func() {
+ 				g.Expect(string(token)).To(Equal(issuedToken))
+ 				g.Expect(channel).To(Receive(&ev))
+ 			}).Should(Succeed())
+-			Expect(ev.Object).To(Equal(restConfigWithTokenPath(kubeconfigFromSecret(secret), tokenFilePath)))
++			Expect(ev.Object).To(Equal(restConfigWithFilePaths(kubeconfigFromSecret(secret), tokenFilePath, caFilePath)))
+ 		})
  
- 	mgr.GetWebhookServer().Register(WebhookPath, w.Handler)
-```
-
-**File**: `pkg/apis/config/admissioncontroller/v1alpha1/types.go` (modified, +0/-3)
-```diff
-@@ -57,9 +57,6 @@ type ServerConfiguration struct {
- 	// ResourceAdmissionConfiguration is the configuration for the resource admission.
- 	// +optional
- 	ResourceAdmissionConfiguration *ResourceAdmissionConfiguration `json:"resourceAdmissionConfiguration,omitempty"`
--	// EnableDebugHandlers determines whether the /debug/ handlers are enabled.
--	// +optional
--	EnableDebugHandlers *bool `json:"enableDebugHandlers,omitempty"`
+ 		It("should forward an already populated token and update it on changes", func() {
+@@ -125,7 +126,12 @@ var _ = Describe("Access controller tests", func() {
+ 				g.Expect(string(token)).To(Equal("Z2FyZGVuZXIK"))
+ 				g.Expect(channel).To(Receive(&ev))
+ 			}).Should(Succeed())
+-			Expect(ev.Object).To(Equal(restConfigWithTokenPath(kubeConfigData, tokenFilePath)))
++			Expect(ev.Object).To(Equal(restConfigWithFilePaths(kubeConfigData, tokenFilePath, caFilePath)))
++
++			By("Verify the CA bundle has been written to the CA file")
++			writtenCA, err := afero.ReadFile(fs, caFilePath)
++			Expect(err).NotTo(HaveOccurred())
++			Expect(writtenCA).To(Equal(caBundle))
+ 
+ 			By("Update token in kubeconfig")
+ 			addTokenToConfig(config, "Ym90YW5pc3QK")
+@@ -140,7 +146,7 @@ var _ = Describe("Access controller tests", func() {
+ 				g.Expect(string(token)).To(Equal("Ym90YW5pc3QK"))
+ 				g.Expect(channel).To(Receive(&ev))
+ 			}).Should(Succeed())
+-			Expect(ev.Object).To(Equal(restConfigWithTokenPath(kubeConfigData, tokenFilePath)))
++			Expect(ev.Object).To(Equal(restConfigWithFilePaths(kubeConfigData, tokenFilePath, caFilePath)))
+ 		})
+ 
+ 		It("should renew the token via the token-requestor once the renew timestamp has been reached", func() {
+@@ -159,7 +165,7 @@ var _ = Describe("Access controller tests", func() {
+ 				g.Expect(string(token)).To(Equal(issuedToken))
+ 				g.Expect(channel).To(Receive(&ev))
+ 			}).Should(Succeed())
+-			Expect(ev.Object).To(Equal(restConfigWithTokenPath(kubeconfigFromSecret(secret), tokenFilePath)))
++			Expect(ev.Object).To(Equal(restConfigWithFilePaths(kubeconfigFromSecret(secret), tokenFilePath, caFilePath)))
+ 		})
+ 	})
+ })
+@@ -182,10 +188,12 @@ func kubeconfigFromSecret(secret *corev1.Secret) []byte {
+ 	return updated.Data["kubeconfig"]
  }
  
- // ResourceAdmissionConfiguration contains settings about arbitrary kinds and the size each resource should have at most.
-```
-
-**File**: `pkg/apis/config/admissioncontroller/v1alpha1/zz_generated.deepcopy.go` (modified, +0/-5)
-```diff
-@@ -181,11 +181,6 @@ func (in *ServerConfiguration) DeepCopyInto(out *ServerConfiguration) {
- 		*out = new(ResourceAdmissionConfiguration)
- 		(*in).DeepCopyInto(*out)
- 	}
--	if in.EnableDebugHandlers != nil {
--		in, out := &in.EnableDebugHandlers, &out.EnableDebugHandlers
--		*out = new(bool)
--		**out = **in
--	}
- 	return
+-func restConfigWithTokenPath(kubeConfigRaw []byte, tokenPath string) *rest.Config {
++func restConfigWithFilePaths(kubeConfigRaw []byte, tokenPath, caPath string) *rest.Config {
+ 	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeConfigRaw)
+ 	ExpectWithOffset(1, err).NotTo(HaveOccurred())
+ 	restConfig.BearerToken = ""
+ 	restConfig.BearerTokenFile = tokenPath
++	restConfig.CAData = nil
++	restConfig.CAFile = caPath
+ 	return restConfig
  }
- 
 ```
 
-**File**: `pkg/utils/graph/debug.go` (removed, +0/-179)
+---
+
+### Incident Patch 3: `639e5305` (2026-11-17)
+**Commit Message**: Fix local DNS forwarding and zone persistence (#16322)
+
+Signed-off-by: Luca Bernstein <[REDACTED_EMAIL]>
+
+**File**: `dev-setup/infra/bind/named.conf` (modified, +2/-0)
 ```diff
-@@ -1,179 +0,0 @@
--// SPDX-FileCopyrightText: Contributors to the Gardener project
--//
--// SPDX-License-Identifier: Apache-2.0
--
--package graph
--
--import (
--	"fmt"
--	"net/http"
--	"net/url"
--	"sort"
--	"strings"
--
--	gonumgraph "gonum.org/v1/gonum/graph"
--	"gonum.org/v1/gonum/graph/simple"
--)
--
--// DebugHandlerPath is the HTTP handler path for this debug handler.
--const DebugHandlerPath = "/debug/resource-dependency-graph"
--
--type handler struct {
--	graph *simple.DirectedGraph
--}
--
--// NewDebugHandler creates a new HTTP handler for debugging the resource dependency graph.
--func NewDebugHandler(graph *graph) http.HandlerFunc {
--	return (&handler{graph.graph}).Handle
--}
--
--func (h *handler) Handle(w http.ResponseWriter, r *http.Request) {
--	var (
--		out strings.Builder
--
--		kind      = getQueryParameter(r.URL.Query(), "kind")
--		namespace = getQueryParameter(r.URL.Query(), "namespace")
--		name      = getQueryParameter(r.URL.Query(), "name")
--
--		nodesIterator = h.graph.Nodes()
--		nodes         []*Vertex
--	)
--
--	// On large landscapes, if there are many vertices then the entire graph cannot be rendered fast enough. Hence, we
--	// apply some default filtering for the 'seed' kind.
--	if kind == "" && namespace == "" && name == "" && nodesIterator.Len() > 2000 {
--		kind = "Seed"
--	}
--
--	// Filter for all relevant nodes and sort them.
--	for nodesIterator.Next() {
--		v := nodesIterator.Node().(*Vertex)
--
--		if (kind != "" && VertexTypes[v.Type].Kind != kind) ||
--			(namespace != "" && v.Namespace != namespace) ||
--			(name != "" && v.Name != name) {
--			continue
--		}
--
--		nodes = append(nodes, v)
--	}
--	sort.Sort(vertexSorter(nodes))
--
--	// Render filtering form.
--	out.WriteString(`
--<form action="` + DebugHandlerPath + `" method="GET">
--  <select name="kind">`)
--	fmt.Fprintf(&out, `<option value=""%s>&lt;all&gt;</option>`, func() string {
--		if kind == "" {
--			return " selected"
--		}
--		return ""
--	}())
--	for _, vt := range VertexTypes {
--		fmt.Fprintf(&out, `<option value="%s"%s>%s</option>`, vt.Kind, func() string {
--			if kind == vt.Kind {
--				return " selected"
--			}
--			return ""
--		}(), vt.Kind)
--	}
--	out.WriteString(`
--  </select>
--  <input type="test" name="namespace" value="` + namespace + `" />
--  <input type="test" name="name" value="` + name + `" />
--  <input type="submit" value="go" />
--</form>` + separate(true))
--
--	// Iterate over each nodes, determine and sort their incoming and outgoing neighbors, and render the output.
--	for i, v := range nodes {
--		out.WriteString(indent(0, "# %s", link(v)))
--
--		for _, n := range []struct {
--			prefix   string
--			iterator gonumgraph.Nodes
--		}{
--			{"<- (incoming)", h.graph.To(v.ID())},
--			{"-> (outgoing)", h.graph.From(v.ID())},
--		} {
--			var neighbors []*Vertex
--			for n.iterator.Next() {
--				neighbors = append(neighbors, n.iterator.Node().(*Vertex))
--			}
--			sort.Sort(vertexSorter(neighbors))
--
--			if len(neighbors) > 0 {
--				out.WriteString(indent(1, "%s (%d)", n.prefix, len(neighbors)))
--				for _, u := range neighbors {
--					out.WriteString(indent(2, link(u)))
--				}
--			}
--		}
--
--		out.WriteString(emptyNewline() + separate(i < len(nodes)-1))
--	}
--
--	w.Header().Set("Content-Type", "text/html; charset=utf-8")
--	fmt.Fprint(w, `<font size="2" face="Courier New">`+out.String()+`</font>`)
--}
--
--func getQueryParameter(query url.Values, param string) string {
--	var out string
--	values, ok := query[param]
--	if ok && len(values[0]) >= 1 {
--		out = values[0]
--	}
--	return out
--}
--
--type vertexSorter []*Vertex
--
--func (v vertexSorter) Len() int { return len(v) }
--
--func (v vertexSorter) Swap(i, j int) { v[i], v[j] = v[j], v[i] }
--
--func (v vertexSorter) Less(i, j int) bool {
--	if VertexTypes[v[i].Type].Kind < VertexTypes[v[j].Type].Kind {
--		return true
--	} else if VertexTypes[v[i].Type].Kind > VertexTypes[v[j].Type].Kind {
--		return false
--	}
--
--	if v[i].Namespace < v[j].Namespace {
--		return true
--	} else if v[i].Namespace > v[j].Namespace {
--		return false
--	}
--
--	return v[i].Name < v[j].Name
--}
--
--func emptyNewline() string {
--	return "|<br />"
--}
--
--func separate(withNewBeginning bool) string {
--	result := "-------------------------------------------------------------------------------<br />"
--	if withNewBeginning {
--		result += emptyNewline()
--	}
--	return result
--}
--
--func indent(level int, format string, a ...any) string {
--	return fmt.Sprintf("| "+strings.Repeat("&nbsp;&nbsp;", level)+format+"<br />", a...)
--}
--
--func link(v *Vertex) string {
--	path := fmt.Sprintf("%s?kind=%s", DebugHandlerPath, VertexTypes[v.Type].Kind)
--	out := fmt.Sprintf(`<a href="%s">%s</a>:`, path, VertexTypes[v.Type].Kind)
--
--	if v.Namespace != "" {
--		path += "&namespace=" + v.Namespace
--		out += fmt.Sprintf(`<a href="%s">%s</a>/`, path, v.Namespace)
--	}
--
--	path += "&name=" + v.Name
--	out += fmt.Sprintf(`<a href="%s">%s</a>`, path, v.Name)
--
--	return out
--}
+@@ -9,6 +9,8 @@ options {
+     allow-recursion { any; };
+ 
+     # Use Docker's built-in DNS server as an upstream server for all zones that we don't manage ourselves.
++    # Don't fall back to direct recursion if the upstream server fails.
++    forward only;
+     forwarders {
+         127.0.0.11;
+     };
+```
+
+**File**: `dev-setup/infra/docker-compose.yaml` (modified, +8/-6)
+```diff
+@@ -13,15 +13,17 @@ services:
+       - ./bind:/etc/bind:ro
+       # Mount the volume storing the zone state (ensure persistence across container restarts).
+       # We don't want bind to update our zone files on the host (resulting in git changes and persistence after stopping
+-      # the local setup). Instead, we copy the zone file to the volume on start up and destroy the volume when running
+-      # `docker compose down`.
++      # the local setup). Instead, we initialize the zone file in the volume only when absent and destroy the volume when
++      # running `docker compose down --volumes`.
+       # This way, we persist the zone state until – and only until – the local setup is stopped.
+       - bind9-zones:/var/lib/bind
+     command: >
+-      /bin/sh -c
+-      "cp /etc/bind/db.local.gardener.cloud /var/lib/bind/db.local.gardener.cloud &&
+-      chown bind:bind /var/lib/bind/db.local.gardener.cloud &&
+-      /usr/sbin/named -g -u bind"
++      /bin/sh -ec
++      "if [ ! -f /var/lib/bind/db.local.gardener.cloud ]; then
++        cp /etc/bind/db.local.gardener.cloud /var/lib/bind/db.local.gardener.cloud;
++      fi;
++      chown bind:bind /var/lib/bind/db.local.gardener.cloud;
++      exec /usr/sbin/named -g -u bind"
+     networks:
+       kind:
+   registry:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16337** (2026-11-13): Update dependency gardener/alpine-conntrack to v3.24.4 (@renovate[bot])
-- **PR #16334** (2026-11-13): Update dependency credativ/vali to v2.2.39 (@renovate[bot])
-- **PR #16331** (2026-11-13): Update golang.org/x/tools digest to 056b2d3 (@renovate[bot])
-- **PR #16323** (2026-11-13): Update golang.org/x/exp digest to d10d3b4 (@renovate[bot])
-- **PR #16321** (2026-11-13): Update Go toolchain to v1.27 (@LucaBernstein)
-- **PR #16315** (2026-11-13): Drop resource dependency graph debug handler (@rfranzke)
+- **PR #16374** (2026-11-17): (docs): Use `:443` to access virtualservices in local scenario (@voelzmo)
+- **PR #16367** (2026-11-17): Update dependency gardener/autoscaler to v1.33.2 (@renovate[bot])
+- **PR #16366** (2026-11-17): Fix `gardener-operator` CA rotation (@timuthy)
+- **PR #16362** (2026-11-17): Update golang.org/x/tools digest to 6bc5e25 (@renovate[bot])
+- **PR #16361** (2026-11-17): Update golang:1.27.4 Docker digest to 205c763 (@renovate[bot])
+- **PR #16360** (2026-11-17): Update golang.org/x/tools digest to 6fa3965 (@renovate[bot])
 
 ---
 
@@ -1248,37 +1235,31 @@ Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update envoy scanning hints
+## X. Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]
 
 **RULE**:
-When implementing operations in `imagevector/containers.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0fcc2eec`: update envoy scanning hints. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a91c7dc9`: Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `imagevector/containers.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          # https://www.envoyproxy.io/docs/envoy/v1.40.2/intro/arch_overview/security/external_deps
-            version: '1.83.0'
-            version: '12.2.0'
-            version: '0.20260929.0'
+	go.opentelemetry.io/otel/sdk/log v1.47.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-          # https://www.envoyproxy.io/docs/envoy/v1.39.0/intro/arch_overview/security/external_deps
-            version: '1.81.1'
-            version: '12.1.0'
-            version: '0.20260413.0'
+	go.opentelemetry.io/otel/sdk/log v0.21.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0fcc2eec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a91c7dc9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

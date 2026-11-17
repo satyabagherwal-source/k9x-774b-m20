@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T17:58:00.587Z",
+  "updated_at": "2026-11-17T18:05:45.349Z",
   "stats": {
-    "total_discovered": 5085,
-    "approved_pending_harvest": 4796,
+    "total_discovered": 5092,
+    "approved_pending_harvest": 4803,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4783,
+      "COMMUNITY_AND_EXPERT": 4790,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -109868,6 +109868,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
         "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-9A9C33A01CB5": {
+      "id": "SRC-9A9C33A01CB5",
+      "url": "https://redirect.github.com/gardener/autoscaler",
+      "title": "https://redirect.github.com/gardener/autoscaler",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:05:44.538Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-3FAE223E1178": {
+      "id": "SRC-3FAE223E1178",
+      "url": "https://redirect.github.com/gardener/autoscaler/releases/tag/v1.33.2",
+      "title": "https://redirect.github.com/gardener/autoscaler/releases/tag/v1.33.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:05:44.575Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-2E4FC3898D2C": {
+      "id": "SRC-2E4FC3898D2C",
+      "url": "https://redirect.github.com/gardener/autoscaler/compare/v1.33.1...v1.33.2",
+      "title": "https://redirect.github.com/gardener/autoscaler/compare/v1.33.1...v1.33.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:05:44.615Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-71A31FC6FC9D": {
+      "id": "SRC-71A31FC6FC9D",
+      "url": "https://redirect.github.com/gagan16k",
+      "title": "https://redirect.github.com/gagan16k",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:05:44.647Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-FD9331582D65": {
+      "id": "SRC-FD9331582D65",
+      "url": "https://redirect.github.com/gardener/autoscaler/pull/450",
+      "title": "https://redirect.github.com/gardener/autoscaler/pull/450",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:05:44.679Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-40577A68795E": {
+      "id": "SRC-40577A68795E",
+      "url": "https://api.gardener.test/",
+      "title": "https://api.gardener.test/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:05:44.713Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-8765269ECBBD": {
+      "id": "SRC-8765269ECBBD",
+      "url": "https://github.com/tursodatabase/turso/pull/11989",
+      "title": "https://github.com/tursodatabase/turso/pull/11989",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:05:45.349Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+        "fileName": "tursodatabase-turso-learnings.md"
       }
     }
   }

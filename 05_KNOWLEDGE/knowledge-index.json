@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T17:58:01.000Z",
-  "total_verified_learnings": 8920,
+  "last_updated": "2026-11-17T18:05:45.791Z",
+  "total_verified_learnings": 8921,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20455,
+  "total_items": 20460,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112993,22 +112993,22 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "063ca631",
-      "content_hash": "811f0a9cc543e710e16d82b2391a5615f44ee1ca3b454d6229325570534345af",
+      "source_version": "d2ecfa2f",
+      "content_hash": "e7a31d1ccbfbf55ad4f937f56b2b81d7f02a508acbdf2f79e6beff64521aa706",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T17:44:00.232Z"
+      "persisted_at": "2026-11-17T18:05:41.254Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "ae2cb738",
-      "content_hash": "927a9ca8a60b07f022514becd1768533a08dafc4ce3cb9c010f9377be8d0d78f",
+      "source_version": "d2ecfa2f",
+      "content_hash": "fd15c76d971ae75a48b80767b1a55db518a0e9e8b15ccd11790deb17a818148d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:16:42.934Z"
+      "persisted_at": "2026-11-17T18:05:41.396Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -213415,13 +213415,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "ae2cb738",
-      "content_hash": "0eeb82952060bb286459e6c24d4ea6223c4caab4cb2ef8cf27009172809eafe0",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "d2ecfa2f",
+      "content_hash": "f1201ca15d8279eee2877af8a8d260f3bd0a8553403bffc6324790563b0f3d50",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213446,7 +213446,7 @@
         {
           "number": 8985,
           "title": "list row-level security policies in pg_policy",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213454,7 +213454,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:16:42.335Z",
+      "verified_at": "2026-11-17T18:05:40.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218771,8 +218771,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "240592ea",
-      "content_hash": "05ec2406f0d6b7f59130ba69697f8f9f997d29e034f49cd0df2789eae07298d9",
+      "source_version": "5b4079a6",
+      "content_hash": "2018a88fdf8e9e47e10855afb22ff91cf7044aaff22e16b569b43eb227afd095",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -218790,6 +218790,11 @@
           "number": 8781,
           "title": "[GEP-28] Fail `gardenadm connect` if temporary bootstrap cluster-admin binding s",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9025,
+          "title": "Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218797,7 +218802,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:55:48.550Z",
+      "verified_at": "2026-11-17T18:05:35.995Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218839,10 +218844,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "repository": "gardener/gardener",
-      "source_version": "240592ea",
-      "content_hash": "6693173c19473893c9e5463d84a741e91184825da3bcd8aa2f9ce3e8998238d2",
+      "source_version": "5b4079a6",
+      "content_hash": "ccec46234ffc5d2b6cf8917a21cf6b59b9ce91b1dd5d055bf208c4ceaee3da71",
       "domain_letter": "L",
-      "persisted_at": "2026-11-16T18:55:48.957Z"
+      "persisted_at": "2026-11-17T18:05:36.495Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener",
@@ -218851,10 +218856,10 @@
       "relative_path": "08_VERIFICATION/gardener-gardener-verification-protocol-empirical-defect-shield-for-gardener-gar.md",
       "title": "Verification Protocol: Empirical Defect Shield for gardener/gardener",
       "repository": "gardener/gardener",
-      "source_version": "240592ea",
-      "content_hash": "3f0aba464a20ec7c34899408babb2e6bd9f9816dd00cfff2c20142034e8179b1",
+      "source_version": "5b4079a6",
+      "content_hash": "681c89b4cf7279ff9bfab319ed61d6d842bb0d479ae5c798f8cb5dca20d206d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:55:49.060Z"
+      "persisted_at": "2026-11-17T18:05:36.632Z"
     },
     "rule-8406": {
       "learning_id": "rule-8406",
@@ -219028,9 +219033,9 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "16e7281a31b72a33b3f8381e37d2141a70f1506f1fdbd5d654f7217ba2b4ee84",
+      "content_hash": "22abed5200c9aac49123aba04d2f4d4913c66296facdbea5c5620534950669c2",
       "domain_letter": "L",
-      "persisted_at": "2026-11-13T23:45:20.841Z"
+      "persisted_at": "2026-11-17T18:05:45.030Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings",
@@ -219040,9 +219045,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gardener-gardener-learnings",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "99381db1a992a7ad1114f212c925dc45a72f4e66034284f34ac44852b5784516",
+      "content_hash": "591668271ca9029a4228575c264559b9e658a41413c1259dcae785cdaccbc811",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T23:45:20.955Z"
+      "persisted_at": "2026-11-17T18:05:45.169Z"
     },
     "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf": {
       "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
@@ -256401,9 +256406,9 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "4a4c9ec6324ad4d66dc8201c7fc8c2d0cbdb43b806010822dceb6f6e5ef7b7b1",
+      "content_hash": "4c983b63055efdc9b574cfcf93d17d3385255dd8f1ccfd1fe3f5428d38cb0a46",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T17:44:04.083Z"
+      "persisted_at": "2026-11-17T18:05:45.648Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings",
@@ -256413,9 +256418,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-turso-learnings",
       "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "03b2ae4e00c4bc025dd3f9c884858b7b76cf04580d8d02ad5b29255a9bbad271",
+      "content_hash": "c01fed788ac420741ed5ba5b8d06b9c25da79e28564750e9685085d2304f963e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T17:44:04.191Z"
+      "persisted_at": "2026-11-17T18:05:45.791Z"
     },
     "learn-huggingface-n4ze3m-tiny-voca": {
       "learning_id": "learn-huggingface-n4ze3m-tiny-voca",
@@ -271492,26 +271497,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8985,
       "title": "list row-level security policies in pg_policy",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "ae2cb738",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "d2ecfa2f",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-17T15:16:42.335Z"
+      "verified_at": "2026-11-17T18:05:40.760Z"
     },
     "candidate_directive-list-row-level-security-policies-in-pg_policy": {
       "item_id": "candidate_directive-list-row-level-security-policies-in-pg_policy",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-59O8-list-row-level-security-policies-in-pg_policy.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6KJQ-list-row-level-security-policies-in-pg_policy.md",
       "title": "list row-level security policies in pg_policy",
       "repository": "tursodatabase/turso",
-      "source_version": "ae2cb738",
-      "content_hash": "ce2825017ebf410b4f09052d49872fac81b81aab22c0898f8ae52ff6397fdff3",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-17T15:16:42.684Z"
+      "source_version": "d2ecfa2f",
+      "content_hash": "532841f481209650eda0422ecf6c1acf4b33abad2f0d3144b4ea52ac2bf8ebf9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T18:05:41.130Z"
     },
     "domain_intelligence-content-information-intelligence-tursodatabase-turso-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-tursodatabase-turso-core-invariants",
@@ -271592,13 +271597,13 @@
       "item_id": "candidate_directive-postgres-list-row-level-security-policies-in-pg_policy",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5LSZ-postgres-list-row-level-security-policies-in-pg_policy.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6NXO-postgres-list-row-level-security-policies-in-pg_policy.md",
       "title": "postgres: list row-level security policies in pg_policy",
-      "repository": "tursodatabase-limbo-learnings",
+      "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "b828f10b02eae71a23b8941ac89c1283ae4058a8687afe9127be543c24fabdb2",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-17T15:16:58.406Z"
+      "content_hash": "ffc3fddc91c3d61d5fabccde5cc1ad367bd81e4a03b50fcea56f7801e12d4e9b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T18:05:45.519Z"
     },
     "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants",
@@ -274437,6 +274442,83 @@
       "content_hash": "f50e9045d7d1a2afc516d3b258396521d9c401b52d927a7e50c16dba4ccb6b6e",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T17:58:01.000Z"
+    },
+    "learn-huggingface-ornith-ai-ornith-1-5-122b": {
+      "learning_id": "learn-huggingface-ornith-ai-ornith-1-5-122b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ornith-ai/Ornith-1.5-122B",
+      "repository": "ornith-ai/Ornith-1.5-122B",
+      "slug": "hf-ornith-ai-ornith-1.5-122b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ornith-ai/Ornith-1.5-122B",
+      "source_version": "hf-ornith-ai-ornith-1.5-122b",
+      "content_hash": "7648d25b645b564638e09fd3e405953c56efd904d74e3a1c17a01bd7f6e2643e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T18:05:26.029Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ornith-ai-ornith-1-5-122b-research-knowledge-intelligence-ornith-ai-ornith-1-.md",
+      "title": "Research & Knowledge Intelligence: ornith-ai/Ornith-1.5-122B Core Invariants",
+      "repository": "ornith-ai/Ornith-1.5-122B",
+      "source_version": "hf-ornith-ai-ornith-1.5-122b",
+      "content_hash": "be4d59844d32977e81f1210656c1f401af83a5fb6f058868031af3abba8f69bf",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T18:05:26.418Z"
+    },
+    "rule-9025": {
+      "learning_id": "rule-9025",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9025,
+      "title": "Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "5b4079a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T18:05:35.995Z"
+    },
+    "candidate_directive-update-module-go-opentelemetry-io-otel-sdk-log-to-v1-security": {
+      "item_id": "candidate_directive-update-module-go-opentelemetry-io-otel-sdk-log-to-v1-security",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6NGJ-update-module-go-opentelemetry-io-otel-sdk-log-to-v1-security.md",
+      "title": "Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]",
+      "repository": "gardener-gardener-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3373d1fc0d0789b77b5db4f362bc8265f91af4ba083f385c6180e5013dc1bf14",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-17T18:05:44.899Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ornith-ai-ornith-1-5-122b-learnings-research-knowledge-intelligence-hf-ornith.md",
+      "title": "Research & Knowledge Intelligence: hf-ornith-ai-ornith-1.5-122b-learnings Core Invariants",
+      "repository": "hf-ornith-ai-ornith-1.5-122b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6d743de7bf257ef396001817ff25b7490674d975a38a2cfddc9daaaae41ef1d1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T18:05:44.335Z"
     }
   },
   "ai-builder-brain": {

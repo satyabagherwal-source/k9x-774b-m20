@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T17:57:56.104Z",
+  "last_updated": "2026-11-17T18:05:40.938Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "0eeb82952060bb286459e6c24d4ea6223c4caab4cb2ef8cf27009172809eafe0",
-      "verified_at": "2026-11-17T15:16:42.512Z",
+      "content_hash": "f1201ca15d8279eee2877af8a8d260f3bd0a8553403bffc6324790563b0f3d50",
+      "verified_at": "2026-11-17T18:05:40.938Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:16:42.512Z"
+      "last_updated": "2026-11-17T18:05:40.938Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "05ec2406f0d6b7f59130ba69697f8f9f997d29e034f49cd0df2789eae07298d9",
-      "verified_at": "2026-11-16T18:55:48.702Z",
+      "content_hash": "2018a88fdf8e9e47e10855afb22ff91cf7044aaff22e16b569b43eb227afd095",
+      "verified_at": "2026-11-17T18:05:36.190Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:55:48.702Z"
+      "last_updated": "2026-11-17T18:05:36.190Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",
@@ -15966,14 +15966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-      "content_hash": "f8497378d391461e1411b703bc216de6885c997d4cc6a971702828645f47b8a3",
-      "verified_at": "2026-11-13T06:58:10.241Z",
+      "content_hash": "7648d25b645b564638e09fd3e405953c56efd904d74e3a1c17a01bd7f6e2643e",
+      "verified_at": "2026-11-17T18:05:26.244Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T06:58:10.241Z"
+      "last_updated": "2026-11-17T18:05:26.244Z"
     },
     "lokoe-mehdi/scouter": {
       "repository": "lokoe-mehdi/scouter",

@@ -10651,3 +10651,6 @@
 | `CYCLE-20261117-W966` | `2026-11-17T17:57:39.822Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md` | Yes (`63203869...`) |
 | `CYCLE-20261117-WFTS` | `2026-11-17T17:57:48.448Z` | `founded-labs/react-native-reusables` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9024` | Yes (`033b87b6...`) |
 | `CYCLE-20261117-WLPG` | `2026-11-17T17:57:56.068Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md` | Yes (`5beb8c10...`) |
+| `CYCLE-20261117-6921` | `2026-11-17T18:05:26.233Z` | `ornith-ai/Ornith-1.5-122B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md` | Yes (`7648d25b...`) |
+| `CYCLE-20261117-6GQA` | `2026-11-17T18:05:36.178Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9025` | Yes (`2018a88f...`) |
+| `CYCLE-20261117-6KE6` | `2026-11-17T18:05:40.926Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8985` | Yes (`f1201ca1...`) |
