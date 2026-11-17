@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source**: github ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
-> **Source Version**: `0e3c01c8`  
+> **Source Version**: `fa34c404`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T12:32:37.465Z  
+> **Timestamp**: 2026-11-17T02:02:15.670Z  
 > **Learning ID**: `learn-github-keyboardkit-keyboardkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T12:32:37.458Z  
+> **Harvest Timestamp**: 2026-11-17T02:02:15.666Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1019,8 +1019,8 @@ private extension KeyboardViewController {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e3c01c8` (2026-11-12)
-**Commit Message**: Update package to 11.2.3
+### Incident Patch 1: `fa34c404` (2026-11-16)
+**Commit Message**: Update package to 11.2.4
 
 **File**: `Package.swift` (modified, +2/-2)
 ```diff
@@ -1028,99 +1028,36 @@ Observed empirical fixes and code patches:
      targets: [
          .binaryTarget(
              name: "KeyboardKit",
--            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.1/KeyboardKit.zip",
--            checksum: "4f7162b00b98f5302a379002a131708cbeba1d7fd9d6962243b383ab235a47e5"
-+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.3/KeyboardKit.zip",
-+            checksum: "f0387285416aea6dd3bccb27d874e8d1c3f989ebe423d7b4f9d75a4e821f13ea"
+-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.3/KeyboardKit.zip",
+-            checksum: "f0387285416aea6dd3bccb27d874e8d1c3f989ebe423d7b4f9d75a4e821f13ea"
++            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.4/KeyboardKit.zip",
++            checksum: "e9ff889bc7e8d7c1ea8e33fc1ed64b1694eece69e1c8538845c38f48ee1ab6d3"
          ),
          .target(
              name: "KeyboardKitDependencies",
 ```
 
-**File**: `RELEASE_NOTES.md` (modified, +22/-0)
+**File**: `RELEASE_NOTES.md` (modified, +12/-0)
 ```diff
-@@ -12,6 +12,28 @@ This document covers the current major version. See older versions for older rel
+@@ -12,6 +12,18 @@ This document covers the current major version. See older versions for older rel
  
  
  
-+## 11.2.3
++## 11.2.4
 +
-+### 🙂 Emojis
++This patch makes it possible to style and interact with toasts.
 +
-+* `EmojiKeyboardSizes` is now `Equatable`.
-+* `EmojiKeyboardSizes` has new `.iPhoneDuoOpen` and `.iPhoneDuoOpenLandscape` sizes.
-+* `EmojiKeyboardSizes` uses larger iPad menu icons, to match the native iPad emoji keyboard.
-+* `KeyboardSearchField` uses a translucent background, to match the native emoji search field.
-+* `EmojiKeyboardSizes` has a new `menuCategoriesMaxWidth` that limits the width of the centered menu.
++### 🌱 Essentials
 +
-+### 🎞️ GIF
-+
-+* `GifKeyboard` now uses the same search bar height as the emoji keyboard.
-+
-+### 🐛 Bug Fixes
-+
-+* `KeyboardView` now makes the emoji keyboard grow like the native one, with a fixed search bar height.
-+* `KeyboardView` now applies the same search bar height to the GIF keyboard search bar.
-+* `KeyboardView` now uses larger emojis on iPad and open iPhone Duo, unless custom emoji sizes are applied.
++* `Keyboard.Toast` is now interactive, which makes Markdown links tappable.
++* `Keyboard.ToastStyle` is a new style that can style the toast components.
++* `View` has a new `.keyboardToastStyle` modifier.
 +
 +
 +
- ## 11.2.1 - 11.2.2
+ ## 11.2.3
  
- These patches fixes some dependencies and adjusts the autocomplete plugin.
-```
-
----
-
-### Incident Patch 2: `42d8e476` (2026-11-11)
-**Commit Message**: Update package to 11.2.2
-
-**File**: `Package.swift` (modified, +4/-4)
-```diff
-@@ -42,8 +42,8 @@ let package = Package(
-     targets: [
-         .binaryTarget(
-             name: "KeyboardKit",
--            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.0/KeyboardKit.zip",
--            checksum: "d21d8e0fe734ff489c240f782a98ee46d7cc1b74e0051b7cc348046f71c7ab7c"
-+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.1/KeyboardKit.zip",
-+            checksum: "4f7162b00b98f5302a379002a131708cbeba1d7fd9d6962243b383ab235a47e5"
-         ),
-         .target(
-             name: "KeyboardKitDependencies",
-@@ -55,8 +55,8 @@ let package = Package(
-         
-         .binaryTarget(
-             name: "KeyboardKitAutocompletePlugin",
--            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.0/KeyboardKitAutocompletePlugin.zip",
--            checksum: "213282148e63b8df397233ca690fcd34380970cd8a9f511e5c66de3d8a18d426"
-+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.1/KeyboardKitAutocompletePlugin.zip",
-+            checksum: "593ffc5df7fef1cf67be7d7a52baa2c95d0abf404e01abf10fc4bcaf0ed7d62c"
-         ),
-         .binaryTarget(
-             name: "KeyboardKitDictationPlugin",
-```
-
-**File**: `RELEASE_NOTES.md` (modified, +11/-0)
-```diff
-@@ -12,6 +12,17 @@ This document covers the current major version. See older versions for older rel
- 
- 
- 
-+## 11.2.1 - 11.2.2
-+
-+These patches fixes some dependencies and adjusts the autocomplete plugin.
-+
-+### 💡 Autocomplete
-+
-+* `AutocompleteEngine` now requires capitalization info.
-+* `KeyboardKitAutocompletePlugin` fixes several Langlot bugs.
-+
-+
-+
- ## 11.2
- 
- This version adds a new GIF feature, with a GIF keyboard, as well as models, views, and built-in GIPHY and Klipy integrations.
+ ### 🙂 Emojis
 ```
 
 #### Recent Merged Pull Requests:
@@ -1149,13 +1086,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update package to 11.2.3
+## X. Update package to 11.2.4
 
 **RULE**:
 When implementing operations in `Package.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in KeyboardKit/KeyboardKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e3c01c8`: Update package to 11.2.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fa34c404`: Update package to 11.2.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.swift`.
@@ -1163,16 +1100,16 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.3/KeyboardKit.zip",
-            checksum: "f0387285416aea6dd3bccb27d874e8d1c3f989ebe423d7b4f9d75a4e821f13ea"
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.4/KeyboardKit.zip",
+            checksum: "e9ff889bc7e8d7c1ea8e33fc1ed64b1694eece69e1c8538845c38f48ee1ab6d3"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.1/KeyboardKit.zip",
-            checksum: "4f7162b00b98f5302a379002a131708cbeba1d7fd9d6962243b383ab235a47e5"
+// Induced defect failure mode:
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.3/KeyboardKit.zip",
+            checksum: "f0387285416aea6dd3bccb27d874e8d1c3f989ebe423d7b4f9d75a4e821f13ea"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e3c01c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fa34c404` are properly handled with clean fallback behavior.

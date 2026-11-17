@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T01:54:53.893Z",
-  "total_records": 1387,
+  "last_updated": "2026-11-17T02:02:54.015Z",
+  "total_records": 1394,
   "domains": {
     "A": {
       "total": 9,
@@ -42,7 +42,7 @@
       ]
     },
     "D": {
-      "total": 605,
+      "total": 607,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -648,7 +648,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-prunaai-p-h3-image-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",
-        "DOM-D-C8024830"
+        "DOM-D-C8024830",
+        "domain_intelligence-research-knowledge-intelligence-oliviarossi-minimax-h3_singularity-x-10eros-max_",
+        "DOM-D-BFBE4A28"
       ]
     },
     "E": {
@@ -697,7 +699,7 @@
       ]
     },
     "G": {
-      "total": 253,
+      "total": 257,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -951,11 +953,15 @@
         "domain_intelligence-architecture-intelligence-ratatui-ratatui-core-invariants",
         "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-core-invariants",
-        "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-core-invariants",
+        "domain_intelligence-architecture-intelligence-openkruise-kruise-core-invariants",
+        "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-openkruise-kruise-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 308,
+      "total": 309,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1264,7 +1270,8 @@
         "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-core-invariants"
       ]
     },
     "I": {
@@ -19549,8 +19556,8 @@
       "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
       "repository": "ClementTsang/bottom",
-      "content_hash": "5973420442a700077143ea5b93c73b6d2773ba2c0938c8bafd4812e6845ad013",
-      "created_at": "2026-11-15T07:04:02.479Z"
+      "content_hash": "53b1c9d946fb8326336e55a53f84b383496bfa73de3e7d615ca2a2f903524dda",
+      "created_at": "2026-11-17T02:02:12.574Z"
     },
     "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants",
@@ -19558,8 +19565,8 @@
       "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-learnings-architecture-intelligence-clementtsang-bottom-lear.md",
       "repository": "clementtsang-bottom-learnings",
-      "content_hash": "4799242cb43b0f68db8f7e3c9f62acbca59daef6dc2b024547ac960b81c92bd3",
-      "created_at": "2026-11-15T07:04:13.492Z"
+      "content_hash": "78d4f14f754b41ea33ec9fce10707f62619745cc0160051a81973505cc8607c7",
+      "created_at": "2026-11-17T02:02:52.835Z"
     },
     "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants",
@@ -24523,6 +24530,102 @@
       "repository": "digitalbazaar-pyld-learnings",
       "content_hash": "baf047dbb1aca79cab97f057a24c1e31d14f3b9510efd14d5e2bd825db29b36f",
       "created_at": "2026-11-17T01:54:51.752Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-oliviarossi-minimax-h3_singularity-x-10eros-max_": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-oliviarossi-minimax-h3_singularity-x-10eros-max_",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-research-knowledge-inte.md",
+      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "content_hash": "6dae28f6aeafe2bc9244f831d0e01f81edc0b5cb989a78d6cecdf7721f3fc48b",
+      "created_at": "2026-11-17T02:02:08.619Z"
+    },
+    "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: KeyboardKit/KeyboardKit Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keyboardkit-keyboardkit-architecture-intelligence-keyboardkit-keyboardkit-core-i.md",
+      "repository": "KeyboardKit/KeyboardKit",
+      "content_hash": "ed46aad44bcdc4f602f757838eebacd34813bf681cdf790f76ff3a12f30a3693",
+      "created_at": "2026-11-17T02:02:16.843Z"
+    },
+    "domain_intelligence-architecture-intelligence-openkruise-kruise-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-openkruise-kruise-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: openkruise/kruise Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openkruise-kruise-architecture-intelligence-openkruise-kruise-core-invariants.md",
+      "repository": "openkruise/kruise",
+      "content_hash": "6ba409babbf535d72c5799e9b4cd44828195929f0bc06705fde0b5dde969cfdd",
+      "created_at": "2026-11-17T02:02:18.754Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: SeekStorm/SeekStorm Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-seekstorm-seekstorm-technical-construction-intelligence-seekstorm-seekstorm-core.md",
+      "repository": "SeekStorm/SeekStorm",
+      "content_hash": "f677c41fda687e8275530fe18e5ad420b615a71251ad62d1759b95783ba11b93",
+      "created_at": "2026-11-17T02:02:23.266Z"
+    },
+    "DOM-D-BFBE4A28": {
+      "record_id": "DOM-D-BFBE4A28",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ClementTsang/bottom",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  \n> **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  \n> **Source Version**: `cb86dc03`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-sy",
+      "content_hash": "1d39474eb1174e1f851503d70dd8f2c4852908b01e3e84bd46c0bd30fdcf7f7a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  \n> **Source**: github ([https://github.com/Clemen -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  \n> **Source**: github ([https://github.com/Clemen",
+      "provenance": {
+        "source_uri": "project://clementtsang-bottom/clementtsang-bottom-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T02:02:26.117Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (clementtsang-bottom)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of clementtsang-bottom"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T02:02:52.534Z"
+    },
+    "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: keyboardkit-keyboardkit-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keyboardkit-keyboardkit-learnings-architecture-intelligence-keyboardkit-keyboard.md",
+      "repository": "keyboardkit-keyboardkit-learnings",
+      "content_hash": "e68f178841afca9ae96903596b90a316a30764f2ef61d68e11719ac2bd99486a",
+      "created_at": "2026-11-17T02:02:53.375Z"
+    },
+    "domain_intelligence-architecture-intelligence-openkruise-kruise-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-openkruise-kruise-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: openkruise-kruise-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openkruise-kruise-learnings-architecture-intelligence-openkruise-kruise-learning.md",
+      "repository": "openkruise-kruise-learnings",
+      "content_hash": "778cabfa7badf628574ec46aef3df45cdedaec1cd77c9a12c64e25142a24b6b7",
+      "created_at": "2026-11-17T02:02:54.015Z"
     }
   }
 }

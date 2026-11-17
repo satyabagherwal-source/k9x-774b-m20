@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T01:54:47.929Z",
+  "last_updated": "2026-11-17T02:02:22.986Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4656,14 +4656,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openkruise-kruise",
-      "content_hash": "d951db78a855915c30db0533b0d3e98c9d2ff72f964c124630767d27482dd170",
-      "verified_at": "2026-11-05T09:12:28.886Z",
+      "content_hash": "397ef3617c94eb968acdf4d911cb582685acde1c599406362119d38f34ed3ed8",
+      "verified_at": "2026-11-17T02:02:18.474Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T09:12:28.886Z"
+      "last_updated": "2026-11-17T02:02:18.474Z"
     },
     "callstack/react-native-paper": {
       "repository": "callstack/react-native-paper",
@@ -5151,14 +5151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seekstorm-seekstorm",
-      "content_hash": "a7f92248a34991724ae7a87d162d2778fe02e065b21e5c114444e05d19aa157c",
-      "verified_at": "2026-11-15T17:40:21.551Z",
+      "content_hash": "388d54b5705baa38a53ba4388d3d6e29bf76e8539c245041b70782d4bea85b4c",
+      "verified_at": "2026-11-17T02:02:22.986Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T17:40:21.551Z"
+      "last_updated": "2026-11-17T02:02:22.986Z"
     },
     "serafimcloud/21st": {
       "repository": "serafimcloud/21st",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "e6060d147012f4254d7cadf71ba03062f06db842214fe2c0267442e10d5ac8a1",
-      "verified_at": "2026-11-15T07:04:02.237Z",
+      "content_hash": "a641928a34c431e3850a5cd6ad8b76499c9d29533d6eb77468d76cbd87e1afcc",
+      "verified_at": "2026-11-17T02:02:12.406Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T07:04:02.237Z"
+      "last_updated": "2026-11-17T02:02:12.406Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",
@@ -15051,14 +15051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keyboardkit-keyboardkit",
-      "content_hash": "3501820c15f0e4d1c47b0b532dad3a5007927580a1953ad80194315c7ac3b927",
-      "verified_at": "2026-11-13T12:32:50.576Z",
+      "content_hash": "5bfaf4648bc8712aeafa232c79c7dcd7e5d96b507c2e1a7dacc68809dbd34b56",
+      "verified_at": "2026-11-17T02:02:16.574Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:32:50.576Z"
+      "last_updated": "2026-11-17T02:02:16.574Z"
     },
     "evanw/esbuild": {
       "repository": "evanw/esbuild",
@@ -17421,14 +17421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "content_hash": "37069d5effcf331b2dcff1e456b50e4ad6f70d0024c30edfd8e86669666fe035",
-      "verified_at": "2026-11-12T08:52:38.468Z",
+      "content_hash": "5ad2152eeaec76b0b491b362e5e2c129cca5f787ce1ad2cef058c55f97902d6f",
+      "verified_at": "2026-11-17T02:02:08.462Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T08:52:38.468Z"
+      "last_updated": "2026-11-17T02:02:08.462Z"
     },
     "LiquidAI/LFM3-1.7B-GGUF": {
       "repository": "LiquidAI/LFM3-1.7B-GGUF",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T01:54:54.119Z",
-  "total_verified_learnings": 8825,
+  "last_updated": "2026-11-17T02:02:54.141Z",
+  "total_verified_learnings": 8828,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19573,
+  "total_items": 19591,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -241294,8 +241294,8 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "a5da65c6",
-      "content_hash": "e6060d147012f4254d7cadf71ba03062f06db842214fe2c0267442e10d5ac8a1",
+      "source_version": "cb86dc03",
+      "content_hash": "a641928a34c431e3850a5cd6ad8b76499c9d29533d6eb77468d76cbd87e1afcc",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
@@ -241310,7 +241310,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T07:04:02.114Z",
+      "verified_at": "2026-11-17T02:02:12.250Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241352,10 +241352,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
       "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
       "repository": "ClementTsang/bottom",
-      "source_version": "a5da65c6",
-      "content_hash": "5973420442a700077143ea5b93c73b6d2773ba2c0938c8bafd4812e6845ad013",
+      "source_version": "cb86dc03",
+      "content_hash": "53b1c9d946fb8326336e55a53f84b383496bfa73de3e7d615ca2a2f903524dda",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T07:04:02.479Z"
+      "persisted_at": "2026-11-17T02:02:12.574Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom",
@@ -241389,9 +241389,9 @@
       "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
       "repository": "clementtsang-bottom-learnings",
       "source_version": "HEAD",
-      "content_hash": "4799242cb43b0f68db8f7e3c9f62acbca59daef6dc2b024547ac960b81c92bd3",
+      "content_hash": "78d4f14f754b41ea33ec9fce10707f62619745cc0160051a81973505cc8607c7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T07:04:13.492Z"
+      "persisted_at": "2026-11-17T02:02:52.835Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings",
@@ -245985,8 +245985,8 @@
       "slug": "seekstorm-seekstorm",
       "platform": "github",
       "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "633896fd",
-      "content_hash": "a7f92248a34991724ae7a87d162d2778fe02e065b21e5c114444e05d19aa157c",
+      "source_version": "c4888cbb",
+      "content_hash": "388d54b5705baa38a53ba4388d3d6e29bf76e8539c245041b70782d4bea85b4c",
       "dossier_path": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "promoted_rules": [],
@@ -245995,7 +245995,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T17:40:21.384Z",
+      "verified_at": "2026-11-17T02:02:22.806Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246008,13 +246008,13 @@
       "item_id": "candidate_directive-update-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EZ3X-update-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RRCG-update-changelog-md.md",
       "title": "Update CHANGELOG.md",
-      "repository": "seekstorm-seekstorm-learnings",
-      "source_version": "HEAD",
-      "content_hash": "fccd39794d1b20ce824ff11fb3926d9fd981c517275ce3f882eeaabde4e56573",
-      "domain_letter": "J",
-      "persisted_at": "2026-11-15T17:40:53.189Z"
+      "repository": "SeekStorm/SeekStorm",
+      "source_version": "c4888cbb",
+      "content_hash": "0312a193aa99d788c258c164c1e06b74f03515b79180408b77de37d82ab1c6f7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T02:02:23.155Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants",
@@ -246035,10 +246035,10 @@
       "relative_path": "08_VERIFICATION/seekstorm-seekstorm-verification-protocol-empirical-defect-shield-for-seekstorm-.md",
       "title": "Verification Protocol: Empirical Defect Shield for SeekStorm/SeekStorm",
       "repository": "SeekStorm/SeekStorm",
-      "source_version": "633896fd",
-      "content_hash": "16284fa2d02ed40f01e4b17beba6756bb1a0a00408ebab0b5001e804c51f9cf6",
+      "source_version": "c4888cbb",
+      "content_hash": "8081359bf6b0a1123e1e7a5fea7c4b4db208a0663f22171f74448a1f66692a60",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:40:21.971Z"
+      "persisted_at": "2026-11-17T02:02:23.379Z"
     },
     "candidate_directive-ios-make-constantstoexport-return-type-non-optional": {
       "item_id": "candidate_directive-ios-make-constantstoexport-return-type-non-optional",
@@ -261045,6 +261045,283 @@
       "content_hash": "83035d1df74942d6c7a9959a53928ac8b1dc95b57b7c97f29a5898f47fc99628",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T01:54:53.779Z"
+    },
+    "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism": {
+      "learning_id": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "slug": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "source_version": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "content_hash": "5ad2152eeaec76b0b491b362e5e2c129cca5f787ce1ad2cef058c55f97902d6f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T02:02:08.291Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-oliviarossi-minimax-h3_singularity-x-10eros-max_": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-oliviarossi-minimax-h3_singularity-x-10eros-max_",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-research-knowledge-inte.md",
+      "title": "Research & Knowledge Intelligence: OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM Core Invariants",
+      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "source_version": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "content_hash": "6dae28f6aeafe2bc9244f831d0e01f81edc0b5cb989a78d6cecdf7721f3fc48b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T02:02:08.619Z"
+    },
+    "learn-github-keyboardkit-keyboardkit": {
+      "learning_id": "learn-github-keyboardkit-keyboardkit",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "KeyboardKit/KeyboardKit",
+      "repository": "KeyboardKit/KeyboardKit",
+      "slug": "keyboardkit-keyboardkit",
+      "platform": "github",
+      "source_url": "https://github.com/KeyboardKit/KeyboardKit",
+      "source_version": "fa34c404",
+      "content_hash": "5bfaf4648bc8712aeafa232c79c7dcd7e5d96b507c2e1a7dacc68809dbd34b56",
+      "dossier_path": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8834,
+          "title": "Update package to 11.2.4",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T02:02:16.410Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8834": {
+      "learning_id": "rule-8834",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8834,
+      "title": "Update package to 11.2.4",
+      "source_url": "https://github.com/KeyboardKit/KeyboardKit",
+      "source_version": "fa34c404",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T02:02:16.410Z"
+    },
+    "candidate_directive-update-package-to-11-2-4": {
+      "item_id": "candidate_directive-update-package-to-11-2-4",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SEKC-update-package-to-11-2-4.md",
+      "title": "Update package to 11.2.4",
+      "repository": "keyboardkit-keyboardkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e10b96df320585a0ea05cd0372ae5c8161c3b6fbb08ad754a68104c34345b89e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T02:02:53.244Z"
+    },
+    "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keyboardkit-keyboardkit-architecture-intelligence-keyboardkit-keyboardkit-core-i.md",
+      "title": "Architecture Intelligence: KeyboardKit/KeyboardKit Core Invariants",
+      "repository": "KeyboardKit/KeyboardKit",
+      "source_version": "fa34c404",
+      "content_hash": "ed46aad44bcdc4f602f757838eebacd34813bf681cdf790f76ff3a12f30a3693",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T02:02:16.843Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-keyboardkit-keyboardkit": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-keyboardkit-keyboardkit",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/keyboardkit-keyboardkit-verification-protocol-empirical-defect-shield-for-keyboa.md",
+      "title": "Verification Protocol: Empirical Defect Shield for KeyboardKit/KeyboardKit",
+      "repository": "KeyboardKit/KeyboardKit",
+      "source_version": "fa34c404",
+      "content_hash": "80867208686fb66b3100ca15ae9afd75351f54b893facb2db4aa4ca305fde56d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T02:02:16.961Z"
+    },
+    "learn-github-openkruise-kruise": {
+      "learning_id": "learn-github-openkruise-kruise",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "openkruise/kruise",
+      "repository": "openkruise/kruise",
+      "slug": "openkruise-kruise",
+      "platform": "github",
+      "source_url": "https://github.com/openkruise/kruise",
+      "source_version": "df1edb99",
+      "content_hash": "397ef3617c94eb968acdf4d911cb582685acde1c599406362119d38f34ed3ed8",
+      "dossier_path": "07_PROJECT_LEARNING/openkruise-kruise-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/openkruise-kruise-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8835,
+          "title": "only manage auto-generated PersistentPodState owned by the",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T02:02:18.310Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8835": {
+      "learning_id": "rule-8835",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8835,
+      "title": "only manage auto-generated PersistentPodState owned by the",
+      "source_url": "https://github.com/openkruise/kruise",
+      "source_version": "df1edb99",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T02:02:18.310Z"
+    },
+    "candidate_directive-only-manage-auto-generated-persistentpodstate-owned-by-the": {
+      "item_id": "candidate_directive-only-manage-auto-generated-persistentpodstate-owned-by-the",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RNV3-only-manage-auto-generated-persistentpodstate-owned-by-the.md",
+      "title": "only manage auto-generated PersistentPodState owned by the",
+      "repository": "openkruise/kruise",
+      "source_version": "df1edb99",
+      "content_hash": "20bec601c10256f24bd816efd7d06e8ddea7b2f0cc5454d4bab3926d30e2be6a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T02:02:18.640Z"
+    },
+    "domain_intelligence-architecture-intelligence-openkruise-kruise-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-openkruise-kruise-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openkruise-kruise-architecture-intelligence-openkruise-kruise-core-invariants.md",
+      "title": "Architecture Intelligence: openkruise/kruise Core Invariants",
+      "repository": "openkruise/kruise",
+      "source_version": "df1edb99",
+      "content_hash": "6ba409babbf535d72c5799e9b4cd44828195929f0bc06705fde0b5dde969cfdd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T02:02:18.754Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-openkruise-kruise": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-openkruise-kruise",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/openkruise-kruise-verification-protocol-empirical-defect-shield-for-openkruise-k.md",
+      "title": "Verification Protocol: Empirical Defect Shield for openkruise/kruise",
+      "repository": "openkruise/kruise",
+      "source_version": "df1edb99",
+      "content_hash": "854f57a0a75a58949fbcb5ec760ef27a03d8c8057f124a9f50afb6983f803c65",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T02:02:18.869Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-seekstorm-seekstorm-technical-construction-intelligence-seekstorm-seekstorm-core.md",
+      "title": "Technical Construction Intelligence: SeekStorm/SeekStorm Core Invariants",
+      "repository": "SeekStorm/SeekStorm",
+      "source_version": "c4888cbb",
+      "content_hash": "f677c41fda687e8275530fe18e5ad420b615a71251ad62d1759b95783ba11b93",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T02:02:23.266Z"
+    },
+    "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keyboardkit-keyboardkit-learnings-architecture-intelligence-keyboardkit-keyboard.md",
+      "title": "Architecture Intelligence: keyboardkit-keyboardkit-learnings Core Invariants",
+      "repository": "keyboardkit-keyboardkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e68f178841afca9ae96903596b90a316a30764f2ef61d68e11719ac2bd99486a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T02:02:53.375Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-keyboardkit-keyboardkit-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-keyboardkit-keyboardkit-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/keyboardkit-keyboardkit-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for keyboardkit-keyboardkit-learnings",
+      "repository": "keyboardkit-keyboardkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "879ce4648cf0a89b4b50db4b97ba3927b1815714c7c4816c0472276a56e01efe",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T02:02:53.509Z"
+    },
+    "candidate_directive-persistentpodstate-only-manage-auto-generated-persistentpodstate-owned-by-the": {
+      "item_id": "candidate_directive-persistentpodstate-only-manage-auto-generated-persistentpodstate-owned-by-the",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SF25-persistentpodstate-only-manage-auto-generated-persistentpodstate-owned-by-the.md",
+      "title": "persistentpodstate): only manage auto-generated PersistentPodState owned by the",
+      "repository": "openkruise-kruise-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9479413261977afa2113fce5ba5d05d46a272bf212a210da38218ab15c750838",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T02:02:53.897Z"
+    },
+    "domain_intelligence-architecture-intelligence-openkruise-kruise-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-openkruise-kruise-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openkruise-kruise-learnings-architecture-intelligence-openkruise-kruise-learning.md",
+      "title": "Architecture Intelligence: openkruise-kruise-learnings Core Invariants",
+      "repository": "openkruise-kruise-learnings",
+      "source_version": "HEAD",
+      "content_hash": "778cabfa7badf628574ec46aef3df45cdedaec1cd77c9a12c64e25142a24b6b7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T02:02:54.015Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-openkruise-kruise-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-openkruise-kruise-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/openkruise-kruise-learnings-verification-protocol-empirical-defect-shield-for-op.md",
+      "title": "Verification Protocol: Empirical Defect Shield for openkruise-kruise-learnings",
+      "repository": "openkruise-kruise-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6d03793ace5ea147c9ad9996481526d7676708860e4a5b0e4153da90858ab7f9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T02:02:54.141Z"
     }
   },
   "ai-builder-brain": {

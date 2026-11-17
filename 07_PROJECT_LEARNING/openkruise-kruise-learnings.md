@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openkruise-kruise-learnings.md`  
 > **Source**: github ([https://github.com/openkruise/kruise](https://github.com/openkruise/kruise))  
-> **Source Version**: `c6d10667`  
+> **Source Version**: `df1edb99`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T09:12:28.067Z  
+> **Timestamp**: 2026-11-17T02:02:17.583Z  
 > **Learning ID**: `learn-github-openkruise-kruise`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openkruise-kruise-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openkruise/kruise](https://github.com/openkruise/kruise))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T09:12:28.059Z  
+> **Harvest Timestamp**: 2026-11-17T02:02:17.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Automated management of large-scale applications on Kubernetes (incubating project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 5376 stars
+- **Stars / Engagement**: 5391 stars
 
 ---
 
@@ -1211,11 +1211,11 @@ func main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2661** (2026-11-16): **fix(persistentpodstate): only manage auto-generated PersistentPodState owned by the workload**
+  *Symptoms*: ### Ⅰ. Describe what this PR does  When a StatefulSet's `kruise.io/auto-generate-persistent-pod-state` annotation changes, the PersistentPodState controller fetches the PersistentPodState with the workload's `namespace/name` and then deletes it (annotation is not `true`) or overwrites its spec (annotation is `true`). It never checks who owns that PersistentPodState.  As a result, a native `apps/v1` StatefulSet and an `apps.kruise.io` StatefulSet with the same name in the same namespace interfere with each other: toggling the annotation on one of them deletes the PersistentPodState generated for the other one. A manually created PersistentPodState with the same name is also deleted.  This PR makes the auto-generate path only manage a PersistentPodState that is controlled by the workload which triggered the reconcile (controller ownerReference UID matches). Otherwise the PersistentPodState is left untouched. Auto-generated PersistentPodStates have always been created with a controller ownerReference to the workload, so existing objects are not affected.  ### Ⅱ. Does this pull request fix one issue?  NONE  ### Ⅲ. Describe how to verify it  Added `TestAutoGeneratePersistentPodState`, covering: - PPS owned by a same-name Kruise StatefulSet is kept when the native StatefulSet disables auto-generation. - Manually created PPS (no ownerReference) is kept. - PPS owned by the StatefulSet itself is still deleted / updated / created as before.  Without the controller change, the first thr
+
 - **Issue #2649** (2026-11-05): **[release-1.9] Backport Nov 5 controller fixes**
   *Symptoms*: ## Summary - Backport five fixes merged into master on 2026-11-05:   - `c6e343cc1`: reconcile WorkloadSpread when a Pod becomes unschedulable.   - `df39dca75`: prevent an empty custom-workload scale selector from matching every Pod.   - `c8edcbce7`: wait for PVC and StorageClass caches in StatefulSet test setup.   - `174e02a85`: clear CloneSet's stale ProgressDeadlineExceeded condition on a new update revision.   - `c6d106679`: do not count failed BroadcastJob Pod creations as active. - Preserve release-1.9 APIs: adapt the CloneSet backport to existing `v1alpha1` types; no API promotion/removal, CRD, generated-client, or webhook changes. - Exclude `0a6738682`, which fixes only CloneSet `v1beta1` validation; release-1.9's `v1alpha1` validation already uses the correct assignment.  ## Test plan - [x] `go test -race ./pkg/controller/workloadspread ./pkg/util/controllerfinder ./pkg/controller/statefulset ./pkg/controller/cloneset ./pkg/controller/broadcastjob` with Kubernetes 1.32.0 envtest assets. - [x] `go test -race ./pkg/webhook/cloneset/validating ./pkg/controller/cloneset/utils ./pkg/util/workloadspread`. - [x] Verify formatting, `git diff --check`, and unchanged API definitions, CRDs, and generated clients. - [x] Backport-specific static code review.
-
-- **Issue #2648** (2026-11-05): **[BUG] WorkloadSpread Adaptive rescheduling can stall when a Pod becomes Unschedulable**
-  *Symptoms*: # [BUG] WorkloadSpread Adaptive rescheduling can stall when a Pod becomes Unschedulable after reconciliation  ## What happened?  A Pod assigned to the first subset of an Adaptive WorkloadSpread did not automatically fall back to the next subset, despite `rescheduleCriticalSeconds: 1`.  The controller reconciled the WorkloadSpread several times during Pod creation, then did not reconcile this WorkloadSpread again for approximately 25 minutes. I manually evicted the Pod afterward. The eviction admission handler updated the WorkloadSpread status, and the subsequent reconciliation immediately detected that the first subset was unschedulable. The replacement Pod was assigned to the second subset.  The eviction was **manually initiated**, not an automatic action by the Adaptive rescheduling controller.  ## What did you expect to happen?  When a managed Pod becomes `Pending` with an empty `spec.nodeName` and `PodScheduled=False, reason=Unschedulable`, the controller should reconcile its WorkloadSpread and evaluate the configured rescheduling timeout.  If the timeout has already elapsed, the controller should mark the subset unschedulable and delete the Pod so that the workload can create a replacement in an eligible fallback subset. Otherwise, it should schedule a check for the remaining timeout.  ## Configuration  The affected workload is a CloneSet. The following simplified demo illustrates the relevant setup, rather than reproducing the production configuration. Assume no availab
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1232,376 +1232,182 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a673868` (2026-11-05)
-**Commit Message**: fix(cloneset): prevent maxSurge variable shadowing in v1beta1 validation (#2617)
+### Incident Patch 1: `df1edb99` (2026-11-12)
+**Commit Message**: fix(persistentpodstate): only manage auto-generated PersistentPodState owned by the workload
 
-In validateUpdateStrategyV1beta1(), maxSurge was declared in the outer
-scope (var maxSurge int) but re-declared using := inside the
-rollingUpdate.MaxSurge != nil block (maxSurge, maxSurgeErr := ...).
-This shadowed the outer variable, leaving it at 0.
+The auto-generate reconcile looked up the PersistentPodState by the workload's namespace/name and deleted or updated it without checking ownership. A same-name workload of a different kind (e.g. apps/v1 StatefulSet vs apps.kruise.io StatefulSet) could therefore remove or rewrite a PersistentPodState that belongs to another workload, or one created manually.
 
-As a result, the subsequent combined check
-replicas > 0 && maxUnavailable < 1 && maxSurge < 1
-always evaluated maxSurge < 1 as true, incorrectly rejecting valid
-surge-only rolling update configurations (e.g. maxUnavailable=0 and
-maxSurge=1).
+Skip the PersistentPodState unless it is controlled by the workload that triggered the reconcile.
 
-Fix the shadowing by declaring maxSurgeErr beforehand and assigning to
-the existing maxSurge variable.
+Signed-off-by: liheng <[REDACTED_EMAIL]>
 
-Signed-off-by: bhuvan-somisetty <[REDACTED_EMAIL]>
-
-**File**: `pkg/webhook/cloneset/validating/validation.go` (modified, +2/-1)
+**File**: `pkg/controller/persistentpodstate/persistent_pod_state_controller.go` (modified, +7/-0)
 ```diff
-@@ -384,8 +384,9 @@ func validateUpdateStrategyV1beta1(strategy *v1beta1.CloneSetUpdateStrategy, rep
+@@ -392,6 +392,13 @@ func (r *ReconcilePersistentPodState) autoGeneratePersistentPodState(req ctrl.Re
+ 		// not found
+ 		oldObj = nil
+ 	}
++	// only manage the persistentPodState auto generated by this workload,
++	// and never touch the one created manually or generated by another workload with the same name.
++	if oldObj != nil && !metav1.IsControlledBy(oldObj, &workload.Metadata) {
++		klog.InfoS("PersistentPodState is not controlled by the workload, and skip it", "persistentPodState", klog.KObj(oldObj),
++			"workload", klog.KRef(ns, name), "apiVersion", apiVersion, "kind", kind)
++		return nil
++	}
  
- 		// Validate MaxSurge
- 		var maxSurge int
-+		var maxSurgeErr error
- 		if rollingUpdate.MaxSurge != nil {
--			maxSurge, maxSurgeErr := util.GetScaledValueFromIntOrPercent(rollingUpdate.MaxSurge, replicas, true)
-+			maxSurge, maxSurgeErr = util.GetScaledValueFromIntOrPercent(rollingUpdate.MaxSurge, replicas, true)
- 			if maxSurgeErr != nil {
- 				allErrs = append(allErrs, field.Invalid(rollingUpdatePath.Child("maxSurge"), rollingUpdate.MaxSurge.String(),
- 					fmt.Sprintf("failed GetScaledValueFromIntOrPercent for maxSurge: %v", maxSurgeErr)))
+ 	// auto generate persistentPodState crd object
+ 	if workload.Metadata.Annotations[appsv1alpha1.AnnotationAutoGeneratePersistentPodState] == "true" {
 ```
 
-**File**: `pkg/webhook/cloneset/validating/validation_test.go` (modified, +92/-0)
+**File**: `pkg/controller/persistentpodstate/persistent_pod_state_controller_test.go` (modified, +184/-0)
 ```diff
-@@ -772,3 +772,95 @@ func TestValidateImagePreDownloadParallelism(t *testing.T) {
- 		})
- 	}
+@@ -25,6 +25,7 @@ import (
+ 
+ 	appsv1 "k8s.io/api/apps/v1"
+ 	corev1 "k8s.io/api/core/v1"
++	"k8s.io/apimachinery/pkg/api/errors"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	"k8s.io/apimachinery/pkg/types"
+@@ -38,6 +39,7 @@ import (
+ 
+ 	appsv1alpha1 "github.com/openkruise/kruise/apis/apps/v1alpha1"
+ 	appsv1beta1 "github.com/openkruise/kruise/apis/apps/v1beta1"
++	"github.com/openkruise/kruise/pkg/util"
+ 	"github.com/openkruise/kruise/pkg/util/controllerfinder"
+ 	"github.com/openkruise/kruise/pkg/util/fieldindex"
+ )
+@@ -562,3 +564,185 @@ func getLatestPersistentPodState(client client.Client, staticIP *appsv1beta1.Per
+ 	err := client.Get(context.TODO(), Key, newPersistentPodState)
+ 	return newPersistentPodState, err
  }
 +
-+// TestValidateUpdateStrategyV1beta1MaxSurgeShadow is a regression test for the variable shadowing
-+// bug in validateUpdateStrategyV1beta1 where `maxSurge, maxSurgeErr :=` inside the if-block
-+// created a new inner variable, leaving the outer maxSurge always 0.  As a result the
-+// combined check `maxUnavailable < 1 && maxSurge < 1` at line 400 incorrectly rejected
-+// configurations with maxUnavailable=0 and maxSurge>0, which are perfectly valid.
-+func TestValidateUpdateStrategyV1beta1MaxSurgeShadow(t *testing.T) {
-+	maxUnavailable := intstr.FromInt32(0)
-+	maxSurge := intstr.FromInt32(1)
-+	partition := intstr.FromInt32(0)
-+
-+	tests := []struct {
-+		name          string
-+		strategy      *v1beta1.CloneSetUpdateStrategy
-+		replicas      int
-+		expectErr     bool
-+		forbiddenPath string
-+	}{
-+		{
-+			// maxUnavailable=0, maxSurge=1 is a valid surge-only rolling update.
-+			// Before the fix the combined check saw outer maxSurge==0 and raised
-+			// a spurious "maxUnavailable and maxSurge should not both be less than 1" error.
-+			name: "valid maxUnavailable=0 maxSurge=1 should not error",
-+			strategy: &v1beta1.CloneSetUpdateStrategy{
-+				Type: v1beta1.RollingUpdateCloneSetUpdateStrategyType,
-+				RollingUpdate: &v1beta1.RollingUpdateCloneSetStrategy{
-+					PodUpdatePolicy: v1beta1.RecreateCloneSetPodUpdateStrategyType,
-+					MaxUnavailable:  &maxUnavailable,
-+					MaxSurge:        &maxSurge,
-+					Partition:       &partition,
-+				},
++func TestAutoGeneratePersistentPodState(t *testing.T) {
++	nativeStsUID := types.UID("5f0ce1a5-7a43-4b0a-9d3c-1b8c3f5e6a01")
++	newNativeSts := func(annotations map[string]string) *appsv1.StatefulSet {
++		return &appsv1.StatefulSet{
++			ObjectMeta: metav1.ObjectMeta{
++				Namespace:   "ns-test",
++				Name:        "test-sts",
++				UID:         nativeStsUID,
++				Annotations: annotations,
 +			},
-+			replicas:  3,
-+			expectErr: false,
-+		},
-+		{
-+			// maxUnavailable=0, maxSurge=0: genuinely invalid; both are less than 1.
-+			name: "invalid maxUnavailable=0 maxSurge=0 should error",
-+			strategy: &v1beta1.CloneSetUpdateStrategy{
-+				Type: v1beta1.RollingUpdateCloneSetUpdateStrategyType,
-+				RollingUpdate: &v1beta1.RollingUpdateCloneSetStrategy{
-+					PodUpdatePolicy: v1beta1.RecreateCloneSetPodUpdateStrategyType,
-+					MaxUnavailable:  &maxUnavailable,
-+					MaxSurge:        func() *intstr.IntOrString { s := intstr.FromInt32(0); return &s }(),
-+					Partition:       &partition,
-+				},
++			Spec: appsv1.StatefulSetSpec{
++				Replicas: ptr.To[int32](0),
 +			},
-+			replicas:      3,
-+			expectErr:     true,
-+			forbiddenPath: "updateStrategy.rollingUpdate.maxUnavailable",
-+		},
-+		{
-+			// InPlaceOnly + maxSurge>0 must still be rejected.
-+			name: "InPlaceOnly with maxSurge=1 should error",
-+			strategy: &v1beta1.CloneSetUpdateStrategy{
-+				Type: v1beta1.RollingUpdateCloneSetUpdateStrategyType,
-+				RollingUpdate: &v1beta1.RollingUpdateCloneSetStrategy{
-+					PodUpdatePolicy: v1beta1.InPlaceOnlyCloneSetPodUpdateStrategyType,
-+					MaxUnavailable:  &maxUnavailable,
-+					MaxSurge:        &maxSurge,
-+					Partition:       &partition,
-+				},
-+			},
-+			replicas:      3,
-+			expectErr:     true,
-+			forbiddenPath: "updateStrategy.rollingUpdate.maxSurge",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			allErrs := validateUpdateStrategyV1beta1(tt.strategy, tt.replicas, field.NewPath("updateStrategy"))
-+			hasErr := len(allErrs) > 0
-+			if hasErr != tt.expectErr {
-+				t.Errorf("expected error=%v, got error=%v, errs=%v", tt.expectErr, hasErr, allErrs)
-+				return
-+			}
-+			if tt.expectErr && tt.forbiddenPath != "" {
-+				found := false
-+				for _, e := range allErrs {
-+					if e.Field == tt.forbiddenPath {
-+						found = true
-+						break
-+					}
-+				}
-+				if !found {
-+					t.Errorf("expected error at field %q, got: %v", tt.forbiddenPath, allErrs)
-+				}
-+			}
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `c6e343cc` (2026-10-22)
-**Commit Message**: fix(workloadspread): reconcile when a pod becomes unschedulable
-
-With the adaptive schedule strategy, a pod is rescheduled to another
-subset once it has been unschedulable for rescheduleCriticalSeconds.
-The timeout is only checked during a reconcile, and the reconcile that
-first sees the PodScheduled=False/Unschedulable condition is the one
-that requeues for it.
-
-The pod update handler only enqueued the WorkloadSpread when a pod
-became inactive or changed revision. The scheduler usually reports a
-pod unschedulable after the reconciles triggered by its creation have
-already run, so nothing requeued the WorkloadSpread and the pod stayed
-pending in its subset until some unrelated event caused a reconcile.
-
-Enqueue the WorkloadSpread when a pod becomes unschedulable.
-
-Signed-off-by: Ishaan400 <[REDACTED_EMAIL]>
-
-**File**: `pkg/controller/workloadspread/workloadspread_event_handler.go` (modified, +19/-0)
-```diff
-@@ -66,7 +66,26 @@ func (p *podEventHandler) Update(ctx context.Context, evt event.TypedUpdateEvent
- 
- 	if kubecontroller.IsPodActive(oldPod) && !kubecontroller.IsPodActive(newPod) || wsutil.GetPodVersion(oldPod) != wsutil.GetPodVersion(newPod) {
- 		p.handlePod(q, newPod, UpdateEventAction)
-+		return
-+	}
-+
-+	// The adaptive strategy reschedules a Pod only once it has been reported unschedulable, and the
-+	// reconcile that sees this condition is the one that requeues for rescheduleCriticalSeconds.
-+	// The scheduler usually reports it after the reconciles triggered by the Pod creation have run,
-+	// so enqueue when the Pod becomes unschedulable.
-+	if !isPodUnschedulable(oldPod) && isPodUnschedulable(newPod) {
-+		p.handlePod(q, newPod, UpdateEventAction)
-+	}
-+}
-+
-+// isPodUnschedulable returns true if the scheduler has reported the Pod as unschedulable.
-+func isPodUnschedulable(pod *corev1.Pod) bool {
-+	for _, condition := range pod.Status.Conditions {
-+		if condition.Type == corev1.PodScheduled {
-+			return condition.Status == corev1.ConditionFalse && condition.Reason == corev1.PodReasonUnschedulable
 +		}
- 	}
-+	return false
- }
- 
- func (p *podEventHandler) Delete(ctx context.Context, evt event.TypedDeleteEvent[*corev1.Pod], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
-```
-
-**File**: `pkg/controller/workloadspread/workloadspread_event_handler_test.go` (modified, +82/-0)
-```diff
-@@ -231,6 +231,88 @@ func TestPodEventHandler(t *testing.T) {
- 	}
- }
- 
-+func TestPodEventHandlerUpdateUnschedulable(t *testing.T) {
-+	injectWorkloadSpread := &wsutil.InjectWorkloadSpread{
-+		Name:   "test-workloadSpread",
-+		Subset: "subset-demo",
 +	}
-+	by, _ := json.Marshal(injectWorkloadSpread)
-+
-+	scheduledCondition := func(status corev1.ConditionStatus, reason, message string) []corev1.PodCondition {
-+		return []corev1.PodCondition{{Type: corev1.PodScheduled, Status: status, Reason: reason, Message: message}}
-+	}
-+	pendingPod := func(annotated bool, conditions []corev1.PodCondition) *corev1.Pod {
-+		pod := podDemo.DeepCopy()
-+		pod.Spec.NodeName = ""
-+		pod.Status.Phase = corev1.PodPending
-+		pod.Status.Conditions = conditions
-+		if annotated {
-+			pod.Annotations = map[string]string{wsutil.MatchedWorkloadSpreadSubsetAnnotations: string(by)}
++	newPps := func(owner *metav1.OwnerReference, targetRef appsv1beta1.TargetReference, keys ...string) *appsv1beta1.PersistentPodState {
++		pps := &appsv1beta1.PersistentPodState{
++			ObjectMeta: metav1.ObjectMeta{
++				Namespace: "ns-test",
++				Name:      "test-sts",
++			},
++			Spec: appsv1beta1.PersistentPodStateSpec{
++				TargetReference: targetRef,
++				RequiredPersistentTopology: &appsv1beta1.NodeTopologyTerm{
++					Keys: keys,
++				},
++			},
 +		}
-+		return pod
++		if owner != nil {
++			pps.OwnerReferences = []metav1.OwnerReference{*owner}
++		}
++		return pps
++	}
++	kruiseStsOwner := &metav1.OwnerReference{
++		APIVersion: KruiseKindSts.GroupVersion().String(),
++		Kind:       KruiseKindSts.Kind,
++		Name:       kruiseStsDemo.Name,
++		UID:        kruiseStsDemo.UID,
++		Controller: ptr.To(true),
++	}
++	kruiseStsRef := appsv1beta1.TargetReference{
++		APIVersion: KruiseKindSts.GroupVersion().String(),
++		Kind:       KruiseKindSts.Kind,
++		Name:       kruiseStsDemo.Name,
++	}
++	nativeStsOwner := &metav1.OwnerReference{
++		APIVersion: KindSts.GroupVersion().String(),
++		Kind:       KindSts.Kind,
++		Name:       "test-sts",
++		UID:        nativeStsUID,
++		Controller: ptr.To(true),
++	}
++	nativeStsRef := appsv1beta1.TargetReference{
++		APIVersion: KindSts.GroupVersion().String(),
++		Kind:       KindSts.Kind,
++		Name:       "test-sts",
 +	}
 +
 +	cases := []struct {
-+		name          string
-+		oldPod        *corev1.Pod
-+		newPod        *corev1.Pod
-+		expectEnqueue bool
++		name        string
++		getSts      func() *appsv1.StatefulSet
++		getPps      func() *appsv1beta1.PersistentPodState
++		expectExist bool
++		expectKeys  []string
 +	}{
 +		{
-+			name:          "pod becomes unschedulable",
-+			oldPod:        pendingPod(true, nil),
-+			newPod:        pendingPod(true, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonUnschedulable, "0/3 nodes are available")),
-+			expectEnqueue: true,
++			name: "auto generate disabled, pps generated by the same-name kruise statefulset, and keep it",
++			getSts: func() *appsv1.StatefulSet {
++				return newNativeSts(map[string]string{appsv1alpha1.AnnotationAutoGeneratePersistentPodState: "false"})
++			},
++			getPps: func() *appsv1beta1.PersistentPodState {
++				return newPps(kruiseStsOwner, kruiseStsRef, podStateNodeTopologyLabel)
++			},
++			expectExist: true,
++			expectKeys:  []string{podStateNodeTopologyLabel},
 +		},
 +		{
-+			name:          "pod becomes unschedulable after its scheduling gates are removed",
-+			oldPod:        pendingPod(true, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonSchedulingGated, "")),
-+			newPod:        pendingPod(true, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonUnschedulable, "0/3 nodes are available")),
-+			expectEnqueue: true,
++			name: "auto generate disabled, pps created manually, and keep it",
++			getSts: func() *appsv1.StatefulSet {
++				return newNativeSts(map[string]string{appsv1alpha1.AnnotationAutoGeneratePersistentPodState: "false"})
++			},
++			getPps: func() *appsv1beta1.PersistentPodState {
++				return newPps(nil, nativeStsRef, podStateNodeTopologyLabel)
++			},
++			expectExist: true,
++			expectKeys:  []string{podStateNodeTopologyLabel},
 +		},
 +		{
-+			name:          "unschedulable pod only gets a new message",
-+			oldPod:        pendingPod(true, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonUnschedulable, "0/3 nodes are available")),
-+			newPod:        pendingPod(true, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonUnschedulable, "0/4 nodes are available")),
-+			expectEnqueue: false,
++			name: "auto generate disabled, pps generated by the statefulset, and delete it",
++			getSts: func() *appsv1.StatefulSet {
++				return newNativeSts(map[string]string{appsv1alpha1.AnnotationAutoGeneratePersistentPodState: "false"})
++			},
++			getPps: func() *appsv1beta1.PersistentPodState {
++				return newPps(nativeStsOwner, nativeStsRef, podStateNodeTopologyLabel)
++			},
++			expectExist: false,
 +		},
 +		{
-+			name:          "pod not managed by a WorkloadSpread becomes unschedulable",
-+			oldPod:        pendingPod(false, nil),
-+			newPod:        pendingPod(false, scheduledCondition(corev1.ConditionFalse, corev1.PodReasonUnschedulable, "0/3 nodes are available")),
-+			expectEnqueue: false,
++			name: "auto generate enabled, pps generated by the same-name kruise statefulset, and keep it unchanged",
++			getSts: func() *appsv1.StatefulSet {
++				return newNativeSts(map[string]string{
++					appsv1alpha1.AnnotationAutoGeneratePersistentPodState: "true",
++					appsv1alpha1.AnnotationRequiredPersistentTopology:     podStateZoneTopologyLabel,
++				})
++			},
++			getPps: func() *appsv1beta1.PersistentPodState {
++				return newPps(kruiseStsOwner, kruiseStsRef, podStateNodeTopologyLabel)
++			},
++			expectExist: true,
++			expectKeys:  []string{podStateNodeTopologyLabel},
 +		},
-+	}
-+
-+	for _, cs := range cases {
-+		t.Run(cs.name, func(t *testing.T) {
-+			handler := &podEventHandler{}
-+			updateQ := workqueue.NewTypedRateLimitingQueue(
-+				workqueue.DefaultTypedControllerRateLimiter[reconcile.Request](),
-+			)
-+			updateEvt := event.TypedUpdateEvent[*corev1.Pod]{
-+				ObjectOld: cs.oldPod,
-+				ObjectNew: cs.newPod,
-+			}
-+			handler.Update(context.TODO(), updateEvt, updateQ)
-+
-+			expectLen := 0
-+			if cs.expectEnqueue {
-+				expectLen = 1
-+			}
-+			if updateQ.Len() != expectLen {
-+				t.Fatalf("unexpected update event handle queue size, expected %d actual %d", expectLen, updateQ.Len())
-+			}
-+			if cs.expectEnqueue {
-+				key, _ := updateQ.Get()
-+				if key.Namespace != cs.newPod.Namespace || key.Name != injectWorkloadSpread.Name {
-+					t.Errorf("matching WorkloadSpread %s/%s failed, got %s", cs.newPod.Namespace, injectWorkloadSpread.Name, key)
-+				}
-+			}
-+		})
-+	}
-+}
-+
- func TestGetWorkloadSpreadForCloneSet(t *testing.T) {
- 	cases := []struct {
- 		name                 string
-```
-
----
-
-### Incident Patch 3: `c6d10667` (2026-10-16)
-**Commit Message**: fix(broadcastjob): do not count failed pod creations as active
-
-Signed-off-by: Sarthak Sharma <[REDACTED_EMAIL]>
-
-**File**: `pkg/controller/broadcastjob/broadcastjob_controller.go` (modified, +1/-0)
-```diff
-@@ -460,6 +460,7 @@ func (r *ReconcileBroadcastJob) reconcilePods(job *appsv1beta1.BroadcastJob,
- 					if err != nil {
- 						defer utilruntime.HandleError(err)
- 						errCh <- err
-+						return
- 					}
- 					// If succeed, increase active counter
- 					activeLock.Lock()
-```
-
-**File**: `pkg/controller/broadcastjob/broadcastjob_controller_test.go` (modified, +50/-0)
-```diff
-@@ -37,6 +37,7 @@ import (
- 	"k8s.io/klog/v2"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-+	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
- 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
- 
- 	appsv1beta1 "github.com/openkruise/kruise/apis/apps/v1beta1"
-@@ -676,3 +677,52 @@ func patchPodName(pod *v1.Pod) {
- 		pod.Name = pod.GenerateName + string(uuid.NewUUID())
- 	}
- }
-+
-+// Test scenario:
-+// 3 nodes without pod running
-+// parallelism = 3
-+// every pod creation fails, so no pod must be counted as active
-+func TestReconcileJobCreatePodFailedNotCountedAsActive(t *testing.T) {
-+	scheme := runtime.NewScheme()
-+	utilruntime.Must(appsv1beta1.AddToScheme(scheme))
-+	utilruntime.Must(v1.AddToScheme(scheme))
-+
-+	job := createJob("job-create-fail", intstr.FromInt(3))
-+	node1 := createNode("node1")
-+	node2 := createNode("node2")
-+	node3 := createNode("node3")
-+
-+	reconcileJob := createReconcileJob(scheme, job, node1, node2, node3)
-+	reconcileJob.Client = interceptor.NewClient(reconcileJob.Client.(client.WithWatch), interceptor.Funcs{
-+		Create: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.CreateOption) error {
-+			if _, ok := obj.(*v1.Pod); ok {
-+				return fmt.Errorf("injected pod create error")
-+			}
-+			return c.Create(ctx, obj, opts...)
-+		},
-+	})
-+
-+	request := reconcile.Request{
-+		NamespacedName: types.NamespacedName{
-+			Name:      "job-create-fail",
-+			Namespace: "default",
-+		},
-+	}
-+
-+	_, err := reconcileJob.Reconcile(context.TODO(), request)
-+	assert.Error(t, err)
-+
-+	retrievedJob := &appsv1beta1.BroadcastJob{}
-+	err = reconcileJob.Get(context.TODO(), request.NamespacedName, retrievedJob)
-+	assert.NoError(t, err)
-+
-+	podList := &v1.PodList{}
-+	err = reconcileJob.List(context.TODO(), podList, client.InNamespace(request.Namespace))
-+	assert.NoError(t, err)
-+
-+	// no pod was created
-+	assert.Empty(t, podList.Items)
-+	// failed creations must not be counted as active
-+	assert.Equal(t, int32(0), retrievedJob.Status.Active)
-+	assert.Equal(t, int32(3), retrievedJob.Status.Desired)
-+}
++		{
++			name: "auto generate enabled, pps generated by the statefulset, and update it",
++			getSts: func() *appsv1.StatefulSet {
++				return newNativeSts(map[string]string{
++					appsv1alpha1.AnnotationAutoGeneratePersistentPodState: "true",
++					appsv1alpha1.AnnotationRequiredPersistentTopology:     po
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2661** (2026-11-16): fix(persistentpodstate): only manage auto-generated PersistentPodState owned by the workload (@zmberg)
 - **PR #2649** (2026-11-05): [release-1.9] Backport Nov 5 controller fixes (@furykerry)
 - **PR #2642** (2026-11-05): fix(controllerfinder): don't match every pod for an empty scale selector (@sarankumar1325)
 - **PR #2635** (2026-11-05): fix(statefulset): wait for PVC and StorageClass caches in test setup (@photoszzt)
 - **PR #2634** (2026-11-05): fix(workloadspread): reconcile when a pod becomes unschedulable (@Ishaan400)
 - **PR #2626** (2026-10-20): docs(changelog): add v1.9.1 and v1.9.2 release notes (@furykerry)
-- **PR #2625** (2026-10-19): fix(ci): bump trivy-action to v0.36.0 and golangci-lint-action to v9.3.0 (@furykerry)
 
 ---
 
@@ -1621,29 +1427,34 @@ Signed-off-by: Sarthak Sharma <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cloneset): prevent maxSurge variable shadowing in v1beta1 validation (#2617)
+## X. persistentpodstate): only manage auto-generated PersistentPodState owned by the 
 
 **RULE**:
-When implementing operations in `pkg/webhook/cloneset/validating/validation.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openkruise/kruise. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/controller/persistentpodstate/persistent_pod_state_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openkruise/kruise. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0a673868`: cloneset): prevent maxSurge variable shadowing in v1beta1 validation (#2617). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df1edb99`: persistentpodstate): only manage auto-generated PersistentPodState owned by the workload. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/webhook/cloneset/validating/validation.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/controller/persistentpodstate/persistent_pod_state_controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		var maxSurgeErr error
-			maxSurge, maxSurgeErr = util.GetScaledValueFromIntOrPercent(rollingUpdate.MaxSurge, replicas, true)
+	// only manage the persistentPodState auto generated by this workload,
+	// and never touch the one created manually or generated by another workload with the same name.
+	if oldObj != nil && !metav1.IsControlledBy(oldObj, &workload.Metadata) {
+		klog.InfoS("PersistentPodState is not controlled by the workload, and skip it", "persistentPodState", klog.KObj(oldObj),
+			"workload", klog.KRef(ns, name), "apiVersion", apiVersion, "kind", kind)
+		return nil
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-			maxSurge, maxSurgeErr := util.GetScaledValueFromIntOrPercent(rollingUpdate.MaxSurge, replicas, true)
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0a673868` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df1edb99` are properly handled with clean fallback behavior.

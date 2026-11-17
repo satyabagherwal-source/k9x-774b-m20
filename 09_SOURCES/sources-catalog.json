@@ -3023,10 +3023,10 @@
     "repository": "openkruise/kruise",
     "platform": "github",
     "sourceUrl": "https://github.com/openkruise/kruise",
-    "sourceVersion": "c6d10667",
+    "sourceVersion": "df1edb99",
     "license": "NOASSERTION",
-    "contentHash": "d951db78a855915c30db0533b0d3e98c9d2ff72f964c124630767d27482dd170",
-    "lastHarvestedAt": "2026-11-05T09:12:28.869Z",
+    "contentHash": "397ef3617c94eb968acdf4d911cb582685acde1c599406362119d38f34ed3ed8",
+    "lastHarvestedAt": "2026-11-17T02:02:18.467Z",
     "learningId": "learn-github-openkruise-kruise"
   },
   "callstack-react-native-paper": {
@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "633896fd",
+    "sourceVersion": "c4888cbb",
     "license": "Apache-2.0",
-    "contentHash": "a7f92248a34991724ae7a87d162d2778fe02e065b21e5c114444e05d19aa157c",
-    "lastHarvestedAt": "2026-11-15T17:40:21.529Z",
+    "contentHash": "388d54b5705baa38a53ba4388d3d6e29bf76e8539c245041b70782d4bea85b4c",
+    "lastHarvestedAt": "2026-11-17T02:02:22.967Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "a5da65c6",
+    "sourceVersion": "cb86dc03",
     "license": "MIT",
-    "contentHash": "e6060d147012f4254d7cadf71ba03062f06db842214fe2c0267442e10d5ac8a1",
-    "lastHarvestedAt": "2026-11-15T07:04:02.231Z",
+    "contentHash": "a641928a34c431e3850a5cd6ad8b76499c9d29533d6eb77468d76cbd87e1afcc",
+    "lastHarvestedAt": "2026-11-17T02:02:12.398Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {
@@ -10003,10 +10003,10 @@
     "repository": "KeyboardKit/KeyboardKit",
     "platform": "github",
     "sourceUrl": "https://github.com/KeyboardKit/KeyboardKit",
-    "sourceVersion": "0e3c01c8",
+    "sourceVersion": "fa34c404",
     "license": "NOASSERTION",
-    "contentHash": "3501820c15f0e4d1c47b0b532dad3a5007927580a1953ad80194315c7ac3b927",
-    "lastHarvestedAt": "2026-11-13T12:32:50.565Z",
+    "contentHash": "5bfaf4648bc8712aeafa232c79c7dcd7e5d96b507c2e1a7dacc68809dbd34b56",
+    "lastHarvestedAt": "2026-11-17T02:02:16.567Z",
     "learningId": "learn-github-keyboardkit-keyboardkit"
   },
   "evanw-esbuild": {
@@ -11585,8 +11585,8 @@
     "sourceUrl": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
     "sourceVersion": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
     "license": "Open-Source",
-    "contentHash": "37069d5effcf331b2dcff1e456b50e4ad6f70d0024c30edfd8e86669666fe035",
-    "lastHarvestedAt": "2026-11-12T08:52:38.460Z",
+    "contentHash": "5ad2152eeaec76b0b491b362e5e2c129cca5f787ce1ad2cef058c55f97902d6f",
+    "lastHarvestedAt": "2026-11-17T02:02:08.454Z",
     "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism"
   },
   "hf-liquidai-lfm3-1.7b-gguf": {

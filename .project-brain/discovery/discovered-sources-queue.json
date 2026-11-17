@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T01:54:53.594Z",
+  "updated_at": "2026-11-17T02:02:53.707Z",
   "stats": {
-    "total_discovered": 4634,
-    "approved_pending_harvest": 4364,
+    "total_discovered": 4637,
+    "approved_pending_harvest": 4367,
     "harvested_count": 0,
     "rejected_count": 270,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4362,
+      "COMMUNITY_AND_EXPERT": 4365,
       "OFFICIAL_DOCUMENTATION": 144,
       "STANDARDS_AND_SPECIFICATIONS": 100,
       "ENGINEERING_BLOGS": 3,
@@ -100079,6 +100079,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
         "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-AE75E991A155": {
+      "id": "SRC-AE75E991A155",
+      "url": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.4/KeyboardKit.zip",
+      "title": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.4/KeyboardKit.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T02:02:53.066Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-7CBEDD9F3CDB": {
+      "id": "SRC-7CBEDD9F3CDB",
+      "url": "https://github.com/openkruise/kruise",
+      "title": "https://github.com/openkruise/kruise",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T02:02:53.664Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openkruise-kruise-learnings.md",
+        "fileName": "openkruise-kruise-learnings.md"
+      }
+    },
+    "SRC-B319D67A4325": {
+      "id": "SRC-B319D67A4325",
+      "url": "https://kubernetes.io/docs/concepts/overview/working-with-objects/labels",
+      "title": "https://kubernetes.io/docs/concepts/overview/working-with-objects/labels",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T02:02:53.707Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openkruise-kruise-learnings.md",
+        "fileName": "openkruise-kruise-learnings.md"
       }
     }
   }

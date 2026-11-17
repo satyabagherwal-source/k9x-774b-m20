@@ -10432,3 +10432,9 @@ Every entry in this ledger must capture:
 | `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `874c56eb` | Multi-dimensional audit evidence | 2026-11-17T01:54:38.232Z |
 | `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `0c23df62` | Multi-dimensional audit evidence | 2026-11-17T01:54:45.204Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `30f9eb40` | Multi-dimensional audit evidence | 2026-11-17T01:54:47.920Z |
+| `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism` | `https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | `hf-oliviar` | Multi-dimensional audit evidence | 2026-11-17T02:02:08.454Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `cb86dc03` | Multi-dimensional audit evidence | 2026-11-17T02:02:12.398Z |
+| `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `fa34c404` | Multi-dimensional audit evidence | 2026-11-17T02:02:16.567Z |
+| `learn-github-openkruise-kruise` | `https://github.com/openkruise/kruise` | `df1edb99` | Multi-dimensional audit evidence | 2026-11-17T02:02:18.467Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `c4888cbb` | Multi-dimensional audit evidence | 2026-11-17T02:02:22.967Z |
+| `learn-dom-d-bfbe4a28` | `project://clementtsang-bottom` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md` | 2026-11-17T02:02:52.550Z |

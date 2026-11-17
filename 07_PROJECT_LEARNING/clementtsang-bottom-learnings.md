@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `a5da65c6`  
+> **Source Version**: `cb86dc03`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T07:04:01.551Z  
+> **Timestamp**: 2026-11-17T02:02:11.993Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T07:04:01.413Z  
+> **Harvest Timestamp**: 2026-11-17T02:02:11.989Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14194 stars
+- **Stars / Engagement**: 14197 stars
 
 ---
 
@@ -1601,43 +1601,55 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5da65c6` (2026-11-14)
-**Commit Message**: other: set `unused_dependencies` lint to deny (#2322)
+### Incident Patch 1: `cb86dc03` (2026-11-16)
+**Commit Message**: ci: fix MSI installer workflow failing when installing dotnet (#2324)
 
-**File**: `Cargo.toml` (modified, +3/-0)
+For some reason on specifically the x86 msvc (but not gnu or arm) runners, the `choco install` step for dotnet would fail. But it looks like dotnet is already included in runners so I can just skip it entirely. So... yeah the PR removes that line.
+
+**File**: `.github/workflows/build_releases.yml` (modified, +0/-5)
 ```diff
-@@ -262,3 +262,6 @@ todo = "deny"
- unimplemented = "deny"
- missing_safety_doc = "deny"
- unwrap_used = "deny"
-+
-+[lints.cargo]
-+unused_dependencies = "deny"
+@@ -371,11 +371,6 @@ jobs:
+         shell: pwsh
+         run: ./scripts/ci/setup_windows_gnullvm.ps1
+ 
+-      - name: Install Net-Framework-Core
+-        shell: powershell
+-        run: |
+-          choco install dotnet-sdk --pre -y --no-progress;
+-
+       - name: Install WiX Toolset
+         shell: powershell
+         run: |
 ```
 
----
-
-### Incident Patch 2: `3f05ccf4` (2026-11-14)
-**Commit Message**: other: add crate publish cooldown (#2321)
-
-**File**: `.cargo/config.toml` (modified, +3/-0)
+**File**: `tests/integration/util.rs` (modified, +3/-2)
 ```diff
-@@ -6,3 +6,6 @@ rustflags = ["-C", "target-feature=+crt-static"]
+@@ -1,6 +1,6 @@
+-use std::{env, ffi::OsString, io::Read, path::Path, process::Command};
++use std::{env, ffi::OsString, path::Path, process::Command};
+ #[cfg(all(target_arch = "x86_64", target_os = "linux"))]
+-use std::{thread, time::Duration};
++use std::{io::Read, thread, time::Duration};
  
- [target.aarch64-pc-windows-gnullvm]
- rustflags = ["-C", "target-feature=+crt-static"]
-+
-+[registry]
-+global-min-publish-age = "7 days"
+ #[cfg(all(target_arch = "x86_64", target_os = "linux"))]
+ use portable_pty::{Child, CommandBuilder, MasterPty, PtySize, native_pty_system};
+@@ -152,6 +152,7 @@ pub fn spawn_btm_in_pty(args: &[&str]) -> (Box<dyn MasterPty>, Box<dyn Child>) {
+     (pair.master, pair.slave.spawn_command(cmd).unwrap())
+ }
+ 
++#[cfg(all(target_arch = "x86_64", target_os = "linux"))]
+ fn reader_to_string(mut reader: Box<dyn Read>) -> String {
+     let mut buf = String::default();
+     reader.read_to_string(&mut buf).unwrap();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2324** (2026-11-16): ci: fix MSI installer workflow failing when installing dotnet (@ClementTsang)
+- **PR #2323** (2026-11-15): feature: allow setting a custom terminal name (@ClementTsang)
 - **PR #2322** (2026-11-14): other: set `unused_dependencies` lint to deny (@ClementTsang)
 - **PR #2321** (2026-11-14): other: add crate publish cooldown (@ClementTsang)
 - **PR #2316** (2026-11-13): ci: fix Android build by tying gpu feature to sysinfo's, bump cross version to a9301e9 (@ClementTsang)
 - **PR #2315** (2026-11-13): ci: bump rust version in CI to 1.100.0 (@ClementTsang)
-- **PR #2314** (2026-11-13): deps: bump sysinfo to 0.40.3 (@ClementTsang)
-- **PR #2313** (2026-11-12): other: add cargo binstall metadata (@ClementTsang)
 
 ---
 
@@ -1651,36 +1663,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. other: set `unused_dependencies` lint to deny
-
-**RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `a5da65c6`: other: set `unused_dependencies` lint to deny. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-
-[lints.cargo]
-unused_dependencies = "deny"
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5da65c6` are properly handled with clean fallback behavior.

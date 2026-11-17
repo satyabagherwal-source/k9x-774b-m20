@@ -10399,3 +10399,9 @@
 | `CYCLE-20261117-HSLW` | `2026-11-17T01:54:38.228Z` | `digitalbazaar/pyld` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8832` | Yes (`7528960e...`) |
 | `CYCLE-20261117-HXZJ` | `2026-11-17T01:54:45.199Z` | `openziti/zrok` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/openziti-zrok-learnings.md` | Yes (`f7fc70c2...`) |
 | `CYCLE-20261117-I030` | `2026-11-17T01:54:47.916Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8833` | Yes (`bcbb81d4...`) |
+| `CYCLE-20261117-RG02` | `2026-11-17T02:02:08.450Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md` | Yes (`5ad2152e...`) |
+| `CYCLE-20261117-RJ1M` | `2026-11-17T02:02:12.394Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md` | Yes (`a641928a...`) |
+| `CYCLE-20261117-RM9F` | `2026-11-17T02:02:16.563Z` | `KeyboardKit/KeyboardKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8834` | Yes (`5bfaf464...`) |
+| `CYCLE-20261117-RNQ7` | `2026-11-17T02:02:18.463Z` | `openkruise/kruise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8835` | Yes (`397ef361...`) |
+| `CYCLE-20261117-RR78` | `2026-11-17T02:02:22.964Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`388d54b5...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T02:02:52.550Z` | `clementtsang-bottom` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BFBE4A28` [Domain D] | Yes (`1d39474e...`) |

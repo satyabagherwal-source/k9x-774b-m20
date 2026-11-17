@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-17T00:56:37.023Z",
+  "updated_at": "2026-11-17T02:02:52.549Z",
   "statistics": {
-    "total_nodes": 288,
+    "total_nodes": 289,
     "total_edges": 149,
     "domain_distribution": {
-      "D": 220,
+      "D": 221,
       "M": 1,
       "H": 28,
       "J": 11,
@@ -6464,6 +6464,28 @@
       ],
       "created_at": "2026-11-17T00:56:37.023Z",
       "updated_at": "2026-11-17T00:56:37.023Z"
+    },
+    "DOM-D-BFBE4A28": {
+      "id": "DOM-D-BFBE4A28",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): ClementTsang/bottom",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  \n> **Source**: github ([https://github.com/Clemen -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  \n> **Source**: github ([https://github.com/Clemen",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://clementtsang-bottom/clementtsang-bottom-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T02:02:26.117Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (clementtsang-bottom)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-17T02:02:52.549Z",
+      "updated_at": "2026-11-17T02:02:52.549Z"
     }
   },
   "edges": [

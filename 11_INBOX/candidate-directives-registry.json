@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T01:54:53.779Z",
+  "last_updated": "2026-11-17T02:02:53.897Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2589,15 +2589,15 @@
       "learning_id": "learn-github-bitnami-sealed-secrets"
     },
     {
-      "id": "CD-EZ3X",
+      "id": "CD-RRCG",
       "directive_title": "Update CHANGELOG.md",
-      "source_repo": "seekstorm-seekstorm-learnings",
-      "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-EZ3X-update-changelog-md.md",
-      "status": "QUARANTINED_REJECT",
-      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-15",
-      "domain_letter": "J"
+      "source_repo": "SeekStorm/SeekStorm",
+      "source_commit": "c4888cbb",
+      "staged_file": "11_INBOX/candidate-directives/CD-RRCG-update-changelog-md.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
     },
     {
       "id": "CD-7DBX",
@@ -21237,6 +21237,66 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-SEKC",
+      "directive_title": "Update package to 11.2.4",
+      "source_repo": "keyboardkit-keyboardkit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SEKC-update-package-to-11-2-4.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-RNV3",
+      "directive_title": "only manage auto-generated PersistentPodState owned by the",
+      "source_repo": "openkruise/kruise",
+      "source_commit": "df1edb99",
+      "staged_file": "11_INBOX/candidate-directives/CD-RNV3-only-manage-auto-generated-persistentpodstate-owned-by-the.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-RR7K",
+      "directive_title": "Update CHANGELOG.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "SeekStorm/SeekStorm",
+      "source_commit": "c4888cbb",
+      "date_staged": "2026-11-17",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-seekstorm-seekstorm",
+      "candidateDomain": "UNASSIGNED",
+      "candidateDomainName": null,
+      "secondaryDomains": [],
+      "classificationConfidence": 0,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-REV-2F1C4D",
+      "directive_title": "Update package to 11.2.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "keyboardkit-keyboardkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2F1C4D-update-package-to-11-2-4.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-SF25",
+      "directive_title": "persistentpodstate): only manage auto-generated PersistentPodState owned by the",
+      "source_repo": "openkruise-kruise-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SF25-persistentpodstate-only-manage-auto-generated-persistentpodstate-owned-by-the.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
     }
   ]
 }

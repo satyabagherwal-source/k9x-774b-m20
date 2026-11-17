@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T01:54:47.925Z",
-  "total_cycles_completed": 9985,
-  "total_learnings_persisted": 9985,
-  "total_rules_promoted": 9571,
+  "last_updated": "2026-11-17T02:02:22.983Z",
+  "total_cycles_completed": 9990,
+  "total_learnings_persisted": 9990,
+  "total_rules_promoted": 9573,
   "history": [
-    {
-      "timestamp": "2026-11-15T23:59:58.547Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T00:17:31.026Z",
-      "repository": "MetrolistGroup/Metrolist",
-      "learningId": "learn-github-metrolistgroup-metrolist",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T00:17:36.471Z",
-      "repository": "EhPanda-Team/EhPanda",
-      "learningId": "learn-github-ehpanda-team-ehpanda",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T00:17:43.885Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T00:27:47.155Z",
-      "repository": "LiconStudio/Minimax-H3-VBVR",
-      "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T00:27:49.892Z",
       "repository": "alexpasmantier/television",
@@ -1403,6 +1368,41 @@
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T02:02:08.459Z",
+      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T02:02:12.403Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T02:02:16.572Z",
+      "repository": "KeyboardKit/KeyboardKit",
+      "learningId": "learn-github-keyboardkit-keyboardkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T02:02:18.472Z",
+      "repository": "openkruise/kruise",
+      "learningId": "learn-github-openkruise-kruise",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T02:02:22.983Z",
+      "repository": "SeekStorm/SeekStorm",
+      "learningId": "learn-github-seekstorm-seekstorm",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

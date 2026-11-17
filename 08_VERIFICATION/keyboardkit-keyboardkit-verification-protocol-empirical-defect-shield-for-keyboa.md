@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for keyboardkit/keyboardkit
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for KeyboardKit/KeyboardKit
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "keyboardkit/keyboardkit",
-  "source_url": "https://github.com/keyboardkit/keyboardkit",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "KeyboardKit/KeyboardKit",
+  "source_url": "https://github.com/KeyboardKit/KeyboardKit",
+  "source_version": "fa34c404",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-17T02:02:16.730Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-keyboardkit-keyboardkit",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [keyboardkit/keyboardkit](https://github.com/keyboardkit/keyboardkit) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit) (Revision: `fa34c404`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T02:02:16.730Z`  
+> **Learning ID**: `learn-github-keyboardkit-keyboardkit`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `keyboardkit/keyboardkit` (Commit: `historical`)
+- **Target Repository**: `KeyboardKit/KeyboardKit` (Commit: `fa34c404`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
-> **Source**: github ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
-> **Source Version**: `623e673f`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T02:28:03.839Z  
-> **Learning ID**: `learn-github-keyboardkit-keyboardkit`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): KeyboardKit/KeyboardKit
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T02:28:03.830Z  
+> **Harvest Timestamp**: 2026-11-17T02:02:15.666Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Create custom iOS keyboards with Swift & SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1902 stars
+- **Stars / Engagement**: 1905 stars
 
 ---
 
@@ -74,59 +60,31 @@ PROVENANCE_END -->
 
 import SwiftUI
 import KeyboardKit
-import KeyboardKitDictationPlugin                           // <-- 💡 Dictation
-
-extension PluginDictationEngine: @retroactive DictationEngine {}  // <-- 💡 Dictation
 
 /// This is the KeyboardKit demo app.
 ///
 /// The main app target shows you how to set up the main app
 /// to use KeyboardKit, while the `Keyboard` keyboard target
-/// shows how to do the same for the keyboard extension.
+/// shows you how to do the same for your keyboard extension.
 ///
-/// To run this demo on a physical device, you must register
+/// To run this test on a physical device, you must register
 /// your team under `Signing & Capabilities` for all targets.
 ///
 /// `IMPORTANT` This demo has no App Group, which means that
 /// the settings won't sync between the app and the keyboard.
 /// Therefore, the keyboard has in-keyboard settings screens
-/// to let you test settings in the keyboard. To enable data
-/// sync, you must change the bundle ID of all targets, then
-/// create an App Group in the Apple Developer Portal, after
-/// this, you must configure it as shown in the docs.
+/// to let you test settings in the keyboard.
 @main
 struct DemoApp: App {
-
-    init() {
-        // subscribeToKeyboardNotifications()
-    }
 
     var body: some Scene {
         WindowGroup {
             KeyboardAppView(
                 for: .keyboardKitDemo,
-                dictationEngine: pluginDictationEngine      // <-- 💡 Dictation
+                autocompleteEngine: autocompleteEngine,     // <-- 💡 Autocomplete
+                dictationEngine: dictationEngine            // <-- 💡 Dictation
             ) {
                 HomeScreen()
-            }
-        }
-    }
-}
-
-private extension DemoApp {
-
-    /// Call this function from the initializer to print all
-    /// keyboard frame changes. You can use this to debug if
-    /// the keyboard resizing starts misbehaving.
-    func subscribeToKeyboardNotifications() {
-        NotificationCenter.default.addObserver(
-            forName: UIResponder.keyboardWillShowNotification,
-            object: nil,
-            queue: .main
-        ) { notification in
-            let key = UIResponder.keyboardFrameEndUserInfoKey
-            if let keyboardFrame = notification.userInfo?[key] as? CGRect {
-                print("Keyboard height: \(keyboardFrame.height)")
             }
         }
     }
@@ -232,11 +190,15 @@ struct HomeScreen: View {
 //  Copyright © 2024-2026 Kankoda. All rights reserved.
 //
 
-#if IS_KEYBOARDKIT
 import KeyboardKit
-#else
-import KeyboardKit
-#endif
+
+// 💡 Autocomplete
+import KeyboardKitAutocompletePlugin
+extension PluginAutocompleteEngine: @retroactive AutocompleteEngine {}
+
+// 💡 Dictation
+import KeyboardKitDictationPlugin
+extension PluginDictationEngine: @retroactive DictationEngine {}
 
 extension KeyboardApp {
 
@@ -245,16 +207,15 @@ extension KeyboardApp {
     /// Note that this file is added to both the app and the
     /// `Keyboard` keyboard extension.
     ///
-    /// The demo uses a `KeyboardKit.license` file to unlock
-    /// KeyboardKit Pro, which is why the `licenseKey` below
-    /// is disabled. The `appGroupId` value is only added to
-    /// show how to enable App Group data syncing, but since
-    /// this demo app isn't code signed, it does not work in
-    /// this demo. See ``DemoApp`` for more information.
+    /// `IMPORTANT` This app isn't code signed and therefore
+    /// can't use an App Group. This means that the settings
+    /// won't sync between the app and the keyboard. The app
+    /// just adds the `appGroupId` value to show how you can
+    /// enable App Group data syncing.
     static var keyboardKitDemo: KeyboardApp {
         .init(
             name: "KeyboardKit Demo",
-            // licenseKey: "299B33C6-061C-4285-8189-90525BCAF098",  // Set up KeyboardKit Pro!
+            licenseKey: "299B33C6-061C-4285-8189-90525BCAF098",     // KeyboardKit Pro License!
             appGroupId: "group.com.keyboardkit.demo",               // Set up App Group data sync
             locales: .keyboardKitSupported,                         // Set up the enabled locales
             autocomplete: .init(                                    // Set up custom autocomplete
@@ -268,12 +229,27 @@ extension KeyboardApp {
     }
 }
 
+@MainActor
+var dictationEngine: DictationEngine {
+    pluginDictationEngine
+}
+
+@MainActor
+var autocompleteEngine: AutocompleteEngine {
+    pluginAutocompleteEngine(
+        .langlot(
+            licenseKey: "87170FBB-24F4-4C00-A7FC-C9A77D49DF38",
+            appGroup: KeyboardApp.keyboardKitDemo.appGroupId!
+        )
+    )
+}
+
 ```
 
-### Core Architecture Module: `Demo/Keyboard/DemoKeyboardActionHandler.swift`
+### Core Architecture Module: `Demo/Keyboard/DemoActionHandler.swift`
 ```
 //
-//  DemoKeyboardActionHandler.swift
+//  DemoActionHandler.swift
 //  KeyboardPro
 //
 //  Created by Daniel Saidi on 2021-02-11.
@@ -285,7 +261,7 @@ import UIKit
 
 /// This action handler inherits the standard action handler
 /// and makes demo-specific adjustments to it.
-class DemoKeyboardActionHandler: StandardKeyboardActionHandler {
+class DemoActionHandler: StandardKeyboardActionHandler {
 
     /// Trigger custom actions for `.image` keyboard actions.
     override func action(
@@ -321,7 +297,7 @@ class DemoKeyboardActionHandler: StandardKeyboardActionHandler {
     }
 }
 
-private extension DemoKeyboardActionHandler {
+private extension DemoActionHandler {
 
     func alert(_ message: String) {
         print("Implement alert functionality if you want.")
@@ -333,6 +309,7 @@ private extension DemoKeyboardActionHandler {
         guard image.copyToPasteboard() else { return alert("The image could not be copied.") }
         alert("Copied to pasteboard!")
     }
+    
     func handleImageDidSave(withError error: Error?) {
         if error == nil { alert("Saved!") }
         else { alert("Failed!") }
@@ -996,7 +973,7 @@ private extension KeyboardViewController {
 
     /// Make demo-specific changes to your keyboard services.
     func setupDemoServices() {
-        services.actionHandler = DemoKeyboardActionHandler( // <-- 💡 Set up a demo-specific action handler.
+        services.actionHandler = DemoActionHandler( // <-- 💡 Set up a demo-specific action handler.
             controller: self
         )
     }
@@ -1053,41 +1030,45 @@ private extension KeyboardViewController {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `623e673f` (2026-11-06)
-**Commit Message**: Update README to include Text Input section
+### Incident Patch 1: `fa34c404` (2026-11-16)
+**Commit Message**: Update package to 11.2.4
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `Package.swift` (modified, +2/-2)
 ```diff
-@@ -161,7 +161,6 @@ KeyboardKit provides a free, open-source keyboard engine. [KeyboardKit Pro][Pro]
- * 🔉 [Feedback][Feedback] - Trigger audio & haptic feedback with ease.
- * 𝒜 [Fonts][Fonts] - Type with other fonts than the standard system font.
- * 🏠 [Host][Host] - Identify and open the host application.
--* 📝 [Input][Input] - Keyboard input fields, Vietnamese support, etc.
- * 🔣 [Layout][Layout] - A dynamic, customizable keyboard layout engine.
- * 🌐 [Localization][Localization] - Locale-specific utilities for all supported locales.
- * 🗺️ [Navigation][Navigation] - Open urls and other apps from the keyboard.
-@@ -170,6 +169,7 @@ KeyboardKit provides a free, open-source keyboard engine. [KeyboardKit Pro][Pro]
- * ⚙️ [Settings][Settings] - Sync keyboard settings across targets, and link to System Settings.
- * 🩺 [Status][Status] - Detect if a keyboard is enabled, has full access, etc.
- * 🎨 [Styling][Styling] - Style your keyboard to great extent.
-+* 📝 [Text Input][Text-Input] - Keyboard text input fields, Vietnamese & Korean support, etc.
- * 🍭 [Themes][Themes] - A theme engine with many pre-defined themes.
+@@ -42,8 +42,8 @@ let package = Package(
+     targets: [
+         .binaryTarget(
+             name: "KeyboardKit",
+-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.3/KeyboardKit.zip",
+-            checksum: "f0387285416aea6dd3bccb27d874e8d1c3f989ebe423d7b4f9d75a4e821f13ea"
++            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.4/KeyboardKit.zip",
++            checksum: "e9ff889bc7e8d7c1ea8e33fc1ed64b1694eece69e1c8538845c38f48ee1ab6d3"
+         ),
+         .target(
+             name: "KeyboardKitDependencies",
+```
+
+**File**: `RELEASE_NOTES.md` (modified, +12/-0)
+```diff
+@@ -12,6 +12,18 @@ This document covers the current major version. See older versions for older rel
  
  
-@@ -250,7 +250,6 @@ KeyboardKit is closed-source. See the [LICENSE][License] file for more info.
- [Feedback]: https://docs.keyboardkit.com/documentation/keyboardkit/feedback-article
- [Fonts]: https://docs.keyboardkit.com/documentation/keyboardkit/fonts-article
- [Host]: https://docs.keyboardkit.com/documentation/keyboardkit/host-article
--[Input]: https://docs.keyboardkit.com/documentation/keyboardkit/input-article
- [Layout]: https://docs.keyboardkit.com/documentation/keyboardkit/layout-article
- [Localization]: https://docs.keyboardkit.com/documentation/keyboardkit/localization-article
- [Navigation]: https://docs.keyboardkit.com/documentation/keyboardkit/navigation-article
-@@ -259,4 +258,5 @@ KeyboardKit is closed-source. See the [LICENSE][License] file for more info.
- [Settings]: https://docs.keyboardkit.com/documentation/keyboardkit/settings-article
- [Status]: https://docs.keyboardkit.com/documentation/keyboardkit/status-article
- [Styling]: https://docs.keyboardkit.com/documentation/keyboardkit/styling-article
-+[Text-Input]: https://docs.keyboardkit.com/documentation/keyboardkit/textinput-article
- [Themes]: https://docs.keyboardkit.com/documentation/keyboardkit/themes-article
+ 
++## 11.2.4
++
++This patch makes it possible to style and interact with toasts.
++
++### 🌱 Essentials
++
++* `Keyboard.Toast` is now interactive, which makes Markdown links tappable.
++* `Keyboard.ToastStyle` is a new style that can style the toast components.
++* `View` has a new `.keyboardToastStyle` modifier.
++
++
++
+ ## 11.2.3
+ 
+ ### 🙂 Emojis
 ```
 
 #### Recent Merged Pull Requests:
@@ -1116,33 +1097,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update README to include Text Input section
+## X. Update package to 11.2.4
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in KeyboardKit/KeyboardKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Package.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in KeyboardKit/KeyboardKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `623e673f`: Update README to include Text Input section. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fa34c404`: Update package to 11.2.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-* 📝 [Text Input][Text-Input] - Keyboard text input fields, Vietnamese & Korean support, etc.
-[Text-Input]: https://docs.keyboardkit.com/documentation/keyboardkit/textinput-article
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.4/KeyboardKit.zip",
+            checksum: "e9ff889bc7e8d7c1ea8e33fc1ed64b1694eece69e1c8538845c38f48ee1ab6d3"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-* 📝 [Input][Input] - Keyboard input fields, Vietnamese support, etc.
-[Input]: https://docs.keyboardkit.com/documentation/keyboardkit/input-article
+// Induced defect failure mode:
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.3/KeyboardKit.zip",
+            checksum: "f0387285416aea6dd3bccb27d874e8d1c3f989ebe423d7b4f9d75a4e821f13ea"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `623e673f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fa34c404` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-ZKIK",
-    "timestamp": "2026-11-14T07:53:22.076Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "dd81e331e74fabe42c76419f76b1d1c6898408a3ffe2d7e3c7272bf2bd511580",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-ZRSA",
-    "timestamp": "2026-11-14T07:53:31.498Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "303f6140b1a862f02b585a81beb5b0c1be90014f0c90fcc6c32cfec1392e9acd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-F0Z4",
-    "timestamp": "2026-11-14T08:05:23.248Z",
-    "repository": "sentence-transformers/all-mpnet-base-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-    "contentHash": "66574738b74ad9ecc10243822004d51f94036a46ea8f0e496208e8dd827c26a1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-LSKD",
-    "timestamp": "2026-11-14T08:10:38.941Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "a710a6f16d73ae5afc1ac7f0b22a1d64e99031580252451fa3ff6fb9012550e3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-LUER",
-    "timestamp": "2026-11-14T08:10:41.331Z",
-    "repository": "typedb/typedb",
-    "learningId": "learn-github-typedb-typedb",
-    "contentHash": "a3e5fcac56e0368773727705f8cea83f4230791a7d93374e2b9a99d69e67b49d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-SR2E",
     "timestamp": "2026-11-14T08:44:03.206Z",
     "repository": "wix/react-native-ui-lib",
@@ -7492,6 +7417,81 @@
     "contentHash": "bcbb81d4df96828d852949442ad13f8866d4920f236c6950368b6fb51c4fcf2a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-RG02",
+    "timestamp": "2026-11-17T02:02:08.450Z",
+    "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+    "contentHash": "5ad2152eeaec76b0b491b362e5e2c129cca5f787ce1ad2cef058c55f97902d6f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-RJ1M",
+    "timestamp": "2026-11-17T02:02:12.394Z",
+    "repository": "ClementTsang/bottom",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "a641928a34c431e3850a5cd6ad8b76499c9d29533d6eb77468d76cbd87e1afcc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-RM9F",
+    "timestamp": "2026-11-17T02:02:16.563Z",
+    "repository": "KeyboardKit/KeyboardKit",
+    "learningId": "learn-github-keyboardkit-keyboardkit",
+    "contentHash": "5bfaf4648bc8712aeafa232c79c7dcd7e5d96b507c2e1a7dacc68809dbd34b56",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-RNQ7",
+    "timestamp": "2026-11-17T02:02:18.463Z",
+    "repository": "openkruise/kruise",
+    "learningId": "learn-github-openkruise-kruise",
+    "contentHash": "397ef3617c94eb968acdf4d911cb582685acde1c599406362119d38f34ed3ed8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-RR78",
+    "timestamp": "2026-11-17T02:02:22.964Z",
+    "repository": "SeekStorm/SeekStorm",
+    "learningId": "learn-github-seekstorm-seekstorm",
+    "contentHash": "388d54b5705baa38a53ba4388d3d6e29bf76e8539c245041b70782d4bea85b4c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
