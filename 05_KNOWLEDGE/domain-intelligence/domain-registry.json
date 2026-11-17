@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T22:56:53.022Z",
-  "total_records": 1711,
+  "last_updated": "2026-11-17T23:20:48.695Z",
+  "total_records": 1715,
   "domains": {
     "A": {
       "total": 11,
@@ -808,7 +808,7 @@
       ]
     },
     "F": {
-      "total": 38,
+      "total": 39,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -847,7 +847,8 @@
         "domain_intelligence-design-intelligence-cypress-io-cypress-core-invariants",
         "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants",
         "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",
-        "domain_intelligence-design-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invariants",
+        "DOM-F-DEB23BA9"
       ]
     },
     "G": {
@@ -1156,7 +1157,7 @@
       ]
     },
     "H": {
-      "total": 402,
+      "total": 405,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1559,7 +1560,10 @@
         "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-core-invariants",
         "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-stabilityai-stable-diffusion-xl-base-1-0-cor",
+        "DOM-H-D0F5C3D5",
+        "domain_intelligence-technical-construction-intelligence-hf-stabilityai-stable-diffusion-xl-base-1-0-"
       ]
     },
     "I": {
@@ -11969,8 +11973,8 @@
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "repository": "lioensky/VCPToolBox",
-      "content_hash": "0cb0a01b37a7977584f9ecad9a386bc30d619ae32062bd9d0c9708d46e87affe",
-      "created_at": "2026-11-17T00:10:56.820Z"
+      "content_hash": "e1d881b43ab620862047d7cec2b24b44172f097e0a5cfb78936ccdab2f047ece",
+      "created_at": "2026-11-17T23:17:41.011Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
@@ -17064,8 +17068,8 @@
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "repository": "tw93/Pake",
-      "content_hash": "845bfe29986f5e1e31b085bce23cd4cfaf31a79ba8f845f269e22f0c8eaa61a3",
-      "created_at": "2026-11-16T15:51:00.622Z"
+      "content_hash": "bbcc41e4fd0e10791d0e3ef94a8a0c4219324ea6e25e50568463e184bf833cb1",
+      "created_at": "2026-11-17T23:17:27.494Z"
     },
     "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
@@ -17082,8 +17086,8 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-learnings-technical-construction-intelligence-tw93-pake-learnings-core.md",
       "repository": "tw93-pake-learnings",
-      "content_hash": "85d53bac871a57c5d63307c8d0754866d925e1d13bd547e65adeb2e60f337011",
-      "created_at": "2026-11-16T15:51:46.083Z"
+      "content_hash": "197a3e3016be7b5907a7237aad14a2e5ad118a7879f4cbdb6ab463c1ae216afa",
+      "created_at": "2026-11-17T23:19:27.631Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -24005,8 +24009,8 @@
       "title": "Technical Construction Intelligence: gravitl/netmaker Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gravitl-netmaker-technical-construction-intelligence-gravitl-netmaker-core-invar.md",
       "repository": "gravitl/netmaker",
-      "content_hash": "374a80076c3c700b22a60a76925a087b1a448f2c1878fc293f54029b8c15fd9f",
-      "created_at": "2026-11-16T18:18:58.780Z"
+      "content_hash": "63431234baac2fcaf8ad866728d5893ee840dbeb193a8116162d6cee47cc3278",
+      "created_at": "2026-11-17T23:17:38.016Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lxml-lxml-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lxml-lxml-learnings-core-invariants",
@@ -24023,8 +24027,8 @@
       "title": "Technical Construction Intelligence: gravitl-netmaker-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gravitl-netmaker-learnings-technical-construction-intelligence-gravitl-netmaker-.md",
       "repository": "gravitl-netmaker-learnings",
-      "content_hash": "c55407966f81e67927df7103a515cc9446ee1ba8b498fd799fb869e6489a3e30",
-      "created_at": "2026-11-16T18:19:03.313Z"
+      "content_hash": "0d29724b9c2afb754036e85e21a51d7ffbb00530327234d48d8cfa162d4b0668",
+      "created_at": "2026-11-17T23:20:48.695Z"
     },
     "domain_intelligence-architecture-intelligence-seaql-sea-orm-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-seaql-sea-orm-core-invariants",
@@ -28771,6 +28775,92 @@
       "repository": "jithin-sabu-purge-app-learnings",
       "content_hash": "ac8ebe82973eddc0ce0af431ec685bf4b81d5719bcea0fdbb7bc1852830b1839",
       "created_at": "2026-11-17T22:56:52.310Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-stabilityai-stable-diffusion-xl-base-1-0-cor": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-stabilityai-stable-diffusion-xl-base-1-0-cor",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: stabilityai/stable-diffusion-xl-base-1.0 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-stabilityai-stable-diffusion-xl-base-1-0-technical-construction-intelligence-.md",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "content_hash": "50201557c7fabd00522f3ea8f660dfc87789ac471a916911b3e5c54e4885a138",
+      "created_at": "2026-11-17T23:19:23.769Z"
+    },
+    "DOM-H-D0F5C3D5": {
+      "record_id": "DOM-H-D0F5C3D5",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "VAE Decoder IEEE 754 Half-Precision Dynamic Range Overflow (BUG-SDXL-VAE-01)",
+      "content": "Do not assume all components of an ensemble pipeline possess identical numerical tolerance; autoencoders with spatial normalization require explicit precision sandboxing.",
+      "content_hash": "009bdf73006c51977d2c3113ed50b2678777f5a070f86bbe94b1c357f7b16465",
+      "summary": "The scaling factor change in SDXL (from $0.18215$ in SD 1.5 to $0.13025$ in SDXL) expanded the variance of the latent distribution. In conju -> Do not assume all components of an ensemble pipeline possess identical numerical tolerance; autoencoders with spatial normalization require ",
+      "provenance": {
+        "source_uri": "project://hf-stabilityai-stable-diffusion-xl-base-1.0/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T23:19:27.988Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-stabilityai-stable-diffusion-xl-base-1.0)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Noted in community issue diffs, diffusers PR #4344, and Stability AI recommendations specifying FP32 decoding mode (`force_upcast=True`)."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T23:20:03.397Z"
+    },
+    "DOM-F-DEB23BA9": {
+      "record_id": "DOM-F-DEB23BA9",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Text Encoder Token Length Truncation Mismatch (BUG-SDXL-ENC-02)",
+      "content": "Dual-encoder pipelines require strict tokenization synchronization with defensive assertions checking identical output shapes prior to model forwarding.",
+      "content_hash": "20db0594a7b77bfdb33e4507471760ca4ebc8d30aca4421f04442f33ae438834",
+      "summary": "The two encoders use different underlying vocabularies (49,408 tokens for OpenAI CLIP vs 49,408 for OpenCLIP with differing BPE merges). Dev -> Dual-encoder pipelines require strict tokenization synchronization with defensive assertions checking identical output shapes prior to model",
+      "provenance": {
+        "source_uri": "project://hf-stabilityai-stable-diffusion-xl-base-1.0/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T23:19:27.988Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-stabilityai-stable-diffusion-xl-base-1.0)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "HuggingFace SDXL pipeline integration validation scripts; prompt tokenization alignment asserts in `diffusers/pipelines/stable_diffusion_xl/pipeline_stable_diffusion_xl.py`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T23:20:46.619Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-stabilityai-stable-diffusion-xl-base-1-0-": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-stabilityai-stable-diffusion-xl-base-1-0-",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-stabilityai-stable-diffusion-xl-base-1.0-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-stabilityai-stable-diffusion-xl-base-1-0-learnings-technical-construction-int.md",
+      "repository": "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings",
+      "content_hash": "328ffa020c9fd4374f24775ae4eb49d33485651ab05ad66103b88af72a06de48",
+      "created_at": "2026-11-17T23:20:47.514Z"
     }
   }
 }

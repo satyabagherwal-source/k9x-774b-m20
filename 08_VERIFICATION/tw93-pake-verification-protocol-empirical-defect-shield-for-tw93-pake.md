@@ -4,22 +4,22 @@
 {
   "source_repository": "tw93/Pake",
   "source_url": "https://github.com/tw93/Pake",
-  "source_version": "3d2d59b5",
+  "source_version": "6a7812c4",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-16T15:51:00.509Z",
+  "timestamp": "2026-11-17T23:17:27.331Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tw93-pake",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tw93/Pake](https://github.com/tw93/Pake) (Revision: `3d2d59b5`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-16T15:51:00.509Z`  
+> **Provenance**: Harvested from [tw93/Pake](https://github.com/tw93/Pake) (Revision: `6a7812c4`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-17T23:17:27.331Z`  
 > **Learning ID**: `learn-github-tw93-pake`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tw93/Pake` (Commit: `3d2d59b5`)
+- **Target Repository**: `tw93/Pake` (Commit: `6a7812c4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:50:59.229Z  
+> **Harvest Timestamp**: 2026-11-17T23:17:25.714Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 63678 stars
+- **Stars / Engagement**: 63751 stars
 
 ---
 
@@ -949,614 +949,279 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `79396657` (2026-11-15)
-**Commit Message**: feat: built-in ad and tracker blocking for runtime templates
+### Incident Patch 1: `3e7ab18d` (2026-11-17)
+**Commit Message**: fix: show alert, confirm and prompt in macOS apps
 
-Pake desktop asked for per-app ad blocking chosen while configuring an
-app. Runtime templates built with `runtime-template` (which now turns on
-the new `content-blocking` feature) embed EasyList, EasyPrivacy, AdGuard
-Cookie Notices and EasyList China, gzipped under filters/, plus uBO
-Unbreak, which is always added. `content_blocking` in pake.json picks the
-groups (ads, trackers, cookies, china); it defaults to empty, so existing
-apps and CLI builds are unchanged, and the CLI never enables the feature.
+A page's alert(), confirm() and prompt() showed nothing in a macOS app: confirm() returned false in a millisecond, so a site that asks before logging out did nothing when clicked (a user's report). WKWebView shows these panels only when its UI delegate implements the three runJavaScript panel methods, and Wry 0.54.2's delegate has none.
 
-Lists are matched by Brave's adblock-rust (MPL-2.0):
-- macOS and Linux compile WebKit content rule lists once per selection
-  (network and cosmetic units, cached by a fingerprint of the list bytes)
-  and the main window waits on about:blank until they are attached, with
-  a 10 s fail-open; popups get the same lists.
-- Windows answers matched WebView2 subresource requests with 403 and
-  injects the cosmetic CSS; documents and *.localhost are never blocked.
+The three methods are added to that delegate's class where it lacks them, for every webview, and the same delegate is then set on the webview again, because WebKit records which methods a delegate answers when it is set; without the reset the methods exist and are never called. Each panel is an NSAlert sheet on the page's window whose completion hands WebKit's handler the answer exactly once, so the page's script waits as in a browser. The sheet goes on the window even when it is hidden, and Cancel is bound to Escape, which AppKit gives only to a button titled Cancel.
 
-Verified: cargo test --lib 102 without and 107 with runtime-template on
-macOS; clippy -D warnings with the feature on macOS, Linux (devbox) and
-Windows ARM64; content_bl
+Verified on macOS 26.7 with a real bundle and a page that calls all three and writes what it got: before, confirm=false after 1ms, alert after 0ms, prompt=null; after, OK gives true, Cancel false, alert waits for OK, a prompt returns
 
-**File**: `filters/README.md` (added, +15/-0)
+**File**: `.claude/rules/tauri-runtime.md` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,15 @@
-+# Filter lists
-+
-+Runtime templates built with the `content-blocking` feature (which `runtime-template` turns on) embed these lists, unmodified and gzipped, for the `content_blocking` groups in `pake.json`. The npm package does not ship this folder, and the CLI never enables the feature.
-+
-+| Group | List | Authors | License |
-+| --- | --- | --- | --- |
-+| `ads` | EasyList | The EasyList authors (https://easylist.to/) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
-+| `trackers` | EasyPrivacy | The EasyList authors (https://easylist.to/) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
-+| `cookies` | AdGuard Cookie Notices filter | AdGuard (https://github.com/AdguardTeam/AdguardFilters) | GPL-3.0 |
-+| `china` | EasyList China | The EasyList China authors (https://github.com/easylist/easylistchina) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
-+| always | uBlock filters – Unbreak | uBlock Origin contributors (https://github.com/uBlockOrigin/uAssets) | GPL-3.0 |
-+
-+`sources.json` records each list's download URL, version and date. Refresh them with `node scripts/update-filter-lists.mjs` before a runtime release; `cargo test --features content-blocking content_blocking` then checks that every list unpacks and that all groups together still fit WebKit's 150,000-rule limit.
-+
-+The lists are matched by Brave's adblock-rust (https://github.com/brave/adblock-rust, MPL-2.0).
-```
-
-**File**: `filters/sources.json` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+{
-+  "fetched": "2026-11-15",
-+  "lists": [
-+    {
-+      "group": "ads",
-+      "title": "EasyList",
-+      "version": "202611150427",
-+      "url": "https://easylist.to/easylist/easylist.txt",
-+      "license": "https://easylist.to/pages/licence.html",
-+      "lines": 78503
-+    },
-+    {
-+      "group": "trackers",
-+      "title": "EasyPrivacy",
-+      "version": "202611150427",
-+      "url": "https://easylist.to/easylist/easyprivacy.txt",
-+      "license": "https://easylist.to/pages/licence.html",
-+      "lines": 57428
-+    },
-+    {
-+      "group": "cookies",
-+      "title": "AdGuard Cookie Notices filter",
-+      "version": "2.0.99.53",
-+      "url": "https://filters.adtidy.org/extension/ublock/filters/18.txt",
-+      "license": "https://github.com/AdguardTeam/AdguardFilters/blob/master/LICENSE",
-+      "lines": 23869
-+    },
-+    {
-+      "group": "china",
-+      "title": "EasyList China",
-+      "version": "202611150422",
-+      "url": "https://easylist-downloads.adblockplus.org/easylistchina.txt",
-+      "license": "https://easylist.to/pages/licence.html",
-+      "lines": 17961
-+    },
-+    {
-+      "group": "unbreak",
-+      "title": "uBlock filters – Unbreak",
-+      "version": "Sat, 14 Nov 2026 04:57:45 +0000",
-+      "url": "https://ublockorigin.github.io/uAssets/filters/unbreak.txt",
-+      "license": "https://github.com/uBlockOrigin/uAssets/blob/master/LICENSE",
-+      "lines": 6116
-+    }
-+  ]
-+}
-```
-
-**File**: `scripts/update-filter-lists.mjs` (added, +63/-0)
-```diff
-@@ -0,0 +1,63 @@
-+#!/usr/bin/env node
-+// Downloads the filter lists that runtime templates built with the
-+// `content-blocking` feature embed, and stores them gzipped under filters/.
-+// Run it before a runtime release; the lists age within days of a download.
-+import { gzipSync } from 'node:zlib';
-+import { writeFileSync, mkdirSync } from 'node:fs';
-+import { dirname, join } from 'node:path';
-+import { fileURLToPath } from 'node:url';
-+
-+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-+const out = join(root, 'filters');
-+
-+// Group names are the values of `content_blocking` in pake.json.
-+export const LISTS = [
-+  { file: 'ads', url: 'https://easylist.to/easylist/easylist.txt' },
-+  { file: 'trackers', url: 'https://easylist.to/easylist/easyprivacy.txt' },
-+  {
-+    file: 'cookies',
-+    url: 'https://filters.adtidy.org/extension/ublock/filters/18.txt',
-+  },
-+  {
-+    file: 'china',
-+    url: 'https://easylist-downloads.adblockplus.org/easylistchina.txt',
-+  },
-+  // Always added to any selection: fixes for sites the other lists break.
-+  {
-+    file: 'unbreak',
-+    url: 'https://ublockorigin.github.io/uAssets/filters/unbreak.txt',
-+  },
-+];
-+
-+function header(text, key) {
-+  const line = text
-+    .split('\n', 40)
-+    .find((l) => l.toLowerCase().startsWith(`! ${key.toLowerCase()}:`));
-+  return line ? line.slice(line.indexOf(':') + 1).trim() : '';
-+}
-+
-+mkdirSync(out, { recursive: true });
-+const sources = [];
-+for (const { file, url } of LISTS) {
-+  const response = await fetch(url);
-+  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
-+  const text = await response.text();
-+  if (!text.includes('##') && !text.includes('||')) {
-+    throw new Error(`${url} does not look like a filter list`);
-+  }
-+  // mtime 0 keeps the gzip bytes stable for the same text.
-+  writeFileSync(join(out, `${file}.txt.gz`), gzipSync(text, { level: 9 }));
-+  sources.push({
-+    group: file,
-+    title: header(text, 'Title'),
-+    version: header(text, 'Version') || header(text, 'Last modified'),
-+    url,
-+    license: header(text, 'Licence') || header(text, 'License'),
-+    lines: text.split('\n').length,
-+  });
-+  console.log(`${file}: ${text.length} bytes`);
-+}
-+writeFileSync(
-+  join(out, 'sources.json'),
-+  JSON.stringify({ fetched: new Date().toISOString().slice(0, 10), lists: sources }, null, 2) + '\n',
-+);
-```
-
-**File**: `src-tauri/Cargo.lock` (modified, +89/-7)
-```diff
-@@ -2,6 +2,39 @@
- # It is not intended for manual editing.
- version = 4
- 
-+[[package]]
-+name = "adblock"
-+version = "0.13.5"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7a4c8558f27608dec74695c866f9a8ef897ec7a77cb826f8a5baf0b8ba461d2a"
-+dependencies = [
-+ "addr",
-+ "arrayvec",
-+ "base64 0.22.1",
-+ "bitflags 2.11.0",
-+ "flatbuffers",
-+ "idna",
-+ "itertools",
-+ "memchr",
-+ "percent-encoding",
-+ "regex",
-+ "rustc-hash",
-+ "seahash",
-+ "serde",
-+ "serde_json",
-+ "thiserror 1.0.69",
-+]
-+
-+[[package]]
-+name = "addr"
-+version = "0.15.6"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "a93b8a41dbe230ad5087cc721f8d41611de654542180586b315d9f4cf6b72bef"
-+dependencies = [
-+ "psl",
-+ "psl-types",
-+]
-+
- [[package]]
- name = "adler2"
- version = "2.0.1"
-@@ -47,6 +80,12 @@ version = "1.0.102"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
- 
-+[[package]]
-+name = "arrayvec"
-+version = "0.7.8"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
-+
- [[package]]
- name = "async-broadcast"
- version = "0.7.2"
-@@ -767,7 +806,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users",
-- "windows-sys 0.59.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -865,6 +904,12 @@ version = "1.0.20"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d0881ea181b1df73ff77ffaaf9c7544ecc11e82fba9b5f27b262a3c73a332555"
- 
-+[[package]]
-+name = "either"
-+version = "1.19.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
-+
- [[package]]
- name = "embed-resource"
- version = "3.0.6"
-@@ -945,7 +990,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.59.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -1000,6 +1045,16 @@ version = "0.1.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582"
- 
-+[[package]]
-+name = "flatbuffers"
-+version = "25.12.19"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "35f6839d7b3b98adde531effaf34f0c2badc6f4735d26fe74709d8e513a96ef3"
-+dependencies = [
-+ "bitflags 2.11.0",
-+ "rustc_version",
-+]
-+
- [[package]]
- name = "flate2"
- version = "1.1.9"
-@@ -1905,6 +1960,15 @@ dependencies = [
-  "once_cell",
- ]
- 
-+[[package]]
-+name = "itertools"
-+version = "0.14.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "2b192c782037fadd9cfa75548310488aabdbf3d2da73885b31bd0abd03351285"
-+dependencies = [
-+ "either",
-+]
-+
- [[package]]
- name = "itoa"
- version = "1.0.17"
-@@ -2580,15 +2644,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967"
- dependencies = [
-  "libc",
-- "windows-sys 0.45.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
- name = "pake"
- version = "3.19.0"
- dependencies = [
-+ "adblock",
-  "block2",
-  "dispatch",
-+ "flate2",
-  "gtk",
-  "objc2",
-  "objc2-app-kit",
-@@ -2608,6 +2674,7 @@ dependencies = [
-  "tauri-plugin-window-state",
-  "tokio",
-  "webkit2gtk",
-+ "webkit2gtk-sys",
-  "webview2-com",
-  "windows-core 0.61.2",
-  "windows-sys 0.61.2",
-@@ -3004,6 +3071,15 @@ dependencies = [
-  "unicode-ident",
- ]
- 
-+[[package]]
-+name = "psl"
-+version = "2.1.254"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "cb958e602bc5c9e07a3bdb78ce240402a490cd08f01e51deacfe637ed903d743"
-+dependencies = [
-+ "psl-types",
-+]
-+
- [[package]]
- name = "psl-types"
- version = "2.0.11"
-@@ -3091,7 +3167,7 @@ dependencies = [
-  "once_cell",
-  "socket2",
-  "tracing",
-- "windows-sys 0.59.0",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
-@@ -3436,7 +3512,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.59.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -3552,6 +3628,12 @@ version = "1.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
- 
-+[[package]]
-+name = "seahash"
-+version = "4.1.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1c107b6f4780854c8b126e228ea8869f4d7b71260f962fefb57b996b8959ba6b"
-+
- [[package]]
- name = "selectors"
- version = "0.24.0"
-@@ -4506,7 +4588,7 @@ dependencies = [
-  "getrandom 0.4.1",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.59.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5320,7 +5402,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.59.0",
-+ "windows-s
-```
-
-**File**: `src-tauri/Cargo.toml` (modified, +19/-1)
-```diff
-@@ -21,6 +21,14 @@ tauri-build = { version = "2.5.5", features = [] }
- serde_json = "1.0.149"
- serde = { version = "1.0.228", features = ["derive"] }
- tokio = { version = "1.49.0", features = ["time", "fs"] }
-+# Content blocking (feature `content-blocking`): Brave's filter engine, MPL-2.0.
-+# Without single-thread its Engine is Send + Sync for the WebView2 handler.
-+adblock = { version = "0.13.5", default-features = false, features = [
-+  "content-blocking",
-+  "embedded-domain-resolver",
-+  "full-regex-handling",
-+], optional = true }
-+flate2 = { version = "1.1", optional = true }
- tauri = { version = "2.10.2", features = [
-   "tray-icon",
-   "image-ico",
-@@ -42,12 +50,17 @@ objc2 = "0.6"
- objc2-app-kit = { version = "0.3", features = ["NSApplication", "NSDockTile", "NSWindow"] }
- objc2-foundation = { version = "0.3", features = [
-   "NSArray",
-+  "NSEnumerator",
-+  "NSError",
-   "NSLocale",
-   "NSString",
-   "NSUserNotification",
- ] }
- objc2-web-kit = { version = "0.3", default-features = false, features = [
-   "std",
-+  "block2",
-+  "WKContentRuleList",
-+  "WKContentRuleListStore",
-   "WKUserContentController",
-   "WKWebViewConfiguration",
- ] }
-@@ -63,6 +76,8 @@ gtk = "0.18"
- # Reads the freedesktop color-scheme from the settings portal. Same version
- # and features that tauri-plugin-opener and single-instance already lock.
- zbus = "5.14"
-+# WebKitGTK's content filter store, which the safe webkit2gtk crate leaves out.
-+webkit2gtk-sys = { version = "=2.0.2", features = ["v2_40"], optional = true }
- 
- [target.'cfg(windows)'.dependencies]
- windows-sys = { version = "0.61.2", features = [
-@@ -84,7 +99,10 @@ native-download-probe = []
- cli-build = []
- # Prebuilt template that reads a pake-runtime folder at launch: Contents/Resources
- # on macOS, next to the executable elsewhere. The CLI never enables it.
--runtime-template = []
-+runtime-template = ["content-blocking"]
-+# Ad, tracker and cookie-notice blocking with the lists in ../filters, which the
-+# npm package does not ship; the CLI never enables it.
-+content-blocking = ["dep:adblock", "dep:flate2", "dep:webkit2gtk-sys"]
- # Tauri's macOS proxy APIs require macOS 14 or later. The CLI enables this
- # feature only after checking the host Darwin version.
- macos-proxy = ["tauri/macos-proxy"]
-```
-
-**File**: `src-tauri/src/app/config.rs` (modified, +4/-0)
-```diff
-@@ -133,6 +133,10 @@ pub struct PakeConfig {
-     /// login item in step at every start (see `autostart.rs`).
-     #[serde(default)]
-     pub launch_at_login: bool,
-+    /// Built-in filter lists to block with: `ads`, `trackers`, `cookies`,
-+    /// `china`. Only builds with the `content-blocking` feature read it.
-+    #[serde(default)]
-+    pub content_blocking: Vec<String>,
-     /// Replaces the compiled custom.js when a runtime override supplies one.
-     #[serde(skip)]
-     pub runtime_custom_js: Option<String>,
-```
-
-**File**: `src-tauri/src/app/content_blocking.rs` (added, +881/-0)
-```diff
-@@ -0,0 +1,881 @@
-+//! Blocks ads, trackers and cookie notices with filter lists built into the
-+//! runtime (the `content-blocking` feature, which `runtime-template` turns on).
-+//!
-+//! `content_blocking` in pake.json names the groups; none means off. macOS and
-+//! Linux hand WebKit content rule lists converted from the filters, Windows
-+//! matches each WebView2 request in process. Blocking fails open: an app whose
-+//! lists cannot load runs unblocked and logs one line.
-+
-+use adblock::lists::{FilterSet, ParseOptions, RuleTypes};
-+use std::io::Read;
-+
-+macro_rules! filter_list {
-+    ($name:literal) => {
-+        include_bytes!(concat!(
-+            env!("CARGO_MANIFEST_DIR"),
-+            "/../filters/",
-+            $name,
-+            ".txt.gz"
-+        ))
-+    };
-+}
-+
-+/// The groups pake.json may name, in the order they are applied. The sources
-+/// and licences of each list are in `filters/sources.json`.
-+const GROUPS: [(&str, &[u8]); 4] = [
-+    ("ads", filter_list!("ads")),
-+    ("trackers", filter_list!("trackers")),
-+    ("cookies", filter_list!("cookies")),
-+    ("china", filter_list!("china")),
-+];
-+
-+/// Fixes for sites the other lists break, added to every selection.
-+const UNBREAK: &[u8] = filter_list!("unbreak");
-+
-+/// The known groups among `names`, in `GROUPS` order and without duplicates.
-+pub fn selected_groups(names: &[String]) -> Vec<&'static str> {
-+    GROUPS
-+        .iter()
-+        .map(|(group, _)| *group)
-+        .filter(|group| names.iter().any(|name| name.trim() == *group))
-+        .collect()
-+}
-+
-+fn list_bytes(groups: &[&str]) -> Vec<&'static [u8]> {
-+    GROUPS
-+        .iter()
-+        .filter(|(group, _)| groups.contains(group))
-+        .map(|(_, bytes)| *bytes)
-+        .chain(std::iter::once(UNBREAK))
-+        .collect()
-+}
-+
-+fn gunzip(bytes: &[u8]) -> Option<String> {
-+    let mut text = String::new();
-+    flate2::read::GzDecoder::new(bytes)
-+        .read_to_string(&mut text)
-+        .ok()?;
-+    Some(text)
-+}
-+
-+fn filter_set(groups: &[&str], rule_types: RuleTypes, debug: bool) -> FilterSet {
-+    let mut set = FilterSet::new(debug);
-+    for bytes in list_bytes(groups) {
-+        match gunzip(bytes) {
-+            Some(text) => {
-+                set.add_filter_list(
-+                    text,
-+                    ParseOptions {
-+                        rule_types,
-+                        ..ParseOptions::default()
-+                    },
-+                );
-+            }
-+            None => eprintln!("[Pake] A built-in filter list could not be read"),
-+        }
-+    }
-+    set
-+}
-+
-+/// FNV-1a, enough to tell one selection of embedded lists from another.
-+#[cfg(any(target_os = "macos", target_os = "linux", test))]
-+fn fingerprint(groups: &[&str]) -> u64 {
-+    let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
-+    let mut feed = |bytes: &[u8]| {
-+        for byte in bytes {
-+            hash ^= u64::from(*byte);
-+            hash = hash.wrapping_mul(0x0000_0100_0000_01b3);
-+        }
-+    };
-+    feed(env!("CARGO_PKG_VERSION").as_bytes());
-+    for group in groups {
-+        feed(group.as_bytes());
-+    }
-+    for bytes in list_bytes(groups) {
-+        feed(bytes);
-+    }
-+    hash
-+}
-+
-+/// WebKit compiles at most this many rules into one content rule list.
-+#[cfg(any(target_os = "macos", target_os = "linux", test))]
-+pub const WEBKIT_MAX_RULES: usize = 150_000;
-+
-+/// Each selection becomes two WebKit lists: requests to block with their
-+/// exceptions, and elements to hide. `ignore-previous-rules` only reaches rules
-+/// of its own list, so every list carries its own exceptions.
-+#[cfg(any(target_os = "macos", target_os = "linux", test))]
-+const WEBKIT_UNITS: [(&str, RuleTypes); 2] = [
-+    ("network", RuleTypes::NetworkOnly),
-+    ("cosmetic", RuleTypes::CosmeticOnly),
-+];
-+
-+/// Identifiers start with this, so lists from older selections can be removed.
-+#[cfg(any(target_os = "macos", target_os = "linux", test))]
-+const IDENTIFIER_PREFIX: &str = "pake-blocking-";
-+
-+#[cfg(any(target_os = "macos", target_os = "linux", test))]
-+fn webkit_identifier(groups: &[&str], unit: &str) -> String {
-+    format!("{IDENTIFIER_PREFIX}{unit}-{:016x}", fingerprint(groups))
-+}
-+
-+/// The rules of one WebKit unit, ready to serialize.
-+#[cfg(any(target_os = "macos", target_os = "linux", test))]
-+fn webkit_rules(groups: &[&str], rule_types: RuleTypes) -> Vec<adblock::content_blocking::CbRule> {
-+    filter_set(groups, rule_types, true)
-+        .into_content_blocking()
-+        .map(|(rules, _)| rules)
-+        .unwrap_or_default()
-+}
-+
-+/// The JSON of one WebKit unit, or `None` when it has no rules or is too large.
-+#[cfg(any(target_os = "macos", target_os = "linux"))]
-+fn webkit_json(groups: &[&str], unit: &str) -> Option<String> {
-+    let rule_types = WEBKIT_UNITS
-+        .iter()
-+        .find(|(name, _)| *name == unit)
-+        .map(|(_, types)| *types)?;
-+    let rules = webkit_rules(groups, rule_types);
-+    if rules.is_empty() || rules.len() > WEBKIT_MAX_RULES {
+@@ -8,6 +8,7 @@ paths:
+ - Native IPC is gated by the application command manifest in `src-tauri/build.rs`. Keep every registered app command in that manifest and grant only its required permissions. The packaged capability is local-only; `PakeConfig::remote_capability` grants the same permission set to exact configured entry origins (scheme, host, and port) before webviews load. Navigation flags, login redirects, subdomains, and restored URLs must not expand that grant. Keep local pages, secondary windows, loopback/IPv6 URLs, and literal hostname handling covered. ACL-denied downloads may fall back to browser attachments, but transient download anchors must bypass the IPC click interceptor to avoid recursion. Fullscreen must acquire native permission before mutating the player DOM; untrusted frame messages must never gain a top-level navigation fallback. Run `cargo test --lib` and `node tests/integration/ipc-security.mjs` (real macOS WebView); hiding `window.__TAURI__` or narrowing plugin capabilities alone does not gate application commands.
+ - Injected CSS uses `src-tauri/src/inject/styles.js`: preserve DOM stylesheet order on ordinary pages; use constructable sheets only when CSP blocks the style element. `replaceSync` silently drops `@import`, so keep import-bearing CSS on its original DOM path, including escaped/case-insensitive at-keywords. Strict CSP plus imports remains unsupported. Run `node tests/browser/style-injection.mjs` with an installed Playwright runtime; mock CSSStyleSheet tests do not validate CSP or cascade behavior.
+ - The `runtime-template` Cargo feature builds a prebuilt runtime that a separate builder customizes without a compiler: at launch it reads `pake-runtime/{pake.json, app.json, custom.js?, tray.png?}` from `Contents/Resources` on macOS or next to the executable elsewhere, and applies app.json's `identifier` and `productName` to the Tauri context before build. The CLI never enables the feature, so CLI-built apps keep their compiled configuration even if such a folder appears. A present but invalid override exits with a `[Pake]` message instead of falling back to the template's identity. A runtime app keys its WebView profile folder under the config dir (`%APPDATA%\<identifier>\EBWebView` on Windows) by identifier instead of product name (`data_dir_name`), so a rename keeps logins and a generated name cannot share another program's folder; CLI apps keep the product-name folder. On Windows a runtime app also sets the process AppUserModelID to its identifier before any window exists, so shortcuts carrying that ID group with the running window and toasts are attributed to it. Logic and tests live in `src-tauri/src/util.rs` (`apply_runtime_override`, `data_dir_name`, `set_app_user_model_id`); `PakeConfig::runtime_app` is the single runtime-app flag, and `run_app` copies the overridden identity from the returned Tauri config into the context; keep `cargo clippy` and `cargo test --lib` green both with and without `--features runtime-template`.
++- A page's `alert()`, `confirm()` and `prompt()` show nothing in a WKWebView unless its UI delegate implements the three `runJavaScript…Panel` methods, and Wry 0.54.2's does not: `alert` returned at once, `confirm` returned false and `prompt` null in a millisecond, so a site that confirms before logging out did nothing (a user's report, 2026-11-17; WebView2 and WebKitGTK show their own). `src-tauri/src/app/script_dialogs.rs` adds the three methods to the delegate's class where it lacks them, for every webview from `build_window`, and then sets the same delegate on the webview again: WebKit records which methods a delegate answers when it is set, and without the reset the added methods are never called. Each panel is an NSAlert sheet on the page's window whose completion calls WebKit's handler exactly once (WebKit raises on zero or two calls), which keeps the script waiting as a browser does. The sheet goes on the window even when it is hidden, as a closed window is with hide-on-close: AppKit then shows the window with its sheet (measured: a window hidden with Cmd+W came back on screen when its page called `confirm()`), where an app-modal panel would float over whatever else the user is doing; only a webview with no window falls back to `runModal`. Cancel carries an explicit Escape key equivalent, because AppKit gives Escape only to a button titled Cancel and the Chinese title is 取消. Verify on a real bundle with a page that calls all three and writes what it got back: OK gives `true`, Cancel `false`, a prompt its field's text or `null`, and each wait is seconds, not a millisecond. Send the keys with a CGEvent tool of your own: Escape must give `false` and `null`, Return `true`. Cover it with `tests/unit/macos-script-dialogs.test.ts`.
+ - `navigation_buttons` is a runtime-only macOS window field (no CLI flag; the paid apps set it, off by default): `src-tauri/src/app/nav_buttons.rs` adds Back and Forward to the title bar in a leading accessory bes
 ```
 
 **File**: `src-tauri/src/app/mod.rs` (modified, +2/-0)
 ```diff
-@@ -4,6 +4,8 @@ pub mod autostart;
- #[cfg(any(target_os = "linux", test))]
- pub mod color_scheme;
- pub mod config;
-+#[cfg(feature = "content-blocking")]
-+pub mod content_blocking;
- #[cfg(target_os = "windows")]
- pub mod download;
- pub mod invoke;
+@@ -19,6 +19,8 @@ pub mod navigation;
+ pub mod notification;
+ #[cfg(any(target_os = "linux", target_os = "windows", test))]
+ pub mod recovery;
++#[cfg(target_os = "macos")]
++pub mod script_dialogs;
+ pub mod setup;
+ #[cfg(target_os = "macos")]
+ pub mod tab_bar;
+```
+
+**File**: `src-tauri/src/app/script_dialogs.rs` (added, +301/-0)
+```diff
+@@ -0,0 +1,301 @@
++//! `alert()`, `confirm()` and `prompt()` for pages in a macOS app.
++//!
++//! WKWebView shows none of the three by itself: it asks its UI delegate, and
++//! when the delegate has no answer `alert` returns at once, `confirm` returns
++//! false and `prompt` returns null. Wry's delegate implements none of them, so a
++//! site that asks "Log out?" before logging out did nothing when clicked.
++//!
++//! The three delegate methods are added to the delegate's own class, resolved
++//! from a live webview as `tab_bar.rs` resolves the window's, and only where
++//! the class does not answer them already, so a Wry that grows its own keeps
++//! it. WebKit notes which methods a delegate answers when the delegate is set,
++//! so after adding them the same delegate is set again, or WebKit goes on
++//! believing it has none. Each shows a native alert as a sheet on the page's window and hands
++//! WebKit's completion handler the answer when it is dismissed, which is what
++//! keeps the page's script waiting, as in a browser.
++
++use block2::{Block, RcBlock};
++use objc2::ffi::class_addMethod;
++use objc2::rc::Retained;
++use objc2::runtime::{AnyClass, AnyObject, Bool, Imp, Sel};
++use objc2::{msg_send, sel, MainThreadMarker};
++use objc2_app_kit::{NSAlert, NSAlertFirstButtonReturn, NSTextField};
++use objc2_foundation::{NSPoint, NSRect, NSSize, NSString};
++use std::cell::Cell;
++use std::ffi::c_char;
++
++use crate::util::UiLanguage;
++
++/// `void (id webView, NSString *message, WKFrameInfo *frame, block)`.
++const MESSAGE_PANEL_TYPES: &[u8] = b"v@:@@@@?\0";
++/// The text panel carries the default text before the frame.
++const TEXT_PANEL_TYPES: &[u8] = b"v@:@@@@@?\0";
++const PROMPT_FIELD_WIDTH: f64 = 260.0;
++const PROMPT_FIELD_HEIGHT: f64 = 24.0;
++
++/// The two buttons as AppKit names them in each language.
++fn button_titles() -> (&'static str, &'static str) {
++    match UiLanguage::system() {
++        UiLanguage::English => ("OK", "Cancel"),
++        UiLanguage::SimplifiedChinese | UiLanguage::TraditionalChinese => ("好", "取消"),
++    }
++}
++
++/// What the page asked for; only `alert` has no way to say no.
++#[derive(Clone, Copy, PartialEq)]
++enum Panel {
++    Alert,
++    Confirm,
++    Prompt,
++}
++
++/// Show one panel for `webview` and call `finish` exactly once with whether it
++/// was accepted and, for a prompt, the text in its field.
++///
++/// # Safety
++/// Main thread only; `webview` is the live WKWebView WebKit passed in, and the
++/// strings are valid `NSString` pointers or null.
++unsafe fn present(
++    webview: *mut AnyObject,
++    message: *mut NSString,
++    default_text: *mut NSString,
++    panel: Panel,
++    finish: Box<dyn FnOnce(bool, Option<Retained<NSString>>)>,
++) {
++    let Some(mtm) = MainThreadMarker::new() else {
++        finish(false, None);
++        return;
++    };
++    let alert = NSAlert::new(mtm);
++    match message.as_ref() {
++        Some(message) => alert.setMessageText(message),
++        None => alert.setMessageText(&NSString::new()),
++    }
++    let field = (panel == Panel::Prompt).then(|| {
++        let field = NSTextField::initWithFrame(
++            mtm.alloc(),
++            NSRect::new(
++                NSPoint::new(0.0, 0.0),
++                NSSize::new(PROMPT_FIELD_WIDTH, PROMPT_FIELD_HEIGHT),
++            ),
++        );
++        if let Some(text) = default_text.as_ref() {
++            field.setStringValue(text);
++        }
++        alert.setAccessoryView(Some(&field));
++        field
++    });
++    let (accept, cancel) = button_titles();
++    alert.addButtonWithTitle(&NSString::from_str(accept));
++    if panel != Panel::Alert {
++        let cancel = alert.addButtonWithTitle(&NSString::from_str(cancel));
++        // AppKit gives Escape to a button titled Cancel, which a translated
++        // title is not, so it is bound here.
++        cancel.setKeyEquivalent(&NSString::from_str("\u{1b}"));
++    }
++    if let Some(field) = &field {
++        alert.layout();
++        alert.window().makeFirstResponder(Some(field));
++    }
++
++    // WebKit raises if its handler is never called and again if it is called
++    // twice, so the answer leaves through a slot that empties on first use.
++    let finish = Cell::new(Some(finish));
++    let shown = alert.clone();
++    let answer = RcBlock::new(move |response: isize| {
++        // Held until the panel is dismissed.
++        let _ = &shown;
++        let Some(finish) = finish.take() else {
++            return;
++        };
++        let accepted = response == NSAlertFirstButtonReturn;
++        let text = field
++            .as_ref()
++            .filter(|_| accepted)
++            .map(|field| field.stringValue());
++        finish(accepted, text);
++    });
++
++    let window: *mut AnyObject = if webview.is_null() {
++        std::ptr::null_mut()
++    } else {
++        msg_send![webview, window]
++    };
++    if window.is_null() {
++        // No window to hang a sheet on: an app-modal panel still answers.
++        let response = alert.runModal();
++        answ
+```
+
+**File**: `src-tauri/src/app/window.rs` (modified, +9/-0)
+```diff
+@@ -1052,6 +1052,15 @@ fn build_window(
+         eprintln!("[Pake] Failed to access WKWebView for history swipe gestures: {error}");
+     }
+ 
++    // A page's alert(), confirm() and prompt() show nothing in a WKWebView
++    // unless its UI delegate answers, and Wry's does not: every window's does.
++    #[cfg(target_os = "macos")]
++    if let Err(error) = window.with_webview(|webview| {
++        crate::app::script_dialogs::install(&webview);
++    }) {
++        eprintln!("[Pake] Failed to access WKWebView for its script dialogs: {error}");
++    }
++
+     // The tab bar's + button exists only while some window class answers
+     // `newWindowForTab:`. Install it for every tabbing window, the main one
+     // included: its tab bar is the one the user sees first.
+```
+
+**File**: `tests/unit/macos-script-dialogs.test.ts` (added, +77/-0)
+```diff
+@@ -0,0 +1,77 @@
++import fs from 'node:fs';
++import path from 'node:path';
++import { describe, expect, it } from 'vitest';
++
++const rustRoot = path.join(process.cwd(), 'src-tauri', 'src');
++const read = (relative: string) =>
++  fs.readFileSync(path.join(rustRoot, relative), 'utf8');
++
++describe('macOS alert(), confirm() and prompt()', () => {
++  it('is installed on every webview the one window builder makes', () => {
++    const modules = read('app/mod.rs');
++    expect(modules).toMatch(
++      /#\[cfg\(target_os = "macos"\)\]\npub mod script_dialogs;/,
++    );
++
++    const window = read('app/window.rs');
++    const start = window.indexOf('fn build_window(');
++    const end = window.indexOf('\n}\n', start);
++    expect(window.slice(start, end)).toMatch(
++      /#\[cfg\(target_os = "macos"\)\]\s+if let Err\(error\) = window\.with_webview\(\|webview\| \{\s+crate::app::script_dialogs::install\(&webview\);/,
++    );
++  });
++
++  it('answers the three WKUIDelegate panels WebKit would otherwise skip', () => {
++    const dialogs = read('app/script_dialogs.rs');
++    for (const selector of [
++      'webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:',
++      'webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:',
++      'webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:',
++    ]) {
++      expect(dialogs).toContain(`sel!(${selector})`);
++    }
++    // Added only where the delegate's class has no answer of its own.
++    expect(dialogs).toContain('if class.instance_method(selector).is_some() {');
++  });
++
++  it('sets the delegate again, since WebKit caches what it answers', () => {
++    const dialogs = read('app/script_dialogs.rs');
++    const added = dialogs.indexOf('class_addMethod(');
++    const reset = dialogs.indexOf('msg_send![view, setUIDelegate: none]');
++    const restored = dialogs.indexOf(
++      'msg_send![view, setUIDelegate: &*delegate]',
++    );
++    expect(added).toBeGreaterThan(-1);
++    // Without this the methods exist and are never called: the page still
++    // gets false from confirm() in a millisecond.
++    expect(reset).toBeGreaterThan(added);
++    expect(restored).toBeGreaterThan(reset);
++  });
++
++  it('hands WebKit its answer exactly once, when the sheet is dismissed', () => {
++    const dialogs = read('app/script_dialogs.rs');
++    expect(dialogs).toContain('beginSheetModalForWindow: window');
++    expect(dialogs).toContain('let finish = Cell::new(Some(finish));');
++    expect(dialogs).toContain('let Some(finish) = finish.take() else {');
++    // Cancel is false for confirm() and null for prompt(), as in a browser.
++    expect(dialogs).toContain(
++      'let accepted = response == NSAlertFirstButtonReturn;',
++    );
++    expect(dialogs).toContain('None => done.call((std::ptr::null_mut(),)),');
++  });
++
++  it('keeps the panel on the page window and Escape on Cancel', () => {
++    const dialogs = read('app/script_dialogs.rs');
++    // A hidden or minimised window still gets a sheet, which AppKit shows
++    // with the window; only a webview with no window gets an app-modal panel.
++    const fallback = dialogs.indexOf('if window.is_null() {');
++    const modal = dialogs.indexOf('alert.runModal()');
++    expect(fallback).toBeGreaterThan(-1);
++    expect(modal).toBeGreaterThan(fallback);
++    expect(dialogs).not.toMatch(/isVisible/);
++    // AppKit binds Escape only to a button titled "Cancel"; 取消 is not.
++    expect(dialogs).toContain(
++      'cancel.setKeyEquivalent(&NSString::from_str("\\u{1b}"));',
++    );
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1437** (closed): Update contributors and formatting (@alperenalbay)
 - **PR #1436** (2026-11-14): feat: accept macOS Icon Composer .icon files (#1433) (@adamsiwiec1)
 - **PR #1435** (2026-11-14): fix(cli): cancel in-flight icon downloads with builds (@yuxino)
 - **PR #1434** (2026-11-14): fix(windows): open external links from iframes in the system browser (@crispyaus)
 - **PR #1430** (closed): marge (@MrCrystal2)
 - **PR #1429** (closed): sync (@tyh0615)
-- **PR #1428** (closed): updating (@fejorca)
 
 ---
 
@@ -1576,33 +1241,21 @@ Windows ARM64; content_bl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. built-in ad and tracker blocking for runtime templates
+## X. show alert, confirm and prompt in macOS apps
 
 **RULE**:
-When implementing operations in `filters/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/tauri-runtime.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `79396657`: built-in ad and tracker blocking for runtime templates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e7ab18d`: show alert, confirm and prompt in macOS apps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `filters/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/tauri-runtime.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Filter lists
-
-Runtime templates built with the `content-blocking` feature (which `runtime-template` turns on) embed these lists, unmodified and gzipped, for the `content_blocking` groups in `pake.json`. The npm package does not ship this folder, and the CLI never enables the feature.
-
-| Group | List | Authors | License |
-| --- | --- | --- | --- |
-| `ads` | EasyList | The EasyList authors (https://easylist.to/) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
-| `trackers` | EasyPrivacy | The EasyList authors (https://easylist.to/) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
-| `cookies` | AdGuard Cookie Notices filter | AdGuard (https://github.com/AdguardTeam/AdguardFilters) | GPL-3.0 |
-| `china` | EasyList China | The EasyList China authors (https://github.com/easylist/easylistchina) | GPL-3.0-or-later or CC BY-SA 3.0 (https://easylist.to/pages/licence.html) |
-| always | uBlock filters – Unbreak | uBlock Origin contributors (https://github.com/uBlockOrigin/uAssets) | GPL-3.0 |
-
-`sources.json` records each list's download URL, version and date. Refresh them with `node scripts/update-filter-lists.mjs` before a runtime re
+- A page's `alert()`, `confirm()` and `prompt()` show nothing in a WKWebView unless its UI delegate implements the three `runJavaScript…Panel` methods, and Wry 0.54.2's does not: `alert` returned at once, `confirm` returned false and `prompt` null in a millisecond, so a site that confirms before logging out did nothing (a user's report, 2026-11-17; WebView2 and WebKitGTK show their own). `src-tauri/src/app/script_dialogs.rs` adds the three methods to the delegate's class where it lacks them, for every webview from `build_window`, and then sets the same delegate on the webview again: WebKit records which methods a delegate answers when it is set, and without the reset the added methods are never called. Each panel is an NSAlert sheet on the page's window whose completion calls WebKit's handler exactly once (WebKit raises on zero or two calls), which keeps the script waiting as a browser does. The sheet goes on the window even when it is hidden, as a closed window is with hide-on-close: AppKit then shows the window with its sheet (measured: a window hidden with Cmd+W came back on screen when its page called `confirm()`), where an app-modal panel would float over whatever else the use
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1612,7 +1265,7 @@ Runtime templates built with the `content-blocking` feature (which `runtime-temp
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `79396657` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e7ab18d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

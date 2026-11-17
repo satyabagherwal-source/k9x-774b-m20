@@ -4,22 +4,22 @@
 {
   "source_repository": "gravitl/netmaker",
   "source_url": "https://github.com/gravitl/netmaker",
-  "source_version": "28560362",
+  "source_version": "098d26a7",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T14:01:47.504Z",
+  "timestamp": "2026-11-17T23:17:37.849Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gravitl-netmaker",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gravitl/netmaker](https://github.com/gravitl/netmaker) (Revision: `28560362`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T14:01:47.504Z`  
+> **Provenance**: Harvested from [gravitl/netmaker](https://github.com/gravitl/netmaker) (Revision: `098d26a7`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T23:17:37.849Z`  
 > **Learning ID**: `learn-github-gravitl-netmaker`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gravitl/netmaker` (Commit: `28560362`)
+- **Target Repository**: `gravitl/netmaker` (Commit: `098d26a7`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:01:46.174Z  
+> **Harvest Timestamp**: 2026-11-17T23:17:36.334Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11876 stars
+- **Stars / Engagement**: 11877 stars
 
 ---
 
@@ -1028,303 +1028,191 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28560362` (2026-11-17)
-**Commit Message**: NM-356: Fix device join/pull when host.Nodes drifts from live nodes (#4235)
+### Incident Patch 1: `098d26a7` (2026-11-17)
+**Commit Message**: V1.8.0: release notes (#4236)
 
-* NM-356: add username filter to nodes api
+* bump version tag to v1.8.0
 
-* NM-356: disconnect user devices and force Desktop logout on disable/delete
+* v1.8.0: update release notes
 
-When a user is disabled or deleted (including IdP sync), disconnect their
-nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
-
-* NM-356: rm force logout from delete user path
-
-* NM-356: keep AllowAll when both default ACL policies are open
-
-Uni/proto-scoped policies were defeating FwUpdate.AllowAll even with All
-Resources and All Users enabled, leaving clients on DROP + per-peer ACCEPT
-rules. Short-circuit on open defaults only, and document the constraint.
-
-* fix: enrich topology and connections with location, is_gw, and egresses
-
-Add location/country and is_gw on topology vertices and connection peers,
-with egresses listing egress vs internet_gateway (exit). Also classify paths
-through a peer's RelayedBy as relayed even when that relay is an exit router.
-
-* add update fallback ns error
-
-* fix: require network query on network-scoped mutations for network admins
-
-ACL/egress/nameserver/tags/posture create-update-delete ignored ?network=
-after NM-378, so auth fell through
-
-**File**: `controllers/hosts.go` (modified, +10/-1)
+**File**: `.github/ISSUE_TEMPLATE/bug-report.yml` (modified, +1/-0)
 ```diff
-@@ -347,6 +347,15 @@ func pull(w http.ResponseWriter, r *http.Request) {
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "internal"))
- 		return
- 	}
-+	// Sync before peer calc (PeerUpdateForHost walks host.Nodes) and reuse the
-+	// returned list for HostPull.Nodes — one host_id query, no second GetHostNodes.
-+	hostNodes, syncErr := logic.SyncHostNodesFromDB(r.Context(), host)
-+	if syncErr != nil {
-+		logger.Log(0, "pull: host.Nodes reconcile failed", hostIDStr, syncErr.Error())
-+		if hostNodes == nil {
-+			hostNodes = logic.GetHostNodes(host)
-+		}
-+	}
- 
- 	resetFailovered := r.URL.Query().Get("reset_failovered") == "true"
- 	refresh := r.URL.Query().Get("refresh") == "true"
-@@ -381,7 +390,7 @@ func pull(w http.ResponseWriter, r *http.Request) {
- 
- 	response := models.HostPull{
- 		Host:                    *host,
--		Nodes:                   logic.GetHostNodes(host),
-+		Nodes:                   hostNodes,
- 		ServerConfig:            hPU.ServerConfig,
- 		Peers:                   hPU.Peers,
- 		PeerIDs:                 hPU.PeerIDs,
+@@ -31,6 +31,7 @@ body:
+       label: Version
+       description: What version are you running?
+       options:
++        - v1.8.0
+         - v1.7.0
+         - v1.6.0
+         - v1.5.1
 ```
 
-**File**: `logic/device.go` (modified, +36/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -356,6 +356,11 @@ func JoinDeviceNetwork(ctx context.Context, user *schema.User, host *schema.Host
- 		if err := reconnectUserDeviceNode(ctx, host, networkID); err != nil {
- 			return empty, err
- 		}
-+		// Orphan nodes (row exists, ID missing from host.Nodes) must be linked
-+		// or the next host pull will omit the network.
-+		if err := ensureDeviceNodeLinkedToHost(ctx, host, networkID); err != nil {
-+			return empty, err
-+		}
- 		return models.DeviceJoinResult{Status: models.DeviceJoinStatusJoined}, nil
- 	}
+@@ -16,7 +16,7 @@
  
-@@ -392,9 +397,40 @@ func JoinDeviceNetwork(ctx context.Context, user *schema.User, host *schema.Host
- 		Networks:           []string{networkID},
- 		SkipDeviceApproval: true,
- 	}, host, user.Username)
-+	// JoinHostToNetworks swallows CreateNode errors; only return joined when the
-+	// host actually has a node on this network (and it is listed on host.Nodes).
-+	if err := ensureDeviceNodeLinkedToHost(ctx, host, networkID); err != nil {
-+		return empty, fmt.Errorf("failed to join network %s: %w", networkID, err)
-+	}
- 	return models.DeviceJoinResult{Status: models.DeviceJoinStatusJoined}, nil
- }
- 
-+// ensureDeviceNodeLinkedToHost verifies a node exists for host+network and that
-+// its ID is on host.Nodes (required for GET /api/v1/host Nodes / peer updates).
-+func ensureDeviceNodeLinkedToHost(ctx context.Context, host *schema.Host, networkID string) error {
-+	nodeSchema, err := getHostNodeOnNetwork(ctx, host, networkID)
-+	if err != nil {
-+		return fmt.Errorf("host node missing on network: %w", err)
-+	}
-+	fresh := &schema.Host{ID: host.ID}
-+	if err := fresh.Get(ctx); err != nil {
-+		return err
-+	}
-+	if StringSliceContains(fresh.Nodes, nodeSchema.ID) {
-+		host.Nodes = fresh.Nodes
-+		return nil
-+	}
-+	modelsNode, err := GetNodeByID(nodeSchema.ID)
-+	if err != nil {
-+		return err
-+	}
-+	if err := AssociateNodeToHost(&modelsNode, fresh); err != nil {
-+		return err
-+	}
-+	host.Nodes = fresh.Nodes
-+	return nil
-+}
-+
- // reconnectUserDeviceNode sets Connected=true on an existing host node after a
- // new JIT grant (node was left enrolled but disconnected when the prior grant ended).
- func reconnectUserDeviceNode(ctx context.Context, host *schema.Host, networkID string) error {
+ <p align="center">
+   <a href="https://github.com/gravitl/netmaker/releases">
+-    <img src="https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square" />
++    <img src="https://img.shields.io/badge/Version-1.8.0-informational?style=flat-square" />
+   </a>
+   <a href="https://hub.docker.com/r/gravitl/netmaker/tags">
+     <img src="https://img.shields.io/docker/pulls/gravitl/netmaker?label=downloads" />
 ```
 
-**File**: `logic/device_test.go` (modified, +16/-1)
+**File**: `compose/docker-compose.netclient.yml` (modified, +1/-1)
 ```diff
-@@ -427,8 +427,23 @@ func TestDeviceJoinSkipsApprovalWhenJITAppliesToUser(t *testing.T) {
- 	joined := false
- 	origJoin := JoinHostToNetworks
- 	t.Cleanup(func() { JoinHostToNetworks = origJoin })
--	JoinHostToNetworks = func(context.Context, models.EnrollmentKey, *schema.Host, string) {
-+	JoinHostToNetworks = func(ctx context.Context, key models.EnrollmentKey, h *schema.Host, _ string) {
- 		joined = true
-+		// Mimic CreateNode: ensure post-join verify finds a host node.
-+		net := &schema.Network{Name: key.Networks[0]}
-+		require.NoError(t, net.Get(ctx))
-+		n := &schema.Node{
-+			ID:        uuid.NewString(),
-+			TenantID:  scope.ID(ctx),
-+			HostID:    h.ID.String(),
-+			NetworkID: net.ID,
-+			Address:   "10.98.0.50",
-+			Connected: true,
-+			Status:    schema.OnlineSt,
-+		}
-+		require.NoError(t, n.Create(ctx))
-+		h.Nodes = append(h.Nodes, n.ID)
-+		require.NoError(t, h.Upsert(ctx))
- 	}
- 
- 	networks, err := GetDeviceNetworks(ctx, user, host)
+@@ -3,7 +3,7 @@ version: "3.4"
+ services:
+   netclient:
+     container_name: netclient
+-    image: 'gravitl/netclient:v1.7.0'
++    image: 'gravitl/netclient:v1.8.0'
+     hostname: netmaker-1
+     network_mode: host
+     restart: on-failure
 ```
 
-**File**: `logic/nodes.go` (modified, +121/-6)
+**File**: `k8s/client/netclient-daemonset.yaml` (modified, +1/-1)
 ```diff
-@@ -37,18 +37,133 @@ func GetNetworkNodes(ctx context.Context, network string) ([]models.Node, error)
- 	return GetNetworkNodesMemory(allnodes, network), nil
- }
+@@ -16,7 +16,7 @@ spec:
+       hostNetwork: true
+       containers:
+       - name: netclient
+-        image: gravitl/netclient:v1.7.0
++        image: gravitl/netclient:v1.8.0
+         env:
+         - name: TOKEN
+           value: "TOKEN_VALUE"
+```
+
+**File**: `k8s/client/netclient.yaml` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ spec:
+       #           - "<node label value>"
+       containers:
+       - name: netclient
+-        image: gravitl/netclient:v1.7.0
++        image: gravitl/netclient:v1.8.0
+         env:
+         - name: TOKEN
+           value: "TOKEN_VALUE"
+```
+
+**File**: `k8s/server/netmaker-ui.yaml` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ spec:
+     spec:
+       containers:
+       - name: netmaker-ui
+-        image: gravitl/netmaker-ui:v1.7.0
++        image: gravitl/netmaker-ui:v1.8.0
+         ports:
+         - containerPort: 443
+         env:
+```
+
+**File**: `main.go` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@ import (
+ var version = "v1.8.0"
  
--// GetHostNodes - fetches all nodes part of the host
-+// GetHostNodes fetches all nodes that belong to the host.
-+// Source of truth is the nodes table (host_id), not host.Nodes — that JSON
-+// slice can retain stale IDs after leave/delete drift and omit live nodes.
-+// Read-only: callers that need host.Nodes repaired use SyncHostNodesFromDB
-+// (pull) or membership write paths (join/associate).
- func GetHostNodes(host *schema.Host) []models.Node {
--	nodes := []models.Node{}
--	for _, nodeID := range host.Nodes {
--		node, err := GetNodeByID(nodeID)
--		if err == nil {
--			nodes = append(nodes, node)
-+	if host == nil || host.ID == uuid.Nil {
-+		return []models.Node{}
-+	}
-+	ctx := hostNodesContext(host)
-+	schemaNodes, err := listHostSchemaNodes(ctx, host.ID.String())
-+	if err != nil {
-+		// Fall back to the denormalized ID list if the query fails.
-+		nodes := []models.Node{}
-+		for _, nodeID := range host.Nodes {
-+			node, err := GetNodeByID(nodeID)
-+			if err == nil {
-+				nodes = append(nodes, node)
-+			}
- 		}
-+		return nodes
-+	}
-+	nodes := make([]models.Node, 0, len(schemaNodes))
-+	for i := range schemaNodes {
-+		n := ConvertSchemaNodeToModelsNode(&schemaNodes[i])
-+		ensureNodeMutex(n)
-+		nodes = append(nodes, *n)
- 	}
- 	return nodes
- }
+ //	@title			NetMaker
+-//	@version		1.7.0
++//	@version		1.8.0
+ //	@description	NetMaker API Docs
+ //	@tag.name	    APIUsage
+ //	@tag.description.markdown
+```
+
+**File**: `release.md` (modified, +81/-33)
+```diff
+@@ -1,53 +1,82 @@
+-# Netmaker v1.7.0 Release Notes 🚀
++# Netmaker v1.8.0 Release Notes 🚀
  
-+func hostNodesContext(host *schema.Host) context.Context {
-+	ctx := db.WithContext(context.Background())
-+	if host != nil && host.TenantID != "" {
-+		ctx = scope.WithContext(ctx, scope.TenantScope, host.TenantID)
-+	}
-+	return ctx
-+}
+ ## 🚀 What’s New
+ 
+-### 🏢 Multi-Tenancy for MSPs (Organizations & Tenants)
++### 💻 All-New Desktop Apps
+ 
+-Run multiple customer environments from a single Netmaker server.
++Completely redesigned **Netmaker Desktop Apps** for a faster, stable connection experience.
+ 
+-- **Organizations & tenants** — Group customers under an organization; each tenant is an isolated Netmaker environment (networks, devices, users).
+-- **MSP license sync** — EE/MSP installs create and update orgs/tenants from the MSP license (including teardown when a tenant is removed from the license). CE and normal Pro accounts continues to use a single local default tenant.
+-- **Scoped access** — API and `nmctl` select the target org/tenant via `X-Organization-ID` / `X-Tenant-ID` (`--org_id` / `--tenant_id`), with `nmctl organization list` and `nmctl tenant list` for discovery.
++- Now available to **CE users** as well (previously limited to Pro/EE).
++- **Peer-to-peer by default** — desktop devices join the mesh with direct peering (not gateway-only), for lower latency and better connectivity.
++- Fresh UI and connection flow for connecting to networks and exit nodes.
++- Improved status visibility for tunnel state and exit modes.
++- **Auto Exit** — when enabled on a network (`auto_select_exit_node`), desktop/user devices are automatically assigned an allowed internet exit (nearest available) when they connect; users can still switch exits when permitted.
+ 
+-### 🔌 TCP Proxy / WSS Uplink
++### 🔐 Managed Access with Netmaker SSH
+ 
+-Gateways can publish a **TCP/WSS uplink** so clients can reach the mesh in restrictive environments when UDP is blocked.
++Secure, managed SSH access to hosts through Netmaker — without opening inbound SSH on the public internet.
+ 
+-- Enable TCP proxy on the gateway/host (`tcp_proxy_enabled` and related listen/TLS settings).
+-- Clients can opt into a TCP uplink to the gateway when the proxy is enabled.
+-- Supports self-signed and externally terminated TLS modes for WSS endpoints.
++- Enable **Manage SSH** on hosts so netclient runs an embedded SSH/SCP/SFTP server.
++- Access mesh hosts over Netmaker with centralized control of who can connect.
++- Useful for admin access, file transfer, and operational workflows on enrolled devices.
+ 
+-### 🛡️ EDR Integration (Pro)
++### 🗺️ Network Map Updates
+ 
+-Connect endpoint detection and response platforms for **posture checks** from **Integrations**.
++Updated network map experience for clearer topology and device context.
+ 
+-- Supported providers: **Microsoft Defender**, **CrowdStrike**, **SentinelOne**, and **Wazuh**.
+-- Sync managed endpoints and evaluate EDR compliance (agent health / risk level) as part of device posture.
+-- Configure, test, and manage integrations via the REST API (`/api/v1/integrations/edr/{provider}`).
++- Improved layout and visualization of users, devices, servers, and config clients.
++- Easier navigation of network relationships and host locations.
++- Better at-a-glance view of how your mesh is connected.
+ 
+-### 📱 MDM Integration (Pro)
++### 🪟 Windows Egress Support
+ 
+-Connect mobile device management platforms for **device compliance posture** from **Integrations**.
++Windows hosts can now act as **egress gateways**.
+ 
+-- Supported providers: **Microsoft Intune**, **Jamf**, **JumpCloud**, and **Iru**.
+-- Match devices by Entra device ID, serial number, hardware UUID, or hostname.
+-- Enforce MDM enrollment/compliance checks alongside existing posture policies.
+-- Configure, test, and manage integrations via the REST API (`/api/v1/integrations/mdm/{provider}`).
++- Advertise egress ranges from Windows netclients.
++- Route traffic from the mesh to attached LAN/site networks via Windows.
++- Uses Windows NetNat where required for egress NAT.
 +
-+func listHostSchemaNodes(ctx context.Context, hostID string) ([]schema.Node, error) {
-+	return (&schema.Node{}).ListAll(
-+		ctx,
-+		dbtypes.WithFilter("host_id", hostID),
-+		dbtypes.WithAllPreloads(),
-+	)
-+}
++### 🔀 Bypass Egress Routes
 +
-+// ReconcileHostNodeIDs rewrites host.Nodes to match live node IDs when they drift.
-+// Peer updates and pull both walk host.Nodes, so stale/missing IDs break joins.
-+// Uses a column-scoped UPDATE (not full-row Save) so a stale host snapshot cannot
-+// clobber concurrent field updates. HA-safe locking would need a DB CAS/advisory
-+// lock; this only avoids Save-wide clobber.
-+func ReconcileHostNodeIDs(ctx context.Context, host *schema.Host, liveIDs []string) error {
-+	if host == nil || host.ID == uuid.Nil {
-+		return nil
-+	}
-+	fresh := &schema.Host{ID: host.ID}
-+	if err := fresh.Get(ctx); err != nil {
-+		return err
-+	}
-+	if hostNodeIDSetsEqual(fresh.Nodes, liveIDs) {
-+		host.Nodes = append([]string(nil), fresh.Nodes...)
-+		return nil
-+	}
-+	prev := append([]string(nil), fresh.Nodes...)
-+	nodesCol := datatypes.JSONSlice[string](append([]string(nil), liveIDs...))
-+	if err := db.FromContext(ctx).Model(&schema.Host{}).
-+		Where("id = ?", host.ID).
-+		Update("nodes", nodesCol).Error; err != nil {
-+		slog.Warn("failed to reconcile host.Nodes",
-+			"host", host.ID.String(), "error", err)
-+		return err
-+	}
-+	host.Nodes = append([]string(nil), liveIDs...)
-+	slog.Info("reconciled host.Nodes with live nodes",
-+		"host", host.ID.String(),
-+		"before", len(prev),
-+		"after", len(liveIDs))
-+	return nil
-+}
++New option on **internet egress** so traffic to other (site) egress destinations does not hairpin through the internet exit.
 +
-+// SyncHostNodesFromDB loads nodes by host_id, updates host.Nodes if needed, and
-+// returns the same node list for reuse (e.g. HostPull.Nodes) so callers avoid a
-+// second preloaded query via GetHostNodes. Call before PeerUpdateForHost.
-+func SyncHostNodesFromDB(ctx context.Context, host *schema.Host) ([]models.Node, error) {
-+	if host == nil || host.ID == uuid.Nil {
-+		return nil, nil
-+	}
-+	if ctx == nil {
-+		ctx = hostNodesContext(host)
-+	} else if scope.ID(ctx) == "" && host.TenantID != "" {
-+		ctx = scope.WithContext(ctx, scope.TenantScope, host.TenantID)
-+	}
-+	schemaNodes, err := listHostSchemaNodes(ctx, host.ID.String())
-+	if err != nil {
-+		return nil, err
-+	}
-+	nodes := make([]models.Node, 0, len(schemaNodes))
-+	ids := make([]string, 0, len(schemaNodes))
-+	for i := range schemaNodes {
-+		n := ConvertSchemaNodeToModelsNode(&schemaNodes[i])
-+		ensureNodeMutex(n)
-+		nodes = append(nodes, *n)
-+		ids = append(ids, schemaNodes[i].ID)
-+	}
-+	if err := ReconcileHostNodeIDs(ctx, host, ids); err != nil {
-+		return nodes, err
-+	}
-+	return nodes, nil
-+}
-+
-+func hostNodeIDSetsEqual(a, b []string) bool {
-+	if len(a) != len(b) {
-+		return false
-+	}
-+	seen := make(map[string]struct{}, len(a))
-+	for _, id := range a {
-+		seen[id] = struct{}{}
-+	}
-+	for _, id := range b {
-+		if _, ok := seen[id]; !ok {
-+			return false
-+		}
-+	}
-+	return true
-+}
-+
- // GetNetworkNodesMemory - gets all nodes belonging to a network from list in memory
- func GetNetworkNodesMemory(allNodes []models.Node, network string) []models.Node {
- 	var nodes = make([]models.Node, 0, len(allNodes))
++- **Why:** Without bypass, clients using an internet exit often send site-egress traffic up to the exit node and back out again (hairpin), adding latency and load. Bypass keeps allowed site egress as **direct peers**, so traffic to those sites flows peer-to-peer instead of bending through the exit.
++- **`bypass_egress_routes`** (internet egress only) — enable to avoid that hairpin for other egress sites; disable to force site-egress traffic via the internet exit.
++- Configurable on create/update; defaults to **on** for new internet egress.
++- Ignored for non-internet (site) egress types.
+ 
+ 
+ ---
+ 
+ ## 🗄️ Database Schema Migration
+ 
+-This release completes the SQL schema path and introduces **multi-tenancy (org/tenant) bootstrap** as part of the v1.7.0 migration.
++This release runs **`migration-v1.8.0`**, which continues the SQL schema path after multi-tenancy (org/tenant) from v1.7.0. It migrates remaining key-value resources into versioned tables, backfills IP pools/al
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4236** (2026-11-17): V1.8.0: release notes (@abhishek9686)
 - **PR #4235** (2026-11-17): NM-356: Fix device join/pull when host.Nodes drifts from live nodes (@abhishek9686)
 - **PR #4232** (2026-11-16): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4231** (2026-11-14): NM-356: Enable CE user ACL policies with All Users and per-user sources (@abhishek9686)
 - **PR #4230** (2026-11-12): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4225** (2026-11-12): NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (@abhishek9686)
-- **PR #4224** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 
 ---
 
@@ -1344,40 +1232,31 @@ after NM-378, so auth fell through
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NM-356: Fix device join/pull when host.Nodes drifts from live nodes
+## X. V1.8.0: release notes
 
 **RULE**:
-When implementing operations in `controllers/hosts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/ISSUE_TEMPLATE/bug-report.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `28560362`: NM-356: Fix device join/pull when host.Nodes drifts from live nodes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `098d26a7`: V1.8.0: release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/hosts.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/bug-report.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Sync before peer calc (PeerUpdateForHost walks host.Nodes) and reuse the
-	// returned list for HostPull.Nodes — one host_id query, no second GetHostNodes.
-	hostNodes, syncErr := logic.SyncHostNodesFromDB(r.Context(), host)
-	if syncErr != nil {
-		logger.Log(0, "pull: host.Nodes reconcile failed", hostIDStr, syncErr.Error())
-		if hostNodes == nil {
-			hostNodes = logic.GetHostNodes(host)
-		}
-	}
-		Nodes:                   hostNodes,
+        - v1.8.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		Nodes:                   logic.GetHostNodes(host),
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28560362` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `098d26a7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

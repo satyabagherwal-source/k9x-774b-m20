@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T22:56:48.556Z",
+  "last_updated": "2026-11-17T23:19:23.237Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -320,14 +320,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "content_hash": "09ee4bfbd7c50264d6a6ddd6140bb1b4c3db9509adcde0412833d6b9ecbf7e8c",
-      "verified_at": "2026-11-13T12:42:27.722Z",
+      "content_hash": "cb7fd523cfe8d44272526e9049ef1bcc1002853a8c36a92acbaa29aa0520ef4c",
+      "verified_at": "2026-11-17T23:19:23.236Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:42:27.722Z"
+      "last_updated": "2026-11-17T23:19:23.236Z"
     },
     "meta-llama/Llama-3.1-8B-Instruct": {
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "82d2d7901fd831d2752a8b46c970d12d0f9366855ca56a0ac86562d799724d0f",
-      "verified_at": "2026-11-16T15:51:00.357Z",
+      "content_hash": "799d3c4ee500604d5f04db676e7bb4ac2d4ee288db3bc6e7de23fd2873fc0154",
+      "verified_at": "2026-11-17T23:17:27.095Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T15:51:00.357Z"
+      "last_updated": "2026-11-17T23:17:27.095Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "2e7d28a8e31e3cd40c916f70f8d770975829ebff293c9b71eb691430fe0280a1",
-      "verified_at": "2026-11-17T00:10:56.546Z",
+      "content_hash": "df767793283c97082bc1705c9bc6083f638ea071e22b71296c469e972f75517e",
+      "verified_at": "2026-11-17T23:17:40.584Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T00:10:56.546Z"
+      "last_updated": "2026-11-17T23:17:40.584Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "40d5bd4500aefafe945ab9fd418e17583ec277d064d80e1f85d1bd2f2206d9a1",
-      "verified_at": "2026-11-17T14:01:47.342Z",
+      "content_hash": "c0a96b8c1dfdb7ddf49b7d570c446d571b1729dfc0c847521d5013b9bfa25eb6",
+      "verified_at": "2026-11-17T23:17:37.604Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:01:47.342Z"
+      "last_updated": "2026-11-17T23:17:37.604Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",

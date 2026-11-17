@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T22:56:53.259Z",
+  "last_updated": "2026-11-17T23:20:49.095Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T22:27:26.674Z",
@@ -178,13 +178,13 @@
       "staged_for_review": 1
     },
     "gravitl-netmaker-learnings.md": {
-      "processed_at": "2026-11-17T14:01:55.116Z",
+      "processed_at": "2026-11-17T23:20:47.924Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "tw93-pake-learnings.md": {
-      "processed_at": "2026-11-16T15:51:45.334Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T23:19:27.184Z",
+      "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "caviraoss-longmemory-learnings.md": {
@@ -1798,8 +1798,8 @@
       "staged_for_review": 1
     },
     "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md": {
-      "processed_at": "2026-11-13T12:42:51.114Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T23:20:46.643Z",
+      "promoted_canonical": 2,
       "staged_for_review": 0
     },
     "hf-meta-llama-llama-3.1-8b-instruct-learnings.md": {
@@ -3363,7 +3363,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1734,
-  "total_canonical_promoted": 326,
-  "total_staged_for_review": 1350
+  "total_dossiers_evaluated": 1737,
+  "total_canonical_promoted": 328,
+  "total_staged_for_review": 1352
 }

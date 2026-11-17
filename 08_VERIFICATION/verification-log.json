@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-YKP2",
-    "timestamp": "2026-11-16T00:28:02.246Z",
-    "repository": "rqlite/rqlite",
-    "learningId": "learn-github-rqlite-rqlite",
-    "contentHash": "8ccc4d5cd3a5b5715d19037d9ae015d9014f88999a009946f803219ea83d541a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-9MVI",
-    "timestamp": "2026-11-16T00:36:38.286Z",
-    "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-    "contentHash": "55c1c95bd5fd1c68859a1a02813665189f8849cb7301cea9033d1533a538564e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-9XP2",
-    "timestamp": "2026-11-16T00:36:52.310Z",
-    "repository": "apple/foundationdb",
-    "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "3b872964c15e736fbc08afcc645c9dd173030e8202b97a7aca77b9415ef5646e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-9ZP9",
-    "timestamp": "2026-11-16T00:36:54.909Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "85266eacf91e58aaf70f16e8f37ed0a77fabad2be590aa0580203aec9534b622",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-KPRJ",
     "timestamp": "2026-11-16T00:45:15.247Z",
     "repository": "rainbow-me/rainbow",
@@ -7492,6 +7432,66 @@
     "contentHash": "ca7e92e6dbf8f52795ef5510f36ae72de3375ddc1302f5815ef2b2f7db69be43",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-BI5J",
+    "timestamp": "2026-11-17T23:17:27.079Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "799d3c4ee500604d5f04db676e7bb4ac2d4ee288db3bc6e7de23fd2873fc0154",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-BQ9H",
+    "timestamp": "2026-11-17T23:17:37.589Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "c0a96b8c1dfdb7ddf49b7d570c446d571b1729dfc0c847521d5013b9bfa25eb6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-BSK9",
+    "timestamp": "2026-11-17T23:17:40.569Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "df767793283c97082bc1705c9bc6083f638ea071e22b71296c469e972f75517e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-DZRP",
+    "timestamp": "2026-11-17T23:19:23.221Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "cb7fd523cfe8d44272526e9049ef1bcc1002853a8c36a92acbaa29aa0520ef4c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -4,22 +4,22 @@
 {
   "source_repository": "lioensky/VCPToolBox",
   "source_url": "https://github.com/lioensky/VCPToolBox",
-  "source_version": "3c8cd08f",
+  "source_version": "4eaca06a",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T00:10:56.708Z",
+  "timestamp": "2026-11-17T23:17:40.835Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lioensky-vcptoolbox",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `3c8cd08f`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T00:10:56.708Z`  
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `4eaca06a`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T23:17:40.835Z`  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `lioensky/VCPToolBox` (Commit: `3c8cd08f`)
+- **Target Repository**: `lioensky/VCPToolBox` (Commit: `4eaca06a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:10:55.678Z  
+> **Harvest Timestamp**: 2026-11-17T23:17:39.322Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2449 stars
+- **Stars / Engagement**: 2448 stars
 
 ---
 
@@ -1796,11 +1796,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #605** (2026-11-16): **fix(UserAuth): 增加 code.bin 缺失即时自愈生成机制并从版本控制中移除**
-  *Symptoms*: ### 变更背景与原因 1. **跨分支追踪状态不对称问题**：    - `code.bin` 属于每小时自动轮换的运行时动态授权缓存，`.gitignore` 中早已声明忽略该文件。    - 但此前版本库中仍然追踪了该二进制文件。当开发者在本地分支切换或与上游同步时，因追踪状态差异，容易导致 Git 认为该文件需要清理而将其物理删除，进而导致依赖管理员权限的工具（如 `LinuxShellExecutor`、`PowerShellExecutor`）调用时报 `Plugin requires admin authentication, but auth code could not be obtained. Execution denied.`。 2. **缺乏即时自愈机制**：    - 原有机制仅在服务完全冷启动或整点 Cron 触发时生成 `code.bin`。若服务经历热重载（Hot-reload）或文件因异常丢失，会导致长达近 1 小时的文件真空期。  ### 详细变更 1. **版本控制治理**：从 Git 索引中彻底移除 `Plugin/UserAuth/code.bin`，真正与 `.gitignore` 保持一致，消除分支切换与合并时的幽灵清理。 2. **模块能力导出**：重构 `Plugin/UserAuth/auth.js`，支持直接导出 `generateRealAuthCode`、`encodeToBrackets` 与 `generateAndSaveAuthCode`，同时严格保留 CLI 脚本入口（供原有 static 插件 Cron 流程调用）。 3. **即时自愈（JIT Self-healing）**：    - 在 `modules/captchaDecoder.js` 的 `getAuthCode` 中增加存在性检查：若 `code.bin` 不存在，优先调用 `generateAndSaveAuthCode` 毫秒级补齐落盘，完全避免鉴权失败。    - 在 `Plugin.js` 的 `initializeStaticPlugins` 与 `_getDecryptedAuthCode` 中增加物理文件缺失自愈感知，确保热重载与工具执行前物理文件与内存占位符高度同步。  ### 验证情况 - [x] 删除 `code.bin` 后调用 `getAuthCode`，验证即时自愈生成且成功返回 6 位验证码。 - [x] 验证 `node Plugin/UserAuth/auth.js` CLI 执行正常，stdout 正确输出验证码，stderr 记录生成日志。 - [x] 验证 `PluginManager._getDecryptedAuthCode()` 在 `code.bin` 物理丢失场景下自动触发自愈并成功解密。
+- **Issue #609** (2026-11-17): **feat(memory): 完整接入 RiverMemo V5 双曲生产检索与 AB 旧轨隔离**
+  *Symptoms*: ## 概要  将 RiverMemo V5 双曲检索完整接入生产记忆入口，包含双曲导航内核、Tag／Chunk 场、快照与训练生命周期、RAGDiary／LightMemo 接线、AB 对照、回归与技术文档。  ### 生产入口  - RAGDiary 原生被动检索默认使用双曲 Chunk 候选、双曲 Tag 观测和 RiverMemo V5 读出；观测初始化不可用时兜底双曲 ANN。 - LightMemo 普通检索默认同一 V5 链路，纯 ANN 模式使用双曲 Chunk 检索。 - 普通生产查询不加载旧全库 TDB-SM 候选载荷或预加载旧分库索引；旧 TDB ANN、余弦 Tag／RiverMemo V3/4 对照在 LightMemo AB 中按需启用，下一次生产查询释放旧候选载荷。 - RAG 提示词及 LightMemo 回执区分 V5 与双曲 ANN，负双曲距离不显示为相关性百分比。 - V5 是检索链路名称，保留现有原生读出器及 Topology V3 连续评分架构。  ### 原生资产与训练  - 全局 Chunk 共享训练代均值轴、经验分位半径、量化图及方向目录，范围过滤复用全局坐标。 - SQL 实时同步成员及范围元数据；新增／向量更新的 Chunk 在冻结几何上精确评分，删除立即影响结果。 - 日常事实前移不重建全场；手动全训及既有 1% Tag 阈值任务统一重建生产 Tag 与 Chunk 双曲场。 - 包含快照恢复、完整性校验、受控强制重建、冷加载及代际一致性。 - 增加残差能量半径、强语义场继承与 Hop-0 意图覆盖。 - 已删除阶段实验工具和旧固定曲率原型，保留生产共用编码、搜索预算、连通性修复与正式回归；原有基准工程编译通过。  ## 验证  - 原生主项目 Release：254 通过，0 失败，0 忽略。 - 索引内核 Release：124 通过，0 失败，3 项既有基准／诊断忽略。 - 相关 JS：87 通过，0 失败。 - 真实 N-API 合成集成通过，覆盖 V5、双曲 ANN、AB 载荷启用／释放、范围、增量、重启及训练；撤回 V5.1 后再次通过。 - Windows x64 MSVC 生产构建及原有检索基准编译检查通过。 - 原生构建与测试禁用 AVX-512。 - 与当前远端主分支合并预检无文本冲突。未执行实际合并。 - 用户计划的服务器 50 组跑分尚未提供结果，不计入已通过验证。  ## V5.1 母锚探针实验：不采用  既有 64 个已观察文件完成七组主对照及 0.66 反例。重点分离模式 0.22 没有净增准入层，开发／已观察验证收益不一致；0.66 明显退化。实验源码已撤回，仅保留[实验结论](docs/RIVERMEMO_V51_PARENT_TETHER_EXPERIMENT.md)，本 PR 不含母锚系绳算子或开关。  ## 部署  后端、插件与匹配平台原生模块一并更新并重启。此 PR 只更新 Windows x64 MSVC 模块；Linux/macOS 在目标平台构建。  Windows 模块大小为 15,917,056 字节，SHA-256： a50d8fe5fe782281cde1179567615f0e41bebef083a1c606e0587fa76b903413  旧 Chunk 快照继续使用其保存的径向规则；执行现有全量训练才发布新训练几何。数据库同目录需旁路快照写权限。
 
-- **Issue #604** (2026-11-16): **feat(Plugin): 新增可选的 KeenableSearch 联网搜索插件（默认禁用）**
-  *Symptoms*: I work with Keenable  新增 `Plugin/KeenableSearch`，结构参考 YouSearch / TavilySearch。插件默认禁用，以 `plugin-manifest.json.block` 提交，需要的人改名后才会启用，不影响现有插件  - 不填 Key 也能用：`POST https://api.keenable.ai/v1/search/public`（`X-Keenable-Title` 请求头），每个 IP 每小时 1,000 次、每秒 10 次 - 填写 `KeenableKey` 后改走 `POST https://api.keenable.ai/v1/search`（`X-API-Key`） - 可选参数 `max_results`、`site`、`published_after`，返回 Markdown 列表 - 用 Node 自带的 fetch，不需要新依赖，也不需要 package.json  验证 - `node --test Plugin/KeenableSearch/KeenableSearch.test.js`：5/5 通过（fetch 全部 mock） - 本地 stdin 实测免 Key 接口，返回结果正常，`site` / `published_after` 也正常  English: an opt-in Keenable search plugin, shipped disabled. It works without a key, and setting `KeenableKey` switches it to the keyed API. No new dependencies 
+- **Issue #608** (2026-11-17): **fix(chat,bridge): 仅按 NativeToolIsolationModels 选择性剥离出站原生工具调用并支持桥接模型列表透传**
+  *Symptoms*: ## 动机与背景  1. **出站原生工具调用被无差别剥离**：此前引入环境变量 `NativeToolIsolationModels`（默认 `hydrogen`）旨在针对原生工具调用异常的特定模型（如 `4h`）移除请求侧的 `tools` 与 `tool_calls` 字段。但在 `6d7cefe0` 提交中，`modules/handlers/streamHandler.js` 的 `transformParsedDataForClient` 对所有模型无条件执行了 `delete payload.tool_calls`、`delete payload.function_call` 并将工具类 `finish_reason` 置为 `null`，且在未命中 VCP 文本工具循环时统一补发 `finish_reason: "stop"`；同时 `modules/handlers/nonStreamHandler.js` 在结尾硬编码将 `finish_reason` 覆写为 `"stop"`。这导致所有常规模型通过 `/v1/chat/completions`（以及内部依赖该端点的 `routes/protocolBridge.js` `/v1/responses` 流式接口、外部 IDE/CLI 客户端与酒馆前端脚本）发起的原生 Function Calling 丢失工具载荷与终止信号。 2. **多轮工具回执字面量保护缺口**：当下游客户端在多轮原生工具调用中回传 `role: "tool"` 或 `"function"` 消息时，若工具读取的源码片段恰好包含 `{{...}}` 占位符字面量，经过 `chatCompletionHandler.js` 变量展开循环时存在被误替换的风险。 3. **VCPBridgeServer 模型列表未透传上游**：`Plugin/VCPBridgeServer/bridgeserver.js` 的 `GET /v1/models`（及 `/v1/:profile/models`）仅返回本地配置的静态模型项，下游客户端无法动态获取主服务端与上游渠道的完整可用模型列表。  ## 架构与解决方案  不新增任何环境变量，直接复用既有 `NativeToolIsolationModels`（`matchesNativeToolIsolation`）实现入站与出站的双向对称门控：  1. **流式出站对称门控（`modules/handlers/streamHandler.js`）**：    - 仅当实际响应模型或请求模型命中 `matchesNativeToolIsolation` 时剥离 `delta.tool_calls`、`function_call` 并重置工具终止原因（保持 `hydrogen` 等隔离模型的畸形工具恢复防重语义不变）；    - 对非隔离模型完整保留原生工具增量块，记录 `sawNativeToolCall` 与原始 `finish_reason`；在本轮无 VCP 文本工具且已产出原生工具调用时，跳过追加覆盖性的 `finish_reason: "stop"` 帧（若上游未携带工具终止原因则补齐 `"tool_calls"` 终态帧），并将有效原生工具轮纳入 `completed: true` 结算。 2. **非流式出站终态保留（`modules/handlers/nonStreamHandler.js`）**：    - 对命中隔离配置的模型清理残余 `tool_call
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1817,504 +1817,1171 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c8cd08f` (2026-11-16)
-**Commit Message**: fix
+### Incident Patch 1: `4eaca06a` (2026-11-17)
+**Commit Message**: 内存fix
 
-**File**: `config.env.example` (modified, +7/-1)
+**File**: `KnowledgeBaseManager.js` (modified, +2/-1)
 ```diff
-@@ -836,7 +836,13 @@ JevFoldDialogueRounds=1
- # 附带对话里每条消息的截断长度，防 context rot。
- JevFoldDialogueMsgChars=300
- 
--# --- Jev 上下文剪枝（仅在请求带 contextTokenLimit 时生效）---
-+# --- 上下文裁剪服务端总开关 ---
-+# 默认关闭：即使客户端携带 contextTokenLimit，也原样保留消息，不执行位置裁剪或 Jev 打分。
-+# 设为 true 后才按客户端预算启用裁剪；JevContextPrune 仅控制是否使用智能排序。
-+# 修改根 config.env 后重启服务生效。
-+ContextPruneEnabled=false
-+
-+# --- Jev 上下文剪枝（仅在 ContextPruneEnabled=true 且请求带 contextTokenLimit 时生效）---
- # 原行为：保住 system、保住 [系统提示:] 前缀、保住最后两条，然后**从最老的**往后删到预算内。
- # 开启后：先让 Jev 给每条可删消息打"对继续当前任务是否还有用"的概率，按概率升序删——
- #         即删"最没用的"而不是"最老的"。预算上限与三条不可删规则全部留在代码里，模型只提供排序。
-```
-
-**File**: `modules/contextManager.js` (modified, +11/-1)
-```diff
-@@ -3,6 +3,12 @@
-  */
- 
- const jevContextPruner = require('./jevContextPruner.js');
-+const { readBool } = require('./jevScorer');
-+
-+// 服务端总开关，默认关闭；客户端 contextTokenLimit 不能绕过此开关。
-+function isPruningEnabled() {
-+    return readBool('ContextPruneEnabled', false);
-+}
- 
- /**
-  * 估算消息的 Token 数量 (仅计算文本内容，排除 Base64 等多媒体数据)
-@@ -65,7 +71,7 @@ function computeMustKeepIndices(messages) {
-  * @returns {Array} 修剪后的消息数组
-  */
- function pruneMessages(messages, limit, debugMode = false) {
--    if (!limit || !Array.isArray(messages) || messages.length <= 2) {
-+    if (!isPruningEnabled() || !limit || !Array.isArray(messages) || messages.length <= 2) {
-         return messages;
-     }
- 
-@@ -140,6 +146,10 @@ function findLastUserText(messages) {
-  * @returns {Promise<Array>}
-  */
- async function pruneMessagesSmart(messages, limit, debugMode = false, options = {}) {
-+    // 必须先检查总开关，关闭时不估算、不打分、不删除，原样返回。
-+    if (!isPruningEnabled()) {
-+        return messages;
-+    }
-     if (!jevContextPruner.isEnabled()) {
-         return pruneMessages(messages, limit, debugMode);
-     }
-```
-
-**File**: `tests/jevContextPrune.test.js` (modified, +27/-2)
-```diff
-@@ -13,7 +13,7 @@ const path = require('path');
- const contextManager = require(path.join(__dirname, '..', 'modules', 'contextManager.js'));
- 
- const ENV_KEYS = [
--    'JevContextPrune', 'JevContextPruneChunk', 'JevContextPruneMaxChunks',
-+    'ContextPruneEnabled', 'JevContextPrune', 'JevContextPruneChunk', 'JevContextPruneMaxChunks',
-     'JevContextPruneChars', 'JevContextPruneTimeoutMs'
- ];
- 
-@@ -23,6 +23,8 @@ function setEnv(vars) {
-         saved[k] = process.env[k];
-         delete process.env[k];
-     }
-+    // 原有策略用例显式开启总开关；关闭行为由独立用例验证。
-+    process.env.ContextPruneEnabled = 'true';
-     for (const [k, v] of Object.entries(vars)) process.env[k] = String(v);
-     return saved;
- }
-@@ -87,7 +89,30 @@ const PROB_BY_TEXT = {
-     '哈哈': 0.10
- };
- 
--test('默认关闭：与位置规则完全一致（会删掉最老的关键消息）', async () => {
-+for (const enabled of [undefined, 'false', '', 'invalid']) {
-+    test(`服务端总开关 ${String(enabled)}：超预算也原样返回，且不调用 Jev`, async () => {
-+        const saved = setEnv({ JevContextPrune: 'true' });
-+        try {
-+            if (enabled === undefined) delete process.env.ContextPruneEnabled;
-+            else process.env.ContextPruneEnabled = enabled;
-+            const msgs = makeMessages();
-+            msgs[3].content = [
-+                { type: 'text', text: '今天天气不错啊' },
-+                { type: 'image_url', image_url: { url: 'data:image/png;base64,test' } }
-+            ];
-+            const before = JSON.stringify(msgs);
-+            const client = makeClient(PROB_BY_TEXT);
-+            assert.strictEqual(contextManager.pruneMessages(msgs, 1), msgs);
-+            assert.strictEqual(await contextManager.pruneMessagesSmart(msgs, 1, false, { client }), msgs);
-+            assert.equal(JSON.stringify(msgs), before);
-+            assert.equal(client.calls.length, 0);
-+        } finally {
-+            restoreEnv(saved);
-+        }
-+    });
-+}
-+
-+test('总开关开启、Jev 默认关闭：与位置规则完全一致（会删掉最老的关键消息）', async () => {
-     const saved = setEnv({});
-     try {
-         const msgs = makeMessages();
-```
-
----
-
-### Incident Patch 2: `933f7fe5` (2026-11-16)
-**Commit Message**: fix
-
-**File**: `TVStxt/JevToolCall.txt` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ JEV:「始」请使用 {能力} 中的 `可选工具`，围绕【主要内容】
- - 每个 JEV 块只执行一个动作，但支持同类多工具名并发。
- - JEVCall也支持ink，archery等高级字段，灵活使用固化重要信息到上下文。
- - 联网搜索和图片生成仍必须明确写 `{联网搜索}` 或 `{图片生成}`。
--- `{联网搜索}`：默认使用 VSearch(通用AI总结)。可选工具为 `谷歌搜索`、`谷歌学术`、`Tavily`、`AnySearch`(深网数据库检索)、`YouSearch`(AI集群交叉验证)、`B站搜索`、`B站获取`；自然地说“打开网页”会自动使用 UrlFetch。
-+- `{联网搜索}`：默认使用 VSearch(通用AI总结)。可选工具为 `Keenable`(极速通用搜索)、`谷歌学术`、`Tavily`、`AnySearch`(深网数据库检索)、`YouSearch`(AI集群交叉验证)、`B站搜索`、`B站获取`；自然地说“打开网页”会自动使用 UrlFetch。
- - `YouSearch`：支持 `[lite]`、`[standard]`、`[deep]`三个档位。日用lite足够。
- - `{图片生成}`：默认使用谷歌 NanoBanana2。可选工具为 `GPT生图`、`ZImage`、`豆包`。
- - `【】` 标记句子中的主要任务负载，`[]` 标记目标、范围、数量、时间、模式、URL等目标。
-```
-
----
-
-### Incident Patch 3: `9520d092` (2026-11-16)
-**Commit Message**: Merge pull request #605 from InSciTech/fix/userauth-self-healing
-
-fix(UserAuth): 增加 code.bin 缺失即时自愈生成机制并从版本控制中移除
-
-**File**: `Plugin.js` (modified, +12/-1)
-```diff
-@@ -1,5 +1,6 @@
- // Plugin.js
- const fs = require('fs').promises;
-+const fsSync = require('fs');
- const EventEmitter = require('events');
- const path = require('path');
- const { spawn } = require('child_process');
-@@ -195,6 +196,14 @@ class PluginManager extends EventEmitter {
-     async _getDecryptedAuthCode() {
-         try {
-             const authCodePath = path.join(__dirname, 'Plugin', 'UserAuth', 'code.bin');
-+            // 物理文件缺失自愈：通知 UserAuth 插件更新以同步内存占位符与磁盘文件
-+            if (!fsSync.existsSync(authCodePath)) {
-+                console.warn('[PluginManager] Plugin/UserAuth/code.bin 缺失，正在触发自愈生成...');
-+                const userAuthPlugin = this.plugins.get('UserAuth');
-+                if (userAuthPlugin) {
-+                    await this._updateStaticPluginValue(userAuthPlugin);
-+                }
-+            }
-             // 使用正确的 getAuthCode 函数，并传递文件路径
-             return await getAuthCode(authCodePath);
-         } catch (error) {
-@@ -561,7 +570,9 @@ class PluginManager extends EventEmitter {
-             const missingPlaceholder = Array.from(placeholderKeys).some(
-                 key => !this.staticPlaceholderValues.has(key)
+@@ -491,7 +491,8 @@ class KnowledgeBaseManager {
+                 dbPath,
+                 path.join(this.config.storePath, 'index_global_tags_a.vec'),
+                 this.config.modelSig,
+-                tagCapacity
++                tagCapacity,
++                true
              );
--            const needsRefresh = !wasInitialized || previousSignature !== signature || missingPlaceholder;
-+            // 物理产物缺失检测（例如切分支导致动态生成的 code.bin 被清理）
-+            const isMissingPhysicalArtifact = (plugin.name === 'UserAuth' && !fsSync.existsSync(path.join(__dirname, 'Plugin', 'UserAuth', 'code.bin')));
-+            const needsRefresh = !wasInitialized || previousSignature !== signature || missingPlaceholder || isMissingPhysicalArtifact;
+             const parsed = typeof restored === 'string'
+                 ? JSON.parse(restored)
+```
+
+**File**: `docs/双曲Vexus合龙交付说明.md` (modified, +56/-1)
+```diff
+@@ -550,4 +550,59 @@ LightMemo AB 按需加载旧全局候选载荷；下一次生产查询会释放
+ - SHA-256：a50d8fe5fe782281cde1179567615f0e41bebef083a1c606e0587fa76b903413。
+ - Linux/macOS 使用相同源码在目标平台构建。
  
-             if (needsRefresh) {
-                 placeholderKeys.forEach(placeholderKey => {
+-本地工程验证已完成。服务器由用户执行 50 组跑分检查检索与性能退行；完成该验收前暂停提交、推送和创建 PR。本轮未操作生产数据库或执行生产训练。
+\ No newline at end of file
++本地工程验证已完成。服务器由用户执行 50 组跑分检查检索与性能退行；完成该验收前暂停提交、推送和创建 PR。本轮未操作生产数据库或执行生产训练。
++
++## 17. 内存一期：旧 Tag 路由休眠与 Chunk 范围缓存冷热切换
++
++### 17.1 原因与本轮范围
++
++V5 的双曲 Tag 场不会自动替代并释放旧余弦 Tag 路由。旧流程在启动恢复、摄取差分维护和快照发布后仍可能持有旧载荷；与此同时，生产请求还会激活双曲 Tag 场、全局 Chunk 双曲图及实时范围元数据。因此“采用量化双曲索引”不能直接推导整个进程 RSS 一定低于 V4。
++
++本轮定位到上述重复驻留机制，但未在生产进程中分解用户观察到的 100–200 MB 增量，也未证明检索卡顿的根因。受管载荷、线程工作区、SQL 页缓存和分配器保留量不能混同为 RSS。
++
++### 17.2 Tag 行为
++
++- 生产启动显式选择旧路由懒加载，校验 SQL 有效向量并保留逻辑计数，不创建完整旧检索载荷。
++- 显式余弦搜索、旧轨观测以及既有双曲初始化余弦回退，在需要时从当前 SQL 读事务恢复旧路由。
++- 生产双曲 Tag 命中时释放旧路由，不清空共享数学资产和在途观测。旧轨最后一次使用后若没有后续双曲请求，本轮没有新增独立定时回收器。
++- 冷态摄取不保留旧路由增量向量；现阶段通过流式扫描 SQL 有效向量刷新逻辑计数，会产生随 Tag 总数增长的读取成本，不宣称该步骤恒定耗时。
++- 快照发布保留原冷热状态；后台压缩发布前检查驻留状态，避免把已休眠载荷重新放回。
++- SQL 原始向量、向量版本、累计差异、A/B 基线及既有发布门禁保留。双曲场不是事实数据库，也不能替代这些持久化信息。
++- 兼容恢复接口新增可选懒加载参数；省略时仍使用既有热恢复行为。
++
++Tag 双曲仍遵循原训练代际，没有加入新 Tag 实时感应，没有修改 1% 自动训练门槛。十万级 Tag 双曲预计算降本及提高训练频率属于二期。
++
++### 17.3 Chunk 行为与限制
++
++当前实现是范围元数据缓存优化，不是新增或卸载一套分区向量索引：
++
++- 全局有效成员头、向量版本、文件身份及目录名仍保留；全局双曲图和冻结训练代不因目录切换重建。
++- 首行文本及日期按当前请求涉及的目录集合加载；切换范围时释放不再使用的目录文本缓存。多目录请求同时保留所需目录，全库请求可能加载全部范围文本。
++- LightMemo 与原生联合检索均在现有 SQL 快照和全局表锁内完成激活及检索；不会在请求使用中卸载缓存。
++- 新增和变更 Chunk 仍在冻结几何下精确评分并合并；删除与权限、时间、女仆首行条件不放宽。
++- 旧 AB 全局量化载荷仍按需启用；返回生产查询后释放。原闲置全局表淘汰机制保留。
++- 运行时统计新增分区数量和首行文本容量；此容量不含全局成员头、图载荷、分配器或 RSS。
++- 当前没有独立分区 LRU、容量预算或分区 TTL；采用当前请求工作集切换策略。频繁交替目录存在重新读取文本的成本，尚未进行真实规模性能验收。
++
++### 17.4 验证与模块身份
++
++本轮仅操作临时合成夹具，未启动生产服务、操作生产库或执行生产训练。
++
++| 范围 | 结果 |
++| --- | --- |
++| 原生主项目 Release 全量回归 | 258 通过、0 失败、0 忽略 |
++| 最终 Windows 模块真实 N-API 集成 | 通过；覆盖冷态摄取、余弦按需恢复、双曲释放、观测保留、分区切换、实时增量与持久化 |
++| 生产路由、Tag 基线、一致性及维度兼容 JS 回归 | 9 通过、0 失败 |
++| Windows x64 MSVC 生产构建 | 成功 |
++| 差异空白检查 | 通过；生成声明存在行尾提示 |
++
++本轮未修改索引内核，未将历史内核测试冒充重新运行。测试和构建设置禁用 AVX-512 的运行时条件。
++
++Windows 模块大小：15,967,744 字节。
++SHA-256：e696d70557d3a5773cc7f3adf0825aea1b455e61bdf2cdb6449bb8dd9212bfe3。
++
++部署必须同时更新后端及匹配原生模块并重启。Linux/macOS 需要在对应平台重新构建。无需为了回收旧路由执行全量训练或删除历史快照。
++
++生产验收应分别采集：启动后、首次普通双曲查询后、AB 后、再次普通双曲查询后、切换目录后和闲置回收后的进程 RSS、旧 Tag 热载荷、分区首行容量及双曲场统计；同时比较相同查询集合的结果与延迟。载荷释放不保证分配器立即归还 RSS，合成回归也不能替代实际内存与性能测量。
++
++未执行 Git 提交、推送或暂存。
+\ No newline at end of file
 ```
 
-**File**: `Plugin/UserAuth/auth.js` (modified, +92/-79)
+**File**: `rust-vexus-lite/index.d.ts` (modified, +1/-1)
 ```diff
-@@ -1,79 +1,92 @@
--const fs = require('fs').promises;
--const path = require('path');
--
--// 生成一个真实的、随机的6位验证码
--function generateRealAuthCode() {
--    const realCode = Math.floor(100000 + Math.random() * 900000);
--    return String(realCode);
--}
--
--// 将验证码编码为括号序列
--function encodeToBrackets(realCode) {
--    // 定义6种括号类型，按顺序对应验证码的每一位数字
--    const bracketTypes = [
--        ['[', ']'],   // 第1位数字对应方括号
--        ['{', '}'],   // 第2位数字对应花括号
--        ['<', '>'],   // 第3位数字对应尖括号
--        ['（', '）'], // 第4位数字对应全角小括号
--        ['《', '》'], // 第5位数字对应书名号
--        ['【', '】']  // 第6位数字对应全角方括号
--    ];
--    
--    // 获取当前月份（1-12），计算右括号出现的概率
--    const currentMonth = new Date().getMonth() + 1;
--    const closeProbability = currentMonth / 12;
--    
--    let allBrackets = [];
--    
--    // 为验证码的每一位数字生成对应数量的括号
--    for (let i = 0; i < realCode.length; i++) {
--        const digit = parseInt(realCode[i], 10); // 0-9
--        const [openBracket, closeBracket] = bracketTypes[i];
--        
--        // 生成 digit 个该类型的括号
--        for (let j = 0; j < digit; j++) {
--            // 根据月份概率决定是左括号还是右括号
--            if (Math.random() < closeProbability) {
--                allBrackets.push(closeBracket); // 右括号
--            } else {
--                allBrackets.push(openBracket);  // 左括号
--            }
--        }
--    }
--    
--    // 随机打乱所有括号的顺序（Fisher-Yates洗牌算法）
--    for (let i = allBrackets.length - 1; i > 0; i--) {
--        const j = Math.floor(Math.random() * (i + 1));
--        [allBrackets[i], allBrackets[j]] = [allBrackets[j], allBrackets[i]];
--    }
--    
--    return allBrackets.join('');
--}
--
--async function main() {
--    try {
--        const realCode = generateRealAuthCode();
--        const bracketSequence = encodeToBrackets(realCode);
--        
--        // 将括号序列转换为base64编码后存入 code.bin（供后端 captchaDecoder 解码 + 注入 DECRYPTED_AUTH_CODE 环境变量给管理员插件比对）
--        // 落盘加编码是为了防止 code.bin 被简单读取就拿到明文。
--        const base64Encoded = Buffer.from(bracketSequence, 'utf-8').toString('base64');
--        const filePath = path.join(__dirname, 'code.bin');
--        await fs.writeFile(filePath, base64Encoded, 'utf-8');
--        
--        // ⚠️ static 插件协议：stdout 内容会被 PluginManager 作为 {{USER_AUTH_CODE}} 占位符的值注入到 system prompt。
--        // 这里输出明文 6 位验证码，让被授权的 Agent（即 system prompt 中包含此占位符的 Agent）可以直接将其
--        // 作为 tool_password 参数传递给需要管理员权限的工具（如 LinuxShellExecutor、PowerShellExecutor 等）。
--        // 安全性来自于"是否注入此占位符"的访问控制，而不是 AI 端的解码难度。
--        process.stdout.write(realCode);
--        
--        // 状态信息走 stderr，不会污染占位符值
--        console.error('[UserAuth] 认证码已生成并保存到 code.bin');
--        
--    } catch (error) {
--        console.error('[UserAuth] 生成认证码失败:', error);
--        process.exit(1);
--    }
--}
--
--main();
-\ No newline at end of file
-+const fs = require('fs').promises;
-+const path = require('path');
-+
-+// 生成一个真实的、随机的6位验证码
-+function generateRealAuthCode() {
-+    const realCode = Math.floor(100000 + Math.random() * 900000);
-+    return String(realCode);
-+}
-+
-+// 将验证码编码为括号序列
-+function encodeToBrackets(realCode) {
-+    // 定义6种括号类型，按顺序对应验证码的每一位数字
-+    const bracketTypes = [
-+        ['[', ']'],   // 第1位数字对应方括号
-+        ['{', '}'],   // 第2位数字对应花括号
-+        ['<', '>'],   // 第3位数字对应尖括号
-+        ['（', '）'], // 第4位数字对应全角小括号
-+        ['《', '》'], // 第5位数字对应书名号
-+        ['【', '】']  // 第6位数字对应全角方括号
-+    ];
-+    
-+    // 获取当前月份（1-12），计算右括号出现的概率
-+    const currentMonth = new Date().getMonth() + 1;
-+    const closeProbability = currentMonth / 12;
-+    
-+    let allBrackets = [];
-+    
-+    // 为验证码的每一位数字生成对应数量的括号
-+    for (let i = 0; i < realCode.length; i++) {
-+        const digit = parseInt(realCode[i], 10); // 0-9
-+        const [openBracket, closeBracket] = bracketTypes[i];
-+        
-+        // 生成 digit 个该类型的括号
-+        for (let j = 0; j < digit; j++) {
-+            // 根据月份概率决定是左括号还是右括号
-+            if (Math.random() < closeProbability) {
-+                allBrackets.push(closeBracket); // 右括号
-+            } else {
-+                allBrackets.push(openBracket);  // 左括号
+@@ -307,7 +307,7 @@ export declare class NativeKnowledgeRuntime {
+    */
+   restoreDiaryIndex(dbPath: string, diaryName: string, indexPath: string, modelSig: string, capacity: number, diaryIndex: VexusIndex): Promise<unknown>
+   /** 在 Rust 后台线程恢复全局 Tag 索引。 */
+-  restoreGlobalTagIndex(dbPath: string, indexPath: string, modelSig: string, capacity: number): Promise<unknown>
++  restoreGlobalTagIndex(dbPath: string, indexPath: string, modelSig: string, capacity: number, lazyRouting?: boolean | undefined | null): Promise<unknown>
+   /** 在 Rust 后台线程执行日记索引双槽代际 checkpoint。 */
+   checkpointDiaryIndex(dbPath: string, diaryName: string, indexPath: string, modelSig: string, threshold: number, force?: boolean | undefined | null, allowInitial?: boolean | undefined | null): Promise<unknown>
+   /** 在 Rust 后台线程执行全局 Tag 索引双槽代际 checkpoint。 */
+```
+
+**File**: `rust-vexus-lite/src/global_chunks.rs` (modified, +108/-2)
+```diff
+@@ -45,6 +45,9 @@ pub(crate) struct GlobalChunks {
+     model: String,
+     facts: String,
+     pub last_used: Instant,
++    // Only production scope metadata is cold-loaded. Global membership and
++    // trained geometry remain independent of this request working set.
++    hot_partitions: HashSet<String>,
+ }
+ 
+ fn facts(connection: &Connection) -> Result<String, String> {
+@@ -76,6 +79,7 @@ impl GlobalChunks {
+             warped: None,
+             dimension, model: model.into(), facts: String::new(),
+             last_used: Instant::now(),
++            hot_partitions: HashSet::new(),
+         })
+     }
+ 
+@@ -92,6 +96,11 @@ impl GlobalChunks {
+         if self.legacy_enabled {
+             self.routing = CorrectedSmIndex::empty_flat(self.dimension).map_err(|e| e.to_string())?;
+             self.legacy_enabled = false;
++            self.hot_partitions.clear();
++            for row in self.rows.values_mut() {
++                row.first_line = String::new();
++                row.date = 0;
 +            }
+         }
+         Ok(())
+     }
+@@ -177,10 +186,13 @@ impl GlobalChunks {
+             let (file_id, content, diary): (i64, String, String) =
+                 metadata.query_row([id], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))
+                     .map_err(|e| e.to_string())?;
++            let hot = self.legacy_enabled || self.hot_partitions.contains(&diary);
+             self.rows.insert(id, ChunkHeader {
+                 id, file_id, diary,
+-                first_line: content.split('\n').next().unwrap_or_default().trim().into(),
+-                date: chunk_date(&content),
++                first_line: if hot {
++                    content.split('\n').next().unwrap_or_default().trim().into()
++                } else { String::new() },
++                date: if hot { chunk_date(&content) } else { 0 },
+                 vector_version: vv, metadata_version: mv, file_version: fv, slot,
+             });
+             changed += 1;
+@@ -189,6 +201,53 @@ impl GlobalChunks {
+         Ok(changed)
+     }
+ 
++    /// Activate exactly the partitions required by this frozen request. The
++    /// caller holds the table mutex until scope filtering and retrieval finish.
++    /// No vector payload, file publication, or geometry rebuild is involved.
++    pub fn activate_partitions(
++        &mut self, connection: &Connection, diaries: &HashSet<String>,
++    ) -> Result<(), String> {
++        if self.legacy_enabled { return Ok(()); }
++        if connection.is_autocommit() {
++            return Err("Chunk partition activation requires a read transaction".into());
 +        }
-+    }
-+    
-+    // 随机打乱所有括号的顺序（Fisher-Yates洗牌算法）
-+    for (let i = allBrackets.length - 1; i > 0; i--) {
-+        const j = Math.floor(Math.random() * (i + 1));
-+        [allBrackets[i], allBrackets[j]] = [allBrackets[j], allBrackets[i]];
-+    }
-+    
-+    return allBrackets.join('');
-+}
-+
-+async function generateAndSaveAuthCode(targetDir = __dirname) {
-+    const realCode = generateRealAuthCode();
-+    const bracketSequence = encodeToBrackets(realCode);
-+    
-+    // 将括号序列转换为base64编码后存入 code.bin（供后端 captchaDecoder 解码 + 注入 DECRYPTED_AUTH_CODE 环境变量给管理员插件比对）
-+    // 落盘加编码是为了防止 code.bin 被简单读取就拿到明文。
-+    const base64Encoded = Buffer.from(bracketSequence, 'utf-8').toString('base64');
-+    const filePath = path.join(targetDir, 'code.bin');
-+    await fs.writeFile(filePath, base64Encoded, 'utf-8');
-+    return realCode;
-+}
-+
-+async function main() {
-+    try {
-+        const realCode = await generateAndSaveAuthC
-```
-
-**File**: `Plugin/UserAuth/code.bin` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--44CQe1t7e+OAkOOAkeOAkO+8iT4844CQXVvjgJHvvIh977yJfX3jgJDjgIrjgJBd44CQXVs=
-\ No newline at end of file
-```
-
-**File**: `modules/captchaDecoder.js` (modified, +87/-64)
-```diff
-@@ -1,64 +1,87 @@
--const fs = require('fs').promises;
--const path = require('path');
--
--/**
-- * 从括号序列中解码出真实的验证码
-- * @param {string} bracketSequence - 括号序列字符串
-- * @returns {string} 解码后的6位数验证码
-- */
--function decodeFromBrackets(bracketSequence) {
--    // 定义括号类型映射表（左右括号映射到同一个索引位置）
--    const bracketTypeMap = {
--        '[': 0, ']': 0,     // 第1位数字
--        '{': 1, '}': 1,     // 第2位数字
--        '<': 2, '>': 2,     // 第3位数字
--        '（': 3, '）': 3,   // 第4位数字（全角括号）
--        '《': 4, '》': 4,   // 第5位数字
--        '【': 5, '】': 5    // 第6位数字
--    };
--    
--    // 统计每种括号类型的数量（初始化为6个0）
--    const counts = [0, 0, 0, 0, 0, 0];
--    
--    // 遍历括号序列，统计每种类型的数量
--    for (const char of bracketSequence) {
--        const typeIndex = bracketTypeMap[char];
--        if (typeIndex !== undefined) {
--            counts[typeIndex]++;
--        }
--    }
--    
--    // 将统计结果拼接成6位数字符串
--    return counts.join('');
--}
--
--/**
-- * 从 code.bin 文件中读取并解码验证码
-- * @param {string} filePath - code.bin 文件路径（可选）
-- * @returns {Promise<string>} 解码后的验证码
-- */
--async function getAuthCode(filePath = null) {
--    try {
--        const codePath = filePath || path.join(__dirname, 'code.bin');
--        
--        // 读取base64编码的内容
--        const base64Encoded = await fs.readFile(codePath, 'utf-8');
--        
--        // base64解码得到原始括号序列
--        const bracketSequence = Buffer.from(base64Encoded.trim(), 'base64').toString('utf-8');
--        
--        // 解码括号序列得到验证码
--        const authCode = decodeFromBrackets(bracketSequence);
--        
--        return authCode;
--        
--    } catch (error) {
--        console.error('读取或解码认证码失败:', error);
--        return '';
--    }
--}
--
--module.exports = {
--    decodeFromBrackets,
--    getAuthCode
--};
-\ No newline at end of file
-+const fs = require('fs').promises;
-+const fsSync = require('fs');
-+const path = require('path');
-+
-+/**
-+ * 从括号序列中解码出真实的验证码
-+ * @param {string} bracketSequence - 括号序列字符串
-+ * @returns {string} 解码后的6位数验证码
-+ */
-+function decodeFromBrackets(bracketSequence) {
-+    // 定义括号类型映射表（左右括号映射到同一个索引位置）
-+    const bracketTypeMap = {
-+        '[': 0, ']': 0,     // 第1位数字
-+        '{': 1, '}': 1,     // 第2位数字
-+        '<': 2, '>': 2,     // 第3位数字
-+        '（': 3, '）': 3,   // 第4位数字（全角括号）
-+        '《': 4, '》': 4,   // 第5位数字
-+        '【': 5, '】': 5    // 第6位数字
-+    };
-+    
-+    // 统计每种括号类型的数量（初始化为6个0）
-+    const counts = [0, 0, 0, 0, 0, 0];
-+    
-+    // 遍历括号序列，统计每种类型的数量
-+    for (const char of bracketSequence) {
-+        const typeIndex = bracketTypeMap[char];
-+        if (typeIndex !== undefined) {
-+            counts[typeIndex]++;
-+        }
-+    }
-+    
-+    // 将统计结果拼接成6位数字符串
-+    return counts.join('');
-+}
-+
-+/**
-+ * 从 code.bin 文件中读取并解码验证码（若文件丢失具备自动生成自愈能力）
-+ * @param {string} filePath - code.bin 文件路径（可选）
-+ * @returns {Promise<string>} 解码后的验证码
-+ */
-+async function getAuthCode(filePath = null) {
-+    try {
-+        const codePath = filePath || path.join(__dirname, '..', 'Plugin', 'UserAuth', 'code.bin');
-+        
-+        // 自愈检测：如果物理文件不存在，即时调用 UserAuth 生成
-+        if (!fsSync.existsSync(codePath)) {
-+            const authDir = path.resolve(path.dirname(codePath));
-+            const authScript = path.join(authDir, 'auth.js');
-+            if (fsSync.existsSync(authScript)) {
-+                try {
-+                    const authModule = require(authScript);
-+                    if (typeof authModule.generateAndSaveAuthCode === 'function') {
-+                        await authModule.generateAndSaveAuthCode(authDir);
-+                    } else {
-+                        require('child_process').execFileSync(process.execPath, [authScript], {
-+                            cwd: authDir,
-+                            windowsHide: true,
-+                            timeout: 5000
-+                        });
-+                    }
-+                } catch (genErr) {
-+                    console.error('自愈生成 code.bin 失败:', genErr.message);
++        // Publish readiness only after all reads succeed. Partial text loads on
++        // error are not marked ready and are retried; no result escapes that request.
++        let missing: HashSet<_> = diaries.difference(&self.hot_partitions).cloned().collect();
++        let mut statement = connection.prepare(
++            "SELECT c.id,c.content FROM chunks c JOIN files f ON f.id=c.file_id
++             WHERE f.diary_name=?1 AND c.vector IS NOT NULL",
++        ).map_err(|error| error.to_string())?;
++        for diary in &missing {
++            let mut rows = statement.query([diary]).map_err(|error| error.to_string())?;
++            while let Some(row) = rows.next().map_err(|error| error.to_string())? {
++                let id: i64 = row.get(0).map_err(|error| error.to_string())?;
++                if let Some(header) = self.rows.get_mut(&id) {
++                    let content: String = row.get(1).map_err(|error| error.to_string())?;
++                    header.first_line = content.split('\n').next().unwrap_or_default().trim().into();
++                    header.date = chunk_date(&content);
 +                }
 +            }
 +        }
-+        
-+        // 读取base64编码的内容
-+        const base64Encoded = await fs.readFile(codePath, 'utf-8');
-+        
-+        // base64解码得到原始括号序列
-+        const bracketSequence = Buffer.from(base64Encoded.trim(), 'base64').toString('utf-8');
-+        
-+        // 解码括号序列得到验证码
-+        const authCode = decodeFromBrackets(bracketSequence);
-+        
-+        return authCode;
-+        
-+    } catch (error) {
-+        console.error('读取或解码认证码失败:', error);
-+        return '';
++        for row in self.rows.values_mut().filter(|row| !diaries.contains(&row.diary)) {
++            row.first_line = String::new();
++            row.date = 0;
++        }
++        self.hot_partitions = diaries.clone();
++        Ok(())
 +    }
++
++    pub fn partition_stats(&self) -> serde_json::Value {
++        let first_line_bytes: usize = self.rows.values().map(|row| row.first_line.capacity()).sum();
++        serde_json::json!({
++            "mode":if self.legacy_enabled {"legacy-global"} else {"request-partitions"},
++            "hotPartitions":self.hot_partitions.len(),
++            "globalMembers":self.rows.len(),
++            "firstLineBytes":first_line_bytes,
++            "note":"Managed text capacity only; excludes global member headers, geometry and RSS"
++        })
++    }
++
+     /// `admits` is called exactly once per live row, at that row's current slot,
+     /// when `limit > 0` and the scan completes (an empty search returns early).
+     #[cfg(test)]
+@@ -270,6 +329,7 @@ impl GlobalChunks {
+                 rows: snapshot.rows.into_iter().map(|row| (row.id, row)).collect(),
+                 routing, legacy_enabled: true, warped: None, dimension, model: model.into(), facts: snapshot.facts,
+                 last
+```
+
+**File**: `rust-vexus-lite/src/index_handle.rs` (modified, +3/-0)
+```diff
+@@ -7,6 +7,8 @@ use crate::retrieval_index::RetrievalIndex as Index;
+ pub(crate) struct IndexHandle {
+     inner: RwLock<Index>,
+     pub(crate) maintenance: std::sync::Mutex<()>,
++    /// Production may keep SQL-owned Tag routing cold; standalone defaults stay eager.
++    pub(crate) lazy_tag_routing: std::sync::atomic::AtomicBool,
+     count: AtomicU64,
+     capacity: AtomicU64,
+     memory: AtomicU64,
+@@ -24,6 +26,7 @@ impl IndexHandle {
+             tombstones: AtomicU64::new(index.tombstones() as u64),
+             inner: RwLock::new(index),
+             maintenance: std::sync::Mutex::new(()),
++            lazy_tag_routing: std::sync::atomic::AtomicBool::new(false),
+         }
+     }
+ 
+```
+
+**File**: `rust-vexus-lite/src/index_lifecycle.rs` (modified, +133/-1)
+```diff
+@@ -842,7 +842,13 @@ impl Task for IndexCheckpointTask {
+             Error::from_reason(format!("Rebase checkpoint index failed: {}", error))
+         })?;
+         if self.content_revision.load(Ordering::Acquire) == revision_before_save {
+-            *active = Index::from_sql(build);
++            let was_cold = !active.routing_resident();
++            let mut replacement = Index::from_sql(build);
++            if was_cold {
++                replacement.sleep_routing()
++                    .map_err(|error| Error::from_reason(error.to_string()))?;
++            }
++            *active = replacement;
+         }
+         drop(active);
+ 
+@@ -990,6 +996,51 @@ impl Task for IndexRestoreTask {
+         if Path::new(&self.index_path).extension().and_then(|value| value.to_str()) != Some("vec") {
+             return Err(Error::from_reason("Runtime index paths must use the .vec format"));
+         }
++        let (generation, slot, replayed, rebuilt, skipped_invalid_vectors, target) =
++        if self.scope == IndexScope::GlobalTags
++            && self.index.lazy_tag_routing.load(Ordering::Acquire)
++        {
++            let mut target = Index::empty(dimension).map_err(|error|
++                Error::from_reason(error.to_string()))?;
++            target.release_originals();
++            target.sleep_routing().map_err(|error|
++                Error::from_reason(error.to_string()))?;
++            let (generation, slot, skipped) = with_registered_read_transaction(&self.db_path, |connection| {
++                target.refresh_cold_tag_count(connection)?;
++                let total: i64 = connection.query_row(
++                    "SELECT COUNT(*) FROM tags WHERE vector IS NOT NULL",
++                    [], |row| row.get(0),
++                ).map_err(|error| error.to_string())?;
++                let active: Option<String> = connection.query_row(
++                    "SELECT value FROM kv_store WHERE key='tag_index_active_baseline'",
++                    [], |row| row.get(0),
++                ).optional().map_err(|error| error.to_string())?;
++                let mut generation = 0;
++                let mut slot = String::new();
++                if let Some(raw) = active {
++                    let pointer: serde_json::Value = serde_json::from_str(&raw)
++                        .map_err(|error| format!("Decode Tag baseline pointer failed: {error}"))?;
++                    let candidate = pointer["generation"].as_i64().unwrap_or(0);
++                    let candidate_slot = pointer["slot"].as_str().unwrap_or_default();
++                    let manifest: Option<(i64, String)> = connection.query_row(
++                        "SELECT dimension,model_sig FROM tag_index_baselines
++                         WHERE generation=?1 AND slot=?2 AND status='ready'",
++                        rusqlite::params![candidate, candidate_slot],
++                        |row| Ok((row.get(0)?, row.get(1)?)),
++                    ).optional().map_err(|error| error.to_string())?;
++                    if candidate > 0 && matches!(candidate_slot, "a" | "b")
++                        && manifest == Some((dimension as i64, self.model_sig.clone()))
++                    {
++                        generation = candidate;
++                        slot = candidate_slot.to_string();
++                    }
++                }
++                Ok((generation, slot, (total.max(0) as u64).saturating_sub(target.size() as u64)))
++            }).map_err(Error::from_reason)?;
++            // No legacy payload is restored. Its SQL endorsement remains visible
++            // in diagnostics, without opening or rewriting the endorsed asset.
++            (generation, slot, false, false, skipped, target)
++        } else {
+         let db_path = self.db_path.clone();
+         let diary_name = self.diary_name.clone();
+         let model_sig = self.model_sig.clone();
+@@ -1297,6 +1348,8 @@ impl Task for IndexRestoreTask {
+         target.reserve(self.capacity as usize).map_err(|error| {
+             Error::from_reason(format!("Reserve restored index capacity failed: {}", error))
+         })?;
++        (generation, slot, replayed, rebuilt, skipped_invalid_vectors, target)
++        };
+         let vector_count = target.size() as u64;
+         let mut active = self
+             .index
+@@ -1814,4 +1867,83 @@ mod failed_endorsement_tests {
+         storage.shutdown().unwrap();
+         std::fs::remove_dir_all(root).unwrap();
+     }
 +}
 +
-+module.exports = {
-+    decodeFromBrackets,
-+    getAuthCode
-+};
++#[cfg(test)]
++mod lazy_tag_routing_tests {
++    use super::*;
++
++    #[test]
++    fn lazy_restore_checkpoint_and_reload_preserve_sql_baseline_without_resident_routing() {
++        let root = std::env::temp_dir().join(format!(
++            "kbm-lazy-tags-{}-{}", std::process::id(),
++            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)
++                .unwrap().as_nanos()
++        ));
++        std::fs::create_dir_all(&root).unwrap();
++        let db = root.join("test.sqlite").to_string_lossy().into_owned();
++        let baseline
+```
+
+**File**: `rust-vexus-lite/src/index_maintenance.rs` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@ pub(crate) fn maintain(
+         crate::storage::ensure_generation(connection, generation)
+     })?;
+     let mut active = index.write().map_err(|error| error.to_string())?;
+-    if revision.load(Ordering::Acquire) != revision_before {
++    if revision.load(Ordering::Acquire) != revision_before || !active.routing_resident() {
+         return Ok(false);
+     }
+     *active = RetrievalIndex::from_sql(build);
+```
+
+**File**: `rust-vexus-lite/src/ingestion.rs` (modified, +16/-0)
+```diff
+@@ -974,6 +974,22 @@ fn apply_scope_index_deltas(
+     }
+ 
+     if !tag_updates.is_empty() {
++        let cold = !global_tag_index.read()
++            .map_err(|_| "Global Tag index read lock poisoned".to_string())?
++            .routing_resident();
++        if cold {
++            // The caller owns the exclusive publication gate. SQL facts have
++            // committed; no cosine consumer can race this cold refresh.
++            with_registered_read(db_path, |connection| {
++                let mut guard = global_tag_index.write()
++                    .map_err(|_| "Global Tag index write lock poisoned".to_string())?;
++                if guard.dimensions() != plan.dimension {
++                    return Err("Global Tag retrieval dimension mismatch".into());
++                }
++                guard.refresh_cold_tag_count(connection)
++            })?;
++            return Ok(ready);
++        }
+         let mut ids = Vec::new();
+         let mut vectors = Vec::new();
+         for (id, slot) in tag_updates {
+```
+
+---
+
+### Incident Patch 2: `274622eb` (2026-11-17)
+**Commit Message**: Merge pull request #608 from infinite-vector/fix/selective-native-tool-isolation
+
+fix(chat,bridge): 仅按 NativeToolIsolationModels 选择性剥离出站原生工具调用并支持桥接模型列表透传
+
+**File**: `Plugin/VCPBridgeServer/bridgeserver.js` (modified, +48/-6)
+```diff
+@@ -1006,25 +1006,67 @@ function startServer() {
+         });
+     });
+ 
+-    // 模型列表探活（支持 OpenAI 根端点与 Profile 前缀端点，兼容客户端连通性检查）
+-    app.get(['/v1/models', '/v1/:profile/models'], (req, res, next) => {
++    // 模型列表动态透传与探活（支持 OpenAI 根端点与 Profile 前缀端点，上游不可达时平滑回退本地配置）
++    app.get(['/v1/models', '/v1/:profile/models'], async (req, res, next) => {
+         const profile = req.params?.profile;
+         if (profile && ['chat', 'responses', 'messages', 'beta'].includes(profile)) {
+             return next();
+         }
+-        const configuredModels = new Set([
++        const matchedProfile = profile ? readProfileCached(profile) : resolveProfileForRequest(req, '');
++        const localModelIds = new Set([
++            matchedProfile?.modelOverride,
+             runtimeConfig.defaultModel,
+             ...Object.keys(runtimeConfig.modelMap || {}),
+             ...Object.values(runtimeConfig.modelMap || {})
+         ].filter(Boolean));
+-        if (configuredModels.size === 0) configuredModels.add('gpt-5.6-sol');
+-        const data = Array.from(configuredModels).map(id => ({
++        if (localModelIds.size === 0) localModelIds.add('gpt-5.6-sol');
++
++        const buildFallbackList = () => Array.from(localModelIds).map(id => ({
+             id,
+             object: 'model',
+             created: 1700000000,
+             owned_by: 'vcp-bridge'
+         }));
+-        res.json({ object: 'list', data });
++
++        const base = String(runtimeConfig.upstreamUrl || '').replace(/\/+$/, '');
++        if (base) {
++            try {
++                const requestToken = extractBearerToken(req.headers.authorization);
++                const upstreamKey = runtimeConfig.upstreamKey || requestToken;
++                const headers = { Accept: 'application/json' };
++                if (upstreamKey) headers.Authorization = `Bearer ${upstreamKey}`;
++                const upstreamRes = await fetch(`${base}/v1/models`, {
++                    method: 'GET',
++                    headers,
++                    signal: AbortSignal.timeout(5000)
++                });
++                if (upstreamRes.ok) {
++                    const parsed = safeJsonParse(await upstreamRes.text());
++                    if (parsed && Array.isArray(parsed.data)) {
++                        const seen = new Set();
++                        const merged = [];
++                        for (const item of parsed.data) {
++                            if (!item || typeof item.id !== 'string' || !item.id || seen.has(item.id)) continue;
++                            seen.add(item.id);
++                            merged.push(item);
++                        }
++                        for (const localId of localModelIds) {
++                            if (!seen.has(localId)) {
++                                seen.add(localId);
++                                merged.push({ id: localId, object: 'model', created: 1700000000, owned_by: 'vcp-bridge' });
++                            }
++                        }
++                        return res.json({ ...parsed, object: parsed.object || 'list', data: merged });
++                    }
++                }
++            } catch (err) {
++                if (runtimeConfig.debugMode) {
++                    console.warn(`[VCPBridgeServer] Upstream /v1/models fetch fallback to local list: ${err.message}`);
++                }
++            }
++        }
++
++        res.json({ object: 'list', data: buildFallbackList() });
+     });
+ 
+     // ─── Profile-prefixed routes ─────────────────────────────────────────
+```
+
+**File**: `modules/chatCompletionHandler.js` (modified, +4/-0)
+```diff
+@@ -1072,6 +1072,10 @@ class ChatCompletionHandler {
+       let processedMessages = [];
+       for (const msg of tavernProcessedMessages) {
+         throwIfRequestAborted();
++        if (msg && (msg.role === 'tool' || msg.role === 'function')) {
++          processedMessages.push(JSON.parse(JSON.stringify(msg)));
++          continue;
++        }
+         const newMessage = JSON.parse(JSON.stringify(msg));
+         if (newMessage.content && typeof newMessage.content === 'string') {
+           newMessage.content = await messageProcessor.replaceAgentVariables(
+```
+
+**File**: `modules/handlers/nonStreamHandler.js` (modified, +44/-10)
+```diff
+@@ -2,6 +2,7 @@
+ const vcpInfoHandler = require('../../vcpInfoHandler.js');
+ const roleDivider = require('../roleDivider.js');
+ const { formatToolResultBatch, projectToolBatchForUpstream } = require('../toolResultBatch.js');
++const { matchesNativeToolIsolation } = require('../nativeToolIsolation.js');
+ const {
+   buildClientVisibleContent,
+   removeReasoningFields,
+@@ -57,11 +58,23 @@ function parseNonStreamResponse(rawResponseText) {
+   }
+ }
+ 
+-function isCompleteNonStreamResponse(readResult) {
++function hasNativeToolCallPayload(message) {
++  return (
++    (Array.isArray(message?.tool_calls) && message.tool_calls.length > 0) ||
++    Boolean(message?.function_call && typeof message.function_call === 'object')
++  );
++}
++
++function isCompleteNonStreamResponse(readResult, stripNativeTools = false) {
+   const { parsedJson, message, choice } = parseNonStreamResponse(readResult.text);
+-  return readResult.response.ok && !readResult.semanticRetryExhausted &&
+-    !!parsedJson && !parsedJson.error && !!message &&
+-    hasVisibleContent(message.content) && choice?.finish_reason === 'stop';
++  if (!readResult.response.ok || readResult.semanticRetryExhausted || !parsedJson || parsedJson.error || !message) {
++    return false;
++  }
++  if (!stripNativeTools && hasNativeToolCallPayload(message) &&
++      ['tool_calls', 'function_call', 'stop'].includes(choice?.finish_reason)) {
++    return true;
++  }
++  return hasVisibleContent(message.content) && choice?.finish_reason === 'stop';
+ }
+ 
+ function isReasoningOnlyNonStreamResponse(rawResponseText) {
+@@ -254,8 +267,9 @@ class NonStreamHandler {
+     firstAiAPIResponse = firstReadResult.response;
+     const aiResponseText = firstReadResult.text;
+     let chatLogs = [];
++    const stripInitialNativeTools = matchesNativeToolIsolation(originalBody?.model);
+     let oneRingAssistantTurnParts = [];
+-    let validUpstreamTurns = isCompleteNonStreamResponse(firstReadResult);
++    let validUpstreamTurns = isCompleteNonStreamResponse(firstReadResult, stripInitialNativeTools);
+     let completed = false;
+ 
+     let fullContentFromAI = '';
+@@ -542,16 +556,36 @@ class NonStreamHandler {
+     let finalJsonResponse;
+     try {
+       finalJsonResponse = JSON.parse(aiResponseText);
+-      if (!finalJsonResponse.choices?.[0]?.message) {
++      const stripTools = matchesNativeToolIsolation(finalJsonResponse?.model || originalBody?.model);
++      const choice0 = finalJsonResponse.choices?.[0];
++      const msg0 = choice0?.message;
++      const preserveNativeToolTurn = !stripTools && recursionDepth === 0 && hasNativeToolCallPayload(msg0);
++
++      if (!msg0) {
+         finalJsonResponse.choices = [{ message: { content: finalContentForClient } }];
++        finalJsonResponse.choices[0].finish_reason = recursionDepth >= maxRecursion ? 'length' : 'stop';
+       } else {
+-        finalJsonResponse.choices[0].message.content = finalContentForClient;
++        if (stripTools) {
++          delete msg0.tool_calls;
++          delete msg0.function_call;
++        }
++        if (!preserveNativeToolTurn || finalContentForClient.length > 0 || msg0.content !== null) {
++          msg0.content = finalContentForClient;
++        }
+         if (reasoningToContentEnabled) {
+-          removeReasoningFields(finalJsonResponse.choices[0].message);
+-          removeReasoningFields(finalJsonResponse.choices[0]);
++          removeReasoningFields(msg0);
++          removeReasoningFields(choice0);
++        }
++        if (recursionDepth >= maxRecursion) {
++          choice0.finish_reason = 'length';
++        } else if (preserveNativeToolTurn && ['tool_calls', 'function_call'].includes(choice0.finish_reason)) {
++          // Keep native tool termination reason intact for downstream tool-calling clients.
++        } else if (preserveNativeToolTurn) {
++          choice0.finish_reason = msg0.function_call && !msg0.tool_calls ? 'function_call' : 'tool_calls';
++        } else {
++          choice0.finish_reason = 'stop';
+         }
+       }
+-      finalJsonResponse.choices[0].finish_reason = recursionDepth >= maxRecursion ? 'length' : 'stop';
+     } catch (e) {
+       finalJsonResponse = {
+         choices: [{ index: 0, message: { role: 'assistant', content: finalContentForClient }, finish_reason: recursionDepth >= maxRecursion ? 'length' : 'stop' }]
+```
+
+**File**: `modules/handlers/streamHandler.js` (modified, +66/-21)
+```diff
+@@ -3,6 +3,7 @@ const { StringDecoder } = require('string_decoder');
+ const vcpInfoHandler = require('../../vcpInfoHandler.js');
+ const roleDivider = require('../roleDivider.js');
+ const { formatToolResultBatch, projectToolBatchForUpstream } = require('../toolResultBatch.js');
++const { matchesNativeToolIsolation } = require('../nativeToolIsolation.js');
+ const {
+   extractReasoningText,
+   removeReasoningFields,
+@@ -203,15 +204,24 @@ class StreamHandler {
+         let invalidPayload = false;
+         let hasPayloadError = false;
+         let upstreamEnded = false;
++        let sawNativeToolCall = false;
++        const shouldStripNativeTools = (payloadModel) =>
++          matchesNativeToolIsolation(payloadModel || originalBody?.model);
+         const result = () => {
+           streamSettled = true;
+           if (toolTailTimer) clearTimeout(toolTailTimer);
++          const hasNativeToolCompletion = sawNativeToolCall && (
++            ['tool_calls', 'function_call', 'stop'].includes(finishReason) ||
++            (!finishReason && sawDone)
++          );
+           return {
+             content: collectedContentThisTurn, message, malformedFunctionCall,
+-            streamAborted, hasPayloadError,
+-            completed: !streamAborted && !invalidPayload && aiResponse.ok &&
+-              collectedContentThisTurn.trim().length > 0 &&
+-              (finishReason === 'stop' || (!finishReason && sawDone))
++            streamAborted, hasPayloadError, sawNativeToolCall, finishReason,
++            completed: !streamAborted && !invalidPayload && aiResponse.ok && (
++              (collectedContentThisTurn.trim().length > 0 &&
++                (finishReason === 'stop' || (!finishReason && sawDone))) ||
++              hasNativeToolCompletion
++            )
+           };
+         };
+         const observePayload = (parsedData) => {
+@@ -225,6 +235,19 @@ class StreamHandler {
+             malformedFunctionCall = true;
+             invalidPayload = true;
+           }
++          if (!shouldStripNativeTools(parsedData?.model)) {
++            const delta = choice?.delta;
++            const msg = choice?.message;
++            if (
++              (Array.isArray(delta?.tool_calls) && delta.tool_calls.length > 0) ||
++              delta?.function_call ||
++              (Array.isArray(msg?.tool_calls) && msg.tool_calls.length > 0) ||
++              msg?.function_call ||
++              ['tool_calls', 'function_call'].includes(choice?.finish_reason)
++            ) {
++              sawNativeToolCall = true;
++            }
++          }
+           const reason = parsedData?.choices?.[0]?.finish_reason;
+           if (reason) finishReason = reason;
+         };
+@@ -247,16 +270,21 @@ class StreamHandler {
+         const transformParsedDataForClient = (parsedData) => {
+           if (!parsedData || typeof parsedData !== 'object') return parsedData;
+ 
++          const stripTools = shouldStripNativeTools(parsedData.model);
++          if (!stripTools && !reasoningToContentEnabled) return parsedData;
++
+           const transformed = JSON.parse(JSON.stringify(parsedData));
+-          for (const item of transformed.choices || []) {
+-            for (const payload of [item.delta, item.message]) {
+-              if (!payload || typeof payload !== 'object') continue;
+-              delete payload.tool_calls;
+-              delete payload.function_call;
+-            }
+-            // Native FC is not a frontend termination or execution channel in VCP.
+-            for (const key of ['finish_reason', 'native_finish_reason']) {
+-              if (['tool_calls', 'function_call'].includes(item[key])) item[key] = null;
++          if (stripTools) {
++            for (const item of transformed.choices || []) {
++              for (const payload of [item.delta, item.message]) {
++                if (!payload || typeof payload !== 'object') continue;
++                delete payload.tool_calls;
++                delete payload.function_call;
++              }
++              // Strip hallucinated native FC only for models matched by NativeToolIsolationModels.
++              for (const key of ['finish_reason', 'native_finish_reason']) {
++                if (['tool_calls', 'function_call'].includes(item[key])) item[key] = null;
++              }
+             }
+           }
+           if (!reasoningToContentEnabled) return transformed;
+@@ -632,6 +660,8 @@ class StreamHandler {
+     // --- 初始 AI 调用 ---
+     if (DEBUG_MODE) console.log('[VCP Stream Loop] Processing initial AI call.');
+     let initialAIResponseData = await processAIResponseStreamHelper(firstAiAPIResponse, true);
++    let lastTurnSawNativeToolCall = Boolean(initialAIResponseData.sawNativeToolCall);
++    let lastTurnFinishReason = initialAIResponseData.finishReason || null;
+     validUpstreamTurns = initialAIResponseData.completed;
+     currentAIContentForLoop = initialAIResponseData.content;
+     if (writeChatLog) chatLogs.push({ request: originalBody, response: initialAIResponseData.message });
+@@ -663,15
+```
+
+**File**: `tests/nativeToolIsolation.test.js` (modified, +91/-1)
+```diff
+@@ -123,4 +123,94 @@ for (const stream of [false, true]) {
+         assert.ok(sent[2].messages[0].tool_calls);
+         assert.equal(options.body, before);
+     });
+-}
+\ No newline at end of file
++}
++
++const { Readable } = require('node:stream');
++const { EventEmitter } = require('node:events');
++const StreamHandler = require('../modules/handlers/streamHandler');
++const NonStreamHandler = require('../modules/handlers/nonStreamHandler');
++
++test('StreamHandler strips outbound tool_calls ONLY for NativeToolIsolationModels and preserves them for normal models', async () => {
++    const ssePayload = [
++        `data: ${JSON.stringify({ model: undefined, choices: [{ index: 0, delta: { role: 'assistant', content: '' }, finish_reason: null }] })}\n\n`,
++        `data: ${JSON.stringify({ choices: [{ index: 0, delta: { tool_calls: [{ index: 0, id: 'call_pf_1', type: 'function', function: { name: 'pf_list_workspaces', arguments: '{}' } }] }, finish_reason: 'tool_calls' }] })}\n\n`,
++        'data: [DONE]\n\n'
++    ].join('');
++
++    const runStreamForModel = async (model) => {
++        const res = {
++            writableEnded: false,
++            destroyed: false,
++            output: '',
++            write(chunk, cb) { this.output += chunk; if (cb) cb(); return true; },
++            end() { this.writableEnded = true; }
++        };
++        const handler = new StreamHandler({
++            originalBody: { model, messages: [{ role: 'user', content: 'list' }] },
++            abortController: new AbortController(),
++            ToolCallParser: { parse: () => [] },
++            maxVCPLoopStream: 3
++        });
++        const outcome = await handler.handle({}, res, { ok: true, status: 200, body: Readable.from([Buffer.from(ssePayload)]) });
++        return { outcome, output: res.output };
++    };
++
++    const isolated = await runStreamForModel('gemini-4-hydrogen');
++    assert.doesNotMatch(isolated.output, /call_pf_1|pf_list_workspaces|"finish_reason":"tool_calls"/);
++    assert.equal(isolated.outcome.completed, false);
++
++    const normal = await runStreamForModel('gemini-3.8-flash-high');
++    assert.match(normal.output, /"id":"call_pf_1"/);
++    assert.match(normal.output, /"name":"pf_list_workspaces"/);
++    assert.match(normal.output, /"finish_reason":"tool_calls"/);
++    assert.doesNotMatch(normal.output, /"finish_reason":"stop"/);
++    assert.equal((normal.output.match(/data: \[DONE\]/g) || []).length, 1);
++    assert.equal(normal.outcome.completed, true);
++});
++
++test('NonStreamHandler strips outbound tool_calls for isolated models and preserves tool_calls + finish_reason for normal models', async () => {
++    const makeUpstreamJson = (model) => JSON.stringify({
++        id: 'chatcmpl-nonstream-tool',
++        model,
++        choices: [{
++            index: 0,
++            message: {
++                role: 'assistant',
++                content: null,
++                tool_calls: [{ id: 'call_ns_1', type: 'function', function: { name: 'pf_list_workspaces', arguments: '{}' } }]
++            },
++            finish_reason: 'tool_calls'
++        }]
++    });
++
++    const runNonStreamForModel = async (model) => {
++        const res = new EventEmitter();
++        res.writableEnded = false;
++        res.destroyed = false;
++        res.bodyText = '';
++        res.send = (buf) => { res.bodyText = Buffer.from(buf).toString('utf8'); res.writableEnded = true; };
++        const handler = new NonStreamHandler({
++            originalBody: { model, messages: [{ role: 'user', content: 'list' }] },
++            pluginManager: { messagePreprocessors: new Map() },
++            abortController: new AbortController(),
++            ToolCallParser: { parse: () => [] },
++            apiRetries: 1,
++            apiRetryDelay: 0,
++            maxVCPLoopNonStream: 3
++        });
++        const raw = makeUpstreamJson(model);
++        const outcome = await handler.handle({}, res, { ok: true, arrayBuffer: async () => Buffer.from(raw) });
++        return { outcome, json: JSON.parse(res.bodyText) };
++    };
++
++    const isolated = await runNonStreamForModel('gemini-4-hydrogen');
++    assert.equal(isolated.json.choices[0].message.tool_calls, undefined);
++    assert.equal(isolated.json.choices[0].finish_reason, 'stop');
++    assert.equal(isolated.outcome.completed, false);
++
++    const normal = await runNonStreamForModel('gemini-3.8-flash-high');
++    assert.equal(normal.json.choices[0].message.content, null);
++    assert.equal(normal.json.choices[0].message.tool_calls[0].id, 'call_ns_1');
++    assert.equal(normal.json.choices[0].finish_reason, 'tool_calls');
++    assert.equal(normal.outcome.completed, true);
++});
+\ No newline at end of file
+```
+
+---
+
+### Incident Patch 3: `34358711` (2026-11-17)
+**Commit Message**: fix(chat,bridge): 仅按 NativeToolIsolationModels 选择性剥离出站原生工具调用并支持桥接模型列表透传
+
+**File**: `Plugin/VCPBridgeServer/bridgeserver.js` (modified, +48/-6)
+```diff
+@@ -1006,25 +1006,67 @@ function startServer() {
+         });
+     });
+ 
+-    // 模型列表探活（支持 OpenAI 根端点与 Profile 前缀端点，兼容客户端连通性检查）
+-    app.get(['/v1/models', '/v1/:profile/models'], (req, res, next) => {
++    // 模型列表动态透传与探活（支持 OpenAI 根端点与 Profile 前缀端点，上游不可达时平滑回退本地配置）
++    app.get(['/v1/models', '/v1/:profile/models'], async (req, res, next) => {
+         const profile = req.params?.profile;
+         if (profile && ['chat', 'responses', 'messages', 'beta'].includes(profile)) {
+             return next();
+         }
+-        const configuredModels = new Set([
++        const matchedProfile = profile ? readProfileCached(profile) : resolveProfileForRequest(req, '');
++        const localModelIds = new Set([
++            matchedProfile?.modelOverride,
+             runtimeConfig.defaultModel,
+             ...Object.keys(runtimeConfig.modelMap || {}),
+             ...Object.values(runtimeConfig.modelMap || {})
+         ].filter(Boolean));
+-        if (configuredModels.size === 0) configuredModels.add('gpt-5.6-sol');
+-        const data = Array.from(configuredModels).map(id => ({
++        if (localModelIds.size === 0) localModelIds.add('gpt-5.6-sol');
++
++        const buildFallbackList = () => Array.from(localModelIds).map(id => ({
+             id,
+             object: 'model',
+             created: 1700000000,
+             owned_by: 'vcp-bridge'
+         }));
+-        res.json({ object: 'list', data });
++
++        const base = String(runtimeConfig.upstreamUrl || '').replace(/\/+$/, '');
++        if (base) {
++            try {
++                const requestToken = extractBearerToken(req.headers.authorization);
++                const upstreamKey = runtimeConfig.upstreamKey || requestToken;
++                const headers = { Accept: 'application/json' };
++                if (upstreamKey) headers.Authorization = `Bearer ${upstreamKey}`;
++                const upstreamRes = await fetch(`${base}/v1/models`, {
++                    method: 'GET',
++                    headers,
++                    signal: AbortSignal.timeout(5000)
++                });
++                if (upstreamRes.ok) {
++                    const parsed = safeJsonParse(await upstreamRes.text());
++                    if (parsed && Array.isArray(parsed.data)) {
++                        const seen = new Set();
++                        const merged = [];
++                        for (const item of parsed.data) {
++                            if (!item || typeof item.id !== 'string' || !item.id || seen.has(item.id)) continue;
++                            seen.add(item.id);
++                            merged.push(item);
++                        }
++                        for (const localId of localModelIds) {
++                            if (!seen.has(localId)) {
++                                seen.add(localId);
++                                merged.push({ id: localId, object: 'model', created: 1700000000, owned_by: 'vcp-bridge' });
++                            }
++                        }
++                        return res.json({ ...parsed, object: parsed.object || 'list', data: merged });
++                    }
++                }
++            } catch (err) {
++                if (runtimeConfig.debugMode) {
++                    console.warn(`[VCPBridgeServer] Upstream /v1/models fetch fallback to local list: ${err.message}`);
++                }
++            }
++        }
++
++        res.json({ object: 'list', data: buildFallbackList() });
+     });
+ 
+     // ─── Profile-prefixed routes ─────────────────────────────────────────
+```
+
+**File**: `modules/chatCompletionHandler.js` (modified, +4/-0)
+```diff
+@@ -1072,6 +1072,10 @@ class ChatCompletionHandler {
+       let processedMessages = [];
+       for (const msg of tavernProcessedMessages) {
+         throwIfRequestAborted();
++        if (msg && (msg.role === 'tool' || msg.role === 'function')) {
++          processedMessages.push(JSON.parse(JSON.stringify(msg)));
++          continue;
++        }
+         const newMessage = JSON.parse(JSON.stringify(msg));
+         if (newMessage.content && typeof newMessage.content === 'string') {
+           newMessage.content = await messageProcessor.replaceAgentVariables(
+```
+
+**File**: `modules/handlers/nonStreamHandler.js` (modified, +44/-10)
+```diff
+@@ -2,6 +2,7 @@
+ const vcpInfoHandler = require('../../vcpInfoHandler.js');
+ const roleDivider = require('../roleDivider.js');
+ const { formatToolResultBatch, projectToolBatchForUpstream } = require('../toolResultBatch.js');
++const { matchesNativeToolIsolation } = require('../nativeToolIsolation.js');
+ const {
+   buildClientVisibleContent,
+   removeReasoningFields,
+@@ -57,11 +58,23 @@ function parseNonStreamResponse(rawResponseText) {
+   }
+ }
+ 
+-function isCompleteNonStreamResponse(readResult) {
++function hasNativeToolCallPayload(message) {
++  return (
++    (Array.isArray(message?.tool_calls) && message.tool_calls.length > 0) ||
++    Boolean(message?.function_call && typeof message.function_call === 'object')
++  );
++}
++
++function isCompleteNonStreamResponse(readResult, stripNativeTools = false) {
+   const { parsedJson, message, choice } = parseNonStreamResponse(readResult.text);
+-  return readResult.response.ok && !readResult.semanticRetryExhausted &&
+-    !!parsedJson && !parsedJson.error && !!message &&
+-    hasVisibleContent(message.content) && choice?.finish_reason === 'stop';
++  if (!readResult.response.ok || readResult.semanticRetryExhausted || !parsedJson || parsedJson.error || !message) {
++    return false;
++  }
++  if (!stripNativeTools && hasNativeToolCallPayload(message) &&
++      ['tool_calls', 'function_call', 'stop'].includes(choice?.finish_reason)) {
++    return true;
++  }
++  return hasVisibleContent(message.content) && choice?.finish_reason === 'stop';
+ }
+ 
+ function isReasoningOnlyNonStreamResponse(rawResponseText) {
+@@ -254,8 +267,9 @@ class NonStreamHandler {
+     firstAiAPIResponse = firstReadResult.response;
+     const aiResponseText = firstReadResult.text;
+     let chatLogs = [];
++    const stripInitialNativeTools = matchesNativeToolIsolation(originalBody?.model);
+     let oneRingAssistantTurnParts = [];
+-    let validUpstreamTurns = isCompleteNonStreamResponse(firstReadResult);
++    let validUpstreamTurns = isCompleteNonStreamResponse(firstReadResult, stripInitialNativeTools);
+     let completed = false;
+ 
+     let fullContentFromAI = '';
+@@ -542,16 +556,36 @@ class NonStreamHandler {
+     let finalJsonResponse;
+     try {
+       finalJsonResponse = JSON.parse(aiResponseText);
+-      if (!finalJsonResponse.choices?.[0]?.message) {
++      const stripTools = matchesNativeToolIsolation(finalJsonResponse?.model || originalBody?.model);
++      const choice0 = finalJsonResponse.choices?.[0];
++      const msg0 = choice0?.message;
++      const preserveNativeToolTurn = !stripTools && recursionDepth === 0 && hasNativeToolCallPayload(msg0);
++
++      if (!msg0) {
+         finalJsonResponse.choices = [{ message: { content: finalContentForClient } }];
++        finalJsonResponse.choices[0].finish_reason = recursionDepth >= maxRecursion ? 'length' : 'stop';
+       } else {
+-        finalJsonResponse.choices[0].message.content = finalContentForClient;
++        if (stripTools) {
++          delete msg0.tool_calls;
++          delete msg0.function_call;
++        }
++        if (!preserveNativeToolTurn || finalContentForClient.length > 0 || msg0.content !== null) {
++          msg0.content = finalContentForClient;
++        }
+         if (reasoningToContentEnabled) {
+-          removeReasoningFields(finalJsonResponse.choices[0].message);
+-          removeReasoningFields(finalJsonResponse.choices[0]);
++          removeReasoningFields(msg0);
++          removeReasoningFields(choice0);
++        }
++        if (recursionDepth >= maxRecursion) {
++          choice0.finish_reason = 'length';
++        } else if (preserveNativeToolTurn && ['tool_calls', 'function_call'].includes(choice0.finish_reason)) {
++          // Keep native tool termination reason intact for downstream tool-calling clients.
++        } else if (preserveNativeToolTurn) {
++          choice0.finish_reason = msg0.function_call && !msg0.tool_calls ? 'function_call' : 'tool_calls';
++        } else {
++          choice0.finish_reason = 'stop';
+         }
+       }
+-      finalJsonResponse.choices[0].finish_reason = recursionDepth >= maxRecursion ? 'length' : 'stop';
+     } catch (e) {
+       finalJsonResponse = {
+         choices: [{ index: 0, message: { role: 'assistant', content: finalContentForClient }, finish_reason: recursionDepth >= maxRecursion ? 'length' : 'stop' }]
+```
+
+**File**: `modules/handlers/streamHandler.js` (modified, +66/-21)
+```diff
+@@ -3,6 +3,7 @@ const { StringDecoder } = require('string_decoder');
+ const vcpInfoHandler = require('../../vcpInfoHandler.js');
+ const roleDivider = require('../roleDivider.js');
+ const { formatToolResultBatch, projectToolBatchForUpstream } = require('../toolResultBatch.js');
++const { matchesNativeToolIsolation } = require('../nativeToolIsolation.js');
+ const {
+   extractReasoningText,
+   removeReasoningFields,
+@@ -203,15 +204,24 @@ class StreamHandler {
+         let invalidPayload = false;
+         let hasPayloadError = false;
+         let upstreamEnded = false;
++        let sawNativeToolCall = false;
++        const shouldStripNativeTools = (payloadModel) =>
++          matchesNativeToolIsolation(payloadModel || originalBody?.model);
+         const result = () => {
+           streamSettled = true;
+           if (toolTailTimer) clearTimeout(toolTailTimer);
++          const hasNativeToolCompletion = sawNativeToolCall && (
++            ['tool_calls', 'function_call', 'stop'].includes(finishReason) ||
++            (!finishReason && sawDone)
++          );
+           return {
+             content: collectedContentThisTurn, message, malformedFunctionCall,
+-            streamAborted, hasPayloadError,
+-            completed: !streamAborted && !invalidPayload && aiResponse.ok &&
+-              collectedContentThisTurn.trim().length > 0 &&
+-              (finishReason === 'stop' || (!finishReason && sawDone))
++            streamAborted, hasPayloadError, sawNativeToolCall, finishReason,
++            completed: !streamAborted && !invalidPayload && aiResponse.ok && (
++              (collectedContentThisTurn.trim().length > 0 &&
++                (finishReason === 'stop' || (!finishReason && sawDone))) ||
++              hasNativeToolCompletion
++            )
+           };
+         };
+         const observePayload = (parsedData) => {
+@@ -225,6 +235,19 @@ class StreamHandler {
+             malformedFunctionCall = true;
+             invalidPayload = true;
+           }
++          if (!shouldStripNativeTools(parsedData?.model)) {
++            const delta = choice?.delta;
++            const msg = choice?.message;
++            if (
++              (Array.isArray(delta?.tool_calls) && delta.tool_calls.length > 0) ||
++              delta?.function_call ||
++              (Array.isArray(msg?.tool_calls) && msg.tool_calls.length > 0) ||
++              msg?.function_call ||
++              ['tool_calls', 'function_call'].includes(choice?.finish_reason)
++            ) {
++              sawNativeToolCall = true;
++            }
++          }
+           const reason = parsedData?.choices?.[0]?.finish_reason;
+           if (reason) finishReason = reason;
+         };
+@@ -247,16 +270,21 @@ class StreamHandler {
+         const transformParsedDataForClient = (parsedData) => {
+           if (!parsedData || typeof parsedData !== 'object') return parsedData;
+ 
++          const stripTools = shouldStripNativeTools(parsedData.model);
++          if (!stripTools && !reasoningToContentEnabled) return parsedData;
++
+           const transformed = JSON.parse(JSON.stringify(parsedData));
+-          for (const item of transformed.choices || []) {
+-            for (const payload of [item.delta, item.message]) {
+-              if (!payload || typeof payload !== 'object') continue;
+-              delete payload.tool_calls;
+-              delete payload.function_call;
+-            }
+-            // Native FC is not a frontend termination or execution channel in VCP.
+-            for (const key of ['finish_reason', 'native_finish_reason']) {
+-              if (['tool_calls', 'function_call'].includes(item[key])) item[key] = null;
++          if (stripTools) {
++            for (const item of transformed.choices || []) {
++              for (const payload of [item.delta, item.message]) {
++                if (!payload || typeof payload !== 'object') continue;
++                delete payload.tool_calls;
++                delete payload.function_call;
++              }
++              // Strip hallucinated native FC only for models matched by NativeToolIsolationModels.
++              for (const key of ['finish_reason', 'native_finish_reason']) {
++                if (['tool_calls', 'function_call'].includes(item[key])) item[key] = null;
++              }
+             }
+           }
+           if (!reasoningToContentEnabled) return transformed;
+@@ -632,6 +660,8 @@ class StreamHandler {
+     // --- 初始 AI 调用 ---
+     if (DEBUG_MODE) console.log('[VCP Stream Loop] Processing initial AI call.');
+     let initialAIResponseData = await processAIResponseStreamHelper(firstAiAPIResponse, true);
++    let lastTurnSawNativeToolCall = Boolean(initialAIResponseData.sawNativeToolCall);
++    let lastTurnFinishReason = initialAIResponseData.finishReason || null;
+     validUpstreamTurns = initialAIResponseData.completed;
+     currentAIContentForLoop = initialAIResponseData.content;
+     if (writeChatLog) chatLogs.push({ request: originalBody, response: initialAIResponseData.message });
+@@ -663,15
+```
+
+**File**: `tests/nativeToolIsolation.test.js` (modified, +91/-1)
+```diff
+@@ -123,4 +123,94 @@ for (const stream of [false, true]) {
+         assert.ok(sent[2].messages[0].tool_calls);
+         assert.equal(options.body, before);
+     });
+-}
+\ No newline at end of file
++}
++
++const { Readable } = require('node:stream');
++const { EventEmitter } = require('node:events');
++const StreamHandler = require('../modules/handlers/streamHandler');
++const NonStreamHandler = require('../modules/handlers/nonStreamHandler');
++
++test('StreamHandler strips outbound tool_calls ONLY for NativeToolIsolationModels and preserves them for normal models', async () => {
++    const ssePayload = [
++        `data: ${JSON.stringify({ model: undefined, choices: [{ index: 0, delta: { role: 'assistant', content: '' }, finish_reason: null }] })}\n\n`,
++        `data: ${JSON.stringify({ choices: [{ index: 0, delta: { tool_calls: [{ index: 0, id: 'call_pf_1', type: 'function', function: { name: 'pf_list_workspaces', arguments: '{}' } }] }, finish_reason: 'tool_calls' }] })}\n\n`,
++        'data: [DONE]\n\n'
++    ].join('');
++
++    const runStreamForModel = async (model) => {
++        const res = {
++            writableEnded: false,
++            destroyed: false,
++            output: '',
++            write(chunk, cb) { this.output += chunk; if (cb) cb(); return true; },
++            end() { this.writableEnded = true; }
++        };
++        const handler = new StreamHandler({
++            originalBody: { model, messages: [{ role: 'user', content: 'list' }] },
++            abortController: new AbortController(),
++            ToolCallParser: { parse: () => [] },
++            maxVCPLoopStream: 3
++        });
++        const outcome = await handler.handle({}, res, { ok: true, status: 200, body: Readable.from([Buffer.from(ssePayload)]) });
++        return { outcome, output: res.output };
++    };
++
++    const isolated = await runStreamForModel('gemini-4-hydrogen');
++    assert.doesNotMatch(isolated.output, /call_pf_1|pf_list_workspaces|"finish_reason":"tool_calls"/);
++    assert.equal(isolated.outcome.completed, false);
++
++    const normal = await runStreamForModel('gemini-3.8-flash-high');
++    assert.match(normal.output, /"id":"call_pf_1"/);
++    assert.match(normal.output, /"name":"pf_list_workspaces"/);
++    assert.match(normal.output, /"finish_reason":"tool_calls"/);
++    assert.doesNotMatch(normal.output, /"finish_reason":"stop"/);
++    assert.equal((normal.output.match(/data: \[DONE\]/g) || []).length, 1);
++    assert.equal(normal.outcome.completed, true);
++});
++
++test('NonStreamHandler strips outbound tool_calls for isolated models and preserves tool_calls + finish_reason for normal models', async () => {
++    const makeUpstreamJson = (model) => JSON.stringify({
++        id: 'chatcmpl-nonstream-tool',
++        model,
++        choices: [{
++            index: 0,
++            message: {
++                role: 'assistant',
++                content: null,
++                tool_calls: [{ id: 'call_ns_1', type: 'function', function: { name: 'pf_list_workspaces', arguments: '{}' } }]
++            },
++            finish_reason: 'tool_calls'
++        }]
++    });
++
++    const runNonStreamForModel = async (model) => {
++        const res = new EventEmitter();
++        res.writableEnded = false;
++        res.destroyed = false;
++        res.bodyText = '';
++        res.send = (buf) => { res.bodyText = Buffer.from(buf).toString('utf8'); res.writableEnded = true; };
++        const handler = new NonStreamHandler({
++            originalBody: { model, messages: [{ role: 'user', content: 'list' }] },
++            pluginManager: { messagePreprocessors: new Map() },
++            abortController: new AbortController(),
++            ToolCallParser: { parse: () => [] },
++            apiRetries: 1,
++            apiRetryDelay: 0,
++            maxVCPLoopNonStream: 3
++        });
++        const raw = makeUpstreamJson(model);
++        const outcome = await handler.handle({}, res, { ok: true, arrayBuffer: async () => Buffer.from(raw) });
++        return { outcome, json: JSON.parse(res.bodyText) };
++    };
++
++    const isolated = await runNonStreamForModel('gemini-4-hydrogen');
++    assert.equal(isolated.json.choices[0].message.tool_calls, undefined);
++    assert.equal(isolated.json.choices[0].finish_reason, 'stop');
++    assert.equal(isolated.outcome.completed, false);
++
++    const normal = await runNonStreamForModel('gemini-3.8-flash-high');
++    assert.equal(normal.json.choices[0].message.content, null);
++    assert.equal(normal.json.choices[0].message.tool_calls[0].id, 'call_ns_1');
++    assert.equal(normal.json.choices[0].finish_reason, 'tool_calls');
++    assert.equal(normal.outcome.completed, true);
++});
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #609** (2026-11-17): feat(memory): 完整接入 RiverMemo V5 双曲生产检索与 AB 旧轨隔离 (@lioensky)
+- **PR #608** (2026-11-17): fix(chat,bridge): 仅按 NativeToolIsolationModels 选择性剥离出站原生工具调用并支持桥接模型列表透传 (@infinite-vector)
+- **PR #607** (2026-11-17): fix(roleDivider,vcpLoop): 修复多模态数组角色切分丢失及模糊匹配 ESCAPE 大小写问题 (@InSciTech)
+- **PR #606** (2026-11-17): fix(rag): 修复 ContextVectorManager 未排除虚拟系统 User 消息导致的向量污染 (@InSciTech)
 - **PR #605** (2026-11-16): fix(UserAuth): 增加 code.bin 缺失即时自愈生成机制并从版本控制中移除 (@InSciTech)
 - **PR #604** (2026-11-16): feat(Plugin): 新增可选的 KeenableSearch 联网搜索插件（默认禁用） (@KGKallasmaa)
-- **PR #602** (2026-11-15): fix(Plugin): 插件子进程自动继承父进程 Node 运行时以防止原生模块 ABI 冲突 (@InSciTech)
-- **PR #600** (2026-11-15): fix(roleDivider): 保护记忆包络与代码字面量免受角色误切分并保留多模态缓存断点 (@infinite-vector)
-- **PR #599** (2026-11-14): perf(rust-vexus-lite): 去重、NNLS、索引、存储、入库、Spike、元思考、LightMemo 的一批逐位不变改进 (@CI-IISATO)
-- **PR #598** (2026-11-14): fix(RAGDiary): ContextVectorManager 向量表加上限，分段排除当前这一轮，复用清洗缓存 (@CI-IISATO)
 
 ---
 
@@ -2334,37 +3001,32 @@ fix(UserAuth): 增加 code.bin 缺失即时自愈生成机制并从版本控制�
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in config.env.example
+## X. Empirical Invariant Guard in KnowledgeBaseManager.js
 
 **RULE**:
-When implementing operations in `config.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `KnowledgeBaseManager.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c8cd08f`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4eaca06a`: 内存fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `config.env.example`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `KnowledgeBaseManager.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-# --- 上下文裁剪服务端总开关 ---
-# 默认关闭：即使客户端携带 contextTokenLimit，也原样保留消息，不执行位置裁剪或 Jev 打分。
-# 设为 true 后才按客户端预算启用裁剪；JevContextPrune 仅控制是否使用智能排序。
-# 修改根 config.env 后重启服务生效。
-ContextPruneEnabled=false
-
-# --- Jev 上下文剪枝（仅在 ContextPruneEnabled=true 且请求带 contextTokenLimit 时生效）---
+                tagCapacity,
+                true
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-# --- Jev 上下文剪枝（仅在请求带 contextTokenLimit 时生效）---
+                tagCapacity
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c8cd08f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4eaca06a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

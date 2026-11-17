@@ -10772,3 +10772,9 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `b7d38137` | Multi-dimensional audit evidence | 2026-11-17T22:40:03.630Z |
 | `learn-github-jithin-sabu-purge-app` | `https://github.com/jithin-sabu/purge-app` | `6e5c3d30` | Multi-dimensional audit evidence | 2026-11-17T22:56:28.375Z |
 | `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-17T22:56:48.548Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `6a7812c4` | Multi-dimensional audit evidence | 2026-11-17T23:17:27.084Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `098d26a7` | Multi-dimensional audit evidence | 2026-11-17T23:17:37.594Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `4eaca06a` | Multi-dimensional audit evidence | 2026-11-17T23:17:40.574Z |
+| `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-17T23:19:23.225Z |
+| `learn-dom-h-d0f5c3d5` | `project://hf-stabilityai-stable-diffusion-xl-base-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | 2026-11-17T23:20:03.425Z |
+| `learn-dom-f-deb23ba9` | `project://hf-stabilityai-stable-diffusion-xl-base-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | 2026-11-17T23:20:46.643Z |

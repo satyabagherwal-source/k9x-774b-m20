@@ -10739,3 +10739,9 @@
 | `CYCLE-20261117-ZF3E` | `2026-11-17T22:40:03.626Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md` | Yes (`f4aaf720...`) |
 | `CYCLE-20261117-KIXF` | `2026-11-17T22:56:28.371Z` | `jithin-sabu/purge-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9078` | Yes (`b579907a...`) |
 | `CYCLE-20261117-KYHS` | `2026-11-17T22:56:48.544Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`ca7e92e6...`) |
+| `CYCLE-20261117-BI5J` | `2026-11-17T23:17:27.079Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9079` | Yes (`799d3c4e...`) |
+| `CYCLE-20261117-BQ9H` | `2026-11-17T23:17:37.589Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9080` | Yes (`c0a96b8c...`) |
+| `CYCLE-20261117-BSK9` | `2026-11-17T23:17:40.569Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9081` | Yes (`df767793...`) |
+| `CYCLE-20261117-DZRP` | `2026-11-17T23:19:23.221Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9082, Rule 9083, Rule 9084` | Yes (`cb7fd523...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T23:20:03.425Z` | `hf-stabilityai-stable-diffusion-xl-base-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-D0F5C3D5` [Domain H] | Yes (`009bdf73...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T23:20:46.643Z` | `hf-stabilityai-stable-diffusion-xl-base-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-DEB23BA9` [Domain F] | Yes (`20db0594...`) |

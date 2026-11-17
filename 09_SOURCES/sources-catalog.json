@@ -285,8 +285,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceVersion": "hf-stabilityai-stable-diffusion-xl-base-1.0",
     "license": "Open-Source",
-    "contentHash": "09ee4bfbd7c50264d6a6ddd6140bb1b4c3db9509adcde0412833d6b9ecbf7e8c",
-    "lastHarvestedAt": "2026-11-13T12:42:27.712Z",
+    "contentHash": "cb7fd523cfe8d44272526e9049ef1bcc1002853a8c36a92acbaa29aa0520ef4c",
+    "lastHarvestedAt": "2026-11-17T23:19:23.225Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "3d2d59b5",
+    "sourceVersion": "6a7812c4",
     "license": "GPL-3.0",
-    "contentHash": "82d2d7901fd831d2752a8b46c970d12d0f9366855ca56a0ac86562d799724d0f",
-    "lastHarvestedAt": "2026-11-16T15:51:00.349Z",
+    "contentHash": "799d3c4ee500604d5f04db676e7bb4ac2d4ee288db3bc6e7de23fd2873fc0154",
+    "lastHarvestedAt": "2026-11-17T23:17:27.084Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "3c8cd08f",
+    "sourceVersion": "4eaca06a",
     "license": "NOASSERTION",
-    "contentHash": "2e7d28a8e31e3cd40c916f70f8d770975829ebff293c9b71eb691430fe0280a1",
-    "lastHarvestedAt": "2026-11-17T00:10:56.539Z",
+    "contentHash": "df767793283c97082bc1705c9bc6083f638ea071e22b71296c469e972f75517e",
+    "lastHarvestedAt": "2026-11-17T23:17:40.574Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "28560362",
+    "sourceVersion": "098d26a7",
     "license": "NOASSERTION",
-    "contentHash": "40d5bd4500aefafe945ab9fd418e17583ec277d064d80e1f85d1bd2f2206d9a1",
-    "lastHarvestedAt": "2026-11-17T14:01:47.336Z",
+    "contentHash": "c0a96b8c1dfdb7ddf49b7d570c446d571b1729dfc0c847521d5013b9bfa25eb6",
+    "lastHarvestedAt": "2026-11-17T23:17:37.594Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {

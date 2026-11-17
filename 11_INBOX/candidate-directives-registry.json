@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T22:56:52.883Z",
+  "last_updated": "2026-11-17T23:20:48.503Z",
   "directives": [
     {
       "id": "CD-001",
@@ -26429,6 +26429,90 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5343C1-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-E31H",
+      "directive_title": "show alert, confirm and prompt in macOS apps",
+      "source_repo": "tw93-pake-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-E31H-show-alert-confirm-and-prompt-in-macos-apps.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-FTKM",
+      "directive_title": "V1.8.0: release notes",
+      "source_repo": "gravitl-netmaker-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-FTKM-v1-8-0-release-notes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-BSRI",
+      "directive_title": "Empirical Invariant Guard in KnowledgeBaseManager.js",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "4eaca06a",
+      "staged_file": "11_INBOX/candidate-directives/CD-BSRI-empirical-invariant-guard-in-knowledgebasemanager-js.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-88A063",
+      "directive_title": "show alert, confirm and prompt in macOS apps",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tw93-pake",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-88A063-show-alert-confirm-and-prompt-in-macos-a.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-FSCT",
+      "directive_title": "Mixed-Precision VAE Latent Normalization Guard",
+      "source_repo": "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-FSCT-mixed-precision-vae-latent-normalization-guard.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-FSCU",
+      "directive_title": "Dual-Encoder Cross-Attention Alignment & Projection Invariant",
+      "source_repo": "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-FSCU-dual-encoder-cross-attention-alignment-projection-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-FSCV",
+      "directive_title": "Micro-Conditioning Coordinate Invariant Vector Injection",
+      "source_repo": "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-FSCV-micro-conditioning-coordinate-invariant-vector-injection.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-1BA33B",
+      "directive_title": "V1.8.0: release notes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gravitl-netmaker",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1BA33B-v1-8-0-release-notes.md",
       "staged_date": "2026-11-17"
     }
   ]

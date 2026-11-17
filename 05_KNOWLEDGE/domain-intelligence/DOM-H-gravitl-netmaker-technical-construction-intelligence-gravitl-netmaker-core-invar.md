@@ -4,24 +4,24 @@
 {
   "source_repository": "gravitl/netmaker",
   "source_url": "https://github.com/gravitl/netmaker",
-  "source_version": "5485d954",
+  "source_version": "098d26a7",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-16T18:18:58.638Z",
+  "timestamp": "2026-11-17T23:17:37.849Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gravitl-netmaker",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gravitl/netmaker](https://github.com/gravitl/netmaker) (Revision: `5485d954`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-16T18:18:58.638Z`  
+> **Provenance**: Harvested from [gravitl/netmaker](https://github.com/gravitl/netmaker) (Revision: `098d26a7`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T23:17:37.849Z`  
 > **Learning ID**: `learn-github-gravitl-netmaker`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from gravitl/netmaker:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:18:57.681Z  
+> **Harvest Timestamp**: 2026-11-17T23:17:36.334Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11876 stars
+- **Stars / Engagement**: 11877 stars
 
 ---
 
@@ -1031,295 +1031,191 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5485d954` (2026-11-16)
-**Commit Message**: Pre-Release Fixes v1.8.0 (#4232)
+### Incident Patch 1: `098d26a7` (2026-11-17)
+**Commit Message**: V1.8.0: release notes (#4236)
 
-* fix(go): validate traffic public key;
+* bump version tag to v1.8.0
 
-* feat(go): rekey tenant idp sync hook;
+* v1.8.0: update release notes
 
-* feat(go): check if membership exists before creating;
-
-* feat(go): parse node addr without cidr as well;
-
-* feat(go): only check for orphans before the cursor;
-
-* feat(go): normalize usernames in idp synced users;
-
-* feat(go): allow patch method;
-
-* feat(go): allow master user to list all tenants;
-
-* feat(go): publish server sync for non-master pods on idp sync hook rekey;
-
-* feat(go): add before peer can be skipped;
-
-* feat(go): ignore vendor dir;
-
-* fix(go): use normalized usernames when verifying auth request;
-
-* fix(go): return error on user device host sso callback if user is disabled;
-
-* fix(go): reset auto relayed peers on inet gw creation;
-
-* feat(go): reset host owner_username field;
-
-* feat(go): return user-auth host registration unsupported error;
-
-* feat(go): remove unused file;
-
-* feat(go): move auto relayed peers reset to callers;
-
-* feat(go): allow updating static port;
-
-* feat(go): set net id is passed for flow logs;
-
-* feat(go): validate egress node firewall; optimize db queries on egress validation;
-
-* fix(go): add exclusion filter to list host api
-
-**File**: `go.mod` (modified, +3/-0)
+**File**: `.github/ISSUE_TEMPLATE/bug-report.yml` (modified, +1/-0)
 ```diff
-@@ -46,6 +46,7 @@ require (
- 	github.com/klauspost/compress v1.20.3
- 	github.com/matryer/is v1.4.1
- 	github.com/pquerna/otp v1.5.0
-+	github.com/sams96/rgeo v1.3.0
- 	github.com/spf13/cobra v1.10.2
- 	golang.org/x/time v0.15.0
- 	google.golang.org/api v0.272.0
-@@ -76,6 +77,7 @@ require (
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-sql-driver/mysql v1.8.1 // indirect
- 	github.com/goccy/go-json v0.10.6 // indirect
-+	github.com/golang/geo v0.0.0-20230421003525-6adc56603217 // indirect
- 	github.com/google/s2a-go v0.1.9 // indirect
- 	github.com/googleapis/enterprise-certificate-proxy v0.3.14 // indirect
- 	github.com/googleapis/gax-go/v2 v2.18.0 // indirect
-@@ -94,6 +96,7 @@ require (
- 	github.com/segmentio/asm v1.2.1 // indirect
- 	github.com/shopspring/decimal v1.4.0 // indirect
- 	github.com/spf13/pflag v1.0.9 // indirect
-+	github.com/twpayne/go-geom v1.6.0 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
- 	go.opentelemetry.io/otel v1.46.0 // indirect
+@@ -31,6 +31,7 @@ body:
+       label: Version
+       description: What version are you running?
+       options:
++        - v1.8.0
+         - v1.7.0
+         - v1.6.0
+         - v1.5.1
 ```
 
-**File**: `go.sum` (modified, +14/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -12,6 +12,10 @@ github.com/ClickHouse/clickhouse-go/v2 v2.49.0 h1:HgiLTraLGgMe8kYivQ6RzMHDUkU/uF
- github.com/ClickHouse/clickhouse-go/v2 v2.49.0/go.mod h1:o8dSgGJGxY7CeWFNiKusF9a5RnLpgzuo7OaNyH0NQPE=
- github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAwZ/2OOE=
- github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
-+github.com/alecthomas/assert/v2 v2.10.0 h1:jjRCHsj6hBJhkmhznrCzoNpbA3zqy0fYiUcYZP/GkPY=
-+github.com/alecthomas/assert/v2 v2.10.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
-+github.com/alecthomas/repr v0.4.0 h1:GhI2A8MACjfegCPVq9f1FLvIBS+DrQ2KQBFZP1iFzXc=
-+github.com/alecthomas/repr v0.4.0/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
- github.com/andybalholm/brotli v1.2.6 h1:ftYnfj6usCp+UGV5kSJ3+chpMQgU+gJf/AxsUQ52REI=
- github.com/andybalholm/brotli v1.2.6/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
- github.com/biter777/countries v1.7.5 h1:MJ+n3+rSxWQdqVJU8eBy9RqcdH6ePPn4PJHocVWUa+Q=
-@@ -59,6 +63,8 @@ github.com/go-playground/validator/v10 v10.30.5/go.mod h1:wEqiaov48pXX1kjhc3Da8y
- github.com/go-sql-driver/mysql v1.7.0/go.mod h1:OXbVy3sEdcQ2Doequ6Z5BW6fXNQTmx+9S1MCJN5yJMI=
- github.com/go-sql-driver/mysql v1.8.1 h1:LedoTUt/eveggdHS9qUFC1EFSa8bU2+1pZjSRpvNJ1Y=
- github.com/go-sql-driver/mysql v1.8.1/go.mod h1:wEBSXgmK//2ZFJyE+qWnIsVGmvmEKlqwuVSjsCm7DZg=
-+github.com/go-test/deep v1.1.1 h1:0r/53hagsehfO4bzD2Pgr/+RgHqhmf+k1Bpse2cTu1U=
-+github.com/go-test/deep v1.1.1/go.mod h1:5C2ZWiW0ErCdrYzpqxLbTX7MG14M9iiw8DgHncVwcsE=
- github.com/goccy/go-json v0.10.6 h1:p8HrPJzOakx/mn/bQtjgNjdTcN+/S6FcG2CTtQOrHVU=
- github.com/goccy/go-json v0.10.6/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
- github.com/golang-jwt/jwt/v4 v4.5.2 h1:YtQM7lnr8iZ+j5q71MGKkNw9Mn7AjHM68uc9g5fXeUI=
-@@ -67,6 +73,8 @@ github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 h1:au07oEsX2xN0kt
- github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9/go.mod h1:8vg3r2VgvsThLBIFL93Qb5yWzgyZWhEmBwUJWevAkK0=
- github.com/golang-sql/sqlexp v0.1.0 h1:ZCD6MBpcuOVfGVqsEmY5/4FtYiKz6tSyUv9LPEDei6A=
- github.com/golang-sql/sqlexp v0.1.0/go.mod h1:J4ad9Vo8ZCWQ2GMrC4UCQy1JpCbwU9m3EOqtpKwwwHI=
-+github.com/golang/geo v0.0.0-20230421003525-6adc56603217 h1:HKlyj6in2JV6wVkmQ4XmG/EIm+SCYlPZ+V4GWit7Z+I=
-+github.com/golang/geo v0.0.0-20230421003525-6adc56603217/go.mod h1:8wI0hitZ3a1IxZfeH3/5I97CI8i5cLGsYe7xNhQGs9U=
- github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
- github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
- github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
-@@ -99,6 +107,8 @@ github.com/hashicorp/go-version v1.9.0 h1:CeOIz6k+LoN3qX9Z0tyQrPtiB1DFYRPfCIBtaX
- github.com/hashicorp/go-version v1.9.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09ZGVZPK5anwXA=
- github.com/hashicorp/golang-lru/v2 v2.0.7 h1:a+bsQ5rvGLjzHuww6tVxozPZFVghXaHOwFs4luLUK2k=
- github.com/hashicorp/golang-lru/v2 v2.0.7/go.mod h1:QeFd9opnmA6QUJc5vARoKUSoFhyfM2/ZepoAG6RGpeM=
-+github.com/hexops/gotextdiff v1.0.3 h1:gitA9+qJrrTCsiCl7+kh75nPqQt1cx4ZkudSTLoUqJM=
-+github.com/hexops/gotextdiff v1.0.3/go.mod h1:pSWU5MAI3yDq+fZBTazCSJysOMbxWL1BSow5/V2vxeg=
- github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
- github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
- github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
-@@ -151,6 +161,8 @@ github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJ
- github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
- github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
- github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
-+github.com/sams96/rgeo v1.3.0 h1:IkXcEPP5fRU8t0tRj5FBqqPnd2XDoxROwY3EKQlLEvQ=
-+github.com/sams96/rgeo v1.3.0/go.mod h1:iSKFW5MpJ1Ow02Jzcm5UYUg/jrrSZp7mzRrWis0K9Qg=
- github.com/segmentio/asm v1.2.1 h1:DTNbBqs57ioxAD4PrArqftgypG4/qNpXoJx8TVXxPR0=
- github.com/segmentio/asm v1.2.1/go.mod h1:BqMnlJP91P8d+4ibuonYZw9mfnzI9HfxselHZr5aAcs=
- github.com/shopspring/decimal v1.4.0 h1:bxl37RwXBklmTi0C79JfXCEBD1cqqHt0bbgBAGFp81k=
-@@ -166,6 +178,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
- github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
- github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
- github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
-+github.com/twpayne/go-geom v1.6.0 h1:WPOJLCdd8OdcnHvKQepLKwOZrn5BzVlNxtQB59IDHRE=
-+github.com/twpayne/go-geom v1.6.0/go.mod h1:Kr+Nly6BswFsKM5sd31YaoWS5PeDDH2NftJTK7Gd028=
- github.com/xyproto/randomstring v1.0.5 h1:YtlWPoRdgMu3NZtP45drfy1GKoojuR7hmRcnhZqKjWU=
- github.com/xyproto/randomstring v1.0.5/go.mod h1:rg
+@@ -16,7 +16,7 @@
+ 
+ <p align="center">
+   <a href="https://github.com/gravitl/netmaker/releases">
+-    <img src="https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square" />
++    <img src="https://img.shields.io/badge/Version-1.8.0-informational?style=flat-square" />
+   </a>
+   <a href="https://hub.docker.com/r/gravitl/netmaker/tags">
+     <img src="https://img.shields.io/docker/pulls/gravitl/netmaker?label=downloads" />
 ```
 
-**File**: `logic/auto_relay.go` (modified, +10/-18)
+**File**: `compose/docker-compose.netclient.yml` (modified, +1/-1)
 ```diff
-@@ -6,6 +6,7 @@ import (
- 	"net"
- 
- 	"github.com/gravitl/netmaker/db"
-+	"github.com/gravitl/netmaker/db/expr"
- 	"github.com/gravitl/netmaker/logger"
- 	"github.com/gravitl/netmaker/models"
- 	"github.com/gravitl/netmaker/schema"
-@@ -112,28 +113,19 @@ func ResetAutoRelayedPeer(ctx context.Context, autoRelayedNode *models.Node) err
- 	return nil
- }
- 
--// ResetAutoRelay - reset autorelayed peers
- func ResetAutoRelay(ctx context.Context, autoRelayNode *models.Node) error {
--	// Unset autorelayed peers
--	nodes, err := GetNetworkNodes(ctx, autoRelayNode.Network)
-+	autoRelayNodeID := autoRelayNode.ID.String()
-+	_node := &schema.Node{ID: autoRelayNodeID}
-+	err := _node.Get(ctx)
- 	if err != nil {
- 		return err
- 	}
--	for _, node := range nodes {
--		for autoRelayedPeerID, autoRelayID := range node.AutoRelayedPeers {
--			if autoRelayID != autoRelayNode.ID.String() {
--				continue
--			}
--			delete(node.AutoRelayedPeers, autoRelayedPeerID)
--			UpsertNode(&node)
--			peer, err := GetNodeByID(autoRelayedPeerID)
--			if err == nil {
--				delete(peer.AutoRelayedPeers, node.ID.String())
--				UpsertNode(&peer)
--			}
--		}
--	}
--	return nil
-+
-+	return db.FromContext(ctx).Model(&schema.Node{}).
-+		Where("network_id = ?", _node.NetworkID).
-+		Where(expr.WhereHasValue("auto_relayed_peers", autoRelayNodeID)).
-+		UpdateColumn("auto_relayed_peers", expr.RemoveByValue("auto_relayed_peers", autoRelayNodeID)).
-+		Error
- }
- 
- // GetAutoRelayPeerIps - adds the autorelayed peerIps by the peer
+@@ -3,7 +3,7 @@ version: "3.4"
+ services:
+   netclient:
+     container_name: netclient
+-    image: 'gravitl/netclient:v1.7.0'
++    image: 'gravitl/netclient:v1.8.0'
+     hostname: netmaker-1
+     network_mode: host
+     restart: on-failure
 ```
 
-**File**: `mq/handlers.go` (modified, +4/-0)
+**File**: `k8s/client/netclient-daemonset.yaml` (modified, +1/-1)
 ```diff
-@@ -187,6 +187,10 @@ func DeleteAndCleanupHost(h *schema.Host) {
- 		slog.Error("failed to delete host", "id", h.ID, "error", err)
- 		return
- 	}
-+	// delete if any pending reqs
-+	if err := (&schema.PendingHost{HostID: h.ID.String()}).DeleteAllPendingHosts(ctx); err != nil {
-+		slog.Error("failed to delete pending host reqs", "id", h.ID, "error", err)
-+	}
- }
- 
- func SignalPeer(signal models.Signal) {
+@@ -16,7 +16,7 @@ spec:
+       hostNetwork: true
+       containers:
+       - name: netclient
+-        image: gravitl/netclient:v1.7.0
++        image: gravitl/netclient:v1.8.0
+         env:
+         - name: TOKEN
+           value: "TOKEN_VALUE"
 ```
 
-**File**: `utils/geoinfo.go` (modified, +58/-1)
+**File**: `k8s/client/netclient.yaml` (modified, +1/-1)
 ```diff
-@@ -6,9 +6,12 @@ import (
- 	"fmt"
- 	"net"
- 	"net/http"
-+	"strconv"
- 	"strings"
- 	"sync"
- 	"time"
-+
-+	"github.com/sams96/rgeo"
- )
+@@ -28,7 +28,7 @@ spec:
+       #           - "<node label value>"
+       containers:
+       - name: netclient
+-        image: gravitl/netclient:v1.7.0
++        image: gravitl/netclient:v1.8.0
+         env:
+         - name: TOKEN
+           value: "TOKEN_VALUE"
+```
+
+**File**: `k8s/server/netmaker-ui.yaml` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ spec:
+     spec:
+       containers:
+       - name: netmaker-ui
+-        image: gravitl/netmaker-ui:v1.7.0
++        image: gravitl/netmaker-ui:v1.8.0
+         ports:
+         - containerPort: 443
+         env:
+```
+
+**File**: `main.go` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@ import (
+ var version = "v1.8.0"
  
- type GeoInfo struct {
-@@ -21,10 +24,64 @@ type GeoInfo struct {
- func GetGeoInfo(ip ...net.IP) (*GeoInfo, error) {
- 	geoInfo, err := getGeoInfoFromIPAPI(ip...)
- 	if err == nil && geoInfo.HasUsableGeo() {
-+		geoInfo.fillCountryCodeFromLocation()
- 		return geoInfo, nil
- 	}
+ //	@title			NetMaker
+-//	@version		1.7.0
++//	@version		1.8.0
+ //	@description	NetMaker API Docs
+ //	@tag.name	    APIUsage
+ //	@tag.description.markdown
+```
+
+**File**: `release.md` (modified, +81/-33)
+```diff
+@@ -1,53 +1,82 @@
+-# Netmaker v1.7.0 Release Notes 🚀
++# Netmaker v1.8.0 Release Notes 🚀
  
--	return getGeoInfoFromIpInfo(ip...)
-+	geoInfo, err = getGeoInfoFromIpInfo(ip...)
-+	if err == nil {
-+		geoInfo.fillCountryCodeFromLocation()
-+	}
-+	return geoInfo, err
-+}
-+
-+var (
-+	countryReverseGeocoder     *rgeo.Rgeo
-+	countryReverseGeocoderOnce sync.Once
-+)
-+
-+// fillCountryCodeFromLocation resolves CountryCode from Location via offline
-+// reverse geocoding when the geo source returned coordinates but no code
-+// (e.g. ipapi.is's free tier, which only returns a full country name).
-+func (g *GeoInfo) fillCountryCodeFromLocation() {
-+	if g == nil || g.CountryCode != "" {
-+		return
-+	}
-+	lat, lon, ok := parseLatLon(g.Location)
-+	if !ok {
-+		return
-+	}
-+
-+	countryReverseGeocoderOnce.Do(func() {
-+		r, err := rgeo.New(rgeo.Countries110)
-+		if err != nil {
-+			return
-+		}
-+		countryReverseGeocoder = r
-+	})
-+	if countryReverseGeocoder == nil {
-+		return
-+	}
-+
-+	loc, err := countryReverseGeocoder.ReverseGeocode([]float64{lon, lat})
-+	if err != nil {
-+		return
-+	}
-+	g.CountryCode = loc.CountryCode2
-+}
-+
-+// parseLatLon parses a "lat,lon" formatted Location string.
-+func parseLatLon(location string) (lat, lon float64, ok bool) {
-+	parts := strings.SplitN(strings.TrimSpace(location), ",", 2)
-+	if len(parts) != 2 {
-+		return 0, 0, false
-+	}
-+	lat, err1 := strconv.ParseFloat(strings.TrimSpace(parts[0]), 64)
-+	lon, err2 := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
-+	if err1 != nil || err2 != nil {
-+		return 0, 0, false
-+	}
-+	return lat, lon, true
- }
+ ## 🚀 What’s New
  
- // HasUsableGeo reports whether payload contains meaningful geo data.
+-### 🏢 Multi-Tenancy for MSPs (Organizations & Tenants)
++### 💻 All-New Desktop Apps
+ 
+-Run multiple customer environments from a single Netmaker server.
++Completely redesigned **Netmaker Desktop Apps** for a faster, stable connection experience.
+ 
+-- **Organizations & tenants** — Group customers under an organization; each tenant is an isolated Netmaker environment (networks, devices, users).
+-- **MSP license sync** — EE/MSP installs create and update orgs/tenants from the MSP license (including teardown when a tenant is removed from the license). CE and normal Pro accounts continues to use a single local default tenant.
+-- **Scoped access** — API and `nmctl` select the target org/tenant via `X-Organization-ID` / `X-Tenant-ID` (`--org_id` / `--tenant_id`), with `nmctl organization list` and `nmctl tenant list` for discovery.
++- Now available to **CE users** as well (previously limited to Pro/EE).
++- **Peer-to-peer by default** — desktop devices join the mesh with direct peering (not gateway-only), for lower latency and better connectivity.
++- Fresh UI and connection flow for connecting to networks and exit nodes.
++- Improved status visibility for tunnel state and exit modes.
++- **Auto Exit** — when enabled on a network (`auto_select_exit_node`), desktop/user devices are automatically assigned an allowed internet exit (nearest available) when they connect; users can still switch exits when permitted.
+ 
+-### 🔌 TCP Proxy / WSS Uplink
++### 🔐 Managed Access with Netmaker SSH
+ 
+-Gateways can publish a **TCP/WSS uplink** so clients can reach the mesh in restrictive environments when UDP is blocked.
++Secure, managed SSH access to hosts through Netmaker — without opening inbound SSH on the public internet.
+ 
+-- Enable TCP proxy on the gateway/host (`tcp_proxy_enabled` and related listen/TLS settings).
+-- Clients can opt into a TCP uplink to the gateway when the proxy is enabled.
+-- Supports self-signed and externally terminated TLS modes for WSS endpoints.
++- Enable **Manage SSH** on hosts so netclient runs an embedded SSH/SCP/SFTP server.
++- Access mesh hosts over Netmaker with centralized control of who can connect.
++- Useful for admin access, file transfer, and operational workflows on enrolled devices.
+ 
+-### 🛡️ EDR Integration (Pro)
++### 🗺️ Network Map Updates
+ 
+-Connect endpoint detection and response platforms for **posture checks** from **Integrations**.
++Updated network map experience for clearer topology and device context.
+ 
+-- Supported providers: **Microsoft Defender**, **CrowdStrike**, **SentinelOne**, and **Wazuh**.
+-- Sync managed endpoints and evaluate EDR compliance (agent health / risk level) as part of device posture.
+-- Configure, test, and manage integrations via the REST API (`/api/v1/integrations/edr/{provider}`).
++- Improved layout and visualization of users, devices, servers, and config clients.
++- Easier navigation of network relationships and host locations.
++- Better at-a-glance view of how your mesh is connected.
+ 
+-### 📱 MDM Integration (Pro)
++### 🪟 Windows Egress Support
+ 
+-Connect mobile device management platforms for **device compliance posture** from **Integrations**.
++Windows hosts can now act as **egress gateways**.
+ 
+-- Supported providers: **Microsoft Intune**, **Jamf**, **JumpCloud**, and **Iru**.
+-- Match devices by Entra device ID, serial number, hardware UUID, or hostname.
+-- Enforce MDM enrollment/compliance checks alongside existing posture policies.
+-- Configure, test, and manage integrations via the REST API (`/api/v1/integrations/mdm/{provider}`).
++- Advertise egress ranges from Windows netclients.
++- Route traffic from the mesh to attached LAN/site networks via Windows.
++- Uses Windows NetNat where required for egress NAT.
++
++### 🔀 Bypass Egress Routes
++
++New option on **internet egress** so traffic to other (site) egress destinations does not hairpin through the internet exit.
++
++- **Why:** Without bypass, clients using an internet exit often send site-egress traffic up to the exit node and back out again (hairpin), adding latency and load. Bypass keeps allowed site egress as **direct peers**, so traffic to those sites flows peer-to-peer instead of bending through the exit.
++- **`bypass_egress_routes`** (internet egress only) — enable to avoid that hairpin for other egress sites; disable to force site-egress traffic via the internet exit.
++- Configurable on create/update; defaults to **on** for new internet egress.
++- Ignored for non-internet (site) egress types.
+ 
+ 
+ ---
+ 
+ ## 🗄️ Database Schema Migration
+ 
+-This release completes the SQL schema path and introduces **multi-tenancy (org/tenant) bootstrap** as part of the v1.7.0 migration.
++This release runs **`migration-v1.8.0`**, which continues the SQL schema path after multi-tenancy (org/tenant) from v1.7.0. It migrates remaining key-value resources into versioned tables, backfills IP pools/al
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4236** (2026-11-17): V1.8.0: release notes (@abhishek9686)
+- **PR #4235** (2026-11-17): NM-356: Fix device join/pull when host.Nodes drifts from live nodes (@abhishek9686)
 - **PR #4232** (2026-11-16): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4231** (2026-11-14): NM-356: Enable CE user ACL policies with All Users and per-user sources (@abhishek9686)
 - **PR #4230** (2026-11-12): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4225** (2026-11-12): NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (@abhishek9686)
-- **PR #4224** (2026-11-11): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
-- **PR #4223** (closed): Release v1.7.0 (@abhishek9686)
 
 ---
 
@@ -1339,23 +1235,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pre-Release Fixes v1.8.0
+## X. V1.8.0: release notes
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/ISSUE_TEMPLATE/bug-report.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5485d954`: Pre-Release Fixes v1.8.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `098d26a7`: V1.8.0: release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/bug-report.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/sams96/rgeo v1.3.0
-	github.com/golang/geo v0.0.0-20230421003525-6adc56603217 // indirect
-	github.com/twpayne/go-geom v1.6.0 // indirect
+        - v1.8.0
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1365,7 +1259,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5485d954` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `098d26a7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

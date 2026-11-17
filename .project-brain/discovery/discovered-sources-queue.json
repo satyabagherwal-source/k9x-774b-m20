@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T22:56:51.995Z",
+  "updated_at": "2026-11-17T23:20:48.226Z",
   "stats": {
-    "total_discovered": 5177,
-    "approved_pending_harvest": 4888,
+    "total_discovered": 5182,
+    "approved_pending_harvest": 4893,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4873,
+      "COMMUNITY_AND_EXPERT": 4878,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -111892,6 +111892,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
         "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-A3DB4B505E9A": {
+      "id": "SRC-A3DB4B505E9A",
+      "url": "https://github.com/gravitl/netmaker/releases",
+      "title": "https://github.com/gravitl/netmaker/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T23:20:48.011Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
+        "fileName": "gravitl-netmaker-learnings.md"
+      }
+    },
+    "SRC-CA087B5C2BD0": {
+      "id": "SRC-CA087B5C2BD0",
+      "url": "https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square",
+      "title": "https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T23:20:48.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
+        "fileName": "gravitl-netmaker-learnings.md"
+      }
+    },
+    "SRC-7754A13DF4BD": {
+      "id": "SRC-7754A13DF4BD",
+      "url": "https://img.shields.io/badge/Version-1.8.0-informational?style=flat-square",
+      "title": "https://img.shields.io/badge/Version-1.8.0-informational?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T23:20:48.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
+        "fileName": "gravitl-netmaker-learnings.md"
+      }
+    },
+    "SRC-79689FBCE11F": {
+      "id": "SRC-79689FBCE11F",
+      "url": "https://hub.docker.com/r/gravitl/netmaker/tags",
+      "title": "https://hub.docker.com/r/gravitl/netmaker/tags",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T23:20:48.164Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
+        "fileName": "gravitl-netmaker-learnings.md"
+      }
+    },
+    "SRC-5919F7CFCDF5": {
+      "id": "SRC-5919F7CFCDF5",
+      "url": "https://img.shields.io/docker/pulls/gravitl/netmaker?label=downloads",
+      "title": "https://img.shields.io/docker/pulls/gravitl/netmaker?label=downloads",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T23:20:48.226Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
+        "fileName": "gravitl-netmaker-learnings.md"
       }
     }
   }
