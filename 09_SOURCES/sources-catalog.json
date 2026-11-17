@@ -2393,10 +2393,10 @@
     "repository": "NervJS/taro",
     "platform": "github",
     "sourceUrl": "https://github.com/NervJS/taro",
-    "sourceVersion": "c8c25e58",
+    "sourceVersion": "b6eaa4ef",
     "license": "NOASSERTION",
-    "contentHash": "78ce4a9773d7c4ddc47a3f3d9257e79f1f74bcab58442fbda77c6d9ccb877127",
-    "lastHarvestedAt": "2026-11-13T19:39:57.469Z",
+    "contentHash": "0f8fd1278d4a84993ae32a650c10746c475b9e1d755749320550fb578d47d8c9",
+    "lastHarvestedAt": "2026-11-17T09:27:23.354Z",
     "learningId": "learn-github-nervjs-taro"
   },
   "kubeedge-kubeedge": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "61ba4ac1",
+    "sourceVersion": "ddf073ee",
     "license": "NOASSERTION",
-    "contentHash": "05dcb4edca579c23469b578b195d7daf3bcceae3fa41b9240bb999a1506991b3",
-    "lastHarvestedAt": "2026-11-17T03:34:20.219Z",
+    "contentHash": "342c07504c40fb45358cc9891013ea8b406bd9cf5c3549b1d24d9daa9ea3319e",
+    "lastHarvestedAt": "2026-11-17T09:22:24.424Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "708bee9a",
+    "sourceVersion": "4d6a58e6",
     "license": "Apache-2.0",
-    "contentHash": "3640b9590ab2d0ed2aad79dfbb40a5e99e73649898c6ceb59bc99b653fad5be8",
-    "lastHarvestedAt": "2026-11-14T19:41:41.065Z",
+    "contentHash": "2d40116262cca2668c8588cdc801fbb038833ef033221889260d92dd86f42fea",
+    "lastHarvestedAt": "2026-11-17T09:23:12.665Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -5173,10 +5173,10 @@
     "repository": "citusdata/citus",
     "platform": "github",
     "sourceUrl": "https://github.com/citusdata/citus",
-    "sourceVersion": "08479aca",
+    "sourceVersion": "1c614e7d",
     "license": "AGPL-3.0",
-    "contentHash": "7fb2aca545c8cbd42bb963307f5d211b9e54f7e25586775cb5586a0c967ebbb7",
-    "lastHarvestedAt": "2026-11-09T17:12:20.898Z",
+    "contentHash": "e250e023b1f6726f5f3f5667217e6a8ddea93780f7b09155ad39c82fbc666d46",
+    "lastHarvestedAt": "2026-11-17T09:22:25.882Z",
     "learningId": "learn-github-citusdata-citus"
   },
   "reshaped-ui-reshaped": {

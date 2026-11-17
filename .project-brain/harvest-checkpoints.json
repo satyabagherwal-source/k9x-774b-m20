@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T08:56:42.428Z",
+  "last_updated": "2026-11-17T09:27:23.366Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3726,14 +3726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nervjs-taro",
-      "content_hash": "78ce4a9773d7c4ddc47a3f3d9257e79f1f74bcab58442fbda77c6d9ccb877127",
-      "verified_at": "2026-11-13T19:39:57.480Z",
+      "content_hash": "0f8fd1278d4a84993ae32a650c10746c475b9e1d755749320550fb578d47d8c9",
+      "verified_at": "2026-11-17T09:27:23.365Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:39:57.480Z"
+      "last_updated": "2026-11-17T09:27:23.365Z"
     },
     "kubeedge/kubeedge": {
       "repository": "kubeedge/kubeedge",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "05dcb4edca579c23469b578b195d7daf3bcceae3fa41b9240bb999a1506991b3",
-      "verified_at": "2026-11-17T03:34:20.230Z",
+      "content_hash": "342c07504c40fb45358cc9891013ea8b406bd9cf5c3549b1d24d9daa9ea3319e",
+      "verified_at": "2026-11-17T09:22:24.435Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:34:20.230Z"
+      "last_updated": "2026-11-17T09:22:24.435Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "3640b9590ab2d0ed2aad79dfbb40a5e99e73649898c6ceb59bc99b653fad5be8",
-      "verified_at": "2026-11-14T19:41:41.076Z",
+      "content_hash": "2d40116262cca2668c8588cdc801fbb038833ef033221889260d92dd86f42fea",
+      "verified_at": "2026-11-17T09:23:12.676Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T19:41:41.076Z"
+      "last_updated": "2026-11-17T09:23:12.676Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -7881,14 +7881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-citusdata-citus",
-      "content_hash": "7fb2aca545c8cbd42bb963307f5d211b9e54f7e25586775cb5586a0c967ebbb7",
-      "verified_at": "2026-11-09T17:12:20.915Z",
+      "content_hash": "e250e023b1f6726f5f3f5667217e6a8ddea93780f7b09155ad39c82fbc666d46",
+      "verified_at": "2026-11-17T09:22:25.893Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T17:12:20.915Z"
+      "last_updated": "2026-11-17T09:22:25.893Z"
     },
     "reshaped-ui/reshaped": {
       "repository": "reshaped-ui/reshaped",

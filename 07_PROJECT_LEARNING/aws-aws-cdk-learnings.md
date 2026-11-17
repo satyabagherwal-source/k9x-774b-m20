@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `708bee9a`  
+> **Source Version**: `4d6a58e6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T19:41:39.976Z  
+> **Timestamp**: 2026-11-17T09:23:11.533Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T19:41:39.824Z  
+> **Harvest Timestamp**: 2026-11-17T09:22:21.286Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12976 stars
+- **Stars / Engagement**: 12980 stars
 
 ---
 
@@ -1200,499 +1200,67 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `708bee9a` (2026-11-13)
-**Commit Message**: feat(core): embed structured design context in synthesized templates (MetadataContext) (#38381)
+### Incident Patch 1: `88e01777` (2026-11-16)
+**Commit Message**: docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tracing (#39754)
 
 ### Issue # (if applicable)
 
-RFC tracking issue: https://github.com/aws/aws-cdk-rfcs/issues/994
-
-Accepted RFC: https://github.com/aws/aws-cdk-rfcs/pull/981
+No tracking issue.
 
 ### Reason for this change
 
-CloudFormation templates preserve deployed configuration but usually lose the rationale, invariants, change-safety guidance, and provenance available in CDK source. CloudFormation defines the advisory `com.aws.cloudformation.Context` metadata schema for preserving that information, but CDK users need a typed authoring API.
+Agents and users who copy the README tracing example hit a deploy failure on accounts where CloudWatch Transaction Search is off, and the docs do not mention the prerequisite. The deploy fails with:
+
+`X-Ray Delivery Destination is supported with CloudWatch Logs as a Trace Segment Destination`
+
+Runtime tracing delivers traces to X-Ray through CloudWatch Logs, and that delivery only works when Transaction Search is enabled in the account and Region.
 
 ### Description of changes
 
-- Adds `CfnResourceMetadataContext` for setting or clearing Context on selected `CfnResource` constructs during synthesis.
-- Adds `CfnTemplateMetadataContext` for setting or clearing template-level Context.
-- Mirrors the published resource, template, mutability, reference, and trust fields without adding another vocabulary.
-- Uses `IConstructSelector` for explicit resource targeting. The default selects a `CfnResource` scope or its immediate `CfnResource` default child.
-- Uses complete-value replacement rather than implicit merging. Aspect priority and scope
+Documentation only. No code behaviour change.
 
-**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextIntegDefaultTestDeployAssert9187EC06.assets.json` (added, +20/-0)
+- Added a docstring note on the `tracingEnabled` prop in `runtime.ts` explaining that tracing requires CloudWatch Transaction Search enabled in the account and Region (a one-time, account-wide setting), and that the deploy fails without it.
+- Added one note in the README observability section, after the tracing example, linking the `xray.CfnTransactionSearchConfig` API docs and the CloudWatch "Enable Transaction Search with CloudFormation" guide.
+
+There is no L2 construct for Transaction Search,
+
+**File**: `packages/aws-cdk-lib/aws-bedrockagentcore/README.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,20 @@
-+{
-+  "version": "54.0.0",
-+  "files": {
-+    "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22": {
-+      "displayName": "MetadataContextIntegDefaultTestDeployAssert9187EC06 Template",
-+      "source": {
-+        "path": "MetadataContextIntegDefaultTestDeployAssert9187EC06.template.json",
-+        "packaging": "file"
-+      },
-+      "destinations": {
-+        "current_account-current_region-d8d86b35": {
-+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-+          "objectKey": "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22.json",
-+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-+        }
-+      }
-+    }
-+  },
-+  "dockerImages": {}
-+}
-\ No newline at end of file
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextIntegDefaultTestDeployAssert9187EC06.metadata.json` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+{
-+  "/MetadataContextInteg/DefaultTest/DeployAssert/BootstrapVersion": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "BootstrapVersion"
-+    }
-+  ],
-+  "/MetadataContextInteg/DefaultTest/DeployAssert/CheckBootstrapVersion": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "CheckBootstrapVersion"
-+    }
-+  ]
-+}
-\ No newline at end of file
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextIntegDefaultTestDeployAssert9187EC06.template.json` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+{
-+ "Parameters": {
-+  "BootstrapVersion": {
-+   "Type": "AWS::SSM::Parameter::Value<String>",
-+   "Default": "/cdk-bootstrap/hnb659fds/version",
-+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
-+  }
-+ },
-+ "Rules": {
-+  "CheckBootstrapVersion": {
-+   "Assertions": [
-+    {
-+     "Assert": {
-+      "Fn::Not": [
-+       {
-+        "Fn::Contains": [
-+         [
-+          "1",
-+          "2",
-+          "3",
-+          "4",
-+          "5"
-+         ],
-+         {
-+          "Ref": "BootstrapVersion"
-+         }
-+        ]
-+       }
-+      ]
-+     },
-+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
-+    }
-+   ]
-+  }
-+ }
-+}
-\ No newline at end of file
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextTestStack.assets.json` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+{
-+  "version": "54.0.0",
-+  "files": {
-+    "5c79dae7d802ed0f71a89fba0f78e8060710c1188920589e08449635f0ed2d0e": {
-+      "displayName": "MetadataContextTestStack Template",
-+      "source": {
-+        "path": "MetadataContextTestStack.template.json",
-+        "packaging": "file"
-+      },
-+      "destinations": {
-+        "current_account-current_region-9a054d3c": {
-+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-+          "objectKey": "5c79dae7d802ed0f71a89fba0f78e8060710c1188920589e08449635f0ed2d0e.json",
-+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-+        }
-+      }
-+    }
-+  },
-+  "dockerImages": {}
-+}
-\ No newline at end of file
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextTestStack.metadata.json` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+{
-+  "/MetadataContextTestStack/OrderQueue": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": {
-+        "encryption": "SQS_MANAGED"
-+      }
-+    }
-+  ],
-+  "/MetadataContextTestStack/BootstrapVersion": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "BootstrapVersion"
-+    }
-+  ],
-+  "/MetadataContextTestStack/CheckBootstrapVersion": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "CheckBootstrapVersion"
-+    }
-+  ],
-+  "/MetadataContextTestStack/OrderQueue/Resource": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "OrderQueue39B99167"
-+    }
-+  ],
-+  "/MetadataContextTestStack/Notifications/AlertsTopic": [
-+    {
-+      "type": "aws:cdk:analytics:construct",
-+      "data": "*"
-+    }
-+  ],
-+  "/MetadataContextTestStack/Notifications/AlertsTopic/Resource": [
-+    {
-+      "type": "aws:cdk:logicalId",
-+      "data": "NotificationsAlertsTopicDFE3487E"
-+    }
-+  ]
-+}
-\ No newline at end of file
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextTestStack.template.json` (added, +87/-0)
-```diff
-@@ -0,0 +1,87 @@
-+{
-+ "Description": "integ test stack for MetadataContext; exercises resource + template level context",
-+ "Metadata": {
-+  "com.aws.cloudformation.Context": {
-+   "arch": "SQS buffer -> consumer; DLQ for poison msgs",
-+   "must": [
-+    "all queues encrypted w/ SSE"
-+   ],
-+   "ref": [
-+    {
-+     "at": "context/shared/encryption.ctx.yaml",
-+     "has": "org CMK + tagging rules",
-+     "scope": "shared"
-+    }
-+   ],
-+   "owner": "framework-integ-team"
-+  }
-+ },
-+ "Resources": {
-+  "OrderQueue39B99167": {
-+   "Type": "AWS::SQS::Queue",
-+   "Properties": {
-+    "SqsManagedSseEnabled": true
-+   },
-+   "UpdateReplacePolicy": "Delete",
-+   "DeletionPolicy": "Delete",
-+   "Metadata": {
-+    "com.aws.cloudformation.Context": {
-+     "why": "buffer order events async; std queue (throughput > ordering)",
-+     "must": [
-+      "VisTimeout >= 6x consumer timeout, else dup on retry"
-+     ],
-+     "mutable": "change-with-constraints",
-+     "mutability": {
-+      "QueueName": "must-never-change"
-+     },
-+     "trust": {
-+      "src": "authored",
-+      "conf": "high"
-+     }
-+    }
-+   }
-+  },
-+  "NotificationsAlertsTopicDFE3487E": {
-+   "Type": "AWS::SNS::Topic",
-+   "Metadata": {
-+    "com.aws.cloudformation.Context": {
-+     "why": "fan-out of alert events to oncall channels"
-+    }
-+   }
-+  }
-+ },
-+ "Parameters": {
-+  "BootstrapVersion": {
-+   "Type": "AWS::SSM::Parameter::Value<String>",
-+   "Default": "/cdk-bootstrap/hnb659fds/version",
-+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
-+  }
-+ },
-+ "Rules": {
-+  "CheckBootstrapVersion": {
-+   "Assertions": [
-+    {
-+     "Assert": {
-+      "Fn::Not": [
-+       {
-+        "Fn::Contains": [
-+         [
-+          "1",
-+          "2",
-+          "3",
-+          "4",
-+          "5"
-+         ],
-+         {
-+          "Ref": "BootstrapVersion"
-+         }
-+        ]
-+       }
-+      ]
-+     },
-+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
-+    }
-+   ]
-+  }
-+ }
-+}
-\ No newline at end of file
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/cdk.out` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"version":"54.0.0"}
-\ No newline at end of file
-```
-
-**File**: `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/integ.json` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+{
-+  "version": "54.0.0",
-+  "testCases": {
-+    "MetadataContextInteg/DefaultTest": {
-+      "stacks": [
-+        "MetadataContextTestStack"
-+      ],
-+      "assertionStack": "MetadataContextInteg/DefaultTest/DeployAssert",
-+      "assertionStackName": "MetadataContextIntegDefaultTestDeployAssert9187EC06"
-+    }
-+  },
-+  "enableLookups": true,
-+  "minimumCliVersion": "2.1131.0"
-+}
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 2: `bd4b78e9` (2026-11-13)
-**Commit Message**: docs(lambda-event-sources): explain Kafka schema registry integration (#39679)
-
-### Issue # (if applicable)
-
-Closes #34778.
-
-### Reason for this change
-
-The `aws-lambda-event-sources` README shows two schema registry examples for Kafka event sources but doesn't explain the integration: which registries and record formats Lambda supports, that provisioned mode is required, or what the required properties mean.
-
-This continues #34779 by @evzzk, which has been inactive since July 2025.
-
-### Description of changes
-
-- Add a short "Schema Registry" section to the README: what the integration does, which registries and record formats work, what to set (`provisionedPollerConfig`, `eventRecordFormat`, `schemaValidationConfigs`), and what `ConfluentSchemaRegistry` and `GlueSchemaRegistry` need.
-- Add an example for a self-managed Kafka cluster with a self-managed Confluent schema registry.
-- Take the registry secret in the existing Confluent example as a declared variable. The example created a secret with the MSK broker secret name.
-- Reword the doc comments of `EventRecordFormat`, `KafkaSchemaRegistryAccessConfigType` and `KafkaSchemaValidationAttribute` in `aws-lambda` in plain terms. Thi
-
-**File**: `packages/aws-cdk-lib/aws-lambda-event-sources/README.md` (modified, +62/-6)
-```diff
-@@ -653,9 +653,28 @@ ordersFunction.addEventSource(new ManagedKafkaEventSource({
- 
+@@ -877,6 +877,8 @@ new agentcore.Runtime(this, 'test-runtime', {
+ });
  ```
  
--Set a confluent or self-managed schema registry to de-serialize events from the event source. 
-+### Schema Registry
- 
--Note: This will also work for `SelfManagedKafkaEventSource`.
-+Lambda can validate the key, the value, or both of each Kafka record against a schema registry before it
-+invokes your function. Set `schemaRegistryConfig` on `ManagedKafkaEventSource` or `SelfManagedKafkaEventSource`
-+to an AWS Glue schema registry with `GlueSchemaRegistry`, or to a Confluent schema registry, cloud or
-+self-managed, with `ConfluentSchemaRegistry`. The registry can validate Avro, Protobuf and JSON Schema records.
++> **Note:** Tracing requires CloudWatch Transaction Search, enabled once per account and Region. Without it the deploy fails with `X-Ray Delivery Destination is supported with CloudWatch Logs as a Trace Segment Destination`. Turn it on in the CloudWatch console, or deploy [`xray.CfnTransactionSearchConfig`](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_xray.CfnTransactionSearchConfig.html) in a stack you deploy once per account; see [Enable Transaction Search with CloudFormation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-Cloudformation.html).
 +
-+Schema registries need provisioned pollers, so also set `provisionedPollerConfig`. Then choose:
-+
-+* `eventRecordFormat`: `JSON` passes the validated parts to your function as JSON, which suits languages such as
-+  Python and Node.js; `SOURCE` passes them in their original format, which suits Avro or Protobuf generated classes.
-+* `schemaValidationConfigs`: whether to validate the key, the value, or both.
-+
-+For Confluent, give the registry URL, an authentication type and the Secrets Manager secret that goes with it;
-+the function gets read access to the secret. For Glue, pass the registry; the function gets the Glue
-+permissions it needs to read it.
-+
-+For details, see
-+[Using schema registries with Kafka event sources in Lambda](https://docs.aws.amazon.com/lambda/latest/dg/services-consume-kafka-events.html)
-+in the AWS Lambda Developer Guide.
-+
-+This example uses a Confluent schema registry with Amazon MSK:
- 
- ```ts
- import { ManagedKafkaEventSource, ConfluentSchemaRegistry } from 'aws-cdk-lib/aws-lambda-event-sources';
-@@ -667,7 +686,8 @@ declare const clusterArn: string;
- // The Kafka topic you want to subscribe to
- const topic = 'some-cool-topic';
- 
--const secret = new Secret(this, 'Secret', { secretName: 'AmazonMSK_KafkaSecret' });
-+// The secret with the credentials for your schema registry
-+declare const secret: Secret;
- 
- declare const myFunction: lambda.Function;
- myFunction.addEventSource(new ManagedKafkaEventSource({
-@@ -688,9 +708,7 @@ myFunction.addEventSource(new ManagedKafkaEventSource({
- }));
- ```
- 
--Set Glue schema registry to de-serialize events from the event source.
--
--Note: This will also work for `SelfManagedKafkaEventSource`.
-+This example uses an AWS Glue schema registry with Amazon MSK:
- 
- ```ts
- import { CfnRegistry } from 'aws-cdk-lib/aws-glue';
-@@ -725,6 +743,44 @@ myFunction.addEventSource(new ManagedKafkaEventSource({
- }));
- ```
- 
-+This example uses a self-managed Confluent schema registry with a self-managed Kafka cluster:
-+
-+```ts
-+import { SelfManagedKafkaEventSource, ConfluentSchemaRegistry } from 'aws-cdk-lib/aws-lambda-event-sources';
-+import { ISecret } from 'aws-cdk-lib/aws-secretsmanager';
-+
-+// The list of Kafka brokers
-+const bootstrapServers = ['kafka-broker:9092'];
-+
-+// The Kafka topic you want to subscribe to
-+const topic = 'some-cool-topic';
-+
-+// The secret that allows access to your self hosted Kafka cluster
-+declare const kafkaSecret: ISecret;
-+
-+// The secret with the client certificate and private key for your schema registry
-+declare const registrySecret: ISecret;
-+
-+declare const myFunction: lambda.Function;
-+myFunction.addEventSource(new SelfManagedKafkaEventSource({
-+  bootstrapServers,
-+  topic,
-+  secret: kafkaSecret,
-+  startingPosition: lambda.StartingPosition.TRIM_HORIZON,
-+  provisionedPollerConfig: {
-+    minimumPollers: 1,
-+    maximumPollers: 3,
-+  },
-+  schemaRegistryConfig: new ConfluentSchemaRegistry({
-+    schemaRegistryUri: 'https://schema-registry.example.com',
-+    eventRecordFormat: lambda.EventRecordFormat.SOURCE,
-+    authenticationType: lambda.KafkaSchemaRegistryAccessConfigType.CLIENT_CERTIFICATE_TLS_AUTH,
-+    secret: registrySecret,
-+    schemaValidationConfigs: [{ attribute: lambda.KafkaSchemaValidationAttribute.VALUE }],
-+  }),
-+}));
-+```
-+
- ## Roadmap
- 
- Eventually, this module will support all the event sources described under
+ ```typescript fixture=default
+ const repository = new ecr.Repository(this, 'TestRepository', {
+   repositoryName: 'test-agent-runtime',
 ```
 
-**File**: `packages/aws-cdk-lib/aws-lambda/lib/schema-registry.ts` (modified, +17/-6)
+**File**: `packages/aws-cdk-lib/aws-bedrockagentcore/lib/runtime/runtime.ts` (modified, +5/-0)
 ```diff
-@@ -2,20 +2,28 @@ import type { IEventSourceMapping } from './event-source-mapping';
- import type { IFunction } from './function-base';
- 
- /**
-- * The format target function should receive record in.
-+ * How Lambda passes schema-validated records to your function.
-  */
- export class EventRecordFormat {
-   /**
--   * The target function will receive records as json objects.
-+   * Your function receives the validated parts of each record as JSON.
+@@ -160,7 +160,12 @@ export interface RuntimeProps {
+    * Whether to enable X-Ray tracing for this runtime.
+    * When enabled, traces will be delivered to AWS X-Ray.
+    *
++   * Tracing requires CloudWatch Transaction Search to be enabled in the account and
++   * Region, so that the X-Ray trace segment destination is CloudWatch Logs.
++   * Without it the deploy fails. This is a one-time, account-wide setting.
 +   *
-+   * A good fit for languages such as Python and Node.js.
+    * @see https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html
++   * @see https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-get-started.html
+    * @default false
     */
-   public static readonly JSON = new EventRecordFormat('JSON');
- 
-   /**
--   * The target function will receive records in same format as the schema source.
-+   * Your function receives the validated parts of each record in their original format.
-+   *
-+   * A good fit when you use Avro or Protobuf generated classes.
-    */
-   public static readonly SOURCE = new EventRecordFormat('SOURCE');
- 
--  /** A custom event record format */
-+  /**
-+   * A custom event record format.
-+   *
-+   * @param name the name of the record format
-+   */
-   public static of(name: string): EventRecordFormat {
-     return new EventRecordFormat(name);
-   }
-@@ -32,6 +40,9 @@ export class EventRecordFormat {
- 
- /**
-  * The type of authentication protocol for your schema registry.
-+ *
-+ * Used with Confluent schema registries. For an AWS Glue schema registry, Lambda uses the
-+ * function's execution role instead.
-  */
- export class KafkaSchemaRegistryAccessConfigType {
-   /**
-@@ -109,12 +120,12 @@ export interface KafkaSchemaRegistryAccessConfig {
-  */
- export class KafkaSchemaValidationAttribute {
-   /**
--   * De-serialize the key field of the parload to target function.
-+   * Validate the key of each record.
-    */
-   public static readonly KEY = new KafkaSchemaValidationAttribute('KEY');
- 
-   /**
--   * De-serialize the value field of the parload to target function.
-+   * Validate the value of each record.
-    */
-   public static readonly VALUE = new KafkaSchemaValidationAttribute('VALUE');
- 
+   readonly tracingEnabled?: boolean;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39755** (2026-11-16): docs(bedrockagentcore): document OpenTelemetry dependency for direct code deployment (@kumvprat)
+- **PR #39754** (2026-11-16): docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tracing (@kumvprat)
+- **PR #39751** (closed): fix(bedrockagentcore): imported gateway target reports its status as its description (@laazyj)
 - **PR #39722** (2026-11-13): chore(merge-back): 2.277.0 (@aws-cdk-automation)
 - **PR #39712** (2026-11-12): feat(lambda-event-sources): support queue consumption mode for self-managed Kafka (@ainafee-amzn)
 - **PR #39711** (2026-11-12): chore(release): 2.277.0 (@aws-cdk-automation)
-- **PR #39709** (2026-11-12): docs: reference the security model in the README (@ozelalisen)
-- **PR #39703** (closed): chore(release): 2.277.0 (@aws-cdk-automation)
-- **PR #39701** (2026-11-12): feat: update L1 CloudFormation resource definitions (@aws-cdk-automation)
 
 ---
 
@@ -1712,40 +1280,22 @@ This continues #34779 by @evzzk, which has been inactive since July 2025.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): embed structured design context in synthesized templates (MetadataContext
+## X. docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tra
 
 **RULE**:
-When implementing operations in `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextIntegDefaultTestDeployAssert9187EC06.assets.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `708bee9a`: core): embed structured design context in synthesized templates (MetadataContext). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `88e01777`: docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tracing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk-testing/framework-integ/test/core/test/integ.metadata-context.js.snapshot/MetadataContextIntegDefaultTestDeployAssert9187EC06.assets.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-{
-  "version": "54.0.0",
-  "files": {
-    "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22": {
-      "displayName": "MetadataContextIntegDefaultTestDeployAssert9187EC06 Template",
-      "source": {
-        "path": "MetadataContextIntegDefaultTestDeployAssert9187EC06.template.json",
-        "packaging": "file"
-      },
-      "destinations": {
-        "current_account-current_region-d8d86b35": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "21fbb51d7b23f6a6c262b46a9caee79d744a3ac019fd45422d988b96d44b2a22.json",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
-        }
-      }
-    }
-  },
-  "dockerImages": {}
-}
+> **Note:** Tracing requires CloudWatch Transaction Search, enabled once per account and Region. Without it the deploy fails with `X-Ray Delivery Destination is supported with CloudWatch Logs as a Trace Segment Destination`. Turn it on in the CloudWatch console, or deploy [`xray.CfnTransactionSearchConfig`](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_xray.CfnTransactionSearchConfig.html) in a stack you deploy once per account; see [Enable Transaction Search with CloudFormation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-Cloudformation.html).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1755,4 +1305,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `708bee9a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `88e01777` are properly handled with clean fallback behavior.

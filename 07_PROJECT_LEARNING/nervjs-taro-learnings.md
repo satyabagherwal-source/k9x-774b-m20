@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source**: github ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
-> **Source Version**: `c8c25e58`  
+> **Source Version**: `b6eaa4ef`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T19:39:56.405Z  
+> **Timestamp**: 2026-11-17T09:27:22.215Z  
 > **Learning ID**: `learn-github-nervjs-taro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:39:56.397Z  
+> **Harvest Timestamp**: 2026-11-17T09:22:18.739Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 开放式跨端跨框架解决方案，支持使用 React/Vue 等框架来开发微信/京东/百度/支付宝/字节跳动/ QQ 小程序/H5/React Native 等应用。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 37752 stars
+- **Stars / Engagement**: 37753 stars
 
 ---
 
@@ -1221,1085 +1221,304 @@ pub fn init_git(project_name: &str, project_path: &str) -> anyhow::Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6471ad8e` (2026-11-10)
-**Commit Message**: fix(taro-components-advanced): avoid updating state while VirtualWaterfall/VirtualList render (#19612)
+### Incident Patch 1: `b6eaa4ef` (2026-11-17)
+**Commit Message**: fix(h5): report video picture-in-picture state (#19662)
 
-VirtualWaterfall lays out items lazily: while rendering it asks ListMap for
-the visible range, and ListMap assigns newly reached items to a column and
-records their size through setSizeByPosition, which calls the component's
-refresh callback. refresh calls setState (or forceUpdate under Preact), so
-every newly laid out item triggered a state update from inside render.
-React reports this as "Cannot update during an existing state transition
-(such as within `render`)", and it also scheduled one extra update per item.
-VirtualList has the same problem: ListSet.getSize records the size of
-items measured during render through setSize, which calls refresh as well.
-
-The re-render itself is still required, because sizes recorded during a
-render (e.g. the wrapper height, which is computed before the columns) are
-only reflected by the next one. So instead of dropping the refresh, mark
-the component as rendering, remember refresh requests made in the meantime
-and flush them once from componentDidMount/componentDidUpdate after the
-render has been committed. Refresh requests made outside of re
-
-**File**: `packages/taro-components-advanced/__tests__/virtual-list.spec.tsx` (added, +80/-0)
+**File**: `packages/taro-h5/__tests__/ui/window.test.ts` (modified, +24/-1)
 ```diff
-@@ -0,0 +1,80 @@
-+import React, { act } from 'react'
-+import { createRoot } from 'react-dom/client'
+@@ -1,5 +1,5 @@
+ import { getWindowInfo } from '../../src/api/base/system'
+-import { offWindowResize, onWindowResize } from '../../src/api/ui/window'
++import { checkIsPictureInPictureActive, offWindowResize, onWindowResize } from '../../src/api/ui/window'
+ 
+ test('reports the updated viewport dimensions to resize listeners', () => {
+   const callback = jest.fn()
+@@ -30,3 +30,26 @@ test('reports the updated viewport dimensions to resize listeners', () => {
+     jest.restoreAllMocks()
+   }
+ })
 +
-+import List from '../src/components/virtual-list/react/list'
-+
-+import type { Root } from 'react-dom/client'
-+
-+jest.mock('@tarojs/runtime', () => ({ document: { getElementById: jest.fn() }, now: () => Date.now() }))
-+jest.mock('@tarojs/taro', () => ({
-+  createIntersectionObserver: jest.fn(),
-+  createSelectorQuery: jest.fn(),
-+  getCurrentInstance: jest.fn()
-+}))
-+
-+const originalActEnvironment = (globalThis as any).IS_REACT_ACT_ENVIRONMENT
-+
-+function Item ({ id, index }: { id?: string, index?: number }) {
-+  return <div id={id}>{index}</div>
-+}
-+
-+describe('VirtualList', () => {
-+  let container: HTMLDivElement
-+  let root: Root
-+  let consoleError: jest.SpyInstance
-+  let renderDepth: number
-+  let updatesDuringRender: number
-+
-+  beforeEach(() => {
-+    (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true
-+    consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
-+    // React only warns about render phase updates once per process, so also count them directly
-+    renderDepth = 0
-+    updatesDuringRender = 0
-+    const { render, setState } = List.prototype
-+    jest.spyOn(List.prototype, 'render').mockImplementation(function (this: List) {
-+      renderDepth++
-+      try {
-+        return render.call(this)
-+      } finally {
-+        renderDepth--
-+      }
-+    })
-+    jest.spyOn(List.prototype, 'setState').mockImplementation(function (this: List, ...args: Parameters<typeof setState>) {
-+      if (renderDepth > 0) updatesDuringRender++
-+      return setState.apply(this, args)
-+    })
-+    container = document.createElement('div')
-+    document.body.appendChild(container)
-+    root = createRoot(container)
++test('reports the current video picture-in-picture state synchronously', () => {
++  let activeVideo: HTMLVideoElement | null = null
++  const original = Object.getOwnPropertyDescriptor(document, 'pictureInPictureElement')
++  Object.defineProperty(document, 'pictureInPictureElement', {
++    configurable: true,
++    get: () => activeVideo,
 +  })
 +
-+  afterEach(() => {
-+    act(() => root.unmount())
-+    container.remove()
-+    jest.restoreAllMocks()
-+    ;(globalThis as any).IS_REACT_ACT_ENVIRONMENT = originalActEnvironment
-+  })
-+
-+  it('does not update state while rendering when item sizes are measured', () => {
-+    act(() => {
-+      root.render(
-+        <List
-+          id='list'
-+          height={300}
-+          width={400}
-+          item={Item}
-+          itemCount={20}
-+          itemSize={(index = 0) => 100 + index}
-+        />
-+      )
-+    })
-+
-+    expect(container.querySelector('#list-0')).not.toBeNull()
-+    expect(updatesDuringRender).toBe(0)
-+    expect(consoleError).not.toHaveBeenCalledWith(
-+      expect.stringContaining('Cannot update during an existing state transition'),
-+      expect.anything()
-+    )
-+  })
-+})
-```
-
-**File**: `packages/taro-components-advanced/__tests__/virtual-waterfall.spec.tsx` (added, +145/-0)
-```diff
-@@ -0,0 +1,145 @@
-+import React, { act } from 'react'
-+import { createRoot } from 'react-dom/client'
-+
-+import Waterfall from '../src/components/virtual-waterfall/react/waterfall'
-+
-+import type { Root } from 'react-dom/client'
-+
-+jest.mock('@tarojs/runtime', () => ({
-+  cancelAnimationFrame: jest.fn(),
-+  document: { getElementById: jest.fn() },
-+  now: () => Date.now(),
-+  requestAnimationFrame: jest.fn()
-+}))
-+jest.mock('@tarojs/taro', () => ({
-+  createIntersectionObserver: jest.fn(),
-+  createSelectorQuery: jest.fn(),
-+  getCurrentInstance: jest.fn()
-+}))
-+
-+// Scroll events are only filtered for shaking outside of the web platform
-+process.env.TARO_PLATFORM = 'web'
-+
-+const originalActEnvironment = (globalThis as any).IS_REACT_ACT_ENVIRONMENT
-+
-+function Item ({ id, index }: { id?: string, index?: number }) {
-+  return <div id={id}>{index}</div>
-+}
-+
-+describe('VirtualWaterfall', () => {
-+  let container: HTMLDivElement
-+  let root: Root
-+  let consoleError: jest.SpyInstance
-+  let renderDepth: number
-+  let updatesDuringRender: number
-+
-+  const renderWaterfall = (props: Partial<React.ComponentProps<typeof Waterfall>> = {}) => {
-+    act(() => {
-+      root.render(
-+        <Waterfall
-+          id='waterfall'
-+          column={2}
-+          height={300}
-+          width={400}
-+          item={Item}
-+          itemCount={20}
-+          itemSize={(index = 0) => 100 + index * 10}
-+          {...props}
-+        />
-+      )
-+    })
-+  }
-+
-+  const getWrapperHeight = () => container.querySelector<HTMLElement>('#waterfall-wrapper')!.style.height
-+
-+  beforeEach(() => {
-+    (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true
-+    consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
-+    // React only warns about render phase updates once per process, so also count them directly
-+    renderDepth = 0
-+    updatesDuringRender = 0
-+    const { render, setState } = Waterfall.prototype
-+    jest.spyOn(Waterfall.prototype, 'render').mockImplementation(function (this: Waterfall) {
-+      renderDepth++
-+      try {
-+        return render.call(this)
-+      } finally {
-+        renderDepth--
-+      }
-+    })
-+    jest.spyOn(Waterfall.prototype, 'setState').mockImplementation(function (this: Waterfall, ...args: Parameters<typeof setState>) {
-+      if (renderDepth > 0) updatesDuringRender++
-+      return setState.apply(this, args)
-+    })
-+    container = document.createElement('div')
-+    document.body.appendChild(container)
-+    root = createRoot(container)
-+  })
-+
-+  afterEach(() => {
-+    act(() => root.unmount())
-+    container.remove()
-+    jest.restoreAllMocks()
-+    ;(globalThis as any).IS_REACT_ACT_ENVIRONMENT = originalActEnvironment
-+  })
-+
-+  it('does not update state while rendering when items are laid out on mount', () => {
-+    renderWaterfall()
-+
-+    expect(container.querySelector('#waterfall-0')).not.toBeNull()
-+    expect(updatesDuringRender).toBe(0)
-+    expect(consoleError).not.toHaveBeenCalledWith(
-+      expect.stringContaining('Cannot update during an existing state transition'),
-+      expect.anything()
-+    )
-+  })
-+
-+  it('does not update state while rendering when more items are laid out by scrolling', () => {
-+    renderWaterfall()
-+
-+    const outer = container.querySelector<HTMLElement>('#waterfall')!
-+    Object.defineProperties(outer, {
-+      scrollHeight: { configurable: true, value: 10000 },
-+      scrollWidth: { configurable: true, value: 400 },
-+      scrollTop: { configurable: true, value: 600 }
-+    })
-+    act(() => {
-+      outer.dispatchEvent(new Event('scroll', { bubbles: true }))
-+    })
-+
-+    expect(container.querySelector('#waterfall-10')).not.toBeNull()
-+    expect(updatesDuringRender).toBe(0)
-+  })
-+
-+  it('renders again after commit so the wrapper height includes items laid out during render', () => {
-+    renderWaterfall({ itemCount: 4, itemSize: () => 100 })
-+
-+    // Each of the two columns ends up with two items
-+    expect(getWrapperHeight()).toBe('200px')
-+  })
-+
-+  it('keeps refreshing synchronously when requested outside of render', () => {
-+    const ref = React.createRef<Waterfall>()
-+    act(() => {
-+      root.render(
-+        <Waterfall
-+          ref={ref}
-+          id='waterfall'
-+          column={2}
-+          height={300}
-+          width={400}
-+          item={Item}
-+          itemCount={4}
-+          itemSize={() => 100}
-+        />
-+      )
-+    })
-+    expect(getWrapperHeight()).toBe('200px')
-+
-+    act(() => {
-+      ref.current!.itemMap.setSizeByPosition(0, 0, 500)
-+    })
-+
-+    expect(getWrapperHeight()).toBe('600px')
-+  })
-+})
-```
-
-**File**: `packages/taro-components-advanced/src/components/virtual-list/react/list.ts` (modified, +29/-0)
-```diff
-@@ -61,7 +61,18 @@ export default class List extends React.PureComponent<IProps, IState> {
-     }
-   }
- 
-+  _isRendering = false
-+
-+  _hasPendingRefresh = false
-+
-   refresh = () => {
-+    // Note: ListSet records the size of newly measured items while rendering and asks for a refresh,
-+    // updating state at that point is illegal, so wait until the current render has been committed.
-+    if (this._isRendering) {
-+      this._hasPendingRefresh = true
-+      return
-+    }
-+
-     if (process.env.FRAMEWORK === 'preact') {
-       this.forceUpdate()
-     } else {
-@@ -71,6 +82,13 @@ export default class List extends React.PureComponent<IProps, IState> {
-     }
-   }
- 
-+  _flushPendingRefresh () {
-+    if (this._hasPendingRefresh) {
-+      this._hasPendingRefresh = false
-+      this.refresh()
-+    }
-+  }
-+
-   _outerRef = undefined
- 
-   _resetIsScrollingTimeoutId = null
-@@ -333,6 +351,7 @@ export default class List extends React.PureComponent<IProps, IState> {
- 
-     this._callPropsCallbacks()
-     this.preset.boundaryDetection()
-+    this._flushPendingRefresh()
-   }
- 
-   componentDidUpdate (prevProps: IProps, prevState: IState) {
-@@ -370,6 +389,7 @@ export default class List extends React.PureComponent<IProps, IState> {
-     }
- 
-     this._callPropsCallbacks(prevProps, prevState)
-+    this._flushPendingRefresh()
-   }
- 
-   componentWillUnmount () {
-@@ -464,6 +484,15 @@ export default class List extends React.PureComponent<IProps, IState> {
-   }
- 
-   render () {
-+    this._isRendering = true
-+    try {
-+      return this._renderList()
-+    } finally {
-+      this._isRendering = false
-+    }
-+  }
-+
-+  _renderList () {
-     const {
-       className,
-       direction,
-```
-
-**File**: `packages/taro-components-advanced/src/components/virtual-waterfall/react/waterfall.ts` (modified, +29/-0)
-```diff
-@@ -52,7 +52,18 @@ export default class Waterfall extends React.PureComponent<IProps, IState> {
-     }
-   }
- 
-+  _isRendering = false
-+
-+  _hasPendingRefresh = false
-+
-   refresh = () => {
-+    // Note: ListMap records the size of newly laid out items while rendering and asks for a refresh,
-+    // updating state at that point is illegal, so wait until the current render has been committed.
-+    if (this._isRendering) {
-+      this._hasPendingRefresh = true
-+      return
-+    }
-+
-     if (process.env.FRAMEWORK === 'preact') {
-       this.forceUpdate()
-     } else {
-@@ -62,6 +73,13 @@ export default class Waterfall extends React.PureComponent<IProps, IState> {
-     }
-   }
- 
-+  _flushPendingRefresh () {
-+    if (this._hasPendingRefresh) {
-+      this._hasPendingRefresh = false
-+      this.refresh()
-+    }
-+  }
-+
-   _outerRef = undefined
- 
-   _resetIsScrollingTimeoutId = null
-@@ -251,6 +269,7 @@ export default class Waterfall extends React.PureComponent<IProps, IState> {
- 
-     this._callPropsCallbacks()
-     this.preset.boundaryDetection()
-+    this._flushPendingRefresh()
-   }
- 
-   componentDidUpdate (prevProps: IProps, prevState: IState) {
-@@ -263,6 +282,7 @@ export default class Waterfall extends React.PureComponent<IProps, IState> {
-     }
- 
-     this._callPropsCallbacks(prevProps, prevState)
-+    this._flushPendingRefresh()
-   }
- 
-   componentWillUnmount () {
-@@ -351,6 +371,15 @@ export default class Waterfall extends React.PureComponent<IProps, IState> {
-   }
- 
-   render () {
-+    this._isRendering = true
-+    try {
-+      return this._renderWaterfall()
-+    } finally {
-+      this._isRendering = false
-+    }
-+  }
-+
-+  _renderWaterfall () {
-     const {
-       className,
-       style,
-```
-
----
-
-### Incident Patch 2: `216a9174` (2026-11-10)
-**Commit Message**: fix(h5): isolate each chooseLocation call and settle it only once (#19611)
-
-* fix(h5): isolate each chooseLocation call and settle it only once
-
-`createLocationChooser` kept the picker element in a module-level
-`container` variable and reused it whenever it was still set, while
-`remove()` unconditionally reset that variable. The teardown is delayed
-by 300ms, so two problems followed from this shared state:
-
-- Calling `chooseLocation` again within that 300ms window reused the
-  previous picker. When the first call's timer fired it removed the DOM
-  of the picker the second call was showing, so the second promise never
-  settled and its `message` listener was never detached.
-- The `back`/`submit` handlers had no "already finished" guard, so a
-  `popstate` (browser back) or another click arriving during the same
-  300ms window invoked the caller's handler a second time. A confirmed
-  selection could therefore report both `success` and `fail`, and
-  `complete` ran twice.
-
-Each call now builds its own container, `remove()` only detaches its own
-node and clears its own pending show timer, and a `settled` guard makes
-sure the caller is notified exactly once. Listeners are detached as soon
-
-**File**: `packages/taro-h5/__tests__/location/chooseLocation.test.ts` (modified, +150/-4)
-```diff
-@@ -10,7 +10,7 @@ describe('chooseLocation coordinates', () => {
-   })
- 
-   afterEach(() => {
--    document.querySelector<HTMLElement>('.taro_choose_location_back')?.click()
-+    document.querySelectorAll<HTMLElement>('.taro_choose_location_back').forEach(back => back.click())
-     jest.runOnlyPendingTimers()
-     document.body.innerHTML = ''
-     if (apiKey) Object.defineProperty(globalThis, 'LOCATION_APIKEY', apiKey)
-@@ -23,16 +23,29 @@ describe('chooseLocation coordinates', () => {
-     const fail = jest.fn()
-     const complete = jest.fn()
-     const result = chooseLocation({ mapOpts, success, fail, complete }).catch(error => error)
--    return { result, success, fail, complete }
-+    return { result, success, fail, complete, scope: currentChooser() }
-   }
- 
--  function confirm (latitude?: number, longitude?: number) {
-+  // 最后打开的那个选择器才是当前可交互的那个（上一个可能还在 300ms 的移除窗口里）
-+  function currentChooser () {
-+    const mains = document.querySelectorAll<HTMLElement>('.taro_choose_location')
-+    return mains[mains.length - 1]
-+  }
-+
-+  // 选点消息必须带上发出它的 iframe，否则会被其它调用的选择器误收
-+  function selectPoint (scope: HTMLElement, latitude?: number, longitude?: number) {
-+    const iframe = scope.querySelector<HTMLIFrameElement>('.taro_choose_location_frame')!
-     window.dispatchEvent(new MessageEvent('message', {
-+      source: iframe.contentWindow,
-       data: {
-         module: 'locationPicker', poiname: 'place', poiaddress: 'address', latlng: { lat: latitude, lng: longitude }
-       }
-     }))
--    document.querySelector<HTMLElement>('.taro_choose_location_submit')!.click()
-+  }
-+
-+  function confirm (latitude?: number, longitude?: number, scope: HTMLElement = currentChooser()) {
-+    selectPoint(scope, latitude, longitude)
-+    scope.querySelector<HTMLElement>('.taro_choose_location_submit')!.click()
-   }
- 
-   test.each([[-33.86, 151.21], [37.77, -122.42], [-33.45, -70.66], [0, 0], [90, 180], [-90, -180]])('passes initial coordinates %s,%s to the map iframe', (latitude, longitude) => {
-@@ -90,4 +103,137 @@ describe('chooseLocation coordinates', () => {
-     expect(success).not.toHaveBeenCalled()
-     expect(fail).toHaveBeenCalledTimes(1)
-   })
-+
-+  test('ignores a popstate that arrives after the point has been confirmed', async () => {
-+    const { result, success, fail, complete } = openChooser()
-+    confirm(1, 2)
-+    expect(await result).toEqual(expect.objectContaining({ errMsg: 'chooseLocation:ok' }))
-+
-+    // 选择器要到 300ms 后才会被移除，这期间用户仍可能按下浏览器返回
-+    window.dispatchEvent(new PopStateEvent('popstate'))
-+    jest.runOnlyPendingTimers()
-+
-+    expect(success).toHaveBeenCalledTimes(1)
-+    expect(fail).not.toHaveBeenCalled()
-+    expect(complete).toHaveBeenCalledTimes(1)
-+  })
-+
-+  test('ignores a second click on 返回 after cancellation', async () => {
-+    const { result, fail, complete } = openChooser()
-+    const back = document.querySelector<HTMLElement>('.taro_choose_location_back')!
-+    back.click()
-+    expect(await result).toEqual({ errMsg: 'chooseLocation:fail cancel' })
-+
-+    back.click()
-+    jest.runOnlyPendingTimers()
-+
-+    expect(fail).toHaveBeenCalledTimes(1)
-+    expect(complete).toHaveBeenCalledTimes(1)
-+  })
-+
-+  test('a chooser opened while the previous one is being torn down still works', async () => {
-+    const first = openChooser()
-+    confirm(1, 2)
-+    expect(await first.result).toEqual(expect.objectContaining({ errMsg: 'chooseLocation:ok' }))
-+
-+    // 上一个选择器的移除定时器（300ms）还没到点就再次打开
-+    jest.advanceTimersByTime(100)
-+    const second = openChooser()
-+    expect(document.querySelector('.taro_choose_location_submit')).not.toBeNull()
-+
-+    // 上一个选择器的移除定时器到点，不应影响这一个
-+    jest.advanceTimersByTime(400)
-+    expect(document.querySelector('.taro_choose_location_submit')).not.toBeNull()
-+
-+    confirm(3, 4)
-+    expect(await second.result).toEqual({
-+      errMsg: 'chooseLocation:ok', latitude: 3, longitude: 4, name: 'place', address: 'address'
-+    })
-+    expect(second.success).toHaveBeenCalledTimes(1)
-+    expect(second.complete).toHaveBeenCalledTimes(1)
-+    // 第一次调用的回调不应被第二次的交互再次触发
-+    expect(first.success).toHaveBeenCalledTimes(1)
-+    expect(first.complete).toHaveBeenCalledTimes(1)
-+  })
-+
-+  test('ignores a location message with a null source', async () => {
-+    const { result, success, fail, complete, scope } = openChooser()
-+    window.dispatchEvent(new MessageEvent('message', {
-+      source: null,
-+      data: {
-+        module: 'locationPicker', poiname: 'place', poiaddress: 'address', latlng: { lat: 1, lng: 2 }
-+      }
-+    }))
-+    scope.querySelector<HTMLElement>('.taro_choose_location_submit')!.click()
-+
-+    expect(await result).toEqual({ errMsg: 'chooseLocation:fail' })
-+    expect(success).not.toHaveBeenCalled()
-+    expect(fail).toHaveBeenCalledTimes(1)
-+    expect(complete).toHaveBeenCalledTimes(1)
-+  })
-+
-+  test.each(['forward', 'reverse'])('keeps both concurrent choosers isolated with messages in %s order', async order => {
-+    const first = openChooser()
-+    const second
-```
-
-**File**: `packages/taro-h5/src/api/location/chooseLocation.ts` (modified, +48/-17)
-```diff
-@@ -10,7 +10,6 @@ function isValidCoordinates (latitude: unknown, longitude: unknown) {
-     typeof longitude === 'number' && longitude >= -180 && longitude <= 180
- }
- 
--let container: HTMLDivElement | null = null
- function createLocationChooser (handler, key = LOCATION_APIKEY, mapOpt: Taro.chooseLocation.Option['mapOpts'] = {}) {
-   const { latitude, longitude, ...opts } = mapOpt
-   const query = {
-@@ -20,8 +19,7 @@ function createLocationChooser (handler, key = LOCATION_APIKEY, mapOpt: Taro.cho
-     referer: 'myapp',
-     ...opts
-   }
--  if (!container) {
--    const html = `
-+  const html = `
- <div class='taro_choose_location'>
-   <div class='taro_choose_location_bar'>
-     <div class='taro_choose_location_back'></div>
-@@ -31,13 +29,19 @@ function createLocationChooser (handler, key = LOCATION_APIKEY, mapOpt: Taro.cho
-   <iframe class='taro_choose_location_frame' frameborder='0' src="https://apis.map.qq.com/tools/locpicker?${queryString.stringify(query, { arrayFormat: 'comma', skipNull: true })}" />
- </div>
- `
--    container = document.createElement('div')
--    container.innerHTML = html
--  }
-+  const container = document.createElement('div')
-+  container.innerHTML = html
-   const main: HTMLDivElement = container.querySelector('.taro_choose_location') as HTMLDivElement
-+  const frame = container.querySelector('.taro_choose_location_frame') as HTMLIFrameElement | null
-+  const backButton = container.querySelector('.taro_choose_location_back')
-+  const submitButton = container.querySelector('.taro_choose_location_submit')
-+  // 结束后选择器还会停留 300ms 再移除，期间的返回/完成不应再次通知调用方
-+  let settled = false
-+  let detached = false
-+  let showTimer: ReturnType<typeof setTimeout> | undefined
- 
-   function show () {
--    setTimeout(() => {
-+    showTimer = setTimeout(() => {
-       main.style.top = '0'
-     })
-   }
-@@ -46,31 +50,49 @@ function createLocationChooser (handler, key = LOCATION_APIKEY, mapOpt: Taro.cho
-     main.style.top = '100%'
-   }
- 
--  function back () {
-+  function detachListeners () {
-+    if (detached) return
-+    detached = true
-+    backButton?.removeEventListener('click', back)
-+    submitButton?.removeEventListener('click', submit)
-+    window.removeEventListener('popstate', back)
-+  }
-+
-+  function settle (res?: { errMsg: string }) {
-+    if (settled) return
-+    settled = true
-+    detachListeners()
-     hide()
--    handler({ errMsg: 'cancel' })
-+    handler(res)
-+  }
-+
-+  function back () {
-+    settle({ errMsg: 'cancel' })
-   }
- 
-   function submit () {
--    hide()
--    handler()
-+    settle()
-   }
- 
-   function remove () {
--    container?.remove()
--    container = null
--    window.removeEventListener('popstate', back)
-+    if (showTimer !== undefined) {
-+      clearTimeout(showTimer)
-+      showTimer = undefined
-+    }
-+    detachListeners()
-+    container.remove()
-   }
- 
--  container.querySelector('.taro_choose_location_back')?.addEventListener('click', back)
--  container.querySelector('.taro_choose_location_submit')?.addEventListener('click', submit)
-+  backButton?.addEventListener('click', back)
-+  submitButton?.addEventListener('click', submit)
- 
-   window.addEventListener('popstate', back)
- 
-   return {
-     show,
-     remove,
-     container,
-+    frame,
-   }
- }
- 
-@@ -90,11 +112,18 @@ export const chooseLocation: typeof Taro.chooseLocation = ({ success, fail, comp
- 
-     const key = LOCATION_APIKEY
- 
-+    // 本次调用自己的选点 iframe，createLocationChooser 返回后立即赋值
-+    let frame: HTMLIFrameElement | null = null
-+
-     const onMessage = event => {
-+      // 页面上可能同时存在多个选点 iframe：并发调用，或上一次调用正处于
-+      // 延迟移除的窗口期。只认本次调用自己的 iframe，否则各调用之间会串号。
-+      if (!frame || event.source !== frame.contentWindow) return
-+
-       // 接收位置信息，用户选择确认位置点后选点组件会触发该事件，回传用户的位置信息
-       const loc = event.data
- 
--      // 防止其他应用也会向该页面 post 信息，需判断 module 是否为'locationPicker'
-+      // 防止其他应用也会向该页面 post 信息，需判断 module 是否为 'locationPicker'
-       if (!loc || loc.module !== 'locationPicker') return
- 
-       chooseLocation.name = loc.poiname
-@@ -119,6 +148,8 @@ export const chooseLocation: typeof Taro.chooseLocation = ({ success, fail, comp
-       }
-     }, key, mapOpts)
- 
-+    frame = chooser.frame
-+
-     document.body.appendChild(chooser.container)
- 
-     window.addEventListener('message', onMessage, false)
-```
-
----
-
-### Incident Patch 3: `b92aa65d` (2026-11-13)
-**Commit Message**: fix(water-flow): 修复 H5 动态切列后的布局错位 (#19651)
-
-* fix(water-flow): handle H5 column changes
-
-* fix(water-flow): use live H5 width for auto columns
-
-* fix(water-flow): update positions after dynamic height changes
-
-**File**: `packages/taro-components-advanced/__tests__/water-flow-column.spec.tsx` (added, +231/-0)
-```diff
-@@ -0,0 +1,231 @@
-+import React, { act } from 'react'
-+import { createRoot } from 'react-dom/client'
-+
-+import { FlowItem } from '../src/components/water-flow/flow-item'
-+import { FlowSection } from '../src/components/water-flow/flow-section'
-+import { Root } from '../src/components/water-flow/root'
-+import { Section } from '../src/components/water-flow/section'
-+import { WaterFlow } from '../src/components/water-flow/water-flow'
-+
-+import type { Root as ReactRoot } from 'react-dom/client'
-+
-+let resizeCallback: ((value: { size: { windowWidth: number } }) => void) | undefined
-+jest.mock('@tarojs/taro', () => {
-+  const getSystemInfoSync = jest.fn(() => ({ windowWidth: 400, windowHeight: 800 }))
-+  return {
-+    __esModule: true,
-+    default: { getSystemInfoSync },
-+    getSystemInfoSync,
-+    getEnv: () => 'WEB',
-+    nextTick: (callback: () => void) => callback(),
-+    useResize: (callback: typeof resizeCallback) => { resizeCallback = callback },
-+  }
-+})
-+jest.mock('@tarojs/runtime', () => ({
-+  requestAnimationFrame: (callback: FrameRequestCallback) => setTimeout(callback, 0),
-+  cancelAnimationFrame: (handle: number) => clearTimeout(handle),
-+  document: { getElementById: jest.fn() },
-+}))
-+jest.mock('@tarojs/components', () => {
-+  const View = React.forwardRef(function View(props: any, ref: any) { return <div {...props} ref={ref} /> })
-+  const ScrollView = React.forwardRef(function ScrollView({ scrollY: _scrollY, ...props }: any, ref: any) { return <div {...props} ref={ref} /> })
-+  return { View, ScrollView }
-+}, { virtual: true })
-+jest.mock('../src/utils/scrollElementContext', () => ({
-+  ScrollElementContextOrFallback: jest.requireActual('react').createContext(null),
-+}))
-+jest.mock('../src/components/water-flow/utils', () => ({
-+  ...jest.requireActual('../src/components/water-flow/utils'),
-+  isH5: true,
-+}))
-+
-+let mount: HTMLDivElement
-+let reactRoot: ReactRoot
-+let model: Root
-+
-+beforeEach(() => {
-+  (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true
-+  const originalRegister = Root.prototype.registerSection
-+  jest.spyOn(Root.prototype, 'registerSection').mockImplementation(function (this: Root, section: Section) {
-+    model = this
-+    return originalRegister.call(this, section)
-+  })
-+  jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
-+    const height = this.id === 'test' ? 300 : 100
-+    return { width: 400, height, top: 0, bottom: height, left: 0, right: 400, x: 0, y: 0, toJSON: () => {} } as DOMRect
-+  })
-+  mount = document.createElement('div')
-+  document.body.appendChild(mount)
-+  reactRoot = createRoot(mount)
-+})
-+
-+afterEach(() => {
-+  act(() => reactRoot.unmount())
-+  mount.remove()
-+  const getSystemInfoSync = (jest.requireMock('@tarojs/taro') as { getSystemInfoSync: jest.Mock }).getSystemInfoSync
-+  getSystemInfoSync.mockReturnValue({ windowWidth: 400, windowHeight: 800 })
-+  jest.restoreAllMocks()
-+})
-+
-+function renderFlow(column: number, count = 6, autoColumn = false, onColumnChange?: (column: number) => void) {
-+  act(() => reactRoot.render(
-+    <WaterFlow id='test' style={{ height: 300 }}>
-+      <FlowSection id='grid' column={column} autoColumn={autoColumn} onColumnChange={onColumnChange}>
-+        {Array.from({ length: count }, (_, index) => <FlowItem key={index}>{index}</FlowItem>)}
-+      </FlowSection>
-+    </WaterFlow>
-+  ))
-+  return model.findSection('grid')!
-+}
-+
-+test('reflows the same H5 section on column changes without remounting', () => {
-+  const section = renderFlow(2)
-+  expect(section.columnMap.map(nodes => nodes.map(node => node.childIndex))).toEqual([[0, 2, 4], [1, 3, 5]])
-+  const previousMap = section.columnMap
-+  renderFlow(2)
-+  expect(section.columnMap).toBe(previousMap)
-+  renderFlow(3)
-+  expect(section.columnMap.map(nodes => nodes.map(node => node.childIndex))).toEqual([[0, 3], [1, 4], [2, 5]])
-+  expect(section.getState().renderRange).toHaveLength(3)
-+  renderFlow(1)
-+  expect(section.columnMap).toHaveLength(1)
-+  expect(section.getState().renderRange).toHaveLength(1)
-+  expect(model.findSection('grid')).toBe(section)
-+})
-+
-+test('remeasures relocated items and updates positions after their height changes', async () => {
-+  jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
-+    const section = model?.findSection('grid')
-+    const height = this.id === 'test' ? 300 : section?.col === 3 && this.id.endsWith('-item-3') ? 180 : 100
-+    return { width: 400, height, top: 0, bottom: height, left: 0, right: 400, x: 0, y: 0, toJSON: () => {} } as DOMRect
-+  })
-+  const section = renderFlow(2, 9)
-+  expect(section.columnMap[1][1].getState().height).toBe(100)
-+  await act(async () => {
-+    renderFlow(3, 9)
-+    await Promise.resolve()
-+  })
-+  expect(section.columnMap[0][1].getState().height).toBe(180)
-+  expect(section.columnMap[0][2].getState().top).toBe(280)
-+})
-+
-+test('finalizes appended items before reflowing and flushes tota
-```
-
-**File**: `packages/taro-components-advanced/__tests__/water-flow-platform.spec.tsx` (added, +93/-0)
-```diff
-@@ -0,0 +1,93 @@
-+import React, { act } from 'react'
-+import { createRoot } from 'react-dom/client'
-+
-+import { FlowItem } from '../src/components/water-flow/flow-item'
-+import { FlowSection } from '../src/components/water-flow/flow-section'
-+import { Root } from '../src/components/water-flow/root'
-+import { WaterFlow } from '../src/components/water-flow/water-flow'
-+
-+let resizeCallback: ((value: { size: { windowWidth: number } }) => void) | undefined
-+jest.mock('@tarojs/taro', () => ({
-+  __esModule: true,
-+  default: { getSystemInfoSync: () => ({ windowWidth: 400, windowHeight: 800 }) },
-+  getSystemInfoSync: () => ({ windowWidth: 400, windowHeight: 800 }),
-+  getEnv: () => 'WEB',
-+  nextTick: (callback: () => void) => callback(),
-+  useResize: (callback: typeof resizeCallback) => { resizeCallback = callback },
-+}))
-+jest.mock('@tarojs/runtime', () => ({
-+  requestAnimationFrame: (callback: FrameRequestCallback) => setTimeout(callback, 0),
-+  cancelAnimationFrame: (handle: number) => clearTimeout(handle),
-+  document: { getElementById: jest.fn() },
-+}))
-+jest.mock('@tarojs/components', () => {
-+  const View = React.forwardRef(function View(props: any, ref: any) { return <div {...props} ref={ref} /> })
-+  const ScrollView = React.forwardRef(function ScrollView({ scrollY: _scrollY, ...props }: any, ref: any) { return <div {...props} ref={ref} /> })
-+  return { View, ScrollView }
-+}, { virtual: true })
-+jest.mock('../src/utils/scrollElementContext', () => ({
-+  ScrollElementContextOrFallback: jest.requireActual('react').createContext(null),
-+}))
-+
-+test('does not reflow manual column updates on non-H5 platforms', () => {
-+  (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true
-+  const originalRegister = Root.prototype.registerSection
-+  let model: Root
-+  const register = jest.spyOn(Root.prototype, 'registerSection').mockImplementation(function (this: Root, section) {
-+    model = this
-+    return originalRegister.call(this, section)
-+  })
-+  const measure = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
-+    width: 400, height: 300, top: 0, bottom: 300, left: 0, right: 400, x: 0, y: 0, toJSON: () => {},
-+  })
-+  const mount = document.createElement('div')
-+  document.body.appendChild(mount)
-+  const reactRoot = createRoot(mount)
-+  const render = (column: number) => act(() => reactRoot.render(
-+    <WaterFlow id='platform-test'>
-+      <FlowSection id='grid' column={column}><FlowItem>item</FlowItem></FlowSection>
-+    </WaterFlow>
-+  ))
 +  try {
-+    render(2)
-+    render(3)
-+    expect(model!.findSection('grid')?.col).toBe(2)
++    expect(checkIsPictureInPictureActive()).toBe(false)
++    activeVideo = document.createElement('video')
++    expect(checkIsPictureInPictureActive()).toBe(true)
++    activeVideo = null
++    expect(checkIsPictureInPictureActive()).toBe(false)
 +  } finally {
-+    act(() => reactRoot.unmount())
-+    mount.remove()
-+    register.mockRestore()
-+    measure.mockRestore()
-+  }
-+})
-+
-+test('preserves non-H5 resize notifications for all auto sections', () => {
-+  (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true
-+  const originalRegister = Root.prototype.registerSection
-+  let model: Root
-+  const register = jest.spyOn(Root.prototype, 'registerSection').mockImplementation(function (this: Root, section) {
-+    model = this
-+    return originalRegister.call(this, section)
-+  })
-+  const mount = document.createElement('div')
-+  document.body.appendChild(mount)
-+  const reactRoot = createRoot(mount)
-+  const firstChange = jest.fn()
-+  const secondChange = jest.fn()
-+  try {
-+    act(() => reactRoot.render(
-+      <WaterFlow id='platform-resize'>
-+        <FlowSection id='first' autoColumn onColumnChange={firstChange}><FlowItem>first</FlowItem></FlowSection>
-+        <FlowSection id='second' autoColumn onColumnChange={secondChange}><FlowItem>second</FlowItem></FlowSection>
-+      </WaterFlow>
-+    ))
-+    act(() => model!.findSection('second')!.reflow(3))
-+    act(() => resizeCallback?.({ size: { windowWidth: 640 } }))
-+    expect(model!.findSection('first')?.col).toBe(3)
-+    expect(firstChange).toHaveBeenCalledWith(3)
-+    expect(secondChange).toHaveBeenCalledWith(3)
-+  } finally {
-+    act(() => reactRoot.unmount())
-+    mount.remove()
-+    register.mockRestore()
-+  }
-+})
-```
-
-**File**: `packages/taro-components-advanced/src/components/water-flow/flow-item.ts` (modified, +7/-3)
-```diff
-@@ -69,8 +69,9 @@ export function FlowItemContainer({
- 
-   const setInnerMeasureRef = useMemoizedFn((el: HTMLElement | null) => {
-     const innerRef = refFlowItem as React.MutableRefObject<HTMLElement | undefined>
-+    const previousEl = innerRef.current
-     innerRef.current = el ?? undefined
--    node.attachMeasureElement(el)
-+    node.attachMeasureElement(el, previousEl)
-   })
- 
-   useEffect(() => {
-@@ -86,12 +87,15 @@ export function FlowItemContainer({
-       if (observer) {
-         observer.disconnect()
-       }
--      node.attachMeasureElement(null)
-     }
-   }, [node])
- 
-   useLayoutEffect(() => {
--    node.measure().catch(() => {})
-+    if (node.getState().layouted) {
-+      node.pub(NodeEvents.Resize)
++    if (original) {
++      Object.defineProperty(document, 'pictureInPictureElement', original)
 +    } else {
-+      node.measure().catch(() => {})
++      Reflect.deleteProperty(document, 'pictureInPictureElement')
 +    }
-   }, [node])
- 
-   return createElement(
++  }
++})
 ```
 
-**File**: `packages/taro-components-advanced/src/components/water-flow/interface.ts` (modified, +2/-1)
+**File**: `packages/taro-h5/src/api/ui/window.ts` (modified, +2/-1)
 ```diff
-@@ -69,7 +69,8 @@ export interface WaterFlowRef {
- 
- export interface FlowSectionProps extends BaseProps {
-   /**
--   * 列数
-+   * 列数，非有效正整数按 1 列处理。运行时修改仅 H5 支持；其他端需重建组件。
-+   * 减少子项数量时需重建 WaterFlow，当前不会从已有分组移除节点。
-    */
-   column?: number
-   /**
-```
-
-**File**: `packages/taro-components-advanced/src/components/water-flow/node.ts` (modified, +2/-2)
-```diff
-@@ -63,8 +63,8 @@ export class Node extends StatefulEventBus<NodeState> {
-     this.setupSubscriptions()
+@@ -37,4 +37,5 @@ export const offWindowResize: typeof Taro.offWindowResize = callback => {
    }
- 
--  attachMeasureElement (el: HTMLElement | null) {
--    this._measureEl = el
-+  attachMeasureElement (el: HTMLElement | null, previousEl?: HTMLElement) {
-+    if (el || this._measureEl === previousEl) this._measureEl = el
-   }
- 
-   private setupSubscriptions() {
-```
-
-**File**: `packages/taro-components-advanced/src/components/water-flow/water-flow.ts` (modified, +46/-7)
-```diff
-@@ -42,6 +42,11 @@ function pickControlledScrollOffset (value: unknown): number | undefined {
-   return typeof value === 'number' && !Number.isNaN(value) ? value : undefined
  }
  
-+function normalizeColumn (column: number | undefined): number {
-+  const value = Number(column ?? 1)
-+  return Number.isFinite(value) ? Math.max(1, Math.floor(value)) : 1
+-export const checkIsPictureInPictureActive = /* @__PURE__ */ temporarilyNotSupport('checkIsPictureInPictureActive')
++export const checkIsPictureInPictureActive: typeof Taro.checkIsPictureInPictureActive = () =>
++  typeof document !== 'undefined' && Boolean(document.pictureInPictureElement)
+```
+
+**File**: `packages/taro/types/api/ui/window.d.ts` (modified, +2/-1)
+```diff
+@@ -63,7 +63,8 @@ declare module '../../index' {
+ 
+     /**
+      * 返回当前是否存在小窗播放（小窗在 video/live-player/live-pusher 下可用）
+-     * @supported weapp
++     * H5 查询当前文档中使用标准画中画 API 的视频。
++     * @supported weapp, h5
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/ui/window/wx.checkIsPictureInPictureActive.html
+      */
+     checkIsPictureInPictureActive(): boolean
+```
+
+---
+
+### Incident Patch 2: `cc23bc48` (2026-11-17)
+**Commit Message**: fix(vite-runner): await mini modifyBuildAssets hook (#19658)
+
+* fix(vite-runner): await mini modifyBuildAssets hook
+
+* test(vite-runner): cover async asset additions
+
+**File**: `packages/taro-vite-runner/src/mini/emit.ts` (modified, +1/-1)
+```diff
+@@ -215,7 +215,7 @@ export default function (viteCompilerContext: ViteMiniCompilerContext): PluginOp
+               return true
+             },
+           })
+-          taroConfig.modifyBuildAssets(
++          await taroConfig.modifyBuildAssets(
+             assetsProxy,
+             {
+               pages: viteCompilerContext.pages,
+```
+
+**File**: `packages/taro-vite-runner/tests/mini/emit.spec.ts` (modified, +39/-15)
+```diff
+@@ -6,19 +6,13 @@ import emitPlugin from '../../src/mini/emit'
+ import type { ViteMiniCompilerContext } from '@tarojs/taro/types/compile/viteCompilerContext'
+ import type { Plugin } from 'rollup'
+ 
+-test('emits new assets added by modifyBuildAssets', async () => {
+-  const fileName = '.browserslistrc'
+-  const source = 'defaults and fully supports es6-module'
++function buildWithAssetHook (modifyBuildAssets: (assets: Record<string, { source: () => string }>) => void | Promise<void>) {
+   const plugins = emitPlugin({
+-    taroConfig: {
+-      modifyBuildAssets (assets) {
+-        assets[fileName] = { source: () => source }
+-      }
+-    }
++    taroConfig: { modifyBuildAssets }
+   } as unknown as ViteMiniCompilerContext) as Plugin[]
+ 
+-  const entry = '\0app'
+-  const bundle = await rollup({
++  const entry = 'app.js'
++  return rollup({
+     input: entry,
+     plugins: [
+       {
+@@ -29,15 +23,45 @@ test('emits new assets added by modifyBuildAssets', async () => {
+       plugins.find(plugin => plugin.name === 'taro:vite-mini-emit-post'),
+     ],
+   })
 +}
 +
- const InnerWaterFlow = (
-   { children, ...props }: PropsWithChildren<WaterFlowProps>,
-   ref: React.ForwardedRef<HTMLElement>
-@@ -221,6 +226,7 @@ const InnerWaterFlow = (
- 
-   const controlledScrollTop = pickControlledScrollOffset(scrollTop)
-   const controlledScrollLeft = pickControlledScrollOffset(scrollLeft)
-+  const warnedShrinks = useRef<Map<string, number> | null>(null)
- 
-   const sections = useMemo(() => {
-     const [start, end] = renderRange$
-@@ -244,10 +250,10 @@ const InnerWaterFlow = (
-           order,
-           col: autoColumn
-             ? getFeedColumn(Taro.getSystemInfoSync().windowWidth)
--            : (sectionProps.column ?? 1),
-+            : normalizeColumn(sectionProps.column),
-           rowGap: sectionProps.rowGap || 0,
-           columnGap: sectionProps.columnGap || 0,
--          count: Children.count(sectionProps.children),
-+          count: childCount,
-         })
-       }
-       // 同步只读控制字段(纯赋值,不触发 pub);autoColumn 下列数由 useResize/reflow 驱动
-@@ -260,33 +266,66 @@ const InnerWaterFlow = (
- 
-   /** autoColumn:监听窗口变化,组件内部算列数并原地 reflow,不依赖业务改 props */
-   useResize(useMemoizedFn((res: Taro.PageResizeObject) => {
--    const width = res?.size?.windowWidth ?? Taro.getSystemInfoSync().windowWidth
-+    const width = isH5
-+      ? Taro.getSystemInfoSync().windowWidth
-+      : (res?.size?.windowWidth ?? Taro.getSystemInfoSync().windowWidth)
-     const nextCol = getFeedColumn(width)
-     let changed = false
-     for (const section of root.sectionMap.values()) {
-       if (section.autoColumn && section.col !== nextCol) {
-         section.reflow(nextCol)
-         changed = true
-+        if (isH5) section.onColumnChange?.(nextCol)
-       }
-     }
-     if (changed) {
--      root.setStateIn('renderRange', root.getSectionRenderRange())
--      for (const section of root.sectionMap.values()) {
--        if (section.autoColumn) section.onColumnChange?.(nextCol)
-+      if (isH5) {
-+        root.updateScrollHeight(true)
-+      } else {
-+        root.setStateIn('renderRange', root.getSectionRenderRange())
-+        for (const section of root.sectionMap.values()) {
-+          if (section.autoColumn) section.onColumnChange?.(nextCol)
-+        }
-       }
-     }
-   }))
- 
-   /** 配对 pushNodesStructuralOnly：在 layout 阶段完成 Section 状态，避免 useMemo 内 setState 告警 */
-   useLayoutEffect(() => {
-+    let changed = false
-+    let autoColumnCount: number | undefined
-+    const getAutoColumnCount = () => {
-+      autoColumnCount ??= getFeedColumn(Taro.getSystemInfoSync().windowWidth)
-+      return autoColumnCount
++test.each([false, true])('applies synchronous additions and asynchronous updates (async: %s)', async asynchronous => {
++  const fileName = '.browserslistrc'
++  const source = 'defaults and fully supports es6-module'
++  const bundle = await buildWithAssetHook(assets => {
++    const addAsset = () => { assets[fileName] = { source: () => source } }
++    if (asynchronous) {
++      return new Promise<void>(resolve => {
++        setTimeout(() => {
++          addAsset()
++          assets['app.js'] = { source: () => 'export default 2' }
++          resolve()
++        }, 0)
++      })
 +    }
-+    if (warnedShrinks.current === null) warnedShrinks.current = new Map()
-+    const warnedCounts = warnedShrinks.current
-     Children.forEach(children, (child: ReactElement<PropsWithChildren<_FlowSectionProps>>, order) => {
-       if (Object.is(child, null)) {
-         return
-       }
-       const sectionProps = child.props
-       const sectionId = sectionProps.id || `section-${order}`
--      root.findSection(sectionId)?.finalizePushNodesStateIfNeeded()
-+      const section = root.findSection(sectionId)
-+      if (!section) return
-+      section.finalizePushNodesStateIfNeeded()
-+      const childCount = Children.count(sectionProps.children)
-+      if (childCount >= section.count) {
-+        warnedCounts.delete(sectionId)
-+      } else if (process.env.NODE_ENV !== 'production' && warnedCounts.get(sectionId) !== childCount) {
-+        warnedCounts.set(sectionId, childCount)
-+        console.warn(`[WaterFlow] FlowSection ${sectionId} 已注册 ${section.count} 个节点，当前收到 ${childCount} 个子项；减少数据后请重建 WaterFlow。`)
-+      }
-+      if (!isH5) return
-+      const nextCol = section.autoColumn
-+        ? getAutoColumnCount()
-+        : normalizeColumn(sectionProps.column)
-+      if (section.col === nextCol) return
-+      section.reflow(nextCol)
-+      changed = true
-+      if (section.autoColumn) section.onColumnChange?.(nextCol)
-     })
-+    if (changed) root.updateScrollHeight(true)
-   }, [children, root])
++    addAsset()
++  })
  
-   const scrollTo = useMemoizedFn((scrollOffset = 0) => {
+   try {
+     const { output } = await bundle.generate({ format: 'es' })
+ 
+-    expect(output).toContainEqual(expect.objectContaining({
+-      fileName,
+-      source,
+-      type: 'asset',
+-    }))
++    expect(output).toContainEqual(expect.objectContaining({ fileName, source, type: 'asset' }))
++    if (asynchronous) {
++      expect(output).toContainEqual(expect.objectContaining({ fileName: 'app.js', code: 'export default 2', type: 'chunk' }))
++    }
++  } finally {
++    await bundle.close()
++  }
++})
++
++test('propagates a rejected modifyBuildAssets promise', async () => {
++  const error = new Error('asset transformation failed')
++  const hook = Promise.reject(error)
++  hook.catch(() => {})
++  const bundle = await buildWithAssetHook(() => hook)
++
++  try {
++    await expect(bundle.generate({ format: 'es' })).rejects.toThrow('asset transformation failed')
+   } finally {
+     await bundle.close()
+   }
+```
+
+---
+
+### Incident Patch 3: `e8444c72` (2026-11-16)
+**Commit Message**: fix(h5): expose response headers as objects for file transfers (#19639)
+
+* fix(h5): expose response headers as objects for file transfers
+
+* refactor(h5): keep response header parsing separate from transfer setup
+
+**File**: `packages/taro-h5/__tests__/network/transfer-headers.test.ts` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++import { downloadFile } from '../../src/api/network/download'
++import { uploadFile } from '../../src/api/network/upload'
++import * as networkUtils from '../../src/api/network/utils'
++
++describe.each([
++  ['download', () => downloadFile({ url: '/download' })],
++  ['upload', () => uploadFile({ url: '/upload', filePath: 'blob:file', name: 'file' })],
++] as const)('%s response headers', (kind, start) => {
++  afterEach(() => {
++    jest.restoreAllMocks()
++    jest.useRealTimers()
++  })
++
++  test.each([
++    ['', {}],
++    ['__proto__: value\r\n', { ['__proto__']: 'value' }],
++    ['content-type: text/plain\r\nx-custom: key: value\r\n', { 'content-type': 'text/plain', 'x-custom': 'key: value' }],
++  ])('returns a header object for %j', async (raw, expected) => {
++    jest.useFakeTimers()
++    const xhr = new XMLHttpRequest()
++    jest.spyOn(window, 'XMLHttpRequest').mockReturnValue(xhr)
++    jest.spyOn(xhr, 'send').mockImplementation(() => {})
++    jest.spyOn(networkUtils, 'convertObjectUrlToBlob').mockResolvedValue(new File(['test'], 'example.txt'))
++    const task = start()
++    const result = task.catch(error => error)
++    const listener = jest.fn()
++    task.onHeadersReceived(listener)
++
++    jest.spyOn(xhr, 'readyState', 'get').mockReturnValue(xhr.HEADERS_RECEIVED)
++    jest.spyOn(xhr, 'getAllResponseHeaders').mockReturnValue(raw)
++    xhr.dispatchEvent(new Event('readystatechange'))
++    expect(listener).toHaveBeenCalledWith({ header: expected })
++    const { header } = listener.mock.calls[0][0]
++    expect(Object.getPrototypeOf(header)).toBe(Object.prototype)
++    expect(typeof header.hasOwnProperty).toBe('function')
++    expect(Object.prototype.hasOwnProperty.call(header, '__proto__')).toBe(
++      Object.prototype.hasOwnProperty.call(expected, '__proto__')
++    )
++
++    task.offHeadersReceived(listener)
++    xhr.dispatchEvent(new Event('readystatechange'))
++    expect(listener).toHaveBeenCalledTimes(1)
++
++    await Promise.resolve()
++    if (kind === 'upload') task.abort()
++    else xhr.dispatchEvent(new ProgressEvent('abort'))
++    await result
++  })
++})
+```
+
+**File**: `packages/taro-h5/src/api/network/download.ts` (modified, +2/-1)
+```diff
+@@ -1,6 +1,7 @@
+ import Taro from '@tarojs/api'
+ 
+ import { CallbackManager } from '../../utils/handler'
++import { parseResponseHeaders } from './response-headers'
+ import { inactiveTransferTask, NETWORK_TIMEOUT, setHeader, XHR_STATS } from './utils'
+ 
+ const createDownloadTask = ({ url, header, withCredentials = true, timeout, success, error }): Taro.DownloadTask => {
+@@ -29,7 +30,7 @@ const createDownloadTask = ({ url, header, withCredentials = true, timeout, succ
+   xhr.onreadystatechange = () => {
+     if (xhr.readyState !== XHR_STATS.HEADERS_RECEIVED) return
+     callbackManager.headersReceived.trigger({
+-      header: xhr.getAllResponseHeaders()
++      header: parseResponseHeaders(xhr.getAllResponseHeaders())
+     })
+   }
+ 
+```
+
+**File**: `packages/taro-h5/src/api/network/response-headers.ts` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++export const parseResponseHeaders = (rawHeaders: string) => {
++  const headers: Record<string, string> = {}
++  for (const line of rawHeaders.split(/\r?\n/)) {
++    const separator = line.indexOf(':')
++    if (separator <= 0) continue
++    Object.defineProperty(headers, line.slice(0, separator).trim(), {
++      value: line.slice(separator + 1).trim(),
++      configurable: true,
++      enumerable: true,
++      writable: true
++    })
++  }
++  return headers
++}
+```
+
+**File**: `packages/taro-h5/src/api/network/upload.ts` (modified, +2/-1)
+```diff
+@@ -1,6 +1,7 @@
+ import Taro from '@tarojs/api'
+ 
+ import { CallbackManager } from '../../utils/handler'
++import { parseResponseHeaders } from './response-headers'
+ import {
+   convertObjectUrlToBlob,
+   inactiveTransferTask,
+@@ -58,7 +59,7 @@ const createUploadTask = ({ url, filePath, formData = {}, name, header, timeout,
+   xhr.onreadystatechange = () => {
+     if (xhr.readyState !== XHR_STATS.HEADERS_RECEIVED) return
+     callbackManager.headersReceived.trigger({
+-      header: xhr.getAllResponseHeaders()
++      header: parseResponseHeaders(xhr.getAllResponseHeaders())
+     })
+   }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #19662** (2026-11-17): fix(h5): 支持同步查询视频画中画状态 (@Jarvis636431)
+- **PR #19660** (2026-11-16): feat(h5): support creating and revoking buffer URLs (@Jarvis636431)
+- **PR #19658** (2026-11-17): fix(vite-runner): await mini modifyBuildAssets hook (@Jarvis636431)
+- **PR #19656** (2026-11-16): feat(h5): support hideKeyboard on H5 (@officialasishkumar)
 - **PR #19652** (2026-11-13): chore(release): publish 4.3.3 (@Single-Dancer)
 - **PR #19651** (2026-11-13): fix(water-flow): 修复 H5 动态切列后的布局错位 (@Adamlyu-hub)
-- **PR #19650** (2026-11-13): fix(vite-runner): 修复支付宝构建新增资源时报错 (@CrayonPig)
-- **PR #19647** (2026-11-12): feat(h5): support getSelectedTextRange (@Jarvis636431)
-- **PR #19645** (2026-11-12): fix(h5): report finite download progress when length is unknown (@Jarvis636431)
-- **PR #19643** (2026-11-13): fix(h5): settle pull-down refresh without a current component (@Jarvis636431)
 
 ---
 
@@ -2319,62 +1538,51 @@ sure the caller is notified exactly once. Listeners are detached as soon
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. taro-components-advanced): avoid updating state while VirtualWaterfall/VirtualLi
+## X. h5): report video picture-in-picture state
 
 **RULE**:
-When implementing operations in `packages/taro-components-advanced/__tests__/virtual-list.spec.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/taro-h5/__tests__/ui/window.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6471ad8e`: taro-components-advanced): avoid updating state while VirtualWaterfall/VirtualList render. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b6eaa4ef`: h5): report video picture-in-picture state. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-components-advanced/__tests__/virtual-list.spec.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-h5/__tests__/ui/window.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import React, { act } from 'react'
-import { createRoot } from 'react-dom/client'
+import { checkIsPictureInPictureActive, offWindowResize, onWindowResize } from '../../src/api/ui/window'
 
-import List from '../src/components/virtual-list/react/list'
+test('reports the current video picture-in-picture state synchronously', () => {
+  let activeVideo: HTMLVideoElement | null = null
+  const original = Object.getOwnPropertyDescriptor(document, 'pictureInPictureElement')
+  Object.defineProperty(document, 'pictureInPictureElement', {
+    configurable: true,
+    get: () => activeVideo,
+  })
 
-import type { Root } from 'react-dom/client'
-
-jest.mock('@tarojs/runtime', () => ({ document: { getElementById: jest.fn() }, now: () => Date.now() }))
-jest.mock('@tarojs/taro', () => ({
-  createIntersectionObserver: jest.fn(),
-  createSelectorQuery: jest.fn(),
-  getCurrentInstance: jest.fn()
-}))
-
-const originalActEnvironment = (globalThis as any).IS_REACT_ACT_ENVIRONMENT
-
-function Item ({ id, index }: { id?: string, index?: number }) {
-  return <div id={id}>{index}</div>
-}
-
-describe('VirtualList', () => {
-  let container: HTMLDivElement
-  let root: Root
-  let consoleError: jest.SpyInstance
-  let renderDepth: number
-  let updatesDuringRender: number
-
-  beforeEach(() => {
-    (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true
-    consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
-    // React only warns about render phase updates once per process, so also count them directly
-    renderDepth = 0
-    updatesDuringRender = 0
-    const { render, setState } = List.prototype
-    jest.spyOn(List.prototype, 'render').mockImplem
+  try {
+    expect(checkIsPictureInPictureActive()).toBe(false)
+    activeVideo = document.createElement('video')
+    expect(checkIsPictureInPictureActive()).toBe(true)
+    activeVideo = null
+    expect(checkIsPictureInPictureActive()).toBe(false)
+  } finally {
+    if (original) {
+      Object.defineProperty(document, 'pictureInPictureElement', original)
+    } else {
+      Reflect.deleteProperty(document, 'pictureInPictureElement')
+    }
+  }
+})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+import { offWindowResize, onWindowResize } from '../../src/api/ui/window'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6471ad8e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b6eaa4ef` are properly handled with clean fallback behavior.

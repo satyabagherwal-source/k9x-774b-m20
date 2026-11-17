@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T08:57:20.425Z",
+  "last_updated": "2026-11-17T09:27:29.277Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T08:09:42.782Z",
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-17T03:34:24.709Z",
+      "processed_at": "2026-11-17T09:27:28.533Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1018,7 +1018,7 @@
       "staged_for_review": 1
     },
     "aws-aws-cdk-learnings.md": {
-      "processed_at": "2026-11-14T19:47:13.426Z",
+      "processed_at": "2026-11-17T09:27:27.617Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2103,7 +2103,7 @@
       "staged_for_review": 0
     },
     "nervjs-taro-learnings.md": {
-      "processed_at": "2026-11-13T19:40:46.575Z",
+      "processed_at": "2026-11-17T09:27:26.785Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3278,7 +3278,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1527,
+  "total_dossiers_evaluated": 1530,
   "total_canonical_promoted": 313,
-  "total_staged_for_review": 1203
+  "total_staged_for_review": 1206
 }

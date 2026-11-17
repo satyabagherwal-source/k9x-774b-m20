@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-WYK4",
-    "timestamp": "2026-11-14T19:03:11.092Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "02cbae7b6441cc980dfad1f730d2c9fd10b226f814e7d5403d048d66bbe684f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-X4SE",
-    "timestamp": "2026-11-14T19:03:19.166Z",
-    "repository": "aquasecurity/trivy",
-    "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "b431e785e7fdee36a740becd5b3628c1e458a86948ed6863bcafb7a327aec1cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-XAN6",
-    "timestamp": "2026-11-14T19:03:26.754Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "76107d486b9adc06837896f4e9180b09c77c8f623a73a0d497d124a6fd6b516c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-JEJF",
-    "timestamp": "2026-11-14T19:20:38.235Z",
-    "repository": "autotrust/GEV-26B-Decide-NVFP4",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-    "contentHash": "cf2f74b334da961cf635512f719f1ef89c1beb3c8329fad97c2cf9407f33a574",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-JKDG",
     "timestamp": "2026-11-14T19:20:45.796Z",
     "repository": "pulumi/pulumi",
@@ -7490,6 +7430,66 @@
     "repository": "apache/zookeeper",
     "learningId": "learn-github-apache-zookeeper",
     "contentHash": "256b12fb526e5359b243566de3e194af8b98d18ebd2d371b37d728442b88c16b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-HMP0",
+    "timestamp": "2026-11-17T09:22:24.420Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "342c07504c40fb45358cc9891013ea8b406bd9cf5c3549b1d24d9daa9ea3319e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-HNTI",
+    "timestamp": "2026-11-17T09:22:25.878Z",
+    "repository": "citusdata/citus",
+    "learningId": "learn-github-citusdata-citus",
+    "contentHash": "e250e023b1f6726f5f3f5667217e6a8ddea93780f7b09155ad39c82fbc666d46",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-INX0",
+    "timestamp": "2026-11-17T09:23:12.660Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "2d40116262cca2668c8588cdc801fbb038833ef033221889260d92dd86f42fea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-O1CM",
+    "timestamp": "2026-11-17T09:27:23.350Z",
+    "repository": "NervJS/taro",
+    "learningId": "learn-github-nervjs-taro",
+    "contentHash": "0f8fd1278d4a84993ae32a650c10746c475b9e1d755749320550fb578d47d8c9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

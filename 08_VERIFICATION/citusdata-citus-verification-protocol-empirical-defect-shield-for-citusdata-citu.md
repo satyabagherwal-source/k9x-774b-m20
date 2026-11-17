@@ -4,45 +4,31 @@
 {
   "source_repository": "citusdata/citus",
   "source_url": "https://github.com/citusdata/citus",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "1c614e7d",
+  "license": "AGPL-3.0",
+  "timestamp": "2026-11-17T09:22:26.119Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-citusdata-citus",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [citusdata/citus](https://github.com/citusdata/citus) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [citusdata/citus](https://github.com/citusdata/citus) (Revision: `1c614e7d`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-17T09:22:26.119Z`  
+> **Learning ID**: `learn-github-citusdata-citus`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `citusdata/citus` (Commit: `historical`)
+- **Target Repository**: `citusdata/citus` (Commit: `1c614e7d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
-> **Source**: github ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
-> **Source Version**: `08479aca`  
-> **License**: AGPL-3.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T17:12:19.532Z  
-> **Learning ID**: `learn-github-citusdata-citus`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): citusdata/citus
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T17:12:18.835Z  
+> **Harvest Timestamp**: 2026-11-17T09:22:24.738Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Distributed PostgreSQL as an extension
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 12850 stars
+- **Stars / Engagement**: 12863 stars
 
 ---
 
@@ -2567,11 +2553,11 @@ ColumnarStorageGetReservedRowNumber(Relation rel, bool force)
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8959** (2026-11-16): **Segfault in AddPartitionKeyNotNullFilterToSelect: INSERT ... SELECT ... GROUP BY into a schema-sharded table with a now() default (PG18)**
+  *Symptoms*: On PostgreSQL 18, an `INSERT ... SELECT ... GROUP BY` into a single-shard (schema-based sharding) table crashes the coordinator backend with signal 11 when the statement contains a stable function such as `now()`. A column default counts. The postmaster then terminates all other backends and goes through crash recovery.  **Versions** - PostgreSQL 18.4 - Citus 14.1.0, 14.2.0 and nightly (15.0-1, built 2026-10-26). All three crash. Tables created with `create_distributed_table(..., NULL)` crash the same way (checked on 14.2.0 and nightly). - Tested with the official `citusdata/citus` Docker images, both on a single node (coordinator holding shards) and on a coordinator plus one worker. - We first hit this in production on PostgreSQL 18.4 + Citus 14.1.0 (PGDG RHEL 8 packages, `citus_18-14.1.0-1PGDG.rhel8.10`). The kernel log showed:   ```   postgres[...]: segfault at 4 ip ... error 4 in citus.so   ```  **Reproduce (SQL)**  ```sql SET citus.enable_schema_based_sharding TO on; CREATE SCHEMA tenant; CREATE TABLE tenant.src (k text); CREATE TABLE tenant.dst (k text, created_at timestamptz DEFAULT now()); INSERT INTO tenant.src VALUES ('a'), ('a'), ('b');  INSERT INTO tenant.dst (k) SELECT k FROM tenant.src GROUP BY k; ```  ``` server closed the connection unexpectedly LOG:  client backend (PID 133) was terminated by signal 11: Segmentation fault DETAIL:  Failed process was running: INSERT INTO tenant.dst (k) SELECT k FROM tenant.src GROUP BY k; LOG:  terminating any other active ser
+
 - **Issue #8897** (2026-10-14): **getProcNo_compat() returns -1 for auxiliary procs on PG17+, causing out-of-bounds BackendData access**
   *Symptoms*: ## Summary  On PG17+, `getProcNo_compat()` is defined as `a->vxid.procNumber` (`src/include/pg_version_compat.h:696`). That is **not** the PGPROC slot index for every proc:  - **Auxiliary processes** (checkpointer, bgwriter, walwriter, startup, ... and on PG18 the **io workers**) have `vxid.procNumber = INVALID_PROC_NUMBER` (-1). See `InitAuxiliaryProcess()` in PG17/PG18 `proc.c`. - **Prepared-transaction dummy procs** carry the *preparing backend's* number, or -1 after recovery (`MarkAsPreparingGuts()` in `twophase.c`).  On PG16, the equivalent `proc->pgprocno` was always the slot index, so this changed meaning when the compat macro was introduced.  ## Impact  `BuildLocalWaitGraph()` (`lock_graph.c:563`) iterates over every PGPROC with `pid != 0` and calls `GetBackendDataForProc()`, which indexes `backendManagementShmemData->backends[getProcNo_compat(proc)]`. For an aux proc that is `backends[-1]`. So on every distributed deadlock detection cycle, Citus:  - acquires/releases a "spinlock" on a byte that lies **before** the `backends[]` array (in the `BackendManagementShmemData` header / preceding shmem), and - copies garbage into a `BackendData`.  Today this is silent only because, with `sizeof(BackendData) == 56`, the stray byte happens to be zero, so it becomes a transient out-of-bounds write. Any change to `BackendData`'s size moves it. With an 88-byte struct (while working on #8888) it lands on a non-zero byte and the maintenance daemon PANICs:  ``` PANIC:  stuck spinlock
-
-- **Issue #8857** (2026-09-25): **rebalancer poisons fkey cache: parallel reference-table rebalance can schedule the same dependency twice**
-  *Symptoms*: ## Problem  Parallel reference-table rebalancing can fail when reference tables are processed in a different order. The scheduler tries to insert the same prerequisite twice, and PostgreSQL rejects it:  ```text ERROR: duplicate key value violates unique constraint "pg_dist_background_task_depend_pkey" DETAIL: Key (job_id, task_id, depends_on)=(17777, 1005, 1004) already exists. ```  This is a real scheduling failure, not a test-output mismatch. It was discovered while investigating #8847, but has **not** been established as the cause of that CI failure.  ## How to reproduce  Reproduced locally on PostgreSQL 17.7 with assertions enabled, using Citus commit `6dfa3e01622358bbf1b2ec0d23951d6a5a9bedb2`. Both `force_logical` and `block_writes` scenarios fail.  Use a **disposable regression-test cluster only**: the reproduction deliberately rearranges an internal catalog.  1. In a configured Citus development environment, build and install Citus. 2. Open `src/test/regress/sql/background_rebalance_parallel_reference_tables.sql`. This test already creates the foreign-key chain `order_items -> orders -> customers` and adds two destination workers. 3. Insert the following immediately before **each** `citus_rebalance_start(...)` call:     ```sql    CREATE INDEX reverse_reference_scan    ON pg_dist_partition (logicalrelid DESC);    CLUSTER pg_dist_partition USING reverse_reference_scan;    DROP INDEX reverse_reference_scan;    ```     This changes the catalog's physical scan order without
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2588,410 +2574,173 @@ ColumnarStorageGetReservedRowNumber(Relation rel, bool force)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08479aca` (2026-11-09)
-**Commit Message**: Propagate encrypted password on CREATE ROLE (#8966)
+### Incident Patch 1: `1c614e7d` (2026-11-16)
+**Commit Message**: Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT (#8963)
 
-DESCRIPTION: Fixes CREATE ROLE to send the locally stored password
-verifier, ensuring consistent password representation on all nodes by
-matching ALTER ROLE behavior.
+Fixes #8959.
 
-## Problem
+`RebuildQueryStrings()` called `AddPartitionKeyNotNullFilterToSelect()`
+for every INSERT ... SELECT whose target was a distributed table, which
+also matched single-shard (schema-based sharding) tables created via
+`create_distributed_table(..., NULL)`. Those tables have no distribution
+column, so the loop inside the helper never finds a partition-key `Var`
+and leaves `targetPartitionColumnVar` NULL. In release builds the
+`Assert` is compiled out and:
 
-Previously, Citus constructed the remote `CREATE ROLE` commands before
-the role was created locally. As a result, each node independently
-generated its own password verifier, potentially leading to inconsistent
-password representations across nodes.
+- on PG18 the `hasGroupRTE` branch reads
+`targetPartitionColumnVar->varno` and crashes the backend (`segfault at
+4`),
+- without GROUP BY the `NullTest` is built with `arg = NULL` and the
+worker query is deparsed as `( IS NOT NULL)`, which errors out as
+`syntax error at or near "NOT"`.
 
-For example:
-- With `scram-sha-256`, each node generated a different verifier due to
-random salts.
-- With different `password_encryption` settings, nodes could store
-different types of password verifiers.
-
-`ALTER ROLE ... PASSWORD` and node activation already use the password
-verifier stored in `pg_authid`, ensuring consistent representation
-across nodes.
-
-Example on a coordinator + 2 workers, before this PR:
-
-```sql
-CREATE ROLE r LOGIN PASSWORD 'x';
--- pg_authid.rolpassword differs across nodes
-
-ALTER ROLE r PASSWORD 'y';
--- pg_authid.rolpassword is identical across nodes
-```
+Any user who can run an INSERT ... SELECT with a stable function (e.g.
+`now()`, a `DEFAULT now()` column, `current_timestamp`, `current_user`)
+against a schema-sharded table could crash the coordinator, taking down
+every other backend with it until crash recovery finishes.
 
 ## Fix
 
-- Remote `CREATE ROLE` commands are now built in a new
-`PostprocessCreateRoleStmt`, after the role is created locally. The
+Two changes, matching both suggestions from the issue:
 
+1. In `RebuildQueryStrings
 
-**File**: `src/backend/distributed/commands/distribute_object_ops.c` (modified, +1/-1)
+**File**: `src/backend/distributed/planner/deparse_shard_query.c` (modified, +1/-2)
 ```diff
-@@ -271,7 +271,7 @@ static DistributeObjectOps Any_CreateRole = {
- 	.deparse = DeparseCreateRoleStmt,
- 	.qualify = NULL,
- 	.preprocess = PreprocessCreateRoleStmt,
--	.postprocess = NULL,
-+	.postprocess = PostprocessCreateRoleStmt,
- 	.operationType = DIST_OPS_CREATE,
- 	.address = CreateRoleStmtObjectAddress,
- 	.markDistributed = true,
+@@ -106,8 +106,7 @@ RebuildQueryStrings(Job *workerJob)
+ 			RangeTblEntry *copiedSubqueryRte = ExtractSelectRangeTableEntry(query);
+ 			Query *copiedSubquery = copiedSubqueryRte->subquery;
+ 
+-			/* there are no restrictions to add for reference and citus local tables */
+-			if (IsCitusTableType(shardInterval->relationId, DISTRIBUTED_TABLE))
++			if (HasDistributionKey(shardInterval->relationId))
+ 			{
+ 				bool distributionColumnIsShardKeyIdentity =
+ 					InsertPartitionColumnIsShardKeyIdentity(query, copiedInsertRte,
 ```
 
-**File**: `src/backend/distributed/commands/role.c` (modified, +71/-24)
+**File**: `src/backend/distributed/planner/multi_router_planner.c` (modified, +7/-2)
 ```diff
-@@ -56,6 +56,7 @@
- #include "distributed/version_compat.h"
- #include "distributed/worker_transaction.h"
- 
-+static void ReplacePasswordOptionWithEncryptedPassword(List *roleOptions, Oid roleOid);
- static const char * ExtractEncryptedPassword(Oid roleOid);
- static const char * CreateAlterRoleIfExistsCommand(AlterRoleStmt *stmt);
- static const char * CreateAlterRoleSetIfExistsCommand(AlterRoleSetStmt *stmt);
-@@ -161,27 +162,9 @@ PostprocessAlterRoleStmt(Node *node, const char *queryString)
- 
- 	AlterRoleStmt *stmt = castNode(AlterRoleStmt, node);
- 
--	DefElem *option = NULL;
--	foreach_declared_ptr(option, stmt->options)
--	{
--		if (strcasecmp(option->defname, "password") == 0)
--		{
--			Oid roleOid = get_rolespec_oid(stmt->role, true);
--			const char *encryptedPassword = ExtractEncryptedPassword(roleOid);
--
--			if (encryptedPassword != NULL)
--			{
--				String *encryptedPasswordValue = makeString((char *) encryptedPassword);
--				option->arg = (Node *) encryptedPasswordValue;
--			}
--			else
--			{
--				option->arg = NULL;
--			}
-+	Oid roleOid = get_rolespec_oid(stmt->role, true);
-+	ReplacePasswordOptionWithEncryptedPassword(stmt->options, roleOid);
- 
--			break;
--		}
--	}
- 	List *commands = list_make3(DISABLE_DDL_PROPAGATION,
- 								(void *) CreateAlterRoleIfExistsCommand(stmt),
- 								ENABLE_DDL_PROPAGATION);
-@@ -337,6 +320,47 @@ CreateCreateOrAlterRoleCommand(const char *roleName,
- }
- 
- 
-+/*
-+ * ReplacePasswordOptionWithEncryptedPassword replaces the value of the
-+ * "password" option in the given role options, if any, with the encrypted
-+ * password that is stored in pg_authid for the given role. If the role has no
-+ * stored password, the option value is set to NULL, so it gets deparsed as
-+ * PASSWORD NULL.
-+ *
-+ * We send the encrypted password to the other nodes, rather than the password
-+ * given by the user, so that all nodes store the same password verifier. If we
-+ * sent the plain text password instead, each node would encrypt it with its
-+ * own password_encryption setting and, for SCRAM-SHA-256, its own random salt.
-+ *
-+ * This must be called after the local command has stored the password in
-+ * pg_authid.
-+ */
-+static void
-+ReplacePasswordOptionWithEncryptedPassword(List *roleOptions, Oid roleOid)
-+{
-+	DefElem *option = NULL;
-+	foreach_declared_ptr(option, roleOptions)
-+	{
-+		if (strcmp(option->defname, "password") == 0)
-+		{
-+			const char *encryptedPassword = ExtractEncryptedPassword(roleOid);
-+
-+			if (encryptedPassword != NULL)
-+			{
-+				String *encryptedPasswordValue = makeString((char *) encryptedPassword);
-+				option->arg = (Node *) encryptedPasswordValue;
-+			}
-+			else
-+			{
-+				option->arg = NULL;
-+			}
-+
-+			break;
-+		}
-+	}
-+}
-+
-+
- /*
-  * ExtractEncryptedPassword extracts the encrypted password of a role. The function
-  * gets the password from the pg_authid table.
-@@ -351,6 +375,7 @@ ExtractEncryptedPassword(Oid roleOid)
- 
- 	if (!HeapTupleIsValid(tuple))
- 	{
-+		table_close(pgAuthId, AccessShareLock);
- 		return NULL;
+@@ -401,8 +401,13 @@ AddPartitionKeyNotNullFilterToSelect(Query *subqery, bool
+ 		return;
  	}
  
-@@ -994,10 +1019,11 @@ GenerateSecLabelOnRoleStmts(Oid roleid, char *rolename)
- 
- 
- /*
-- * PreprocessCreateRoleStmt creates a worker_create_or_alter_role query for the
-- * role that is being created. With that query we can create the role in the
-- * workers or if they exist we alter them to the way they are being created
-- * right now.
-+ * PreprocessCreateRoleStmt performs the checks and acquires the locks that need
-+ * to happen before the role is created locally. The commands to create the role
-+ * on the other nodes are built in PostprocessCreateRoleStmt, because they need
-+ * the encrypted password, which is only available after the role is created
-+ * locally.
-  */
- List *
- PreprocessCreateRoleStmt(Node *node, const char *queryString,
-@@ -1024,8 +1050,29 @@ PreprocessCreateRoleStmt(Node *node, const char *queryString,
- 
- 	LockRelationOid(DistNodeRelationId(), RowShareLock);
- 
-+	return NIL;
-+}
-+
-+
-+/*
-+ * PostprocessCreateRoleStmt creates a worker_create_or_alter_role query for the
-+ * role that has just been created. With that query we can create the role in the
-+ * workers or if they exist we alter them to the way they are being created
-+ * right now.
-+ */
-+List *
-+PostprocessCreateRoleStmt(Node *node, const char *queryString)
-+{
-+	if (!EnableCreateRolePropagation || !ShouldPropagate())
+-	/* we should have found target partition column */
+-	Assert(targetPartitionColumnVar != NULL);
++	/* Caller must gate on HasDistributionKey(); surface stray callers (#8959). */
++	if (targetPartitionColumnVar == NULL)
 +	{
-+		return NIL;
++		ereport(ERROR, (errcode(ERRCODE_INTERNAL_ERROR),
++						errmsg("AddPartitionKeyNotNullFilterToSelect called "
++							   "without a partition-key Var in the target list")));
 +	}
-+
- 	CreateRoleStmt *createRoleStmt = castNode(CreateRoleStmt, node);
  
-+	Oid roleOid = get_role_oid(createRoleStmt->role, false);
-+	ReplacePasswordOptionWithEncryptedPassword(createRoleStmt->options, roleOid);
-+
- 	AlterRoleStmt *alterRoleStmt = makeNode(AlterRoleStmt);
- 	alterRoleStmt->role = makeNode(RoleSpec);
- 	alterRoleStmt->role->roletype = ROLESPEC_CSTRING;
+ #if PG_VERSION_NUM >= PG_VERSION_18
+ 	if (subqery->hasGroupRTE)
 ```
 
-**File**: `src/include/distributed/commands.h` (modified, +1/-0)
+**File**: `src/test/regress/expected/insert_select_single_shard_table_8959.out` (added, +39/-0)
 ```diff
-@@ -528,6 +528,7 @@ extern List * AlterRoleSetStmtObjectAddress(Node *node,
- 											bool missing_ok, bool isPostprocess);
- extern List * PreprocessCreateRoleStmt(Node *stmt, const char *queryString,
- 									   ProcessUtilityContext processUtilityContext);
-+extern List * PostprocessCreateRoleStmt(Node *stmt, const char *queryString);
- extern List * PreprocessDropRoleStmt(Node *stmt, const char *queryString,
- 									 ProcessUtilityContext processUtilityContext);
- extern List * PreprocessGrantRoleStmt(Node *stmt, const char *queryString,
+@@ -0,0 +1,39 @@
++-- Regression for #8959: INSERT ... SELECT into a single-shard target used to
++-- hit AddPartitionKeyNotNullFilterToSelect with no partition-key Var, which
++-- segfaulted on PG18 with GROUP BY and deparsed to "( IS NOT NULL)" without.
++-- Kept out of multi_1_schedule because N-1 runs against older coordinator
++-- libraries would still crash on these statements.
++CREATE SCHEMA insert_select_single_shard_table_8959;
++SET search_path TO insert_select_single_shard_table_8959;
++SET citus.shard_replication_factor TO 1;
++CREATE TABLE src_8959(k text);
++CREATE TABLE dst_8959(k text, created_at timestamptz DEFAULT now());
++SELECT create_distributed_table('src_8959', null, colocate_with=>'none');
++ create_distributed_table
++---------------------------------------------------------------------
++
++(1 row)
++
++SELECT create_distributed_table('dst_8959', null, colocate_with=>'src_8959');
++ create_distributed_table
++---------------------------------------------------------------------
++
++(1 row)
++
++INSERT INTO src_8959 VALUES ('a'), ('a'), ('b');
++-- GROUP BY variants (crashed)
++INSERT INTO dst_8959 (k) SELECT k FROM src_8959 GROUP BY k;
++INSERT INTO dst_8959 (k, created_at) SELECT k, now() FROM src_8959 GROUP BY k;
++INSERT INTO dst_8959 (k) SELECT k FROM src_8959 WHERE now() > '2020-01-01' GROUP BY k;
++INSERT INTO dst_8959 (k) SELECT k FROM src_8959 GROUP BY k HAVING count(*) > 0;
++-- No-GROUP-BY variants (deparsed as "( IS NOT NULL)")
++INSERT INTO dst_8959 (k) SELECT 'x' FROM src_8959 HAVING count(*) > 0;
++INSERT INTO dst_8959 (k) SELECT k FROM src_8959;
++SELECT count(*) FROM dst_8959;
++ count
++---------------------------------------------------------------------
++    12
++(1 row)
++
++SET client_min_messages TO WARNING;
++DROP SCHEMA insert_select_single_shard_table_8959 CASCADE;
 ```
 
-**File**: `src/test/regress/expected/create_role_propagation.out` (modified, +114/-0)
+**File**: `src/test/regress/multi_1_create_citus_schedule` (modified, +8/-0)
 ```diff
-@@ -811,3 +811,117 @@ ORDER BY role, member;
- -- Clean up interdependent roles
- DROP ROLE interdep_role2, interdep_role1, read_only_role;
- DROP ROLE nondist_cascade_1, nondist_cascade_2, nondist_cascade_3, dist_cascade;
-+-- Test that CREATE ROLE propagates the encrypted password that is stored on the
-+-- node where the command is run, so that all nodes store the same password
-+-- verifier. If the plain text password were propagated, each node would encrypt
-+-- it with its own random salt (for scram-sha-256) and its own password_encryption
-+-- setting.
-+-- default password_encryption (scram-sha-256)
-+CREATE ROLE create_role_pass_scram LOGIN PASSWORD 'pass_scram';
-+SELECT workers.nodeport,
-+       CASE WHEN pg_authid.rolpassword LIKE 'SCRAM-SHA-256$%' THEN 'scram-sha-256'
-+            WHEN pg_authid.rolpassword LIKE 'md5%' THEN 'md5' END AS password_type,
-+       workers.result = pg_authid.rolpassword AS password_is_same
-+FROM run_command_on_workers($$SELECT rolpassword FROM pg_authid WHERE rolname = 'create_role_pass_scram'$$) workers, pg_authid
-+WHERE pg_authid.rolname = 'create_role_pass_scram' ORDER BY 1;
-+ nodeport | password_type | password_is_same
-+---------------------------------------------------------------------
-+    57637 | scram-sha-256 | t
-+    57638 | scram-sha-256 | t
-+(2 rows)
+@@ -131,3 +131,11 @@ test: multi_or_arm_pruning
+ # check-multi-1-create-citus, which is not part of the N-1 test matrix.
+ # ----------
+ test: node_removal_transaction_recovery
 +
-+-- password_encryption is only set in the coordinator session, workers still
-+-- default to scram-sha-256
-+SET password_encryption TO md5;
-+SET client_min_messages TO ERROR;
-+CREATE ROLE create_role_pass_md5 LOGIN PASSWORD 'pass_md5';
-+RESET client_min_messages;
-+RESET password_encryption;
-+SELECT workers.nodeport,
-+       CASE WHEN pg_authid.rolpassword LIKE 'SCRAM-SHA-256$%' THEN 'scram-sha-256'
-+            WHEN pg_authid.rolpassword LIKE 'md5%' THEN 'md5' END AS password_type,
-+       workers.result = pg_authid.rolpassword AS password_is_same
-+FROM run_command_on_workers($$SELECT rolpassword FROM pg_authid WHERE rolname = 'create_role_pass_md5'$$) workers, pg_authid
-+WHERE pg_authid.rolname = 'create_role_pass_md5' ORDER BY 1;
-+ nodeport | password_type | password_is_same
-+---------------------------------------------------------------------
-+    57637 | md5           | t
-+    57638 | md5           | t
-+(2 rows)
-+
-+-- in a transaction block
-+BEGIN;
-+CREATE ROLE create_role_pass_xact LOGIN PASSWORD 'pass_xact';
-+COMMIT;
-+SELECT workers.nodeport,
-+       CASE WHEN pg_authid.rolpassword LIKE 'SCRAM-SHA-256$%' THEN 'scram-sha-256'
-+            WHEN pg_authid.rolpassword LIKE 'md5%' THEN 'md5' END AS password_type,
-+       workers.result = pg_authid.rolpassword AS password_is_same
-+FROM run_command_on_workers($$SELECT rolpassword FROM pg_authid WHERE rolname = 'create_role_pass_xact'$$) workers, pg_authid
-+WHERE pg_authid.rolname = 'create_role_pass_xact' ORDER BY 1;
-+ nodeport | password_type | password_is_same
-+---------------------------------------------------------------------
-+    57637 | scram-sha-256 | t
-+    57638 | scram-sha-256 | t
-+(2 rows)
-+
-+-- role already exists on a worker, so the worker alters it instead
-+\c - - - :worker_1_port
-+SET citus.enable_ddl_propagation TO off;
-+CREATE ROLE create_role_pass_exists LOGIN PASSWORD 'pass_old';
-+RESET citus.enable_ddl_propagation;
-+\c - - - :master_port
-+CREATE ROLE create_role_pass_exists LOGIN PASSWORD 'pass_exists';
-+SELECT workers.nodeport,
-+       CASE WHEN pg_authid.rolpassword LIKE 'SCRAM-SHA-256$%' THEN 'scram-sha-256'
-+            WHEN pg_authid.rolpassword LIKE 'md5%' THEN 'md5' END AS password_type,
-+       workers.result = pg_authid.rolpassword AS password_is_same
-+FROM run_command_on_workers($$SELECT rolpassword FROM pg_authid WHERE rolname = 'create_role_pass_exists'$$) workers, pg_authid
-+WHERE pg_authid.rolname = 'create_role_pass_exists' ORDER BY 1;
-+ nodeport | password_type | password_is_same
-+---------------------------------------------------------------------
-+    57637 | scram-sha-256 | t
-+    57638 | scram-sha-256 | t
-+(2 rows)
-+
-+-- from a worker
-+\c - - - :worker_1_port
-+CREATE ROLE create_role_pass_from_worker LOGIN PASSWORD 'pass_from_worker';
-+\c - - - :master_port
-+SELECT workers.nodeport,
-+       CASE WHEN pg_authid.rolpassword LIKE 'SCRAM-SHA-256$%' THEN 'scram-sha-256'
-+            WHEN pg_authid.rolpassword LIKE 'md5%' THEN 'md5' END AS password_type,
-+       workers.result = pg_authid.rolpassword AS password_is_same
-+FROM run_command_on_workers($$SELECT rolpassword FROM pg_authid WHERE rolname = 'create_role_pass_from_worker'$$) workers, pg_authid
-+WHERE pg_authid.rolname = 'create_role_pass_from_worker' ORDER BY 1;
-+ nodeport | password_type | password_is_same
-+---------------------------------------------------------------------
-+    57637 | scram-sha-256 | t
-+    57638 | scram-sha-256 | t
-+(2 rows)
-+
-+-- empty and NULL passwords are propagated as NULL
-+CREATE ROLE create_role_pass_empty LOGIN PASSWORD '';
-+NOTICE:  empty string is not a valid password, clearing password
-+CREATE ROLE create_role_pass_null LOGIN PASSWORD NULL
++# ----------
++# insert_select_single_shard_table_8959 covers an INSERT ... SELECT crash
++# (#8959) fixed in 14.3; the N-1 (14.2-1) coordinator library still segfaults
++# or produces invalid worker SQL on these statements, so this cannot run under
++# the N-1 test matrix. Move back to multi_1_schedule at Citus 15.
++# ----------
++test: insert_select_single_shard_table_8959
 ```
 
-**File**: `src/test/regress/sql/create_role_propagation.sql` (modified, +79/-0)
+**File**: `src/test/regress/sql/insert_select_single_shard_table_8959.sql` (added, +30/-0)
 ```diff
-@@ -365,3 +365,82 @@ ORDER BY role, member;
- DROP ROLE interdep_role2, interdep_role1, read_only_role;
- 
- DROP ROLE nondist_cascade_1, nondist_cascade_2, nondist_cascade_3, dist_cascade;
+@@ -0,0 +1,30 @@
++-- Regression for #8959: INSERT ... SELECT into a single-shard target used to
++-- hit AddPartitionKeyNotNullFilterToSelect with no partition-key Var, which
++-- segfaulted on PG18 with GROUP BY and deparsed to "( IS NOT NULL)" without.
++-- Kept out of multi_1_schedule because N-1 runs against older coordinator
++-- libraries would still crash on these statements.
++CREATE SCHEMA insert_select_single_shard_table_8959;
++SET search_path TO insert_select_single_shard_table_8959;
++SET citus.shard_replication_factor TO 1;
 +
-+-- Test that CREATE ROLE propagates the encrypted password that is stored on the
-+-- node where the command is run, so that all nodes store the same password
-+-- verifier. If the plain text password were propagated, each node would encrypt
-+-- it with its own random salt (for scram-sha-256) and its own password_encryption
-+-- setting.
++CREATE TABLE src_8959(k text);
++CREATE TABLE dst_8959(k text, created_at timestamptz DEFAULT now());
++SELECT create_distributed_table('src_8959', null, colocate_with=>'none');
++SELECT create_distributed_table('dst_8959', null, colocate_with=>'src_8959');
 +
-+-- default password_encryption (scram-sha-256)
-+CREATE ROLE create_role_pass_scram LOGIN PASSWORD 'pass_scram';
-+SELECT workers.nodeport,
-+       CASE WHEN pg_authid.rolpassword LIKE 'SCRAM-SHA-256$%' THEN 'scram-sha-256'
-+            WHEN pg_authid.rolpassword LIKE 'md5%' THEN 'md5' END AS password_type,
-+       workers.result = pg_authid.rolpassword AS password_is_same
-+FROM run_command_on_workers($$SELECT rolpassword FROM pg_authid WHERE rolname = 'create_role_pass_scram'$$) workers, pg_authid
-+WHERE pg_authid.rolname = 'create_role_pass_scram' ORDER BY 1;
++INSERT INTO src_8959 VALUES ('a'), ('a'), ('b');
 +
-+-- password_encryption is only set in the coordinator session, workers still
-+-- default to scram-sha-256
-+SET password_encryption TO md5;
-+SET client_min_messages TO ERROR;
-+CREATE ROLE create_role_pass_md5 LOGIN PASSWORD 'pass_md5';
-+RESET client_min_messages;
-+RESET password_encryption;
-+SELECT workers.nodeport,
-+       CASE WHEN pg_authid.rolpassword LIKE 'SCRAM-SHA-256$%' THEN 'scram-sha-256'
-+            WHEN pg_authid.rolpassword LIKE 'md5%' THEN 'md5' END AS password_type,
-+       workers.result = pg_authid.rolpassword AS password_is_same
-+FROM run_command_on_workers($$SELECT rolpassword FROM pg_authid WHERE rolname = 'create_role_pass_md5'$$) workers, pg_authid
-+WHERE pg_authid.rolname = 'create_role_pass_md5' ORDER BY 1;
++-- GROUP BY variants (crashed)
++INSERT INTO dst_8959 (k) SELECT k FROM src_8959 GROUP BY k;
++INSERT INTO dst_8959 (k, created_at) SELECT k, now() FROM src_8959 GROUP BY k;
++INSERT INTO dst_8959 (k) SELECT k FROM src_8959 WHERE now() > '2020-01-01' GROUP BY k;
++INSERT INTO dst_8959 (k) SELECT k FROM src_8959 GROUP BY k HAVING count(*) > 0;
 +
-+-- in a transaction block
-+BEGIN;
-+CREATE ROLE create_role_pass_xact LOGIN PASSWORD 'pass_xact';
-+COMMIT;
-+SELECT workers.nodeport,
-+       CASE WHEN pg_authid.rolpassword LIKE 'SCRAM-SHA-256$%' THEN 'scram-sha-256'
-+            WHEN pg_authid.rolpassword LIKE 'md5%' THEN 'md5' END AS password_type,
-+       workers.result = pg_authid.rolpassword AS password_is_same
-+FROM run_command_on_workers($$SELECT rolpassword FROM pg_authid WHERE rolname = 'create_role_pass_xact'$$) workers, pg_authid
-+WHERE pg_authid.rolname = 'create_role_pass_xact' ORDER BY 1;
++-- No-GROUP-BY variants (deparsed as "( IS NOT NULL)")
++INSERT INTO dst_8959 (k) SELECT 'x' FROM src_8959 HAVING count(*) > 0;
++INSERT INTO dst_8959 (k) SELECT k FROM src_8959;
 +
-+-- role already exists on a worker, so the worker alters it instead
-+\c - - - :worker_1_port
-+SET citus.enable_ddl_propagation TO off;
-+CREATE ROLE create_role_pass_exists LOGIN PASSWORD 'pass_old';
-+RESET citus.enable_ddl_propagation;
-+\c - - - :master_port
-+CREATE ROLE create_role_pass_exists LOGIN PASSWORD 'pass_exists';
-+SELECT workers.nodeport,
-+       CASE WHEN pg_authid.rolpassword LIKE 'SCRAM-SHA-256$%' THEN 'scram-sha-256'
-+            WHEN pg_authid.rolpassword LIKE 'md5%' THEN 'md5' END AS password_type,
-+       workers.result = pg_authid.rolpassword AS password_is_same
-+FROM run_command_on_workers($$SELECT rolpassword FROM pg_authid WHERE rolname = 'create_role_pass_exists'$$) workers, pg_authid
-+WHERE pg_authid.rolname = 'create_role_pass_exists' ORDER BY 1;
++SELECT count(*) FROM dst_8959;
 +
-+-- from a worker
-+\c - - - :worker_1_port
-+CREATE ROLE create_role_pass_from_worker LOGIN PASSWORD 'pass_from_worker';
-+\c - - - :master_port
-+SELECT workers.nodeport,
-+       CASE WHEN pg_authid.rolpassword LIKE 'SCRAM-SHA-256$%' THEN 'scram-sha-256'
-+            WHEN pg_authid.rolpassword LIKE 'md5%' THEN 'md5' END AS password_type,
-+       workers.result = pg_authid.rolpassword AS password_is_same
-+FROM run_command_on_workers($$SELECT rolpassword FROM pg_authid WHERE rolname = 'create_role_pass_from_worker'$$) workers, pg_authid
-+WHERE pg_authid.rolname = 'create_role_pass_from_worker' ORDER BY 1;
-+
-+-- empty and NULL passwords are propagated as NULL
-+CREATE ROLE create_role_pass_empty LOGIN PASSWORD '';
-+CREATE ROLE create_role_pass_null LOGIN PASSWORD NULL;
-+SELECT rolname, rolpassword IS NULL AS password_is_null FROM pg_authid
-+WHERE rolname IN ('create_role_pass_empty', 'create_role_pass_null') ORDER BY 1;
-+SELECT result FROM run_command_on_workers($$
-+    SELECT json_agg(json_build_array(rolname, rolpassword IS NULL) ORDER BY rolname) FROM pg_authid
-+    WHERE rolname IN ('create_role_pass_empty', 'create_role_pass_null')
-+$$) ORDER BY nodeport;
-+
-+DROP ROLE create_role_pass_scram, create_role_pass_md5, create_role_pass_xact,
-+          create_role_pass_exists, create_role_pass_from_worker,
-+          create_role_pass_empty, create_role_pass_null;
++SET client_min_messages TO WARNING;
++DROP SCHEMA insert_select_single_shard_table_8959 CASCADE;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8969** (2026-11-10): [release-14.0] Propagate encrypted password on CREATE ROLE (#8966) (@onurctirtir)
+- **PR #8968** (2026-11-10): [release-13.2] Propagate encrypted password on CREATE ROLE (#8966) (@onurctirtir)
 - **PR #8966** (2026-11-09): Propagate encrypted password on CREATE ROLE (@onurctirtir)
+- **PR #8963** (2026-11-16): Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT (@Bimal-ray99)
 - **PR #8956** (2026-11-06): Evaluate replayed object definitions in the owner context (@ihalatci)
 - **PR #8955** (2026-11-06): Use a trusted search path for internal SPI queries (@ihalatci)
-- **PR #8954** (2026-11-06): Restrict internal metadata cleanup (@ihalatci)
-- **PR #8951** (2026-10-23): Release 13.5.0 (@ihalatci)
-- **PR #8950** (2026-10-23): Update changelog for Citus 14.3.0 (@ihalatci)
 
 ---
 
@@ -3011,31 +2760,32 @@ ALTER ROLE r PASSWORD 'y';
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Propagate encrypted password on CREATE ROLE (#8966)
+## X. Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT
 
 **RULE**:
-When implementing operations in `src/backend/distributed/commands/distribute_object_ops.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/backend/distributed/planner/deparse_shard_query.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08479aca`: Propagate encrypted password on CREATE ROLE (#8966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1c614e7d`: Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/commands/distribute_object_ops.c`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/planner/deparse_shard_query.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-	.postprocess = PostprocessCreateRoleStmt,
+			if (HasDistributionKey(shardInterval->relationId))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
-// Anti-pattern to NEVER write (induced failure mode):
-	.postprocess = NULL,
+// Induced defect failure mode:
+			/* there are no restrictions to add for reference and citus local tables */
+			if (IsCitusTableType(shardInterval->relationId, DISTRIBUTED_TABLE))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08479aca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1c614e7d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

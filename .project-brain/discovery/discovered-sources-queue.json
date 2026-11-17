@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T08:57:19.113Z",
+  "updated_at": "2026-11-17T09:27:28.575Z",
   "stats": {
-    "total_discovered": 4912,
-    "approved_pending_harvest": 4627,
+    "total_discovered": 4918,
+    "approved_pending_harvest": 4633,
     "harvested_count": 0,
     "rejected_count": 285,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4625,
-      "OFFICIAL_DOCUMENTATION": 156,
+      "COMMUNITY_AND_EXPERT": 4627,
+      "OFFICIAL_DOCUMENTATION": 160,
       "STANDARDS_AND_SPECIFICATIONS": 102,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 19,
@@ -106090,6 +106090,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
         "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-2D469833841D": {
+      "id": "SRC-2D469833841D",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/ui/window/wx.checkIsPictureInPictureActive.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/ui/window/wx.checkIsPictureInPictureActive.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T09:27:26.891Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-C86018AA782C": {
+      "id": "SRC-C86018AA782C",
+      "url": "https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_xray.CfnTransactionSearchConfig.html",
+      "title": "https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_xray.CfnTransactionSearchConfig.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T09:27:27.720Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-AB94B19660E8": {
+      "id": "SRC-AB94B19660E8",
+      "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-Cloudformation.html",
+      "title": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-Cloudformation.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T09:27:27.761Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-3C8908FB8E28": {
+      "id": "SRC-3C8908FB8E28",
+      "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html",
+      "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T09:27:27.802Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-1F4D5AFC3381": {
+      "id": "SRC-1F4D5AFC3381",
+      "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-get-started.html",
+      "title": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-get-started.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T09:27:27.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-93D9A4B74E36": {
+      "id": "SRC-93D9A4B74E36",
+      "url": "https://github.com/freenet/freenet-core/issues/6205",
+      "title": "https://github.com/freenet/freenet-core/issues/6205",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T09:27:28.575Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
       }
     }
   }

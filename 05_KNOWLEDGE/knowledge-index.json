@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T08:57:19.636Z",
-  "total_verified_learnings": 8874,
+  "last_updated": "2026-11-17T09:27:29.127Z",
+  "total_verified_learnings": 8875,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20054,
+  "total_items": 20067,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114637,10 +114637,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "61ba4ac1",
-      "content_hash": "46e10ac8c2852967c92f5ec7b44b5586e5fedaeb551acc45a24041c6cad3b25c",
+      "source_version": "ddf073ee",
+      "content_hash": "7a4b14d40a7eee6d39630f3ceeb82b3cd8315a10cdfa5856c060e803072c89ed",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:34:20.620Z"
+      "persisted_at": "2026-11-17T09:22:24.822Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114649,10 +114649,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "61ba4ac1",
-      "content_hash": "4a4db3016a18a97b61b880567fe70f0d8f6a2f4b632f2d1cf9b21c00f8896614",
+      "source_version": "ddf073ee",
+      "content_hash": "82f6cdeb591c062c45cad1b2eaa308b465f13313a26ba979a2f3fd9b9ac435bc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:34:20.775Z"
+      "persisted_at": "2026-11-17T09:22:25.007Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114734,9 +114734,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4a97a07260641fd551e8c71dfc04d21e3f07445da8659a775fadc869a36be21",
+      "content_hash": "f419041956c0fb518282781acb7e90ad210e0b731e17b66b1f23150def679bea",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:34:25.085Z"
+      "persisted_at": "2026-11-17T09:27:28.957Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114746,9 +114746,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "c17da88014402acac454b376db3ee6d7974523afb557faae42b3d166d40cd2bd",
+      "content_hash": "8fec6409adce85e7a373fdbcb053ae36694b6d9bb7befe614dcc08c8fa1cac3c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:34:25.241Z"
+      "persisted_at": "2026-11-17T09:27:29.127Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -213117,14 +213117,19 @@
       "slug": "nervjs-taro",
       "platform": "github",
       "source_url": "https://github.com/NervJS/taro",
-      "source_version": "c8c25e58",
-      "content_hash": "78ce4a9773d7c4ddc47a3f3d9257e79f1f74bcab58442fbda77c6d9ccb877127",
+      "source_version": "b6eaa4ef",
+      "content_hash": "0f8fd1278d4a84993ae32a650c10746c475b9e1d755749320550fb578d47d8c9",
       "dossier_path": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "promoted_rules": [
         {
           "number": 8364,
           "title": "avoid updating state while VirtualWaterfall/VirtualLi",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8945,
+          "title": "report video picture-in-picture state",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -213133,7 +213138,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:39:57.283Z",
+      "verified_at": "2026-11-17T09:27:23.143Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213175,10 +213180,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nervjs-taro-technical-construction-intelligence-nervjs-taro-core-invariants.md",
       "title": "Technical Construction Intelligence: NervJS/taro Core Invariants",
       "repository": "NervJS/taro",
-      "source_version": "c8c25e58",
-      "content_hash": "3cccd2c14792e6b759b1cf8ff3a313910e65867d063f8eddcaaaa9e39c7ec6e3",
+      "source_version": "b6eaa4ef",
+      "content_hash": "25294d7037058b422e45a57361385436013685527f64dbb4110fca50e34cf3d2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T19:39:57.844Z"
+      "persisted_at": "2026-11-17T09:27:23.741Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro",
@@ -213187,10 +213192,10 @@
       "relative_path": "08_VERIFICATION/nervjs-taro-verification-protocol-empirical-defect-shield-for-nervjs-taro.md",
       "title": "Verification Protocol: Empirical Defect Shield for NervJS/taro",
       "repository": "NervJS/taro",
-      "source_version": "c8c25e58",
-      "content_hash": "0f90d10b30a6520729e8d94f4b956d0cbb76f5a88b1914e4c79d1b88f5257e6f",
+      "source_version": "b6eaa4ef",
+      "content_hash": "761b5802c027cc603bd2f75e09da37734e8b14e5caed03ba6ea2fb40543448a6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:39:57.965Z"
+      "persisted_at": "2026-11-17T09:27:23.912Z"
     },
     "learn-github-rook-rook": {
       "learning_id": "learn-github-rook-rook",
@@ -213510,9 +213515,9 @@
       "title": "Technical Construction Intelligence: nervjs-taro-learnings Core Invariants",
       "repository": "nervjs-taro-learnings",
       "source_version": "HEAD",
-      "content_hash": "86e1bf497a084276cae33def5ee2c0fb31c7807f996fc1f4c9418b8de77d7047",
+      "content_hash": "eb4ef31b22240770271f701344ecd19b23edaf6c7510e0d8842a18daf8b86c60",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T19:40:47.054Z"
+      "persisted_at": "2026-11-17T09:27:27.287Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro-learnings",
@@ -213522,9 +213527,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nervjs-taro-learnings",
       "repository": "nervjs-taro-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c9103879ce7dd17f563f3ee3c527e7f12fbfa66f616ab3745550a851146d5b4",
+      "content_hash": "6067824aebfb65bcaa1cfac7712c4af86033d55d3dcbfa33e1ec5e1fe0304571",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:40:47.190Z"
+      "persisted_at": "2026-11-17T09:27:27.457Z"
     },
     "learn-github-krishhgg-insomnia": {
       "learning_id": "learn-github-krishhgg-insomnia",
@@ -219357,8 +219362,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "61ba4ac1",
-      "content_hash": "05dcb4edca579c23469b578b195d7daf3bcceae3fa41b9240bb999a1506991b3",
+      "source_version": "ddf073ee",
+      "content_hash": "342c07504c40fb45358cc9891013ea8b406bd9cf5c3549b1d24d9daa9ea3319e",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -219396,6 +219401,11 @@
           "number": 8855,
           "title": "bump Rust toolchain pin to 1.95.0 to unblock wasmtime 48",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8942,
+          "title": "native dial timing gates, a NAT model, and UDP dials beside native one",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219403,7 +219413,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:34:20.012Z",
+      "verified_at": "2026-11-17T09:22:24.215Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234341,14 +234351,19 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "708bee9a",
-      "content_hash": "3640b9590ab2d0ed2aad79dfbb40a5e99e73649898c6ceb59bc99b653fad5be8",
+      "source_version": "4d6a58e6",
+      "content_hash": "2d40116262cca2668c8588cdc801fbb038833ef033221889260d92dd86f42fea",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
         {
           "number": 8527,
           "title": "embed structured design context in synthesized templates (MetadataContext",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8944,
+          "title": "docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tra",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -234357,7 +234372,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T19:41:40.837Z",
+      "verified_at": "2026-11-17T09:23:12.456Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234399,10 +234414,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "repository": "aws/aws-cdk",
-      "source_version": "708bee9a",
-      "content_hash": "bb480446e6c20d50434d5db7af7ad6bb83c02122b93ffe225b93a0a0c49df3c8",
+      "source_version": "4d6a58e6",
+      "content_hash": "48d3b167723fe2b46d6d82b1b2f9153bd95cb59d669ff375c06fff373a6f80cf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T19:41:41.460Z"
+      "persisted_at": "2026-11-17T09:23:13.054Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk",
@@ -234411,10 +234426,10 @@
       "relative_path": "08_VERIFICATION/aws-aws-cdk-verification-protocol-empirical-defect-shield-for-aws-aws-cdk.md",
       "title": "Verification Protocol: Empirical Defect Shield for aws/aws-cdk",
       "repository": "aws/aws-cdk",
-      "source_version": "708bee9a",
-      "content_hash": "55308e6671bd75a63e8398ff5de9e4eeddaa496f52382fc7c39a29791d1d1af1",
+      "source_version": "4d6a58e6",
+      "content_hash": "0ee327799b44e874e1d1c915d02480854d20db84822e9b090f3d8aaca4fe5cf4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:41:41.644Z"
+      "persisted_at": "2026-11-17T09:23:13.222Z"
     },
     "learn-huggingface-qwen-qwen3-4b": {
       "learning_id": "learn-huggingface-qwen-qwen3-4b",
@@ -234487,9 +234502,9 @@
       "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
       "repository": "aws-aws-cdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "aaa4bd57662e757a17d7785f775e3ed2ae38cdfa58aa5d124cd72a8ce1c2ab9c",
+      "content_hash": "459fc6eef9e2519f2528e1edbe3214bcd4a90198fd789c75201433e08462d47e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T19:47:13.959Z"
+      "persisted_at": "2026-11-17T09:27:28.205Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings",
@@ -234499,9 +234514,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aws-aws-cdk-learnings",
       "repository": "aws-aws-cdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "a03ebbb39c46e45f04562484bcd1ee7a0647a2f741c15e23385c0995f67bb479",
+      "content_hash": "8088903c6ff956a74a226559447f1a0e6e2b3576c697ac9fa89d637930cf3fb8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:47:14.128Z"
+      "persisted_at": "2026-11-17T09:27:28.374Z"
     },
     "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0": {
       "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
@@ -268338,6 +268353,191 @@
       "content_hash": "5a91f5ee47444762550eb532f20945a8e28082e404c91018e44336772ef4056d",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T08:57:19.469Z"
+    },
+    "rule-8942": {
+      "learning_id": "rule-8942",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8942,
+      "title": "native dial timing gates, a NAT model, and UDP dials beside native one",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "ddf073ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T09:22:24.215Z"
+    },
+    "candidate_directive-native-dial-timing-gates-a-nat-model-and-udp-dials-beside-native-one": {
+      "item_id": "candidate_directive-native-dial-timing-gates-a-nat-model-and-udp-dials-beside-native-one",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HMVN-native-dial-timing-gates-a-nat-model-and-udp-dials-beside-native-one.md",
+      "title": "native dial timing gates, a NAT model, and UDP dials beside native one",
+      "repository": "freenet/freenet-core",
+      "source_version": "ddf073ee",
+      "content_hash": "20020172dbbdd1e3a55408bbda51642776b3deaffd303c351a40bd15df19ddda",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T09:22:24.666Z"
+    },
+    "learn-github-citusdata-citus": {
+      "learning_id": "learn-github-citusdata-citus",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "citusdata/citus",
+      "repository": "citusdata/citus",
+      "slug": "citusdata-citus",
+      "platform": "github",
+      "source_url": "https://github.com/citusdata/citus",
+      "source_version": "1c614e7d",
+      "content_hash": "e250e023b1f6726f5f3f5667217e6a8ddea93780f7b09155ad39c82fbc666d46",
+      "dossier_path": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8943,
+          "title": "Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T09:22:25.674Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8943": {
+      "learning_id": "rule-8943",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8943,
+      "title": "Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT",
+      "source_url": "https://github.com/citusdata/citus",
+      "source_version": "1c614e7d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T09:22:25.674Z"
+    },
+    "candidate_directive-skip-partition-key-not-null-filter-for-single-shard-insert-select": {
+      "item_id": "candidate_directive-skip-partition-key-not-null-filter-for-single-shard-insert-select",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HO02-skip-partition-key-not-null-filter-for-single-shard-insert-select.md",
+      "title": "Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT",
+      "repository": "citusdata/citus",
+      "source_version": "1c614e7d",
+      "content_hash": "6371b1cd3294281b7f3942c0999cac15a13f10f02647c28bd7ad90fd50cb2fce",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T09:22:26.120Z"
+    },
+    "domain_intelligence-architecture-intelligence-citusdata-citus-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-citusdata-citus-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-citusdata-citus-architecture-intelligence-citusdata-citus-core-invariants.md",
+      "title": "Architecture Intelligence: citusdata/citus Core Invariants",
+      "repository": "citusdata/citus",
+      "source_version": "1c614e7d",
+      "content_hash": "eacba3d5b4fd3c662f9a6d125ea1fbaf82594be6985d8faf6e3a0399c4cfeeec",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T09:22:26.270Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-citusdata-citus": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-citusdata-citus",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/citusdata-citus-verification-protocol-empirical-defect-shield-for-citusdata-citu.md",
+      "title": "Verification Protocol: Empirical Defect Shield for citusdata/citus",
+      "repository": "citusdata/citus",
+      "source_version": "1c614e7d",
+      "content_hash": "b4a8c1a0d23ccdc61d349dbf705778dda84a0820bab24adc30733845f0e419ee",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T09:22:26.438Z"
+    },
+    "rule-8944": {
+      "learning_id": "rule-8944",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8944,
+      "title": "docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tra",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "4d6a58e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T09:23:12.456Z"
+    },
+    "candidate_directive-docs-bedrockagentcore-document-transaction-search-prerequisite-for-runtime-tra": {
+      "item_id": "candidate_directive-docs-bedrockagentcore-document-transaction-search-prerequisite-for-runtime-tra",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O4Z9-docs-bedrockagentcore-document-transaction-search-prerequisite-for-runtime-tra.md",
+      "title": "docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tra",
+      "repository": "aws-aws-cdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "853c61b6cabf9d4c332c43d7774bc5d837e3fc885d975294c89a84e9c4c6d7ad",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T09:27:28.054Z"
+    },
+    "rule-8945": {
+      "learning_id": "rule-8945",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8945,
+      "title": "report video picture-in-picture state",
+      "source_url": "https://github.com/NervJS/taro",
+      "source_version": "b6eaa4ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T09:27:23.143Z"
+    },
+    "candidate_directive-report-video-picture-in-picture-state": {
+      "item_id": "candidate_directive-report-video-picture-in-picture-state",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O1J3-report-video-picture-in-picture-state.md",
+      "title": "report video picture-in-picture state",
+      "repository": "NervJS/taro",
+      "source_version": "b6eaa4ef",
+      "content_hash": "7e69ccae2b10afcebf61bd2136ebbfe32b8fd9ee34a52dc5098a3826cd5f0b5c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T09:27:23.585Z"
+    },
+    "candidate_directive-h5-report-video-picture-in-picture-state": {
+      "item_id": "candidate_directive-h5-report-video-picture-in-picture-state",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O49P-h5-report-video-picture-in-picture-state.md",
+      "title": "h5): report video picture-in-picture state",
+      "repository": "nervjs-taro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1c90586ac46456dcc0ba28ad205ca2495d423c38cf51c40efcdbfb7cad030412",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T09:27:27.134Z"
+    },
+    "candidate_directive-connect-native-dial-timing-gates-a-nat-model-and-udp-dials-beside-native-one": {
+      "item_id": "candidate_directive-connect-native-dial-timing-gates-a-nat-model-and-udp-dials-beside-native-one",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O5JZ-connect-native-dial-timing-gates-a-nat-model-and-udp-dials-beside-native-one.md",
+      "title": "connect): native dial timing gates, a NAT model, and UDP dials beside native one",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d50622843bd78733ae916b5bc81455c5afd4e2364102b058a70fa749dc34df02",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T09:27:28.805Z"
     }
   },
   "ai-builder-brain": {

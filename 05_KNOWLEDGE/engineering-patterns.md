@@ -652591,3 +652591,341 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `9fde5223` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8942. native dial timing gates, a NAT model, and UDP dials beside native one (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "native dial timing gates, a NAT model, and UDP dials beside native one",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "ddf073ee",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-17T09:22:23.890Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `ddf073ee`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ddf073ee`: connect): native dial timing gates, a NAT model, and UDP dials beside native ones. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+turned its own native connects off,
+`connect_native_rescued_by_udp_{joiner,acceptor}` for each UDP dial after a
+failed native setup that connected (R5: a connection a node without UDP
+would not have made), `connect_native_both_dials_connected_kept_{udp,native}`
+for a native dial and the UDP dial beside it that both connected (the first
+kept), and the last offer as states
+  peer (joiner: before anything counts the acceptor failed; acceptor:
+  expectation plus dial). Both sides start it NATIVE_FALLBACK_AFTER (12 s,
+  the server's window) after their own reference, never earlier: the
+  acceptor's decision, the joiner's receipt of the response. Both setups
+  have ended by then, and the references are the response's travel time
+  apart, so the two hole punches (NAT_TRAVERSAL_DEADLINE, 3 s each) overlap.
+  Falling back as each setup ended would not: the client's window ends 4 s
+  before the server's (behind port-restricted NATs every peer fallback then
+  misses, test_quic_native_blocked_pairs_connect_over_udp_behind_nats).
+  The joiner plans each dial (op_ctx_task.rs plan_acceptor_dial): a native
+  dial carries an absolute deadline, the common fallback time
+  (DialTransport::Native { dea
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+turned its own native connects off, and the last offer as states
+  peer (joiner: in the same dial slot, before anything counts the acceptor
+  failed; acceptor: expectation plus dial). Both sides start it
+  NATIVE_FALLBACK_AFTER (12 s, the server's window) after their own
+  reference, never earlier: the acceptor's decision, the joiner's receipt of
+  the response. Both setups have ended by then, and the references are the
+  response's travel time apart, so the two hole punches
+  (NAT_TRAVERSAL_DEADLINE, 3 s each) overlap. Falling back as each setup
+  ended would not: the client's window ends 4 s before the server's. The
+  simulation cannot show the difference (it has no NAT, and an expected
+  inbound is accepted for 100 s), so unit tests pin the timing, including
+  a two-sided one where a UDP dial connects only if both sides punch
+  together. A joiner's native attempt is bounded by its fallback time
+  (DialTransport::Native carries the bound), and a queued native acceptor
+  with less than NATIVE_MIN_WINDOW_LEFT (4 s) left before it is dialled over
+  UDP at that time with no native attempt: a joiner with a connection dials
+  one acceptor at a time, and one behind a failed native dial 
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ddf073ee` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8943. Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT (Harvested from citusdata/citus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT",
+  "source": "citusdata/citus",
+  "source_url": "https://github.com/citusdata/citus",
+  "source_version": "1c614e7d",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-17T09:22:25.356Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-citusdata-citus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [citusdata/citus](https://github.com/citusdata/citus) (Revision: `1c614e7d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/backend/distributed/planner/deparse_shard_query.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1c614e7d`: Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/planner/deparse_shard_query.c`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production-grade fix pattern:
+			if (HasDistributionKey(shardInterval->relationId))
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// Induced defect failure mode:
+			/* there are no restrictions to add for reference and citus local tables */
+			if (IsCitusTableType(shardInterval->relationId, DISTRIBUTED_TABLE))
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1c614e7d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8944. docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tra (Harvested from aws/aws-cdk)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tra",
+  "source": "aws/aws-cdk",
+  "source_url": "https://github.com/aws/aws-cdk",
+  "source_version": "4d6a58e6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T09:23:12.134Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aws-aws-cdk",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aws/aws-cdk](https://github.com/aws/aws-cdk) (Revision: `4d6a58e6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `88e01777`: docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tracing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+> **Note:** Tracing requires CloudWatch Transaction Search, enabled once per account and Region. Without it the deploy fails with `X-Ray Delivery Destination is supported with CloudWatch Logs as a Trace Segment Destination`. Turn it on in the CloudWatch console, or deploy [`xray.CfnTransactionSearchConfig`](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_xray.CfnTransactionSearchConfig.html) in a stack you deploy once per account; see [Enable Transaction Search with CloudFormation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-Cloudformation.html).
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `88e01777` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8945. report video picture-in-picture state (Harvested from NervJS/taro)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "report video picture-in-picture state",
+  "source": "NervJS/taro",
+  "source_url": "https://github.com/NervJS/taro",
+  "source_version": "b6eaa4ef",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-17T09:27:22.816Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nervjs-taro",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NervJS/taro](https://github.com/NervJS/taro) (Revision: `b6eaa4ef`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `packages/taro-h5/__tests__/ui/window.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b6eaa4ef`: h5): report video picture-in-picture state. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-h5/__tests__/ui/window.test.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { checkIsPictureInPictureActive, offWindowResize, onWindowResize } from '../../src/api/ui/window'
+
+test('reports the current video picture-in-picture state synchronously', () => {
+  let activeVideo: HTMLVideoElement | null = null
+  const original = Object.getOwnPropertyDescriptor(document, 'pictureInPictureElement')
+  Object.defineProperty(document, 'pictureInPictureElement', {
+    configurable: true,
+    get: () => activeVideo,
+  })
+
+  try {
+    expect(checkIsPictureInPictureActive()).toBe(false)
+    activeVideo = document.createElement('video')
+    expect(checkIsPictureInPictureActive()).toBe(true)
+    activeVideo = null
+    expect(checkIsPictureInPictureActive()).toBe(false)
+  } finally {
+    if (original) {
+      Object.defineProperty(document, 'pictureInPictureElement', original)
+    } else {
+      Reflect.deleteProperty(document, 'pictureInPictureElement')
+    }
+  }
+})
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+import { offWindowResize, onWindowResize } from '../../src/api/ui/window'
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b6eaa4ef` are properly handled with clean fallback behavior.

@@ -10545,3 +10545,7 @@ Every entry in this ledger must capture:
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `53ba1b4f` | Multi-dimensional audit evidence | 2026-11-17T08:56:34.955Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `9fde5223` | Multi-dimensional audit evidence | 2026-11-17T08:56:42.418Z |
 | `learn-dom-d-c917d98c` | `project://faker-js-faker` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md` | 2026-11-17T08:57:17.742Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `ddf073ee` | Multi-dimensional audit evidence | 2026-11-17T09:22:24.424Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `1c614e7d` | Multi-dimensional audit evidence | 2026-11-17T09:22:25.882Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `4d6a58e6` | Multi-dimensional audit evidence | 2026-11-17T09:23:12.665Z |
+| `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `b6eaa4ef` | Multi-dimensional audit evidence | 2026-11-17T09:27:23.354Z |

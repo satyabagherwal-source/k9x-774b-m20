@@ -10512,3 +10512,7 @@
 | `CYCLE-20261117-KF30` | `2026-11-17T08:56:34.908Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8940` | Yes (`5dfd58ad...`) |
 | `CYCLE-20261117-KKVI` | `2026-11-17T08:56:42.414Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8941` | Yes (`256b12fb...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:57:17.742Z` | `faker-js-faker` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C917D98C` [Domain D] | Yes (`d4325d5e...`) |
+| `CYCLE-20261117-HMP0` | `2026-11-17T09:22:24.420Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8942` | Yes (`342c0750...`) |
+| `CYCLE-20261117-HNTI` | `2026-11-17T09:22:25.878Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8943` | Yes (`e250e023...`) |
+| `CYCLE-20261117-INX0` | `2026-11-17T09:23:12.660Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8944` | Yes (`2d401162...`) |
+| `CYCLE-20261117-O1CM` | `2026-11-17T09:27:23.350Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8945` | Yes (`0f8fd127...`) |

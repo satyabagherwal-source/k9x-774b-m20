@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T08:57:19.469Z",
-  "total_records": 1514,
+  "last_updated": "2026-11-17T09:27:28.957Z",
+  "total_records": 1515,
   "domains": {
     "A": {
       "total": 9,
@@ -723,7 +723,7 @@
       ]
     },
     "G": {
-      "total": 284,
+      "total": 285,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1008,7 +1008,8 @@
         "domain_intelligence-architecture-intelligence-avajs-ava-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-pulumi-pulumi-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-faker-js-faker-core-invariants",
-        "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-citusdata-citus-core-invariants"
       ]
     },
     "H": {
@@ -8880,8 +8881,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "46e10ac8c2852967c92f5ec7b44b5586e5fedaeb551acc45a24041c6cad3b25c",
-      "created_at": "2026-11-17T03:34:20.620Z"
+      "content_hash": "7a4b14d40a7eee6d39630f3ceeb82b3cd8315a10cdfa5856c060e803072c89ed",
+      "created_at": "2026-11-17T09:22:24.822Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -8958,8 +8959,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "f4a97a07260641fd551e8c71dfc04d21e3f07445da8659a775fadc869a36be21",
-      "created_at": "2026-11-17T03:34:25.085Z"
+      "content_hash": "f419041956c0fb518282781acb7e90ad210e0b731e17b66b1f23150def679bea",
+      "created_at": "2026-11-17T09:27:28.957Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -9345,8 +9346,8 @@
       "title": "Technical Construction Intelligence: NervJS/taro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nervjs-taro-technical-construction-intelligence-nervjs-taro-core-invariants.md",
       "repository": "NervJS/taro",
-      "content_hash": "3cccd2c14792e6b759b1cf8ff3a313910e65867d063f8eddcaaaa9e39c7ec6e3",
-      "created_at": "2026-11-13T19:39:57.844Z"
+      "content_hash": "25294d7037058b422e45a57361385436013685527f64dbb4110fca50e34cf3d2",
+      "created_at": "2026-11-17T09:27:23.741Z"
     },
     "domain_intelligence-architecture-intelligence-rook-rook-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rook-rook-core-invariants",
@@ -9432,8 +9433,8 @@
       "title": "Technical Construction Intelligence: nervjs-taro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nervjs-taro-learnings-technical-construction-intelligence-nervjs-taro-learnings-.md",
       "repository": "nervjs-taro-learnings",
-      "content_hash": "86e1bf497a084276cae33def5ee2c0fb31c7807f996fc1f4c9418b8de77d7047",
-      "created_at": "2026-11-13T19:40:47.054Z"
+      "content_hash": "eb4ef31b22240770271f701344ecd19b23edaf6c7510e0d8842a18daf8b86c60",
+      "created_at": "2026-11-17T09:27:27.287Z"
     },
     "domain_intelligence-architecture-intelligence-krishhgg-insomnia-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-krishhgg-insomnia-core-invariants",
@@ -17026,8 +17027,8 @@
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "repository": "aws/aws-cdk",
-      "content_hash": "bb480446e6c20d50434d5db7af7ad6bb83c02122b93ffe225b93a0a0c49df3c8",
-      "created_at": "2026-11-14T19:41:41.460Z"
+      "content_hash": "48d3b167723fe2b46d6d82b1b2f9153bd95cb59d669ff375c06fff373a6f80cf",
+      "created_at": "2026-11-17T09:23:13.054Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants",
@@ -17095,8 +17096,8 @@
       "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-learnings-technical-construction-intelligence-aws-aws-cdk-learnings-.md",
       "repository": "aws-aws-cdk-learnings",
-      "content_hash": "aaa4bd57662e757a17d7785f775e3ed2ae38cdfa58aa5d124cd72a8ce1c2ab9c",
-      "created_at": "2026-11-14T19:47:13.959Z"
+      "content_hash": "459fc6eef9e2519f2528e1edbe3214bcd4a90198fd789c75201433e08462d47e",
+      "created_at": "2026-11-17T09:27:28.205Z"
     },
     "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-saluki-27b-1-0-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-saluki-27b-1-0-core-inva",
@@ -26388,6 +26389,15 @@
       "repository": "mattermost-mattermost-learnings",
       "content_hash": "5a91f5ee47444762550eb532f20945a8e28082e404c91018e44336772ef4056d",
       "created_at": "2026-11-17T08:57:19.469Z"
+    },
+    "domain_intelligence-architecture-intelligence-citusdata-citus-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-citusdata-citus-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: citusdata/citus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-citusdata-citus-architecture-intelligence-citusdata-citus-core-invariants.md",
+      "repository": "citusdata/citus",
+      "content_hash": "eacba3d5b4fd3c662f9a6d125ea1fbaf82594be6985d8faf6e3a0399c4cfeeec",
+      "created_at": "2026-11-17T09:22:26.270Z"
     }
   }
 }

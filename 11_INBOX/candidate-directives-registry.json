@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T08:57:19.338Z",
+  "last_updated": "2026-11-17T09:27:28.805Z",
   "directives": [
     {
       "id": "CD-001",
@@ -23334,6 +23334,81 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EB2A2D--mm-69773-fix-layout-shift-when-wide-ima.md",
       "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-HMVN",
+      "directive_title": "native dial timing gates, a NAT model, and UDP dials beside native one",
+      "source_repo": "freenet/freenet-core",
+      "source_commit": "ddf073ee",
+      "staged_file": "11_INBOX/candidate-directives/CD-HMVN-native-dial-timing-gates-a-nat-model-and-udp-dials-beside-native-one.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-HO02",
+      "directive_title": "Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT",
+      "source_repo": "citusdata/citus",
+      "source_commit": "1c614e7d",
+      "staged_file": "11_INBOX/candidate-directives/CD-HO02-skip-partition-key-not-null-filter-for-single-shard-insert-select.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-O4Z9",
+      "directive_title": "docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tra",
+      "source_repo": "aws-aws-cdk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O4Z9-docs-bedrockagentcore-document-transaction-search-prerequisite-for-runtime-tra.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-O1J3",
+      "directive_title": "report video picture-in-picture state",
+      "source_repo": "NervJS/taro",
+      "source_commit": "b6eaa4ef",
+      "staged_file": "11_INBOX/candidate-directives/CD-O1J3-report-video-picture-in-picture-state.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-O49P",
+      "directive_title": "h5): report video picture-in-picture state",
+      "source_repo": "nervjs-taro-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O49P-h5-report-video-picture-in-picture-state.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-FEBFC3",
+      "directive_title": "docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tra",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aws-aws-cdk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FEBFC3-docs-bedrockagentcore-document-transacti.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-O5JZ",
+      "directive_title": "connect): native dial timing gates, a NAT model, and UDP dials beside native one",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O5JZ-connect-native-dial-timing-gates-a-nat-model-and-udp-dials-beside-native-one.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
     }
   ]
 }
