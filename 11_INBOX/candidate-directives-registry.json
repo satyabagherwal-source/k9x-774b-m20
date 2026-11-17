@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T04:31:34.715Z",
+  "last_updated": "2026-11-17T04:43:59.582Z",
   "directives": [
     {
       "id": "CD-001",
@@ -10262,11 +10262,11 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-49NA",
+      "id": "CD-JL5N",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-49NA-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-JL5N-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -22053,6 +22053,35 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0F7195-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-JKR3",
+      "directive_title": "Require new bundle format for image signing and verification",
+      "source_repo": "sigstore-cosign-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JKR3-require-new-bundle-format-for-image-signing-and-verification.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-AB52CC",
+      "directive_title": "Require new bundle format for image signing and verification",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sigstore-cosign",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AB52CC-require-new-bundle-format-for-image-sign.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-0ED6D0",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0ED6D0-puppet-fix-postgresql-failing-to-start-o.md",
       "staged_date": "2026-11-17"
     }
   ]

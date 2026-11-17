@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-BW7K",
-    "timestamp": "2026-11-14T13:38:52.496Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "b2228f7a84688c0cae28c341dc66562f49fcec1e4589a3e40f5ba5b82170d606",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-ZFVY",
-    "timestamp": "2026-11-14T13:57:11.086Z",
-    "repository": "BAAI/bge-base-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-    "contentHash": "5fd29a34c759bfc6cc9dbb64d0f00f1c688bbf03d059a8bb62410f2cc2167a44",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-WQD6",
     "timestamp": "2026-11-14T14:23:04.314Z",
     "repository": "google/gemma-4-31B-it",
@@ -7490,6 +7460,36 @@
     "repository": "typedb/typedb",
     "learningId": "learn-github-typedb-typedb",
     "contentHash": "23f6d4abfb272e14f679f8f7cd1a639711dca060cac048e747f1d643a6bce41e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-J9HI",
+    "timestamp": "2026-11-17T04:43:44.454Z",
+    "repository": "LiquidAI/LFM3-1.7B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+    "contentHash": "69dd95b2a6f1da0523c9107ed16b82d68fb4c6ec5f82db6c977db7a3785cfd97",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-JHWI",
+    "timestamp": "2026-11-17T04:43:55.362Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "b79b24c85211c584c21e984399872ea56490bc49b7e93c0d4815cb2fbe0d9819",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

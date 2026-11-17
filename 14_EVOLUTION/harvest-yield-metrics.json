@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T04:31:29.802Z",
-  "total_cycles_completed": 10024,
-  "total_learnings_persisted": 10024,
-  "total_rules_promoted": 9608,
+  "last_updated": "2026-11-17T04:43:55.371Z",
+  "total_cycles_completed": 10026,
+  "total_learnings_persisted": 10026,
+  "total_rules_promoted": 9609,
   "history": [
-    {
-      "timestamp": "2026-11-16T03:47:45.600Z",
-      "repository": "CrawlCove/xml-sitemap-validator",
-      "learningId": "learn-github-crawlcove-xml-sitemap-validator",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T03:57:06.603Z",
-      "repository": "GanymedeNil/document.ai",
-      "learningId": "learn-github-ganymedenil-document-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T03:57:17.343Z",
       "repository": "JuulLabs/kable",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-17T04:31:29.802Z",
       "repository": "typedb/typedb",
       "learningId": "learn-github-typedb-typedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T04:43:44.464Z",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T04:43:55.371Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

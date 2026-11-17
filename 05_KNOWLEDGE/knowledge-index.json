@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T04:31:34.951Z",
-  "total_verified_learnings": 8843,
+  "last_updated": "2026-11-17T04:43:59.807Z",
+  "total_verified_learnings": 8844,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19762,
+  "total_items": 19767,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "888382d42e8ab083969929417c7eec4cfd855814eb08cff44cae7e717e970228",
+      "content_hash": "82212a94c6f90e3a123785dc02d6812dcd50465617f83d3ace0dccde5e8aa973",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T03:08:06.096Z"
+      "persisted_at": "2026-11-17T04:43:59.694Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e65786706f6ea64bbb962dfbd880260e16e1a3088ddd9b53870a0c213084f6a7",
+      "content_hash": "d45b3180c2f5e623b9693525576aa1c2cafd7a9eb8a33d5a20f7b7faccf17116",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:08:06.214Z"
+      "persisted_at": "2026-11-17T04:43:59.807Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214876,13 +214876,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-49NA-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JL5N-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f06527070e0df0d96ece54cd9a5333c81bb4233bfe06b3788407eb9155f39c1",
+      "content_hash": "0a25632ded94a7b723de29eb5b4b5f3cc1e9c7046d4b9d108dc87a6b4e5519f2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T03:08:05.980Z"
+      "persisted_at": "2026-11-17T04:43:59.582Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -259216,14 +259216,19 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "330b0bab",
-      "content_hash": "b48d6dd2de5357c2d3a1d7c98cadd337494fbc408867a42c1cca3db96dd83aa3",
+      "source_version": "8404f23a",
+      "content_hash": "b79b24c85211c584c21e984399872ea56490bc49b7e93c0d4815cb2fbe0d9819",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
         {
           "number": 8810,
           "title": "Verify blob attestations exclusively via sigstore-go",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8870,
+          "title": "Require new bundle format for image signing and verification",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -259232,7 +259237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T23:14:51.595Z",
+      "verified_at": "2026-11-17T04:43:55.207Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259274,10 +259279,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "repository": "sigstore/cosign",
-      "source_version": "330b0bab",
-      "content_hash": "9cecfd7617814c705a764d11e285e2e66f4a2bab9cf562e866fef5f644f4f57b",
+      "source_version": "8404f23a",
+      "content_hash": "92def6dfd6fac4502ef2d93bac02ba89fe4c2394526ace1ab76c60d4024d4ec9",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T23:14:52.056Z"
+      "persisted_at": "2026-11-17T04:43:55.649Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign",
@@ -259286,10 +259291,10 @@
       "relative_path": "08_VERIFICATION/sigstore-cosign-verification-protocol-empirical-defect-shield-for-sigstore-cosig.md",
       "title": "Verification Protocol: Empirical Defect Shield for sigstore/cosign",
       "repository": "sigstore/cosign",
-      "source_version": "330b0bab",
-      "content_hash": "e135719786743173a0bb8fbca936c95af35c5ee752b240ed38ea82c669c63942",
+      "source_version": "8404f23a",
+      "content_hash": "11bf5b5ba3fd378ade55482afda51f9532109d4ffa0888255aa01bea222d8363",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:14:52.173Z"
+      "persisted_at": "2026-11-17T04:43:55.766Z"
     },
     "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized": {
       "item_id": "candidate_directive-docs-synthesize-warn-that-synthetic-output-is-not-anonymized",
@@ -259335,9 +259340,9 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "repository": "sigstore-cosign-learnings",
       "source_version": "HEAD",
-      "content_hash": "0cf57eaa94081f663e1d5c328a867bc26d57c1a8d0bf2a3bc042db66d4e3bc5a",
+      "content_hash": "68c04bd169247a1aeefcbc2942eaa5f3ccf502bac7871417924d5ec0ae3bdf02",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T23:15:00.461Z"
+      "persisted_at": "2026-11-17T04:43:59.171Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings",
@@ -259347,9 +259352,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sigstore-cosign-learnings",
       "repository": "sigstore-cosign-learnings",
       "source_version": "HEAD",
-      "content_hash": "2230fd9e271baf853b63a798672613e11db35f2229aca9d470feee42cc39cc7d",
+      "content_hash": "6e1858d6dc16e2e0befcbb2d4d7abdce1ab998f28ef6f434b51243f7e26df23c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:15:00.586Z"
+      "persisted_at": "2026-11-17T04:43:59.285Z"
     },
     "rule-8811": {
       "learning_id": "rule-8811",
@@ -263859,6 +263864,83 @@
       "content_hash": "cf4694cab4e2fb88a11e7612f13b877b3180deb2437005fab0857febb4c24fcc",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T04:31:33.516Z"
+    },
+    "learn-huggingface-liquidai-lfm3-1-7b-gguf": {
+      "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/LFM3-1.7B-GGUF",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "slug": "hf-liquidai-lfm3-1.7b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
+      "source_version": "hf-liquidai-lfm3-1.7b-gguf",
+      "content_hash": "69dd95b2a6f1da0523c9107ed16b82d68fb4c6ec5f82db6c977db7a3785cfd97",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T04:43:44.271Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-gguf-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-gguf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-gguf-research-knowledge-intelligence-liquidai-lfm3-1-7b-gg.md",
+      "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-1.7B-GGUF Core Invariants",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "source_version": "hf-liquidai-lfm3-1.7b-gguf",
+      "content_hash": "999f1228d0ab7e12f384debe9831d558bd4e8c9a0f3bbb974814e17689d56523",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T04:43:44.635Z"
+    },
+    "rule-8870": {
+      "learning_id": "rule-8870",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8870,
+      "title": "Require new bundle format for image signing and verification",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "8404f23a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T04:43:55.207Z"
+    },
+    "candidate_directive-require-new-bundle-format-for-image-signing-and-verification": {
+      "item_id": "candidate_directive-require-new-bundle-format-for-image-signing-and-verification",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JKR3-require-new-bundle-format-for-image-signing-and-verification.md",
+      "title": "Require new bundle format for image signing and verification",
+      "repository": "sigstore-cosign-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b918adc4eac610e43c1271f996f359957a5126563e251cb643a908e1f41570aa",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T04:43:59.058Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-gguf-learnings-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-gguf-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-gguf-learnings-research-knowledge-intelligence-hf-liquidai.md",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-1.7b-gguf-learnings Core Invariants",
+      "repository": "hf-liquidai-lfm3-1.7b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f3a5da40ac2d8d315b8fa6ee05837ea04be5564829affeb10f1717ea669169f0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T04:43:58.670Z"
     }
   },
   "ai-builder-brain": {

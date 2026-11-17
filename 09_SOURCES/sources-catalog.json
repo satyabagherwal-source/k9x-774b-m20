@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "330b0bab",
+    "sourceVersion": "8404f23a",
     "license": "Apache-2.0",
-    "contentHash": "b48d6dd2de5357c2d3a1d7c98cadd337494fbc408867a42c1cca3db96dd83aa3",
-    "lastHarvestedAt": "2026-11-16T23:14:51.758Z",
+    "contentHash": "b79b24c85211c584c21e984399872ea56490bc49b7e93c0d4815cb2fbe0d9819",
+    "lastHarvestedAt": "2026-11-17T04:43:55.366Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -11595,8 +11595,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
     "sourceVersion": "hf-liquidai-lfm3-1.7b-gguf",
     "license": "Open-Source",
-    "contentHash": "29866816d6d8b7d60348718039781b0fd03bfe562979d1774eea7b34737adc95",
-    "lastHarvestedAt": "2026-11-12T13:15:10.040Z",
+    "contentHash": "69dd95b2a6f1da0523c9107ed16b82d68fb4c6ec5f82db6c977db7a3785cfd97",
+    "lastHarvestedAt": "2026-11-17T04:43:44.458Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
   },
   "hf-speridlabs-idol": {

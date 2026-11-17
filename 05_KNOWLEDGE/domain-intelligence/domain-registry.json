@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T04:31:34.832Z",
-  "total_records": 1442,
+  "last_updated": "2026-11-17T04:43:59.694Z",
+  "total_records": 1444,
   "domains": {
     "A": {
       "total": 9,
@@ -44,7 +44,7 @@
       ]
     },
     "D": {
-      "total": 618,
+      "total": 620,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -663,7 +663,9 @@
         "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-fabio-rovai-open-ontologies-learnings-core-invar",
-        "DOM-D-2B088993"
+        "DOM-D-2B088993",
+        "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-gguf-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-gguf-learnings-core-invari"
       ]
     },
     "E": {
@@ -7257,8 +7259,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "888382d42e8ab083969929417c7eec4cfd855814eb08cff44cae7e717e970228",
-      "created_at": "2026-11-17T03:08:06.096Z"
+      "content_hash": "82212a94c6f90e3a123785dc02d6812dcd50465617f83d3ace0dccde5e8aa973",
+      "created_at": "2026-11-17T04:43:59.694Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -24228,8 +24230,8 @@
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "repository": "sigstore/cosign",
-      "content_hash": "9cecfd7617814c705a764d11e285e2e66f4a2bab9cf562e866fef5f644f4f57b",
-      "created_at": "2026-11-16T23:14:52.056Z"
+      "content_hash": "92def6dfd6fac4502ef2d93bac02ba89fe4c2394526ace1ab76c60d4024d4ec9",
+      "created_at": "2026-11-17T04:43:55.649Z"
     },
     "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
@@ -24246,8 +24248,8 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-learnings-content-information-intelligence-sigstore-cosign-learn.md",
       "repository": "sigstore-cosign-learnings",
-      "content_hash": "0cf57eaa94081f663e1d5c328a867bc26d57c1a8d0bf2a3bc042db66d4e3bc5a",
-      "created_at": "2026-11-16T23:15:00.461Z"
+      "content_hash": "68c04bd169247a1aeefcbc2942eaa5f3ccf502bac7871417924d5ec0ae3bdf02",
+      "created_at": "2026-11-17T04:43:59.171Z"
     },
     "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",
@@ -25255,6 +25257,24 @@
       "repository": "rollup-rollup-learnings",
       "content_hash": "2b7dede96e220c4fa0dd0e5a6ada4311d7b26193c143679ac4d91b2c49349133",
       "created_at": "2026-11-17T04:31:33.395Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-1.7B-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-gguf-research-knowledge-intelligence-liquidai-lfm3-1-7b-gg.md",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "content_hash": "999f1228d0ab7e12f384debe9831d558bd4e8c9a0f3bbb974814e17689d56523",
+      "created_at": "2026-11-17T04:43:44.635Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-gguf-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-gguf-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-1.7b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-1-7b-gguf-learnings-research-knowledge-intelligence-hf-liquidai.md",
+      "repository": "hf-liquidai-lfm3-1.7b-gguf-learnings",
+      "content_hash": "f3a5da40ac2d8d315b8fa6ee05837ea04be5564829affeb10f1717ea669169f0",
+      "created_at": "2026-11-17T04:43:58.670Z"
     }
   }
 }

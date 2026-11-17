@@ -10477,3 +10477,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-2b088993` | `project://fujiapple852-trippy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md` | 2026-11-17T04:13:59.662Z |
 | `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `2cf3a91b` | Multi-dimensional audit evidence | 2026-11-17T04:31:20.415Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `fb7c1cce` | Multi-dimensional audit evidence | 2026-11-17T04:31:29.798Z |
+| `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-17T04:43:44.458Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `8404f23a` | Multi-dimensional audit evidence | 2026-11-17T04:43:55.366Z |
