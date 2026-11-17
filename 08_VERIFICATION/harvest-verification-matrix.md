@@ -10556,3 +10556,6 @@
 | `CYCLE-20261117-GXFD` | `2026-11-17T13:05:48.601Z` | `streetwriters/notesnook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8967` | Yes (`add312a6...`) |
 | `CYCLE-20261117-GYO0` | `2026-11-17T13:05:50.208Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8968` | Yes (`bf12c2d2...`) |
 | `CYCLE-20261117-H1SA` | `2026-11-17T13:05:54.250Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/startrail-org-leann-learnings.md` | Yes (`d301b28d...`) |
+| `CYCLE-20261117-BTB8` | `2026-11-17T13:29:49.604Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8969` | Yes (`ce910241...`) |
+| `CYCLE-20261117-BUCJ` | `2026-11-17T13:29:50.947Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8970` | Yes (`f4e3668a...`) |
+| `CYCLE-20261117-BVMT` | `2026-11-17T13:29:52.613Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md` | Yes (`40659ff1...`) |

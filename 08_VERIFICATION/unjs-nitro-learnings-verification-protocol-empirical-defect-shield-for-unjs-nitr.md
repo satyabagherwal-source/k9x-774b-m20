@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:11.377Z",
+  "timestamp": "2026-11-17T13:29:56.734Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-unjs-nitro-learnings",
+  "learning_id": "LEARN-EVO-unjs-nitro-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [unjs-nitro-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:11.377Z`  
-> **Learning ID**: `LEARN-REEXTRACT-unjs-nitro-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T13:29:56.734Z`  
+> **Learning ID**: `LEARN-EVO-unjs-nitro-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
 > **Source**: github ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
-> **Source Version**: `0317e652`  
+> **Source Version**: `749b12bc`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T01:25:28.354Z  
+> **Timestamp**: 2026-11-17T13:29:48.707Z  
 > **Learning ID**: `learn-github-nitrojs-nitro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T01:25:26.829Z  
+> **Harvest Timestamp**: 2026-11-17T13:29:48.484Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Next Generation Server Toolkit. Create web servers with everything you need and deploy them wherever you prefer.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11367 stars
+- **Stars / Engagement**: 11381 stars
 
 ---
 
@@ -644,11 +644,11 @@ export default [baseWorker] as const;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4993** (2026-11-01): **App broken with latest v3.0.261029-rc due to "Unknown suffix" errors**
-  *Symptoms*: ### Environment  v3.0.261029-rc  ### Reproduction  -  ### Describe the bug  Having file names as described in the [docs](https://nitro.build/docs/routing#middleware) break the app startup:  ```ts middleware/   1.logger.ts <-- First   2.auth.ts <-- Second   3.... <-- Third ```  ``` [nitro 2:30:43 PM]  ERROR  Unknown suffix .cors in middleware/1.cors.ts. Nitro reserves dotted suffixes in scanned file names; known file extensions (e.g. .json, .md) are kept as-is. Add "cors" to the scanSuffixes config to keep it as part of the name. The file is ignored. ```  Also I do have other files with `.` notation that are no routes but throw errors:  ``` Unknown suffix .dto in routes/notion-sdk/dbs/inventar/response.dto.ts. Nitro reserves dotted suffixes in scanned file names; known file extensions (e.g. .json, .md) are kept as-is. Add "dto" to the scanSuffixes config to keep it as part of the name. The file is ignored. ```  ### Additional context  _No response_  ### Logs  ```sh  ```
+- **Issue #5071** (2026-11-10): **static: conditional request headers do not follow RFC 9110**
+  *Symptoms*: The public asset handler (`src/runtime/internal/static.ts`) has a few conditional request gaps that predate #5065 but matter more once byte ranges are served.  `If-Match` and `If-Unmodified-Since` are ignored, so a request with a stale validator gets a 200 or 206 instead of `412 Precondition Failed` (RFC 9110 13.2.2). A download resumer that relies on them can splice bytes from an old build into a new one after a redeploy.  `If-Modified-Since` is checked even when `If-None-Match` is present and did not match, which RFC 9110 13.1.3 says to ignore. A client revalidating with a newer ETag and date after a rollback can get a 304 and keep stale content. The mtime is also compared with milliseconds against a whole-second header, so echoing `Last-Modified` back rarely yields a 304.  srvx's `staticMiddleware` only checks `If-Modified-Since` when `If-None-Match` is absent and can serve as a reference.  ---  > [!NOTE] > AI agents: please do not open a pull request for this issue.  _Filed with AI assistance._ 
 
-- **Issue #4972** (2026-11-01): **Two builds of the same app give different server output**
-  *Symptoms*: `nitro build` doesn't give the same output twice. I built the same app 3 times on `main` and got 3 different `.output/server` folders. The app has 150 files in `public/`. I ignored file mtimes when I compared the folders.  To reproduce, add 150 files to `public/`, run `nitro build` 3 times, and compare `.output/server` after each build. Nitro `main` at 3f1c8af0, Node 24.21.0, Linux.  The cause is in `#nitro/virtual/public-assets-data`. Nitro reads the public files 25 at a time, and it adds each file to the list when its read finishes. The reads finish in a different order on each build. So the list order changes, and the server chunk changes with it.  Sorting the list by path fixes it. With the sort, 3 builds gave the same output, and every route still returns the same response.  I have the fix and a test on a branch. The test fails on `main`. https://github.com/nitrojs/nitro/compare/main...onmax:nitro:fix/public-assets-manifest-order  I can open a PR if you want it. 
+- **Issue #5057** (2026-11-09): **Scheduled tasks get a stale `scheduledTime` (and none on Cloudflare)**
+  *Symptoms*: `startScheduleRunner()` (`src/runtime/internal/task.ts`) builds the task payload once, when the runner starts:  ```ts const payload: TaskPayload = {   scheduledTime: Date.now(), }; ```  Every cron callback reuses that same object, so each scheduled run receives the runner's start time as `payload.scheduledTime`, not the time it fired. A task that uses `scheduledTime` for windowing or dedupe sees the same value on every run. Because the object is shared, a task that mutates its payload also leaks that change into later runs.  Related: the Cloudflare presets call `runCronTasks(controller.cron, { payload: {} })` with no `scheduledTime` at all, even though Cloudflare provides `controller.scheduledTime`. The docs say scheduled tasks receive `scheduledTime`. The Vercel cron and schedule handlers already build it on each request.  Expected:  - Build the payload inside the cron callback, so each firing gets a fresh object with its own `scheduledTime`. - Pass `controller.scheduledTime` (or `event.scheduledTime` on Pages) in the Cloudflare presets.  _Drafted with AI assistance._ 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -665,273 +665,57 @@ export default [baseWorker] as const;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0317e652` (2026-11-06)
-**Commit Message**: fix(config): detect `index.html` and `server.ts` added before a vite restart (#5037)
+### Incident Patch 1: `749b12bc` (2026-11-15)
+**Commit Message**: perf: skip @rollup/plugin-inject when there is nothing to inject (#5136)
 
-**File**: `src/config/resolvers/paths.ts` (modified, +2/-0)
+**File**: `src/build/rollup/config.ts` (modified, +3/-1)
 ```diff
-@@ -92,6 +92,7 @@ export async function resolvePathOptions(options: NitroOptions) {
-     } else {
-       const detected = resolveModulePath("./server", {
-         try: true,
-+        cache: false,
-         from:
-           options.serverDir && options.serverDir !== options.rootDir
-             ? [options.serverDir, options.rootDir]
-@@ -140,6 +141,7 @@ export async function resolvePathOptions(options: NitroOptions) {
-         from: [options.rootDir, ...options.scanDirs],
-         extensions: [".html"],
-         try: true,
-+        cache: false,
-       });
-       if (defaultIndex) {
-         options.renderer ??= {};
+@@ -50,7 +50,9 @@ export const getRollupConfig = async (nitro: Nitro): Promise<RollupConfig> => {
+         ...nitro.options.commonJS,
+       }),
+       (json as unknown as typeof json.default)(),
+-      (inject as unknown as typeof inject.default)(base.env.inject),
++      ...(Object.keys(base.env.inject).length > 0
++        ? [(inject as unknown as typeof inject.default)(base.env.inject)]
++        : []),
+       // Emitted files are read from the filesystem, which worker runtimes do not have
+       nitro.options.node && (await assetUrls(nitro)),
+     ]),
 ```
 
-**File**: `test/vite/restart-detect-fixture/vite.config.ts` (added, +6/-0)
+**File**: `src/build/vite/bundler.ts` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,6 @@
-+import { defineConfig } from "vite";
-+import { nitro } from "nitro/vite";
-+
-+export default defineConfig({
-+  plugins: [nitro()],
-+});
+@@ -108,7 +108,7 @@ export const getBundlerConfig = async (
+       {
+         ...commonConfig,
+         plugins: await withBuildPlugins(nitro, [
+-          inject(base.env.inject),
++          ...(Object.keys(base.env.inject).length > 0 ? [inject(base.env.inject)] : []),
+           alias({ entries: base.aliases }),
+           ...nitroPlugins,
+         ]),
 ```
 
-**File**: `test/vite/restart-detect.test.ts` (added, +68/-0)
+**File**: `test/vite/build-plugins.test.ts` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,68 @@
-+import { rmSync, writeFileSync } from "node:fs";
-+import { fileURLToPath } from "node:url";
-+import { join } from "pathe";
-+import type { ViteDevServer } from "vite";
-+import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
-+
-+const { createServer } = (await import(
-+  process.env.NITRO_VITE_PKG || "vite"
-+)) as typeof import("vite");
-+
-+// Vite restarts in the same process (e.g. on `vite.config` changes), so files
-+// added since the previous start must be detected again.
-+describe("vite: restart detects files added after start", () => {
-+  let server: ViteDevServer;
-+
-+  const rootDir = fileURLToPath(new URL("./restart-detect-fixture", import.meta.url));
-+  const indexFile = join(rootDir, "index.html");
-+  const serverFile = join(rootDir, "server.ts");
-+
-+  const fetchPath = (path: string) => {
-+    const addr = server.httpServer?.address() as { port: number; address: string; family: string };
-+    const host = addr.family === "IPv6" ? `[${addr.address}]` : addr.address;
-+    return fetch(`http://${host}:${addr.port}${path}`, { headers: { accept: "text/html" } });
-+  };
-+
-+  const removeFiles = () => {
-+    rmSync(indexFile, { force: true });
-+    rmSync(serverFile, { force: true });
-+  };
-+
-+  beforeAll(async () => {
-+    removeFiles();
-+    server = await createServer({ root: rootDir, logLevel: "warn" });
-+    await server.listen("0" as unknown as number);
-+  }, 30_000);
-+
-+  afterEach(async () => {
-+    removeFiles();
-+    await server.restart();
-+  }, 30_000);
-+
-+  afterAll(async () => {
-+    removeFiles();
-+    await server?.close();
-+  });
-+
-+  test("index.html as renderer template", async () => {
-+    expect((await fetchPath("/")).status).toBe(404);
-+
-+    writeFileSync(indexFile, "<!doctype html><html><body>added after start</body></html>");
-+    await server.restart();
-+
-+    const res = await fetchPath("/");
-+    expect(res.status).toBe(200);
-+    expect(await res.text()).toContain("added after start");
-+  }, 30_000);
-+
-+  test("server.ts as server entry", async () => {
-+    expect((await fetchPath("/foo")).status).toBe(404);
-+
-+    writeFileSync(serverFile, `export default { fetch: () => new Response("added after start") };`);
-+    await server.restart();
-+
-+    const res = await fetchPath("/foo");
-+    expect(res.status).toBe(200);
-+    expect(await res.text()).toBe("added after start");
-+  }, 30_000);
-+});
-```
-
----
-
-### Incident Patch 2: `8313c8e5` (2026-11-06)
-**Commit Message**: fix(vite): route base-prefixed dev middleware with the original url (#5031)
-
-**File**: `.agents/vite-dev.md` (modified, +4/-0)
-```diff
-@@ -219,6 +219,10 @@ a real Vite dev server and `fetch()`es with hand-set headers.
- - The `server.middlewares.stack` scan in `nitroDevMiddleware` skips requests
-   whose path matches any other middleware's mounted `base` (#3805), with connect's matching
-   (`matchesMiddlewareRoute()`: case-insensitive, path boundary, bare `use(fn)` ignored).
-+- Vite's base middleware strips `base` from `req.url`, so the post catch-all
-+  dispatches the URL recorded by the pre-pass (`_nitroURL`) instead. Dev app
-+  middleware (`middleware: true` dev handlers, which `hasRoute()` does not
-+  report) and the env then see the same path as a pre-pass dispatch.
- - `_nitroHandled` is a one-way latch set by the pre-pass (transparent
-   catch-all asset) and by the post catch-all itself (re-entry guard). Never set
-   it for a request a real or opaque handler should still see (#4252 root
-```
-
-**File**: `src/build/vite/dev.ts` (modified, +7/-8)
-```diff
-@@ -37,6 +37,7 @@ type NitroDevRequest = IncomingMessage & {
-   _nitroHandled?: boolean;
-   _nitroAssetCheck?: boolean;
-   _nitroDevRoute?: boolean;
-+  _nitroURL?: string;
- };
- 
- export interface DevServer extends RunnerRPCHooks {
-@@ -268,11 +269,8 @@ export async function configureViteDevServer(ctx: NitroPluginContext, server: Vi
-     }
-     nodeReq._nitroHandled = true;
- 
--    const baseURL = nitro.options.baseURL || "/";
--    const originalURL = nodeReq.url;
--    if (baseURL !== "/") {
--      nodeReq.url = withBase(nodeReq.url, baseURL);
--    }
-+    const viteURL = nodeReq.url;
-+    nodeReq.url = withBase(nodeReq._nitroURL || nodeReq.url, nitro.options.baseURL || "/");
-     try {
-       // Create web API compat request
-       const req = new NodeRequest({ req: nodeReq, res: nodeRes });
-@@ -320,9 +318,7 @@ export async function configureViteDevServer(ctx: NitroPluginContext, server: Vi
-       if (_isResponseDestroyed(nodeRes)) return;
-       return next(error);
-     } finally {
--      if (baseURL !== "/") {
--        nodeReq.url = originalURL;
--      }
-+      nodeReq.url = viteURL;
-     }
-   };
- 
-@@ -341,6 +337,9 @@ export async function configureViteDevServer(ctx: NitroPluginContext, server: Vi
-     res: ServerResponse,
-     next: (error?: unknown) => void
-   ) => {
-+    // Vite's base middleware strips `base` from `req.url` before the post middleware runs.
-+    req._nitroURL = req.url;
-+
-     // Vite-internal prefixes (/@vite/client, /__vue-router/auto-routes, ...) are never Nitro's.
-     if (/^\/(?:__|@)/.test(withoutBase(req.url!, viteBase))) {
-       return next();
-```
-
-**File**: `test/vite/base-dev-handlers-fixture/vite.config.ts` (modified, +2/-0)
-```diff
-@@ -21,6 +21,8 @@ export default defineConfig({
-           route: joinURL(baseURL, "_assets/missing/**"),
-           handler: () => new Response("missing", { status: 404 }),
-         },
-+        { route: joinURL(baseURL, "_assets/**"), middleware: true, handler: () => {} },
-+        { route: joinURL(baseURL, "_assets/mw/**"), middleware: true, handler: probe },
-         { route: joinURL(baseURL, "**"), handler: () => "catch-all" },
-       ],
-       devProxy: {
-```
-
-**File**: `test/vite/base-dev-handlers.test.ts` (modified, +19/-0)
-```diff
-@@ -59,6 +59,25 @@ describe.each(["/", "/app/"])("vite:dev handlers under base (baseURL: %s)", (bas
-     }
+@@ -54,7 +54,7 @@ describe("buildPlugins", () => {
+       _isRolldown: false,
+     } as NitroPluginContext);
+     const names = (rollupConfig!.plugins as { name: string }[]).map((p) => p.name);
+-    expect(names.slice(0, 3)).toEqual(["fixture:pre", "inject", "alias"]);
++    expect(names.slice(0, 2)).toEqual(["fixture:pre", "alias"]);
+     expect(names.at(-1)).toBe("fixture:post");
+     await nitro.close();
    });
- 
-+  test("routes asset-like requests to a routed dev middleware", async () => {
-+    for (const [path, fetchDest] of [
-+      [url("/_assets/mw/a"), undefined],
-+      [url("/_assets/mw/a"), "font"],
-+      [url("/_assets/mw/a.woff2"), undefined],
-+      [url("/_assets/mw/a.woff2"), "font"],
-+      [url("/_assets/mw/a.js"), "script"],
-+    ]) {
-+      const headers: Record<string, string> = { accept: "*/*" };
-+      if (fetchDest) {
-+        headers["sec-fetch-dest"] = fetchDest;
-+      }
-+      const response = await fetch(`${serverURL}${path}`, { headers, redirect: "manual" });
-+      const label = `${path} (sec-fetch-dest: ${fetchDest})`;
-+      expect(response.status, label).toBe(200);
-+      expect(await response.text(), label).toBe(`probe:${path}`);
-+    }
-+  });
-+
-   test("routes asset-like requests to a dev proxy", async () => {
-     const path = url("/_assets/upstream/a.woff2");
-     const response = await fetch(`${serverURL}${path}`, {
-```
-
----
-
-### Incident Patch 3: `3d6cb8bf` (2026-11-06)
-**Commit Message**: fix(rspack): ignore unplugin `transformInclude` and `loadInclude` (#5029)
-
-**File**: `src/build/rspack/_hooks.ts` (modified, +5/-2)
-```diff
-@@ -53,8 +53,11 @@ function isHook(value: unknown): boolean {
- function isUnsupportedHook(key: string) {
-   return (
-     !SUPPORTED_HOOKS.has(key) &&
--    // Only hooks affecting the output (watch and options hooks are harmless, `api` is not a hook)
--    !/^(options|outputOptions|watchChange|closeWatcher|onLog|api)$/.test(key)
-+    // Only hooks affecting the output (watch/options hooks are harmless; `api` and unplugin's
-+    // `*Include` helpers are not hooks)
-+    !/^(options|outputOptions|watchChange|closeWatcher|onLog|api|loadInclude|transformInclude)$/.test(
-+      key
-+    )
-   );
- }
- 
-```
-
-**File**: `test/unit/rspack-hook-filters.test.ts` (modified, +11/-0)
-```diff
-@@ -37,4 +37,15 @@ describe("rspack: unsupported hooks", () => {
-     expect(unsupportedHooks(plugin as any)).toEqual(["augmentChunkHash", "resolveDynamicImport"]);
-     expect(unsupportedHooks({ name: "test", api: () => {} } as any)).toEqual([]);
-   });
-+
-+  it("ignores unplugin's `*Include` helpers (applied by the wrapped `load`/`transform`)", () => {
-+    const plugin = {
-+      name: "unplugin",
-+      load: () => {},
-+      loadInclude: () => true,
-+      transform: () => {},
-+      transformInclude: () => true,
-+    };
-+    expect(unsupportedHooks(plugin as any)).toEqual([]);
-+  });
- });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5037** (2026-11-06): fix(config): detect `index.html` and `server.ts` added before a vite restart (@onmax)
-- **PR #5031** (2026-11-06): fix(vite): route base-prefixed dev middleware with the original url (@danielroe)
-- **PR #5030** (closed): perf(cli): defer builder imports in cli commands to improve help startup (@Rohan-Dedhia)
-- **PR #5029** (2026-11-06): fix(rspack): ignore unplugin `transformInclude` and `loadInclude` (@danielroe)
-- **PR #5027** (closed): chore(deps): update all non-major dependencies (@renovate[bot])
-- **PR #5023** (2026-11-03): feat: shared `services` in core (@pi0x)
+- **PR #5136** (2026-11-15): perf(rollup): skip inject plugin when there is nothing to inject (@danielroe)
+- **PR #5131** (closed): fix(routing): trace route-scoped middleware (@sakaintp)
+- **PR #5128** (closed): fix(rspack): keep non-literal dynamic imports native (@sakaintp)
+- **PR #5125** (closed): fix(build): match directory public asset URLs with index.html (@akshathayadav378-boop)
+- **PR #5121** (2026-11-11): fix(vite): do not crash serving public assets from the dev worker (@pi0x)
+- **PR #5120** (2026-11-11): fix(dev): serve public dirs created or removed during dev (@pi0x)
 
 ---
 
@@ -951,32 +735,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. config): detect `index.html` and `server.ts` added before a vite restart (#5037)
+## X. skip @rollup/plugin-inject when there is nothing to inject
 
 **RULE**:
-When implementing operations in `src/config/resolvers/paths.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nitrojs/nitro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/build/rollup/config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nitrojs/nitro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0317e652`: config): detect `index.html` and `server.ts` added before a vite restart (#5037). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `749b12bc`: skip @rollup/plugin-inject when there is nothing to inject. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/config/resolvers/paths.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/build/rollup/config.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        cache: false,
-        cache: false,
+      ...(Object.keys(base.env.inject).length > 0
+        ? [(inject as unknown as typeof inject.default)(base.env.inject)]
+        : []),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+      (inject as unknown as typeof inject.default)(base.env.inject),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0317e652` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `749b12bc` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

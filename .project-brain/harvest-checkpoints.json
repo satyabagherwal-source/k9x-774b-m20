@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T13:05:54.280Z",
+  "last_updated": "2026-11-17T13:29:52.636Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3171,14 +3171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nitrojs-nitro",
-      "content_hash": "19d981a520d39cc08f518afe149722a7c6e4b34e970078479d7e7f99496a23d6",
-      "verified_at": "2026-11-13T00:24:04.876Z",
+      "content_hash": "ce9102417182f96e6373ac11b3bf021941ed1135cd159d6050e6ace01675fea3",
+      "verified_at": "2026-11-17T13:29:49.615Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T00:24:04.876Z"
+      "last_updated": "2026-11-17T13:29:49.615Z"
     },
     "h3js/h3": {
       "repository": "h3js/h3",
@@ -4671,14 +4671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-react-native-paper",
-      "content_hash": "8c0cf5d2b275281f76878baff9756d81081b16124b26bd00ad739197ace5bace",
-      "verified_at": "2026-11-13T21:45:12.717Z",
+      "content_hash": "40659ff18d941994ef45b324a3d4e0060261977289ed9675fde2baf55ca35366",
+      "verified_at": "2026-11-17T13:29:52.636Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:45:12.717Z"
+      "last_updated": "2026-11-17T13:29:52.636Z"
     },
     "tensorchord/pgvecto.rs": {
       "repository": "tensorchord/pgvecto.rs",
@@ -9186,14 +9186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-u-root-u-root",
-      "content_hash": "89695c265dd46271dfb982bc75d5222981688d54aa24b18c1d062c33211674ad",
-      "verified_at": "2026-11-13T23:01:33.743Z",
+      "content_hash": "f4e3668abd028f38c4cdfcdb078c462f178af0c08416faa7524ae0f69fac41eb",
+      "verified_at": "2026-11-17T13:29:50.959Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T23:01:33.743Z"
+      "last_updated": "2026-11-17T13:29:50.959Z"
     },
     "shoutem/ui": {
       "repository": "shoutem/ui",

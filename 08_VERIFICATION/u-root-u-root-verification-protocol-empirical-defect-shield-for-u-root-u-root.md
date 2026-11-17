@@ -4,22 +4,22 @@
 {
   "source_repository": "u-root/u-root",
   "source_url": "https://github.com/u-root/u-root",
-  "source_version": "4eba8433",
+  "source_version": "beb9a36f",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-13T23:01:33.936Z",
+  "timestamp": "2026-11-17T13:29:51.115Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-u-root-u-root",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [u-root/u-root](https://github.com/u-root/u-root) (Revision: `4eba8433`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-13T23:01:33.936Z`  
+> **Provenance**: Harvested from [u-root/u-root](https://github.com/u-root/u-root) (Revision: `beb9a36f`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-17T13:29:51.115Z`  
 > **Learning ID**: `learn-github-u-root-u-root`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `u-root/u-root` (Commit: `4eba8433`)
+- **Target Repository**: `u-root/u-root` (Commit: `beb9a36f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T23:01:32.694Z  
+> **Harvest Timestamp**: 2026-11-17T13:29:46.826Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A fully Go userland with Linux bootloaders! u-root can create a one-binary root file system (initramfs) containing a busybox-like set of tools written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3087 stars
+- **Stars / Engagement**: 3089 stars
 
 ---
 
@@ -1297,58 +1297,70 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4eba8433` (2026-11-12)
-**Commit Message**: CI: Add RISC-V 64 Kernel and OVMF binaries docker push action
+### Incident Patch 1: `295f982f` (2026-11-16)
+**Commit Message**: CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04
 
-Add Linux Kernel image and OVMF binaries for github CI action
+GitHub Actions migrated ubuntu-latest to ubuntu-26.04 (Linux 7.0),
+breaking two parts of tests.yml:
 
-Signed-off-by: Ajan Zhong <[REDACTED_EMAIL]>
+1. runvmtest pins dagger.io/dagger v0.9.4, whose engine uses legacy
+   iptables (xtables-legacy) for BuildKit CNI setup. Linux 6.17+
+   disables CONFIG_NETFILTER_XTABLES_LEGACY, causing dagger-engine
+   v0.9.4 to crash-loop until the 300s session timeout. Pin runs-on
+   to ubuntu-24.04 until runvmtest is updated or replaced.
+2. In Ubuntu 26.04 (QEMU 10.2), the transitional qemu-user-static
+   package and qemu-riscv64-static binary name were removed in favor
+   of qemu-user and qemu-riscv64, which work on both 24.04 and 26.04.
 
-**File**: `.github/workflows/test-images.yml` (modified, +5/-1)
+Signed-off-by: Barret Rhoden <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/tests.yml` (modified, +6/-4)
 ```diff
-@@ -6,10 +6,12 @@ on:
-       - '.circleci/images/kernel-arm/*'
-       - '.circleci/images/kernel-arm64/*'
-       - '.circleci/images/kernel-amd64/*'
-+      - '.circleci/images/kernel-riscv64/*'
-       - '.circleci/images/multiboot-test-kernel-amd64/*'
-       - '.circleci/images/uefipayload-amd64/*'
-       - '.circleci/images/ovmf-amd64/*'
-       - '.circleci/images/ovmf-arm64/*'
-+      - '.circleci/images/ovmf-riscv64/*'
-       - '.circleci/images/upl-fit-amd64/*'
-       - '.circleci/images/upl-fit-arm64/*'
-       - '.github/workflows/test-images.yml'
-@@ -19,9 +21,11 @@ on:
-       - '.circleci/images/kernel-arm/*'
-       - '.circleci/images/kernel-arm64/*'
-       - '.circleci/images/kernel-amd64/*'
-+      - '.circleci/images/kernel-riscv64/*'
-       - '.circleci/images/multiboot-test-kernel-amd64/*'
-       - '.circleci/images/uefipayload-amd64/*'
-       - '.circleci/images/ovmf-amd64/*'
-+      - '.circleci/images/ovmf-riscv64/*'
-       - '.circleci/images/ovmf-arm64/*'
-       - '.circleci/images/upl-fit-amd64/*'
-       - '.circleci/images/upl-fit-arm64/*'
-@@ -45,7 +49,7 @@ jobs:
+@@ -13,7 +13,9 @@ concurrency:
  
+ jobs:
+   test:
+-    runs-on: ubuntu-latest
++    # Pin to ubuntu-24.04 because runvmtest uses dagger v0.9.4, whose
++    # legacy iptables CNI setup fails on ubuntu-26.04 (Linux 7.0).
++    runs-on: ubuntu-24.04
      strategy:
        matrix:
--        image: ['kernel-amd64', 'kernel-arm', 'kernel-arm64', 'uefipayload-amd64', 'multiboot-test-kernel-amd64', 'ovmf-amd64', 'ovmf-arm64', 'upl-fit-amd64', 'upl-fit-arm64']
-+        image: ['kernel-amd64', 'kernel-arm', 'kernel-arm64', 'kernel-riscv64', 'uefipayload-amd64', 'multiboot-test-kernel-amd64', 'ovmf-amd64', 'ovmf-arm64', 'ovmf-riscv64', 'upl-fit-amd64', 'upl-fit-arm64']
- 
+         go-version: ['1.27.x' ]
+@@ -87,21 +89,21 @@ jobs:
+   # pkg/... job never compiles it. Cross-compile the package tests and
+   # run them under qemu-user so Codecov records those lines.
+   upl-riscv64:
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
      steps:
-       - name: Checkout repository
+       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+       - name: Setup Go
+         uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+         with:
+           go-version: '1.27.x'
+       - name: Install QEMU user emulator
+-        run: sudo apt-get update && sudo apt-get install -y qemu-user-static
++        run: sudo apt-get update && sudo apt-get install -y qemu-user
+       - name: Test universalpayload on riscv64
+         run: |
+           CGO_ENABLED=0 GOARCH=riscv64 go test -c -o upl.riscv64.test \
+             -covermode=atomic \
+             ./pkg/boot/universalpayload/
+-          qemu-riscv64-static ./upl.riscv64.test \
++          qemu-riscv64 ./upl.riscv64.test \
+             -test.v -test.timeout=10m \
+             -test.coverprofile=coverage.txt
+       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3840** (2026-11-16): CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04 (@brho)
+- **PR #3839** (2026-11-16): vfile: skip revoked and non-signing keys in GetRSAKeysFromRing (@alhudz)
+- **PR #3837** (2026-11-16): mount9p: verify the server host key over ssh (@alhudz)
 - **PR #3835** (2026-11-12): CI: Add RISC-V 64 Kernel and OVMF binaries docker push action (@AjanZhong)
 - **PR #3834** (2026-11-10): Remove bubbline (@rminnich)
 - **PR #3832** (2026-11-10): Use IoctlGetUint64 from golang.org/x/sys/unix (@tklauser)
-- **PR #3831** (2026-11-10): Add docker files to build RISC-V 64 kernel and OVMF binaries. (@AjanZhong)
-- **PR #3829** (2026-11-09): go.mod: move to Go 1.27 and update gobusybox (@rminnich)
-- **PR #3827** (2026-11-09): gzip: keep the input file's permissions on the output (@alhudz)
 
 ---
 
@@ -1368,35 +1380,39 @@ Signed-off-by: Ajan Zhong <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CI: Add RISC-V 64 Kernel and OVMF binaries docker push action
+## X. CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04
 
 **RULE**:
-When implementing operations in `.github/workflows/test-images.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4eba8433`: CI: Add RISC-V 64 Kernel and OVMF binaries docker push action. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `295f982f`: CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/test-images.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tests.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - '.circleci/images/kernel-riscv64/*'
-      - '.circleci/images/ovmf-riscv64/*'
-      - '.circleci/images/kernel-riscv64/*'
-      - '.circleci/images/ovmf-riscv64/*'
-        image: ['kernel-amd64', 'kernel-arm', 'kernel-arm64', 'kernel-riscv64', 'uefipayload-amd64', 'multiboot-test-kernel-amd64', 'ovmf-amd64', 'ovmf-arm64', 'ovmf-riscv64', 'upl-fit-amd64', 'upl-fit-arm64']
+    # Pin to ubuntu-24.04 because runvmtest uses dagger v0.9.4, whose
+    # legacy iptables CNI setup fails on ubuntu-26.04 (Linux 7.0).
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+        run: sudo apt-get update && sudo apt-get install -y qemu-user
+          qemu-riscv64 ./upl.riscv64.test \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        image: ['kernel-amd64', 'kernel-arm', 'kernel-arm64', 'uefipayload-amd64', 'multiboot-test-kernel-amd64', 'ovmf-amd64', 'ovmf-arm64', 'upl-fit-amd64', 'upl-fit-arm64']
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+        run: sudo apt-get update && sudo apt-get install -y qemu-user-static
+          qemu-riscv64-static ./upl.riscv64.test \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4eba8433` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `295f982f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

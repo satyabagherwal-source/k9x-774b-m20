@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T13:05:59.538Z",
-  "total_verified_learnings": 8885,
+  "last_updated": "2026-11-17T13:29:57.651Z",
+  "total_verified_learnings": 8886,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20177,
+  "total_items": 20188,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216797,8 +216797,8 @@
       "slug": "callstack-react-native-paper",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-paper",
-      "source_version": "ead3e550",
-      "content_hash": "8c0cf5d2b275281f76878baff9756d81081b16124b26bd00ad739197ace5bace",
+      "source_version": "655fbcc5",
+      "content_hash": "40659ff18d941994ef45b324a3d4e0060261977289ed9675fde2baf55ca35366",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "promoted_rules": [],
@@ -216807,7 +216807,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:45:12.583Z",
+      "verified_at": "2026-11-17T13:29:52.466Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216835,10 +216835,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-design-intelligence-callstack-react-native-paper-co.md",
       "title": "Design Intelligence: callstack/react-native-paper Core Invariants",
       "repository": "callstack/react-native-paper",
-      "source_version": "ead3e550",
-      "content_hash": "7f22090742776649dabfd127ea3c3f5c16eb1e6a343e0016d91abd1720320ad7",
+      "source_version": "655fbcc5",
+      "content_hash": "706434536955310672c71a6cbfa841b2e2629fc5c4b9ad3ede66c36c6a8e01e5",
       "domain_letter": "F",
-      "persisted_at": "2026-11-13T21:45:12.976Z"
+      "persisted_at": "2026-11-17T13:29:52.952Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper",
@@ -216847,10 +216847,10 @@
       "relative_path": "08_VERIFICATION/callstack-react-native-paper-verification-protocol-empirical-defect-shield-for-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for callstack/react-native-paper",
       "repository": "callstack/react-native-paper",
-      "source_version": "ead3e550",
-      "content_hash": "00f37a2ffcb8affaf98b6af5393501ab0adcaa0426e0c1dd0f86a52ba1984864",
+      "source_version": "655fbcc5",
+      "content_hash": "20acf0d3207fe837c517b738a23485bdbd23eed638966ab33219bcb26156d9f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:45:13.061Z"
+      "persisted_at": "2026-11-17T13:29:53.093Z"
     },
     "learn-github-databendlabs-databend": {
       "learning_id": "learn-github-databendlabs-databend",
@@ -217028,9 +217028,9 @@
       "title": "Design Intelligence: callstack-react-native-paper-learnings Core Invariants",
       "repository": "callstack-react-native-paper-learnings",
       "source_version": "HEAD",
-      "content_hash": "96b3c53608cd2a82c0a566edf0bf9691401054184c48fe1595d05d5a18b8caeb",
+      "content_hash": "e36bf80a7d28c03542b5062d63f19c9fa385d784bfc896a36067c39376d602d1",
       "domain_letter": "F",
-      "persisted_at": "2026-11-13T21:50:53.947Z"
+      "persisted_at": "2026-11-17T13:29:57.528Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper-l": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper-l",
@@ -217040,9 +217040,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for callstack-react-native-paper-learnings",
       "repository": "callstack-react-native-paper-learnings",
       "source_version": "HEAD",
-      "content_hash": "519621090b4e5709fc17c749b91a524f38defb78e1eeba8ddd0bd387ef7916cc",
+      "content_hash": "60bbdec65e043f4eb8966522865bbcd3fc4294f4736e0d7ccdc5aca949a183ca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:50:54.053Z"
+      "persisted_at": "2026-11-17T13:29:57.651Z"
     },
     "learn-github-xudong-huang-may": {
       "learning_id": "learn-github-xudong-huang-may",
@@ -218207,14 +218207,19 @@
       "slug": "u-root-u-root",
       "platform": "github",
       "source_url": "https://github.com/u-root/u-root",
-      "source_version": "4eba8433",
-      "content_hash": "89695c265dd46271dfb982bc75d5222981688d54aa24b18c1d062c33211674ad",
+      "source_version": "beb9a36f",
+      "content_hash": "f4e3668abd028f38c4cdfcdb078c462f178af0c08416faa7524ae0f69fac41eb",
       "dossier_path": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/u-root-u-root-learnings.md",
       "promoted_rules": [
         {
           "number": 8401,
           "title": "Add RISC-V 64 Kernel and OVMF binaries docker push action",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8970,
+          "title": "fix tests.yml after ubuntu-latest moved to ubuntu-26.04",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -218223,7 +218228,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T23:01:33.569Z",
+      "verified_at": "2026-11-17T13:29:50.784Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218265,10 +218270,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-u-root-u-root-technical-construction-intelligence-u-root-u-root-core-invariants.md",
       "title": "Technical Construction Intelligence: u-root/u-root Core Invariants",
       "repository": "u-root/u-root",
-      "source_version": "4eba8433",
-      "content_hash": "bdd67f8ceae609629538f542506f0cf103ee221291b35d6e35775121bb24c879",
+      "source_version": "beb9a36f",
+      "content_hash": "abf57861a6b92166c27056725fdc3381f4ee15a5c6df80b72ee7fabf39438e3a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T23:01:34.071Z"
+      "persisted_at": "2026-11-17T13:29:51.235Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root",
@@ -218277,10 +218282,10 @@
       "relative_path": "08_VERIFICATION/u-root-u-root-verification-protocol-empirical-defect-shield-for-u-root-u-root.md",
       "title": "Verification Protocol: Empirical Defect Shield for u-root/u-root",
       "repository": "u-root/u-root",
-      "source_version": "4eba8433",
-      "content_hash": "cac9f5b9b3120bbea50cf54d1aa26c4a0f70aab9cd5d13b43092fcd4cf385cf6",
+      "source_version": "beb9a36f",
+      "content_hash": "a9e450c9ba282265b62a0c9101a0b5a3796b098c8ae88ea68329345da0cbafa9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T23:01:34.186Z"
+      "persisted_at": "2026-11-17T13:29:51.358Z"
     },
     "learn-github-openreplay-openreplay": {
       "learning_id": "learn-github-openreplay-openreplay",
@@ -218473,9 +218478,9 @@
       "title": "Technical Construction Intelligence: u-root-u-root-learnings Core Invariants",
       "repository": "u-root-u-root-learnings",
       "source_version": "HEAD",
-      "content_hash": "7ed1f6d92974673a9d4619ffdeea97352188ec11b559b374b578a46dd7afa0a7",
+      "content_hash": "ffa93944c17302437e43281848e3924b075bbf7771675f7d1f3f6644b9d8c5a7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T23:01:49.381Z"
+      "persisted_at": "2026-11-17T13:29:56.364Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-u-root-u-root-learnings",
@@ -218485,9 +218490,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for u-root-u-root-learnings",
       "repository": "u-root-u-root-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c5220ba3981e93e6a01dcece80bbee0e89d7d8a3221db137bedb5b8688c812d",
+      "content_hash": "f0df3a78781fcb5f3d3fec1579b064b283e42b4f3e7c0ceff1fe413a40443cbf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T23:01:49.496Z"
+      "persisted_at": "2026-11-17T13:29:56.489Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants",
@@ -270182,6 +270187,163 @@
       "content_hash": "274c06be32b62b8783c1f0842f0fc7e8b949dc76f3040584c6db0cdc3d1913b7",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T13:05:59.538Z"
+    },
+    "learn-github-nitrojs-nitro": {
+      "learning_id": "learn-github-nitrojs-nitro",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nitrojs/nitro",
+      "repository": "nitrojs/nitro",
+      "slug": "unjs-nitro",
+      "platform": "github",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "749b12bc",
+      "content_hash": "ce9102417182f96e6373ac11b3bf021941ed1135cd159d6050e6ace01675fea3",
+      "dossier_path": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8969,
+          "title": "skip @rollup/plugin-inject when there is nothing to inject",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T13:29:49.442Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8969": {
+      "learning_id": "rule-8969",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8969,
+      "title": "skip @rollup/plugin-inject when there is nothing to inject",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "749b12bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T13:29:49.442Z"
+    },
+    "candidate_directive-skip-rollup-plugin-inject-when-there-is-nothing-to-inject": {
+      "item_id": "candidate_directive-skip-rollup-plugin-inject-when-there-is-nothing-to-inject",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BYVU-skip-rollup-plugin-inject-when-there-is-nothing-to-inject.md",
+      "title": "skip @rollup/plugin-inject when there is nothing to inject",
+      "repository": "unjs-nitro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "97218dc170d50dc0a1218513c3b74c6da8d9bc0881d65f132b72557a5bf99493",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T13:29:56.827Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nitrojs-nitro-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nitrojs-nitro-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-unjs-nitro-technical-construction-intelligence-nitrojs-nitro-core-invariants.md",
+      "title": "Technical Construction Intelligence: nitrojs/nitro Core Invariants",
+      "repository": "nitrojs/nitro",
+      "source_version": "749b12bc",
+      "content_hash": "89608807fed84d98592c29e9a7e8e1bac094901abd5fa70d5c5efd5c5c06ca8c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T13:29:49.894Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nitrojs-nitro": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nitrojs-nitro",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/unjs-nitro-verification-protocol-empirical-defect-shield-for-nitrojs-nitro.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nitrojs/nitro",
+      "repository": "nitrojs/nitro",
+      "source_version": "749b12bc",
+      "content_hash": "871e5266f8598a288b97d53736cc47cf3d892c0c0d6031f2f00040a5d9897940",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T13:29:50.020Z"
+    },
+    "rule-8970": {
+      "learning_id": "rule-8970",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8970,
+      "title": "fix tests.yml after ubuntu-latest moved to ubuntu-26.04",
+      "source_url": "https://github.com/u-root/u-root",
+      "source_version": "beb9a36f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T13:29:50.785Z"
+    },
+    "candidate_directive-fix-tests-yml-after-ubuntu-latest-moved-to-ubuntu-26-04": {
+      "item_id": "candidate_directive-fix-tests-yml-after-ubuntu-latest-moved-to-ubuntu-26-04",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BUH7-fix-tests-yml-after-ubuntu-latest-moved-to-ubuntu-26-04.md",
+      "title": "fix tests.yml after ubuntu-latest moved to ubuntu-26.04",
+      "repository": "u-root/u-root",
+      "source_version": "beb9a36f",
+      "content_hash": "17c4cf567c2537fe6b6ff784f3386df34a81b2d0ff239f24158531a4900ee76a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T13:29:51.116Z"
+    },
+    "candidate_directive-fix-don-t-expose-handler-less-touchableripple-as-a-disabled-control": {
+      "item_id": "candidate_directive-fix-don-t-expose-handler-less-touchableripple-as-a-disabled-control",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BZC2-fix-don-t-expose-handler-less-touchableripple-as-a-disabled-control.md",
+      "title": "fix!: don't expose handler-less TouchableRipple as a disabled control",
+      "repository": "callstack-react-native-paper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8e45436628db94e33a5308523079499d79f899bbaf0947ab3b42422a15133553",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-17T13:29:57.413Z"
+    },
+    "candidate_directive-ci-fix-tests-yml-after-ubuntu-latest-moved-to-ubuntu-26-04": {
+      "item_id": "candidate_directive-ci-fix-tests-yml-after-ubuntu-latest-moved-to-ubuntu-26-04",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BYFO-ci-fix-tests-yml-after-ubuntu-latest-moved-to-ubuntu-26-04.md",
+      "title": "CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04",
+      "repository": "u-root-u-root-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6c08f9b480305f001940575a22fd5e9ae3eef5760085201b07c3875852b73a57",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T13:29:56.245Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-unjs-nitro-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-unjs-nitro-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-unjs-nitro-learnings-technical-construction-intelligence-unjs-nitro-learnings-co.md",
+      "title": "Technical Construction Intelligence: unjs-nitro-learnings Core Invariants",
+      "repository": "unjs-nitro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "231aff6dcdb4e51155ab00e5d7aa0cc1d5ebfba66382daec7c2ecb81e3c541a3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T13:29:56.944Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-unjs-nitro-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-unjs-nitro-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/unjs-nitro-learnings-verification-protocol-empirical-defect-shield-for-unjs-nitr.md",
+      "title": "Verification Protocol: Empirical Defect Shield for unjs-nitro-learnings",
+      "repository": "unjs-nitro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "80ec983347a6e644246db9a41dab98e3865b071005b5f75c45ce6cde11168de8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T13:29:57.071Z"
     }
   },
   "ai-builder-brain": {

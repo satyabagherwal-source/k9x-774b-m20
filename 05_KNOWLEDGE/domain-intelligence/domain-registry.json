@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T13:05:59.409Z",
-  "total_records": 1551,
+  "last_updated": "2026-11-17T13:29:57.528Z",
+  "total_records": 1553,
   "domains": {
     "A": {
       "total": 11,
@@ -1034,7 +1034,7 @@
       ]
     },
     "H": {
-      "total": 375,
+      "total": 377,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1410,7 +1410,9 @@
         "domain_intelligence-technical-construction-intelligence-fastify-fastify-core-invariants",
         "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-nitrojs-nitro-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-unjs-nitro-learnings-core-invariants"
       ]
     },
     "I": {
@@ -10531,8 +10533,8 @@
       "title": "Design Intelligence: callstack/react-native-paper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-design-intelligence-callstack-react-native-paper-co.md",
       "repository": "callstack/react-native-paper",
-      "content_hash": "7f22090742776649dabfd127ea3c3f5c16eb1e6a343e0016d91abd1720320ad7",
-      "created_at": "2026-11-13T21:45:12.976Z"
+      "content_hash": "706434536955310672c71a6cbfa841b2e2629fc5c4b9ad3ede66c36c6a8e01e5",
+      "created_at": "2026-11-17T13:29:52.952Z"
     },
     "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants",
@@ -10618,8 +10620,8 @@
       "title": "Design Intelligence: callstack-react-native-paper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-learnings-design-intelligence-callstack-react-nativ.md",
       "repository": "callstack-react-native-paper-learnings",
-      "content_hash": "96b3c53608cd2a82c0a566edf0bf9691401054184c48fe1595d05d5a18b8caeb",
-      "created_at": "2026-11-13T21:50:53.947Z"
+      "content_hash": "e36bf80a7d28c03542b5062d63f19c9fa385d784bfc896a36067c39376d602d1",
+      "created_at": "2026-11-17T13:29:57.528Z"
     },
     "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants",
@@ -10960,8 +10962,8 @@
       "title": "Technical Construction Intelligence: u-root/u-root Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-u-root-u-root-technical-construction-intelligence-u-root-u-root-core-invariants.md",
       "repository": "u-root/u-root",
-      "content_hash": "bdd67f8ceae609629538f542506f0cf103ee221291b35d6e35775121bb24c879",
-      "created_at": "2026-11-13T23:01:34.071Z"
+      "content_hash": "abf57861a6b92166c27056725fdc3381f4ee15a5c6df80b72ee7fabf39438e3a",
+      "created_at": "2026-11-17T13:29:51.235Z"
     },
     "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-core-invariants",
@@ -10987,8 +10989,8 @@
       "title": "Technical Construction Intelligence: u-root-u-root-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-u-root-u-root-learnings-technical-construction-intelligence-u-root-u-root-learni.md",
       "repository": "u-root-u-root-learnings",
-      "content_hash": "7ed1f6d92974673a9d4619ffdeea97352188ec11b559b374b578a46dd7afa0a7",
-      "created_at": "2026-11-13T23:01:49.381Z"
+      "content_hash": "ffa93944c17302437e43281848e3924b075bbf7771675f7d1f3f6644b9d8c5a7",
+      "created_at": "2026-11-17T13:29:56.364Z"
     },
     "DOM-D-AB4CCCBB": {
       "record_id": "DOM-D-AB4CCCBB",
@@ -26981,6 +26983,24 @@
       "repository": "startrail-org-leann-learnings",
       "content_hash": "5980dc2c0b8782e1471c5fbcd61368f89cf54a9f3e4b0445269c84a78bd57e69",
       "created_at": "2026-11-17T13:05:59.409Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nitrojs-nitro-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nitrojs-nitro-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nitrojs/nitro Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-unjs-nitro-technical-construction-intelligence-nitrojs-nitro-core-invariants.md",
+      "repository": "nitrojs/nitro",
+      "content_hash": "89608807fed84d98592c29e9a7e8e1bac094901abd5fa70d5c5efd5c5c06ca8c",
+      "created_at": "2026-11-17T13:29:49.894Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-unjs-nitro-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-unjs-nitro-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: unjs-nitro-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-unjs-nitro-learnings-technical-construction-intelligence-unjs-nitro-learnings-co.md",
+      "repository": "unjs-nitro-learnings",
+      "content_hash": "231aff6dcdb4e51155ab00e5d7aa0cc1d5ebfba66382daec7c2ecb81e3c541a3",
+      "created_at": "2026-11-17T13:29:56.944Z"
     }
   }
 }

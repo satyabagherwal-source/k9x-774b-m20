@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T13:05:54.275Z",
-  "total_cycles_completed": 10114,
-  "total_learnings_persisted": 10114,
-  "total_rules_promoted": 9707,
+  "last_updated": "2026-11-17T13:29:52.633Z",
+  "total_cycles_completed": 10117,
+  "total_learnings_persisted": 10117,
+  "total_rules_promoted": 9709,
   "history": [
-    {
-      "timestamp": "2026-11-16T18:55:43.569Z",
-      "repository": "inikulin/parse5",
-      "learningId": "learn-github-inikulin-parse5",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:55:45.149Z",
-      "repository": "wquguru/cicada",
-      "learningId": "learn-github-wquguru-cicada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:55:48.699Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T18:55:50.863Z",
       "repository": "max-sixty/worktrunk",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T13:05:54.275Z",
       "repository": "StarTrail-org/LEANN",
       "learningId": "learn-github-startrail-org-leann",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T13:29:49.613Z",
+      "repository": "nitrojs/nitro",
+      "learningId": "learn-github-nitrojs-nitro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T13:29:50.957Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T13:29:52.633Z",
+      "repository": "callstack/react-native-paper",
+      "learningId": "learn-github-callstack-react-native-paper",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -10589,3 +10589,6 @@ Every entry in this ledger must capture:
 | `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `8bb25559` | Multi-dimensional audit evidence | 2026-11-17T13:05:48.605Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `0087e705` | Multi-dimensional audit evidence | 2026-11-17T13:05:50.212Z |
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `2ec581fc` | Multi-dimensional audit evidence | 2026-11-17T13:05:54.254Z |
+| `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `749b12bc` | Multi-dimensional audit evidence | 2026-11-17T13:29:49.608Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `beb9a36f` | Multi-dimensional audit evidence | 2026-11-17T13:29:50.951Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `655fbcc5` | Multi-dimensional audit evidence | 2026-11-17T13:29:52.616Z |

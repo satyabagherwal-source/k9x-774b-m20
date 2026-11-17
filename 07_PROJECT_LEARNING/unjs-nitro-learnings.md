@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
 > **Source**: github ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
-> **Source Version**: `0f2a7f49`  
+> **Source Version**: `749b12bc`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T00:23:42.127Z  
+> **Timestamp**: 2026-11-17T13:29:48.707Z  
 > **Learning ID**: `learn-github-nitrojs-nitro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T00:23:42.121Z  
+> **Harvest Timestamp**: 2026-11-17T13:29:48.484Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next Generation Server Toolkit. Create web servers with everything you need and deploy them wherever you prefer.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11384 stars
+- **Stars / Engagement**: 11381 stars
 
 ---
 
@@ -640,585 +640,57 @@ export default [baseWorker] as const;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fddb9167` (2026-11-11)
-**Commit Message**: fix(vite): do not crash serving public assets from the dev worker (#5121)
+### Incident Patch 1: `749b12bc` (2026-11-15)
+**Commit Message**: perf: skip @rollup/plugin-inject when there is nothing to inject (#5136)
 
-**File**: `src/build/virtual/public-assets.ts` (modified, +5/-2)
+**File**: `src/build/rollup/config.ts` (modified, +3/-1)
 ```diff
-@@ -230,15 +230,18 @@ export function resolveAsset (id, encodings) {
-     {
-       id: "#nitro/virtual/public-assets-node",
-       template: () => {
-+        // Dev asset paths are absolute, and the Vite dev runner does not set `__nitro_main__`
-+        const path = nitro.options.dev
-+          ? "assets[id].path"
-+          : "resolve(dirname(fileURLToPath(globalThis.__nitro_main__)), assets[id].path)";
-         return /* js */ `
- import { promises as fsp } from 'node:fs'
- import { Readable } from 'node:stream'
- import { fileURLToPath } from 'node:url'
- import { resolve, dirname } from 'node:path'
- import assets from '#nitro/virtual/public-assets-data'
- export function readAsset (id, range) {
--  const serverDir = dirname(fileURLToPath(globalThis.__nitro_main__))
--  const path = resolve(serverDir, assets[id].path)
-+  const path = ${path}
-   // Public dirs might be pruned after the build (uploaded to a CDN, sourcemaps
-   // stripped), so a manifest entry with no file behind it reads as absent, not broken.
-   return (range ? readRange(path, range) : fsp.readFile(path)).catch((error) => {
+@@ -50,7 +50,9 @@ export const getRollupConfig = async (nitro: Nitro): Promise<RollupConfig> => {
+         ...nitro.options.commonJS,
+       }),
+       (json as unknown as typeof json.default)(),
+-      (inject as unknown as typeof inject.default)(base.env.inject),
++      ...(Object.keys(base.env.inject).length > 0
++        ? [(inject as unknown as typeof inject.default)(base.env.inject)]
++        : []),
+       // Emitted files are read from the filesystem, which worker runtimes do not have
+       nitro.options.node && (await assetUrls(nitro)),
+     ]),
 ```
 
-**File**: `test/unit/_scan-dirs.ts` (modified, +16/-0)
+**File**: `src/build/vite/bundler.ts` (modified, +1/-1)
 ```diff
-@@ -87,6 +87,22 @@ export function writeFiles(rootDir: string, files: Record<string, string>) {
-   }
- }
- 
-+/** A public asset that exists at startup and is deleted during dev. */
-+export const publicAssetCase = {
-+  files: {
-+    "public/asset.txt": "asset",
-+    "routes/internal.ts": `import { serverFetch } from "nitro";
-+export default () => serverFetch("/asset.txt");`,
-+  },
-+  file: "public/asset.txt",
-+  observe: async (fetch: Fetch) => [
-+    await text(await fetch("/asset.txt")),
-+    await text(await fetch("/internal")),
-+  ],
-+  existing: ["asset", "asset"],
-+  removed: [404, 404],
-+};
-+
- async function text(res: Response) {
-   return res.ok ? await res.text() : res.status;
- }
+@@ -108,7 +108,7 @@ export const getBundlerConfig = async (
+       {
+         ...commonConfig,
+         plugins: await withBuildPlugins(nitro, [
+-          inject(base.env.inject),
++          ...(Object.keys(base.env.inject).length > 0 ? [inject(base.env.inject)] : []),
+           alias({ entries: base.aliases }),
+           ...nitroPlugins,
+         ]),
 ```
 
-**File**: `test/unit/dev-scan-reload.test.ts` (modified, +39/-1)
+**File**: `test/vite/build-plugins.test.ts` (modified, +1/-1)
 ```diff
-@@ -5,7 +5,7 @@ import { join } from "pathe";
- import { isWindows } from "std-env";
- import { afterAll, describe, expect, it } from "vitest";
- import { build, createDevServer, createNitro, prepare } from "../../src/builder.ts";
--import { scanDirCases, writeFiles } from "./_scan-dirs.ts";
-+import { publicAssetCase, scanDirCases, writeFiles } from "./_scan-dirs.ts";
- import type { Fetch } from "./_scan-dirs.ts";
- 
- const tmpDirs: string[] = [];
-@@ -105,3 +105,41 @@ describe(`dev scan reload (${builder})`, () => {
-     60_000
-   );
- });
-+
-+describe(`dev deleted public asset (${builder})`, () => {
-+  it.skipIf(builder === "rspack" && isWindows)(
-+    "is no longer served",
-+    async () => {
-+      const rootDir = mkdtempSync(join(tmpdir(), "nitro-dev-public-asset-"));
-+      tmpDirs.push(rootDir);
-+      writeFiles(rootDir, {
-+        "package.json": JSON.stringify({ type: "module" }),
-+        ...publicAssetCase.files,
-+      });
-+
-+      const nitro = await createNitro({
-+        rootDir,
-+        serverDir: ".",
-+        builder,
-+        dev: true,
-+        compatibilityDate: "latest",
-+        logLevel: 0,
-+      });
-+      const server = await createDevServer(nitro).listen({ port: 0 });
-+      const fetchPath: Fetch = (path) => fetch(new URL(path, server.url));
-+      const ready = new Promise<void>((resolve) => nitro.hooks.hook("dev:reload", () => resolve()));
-+      try {
-+        await prepare(nitro);
-+        await build(nitro);
-+        await ready;
-+        expect(await publicAssetCase.observe(fetchPath)).toEqual(publicAssetCase.existing);
-+        rmSync(join(rootDir, publicAssetCase.file));
-+        expect(await publicAssetCase.observe(fetchPath)).toEqual(publicAssetCase.removed);
-+      } finally {
-+        await server.close();
-+        await nitro.close();
-+      }
-+    },
-+    60_000
-+  );
-+});
-```
-
-**File**: `test/vite/scan-reload.test.ts` (modified, +38/-1)
-```diff
-@@ -5,7 +5,7 @@ import { join } from "pathe";
- import type { ViteDevServer } from "vite";
- import { afterAll, beforeAll, describe, expect, test } from "vitest";
- import { nitro } from "../../src/vite.ts";
--import { scanDirCases, writeFiles } from "../unit/_scan-dirs.ts";
-+import { publicAssetCase, scanDirCases, writeFiles } from "../unit/_scan-dirs.ts";
- import type { Fetch } from "../unit/_scan-dirs.ts";
- 
- const { createServer } = (await import(
-@@ -68,3 +68,40 @@ describe("vite: scan dirs reload", { concurrent: false }, () => {
-     await expectState(c.removed);
+@@ -54,7 +54,7 @@ describe("buildPlugins", () => {
+       _isRolldown: false,
+     } as NitroPluginContext);
+     const names = (rollupConfig!.plugins as { name: string }[]).map((p) => p.name);
+-    expect(names.slice(0, 3)).toEqual(["fixture:pre", "inject", "alias"]);
++    expect(names.slice(0, 2)).toEqual(["fixture:pre", "alias"]);
+     expect(names.at(-1)).toBe("fixture:post");
+     await nitro.close();
    });
- });
-+
-+describe("vite: deleted public asset", () => {
-+  let server: ViteDevServer;
-+  let fetchPath: Fetch;
-+  const tmpDir = fileURLToPath(new URL(".tmp", import.meta.url));
-+  let rootDir: string;
-+
-+  beforeAll(async () => {
-+    mkdirSync(tmpDir, { recursive: true });
-+    rootDir = mkdtempSync(join(tmpDir, "public-asset-"));
-+    writeFiles(rootDir, {
-+      "package.json": JSON.stringify({ type: "module" }),
-+      ...publicAssetCase.files,
-+    });
-+    server = await createServer({
-+      root: rootDir,
-+      configFile: false,
-+      logLevel: "warn",
-+      plugins: [nitro({ serverDir: "./" })],
-+    });
-+    await server.listen("0" as unknown as number);
-+    const addr = server.httpServer?.address() as { port: number; address: string; family: string };
-+    const serverURL = `http://${addr.family === "IPv6" ? `[${addr.address}]` : addr.address}:${addr.port}`;
-+    fetchPath = (path) => fetch(serverURL + path);
-+  }, 30_000);
-+
-+  afterAll(async () => {
-+    await server?.close();
-+    rmSync(rootDir, { recursive: true, force: true });
-+  });
-+
-+  test("is no longer served", async () => {
-+    expect(await publicAssetCase.observe(fetchPath)).toEqual(publicAssetCase.existing);
-+    rmSync(join(rootDir, publicAssetCase.file));
-+    expect(await publicAssetCase.observe(fetchPath)).toEqual(publicAssetCase.removed);
-+  });
-+});
-```
-
----
-
-### Incident Patch 2: `f79d7a28` (2026-11-11)
-**Commit Message**: fix(rspack): invalidate virtual modules when scanned plugins or tasks change (#5119)
-
-**File**: `src/build/rspack/dev.ts` (modified, +6/-2)
-```diff
-@@ -49,7 +49,7 @@ export async function watchDev(
- }
- 
- export interface DevWatch {
--  /** Scans handlers, returning whether they changed. */
-+  /** Scans handlers (and plugins and tasks), returning whether they changed. */
-   scan: () => Promise<boolean>;
-   /** Watch `ignored` option (output and virtual module placeholders). */
-   ignored: RegExp;
-@@ -90,7 +90,11 @@ export function createDevWatch(
-     const result = scanning.then(async () => {
-       await scanHandlers(nitro);
-       nitro.routing.sync();
--      const scanned = JSON.stringify(nitro.scannedHandlers);
-+      const scanned = JSON.stringify([
-+        nitro.scannedHandlers,
-+        nitro.options.plugins,
-+        nitro.options.tasks,
-+      ]);
-       const changed = scanned !== handlers;
-       handlers = scanned;
-       return changed;
-```
-
-**File**: `test/unit/dev-scan-reload.test.ts` (modified, +2/-2)
-```diff
-@@ -77,8 +77,8 @@ describe(`dev scan reload (${builder})`, () => {
-         expect(state).toEqual(expected);
-         expect(lingeringErrors).toEqual([]);
-         // TODO: the rolldown and rollup watchers build stale virtual modules before the scan dirs
--        // watcher reloads, and so does rspack for removed plugins and tasks
--        if (builder === "rspack" && !["plugins", "tasks"].includes(c.dir)) {
-+        // watcher reloads
-+        if (builder === "rspack") {
-           expect(errors).toEqual([]);
-         }
-         errors = [];
-```
-
----
-
-### Incident Patch 3: `0f2a7f49` (2026-11-11)
-**Commit Message**: fix(dev): serve public dirs created or removed during dev (#5120)
-
-**File**: `docs/1.docs/50.assets.md` (modified, +2/-0)
-```diff
-@@ -21,6 +21,8 @@ public/
-   robots.txt    <-- /robots.txt
- ```
- 
-+In development, public assets are served from their source directories, so file changes are picked up without a restart. This includes a `public/` directory created or removed while the dev server is running.
-+
- ### Caching and Headers
- 
- Public assets are served with automatic `ETag` and `Last-Modified` headers for conditional requests. When the client sends `If-None-Match` or `If-Modified-Since` headers, Nitro returns a `304 Not Modified` response.
-```
-
-**File**: `src/build/build.ts` (modified, +25/-0)
-```diff
-@@ -1,5 +1,6 @@
- import type { Nitro } from "nitro/types";
- import { existsSync } from "node:fs";
-+import { resolve } from "pathe";
- import { compressPublicAssets } from "../utils/compress.ts";
- import { createWatcher } from "../utils/watch.ts";
- 
-@@ -14,6 +15,9 @@ export async function build(nitro: Nitro) {
-   if (nitro.options.dev && nitro.options.builder === false) {
-     watchRendererTemplate(nitro);
-   }
-+  if (nitro.options.dev) {
-+    watchPublicDirs(nitro);
-+  }
-   warnUnbuiltServices(nitro);
-   switch (nitro.options.builder) {
-     case "rollup": {
-@@ -60,6 +64,27 @@ function watchRendererTemplate(nitro: Nitro) {
-   nitro.hooks.hook("close", () => watcher.close());
- }
- 
-+// Public dirs are served from disk in development, but the public assets manifest of the dev worker
-+// is rendered at build time: rebuild when a public dir is removed, so its files are no longer served
-+function watchPublicDirs(nitro: Nitro) {
-+  const dirs = [
-+    ...new Set([nitro.options.rootDir, ...nitro.options.scanDirs].map((dir) => resolve(dir))),
-+  ];
-+  const publicDirs = new Set(dirs.map((dir) => resolve(dir, "public")));
-+  const { cwd = "" } = nitro.options.watchOptions || {};
-+  const watcher = createWatcher(nitro, dirs, {
-+    ...nitro.options.watchOptions,
-+    ignoreInitial: true,
-+    depth: 0,
-+  }).on("unlinkDir", (path) => {
-+    // Event paths are relative to `cwd` when it is set
-+    if (publicDirs.has(resolve(cwd, path))) {
-+      nitro.hooks.callHook("build:reload");
-+    }
-+  });
-+  nitro.hooks.hook("close", () => watcher.close());
-+}
-+
- // Services are built by a builder integration (e.g. `nitro/vite`), which sets `_serviceLoader`
- function warnUnbuiltServices(nitro: Nitro) {
-   const names = Object.keys({ ...nitro.options.vite?.services, ...nitro.options.services });
-```
-
-**File**: `src/build/vite/_scan-watch.ts` (modified, +11/-3)
-```diff
-@@ -9,7 +9,7 @@ const watchReloadEvents = new Set(["add", "addDir", "unlink", "unlinkDir"]);
- 
- /**
-  * Calls `onChange` when files are added to or removed from the scan dirs (or a root `server.*`
-- * entry), and on the `build:reload` hook.
-+ * entry), when a `public/` dir is removed, and on the `build:reload` hook.
-  */
- export function watchScanDirs(nitro: Nitro, server: ViteDevServer, onChange: () => void): void {
-   const scanDirs = nitro.options.scanDirs.flatMap((dir) => [
-@@ -20,6 +20,9 @@ export function watchScanDirs(nitro: Nitro, server: ViteDevServer, onChange: ()
-     join(dir, "modules"),
-     join(dir, "tasks"),
-   ]);
-+  const publicDirs = [nitro.options.rootDir, ...nitro.options.scanDirs].map((dir) =>
-+    join(dir, "public")
-+  );
- 
-   const shouldReload = (path: string) => {
-     path = normalize(path);
-@@ -31,9 +34,14 @@ export function watchScanDirs(nitro: Nitro, server: ViteDevServer, onChange: ()
- 
-   // Reuse vite's watcher (root is already watched) to avoid extra system watchers
-   server.watcher.on("error", (error) => onWatchError(nitro, error));
--  server.watcher.add(scanDirs.filter((dir) => !dir.startsWith(server.config.root + "/")));
-+  server.watcher.add(
-+    [...scanDirs, ...publicDirs].filter((dir) => !dir.startsWith(server.config.root + "/"))
-+  );
-   server.watcher.on("all", (event, path) => {
--    if (watchReloadEvents.has(event) && shouldReload(path)) {
-+    if (
-+      (watchReloadEvents.has(event) && shouldReload(path)) ||
-+      (event === "unlinkDir" && publicDirs.includes(normalize(path)))
-+    ) {
-       onChange();
-     }
-   });
-```
-
-**File**: `src/config/resolvers/assets.ts` (modified, +2/-2)
-```diff
-@@ -11,10 +11,10 @@ export async function resolveAssetsOptions(options: NitroOptions) {
-     publicAsset.dir = resolve(options.rootDir, publicAsset.dir);
-     publicAsset.baseURL = withLeadingSlash(withoutTrailingSlash(publicAsset.baseURL || "/"));
-   }
--  // 2. Add public/ directories from each layer
-+  // 2. Add public/ directories from each layer (in dev, also missing ones: they can be created later)
-   for (const dir of [options.rootDir, ...options.scanDirs]) {
-     const publicDir = resolve(dir, "public");
--    if (!existsSync(publicDir)) {
-+    if (!options.dev && !existsSync(publicDir)) {
-       continue;
-     }
-     if (options.publicAssets.some((asset) => asset.dir === publicDir)) {
-```
-
-**File**: `test/unit/_scan-dirs.ts` (modified, +25/-0)
-```diff
-@@ -8,6 +8,10 @@ export interface ScanDirCase {
-   files: Record<string, string>;
-   file: string;
-   contents: string;
-+  /** Path removed instead of `file` (e.g. the whole dir). */
-+  remove?: string;
-+  /** Whether `file` exists from the start (removed, then re-added). */
-+  existing?: boolean;
-   observe: (fetch: Fetch) => Promise<unknown>;
-   added: unknown;
-   removed: unknown;
-@@ -78,6 +82,27 @@ export const scanDirCases: ScanDirCase[] = [
-     ],
-     removed: [{ base: { description: "base" } }, 404],
-   },
-+  {
-+    dir: "public",
-+    files: index,
-+    file: "public/index.html",
-+    contents: "added",
-+    remove: "public",
-+    observe: async (fetch) => [await text(await fetch("/"))],
-+    added: ["added"],
-+    removed: ["index"],
-+  },
-+  {
-+    dir: "layer/public",
-+    files: { ...index, "routes/existing.ts": `export default () => "existing";` },
-+    file: "layer/public/existing/index.html",
-+    contents: "added",
-+    remove: "layer/public",
-+    existing: true,
-+    observe: async (fetch) => [await text(await fetch("/")), await text(await fetch("/existing"))],
-+    added: ["index", "added"],
-+    removed: ["index", "existing"],
-+  },
- ];
- 
- export function writeFiles(rootDir: string, files: Record<string, string>) {
-```
-
-**File**: `test/unit/dev-scan-reload.test.ts` (modified, +103/-82)
-```diff
-@@ -6,7 +6,7 @@ import { isWindows } from "std-env";
- import { afterAll, describe, expect, it } from "vitest";
- import { build, createDevServer, createNitro, prepare } from "../../src/builder.ts";
- import { publicAssetCase, scanDirCases, writeFiles } from "./_scan-dirs.ts";
--import type { Fetch } from "./_scan-dirs.ts";
-+import type { Fetch, ScanDirCase } from "./_scan-dirs.ts";
- 
- const tmpDirs: string[] = [];
- afterAll(() => {
-@@ -19,89 +19,18 @@ const builder = (process.env.NITRO_BUILDER as "rollup" | "rolldown" | "rspack")
- 
- describe(`dev scan reload (${builder})`, () => {
-   // TODO: rspack dev on Windows (https://github.com/nitrojs/nitro/issues/4948)
--  it.skipIf(builder === "rspack" && isWindows).each(scanDirCases)(
--    "picks up added, removed and re-added files in `$dir/`",
--    async (c) => {
--      const rootDir = mkdtempSync(join(tmpdir(), "nitro-dev-scan-reload-"));
--      tmpDirs.push(rootDir);
--      writeFiles(rootDir, { "package.json": JSON.stringify({ type: "module" }), ...c.files });
--
--      const nitro = await createNitro({
--        rootDir,
--        serverDir: ".",
--        builder,
--        dev: true,
--        compatibilityDate: "latest",
--        logLevel: 0,
--        experimental: { tasks: true },
--      });
--      const server = await createDevServer(nitro).listen({ port: 0 });
--      const fetchPath: Fetch = (path) => fetch(new URL(path, server.url));
--
--      let errors: unknown[] = [];
--      let lingeringErrors: unknown[] = [];
--      let reloads = 0;
--      let onReload: (() => void) | undefined;
--      nitro.hooks.hook("dev:error", (error) => {
--        errors.push(error);
--        lingeringErrors.push(error);
--      });
--      nitro.hooks.hook("dev:reload", () => {
--        reloads++;
--        lingeringErrors = [];
--        onReload?.();
--      });
--      const nextReload = (timeout: number) =>
--        new Promise<void>((resolve, reject) => {
--          const timer = setTimeout(() => reject(new Error("timed out")), timeout);
--          onReload = () => {
--            clearTimeout(timer);
--            resolve();
--          };
--        });
--      const expectState = async (expected: unknown) => {
--        const deadline = Date.now() + 15_000;
--        let state: unknown;
--        while (true) {
--          const seen = reloads;
--          state = await c.observe(fetchPath);
--          if (isDeepStrictEqual(state, expected)) {
--            break;
--          }
--          if (reloads === seen) {
--            await nextReload(deadline - Date.now()).catch(() => {
--              throw new Error(`No reload to the expected state, last: ${JSON.stringify(state)}`);
--            });
--          }
--        }
--        expect(state).toEqual(expected);
--        expect(lingeringErrors).toEqual([]);
--        // TODO: the rolldown and rollup watchers build stale virtual modules before the scan dirs
--        // watcher reloads
--        if (builder === "rspack") {
--          expect(errors).toEqual([]);
--        }
--        errors = [];
--      };
--
--      try {
--        await prepare(nitro);
--        await build(nitro);
--        await expectState(c.removed);
-+  const skip = builder === "rspack" && isWindows;
- 
--        writeFiles(rootDir, { [c.file]: c.contents });
--        await expectState(c.added);
--
--        rmSync(join(rootDir, c.file));
--        await expectState(c.removed);
-+  it.skipIf(skip).each(scanDirCases)(
-+    "picks up added, removed and re-added files in `$dir/`",
-+    (c) => runCase(c),
-+    60_000
-+  );
- 
--        writeFiles(rootDir, { [c.file]: c.contents });
--        await expectState(c.added);
--      } finally {
--        await server.close();
--        await nitro.close();
--      }
--    },
-+  // Chokidar emits paths relative to `watchOptions.cwd` when it is set
-+  it.skipIf(skip).each(scanDirCases.filter((c) => c.remove))(
-+    "picks up a removed `$dir/` with `watchOptions.cwd`",
-+    (c) => runCase(c, { watchCwd: true }),
-     60_000
-   );
- });
-@@ -143,3 +72,95 @@ describe(`dev deleted public asset (${builder})`, () => {
-     60_000
-   );
- });
-+
-+async function runCase(c: ScanDirCase, opts: { watchCwd?: boolean } = {}) {
-+  const rootDir = mkdtempSync(join(tmpdir(), "nitro-dev-scan-reload-"));
-+  tmpDirs.push(rootDir);
-+  writeFiles(rootDir, {
-+    "package.json": JSON.stringify({ type: "module" }),
-+    ...c.files,
-+    ...(c.existing && { [c.file]: c.contents }),
-+  });
-+
-+  const nitro = await createNitro({
-+    rootDir,
-+    serverDir: ".",
-+    scanDirs: ["layer"],
-+    builder,
-+    dev: true,
-+    compatibilityDate: "latest",
-+    logLevel: 0,
-+    experimental: { tasks: true },
-+    watchOptions: opts.watchCwd ? { cwd: rootDir } : undefined,
-+  });
-+  const server = await createDevServer(nitro).listen({ port: 0 });
-+  const fetchPath: Fetch = (path) => fetch(new URL(path, server.url));
-+
-+  let errors: unknown[] = [];
-+  let lingeringErrors: unknown[] = [];
-+  let reloads = 0;
-+  let onReload: (() => void) | undefined;
-+  nitro.hooks.hook("dev:error", (error) => {
-+  
-```
-
-**File**: `test/vite/scan-reload.test.ts` (modified, +11/-4)
-```diff
-@@ -23,13 +23,16 @@ describe("vite: scan dirs reload", { concurrent: false }, () => {
-     rootDir = mkdtempSync(join(tmpDir, "scan-reload-"));
-     writeFiles(rootDir, {
-       "package.json": JSON.stringify({ type: "module" }),
--      ...Object.assign({}, ...scanDirCases.map((c) => c.files)),
-+      ...Object.assign(
-+        {},
-+        ...scanDirCases.map((c) => ({ ...c.files, ...(c.existing && { [c.file]: c.contents }) }))
-+      ),
-     });
-     server = await createServer({
-       root: rootDir,
-       configFile: false,
-       logLevel: "warn",
--      plugins: [nitro({ serverDir: "./", experimental: { tasks: true } })],
-+      plugins: [nitro({ serverDir: "./", scanDirs: ["layer"], experimental: { tasks: true } })],
-     });
-     await server.listen("0" as unknown as number);
-     const addr = server.httpServer?.address() as { port: number; address: string; family: string };
-@@ -53,18 +56,22 @@ describe("vite: scan dirs reload", { concurrent: false }, () => {
-       expect(state).toEqual(expected);
-     };
- 
-+    if (c.existing) {
-+      await expectState(c.added);
-+      rmSync(join(rootDir, c.remove ?? c.file), { recursive: true });
-+    }
-     await expectState(c.removed);
- 
-     writeFiles(rootDir, { [c.file]: c.contents });
-     await expectState(c.added);
- 
--    rmSync(join(rootDir, c.file));
-+    rmSync(join(rootDir, c.remove ?? c.file), { recursive: true });
-     await expectState(c.removed);
- 
-     writeFiles(rootDir, { [c.file]: c.contents });
-     await expectState(c.added);
- 
--    rmSync(join(rootDir, c.file));
-+    rmSync(join(rootDir, c.remove ?? c.file), { recursive: true });
-     await expectState(c.removed);
-   });
- });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5136** (2026-11-15): perf(rollup): skip inject plugin when there is nothing to inject (@danielroe)
+- **PR #5131** (closed): fix(routing): trace route-scoped middleware (@sakaintp)
+- **PR #5128** (closed): fix(rspack): keep non-literal dynamic imports native (@sakaintp)
 - **PR #5125** (closed): fix(build): match directory public asset URLs with index.html (@akshathayadav378-boop)
 - **PR #5121** (2026-11-11): fix(vite): do not crash serving public assets from the dev worker (@pi0x)
 - **PR #5120** (2026-11-11): fix(dev): serve public dirs created or removed during dev (@pi0x)
-- **PR #5119** (2026-11-11): fix(rspack): invalidate virtual modules when scanned plugins or tasks change (@pi0x)
-- **PR #5118** (2026-11-11): test(scan): cover dev reload of scanned dirs (@pi0x)
-- **PR #5115** (2026-11-11): fix(scan): sync scanned tasks on dev reload (@pi0x)
 
 ---
 
@@ -1238,33 +710,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vite): do not crash serving public assets from the dev worker (#5121)
+## X. skip @rollup/plugin-inject when there is nothing to inject
 
 **RULE**:
-When implementing operations in `src/build/virtual/public-assets.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nitrojs/nitro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/build/rollup/config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nitrojs/nitro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fddb9167`: vite): do not crash serving public assets from the dev worker (#5121). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `749b12bc`: skip @rollup/plugin-inject when there is nothing to inject. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/build/virtual/public-assets.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/build/rollup/config.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        // Dev asset paths are absolute, and the Vite dev runner does not set `__nitro_main__`
-        const path = nitro.options.dev
-          ? "assets[id].path"
-          : "resolve(dirname(fileURLToPath(globalThis.__nitro_main__)), assets[id].path)";
-  const path = ${path}
+      ...(Object.keys(base.env.inject).length > 0
+        ? [(inject as unknown as typeof inject.default)(base.env.inject)]
+        : []),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-  const serverDir = dirname(fileURLToPath(globalThis.__nitro_main__))
-  const path = resolve(serverDir, assets[id].path)
+// Induced defect failure mode:
+      (inject as unknown as typeof inject.default)(base.env.inject),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fddb9167` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `749b12bc` are properly handled with clean fallback behavior.

@@ -2023,10 +2023,10 @@
     "repository": "nitrojs/nitro",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/nitro",
-    "sourceVersion": "0f2a7f49",
+    "sourceVersion": "749b12bc",
     "license": "NOASSERTION",
-    "contentHash": "19d981a520d39cc08f518afe149722a7c6e4b34e970078479d7e7f99496a23d6",
-    "lastHarvestedAt": "2026-11-13T00:24:04.816Z",
+    "contentHash": "ce9102417182f96e6373ac11b3bf021941ed1135cd159d6050e6ace01675fea3",
+    "lastHarvestedAt": "2026-11-17T13:29:49.608Z",
     "learningId": "learn-github-nitrojs-nitro"
   },
   "unjs-h3": {
@@ -3033,10 +3033,10 @@
     "repository": "callstack/react-native-paper",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/react-native-paper",
-    "sourceVersion": "ead3e550",
+    "sourceVersion": "655fbcc5",
     "license": "MIT",
-    "contentHash": "8c0cf5d2b275281f76878baff9756d81081b16124b26bd00ad739197ace5bace",
-    "lastHarvestedAt": "2026-11-13T21:45:12.705Z",
+    "contentHash": "40659ff18d941994ef45b324a3d4e0060261977289ed9675fde2baf55ca35366",
+    "lastHarvestedAt": "2026-11-17T13:29:52.616Z",
     "learningId": "learn-github-callstack-react-native-paper"
   },
   "tensorchord-pgvecto.rs": {
@@ -6043,10 +6043,10 @@
     "repository": "u-root/u-root",
     "platform": "github",
     "sourceUrl": "https://github.com/u-root/u-root",
-    "sourceVersion": "4eba8433",
+    "sourceVersion": "beb9a36f",
     "license": "BSD-3-Clause",
-    "contentHash": "89695c265dd46271dfb982bc75d5222981688d54aa24b18c1d062c33211674ad",
-    "lastHarvestedAt": "2026-11-13T23:01:33.734Z",
+    "contentHash": "f4e3668abd028f38c4cdfcdb078c462f178af0c08416faa7524ae0f69fac41eb",
+    "lastHarvestedAt": "2026-11-17T13:29:50.951Z",
     "learningId": "learn-github-u-root-u-root"
   },
   "shoutem-ui": {

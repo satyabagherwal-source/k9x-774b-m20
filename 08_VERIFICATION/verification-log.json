@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-N8D9",
-    "timestamp": "2026-11-14T22:39:34.173Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "fa001ba3c4fdfe882a77ef9e842ebbdb97e4f69515fa6b85f6a3594e87f2f824",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-AC70",
-    "timestamp": "2026-11-14T22:57:32.220Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "feca3a3031cc372da7d5f7d89e4d6a04be762577ebb1e0c2a62dd4aff3f85271",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-AF8F",
-    "timestamp": "2026-11-14T22:57:36.159Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "257ca9b69ee726f0df831bb75727f76bc7ceb64499e67b7ea9ca6078aa81a881",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-AISV",
     "timestamp": "2026-11-14T22:57:40.783Z",
     "repository": "apollographql/apollo-kotlin",
@@ -7490,6 +7445,51 @@
     "repository": "StarTrail-org/LEANN",
     "learningId": "learn-github-startrail-org-leann",
     "contentHash": "d301b28d02eb315478cbaeb2b34233068de8eac3c296ddc9cc980a48f83f7d40",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-BTB8",
+    "timestamp": "2026-11-17T13:29:49.604Z",
+    "repository": "nitrojs/nitro",
+    "learningId": "learn-github-nitrojs-nitro",
+    "contentHash": "ce9102417182f96e6373ac11b3bf021941ed1135cd159d6050e6ace01675fea3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-BUCJ",
+    "timestamp": "2026-11-17T13:29:50.947Z",
+    "repository": "u-root/u-root",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "f4e3668abd028f38c4cdfcdb078c462f178af0c08416faa7524ae0f69fac41eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-BVMT",
+    "timestamp": "2026-11-17T13:29:52.613Z",
+    "repository": "callstack/react-native-paper",
+    "learningId": "learn-github-callstack-react-native-paper",
+    "contentHash": "40659ff18d941994ef45b324a3d4e0060261977289ed9675fde2baf55ca35366",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

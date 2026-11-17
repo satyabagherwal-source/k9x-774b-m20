@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T13:05:59.291Z",
+  "last_updated": "2026-11-17T13:29:57.413Z",
   "directives": [
     {
       "id": "CD-001",
@@ -23975,6 +23975,68 @@
       "source_repo": "startrail-org-leann",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E2D3E5-harden-index-artifact-deserialization.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-BYVU",
+      "directive_title": "skip @rollup/plugin-inject when there is nothing to inject",
+      "source_repo": "unjs-nitro-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BYVU-skip-rollup-plugin-inject-when-there-is-nothing-to-inject.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-BUH7",
+      "directive_title": "fix tests.yml after ubuntu-latest moved to ubuntu-26.04",
+      "source_repo": "u-root/u-root",
+      "source_commit": "beb9a36f",
+      "staged_file": "11_INBOX/candidate-directives/CD-BUH7-fix-tests-yml-after-ubuntu-latest-moved-to-ubuntu-26-04.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-BZC2",
+      "directive_title": "fix!: don't expose handler-less TouchableRipple as a disabled control",
+      "source_repo": "callstack-react-native-paper-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BZC2-fix-don-t-expose-handler-less-touchableripple-as-a-disabled-control.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-BYFO",
+      "directive_title": "CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04",
+      "source_repo": "u-root-u-root-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BYFO-ci-fix-tests-yml-after-ubuntu-latest-moved-to-ubuntu-26-04.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-A2B1E6",
+      "directive_title": "skip @rollup/plugin-inject when there is nothing to inject",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "unjs-nitro",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A2B1E6-skip-rollup-plugin-inject-when-there-is-.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-B5F711",
+      "directive_title": "fix!: don't expose handler-less TouchableRipple as a disabled control",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "callstack-react-native-paper",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B5F711-fix-don-t-expose-handler-less-touchabler.md",
       "staged_date": "2026-11-17"
     }
   ]
