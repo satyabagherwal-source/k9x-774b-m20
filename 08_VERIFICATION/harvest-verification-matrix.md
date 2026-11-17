@@ -10695,3 +10695,7 @@
 | `CYCLE-20261117-E5TX` | `2026-11-17T20:03:33.765Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9051` | Yes (`abbc83ae...`) |
 | `CYCLE-20261117-E9W0` | `2026-11-17T20:03:39.024Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9052` | Yes (`a2f4e489...`) |
 | `CYCLE-20261117-EBZS` | `2026-11-17T20:03:41.752Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9053` | Yes (`b9d86109...`) |
+| `CYCLE-20261117-W3EF` | `2026-11-17T20:17:30.423Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`d5b26861...`) |
+| `CYCLE-20261117-W6VX` | `2026-11-17T20:17:34.941Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9054` | Yes (`aeea49b1...`) |
+| `CYCLE-20261117-WB20` | `2026-11-17T20:17:40.344Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9055` | Yes (`18e94ac6...`) |
+| `CYCLE-20261117-WGIF` | `2026-11-17T20:17:47.415Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9056` | Yes (`121b80ec...`) |

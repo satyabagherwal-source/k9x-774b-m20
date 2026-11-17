@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T20:03:41.764Z",
+  "last_updated": "2026-11-17T20:17:47.428Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -37,14 +37,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-convaiinnovations-laya",
-      "content_hash": "b8a23452731f5861f341ce8a724a76e1a7f7afe2547b1b69763e06ac4bc79c38",
-      "verified_at": "2026-11-13T09:37:45.407Z",
+      "content_hash": "d5b26861e3d1ffbf29c6b00c6368a3480c24e3a49218ef2978bba853771b5e2f",
+      "verified_at": "2026-11-17T20:17:30.435Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T09:37:45.407Z"
+      "last_updated": "2026-11-17T20:17:30.435Z"
     },
     "Edge0/Audio8-ASR-Infinite": {
       "repository": "Edge0/Audio8-ASR-Infinite",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "20a4ea81b8d8a8089ad4a6b74f4c4bcc15f41c7adddaef09779c2b1dd7810f57",
-      "verified_at": "2026-11-16T23:03:47.283Z",
+      "content_hash": "18e94ac678ac716a0039a7366ba95cc4b0bad48adfc59779f596ef55c8e11034",
+      "verified_at": "2026-11-17T20:17:40.357Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:03:47.283Z"
+      "last_updated": "2026-11-17T20:17:40.357Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "bb2d8aacbba155dfc0e235c02bc4934675faa191c416a054c05bfd519fa3843f",
-      "verified_at": "2026-11-17T15:35:17.443Z",
+      "content_hash": "121b80ec33bd23938835e4bf48c44feda5c841aa2fb7d479385e69593ddacea1",
+      "verified_at": "2026-11-17T20:17:47.427Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:35:17.443Z"
+      "last_updated": "2026-11-17T20:17:47.427Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "21d14b8a1709d6416bbde92ecf938f9e225b0c4c4ece56c491f0cc182f78f0f8",
-      "verified_at": "2026-11-16T07:45:01.719Z",
+      "content_hash": "aeea49b111403c9deb597cd7071a909494cbc31582738b90de8fa1410267f764",
+      "verified_at": "2026-11-17T20:17:34.954Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T07:45:01.720Z"
+      "last_updated": "2026-11-17T20:17:34.954Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",

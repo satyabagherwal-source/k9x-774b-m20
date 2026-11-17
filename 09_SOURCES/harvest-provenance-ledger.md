@@ -10728,3 +10728,7 @@ Every entry in this ledger must capture:
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `6aebc64b` | Multi-dimensional audit evidence | 2026-11-17T20:03:33.769Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `d772968d` | Multi-dimensional audit evidence | 2026-11-17T20:03:39.027Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `ab1e41df` | Multi-dimensional audit evidence | 2026-11-17T20:03:41.756Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-11-17T20:17:30.427Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `7c39be07` | Multi-dimensional audit evidence | 2026-11-17T20:17:34.946Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `d8eaa141` | Multi-dimensional audit evidence | 2026-11-17T20:17:40.348Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d6fb6afa` | Multi-dimensional audit evidence | 2026-11-17T20:17:47.419Z |

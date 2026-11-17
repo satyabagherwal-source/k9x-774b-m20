@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T20:03:41.761Z",
-  "total_cycles_completed": 10249,
-  "total_learnings_persisted": 10249,
-  "total_rules_promoted": 9799,
+  "last_updated": "2026-11-17T20:17:47.424Z",
+  "total_cycles_completed": 10253,
+  "total_learnings_persisted": 10253,
+  "total_rules_promoted": 9802,
   "history": [
-    {
-      "timestamp": "2026-11-17T07:06:27.255Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T07:06:54.504Z",
-      "repository": "actix/actix-web",
-      "learningId": "learn-github-actix-actix-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T07:20:03.070Z",
-      "repository": "facebook/sam-3d-body-dinov3",
-      "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T07:20:10.012Z",
-      "repository": "storybookjs/storybook",
-      "learningId": "learn-github-storybookjs-storybook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T07:20:19.592Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-17T20:03:41.761Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T20:17:30.432Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T20:17:34.951Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T20:17:40.353Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T20:17:47.424Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

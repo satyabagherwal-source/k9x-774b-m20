@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T20:03:47.262Z",
-  "total_verified_learnings": 8936,
+  "last_updated": "2026-11-17T20:17:52.941Z",
+  "total_verified_learnings": 8937,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20583,
+  "total_items": 20596,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112117,10 +112117,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "c0d30a17",
-      "content_hash": "46b3f854db24b2ab782076cf8c25b701cdb7f3a75d12074269b334ba8ff9a3bc",
+      "source_version": "d6fb6afa",
+      "content_hash": "a09feb12293164eda915fa9d193c28a4d5b373aa3d887701ceb56d8c6d9b8585",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:35:17.871Z"
+      "persisted_at": "2026-11-17T20:17:47.888Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -219126,8 +219126,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "c0d30a17",
-      "content_hash": "bb2d8aacbba155dfc0e235c02bc4934675faa191c416a054c05bfd519fa3843f",
+      "source_version": "d6fb6afa",
+      "content_hash": "121b80ec33bd23938835e4bf48c44feda5c841aa2fb7d479385e69593ddacea1",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219205,6 +219205,11 @@
           "number": 8742,
           "title": "build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9056,
+          "title": "trim numeric/date ranges and ordered gaps by --min-count",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219212,7 +219217,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:35:17.241Z",
+      "verified_at": "2026-11-17T20:17:47.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220113,10 +220118,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "c0d30a17",
-      "content_hash": "c589045f2f121b0dc0d77ba038a9c25541b0111c60cc481ed3a9a2fe8ed2d36b",
+      "source_version": "d6fb6afa",
+      "content_hash": "0e253685fe2b4d75feac3d0c88dc436975c7fd156d074c6f3c986e887fc81c71",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T15:35:17.746Z"
+      "persisted_at": "2026-11-17T20:17:47.750Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -222513,8 +222518,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "7059b8d2",
-      "content_hash": "20a4ea81b8d8a8089ad4a6b74f4c4bcc15f41c7adddaef09779c2b1dd7810f57",
+      "source_version": "d8eaa141",
+      "content_hash": "18e94ac678ac716a0039a7366ba95cc4b0bad48adfc59779f596ef55c8e11034",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -222527,6 +222532,11 @@
           "number": 8808,
           "title": "provide upload completion callbacks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9055,
+          "title": "align domain rule matching for ASCII case",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222534,7 +222544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T23:03:47.062Z",
+      "verified_at": "2026-11-17T20:17:40.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222576,10 +222586,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-higress-group-higress-content-information-intelligence-higress-group-higress-cor.md",
       "title": "Content & Information Intelligence: higress-group/higress Core Invariants",
       "repository": "higress-group/higress",
-      "source_version": "7059b8d2",
-      "content_hash": "6794c7fe1ea3a36c027f0db9bc328a6017c2b3f364f184f06927e58b2afe93f5",
+      "source_version": "d8eaa141",
+      "content_hash": "3b9d2da66d4deec4558063aacda7b8aa92ca823137a6ec4101d7dcaf9bdb9d36",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T23:03:47.666Z"
+      "persisted_at": "2026-11-17T20:17:40.668Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress",
@@ -222588,10 +222598,10 @@
       "relative_path": "08_VERIFICATION/higress-group-higress-verification-protocol-empirical-defect-shield-for-higress-.md",
       "title": "Verification Protocol: Empirical Defect Shield for higress-group/higress",
       "repository": "higress-group/higress",
-      "source_version": "7059b8d2",
-      "content_hash": "e715eee90e4d0ffe2b62c6ceceeb154421a424bd67e30a7bd23f16fb607a3833",
+      "source_version": "d8eaa141",
+      "content_hash": "c57acef55627d033772c0b0b39356badf68fb222433f1826761b0eb16b9dc1a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:03:47.821Z"
+      "persisted_at": "2026-11-17T20:17:40.810Z"
     },
     "learn-github-mitmproxy-mitmproxy": {
       "learning_id": "learn-github-mitmproxy-mitmproxy",
@@ -222830,9 +222840,9 @@
       "title": "Content & Information Intelligence: higress-group-higress-learnings Core Invariants",
       "repository": "higress-group-higress-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ca6e841adce235e9bf072768f86e7d0f50b154a437c5571b854974e82872df1",
+      "content_hash": "93bca0c9e3201bfd16d5aa1e6d0ac1986273ff5cfa889b77bb0ffbea5b36b37b",
       "domain_letter": "I",
-      "persisted_at": "2026-11-14T03:50:00.179Z"
+      "persisted_at": "2026-11-17T20:17:52.798Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress-learning",
@@ -222842,9 +222852,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for higress-group-higress-learnings",
       "repository": "higress-group-higress-learnings",
       "source_version": "HEAD",
-      "content_hash": "df52ab889cf7dac3f3b5f2ac03ffb48f13aea04ff0fa3e23e989b857c45e95f9",
+      "content_hash": "b233acf9028eceaf51b48ec74dffb3858ac84a9d657bc7940ee51e8c1d4200be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:50:00.313Z"
+      "persisted_at": "2026-11-17T20:17:52.941Z"
     },
     "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized": {
       "learning_id": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
@@ -230984,8 +230994,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "e61ca3a1",
-      "content_hash": "21d14b8a1709d6416bbde92ecf938f9e225b0c4c4ece56c491f0cc182f78f0f8",
+      "source_version": "7c39be07",
+      "content_hash": "aeea49b111403c9deb597cd7071a909494cbc31582738b90de8fa1410267f764",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -230998,6 +231008,11 @@
           "number": 8726,
           "title": "linter/eslint/no-div-regex): offer regex rewrites as suggestions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9054,
+          "title": "keep catch parameters in the catch clause scope",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231005,7 +231020,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T07:45:01.575Z",
+      "verified_at": "2026-11-17T20:17:34.758Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231059,10 +231074,10 @@
       "relative_path": "08_VERIFICATION/oxc-project-oxc-verification-protocol-empirical-defect-shield-for-oxc-project-ox.md",
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project/oxc",
       "repository": "oxc-project/oxc",
-      "source_version": "e61ca3a1",
-      "content_hash": "ac2f2749ea8a1d042aaf133ef29fe34c46fc0543550c055f0e07eecb12a0b82f",
+      "source_version": "7c39be07",
+      "content_hash": "d3802b4cdd9d2fd3afe6c2e2dd6bd6af169233a31b897becf8a9dd8a55275933",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T07:45:02.057Z"
+      "persisted_at": "2026-11-17T20:17:35.488Z"
     },
     "learn-github-agent-field-agentfield": {
       "learning_id": "learn-github-agent-field-agentfield",
@@ -231302,9 +231317,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project-oxc-learnings",
       "repository": "oxc-project-oxc-learnings",
       "source_version": "HEAD",
-      "content_hash": "5019843816a368949fee09e22619a5de4cb33a448654548fe332b69b217df80e",
+      "content_hash": "b6436d3fad800e968703d86b87867c03ef633ea071cc08ca8243a8d062f922e6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T07:45:11.893Z"
+      "persisted_at": "2026-11-17T20:17:51.868Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants",
@@ -276429,6 +276444,183 @@
       "content_hash": "6eea88b6c50b4a3831409a879c3a7d6f3447284ab84a1124b319c46ba4afd3d9",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T20:03:46.308Z"
+    },
+    "learn-huggingface-convaiinnovations-laya": {
+      "learning_id": "learn-huggingface-convaiinnovations-laya",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "convaiinnovations/laya",
+      "repository": "convaiinnovations/laya",
+      "slug": "hf-convaiinnovations-laya",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "content_hash": "d5b26861e3d1ffbf29c6b00c6368a3480c24e3a49218ef2978bba853771b5e2f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T20:17:30.192Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-convaiinnovations-laya-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-convaiinnovations-laya-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-convaiinnovations-laya-research-knowledge-intelligence-convaiinnovations-laya.md",
+      "title": "Research & Knowledge Intelligence: convaiinnovations/laya Core Invariants",
+      "repository": "convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "content_hash": "8f6ec52bf754c9f48edbc88a6dca9fcae950174d9490a496f5289469cc5923a9",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T20:17:30.621Z"
+    },
+    "rule-9054": {
+      "learning_id": "rule-9054",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9054,
+      "title": "keep catch parameters in the catch clause scope",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "7c39be07",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T20:17:34.758Z"
+    },
+    "candidate_directive-keep-catch-parameters-in-the-catch-clause-scope": {
+      "item_id": "candidate_directive-keep-catch-parameters-in-the-catch-clause-scope",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W71N-keep-catch-parameters-in-the-catch-clause-scope.md",
+      "title": "keep catch parameters in the catch clause scope",
+      "repository": "oxc-project/oxc",
+      "source_version": "7c39be07",
+      "content_hash": "2d14935316252f4db02f206f5230b9bf03cfd840999306aaaa3ffbab42201ae0",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-17T20:17:35.152Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-oxc-project-oxc-quality-verification-intelligence-oxc-project-oxc-core-invariant.md",
+      "title": "Quality & Verification Intelligence: oxc-project/oxc Core Invariants",
+      "repository": "oxc-project/oxc",
+      "source_version": "7c39be07",
+      "content_hash": "4c09311586b62c838c6ce824afbf4b9ef35190d2b2626946c91fd535c69b38f1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T20:17:35.307Z"
+    },
+    "rule-9055": {
+      "learning_id": "rule-9055",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9055,
+      "title": "align domain rule matching for ASCII case",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "d8eaa141",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T20:17:40.171Z"
+    },
+    "candidate_directive-align-domain-rule-matching-for-ascii-case": {
+      "item_id": "candidate_directive-align-domain-rule-matching-for-ascii-case",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WB7G-align-domain-rule-matching-for-ascii-case.md",
+      "title": "align domain rule matching for ASCII case",
+      "repository": "higress-group/higress",
+      "source_version": "d8eaa141",
+      "content_hash": "e684f439f68fc1025f032f3eade40d0da5d9b12358ca6df7a07efddf836f65e5",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T20:17:40.541Z"
+    },
+    "rule-9056": {
+      "learning_id": "rule-9056",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9056,
+      "title": "trim numeric/date ranges and ordered gaps by --min-count",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "d6fb6afa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T20:17:47.243Z"
+    },
+    "candidate_directive-trim-numeric-date-ranges-and-ordered-gaps-by-min-count": {
+      "item_id": "candidate_directive-trim-numeric-date-ranges-and-ordered-gaps-by-min-count",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WGNY-trim-numeric-date-ranges-and-ordered-gaps-by-min-count.md",
+      "title": "trim numeric/date ranges and ordered gaps by --min-count",
+      "repository": "dathere/qsv",
+      "source_version": "d6fb6afa",
+      "content_hash": "e1aad8e453d3822f82ba3e2f689033983e4cce57265f8705685f198295b62e20",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T20:17:47.619Z"
+    },
+    "candidate_directive-semantic-keep-catch-parameters-in-the-catch-clause-scope": {
+      "item_id": "candidate_directive-semantic-keep-catch-parameters-in-the-catch-clause-scope",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WJQI-semantic-keep-catch-parameters-in-the-catch-clause-scope.md",
+      "title": "semantic): keep catch parameters in the catch clause scope",
+      "repository": "oxc-project-oxc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cde429ada09f74ce6f9f8eb443dc4ff2fa40fcbf2fac16d3ec7ca614b4cb38b5",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-17T20:17:51.599Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-oxc-project-oxc-learnings-quality-verification-intelligence-oxc-project-oxc-lear.md",
+      "title": "Quality & Verification Intelligence: oxc-project-oxc-learnings Core Invariants",
+      "repository": "oxc-project-oxc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "af146a80516a8fe9413ab3d8348f87779f82af4c0ad00b6344ec7b8c666d08f6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T20:17:51.727Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-convaiinnovations-laya-learnings-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-convaiinnovations-laya-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-convaiinnovations-laya-learnings-research-knowledge-intelligence-hf-convaiinn.md",
+      "title": "Research & Knowledge Intelligence: hf-convaiinnovations-laya-learnings Core Invariants",
+      "repository": "hf-convaiinnovations-laya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bb8c37ec3fea470d20b177f498c28520429b2f9e92a1182188e16a0cbae01178",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T20:17:52.200Z"
+    },
+    "candidate_directive-ext-auth-align-domain-rule-matching-for-ascii-case": {
+      "item_id": "candidate_directive-ext-auth-align-domain-rule-matching-for-ascii-case",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WKKB-ext-auth-align-domain-rule-matching-for-ascii-case.md",
+      "title": "ext-auth): align domain rule matching for ASCII case",
+      "repository": "higress-group-higress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "94d604e52954d292b6321ac15e7bf2c474608760df0e74eaeb8e90030eaf6426",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T20:17:52.668Z"
     }
   },
   "ai-builder-brain": {

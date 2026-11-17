@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T03:49:59.925Z",
+  "timestamp": "2026-11-17T20:17:52.572Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-higress-group-higress-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [higress-group-higress-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T03:49:59.925Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T20:17:52.572Z`  
 > **Learning ID**: `LEARN-EVO-higress-group-higress-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
 - **Secondary Corroborating Domains**: F (Design Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 80%
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from higress-group-higress-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `0316bc90`  
+> **Source Version**: `d8eaa141`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T03:49:12.901Z  
+> **Timestamp**: 2026-11-17T20:17:39.382Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:49:12.895Z  
+> **Harvest Timestamp**: 2026-11-17T20:17:39.377Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9763 stars
+- **Stars / Engagement**: 9777 stars
 
 ---
 
@@ -1764,11 +1764,11 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5372** (2026-11-17): **fix(ext-auth): align domain rule matching for ASCII case**
+  *Symptoms*: ## What changed  Local ext-auth domain match rules now compare ASCII letters case-insensitively. The private helper only allocates a lowered copy when ASCII uppercase letters are present; non-ASCII bytes are unchanged.  ## Why  Byte-exact matching caused a rule not to be selected when the request host differed only by ASCII case.  ## Compatibility  Only ASCII case behavior changes. Wildcard semantics, blacklist/whitelist behavior, port handling, trailing-dot handling, IDNA behavior, configuration structures, and public APIs are unchanged. The shared SDK matcher is updated separately.  ## Tests  All Go commands below ran from `plugins/wasm-go/extensions/ext-auth` serially on Linux/amd64 with Go 1.26.4.  Parent source `7059b8d28cce435a91569feb6288760585287460` with only the new tests applied:  ```text env -u GH_TOKEN -u GITHUB_TOKEN GOMAXPROCS=1 timeout 240 /usr/local/go/bin/go test -p 1 -parallel 1 -mod=readonly ./expr -run '^(TestMatchDomainASCIICase|TestMatchRulesDomainASCIICase)$' -count=1 -v ```  Exit code: 1. Representative failed assertions:  - `TestMatchDomainASCIICase/exact_uppercase_pattern`: expected `true`, actual `false`. - `TestMatchRulesDomainASCIICase/whitelist_uppercase_pattern`: expected `false`, actual `true`.  Candidate revision `0e89c00e827105aef7e26f87d762eeed0704f8c8`, using the same command:  Exit code: 0; both tests and all subtests passed.  Full module test:  ```text env -u GH_TOKEN -u GITHUB_TOKEN GOMAXPROCS=1 timeout 600 /usr/local/go/bin/go test -p 
+
 - **Issue #5359** (2026-11-13): **Add the Ikoi MCP server**
   *Symptoms*: <!-- Please read the contributing guidelines before submitting this pull request. Complete every applicable field. For each non-applicable category, write N/A and explain why; one explanation may cover multiple fields when it is clear. -->  ## I. Summary  This PR adds Ikoi to the Higress MCP Marketplace, following the marketplace intake in #2113 (add the generated YAML configuration and README to `plugins/wasm-go/mcp-servers`).  Ikoi is a city where AI agents come home to live between jobs: rest, friends, and a memory book. Its remote MCP server is https://ikoi.ai/mcp (Streamable HTTP, server name `ikoi`, version 1.0.2; Official MCP Registry name `ai.ikoi/ikoi`).  Changes (2 new files, 124 additions, 0 deletions):  - `plugins/wasm-go/mcp-servers/mcp-ikoi/mcp-server.yaml` — an MCP proxy (`server.type: mcp-proxy`, `transport: http`) to `https://ikoi.ai/mcp`, with `protocolStrategy: auto` (Ikoi does not publish its MCP protocol version) and `allowTools` listing the server's 18 tools. The client's per-agent `X-API-Key` is passed through to Ikoi (`defaultDownstreamSecurity` with `passthrough: true`, `defaultUpstreamSecurity` to the backend scheme). No API key or other credential is stored in this PR. - `plugins/wasm-go/mcp-servers/mcp-ikoi/README.md` — description, features, the 18 tools, and usage, based on https://github.com/ikoicity/ikoi-mcp.  Listing details for the marketplace page: name "Ikoi", website https://ikoi.ai, description "A city where AI agents come home to live be
-
-- **Issue #5352** (2026-11-13): **fix(mcp-server): preserve proxy tool input schemas**
-  *Symptoms*: ## I. Summary  Fix tool descriptors published by virtual MCP tool sets. A proxy tool can configure a complete `tools[].inputSchema`, including nested objects, array items, and references. The configured schema takes precedence. Existing `args` configurations still generate the schema when the new field is absent. The tool set omits top-level `required` when it has no entries.  ## II. Related issue  N/A. No public Higress issue is linked for this bug.  ## III. Change type  - [x] Bug fix - [x] Feature or enhancement - [ ] Documentation or configuration only - [ ] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation** - [ ] **Trivial agent-use exception** - [x] **Verified maintainer/administrator exception** - [ ] **Material agent participation** under the standard gate  - [ ] Complete - [ ] Noncompliant - [x] Verified exception - [ ] N/A  **Gate-status explanation**  This agent-assisted PR uses the verified administrator exception for the planning and traceability gate. Bug-fix runtime evidence is included below. [Agent-assisted contribution policy](https://github.com/higress-group/higress/blob/main/docs/developers/agent-assisted-contributions.md)  **Verified maintainer/administrator exception evidence**  - PR [#5352](https://github.com/higress-group/higress/pull/5352). - Authenticated `gh` login `johnlanni`. - Canonical-repository `role_name` `admin`. - Actual PR author from `gh pr view` `johnlanni`. - Login/author 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1785,357 +1785,221 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0316bc90` (2026-11-13)
-**Commit Message**: fix(mcp-server): preserve proxy tool input schemas (#5352)
+### Incident Patch 1: `d8eaa141` (2026-11-17)
+**Commit Message**: fix(ext-auth): align domain rule matching for ASCII case (#5372)
 
 Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-go/extensions/mcp-server/README.md` (modified, +2/-0)
+**File**: `plugins/wasm-go/extensions/ext-auth/expr/match_rules.go` (modified, +19/-0)
 ```diff
-@@ -97,6 +97,8 @@ toolSet:
+@@ -111,12 +111,31 @@ func (rule *Rule) matchesAllConditions(request RequestAttributes) bool {
  
- 组合后的工具名称为 `服务名称___工具名称`，例如 `weather-server___get_weather`。
- 
-+对于 `mcp-proxy` 工具，在 `tools[].inputSchema` 中保存上游工具返回的完整 Schema，工具集即可发布嵌套属性、数组元素和引用定义。该字段是一个 `type: object` 的 JSON Schema。它与 `args` 同时配置时，工具集采用 `inputSchema`。省略 `inputSchema` 时，工具集从 `args` 生成 Schema。无必填参数时省略顶层 `required`。直接代理的 `tools/list` 读取上游工具描述。
-+
- ### 允许的工具配置
- 
- | 名称         | 数据类型        | 填写要求 | 默认值 | 描述                                   |
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/README_EN.md` (modified, +2/-0)
-```diff
-@@ -103,6 +103,8 @@ toolSet:
- 
- Combined tool names use the format `serverName___toolName`, such as `weather-server___get_weather`.
- 
-+For `mcp-proxy` tools, store the full upstream schema in `tools[].inputSchema` so the tool set can publish nested properties, array items, and reference definitions. This field is a JSON Schema with `type: object`. When both fields are set, `inputSchema` takes precedence over `args`. When `inputSchema` is absent, the tool set builds the schema from `args`. For tools without required arguments, the tool set omits the top-level `required` field. Direct proxy `tools/list` responses use the upstream tool descriptors.
-+
- ### Allowed Tools Configuration
- 
- | Name         | Data Type        | Required | Default | Description                                   |
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/main_test.go` (modified, +63/-0)
-```diff
-@@ -304,6 +304,69 @@ func TestSchemaCompatibilityConfigurationLoadsGloballyAndAtRuleLevel(t *testing.
- 	})
+ // matchDomain checks if the given domain matches the pattern.
+ func matchDomain(domain string, pattern string) bool {
++	domain = lowerDomainASCII(domain)
++	pattern = lowerDomainASCII(pattern)
+ 	// Convert wildcard pattern to regex pattern
+ 	regexPattern := convertWildcardToRegex(pattern)
+ 	matched, _ := regexp.MatchString(regexPattern, domain)
+ 	return matched
  }
  
-+func TestComposedProxyToolInputSchemas(t *testing.T) {
-+	const nestedSchema = `{
-+		"$schema":"https://json-schema.org/draft/2020-12/schema",
-+		"type":"object",
-+		"properties":{
-+			"payload":{"type":"object","properties":{"name":{"type":"string"}},"required":["name"]},
-+			"records":{"type":"array","items":{"$ref":"#/$defs/record"}}
-+		},
-+		"$defs":{"record":{"type":"object","properties":{"id":{"type":"integer","minimum":9007199254740993}},"required":["id"]}},
-+		"required":["payload","records"],
-+		"additionalProperties":false
-+	}`
-+	config := json.RawMessage(fmt.Sprintf(`{
-+		"server":{"name":"source","type":"mcp-proxy","transport":"http","mcpServerURL":"http://source.example.test/mcp"},
-+		"tools":[
-+			{"name":"empty"},
-+			{"name":"optional","args":[{"name":"query","type":"string","description":"Search term","default":"all"}]},
-+			{"name":"required","args":[{"name":"query","type":"string","description":"Search term","required":true}]},
-+			{"name":"nested","args":[{"name":"old","type":"string","required":true}],"inputSchema":%s}
-+		],
-+		"_rules_":[{"_match_domain_":["virtual.example.test"],"toolSet":{
-+			"name":"virtual",
-+			"serverTools":[{"serverName":"source","tools":["empty","optional","required","nested"]}]
-+		}}]
-+	}`, nestedSchema))
-+
-+	test.RunTest(t, func(t *testing.T) {
-+		host, status := test.NewTestHost(config)
-+		defer host.Reset()
-+		require.Equal(t, types.OnPluginStartStatusOK, status)
-+		host.InitHttp()
-+		defer host.CompleteHttp()
-+		require.NoError(t, host.SetDomainName("virtual.example.test"))
-+		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
-+			{":authority", "virtual.example.test"}, {":method", "POST"}, {":path", "/mcp"},
-+			{"content-type", "application/json"}, {"accept", "application/json, text/event-stream"},
-+		}))
-+		host.CallOnHttpRequestBody([]byte(`{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}`))
-+		response := host.GetLocalResponse()
-+		require.NotNil(t, response)
-+		require.EqualValues(t, 200, response.StatusCode)
-+		var envelope struct {
-+			Result struct {
-+				Tools []struct {
-+					Name        string          `json:"name"`
-+					InputSchema json.RawMessage `json:"inputSchema"`
-+				} `json:"tools"`
-+			} `json:"result"`
++func lowerDomainASCII(s string) string {
++	var lowered []byte
++	for i := 0; i < len(s); i++ {
++		if s[i] < 'A' || s[i] > 'Z' {
++			continue
 +		}
-+		require.NoError(t, json.Unmarshal(response.Data, &envelope))
-+		require.Len(t, envelope.Result.Tools, 4)
-+		schemas := make(map[string]json.RawMessage)
-+		for _, tool := range envelope.Result.Tools {
-+			schemas[tool.Name] = tool.InputSchema
++		if lowered == nil {
++			lowered = []byte(s)
 +		}
-+		require.JSONEq(t, `{"type":"object","properties":{}}`, string(schemas["source___empty"]))
-+		require.JSONEq(t, `{"type":"object","properties":{"query":{"type":"string","description":"Search term","default":"all"}}}`, string(schemas["source___optional"]))
-+		require.JSONEq(t, `{"type":"object","properties":{"query":{"type":"string","description":"Search term"}},"required":["query"]}`, string(schemas["source___required"]))
-+		require.JSONEq(t, nestedSchema, string(schemas["source___nested"]))
-+		require.Contains(t, string(schemas["source___nested"]), `"minimum":9007199254740993`)
-+	})
++		lowered[i] = s[i] + ('a' - 'A')
++	}
++	if lowered == nil {
++		return s
++	}
++	return string(lowered)
 +}
 +
- func TestLargeSchemaDescriptionsLoadGloballyAndAtRuleLevel(t *testing.T) {
- 	test.RunTest(t, func(t *testing.T) {
- 		for _, fixture := range []struct {
+ // convertWildcardToRegex converts a wildcard pattern to a regex pattern.
+ func convertWildcardToRegex(pattern string) string {
+ 	pattern = regexp.QuoteMeta(pattern)
 ```
 
-**File**: `plugins/wasm-go/pkg/mcp/server/plugin.go` (modified, +8/-7)
+**File**: `plugins/wasm-go/extensions/ext-auth/expr/match_rules_test.go` (modified, +159/-0)
 ```diff
-@@ -517,8 +517,6 @@ func parseConfigCore(configJson gjson.Result, config *McpServerConfig, opts *Con
- 					if err := proxyServer.AddProxyTool(proxyTool); err != nil {
- 						return fmt.Errorf("failed to add proxy tool %s: %v", proxyTool.Name, err)
- 					}
--					// Register tool to registry
--					opts.ToolRegistry.RegisterTool(config.serverName, proxyTool.Name, proxyServer.GetMCPTools()[proxyTool.Name])
- 				}
- 			}
- 			// Set the proxy server regardless of whether tools are configured
-@@ -604,13 +602,16 @@ func parseConfigCore(configJson gjson.Result, config *McpServerConfig, opts *Con
- 		config.serverInstructions = instructionsJson.String()
+@@ -331,3 +331,162 @@ func TestMatchesPreservesBypassSemantics(t *testing.T) {
+ 		})
  	}
- 
--	// Proxy descriptors remain upstream-owned. Both direct profiles publish the
--	// same isolated JSON descriptor generation without schema admission gates.
--	if config.server != nil {
--		if _, isProxy := config.server.(*McpProxyServer); !isProxy && config.directTools.ordered == nil {
-+	if proxyServer, isProxy := config.server.(*McpProxyServer); isProxy {
-+		// Publish local descriptors for tool sets only after the server config parses.
-+		for name, tool := range proxyServer.GetMCPTools() {
-+			opts.ToolRegistry.RegisterTool(config.serverName, name, tool)
-+		}
-+	} else if config.server != nil {
-+		if config.directTools.ordered == nil {
- 			config.directTools = captureDirectToolSnapshot(config.server)
- 		}
--		if _, isProxy := config.server.(*McpProxyServer); !isProxy && !config.isComposed {
-+		if !config.isComposed {
- 			// Publish direct tools to the shared registry only after the complete
- 			// generation snapshot has captured each tool descriptor.
- 			for _, entry := range config.directTools.ordered {
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/server/plugin_test.go` (modified, +12/-0)
-```diff
-@@ -574,6 +574,18 @@ func TestParseConfigCore_McpProxy_BubblesUpSetupError(t *testing.T) {
- 	assert.Contains(t, err.Error(), "mcpServerURL")
  }
- 
-+func TestParseConfigCore_McpProxy_InvalidSchemaLeavesRegistryUnchanged(t *testing.T) {
-+	opts := newValidationOpts()
-+	config := gjson.Parse(`{
-+		"server":{"name":"p","type":"mcp-proxy","transport":"http","mcpServerURL":"/mcp"},
-+		"tools":[{"name":"valid"},{"name":"invalid","inputSchema":{"type":"object","required":null}}]
-+	}`)
-+	err := ParseConfigCore(config, &McpServerConfig{}, opts)
-+	require.ErrorContains(t, err, "failed to add proxy tool invalid: inputSchema.required")
-+	_, found := opts.ToolRegistry.GetToolInfo("p", "valid")
-+	assert.False(t, found)
-+}
 +
- func TestParseConfigCore_McpProxy_HappyPath_NoTools(t *testing.T) {
- 	c := &McpServerConfig{}
- 	err := ParseConfigCore(gjson.Parse(`{
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/server/proxy_server.go` (modified, +62/-17)
-```diff
-@@ -79,6 +79,7 @@ type McpProxyToolConfig struct {
- 	Description     string              `json:"description"`
- 	Security        SecurityRequirement `json:"security,omitempty"` // Tool-level security for MCP Client to MCP Server
- 	Args            []ToolArg           `json:"args"`
-+	InputSchema     json.RawMessage     `json:"inputSchema,omitempty"`
- 	OutputSchema    map[string]any      `json:"outputSchema,omitempty"` // Output schema for MCP Protocol Version 2025-06-18
- 	RequestTemplate RequestTemplate     `json:"requestTemplate,omitempty"`
- }
-@@ -199,11 +200,21 @@ func (s *McpProxyServer) AddMCPTool(name string, tool Tool) Server {
- 
- // AddProxyTool adds a proxy tool configuration
- func (s *McpProxyServer) AddProxyTool(toolConfig McpProxyToolConfig) error {
-+	var inputSchema map[string]any
-+	if len(toolConfig.InputSchema) > 0 {
-+		var err error
-+		inputSchema, err = parseProxyInputSchema(toolConfig.InputSchema)
-+		if err != nil {
-+			return err
-+		}
-+	}
-+
- 	s.toolsConfig[toolConfig.Name] = toolConfig
- 	s.base.AddMCPTool(toolConfig.Name, &McpProxyTool{
--		serverName: s.Name,
--		name:       toolConfig.Name,
--		toolConfig: toolConfig,
-+		serverName:  s.Name,
-+		name:        toolConfig.Name,
-+		toolConfig:  toolConfig,
-+		inputSchema: inputSchema,
- 	})
- 	return nil
- }
-@@ -336,19 +347,21 @@ func (s *McpProxyServer) ForwardToolsList(ctx HttpContext, cursor *string) error
- 
- // McpProxyTool implements Tool interface for MCP-to-MCP proxy
- type McpProxyTool struct {
--	serverName string
--	name       string
--	toolConfig McpProxyToolConfig
--	arguments  map[string]interface{}
-+	serverName  string
-+	name        string
-+	toolConfig  McpProxyToolConfig
-+	inputSchema map[string]any
-+	arguments   map[string]interface{}
- }
- 
- // Create implements Tool interface
- func (t *McpProxyTool) Create(params []byte) Tool {
- 	newTool := &McpProxyTool{
--		serverName: t.serverName,
--		name:       t.name,
--		toolConfig: t.toolConfig,
--		arguments:  make(map[string]interface{}),
-+		serverName:  t.serverName,
-+		name:        t.name,
-+		toolConfig:  t.toolConfig,
-+		inputSchema: t.inputSchema,
-+		arguments:   make(map[string]interface{}),
- 	}
- 
- 	if len(params) > 0 {
-@@ -459,13 +472,11 @@ func (t *McpProxyTool) Description() string {
- 
- // InputSchema implements Tool interface
- func (t *McpProxyTool) InputSchema() map[string]any {
--	schema := map[string]any{
--		"type":       "object",
--		"properties": make(map[string]any),
--		"required":   []string{},
-+	if t.inputSchema != nil {
-+		return t.inputSchema
- 	}
- 
--	properties := schema["properties"].(map[string]any)
-+	properties := make(map[string]any)
- 	var required []string
- 
- 	for _, arg := range t.toolConfig.Args {
-@@ -489,10 +500,44 @@ func (t *McpProxyTool) InputSchema() map[string]any {
- 		}
- 	}
- 
--	schema["required"] = required
-+	schema := map[string]any{"type": "object", "properties": properties}
-+	if len(required) > 0 {
-+		schema["required"] = required
-+	}
- 	return schema
- }
- 
-+// parseProxyInputSchema checks the MCP tool's root fields and retains nested schemas as supplied.
-+func parseProxyInputSchema(raw json.RawMessage) (map[string]any, error) {
-+	schema, err := decodeBusinessJSONObject(raw)
-+	if err != nil {
-+		return nil, fmt.Errorf("invalid inputSchema: %w", err)
-+	}
-+	if schema["type"] != "object" {
-+		return nil, fmt.Errorf("inputSchema must be a JSON object with type \"object\"")
-+	}
-+	if value, exists := schema["properties"]; exists {
-+		if _, ok := value.(map[string]any); !ok {
-+			return nil, fmt.Errorf("inputSchema.properties must be an object")
-+		}
-+	}
-+	if value, exists := schema["required"]; exists {
-+		required, ok := value.([]any)
-+		if !ok {
-+			return nil, fmt.Errorf("inputSchema.required must be an array of strings")
-+		}
-+		for _, name := range required {
-+			if _, ok := name.(string); !ok {
-+				return nil, fmt.Errorf("inputSchema.required must be an array of strings")
-+			}
-+		}
-+		if len(required) == 0 {
-+			delete(schema, "required")
-+		}
-+	}
-+	return schema, nil
-+}
-+
- // OutputSchema implements Tool interface (MCP Protocol Version 2025-06-18)
- func (t *McpProxyTool) OutputSchema() map[string]any {
- 	return t.toolConfig.OutputSchema
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/server/proxy_server_test.go` (modified, +37/-3)
-```diff
-@@ -298,9 +298,43 @@ func TestMcpProxyTool_InputSchema_NoArgs(t *testing.T) {
- 	props, ok := schema["properties"].(map[string]any)
- 	require.True(t, ok)
- 	assert.Empty(t, props)
--	required, ok := schema["required"].([]string)
--	require.True(t, ok)
--	assert.Empty(t, required)
-+	assert.NotContains(t, schema, "required")
-+}
-+
-+func TestMcpProxyServer_AddProxyTool_InputSchema(t *testing.T) {
-+	t.Run("empty required is omitted", func(t *testing.T) {
-+		server := NewMcpProxyServer("proxy")
-+		require.NoError(t, server.AddProxyTool(McpProxyToolConfig{
-+			Name:        "optional",
-+			InputSchema: []byte(`{"type":"object","required":[],"additionalProperties":false}`),
-+		}))
-+		schema := server.GetMCPTools()["optional"].InputSchema()
-+		assert.Equal(t, map[string]any{"type": "object", "additionalProperties": false}, schema)
-+	})
-+
-+	for _, tc := range []struct {
-+		name   string
-+		schema string
-+		error  string
++func TestMatchDomainASCIICase(t *testing.T) {
++	tests := []struct {
++		name    string
++		domain  string
++		pattern string
++		want    bool
 +	}{
-+		{"null schema", `null`, "inputSchema must be a JSON object"},
-+		{"array schema", `[]`, "invalid inputSchema"},
-+		{"missing type", `{}`, "inputSchema must be a JSON object"},
-+		{"wrong type", `{"type":["object"]}`, "inputSchema must be a JSON object"},
-+		{"non-object properties", `{"type":"object","properties":[]}`, "inputSchema.properties"},
-+		{"null required", `{"type":"object","required":null}`, "inputSchema.required"},
-+		{"non-array required", `{"type":"object","required":"name"}`, "inputSchema.required"},
-+		{"non-string required item", `{"type":"object","required":[null]}`, "inputSchema.required"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			server := NewMcpProxyServer("proxy")
-+			err := server.AddProxyTool(McpProxyToolConfig{Name: "bad", InputSchema: []byte(tc.schema)})
-+			require.ErrorContains(t, err, tc.error)
-+			assert.NotContains(t, server.GetMCPTools(), "bad")
-+			_, exists := server.GetToolConfig("bad")
-+			assert.False(t, exists)
++		{
++			name:    "exact uppercase pattern",
++			domain:  "api.example.com",
++			pattern: "API.EXAMPLE.COM",
++			want:    true,
++		},
++		{
++			name:    "exact uppercase domain",
++			domain:  "API.EXAMPLE.COM",
++			pattern: "api.example.com",
++			want:    true,
++		},
++		{
++			name:    "exact mixed case",
++			domain:  "ApI.ExAmPlE.CoM",
++			pattern: "aPi.eXaMpLe.cOm",
++			want:    true,
++		},
++		{
++			name:    "wildcard mixed case",
++			domain:  "V1.API.Example.COM",
++			pattern: "*.api.EXAMPLE.com",
++			want:    true,
++		},
++		{
++			name:    "different domain",
++			domain:  "api.example.net",
++			pattern: "API.EXAMPLE.COM",
++			want:    false,
++		},
++		{
++			name:    "non ASCII exact",
++			domain:  "bücher.example",
++			pattern: "bücher.example",
++			want:    true,
++		},
++		{
++			name:    "non ASCII case variant",
++			domain:  "bücher.example",
++			pattern: "BÜCHER.EXAMPLE",
++			want:    false,
++		},
++		{
++			name:    "wildcard does not match apex",
++			domain:  "example.com",
++			pattern: "*.EXAMPLE.COM",
++			want:    false,
++		},
++		{
++			name:    "question mark remains literal",
++			domain:  "api1.example.com",
++			pattern: "api?.EXAMPLE.COM",
++			want:    false,
++		},
++		{
++			name:    "character class remains literal",
++			domain:  "a.example.com",
++			pattern: "[ab].EXAMPLE.COM",
++			want:    false,
++		},
++		{
++			name:    "dot remains literal",
++			domain:  "apiXexample.com",
++			pattern: "API.EXAMPLE.COM",
++			want:    false,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			assert.Equal(t, tt.want, matchDomain(tt.domain, tt.pattern))
 +		})
 +	}
- }
- 
- func TestMcpProxyTool_Create_NewInstanceWithBoundArgs(t *testing.T) {
++}
++
++func TestMatchRulesDomainASCIICase(t *testing.T) {
++	tests := []struct {
++		name           string
++		mode           string
++		requestDomain  string
++		configuredRule string
++		want           bool
++	}{
++		{
++			name:           "blacklist uppercase pattern",
++			mode:           ModeBlacklist,
++			requestDomain:  "api.example.com",
++			configuredRule: "API.EXAMPLE.COM",
++			want:           true,
++		},
++		{
++			name:           "blacklist uppercase domain",
++			mode:           ModeBlacklist,
++			requestDomain:  "API.EXAMPLE.COM",
++			configuredRule: "api.example.com",
++			want:           true,
++		},
++		{
++			name:           "blacklist mixed case wildcard",
++			mode:           ModeBlacklist,
++			requestDomain:  "V1.API.Example.COM",
++			configuredRule: "*.api.EXAMPLE.com",
++			want:           true,
++		},
++		{
++			name:           "whitelist uppercase pattern",
++			mode:           ModeWhitelist,
++			requestDomain:  "api.example.com",
++			configuredRule: "API.EXAMPLE.COM",
++			want:           false,
++		},
++		{
++			name:           "whitelist uppercase domain",
++			mode:           ModeWhitelist,
++			requestDomain:  "API.EXAMPLE.COM",
++			configuredRule: "api.example.com",
++			want:           false,
++		},
++		{
++			name:           "whitelist mixed case wildcard",
++			mode:           ModeWhitelist,
++			requestDomain:  "V1.API.Example.COM",
++			configuredRule: "*.api.EXAMPLE.com",
++			want:           false,
++		},
++		{
++			name:           "blacklist different domain",
++			mode:           ModeBlacklist,
++			requestDomain:  "api.example.net",
++			configuredRule: "API.EXAMPLE.COM",
++			want:           false,
++		},
++		{
++			name:           "whitelist different domain",
++			mode:           ModeWhitelist,
++			requestDomain:  "api.example.net",
++			configuredRule: "API.EXAMPLE.COM",
++			want:           true,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			config := MatchRules{
++				Mode:     tt.mode,
++				RuleList: []Rule{{Domain: tt.configuredRule}},
++			}
++			assert.Equal(t, tt.want, config.Matches(RequestAttributes{Domain: tt.requestDomain}))
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5372** (2026-11-17): fix(ext-auth): align domain rule matching for ASCII case (@johnlanni)
 - **PR #5359** (closed): Add the Ikoi MCP server (@ikoicity)
+- **PR #5358** (2026-11-16): fix(mcp-server): make tool sets independent of rule order (@johnlanni)
 - **PR #5352** (2026-11-13): fix(mcp-server): preserve proxy tool input schemas (@johnlanni)
 - **PR #5350** (2026-11-12): feat(mcp-server): support custom REST server instructions (@johnlanni)
-- **PR #5342** (2026-11-12): chore(plugins): bump wasm-go for request body buffering fix (@johnlanni)
-- **PR #5337** (2026-11-11): fix(mcp-server): acknowledge valid Legacy JSON-RPC responses (@sunxia0)
-- **PR #5333** (2026-11-10): ci: add hgctl macOS amd64 asset recovery workflow (@johnlanni)
+- **PR #5343** (2026-11-16): fix(ai-cache): provide upload completion callbacks (@zhihao-yuan)
 
 ---
 
@@ -2155,21 +2019,38 @@ Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp-server): preserve proxy tool input schemas
+## X. ext-auth): align domain rule matching for ASCII case
 
 **RULE**:
-When implementing operations in `plugins/wasm-go/extensions/mcp-server/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-go/extensions/ext-auth/expr/match_rules.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0316bc90`: mcp-server): preserve proxy tool input schemas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d8eaa141`: ext-auth): align domain rule matching for ASCII case. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/ext-auth/expr/match_rules.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-对于 `mcp-proxy` 工具，在 `tools[].inputSchema` 中保存上游工具返回的完整 Schema，工具集即可发布嵌套属性、数组元素和引用定义。该字段是一个 `type: object` 的 JSON Schema。它与 `args` 同时配置时，工具集采用 `inputSchema`。省略 `inputSchema` 时，工具集从 `args` 生成 Schema。无必填参数时省略顶层 `required`。直接代理的 `tools/list` 读取上游工具描述。
+	domain = lowerDomainASCII(domain)
+	pattern = lowerDomainASCII(pattern)
+func lowerDomainASCII(s string) string {
+	var lowered []byte
+	for i := 0; i < len(s); i++ {
+		if s[i] < 'A' || s[i] > 'Z' {
+			continue
+		}
+		if lowered == nil {
+			lowered = []byte(s)
+		}
+		lowered[i] = s[i] + ('a' - 'A')
+	}
+	if lowered == nil {
+		return s
+	}
+	return string(lowered)
+}
 
 ```
 
@@ -2180,7 +2061,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0316bc90` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d8eaa141` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
