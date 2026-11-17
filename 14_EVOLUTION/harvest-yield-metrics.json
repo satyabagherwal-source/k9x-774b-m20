@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T18:56:24.423Z",
-  "total_cycles_completed": 10224,
-  "total_learnings_persisted": 10224,
-  "total_rules_promoted": 9780,
+  "last_updated": "2026-11-17T19:04:52.037Z",
+  "total_cycles_completed": 10226,
+  "total_learnings_persisted": 10226,
+  "total_rules_promoted": 9781,
   "history": [
-    {
-      "timestamp": "2026-11-17T04:43:44.464Z",
-      "repository": "LiquidAI/LFM3-1.7B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T04:43:55.371Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T04:56:48.000Z",
       "repository": "Saffsanity/sill",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-17T18:56:24.423Z",
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:04:49.279Z",
+      "repository": "XHToken/Spark-X2.6-4B-GGUF",
+      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:04:52.037Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

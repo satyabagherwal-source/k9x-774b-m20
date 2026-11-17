@@ -10670,3 +10670,5 @@
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T18:44:44.098Z` | `hf-nanbeige-nanbeige4.3-33b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-28B99DBA` [Domain H] | Yes (`39b39c66...`) |
 | `CYCLE-20261117-ZKKI` | `2026-11-17T18:56:13.794Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md` | Yes (`77319363...`) |
 | `CYCLE-20261117-ZSRJ` | `2026-11-17T18:56:24.415Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9034` | Yes (`30bcb05b...`) |
+| `CYCLE-20261117-AMB8` | `2026-11-17T19:04:49.268Z` | `XHToken/Spark-X2.6-4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md` | Yes (`cd57dcd4...`) |
+| `CYCLE-20261117-AOFU` | `2026-11-17T19:04:52.026Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9035` | Yes (`8b2dc88d...`) |

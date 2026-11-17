@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-I6SE",
-    "timestamp": "2026-11-15T15:23:25.022Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "d271937c0c69ed69a60f989f0a7f065150d77d1c3108c1c2d8ba6daeacf59070",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-DO4E",
-    "timestamp": "2026-11-15T15:47:53.822Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "73ef8d9c89c6fce0081ea8d524529674556ed6bafe78f67b462e9e9c309ae71c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-29BU",
     "timestamp": "2026-11-15T16:07:01.050Z",
     "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "pingcap/tidb",
     "learningId": "learn-github-pingcap-tidb",
     "contentHash": "30bcb05b737061f22294bc237f0b9e7fb429a4ab2799eb8f99b0e7c4173e0b1e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-AMB8",
+    "timestamp": "2026-11-17T19:04:49.268Z",
+    "repository": "XHToken/Spark-X2.6-4B-GGUF",
+    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+    "contentHash": "cd57dcd4b47e43c6657f7b1d009b4da6b85c86f1ce204e43c8f304084389e749",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-AOFU",
+    "timestamp": "2026-11-17T19:04:52.026Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "8b2dc88d4f9d16543a9a28402459a263c9c8c4e52dbe16a2fa37390f2ceafed6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

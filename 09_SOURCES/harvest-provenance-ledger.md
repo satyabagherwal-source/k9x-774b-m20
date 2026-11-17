@@ -10703,3 +10703,5 @@ Every entry in this ledger must capture:
 | `learn-dom-h-28b99dba` | `project://hf-nanbeige-nanbeige4.3-33b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | 2026-11-17T18:44:44.098Z |
 | `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-17T18:56:13.798Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `8c05d01e` | Multi-dimensional audit evidence | 2026-11-17T18:56:24.419Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-17T19:04:49.273Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `3bfd7c01` | Multi-dimensional audit evidence | 2026-11-17T19:04:52.031Z |

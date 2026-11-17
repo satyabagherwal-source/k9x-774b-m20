@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T18:56:29.284Z",
+  "last_updated": "2026-11-17T19:05:03.186Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-17T17:50:09.049Z",
+      "processed_at": "2026-11-17T19:05:02.180Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1378,7 +1378,7 @@
       "staged_for_review": 1
     },
     "agent-of-empires-agent-of-empires-learnings.md": {
-      "processed_at": "2026-11-16T05:29:11.960Z",
+      "processed_at": "2026-11-17T19:05:00.835Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1643,8 +1643,8 @@
       "staged_for_review": 0
     },
     "hf-xhtoken-spark-x2.6-4b-gguf-learnings.md": {
-      "processed_at": "2026-11-13T07:47:42.744Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T19:05:01.765Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md": {
@@ -3353,7 +3353,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1674,
+  "total_dossiers_evaluated": 1677,
   "total_canonical_promoted": 324,
-  "total_staged_for_review": 1312
+  "total_staged_for_review": 1314
 }

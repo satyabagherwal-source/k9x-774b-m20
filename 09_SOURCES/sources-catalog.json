@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "87abaabc",
+    "sourceVersion": "3bfd7c01",
     "license": "MIT",
-    "contentHash": "080098fbce8d89028f6c18efa03cd78c57feb2b1a42e366b001e99aec84edcc0",
-    "lastHarvestedAt": "2026-11-16T05:28:57.190Z",
+    "contentHash": "8b2dc88d4f9d16543a9a28402459a263c9c8c4e52dbe16a2fa37390f2ceafed6",
+    "lastHarvestedAt": "2026-11-17T19:04:52.031Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {
@@ -10815,8 +10815,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b-gguf",
     "license": "Open-Source",
-    "contentHash": "5fa1f936992d0563bd2077ac6fe4381b5eba5fcdfac0fd29052b3c5e53bfe845",
-    "lastHarvestedAt": "2026-11-13T07:46:57.955Z",
+    "contentHash": "cd57dcd4b47e43c6657f7b1d009b4da6b85c86f1ce204e43c8f304084389e749",
+    "lastHarvestedAt": "2026-11-17T19:04:49.273Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf"
   },
   "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb": {

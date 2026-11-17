@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T18:56:29.040Z",
-  "total_records": 1654,
+  "last_updated": "2026-11-17T19:05:02.663Z",
+  "total_records": 1658,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 707,
+      "total": 709,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -756,7 +756,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor",
         "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-gguf-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv"
       ]
     },
     "E": {
@@ -1113,7 +1115,7 @@
       ]
     },
     "H": {
-      "total": 393,
+      "total": 395,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1507,7 +1509,9 @@
         "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv",
         "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants",
         "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva",
-        "DOM-H-28B99DBA"
+        "DOM-H-28B99DBA",
+        "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-core-invar",
+        "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-learnings-"
       ]
     },
     "I": {
@@ -22825,8 +22829,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "3b5a29637c0035b20654e3f4b79d8efd62dc61b71a9d794f19f8837780009e5f",
-      "created_at": "2026-11-17T17:50:09.514Z"
+      "content_hash": "22990eb947359329ae49b022fc1c930d073ae3443a18cf8012ebae76dfd93abe",
+      "created_at": "2026-11-17T19:05:02.663Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -28135,6 +28139,42 @@
       "repository": "hf-briaai-fibo-2.0-dev-learnings",
       "content_hash": "2c157409ac29dfb72ff25d1622e04d5e350a1420c8913a3bb7fc4cc643d23623",
       "created_at": "2026-11-17T18:56:27.750Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: XHToken/Spark-X2.6-4B-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xhtoken-spark-x2-6-4b-gguf-research-knowledge-intelligence-xhtoken-spark-x2-6.md",
+      "repository": "XHToken/Spark-X2.6-4B-GGUF",
+      "content_hash": "51e9082ad39abcc483a21baeccc9d853c87ff0c1f8d78c06b1afb90aecc1bc04",
+      "created_at": "2026-11-17T19:04:49.513Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: agent-of-empires/agent-of-empires Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-of-empires-agent-of-empires-technical-construction-intelligence-agent-of-e.md",
+      "repository": "agent-of-empires/agent-of-empires",
+      "content_hash": "baa6522f31bcf51a795b1e1f4f56fd9f2410bf044791af7f143a1a3dec98a949",
+      "created_at": "2026-11-17T19:04:52.452Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-learnings-": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-learnings-",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-of-empires-agent-of-empires-learnings-technical-construction-intelligence-.md",
+      "repository": "agent-of-empires-agent-of-empires-learnings",
+      "content_hash": "dca1a5a1be48eda03ba6bef5fbfa66f116451ae1f80b36ada576575780dea1fe",
+      "created_at": "2026-11-17T19:05:01.369Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-xhtoken-spark-x2.6-4b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xhtoken-spark-x2-6-4b-gguf-learnings-research-knowledge-intelligence-hf-xhtok.md",
+      "repository": "hf-xhtoken-spark-x2.6-4b-gguf-learnings",
+      "content_hash": "aa33b8e062f287a48924398e0a94066a127c9e325055598299c6712b36183f5a",
+      "created_at": "2026-11-17T19:05:01.990Z"
     }
   }
 }

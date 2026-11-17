@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T05:29:12.022Z",
+  "timestamp": "2026-11-17T19:05:01.071Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-agent-of-empires-agent-of-empires-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [agent-of-empires-agent-of-empires-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T05:29:12.022Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T19:05:01.071Z`  
 > **Learning ID**: `LEARN-EVO-agent-of-empires-agent-of-empires-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `87abaabc`  
+> **Source Version**: `3bfd7c01`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T05:28:56.308Z  
+> **Timestamp**: 2026-11-17T19:04:50.859Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T05:28:55.943Z  
+> **Harvest Timestamp**: 2026-11-17T19:04:50.851Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4544 stars
+- **Stars / Engagement**: 4644 stars
 
 ---
 
@@ -1785,11 +1785,11 @@ impl ConfigOptionDescriptor {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5725** (2026-11-15): **Web: a kept terminal shows blank on return with "Keep terminals alive (Beta)" on, until scrolled to the bottom**
-  *Symptoms*: ### What happened?  With **Settings → Terminal → "Keep terminals alive (Beta)"** on, switching back to a session whose terminal was kept alive shows a blank terminal, every time. The content comes back only after I either scroll with the mouse wheel all the way down from the top, or click the down arrow in the bottom-right corner. It looks like the kept terminal returns parked at the top of its scrollback rather than at the live bottom.  This is the terminal view; "Keep conversations alive (Beta)" is off. #5458 reported the same symptom for kept conversations and was fixed in #5491, but that change covered structured views only, and this still happens on a version that includes it.  ### Steps  1. Turn on "Keep terminals alive (Beta)". 2. Open a session in terminal view, then switch to another session. 3. Switch back to the first one: the terminal is blank. 4. Scroll to the bottom (wheel or the down arrow): the content appears.  ### aoe version and OS  aoe 1.23.0. Linux: Ubuntu VM, plus WSL2 on Windows. Used through the web dashboard in Chrome.  ### AI usage  The issue text was written by Claude from my description; the report itself is mine. 
+- **Issue #5817** (2026-11-17): **ci: Supply Chain fails on main and every PR after two new RustSec advisories**
+  *Symptoms*: ## What happens  The `Supply Chain` job (cargo-deny in `.github/workflows/ci.yml`) has failed on every run since about 10:45 UTC on 2026-11-17, on main as well as on PRs. Main's last green run was on `61894f099`, and the run on `558d95353` failed. No lockfile changed in between. The failures come from two advisories published since then:  1. **RUSTSEC-2026-0544** (vulnerability): heap buffer overflow in zlib's `gz_vacate()`, reached through `libz-sys 1.1.31`, which `libgit2-sys 0.18.8+1.9.7` pulls in via `git2`. The advisory's fix is `libz-sys >= 1.1.33`, published on crates.io on 2026-11-10. Note that 1.1.32 is not enough. 2. **RUSTSEC-2026-0543** (unmaintained): `chrono` is marked unmaintained for all versions, with "No safe upgrade is available". `chrono` is a direct dependency (`Cargo.toml`, with `serde`, plus `schemars`'s `chrono04` feature) used across about 190 Rust files.  `deny.toml` has `ignore = []` under `[advisories]`, so both are errors.  Example failing run: https://github.com/agent-of-empires/agent-of-empires/actions/runs/44067734648  ## Suggested fix  - **libz-sys:** run `cargo update -p libz-sys` to move the lockfile to 1.1.33. This is a lockfile-only change; `libgit2-sys` takes any compatible `libz-sys` 1.x. Not yet tried locally. - **chrono:** there's no upgrade to take. One way to unblock CI is to add `RUSTSEC-2026-0543` to `[advisories].ignore` with a reason, and decide separately whether to migrate off `chrono` (for example to `jiff` or `time`). Given h
 
-- **Issue #5721** (2026-11-15): **Flaky: tui::app::tests::unowned_stop_refusal_preserves_connected_feed fails on macOS CI**
-  *Symptoms*: > **AI disclosure:** this issue was investigated and drafted by an AI agent (Claude Code, Claude Sonnet 5.5) and approved by a maintainer before posting. The race below is a hypothesis; it was not reproduced.  `Cargo Test (macos)` failed three times on unrelated stack branches and passed on rerun. I read the logs for runs 43604785145 and 43712098619 (attempt 1); the earlier third failure was on another branch and I did not read its log. Both runs fail in 0.2 s with:  ``` thread 'tui::app::tests::unowned_stop_refusal_preserves_connected_feed' panicked at src/tui/app.rs:5520:13: a locally refused S revoked the connected feed ```  The assertion at `src/tui/app.rs:5520` fires after the test presses `S` on a refusal path. `S` must be refused locally: `refuse_stop()` at `src/tui/dialogs/serve/mod.rs:1379`, and `App::request_dashboard_stop` at `src/tui/app.rs:2843`. In this test the loop sets `session_feed` grants by hand through `request_driver_for_test()` (`src/tui/session_feed.rs:2240`), so no background task touches the grants. The only code in this path that revokes them is `suspend_for_dashboard()` (`src/tui/session_feed.rs:793`), called from `request_dashboard_stop` (`src/tui/app.rs:2853`). So the failing iteration reached the real stop path.  ## Likely race (not reproduced)  `ServeView::handle_key('S')` (`src/tui/dialogs/serve/mod.rs:1041-1077`) returns `Stop(request)` instead of `StopOwnedLaunch` when `launch_in_flight` is false and `target` is `Some`. Those fields depend o
+- **Issue #5765** (2026-11-17): **Web dashboard: Workflow card shows as "other tool call" and stays bare until launch**
+  *Symptoms*: **Note:** Claude handled the investigation and prose via back-and-forth. Idea, decisions, and everything else are mine. — @Seluj78  ## Problem  Claude `Workflow` runs show up badly in the web structured view, in two ways.  1. After launch, the call can render as a generic `OTHER tool call` card (Input `{"_aoe_title":"tool call",...,"_aoe_raw_tool_name":"Workflow"}`, Output "Workflow launched in background...") instead of the workflow card with run name, phases and agent counts. 2. Before launch, the card is a bare `workflow` label for 1.5 to 2.5 minutes with no name, summary or agents. The Background pane fills in only once the run starts, which looks like the workflow UI is broken even though events are in the log.  ## Evidence from the affected sessions  Session `d1380576508e4178`, timestamps from `acp_events.created_at`:  ``` 599|ToolCallStarted  name=Workflow   17:32:09 600|ToolCallUpdated  (script)        17:34:25 603|BackgroundTaskStarted perf-audit 17:34:26 605|BackgroundAgentLaunched find:session-instance ... ```  The adapter emits nothing between seq 599 and 600 while the model generates the script (137s here). Session `5503377fd5bf4581` is the same shape: `ToolCallStarted` at seq 1011 (17:33:26), `BackgroundTaskStarted` at seq 1015 (about 17:34:55). Daemon, DB and reducer are fine; every launch event is recorded.  ## Root cause  Defect 1, name clobbered:  - `src/acp/acp_client/permission_handlers.rs:166` falls back to the title `"tool call"` when a permission reques
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1806,395 +1806,808 @@ impl ConfigOptionDescriptor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `748ba0ff` (2026-11-15)
-**Commit Message**: fix(process): wait for a stopped scope to drain before reporting it non-empty (#5699)
+### Incident Patch 1: `c07429c3` (2026-11-16)
+**Commit Message**: fix(plugin): avoid blocking runtime on asset downloads (#5732)
 
-retire_scope checked scope_stopped once right after systemctl stop. A
-scope whose last processes were still exiting failed that check, so idle
-auto-stop left the session in Error. Poll for up to 5s after a successful
-stop and fail only if the scope is still populated at the deadline.
+* fix(plugin): avoid blocking runtime on asset downloads
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+* fix(plugin): retain staging across download cancellation
 
-**File**: `src/process/systemd/mod.rs` (modified, +28/-1)
+* fix(plugin): drain asset writes after download failure
+
+* fix(plugin): preserve download task panic boundary
+
+**File**: `src/plugin/fetch.rs` (modified, +89/-10)
 ```diff
-@@ -22,6 +22,11 @@ const UNIT_PREFIX: &str = "aoe-session-";
- pub(crate) const INJECTED_VAR: &str = "INVOCATION_ID";
- /// systemd's limit for a unit name.
- const UNIT_NAME_MAX: usize = 255;
-+/// How long a stopped scope may keep draining its last processes.
-+#[cfg(not(test))]
-+const SCOPE_DRAIN_WINDOW: Duration = Duration::from_secs(5);
-+#[cfg(test)]
-+const SCOPE_DRAIN_WINDOW: Duration = Duration::from_millis(500);
+@@ -89,12 +89,23 @@ pub(super) async fn fetch(
+             Some(RuntimeSpec::ReleaseBinary { .. })
+         )
+     {
+-        download_release_binary(fetched, operation).await
++        // Keep staging and the lease until asynchronous file operations finish.
++        await_asset_download(tokio::spawn(download_release_binary(fetched, operation))).await
+     } else {
+         Ok(fetched)
+     }
+ }
  
- /// Escapes every character outside `[A-Za-z0-9:.]` as `_xx` per byte. `-`
- /// and `_` are escaped too, so the encoding is injective, never nests a slice
-@@ -826,7 +831,14 @@ pub(crate) fn retire_scope(
-     command.args(["--user", "stop", unit]);
-     let output = crate::process::run_with_timeout(&mut command, Duration::from_secs(3))?
-         .ok_or_else(|| anyhow::anyhow!("scope stop timed out"))?;
--    let proven_empty = scope_stopped(session_id, scope)?;
-+    let mut proven_empty = scope_stopped(session_id, scope)?;
-+    if output.status.success() {
-+        let deadline = std::time::Instant::now() + SCOPE_DRAIN_WINDOW;
-+        while !proven_empty && std::time::Instant::now() < deadline {
-+            std::thread::sleep(Duration::from_millis(50));
-+            proven_empty = scope_stopped(session_id, scope)?;
-+        }
++async fn await_asset_download(
++    task: tokio::task::JoinHandle<Result<FetchedPlugin>>,
++) -> Result<FetchedPlugin> {
++    match task.await {
++        Ok(result) => result,
++        Err(error) if error.is_panic() => std::panic::resume_unwind(error.into_panic()),
++        Err(error) => Err(error).context("plugin asset download task failed"),
 +    }
-     anyhow::ensure!(
-         output.status.success() || proven_empty,
-         "scope stop rejected: {}",
-@@ -1060,6 +1072,15 @@ case "$2" in
-       collected) printf 'LoadState=not-found\nActiveState=inactive\nControlGroup=\n' ;;
-       nonempty) printf 'LoadState=loaded\nActiveState=inactive\nControlGroup=/owned\n' ;;
-       unknown) printf 'LoadState=loaded\nControlGroup=\n' ;;
-+      settling)
-+        n=$(cat "$root/n")
-+        if [ "$n" -gt 0 ]; then
-+          echo $((n - 1)) > "$root/n"
-+          printf 'LoadState=loaded\nActiveState=inactive\nControlGroup=/owned\n'
-+        else
-+          printf 'LoadState=not-found\nActiveState=inactive\nControlGroup=\n'
-+        fi
-+        ;;
-       unavailable) exit 7 ;;
-       *) exit 2 ;;
-     esac
-@@ -1075,6 +1096,11 @@ case "$2" in
-         printf 'nonempty\n' > "$root/$unit"
-         exit 0
-         ;;
-+      settling)
-+        printf 'settling\n' > "$root/$unit"
-+        echo 2 > "$root/n"
-+        exit 0
-+        ;;
-       active) exit 1 ;;
-       *) exit 2 ;;
-     esac
-@@ -1092,6 +1118,7 @@ esac
-         let scope = ScopeOwnership::Owned { unit: unit.clone() };
-         for (mode, succeeds, expected) in [
-             ("collected", true, "collected\n"),
-+            ("settling", true, "settling\n"),
-             ("active", false, "active\n"),
-             ("nonempty", false, "nonempty\n"),
-             ("unknown", false, "unknown\n"),
++}
++
+ fn stage(
+     source: PluginSource,
+     plugins_root: PathBuf,
+@@ -584,7 +595,7 @@ pub(super) fn render_asset_template<'a>(
+ }
+ 
+ async fn download_asset(url: &str, dest: &Path) -> Result<()> {
+-    use std::io::Write;
++    use tokio::io::AsyncWriteExt;
+     let client = reqwest::Client::builder()
+         .user_agent(DEFAULT_USER_AGENT)
+         .timeout(Duration::from_secs(300))
+@@ -594,14 +605,24 @@ async fn download_asset(url: &str, dest: &Path) -> Result<()> {
+     if !status.is_success() {
+         bail!("downloading {url} failed: HTTP {status}");
+     }
+-    let mut file =
+-        std::fs::File::create(dest).with_context(|| format!("creating {}", dest.display()))?;
+-    while let Some(chunk) = response.chunk().await? {
+-        file.write_all(&chunk)
+-            .with_context(|| format!("writing {url} to {}", dest.display()))?;
++    let mut file = tokio::fs::File::create(dest)
++        .await
++        .with_context(|| format!("creating {}", dest.display()))?;
++    let result: Result<()> = async {
++        while let Some(chunk) = response.chunk().await? {
++            file.write_all(&chunk)
++                .await
++                .with_context(|| format!("writing {url} to {}", dest.display()))?;
++        }
++        Ok(())
+     }
+-    file.flush()
+-        .with_context(|| format!("writing {url} to {}", dest.display()))
++    .await;
++    let flush = file
++        .flush()
++        .await
++        .with_context(|| format!("writing {url} to {}", dest.display()));
++    result?;
++    flush
+ }
+ 
+ fn sha256_file(path: &Path) -> Result<String> {
+@@ -798,6 +819,18 @@ fn ensure_executable(tree: &Path, rel: &Path) -> Result<()> {
+ mod tests {
+     use super::*;
+ 
++    #[tokio::test]
++    async fn asset_task_panics_reach_the_job_panic_boundary() {
++        use futures_util::FutureExt;
++
++        let task: tokio::task::JoinHandle<Result<FetchedPlugin>> =
++            tokio::spawn(async { panic!("private-panic-payload") });
++        let panic = std::panic::AssertUnwindSafe(await_asset_download(task))
++            .catch_unwind()
++            .await;
++        assert!(panic.is_err());
++    }
++
+     #[test]
+     fn parse_ls_remote_prefers_the_peeled_tag_and_a_pinned_sha_skips_the_remote() {
+         let peeled = "1111111111111111111111111111111111111111\trefs/tags/v1\n\
+@@ -1018,6 +1051,13 @@ mod tests {
+         run_git(&repo, &["tag", "v1"]);
+         let bytes = Arc::new(Mutex::new(b"#!/bin/sh\nexit 0\n".to_vec()));
+         let download = bytes.clone();
++        let pause = Arc::new(Mutex::new(
++            None::<(
++                tokio::sync::oneshot::Sender<()>,
++                tokio::sync::oneshot::Receiver<()>,
++            )>,
++        ));
++        let pause_download = pause.clone();
+         let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+         let base = format!("http://{}", listener.local_addr().unwrap());
+         let release_base = base.clone();
+@@ -1029,7 +1069,14 @@ mod tests {
+             }))
+             .route("/asset", axum::routing::get(move || {
+                 let download = download.clone();
+-                async move { download.lock().unwrap().clone() }
++                let pause = pause_download.lock().unwrap().take();
++                async move {
++                    if let Some((entered, release)) = pause {
++                        let _ = entered.send(());
++                        let _ = release.await;
++                    }
++                    download.lock().unwrap().clone()
++                }
+             }));
+         let server = tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
+         let _env = EnvGuard::set(&[
+@@ -1041,6 +1088,38 @@ mod tests {
+         ]);
+         let source = PluginSource::parse("gh:acme/bin@v1").unwrap();
+         let plugins = crate::plugin::plugins_dir().unwrap();
++        let (entered, waiting) = tokio::sync::oneshot::channel();
++        let (release, released) = tokio::sync::oneshot::channel();
++        *pause.lock().unwrap() = Some((entered, released));
++        let operation = crate::plugin::install::begin_operation().unwrap();
++        let staged_source = source.clone();
++        let task = tokio::spawn(async move { fetch(&staged_source, Som
 ```
 
 ---
 
-### Incident Patch 2: `1eb5342d` (2026-11-15)
-**Commit Message**: fix(acp): drain queued prompts while background work runs (#5585)
+### Incident Patch 2: `558d9535` (2026-11-17)
+**Commit Message**: fix(send): pace the enter from a plugin's declaration (#5724)
 
-* fix(acp): drain queued prompts between background turns
+* fix(send): pace the enter from a plugin's declaration
 
-* fix(acp): preserve stopped queue lifecycle eligibility
+An agent whose composer reads a fast burst as a paste drops the Enter, so the
+host types the message and never submits it, leaving a draft that looks like a
+running session. A declared plugin agent could not state a pause at all, and
+every send path resolved the delay from the built-in table, which does not know
+declared agents, so such an agent was paced at 0 ms.
 
-**File**: `docs/structured-view/interface.md` (modified, +2/-0)
+`launch.send_keys_enter_delay_ms` lets an integration declare the pause, gated
+at api_version 22 and capped at 2000 ms. The resolver, send_keys_enter_delay,
+now asks the active declaration first and falls back to the built-in table, so
+the five send paths and the post-restart wake-up inherit it without each one
+holding a registry of its own.
+
+🤖 Generated with Codebuff
+Co-Authored-By: Codebuff <[REDACTED_EMAIL]>
+
+* fix(send): pace only the program a declaration owns
+
+A declared enter delay resolved by tool name alone, so a custom wrapper, a
+command override or another stored command inherited a plugin's pause. Resolve
+it through the session's effective declaration instead, keeping the built-in
+table as 
+
+**File**: `aoe-plugin-api/src/agent_integration.rs` (modified, +4/-0)
 ```diff
-@@ -82,6 +82,8 @@ Attachments persist with the transcript and queue alongside the prompt text, so
- 
- ### Queued prompts
- 
-+Queued prompts can drain between turns while background tasks or sub-agents continue running. A queued `/clear` waits for that background work to finish before resetting the conversation.
-+
- The composer keeps messages the session cannot accept yet:
- 
- 1. **Mid-turn follow-up.** With a steerable agent (Claude Code on a supported `claude-agent-acp`, see [Troubleshooting](troubleshooting.md)) your message goes into the running turn, the same as typing ahead in the CLI, so nothing is queued and `aoe acp prompt` works mid-turn too. Without steering, while the agent compacts, or for a `/clear` or `/compact` command, the text lands in the **Queued (N)** strip and drains when the agent reports `Stopped`, joined into one combined prompt (a clear or compact command fires alone so it keeps its meaning).
+@@ -75,6 +75,10 @@ pub struct AgentLaunchDeclaration {
+     pub install_hint: Option<String>,
+     #[serde(default)]
+     pub host_only: bool,
++    /// Pause between typing a message into the agent's pane and sending Enter,
++    /// for an agent whose composer reads a fast burst as a paste and drops it.
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub send_keys_enter_delay_ms: Option<u64>,
+     #[serde(default, skip_serializing_if = "Option::is_none")]
+     pub resume: Option<AgentResumeDeclaration>,
+     #[serde(default, skip_serializing_if = "Option::is_none")]
 ```
 
-**File**: `src/acp/state.rs` (modified, +8/-0)
+**File**: `aoe-plugin-api/src/manifest.rs` (modified, +18/-0)
 ```diff
-@@ -1101,6 +1101,14 @@ impl AcpState {
+@@ -1300,6 +1300,24 @@ impl PluginManifest {
+                 self.api_version >= 22 || integration.session_id.is_none(),
+                 format!("agent_integrations[{i}].session_id requires api_version >= 22"),
+             );
++            if let Some(delay) = integration
++                .launch
++                .as_ref()
++                .and_then(|launch| launch.send_keys_enter_delay_ms)
++            {
++                check(
++                    self.api_version >= 22,
++                    format!(
++                        "agent_integrations[{i}].launch.send_keys_enter_delay_ms requires api_version >= 22"
++                    ),
++                );
++                check(
++                    delay <= 2_000,
++                    format!(
++                        "agent_integrations[{i}].launch.send_keys_enter_delay_ms must be at most 2000"
++                    ),
++                );
++            }
+             check(
+                 if status_integration {
+                     !integration.provider_versions.is_empty()
+```
+
+**File**: `aoe-plugin-api/tests/manifest.rs` (modified, +43/-0)
+```diff
+@@ -432,6 +432,49 @@ fn runtime_requires_worker_capability() {
+     parse(2, "capabilities = [\"runtime.worker\"]\n");
+ }
+ 
++#[test]
++fn send_keys_enter_delay_requires_api_22_and_caps_at_two_seconds() {
++    let declaration = "[[agent_integrations]]\ntool = \"example\"\ncommand = \"example\"\n\
++                       [agent_integrations.launch]\n\
++                       send_keys_enter_delay_ms = 150\n";
++
++    let parsed = parse(22, declaration);
++    assert_eq!(
++        parsed.agent_integrations[0]
++            .launch
++            .as_ref()
++            .and_then(|launch| launch.send_keys_enter_delay_ms),
++        Some(150)
++    );
++    assert_eq!(
++        PluginManifest::from_toml_str(&toml::to_string(&parsed).unwrap())
++            .expect("round-trips")
++            .agent_integrations[0]
++            .launch
++            .as_ref()
++            .and_then(|launch| launch.send_keys_enter_delay_ms),
++        Some(150)
++    );
++
++    let errors = invalid(21, declaration);
++    assert!(
++        errors
++            .iter()
++            .any(|error| error.contains("send_keys_enter_delay_ms requires api_version >= 22")),
++        "{errors:?}"
++    );
++
++    let errors = invalid(22, &declaration.replace("150", "2001"));
++    assert!(
++        errors
++            .iter()
++            .any(|error| error.contains("send_keys_enter_delay_ms must be at most 2000")),
++        "{errors:?}"
++    );
++
++    parse(22, &declaration.replace("150", "2000"));
++}
++
+ #[test]
+ fn session_id_capture_requires_api_22_and_a_worker_runtime() {
+     let runtime = "capabilities = [\"runtime.worker\"]\n\
+```
+
+**File**: `docs/plugin-api.md` (modified, +2/-0)
+```diff
+@@ -93,6 +93,7 @@ instruction_flag = "--prompt={}"
+ model_flag = "--model"
+ host_only = false
+ install_hint = "Install example-agent from its vendor"
++send_keys_enter_delay_ms = 150
+ 
+ [agent_integrations.launch.container_env]
+ EXAMPLE_HOME = "/state"
+@@ -121,6 +122,7 @@ deny = [{ kind = "literal", value = "n" }]
+ The example's `detection` requires `session.integration` in the manifest's capabilities. Every declaration type, `session_id` included, requires a nonblank `command`: the plugin must contribute the tool it captures for, because only the plugin that owns a tool may attribute an id to a session using it.
+ 
+ - `launch.aliases` are unique lowercase agent ids, distinct from the tool. `oneshot_flag` and `model_flag` are single shell-safe flags. `instruction_flag` has one `{}` placeholder, as a whole argument or after `=`, and otherwise contains shell-safe words.
++- `launch.send_keys_enter_delay_ms` is the pause, in milliseconds, that the host leaves between typing a message into the agent's pane and sending Enter. Some agents read a fast burst as a paste and drop the Enter, which leaves the message as an unsent draft that looks like a running session. It requires `api_version >= 22` and is capped at 2000. An agent that declares nothing falls back to the host's built-in pause for its tool.
+ - `launch.yolo` is `kind = "flag"` with `flag`, `kind = "always"`, or `kind = "env"` with `key` and `value`. An `always` declaration applies while active without changing the session's saved Yolo preference. `container_env` is applied to sandbox launches. Protected environment names are rejected.
+ - `launch.resume` is `kind = "flag"` with `flag`, `kind = "flag_pair"` with `existing` and `new_session`, or `kind = "subcommand"` with `command`. Resume and capture require each other. Capture supports only backend `omp`, with `pane_scoped` in at least one of `host` or `sandbox` and `pane_scoped` or `unsupported` in the other.
+ - `detection.mode = "native_only"` requires `session.integration`; the integration owns status rather than falling back to pane parsing when a report is missing or invalid.
+```
+
+**File**: `src/agents.rs` (modified, +4/-0)
+```diff
+@@ -1731,6 +1731,10 @@ fn is_safe_agent_name(name: &str) -> bool {
+         && !name.contains('\\')
+ }
+ 
++/// The built-in pause for `tool` between typing and Enter.
++///
++/// A declared integration paces through `Instance::send_keys_enter_delay`,
++/// which keeps this table as the fallback for every program it does not own.
+ pub fn send_keys_enter_delay(tool: &str) -> u64 {
+     get_agent(tool)
+         .map(|a| a.send_keys_enter_delay_ms)
+```
+
+**File**: `src/cli/session.rs` (modified, +1/-1)
+```diff
+@@ -1402,7 +1402,7 @@ fn send_restart_wake(
+         return Ok(false);
+     }
+     let _input_lock = working.lock_for_input()?;
+-    let delay = crate::agents::send_keys_enter_delay(&working.tool);
++    let delay = working.send_keys_enter_delay();
+     tmux_session.send_keys_with_delay(wake_msg, delay)?;
+     Ok(true)
+ }
+```
+
+**File**: `src/plugin/agent_definition.rs` (modified, +1/-1)
+```diff
+@@ -132,7 +132,7 @@ impl<'a> DefinitionData<'a> {
+             session_support: support,
+             fork_strategy: ForkStrategy::Unsupported,
+             host_only: launch.host_only,
+-            send_keys_enter_delay_ms: 0,
++            send_keys_enter_delay_ms: launch.send_keys_enter_delay_ms.unwrap_or(0),
+             ready_marker: None,
+             install_hint: launch.install_hint.as_deref().unwrap_or(&entry.tool),
+             permission_response: entry.reply_fallback.as_ref().map(|_| PermissionResponse {
+```
+
+**File**: `src/plugin/agent_integration.rs` (modified, +118/-3)
+```diff
+@@ -402,6 +402,9 @@ pub fn consent_lines(integration: &AgentIntegrationContribution) -> Vec<String>
+         if !flags.is_empty() {
+             lines.push(format!("  launch flags: {}", flags.join("; ")));
          }
++        if let Some(delay) = launch.send_keys_enter_delay_ms {
++            lines.push(format!("  enter delay: {delay} ms"));
++        }
+         if !launch.aliases.is_empty() {
+             lines.push(format!(
+                 "  aliases: {}",
+@@ -1386,8 +1389,6 @@ oneshot_flag = "-p"
      }
  
-+    /// Queue delivery ignores background work, but never overlaps a foreground turn.
-+    pub fn accepts_queue_drain(&self) -> bool {
-+        !self.turn_active
-+            && self.sidebar_phase == SidebarPhase::Idle
-+            && !self.cancelling
-+            && !self.compacting
+     fn install_test_integration(plugin_id: &str, tool: &str) {
+-        use crate::session::{CapabilityGrant, PluginConfig};
+-
+         let manifest = format!(
+             r#"
+ id = "{plugin_id}"
+@@ -1403,9 +1404,42 @@ provider_versions = ["^18"]
+ replies = true
+ "#
+         );
++        install_test_manifest(plugin_id, &manifest);
 +    }
 +
-     /// The sidebar status this state implies. A live background agent keeps
-     /// the row `Running` between main turns.
-     pub fn sidebar_status(&self) -> Status {
++    /// A status integration that also declares an Enter delay, so the pace
++    /// resolves through the same declaration as its other launch fields.
++    ///
++    /// Pair it with a tool name no built-in alias matches: `agent` is a cursor
++    /// alias, so a name containing it resolves as a built-in and keeps the table.
++    fn install_paced_test_integration(plugin_id: &str, tool: &str, delay_ms: u64) {
++        let manifest = format!(
++            r#"
++id = "{plugin_id}"
++name = "Integration test"
++version = "1.0.0"
++api_version = 22
++capabilities = ["session.integration"]
++
++[[agent_integrations]]
++tool = "{tool}"
++command = "{tool}"
++provider_versions = ["^18"]
++replies = true
++
++[agent_integrations.launch]
++send_keys_enter_delay_ms = {delay_ms}
++"#
++        );
++        install_test_manifest(plugin_id, &manifest);
++    }
++
++    fn install_test_manifest(plugin_id: &str, manifest: &str) {
++        use crate::session::{CapabilityGrant, PluginConfig};
++
+         let dir = super::super::plugins_dir().unwrap().join(plugin_id);
+         std::fs::create_dir_all(&dir).unwrap();
+-        std::fs::write(dir.join("aoe-plugin.toml"), &manifest).unwrap();
++        std::fs::write(dir.join("aoe-plugin.toml"), manifest).unwrap();
+         crate::session::update_config(|config| {
+             config.plugins.insert(
+                 plugin_id.to_string(),
+@@ -2004,6 +2038,64 @@ sandbox = "unsupported"
+         assert!(instance().declared_agent().is_none());
+     }
+ 
++    /// The declared pause belongs to the program the declaration owns, so a
++    /// custom wrapper, an override or another stored command keeps the built-in
++    /// table's pace for its tool instead of inheriting that delay.
++    #[test]
++    #[serial_test::serial]
++    fn a_declared_enter_delay_paces_only_the_program_it_declares() {
++        let temp = tempfile::tempdir().unwrap();
++        let _reload = super::super::ReloadRegistryOnDrop;
++        let _env = crate::session::test_support::EnvGuard::set(&[
++            ("HOME", temp.path()),
++            ("XDG_CONFIG_HOME", temp.path()),
++            ("USERPROFILE", temp.path()),
++        ]);
++        let _featured = crate::session::test_support::EnvGuard::unset(&["AOE_FEATURED_INDEX_PATH"]);
++        install_paced_test_integration("acme.paced-provider", "pacer-helper", 150);
++        super::super::reload_registry();
++
++        let instance = |tool: &str, command: &str| {
++            let mut instance = Instance::new("paced-delay", temp.path().to_str().unwrap());
++            instance.tool = tool.into();
++            instance.command = command.into();
++            instance
++        };
++
++        // The declared program takes the declared pause.
++        assert_eq!(instance("pacer-helper", "").send_keys_enter_delay(), 150);
++
++        // A stored command that is not the declared one is another program.
++        assert_eq!(
++            instance("pacer-helper", "/opt/other/paced --serve").send_keys_enter_delay(),
++            0
++        );
++
++        // A command override replaces the declared program.
++        crate::session::update_config(|config| {
++            config
++                .session
++                .agent_command_override
++                .insert("pacer-helper".into(), "/opt/override/paced --serve".into());
++        })
++        .unwrap();
++        assert_eq!(instance("pacer-helper", "").send_keys_enter_delay(), 0);
++
++        // So does a custom agent of the same name.
++        crate::session::update_config(|config| {
++            config.session.agent_command_override.remove("pacer-helper");
++            config
++                .session
++                .custom_agents
++                .insert("pacer-helper".into(), "/opt/custom/paced --serve".into());
++        })
++        .unwrap();
++        assert_eq!(instance("pacer-helper", "").send_keys_enter_delay(), 0);
++
++        // A built-in keeps the table's pace and gains nothing from the plugin.
++        assert_eq!(instance("codex", "").send_keys_enter_delay(), 150);
++    }
++
+     /// Two approved providers make the own-name claim ambiguous. A readable
+     /// custom selection still owns its program, so
 ```
 
-**File**: `src/server/acp_reconciler/mod.rs` (modified, +183/-1)
+---
+
+### Incident Patch 3: `1912a317` (2026-11-16)
+**Commit Message**: fix(server): load plugin icons under passphrase auth (#5735)
+
+* fix(server): serve plugin icons from a login-exempt path
+
+Under --auth passphrase every plugin icon <img> was rejected with a 401
+and a warn line: an image load carries the session cookie but cannot
+send the device binding header, and /api/plugins/{id}/icon is a gated
+machine endpoint. Serve the icon at /plugin-icons/{id} and exempt that
+prefix from the login session check, like the other static assets.
+The token gate and the CityHall block still apply.
+
+A separate prefix avoids colliding with a plugin page whose id is
+"icon" under /plugins/{id}/{page_id}.
+
+Fixes #5095
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(server): keep plugin icons behind the token gate
+
+Review follow-up. The token gate lets anonymous requests through to any
+path that is not a machine endpoint, so /plugin-icons/{id} was public in
+token mode too. Class it as a machine endpoint so a missing token gets a
+401 again. It stays login-exempt, so under passphrase-only auth it is
+public, as the issue proposed; the test now pins both cases.
+
+Also point the handler doc at the new path and proxy /plugin-icons in
+the Vite dev server.
+
+Co-Author
+
+**File**: `docs/guides/web-dashboard.md` (modified, +1/-0)
 ```diff
-@@ -509,14 +509,20 @@ async fn drain_queued_prompts(state: &Arc<AppState>) {
-             .iter()
-             .filter(|i| {
-                 !i.queued_prompts.is_empty()
--                    && i.status == crate::session::Status::Idle
-+                    && matches!(
-+                        i.status,
-+                        crate::session::Status::Idle | crate::session::Status::Running
-+                    )
-                     && is_untriaged_structured(i)
-             })
-             .map(|i| (i.id.clone(), i.is_idle_dormant()))
-             .collect()
-     };
-     for (id, dormant) in candidates {
-         let service = Arc::clone(&state.session_service);
-+        if !service.fold_control_state(&id).await.accepts_queue_drain() {
-+            continue;
-+        }
-         if state.acp_supervisor.is_running(&id).await {
-             crate::task_util::spawn_supervised(
-                 "acp.queue_drain",
-@@ -976,6 +982,182 @@ mod tests {
+@@ -234,6 +234,7 @@ native clients on the owner-verified Unix API retain the local-owner exemption.
+ 
+ - **Token auth** (`--auth=token`, default): a random 256-bit token, generated on startup and stored at `~/.config/agent-of-empires/serve.token` (Linux) or `~/.agent-of-empires/serve.token` (macOS). Passed via URL on first visit, then kept as an `HttpOnly; SameSite=Strict` cookie.
+ - **Passphrase wall** (`--auth=passphrase`, or combined with token via `--passphrase`): an argon2-hashed passphrase gates `/login`. Sessions bind to a per-device secret in `localStorage`, so a leaked cookie alone is insufficient.
++- **Plugin icons**: with a passphrase configured, `/plugin-icons/{id}` needs a live login session but not its device binding, because an `<img>` load cannot send that header. Callers without a session get `401`. With token auth alone, the token is required as on any route.
+ - **Plaintext refusal**: plain HTTP from a non-loopback peer gets `426` before authentication, so tokens and passphrases never cross a network in the clear. A TLS proxy or tunnel in front of a loopback bind is unaffected. A direct bind to a LAN or tailnet IP needs `--dangerously-allow-plaintext-remote` (per bind, logged at every start). Native clients likewise refuse to send a token or passphrase to a plaintext non-loopback endpoint.
+ - **Rate limiting**: 5 failed logins from an IP trigger a 15-minute lockout.
+ - **Token rotation**: in `--remote` mode the token rotates every 4 hours with a 5-minute grace period for active sessions.
+```
+
+**File**: `src/plugin/view.rs` (modified, +1/-1)
+```diff
+@@ -63,7 +63,7 @@ impl LoadedPlugin {
+             description: self.manifest.description.clone(),
+             icon: self.manifest.icon.clone(),
+             icon_asset_url: (self.manifest.icon_asset.is_some() && self.dir.is_some())
+-                .then(|| format!("/api/plugins/{}/icon", self.id())),
++                .then(|| format!("/plugin-icons/{}", self.id())),
+             enabled: self.enabled,
+             builtin: self.builtin(),
+             validation: self.validation.as_str().to_string(),
+```
+
+**File**: `src/server/api/plugins.rs` (modified, +57/-1)
+```diff
+@@ -143,7 +143,7 @@ fn content_type_for_icon(path: &std::path::Path) -> Option<&'static str> {
+     }
+ }
+ 
+-/// `GET /api/plugins/{id}/icon`: stream an installed plugin's `icon_asset`
++/// `GET /plugin-icons/{id}`: stream an installed plugin's `icon_asset`
+ /// from its install directory. Mirrors `serve_sound_file`'s allowlist-then-read
+ /// shape: the manifest path is re-validated and re-joined against the
+ /// plugin's own directory rather than trusted from a cached URL. A builtin
+@@ -2538,6 +2538,62 @@ id = "voice"
          );
      }
  
++    /// Under passphrase-only auth an `<img>` load of an installed icon needs a live session
++    /// but not its device binding.
 +    #[tokio::test]
-+    async fn queue_drain_preserves_a_deliberately_stopped_dormant_session() {
-+        use crate::session::{Instance, Status, View};
++    #[serial_test::serial]
++    async fn an_installed_icon_loads_on_an_unbound_session_under_passphrase_auth() {
++        use tower::ServiceExt;
++        let _app_dir = AppDirEnvGuard::new();
++        let dir = crate::plugin::plugins_dir().unwrap().join("acme.logo");
++        std::fs::create_dir_all(dir.join("assets")).unwrap();
++        std::fs::write(
++            dir.join("aoe-plugin.toml"),
++            "id = \"acme.logo\"\nname = \"Logo\"\nversion = \"1.0.0\"\napi_version = 16\nicon_asset = \"assets/icon.png\"\n",
++        )
++        .unwrap();
++        std::fs::write(dir.join("assets/icon.png"), b"png-bytes").unwrap();
++        crate::plugin::reload_registry();
 +
-+        let _app_dir = crate::session::test_support::isolate_app_dir();
-+        let id = "stopped-with-queue";
-+        let mut inst = Instance::new(id, "/tmp/aoe-stopped-with-queue");
-+        inst.id = id.into();
-+        inst.view = View::Structured;
-+        inst.status = Status::Stopped;
-+        inst.mark_idle_dormant();
-+        inst.queued_prompts.push(test_fixtures::queued_prompt());
-+        let state = crate::server::test_support::build_test_app_state(vec![inst]);
-+        let mut tick = test_fixtures::Tick::default();
-+        for _ in 0..3 {
-+            tick.run(&state).await;
-+        }
-+        let instances = state.instances.read().await;
-+        assert!(
-+            instances[0].is_idle_dormant(),
-+            "a deliberate stop must stay dormant"
++        let login = std::sync::Arc::new(crate::server::login::LoginManager::new(Some("pw")));
++        let session = login.create_session(&[7u8; 32], "203.0.113.7", "t").await;
++        let state = crate::server::test_support::build_test_app_state_with_policy_configured(
++            Vec::new(),
++            Vec::new(),
++            Vec::new(),
++            None,
++            |state| state.login_manager = std::sync::Arc::clone(&login),
 +        );
-+        assert!(
-+            !tick.attempted.contains(id),
-+            "queue drain must not attempt a stopped session"
-+        );
-+        assert_eq!(instances[0].queued_prompts.len(), 1);
++        let app = crate::server::test_support::build_router_for_test(state);
++        let get =
++            |cookie: Option<String>| {
++                let mut req =
++                    axum::http::Request::get("/plugin-icons/acme.logo").header("host", "127.0.0.1");
++                if let Some(cookie) = cookie {
++                    req = req.header("cookie", cookie);
++                }
++                let mut req = req.body(axum::body::Body::empty()).unwrap();
++                req.extensions_mut().insert(axum::extract::ConnectInfo(
++                    std::net::SocketAddr::from(([203, 0, 113, 7], 5555)),
++                ));
++                app.clone().oneshot(req)
++            };
++        let cookie = format!("aoe_session={session}");
++
++        let resp = get(None).await.unwrap();
++        assert_eq!(resp.status(), StatusCode::UNAUTHORIZED, "no session");
++
++        let resp = get(Some(cookie.clone())).await.unwrap();
++        assert_eq!(resp.status(), StatusCode::OK);
++        assert_eq!(resp.headers()["content-type"], "image/png");
++        let body = axum::body::to_bytes(resp.into_body(), 1024).await.unwrap();
++        assert_eq!(&body[..], b"png-bytes");
++
++        login.invalidate_session(&session).await;
++        let resp = get(Some(cookie)).await.unwrap();
++        assert_eq!(resp.status(), StatusCode::UNAUTHORIZED, "after logout");
 +    }
 +
-+    #[tokio::test]
-+    async fn queue_drain_ignores_background_work_but_preserves_foreground_barriers() {
-+        use crate::acp::state::test_support::{chunk, prompt, stopped};
-+        use crate::acp::state::Event;
-+        use crate::acp::supervisor::{BroadcastSink, ChannelSink};
-+        use crate::session::{Instance, Status, View};
+     #[test]
+     #[serial_test::serial]
+     fn composer_snapshot_forwarding_requires_active_composer_read_capability() {
+```
+
+**File**: `src/server/auth.rs` (modified, +71/-21)
+```diff
+@@ -133,6 +133,8 @@ fn normalize_path(path: &str) -> &str {
+ fn is_machine_endpoint(path: &str) -> bool {
+     let path = path.trim_end_matches('/');
+     path.starts_with("/api/")
++        // Not under `/api/`, but refused with a 401 like it, never passed through.
++        || path.starts_with("/plugin-icons/")
+         || path.contains("/ws")
+         || (path.starts_with("/sessions/") && path.ends_with("/live-ws"))
+         || is_mcp_path(path)
+@@ -373,11 +375,25 @@ struct PageTicketClaim {
+     tickets: Vec<String>,
+ }
+ 
+-/// Set only for a GET of exactly `/api/plugins/{id}/pages/{page_id}`.
+-fn page_ticket_claim(request: &Request) -> Option<PageTicketClaim> {
++/// A GET that cannot send the device binding header and what stands in for it.
++enum UnboundClaim {
++    PageTicket(PageTicketClaim),
++    /// A plugin icon `<img>` load: the live session alone suffices.
++    PluginIcon,
++}
 +
-+        let _app_dir = crate::session::test_support::isolate_app_dir();
-+        let task = Event::BackgroundTaskStarted {
-+            task_id: "task".into(),
-+            tool_call_id: None,
-+            description: "build".into(),
-+            workflow: None,
-+            started_at: None,
-+        };
-+        let agent = Event::BackgroundAgentLaunched {
-+            agent_id: "agent".into(),
-+            tool_call_id: "tool".into(),
-+            description: "research".into(),
-+            prompt: "research".into(),
-+            model: "model".into(),
-+            output_file: String::new(),
-+            started_at: chrono::Utc::now(),
-+            workflow: None,
-+        };
-+        for (name, events, text, drains) in [
-+            (
-+                "task",
-+                vec![prompt("go"), task.clone(), stopped("end_turn")],
-+                "follow up",
-+                true,
-+            ),
-+            (
-+                "agent",
-+                vec![prompt("go"), agent, stopped("end_turn")],
-+                "follow up",
-+                true,
-+            ),
-+            ("main", vec![prompt("go"), task.clone()], "follow up", false),
-+            (
-+                "notification",
-+                vec![task.clone(), chunk("result")],
-+                "follow up",
-+                false,
-+            ),
-+            (
-+                "cancel",
-+                vec![
-+                    task.clone(),
-+                    Event::CancelRequested {
-+                        escalates_at: chrono::Utc::now(),
-+                    },
-+                ],
-+                "follow up",
-+                false,
-+            ),
-+            (
-+                "compact",
-+                vec![task.clone(), Event::ConversationCompactionStarted],
-+                "follow up",
-+                false,
-+            ),
-+            ("clear", vec![task.clone()], "/clear", false),
-+        ] {
-+            let mut inst = Instance::new(name, "/tmp/aoe-queue-background");
-+            inst.id = name.into();
-+            inst.view = View::Structured;
-+            inst.agent_name = Some("claude".into());
-+            // The display stays busy even after the foreground turn ends.
-+            inst.status = Status::Running;
-+            let state = crate::server::test_support::build_test_app_state(vec![inst]);
-+            let commands = state
-+                .acp_supervisor
-+                .test_insert_worker_cmd_recording(name)
-+                .await;
-+            let sink = ChannelSink:
-```
-
-**File**: `src/server/session_service.rs` (modified, +9/-5)
-```diff
-@@ -1890,7 +1890,10 @@ impl SessionService {
-                 || inst.is_archived()
-                 || inst.is_snoozed()
-                 || inst.is_trashed()
--                || inst.status != crate::session::Status::Idle
-+                || !matches!(
-+                    inst.status,
-+                    crate::session::Status::Idle | crate::session::Status::Running
-+                )
-             {
-                 return;
-             }
-@@ -1909,16 +1912,17 @@ impl SessionService {
-             (caller, agent_key, queue)
-         };
++fn unbound_claim(request: &Request) -> Option<UnboundClaim> {
+     if request.method() != axum::http::Method::GET {
+         return None;
+     }
++    if let Some(id) = request.uri().path().strip_prefix("/plugin-icons/") {
++        return (!id.is_empty() && !id.contains('/')).then_some(UnboundClaim::PluginIcon);
++    }
++    page_ticket_claim(request).map(UnboundClaim::PageTicket)
++}
++
++/// Set only for exactly `/api/plugins/{id}/pages/{page_id}`.
++fn page_ticket_claim(request: &Request) -> Option<PageTicketClaim> {
+     let rest = request.uri().path().strip_prefix("/api/plugins/")?;
+     let (plugin_id, rest) = rest.split_once('/')?;
+     let page_id = rest.strip_prefix("pages/")?;
+@@ -392,21 +408,26 @@ fn page_ticket_claim(request: &Request) -> Option<PageTicketClaim> {
+ }
  
--        // `Status::Idle` above is a mirror the broadcast listener applies one serial task
--        // behind every session's events, so it still reads Idle for as long as that task is
--        // behind.
--        if self.fold_control_state(id).await.turn_active {
-+        let control = self.fold_control_state(id).await;
-+        if !control.accepts_queue_drain() {
-             return;
-         }
- 
-         // Leading batch up to a clear or compact boundary.
-         let profile = crate::acp::agent_profiles::resolve(&agent_key);
-         let (sub, combined) = queue_drain_batch(&queue, profile);
-+        if profile.is_clear_command(&combined) && control.has_active_background_agent() {
-+            return;
+ /// A bound session presents its binding. A frame load cannot, so on a plugin page route
+-/// a ticket that session minted for that exact page stands in for it.
++/// a ticket that session minted for that exact page stands in for it; a plugin icon needs
++/// only the live session.
+ async fn session_valid(
+     state: &AppState,
+     session_id: &str,
+     binding: Option<&[u8]>,
+-    claim: Option<PageTicketClaim>,
++    claim: Option<UnboundClaim>,
+ ) -> bool {
+     if let Some(binding) = binding {
+         return state
+             .login_manager
+             .validate_session(session_id, binding)
+             .await;
+     }
+-    let Some(claim) = claim else {
+-        return false;
++    let claim = match claim {
++        Some(UnboundClaim::PageTicket(claim)) => claim,
++        Some(UnboundClaim::PluginIcon) => {
++            return state.login_manager.session_live(session_id).await
 +        }
-         let caller = match &sub[0].origin_plugin {
-             Some(plugin_id) => SessionCaller::PluginMessage {
-                 plugin_id: plugin_id.clone(),
++        None => return false,
+     };
+     for ticket in &claim.tickets {
+         if state
+@@ -439,7 +460,7 @@ async fn run_passphrase_wall(
+ 
+     let has_valid_session = match &session_id {
+         Some(id) => {
+-            let claim = page_ticket_claim(&request);
++            let claim = unbound_claim(&request);
+             session_valid(state, id, presented_binding.as_deref(), claim).await
+         }
+         None => false,
+@@ -641,7 +662,7 @@ pub async fn auth_middleware(
+     };
+     let session_valid = match &presented_session_id {
+         Some(id) => {
+-            let claim = page_ticket_claim(&request);
++            let claim = unbound_claim(&request);
+             session_valid(&state, id, presented_binding.as_deref(), claim).await
+         }
+         None => false,
+@@ -1217,6 +1238,7 @@ mod tests {
+             "/api/plugins",
+             "/api/plugins/github/pages/prs",
+             "/pluginsx",
++            "/plugin-icons/github",
+             "/api/sessions/abc/acp/ws",
+             "/api/settings",
+             "/api/login/elevate",
+@@ -1336,10 +1358,11 @@ mod tests {
+         }
+     }
+ 
+-    /// Plugin page deep links are document navigations that cannot carry a device binding
+-    /// header, so the shell must load on a bare session cookie while APIs stay gated.
++    /// Plugin page deep links and plugin icon `<img>` loads cannot carry a device binding
++    /// header: the shell loads on a bare session cookie, an icon on a live session, and
++    /// APIs stay gated.
+     #[tokio::test]
+-    async fn plugin_page_shell_loads_remote_without_binding_header() {
++    async fn plugin_shell_and_icon_load_remote_without_binding_header() {
+         use crate::server::login::LoginManager;
+         use tower::ServiceExt;
+ 
+@@ -1360,13 +1383,12 @@ mod tests {
+                 None => format!("aoe_session={session_id}"),
+             };
+ 
+-            let get = |uri: &str| {
+-                let mut req = Request::builder()
+-                    .uri(uri)
+-                    .header("host", "localhost")
+-                    .header("cookie", &cookie)
+-                    .body(axum::body::Body::empty())
+-                    .unwrap();
++            let get = |uri: &str, cookie: Option<&str>| {
++                let mut req = Request::builder().uri(uri).header("host", "localhost");
++                if let Some(cookie) = cookie {
++                    req =
 ```
 
----
-
-### Incident Patch 3: `6a4edad0` (2026-11-15)
-**Commit Message**: fix(web): keep retained terminals in place when switching (#5728)
-
-With "Keep terminals alive" on, the terminal stack rendered kept
-terminals in recency order, so every switch made React move their DOM
-nodes. A moved scroller loses its scrollTop, and the live-edge pinning
-reads that jump to the top as the reader scrolling up, so the view
-stays detached on the blank top of the capture window until scrolled
-to the bottom.
-
-Render kept terminals in a stable order, as the structured stack
-already does since #5491.
-
-Fixes #5725
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `web/src/components/TerminalSessionStack.tsx` (modified, +2/-1)
+**File**: `src/server/login.rs` (modified, +10/-7)
 ```diff
-@@ -30,7 +30,8 @@ export function TerminalSessionStack({
+@@ -298,13 +298,16 @@ impl LoginManager {
+                 && t.plugin_id == plugin_id
+                 && t.page_id == page_id
+         });
+-        matches
+-            && self
+-                .sessions
+-                .read()
+-                .await
+-                .get(session_id)
+-                .is_some_and(|s| now < s.expires_at)
++        matches && self.session_live(session_id).await
++    }
++
++    /// Whether `session_id` names an unexpired session, without checking its device binding.
++    pub async fn session_live(&self, session_id: &str) -> bool {
++        self.sessions
++            .read()
++            .await
++            .get(session_id)
++            .is_some_and(|s| Instant::now() < s.expires_at)
+     }
  
-   return (
-     <div className="flex-1 min-h-0 overflow-hidden relative">
--      {visibleIds.map((sessionId) => {
-+      {/* Recency order would make React re-insert kept terminals, and re-insertion resets their scroll. */}
-+      {[...visibleIds].sort().map((sessionId) => {
-         const session = sessionsById.get(sessionId);
-         if (!session) return null;
-         const selected = sessionId === activeSessionId;
+     /// Mark a session as elevated (passphrase confirmed) for `ELEVATION_LIFETIME`.
 ```
 
-**File**: `web/src/components/__tests__/TerminalSessionStack.test.tsx` (modified, +19/-1)
+**File**: `src/server/router.rs` (modified, +2/-1)
 ```diff
-@@ -1,7 +1,7 @@
- // @vitest-environment jsdom
- 
- import { afterEach, describe, expect, it, vi } from "vitest";
--import { cleanup, render, screen, waitFor } from "@testing-library/react";
-+import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
- import type { SessionResponse } from "../../lib/types";
- import { makeSession as baseSession } from "./fixtures";
- 
-@@ -93,6 +93,24 @@ describe("TerminalSessionStack", () => {
-     });
+@@ -285,7 +285,8 @@ pub(super) fn build_router(state: Arc<AppState>) -> Router {
+         .route("/api/app-state/tip-seen", post(api::mark_tip_seen))
+         // Plugin management.
+         .route("/api/plugins", get(api::list_plugins))
+-        .route("/api/plugins/{id}/icon", get(api::serve_plugin_icon))
++        // A live login session needs no device binding here; see `auth::UnboundClaim`.
++        .route("/plugin-icons/{id}", get(api::serve_plugin_icon))
+         .route(
+             "/api/plugins/{id}/pages/{page_id}",
+             get(api::serve_plugin_page),
+```
+
+**File**: `tests/integration/serve_cityhall_lockdown.rs` (modified, +1/-1)
+```diff
+@@ -232,7 +232,7 @@ async fn sensitive_routes_are_blocked() {
+         (Method::GET, "/api/skills/claude-user/review", ""),
+         (Method::GET, "/api/mcp/servers?agent=claude", ""),
+         (Method::GET, "/api/plugins", ""),
+-        (Method::GET, "/api/plugins/x/icon", ""),
++        (Method::GET, "/plugin-icons/x", ""),
+         (Method::GET, "/api/plugins/commands", ""),
+         (Method::GET, "/api/plugins/ui-state", ""),
+         (Method::GET, "/api/plugins/updates", ""),
+```
+
+**File**: `web/src/components/__tests__/PaneIcon.test.tsx` (modified, +2/-2)
+```diff
+@@ -8,11 +8,11 @@ import { PaneIcon } from "../PaneIcon";
+ describe("PaneIcon", () => {
+   it("renders the icon_asset image, outranking the resolved fallback icon", async () => {
+     const { findByTestId } = render(
+-      <PaneIcon icon={GitBranch} iconAssetUrl="/api/plugins/acme.widget/icon" className="size-4" testId="icon" />,
++      <PaneIcon icon={GitBranch} iconAssetUrl="/plugin-icons/acme.widget" className="size-4" testId="icon" />,
+     );
+     const icon = await findByTestId("icon");
+     expect(icon.tagName).toBe("IMG");
+-    expect(icon.getAttribute("src")).toBe("/api/plugins/acme.widget/icon");
++    expect(icon.getAttribute("src")).toBe("/plugin-icons/acme.widget");
    });
  
-+  it("never detaches a kept terminal when switching, which would reset its scroll to the top", async () => {
-+    const activate = await mountThreeKeepingTwo();
-+    const stack = screen.getByTestId("terminal-s1").parentElement!.parentElement!;
-+    const detached: Node[] = [];
-+    const record = (records: MutationRecord[]) => detached.push(...records.flatMap((r) => [...r.removedNodes]));
-+    const observer = new MutationObserver(record);
-+    observer.observe(stack, { childList: true });
-+    for (const id of ["s1", "s2", "s1"]) {
-+      activate(id, 2);
-+      await waitFor(() => expect(screen.getByTestId(`terminal-${id}`).dataset.active).toBe("true"));
-+      await act(async () => {});
-+    }
-+
-+    record(observer.takeRecords());
-+    observer.disconnect();
-+    expect(detached).toEqual([]);
-+  });
-+
-   it("normalizes configured limits to the supported range", () => {
-     expect(normalizePersistentTerminalLimit(0)).toBe(1);
-     expect(normalizePersistentTerminalLimit(5.4)).toBe(5);
-```
-
-**File**: `web/tests/coverage-matrix.json` (modified, +8/-0)
-```diff
-@@ -3243,6 +3243,14 @@
-         "web/src/components/SettingsView.tsx"
-       ]
-     },
-+    {
-+      "id": "settings.persistent-terminals",
-+      "kind": "vitest",
-+      "risk": "low",
-+      "description": "Kept terminals stay attached across session switches, so each keeps its scroll position.",
-+      "specs": ["src/components/__tests__/TerminalSessionStack.test.tsx"],
-+      "components": ["web/src/components/TerminalSessionStack.tsx"]
-+    },
-     {
-       "id": "settings.persistent-structured-views",
-       "kind": "vitest",
+   it("falls back to the resolved icon component when there is no icon_asset", () => {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5728** (2026-11-15): fix(web): keep retained terminals in place when switching (@njbrake)
-- **PR #5726** (2026-11-15): docs: move reviewer push exclusions to MAINTAINERS.md (@njbrake)
-- **PR #5723** (2026-11-15): docs: let reviewers push small fixes to contributor branches (@njbrake)
-- **PR #5722** (closed): fix(tui): paint a pending redraw instead of waiting for the next event (@athal7)
-- **PR #5720** (2026-11-15): fix: de-flake live drag-ring, triage menu and unowned-stop tests (@Seluj78)
-- **PR #5716** (2026-11-15): fix(acp): point the container-missing message at Recreate (@klubrake)
+- **PR #5828** (2026-11-17): test(tui): keep the settings scroll test independent of SSH (@klubrake)
+- **PR #5820** (2026-11-17): fix(deps): clear cargo-deny advisories RUSTSEC-2026-0544 and -0543 (@Seluj78)
+- **PR #5783** (2026-11-17): fix(tui): keep the request when a trust answer after a setup failure is refused (@cwrau)
+- **PR #5782** (2026-11-17): fix(tui): settings fields cut by the viewport show only their own rows (@klubrake)
+- **PR #5780** (2026-11-17): fix(sandbox): stop hook installers following links planted in the sandbox store (@Seluj78)
+- **PR #5778** (2026-11-17): fix(server): keep the auth failure coalesce window fixed (@Seluj78)
 
 ---
 
@@ -2214,58 +2627,72 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. process): wait for a stopped scope to drain before reporting it non-empty
+## X. plugin): avoid blocking runtime on asset downloads
 
 **RULE**:
-When implementing operations in `src/process/systemd/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/plugin/fetch.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `748ba0ff`: process): wait for a stopped scope to drain before reporting it non-empty. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c07429c3`: plugin): avoid blocking runtime on asset downloads. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/process/systemd/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/plugin/fetch.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// How long a stopped scope may keep draining its last processes.
-#[cfg(not(test))]
-const SCOPE_DRAIN_WINDOW: Duration = Duration::from_secs(5);
-#[cfg(test)]
-const SCOPE_DRAIN_WINDOW: Duration = Duration::from_millis(500);
-    let mut proven_empty = scope_stopped(session_id, scope)?;
-    if output.status.success() {
-        let deadline = std::time::Instant::now() + SCOPE_DRAIN_WINDOW;
-        while !proven_empty && std::time::Instant::now() < deadline {
-            std::thread::sleep(Duration::from_millis(50));
-            proven_empty = scope_stopped(session_id, scope)?;
-        }
+        // Keep staging and the lease until asynchronous file operations finish.
+        await_asset_download(tokio::spawn(download_release_binary(fetched, operation))).await
+async fn await_asset_download(
+    task: tokio::task::JoinHandle<Result<FetchedPlugin>>,
+) -> Result<FetchedPlugin> {
+    match task.await {
+        Ok(result) => result,
+        Err(error) if error.is_panic() => std::panic::resume_unwind(error.into_panic()),
+        Err(error) => Err(error).context("plugin asset download task failed"),
     }
-      settling)
-        n=$(cat "$root/n")
-        if [ "$n" -gt 0 ]; then
-          echo $((n - 1)) > "$root/n"
-          printf 'LoadState=loaded\nActiveState=inactive\nControlGroup=/owned\n'
-        else
-          printf 'LoadState=not-found\nActiveState=inactive\nControlGroup=\n'
-        fi
-        ;;
-      settling)
-        printf 'settling\n' > "$root/$unit"
-        echo 2 > "$root/n"
-        exit 0
-        ;;
-            ("settling", true, "settling\n"),
+}
+
+    use tokio::io::AsyncWriteExt;
+    let mut file = tokio::fs::File::create(dest)
+        .await
+        .with_context(|| format!("creating {}", dest.display()))?;
+    let result: Result<()> = async {
+        while let Some(chunk) = response.chunk().await? {
+            file.write_all(&chunk)
+                .await
+                .with_context(|| format!("writing {url} to {}", dest.display()))?;
+        }
+        Ok(())
+    .await;
+    let flush = file
+        .flush()
+        .await
+        .with_context(|| format!("writing {url} to {}", dest.display()));
+    result?;
+    flush
+    #[tokio::test]
+    async fn asset_task_panics_reach_the_job_panic_boundary() {
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    let proven_empty = scope_stopped(session_id, scope)?;
+        download_release_binary(fetched, operation).await
+    use std::io::Write;
+    let mut file =
+        std::fs::File::create(dest).with_context(|| format!("creating {}", dest.display()))?;
+    while let Some(chunk) = response.chunk().await? {
+        file.write_all(&chunk)
+            .with_context(|| format!("writing {url} to {}", dest.display()))?;
+    file.flush()
+        .with_context(|| format!("writing {url} to {}", dest.display()))
+                async move { download.lock().unwrap().clone() }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `748ba0ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c07429c3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

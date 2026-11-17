@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T18:56:24.427Z",
+  "last_updated": "2026-11-17T19:04:52.042Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "080098fbce8d89028f6c18efa03cd78c57feb2b1a42e366b001e99aec84edcc0",
-      "verified_at": "2026-11-16T05:28:57.198Z",
+      "content_hash": "8b2dc88d4f9d16543a9a28402459a263c9c8c4e52dbe16a2fa37390f2ceafed6",
+      "verified_at": "2026-11-17T19:04:52.041Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T05:28:57.198Z"
+      "last_updated": "2026-11-17T19:04:52.041Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",
@@ -16251,14 +16251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-      "content_hash": "5fa1f936992d0563bd2077ac6fe4381b5eba5fcdfac0fd29052b3c5e53bfe845",
-      "verified_at": "2026-11-13T07:46:57.964Z",
+      "content_hash": "cd57dcd4b47e43c6657f7b1d009b4da6b85c86f1ce204e43c8f304084389e749",
+      "verified_at": "2026-11-17T19:04:49.283Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T07:46:57.964Z"
+      "last_updated": "2026-11-17T19:04:49.283Z"
     },
     "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB": {
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
