@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `24cf8ef7`  
+> **Source Version**: `5b172d1a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T06:05:49.383Z  
+> **Timestamp**: 2026-11-17T03:26:21.097Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T06:05:49.377Z  
+> **Harvest Timestamp**: 2026-11-17T03:26:21.090Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9411 stars
+- **Stars / Engagement**: 9416 stars
 
 ---
 
@@ -1077,94 +1077,685 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `24cf8ef7` (2026-11-13)
-**Commit Message**: chore(deps): bump sysinfo from 0.39.6 to 0.40.0 (#27975)
+### Incident Patch 1: `ab28399d` (2026-11-16)
+**Commit Message**: fix(connector): keep NULL for columns with a default in CDC change events (#28004)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Li0k <[REDACTED_EMAIL]>
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `e2e_test/source_inline/cdc/postgres/postgres_null_with_default.slt` (added, +77/-0)
 ```diff
-@@ -18034,9 +18034,9 @@ dependencies = [
- 
- [[package]]
- name = "sysinfo"
--version = "0.39.6"
-+version = "0.40.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d2071df9448915b71c4fe6d25deaf1c22f12bd234f01540b77312bb8e41361e6"
-+checksum = "110e37d98880fd804cd47509b90a8444f7aaaab655ae625e83cd442a8bc2ebf2"
- dependencies = [
-  "libc",
-  "memchr",
+@@ -0,0 +1,77 @@
++control substitution on
++
++statement ok
++drop source if exists postgres_null_with_default_source cascade;
++
++system ok
++PGDATABASE=${PGDATABASE:-postgres} psql -c "
++    SELECT pg_terminate_backend(active_pid)
++    FROM pg_replication_slots
++    WHERE slot_name = 'postgres_null_with_default_slot' AND active_pid IS NOT NULL;
++    SELECT pg_sleep(1);
++    SELECT pg_drop_replication_slot(slot_name)
++    FROM pg_replication_slots
++    WHERE slot_name = 'postgres_null_with_default_slot';
++    DROP PUBLICATION IF EXISTS postgres_null_with_default_pub;
++    DROP TABLE IF EXISTS public.postgres_null_with_default CASCADE;
++    CREATE TABLE public.postgres_null_with_default (
++        id int PRIMARY KEY,
++        v int,
++        c_text text DEFAULT 'x',
++        c_jsonb jsonb DEFAULT '{}'::jsonb,
++        c_ts timestamp DEFAULT now()
++    );
++    INSERT INTO public.postgres_null_with_default VALUES (1, 0, NULL, NULL, NULL);
++    CREATE PUBLICATION postgres_null_with_default_pub FOR TABLE public.postgres_null_with_default;
++    "
++
++statement ok
++create source postgres_null_with_default_source with (
++    connector = 'postgres-cdc',
++    hostname = '${PGHOST:localhost}',
++    port = '${PGPORT:5432}',
++    username = '${PGUSER:$USER}',
++    password = '${PGPASSWORD:}',
++    database.name = '${PGDATABASE:postgres}',
++    schema.name = 'public',
++    publication.name = 'postgres_null_with_default_pub',
++    publication.create.enable = 'false',
++    slot.name = 'postgres_null_with_default_slot'
++);
++
++statement ok
++create table postgres_null_with_default_rw (*)
++from postgres_null_with_default_source table 'public.postgres_null_with_default';
++
++query IITTT retry 30 backoff 1s
++select id, v, c_text, c_jsonb, c_ts from postgres_null_with_default_rw order by id;
++----
++1 0 NULL NULL NULL
++
++system ok
++PGDATABASE=${PGDATABASE:-postgres} psql -c "
++    INSERT INTO public.postgres_null_with_default VALUES (2, 0, NULL, NULL, NULL);
++    UPDATE public.postgres_null_with_default SET v = 1 WHERE id = 1;
++    "
++
++query IITTT retry 30 backoff 1s
++select id, v, c_text, c_jsonb, c_ts from postgres_null_with_default_rw order by id;
++----
++1 1 NULL NULL NULL
++2 0 NULL NULL NULL
++
++statement ok
++drop source postgres_null_with_default_source cascade;
++
++system ok
++PGDATABASE=${PGDATABASE:-postgres} psql -c "
++    SELECT pg_terminate_backend(active_pid)
++    FROM pg_replication_slots
++    WHERE slot_name = 'postgres_null_with_default_slot' AND active_pid IS NOT NULL;
++    SELECT pg_sleep(1);
++    SELECT pg_drop_replication_slot(slot_name)
++    FROM pg_replication_slots
++    WHERE slot_name = 'postgres_null_with_default_slot';
++    DROP PUBLICATION IF EXISTS postgres_null_with_default_pub;
++    DROP TABLE IF EXISTS public.postgres_null_with_default CASCADE;
++    "
 ```
 
-**File**: `src/common/Cargo.toml` (modified, +1/-1)
+**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/core/DbzCdcEngine.java` (modified, +10/-12)
 ```diff
-@@ -105,7 +105,7 @@ stacker = "0.1"
- static_assertions = "1"
- strum = "0.28"
- strum_macros = "0.28"
--sysinfo = { version = "0.39", default-features = false, features = ["system"] }
-+sysinfo = { version = "0.40", default-features = false, features = ["system"] }
- thiserror = { workspace = true }
- thiserror-ext = { workspace = true }
- tinyvec = { version = "1", features = ["rustc_1_55", "grab_spare_slice"] }
+@@ -19,11 +19,10 @@
+ import static io.debezium.config.CommonConnectorConfig.TOPIC_PREFIX;
+ import static io.debezium.schema.AbstractTopicNamingStrategy.*;
+ 
+-import com.risingwave.connector.api.source.SourceTypeE;
++import com.risingwave.connector.source.common.DbzConnectorConfig;
+ import com.risingwave.proto.ConnectorServiceProto;
+ import io.debezium.embedded.Connect;
+ import io.debezium.engine.DebeziumEngine;
+-import java.util.Properties;
+ import java.util.concurrent.ArrayBlockingQueue;
+ import java.util.concurrent.BlockingQueue;
+ 
+@@ -36,28 +35,27 @@ public class DbzCdcEngine implements Runnable {
+ 
+     /** If config is not valid will throw exceptions */
+     public DbzCdcEngine(
+-            SourceTypeE connector,
+-            long sourceId,
+-            Properties config,
+-            DebeziumEngine.CompletionCallback completionCallback) {
+-        var heartbeatTopicPrefix = config.getProperty(TOPIC_HEARTBEAT_PREFIX.name());
+-        var topicPrefix = config.getProperty(TOPIC_PREFIX.name());
++            DbzConnectorConfig config, DebeziumEngine.CompletionCallback completionCallback) {
++        var dbzProps = config.getResolvedDebeziumProps();
++        var heartbeatTopicPrefix = dbzProps.getProperty(TOPIC_HEARTBEAT_PREFIX.name());
++        var topicPrefix = dbzProps.getProperty(TOPIC_PREFIX.name());
+         var transactionTopic = String.format("%s.%s", topicPrefix, DEFAULT_TRANSACTION_TOPIC);
+         var consumer =
+                 new DbzChangeEventConsumer(
+-                        connector,
+-                        sourceId,
++                        config.getSourceType(),
++                        config.getSourceId(),
+                         heartbeatTopicPrefix,
+                         transactionTopic,
+                         topicPrefix,
++                        config.isBackfillSource(),
+                         new ArrayBlockingQueue<>(DEFAULT_QUEUE_CAPACITY));
+ 
+         // Builds a debezium engine but not start it
+-        this.id = sourceId;
++        this.id = config.getSourceId();
+         this.changeEventConsumer = consumer;
+         this.engine =
+                 DebeziumEngine.create(Connect.class)
+-                        .using(config)
++                        .using(dbzProps)
+                         .using(completionCallback)
+                         .notifying(consumer)
+                         .build();
 ```
 
-**File**: `src/utils/resource_util/Cargo.toml` (modified, +1/-1)
+**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/core/DbzCdcEngineRunner.java` (modified, +2/-6)
 ```diff
-@@ -7,7 +7,7 @@ repository = { workspace = true }
- [dependencies]
- fs-err = "3"
- hostname = "0.4.1"
--sysinfo = { version = "0.39", default-features = false, features = ["system"] }
-+sysinfo = { version = "0.40", default-features = false, features = ["system"] }
- thiserror-ext = { workspace = true }
- tracing = "0.1"
+@@ -45,9 +45,7 @@ public static DbzCdcEngineRunner newCdcEngineRunner(
+             var sourceId = config.getSourceId();
+             var engine =
+                     new DbzCdcEngine(
+-                            config.getSourceType(),
+-                            config.getSourceId(),
+-                            config.getResolvedDebeziumProps(),
++                            config,
+                             (success, message, error) -> {
+                                 if (!success) {
+                                     LOG.error(
+@@ -79,9 +77,7 @@ public static DbzCdcEngineRunner create(DbzConnectorConfig config, CdcSourceChan
+             final DbzCdcEngineRunner finalRunner = runner;
+             var engine =
+                     new DbzCdcEngine(
+-                            config.getSourceType(),
+-                            config.getSourceId(),
+-                            config.getResolvedDebeziumProps(),
++                            config,
+                             (success, message, error) -> {
+                                 if (!success) {
+                                     LOG.error(
+```
+
+**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/core/DbzChangeEventConsumer.java` (modified, +3/-1)
+```diff
+@@ -72,6 +72,7 @@ public class DbzChangeEventConsumer
+             String heartbeatTopicPrefix,
+             String transactionTopic,
+             String schemaChangeTopic,
++            boolean isBackfillSource,
+             BlockingQueue<GetEventStreamResponse> queue) {
+         this.connector = connector;
+         this.sourceId = sourceId;
+@@ -85,11 +86,12 @@ public class DbzChangeEventConsumer
+         // to source parser, we use a customized JSON converter to avoid outputting the `schema`
+         // field.
+         var payloadConverter = new DbzJsonConverter();
+-        final HashMap<String, Object> configs = new HashMap<>(2);
++        final HashMap<String, Object> configs = new HashMap<>(3);
+         // only serialize the value part
+         configs.put(ConverterConfig.TYPE_CONFIG, ConverterType.VALUE.getName());
+         // include record schema to output JSON in { "schema": { ... }, "payload": { ... } } format
+         configs.put(JsonConverterConfig.SCHEMAS_ENABLE_CONFIG, true);
++        configs.put(JsonConverterConfig.REPLACE_NULL_WITH_DEFAULT_CONFIG, !isBackfillSource);
+         payloadConverter.configure(configs);
+         this.payloadConverter = payloadConverter;
  
 ```
 
-**File**: `src/utils/resource_util/src/lib.rs` (modified, +9/-6)
+**File**: `java/connector-node/risingwave-connector-service/src/test/java/com/risingwave/connector/source/core/DbzCdcEngineRunnerTest.java` (modified, +1/-5)
 ```diff
-@@ -151,18 +151,21 @@ pub mod memory {
-     const V2_MEMORY_LIMIT_PATH: &str = "/sys/fs/cgroup/memory.max";
-     const V2_MEMORY_CURRENT_PATH: &str = "/sys/fs/cgroup/memory.current";
+@@ -139,11 +139,7 @@ private static class WaitingEngine extends DbzCdcEngine {
+         boolean failStop;
  
-+    fn system_with_memory() -> System {
-+        // A zero total would invalidate memory sizing, so fail if sysinfo cannot initialize.
-+        let mut sys = System::new().expect("failed to initialize system memory information");
-+        sys.refresh_memory();
-+        sys
+         WaitingEngine(DbzConnectorConfig config) {
+-            super(
+-                    config.getSourceType(),
+-                    config.getSourceId(),
+-                    config.getResolvedDebeziumProps(),
+-                    (success, message, error) -> {});
++            super(config, (success, message, error) -> {});
+         }
+ 
+         @Override
+```
+
+---
+
+### Incident Patch 2: `8ac9c69f` (2026-11-16)
+**Commit Message**: fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978)
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/connector/src/allow_alter_on_fly_fields.rs` (modified, +7/-0)
+```diff
+@@ -178,6 +178,13 @@ pub static SOURCE_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<St
+ pub static SINK_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<String>>> = LazyLock::new(|| {
+     use sink_properties::*;
+     let mut map = HashMap::new();
++    // BigQueryConfig
++    map.try_insert(
++        std::any::type_name::<BigQueryConfig>().to_owned(),
++        [
++            "bigquery.change_sequence_number".to_owned(),
++        ].into_iter().collect(),
++    ).unwrap();
+     // ClickHouseConfig
+     map.try_insert(
+         std::any::type_name::<ClickHouseConfig>().to_owned(),
+```
+
+**File**: `src/connector/src/sink/big_query.rs` (modified, +112/-42)
+```diff
+@@ -21,6 +21,7 @@ use anyhow::{Context, anyhow};
+ use async_trait::async_trait;
+ use base64::Engine;
+ use base64::prelude::BASE64_STANDARD;
++use either::Either;
+ use futures::future::pending;
+ use futures::prelude::Future;
+ use futures::{Stream, StreamExt};
+@@ -265,6 +266,14 @@ pub struct BigQueryConfig {
+     pub aws_auth_props: AwsAuthProps,
+     pub r#type: String, // accept "append-only" or "upsert"
+ 
++    /// Write `_CHANGE_SEQUENCE_NUMBER` on upsert rows, so that `BigQuery` applies the changes of
++    /// each key in the order they are sent. Once a table has rows written with it, turning it off
++    /// makes `BigQuery` ignore later changes to those rows.
++    #[serde(rename = "bigquery.change_sequence_number", default)]
++    #[serde_as(as = "DisplayFromStr")]
++    #[with_option(allow_alter_on_fly)]
++    pub change_sequence_number: bool,
++
+     #[serde(flatten)]
+     pub unknown_fields: std::collections::HashMap<String, String>,
+ }
+@@ -538,6 +547,11 @@ impl Sink for BigQuerySink {
+ 
+     crate::impl_validate_sink_unknown_fields!();
+ 
++    fn validate_alter_config(config: &BTreeMap<String, String>) -> Result<()> {
++        BigQueryConfig::from_btreemap(config.clone())?;
++        Ok(())
 +    }
 +
-     /// Returns the system memory.
-     pub fn get_system_memory() -> usize {
--        let mut sys = System::new();
--        sys.refresh_memory();
--        sys.total_memory() as usize
-+        system_with_memory().total_memory() as usize
+     async fn new_log_sinker(&self, _writer_param: SinkWriterParam) -> Result<Self::LogSinker> {
+         let (writer, resp_stream) = BigQuerySinkWriter::new(
+             self.config.clone(),
+@@ -696,13 +710,15 @@ impl BigQuerySinkWriter {
+                 ..Default::default()
+             };
+             descriptor_proto.field.push(field);
+-            let field = FieldDescriptorProto {
+-                name: Some(CHANGE_SEQUENCE_NUMBER.to_owned()),
+-                number: Some((schema.len() + 2) as i32),
+-                r#type: Some(field_descriptor_proto::Type::String.into()),
+-                ..Default::default()
+-            };
+-            descriptor_proto.field.push(field);
++            if config.change_sequence_number {
++                let field = FieldDescriptorProto {
++                    name: Some(CHANGE_SEQUENCE_NUMBER.to_owned()),
++                    number: Some((schema.len() + 2) as i32),
++                    r#type: Some(field_descriptor_proto::Type::String.into()),
++                    ..Default::default()
++                };
++                descriptor_proto.field.push(field);
++            }
+         }
+ 
+         let descriptor_pool = build_protobuf_descriptor_pool(&descriptor_proto)?;
+@@ -724,7 +740,7 @@ impl BigQuerySinkWriter {
+         } else {
+             None
+         };
+-        let change_sequence_number_field = if !is_append_only {
++        let change_sequence_number_field = if !is_append_only && config.change_sequence_number {
+             let field = message_descriptor
+                 .get_field_by_name(CHANGE_SEQUENCE_NUMBER)
+                 .ok_or_else(|| {
+@@ -772,7 +788,11 @@ impl BigQuerySinkWriter {
      }
  
-     /// Returns the used memory of the system.
-     pub fn get_system_memory_used() -> usize {
--        let mut sys = System::new();
--        sys.refresh_memory();
--        sys.used_memory() as usize
-+        system_with_memory().used_memory() as usize
+     fn upsert(&mut self, chunk: StreamChunk) -> Result<Vec<Vec<u8>>> {
+-        let sequence_numbers = CHANGE_SEQUENCE_CLOCK.reserve(chunk.cardinality());
++        let sequence_numbers = if self.change_sequence_number_field.is_some() {
++            Either::Left(CHANGE_SEQUENCE_CLOCK.reserve(chunk.cardinality()).map(Some))
++        } else {
++            Either::Right(std::iter::repeat_n(None, chunk.cardinality()))
++        };
+         let mut serialized_rows: Vec<Vec<u8>> = Vec::with_capacity(chunk.capacity());
+         for ((op, row), sequence_number) in chunk.rows().zip_eq_debug(sequence_numbers) {
+             if op == Op::UpdateDelete {
+@@ -803,13 +823,15 @@ impl BigQuerySinkWriter {
+                     )
+                     .map_err(|e| SinkError::BigQuery(e.into()))?,
+             };
+-            pb_row
+-                .message
+-                .try_set_field(
+-                    self.change_sequence_number_field.as_ref().unwrap(),
+-                    prost_reflect::Value::String(sequence_number),
+-                )
+-                .map_err(|e| SinkError::BigQuery(e.into()))?;
++            if let Some(sequence_number) = sequence_number {
++                pb_row
++                    .message
++                    .try_set_field(
++                        self.change_sequence_number_field.as_ref().unwrap(),
++                        prost_reflect::Value::String(sequence_number),
++                    )
++                    .map_err(|e| SinkError::BigQuery(e.into()))?;
++            }
+ 
+             serialized_rows.push(pb_row.ser_to()?)
+         }
+@@ -1120,12 +1142,14 @@ mod test {
+     use risingwave_common::types::{DataType, StructType};
+     use tokio::sync::mpsc;
+ 
++    use crate::allow_alter_on_fly_fields::check_sink_allow_alter_on_fly_fields;
+     use crate::connector_common::AwsAuthProps;
+     use crate::sink::big_query::{
+-        BigQueryCommon, BigQueryConfig, BigQuerySink, BigQuerySinkWriter, CHANGE_SEQUENCE_NUMBER,
+-        CHANGE_TYPE, ChangeSequenceClock, StorageWriterClient, build_protobuf_descriptor_pool,
+-        build_protobuf_schema,
++      
+```
+
+**File**: `src/connector/with_options_sink.yaml` (modified, +9/-0)
+```diff
+@@ -115,6 +115,15 @@ BigQueryConfig:
+   - name: r#type
+     field_type: String
+     required: true
++  - name: bigquery.change_sequence_number
++    field_type: bool
++    comments: |-
++      Write `_CHANGE_SEQUENCE_NUMBER` on upsert rows, so that `BigQuery` applies the changes of
++      each key in the order they are sent. Once a table has rows written with it, turning it off
++      makes `BigQuery` ignore later changes to those rows.
++    required: false
++    default: Default::default
++    allow_alter_on_fly: true
+ ClickHouseConfig:
+   fields:
+   - name: clickhouse.url
+```
+
+---
+
+### Incident Patch 3: `5b172d1a` (2026-11-17)
+**Commit Message**: fix(storage): preserve listing pagination across full GC batches (#27766)
+
+**File**: `src/ctl/src/cmd_impl/hummock/migrate_legacy_object.rs` (modified, +1/-1)
+```diff
+@@ -55,7 +55,7 @@ pub async fn migrate_legacy_object(
+     let ObjectStoreImpl::Opendal(opendal) = store else {
+         return Err(anyhow!("OpenDAL is required"));
+     };
+-    let mut iter = opendal.list(source_dir, None, None).await?;
++    let mut iter = opendal.list(source_dir).await?;
+     let mut count = 0;
+     println!("Migration is started: from {source_dir} to {target_dir}.");
+     let mut from_to = Vec::with_capacity(concurrency as usize);
+```
+
+**File**: `src/ctl/src/cmd_impl/hummock/sst_dump.rs` (modified, +1/-1)
+```diff
+@@ -141,7 +141,7 @@ pub async fn sst_dump(context: &CtlContext, args: SstDumpArgs) -> anyhow::Result
+             .await?;
+         } else {
+             let mut metadata_iter = sstable_store
+-                .list_sst_object_metadata_from_object_store(None, None, None)
++                .list_sst_object_metadata_from_object_store(None)
+                 .await?;
+             while let Some(obj) = metadata_iter.try_next().await? {
+                 print_object(&obj);
+```
+
+**File**: `src/jni_core/src/opendal_schema_history.rs` (modified, +2/-8)
+```diff
+@@ -243,10 +243,7 @@ pub extern "system" fn Java_com_risingwave_java_binding_Binding_listObject<'a>(
+         let files: Vec<String> = JAVA_BINDING_ASYNC_RUNTIME.block_on(async {
+             let object_store = get_object_store().await;
+             let mut prefix_stripped_paths = Vec::new();
+-            let mut stream = object_store
+-                .list(&dir, None, None)
+-                .await
+-                .map_err(|e| anyhow!(e))?;
++            let mut stream = object_store.list(&dir).await.map_err(|e| anyhow!(e))?;
+             use futures::StreamExt;
+             while let Some(obj) = stream.next().await {
+                 let obj = obj.map_err(|e| anyhow!(e))?;
+@@ -292,10 +289,7 @@ pub extern "system" fn Java_com_risingwave_java_binding_Binding_deleteObjects<'a
+         JAVA_BINDING_ASYNC_RUNTIME.block_on(async {
+             let object_store = get_object_store().await;
+             let mut keys = Vec::new();
+-            let mut stream = object_store
+-                .list(&dir, None, None)
+-                .await
+-                .map_err(|e| anyhow!(e))?;
++            let mut stream = object_store.list(&dir).await.map_err(|e| anyhow!(e))?;
+             use futures::StreamExt;
+             while let Some(obj) = stream.next().await {
+                 let obj = obj.map_err(|e| anyhow!(e))?;
+```
+
+**File**: `src/meta/src/backup_restore/restore.rs` (modified, +1/-3)
+```diff
+@@ -293,9 +293,7 @@ async fn validate_integrity(
+         )
+         .await,
+     );
+-    let mut iter = object_store
+-        .list(hummock_storage_directory, None, None)
+-        .await?;
++    let mut iter = object_store.list(hummock_storage_directory).await?;
+     while let Some(obj) = iter.try_next().await? {
+         let Some(obj_id) = try_get_object_id_from_path(&obj.key) else {
+             continue;
+```
+
+**File**: `src/meta/src/hummock/manager/gc.rs` (modified, +227/-46)
+```diff
+@@ -95,11 +95,9 @@ impl GcManager {
+     async fn list_object_metadata_from_object_store(
+         &self,
+         prefix: Option<String>,
+-        start_after: Option<String>,
+-        limit: Option<usize>,
+     ) -> Result<ObjectMetadataIter> {
+         let list_path = format!("{}/{}", self.path_prefix, prefix.unwrap_or("".into()));
+-        let raw_iter = self.store.list(&list_path, start_after, limit).await?;
++        let raw_iter = self.store.list(&list_path).await?;
+         let valid_suffixes = VALID_OBJECT_ID_SUFFIXES.map(|suffix| format!(".{}", suffix));
+         let iter = raw_iter.filter(move |r| match r {
+             Ok(i) => future::ready(valid_suffixes.iter().any(|suffix| i.key.ends_with(suffix))),
+@@ -108,41 +106,23 @@ impl GcManager {
+         Ok(Box::pin(iter))
      }
  
-     /// Returns the total memory used by the system in bytes.
+-    /// Returns **filtered** object ids, and **unfiltered** total object count and size.
+-    pub async fn list_objects(
+-        &self,
++    /// Consumes a batch from the same listing, preserving the backend's pagination state.
++    /// Returns object ids filtered by retention, and the batch's count and size before that filter.
++    async fn list_objects_batch(
++        metadata_iter: &mut ObjectMetadataIter,
+         object_retention_watermark: u64,
+-        prefix: Option<String>,
+-        start_after: Option<String>,
+-        limit: Option<u64>,
+-    ) -> Result<(HashSet<HummockObjectId>, u64, u64, Option<String>)> {
+-        tracing::debug!(
+-            object_retention_watermark,
+-            prefix,
+-            start_after,
+-            limit,
+-            "Try to list objects."
+-        );
++        limit: usize,
++    ) -> Result<(HashSet<HummockObjectId>, u64, u64)> {
+         let mut total_object_count = 0;
+         let mut total_object_size = 0;
+-        let mut next_start_after: Option<String> = None;
+-        let metadata_iter = self
+-            .list_object_metadata_from_object_store(prefix, start_after, limit.map(|i| i as usize))
+-            .await?;
+         let filtered = metadata_iter
++            .by_ref()
++            .take(limit)
+             .filter_map(|r| {
+                 let result = match r {
+                     Ok(o) => {
+                         total_object_count += 1;
+                         total_object_size += o.total_size;
+-                        // Determine if the LIST has been truncated.
+-                        // A false positives would at most cost one additional LIST later.
+-                        if let Some(limit) = limit
+-                            && limit == total_object_count
+-                        {
+-                            next_start_after = Some(o.key.clone());
+-                            tracing::debug!(next_start_after, "set next start after");
+-                        }
+                         if o.last_modified < object_retention_watermark as f64 {
+                             Some(Ok(get_object_id_from_path(&o.key)))
+                         } else {
+@@ -155,12 +135,7 @@ impl GcManager {
+             })
+             .try_collect::<HashSet<HummockObjectId>>()
+             .await?;
+-        Ok((
+-            filtered,
+-            total_object_count,
+-            total_object_size as u64,
+-            next_start_after,
+-        ))
++        Ok((filtered, total_object_count, total_object_size as u64))
+     }
+ 
+     pub fn add_may_delete_object_ids(
+@@ -271,8 +246,11 @@ impl HummockManager {
+             object_retention_time,
+             Duration::from_secs(self.env.opts.min_sst_retention_time_sec),
+         );
+-        let limit = self.env.opts.full_gc_object_limit;
+-        let mut start_after = None;
++        let limit = usize::try_from(self.env.opts.full_gc_object_limit)
++            .map_err(|_| anyhow::anyhow!("full_gc_object_limit exceeds usize::MAX"))?;
++        if limit == 0 {
++            return Err(anyhow::anyhow!("full_gc_object_limit must be greater than zero").into());
++        }
+         let object_retention_watermark = self
+             .now()
+             .await?
+@@ -285,21 +263,24 @@ impl HummockManager {
+             limit,
+             "Start GC."
+         );
++        // Keep one lister across batches so backends such as Azure Blob can use their
++        // continuation tokens without requiring support for listing after an object key.
++        let mut metadata_iter = self
++            .gc_manager
++            .list_object_metadata_from_object_store(prefix.clone())
++            .await?;
+         loop {
+             tracing::debug!(
+                 retention_sec = object_retention_time.as_secs(),
+                 prefix,
+-                start_after,
+                 limit,
+                 "Start a GC batch."
+             );
+-            let (object_ids, batch_object_count, batch_object_size, next_start_after) = self
+-                .gc_manager
+-                .list_objects(
++            let (object_ids, batch_object_count, batch_object_size) =
++                GcManager::list_objects_batch(
++                    &mut metadata_iter,
+ 
+```
+
+**File**: `src/meta/src/hummock/manager/worker.rs` (modified, +1/-1)
+```diff
+@@ -142,7 +142,7 @@ async fn try_clean_up_cdc_source_schema_history(
+     // The path should follow that defined in OpenDalSchemaHIstory.java prefixed by data_directory.
+     let object_dir: String = format!("{data_directory}/rw-cdc-schema-history/source-{source_id}");
+     let mut keys: Vec<String> = Vec::new();
+-    let mut stream = object_store.list(&object_dir, None, None).await?;
++    let mut stream = object_store.list(&object_dir).await?;
+     use futures::StreamExt;
+     while let Some(obj) = stream.next().await {
+         let obj = obj?;
+```
+
+**File**: `src/object_store/src/benchmark/basic.rs` (modified, +3/-8)
+```diff
+@@ -213,7 +213,7 @@ pub(super) async fn metadata(
+             async move {
+                 Outcome::from_result(
+                     async {
+-                        let mut stream = s.list(&prefix, None, None).await?;
++                        let mut stream = s.list(&prefix).await?;
+                         let mut count = 0;
+                         while stream.try_next().await?.is_some() {
+                             count += 1;
+@@ -417,7 +417,7 @@ pub(super) async fn preflight(
+                     );
+                 }
+                 let listed = store
+-                    .list(&prefix, None, None)
++                    .list(&prefix)
+                     .await
+                     .context("preflight LIST")?
+                     .try_collect::<Vec<_>>()
+@@ -431,12 +431,7 @@ pub(super) async fn preflight(
+                     .await
+                     .context("preflight DELETE")?;
+                 ensure!(
+-                    store
+-                        .list(&prefix, None, None)
+-                        .await?
+-                        .try_next()
+-                        .await?
+-                        .is_none(),
++                    store.list(&prefix).await?.try_next().await?.is_none(),
+                     "preflight object is still listed after DELETE"
+                 );
+                 Ok(Sample {
+```
+
+**File**: `src/object_store/src/benchmark/tests.rs` (modified, +5/-11)
+```diff
+@@ -168,13 +168,7 @@ async fn all_profiles_clean_only_owned_objects() {
+             30
+         );
+     }
+-    let remaining: Vec<_> = store
+-        .list("", None, None)
+-        .await
+-        .unwrap()
+-        .try_collect()
+-        .await
+-        .unwrap();
++    let remaining: Vec<_> = store.list("").await.unwrap().try_collect().await.unwrap();
+     assert_eq!(remaining.len(), 1);
+     assert_eq!(remaining[0].key, "production/object");
+     assert!(!report.backpressure_verified);
+@@ -286,7 +280,7 @@ async fn kept_data_and_pre_cancelled_run() {
+     assert!(report.succeeded());
+     assert_eq!(
+         store
+-            .list("risectl-bench/kept/", None, None)
++            .list("risectl-bench/kept/")
+             .await
+             .unwrap()
+             .try_collect::<Vec<_>>()
+@@ -325,7 +319,7 @@ async fn kept_data_and_pre_cancelled_run() {
+     assert_eq!(report.cleanup_status, "completed");
+     assert!(
+         store
+-            .list("risectl-bench/cancelled/", None, None)
++            .list("risectl-bench/cancelled/")
+             .await
+             .unwrap()
+             .try_collect::<Vec<_>>()
+@@ -660,7 +654,7 @@ async fn real_s3_profiles() {
+     assert!(report.succeeded(), "{report:#?}");
+     assert!(
+         store
+-            .list(&prefix, None, None)
++            .list(&prefix)
+             .await
+             .unwrap()
+             .try_collect::<Vec<_>>()
+@@ -742,7 +736,7 @@ async fn basic_caps_measurement_reuses_keys_and_replenishes_deletes() {
+     assert_eq!(deleted.items, 12); // Two five-object rounds and one two-object batch.
+     assert!(deleted.wall_elapsed_ms >= deleted.elapsed_ms + deleted.setup_elapsed_ms);
+     let remaining = store
+-        .list("risectl-bench/budget/", None, None)
++        .list("risectl-bench/budget/")
+         .await
+         .unwrap()
+         .try_collect::<Vec<_>>()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27975** (2026-11-13): chore(deps): bump sysinfo from 0.39.6 to 0.40.0 (@dependabot[bot])
-- **PR #27970** (2026-11-12): feat(iceberg): gate PK index sinks behind a license (@silver-ymz)
-- **PR #27967** (2026-11-13): cherry-pick fix(storage): don't panic on a write limit notification before the snapshot (#27853) to release-3.0 (@yuhao-su)
-- **PR #27965** (2026-11-12): fix(storage): don't panic on a write limit notification before the snapshot (#27853) (@risingwave-ci)
-- **PR #27960** (closed): feat(sink): support replacing exactly-once sinks (@chenzl25)
-- **PR #27953** (2026-11-12): fix(stream): make ChangeBuffer cancellation constant time (@yuhao-su)
+- **PR #28013** (2026-11-16): cherry-pick fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978) to release-3.0 (@yuhao-su)
+- **PR #28011** (2026-11-16): cherry-pick fix(optimizer): keep the outer column type when eliminating a correlated apply (#28003) to release-3.1 (@chenzl25)
+- **PR #28008** (2026-11-16): fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978) (@risingwave-ci)
+- **PR #28004** (2026-11-16): fix(connector): keep NULL for columns with a default in CDC change events (@anlowee)
+- **PR #28003** (2026-11-16): fix(optimizer): keep the outer column type when eliminating a correlated apply (@chenzl25)
+- **PR #27987** (2026-11-16): fix(build): patch native dependencies for modern GCC and glibc (@silver-ymz)
 
 ---
 
@@ -1184,30 +1775,60 @@ Co-authored-by: Li0k <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump sysinfo from 0.39.6 to 0.40.0
+## X. connector): keep NULL for columns with a default in CDC change events
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e_test/source_inline/cdc/postgres/postgres_null_with_default.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `24cf8ef7`: deps): bump sysinfo from 0.39.6 to 0.40.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab28399d`: connector): keep NULL for columns with a default in CDC change events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/source_inline/cdc/postgres/postgres_null_with_default.slt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.40.0"
-checksum = "110e37d98880fd804cd47509b90a8444f7aaaab655ae625e83cd442a8bc2ebf2"
+control substitution on
+
+statement ok
+drop source if exists postgres_null_with_default_source cascade;
+
+system ok
+PGDATABASE=${PGDATABASE:-postgres} psql -c "
+    SELECT pg_terminate_backend(active_pid)
+    FROM pg_replication_slots
+    WHERE slot_name = 'postgres_null_with_default_slot' AND active_pid IS NOT NULL;
+    SELECT pg_sleep(1);
+    SELECT pg_drop_replication_slot(slot_name)
+    FROM pg_replication_slots
+    WHERE slot_name = 'postgres_null_with_default_slot';
+    DROP PUBLICATION IF EXISTS postgres_null_with_default_pub;
+    DROP TABLE IF EXISTS public.postgres_null_with_default CASCADE;
+    CREATE TABLE public.postgres_null_with_default (
+        id int PRIMARY KEY,
+        v int,
+        c_text text DEFAULT 'x',
+        c_jsonb jsonb DEFAULT '{}'::jsonb,
+        c_ts timestamp DEFAULT now()
+    );
+    INSERT INTO public.postgres_null_with_default VALUES (1, 0, NULL, NULL, NULL);
+    CREATE PUBLICATION postgres_null_with_default_pub FOR TABLE public.postgres_null_with_default;
+    "
+
+statement ok
+create source postgres_null_with_default_source with (
+    connector = 'postgres-cdc',
+    hostname = '${PGHOST:localhost}',
+    port = '${PGPORT:5432}',
+    username = '${PGUS
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.39.6"
-checksum = "d2071df9448915b71c4fe6d25deaf1c22f12bd234f01540b77312bb8e41361e6"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `24cf8ef7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab28399d` are properly handled with clean fallback behavior.

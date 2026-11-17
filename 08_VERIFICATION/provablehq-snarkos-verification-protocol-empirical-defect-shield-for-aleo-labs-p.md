@@ -4,22 +4,22 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/ProvableHQ/snarkOS",
-  "source_version": "9419be28",
+  "source_version": "a33d49c4",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T21:40:01.212Z",
+  "timestamp": "2026-11-17T03:26:20.935Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `9419be28`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T21:40:01.212Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `a33d49c4`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T03:26:20.935Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `9419be28`)
+- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `a33d49c4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:39:59.991Z  
+> **Harvest Timestamp**: 2026-11-17T03:26:19.605Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1999,173 +1999,513 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c341ad3` (2026-11-16)
-**Commit Message**: Merge pull request #4664 from aleo-labs-protocol/fix/propose-drain-ledger-error
+### Incident Patch 1: `e7a70c70` (2026-11-17)
+**Commit Message**: Remove the locktick profile and tokio_console flag checks from build.rs
 
-Requeue a transmission when the ledger check fails while proposing
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `node/bft/ledger-service/src/mock.rs` (modified, +23/-8)
+**File**: `Cargo.lock` (modified, +1/-32)
 ```diff
-@@ -45,12 +45,19 @@ pub struct MockLedgerService<N: Network> {
-     /// The transmission IDs the ledger knows without being able to produce a transmission for them,
-     /// as is the case for the ones it recorded as aborted.
-     known_transmission_ids: HashSet<TransmissionID<N>>,
-+    /// The transmission IDs for which the containment check returns an error, as a failed ledger read would.
-+    unreadable_transmission_ids: HashSet<TransmissionID<N>>,
- }
+@@ -4753,7 +4753,7 @@ dependencies = [
+  "ci_info",
+  "getopts",
+  "nias",
+- "toml 0.5.11",
++ "toml",
+ ]
  
- impl<N: Network> MockLedgerService<N> {
-     /// Initializes a new mock ledger service.
-     pub fn new(committee: Committee<N>) -> Self {
--        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids: Default::default() }
-+        Self {
-+            committee,
-+            height_to_round_and_hash: Default::default(),
-+            known_transmission_ids: Default::default(),
-+            unreadable_transmission_ids: Default::default(),
-+        }
-     }
+ [[package]]
+@@ -5117,15 +5117,6 @@ dependencies = [
+  "serde_core",
+ ]
  
-     /// Initializes a new mock ledger service at the specified height.
-@@ -59,11 +66,7 @@ impl<N: Network> MockLedgerService<N> {
-         for i in 0..=height {
-             height_to_hash.insert(i, (i as u64 * 2, Field::<N>::from_u32(i).into()));
-         }
--        Self {
--            committee,
--            height_to_round_and_hash: Mutex::new(height_to_hash),
--            known_transmission_ids: Default::default(),
--        }
-+        Self { height_to_round_and_hash: Mutex::new(height_to_hash), ..Self::new(committee) }
-     }
+-[[package]]
+-name = "serde_spanned"
+-version = "1.1.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
+-dependencies = [
+- "serde_core",
+-]
+-
+ [[package]]
+ name = "serde_urlencoded"
+ version = "0.7.1"
+@@ -5373,7 +5364,6 @@ dependencies = [
+  "snarkos-node-tcp",
+  "snarkvm",
+  "tikv-jemallocator",
+- "toml 1.1.6+spec-1.1.0",
+  "tracing",
+ ]
  
-     /// Initializes a new mock ledger service that knows the given transmission IDs.
-@@ -74,7 +77,16 @@ impl<N: Network> MockLedgerService<N> {
-         committee: Committee<N>,
-         known_transmission_ids: HashSet<TransmissionID<N>>,
-     ) -> Self {
--        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids }
-+        Self { known_transmission_ids, ..Self::new(committee) }
-+    }
-+
-+    /// Makes the containment check fail for the given transmission IDs.
-+    pub fn with_unreadable_transmission_ids(
-+        mut self,
-+        unreadable_transmission_ids: impl IntoIterator<Item = TransmissionID<N>>,
-+    ) -> Self {
-+        self.unreadable_transmission_ids.extend(unreadable_transmission_ids);
-+        self
-     }
- }
+@@ -7451,21 +7441,6 @@ dependencies = [
+  "serde",
+ ]
  
-@@ -197,8 +209,11 @@ impl<N: Network> LedgerService<N> for MockLedgerService<N> {
-         Ok(false)
-     }
+-[[package]]
+-name = "toml"
+-version = "1.1.6+spec-1.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
+-dependencies = [
+- "indexmap 2.14.2",
+- "serde_core",
+- "serde_spanned",
+- "toml_datetime",
+- "toml_parser",
+- "toml_writer",
+- "winnow",
+-]
+-
+ [[package]]
+ name = "toml_datetime"
+ version = "1.1.1+spec-1.1.0"
+@@ -7496,12 +7471,6 @@ dependencies = [
+  "winnow",
+ ]
  
--    /// Returns `false`, unless the mock was configured to know the transmission ID.
-+    /// Returns `false`, unless the mock was configured to know the transmission ID or to fail on it.
-     fn contains_transmission(&self, transmission_id: &TransmissionID<N>) -> Result<bool> {
-+        if self.unreadable_transmission_ids.contains(transmission_id) {
-+            bail!("[MockLedgerService] Unable to read transmission ID {}", fmt_id(transmission_id));
-+        }
-         let contains = self.known_transmission_ids.contains(transmission_id);
-         trace!(
-             "[MockLedgerService] Contains transmission ID {}.{} - {contains}",
+-[[package]]
+-name = "toml_writer"
+-version = "1.1.2+spec-1.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
+-
+ [[package]]
+ name = "tonic"
+ version = "0.14.6"
 ```
 
-**File**: `node/bft/src/primary.rs` (modified, +57/-4)
+**File**: `Cargo.toml` (modified, +0/-11)
 ```diff
-@@ -714,9 +714,22 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
-                 }
+@@ -382,19 +382,8 @@ version = "0.11.2"
+ [build-dependencies.built]
+ workspace = true
  
-                 // Check if the ledger already contains the transmission.
--                if self.ledger.contains_transmission(&id).unwrap_or(true) {
--                    trace!("Proposing - Skipping transmission '{}' - Already in ledger", fmt_id(id));
--                    continue;
-+                match self.ledger.contains_transmission(&id) {
-+                    Ok(true) => {
-+                        trace!("Proposing - Skipping transmission '{}' - Already in ledger", fmt_id(id));
-+                        continue;
-+                    }
-+                    Ok(false) => {}
-+                    Err(e) => {
-+                        warn!(
-+                            "Proposing - Stopping at transmission '{}' - Unable to check the ledger - {e}",
-+                            fmt_id(id)
-+                        );
-+                        // Requeue the transmission at the back of the worker and stop draining,
-+                        // as continuing would cycle through the queue forever if every ledger read fails.
-+                        worker.reinsert(id, transmission);
-+                        break 'outer;
-+                    }
-                 }
+-[build-dependencies.toml]
+-version = "1"
+-
+ [profile.release]
+ lto = "thin"
+-# uncomment the 2 lines below when building with the locktick feature or use the `release-locktick` profile
+-# debug = "line-tables-only"
+-# strip = "none"
+-
+-[profile.release-locktick]
+-inherits = "release"
+-debug = "line-tables-only"
+-strip = "none"
  
-                 // Check if storage already knows the transmission, either way.
-@@ -2266,7 +2279,15 @@ mod tests {
-         committee: Committee<CurrentNetwork>,
-         height: u32,
-     ) -> Primary<CurrentNetwork> {
--        let ledger = Arc::new(MockLedgerService::new_at_height(committee, height));
-+        primary_with_ledger(account_index, accounts, MockLedgerService::new_at_height(committee, height))
-+    }
-+
-+    fn primary_with_ledger(
-+        account_index: usize,
-+        accounts: &[(SocketAddr, Account<CurrentNetwork>)],
-+        ledger: MockLedgerService<CurrentNetwork>,
-+    ) -> Primary<CurrentNetwork> {
-+        let ledger = Arc::new(ledger);
-         let storage = Storage::new(ledger.clone(), Arc::new(BFTMemoryService::new()), 10).unwrap();
+ [profile.dev]
+ debug = "line-tables-only"
+```
+
+**File**: `build.rs` (modified, +1/-115)
+```diff
+@@ -13,116 +13,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
  
-         // Initialize the primary.
-@@ -2590,6 +2611,38 @@ mod tests {
-         );
-     }
+-use std::{env, fs, path::Path, process};
+-use toml::Value;
+-
+-fn check_locktick_profile() {
+-    let locktick_enabled = env::var("CARGO_FEATURE_LOCKTICK").is_ok();
+-    if locktick_enabled {
+-        // First check the env variables that can override the TOML values.
+-        let (mut valid_debug_override, mut valid_strip_override) = (false, false);
+-
+-        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_DEBUG") {
+-            if val != "line-tables-only" {
+-                eprintln!(
+-                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_DEBUG may only be set to `line-tables-only`."
+-                );
+-                process::exit(1);
+-            } else {
+-                valid_debug_override = true;
+-            }
+-        }
+-        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_STRIP") {
+-            if val != "none" {
+-                eprintln!(
+-                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_STRIP may only be set to `none`."
+-                );
+-                process::exit(1);
+-            } else {
+-                valid_strip_override = true;
+-            }
+-        }
+-
+-        if valid_debug_override && valid_strip_override {
+-            // Both overrides are compatible with locktick, no need to check the TOML.
+-            return;
+-        }
+-
+-        // If the relevant overrides were either invalid or not present, check the TOML.
+-        let profile = env::var("PROFILE").unwrap_or_else(|_| "".to_string());
+-        let manifest = Path::new(&env::var("CARGO_MANIFEST_DIR").unwrap()).join("Cargo.toml");
+-        let contents = fs::read_to_string(&manifest).expect("failed to read Cargo.toml");
+-        let doc: Value = toml::from_str(&contents).expect("invalid TOML in Cargo.toml");
+-
+-        let profile_table = doc.get("profile").and_then(|p| p.get(profile));
+-        if let Some(Value::Table(profile_settings)) = profile_table {
+-            if let Some(debug) = profile_settings.get("debug") {
+-                match debug {
+-                    Value::String(s) if s == "line-tables-only" => {
+-                        println!("cargo:info=manifest has debuginfo=line-tables-only");
+-                    }
+-                    _ => {
+-                        eprintln!(
+-                            "🔴 When enabling the locktick feature, the profile must have debug set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
+-                        );
+-                        process::exit(1);
+-                    }
+-                }
+-            } else {
+-                eprintln!(
+-                    "🔴 When enabling the locktick feature, the profile must have `debug` set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
+-                );
+-                process::exit(1);
+-            }
+-            if let Some(debug) = profile_settings.get("strip") {
+-                match debug {
+-                    Value::String(s) if s == "none" => {
+-                        println!("cargo:info=manifest has strip=none");
+-                    }
+-                    _ => {
+-                        eprintln!(
+-                            "🔴 When enabling the locktick feature, the profile must have `strip` set to `none`. Uncomment the relevant lines in Cargo.toml."
+-                        );
+-                        process::exit(1);
+-                    }
+-                }
+-            }
+-        }
+-    }
+-}
+-
+-fn is_clippy() -> bool {
+-    env::var("RUSTC_WORKSPACE_WRAPPER").is_ok_and(|var| var.contains("clippy"))
+-}
+-
+-fn check_tokio_console_flags() {
+-    // Don't run this check under clippy, otherwise it will cause issues with --all-features.
+-    if is_clippy() {
+-        return;
+-    }
+-
+-    // Skip if the feature is not used.
+-    let feature_enabled = env::var("CARGO_FEATURE_TOKIO_CONSOLE").is_ok();
+-    if !feature_enabled {
+-        return;
+-    }
+-
+-    // Check for the presence of RUSTFLAGS.
+-    let Ok(rustflags) = env::var("CARGO_ENCODED_RUSTFLAGS") else {
+-        eprintln!(
+-            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
+-        );
+-        process::exit(1);
+-    };
+-
+-    // Check for the presence of `tokio_unstable` within RUSTFLAGS.
+-    if !rustflags.contains("tokio_unstable") {
+-        eprintln!(
+-            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
+-        );
+-        process::exit(1);
+-    }
+-}
++use std::{env, fs, path::Path};
  
-+    #[test_log::test(tokio::test)]
-+    async fn test_propose_batch_requeues_a_transmission_the_ledger_cannot_check() {
-+        let mut rng = TestRng::default();
-+        let (accounts, committee) = sample_committee(&mut rng);
-+        let peer_ip = accounts[1].0;
-+
-+        // Sample three transactions, and make the ledger fail to check the second one.
-+        let transmissions = [(); 3].map(|_| {
-+            let (transaction_id, transaction) = sample_unconfirmed_transaction(&mut rng);
-+            // Hashing serialized transaction data does not fail.
-+            let checksum = transaction.to_checksum::<CurrentNetwork>().unwrap();
-+            (TransmissionID::from((&transaction_id, &checksum)), Transmission::Transaction(transaction))
-+        });
-+        let [first_id, unreadable_id, last_id] = transmissions.each_ref().map(|(transmission_id, _)| *transmission_id);
-+        let height = CurrentNetwork::CONSENSUS_HEIGHT(ConsensusVersion::V1).unwrap();
-+        let ledger =
-+            MockLedgerService::new_at_height(committee, height).with_unreadable_transmission_ids([unreadable_id]);
-+        let primary = primary_with_ledger(0, &accounts, ledger);
-+        for (transmission_id, transmission) in transmissions {
-+            primary.workers()[0].process_transmission_from_peer(peer_ip, transmission_id, transmission);
-+        }
-+        assert_eq!(primary.workers()[0].num_transmissions(), 3);
-+
-+        // The proposal stops at the transmission the ledger cannot check, which moves to the back of the queue.
-+        assert!(primary.propose_batch().await.unwrap());
-+        assert_eq!(
-+            primary.proposed_batch.read().as_proposal().unwrap().transmissions().keys().copied().collect::<Vec<_>>(),
-+            [first_id]
-+        );
-+        assert_eq!(primary.workers()[0].transmissions().into_keys().collect::<Vec<_>>(), [last_id, unreadable_id]);
-+    }
-+
-     #[test_log::test(tokio::test)]
-     async fn test_propose_batch_with_no_transmissions() {
-         let mut rng = TestRng::default();
+ // The build script.
+ 
+@@ -150,11 +41,6 @@ fn emit_version_env() {
+ }
+ 
+ fn main() {
+-    // Check if locktick feature is correctly enabled.
+-    check_locktick_profile();
+-    // Check if the tokio_console feature is correctly enabled.
+-    check_tokio_console_flags();
+-
+     // Register the rele
+```
+
+---
+
+### Incident Patch 2: `18b3912a` (2026-11-17)
+**Commit Message**: Report unreadable and non-UTF-8 files instead of crashing
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `scripts/check_sources.py` (modified, +11/-2)
+```diff
+@@ -104,11 +104,20 @@ def main():
+ 
+     for path in rust_files(root):
+         name = path.relative_to(root)
+-        contents = path.read_bytes()
++        try:
++            contents = path.read_bytes()
++        except OSError as error:
++            errors.append(f"{name}: cannot be read: {error}")
++            continue
+         in_root_dot_dir = len(name.parts) > 1 and name.parts[0].startswith(".")
+         if not in_root_dot_dir and not contents.startswith(LICENSE_HEADER):
+             errors.append(f"{name}: the license header is missing or does not match .resources/license_header")
+-        imbalance = lock_import_imbalance(contents.decode("utf-8"))
++        try:
++            text = contents.decode("utf-8")
++        except UnicodeDecodeError as error:
++            errors.append(f"{name}: is not valid UTF-8: {error}")
++            continue
++        imbalance = lock_import_imbalance(text)
+         if imbalance > 0:
+             errors.append(f"{name}: {imbalance} lock import(s) from parking_lot or tokio have no locktick counterpart")
+         elif imbalance < 0:
+```
+
+---
+
+### Incident Patch 3: `c81c424a` (2026-11-17)
+**Commit Message**: Merge pull request #4682 from aleo-labs-protocol/build/drop-feature-config-checks
+
+**File**: `Cargo.lock` (modified, +1/-32)
+```diff
+@@ -4753,7 +4753,7 @@ dependencies = [
+  "ci_info",
+  "getopts",
+  "nias",
+- "toml 0.5.11",
++ "toml",
+ ]
+ 
+ [[package]]
+@@ -5117,15 +5117,6 @@ dependencies = [
+  "serde_core",
+ ]
+ 
+-[[package]]
+-name = "serde_spanned"
+-version = "1.1.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
+-dependencies = [
+- "serde_core",
+-]
+-
+ [[package]]
+ name = "serde_urlencoded"
+ version = "0.7.1"
+@@ -5373,7 +5364,6 @@ dependencies = [
+  "snarkos-node-tcp",
+  "snarkvm",
+  "tikv-jemallocator",
+- "toml 1.1.6+spec-1.1.0",
+  "tracing",
+ ]
+ 
+@@ -7451,21 +7441,6 @@ dependencies = [
+  "serde",
+ ]
+ 
+-[[package]]
+-name = "toml"
+-version = "1.1.6+spec-1.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
+-dependencies = [
+- "indexmap 2.14.2",
+- "serde_core",
+- "serde_spanned",
+- "toml_datetime",
+- "toml_parser",
+- "toml_writer",
+- "winnow",
+-]
+-
+ [[package]]
+ name = "toml_datetime"
+ version = "1.1.1+spec-1.1.0"
+@@ -7496,12 +7471,6 @@ dependencies = [
+  "winnow",
+ ]
+ 
+-[[package]]
+-name = "toml_writer"
+-version = "1.1.2+spec-1.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
+-
+ [[package]]
+ name = "tonic"
+ version = "0.14.6"
+```
+
+**File**: `Cargo.toml` (modified, +0/-11)
+```diff
+@@ -382,19 +382,8 @@ version = "0.11.2"
+ [build-dependencies.built]
+ workspace = true
+ 
+-[build-dependencies.toml]
+-version = "1"
+-
+ [profile.release]
+ lto = "thin"
+-# uncomment the 2 lines below when building with the locktick feature or use the `release-locktick` profile
+-# debug = "line-tables-only"
+-# strip = "none"
+-
+-[profile.release-locktick]
+-inherits = "release"
+-debug = "line-tables-only"
+-strip = "none"
+ 
+ [profile.dev]
+ debug = "line-tables-only"
+```
+
+**File**: `build.rs` (modified, +1/-115)
+```diff
+@@ -13,116 +13,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-use std::{env, fs, path::Path, process};
+-use toml::Value;
+-
+-fn check_locktick_profile() {
+-    let locktick_enabled = env::var("CARGO_FEATURE_LOCKTICK").is_ok();
+-    if locktick_enabled {
+-        // First check the env variables that can override the TOML values.
+-        let (mut valid_debug_override, mut valid_strip_override) = (false, false);
+-
+-        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_DEBUG") {
+-            if val != "line-tables-only" {
+-                eprintln!(
+-                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_DEBUG may only be set to `line-tables-only`."
+-                );
+-                process::exit(1);
+-            } else {
+-                valid_debug_override = true;
+-            }
+-        }
+-        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_STRIP") {
+-            if val != "none" {
+-                eprintln!(
+-                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_STRIP may only be set to `none`."
+-                );
+-                process::exit(1);
+-            } else {
+-                valid_strip_override = true;
+-            }
+-        }
+-
+-        if valid_debug_override && valid_strip_override {
+-            // Both overrides are compatible with locktick, no need to check the TOML.
+-            return;
+-        }
+-
+-        // If the relevant overrides were either invalid or not present, check the TOML.
+-        let profile = env::var("PROFILE").unwrap_or_else(|_| "".to_string());
+-        let manifest = Path::new(&env::var("CARGO_MANIFEST_DIR").unwrap()).join("Cargo.toml");
+-        let contents = fs::read_to_string(&manifest).expect("failed to read Cargo.toml");
+-        let doc: Value = toml::from_str(&contents).expect("invalid TOML in Cargo.toml");
+-
+-        let profile_table = doc.get("profile").and_then(|p| p.get(profile));
+-        if let Some(Value::Table(profile_settings)) = profile_table {
+-            if let Some(debug) = profile_settings.get("debug") {
+-                match debug {
+-                    Value::String(s) if s == "line-tables-only" => {
+-                        println!("cargo:info=manifest has debuginfo=line-tables-only");
+-                    }
+-                    _ => {
+-                        eprintln!(
+-                            "🔴 When enabling the locktick feature, the profile must have debug set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
+-                        );
+-                        process::exit(1);
+-                    }
+-                }
+-            } else {
+-                eprintln!(
+-                    "🔴 When enabling the locktick feature, the profile must have `debug` set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
+-                );
+-                process::exit(1);
+-            }
+-            if let Some(debug) = profile_settings.get("strip") {
+-                match debug {
+-                    Value::String(s) if s == "none" => {
+-                        println!("cargo:info=manifest has strip=none");
+-                    }
+-                    _ => {
+-                        eprintln!(
+-                            "🔴 When enabling the locktick feature, the profile must have `strip` set to `none`. Uncomment the relevant lines in Cargo.toml."
+-                        );
+-                        process::exit(1);
+-                    }
+-                }
+-            }
+-        }
+-    }
+-}
+-
+-fn is_clippy() -> bool {
+-    env::var("RUSTC_WORKSPACE_WRAPPER").is_ok_and(|var| var.contains("clippy"))
+-}
+-
+-fn check_tokio_console_flags() {
+-    // Don't run this check under clippy, otherwise it will cause issues with --all-features.
+-    if is_clippy() {
+-        return;
+-    }
+-
+-    // Skip if the feature is not used.
+-    let feature_enabled = env::var("CARGO_FEATURE_TOKIO_CONSOLE").is_ok();
+-    if !feature_enabled {
+-        return;
+-    }
+-
+-    // Check for the presence of RUSTFLAGS.
+-    let Ok(rustflags) = env::var("CARGO_ENCODED_RUSTFLAGS") else {
+-        eprintln!(
+-            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
+-        );
+-        process::exit(1);
+-    };
+-
+-    // Check for the presence of `tokio_unstable` within RUSTFLAGS.
+-    if !rustflags.contains("tokio_unstable") {
+-        eprintln!(
+-            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
+-        );
+-        process::exit(1);
+-    }
+-}
++use std::{env, fs, path::Path};
+ 
+ // The build script.
+ 
+@@ -150,11 +41,6 @@ fn emit_version_env() {
+ }
+ 
+ fn main() {
+-    // Check if locktick feature is correctly enabled.
+-    check_locktick_profile();
+-    // Check if the tokio_console feature is correctly enabled.
+-    check_tokio_console_flags();
+-
+     // Register the rele
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4679** (2026-11-16): Bump snarkVM to aleo-labs-protocol/snarkVM@d36b2f743 (@aleo-labs-merge-bot[bot])
-- **PR #4676** (2026-11-16): chore(deps): bump taiki-e/install-action from 2.90.2 to 2.90.3 in the github-actions group (@dependabot[bot])
-- **PR #4675** (2026-11-16): Bump snarkVM to aleo-labs-protocol/snarkVM@6e917bc9b (@aleo-labs-merge-bot[bot])
-- **PR #4673** (2026-11-16): ci: read the consensus version from one node, not a probe devnet (@cbeck88)
-- **PR #4669** (closed): test: do not merge - documentation-only CI probe (@cbeck88)
-- **PR #4667** (2026-11-15): Lower iteration counts in randomized round-trip tests (@cbeck88)
+- **PR #4689** (2026-11-17): Scan every top-level use statement for lock imports (@cbeck88-ai-dev)
+- **PR #4685** (closed): [Release] Use published snarkVM 4.13.0 crates for mainnet (@snarkworld)
+- **PR #4684** (2026-11-17): Run fleet CI for approved fork pull requests (@cbeck88)
+- **PR #4683** (2026-11-17): Merge mainnet into staging (@aleo-labs-merge-bot[bot])
+- **PR #4682** (2026-11-17): Remove the locktick profile and tokio_console flag checks from build.rs (@cbeck88-ai-dev)
+- **PR #4681** (2026-11-17): Move the license and locktick source scans from build.rs to CI (@cbeck88-ai-dev)
 
 ---
 
@@ -2185,60 +2525,62 @@ Requeue a transmission when the ledger check fails while proposing
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in mock.rs
+## X. Remove the locktick profile and tokio_console flag checks from build.rs
 
 **RULE**:
-When implementing operations in `node/bft/ledger-service/src/mock.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c341ad3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7a70c70`: Remove the locktick profile and tokio_console flag checks from build.rs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/ledger-service/src/mock.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// The transmission IDs for which the containment check returns an error, as a failed ledger read would.
-    unreadable_transmission_ids: HashSet<TransmissionID<N>>,
-        Self {
-            committee,
-            height_to_round_and_hash: Default::default(),
-            known_transmission_ids: Default::default(),
-            unreadable_transmission_ids: Default::default(),
-        }
-        Self { height_to_round_and_hash: Mutex::new(height_to_hash), ..Self::new(committee) }
-        Self { known_transmission_ids, ..Self::new(committee) }
-    }
-
-    /// Makes the containment check fail for the given transmission IDs.
-    pub fn with_unreadable_transmission_ids(
-        mut self,
-        unreadable_transmission_ids: impl IntoIterator<Item = TransmissionID<N>>,
-    ) -> Self {
-        self.unreadable_transmission_ids.extend(unreadable_transmission_ids);
-        self
-    /// Returns `false`, unless the mock was configured to know the transmission ID or to fail on it.
-        if self.unreadable_transmission_ids.contains(transmission_id) {
-            bail!("[MockLedgerService] Unable to read transmission ID {}", fmt_id(transmission_id));
-        }
+ "toml",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids: Default::default() }
-        Self {
-            committee,
-            height_to_round_and_hash: Mutex::new(height_to_hash),
-            known_transmission_ids: Default::default(),
-        }
-        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids }
-    /// Returns `false`, unless the mock was configured to know the transmission ID.
+ "toml 0.5.11",
+[[package]]
+name = "serde_spanned"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
+dependencies = [
+ "serde_core",
+]
+
+ "toml 1.1.6+spec-1.1.0",
+[[package]]
+name = "toml"
+version = "1.1.6+spec-1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
+dependencies = [
+ "indexmap 2.14.2",
+ "serde_core",
+ "serde_spanned",
+ "toml_datetime",
+ "toml_parser",
+ "toml_writer",
+ "winnow",
+]
+
+[[package]]
+name = "toml_writer"
+version = "1.1.2+spec-1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c341ad3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7a70c70` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

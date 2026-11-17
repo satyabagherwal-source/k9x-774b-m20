@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "9419be28",
+    "sourceVersion": "a33d49c4",
     "license": "Apache-2.0",
-    "contentHash": "167c2502d2f17bfbabe5914acf0feded6b50670df0a03d92181141bd91c201a3",
-    "lastHarvestedAt": "2026-11-16T21:40:01.022Z",
+    "contentHash": "d9d6d6bebbdabd7fa03ab1ea5f54e3750d061bddbfc123f772cb5483a952d4f3",
+    "lastHarvestedAt": "2026-11-17T03:26:20.708Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "7f30b56d",
+    "sourceVersion": "2280c280",
     "license": "Apache-2.0",
-    "contentHash": "cdbcbbf0eb1332019876e6eaba7eb4e3d333be75f933554a6480cc2c19abfa7b",
-    "lastHarvestedAt": "2026-11-15T21:15:43.140Z",
+    "contentHash": "3bb767671b0641f1206da2b8a1cb8861c8f839b66d797d8dd93a608204132473",
+    "lastHarvestedAt": "2026-11-17T03:26:16.839Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "24cf8ef7",
+    "sourceVersion": "5b172d1a",
     "license": "Apache-2.0",
-    "contentHash": "b430616fc8589cdf9a6c059b03ff0bb2702496ad42a60ce79a7754b58e187c27",
-    "lastHarvestedAt": "2026-11-14T06:05:50.353Z",
+    "contentHash": "2bd29a48078f0c87f357becf39afab60b42c37a36a2574b34e4976463e559f40",
+    "lastHarvestedAt": "2026-11-17T03:26:22.190Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -9923,10 +9923,10 @@
     "repository": "scrapinghub/dateparser",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapinghub/dateparser",
-    "sourceVersion": "90544c0b",
+    "sourceVersion": "ecf380af",
     "license": "BSD-3-Clause",
-    "contentHash": "7a61bc657422853f210fc485ca7f0d98eb59fc57135d85d553ab2d10145c78f4",
-    "lastHarvestedAt": "2026-11-07T19:37:17.933Z",
+    "contentHash": "37e6d41ab47065701adb0bbaf203b25ff2b7580a49ec859362d50d10d4ff4546",
+    "lastHarvestedAt": "2026-11-17T03:26:11.597Z",
     "learningId": "learn-github-scrapinghub-dateparser"
   },
   "google-closure-compiler": {
@@ -10163,10 +10163,10 @@
     "repository": "signerlabs/Klee",
     "platform": "github",
     "sourceUrl": "https://github.com/signerlabs/Klee",
-    "sourceVersion": "ba09a7ac",
+    "sourceVersion": "f39e0f96",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "b827284fd77378f21f01a4b4747c95f464fe2c76c09c13a40d9248019f1998b9",
-    "lastHarvestedAt": "2026-11-03T21:09:05.125Z",
+    "contentHash": "0bd559fb1b7b6602720778c75798d52b2bd433b30563f53a24cf655a000ca005",
+    "lastHarvestedAt": "2026-11-17T03:26:14.264Z",
     "learningId": "learn-github-signerlabs-klee"
   },
   "testing-library-react-testing-library": {

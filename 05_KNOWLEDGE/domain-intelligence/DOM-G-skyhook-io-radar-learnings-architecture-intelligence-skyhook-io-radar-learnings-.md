@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T10:31:22.788Z",
+  "timestamp": "2026-11-17T03:26:27.842Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-skyhook-io-radar-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [skyhook-io-radar-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T10:31:22.788Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T03:26:27.842Z`  
 > **Learning ID**: `LEARN-EVO-skyhook-io-radar-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), E (Creative Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from skyhook-io-radar-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `148a70c8`  
+> **Source Version**: `2280c280`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T10:30:12.136Z  
+> **Timestamp**: 2026-11-17T03:26:15.695Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T10:30:12.128Z  
+> **Harvest Timestamp**: 2026-11-17T03:26:15.688Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4121 stars
+- **Stars / Engagement**: 4138 stars
 
 ---
 
@@ -2454,11 +2454,11 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2592** (2026-11-10): **Applications workload view: clicking any resource chip (cm/secret/svc/ing) or Topology-tab node never opens the resource**
-  *Symptoms*: ## Describe the bug  In the Applications section, inside an application's workload view, clicking any resource chip does nothing: `cm/...` and `secret/...` in **Configuration inputs**, `svc/...` in **Serving configuration**, `ing/...` under **Entry point resources**. The click is actually handled — DevTools shows Radar fetching the resource (`/api/resources/configmaps/<ns>/<name>`, `/api/issues/resource/...`) — but no resource panel ever appears.  Same on the workload's **Topology** tab: clicking a resource node (e.g. the ConfigMap) opens nothing, and as a bonus it kicks you back to the Overview tab (`tab=topology` is dropped from the URL).  For comparison, the main **Topology** view (left nav) works fine: clicking any node, including ConfigMaps, opens the resource panel. Pod rows in the workload view also work (they navigate to `/workload/pods/...`).  ## To reproduce  Steps to reproduce the behavior:  1. Open **Applications**, click an app backed by a Deployment (URL becomes `/applications?app=...&workload=Deployment/...`). 2. In the workload Overview, click the `cm/ ...` chip in **Configuration inputs** (or `secret/`, `svc/`, `ing/` — all behave the same). 3. Nothing happens. The URL briefly loses the `workload` param and immediately gets it back (two consecutive `history.replaceState` calls), the resource is fetched from the API, but no panel is shown. 4. Switch the workload view to its **Topology** tab, click the ConfigMap node → same nothing, plus you're returned to the 
+- **Issue #2687** (2026-11-15): **Release Desktop workflow fails during Apple notarization due to missing/expired agreement**
+  *Symptoms*: ## Describe the bug  The `Release Desktop` GitHub Actions workflow fails during the Apple notarization step for the macOS release artifact. The job reaches the notarization request, then exits with a 403 from Apple’s notarization service.  ## To reproduce  1. Trigger the `Release Desktop` workflow in `skyhook-io/radar` 2. Wait for the macOS build to finish packaging the app 3. Observe the workflow attempt to submit the artifact for Apple notarization 4. The job fails before finishing the release  ## Expected behavior  The release workflow should successfully submit the signed/notarized macOS artifact to Apple and complete the release process without failing.  ## Screenshots  Not applicable.  ## Diagnostics (optional)  N/A  ## Logs  ```text 2026-11-13T10:14:58.9407140Z Conducting pre-submission checks for radar-desktop_v1.20.3_darwin_universal.zip and initiating connection to the Apple notary service... 2026-11-13T10:15:00.9809290Z Error: HTTP status code: 403. A required agreement is missing or has expired. This request requires an in-effect agreement that has not been signed or has expired. Ensure your team has signed the necessary legal agreements and that they are not expired. 2026-11-13T10:15:00.9857090Z ##[error]Process completed with exit code 1. ```  ## Additional context  The workflow URL is: https://github.com/skyhook-io/radar/actions/runs/43406103414/job/131820798764  This appears to be an Apple Developer / notarization account issue rather than a code-level build f
 
-- **Issue #2446** (2026-11-09): **Issue detector reports stale Gateway API route conditions as active**
-  *Symptoms*: TLDR: I made a HTTPRoute with a bad config, fixed it, but Envoy kept the old status from the previous version as a failure indicator - Radar shows this as an active failure even tho it was for a previous version of the resource.  Radar Desktop - Version 1.19.0  ---  ## Description A route can be correctly attached and accepted by its current Gateway listener while retaining an old `status.parents` entry for a removed parent ref. The issue detector appears to treat the obsolete `Accepted=False` condition as a current failure, without checking whether its `observedGeneration` matches the route’s generation or whether its `parentRef` is still in `spec.parentRefs`.  ## Example  The current route spec references `websecure`:  ```yaml metadata:   generation: 2 spec:   parentRefs:     - group: gateway.networking.k8s.io       kind: Gateway       name: public-gateway       namespace: gateway-system       sectionName: websecure ```  But status retains a failed condition for the old `https` parent, alongside a successful condition for the current parent:  ```yaml status:   parents:     - parentRef:         group: gateway.networking.k8s.io         kind: Gateway         name: public-gateway         namespace: gateway-system         sectionName: https       conditions:         - type: Accepted           status: "False"           reason: NoMatchingParent           observedGeneration: 1           message: No listeners match this parent ref         - type: BackendsAvailable           status: 
+- **Issue #2670** (2026-11-15): **Timeline: "spec changed (gen N→N+1, fields not specifically tracked)" for every Argo CD Application every few minutes**
+  *Symptoms*: ## Describe the bug  The timeline shows "spec changed (gen N→N+1, fields not specifically tracked)" for every Argo CD Application every 2–3 minutes. Nothing in spec changed. The noise hides real events.  Argo CD Applications have no status subresource (argoproj/argo-cd#22967), so each status write (e.g. status.reconciledAt on every reconcile) bumps metadata.generation.  In internal/k8s/cache.go, generationBumpSignalsSpecChange() runs the generic check (genericDesiredState ignores metadata and status) only for kinds without an audited differ. Application has one (diffApplication in history.go), so the check is skipped and the function returns true for any generation bump.  ## To reproduce  1. Install Argo CD 3.6 with a few auto-synced Applications. 2. Install Radar (Helm chart 1.20.2, in-cluster, auth mode oidc). 3. Open the timeline and wait 5–10 minutes without changing anything.  ## Expected behavior  No "spec changed" event when only status/metadata changed, like for kinds without an audited differ. Possible fix: also compare genericDesiredState for audited unstructured kinds.  ## Screenshots  - Radar version: 1.20.2 - Kubernetes: 1.35.8 (kubeadm), Argo CD 3.6.1  <img width="1438" height="742" alt="2026-11-14_184927" src="https://github.com/user-attachments/assets/aff5c3ae-2e9e-468a-8b06-ce4051c041db" /> <img width="1441" height="744" alt="2026-11-14_184842" src="https://github.com/user-attachments/assets/200f14aa-f41c-4f3d-b5d0-bd80db87886a" /> <img width="1439" height="7
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2475,57 +2475,827 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `148a70c8` (2026-11-13)
-**Commit Message**: Fix Linux desktop packaging with verified nfpm 2.49.0 binary (#2663)
+### Incident Patch 1: `c8f387b4` (2026-11-16)
+**Commit Message**: Recover panics in MCP request handlers (#2745)
 
-Linux desktop releases fail before packaging because `go install
-.../nfpm@latest` now selects nfpm 2.49.0, which requires Go 1.27.4 while
-the runner uses Go 1.26.10. The last successful release, v1.20.2, used
-the same command and compiler but resolved nfpm 2.48.0.
+## Summary
 
-Install the official nfpm 2.49.0 Linux amd64 binary instead, pinned to
-its published SHA-256. This upgrades the packaging tool without changing
-the application compiler. The archive is verified before extraction and
-the tool directory is added to subsequent steps through GITHUB_PATH.
+A panic in any MCP tool handler ends the whole Radar process. The MCP
+SDK runs each request in its own goroutine and doesn't recover panics,
+while Radar's REST routes do. So the same bug that costs a REST caller
+one failed request takes Radar down for everyone when an agent hits it
+through MCP: every open browser, every SSE stream, every other agent.
 
-Validation: workflow syntax, extracted installer Bash syntax and
-ShellCheck passed. [Linux
-recovery](https://github.com/skyhook-io/radar/actions/runs/43419721215)
-built the original v1.20.3 source on ubuntu-22.04 and produced the
-tarball, deb, rpm and AppImage with nfpm 2.49.0. All PR checks passed,
-including the AppImage build-and-launch test. Apple notarization remains
-blocked independently by the account agreement.
+This adds a receiving middleware to every Radar MCP server (the full,
+read-only, apply and investigation servers all come from `newServer`).
+When a handler panics:
 
-**File**: `.github/workflows/release-desktop.yml` (modified, +11/-1)
+- the stack is logged, with the method and tool name;
+- a `tools/call` returns a tool error (`isError: true`), which is how
+MCP reports a tool failure an agent can act on. The message points at
+Radar's log and, since a write tool may have changed something before it
+panicked, says to check resource state before retrying;
+- any other method returns a JSON-RPC internal error (`-32603`);
+- the server keeps answering.
+
+## What changed
+
+- `internal/mcp/recover.go`: `recoverMiddleware`.
+- `internal/mcp/server.go`: installed first in `newServer`. The SDK
+wraps each later middleware around the earlier ones, so this one si
+
+**File**: `internal/mcp/recover.go` (added, +42/-0)
 ```diff
-@@ -267,7 +267,17 @@ jobs:
-         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+@@ -0,0 +1,42 @@
++package mcp
++
++import (
++	"context"
++	"log"
++	"runtime/debug"
++
++	"github.com/modelcontextprotocol/go-sdk/jsonrpc"
++	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
++)
++
++// recoverMiddleware turns a panic in a request handler into a failed request.
++// The SDK runs handlers in their own goroutines without recovering, so a panic
++// in any tool would otherwise end the whole Radar process; the REST routes
++// recover theirs. A tool call reports the failure as a tool error, which is
++// what an agent can act on; other methods return a JSON-RPC internal error.
++// Goroutines a handler starts itself are outside this and must recover their own.
++func recoverMiddleware(next mcpsdk.MethodHandler) mcpsdk.MethodHandler {
++	return func(ctx context.Context, method string, req mcpsdk.Request) (result mcpsdk.Result, err error) {
++		defer func() {
++			rec := recover()
++			if rec == nil {
++				return
++			}
++			name := method
++			if call, ok := req.(*mcpsdk.CallToolRequest); ok && call.Params != nil {
++				name = method + " " + call.Params.Name
++			}
++			log.Printf("[mcp] panic in %s: %v\n%s", name, rec, debug.Stack())
++			if method == "tools/call" {
++				result = &mcpsdk.CallToolResult{
++					IsError: true,
++					Content: []mcpsdk.Content{&mcpsdk.TextContent{Text: "Radar hit an internal error answering this tool call; details are in Radar's log. If the call could change resources, check their state before retrying."}},
++				}
++				err = nil
++				return
++			}
++			result, err = nil, &jsonrpc.Error{Code: jsonrpc.CodeInternalError, Message: "internal error handling " + method}
++		}()
++		return next(ctx, method, req)
++	}
++}
+```
+
+**File**: `internal/mcp/recover_test.go` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++package mcp
++
++import (
++	"context"
++	"strings"
++	"testing"
++
++	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
++)
++
++// A panicking tool fails its own call and leaves Radar's MCP server answering.
++func TestToolPanicFailsTheCallNotTheServer(t *testing.T) {
++	ctx := context.Background()
++	server := newServer(false, false, "")
++	calls := 0
++	server.AddTool(&mcpsdk.Tool{Name: "boom", InputSchema: map[string]any{"type": "object"}}, func(context.Context, *mcpsdk.CallToolRequest) (*mcpsdk.CallToolResult, error) {
++		calls++
++		var m map[string]any
++		_ = m["pods"].([]map[string]any)
++		return nil, nil
++	})
++	server.AddTool(&mcpsdk.Tool{Name: "ok", InputSchema: map[string]any{"type": "object"}}, func(context.Context, *mcpsdk.CallToolRequest) (*mcpsdk.CallToolResult, error) {
++		return &mcpsdk.CallToolResult{Content: []mcpsdk.Content{&mcpsdk.TextContent{Text: "fine"}}}, nil
++	})
++	client := mcpsdk.NewClient(&mcpsdk.Implementation{Name: "test", Version: "test"}, nil)
++	st, ct := mcpsdk.NewInMemoryTransports()
++	ss, err := server.Connect(ctx, st, nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	cs, err := client.Connect(ctx, ct, nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { _ = cs.Close(); _ = ss.Wait() })
++	for i := range 2 {
++		res, err := cs.CallTool(ctx, &mcpsdk.CallToolParams{Name: "boom"})
++		if err != nil {
++			t.Fatalf("call %d: %v", i, err)
++		}
++		text := ""
++		if len(res.Content) == 1 {
++			if c, ok := res.Content[0].(*mcpsdk.TextContent); ok {
++				text = c.Text
++			}
++		}
++		if !res.IsError || !strings.Contains(text, "internal error") {
++			t.Fatalf("call %d: result = %+v", i, res)
++		}
++	}
++	if calls != 2 {
++		t.Fatalf("tool ran %d times, want 2", calls)
++	}
++	if res, err := cs.CallTool(ctx, &mcpsdk.CallToolParams{Name: "ok"}); err != nil || res.IsError {
++		t.Fatalf("a normal call after the panics: %+v, %v", res, err)
++	}
++}
+```
+
+**File**: `internal/mcp/server.go` (modified, +2/-0)
+```diff
+@@ -30,6 +30,8 @@ func newServer(includeWrites, includeExec bool, instructions string) *mcpsdk.Ser
+ 		},
+ 	)
  
-       - name: Install nfpm
--        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
-+        env:
-+          NFPM_VERSION: '2.49.0'
-+          NFPM_SHA256: '2afaa5ffb5e3493402e31e7c67a5a1fb42133e3f66fc315ca0051934125561c7'
-+        run: |
-+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/nfpm.tar.gz" \
-+            "https://github.com/goreleaser/nfpm/releases/download/v${NFPM_VERSION}/nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz"
-+          echo "${NFPM_SHA256}  $RUNNER_TEMP/nfpm.tar.gz" | sha256sum --check --strict
-+          mkdir -p "$RUNNER_TEMP/nfpm-bin"
-+          tar -xzf "$RUNNER_TEMP/nfpm.tar.gz" -C "$RUNNER_TEMP/nfpm-bin" nfpm
-+          echo "$RUNNER_TEMP/nfpm-bin" >> "$GITHUB_PATH"
-+          "$RUNNER_TEMP/nfpm-bin/nfpm" --version
++	server.AddReceivingMiddleware(recoverMiddleware)
++
+ 	// Repair recognisable argument-name mistakes before schema validation, and
+ 	// report the accepted argument names when validation still fails. Every tool
+ 	// schema is additionalProperties:false, so without this one wrong argument
+```
+
+---
+
+### Incident Patch 2: `58462cf5` (2026-11-16)
+**Commit Message**: fix(ui): readable status banners in light mode (#2705)
+
+## Summary
+
+Status banners were hard to read in light mode. The banner at the top of
+a generic resource's drawer (any custom resource without a curated
+renderer) used raw Tailwind `-400` hues on a 10% tint: `text-yellow-400`
+on pale yellow reads at about 1.5:1, well under the 4.5:1 small text
+needs, so a degraded status like "Pending" nearly disappeared. And in
+every `AlertBanner`, the 12px message line that says *why* a resource is
+in its state used the variant's tint at 80% opacity, about 2.5–3.8:1 on
+the light backgrounds. Dark mode was fine, which is how both slipped
+through.
+
+## What changed
+
+- **The generic banner renders through the shared `AlertBanner`**, which
+carries light and dark pairs for each tone and is what DESIGN.md asks
+problem surfaces to use. Each health level maps straight to a variant:
+healthy → success, degraded → warning, **alert → the orange alert
+variant** (it used to fold into red, losing Radar's three-step degraded
+→ alert → unhealthy gradient), unhealthy → error, neutral and unknown →
+unknown. Icons stay the same except for alert, which shows AlertCircle
+instead of the XCircle it borrowed from unhe
+
+**File**: `packages/k8s-ui/src/components/resources/renderers/GenericRenderer.banner.test.tsx` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++import { describe, expect, it } from 'vitest'
++import { renderToString } from 'react-dom/server'
++import { GenericRenderer } from './GenericRenderer'
++import { AlertBanner } from '../../ui/drawer-components'
++
++const widget = (status: Record<string, unknown>) => ({
++  apiVersion: 'example.com/v1', kind: 'Widget', metadata: { name: 'w' }, status,
++})
++
++// The status banner uses the shared AlertBanner's light and dark pairs: a raw
++// -400 hue reads at roughly 1.5:1 on a light tint.
++describe('GenericRenderer status banner', () => {
++  it.each([
++    ['healthy', { conditions: [{ type: 'Ready', status: 'True' }] }, 'text-emerald-700'],
++    ['degraded', { phase: 'Pending' }, 'text-amber-700'],
++    ['unhealthy', { conditions: [{ type: 'Ready', status: 'False' }] }, 'text-red-700'],
++  ])('%s uses theme-paired colors', (_, status, titleClass) => {
++    const html = renderToString(<GenericRenderer data={widget(status)} />)
++    const banner = html.slice(0, html.indexOf('</div></div></div>'))
++    expect(banner).toContain(titleClass)
++    expect(banner).not.toMatch(/text-(yellow|green|red|slate)-400/)
++  })
++
++  it('keeps the detail line in neutral text, readable on every tint', () => {
++    const html = renderToString(<GenericRenderer data={widget({ conditions: [{ type: 'Ready', status: 'False', reason: 'BackendDown', message: 'the backend is down' }] })} />)
++    expect(html).toMatch(/<div class="[^"]*text-theme-text-secondary[^"]*">the backend is down</)
++    expect(html).not.toMatch(/text-red-600\/80/)
++  })
++
++  it('keeps every variant\'s message line neutral, alert included', () => {
++    for (const variant of ['error', 'warning', 'info', 'success', 'alert'] as const) {
++      const html = renderToString(<AlertBanner variant={variant} title="t" message="why" />)
++      expect(html).toMatch(/<div class="[^"]*text-theme-text-secondary[^"]*">why</)
++    }
++  })
++
++  it('renders no detail line when the status has no message', () => {
++    const html = renderToString(<GenericRenderer data={widget({ conditions: [{ type: 'Ready', status: 'True' }] })} />)
++    const banner = html.slice(0, html.indexOf('</div></div></div>'))
++    expect(banner).not.toContain('text-theme-text-secondary')
++  })
++})
+```
+
+**File**: `packages/k8s-ui/src/components/resources/renderers/GenericRenderer.conditions.test.tsx` (modified, +3/-3)
+```diff
+@@ -102,7 +102,7 @@ describe('GenericRenderer conditions', () => {
+     const html = render([cond('InvalidRolloutConfig', 'False'), cond('RolloutProgressing', 'False')], appSet)
+     expect(chipClass(html, 'InvalidRolloutConfig', 'False')).not.toContain('status-red')
+     expect(chipClass(html, 'RolloutProgressing', 'False')).not.toContain('status-red')
+-    expect(html).not.toContain('bg-red-500/10')
++    expect(html).not.toContain('bg-red-50 ')
+   })
  
-       - name: Build frontend
-         run: make frontend embed
+   it("doesn't color a healthy service's Stopped=False red", () => {
+@@ -113,15 +113,15 @@ describe('GenericRenderer conditions', () => {
+   it('shows a deliberately stopped model as stopped, not failed', () => {
+     const html = render([cond('Stopped', 'True'), { type: 'Ready', status: 'False', reason: 'Stopped' }], stopRequested)
+     expect(html).toContain("This model is stopped and isn&#x27;t serving requests.")
+-    expect(html).not.toContain('bg-red-500/10')
++    expect(html).not.toContain('bg-red-50 ')
+     expect(chipClass(html, 'Ready', 'False')).not.toContain('status-red')
+   })
+ 
+   it("doesn't call a failed resume stopped", () => {
+     const html = render([cond('Stopped', 'True'), { type: 'PredictorReady', status: 'False', reason: 'ReconcileFailed' }, { type: 'Ready', status: 'False', reason: 'Stopped' }], stopRequested)
+     expect(html).not.toContain('isn&#x27;t serving requests')
+     expect(html).toContain('ReconcileFailed')
+-    expect(html).toContain('bg-red-500/10')
++    expect(html).toContain('bg-red-50 ')
+     expect(chipClass(html, 'PredictorReady', 'False')).toContain('status-red')
+   })
+ 
+```
+
+**File**: `packages/k8s-ui/src/components/resources/renderers/GenericRenderer.tsx` (modified, +27/-41)
+```diff
+@@ -1,7 +1,7 @@
+ import { useState } from 'react'
+ import { Info, CheckCircle, XCircle, AlertCircle, FileCode, AlertTriangle, Layers, Minus } from 'lucide-react'
+ import { clsx } from 'clsx'
+-import { Section, PropertyList, Property, isInvertedPolarityCondition } from '../../ui/drawer-components'
++import { AlertBanner, Section, PropertyList, Property, isInvertedPolarityCondition } from '../../ui/drawer-components'
+ import { Collapse, CollapseChevron, useDisclosure } from '../../ui/Collapse'
+ import { getGenericResourceStatus } from '../generic-status'
+ import { isApiGroup } from '../resource-utils-cnpg'
+@@ -40,32 +40,12 @@ export function GenericRenderer({ data }: GenericRendererProps) {
+       {acknowledgedPause && <CrossplanePauseNotice data={data} />}
+       {/* Health Status Banner (if determinable) */}
+       {healthStatus && (
+-        <div className={clsx(
+-          'mb-4 p-3 rounded-lg border flex items-center gap-3',
+-          healthStatus.type === 'healthy' && 'bg-green-500/10 border-green-500/30',
+-          healthStatus.type === 'degraded' && 'bg-yellow-500/10 border-yellow-500/30',
+-          healthStatus.type === 'unhealthy' && 'bg-red-500/10 border-red-500/30',
+-          healthStatus.type === 'unknown' && 'bg-slate-500/10 border-slate-500/30'
+-        )}>
+-          {healthStatus.type === 'healthy' && <CheckCircle className="w-5 h-5 text-green-400 shrink-0" />}
+-          {healthStatus.type === 'degraded' && <AlertCircle className="w-5 h-5 text-yellow-400 shrink-0" />}
+-          {healthStatus.type === 'unhealthy' && <XCircle className="w-5 h-5 text-red-400 shrink-0" />}
+-          {healthStatus.type === 'unknown' && <Info className="w-5 h-5 text-slate-400 shrink-0" />}
+-          <div>
+-            <div className={clsx(
+-              'text-sm font-medium',
+-              healthStatus.type === 'healthy' && 'text-green-400',
+-              healthStatus.type === 'degraded' && 'text-yellow-400',
+-              healthStatus.type === 'unhealthy' && 'text-red-400',
+-              healthStatus.type === 'unknown' && 'text-slate-400'
+-            )}>
+-              {healthStatus.label}
+-            </div>
+-            {healthStatus.message && (
+-              <div className="text-xs text-theme-text-secondary mt-0.5">{healthStatus.message}</div>
+-            )}
+-          </div>
+-        </div>
++        <AlertBanner
++          variant={BANNER_VARIANT[healthStatus.level]}
++          icon={BANNER_ICON[healthStatus.level]}
++          title={healthStatus.label}
++          message={healthStatus.message}
++        />
+       )}
+ 
+       {/* Empty state hint */}
+@@ -139,36 +119,42 @@ export function GenericRenderer({ data }: GenericRendererProps) {
+ // HEALTH STATUS DETECTION
+ // ============================================================================
+ 
+-type HealthType = 'healthy' | 'degraded' | 'unhealthy' | 'unknown'
+-
+ interface HealthStatusResult {
+-  type: HealthType
++  level: HealthLevel
+   label: string
+   message?: string
+ }
+ 
+-// This renderer's banner has four tones, while the shared derivation speaks the
+-// full HealthLevel vocabulary. `alert` folds into unhealthy and `neutral` into
+-// unknown — the banner has no distinct treatment for either.
+-const BANNER_TYPE: Record<HealthLevel, HealthType> = {
+-  healthy: 'healthy',
+-  degraded: 'degraded',
+-  alert: 'unhealthy',
+-  unhealthy: 'unhealthy',
++// The shared banner carries light and dark pairs for each tone. `alert` keeps
++// its own orange step between degraded and unhealthy; `neutral` reads like
++// unknown.
++const BANNER_VARIANT = {
++  healthy: 'success',
++  degraded: 'warning',
++  alert: 'alert',
++  unhealthy: 'error',
+   neutral: 'unknown',
+   unknown: 'unknown',
++} as const satisfies Record<HealthLevel, string>
++const BANNER_ICON: Record<HealthLevel, typeof Info> = {
++  healthy: CheckCircle,
++  degraded: AlertCircle,
++  alert: AlertCircle,
++  unhealthy: XCircle,
++  neutral: Info,
++  unknown: Info,
+ }
+ 
+ function getHealthStatus(resource: any): HealthStatusResult | null {
+   if (resource?.kind === 'InferenceService' && isApiGroup(resource?.apiVersion, 'serving.kserve.io') && isInferenceServiceStopRequested(resource)) {
+     const status = getInferenceServiceStatus(resource)
+-    if (status.level === 'neutral') return { type: 'unknown', label: 'Stopped', message: "This model is stopped and isn't serving requests." }
+-    return { type: BANNER_TYPE[status.level], label: status.text }
++    if (status.level === 'neutral') return { level: 'neutral', label: 'Stopped', message: "This model is stopped and isn't serving requests." }
++    return { level: status.level, label: status.text }
+   }
+   const acknowledgedPause = getCrossplanePauseState(resource) === 'acknowledged'
+   const derived = acknowledgedPause ? getCrossplaneIndependentStatus(resource) : getGenericResourceStatus(resource)
+   if (!derived || (acknowledgedPause && derived.tone === 'healthy')) return null
+-  return { type: BANNER_TYPE[derived.tone], label: derived.text, message: 
+```
+
+**File**: `packages/k8s-ui/src/components/ui/drawer-components.tsx` (modified, +7/-5)
+```diff
+@@ -398,13 +398,15 @@ export function ConditionsSection({
+ // ALERT BANNER
+ // ============================================================================
+ 
++// The message line is 12px body text, so it uses the neutral secondary tone:
++// the variants' tinted tones fall below 4.5:1 on their light backgrounds.
+ const ALERT_COLORS = {
+-  alert:   { bg: 'status-alert', border: '', title: '', message: '', list: '', bullet: '' },
++  alert:   { bg: 'status-alert', border: '', title: '', message: 'text-theme-text-secondary', list: '', bullet: '' },
+   unknown: { bg: 'status-unknown', border: '', title: '', message: '', list: '', bullet: '' },
+-  error:   { bg: 'bg-red-50 dark:bg-red-950/30', border: 'border-red-200 dark:border-red-800/30', title: 'text-red-700 dark:text-red-300', message: 'text-red-600/80 dark:text-red-300/70', list: 'text-red-600 dark:text-red-400', bullet: 'text-red-400/60 dark:text-red-400/50' },
+-  warning: { bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-amber-200 dark:border-amber-800/30', title: 'text-amber-700 dark:text-amber-300', message: 'text-amber-600/80 dark:text-amber-300/70', list: 'text-amber-600 dark:text-amber-400', bullet: 'text-amber-400/60 dark:text-amber-400/50' },
+-  info:    { bg: 'bg-sky-50 dark:bg-sky-950/30', border: 'border-sky-200 dark:border-sky-800/30', title: 'text-sky-700 dark:text-sky-300', message: 'text-sky-600/80 dark:text-sky-300/70', list: 'text-sky-600 dark:text-sky-400', bullet: 'text-sky-400/60 dark:text-sky-400/50' },
+-  success: { bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-emerald-200 dark:border-emerald-800/30', title: 'text-emerald-700 dark:text-emerald-300', message: 'text-emerald-600/80 dark:text-emerald-300/70', list: 'text-emerald-600 dark:text-emerald-400', bullet: 'text-emerald-400/60 dark:text-emerald-400/50' },
++  error:   { bg: 'bg-red-50 dark:bg-red-950/30', border: 'border-red-200 dark:border-red-800/30', title: 'text-red-700 dark:text-red-300', message: 'text-theme-text-secondary', list: 'text-red-600 dark:text-red-400', bullet: 'text-red-400/60 dark:text-red-400/50' },
++  warning: { bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-amber-200 dark:border-amber-800/30', title: 'text-amber-700 dark:text-amber-300', message: 'text-theme-text-secondary', list: 'text-amber-600 dark:text-amber-400', bullet: 'text-amber-400/60 dark:text-amber-400/50' },
++  info:    { bg: 'bg-sky-50 dark:bg-sky-950/30', border: 'border-sky-200 dark:border-sky-800/30', title: 'text-sky-700 dark:text-sky-300', message: 'text-theme-text-secondary', list: 'text-sky-600 dark:text-sky-400', bullet: 'text-sky-400/60 dark:text-sky-400/50' },
++  success: { bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-emerald-200 dark:border-emerald-800/30', title: 'text-emerald-700 dark:text-emerald-300', message: 'text-theme-text-secondary', list: 'text-emerald-600 dark:text-emerald-400', bullet: 'text-emerald-400/60 dark:text-emerald-400/50' },
+ } as const
+ 
+ const DEFAULT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+```
+
+---
+
+### Incident Patch 3: `b7e1536d` (2026-11-16)
+**Commit Message**: fix(traffic): show Data per protocol and label byte-only edges with their throughput (#2744)
+
+## Summary
+
+In Istio ambient, a sidecar or ingress client calling an ambient
+workload with no waypoint is reported twice: the calling proxy reports
+HTTP (request and response body bytes, request and error rates) and
+ztunnel reports the connection's TCP bytes. Radar added both into one
+Data figure, so that edge, its nodes and the connections table showed a
+number no proxy measured. #2733 kept both measurements and flagged the
+sum with a "Data may double-count" chip. This removes the sum instead:
+every Data figure on the map is per protocol, and bytes are never added
+across protocols.
+
+## What changed
+
+**Per-protocol bytes on each aggregate** (`pkg/traffic`).
+`AggregatedFlow` gains `bytesByProtocol`, keyed by each flow's protocol
+as the source emits it (`http`, `grpc`, `tcp`, `udp`, …), with every
+observed protocol present. Aggregation identity, rates, latency and L7
+voting are unchanged. `bytesSent`/`bytesRecv` stay on the wire as the
+cross-protocol sum for compatibility, documented as not to be shown as
+one figure when more than one protocol is present.
+
+**One edge, figures per protocol** 
+
+**File**: `docs/integrations.md` (modified, +2/-2)
+```diff
+@@ -852,10 +852,10 @@ permits the reference or has produced an artifact.
+ 
+ Service links accept short names in the rule's namespace or full `name.namespace.svc.<domain>` names. Radar reads a unique registry domain from standard observed Istiod Deployments' `--domain` argument, using Istio's `cluster.local` default when no override is observed. Conflicting or unresolved control-plane arguments leave FQDN links unresolved. External control planes and nonstandard launch configurations may therefore need additional domain discovery; arbitrary dotted hosts are not treated as local Services.
+ 
+-**Live Traffic:** the Traffic view reads Istio's standard Prometheus metrics: `istio_requests_total` (with its 5xx rate and request/response bytes) for HTTP and gRPC edges, and `istio_tcp_received_bytes_total` / `istio_tcp_sent_bytes_total` for TCP edges, as rates over the view's time range (5 minutes when it is under a minute). A rate needs two samples per series, so a range shorter than two scrape intervals shows no traffic; the map then says to choose a longer range. TCP edges appear whenever bytes move in the view's range, including on long-lived connections, and show data volume (byte rates × the window) with no request rate. Radar reads the receiving side's report: the destination sidecar (`reporter="destination"`) or, in ambient mode, the destination's waypoint proxy (`reporter="waypoint"`). It never adds the receiving and calling sides' reports together. In ambient mode:
++**Live Traffic:** the Traffic view reads Istio's standard Prometheus metrics: `istio_requests_total` (with its 5xx rate and request/response bytes) for HTTP and gRPC edges, and `istio_tcp_received_bytes_total` / `istio_tcp_sent_bytes_total` for TCP edges, as rates over the view's time range (5 minutes when it is under a minute). A rate needs two samples per series, so a range shorter than two scrape intervals shows no traffic; the map then says to choose a longer range. TCP edges appear whenever bytes move in the view's range, including on long-lived connections, and show data volume (byte rates × the window) with no request rate; on the map, an edge with no request rate is labelled with its throughput per protocol (for example `TCP · 2.4 KB/s`); against an older Radar that sends no per-protocol breakdown those labels stay empty. Radar reads the receiving side's report: the destination sidecar (`reporter="destination"`) or, in ambient mode, the destination's waypoint proxy (`reporter="waypoint"`). It never adds the receiving and calling sides' reports together. In ambient mode:
+ - Workloads behind a waypoint get HTTP and gRPC edges from the waypoint's metrics. ztunnel also reports the hops into and out of the waypoint. Radar recognizes waypoint Deployments by their labels, as Kiali does (`gateway.istio.io/managed=istio.io-mesh-controller`, or, without that label, a `gateway.networking.k8s.io/gateway-name` containing "waypoint"), and leaves those hops out, so the map draws client → server without the proxy in between. If Radar cannot list Deployments, it cannot recognize waypoints and the hops stay on the map.
+ - A request into an ambient namespace (labeled `istio.io/dataplane-mode=ambient`) that no waypoint reported, such as an ingress gateway or sidecar calling a workload with no waypoint, is read from the calling proxy's report (`reporter="source"`), as Kiali does. Those figures are used only when the receiving side counted none of that client's requests to the same workload, Service and protocol in the view's time range. When it counted some, its figures are used, so requests that skipped the waypoint are not counted. Radar finds ambient namespaces from its Namespace cache; without it, these reports are not read and the ztunnel check below is off. The query names every ambient namespace and is sent in a POST body; when the namespaces are too many to fit Radar's 16 KB query limit (several hundred, depending on name length), Radar skips these reports and the map says so.
+-- Traffic between ambient workloads without a waypoint has no L7 metrics. It appears as TCP edges from ztunnel. When a call's HTTP figures come from the calling proxy (no waypoint or sidecar received it) and ztunnel reports TCP between the same workloads, Data includes both the HTTP bytes and ztunnel's TCP bytes, and the map notes that these may count the same calls twice.
++- Traffic between ambient workloads without a waypoint has no L7 metrics. It appears as TCP edges from ztunnel. When a call's HTTP figures come from the calling proxy (no waypoint or sidecar received it) and ztunnel reports TCP between the same workloads, Data shows HTTP payload bytes and ztunnel TCP connection bytes side by side by protocol. These measurements can describe the same calls and are never added together.
+ - Prometheus has to scrape ztunnel and the waypoint proxies. When the view includes ambient traffic but Radar finds no ztunnel metrics (no `istio_build{component="ztunnel"}` series and no ztun
+```
+
+**File**: `internal/server/traffic_data_note_test.go` (removed, +0/-63)
+```diff
+@@ -1,63 +0,0 @@
+-package server
+-
+-import (
+-	"encoding/json"
+-	"net/http"
+-	"net/http/httptest"
+-	"testing"
+-
+-	"github.com/skyhook-io/radar/pkg/traffic"
+-)
+-
+-func TestTrafficPayloadDataNote(t *testing.T) {
+-	for name, payload := range map[string]func(*traffic.FlowsResponse, []traffic.Flow) map[string]any{
+-		"flows": func(response *traffic.FlowsResponse, flows []traffic.Flow) map[string]any {
+-			return trafficFlowsPayload(response, flows, false)
+-		},
+-		"records": trafficRecordsPayload,
+-	} {
+-		t.Run(name, func(t *testing.T) {
+-			flows := []traffic.Flow{
+-				{Source: traffic.Endpoint{Namespace: "a"}},
+-				{Source: traffic.Endpoint{Namespace: "b"}},
+-			}
+-			for _, tc := range []struct {
+-				name       string
+-				note       string
+-				namespaces []string
+-				source     []traffic.Flow
+-				wantNote   bool
+-			}{
+-				{"carried through", "Reported bytes may overlap.", nil, flows, true},
+-				{"all filtered away", "Reported bytes may overlap.", []string{"c"}, flows, false},
+-				{"some remain", "Reported bytes may overlap.", []string{"a"}, flows, true},
+-				{"source returned none", "Reported bytes may overlap.", nil, nil, true},
+-				{"absent", "", nil, flows, false},
+-			} {
+-				t.Run(tc.name, func(t *testing.T) {
+-					response := &traffic.FlowsResponse{Flows: tc.source, DataNote: tc.note}
+-					s := &Server{}
+-					r := httptest.NewRequest(http.MethodGet, "/", nil)
+-					visible := s.visibleFlows(r, response.Flows, tc.namespaces, traffic.DefaultFlowOptions())
+-					encoded, err := json.Marshal(payload(response, visible))
+-					if err != nil {
+-						t.Fatal(err)
+-					}
+-					var decoded map[string]any
+-					if err := json.Unmarshal(encoded, &decoded); err != nil {
+-						t.Fatal(err)
+-					}
+-					note, present := decoded["dataNote"]
+-					if present != tc.wantNote || present && note != tc.note {
+-						t.Errorf("dataNote = %v (present %v), want %q (present %v)", note, present, tc.note, tc.wantNote)
+-					}
+-					for _, field := range []string{"warning", "warningKind"} {
+-						if _, present := decoded[field]; present {
+-							t.Errorf("a data note must not set %s", field)
+-						}
+-					}
+-				})
+-			}
+-		})
+-	}
+-}
+```
+
+**File**: `internal/server/traffic_handlers.go` (modified, +0/-8)
+```diff
+@@ -292,7 +292,6 @@ func trafficFlowsPayload(response *traffic.FlowsResponse, flows []traffic.Flow,
+ 	}
+ 	addFlowsCoverage(result, response)
+ 	addFlowsWarning(result, response, flows)
+-	addFlowsDataNote(result, response, flows)
+ 	return result
+ }
+ 
+@@ -309,12 +308,6 @@ func addFlowsCoverage(result map[string]any, response *traffic.FlowsResponse) {
+ 	}
+ }
+ 
+-func addFlowsDataNote(result map[string]any, response *traffic.FlowsResponse, flows []traffic.Flow) {
+-	if response.DataNote != "" && !(len(flows) == 0 && len(response.Flows) > 0) {
+-		result["dataNote"] = response.DataNote
+-	}
+-}
+-
+ func addFlowsWarning(result map[string]any, response *traffic.FlowsResponse, flows []traffic.Flow) {
+ 
+ 	// A partial-data warning qualifies the flows it came with. If the namespace
+@@ -413,7 +406,6 @@ func trafficRecordsPayload(response *traffic.FlowsResponse, flows []traffic.Flow
+ 	}
+ 	addFlowsCoverage(result, response)
+ 	addFlowsWarning(result, response, flows)
+-	addFlowsDataNote(result, response, flows)
+ 	return result
+ }
+ 
+```
+
+**File**: `internal/traffic/beyla_test.go` (modified, +30/-0)
+```diff
+@@ -1851,3 +1851,33 @@ func TestBeylaSource_GetFlows_FailedEnrichmentIsReportedNotZeroed(t *testing.T)
+ 		})
+ 	}
+ }
++
++func TestBeylaSource_GetFlows_UnorientedProtocolBytes(t *testing.T) {
++	src := &BeylaSource{k8sClient: fake.NewSimpleClientset()}
++	src.queryFn = func(_ context.Context, query string) (*prom.QueryResult, error) {
++		if !strings.Contains(query, `direction="unknown"`) {
++			return emptyResult(), nil
++		}
++		return promResult("vector",
++			promSeries(map[string]string{"k8s_src_owner_name": "client", "k8s_src_namespace": "demo", "k8s_dst_owner_name": "dns", "k8s_dst_namespace": "demo", "transport": "UDP"}, 10),
++			promSeries(map[string]string{"k8s_src_owner_name": "dns", "k8s_src_namespace": "demo", "k8s_dst_owner_name": "client", "k8s_dst_namespace": "demo", "transport": "UDP"}, 25),
++			promSeries(map[string]string{"k8s_src_owner_name": "client", "k8s_src_namespace": "demo", "k8s_dst_owner_name": "dns", "k8s_dst_namespace": "demo", "transport": "TCP"}, 4),
++		), nil
++	}
++	resp, err := src.GetFlows(t.Context(), FlowOptions{})
++	if err != nil {
++		t.Fatal(err)
++	}
++	aggregated := AggregateFlows(resp.Flows)
++	if len(resp.Flows) != 2 || len(aggregated) != 1 {
++		t.Fatalf("flows=%+v, aggregates=%+v", resp.Flows, aggregated)
++	}
++	a := aggregated[0]
++	if !a.DirectionUnknown || len(a.BytesByProtocol) != 2 {
++		t.Fatalf("wrong conversation: %+v", a)
++	}
++	udp, tcp := a.BytesByProtocol["udp"], a.BytesByProtocol["tcp"]
++	if udp.BytesSent != 10*defaultRateWindowSeconds || udp.BytesRecv != 25*defaultRateWindowSeconds || tcp.BytesSent != 4*defaultRateWindowSeconds || tcp.BytesRecv != 0 {
++		t.Errorf("protocol buckets: %+v", a.BytesByProtocol)
++	}
++}
+```
+
+**File**: `internal/traffic/istio.go` (modified, +4/-26)
+```diff
+@@ -333,19 +333,11 @@ func (s *IstioSource) GetFlows(ctx context.Context, opts FlowOptions) (*FlowsRes
+ 	httpCount := len(httpFlows)
+ 	tcpFlows, tcpErr := []Flow(nil), errIstioTCPUnchecked
+ 	ztunnelReported := false
+-	byteOverlap := false
+ 	if !scopes.tcpUnchecked {
+ 		var reportedInto []string
+-		var destinationTCP map[flowKey]bool
+-		tcpFlows, reportedInto, destinationTCP, tcpErr = s.queryTCPFlows(ctx, opts, scopes.tcp)
++		tcpFlows, reportedInto, tcpErr = s.queryTCPFlows(ctx, opts, scopes.tcp)
+ 		ztunnelReported = slices.ContainsFunc(reportedInto, func(ns string) bool { return slices.Contains(ambientKnown, ns) })
+ 		tcpFlows = withoutWaypointHops(tcpFlows, waypoints)
+-		if tcpErr == nil {
+-			byteOverlap = slices.ContainsFunc(httpFlows, func(f Flow) bool {
+-				return f.BytesSent+f.BytesRecv > 0 && slices.Contains(ambientNamespaces, f.Destination.Namespace) &&
+-					destinationTCP[workloadPairOf(f)] && !opts.Excludes(f) && opts.Match.Matches(f)
+-			})
+-		}
+ 	}
+ 	if tcpErr != nil {
+ 		log.Printf("[istio] Error querying TCP flows (continuing with HTTP only): %v", tcpErr)
+@@ -378,9 +370,6 @@ func (s *IstioSource) GetFlows(ctx context.Context, opts FlowOptions) (*FlowsRes
+ 			response.WarningKind = WarningTransient
+ 		}
+ 	}
+-	if byteOverlap {
+-		noteIstioByteOverlap(response)
+-	}
+ 	mismatch := ""
+ 	switch {
+ 	case len(httpFlows) == 0:
+@@ -611,12 +600,6 @@ func (s *IstioSource) queryHTTPSeriesRates(ctx context.Context, query string) (m
+ 	return rates, nil
+ }
+ 
+-const istioByteOverlapNote = "Data on some edges may count the same calls twice: when no waypoint receives a call into an ambient workload, Radar can show both the calling proxy's HTTP bytes and ztunnel's TCP bytes."
+-
+-func noteIstioByteOverlap(response *FlowsResponse) {
+-	response.DataNote = istioByteOverlapNote
+-}
+-
+ // queryHTTPFlows queries istio_requests_total for HTTP/gRPC traffic.
+ // Response codes are aggregated (not split per-code) and a separate error query
+ // provides 5xx error rates per series. Optional figures that cannot be read are
+@@ -726,8 +709,7 @@ func (s *IstioSource) queryHTTPFlows(ctx context.Context, opts FlowOptions, sc c
+ // queryTCPFlows reads TCP traffic from istio_tcp_received_bytes_total and
+ // istio_tcp_sent_bytes_total. reportedInto includes idle series: their presence
+ // still shows the reporting proxy is scraped even when no bytes moved.
+-// destinationTCP holds the workload pairs whose wire bytes may also cover HTTP.
+-func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc clusterScope) (flows []Flow, reportedInto []string, destinationTCP map[flowKey]bool, err error) {
++func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc clusterScope) (flows []Flow, reportedInto []string, err error) {
+ 	w := rateWindowFor(opts.Since)
+ 	const groupBy = "source_workload, source_workload_namespace, destination_workload, destination_workload_namespace, destination_service_name, reporter"
+ 	type tcpSeriesKey struct {
+@@ -741,7 +723,7 @@ func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc cl
+ 	for direction, metric := range []string{istioTCPMetric, "istio_tcp_sent_bytes_total"} {
+ 		result, err := s.queryFn(ctx, istioRateQuery(groupBy, metric, istioReporterSelector, opts.Namespace, sc, w))
+ 		if err != nil {
+-			return nil, nil, nil, err
++			return nil, nil, err
+ 		}
+ 		for _, series := range result.Series {
+ 			reportedInto = append(reportedInto, series.Labels["destination_workload_namespace"])
+@@ -758,13 +740,9 @@ func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc cl
+ 		}
+ 	}
+ 
+-	destinationTCP = make(map[flowKey]bool)
+ 	flows = make([]Flow, 0, len(keys))
+ 	for _, key := range keys {
+ 		volume := volumes[key]
+-		if key.reporter == "destination" {
+-			destinationTCP[key.flowKey] = true
+-		}
+ 		flow := Flow{
+ 			Source: Endpoint{
+ 				Name: key.srcWorkload, Namespace: key.srcNs,
+@@ -795,7 +773,7 @@ func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc cl
+ 		}
+ 		flows = append(flows, flow)
+ 	}
+-	return flows, reportedInto, destinationTCP, nil
++	return flows, reportedInto, nil
+ }
+ 
+ // StreamFlows returns a channel of flows for real-time updates
+```
+
+**File**: `internal/traffic/istio_ambient.go` (modified, +0/-10)
+```diff
+@@ -108,13 +108,3 @@ func withoutWaypointHops(flows []Flow, waypoints map[istioWorkload]bool) []Flow
+ 	}
+ 	return kept
+ }
+-
+-// workloadPairOf keys a flow by its workloads alone. ztunnel infers the Service
+-// of plaintext traffic from the target port, so its label can differ from the
+-// calling proxy's for the same calls, and edges are merged by workloads anyway.
+-func workloadPairOf(f Flow) flowKey {
+-	return flowKey{
+-		srcWorkload: f.Source.Workload, srcNs: f.Source.Namespace,
+-		dstWorkload: f.Destination.Workload, dstNs: f.Destination.Namespace,
+-	}
+-}
+```
+
+**File**: `internal/traffic/istio_tcp_test.go` (modified, +18/-32)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/skyhook-io/radar/pkg/prom"
++	"github.com/skyhook-io/radar/pkg/traffic"
+ )
+ 
+ func TestIstioTCPByteActivity(t *testing.T) {
+@@ -68,22 +69,22 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
+ 	for _, tc := range []struct {
+ 		name, dstNs, tcpService, tcpSource, tcpSourceNs, tcpDestination string
+ 		httpReporter, tcpReporter                                       string
+-		zeroHTTPBytes, wantOverlap, missingErrors, failTCP              bool
++		zeroHTTPBytes, missingErrors, failTCP                           bool
+ 		excludeClient, selectOther                                      bool
+ 	}{
+-		{name: "ambient same Service", wantOverlap: true},
++		{name: "ambient same Service"},
+ 		{name: "waypoint same Service", httpReporter: "waypoint", tcpReporter: "waypoint"},
+ 		{name: "sidecar same Service", dstNs: "side", httpReporter: "destination"},
+-		{name: "sidecar in an ambient namespace, same Service", httpReporter: "destination", wantOverlap: true},
+-		{name: "ambient other Service", tcpService: "db", wantOverlap: true},
+-		{name: "ambient unknown Service", tcpService: "unknown", wantOverlap: true},
++		{name: "sidecar in an ambient namespace, same Service", httpReporter: "destination"},
++		{name: "ambient other Service", tcpService: "db"},
++		{name: "ambient unknown Service", tcpService: "unknown"},
+ 		{name: "ambient pair excluded from the view", excludeClient: true},
+ 		{name: "ambient pair not in the selection", selectOther: true},
+ 		{name: "ambient other source", tcpSource: "other"},
+ 		{name: "ambient other source namespace", tcpSourceNs: "other"},
+ 		{name: "ambient other destination", tcpDestination: "other"},
+ 		{name: "ambient zero HTTP bytes", zeroHTTPBytes: true},
+-		{name: "ambient missing errors", missingErrors: true, wantOverlap: true},
++		{name: "ambient missing errors", missingErrors: true},
+ 		{name: "ambient failed TCP read", failTCP: true},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+@@ -170,6 +171,14 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
+ 			}
+ 			var aggregateSent, aggregateRecv, recordsSent, recordsRecv int64
+ 			for _, a := range AggregateFlows(resp.Flows) {
++				for _, f := range resp.Flows {
++					if f.Source.Name == a.Source.Name && f.Source.Namespace == a.Source.Namespace && f.Destination.Name == a.Destination.Name && f.Destination.Namespace == a.Destination.Namespace {
++						want := traffic.ProtocolBytes{BytesSent: f.BytesSent, BytesRecv: f.BytesRecv}
++						if got := a.BytesByProtocol[f.Protocol]; got != want {
++							t.Errorf("%s bucket = %+v, want %+v", f.Protocol, got, want)
++						}
++					}
++				}
+ 				aggregateSent += a.BytesSent
+ 				aggregateRecv += a.BytesRecv
+ 				match := FlowMatch{Pairs: []EndpointPair{{
+@@ -187,13 +196,6 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
+ 			if aggregateSent != wantTCPSent+wantHTTPSent || aggregateRecv != wantTCPRecv+wantHTTPRecv || recordsSent != aggregateSent || recordsRecv != aggregateRecv {
+ 				t.Errorf("aggregate bytes %d/%d, records %d/%d; want %d/%d", aggregateSent, aggregateRecv, recordsSent, recordsRecv, wantTCPSent+wantHTTPSent, wantTCPRecv+wantHTTPRecv)
+ 			}
+-			wantNote := ""
+-			if tc.wantOverlap {
+-				wantNote = istioByteOverlapNote
+-			}
+-			if resp.DataNote != wantNote {
+-				t.Errorf("data note = %q, want %q", resp.DataNote, wantNote)
+-			}
+ 			wantKind := ""
+ 			if tc.missingErrors {
+ 				wantKind = WarningPartial
+@@ -220,22 +222,6 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
+ 	}
+ }
+ 
+-func TestIstioByteOverlapPreservesWarning(t *testing.T) {
+-	for _, kind := range []string{"", WarningPartial, WarningTransient, WarningIncomplete, WarningCluster} {
+-		t.Run(kind, func(t *testing.T) {
+-			const warning = "Istio metrics are incomplete: 5xx error rates could not be read."
+-			response := &FlowsResponse{Warning: warning, WarningKind: kind}
+-			noteIstioByteOverlap(response)
+-			if response.DataNote != istioByteOverlapNote {
+-				t.Errorf("data note = %q, want %q", response.DataNote, istioByteOverlapNote)
+-			}
+-			if response.Warning != warning || response.WarningKind != kind {
+-				t.Errorf("warning = %q (%s), want unchanged %q (%s)", response.Warning, response.WarningKind, warning, kind)
+-			}
+-		})
+-	}
+-}
+-
+ func TestIstioTCPJoinsDirectionalSeriesByReporter(t *testing.T) {
+ 	raw := []istioRawSeries{
+ 		istioSeries(istioTCPMetric, "destination", "side", "curl", "amb", "httpbin", "", 13),
+@@ -244,12 +230,12 @@ func TestIstioTCPJoinsDirectionalSeriesByReporter(t *testing.T) {
+ 		istioSeries("istio_tcp_sent_bytes_total", "waypoint", "side", "curl", "amb", "httpbin", "", 3),
+ 	}
+ 	s := newTestIstio(fakeIstioProm(raw, nil))
+-	flows, _, destinationTCP, err := s.queryTCPFlows(t.Context(), DefaultFlowOptions(), clusterScope{})
++	flows, _, err := s.queryTCPFlows(t.Context(), DefaultFlowOptions(), clusterScope{})
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
+-	if len(flows) != 2 || len(destinationTCP) != 1 {
+-		t.Fatalf("want two reporter flows and on
+```
+
+**File**: `packages/k8s-ui/src/types/core.ts` (modified, +2/-5)
+```diff
+@@ -1693,6 +1693,8 @@ export interface AggregatedFlow {
+   protocol: string
+   port: number
+   flowCount: number
++  bytesByProtocol?: Record<string, { bytesSent: number; bytesRecv: number }>
++  /** Cross-protocol sums kept for compatibility; display the breakdown when present. */
+   bytesSent: number
+   bytesRecv: number
+   connections: number
+@@ -1806,10 +1808,6 @@ export interface TrafficFlowsResponse {
+   /** Set when the warning includes a reason tied to keeping the map to this
+    *  cluster in a shared metrics store, so the view links to how that works. */
+   warningClusterScope?: boolean
+-  /** How the Data (byte) figures were measured, when that needs saying: for
+-   *  example two reports that may cover the same calls. Not a warning: show it
+-   *  quietly and never refetch for it. */
+-  dataNote?: string
+ }
+ 
+ export type TrafficWarningKind = 'transient' | 'partial' | 'incomplete' | 'cluster'
+@@ -1829,7 +1827,6 @@ export interface TrafficRecordsResponse {
+   flowLimit?: number
+   warning?: string
+   warningKind?: TrafficWarningKind
+-  dataNote?: string
+ }
+ 
+ // Wizard state for traffic setup
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2663** (2026-11-13): Fix Linux desktop packaging with verified nfpm 2.49.0 binary (@hisco)
-- **PR #2660** (closed): Pin Linux desktop packager to a Go-compatible version (@hisco)
-- **PR #2656** (2026-11-13): Add an optional copy-on-select terminal preference (@hisco)
-- **PR #2637** (2026-11-12): Match resource sidebar icons to Topology kind colors (@hisco)
-- **PR #2636** (2026-11-12): docs: add NVIDIA desktop rendering workaround (@hisco)
-- **PR #2635** (2026-11-12): Delete the auth proxy's session cookies on logout (@hisco)
+- **PR #2747** (2026-11-16): test(traffic): make the layout-engine tests independent of machine load (@nadaverell)
+- **PR #2746** (2026-11-16): Issue and check cards: the severity rail spans the open card (@nadaverell)
+- **PR #2745** (2026-11-16): Recover panics in MCP request handlers (@nadaverell)
+- **PR #2744** (2026-11-16): fix(traffic): show Data per protocol and label byte-only edges with their throughput (@nadaverell)
+- **PR #2743** (2026-11-16): Return 404 for missing assets, serve ranges uncompressed, and always declare Vary (@nadaverell)
+- **PR #2742** (2026-11-16): Let browsers keep Radar's fingerprinted assets between page loads (@nadaverell)
 
 ---
 
@@ -2545,41 +3315,63 @@ blocked independently by the account agreement.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Linux desktop packaging with verified nfpm 2.49.0 binary
+## X. Recover panics in MCP request handlers
 
 **RULE**:
-When implementing operations in `.github/workflows/release-desktop.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/mcp/recover.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `148a70c8`: Linux desktop packaging with verified nfpm 2.49.0 binary. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8f387b4`: Recover panics in MCP request handlers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-desktop.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/mcp/recover.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        env:
-          NFPM_VERSION: '2.49.0'
-          NFPM_SHA256: '2afaa5ffb5e3493402e31e7c67a5a1fb42133e3f66fc315ca0051934125561c7'
-        run: |
-          curl --fail --location --retry 3 --output "$RUNNER_TEMP/nfpm.tar.gz" \
-            "https://github.com/goreleaser/nfpm/releases/download/v${NFPM_VERSION}/nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz"
-          echo "${NFPM_SHA256}  $RUNNER_TEMP/nfpm.tar.gz" | sha256sum --check --strict
-          mkdir -p "$RUNNER_TEMP/nfpm-bin"
-          tar -xzf "$RUNNER_TEMP/nfpm.tar.gz" -C "$RUNNER_TEMP/nfpm-bin" nfpm
-          echo "$RUNNER_TEMP/nfpm-bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/nfpm-bin/nfpm" --version
+package mcp
+
+import (
+	"context"
+	"log"
+	"runtime/debug"
+
+	"github.com/modelcontextprotocol/go-sdk/jsonrpc"
+	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
+)
+
+// recoverMiddleware turns a panic in a request handler into a failed request.
+// The SDK runs handlers in their own goroutines without recovering, so a panic
+// in any tool would otherwise end the whole Radar process; the REST routes
+// recover theirs. A tool call reports the failure as a tool error, which is
+// what an agent can act on; other methods return a JSON-RPC internal error.
+// Goroutines a handler starts itself are outside this and must recover their own.
+func recoverMiddleware(next mcpsdk.MethodHandler) mcpsdk.MethodHandler {
+	return func(ctx context.Context, method string, req mcpsdk.Request) (result mcpsdk.Result, err error) {
+		defer func() {
+			rec := recover()
+			if rec == nil {
+				return
+			}
+			name := method
+			if call, ok := req.(*mcpsdk.CallToolRequest); ok && call.Params != nil {
+				name = method + " " + call.Params.Name
+			}
+			log.Printf("[mcp] panic in %s: %v\n%s", name, rec, debug.Stack())
+			if method == "tools/call" {
+				result = &mcpsdk.CallToolResult{
+					IsError: true,
+					Content: [
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `148a70c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8f387b4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

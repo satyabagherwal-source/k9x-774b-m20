@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `7f30b56d`  
+> **Source Version**: `2280c280`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T21:15:42.234Z  
+> **Timestamp**: 2026-11-17T03:26:15.695Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T21:15:42.228Z  
+> **Harvest Timestamp**: 2026-11-17T03:26:15.688Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4129 stars
+- **Stars / Engagement**: 4138 stars
 
 ---
 
@@ -2447,488 +2447,827 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41dfe716` (2026-11-15)
-**Commit Message**: fix(gitops): let managed resource lists reveal every entry (#2688)
+### Incident Patch 1: `c8f387b4` (2026-11-16)
+**Commit Message**: Recover panics in MCP request handlers (#2745)
 
-## Problem
+## Summary
 
-The inventory list in the Argo CD Application, Kustomization and
-HelmRelease drawers (`ManagedResourcesList`) cut every kind to an equal
-share of the 20-entry cap even when the whole list fit under it, and
-offered **Show all** only when the total exceeded the cap. An uneven
-list therefore lost entries with no way to reveal them, and each kind's
-header counted only the entries shown.
+A panic in any MCP tool handler ends the whole Radar process. The MCP
+SDK runs each request in its own goroutine and doesn't recover panics,
+while Radar's REST routes do. So the same bug that costs a REST caller
+one failed request takes Radar down for everyone when an agent hits it
+through MCP: every open browser, every SSE stream, every other agent.
 
-| Inventory | Before |
-|---|---|
-| 12 ConfigMaps, a Deployment, a Service (14) | ConfigMap (7): five
-hidden, no Show all |
-| 15 CRDs, a Namespace (16) | CRD (10): five hidden, no Show all |
+This adds a receiving middleware to every Radar MCP server (the full,
+read-only, apply and investigation servers all come from `newServer`).
+When a handler panics:
 
-Someone checking whether an object is in the inventory, for example
-after reading a "Tracked by" tooltip, could miss one that is there.
+- the stack is logged, with the method and tool name;
+- a `tools/call` returns a tool error (`isError: true`), which is how
+MCP reports a tool failure an agent can act on. The message points at
+Radar's log and, since a write tool may have changed something before it
+panicked, says to check resource state before retrying;
+- any other method returns a JSON-RPC internal error (`-32603`);
+- the server keeps answering.
 
-## Change
+## What changed
 
-- Kinds are cut only when the list exceeds the cap.
-- **Show all** appears whenever any kind is cut.
-- A cut kind's header reads "N of M" instead of the shown count.
+- `internal/mcp/recover.go`: `recoverMiddleware`.
+- `internal/mcp/server.go`: installed first in `newServer`. The SDK
+wraps each later middleware around the earlier ones, so this one si
 
-## Tests
-
-`ManagedResourcesList.test.tsx` adds three cases; all fail on `main`:
-- an uneven list under the cap shows every entry and no Show all;
-- over the cap, a cut kind reads "2 of 6" and Show all appears;
-- over the cap wi
-
-**File**: `packages/k8s-ui/src/components/gitops/ManagedResourcesList.test.tsx` (added, +35/-0)
+**File**: `internal/mcp/recover.go` (added, +42/-0)
 ```diff
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,42 @@
++package mcp
++
++import (
++	"context"
++	"log"
++	"runtime/debug"
++
++	"github.com/modelcontextprotocol/go-sdk/jsonrpc"
++	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
++)
++
++// recoverMiddleware turns a panic in a request handler into a failed request.
++// The SDK runs handlers in their own goroutines without recovering, so a panic
++// in any tool would otherwise end the whole Radar process; the REST routes
++// recover theirs. A tool call reports the failure as a tool error, which is
++// what an agent can act on; other methods return a JSON-RPC internal error.
++// Goroutines a handler starts itself are outside this and must recover their own.
++func recoverMiddleware(next mcpsdk.MethodHandler) mcpsdk.MethodHandler {
++	return func(ctx context.Context, method string, req mcpsdk.Request) (result mcpsdk.Result, err error) {
++		defer func() {
++			rec := recover()
++			if rec == nil {
++				return
++			}
++			name := method
++			if call, ok := req.(*mcpsdk.CallToolRequest); ok && call.Params != nil {
++				name = method + " " + call.Params.Name
++			}
++			log.Printf("[mcp] panic in %s: %v\n%s", name, rec, debug.Stack())
++			if method == "tools/call" {
++				result = &mcpsdk.CallToolResult{
++					IsError: true,
++					Content: []mcpsdk.Content{&mcpsdk.TextContent{Text: "Radar hit an internal error answering this tool call; details are in Radar's log. If the call could change resources, check their state before retrying."}},
++				}
++				err = nil
++				return
++			}
++			result, err = nil, &jsonrpc.Error{Code: jsonrpc.CodeInternalError, Message: "internal error handling " + method}
++		}()
++		return next(ctx, method, req)
++	}
++}
+```
+
+**File**: `internal/mcp/recover_test.go` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++package mcp
++
++import (
++	"context"
++	"strings"
++	"testing"
++
++	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
++)
++
++// A panicking tool fails its own call and leaves Radar's MCP server answering.
++func TestToolPanicFailsTheCallNotTheServer(t *testing.T) {
++	ctx := context.Background()
++	server := newServer(false, false, "")
++	calls := 0
++	server.AddTool(&mcpsdk.Tool{Name: "boom", InputSchema: map[string]any{"type": "object"}}, func(context.Context, *mcpsdk.CallToolRequest) (*mcpsdk.CallToolResult, error) {
++		calls++
++		var m map[string]any
++		_ = m["pods"].([]map[string]any)
++		return nil, nil
++	})
++	server.AddTool(&mcpsdk.Tool{Name: "ok", InputSchema: map[string]any{"type": "object"}}, func(context.Context, *mcpsdk.CallToolRequest) (*mcpsdk.CallToolResult, error) {
++		return &mcpsdk.CallToolResult{Content: []mcpsdk.Content{&mcpsdk.TextContent{Text: "fine"}}}, nil
++	})
++	client := mcpsdk.NewClient(&mcpsdk.Implementation{Name: "test", Version: "test"}, nil)
++	st, ct := mcpsdk.NewInMemoryTransports()
++	ss, err := server.Connect(ctx, st, nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	cs, err := client.Connect(ctx, ct, nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { _ = cs.Close(); _ = ss.Wait() })
++	for i := range 2 {
++		res, err := cs.CallTool(ctx, &mcpsdk.CallToolParams{Name: "boom"})
++		if err != nil {
++			t.Fatalf("call %d: %v", i, err)
++		}
++		text := ""
++		if len(res.Content) == 1 {
++			if c, ok := res.Content[0].(*mcpsdk.TextContent); ok {
++				text = c.Text
++			}
++		}
++		if !res.IsError || !strings.Contains(text, "internal error") {
++			t.Fatalf("call %d: result = %+v", i, res)
++		}
++	}
++	if calls != 2 {
++		t.Fatalf("tool ran %d times, want 2", calls)
++	}
++	if res, err := cs.CallTool(ctx, &mcpsdk.CallToolParams{Name: "ok"}); err != nil || res.IsError {
++		t.Fatalf("a normal call after the panics: %+v, %v", res, err)
++	}
++}
+```
+
+**File**: `internal/mcp/server.go` (modified, +2/-0)
+```diff
+@@ -30,6 +30,8 @@ func newServer(includeWrites, includeExec bool, instructions string) *mcpsdk.Ser
+ 		},
+ 	)
+ 
++	server.AddReceivingMiddleware(recoverMiddleware)
++
+ 	// Repair recognisable argument-name mistakes before schema validation, and
+ 	// report the accepted argument names when validation still fails. Every tool
+ 	// schema is additionalProperties:false, so without this one wrong argument
+```
+
+---
+
+### Incident Patch 2: `58462cf5` (2026-11-16)
+**Commit Message**: fix(ui): readable status banners in light mode (#2705)
+
+## Summary
+
+Status banners were hard to read in light mode. The banner at the top of
+a generic resource's drawer (any custom resource without a curated
+renderer) used raw Tailwind `-400` hues on a 10% tint: `text-yellow-400`
+on pale yellow reads at about 1.5:1, well under the 4.5:1 small text
+needs, so a degraded status like "Pending" nearly disappeared. And in
+every `AlertBanner`, the 12px message line that says *why* a resource is
+in its state used the variant's tint at 80% opacity, about 2.5–3.8:1 on
+the light backgrounds. Dark mode was fine, which is how both slipped
+through.
+
+## What changed
+
+- **The generic banner renders through the shared `AlertBanner`**, which
+carries light and dark pairs for each tone and is what DESIGN.md asks
+problem surfaces to use. Each health level maps straight to a variant:
+healthy → success, degraded → warning, **alert → the orange alert
+variant** (it used to fold into red, losing Radar's three-step degraded
+→ alert → unhealthy gradient), unhealthy → error, neutral and unknown →
+unknown. Icons stay the same except for alert, which shows AlertCircle
+instead of the XCircle it borrowed from unhe
+
+**File**: `packages/k8s-ui/src/components/resources/renderers/GenericRenderer.banner.test.tsx` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
 +import { describe, expect, it } from 'vitest'
 +import { renderToString } from 'react-dom/server'
-+import { ManagedResourcesList } from './ManagedResourcesList'
-+import type { ManagedResource } from '../../types/gitops'
++import { GenericRenderer } from './GenericRenderer'
++import { AlertBanner } from '../../ui/drawer-components'
 +
-+function render(element: Parameters<typeof renderToString>[0]): string {
-+  return renderToString(element).replace(/<!-- -->/g, '')
-+}
++const widget = (status: Record<string, unknown>) => ({
++  apiVersion: 'example.com/v1', kind: 'Widget', metadata: { name: 'w' }, status,
++})
 +
-+function list(configMaps: number): ManagedResource[] {
-+  return [
-+    ...Array.from({ length: configMaps }, (_, i) => ({ group: '', kind: 'ConfigMap', namespace: 'shop', name: `cm-${i}` })),
-+    { group: 'apps', kind: 'Deployment', namespace: 'shop', name: 'checkout' },
-+    { group: '', kind: 'Service', namespace: 'shop', name: 'checkout' },
-+  ]
-+}
-+
-+describe('ManagedResourcesList', () => {
-+  it('shows every entry of an uneven list under the cap', () => {
-+    const html = render(<ManagedResourcesList resources={list(8)} />)
-+    expect(html).toContain('ConfigMap</span><span class="text-theme-text-tertiary">(8)')
-+    expect(html).not.toContain('Show all')
++// The status banner uses the shared AlertBanner's light and dark pairs: a raw
++// -400 hue reads at roughly 1.5:1 on a light tint.
++describe('GenericRenderer status banner', () => {
++  it.each([
++    ['healthy', { conditions: [{ type: 'Ready', status: 'True' }] }, 'text-emerald-700'],
++    ['degraded', { phase: 'Pending' }, 'text-amber-700'],
++    ['unhealthy', { conditions: [{ type: 'Ready', status: 'False' }] }, 'text-red-700'],
++  ])('%s uses theme-paired colors', (_, status, titleClass) => {
++    const html = renderToString(<GenericRenderer data={widget(status)} />)
++    const banner = html.slice(0, html.indexOf('</div></div></div>'))
++    expect(banner).toContain(titleClass)
++    expect(banner).not.toMatch(/text-(yellow|green|red|slate)-400/)
 +  })
 +
-+  it('offers Show all whenever a kind is cut', () => {
-+    const html = render(<ManagedResourcesList resources={list(6)} maxVisible={6} />)
-+    expect(html).toContain('ConfigMap</span><span class="text-theme-text-tertiary">(2 of 6)')
-+    expect(html).toContain('Show all 8 resources')
++  it('keeps the detail line in neutral text, readable on every tint', () => {
++    const html = renderToString(<GenericRenderer data={widget({ conditions: [{ type: 'Ready', status: 'False', reason: 'BackendDown', message: 'the backend is down' }] })} />)
++    expect(html).toMatch(/<div class="[^"]*text-theme-text-secondary[^"]*">the backend is down</)
++    expect(html).not.toMatch(/text-red-600\/80/)
 +  })
 +
-+  it('offers no Show all over the cap when no kind is cut', () => {
-+    const html = render(<ManagedResourcesList resources={list(1)} maxVisible={2} />)
-+    expect(html).not.toContain('Show all')
++  it('keeps every variant\'s message line neutral, alert included', () => {
++    for (const variant of ['error', 'warning', 'info', 'success', 'alert'] as const) {
++      const html = renderToString(<AlertBanner variant={variant} title="t" message="why" />)
++      expect(html).toMatch(/<div class="[^"]*text-theme-text-secondary[^"]*">why</)
++    }
++  })
++
++  it('renders no detail line when the status has no message', () => {
++    const html = renderToString(<GenericRenderer data={widget({ conditions: [{ type: 'Ready', status: 'True' }] })} />)
++    const banner = html.slice(0, html.indexOf('</div></div></div>'))
++    expect(banner).not.toContain('text-theme-text-secondary')
 +  })
 +})
 ```
 
-**File**: `packages/k8s-ui/src/components/gitops/ManagedResourcesList.tsx` (modified, +8/-4)
+**File**: `packages/k8s-ui/src/components/resources/renderers/GenericRenderer.conditions.test.tsx` (modified, +3/-3)
 ```diff
-@@ -38,7 +38,9 @@ export function ManagedResourcesList({
+@@ -102,7 +102,7 @@ describe('GenericRenderer conditions', () => {
+     const html = render([cond('InvalidRolloutConfig', 'False'), cond('RolloutProgressing', 'False')], appSet)
+     expect(chipClass(html, 'InvalidRolloutConfig', 'False')).not.toContain('status-red')
+     expect(chipClass(html, 'RolloutProgressing', 'False')).not.toContain('status-red')
+-    expect(html).not.toContain('bg-red-500/10')
++    expect(html).not.toContain('bg-red-50 ')
+   })
  
-   const grouped = groupManagedResourcesByKind(resources)
-   const sortedGroups = Array.from(grouped.entries()).sort((a, b) => a[0].localeCompare(b[0]))
--  const hasMore = resources.length > maxVisible && !showAll
-+  // Over the cap, each kind shows an equal share; Show all must appear whenever any kind is cut.
-+  const perKind = !showAll && resources.length > maxVisible ? Math.ceil(maxVisible / sortedGroups.length) : Infinity
-+  const hasMore = sortedGroups.some(([, kindResources]) => kindResources.length > perKind)
+   it("doesn't color a healthy service's Stopped=False red", () => {
+@@ -113,15 +113,15 @@ describe('GenericRenderer conditions', () => {
+   it('shows a deliberately stopped model as stopped, not failed', () => {
+     const html = render([cond('Stopped', 'True'), { type: 'Ready', status: 'False', reason: 'Stopped' }], stopRequested)
+     expect(html).toContain("This model is stopped and isn&#x27;t serving requests.")
+-    expect(html).not.toContain('bg-red-500/10')
++    expect(html).not.toContain('bg-red-50 ')
+     expect(chipClass(html, 'Ready', 'False')).not.toContain('status-red')
+   })
  
-   return (
-     <div className="border-b-subtle pb-4 last:border-0">
-@@ -59,7 +61,8 @@ export function ManagedResourcesList({
-             <ResourceKindGroup
-               key={kind}
-               kind={kind}
--              resources={showAll ? kindResources : kindResources.slice(0, Math.ceil(maxVisible / sortedGroups.length))}
-+              resources={kindResources.slice(0, perKind)}
-+              total={kindResources.length}
-               onResourceClick={onResourceClick}
-               showHealth={showHealth}
-             />
-@@ -82,11 +85,12 @@ export function ManagedResourcesList({
- interface ResourceKindGroupProps {
-   kind: string
-   resources: ManagedResource[]
-+  total: number
-   onResourceClick?: (resource: ManagedResource) => void
-   showHealth?: boolean
+   it("doesn't call a failed resume stopped", () => {
+     const html = render([cond('Stopped', 'True'), { type: 'PredictorReady', status: 'False', reason: 'ReconcileFailed' }, { type: 'Ready', status: 'False', reason: 'Stopped' }], stopRequested)
+     expect(html).not.toContain('isn&#x27;t serving requests')
+     expect(html).toContain('ReconcileFailed')
+-    expect(html).toContain('bg-red-500/10')
++    expect(html).toContain('bg-red-50 ')
+     expect(chipClass(html, 'PredictorReady', 'False')).toContain('status-red')
+   })
+ 
+```
+
+**File**: `packages/k8s-ui/src/components/resources/renderers/GenericRenderer.tsx` (modified, +27/-41)
+```diff
+@@ -1,7 +1,7 @@
+ import { useState } from 'react'
+ import { Info, CheckCircle, XCircle, AlertCircle, FileCode, AlertTriangle, Layers, Minus } from 'lucide-react'
+ import { clsx } from 'clsx'
+-import { Section, PropertyList, Property, isInvertedPolarityCondition } from '../../ui/drawer-components'
++import { AlertBanner, Section, PropertyList, Property, isInvertedPolarityCondition } from '../../ui/drawer-components'
+ import { Collapse, CollapseChevron, useDisclosure } from '../../ui/Collapse'
+ import { getGenericResourceStatus } from '../generic-status'
+ import { isApiGroup } from '../resource-utils-cnpg'
+@@ -40,32 +40,12 @@ export function GenericRenderer({ data }: GenericRendererProps) {
+       {acknowledgedPause && <CrossplanePauseNotice data={data} />}
+       {/* Health Status Banner (if determinable) */}
+       {healthStatus && (
+-        <div className={clsx(
+-          'mb-4 p-3 rounded-lg border flex items-center gap-3',
+-          healthStatus.type === 'healthy' && 'bg-green-500/10 border-green-500/30',
+-          healthStatus.type === 'degraded' && 'bg-yellow-500/10 border-yellow-500/30',
+-          healthStatus.type === 'unhealthy' && 'bg-red-500/10 border-red-500/30',
+-          healthStatus.type === 'unknown' && 'bg-slate-500/10 border-slate-500/30'
+-        )}>
+-          {healthStatus.type === 'healthy' && <CheckCircle className="w-5 h-5 text-green-400 shrink-0" />}
+-          {healthStatus.type === 'degraded' && <AlertCircle className="w-5 h-5 text-yellow-400 shrink-0" />}
+-          {healthStatus.type === 'unhealthy' && <XCircle className="w-5 h-5 text-red-400 shrink-0" />}
+-          {healthStatus.type === 'unknown' && <Info className="w-5 h-5 text-slate-400 shrink-0" />}
+-          <div>
+-            <div className={clsx(
+-              'text-sm font-medium',
+-              healthStatus.type === 'healthy' && 'text-green-400',
+-              healthStatus.type === 'degraded' && 'text-yellow-400',
+-              healthStatus.type === 'unhealthy' && 'text-red-400',
+-              healthStatus.type === 'unknown' && 'text-slate-400'
+-            )}>
+-              {healthStatus.label}
+-            </div>
+-            {healthStatus.message && (
+-              <div className="text-xs text-theme-text-secondary mt-0.5">{healthStatus.message}</div>
+-            )}
+-          </div>
+-        </div>
++        <AlertBanner
++          variant={BANNER_VARIANT[healthStatus.level]}
++          icon={BANNER_ICON[healthStatus.level]}
++          title={healthStatus.label}
++          message={healthStatus.message}
++        />
+       )}
+ 
+       {/* Empty state hint */}
+@@ -139,36 +119,42 @@ export function GenericRenderer({ data }: GenericRendererProps) {
+ // HEALTH STATUS DETECTION
+ // ============================================================================
+ 
+-type HealthType = 'healthy' | 'degraded' | 'unhealthy' | 'unknown'
+-
+ interface HealthStatusResult {
+-  type: HealthType
++  level: HealthLevel
+   label: string
+   message?: string
  }
  
--function ResourceKindGroup({ kind, resources, onResourceClick, showHealth }: ResourceKindGroupProps) {
-+function ResourceKindGroup({ kind, resources, total, onResourceClick, showHealth }: ResourceKindGroupProps) {
-   const [expanded, setExpanded] = useState(resources.length <= 5)
+-// This renderer's banner has four tones, while the shared derivation speaks the
+-// full HealthLevel vocabulary. `alert` folds into unhealthy and `neutral` into
+-// unknown — the banner has no distinct treatment for either.
+-const BANNER_TYPE: Record<HealthLevel, HealthType> = {
+-  healthy: 'healthy',
+-  degraded: 'degraded',
+-  alert: 'unhealthy',
+-  unhealthy: 'unhealthy',
++// The shared banner carries light and dark pairs for each tone. `alert` keeps
++// its own orange step between degraded and unhealthy; `neutral` reads like
++// unknown.
++const BANNER_VARIANT = {
++  healthy: 'success',
++  degraded: 'warning',
++  alert: 'alert',
++  unhealthy: 'error',
+   neutral: 'unknown',
+   unknown: 'unknown',
++} as const satisfies Record<HealthLevel, string>
++const BANNER_ICON: Record<HealthLevel, typeof Info> = {
++  healthy: CheckCircle,
++  degraded: AlertCircle,
++  alert: AlertCircle,
++  unhealthy: XCircle,
++  neutral: Info,
++  unknown: Info,
+ }
  
-   return (
-@@ -97,7 +101,7 @@ function ResourceKindGroup({ kind, resources, onResourceClick, showHealth }: Res
-       >
-         <CollapseChevron open={expanded} className="w-3 h-3" />
-         <span className="font-medium">{kind}</span>
--        <span className="text-theme-text-tertiary">({resources.length})</span>
-+        <span className="text-theme-text-tertiary">({resources.length < total ? `${resources.length} of ${total}` : total})</span>
-       </button>
+ function getHealthStatus(resource: any): HealthStatusResult | null {
+   if (resource?.kind === 'InferenceService' && isApiGroup(resource?.apiVersion, 'serving.kserve.io') && isInferenceServiceStopRequested(resource)) {
+     const status = getInferenceServiceStatus(resource)
+-    if (status.level === 'neutral') return { type: 'unknown', label: 'Stopped', message: "This model is stopped and isn't serving requests." }
+-    return { type: BANNER_TYPE[status.level], label: status.text }
++    if (status.level === 'neutral') return { level: 'neutral', label: 'Stopped', message: "This model is stopped and isn't serving requests." }
++    return { level: status.level, label: status.text }
+   }
+   const acknowledgedPause = getCrossplanePauseState(resource) === 'acknowledged'
+   const derived = acknowledgedPause ? getCrossplaneIndependentStatus(resource) : getGenericResourceStatus(resource)
+   if (!derived || (acknowledgedPause && derived.tone === 'healthy')) return null
+-  return { type: BANNER_TYPE[derived.tone], label: derived.text, message: 
+```
+
+**File**: `packages/k8s-ui/src/components/ui/drawer-components.tsx` (modified, +7/-5)
+```diff
+@@ -398,13 +398,15 @@ export function ConditionsSection({
+ // ALERT BANNER
+ // ============================================================================
  
-       <Collapse open={expanded} mountLazily>
++// The message line is 12px body text, so it uses the neutral secondary tone:
++// the variants' tinted tones fall below 4.5:1 on their light backgrounds.
+ const ALERT_COLORS = {
+-  alert:   { bg: 'status-alert', border: '', title: '', message: '', list: '', bullet: '' },
++  alert:   { bg: 'status-alert', border: '', title: '', message: 'text-theme-text-secondary', list: '', bullet: '' },
+   unknown: { bg: 'status-unknown', border: '', title: '', message: '', list: '', bullet: '' },
+-  error:   { bg: 'bg-red-50 dark:bg-red-950/30', border: 'border-red-200 dark:border-red-800/30', title: 'text-red-700 dark:text-red-300', message: 'text-red-600/80 dark:text-red-300/70', list: 'text-red-600 dark:text-red-400', bullet: 'text-red-400/60 dark:text-red-400/50' },
+-  warning: { bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-amber-200 dark:border-amber-800/30', title: 'text-amber-700 dark:text-amber-300', message: 'text-amber-600/80 dark:text-amber-300/70', list: 'text-amber-600 dark:text-amber-400', bullet: 'text-amber-400/60 dark:text-amber-400/50' },
+-  info:    { bg: 'bg-sky-50 dark:bg-sky-950/30', border: 'border-sky-200 dark:border-sky-800/30', title: 'text-sky-700 dark:text-sky-300', message: 'text-sky-600/80 dark:text-sky-300/70', list: 'text-sky-600 dark:text-sky-400', bullet: 'text-sky-400/60 dark:text-sky-400/50' },
+-  success: { bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-emerald-200 dark:border-emerald-800/30', title: 'text-emerald-700 dark:text-emerald-300', message: 'text-emerald-600/80 dark:text-emerald-300/70', list: 'text-emerald-600 dark:text-emerald-400', bullet: 'text-emerald-400/60 dark:text-emerald-400/50' },
++  error:   { bg: 'bg-red-50 dark:bg-red-950/30', border: 'border-red-200 dark:border-red-800/30', title: 'text-red-700 dark:text-red-300', message: 'text-theme-text-secondary', list: 'text-red-600 dark:text-red-400', bullet: 'text-red-400/60 dark:text-red-400/50' },
++  warning: { bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-amber-200 dark:border-amber-800/30', title: 'text-amber-700 dark:text-amber-300', message: 'text-theme-text-secondary', list: 'text-amber-600 dark:text-amber-400', bullet: 'text-amber-400/60 dark:text-amber-400/50' },
++  info:    { bg: 'bg-sky-50 dark:bg-sky-950/30', border: 'border-sky-200 dark:border-sky-800/30', title: 'text-sky-700 dark:text-sky-300', message: 'text-theme-text-secondary', list: 'text-sky-600 dark:text-sky-400', bullet: 'text-sky-400/60 dark:text-sky-400/50' },
++  success: { bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-emerald-200 dark:border-emerald-800/30', title: 'text-emerald-700 dark:text-emerald-300', message: 'text-theme-text-secondary', list: 'text-emerald-600 dark:text-emerald-400', bullet: 'text-emerald-400/60 dark:text-emerald-400/50' },
+ } as const
+ 
+ const DEFAULT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 ```
 
 ---
 
-### Incident Patch 2: `2104974b` (2026-11-15)
-**Commit Message**: fix(k8score): don't call self-managed AWS clusters EKS (#2655)
+### Incident Patch 3: `b7e1536d` (2026-11-16)
+**Commit Message**: fix(traffic): show Data per protocol and label byte-only edges with their throughput (#2744)
 
-## Description
+## Summary
 
-Radar labels any node with an `aws://` providerID as EKS. That ID only
-says the node is an EC2 instance: the AWS cloud controller manager sets
-it on self-managed clusters too (kubeadm, Cluster API + CAPA, kops), so
-those show up as EKS.
+In Istio ambient, a sidecar or ingress client calling an ambient
+workload with no waypoint is reported twice: the calling proxy reports
+HTTP (request and response body bytes, request and error rates) and
+ztunnel reports the connection's TCP bytes. Radar added both into one
+Data figure, so that edge, its nodes and the connections table showed a
+number no proxy measured. #2733 kept both measurements and flagged the
+sum with a "Data may double-count" chip. This removes the sum instead:
+every Data figure on the map is per protocol, and bytes are never added
+across protocols.
 
-`DetectByProviderID` now returns `eks` for an `aws://` node only when
-its kubelet is an EKS build (`-eks-` in the kubelet version, e.g.
-`v1.31.4-eks-2d5f260`). Otherwise detection falls through to the labels
-as before (`eks.amazonaws.com/nodegroup` / `capacityType` still mean
-EKS; OpenShift and Rancher labels now win on AWS too) and, failing
-those, `generic`, which the UI shows as a standard Kubernetes cluster.
-GKE, AKS, kind, Nutanix, RKE2 and NKP detection are unchanged.
+## What changed
 
-The marker is checked only for nodes, not added to
-`DetectPlatformFromVersion`: the traffic manager reads that from the
-server version before its NKP check, so NKP on EKS would have turned
-into `eks` there.
+**Per-protocol bytes on each aggregate** (`pkg/traffic`).
+`AggregatedFlow` gains `bytesByProtocol`, keyed by each flow's protocol
+as the source emits it (`http`, `grpc`, `tcp`, `udp`, …), with every
+observed protocol present. Aggregation identity, rates, latency and L7
+voting are unchanged. `bytesSent`/`bytesRecv` stay on the wire as the
+cross-protocol sum for compatibility, documented as not to be shown as
+one figure when more than one protocol is present.
 
-## Type of change
+**One edge, figures per protocol** 
 
-- [x] Bug fix (non-breaking change that fixes an issue)
-- [ ] New feature (non-breaking change that adds functionality)
-- [ ] Breaking change (fix or feature that would cause e
-
-**File**: `pkg/k8score/cluster_detection.go` (modified, +13/-1)
+**File**: `docs/integrations.md` (modified, +2/-2)
 ```diff
-@@ -77,13 +77,19 @@ func DetectPlatformFromVersion(gitVersion string) string {
+@@ -852,10 +852,10 @@ permits the reference or has produced an artifact.
+ 
+ Service links accept short names in the rule's namespace or full `name.namespace.svc.<domain>` names. Radar reads a unique registry domain from standard observed Istiod Deployments' `--domain` argument, using Istio's `cluster.local` default when no override is observed. Conflicting or unresolved control-plane arguments leave FQDN links unresolved. External control planes and nonstandard launch configurations may therefore need additional domain discovery; arbitrary dotted hosts are not treated as local Services.
+ 
+-**Live Traffic:** the Traffic view reads Istio's standard Prometheus metrics: `istio_requests_total` (with its 5xx rate and request/response bytes) for HTTP and gRPC edges, and `istio_tcp_received_bytes_total` / `istio_tcp_sent_bytes_total` for TCP edges, as rates over the view's time range (5 minutes when it is under a minute). A rate needs two samples per series, so a range shorter than two scrape intervals shows no traffic; the map then says to choose a longer range. TCP edges appear whenever bytes move in the view's range, including on long-lived connections, and show data volume (byte rates × the window) with no request rate. Radar reads the receiving side's report: the destination sidecar (`reporter="destination"`) or, in ambient mode, the destination's waypoint proxy (`reporter="waypoint"`). It never adds the receiving and calling sides' reports together. In ambient mode:
++**Live Traffic:** the Traffic view reads Istio's standard Prometheus metrics: `istio_requests_total` (with its 5xx rate and request/response bytes) for HTTP and gRPC edges, and `istio_tcp_received_bytes_total` / `istio_tcp_sent_bytes_total` for TCP edges, as rates over the view's time range (5 minutes when it is under a minute). A rate needs two samples per series, so a range shorter than two scrape intervals shows no traffic; the map then says to choose a longer range. TCP edges appear whenever bytes move in the view's range, including on long-lived connections, and show data volume (byte rates × the window) with no request rate; on the map, an edge with no request rate is labelled with its throughput per protocol (for example `TCP · 2.4 KB/s`); against an older Radar that sends no per-protocol breakdown those labels stay empty. Radar reads the receiving side's report: the destination sidecar (`reporter="destination"`) or, in ambient mode, the destination's waypoint proxy (`reporter="waypoint"`). It never adds the receiving and calling sides' reports together. In ambient mode:
+ - Workloads behind a waypoint get HTTP and gRPC edges from the waypoint's metrics. ztunnel also reports the hops into and out of the waypoint. Radar recognizes waypoint Deployments by their labels, as Kiali does (`gateway.istio.io/managed=istio.io-mesh-controller`, or, without that label, a `gateway.networking.k8s.io/gateway-name` containing "waypoint"), and leaves those hops out, so the map draws client → server without the proxy in between. If Radar cannot list Deployments, it cannot recognize waypoints and the hops stay on the map.
+ - A request into an ambient namespace (labeled `istio.io/dataplane-mode=ambient`) that no waypoint reported, such as an ingress gateway or sidecar calling a workload with no waypoint, is read from the calling proxy's report (`reporter="source"`), as Kiali does. Those figures are used only when the receiving side counted none of that client's requests to the same workload, Service and protocol in the view's time range. When it counted some, its figures are used, so requests that skipped the waypoint are not counted. Radar finds ambient namespaces from its Namespace cache; without it, these reports are not read and the ztunnel check below is off. The query names every ambient namespace and is sent in a POST body; when the namespaces are too many to fit Radar's 16 KB query limit (several hundred, depending on name length), Radar skips these reports and the map says so.
+-- Traffic between ambient workloads without a waypoint has no L7 metrics. It appears as TCP edges from ztunnel. When a call's HTTP figures come from the calling proxy (no waypoint or sidecar received it) and ztunnel reports TCP between the same workloads, Data includes both the HTTP bytes and ztunnel's TCP bytes, and the map notes that these may count the same calls twice.
++- Traffic between ambient workloads without a waypoint has no L7 metrics. It appears as TCP edges from ztunnel. When a call's HTTP figures come from the calling proxy (no waypoint or sidecar received it) and ztunnel reports TCP between the same workloads, Data shows HTTP payload bytes and ztunnel TCP connection bytes side by side by protocol. These measurements can describe the same calls and are never added together.
+ - Prometheus has to scrape ztunnel and the waypoint proxies. When the view includes ambient traffic but Radar finds no ztunnel metrics (no `istio_build{component="ztunnel"}` series and no ztun
+```
+
+**File**: `internal/server/traffic_data_note_test.go` (removed, +0/-63)
+```diff
+@@ -1,63 +0,0 @@
+-package server
+-
+-import (
+-	"encoding/json"
+-	"net/http"
+-	"net/http/httptest"
+-	"testing"
+-
+-	"github.com/skyhook-io/radar/pkg/traffic"
+-)
+-
+-func TestTrafficPayloadDataNote(t *testing.T) {
+-	for name, payload := range map[string]func(*traffic.FlowsResponse, []traffic.Flow) map[string]any{
+-		"flows": func(response *traffic.FlowsResponse, flows []traffic.Flow) map[string]any {
+-			return trafficFlowsPayload(response, flows, false)
+-		},
+-		"records": trafficRecordsPayload,
+-	} {
+-		t.Run(name, func(t *testing.T) {
+-			flows := []traffic.Flow{
+-				{Source: traffic.Endpoint{Namespace: "a"}},
+-				{Source: traffic.Endpoint{Namespace: "b"}},
+-			}
+-			for _, tc := range []struct {
+-				name       string
+-				note       string
+-				namespaces []string
+-				source     []traffic.Flow
+-				wantNote   bool
+-			}{
+-				{"carried through", "Reported bytes may overlap.", nil, flows, true},
+-				{"all filtered away", "Reported bytes may overlap.", []string{"c"}, flows, false},
+-				{"some remain", "Reported bytes may overlap.", []string{"a"}, flows, true},
+-				{"source returned none", "Reported bytes may overlap.", nil, nil, true},
+-				{"absent", "", nil, flows, false},
+-			} {
+-				t.Run(tc.name, func(t *testing.T) {
+-					response := &traffic.FlowsResponse{Flows: tc.source, DataNote: tc.note}
+-					s := &Server{}
+-					r := httptest.NewRequest(http.MethodGet, "/", nil)
+-					visible := s.visibleFlows(r, response.Flows, tc.namespaces, traffic.DefaultFlowOptions())
+-					encoded, err := json.Marshal(payload(response, visible))
+-					if err != nil {
+-						t.Fatal(err)
+-					}
+-					var decoded map[string]any
+-					if err := json.Unmarshal(encoded, &decoded); err != nil {
+-						t.Fatal(err)
+-					}
+-					note, present := decoded["dataNote"]
+-					if present != tc.wantNote || present && note != tc.note {
+-						t.Errorf("dataNote = %v (present %v), want %q (present %v)", note, present, tc.note, tc.wantNote)
+-					}
+-					for _, field := range []string{"warning", "warningKind"} {
+-						if _, present := decoded[field]; present {
+-							t.Errorf("a data note must not set %s", field)
+-						}
+-					}
+-				})
+-			}
+-		})
+-	}
+-}
+```
+
+**File**: `internal/server/traffic_handlers.go` (modified, +0/-8)
+```diff
+@@ -292,7 +292,6 @@ func trafficFlowsPayload(response *traffic.FlowsResponse, flows []traffic.Flow,
+ 	}
+ 	addFlowsCoverage(result, response)
+ 	addFlowsWarning(result, response, flows)
+-	addFlowsDataNote(result, response, flows)
+ 	return result
  }
  
- // DetectByProviderID detects the platform from a node's ProviderID field.
-+// An aws:// ID only says the node is an EC2 instance: the AWS cloud controller
-+// sets it on self-managed clusters too (kubeadm, Cluster API, kops), so it
-+// counts as EKS only when the kubelet is an EKS build.
- func DetectByProviderID(node corev1.Node) string {
- 	providerID := node.Spec.ProviderID
- 	switch {
- 	case strings.HasPrefix(providerID, "gce://") || strings.HasPrefix(providerID, "gke://"):
- 		return "gke"
- 	case strings.HasPrefix(providerID, "aws://"):
--		return "eks"
-+		if isEKSKubeletVersion(node.Status.NodeInfo.KubeletVersion) {
-+			return "eks"
-+		}
-+		return "unknown"
- 	case strings.HasPrefix(providerID, "azure://"):
- 		return "aks"
- 	case strings.HasPrefix(providerID, "kind://"):
-@@ -95,6 +101,12 @@ func DetectByProviderID(node corev1.Node) string {
+@@ -309,12 +308,6 @@ func addFlowsCoverage(result map[string]any, response *traffic.FlowsResponse) {
  	}
  }
  
-+// isEKSKubeletVersion reports whether a kubelet version is an EKS build, such
-+// as v1.31.4-eks-2d5f260. Upstream kubelets report a plain v1.31.4.
-+func isEKSKubeletVersion(version string) bool {
-+	return strings.Contains(version, "-eks-")
-+}
-+
- // DetectByLabels detects the platform from a node's labels.
- func DetectByLabels(node corev1.Node) string {
- 	if IsNodeGKE(node) {
-```
-
-**File**: `pkg/k8score/cluster_detection_test.go` (modified, +8/-1)
-```diff
-@@ -22,7 +22,12 @@ func TestDetectNodePlatform(t *testing.T) {
- 		{name: "not an RKE2 suffix", node: nodeWithKubeletVersion("v1.31.7-rke2r1"), want: "unknown"},
- 		{name: "GCE provider", node: nodeWithProviderID("gce://project/zone/node"), want: "gke"},
- 		{name: "GKE provider", node: nodeWithProviderID("gke://project/zone/node"), want: "gke"},
--		{name: "AWS provider", node: nodeWithProviderID("aws:///zone/node"), want: "eks"},
-+		{name: "AWS provider on EKS kubelet", node: nodeWithSignals("v1.31.4-eks-2d5f260", "aws:///us-east-1a/i-0abc", nil), want: "eks"},
-+		{name: "AWS provider without EKS kubelet", node: nodeWithSignals("v1.36.5", "aws:///us-east-1a/i-0abc", nil), want: "unknown"},
-+		{name: "AWS provider with no kubelet version", node: nodeWithProviderID("aws:///zone/node"), want: "unknown"},
-+		{name: "AWS provider with EKS nodegroup label", node: nodeWithSignals("v1.31.4", "aws:///us-east-1a/i-0abc", map[string]string{"eks.amazonaws.com/nodegroup": "workers"}), want: "eks"},
-+		{name: "AWS provider on OpenShift", node: nodeWithSignals("v1.31.4", "aws:///us-east-1a/i-0abc", map[string]string{"node.openshift.io/os_id": "rhcos"}), want: "openshift"},
-+		{name: "EKS marker without AWS provider", node: nodeWithKubeletVersion("v1.31.4-eks-2d5f260"), want: "unknown"},
- 		{name: "Azure provider", node: nodeWithProviderID("azure:///subscriptions/node"), want: "aks"},
- 		{name: "kind provider", node: nodeWithProviderID("kind://docker/radar/control-plane"), want: "kind"},
- 		{name: "Nutanix provider", node: nodeWithProviderID("nutanix://99d71c41-e100-4474-601b-5dd604becea6"), want: "nutanix"},
-@@ -74,6 +79,8 @@ func TestDetectClusterPlatform(t *testing.T) {
- 		{name: "no nodes", client: fake.NewSimpleClientset(), want: "unknown"},
- 		{name: "generic node", client: fake.NewSimpleClientset(&corev1.Node{ObjectMeta: metav1.ObjectMeta{Name: "worker-1"}}), want: "generic"},
- 		{name: "RKE2 node", client: fake.NewSimpleClientset(nodePtr(nodeWithKubeletVersion("v1.31.7+rke2r1"))), want: "rke2"},
-+		{name: "self-managed cluster on AWS", client: fake.NewSimpleClientset(nodePtr(nodeWithSignals("v1.36.5", "aws:///us-east-1a/i-0abc", nil))), want: "generic"},
-+		{name: "EKS node", client: fake.NewSimpleClientset(nodePtr(nodeWithSignals("v1.31.4-eks-2d5f260", "aws:///us-east-1a/i-0abc", nil))), want: "eks"},
- 		{name: "NKP on AWS infrastructure", client: fake.NewSimpleClientset(nodePtr(nodeWithProviderID("aws:///zone/node")), &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: NKPNamespace}}), want: "nkp"},
- 		{name: "Nutanix without NKP", client: fake.NewSimpleClientset(nodePtr(nodeWithProviderID("nutanix://uuid"))), want: "nutanix"},
- 		{name: "GKE Autopilot", client: fake.NewSimpleClientset(nodePtr(nodeWithSignals("", "gce://project/zone/node", map[string]string{"cloud.google.com/gke-autopilot": "true"}))), want: "gke-autopilot"},
-```
-
----
-
-### Incident Patch 3: `7f30b56d` (2026-11-15)
-**Commit Message**: fix(gitops): avoid treating auto-sync off as manual orchestration (#2698)
-
-An Application with auto-sync off can still be synced by another
-controller, including ApplicationSet RollingSync. Radar's drift advice
-previously said nothing would reconcile until the user clicked Sync and
-suggested enabling auto-sync unconditionally.
-
-The advice now states that auto-sync is off and asks for a review of the
-desired changes and sync policy before deciding whether to sync.
-Missing-resource messages in Issues, Resources and the tree use the same
-review step without promising an in-app diff, and rollback copy retains
-the consequence of syncing without implying that auto-sync off prevents
-other controllers from deploying. When existing readable relationships
-identify a parent, both Enable and Disable auto-sync explain that its
-policy or source may overwrite the setting. For an ApplicationSet
-parent, Enable also warns that pending changes may apply immediately and
-bypass rollout ordering. The display label reads “Auto-sync off”; the
-`Manual` wire value and rollback/filter predicates stay unchanged.
-
-Validation: `make test-changed`, including auto-sync-off child shapes,
-rollback and sync-hazard p
-
-**File**: `docs/gitops.md` (modified, +2/-2)
-```diff
-@@ -82,7 +82,7 @@ The Issues band at the top of the detail page surfaces seven classes of problems
+-func addFlowsDataNote(result map[string]any, response *traffic.FlowsResponse, flows []traffic.Flow) {
+-	if response.DataNote != "" && !(len(flows) == 0 && len(response.Flows) > 0) {
+-		result["dataNote"] = response.DataNote
+-	}
+-}
+-
+ func addFlowsWarning(result map[string]any, response *traffic.FlowsResponse, flows []traffic.Flow) {
  
- - **Operation failures** (Argo) — the parser recognizes known controller failures (annotation-too-large, label-too-long, hook failure, admission webhook denial, RBAC, conflict, immutable field, schema migration, connectivity, etc.) and rewrites each into a plain-English cause
- - **Stuck-drift loop** — when sync succeeded at the current desired comparison’s sources and revisions but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration). An older successful apply or rollback against different desired sources/revisions remains ordinary pending drift, including after auto-sync is re-enabled behind a sync window. Missing apply/comparison evidence does not establish a loop
--- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below). A rollback marker in the latest operation, if successful, instead gives an informational note naming the applied revision(s) and recorded initiator; resource rows explain that Sync can undo the rollback (a current sync hazard replaces that advice, since the hazard is the more urgent consequence), including Missing rows while the current comparison is Unknown. Rows use `summary.rollbackRevision`, the revision(s) deployed by the latest successful marked rollback, only while effective auto-sync is off, independently of the OutOfSync-only informational note. Its absence does not mean no rollback happened. This records the last rollback, not the current live state: later changes can also show as drift. Syncing or enabling auto-sync deploys the current revision and can undo the rollback. A marked, completed rollback whose result sources or revisions differ from the requested ones instead gives a warning in both detail and cluster Issues, even if the app is Synced. A known requested target with no recorded applied revisions warns that the rollback target could not be verified. This operation-outcome warning uses the shared diagnosis and remains stable while that operation is latest, independently of the manual-drift timer. It belongs to the GitOps operation-failure category, with a distinct issue identity so current sync errors, operation failures or drift loops do not absorb its warning and recovery advice. Cluster Issues retains its delayed manual-drift warning after a successful rollback, with guidance to fix or revert Git before syncing again, or keep auto-sync off. Dry runs and failed or pending operations do not qualify. A later operation, including a dry-run, replaces the rollback evidence even if it does not move the app; Radar then returns to ordinary diagnosis. Argo's native rollback and a sync to an older revision have indistinguishable durable operation records, so Radar does not infer a rollback from old revisions or expiring audit events.
-+- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue asks you to review the desired changes and sync policy before deciding whether to sync, unless a sync would be hazardous (see below). Auto-sync being off does not rule out another controller initiating a sync, including ApplicationSet RollingSync. The visible sync-mode label is "Auto-sync off"; API responses retain "Manual". A rollback marker in the latest operation, if successful, instead gives an informational note naming the applied revision(s) and recorded initiator; resource rows explain that Sync can undo the rollback (a current sync hazard replaces that advice, since the hazard is the more urgent consequence), including Missing rows while the current comparison is Unknown. Rows use `summary.rollbackRevision`, the revision(s) deployed by the latest successful marked rollback, only while effective auto-sync is off, independently of the OutOfSync-only informational note. Its absence does not mean no rollback happened. This records the last rollback, not the current live state: later changes can also show as drift. Syncing or enabling auto-sync deploys the current revision and can undo the rollback. A marked, completed rollback whose result sources or revisions differ from the requested ones instead gives a warning in both detail and cluster Issues, even if the app is Synced. A known requested target with no recorded applied revisions warns that the rollback target could not be verified. This operation-outcome warning uses the shared diagnosis and remains stable while that operation is latest, independently of the manual-drift timer. It belongs to the GitOps operation-failure category, with a distinct issue identity so current sync errors, operation failures or drift loops do not absorb its warning and recovery advice. Cluster Issues retains its 
-```
-
-**File**: `internal/k8s/detect_gitops.go` (modified, +5/-7)
-```diff
-@@ -368,7 +368,7 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
- 				setDetectionOnset(&d, now, outOfSyncAt)
- 				d.Stuck = true
- 				d.Cause = "Auto-sync applied cleanly and reconciled recently, yet live state keeps diverging from Git. Common causes: a mutating admission webhook adds defaults Argo isn't told to ignore; a sibling controller (Karpenter, Istio, cert-manager) writes back into spec; or a conversion webhook rewrites a deprecated API schema."
--				d.Action = "Open Changes to see the per-resource drift, then match it against your Git manifest, the resource's controller, and any mutating webhooks."
-+				d.Action = "Open Resources to see the per-resource drift, then match it against your Git manifest, the resource's controller, and any mutating webhooks."
- 				out = append(out, d)
- 			} else {
- 				dd := gitopsProblem(now, "Application", argoGroup, ns, name, "high",
-@@ -380,18 +380,16 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
- 				out = append(out, dd)
- 			}
- 		}
--		// A manual-sync app legitimately sits OutOfSync until an operator syncs
--		// it, so unlike the auto-synced branch above we only warn once the drift
--		// has persisted past manualDriftGate — long enough to be a forgotten
--		// change rather than one mid-review.
-+		// Drift with auto-sync off can be intentional, so warn only after the
-+		// existing grace period rather than during review or orchestration.
- 		if !automated && outOfSync && manualDriftFor >= manualDriftGate {
- 			dd := gitopsProblem(now, "Application", argoGroup, ns, name, "warning", "OutOfSyncManual",
- 				fmt.Sprintf("Application has been out of sync for %s and auto-sync is not enabled", timeutil.FormatAgeShort(manualDriftFor)), createdAt)
- 			setDetectionOnset(&dd, now, outOfSyncAt)
--			dd.Action = "Review the drift in Changes, then Sync the application (or enable auto-sync) if the drift is unintended."
-+			dd.Action = "Review the desired changes and sync policy before deciding whether to sync."
- 			if revision, _ := gitops.ArgoSuccessfulRollback(app); revision != "" {
- 				dd.Message = "Last rollback deployed " + revision + "; the live state differs from the desired state and auto-sync is off."
--				dd.Action = "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source first, or keep auto-sync off. Review Changes for later edits."
-+				dd.Action = "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source before syncing again. Review Resources for later edits."
- 			}
- 			if hazard := argoSyncHazardAction(app); hazard != "" {
- 				dd.Action = hazard
-```
-
-**File**: `internal/k8s/detect_gitops_test.go` (modified, +4/-4)
-```diff
-@@ -690,8 +690,8 @@ func TestDetectArgoAppProblems_ManualDriftGate(t *testing.T) {
- 		if !d.OnsetAt.Equal(base) {
- 			t.Errorf("OnsetAt = %v, want exact first observation %v", d.OnsetAt, base)
- 		}
--		if d.Action == "" {
--			t.Error("OutOfSyncManual should carry an Action")
-+		if d.Action != "Review the desired changes and sync policy before deciding whether to sync." {
-+			t.Errorf("unexpected manual drift guidance: %s", d.Action)
- 		}
- 	})
- 
-@@ -715,7 +715,7 @@ func TestDetectArgoAppProblems_ManualDriftGate(t *testing.T) {
- 		if d.Message != "Last rollback deployed rev-old; the live state differs from the desired state and auto-sync is off." {
- 			t.Errorf("message = %q", d.Message)
- 		}
--		if d.Action != "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source first, or keep auto-sync off. Review Changes for later edits." {
-+		if d.Action != "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source before syncing again. Review Resources for later edits." {
- 			t.Errorf("action = %q", d.Action)
- 		}
- 	})
-@@ -1239,7 +1239,7 @@ func TestDetectArgoAppProblems_ManualDriftAdviceRespectsSyncHazards(t *testing.T
- 		name, want string
- 		mutate     func(*unstructured.Unstructured)
- 	}{
--		{"plain drift", "then Sync the application", func(*unstructured.Unstructured) {}},
-+		{"plain drift", "before deciding whether to sync", func(*unstructured.Unstructured) {}},
- 		{"shared resources", "also tracked by Application payments", func(app *unstructured.Unstructured) {
- 			_ = unstructured.SetNestedSlice(app.Object, []any{map[string]any{"type": "SharedResourceWarning", "message": "Deployment/web is part of applications argocd/billing and payments"}}, "status", "conditions")
- 		}},
-```
-
-**File**: `packages/k8s-ui/src/components/gitops/GitOpsDetailLayout.tsx` (modified, +9/-6)
-```diff
-@@ -12,11 +12,14 @@ import { RadarUpgradeNote, radarUpgradeNoteText } from '../ui/RadarUpgradeNote'
- import type { GitOpsHealthStatus, GitOpsInsight, GitOpsIssue, GitOpsRemediation, SyncStatus } from '../../types'
- import type { RadarUpgradeRequirement } from '../../types/fetch-error'
- 
--function argoAutoSyncControllerNote(controller: ArgoActionHandlers['autoSyncController']): string {
-+function argoAutoSyncControllerNote(controller: ArgoActionHandlers['autoSyncController'], enabling = false): string {
-   if (!controller) return ''
--  return controller.kind === 'ApplicationSet'
--    ? ` ApplicationSet ${controller.name} can turn it back on; to keep it off, change the ApplicationSet's template.`
--    : ` Application ${controller.name} manages this one from Git and can turn it back on when it syncs; to keep it off, change it in Git.`
-+  if (controller.kind === 'ApplicationSet') {
-+    return enabling
-+      ? ` ApplicationSet ${controller.name} may overwrite this setting. Enabling may apply pending changes immediately and bypass ApplicationSet rollout ordering. Review its template and rollout policy first.`
-+      : ` ApplicationSet ${controller.name} may overwrite this setting or control when this Application syncs. Review its template and rollout policy before changing auto-sync.`
-+  }
-+  return ` Application ${controller.name} manages this one from Git and may overwrite this setting when it syncs. Review its source before changing auto-sync.`
+ 	// A partial-data warning qualifies the flows it came with. If the namespace
+@@ -413,7 +406,6 @@ func trafficRecordsPayload(response *traffic.FlowsResponse, flows []traffic.Flow
+ 	}
+ 	addFlowsCoverage(result, response)
+ 	addFlowsWarning(result, response, flows)
+-	addFlowsDataNote(result, response, flows)
+ 	return result
  }
  
- function argoResumeDescription(suspended: boolean, settings: ArgoActionHandlers['resumeSettings']): string {
-@@ -395,7 +398,7 @@ export function GitOpsDetailLayout(props: GitOpsDetailLayoutProps) {
-                   {detail.path && <AppFact label="Path" value={detail.path} />}
-                   {detail.chart && <AppFact label="Chart" value={detail.chart} />}
-                   <AppFact label="Destination" value={detail.destination || '-'} />
--                  {detail.autoSyncMode && <AppFact label="Sync mode" value={detail.autoSyncMode} />}
-+                  {detail.autoSyncMode && <AppFact label="Sync mode" value={detail.autoSyncMode === 'Manual' ? 'Auto-sync off' : detail.autoSyncMode} />}
-                 </div>
-               )}
-               {resumeBlockedReason && <p className="mt-2 text-xs text-theme-text-secondary">{resumeBlockedReason}</p>}
-@@ -456,7 +459,7 @@ export function GitOpsDetailLayout(props: GitOpsDetailLayoutProps) {
-                   ) : (
-                     <ActionButton
-                       label="Enable auto-sync"
--                      description={argoResumeDescription(effectiveSuspended, argo.resumeSettings)}
-+                      description={argoResumeDescription(effectiveSuspended, argo.resumeSettings) + argoAutoSyncControllerNote(argo.autoSyncController, true)}
-                       icon={Play}
-                       loading={argo.resuming}
-                       onClick={() => !resumeBlockedReason && !resumeUpgrade && argo.onResume()}
 ```
 
-**File**: `packages/k8s-ui/src/components/gitops/GitOpsTableView.tsx` (modified, +1/-1)
+**File**: `internal/traffic/beyla_test.go` (modified, +30/-0)
 ```diff
-@@ -1023,7 +1023,7 @@ function GitOpsFilterSidebar({
- 
-         <GitOpsFilterSection icon={CircleDot} title="Automation (Sync policy)">
-           <GitOpsFacetButton label="Auto-sync" count={automationCounts.auto} active={automationFilters.has('auto')} onClick={() => onToggleAutomation('auto')} />
--          <GitOpsFacetButton label="Manual" count={automationCounts.manual} active={automationFilters.has('manual')} onClick={() => onToggleAutomation('manual')} />
-+          <GitOpsFacetButton label="Auto-sync off" count={automationCounts.manual} active={automationFilters.has('manual')} onClick={() => onToggleAutomation('manual')} />
-           <GitOpsFacetButton label="Suspended" count={automationCounts.suspended} active={automationFilters.has('suspended')} tone="warning" onClick={() => onToggleAutomation('suspended')} />
-         </GitOpsFilterSection>
- 
+@@ -1851,3 +1851,33 @@ func TestBeylaSource_GetFlows_FailedEnrichmentIsReportedNotZeroed(t *testing.T)
+ 		})
+ 	}
+ }
++
++func TestBeylaSource_GetFlows_UnorientedProtocolBytes(t *testing.T) {
++	src := &BeylaSource{k8sClient: fake.NewSimpleClientset()}
++	src.queryFn = func(_ context.Context, query string) (*prom.QueryResult, error) {
++		if !strings.Contains(query, `direction="unknown"`) {
++			return emptyResult(), nil
++		}
++		return promResult("vector",
++			promSeries(map[string]string{"k8s_src_owner_name": "client", "k8s_src_namespace": "demo", "k8s_dst_owner_name": "dns", "k8s_dst_namespace": "demo", "transport": "UDP"}, 10),
++			promSeries(map[string]string{"k8s_src_owner_name": "dns", "k8s_src_namespace": "demo", "k8s_dst_owner_name": "client", "k8s_dst_namespace": "demo", "transport": "UDP"}, 25),
++			promSeries(map[string]string{"k8s_src_owner_name": "client", "k8s_src_namespace": "demo", "k8s_dst_owner_name": "dns", "k8s_dst_namespace": "demo", "transport": "TCP"}, 4),
++		), nil
++	}
++	resp, err := src.GetFlows(t.Context(), FlowOptions{})
++	if err != nil {
++		t.Fatal(err)
++	}
++	aggregated := AggregateFlows(resp.Flows)
++	if len(resp.Flows) != 2 || len(aggregated) != 1 {
++		t.Fatalf("flows=%+v, aggregates=%+v", resp.Flows, aggregated)
++	}
++	a := aggregated[0]
++	if !a.DirectionUnknown || len(a.BytesByProtocol) != 2 {
++		t.Fatalf("wrong conversation: %+v", a)
++	}
++	udp, tcp := a.BytesByProtocol["udp"], a.BytesByProtocol["tcp"]
++	if udp.BytesSent != 10*defaultRateWindowSeconds || udp.BytesRecv != 25*defaultRateWindowSeconds || tcp.BytesSent != 4*defaultRateWindowSeconds || tcp.BytesRecv != 0 {
++		t.Errorf("protocol buckets: %+v", a.BytesByProtocol)
++	}
++}
 ```
 
-**File**: `packages/k8s-ui/src/components/gitops/argo-radar-upgrade.test.tsx` (modified, +9/-6)
+**File**: `internal/traffic/istio.go` (modified, +4/-26)
 ```diff
-@@ -56,7 +56,7 @@ function layout(handlers: ArgoActionHandlers, status: GitOpsDetailStatus | null
-       terminating={false}
-       terminatingChipTooltip=""
-       terminatingActionTooltip=""
--      detail={{ project: 'default' }}
-+      detail={{ project: 'default', autoSyncMode: 'Manual' }}
-       insight={null}
-       insightLoading={false}
-       isArgoApp
-@@ -86,6 +86,7 @@ describe('Enable auto-sync on the GitOps detail page', () => {
-     const markup = html(layout(argo({ resumeUpgrade: null })))
-     expect(enableAutoSync(markup)).not.toMatch(/\sdisabled=""/)
-     expect(markup).not.toContain('need the latest Radar')
-+    expect(markup).toContain('Auto-sync off')
-   })
+@@ -333,19 +333,11 @@ func (s *IstioSource) GetFlows(ctx context.Context, opts FlowOptions) (*FlowsRes
+ 	httpCount := len(httpFlows)
+ 	tcpFlows, tcpErr := []Flow(nil), errIstioTCPUnchecked
+ 	ztunnelReported := false
+-	byteOverlap := false
+ 	if !scopes.tcpUnchecked {
+ 		var reportedInto []string
+-		var destinationTCP map[flowKey]bool
+-		tcpFlows, reportedInto, destinationTCP, tcpErr = s.queryTCPFlows(ctx, opts, scopes.tcp)
++		tcpFlows, reportedInto, tcpErr = s.queryTCPFlows(ctx, opts, scopes.tcp)
+ 		ztunnelReported = slices.ContainsFunc(reportedInto, func(ns string) bool { return slices.Contains(ambientKnown, ns) })
+ 		tcpFlows = withoutWaypointHops(tcpFlows, waypoints)
+-		if tcpErr == nil {
+-			byteOverlap = slices.ContainsFunc(httpFlows, func(f Flow) bool {
+-				return f.BytesSent+f.BytesRecv > 0 && slices.Contains(ambientNamespaces, f.Destination.Namespace) &&
+-					destinationTCP[workloadPairOf(f)] && !opts.Excludes(f) && opts.Match.Matches(f)
+-			})
+-		}
+ 	}
+ 	if tcpErr != nil {
+ 		log.Printf("[istio] Error querying TCP flows (continuing with HTTP only): %v", tcpErr)
+@@ -378,9 +370,6 @@ func (s *IstioSource) GetFlows(ctx context.Context, opts FlowOptions) (*FlowsRes
+ 			response.WarningKind = WarningTransient
+ 		}
+ 	}
+-	if byteOverlap {
+-		noteIstioByteOverlap(response)
+-	}
+ 	mismatch := ""
+ 	switch {
+ 	case len(httpFlows) == 0:
+@@ -611,12 +600,6 @@ func (s *IstioSource) queryHTTPSeriesRates(ctx context.Context, query string) (m
+ 	return rates, nil
+ }
  
-   // Disable auto-sync works on every Radar; only the way back on is gated.
-@@ -104,13 +105,15 @@ describe('Enable auto-sync on the GitOps detail page', () => {
-       { name: 'first-time enable on a Radar that starts self-heal off', status: { sync: 'OutOfSync', health: 'Healthy', suspended: false } as GitOpsDetailStatus, settings: { prune: false, selfHeal: false }, copy: 'Argo applies new commits. Resources removed from Git are kept (prune off).' },
-       { name: 'a block switched off in place with prune on', status: { sync: 'OutOfSync', health: 'Healthy', suspended: false } as GitOpsDetailStatus, settings: { prune: true, selfHeal: false }, copy: 'Argo applies new commits. Resources removed from Git are deleted (prune on).' },
-       { name: 'unknown settings', status: null, settings: null, copy: 'Turn on automated sync, so Argo applies new commits from Git.' },
--    ])('explains $name', async ({ status, settings, copy }) => {
-+      { name: 'known ApplicationSet parent', status: null, settings: null, controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: 'Turn on automated sync, so Argo applies new commits from Git. ApplicationSet clusters may overwrite this setting. Enabling may apply pending changes immediately and bypass ApplicationSet rollout ordering. Review its template and rollout policy first.' },
-+      { name: 'known parent Application', status: null, settings: null, controller: { kind: 'Application' as const, name: 'bootstrap' }, copy: 'Turn on automated sync, so Argo applies new commits from Git. Application bootstrap manages this one from Git and may overwrite this setting when it syncs. Review its source before changing auto-sync.' },
-+    ])('explains $name', async ({ status, settings, controller, copy }) => {
-       vi.useFakeTimers()
-       const element = document.createElement('div')
-       document.body.appendChild(element)
-       const root = createRoot(element)
-       try {
--        await act(async () => { root.render(layout(argo({ resumeSettings: settings }), status)) })
-+        await act(async () => { root.render(layout(argo({ resumeSettings: settings, autoSyncController: controller }), status)) })
-         const button = [...element.querySelectorAll('button')].find((b) => b.textContent === 'Enable auto-sync')!
-         await act(async () => {
-           button.parentElement!.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }))
-@@ -127,9 +130,9 @@ describe('Enable auto-sync on the GitOps detail page', () => {
-       { name: 'Sync is available', copy: 'Stop Argo from automatically syncing Git changes. Manual Sync still works.' },
-       { name: 'an operation holds Sync', running: true, copy: 'Stop Argo from automatically syncing Git changes.' },
-       { name: 'the Application is suspended', suspended: true, copy: 'Stop Argo from automatically syncing Git changes.' },
--      { name: 'an ApplicationSet owns it', controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: "Stop Argo from automatically syncing Git changes. Manual Sync still works. ApplicationSet clusters can turn it back on; to keep it off, change the ApplicationSet's template." },
--      { name: 'a parent Application manages it', controller: { kind: 'Application' as const, name: 'apps' }, copy: 'Stop Argo from automatically syncing Git changes. Manual Sync still works. Application apps manages this one from Git and can turn it back on when it syncs; to keep it off, change it in Git.' },
--      { name: 'an operation holds Sync on an ApplicationSet-owned app', running: true, controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: "Stop Argo from automatically syncing Git changes. ApplicationSet clusters can turn it back on; to keep it off, change the ApplicationSet's template." },
-+      { name: 'an ApplicationSet owns it', controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: "Stop Argo from automatically syncing Git changes. Manual Sync still works. ApplicationSet clusters may overwrite this setting or control when this Application syncs. Review its template and rollout policy before changing auto-sync." },
-+      { name: 'a parent Application manages it', controller: { kind: 'Application' as const, name: 'apps' }, copy: 'Stop Argo from automatically syncing Git cha
+-const istioByteOverlapNote = "Data on some edges may count the same calls twice: when no waypoint receives a call into an ambient workload, Radar can show both the calling proxy's HTTP bytes and ztunnel's TCP bytes."
+-
+-func noteIstioByteOverlap(response *FlowsResponse) {
+-	response.DataNote = istioByteOverlapNote
+-}
+-
+ // queryHTTPFlows queries istio_requests_total for HTTP/gRPC traffic.
+ // Response codes are aggregated (not split per-code) and a separate error query
+ // provides 5xx error rates per series. Optional figures that cannot be read are
+@@ -726,8 +709,7 @@ func (s *IstioSource) queryHTTPFlows(ctx context.Context, opts FlowOptions, sc c
+ // queryTCPFlows reads TCP traffic from istio_tcp_received_bytes_total and
+ // istio_tcp_sent_bytes_total. reportedInto includes idle series: their presence
+ // still shows the reporting proxy is scraped even when no bytes moved.
+-// destinationTCP holds the workload pairs whose wire bytes may also cover HTTP.
+-func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc clusterScope) (flows []Flow, reportedInto []string, destinationTCP map[flowKey]bool, err error) {
++func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc clusterScope) (flows []Flow, reportedInto []string, err error) {
+ 	w := rateWindowFor(opts.Since)
+ 	const groupBy = "source_workload, source_workload_namespace, destination_workload, destination_workload_namespace, destination_service_name, reporter"
+ 	type tcpSeriesKey struct {
+@@ -741,7 +723,7 @@ func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc cl
+ 	for direction, metric := range []string{istioTCPMetric, "istio_tcp_sent_bytes_total"} {
+ 		result, err := s.queryFn(ctx, istioRateQuery(groupBy, metric, istioReporterSelector, opts.Namespace, sc, w))
+ 		if err != nil {
+-			return nil, nil, nil, err
++			return nil, nil, err
+ 		}
+ 		for _, series := range result.Series {
+ 			reportedInto = append(reportedInto, series.Labels["destination_workload_namespace"])
+@@ -758,13 +740,9 @@ func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc cl
+ 		}
+ 	}
+ 
+-	destinationTCP = make(map[flowKey]bool)
+ 	flows = make([]Flow, 0, len(keys))
+ 	for _, key := range keys {
+ 		volume := volumes[key]
+-		if key.reporter == "destination" {
+-			destinationTCP[key.flowKey] = true
+-		}
+ 		flow := Flow{
+ 			Source: Endpoint{
+ 				Name: key.srcWorkload, Namespace: key.srcNs,
+@@ -795,7 +773,7 @@ func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc cl
+ 		}
+ 		flows = append(flows, flow)
+ 	}
+-	return flows, reportedInto, destinationTCP, nil
++	return flows, reportedInto, nil
+ }
+ 
+ // StreamFlows returns a channel of flows for real-time updates
 ```
 
-**File**: `packages/k8s-ui/src/components/gitops/insights/ArgoResourceDiff.test.tsx` (modified, +1/-1)
+**File**: `internal/traffic/istio_ambient.go` (modified, +0/-10)
 ```diff
-@@ -141,7 +141,7 @@ describe('GitOpsChangesView expanded Argo row', () => {
-     const data = insight(false)
-     data.summary.autoSyncMode = 'Manual'
-     const html = renderToStaticMarkup(<GitOpsChangesView insight={data} />)
--    expect(html).toContain('Click Sync to apply the desired state.')
-+    expect(html).toContain('Review the desired changes and sync policy before deciding whether to sync.')
-     expect(html).not.toContain('See the sync warning above')
-   })
- 
+@@ -108,13 +108,3 @@ func withoutWaypointHops(flows []Flow, waypoints map[istioWorkload]bool) []Flow
+ 	}
+ 	return kept
+ }
+-
+-// workloadPairOf keys a flow by its workloads alone. ztunnel infers the Service
+-// of plaintext traffic from the target port, so its label can differ from the
+-// calling proxy's for the same calls, and edges are merged by workloads anyway.
+-func workloadPairOf(f Flow) flowKey {
+-	return flowKey{
+-		srcWorkload: f.Source.Workload, srcNs: f.Source.Namespace,
+-		dstWorkload: f.Destination.Workload, dstNs: f.Destination.Namespace,
+-	}
+-}
 ```
 
-**File**: `packages/k8s-ui/src/components/gitops/insights/GitOpsInsightViews.tsx` (modified, +3/-7)
+**File**: `internal/traffic/istio_tcp_test.go` (modified, +18/-32)
 ```diff
-@@ -290,7 +290,7 @@ function TerminatingStatusStrip({ summary }: { summary: NonNullable<GitOpsInsigh
-             <MetaFact label="Revision" value={summary.lastRevision || summary.targetRevision || '-'} mono />
-           )}
-           <SummaryTiming summary={summary} />
--          {summary.autoSyncMode && <MetaFact label="Sync mode" value={summary.autoSyncMode} />}
-+          {summary.autoSyncMode && <MetaFact label="Sync mode" value={summary.autoSyncMode === 'Manual' ? 'Auto-sync off' : summary.autoSyncMode} />}
-         </div>
-       </Collapse>
-     </div>
-@@ -1322,10 +1322,6 @@ function refKey(ref: { kind: string; namespace?: string; name: string }): string
- // nor a health message is available — otherwise those carry the truth and
- // this would just add noise. Empty string falls through to no row content.
- //
--// The "what to do" framing is intentional: badges already communicate state
--// ("OutOfSync"); the row should communicate what the operator should do
--// about it. With auto-sync on the answer is usually "wait, Argo will fix
--// it"; with manual mode the answer is "click Sync".
- function explainChangeStatus(
-   sync: string | undefined,
-   health: string | undefined,
-@@ -1349,11 +1345,11 @@ function explainChangeStatus(
-     if (inFlight) return 'Live state differs from Git. A sync is in progress — wait for it to finish.'
-     if (context?.rolledBack) return 'Live state differs from Git after a rollback. Sync applies the desired state and can undo the rollback.'
-     if (isAuto) return 'Live state differs from Git. Auto-sync should reconcile this within a few minutes; click Sync to force it.'
--    return 'Live state differs from Git. Click Sync to apply the desired state.'
-+    return 'Live state differs from Git. Review the desired changes and sync policy before deciding whether to sync.'
-   }
-   if (health === 'Missing' && parentFailed) return 'Resource was not created — see the operation error above for the cause.'
-   if (health === 'Degraded') return 'Resource reports an unhealthy state. Open the resource for events and logs.'
--  if (health === 'Missing') return 'Declared in Git but not present in the cluster. Sync to create it.'
-+  if (health === 'Missing') return missingResourceMessage(sync, context)
-   if (health === 'Progressing') return 'Resource is mid-rollout (e.g. pods coming up). Should converge shortly.'
-   if (health === 'Suspended') return 'Resource is paused (e.g. CronJob suspended, HPA disabled). Intentional unless surprising.'
-   return ''
+@@ -8,6 +8,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/skyhook-io/radar/pkg/prom"
++	"github.com/skyhook-io/radar/pkg/traffic"
+ )
+ 
+ func TestIstioTCPByteActivity(t *testing.T) {
+@@ -68,22 +69,22 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
+ 	for _, tc := range []struct {
+ 		name, dstNs, tcpService, tcpSource, tcpSourceNs, tcpDestination string
+ 		httpReporter, tcpReporter                                       string
+-		zeroHTTPBytes, wantOverlap, missingErrors, failTCP              bool
++		zeroHTTPBytes, missingErrors, failTCP                           bool
+ 		excludeClient, selectOther                                      bool
+ 	}{
+-		{name: "ambient same Service", wantOverlap: true},
++		{name: "ambient same Service"},
+ 		{name: "waypoint same Service", httpReporter: "waypoint", tcpReporter: "waypoint"},
+ 		{name: "sidecar same Service", dstNs: "side", httpReporter: "destination"},
+-		{name: "sidecar in an ambient namespace, same Service", httpReporter: "destination", wantOverlap: true},
+-		{name: "ambient other Service", tcpService: "db", wantOverlap: true},
+-		{name: "ambient unknown Service", tcpService: "unknown", wantOverlap: true},
++		{name: "sidecar in an ambient namespace, same Service", httpReporter: "destination"},
++		{name: "ambient other Service", tcpService: "db"},
++		{name: "ambient unknown Service", tcpService: "unknown"},
+ 		{name: "ambient pair excluded from the view", excludeClient: true},
+ 		{name: "ambient pair not in the selection", selectOther: true},
+ 		{name: "ambient other source", tcpSource: "other"},
+ 		{name: "ambient other source namespace", tcpSourceNs: "other"},
+ 		{name: "ambient other destination", tcpDestination: "other"},
+ 		{name: "ambient zero HTTP bytes", zeroHTTPBytes: true},
+-		{name: "ambient missing errors", missingErrors: true, wantOverlap: true},
++		{name: "ambient missing errors", missingErrors: true},
+ 		{name: "ambient failed TCP read", failTCP: true},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+@@ -170,6 +171,14 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
+ 			}
+ 			var aggregateSent, aggregateRecv, recordsSent, recordsRecv int64
+ 			for _, a := range AggregateFlows(resp.Flows) {
++				for _, f := range resp.Flows {
++					if f.Source.Name == a.Source.Name && f.Source.Namespace == a.Source.Namespace && f.Destination.Name == a.Destination.Name && f.Destination.Namespace == a.Destination.Namespace {
++						want := traffic.ProtocolBytes{BytesSent: f.BytesSent, BytesRecv: f.BytesRecv}
++						if got := a.BytesByProtocol[f.Protocol]; got != want {
++							t.Errorf("%s bucket = %+v, want %+v", f.Protocol, got, want)
++						}
++					}
++				}
+ 				aggregateSent += a.BytesSent
+ 				aggregateRecv += a.BytesRecv
+ 				match := FlowMatch{Pairs: []EndpointPair{{
+@@ -187,13 +196,6 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
+ 			if aggregateSent != wantTCPSent+wantHTTPSent || aggregateRecv != wantTCPRecv+wantHTTPRecv || recordsSent != aggregateSent || recordsRecv != aggregateRecv {
+ 				t.Errorf("aggregate bytes %d/%d, records %d/%d; want %d/%d", aggregateSent, aggregateRecv, recordsSent, recordsRecv, wantTCPSent+wantHTTPSent, wantTCPRecv+wantHTTPRecv)
+ 			}
+-			wantNote := ""
+-			if tc.wantOverlap {
+-				wantNote = istioByteOverlapNote
+-			}
+-			if resp.DataNote != wantNote {
+-				t.Errorf("data note = %q, want %q", resp.DataNote, wantNote)
+-			}
+ 			wantKind := ""
+ 			if tc.missingErrors {
+ 				wantKind = WarningPartial
+@@ -220,22 +222,6 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
+ 	}
+ }
+ 
+-func TestIstioByteOverlapPreservesWarning(t *testing.T) {
+-	for _, kind := range []string{"", WarningPartial, WarningTransient, WarningIncomplete, WarningCluster} {
+-		t.Run(kind, func(t *testing.T) {
+-			const warning = "Istio metrics are incomplete: 5xx error rates could not be read."
+-			response := &FlowsResponse{Warning: warning, WarningKind: kind}
+-			noteIstioByteOverlap(response)
+-			if response.DataNote != istioByteOverlapNote {
+-				t.Errorf("data note = %q, want %q", response.DataNote, istioByteOverlapNote)
+-			}
+-			if response.Warning != warning || response.WarningKind != kind {
+-				t.Errorf("warning = %q (%s), want unchanged %q (%s)", response.Warning, response.WarningKind, warning, kind)
+-			}
+-		})
+-	}
+-}
+-
+ func TestIstioTCPJoinsDirectionalSeriesByReporter(t *testing.T) {
+ 	raw := []istioRawSeries{
+ 		istioSeries(istioTCPMetric, "destination", "side", "curl", "amb", "httpbin", "", 13),
+@@ -244,12 +230,12 @@ func TestIstioTCPJoinsDirectionalSeriesByReporter(t *testing.T) {
+ 		istioSeries("istio_tcp_sent_bytes_total", "waypoint", "side", "curl", "amb", "httpbin", "", 3),
+ 	}
+ 	s := newTestIstio(fakeIstioProm(raw, nil))
+-	flows, _, destinationTCP, err := s.queryTCPFlows(t.Context(), DefaultFlowOptions(), clusterScope{})
++	flows, _, err := s.queryTCPFlows(t.Context(), DefaultFlowOptions(), clusterScope{})
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
+-	if len(flows) != 2 || len(destinationTCP) != 1 {
+-		t.Fatalf("want two reporter flows and on
+```
+
+**File**: `packages/k8s-ui/src/types/core.ts` (modified, +2/-5)
+```diff
+@@ -1693,6 +1693,8 @@ export interface AggregatedFlow {
+   protocol: string
+   port: number
+   flowCount: number
++  bytesByProtocol?: Record<string, { bytesSent: number; bytesRecv: number }>
++  /** Cross-protocol sums kept for compatibility; display the breakdown when present. */
+   bytesSent: number
+   bytesRecv: number
+   connections: number
+@@ -1806,10 +1808,6 @@ export interface TrafficFlowsResponse {
+   /** Set when the warning includes a reason tied to keeping the map to this
+    *  cluster in a shared metrics store, so the view links to how that works. */
+   warningClusterScope?: boolean
+-  /** How the Data (byte) figures were measured, when that needs saying: for
+-   *  example two reports that may cover the same calls. Not a warning: show it
+-   *  quietly and never refetch for it. */
+-  dataNote?: string
+ }
+ 
+ export type TrafficWarningKind = 'transient' | 'partial' | 'incomplete' | 'cluster'
+@@ -1829,7 +1827,6 @@ export interface TrafficRecordsResponse {
+   flowLimit?: number
+   warning?: string
+   warningKind?: TrafficWarningKind
+-  dataNote?: string
+ }
+ 
+ // Wizard state for traffic setup
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2701** (2026-11-15): Count every supported integration in usage stats, without mislabeling user apps as add-ons (@nadaverell)
-- **PR #2699** (2026-11-15): Show Topology filter on/off with the accent instead of per-kind colors (@nadaverell)
-- **PR #2698** (2026-11-15): fix(gitops): avoid treating auto-sync off as manual orchestration (@nadaverell)
-- **PR #2697** (2026-11-15): fix(gitops): report ApplicationSet rollout health accurately (@nadaverell)
-- **PR #2693** (2026-11-15): Revert "Match resource sidebar icons to Topology kind colors" (@nadaverell)
-- **PR #2690** (2026-11-15): deps(npm): override minimatch to 11.0.4 for GHSA-g3hv-75wg-m249 (@nadaverell)
+- **PR #2747** (2026-11-16): test(traffic): make the layout-engine tests independent of machine load (@nadaverell)
+- **PR #2746** (2026-11-16): Issue and check cards: the severity rail spans the open card (@nadaverell)
+- **PR #2745** (2026-11-16): Recover panics in MCP request handlers (@nadaverell)
+- **PR #2744** (2026-11-16): fix(traffic): show Data per protocol and label byte-only edges with their throughput (@nadaverell)
+- **PR #2743** (2026-11-16): Return 404 for missing assets, serve ranges uncompressed, and always declare Vary (@nadaverell)
+- **PR #2742** (2026-11-16): Let browsers keep Radar's fingerprinted assets between page loads (@nadaverell)
 
 ---
 
@@ -2948,47 +3287,53 @@ rollback and sync-hazard p
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gitops): let managed resource lists reveal every entry
+## X. Recover panics in MCP request handlers
 
 **RULE**:
-When implementing operations in `packages/k8s-ui/src/components/gitops/ManagedResourcesList.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/mcp/recover.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41dfe716`: gitops): let managed resource lists reveal every entry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8f387b4`: Recover panics in MCP request handlers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/k8s-ui/src/components/gitops/ManagedResourcesList.test.tsx`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/mcp/recover.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-import { describe, expect, it } from 'vitest'
-import { renderToString } from 'react-dom/server'
-import { ManagedResourcesList } from './ManagedResourcesList'
-import type { ManagedResource } from '../../types/gitops'
+package mcp
 
-function render(element: Parameters<typeof renderToString>[0]): string {
-  return renderToString(element).replace(/<!-- -->/g, '')
-}
+import (
+	"context"
+	"log"
+	"runtime/debug"
 
-function list(configMaps: number): ManagedResource[] {
-  return [
-    ...Array.from({ length: configMaps }, (_, i) => ({ group: '', kind: 'ConfigMap', namespace: 'shop', name: `cm-${i}` })),
-    { group: 'apps', kind: 'Deployment', namespace: 'shop', name: 'checkout' },
-    { group: '', kind: 'Service', namespace: 'shop', name: 'checkout' },
-  ]
-}
+	"github.com/modelcontextprotocol/go-sdk/jsonrpc"
+	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
+)
 
-describe('ManagedResourcesList', () => {
-  it('shows every entry of an uneven list under the cap', () => {
-    const html = render(<ManagedResourcesList resources={list(8)} />)
-    expect(html).toContain('ConfigMap</span><span class="text-theme-text-tertiary">(8)')
-    expect(html).not.toContain('Show all')
-  })
-
-  it('offers Show all whenever a kind is cut', () => {
-    const html = render(<ManagedResourcesList resources={list(6)} maxVisible={6} />)
-    expect(html).toContain('ConfigMap</span
+// recoverMiddleware turns a panic in a request handler into a failed request.
+// The SDK runs handlers in their own goroutines without recovering, so a panic
+// in any tool would otherwise end the whole Radar process; the REST routes
+// recover theirs. A tool call reports the failure as a tool error, which is
+// what an agent can act on; other methods return a JSON-RPC internal error.
+// Goroutines a handler starts itself are outside this and must recover their own.
+func recoverMiddleware(next mcpsdk.MethodHandler) mcpsdk.MethodHandler {
+	return func(ctx context.Context, method string, req mcpsdk.Request) (result mcpsdk.Result, err error) {
+		defer func() {
+			rec := recover()
+			if rec == nil {
+				return
+			}
+			name := method
+			if call, ok := req.(*mcpsdk.CallToolRequest); ok && call.Params != nil {
+				name = method + " " + call.Params.Name
+			}
+			log.Printf("[mcp] panic in %s: %v\n%s", name, rec, debug.Stack())
+			if method == "tools/call" {
+				result = &mcpsdk.CallToolResult{
+					IsError: true,
+					Content: [
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2998,4 +3343,4 @@ describe('ManagedResourcesList', () => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41dfe716` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8f387b4` are properly handled with clean fallback behavior.

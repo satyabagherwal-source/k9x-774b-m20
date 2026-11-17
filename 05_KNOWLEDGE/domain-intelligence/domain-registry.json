@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T03:18:02.506Z",
-  "total_records": 1405,
+  "last_updated": "2026-11-17T03:26:28.110Z",
+  "total_records": 1409,
   "domains": {
     "A": {
       "total": 9,
@@ -42,7 +42,7 @@
       ]
     },
     "D": {
-      "total": 609,
+      "total": 611,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -652,7 +652,9 @@
         "domain_intelligence-research-knowledge-intelligence-oliviarossi-minimax-h3_singularity-x-10eros-max_",
         "DOM-D-BFBE4A28",
         "domain_intelligence-research-knowledge-intelligence-viggle-viggle-remake-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant"
+        "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant",
+        "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-learnings-core-invariants"
       ]
     },
     "E": {
@@ -702,7 +704,7 @@
       ]
     },
     "G": {
-      "total": 259,
+      "total": 261,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -962,7 +964,9 @@
         "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-openkruise-kruise-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-core-invariants",
-        "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-signerlabs-klee-core-invariants",
+        "domain_intelligence-architecture-intelligence-signerlabs-klee-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7509,10 +7513,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "3bed5a752265b261403247ce742c3b22706cef494df31b5eefb922b6b49b528d",
-      "created_at": "2026-11-17T00:38:41.926Z"
+      "content_hash": "fb0822775dda4ff83d18231cdffae6643f3ce7b7cd5d7ae4a22d93786408972d",
+      "created_at": "2026-11-17T03:26:21.080Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -13200,8 +13204,8 @@
       "title": "Technical Construction Intelligence: risingwavelabs/risingwave Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-risingwavelabs-risingwave-technical-construction-intelligence-risingwavelabs-ris.md",
       "repository": "risingwavelabs/risingwave",
-      "content_hash": "40154fc98d407651555239b34356c8f3cdd7aa770934a287500e24d636bf75d3",
-      "created_at": "2026-11-14T06:05:50.673Z"
+      "content_hash": "13ecc18449d1c144e1fd7af6dd480ea3e45b318011f6a09a33c18a3df3a41f45",
+      "created_at": "2026-11-17T03:26:22.570Z"
     },
     "DOM-D-683CD8F2": {
       "record_id": "DOM-D-683CD8F2",
@@ -14328,8 +14332,8 @@
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "ac2f4e63ae37eeac309b486f30daffcf8227aee385666cbc994b0a8f80fadab7",
-      "created_at": "2026-11-15T21:15:43.438Z"
+      "content_hash": "47c48101b59577053d7e2a1b30077593136ad5c99409ee3abe54bbbbf5bcd94d",
+      "created_at": "2026-11-17T03:26:17.235Z"
     },
     "DOM-D-694FEEFE": {
       "record_id": "DOM-D-694FEEFE",
@@ -14439,8 +14443,8 @@
       "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-learnings-architecture-intelligence-skyhook-io-radar-learnings-.md",
       "repository": "skyhook-io-radar-learnings",
-      "content_hash": "8b7f6aeb9535daf6106d643c88d0bd36488423b94f8b4ed2944cabe78de9d64d",
-      "created_at": "2026-11-14T10:31:23.012Z"
+      "content_hash": "60ea73538a33be07b0acd31b8e4f91c472159d392c8de823fdb710554d1d7c4a",
+      "created_at": "2026-11-17T03:26:28.110Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants",
@@ -24819,6 +24823,42 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-17T03:18:00.949Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: scrapinghub/dateparser Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-scrapinghub-dateparser-research-knowledge-intelligence-scrapinghub-dateparser-co.md",
+      "repository": "scrapinghub/dateparser",
+      "content_hash": "22d4d95662e404771fec70a5bbe124baa8598bd03d8fcb1081099a12db1f55cb",
+      "created_at": "2026-11-17T03:26:11.966Z"
+    },
+    "domain_intelligence-architecture-intelligence-signerlabs-klee-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-signerlabs-klee-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: signerlabs/Klee Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-signerlabs-klee-architecture-intelligence-signerlabs-klee-core-invariants.md",
+      "repository": "signerlabs/Klee",
+      "content_hash": "b5870a7512d074c13a3ca2e9b7ec39b4a50a7ceca714abb6a4c2762c4c68d54d",
+      "created_at": "2026-11-17T03:26:14.652Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: scrapinghub-dateparser-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-scrapinghub-dateparser-learnings-research-knowledge-intelligence-scrapinghub-dat.md",
+      "repository": "scrapinghub-dateparser-learnings",
+      "content_hash": "b24ac949566e0e05d2ef1694744c9baace3c562da8b10d94c84b4b37cccfe7e6",
+      "created_at": "2026-11-17T03:26:26.215Z"
+    },
+    "domain_intelligence-architecture-intelligence-signerlabs-klee-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-signerlabs-klee-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: signerlabs-klee-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-signerlabs-klee-learnings-architecture-intelligence-signerlabs-klee-learnings-co.md",
+      "repository": "signerlabs-klee-learnings",
+      "content_hash": "4c105e49fece305cd592b3d03575b9f9a1d4e291fd2cb9f7ef129e899a71baf0",
+      "created_at": "2026-11-17T03:26:27.291Z"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T03:18:02.383Z",
+  "last_updated": "2026-11-17T03:26:27.966Z",
   "directives": [
     {
       "id": "CD-001",
@@ -21587,6 +21587,90 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E9A38E-draft-nuc-111-reactive-string-padding.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-RUHJ",
+      "directive_title": "Use the reference year when choosing a month-end day",
+      "source_repo": "scrapinghub-dateparser-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RUHJ-use-the-reference-year-when-choosing-a-month-end-day.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-RLK8",
+      "directive_title": "banner linking to Klee for Mac, Chinese README",
+      "source_repo": "signerlabs/Klee",
+      "source_commit": "f39e0f96",
+      "staged_file": "11_INBOX/candidate-directives/CD-RLK8-banner-linking-to-klee-for-mac-chinese-readme.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-RVY0",
+      "directive_title": "Recover panics in MCP request handlers",
+      "source_repo": "skyhook-io-radar-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RVY0-recover-panics-in-mcp-request-handlers.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-RQIQ",
+      "directive_title": "Remove the locktick profile and tokio_console flag checks from build.rs",
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "a33d49c4",
+      "staged_file": "11_INBOX/candidate-directives/CD-RQIQ-remove-the-locktick-profile-and-tokio_console-flag-checks-from-build-rs.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-RRO3",
+      "directive_title": "keep NULL for columns with a default in CDC change events",
+      "source_repo": "risingwavelabs/risingwave",
+      "source_commit": "5b172d1a",
+      "staged_file": "11_INBOX/candidate-directives/CD-RRO3-keep-null-for-columns-with-a-default-in-cdc-change-events.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-2363C6",
+      "directive_title": "Use the reference year when choosing a month-end day",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "scrapinghub-dateparser",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2363C6-use-the-reference-year-when-choosing-a-m.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-RVBB",
+      "directive_title": "docs: banner linking to Klee for Mac, Chinese README",
+      "source_repo": "signerlabs-klee-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RVBB-docs-banner-linking-to-klee-for-mac-chinese-readme.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-353AAF",
+      "directive_title": "Recover panics in MCP request handlers",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "skyhook-io-radar",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-353AAF-recover-panics-in-mcp-request-handlers.md",
       "staged_date": "2026-11-17"
     }
   ]

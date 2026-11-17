@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T02:32:27.580Z",
+  "updated_at": "2026-11-17T03:26:27.706Z",
   "stats": {
-    "total_discovered": 4646,
-    "approved_pending_harvest": 4376,
+    "total_discovered": 4666,
+    "approved_pending_harvest": 4396,
     "harvested_count": 0,
     "rejected_count": 270,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4374,
-      "OFFICIAL_DOCUMENTATION": 144,
+      "COMMUNITY_AND_EXPERT": 4392,
+      "OFFICIAL_DOCUMENTATION": 146,
       "STANDARDS_AND_SPECIFICATIONS": 100,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 18,
@@ -100343,6 +100343,446 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
         "fileName": "typewhisper-typewhisper-mac-learnings.md"
+      }
+    },
+    "SRC-C50E58C944D5": {
+      "id": "SRC-C50E58C944D5",
+      "url": "https://github.com/scrapinghub/dateparser",
+      "title": "https://github.com/scrapinghub/dateparser",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:25.584Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
+        "fileName": "scrapinghub-dateparser-learnings.md"
+      }
+    },
+    "SRC-7EE37B92969D": {
+      "id": "SRC-7EE37B92969D",
+      "url": "https://github.com/python/cpython/blob/e34a5e33049ce845de646cf24a498766a2da3586/Lib/_strptime.py",
+      "title": "https://github.com/python/cpython/blob/e34a5e33049ce845de646cf24a498766a2da3586/Lib/_strptime.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:25.625Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
+        "fileName": "scrapinghub-dateparser-learnings.md"
+      }
+    },
+    "SRC-1961B62EBECA": {
+      "id": "SRC-1961B62EBECA",
+      "url": "https://github.com/unicode-org/cldr-json.git",
+      "title": "https://github.com/unicode-org/cldr-json.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:25.666Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
+        "fileName": "scrapinghub-dateparser-learnings.md"
+      }
+    },
+    "SRC-F6EB34F61428": {
+      "id": "SRC-F6EB34F61428",
+      "url": "https://docs.python.org/2/library/datetime.html",
+      "title": "https://docs.python.org/2/library/datetime.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:25.707Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
+        "fileName": "scrapinghub-dateparser-learnings.md"
+      }
+    },
+    "SRC-2FF8A8D14775": {
+      "id": "SRC-2FF8A8D14775",
+      "url": "https://en.wikipedia.org/wiki/French_Republican_calendar",
+      "title": "https://en.wikipedia.org/wiki/French_Republican_calendar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:25.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
+        "fileName": "scrapinghub-dateparser-learnings.md"
+      }
+    },
+    "SRC-D2B5ACED93EE": {
+      "id": "SRC-D2B5ACED93EE",
+      "url": "https://dateparser.readthedocs.io/en/latest/contributing.html",
+      "title": "https://dateparser.readthedocs.io/en/latest/contributing.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:25.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
+        "fileName": "scrapinghub-dateparser-learnings.md"
+      }
+    },
+    "SRC-028FFAEF1C02": {
+      "id": "SRC-028FFAEF1C02",
+      "url": "https://pre-commit.com/",
+      "title": "https://pre-commit.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:25.838Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
+        "fileName": "scrapinghub-dateparser-learnings.md"
+      }
+    },
+    "SRC-0A36CC05C9F0": {
+      "id": "SRC-0A36CC05C9F0",
+      "url": "https://github.com/signerlabs/Klee",
+      "title": "https://github.com/signerlabs/Klee",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:26.541Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+        "fileName": "signerlabs-klee-learnings.md"
+      }
+    },
+    "SRC-909D48D31D55": {
+      "id": "SRC-909D48D31D55",
+      "url": "https://hf-mirror.com/",
+      "title": "https://hf-mirror.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:26.595Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+        "fileName": "signerlabs-klee-learnings.md"
+      }
+    },
+    "SRC-1D49931BDF69": {
+      "id": "SRC-1D49931BDF69",
+      "url": "https://github.com/signerlabs/Klee/releases/tag/v1.1.0",
+      "title": "https://github.com/signerlabs/Klee/releases/tag/v1.1.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:26.632Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+        "fileName": "signerlabs-klee-learnings.md"
+      }
+    },
+    "SRC-B145C5EBA27A": {
+      "id": "SRC-B145C5EBA27A",
+      "url": "https://kleedesktop.com/",
+      "title": "https://kleedesktop.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:26.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+        "fileName": "signerlabs-klee-learnings.md"
+      }
+    },
+    "SRC-83AC8C0EF7D5": {
+      "id": "SRC-83AC8C0EF7D5",
+      "url": "https://github.com/raullenchai/awesome-mlx",
+      "title": "https://github.com/raullenchai/awesome-mlx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:26.711Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+        "fileName": "signerlabs-klee-learnings.md"
+      }
+    },
+    "SRC-64E3756857B3": {
+      "id": "SRC-64E3756857B3",
+      "url": "https://github.com/ml-explore/mlx-swift",
+      "title": "https://github.com/ml-explore/mlx-swift",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:26.755Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+        "fileName": "signerlabs-klee-learnings.md"
+      }
+    },
+    "SRC-2E53B48AA23E": {
+      "id": "SRC-2E53B48AA23E",
+      "url": "https://github.com/signerlabs/Klee/releases",
+      "title": "https://github.com/signerlabs/Klee/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:26.801Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+        "fileName": "signerlabs-klee-learnings.md"
+      }
+    },
+    "SRC-4BFBBBC17FEC": {
+      "id": "SRC-4BFBBBC17FEC",
+      "url": "https://jina.ai/?sui=apikey",
+      "title": "https://jina.ai/?sui=apikey",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:26.838Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+        "fileName": "signerlabs-klee-learnings.md"
+      }
+    },
+    "SRC-540CC9F39791": {
+      "id": "SRC-540CC9F39791",
+      "url": "https://huggingface.co/mlx-community",
+      "title": "https://huggingface.co/mlx-community",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:26.875Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+        "fileName": "signerlabs-klee-learnings.md"
+      }
+    },
+    "SRC-300104D180B4": {
+      "id": "SRC-300104D180B4",
+      "url": "https://github.com/signerlabs/Klee.git",
+      "title": "https://github.com/signerlabs/Klee.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:26.916Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+        "fileName": "signerlabs-klee-learnings.md"
+      }
+    },
+    "SRC-132D05DF56D3": {
+      "id": "SRC-132D05DF56D3",
+      "url": "https://github.com/skyhook-io/radar/actions/runs/43406103414/job/131820798764",
+      "title": "https://github.com/skyhook-io/radar/actions/runs/43406103414/job/131820798764",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:27.632Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-8DF991C9B98B": {
+      "id": "SRC-8DF991C9B98B",
+      "url": "https://github.com/user-attachments/assets/aff5c3ae-2e9e-468a-8b06-ce4051c041db",
+      "title": "https://github.com/user-attachments/assets/aff5c3ae-2e9e-468a-8b06-ce4051c041db",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:27.669Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-0332E080385D": {
+      "id": "SRC-0332E080385D",
+      "url": "https://github.com/user-attachments/assets/200f14aa-f41c-4f3d-b5d0-bd80db87886a",
+      "title": "https://github.com/user-attachments/assets/200f14aa-f41c-4f3d-b5d0-bd80db87886a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:26:27.706Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
       }
     }
   }

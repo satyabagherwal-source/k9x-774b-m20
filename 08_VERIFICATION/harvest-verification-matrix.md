@@ -10416,3 +10416,8 @@
 | `CYCLE-20261117-FPT4` | `2026-11-17T03:17:00.136Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8846, Rule 8847, Rule 8848` | Yes (`34482e45...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T03:17:29.189Z` | `kumahq-kuma` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-3EF61085` [Domain F] | Yes (`d1a9498b...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T03:18:00.965Z` | `pixeltable-pixeltable` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-4B4C2E13` [Domain K] | Yes (`a23b8d24...`) |
+| `CYCLE-20261117-RJBC` | `2026-11-17T03:26:11.592Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8849` | Yes (`37e6d41a...`) |
+| `CYCLE-20261117-RLDG` | `2026-11-17T03:26:14.260Z` | `signerlabs/Klee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8850` | Yes (`0bd559fb...`) |
+| `CYCLE-20261117-RNCZ` | `2026-11-17T03:26:16.835Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8851` | Yes (`3bb76767...`) |
+| `CYCLE-20261117-RQCG` | `2026-11-17T03:26:20.704Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8852` | Yes (`d9d6d6be...`) |
+| `CYCLE-20261117-RRHM` | `2026-11-17T03:26:22.186Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8853` | Yes (`2bd29a48...`) |

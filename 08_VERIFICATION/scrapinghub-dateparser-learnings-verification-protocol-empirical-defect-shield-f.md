@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:44:23.159Z",
+  "timestamp": "2026-11-17T03:26:25.955Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-scrapinghub-dateparser-learnings",
+  "learning_id": "LEARN-EVO-scrapinghub-dateparser-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [scrapinghub-dateparser-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:44:23.159Z`  
-> **Learning ID**: `LEARN-REEXTRACT-scrapinghub-dateparser-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T03:26:25.955Z`  
+> **Learning ID**: `LEARN-EVO-scrapinghub-dateparser-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md`  
 > **Source**: github ([https://github.com/scrapinghub/dateparser](https://github.com/scrapinghub/dateparser))  
-> **Source Version**: `90544c0b`  
+> **Source Version**: `ecf380af`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T19:37:16.767Z  
+> **Timestamp**: 2026-11-17T03:26:10.455Z  
 > **Learning ID**: `learn-github-scrapinghub-dateparser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapinghub/dateparser](https://github.com/scrapinghub/dateparser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T19:37:15.910Z  
+> **Harvest Timestamp**: 2026-11-17T03:26:10.283Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: python parser for human readable dates
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 2864 stars
+- **Stars / Engagement**: 2868 stars
 
 ---
 
@@ -507,21 +507,27 @@ def _inspect_format(og_format: str) -> tuple[bool, bool]:
     return day_of_month_in_format and not year_in_format, day_of_year_in_format
 
 
-def _prepare_format(date_string: str, og_format: str) -> tuple[str, str, bool]:
+def _prepare_format(
+    date_string: str, og_format: str, reference_year: int | None = None
+) -> tuple[str, str, bool]:
     missing_year, day_of_year_in_format = _inspect_format(og_format)
     if missing_year:
-        current_year = datetime.today().year
+        year = reference_year if reference_year is not None else datetime.today().year
         return (
-            f"{current_year} {date_string}",
+            f"{year} {date_string}",
             f"%Y {og_format}",
             day_of_year_in_format,
         )
     return date_string, og_format, day_of_year_in_format
 
 
-def strptime(date_string: str, format: str) -> datetime:  # noqa: A002
+def strptime(
+    date_string: str,
+    format: str,  # noqa: A002
+    reference_year: int | None = None,
+) -> datetime:
     date_string, prepared_format, day_of_year_in_format = _prepare_format(
-        date_string, format
+        date_string, format, reference_year
     )
     time_tuple = __strptime(date_string, prepared_format)
     obj = datetime(*time_tuple[:-3])
@@ -1003,7 +1009,12 @@ def _replace_part_of_day(
     before, after = translated[: match.start()], translated[match.end() :]
     number = _TRAILING_NUMBER_PATTERN.search(before)
     if number and not number["month"]:
-        hour = int(number["hour"])
+        try:
+            hour = int(number["hour"])
+        except ValueError:
+            # A digit that the regular expression matches but int() does not
+            # know, e.g. one added to Unicode after this Python version.
+            return translated, None, False
         if hour > 12:
             return translated, None, False
         time_string = f"{hour}{number['minutes'] or ':00'} {_meridiem(part, hour)}"
@@ -1328,11 +1339,11 @@ class HijriCalendar(CalendarBase):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1568** (2026-11-07): **Skip out-of-range month spans during date searches**
-  *Symptoms*: With `RETURN_TIME_SPAN=True`, an out-of-range month span raises `ValueError` and prevents `search_dates()` from returning other valid dates in the text:  ```python from datetime import datetime from dateparser.search import search_dates  search_dates(     "the past 120000 months. 2024-01-15",     languages=["en"],     settings={"RETURN_TIME_SPAN": True, "RELATIVE_BASE": datetime(2026, 11, 3)}, ) # Before: ValueError: year -7974 is out of range # After: [('2024-01-15', datetime(2024, 1, 15))] ```  The existing guard handles `OverflowError` from `timedelta` arithmetic, but month spans use `relativedelta`, which raises `ValueError` when the resulting year is outside the supported range. Catch both exceptions around span generation so an unrepresentable span is omitted while previously parsed dates are retained.  Six regression cases cover past and future month spans, including preservation of another date with both the `split` and `ngram` search strategies. All six fail on the unmodified base and pass with the fix.  Validation on macOS arm64, Python 3.12.13, with `TZ=UTC`:  - `pytest tests/test_long_digit_runs.py tests/test_search.py -q`: 462 passed, 31 subtests passed. - `pytest -q`: 25,313 passed, 9 skipped, 4 xfailed, 508 subtests passed. - `tox -e pre-commit`: passed (Ruff lint/format and zizmor).  Other supported Python versions and optional calendar/language-detection dependencies were not tested locally.  Assisted by Codex. 
+- **Issue #1584** (2026-11-16): **Parse Bengali future durations ending in পর or পরে**
+  *Symptoms*: In Bengali, a duration followed by পর or পরে describes a point in the future. With a base of 2026-11-16, `২ দিন পরে` should resolve to November 18. On master it returns `None`.  Both postpositions now map to the existing future marker. The tests cover a week offset and a compound day/hour offset with Bengali digits. The translation module was regenerated from the supplementary YAML.  Python 3.13, full suite: 25,512 passed, 18 skipped, 4 expected failures. Ruff lint and format hooks passed. 
 
-- **Issue #1566** (2026-11-04): **Stop a Chinese date rule slowing down on long runs of spaces**
-  *Symptoms*: Regression from #1477, which is not in any release yet.  ## What was wrong  The rule that reads a date followed by a time ("2020年3月4日 5点6分") in the `zh`, `zh-Hans` and `zh-Hant` data was added by "Parse Chinese and Japanese dates with spaces around 年, 月 and 日" (#1477). It has two adjacent `\s*` around the optional `日`: `(\d{1,2})\s*(?:日)?\s*(\d{1,2})…`. When a date is followed by a long run of spaces and no time, the pattern tries every way of splitting the run between the two `\s*`, so the time grows with the square of the run. The rule only sees text whose spaces were not collapsed, for example `search_dates("1年1月1" + " " * n, languages=["zh"])`; `parse()` collapses spaces before it simplifies the text.  CPU seconds of one `search_dates("1年1月1" + " " * n, languages=["zh"])` call (`time.process_time()`, Python 3.12, one run each):  | n | master | this PR | |---|---|---| | 4,000 / 8,000 / 16,000 / 32,000 | 0.075 / 0.199 / 0.863 / 3.23 | 0.018 / 0.046 / 0.121 / 0.272 |  On master each doubling of the size multiplies the time by 2.7 to 4.3; with this PR it is 2.2 to 2.6.  ## How it is fixed  The optional `日` is written together with the spaces after it: `\s*(?:日\s*)?`. It matches the same strings and leaves one way to match a run of spaces. The rule is in `zh.yaml`, `zh-Hans.yaml` and `zh-Hant.yaml`; the three generated Python files were regenerated with `python -m dateparser_scripts.write_complete_data`, and nothing else in the generated data changed.  ## Tests and checks  * 1
+- **Issue #1583** (2026-11-15): **Find a date after a number with a symbol, e.g. "$20", in search_dates**
+  *Symptoms*: Resolves #1582.  search_dates("Paid $20 on January 5, 2024") returned only "2024" (as today's date), and "Paid $20 on Jan 5" returned "$20" as the 20th plus "Jan" as the 15th. Without the "$" the date is found correctly.  The chunk here is "$20 january 5, 2024". split_off_leading_number already handles a chunk that starts with a number which isn't part of the date, but it only accepted all-digit numbers. I made it also accept a number with currency signs or one of # % @ & * + ~ before or after it. For those the number is dropped from the split instead of being kept as its own part, because "$20" on its own parses as a day (plain "20" is short enough that the search already ignores it). Numbers that are all digits are handled exactly as before.  I added a parameterized test with ten cases (dollar, euro, pound, trailing $, #, %, @, +, and a day-first date). They all fail on master and pass with the change. The full suite gives the same result before and after apart from the new tests. ruff check and ruff format are clean.  - [ ] I have read the [contributing guide](https://dateparser.readthedocs.io/en/latest/contributing.html) and [set up pre-commit](https://pre-commit.com/#quick-start). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1349,200 +1360,290 @@ class HijriCalendar(CalendarBase):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `679bae65` (2026-11-05)
-**Commit Message**: Fix parsing time-only strings with a timezone-aware RELATIVE_BASE (#1362)
+### Incident Patch 1: `ecf380af` (2026-11-16)
+**Commit Message**: Use the reference year when choosing a month-end day (#1389)
 
-* Fix parsing time-only strings with a tz-aware RELATIVE_BASE
-
-When RELATIVE_BASE is offset-aware, _correct_for_time_frame localizes
-dateobj to UTC so it can be compared with self.now. The subsequent
-tz.utcoffset(dateobj) call then receives an aware datetime, which pytz
-rejects with "Not naive datetime (tzinfo is already set)". The exception
-is not one of the two caught pytz errors, so parsing aborts and
-dateparser.parse() returns None for inputs like "3pm".
-
-Pass a naive copy to utcoffset() so the offset lookup works regardless of
-whether dateobj was localized. Behaviour with a naive RELATIVE_BASE is
-unchanged.
-
-Adds a regression test in tests/test_date_parser.py covering both
-PREFER_DATES_FROM directions with an offset-aware RELATIVE_BASE.
-
-Closes #1213
-
-* Annotate the new test for the strict mypy check
-
-Master type-checks the tests with mypy in strict mode, so the new test needs
-parameter and return annotations.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Serhii A <[REDACTED_EMAIL]>
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `dateparser/parser.py` (modified, +3/-1)
+**File**: `dateparser/date.py` (modified, +27/-9)
 ```diff
-@@ -811,7 +811,9 @@ def _correct_for_time_frame(  # noqa: PLR0912, PLR0915
-                 # Convert dateobj to utc time to compare with RELATIVE_BASE
-                 try:
-                     tz = tz or get_timezone_from_tz_string(self.settings.TIMEZONE)
--                    tz_offset = tz.utcoffset(dateobj) or tz_offset
-+                    # `dateobj` may have been localized above when `self.now` is
-+                    # offset-aware; `utcoffset()` requires a naive datetime.
-+                    tz_offset = tz.utcoffset(dateobj.replace(tzinfo=None)) or tz_offset
-                 except (pytz.UnknownTimeZoneError, pytz.NonExistentTimeError):
-                     pass
+@@ -381,31 +381,49 @@ def parse_with_formats(
+     """
+     period = "day"
+     for date_format in date_formats:
++        now = settings.RELATIVE_BASE or _now(settings)
+         try:
+-            date_obj = patched_strptime(date_string, date_format)
++            date_obj = patched_strptime(
++                date_string, date_format, reference_year=now.year
++            )
+         except ValueError:
+             continue
+         else:
+             _missing = _get_missing_parts(date_format)
++            if "year" in _missing:
++                try:
++                    date_obj = date_obj.replace(year=now.year)
++                except ValueError:
++                    continue
++
+             missing_month = "month" in _missing
+             missing_day = "day" in _missing
+             if missing_month and missing_day:
+                 period = "year"
+-                date_obj = set_correct_month_from_settings(date_obj, settings)
+-                date_obj = set_correct_day_from_settings(date_obj, settings)
++                date_obj = set_correct_month_from_settings(
++                    date_obj, settings, current_month=now.month
++                )
++                date_obj = set_correct_day_from_settings(
++                    date_obj, settings, current_day=now.day
++                )
  
+             elif missing_month:
+                 period = "year"
+-                date_obj = set_correct_month_from_settings(date_obj, settings)
++                date_obj = set_correct_month_from_settings(
++                    date_obj, settings, current_month=now.month
++                )
+ 
+             elif missing_day:
+                 period = "month"
+-                date_obj = set_correct_day_from_settings(date_obj, settings)
++                date_obj = set_correct_day_from_settings(
++                    date_obj, settings, current_day=now.day
++                )
+ 
+-            now = settings.RELATIVE_BASE or _now(settings)
+-            if "year" in _missing:
+-                date_obj = date_obj.replace(year=now.year)
+-            elif "%y" in date_format and "%Y" not in date_format:
++            if (
++                "year" not in _missing
++                and "%y" in date_format
++                and "%Y" not in date_format
++            ):
+                 date_obj = _apply_century_preference(
+                     date_obj, now, settings.PREFER_DATES_FROM
+                 )
 ```
 
-**File**: `tests/test_date_parser.py` (modified, +22/-0)
+**File**: `dateparser/utils/strptime.py` (modified, +11/-5)
 ```diff
-@@ -6,6 +6,7 @@
- from unittest.mock import Mock, patch
+@@ -122,21 +122,27 @@ def repl(m: re.Match[str]) -> str:
+     return day_of_month_in_format and not year_in_format, day_of_year_in_format
  
- import pytest
-+import pytz
- from parameterized import param, parameterized
  
- import dateparser.timezone_parser
-@@ -788,6 +789,27 @@ def test_preferably_future_dates_leap_year(
-         self.then_date_was_parsed_by_date_parser()
-         self.then_date_obj_exactly_is(expected)
+-def _prepare_format(date_string: str, og_format: str) -> tuple[str, str, bool]:
++def _prepare_format(
++    date_string: str, og_format: str, reference_year: int | None = None
++) -> tuple[str, str, bool]:
+     missing_year, day_of_year_in_format = _inspect_format(og_format)
+     if missing_year:
+-        current_year = datetime.today().year
++        year = reference_year if reference_year is not None else datetime.today().year
+         return (
+-            f"{current_year} {date_string}",
++            f"{year} {date_string}",
+             f"%Y {og_format}",
+             day_of_year_in_format,
+         )
+     return date_string, og_format, day_of_year_in_format
+ 
+ 
+-def strptime(date_string: str, format: str) -> datetime:  # noqa: A002
++def strptime(
++    date_string: str,
++    format: str,  # noqa: A002
++    reference_year: int | None = None,
++) -> datetime:
+     date_string, prepared_format, day_of_year_in_format = _prepare_format(
+-        date_string, format
++        date_string, format, reference_year
+     )
+     time_tuple = __strptime(date_string, prepared_format)
+     obj = datetime(*time_tuple[:-3])
+```
+
+**File**: `tests/test_date_parser.py` (modified, +64/-0)
+```diff
+@@ -22,6 +22,70 @@
+ 
+ 
+ class TestDateParser(BaseTestCase):
++    @parameterized.expand(
++        [
++            (2024, "first", 1),
++            (2024, "current", 15),
++            (2024, "last", 29),
++            (2023, "last", 28),
++        ]
++    )
++    def test_yearless_format_uses_reference_day_preference(
++        self, year: int, preference: str, day: int
++    ) -> None:
++        result = parse(
++            "February",
++            date_formats=["%B"],
++            settings={
++                "RELATIVE_BASE": datetime(year, 6, 15),
++                "PREFER_DAY_OF_MONTH": preference,
++                "PARSERS": ["custom-formats"],
++            },
++        )
++        self.assertEqual(result, datetime(year, 2, day))
++
++    @parameterized.expand([("first", 1), ("current", 7), ("last", 12)])
++    def test_year_only_format_uses_reference_month_and_day(
++        self, preference: str, month: int
++    ) -> None:
++        result = parse(
++            "2030",
++            date_formats=["%Y"],
++            settings={
++                "RELATIVE_BASE": datetime(2024, 7, 17),
++                "PREFER_MONTH_OF_YEAR": preference,
++                "PREFER_DAY_OF_MONTH": "current",
++                "PARSERS": ["custom-formats"],
++            },
++        )
++        self.assertEqual(result, datetime(2030, month, 17))
++
++    @parameterized.expand([(2024, datetime(2024, 2, 29)), (2023, None)])
++    def test_yearless_leap_day_respects_reference_year(
++        self, year: int, expected: datetime | None
++    ) -> None:
++        result = parse(
++            "29 February",
++            date_formats=["%d %B"],
++            settings={
++                "RELATIVE_BASE": datetime(year, 6, 15),
++                "PARSERS": ["custom-formats"],
++            },
++        )
++        self.assertEqual(result, expected)
++
++    def test_yearless_format_without_relative_base_uses_current_date(self) -> None:
++        with patch("dateparser.date._now", return_value=datetime(2024, 7, 17)):
++            result = parse(
++                "February",
++                date_formats=["%B"],
++                settings={
++                    "PREFER_DAY_OF_MONTH": "current",
++                    "PARSERS": ["custom-formats"],
++                },
++            )
++        self.assertEqual(result, datetime(2024, 2, 17))
++
+     def setUp(self) -> None:
+         super().setUp()
+         self.parser: DateDataParser = NotImplemented
+```
+
+---
+
+### Incident Patch 2: `1fdf5da3` (2026-11-13)
+**Commit Message**: Leave out a time span that does not fit in the years 1 to 9999 (#1580)
+
+search_dates() with RETURN_TIME_SPAN raised ValueError for a text such as
+"the last 120000 months", whose span starts before the year 1, or "the next
+120000 months", which ends after the year 9999, and the other dates of the
+text were lost with it. A span whose arithmetic overflows was already left
+out; leave these out as well, with either strategy.
+
+**File**: `dateparser/search/search.py` (modified, +3/-2)
+```diff
+@@ -224,8 +224,9 @@ def _add_time_span_results(
+                 start_date, end_date = generate_time_span(
+                     span_info, base_date, settings
+                 )
+-            except OverflowError:
+-                # The quantity is too large for the span to be a date.
++            except (OverflowError, ValueError):
++                # The quantity is too large for the span to be a date: an
++                # end before the year 1 or after 9999 raises ValueError.
+                 return results
+             matched_text = span_info["matched_text"]
+             results.append((matched_text + " (start)", start_date, "day"))
+```
+
+**File**: `tests/test_search.py` (modified, +61/-0)
+```diff
+@@ -2192,6 +2192,67 @@ def test_search_dates_returning_period_of_time_spans(self) -> None:
+             ],
+         )
  
 +    @parameterized.expand(
 +        [
-+            param("3pm", "past", datetime(2020, 6, 15, 18, 0)),
-+            param("3pm", "future", datetime(2020, 6, 15, 12, 0)),
++            param("next_split", "the next 120000 months", "split"),
++            param("last_split", "the last 120000 months", "split"),
++            param("past_year_0", "the past 24234 months", "split"),
++            param("next_ngram", "the next 120000 months", "ngram"),
 +        ]
 +    )
-+    def test_time_only_with_timezone_aware_relative_base(
-+        self, date_string: str, prefer_dates_from: str, relative_base: datetime
++    def test_time_span_outside_the_years_1_to_9999_is_left_out(
++        self, label: str, text: str, strategy: str
 +    ) -> None:
-+        tz = pytz.timezone("America/Los_Angeles")
-+        self.given_parser(
-+            settings={
-+                "TIMEZONE": "America/Los_Angeles",
-+                "PREFER_DATES_FROM": prefer_dates_from,
-+                "RELATIVE_BASE": tz.localize(relative_base),
-+            }
++        self.assertIsNone(
++            search_dates(
++                text,
++                languages=["en"],
++                settings={
++                    "RETURN_TIME_SPAN": True,
++                    "RELATIVE_BASE": datetime.datetime(2020, 6, 15, 12, 0),
++                },
++                strategy=strategy,
++            )
 +        )
-+        self.when_date_is_parsed(date_string)
-+        self.then_date_was_parsed_by_date_parser()
-+        self.then_period_is("day")
++
++    @parameterized.expand(
++        [
++            param("split", "on 12 January 2020"),
++            param("ngram", "12 January 2020"),
++        ]
++    )
++    def test_time_span_outside_the_years_1_to_9999_keeps_the_other_dates(
++        self, strategy: str, found: str
++    ) -> None:
++        self.assertEqual(
++            search_dates(
++                "Meeting on 12 January 2020. Totals for the last 120000 months.",
++                languages=["en"],
++                settings={
++                    "RETURN_TIME_SPAN": True,
++                    "RELATIVE_BASE": datetime.datetime(2020, 6, 15, 12, 0),
++                },
++                strategy=strategy,
++            ),
++            [(found, datetime.datetime(2020, 1, 12))],
++        )
++
++    def test_time_span_starting_in_the_year_1_is_returned(self) -> None:
++        base = datetime.datetime(2020, 6, 15, 12, 0)
++        result = search_dates(
++            "the past 24233 months",
++            languages=["en"],
++            settings={"RETURN_TIME_SPAN": True, "RELATIVE_BASE": base},
++        )
++        assert result is not None
++        self.assertEqual(
++            result[-2:],
++            [
++                ("past 24233 months (start)", datetime.datetime(1, 1, 15, 12, 0)),
++                ("past 24233 months (end)", base),
++            ],
++        )
 +
      @parameterized.expand(
          [
-             param("29 Feb", datetime(2020, 1, 1), datetime(2020, 2, 29)),
-```
-
----
-
-### Incident Patch 2: `31b6986d` (2026-11-04)
-**Commit Message**: Sort the 1.5.0 security fixes by advisory merge order
-
-**File**: `HISTORY.rst` (modified, +8/-9)
-```diff
-@@ -42,6 +42,14 @@ Deprecations:
- 
- Security fixes:
- 
-+- Make sentence splitting in ``search_dates()`` linear on long punctuation
-+  runs, to prevent quadratic backtracking (ReDoS) for Arabic, Bengali,
-+  Cantonese, Chinese, Hindi, Japanese and Persian (`GHSA-rx9v-94ff-9cc2
-+  <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-rx9v-94ff-9cc2>`_)
-+- Prevent quadratic regex matching (ReDoS) on long digit runs in Chinese and
-+  Japanese, and a ``ValueError`` on runs of more than 4,300 digits on Python
-+  3.11 and later (`GHSA-g8fh-jxm9-6qfx
-+  <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-g8fh-jxm9-6qfx>`_)
- - Bound the lookahead of the Chinese month simplification, to prevent quadratic
-   parsing time on long runs of numbers followed by 月 (`GHSA-q7fp-xwcm-6x9f
-   <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-q7fp-xwcm-6x9f>`_)
-@@ -51,19 +59,10 @@ Security fixes:
- - Strip trailing colons in linear time, to prevent quadratic backtracking
-   (ReDoS) on long colon runs (`GHSA-fmxc-97cw-ph6p
-   <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-fmxc-97cw-ph6p>`_)
--- Make sentence splitting in ``search_dates()`` linear on long punctuation
--  runs, to prevent quadratic backtracking (ReDoS) for Arabic, Bengali,
--  Cantonese, Chinese, Hindi, Japanese and Persian (`GHSA-rx9v-94ff-9cc2
--  <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-rx9v-94ff-9cc2>`_)
--- Prevent quadratic regex matching (ReDoS) on long digit runs in Chinese and
--  Japanese, and a ``ValueError`` on runs of more than 4,300 digits on Python
--  3.11 and later (`GHSA-g8fh-jxm9-6qfx
--  <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-g8fh-jxm9-6qfx>`_)
- - Split strings into known words in linear time, to prevent quadratic parsing
-   time on long runs of words like month names (`GHSA-jxmm-w6rw-32ch
-   <https://github.com/scrapinghub/dateparser/security/advisories/GHSA-jxmm-w6rw-32ch>`_)
- 
--
- New features:
- 
- - Add a ``STRICT_DATE_ORDER`` setting that turns an explicit ``DATE_ORDER``
-```
-
----
-
-### Incident Patch 3: `61022151` (2026-11-04)
-**Commit Message**: Reference the fixes of unreleased regressions in the 1.5.0 notes
-
-**File**: `HISTORY.rst` (modified, +6/-5)
-```diff
-@@ -57,7 +57,7 @@ New features:
- - Parse parts of the day, such as "tomorrow morning", "this evening" or
-   "8 in the evening", at the times set by the new ``PARTS_OF_DAY`` setting;
-   the new ``DateData.part_of_day`` attribute tells which one was found
--  (#1473)
-+  (#1473, #1562)
- - Add ``DateData.parts``, which lists the date parts (day, month, year,
-   time…) read from the input rather than filled in from defaults (#1408)
- - Add an ``add_period`` argument to ``search_dates()`` to also return the
-@@ -103,7 +103,7 @@ New features:
-   - next to a relative date without a comma (#1385)
-   - joined by words that search skips, like "and" (#1488)
-   - inside parentheses, square brackets or straight quotes, e.g.
--    ``'He said "May 5, 2020"'`` or "(Friday)" (#1401)
-+    ``'He said "May 5, 2020"'`` or "(Friday)" (#1401, #1565)
- 
- Fixes:
- 
-@@ -133,7 +133,7 @@ Fixes:
-   20 March 2021 instead of the 23rd of the current month (#1554)
- - Return ``None`` for strings with only skipped words, such as "year" or
-   "hour minute", instead of today, which also stops ``search_dates()`` from
--  returning them (#1440)
-+  returning them (#1440, #1564)
- - Stop ignoring numbers without a unit in relative dates, so "03/06/2020
-   hour", "03/06/2020 day" or "01.02.2011 godz. 08:39" no longer parse as a
-   number of hours or days ago (#1410)
-@@ -194,7 +194,8 @@ Improvements:
- - Chinese: add the supplementary data of ``zh`` to ``zh-Hans`` and
-   ``zh-Hant`` (#1407), and parse 后天, 大后天 and 大前天 as relative days
-   (#1430)
--- Chinese and Japanese: parse dates with spaces around 年, 月 and 日 (#1477)
-+- Chinese and Japanese: parse dates with spaces around 年, 月 and 日 (#1477,
-+  #1566)
- - French: parse "midi" as noon, e.g. "demain à midi" ("après-midi" and
-   "avant midi" are still not read as noon); this also applies when no
-   ``languages`` are given, so ``search_dates()`` can return "MIDI" in an
-@@ -205,7 +206,7 @@ Improvements:
- - Slovak: parse "pozajtra" (#1430)
- - Swedish: parse ordinal day suffixes like "24:e" and "1:a" (#1484)
- - Thai: parse relative dates with spaced ago/in words (#1411)
--- Vietnamese: parse dates with zero-padded months (#1338)
-+- Vietnamese: parse dates with zero-padded months (#1338, #1563)
- - Add type hints (#1457)
- - Document ``search_dates()`` in the API reference (#1468), add a
-   performance section (#1494), explain how ``DEFAULT_LANGUAGES`` relates to
+             param(text="19 марта 2001", languages="wrong type: str instead of list"),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1568** (closed): Skip out-of-range month spans during date searches (@Yongthyuan)
-- **PR #1566** (2026-11-04): Stop a Chinese date rule slowing down on long runs of spaces (@serhii73)
-- **PR #1565** (2026-11-04): Stop search_dates() slowing down on long runs of brackets (@serhii73)
-- **PR #1564** (2026-11-04): Stop search_dates slowing down on long runs of words that do not parse (@serhii73)
-- **PR #1563** (2026-11-04): Stop zero-padded Vietnamese months making English text look Vietnamese (@serhii73)
-- **PR #1562** (2026-11-04): Fix importing dateparser_data.settings before dateparser (@serhii73)
+- **PR #1584** (closed): Parse Bengali future durations ending in পর or পরে (@shrohan2003)
+- **PR #1583** (closed): Find a date after a number with a symbol, e.g. "$20", in search_dates (@hemtilva)
+- **PR #1581** (2026-11-13): Do not raise ValueError for digits that int() does not know (@serhii73)
+- **PR #1580** (2026-11-13): Leave out a time span that does not fit in the years 1 to 9999 (@serhii73)
+- **PR #1579** (2026-11-13): Do not raise KeyError for a month or weekday name spelled with a case-fold variant in date_formats (@serhii73)
+- **PR #1578** (2026-11-13): Stop a long-digit-run test depending on the current year (@serhii73)
 
 ---
 
@@ -1562,33 +1663,65 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. parsing time-only strings with a timezone-aware RELATIVE_BASE (#1362)
+## X. Use the reference year when choosing a month-end day
 
 **RULE**:
-When implementing operations in `dateparser/parser.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/dateparser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dateparser/date.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/dateparser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `679bae65`: parsing time-only strings with a timezone-aware RELATIVE_BASE (#1362). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ecf380af`: Use the reference year when choosing a month-end day. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `dateparser/parser.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `dateparser/date.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                    # `dateobj` may have been localized above when `self.now` is
-                    # offset-aware; `utcoffset()` requires a naive datetime.
-                    tz_offset = tz.utcoffset(dateobj.replace(tzinfo=None)) or tz_offset
+        now = settings.RELATIVE_BASE or _now(settings)
+            date_obj = patched_strptime(
+                date_string, date_format, reference_year=now.year
+            )
+            if "year" in _missing:
+                try:
+                    date_obj = date_obj.replace(year=now.year)
+                except ValueError:
+                    continue
+
+                date_obj = set_correct_month_from_settings(
+                    date_obj, settings, current_month=now.month
+                )
+                date_obj = set_correct_day_from_settings(
+                    date_obj, settings, current_day=now.day
+                )
+                date_obj = set_correct_month_from_settings(
+                    date_obj, settings, current_month=now.month
+                )
+                date_obj = set_correct_day_from_settings(
+                    date_obj, settings, current_day=now.day
+                )
+            if (
+                "year" not in _missing
+                and "%y" in date_format
+                and "%Y" not in date_format
+            ):
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-                    tz_offset = tz.utcoffset(dateobj) or tz_offset
+// Induced defect failure mode:
+            date_obj = patched_strptime(date_string, date_format)
+                date_obj = set_correct_month_from_settings(date_obj, settings)
+                date_obj = set_correct_day_from_settings(date_obj, settings)
+                date_obj = set_correct_month_from_settings(date_obj, settings)
+                date_obj = set_correct_day_from_settings(date_obj, settings)
+            now = settings.RELATIVE_BASE or _now(settings)
+            if "year" in _missing:
+                date_obj = date_obj.replace(year=now.year)
+            elif "%y" in date_format and "%Y" not in date_format:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `679bae65` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ecf380af` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

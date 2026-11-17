@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T03:17:00.147Z",
+  "last_updated": "2026-11-17T03:26:22.200Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "946cdfcdc67c61dbb1dc7e24a1e045eb341f79e92095b6cf93832fee554d6f46",
-      "verified_at": "2026-11-17T00:38:41.548Z",
+      "content_hash": "d9d6d6bebbdabd7fa03ab1ea5f54e3750d061bddbfc123f772cb5483a952d4f3",
+      "verified_at": "2026-11-17T03:26:20.718Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T00:38:41.548Z"
+      "last_updated": "2026-11-17T03:26:20.718Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "cdbcbbf0eb1332019876e6eaba7eb4e3d333be75f933554a6480cc2c19abfa7b",
-      "verified_at": "2026-11-15T21:15:43.148Z",
+      "content_hash": "3bb767671b0641f1206da2b8a1cb8861c8f839b66d797d8dd93a608204132473",
+      "verified_at": "2026-11-17T03:26:16.849Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T21:15:43.148Z"
+      "last_updated": "2026-11-17T03:26:16.849Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "b430616fc8589cdf9a6c059b03ff0bb2702496ad42a60ce79a7754b58e187c27",
-      "verified_at": "2026-11-14T06:05:50.362Z",
+      "content_hash": "2bd29a48078f0c87f357becf39afab60b42c37a36a2574b34e4976463e559f40",
+      "verified_at": "2026-11-17T03:26:22.199Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T06:05:50.362Z"
+      "last_updated": "2026-11-17T03:26:22.199Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -14931,14 +14931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapinghub-dateparser",
-      "content_hash": "7a61bc657422853f210fc485ca7f0d98eb59fc57135d85d553ab2d10145c78f4",
-      "verified_at": "2026-11-07T19:37:17.961Z",
+      "content_hash": "37e6d41ab47065701adb0bbaf203b25ff2b7580a49ec859362d50d10d4ff4546",
+      "verified_at": "2026-11-17T03:26:11.607Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:37:17.962Z"
+      "last_updated": "2026-11-17T03:26:11.607Z"
     },
     "google/closure-compiler": {
       "repository": "google/closure-compiler",
@@ -15291,14 +15291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-signerlabs-klee",
-      "content_hash": "b827284fd77378f21f01a4b4747c95f464fe2c76c09c13a40d9248019f1998b9",
-      "verified_at": "2026-11-03T21:09:05.134Z",
+      "content_hash": "0bd559fb1b7b6602720778c75798d52b2bd433b30563f53a24cf655a000ca005",
+      "verified_at": "2026-11-17T03:26:14.274Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T21:09:05.134Z"
+      "last_updated": "2026-11-17T03:26:14.274Z"
     },
     "testing-library/react-testing-library": {
       "repository": "testing-library/react-testing-library",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T03:18:02.650Z",
-  "total_verified_learnings": 8829,
+  "last_updated": "2026-11-17T03:26:28.263Z",
+  "total_verified_learnings": 8831,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19633,
+  "total_items": 19654,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112798,25 +112798,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "bec6d69e",
-      "content_hash": "3bed5a752265b261403247ce742c3b22706cef494df31b5eefb922b6b49b528d",
+      "source_version": "a33d49c4",
+      "content_hash": "fb0822775dda4ff83d18231cdffae6643f3ce7b7cd5d7ae4a22d93786408972d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T00:38:41.926Z"
+      "persisted_at": "2026-11-17T03:26:21.080Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "bec6d69e",
-      "content_hash": "d8c8720888bce8dfa776e32f7ef14a6ca2ff6925c3244689ea64831b0c9a6960",
+      "source_version": "a33d49c4",
+      "content_hash": "14e4f575d7fc3911af135b50fa40335f2e2e4e5ff913770c017966187e887c2d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:38:42.217Z"
+      "persisted_at": "2026-11-17T03:26:21.381Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -215386,13 +215386,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "bec6d69e",
-      "content_hash": "946cdfcdc67c61dbb1dc7e24a1e045eb341f79e92095b6cf93832fee554d6f46",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "a33d49c4",
+      "content_hash": "d9d6d6bebbdabd7fa03ab1ea5f54e3750d061bddbfc123f772cb5483a952d4f3",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215413,6 +215413,11 @@
           "number": 8826,
           "title": "Empirical Invariant Guard in ci.yml",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8852,
+          "title": "Remove the locktick profile and tokio_console flag checks from build.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215420,7 +215425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T00:38:41.327Z",
+      "verified_at": "2026-11-17T03:26:20.509Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224443,14 +224448,19 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "24cf8ef7",
-      "content_hash": "b430616fc8589cdf9a6c059b03ff0bb2702496ad42a60ce79a7754b58e187c27",
+      "source_version": "5b172d1a",
+      "content_hash": "2bd29a48078f0c87f357becf39afab60b42c37a36a2574b34e4976463e559f40",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
         {
           "number": 8456,
           "title": "bump sysinfo from 0.39.6 to 0.40.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8853,
+          "title": "keep NULL for columns with a default in CDC change events",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -224459,7 +224469,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T06:05:50.191Z",
+      "verified_at": "2026-11-17T03:26:21.991Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224501,10 +224511,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-risingwavelabs-risingwave-technical-construction-intelligence-risingwavelabs-ris.md",
       "title": "Technical Construction Intelligence: risingwavelabs/risingwave Core Invariants",
       "repository": "risingwavelabs/risingwave",
-      "source_version": "24cf8ef7",
-      "content_hash": "40154fc98d407651555239b34356c8f3cdd7aa770934a287500e24d636bf75d3",
+      "source_version": "5b172d1a",
+      "content_hash": "13ecc18449d1c144e1fd7af6dd480ea3e45b318011f6a09a33c18a3df3a41f45",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T06:05:50.673Z"
+      "persisted_at": "2026-11-17T03:26:22.570Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-risingwavelabs-risingwave": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-risingwavelabs-risingwave",
@@ -224513,10 +224523,10 @@
       "relative_path": "08_VERIFICATION/risingwavelabs-risingwave-verification-protocol-empirical-defect-shield-for-risi.md",
       "title": "Verification Protocol: Empirical Defect Shield for risingwavelabs/risingwave",
       "repository": "risingwavelabs/risingwave",
-      "source_version": "24cf8ef7",
-      "content_hash": "9208dc6bec913b86840213105bd8bff447d51f46234ee0b7e3cc483899efe52c",
+      "source_version": "5b172d1a",
+      "content_hash": "274a883e46e1261a5af71d02e53dbdd4ed83b50244b21708c8672f8ff0039aad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T06:05:50.788Z"
+      "persisted_at": "2026-11-17T03:26:22.721Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar",
@@ -227320,8 +227330,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "7f30b56d",
-      "content_hash": "cdbcbbf0eb1332019876e6eaba7eb4e3d333be75f933554a6480cc2c19abfa7b",
+      "source_version": "2280c280",
+      "content_hash": "3bb767671b0641f1206da2b8a1cb8861c8f839b66d797d8dd93a608204132473",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -227334,6 +227344,11 @@
           "number": 8654,
           "title": "let managed resource lists reveal every entry",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8851,
+          "title": "Recover panics in MCP request handlers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227341,7 +227356,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T21:15:42.978Z",
+      "verified_at": "2026-11-17T03:26:16.630Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227383,10 +227398,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "repository": "skyhook-io/radar",
-      "source_version": "7f30b56d",
-      "content_hash": "ac2f4e63ae37eeac309b486f30daffcf8227aee385666cbc994b0a8f80fadab7",
+      "source_version": "2280c280",
+      "content_hash": "47c48101b59577053d7e2a1b30077593136ad5c99409ee3abe54bbbbf5bcd94d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T21:15:43.438Z"
+      "persisted_at": "2026-11-17T03:26:17.235Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar",
@@ -227395,10 +227410,10 @@
       "relative_path": "08_VERIFICATION/skyhook-io-radar-verification-protocol-empirical-defect-shield-for-skyhook-io-ra.md",
       "title": "Verification Protocol: Empirical Defect Shield for skyhook-io/radar",
       "repository": "skyhook-io/radar",
-      "source_version": "7f30b56d",
-      "content_hash": "38fb782f652ed1a77f294f90f3525c8b48b56b5b0157f9dc935a800597a2fab5",
+      "source_version": "2280c280",
+      "content_hash": "a30ff89cd82016a85655cf1637ddad13c9a6b1741c54a0d4dc448ca37c088f3e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:15:43.669Z"
+      "persisted_at": "2026-11-17T03:26:17.386Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva",
@@ -227432,9 +227447,9 @@
       "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
       "repository": "skyhook-io-radar-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b7f6aeb9535daf6106d643c88d0bd36488423b94f8b4ed2944cabe78de9d64d",
+      "content_hash": "60ea73538a33be07b0acd31b8e4f91c472159d392c8de823fdb710554d1d7c4a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T10:31:23.012Z"
+      "persisted_at": "2026-11-17T03:26:28.110Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar-learnings",
@@ -227444,9 +227459,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for skyhook-io-radar-learnings",
       "repository": "skyhook-io-radar-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a608ec0c443410ea307b19f48942fdc01e0a1bed9369ac21e0bd5239bf8255d",
+      "content_hash": "6f6daed437463956a9e4c6f5783c763a7c1fba5b0a088b33a5ba02f72900882b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T10:31:23.136Z"
+      "persisted_at": "2026-11-17T03:26:28.263Z"
     },
     "learn-huggingface-qwen-qwen3-vl-8b-instruct": {
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
@@ -260462,13 +260477,13 @@
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/provablehq-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-speciali.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "bec6d69e",
-      "content_hash": "5d0550d55e8bb3c38bad50834fe3792409c18528ffd61fce00947611c146538e",
+      "source_version": "a33d49c4",
+      "content_hash": "ffc1d8aa87800e048bb9f4cb0cd7dea6c2800c33fced0ada65d7341940533ae9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T00:38:42.078Z"
+      "persisted_at": "2026-11-17T03:26:21.239Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -261935,6 +261950,310 @@
       "content_hash": "3cfdc825db312bb64d35025c4e3e09a244e3c313a94c5320fdd9cb27aa43065d",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T03:17:29.886Z"
+    },
+    "learn-github-scrapinghub-dateparser": {
+      "learning_id": "learn-github-scrapinghub-dateparser",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "scrapinghub/dateparser",
+      "repository": "scrapinghub/dateparser",
+      "slug": "scrapinghub-dateparser",
+      "platform": "github",
+      "source_url": "https://github.com/scrapinghub/dateparser",
+      "source_version": "ecf380af",
+      "content_hash": "37e6d41ab47065701adb0bbaf203b25ff2b7580a49ec859362d50d10d4ff4546",
+      "dossier_path": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8849,
+          "title": "Use the reference year when choosing a month-end day",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T03:26:11.381Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8849": {
+      "learning_id": "rule-8849",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8849,
+      "title": "Use the reference year when choosing a month-end day",
+      "source_url": "https://github.com/scrapinghub/dateparser",
+      "source_version": "ecf380af",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:26:11.381Z"
+    },
+    "candidate_directive-use-the-reference-year-when-choosing-a-month-end-day": {
+      "item_id": "candidate_directive-use-the-reference-year-when-choosing-a-month-end-day",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RUHJ-use-the-reference-year-when-choosing-a-month-end-day.md",
+      "title": "Use the reference year when choosing a month-end day",
+      "repository": "scrapinghub-dateparser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b993ac8fdfa30bdef866e52873bb4bbe2c0070a1261101af663e37994a1f67f4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T03:26:26.072Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-scrapinghub-dateparser-research-knowledge-intelligence-scrapinghub-dateparser-co.md",
+      "title": "Research & Knowledge Intelligence: scrapinghub/dateparser Core Invariants",
+      "repository": "scrapinghub/dateparser",
+      "source_version": "ecf380af",
+      "content_hash": "22d4d95662e404771fec70a5bbe124baa8598bd03d8fcb1081099a12db1f55cb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T03:26:11.966Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-scrapinghub-dateparser": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-scrapinghub-dateparser",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/scrapinghub-dateparser-verification-protocol-empirical-defect-shield-for-scrapin.md",
+      "title": "Verification Protocol: Empirical Defect Shield for scrapinghub/dateparser",
+      "repository": "scrapinghub/dateparser",
+      "source_version": "ecf380af",
+      "content_hash": "22a602018f74e3c35bfc95be749d7c035471d35667a6b031bcd660a984f3f5e9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:26:12.118Z"
+    },
+    "learn-github-signerlabs-klee": {
+      "learning_id": "learn-github-signerlabs-klee",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "signerlabs/Klee",
+      "repository": "signerlabs/Klee",
+      "slug": "signerlabs-klee",
+      "platform": "github",
+      "source_url": "https://github.com/signerlabs/Klee",
+      "source_version": "f39e0f96",
+      "content_hash": "0bd559fb1b7b6602720778c75798d52b2bd433b30563f53a24cf655a000ca005",
+      "dossier_path": "07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8850,
+          "title": "banner linking to Klee for Mac, Chinese README",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T03:26:14.061Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8850": {
+      "learning_id": "rule-8850",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8850,
+      "title": "banner linking to Klee for Mac, Chinese README",
+      "source_url": "https://github.com/signerlabs/Klee",
+      "source_version": "f39e0f96",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:26:14.062Z"
+    },
+    "candidate_directive-banner-linking-to-klee-for-mac-chinese-readme": {
+      "item_id": "candidate_directive-banner-linking-to-klee-for-mac-chinese-readme",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RLK8-banner-linking-to-klee-for-mac-chinese-readme.md",
+      "title": "banner linking to Klee for Mac, Chinese README",
+      "repository": "signerlabs/Klee",
+      "source_version": "f39e0f96",
+      "content_hash": "83fc0497f79db2e33346a7fb9cbaf9e82b99a2afcd9df06002b07fba4aac2284",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T03:26:14.505Z"
+    },
+    "domain_intelligence-architecture-intelligence-signerlabs-klee-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-signerlabs-klee-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-signerlabs-klee-architecture-intelligence-signerlabs-klee-core-invariants.md",
+      "title": "Architecture Intelligence: signerlabs/Klee Core Invariants",
+      "repository": "signerlabs/Klee",
+      "source_version": "f39e0f96",
+      "content_hash": "b5870a7512d074c13a3ca2e9b7ec39b4a50a7ceca714abb6a4c2762c4c68d54d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T03:26:14.652Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-signerlabs-klee": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-signerlabs-klee",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/signerlabs-klee-verification-protocol-empirical-defect-shield-for-signerlabs-kle.md",
+      "title": "Verification Protocol: Empirical Defect Shield for signerlabs/Klee",
+      "repository": "signerlabs/Klee",
+      "source_version": "f39e0f96",
+      "content_hash": "72c0640e1452cf0afb6ae4f693f356ed351bd077933ae0f72bd92dc8ec1780ab",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:26:14.806Z"
+    },
+    "rule-8851": {
+      "learning_id": "rule-8851",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8851,
+      "title": "Recover panics in MCP request handlers",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "2280c280",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:26:16.630Z"
+    },
+    "candidate_directive-recover-panics-in-mcp-request-handlers": {
+      "item_id": "candidate_directive-recover-panics-in-mcp-request-handlers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RVY0-recover-panics-in-mcp-request-handlers.md",
+      "title": "Recover panics in MCP request handlers",
+      "repository": "skyhook-io-radar-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7fe3f088a753891cc0838c16572aa96d283afe0cc290abd77da7922a1a5b7c72",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T03:26:27.966Z"
+    },
+    "rule-8852": {
+      "learning_id": "rule-8852",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8852,
+      "title": "Remove the locktick profile and tokio_console flag checks from build.rs",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "a33d49c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:26:20.509Z"
+    },
+    "candidate_directive-remove-the-locktick-profile-and-tokio_console-flag-checks-from-build-rs": {
+      "item_id": "candidate_directive-remove-the-locktick-profile-and-tokio_console-flag-checks-from-build-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RQIQ-remove-the-locktick-profile-and-tokio_console-flag-checks-from-build-rs.md",
+      "title": "Remove the locktick profile and tokio_console flag checks from build.rs",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "a33d49c4",
+      "content_hash": "39f2fd14259a487de76074f30ef60a7f8197a772d01f5ed50f1bf0792e18db32",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T03:26:20.936Z"
+    },
+    "rule-8853": {
+      "learning_id": "rule-8853",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8853,
+      "title": "keep NULL for columns with a default in CDC change events",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "5b172d1a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:26:21.991Z"
+    },
+    "candidate_directive-keep-null-for-columns-with-a-default-in-cdc-change-events": {
+      "item_id": "candidate_directive-keep-null-for-columns-with-a-default-in-cdc-change-events",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RRO3-keep-null-for-columns-with-a-default-in-cdc-change-events.md",
+      "title": "keep NULL for columns with a default in CDC change events",
+      "repository": "risingwavelabs/risingwave",
+      "source_version": "5b172d1a",
+      "content_hash": "90801e5d26ae6ea104c5576e0b41c0da6d41a6c228ef4db7d0ea9ba65187a9c1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:26:22.425Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-scrapinghub-dateparser-learnings-research-knowledge-intelligence-scrapinghub-dat.md",
+      "title": "Research & Knowledge Intelligence: scrapinghub-dateparser-learnings Core Invariants",
+      "repository": "scrapinghub-dateparser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b24ac949566e0e05d2ef1694744c9baace3c562da8b10d94c84b4b37cccfe7e6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T03:26:26.215Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-scrapinghub-dateparser-learnin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-scrapinghub-dateparser-learnin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/scrapinghub-dateparser-learnings-verification-protocol-empirical-defect-shield-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for scrapinghub-dateparser-learnings",
+      "repository": "scrapinghub-dateparser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6f55a15d801d97338b61188c1aca35980eb0921477e41943660a070820d7714c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:26:26.367Z"
+    },
+    "candidate_directive-docs-banner-linking-to-klee-for-mac-chinese-readme": {
+      "item_id": "candidate_directive-docs-banner-linking-to-klee-for-mac-chinese-readme",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RVBB-docs-banner-linking-to-klee-for-mac-chinese-readme.md",
+      "title": "docs: banner linking to Klee for Mac, Chinese README",
+      "repository": "signerlabs-klee-learnings",
+      "source_version": "HEAD",
+      "content_hash": "508c49839f9b1d8748467fe33bf4c7bb6071bef58b33cc6fcd6ac9f50def2e37",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T03:26:27.144Z"
+    },
+    "domain_intelligence-architecture-intelligence-signerlabs-klee-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-signerlabs-klee-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-signerlabs-klee-learnings-architecture-intelligence-signerlabs-klee-learnings-co.md",
+      "title": "Architecture Intelligence: signerlabs-klee-learnings Core Invariants",
+      "repository": "signerlabs-klee-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4c105e49fece305cd592b3d03575b9f9a1d4e291fd2cb9f7ef129e899a71baf0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T03:26:27.291Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-signerlabs-klee-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-signerlabs-klee-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/signerlabs-klee-learnings-verification-protocol-empirical-defect-shield-for-sign.md",
+      "title": "Verification Protocol: Empirical Defect Shield for signerlabs-klee-learnings",
+      "repository": "signerlabs-klee-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0e696c416bc300f4850a8c2454ccffce50cada270b852389acb522eec881dd0b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:26:27.442Z"
     }
   },
   "ai-builder-brain": {

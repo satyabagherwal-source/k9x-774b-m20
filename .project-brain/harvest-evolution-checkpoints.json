@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T03:18:02.783Z",
+  "last_updated": "2026-11-17T03:26:28.400Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T03:08:05.768Z",
@@ -1658,7 +1658,7 @@
       "staged_for_review": 1
     },
     "skyhook-io-radar-learnings.md": {
-      "processed_at": "2026-11-14T10:31:22.620Z",
+      "processed_at": "2026-11-17T03:26:27.593Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3231,9 +3231,19 @@
       "processed_at": "2026-11-17T02:02:53.639Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "scrapinghub-dateparser-learnings.md": {
+      "processed_at": "2026-11-17T03:26:25.561Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "signerlabs-klee-learnings.md": {
+      "processed_at": "2026-11-17T03:26:26.519Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1443,
+  "total_dossiers_evaluated": 1446,
   "total_canonical_promoted": 296,
-  "total_staged_for_review": 1134
+  "total_staged_for_review": 1137
 }
