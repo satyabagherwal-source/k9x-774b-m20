@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T17:20:29.338Z",
-  "total_records": 1625,
+  "last_updated": "2026-11-17T17:28:13.502Z",
+  "total_records": 1628,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 688,
+      "total": 690,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -737,7 +737,9 @@
         "domain_intelligence-research-knowledge-intelligence-unsloth-flint-gguf-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-unsloth-flint-gguf-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-m3-1-flash-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i"
+        "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
+        "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-ggu",
+        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-"
       ]
     },
     "E": {
@@ -789,7 +791,7 @@
       ]
     },
     "G": {
-      "total": 295,
+      "total": 296,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1085,7 +1087,8 @@
         "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-stakater-reloader-core-invariants",
         "domain_intelligence-architecture-intelligence-arxanas-git-branchless-core-invariants",
-        "domain_intelligence-architecture-intelligence-arxanas-git-branchless-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-arxanas-git-branchless-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants"
       ]
     },
     "H": {
@@ -9159,8 +9162,8 @@
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "repository": "weaviate/weaviate",
-      "content_hash": "ebded646727ec43d1afb77911df9f663a817a12a60a5f551d0259b5849cd6030",
-      "created_at": "2026-11-16T15:51:14.736Z"
+      "content_hash": "c9c2c83815ecb9b44017fd374e031f31bf003f00afde3677fcf4a2dd24b106c5",
+      "created_at": "2026-11-17T17:28:09.403Z"
     },
     "DOM-K-199063A7": {
       "record_id": "DOM-K-199063A7",
@@ -22796,8 +22799,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "83f6af6cc2b4ae6316bd689fe576c96d3a127069ed3ca2a358eee594f9a88b3b",
-      "created_at": "2026-11-17T17:20:28.280Z"
+      "content_hash": "9016bb62cb7980fa3e26bc5448ff33cf0200fcfa4c539302ab551c8e45872683",
+      "created_at": "2026-11-17T17:28:13.502Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -27820,6 +27823,33 @@
       "repository": "hf-minimaxai-minimax-m3.1-flash-learnings",
       "content_hash": "6952115a0782ed60befc9f58d440bd4b30030e7eab595bb6c7aa3b9f2d24dd21",
       "created_at": "2026-11-17T17:20:28.856Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-ggu": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-ggu",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf-research-knowledge-intellig.md",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "content_hash": "619708e99d631805cb0b2478607b4f8036d52181b4474a5c78ea22e71ccd120b",
+      "created_at": "2026-11-17T17:27:56.323Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf-learnings-research-knowledg.md",
+      "repository": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings",
+      "content_hash": "bdcfa91eab85b9921c7c5f5306bac1af50c0cf459b7644ddc72d2a7636a02c6c",
+      "created_at": "2026-11-17T17:28:12.454Z"
+    },
+    "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: weaviate-weaviate-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-learnings-architecture-intelligence-weaviate-weaviate-learning.md",
+      "repository": "weaviate-weaviate-learnings",
+      "content_hash": "5d67c03566e359c252627d45d7bc50b3d60b4d484053fa075c5fd5daeb40fee9",
+      "created_at": "2026-11-17T17:28:12.918Z"
     }
   }
 }

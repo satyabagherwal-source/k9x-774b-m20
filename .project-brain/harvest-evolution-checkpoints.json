@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T17:20:29.597Z",
+  "last_updated": "2026-11-17T17:28:13.855Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-17T17:20:27.907Z",
+      "processed_at": "2026-11-17T17:28:13.160Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1158,7 +1158,7 @@
       "staged_for_review": 1
     },
     "weaviate-weaviate-learnings.md": {
-      "processed_at": "2026-11-12T14:08:51.229Z",
+      "processed_at": "2026-11-17T17:28:12.593Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1573,7 +1573,7 @@
       "staged_for_review": 0
     },
     "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md": {
-      "processed_at": "2026-11-13T06:07:07.221Z",
+      "processed_at": "2026-11-17T17:28:12.278Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3348,7 +3348,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1644,
+  "total_dossiers_evaluated": 1647,
   "total_canonical_promoted": 323,
-  "total_staged_for_review": 1289
+  "total_staged_for_review": 1292
 }

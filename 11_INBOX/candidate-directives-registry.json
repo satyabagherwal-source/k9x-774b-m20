@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T17:20:29.211Z",
+  "last_updated": "2026-11-17T17:28:13.379Z",
   "directives": [
     {
       "id": "CD-001",
@@ -25122,11 +25122,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-KF7A",
+      "id": "CD-UE68",
       "directive_title": "rust): address the remaining issues in #418",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-KF7A-rust-address-the-remaining-issues-in-418.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-UE68-rust-address-the-remaining-issues-in-418.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -25142,6 +25142,44 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-UDQ6",
+      "directive_title": "raise automatic rescoreLimit for RQ 1-bit and BQ to 512",
+      "source_repo": "weaviate-weaviate-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UDQ6-raise-automatic-rescorelimit-for-rq-1-bit-and-bq-to-512.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-A5DA4E",
+      "directive_title": "Forensic Learning Record (Deep Inspection): ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A5DA4E-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-960A6B",
+      "directive_title": "raise automatic rescoreLimit for RQ 1-bit and BQ to 512",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "weaviate-weaviate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-960A6B-raise-automatic-rescorelimit-for-rq-1-bi.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-D10B06",
+      "directive_title": "rust): address the remaining issues in #418",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D10B06-rust-address-the-remaining-issues-in-418.md",
+      "staged_date": "2026-11-17"
     }
   ]
 }

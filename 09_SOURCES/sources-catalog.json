@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "ca73857d",
+    "sourceVersion": "a33c0ef1",
     "license": "NOASSERTION",
-    "contentHash": "c813ade6f401d1b29c6f15fa8be85cb4a4ad4c9444ebac3d697e13abcbf251e8",
-    "lastHarvestedAt": "2026-11-16T15:51:14.450Z",
+    "contentHash": "5123e103b25cc6314830213e7ecf0a2be93d38da909a62818d5d49aa78d5ca8c",
+    "lastHarvestedAt": "2026-11-17T17:28:09.123Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {
@@ -10605,8 +10605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "93acd0c7211a785f554f2c987517f6c3a02286de52632b3187a06328f95142ac",
-    "lastHarvestedAt": "2026-11-13T06:07:02.960Z",
+    "contentHash": "e2c93e84da26f55d63bb88d8b12afb73a42674c92652454760ffd812f27b91c1",
+    "lastHarvestedAt": "2026-11-17T17:27:56.156Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf"
   },
   "hf-comfy-org-fibo-2.0": {

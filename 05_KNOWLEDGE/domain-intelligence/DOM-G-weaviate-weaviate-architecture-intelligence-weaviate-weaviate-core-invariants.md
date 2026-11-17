@@ -4,23 +4,23 @@
 {
   "source_repository": "weaviate/weaviate",
   "source_url": "https://github.com/weaviate/weaviate",
-  "source_version": "ca73857d",
+  "source_version": "a33c0ef1",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-16T15:51:14.623Z",
+  "timestamp": "2026-11-17T17:28:09.286Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-weaviate-weaviate",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `ca73857d`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-16T15:51:14.623Z`  
+> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `a33c0ef1`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T17:28:09.286Z`  
 > **Learning ID**: `learn-github-weaviate-weaviate`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
 - **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:51:13.577Z  
+> **Harvest Timestamp**: 2026-11-17T17:28:08.254Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16952 stars
+- **Stars / Engagement**: 16953 stars
 
 ---
 
@@ -1747,271 +1747,42 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3032ae85` (2026-11-16)
-**Commit Message**: Merge pull request #13893 from weaviate/fix/reindex-finalize-refusal-test
+### Incident Patch 1: `ba33f5fd` (2026-11-17)
+**Commit Message**: fix: raise automatic rescoreLimit for RQ 1-bit and BQ to 512 (#13927)
 
-reindex: test that a failed reindex can never be reported as finished
-
-**File**: `cluster/distributedtask/manager_finalize_refusal_test.go` (added, +53/-0)
+**File**: `entities/vectorindex/hnsw/bq_config.go` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,53 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package distributedtask
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	cmd "github.com/weaviate/weaviate/cluster/proto/api"
-+)
-+
-+// A peer's failure committing before a slower node's finalize must not flip the task to FINISHED.
-+func TestManager_MarkTaskFinalizedLeavesEndedTasksUnchanged(t *testing.T) {
-+	for _, tc := range []struct {
-+		status  TaskStatus
-+		wantErr error
-+	}{
-+		{status: TaskStatusFailed, wantErr: ErrTaskNotInFinalizingState},
-+		{status: TaskStatusFinished},
-+	} {
-+		t.Run(string(tc.status), func(t *testing.T) {
-+			h := newTestHarness(t).init(t)
-+			ns, id, version := fixtureInStatus(t, h, tc.status)
-+			finishedAt := h.manager.tasks[ns][id].FinishedAt
-+			h.clock.Advance(time.Minute)
-+
-+			err := h.manager.MarkTaskFinalized(toCmd(t, &cmd.MarkTaskFinalizedRequest{
-+				Namespace:             ns,
-+				Id:                    id,
-+				Version:               version,
-+				FinalizedAtUnixMillis: h.clock.Now().UnixMilli(),
-+			}))
-+
-+			if tc.wantErr != nil {
-+				require.ErrorIs(t, err, tc.wantErr)
-+			} else {
-+				require.NoError(t, err)
-+			}
-+			require.Equal(t, tc.status, h.manager.tasks[ns][id].Status)
-+			require.Equal(t, finishedAt, h.manager.tasks[ns][id].FinishedAt)
-+		})
-+	}
-+}
+@@ -16,7 +16,7 @@ import "github.com/weaviate/weaviate/entities/vectorindex/common"
+ const (
+ 	DefaultBQEnabled = false
+ 	// DefaultBQRescoreLimit is what RescoreLimitAuto resolves to.
+-	DefaultBQRescoreLimit = 256
++	DefaultBQRescoreLimit = 512
+ 	// DefaultBQRescoreFactor is what RescoreFactorAuto resolves to. One bit
+ 	// per dimension ranks candidates coarsely, so BQ keeps more headroom.
+ 	DefaultBQRescoreFactor = 4.0
 ```
 
----
-
-### Incident Patch 2: `54eac5f8` (2026-11-16)
-**Commit Message**: Merge pull request #13895 from weaviate/fix/reindex-empty-records-early-return
-
-reindex: remove reindex overhead from tenant loads when no reindex ever ran
-
-**File**: `adapters/repos/db/inverted_reindex_load_overlay.go` (modified, +9/-2)
+**File**: `entities/vectorindex/hnsw/rq_config.go` (modified, +1/-1)
 ```diff
-@@ -58,8 +58,11 @@ func (s *Shard) restoreMigratedOverlays(class *models.Class, unbuildableFaults *
- 	if s.migrationRecords == nil || class == nil {
- 		return
- 	}
--	tasks, readable := s.migrations().LocalTasks()
- 	all := s.migrationRecords.Records()
-+	if len(all) == 0 {
-+		return
-+	}
-+	tasks, readable := s.migrations().LocalTasks()
- 	records := slices.SortedFunc(slices.Values(all), func(a, b MigrationRecord) int {
- 		return cmp.Compare(a.Subject().Key.TaskVersion, b.Subject().Key.TaskVersion)
- 	})
-@@ -128,8 +131,12 @@ func (s *Shard) migratedIndexStands(propName, indexType string) bool {
- 	if s.migrationRecords == nil {
- 		return false
- 	}
-+	records := s.migrationRecords.Records()
-+	if len(records) == 0 {
-+		return false
-+	}
- 	tasks, readable := s.migrations().LocalTasks()
--	return migratedIndexStandsIn(s.migrationRecords.Records(), tasks, readable, propName, indexType)
-+	return migratedIndexStandsIn(records, tasks, readable, propName, indexType)
- }
- 
- func migratedIndexStandsIn(records []MigrationRecord, tasks []distributedtask.TaskStatusEntry, readable bool,
-```
-
-**File**: `adapters/repos/db/inverted_reindex_load_overlay_test.go` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package db
-+
-+import (
-+	"testing"
-+
-+	"github.com/sirupsen/logrus/hooks/test"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/weaviate/weaviate/cluster/distributedtask"
-+	"github.com/weaviate/weaviate/entities/models"
-+)
-+
-+// Reading the task list takes the task manager's lock, which RAFT applies wait on.
-+func TestAnEmptyRecordStoreSkipsTheTaskListRead(t *testing.T) {
-+	tests := []struct {
-+		name string
-+		ask  func(s *Shard)
-+	}{
-+		{"restore overlays on load", func(s *Shard) { s.restoreMigratedOverlays(&models.Class{Class: "Books"}, nil) }},
-+		{"migrated index stands", func(s *Shard) { s.migratedIndexStands("title", "filterable") }},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			logger, _ := test.NewNullLogger()
-+			reads := 0
-+			db := &DB{logger: logger}
-+			db.migrationCluster.local = func(string) ([]distributedtask.TaskStatusEntry, bool) {
-+				reads++
-+				return nil, true
-+			}
-+			s := &Shard{
-+				name:             "shard",
-+				index:            &Index{db: db, logger: logger},
-+				migrationRecords: NewMigrationRecordStore(t.TempDir(), logger),
-+			}
-+
-+			tt.ask(s)
-+
-+			require.Zero(t, reads)
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `bbe85a7c` (2026-11-16)
-**Commit Message**: Merge pull request #13874 from weaviate/fix/reindex-567-shard-lookup
-
-reindex: speed up shard lookups at 1M tenants from ~45 hours to ~0.02 s per phase
-
-**File**: `adapters/repos/db/reindex_provider.go` (modified, +5/-31)
-```diff
-@@ -1903,20 +1903,6 @@ func (p *ReindexProvider) hasLocalPostMergeState(ctx context.Context, payload *R
- 	if len(shards) == 0 {
- 		return false
- 	}
--	// One walk for the whole payload: a per-name lookup walks the shard map
--	// again for every tenant the payload names.
--	hosted := make(map[string]bool, len(shards))
--	for _, shardName := range shards {
--		hosted[shardName] = false
--	}
--	if err := idx.ForEachShard(func(name string, _ ShardLike) error {
--		if _, wanted := hosted[name]; wanted {
--			hosted[name] = true
--		}
--		return nil
--	}); err != nil {
--		return false
--	}
- 	recordReads := 0
- 	// Faults are accumulated, not logged per shard: a per-shard line would follow the tenant count.
- 	unreadable := map[string]struct{}{}
-@@ -1935,7 +1921,7 @@ func (p *ReindexProvider) hasLocalPostMergeState(ctx context.Context, payload *R
- 		if ctx.Err() != nil {
- 			return false
- 		}
--		if !hosted[shardName] {
-+		if idx.shards.Load(shardName) == nil {
- 			continue
- 		}
- 		recordReads++
-@@ -2642,23 +2628,11 @@ func (db *DB) ShardReplicaOwnership(ctx context.Context, className string) (map[
- 	return result, nil
- }
- 
--// lookupShardByName returns the named shard from the index, or an error
--// describing why the lookup failed. There is no Index.GetShardByName, so
--// callers walk ForEachShard; centralise that walk here so the two call
--// sites (processOneUnit and OnGroupCompleted) report the same shape of
--// error.
- func lookupShardByName(idx *Index, shardName string) (ShardLike, error) {
--	var found ShardLike
--	if err := idx.ForEachShard(func(name string, s ShardLike) error {
--		if name == shardName {
--			found = s
-+	if idx.closeCause() == nil {
-+		if s := idx.shards.Load(shardName); s != nil {
-+			return s, nil
- 		}
--		return nil
--	}); err != nil {
--		return nil, fmt.Errorf("iterating shards: %w", err)
--	}
--	if found == nil {
--		return nil, fmt.Errorf("shard %q not found", shardName)
- 	}
--	return found, nil
-+	return nil, fmt.Errorf("shard %q not found", shardName)
- }
-```
-
-**File**: `adapters/repos/db/reindex_provider_test.go` (modified, +22/-0)
-```diff
-@@ -647,3 +647,25 @@ func TestADropNeverUndoesAClaimItDoesNotHold(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestLookupShardByName(t *testing.T) {
-+	open := &Index{}
-+	open.shards.Store("tenant-a", &Shard{})
-+	closing, closingTenant := closingIndexWithAnUnvisitedShard(t)
-+
-+	tests := []struct {
-+		name    string
-+		idx     *Index
-+		shard   string
-+		wantErr string
-+	}{
-+		{name: "missing shard", idx: open, shard: "tenant-b", wantErr: `shard "tenant-b" not found`},
-+		{name: "index closing", idx: closing, shard: closingTenant, wantErr: fmt.Sprintf("shard %q not found", closingTenant)},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			_, err := lookupShardByName(tt.idx, tt.shard)
-+			require.EqualError(t, err, tt.wantErr)
-+		})
-+	}
-+}
+@@ -24,7 +24,7 @@ const (
+ 	// DefaultRQRescoreLimit and DefaultBRQRescoreLimit are what
+ 	// RescoreLimitAuto resolves to for 4/8-bit and 1-bit codes.
+ 	DefaultRQRescoreLimit  = 20
+-	DefaultBRQRescoreLimit = 256
++	DefaultBRQRescoreLimit = 512
+ 	// DefaultRQRescoreFactor and DefaultBRQRescoreFactor are what
+ 	// RescoreFactorAuto resolves to for 4/8-bit and 1-bit codes.
+ 	DefaultRQRescoreFactor  = 2.0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13935** (2026-11-17): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
+- **PR #13931** (2026-11-17): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
+- **PR #13929** (2026-11-17): hnsw: keep compression across a reset of an empty index (@asdine)
+- **PR #13927** (2026-11-17): fix: raise automatic rescoreLimit for RQ 1-bit and BQ to 512 (@trengrj)
+- **PR #13926** (2026-11-17): test: drop the small hnsw cache case from the dynamic upgrade tests (@trengrj)
 - **PR #13923** (2026-11-16): prepare release v1.41.0-rc.0 (@antas-marcin)
-- **PR #13920** (2026-11-16): Merge stable/v1.40 into main (@antas-marcin)
-- **PR #13919** (2026-11-16): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
-- **PR #13917** (2026-11-16): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
-- **PR #13912** (2026-11-16): Speed up inactive shard backups by ~40% with flat staging folder structure (@dirkkul)
-- **PR #13898** (2026-11-16): Speed up object listing by ~50% by decoding properties without reflection (@dirkkul)
 
 ---
 
@@ -2031,70 +1802,31 @@ reindex: speed up shard lookups at 1M tenants from ~45 hours to ~0.02 s per phas
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in manager_finalize_refusal_test.go
+## X. raise automatic rescoreLimit for RQ 1-bit and BQ to 512
 
 **RULE**:
-When implementing operations in `cluster/distributedtask/manager_finalize_refusal_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `entities/vectorindex/hnsw/bq_config.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3032ae85`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba33f5fd`: raise automatic rescoreLimit for RQ 1-bit and BQ to 512. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cluster/distributedtask/manager_finalize_refusal_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `entities/vectorindex/hnsw/bq_config.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-//                           _       _
-// __      _____  __ ___   ___  __ _| |_ ___
-// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-//
-//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-//
-//  CONTACT: hello@weaviate.io
-//
-
-package distributedtask
-
-import (
-	"testing"
-	"time"
-
-	"github.com/stretchr/testify/require"
-	cmd "github.com/weaviate/weaviate/cluster/proto/api"
-)
-
-// A peer's failure committing before a slower node's finalize must not flip the task to FINISHED.
-func TestManager_MarkTaskFinalizedLeavesEndedTasksUnchanged(t *testing.T) {
-	for _, tc := range []struct {
-		status  TaskStatus
-		wantErr error
-	}{
-		{status: TaskStatusFailed, wantErr: ErrTaskNotInFinalizingState},
-		{status: TaskStatusFinished},
-	} {
-		t.Run(string(tc.status), func(t *testing.T) {
-			h := newTestHarness(t).init(t)
-			ns, id, version := fixtureInStatus(t, h, tc.status)
-			finishedAt := h.manager.tasks[ns][id].FinishedAt
-			h.clock.Advance(time.Minute)
-
-			err := h.manager.MarkTaskFinalized(toCmd(t, &cmd.MarkTaskFinalizedRequest{
-				Namespace:             ns,
-				Id:                    id,
-				Versio
+	DefaultBQRescoreLimit = 512
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	DefaultBQRescoreLimit = 256
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3032ae85` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba33f5fd` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

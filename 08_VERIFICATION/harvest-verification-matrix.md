@@ -10641,3 +10641,5 @@
 | `CYCLE-20261117-K9O5` | `2026-11-17T17:20:20.981Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9018` | Yes (`3827cef6...`) |
 | `CYCLE-20261117-KAW9` | `2026-11-17T17:20:22.569Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9019` | Yes (`b1f0df36...`) |
 | `CYCLE-20261117-KCIZ` | `2026-11-17T17:20:24.683Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9020` | Yes (`1469bf05...`) |
+| `CYCLE-20261117-U0VS` | `2026-11-17T17:27:56.152Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md` | Yes (`e2c93e84...`) |
+| `CYCLE-20261117-UAVZ` | `2026-11-17T17:28:09.119Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9021` | Yes (`5123e103...`) |

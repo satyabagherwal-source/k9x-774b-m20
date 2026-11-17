@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T17:20:29.476Z",
-  "total_verified_learnings": 8916,
+  "last_updated": "2026-11-17T17:28:13.745Z",
+  "total_verified_learnings": 8917,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20429,
+  "total_items": 20436,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf0d1b88afcee50eb41101a05c13e7ef6aa2d83d5c18850dc6a46011156355d4",
+      "content_hash": "bc2f72187c77b324b1dddd433ef7b870cc5fe90eaa64a722ee2bafa551c4975d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:20:28.420Z"
+      "persisted_at": "2026-11-17T17:28:13.632Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "734cb5c9109e2ec6b7142fd8a34959f5331356c745508bc6cfba550a70c6fcd9",
+      "content_hash": "cda6437423fa9edcd9f91adac23ebd7a0266fa7a7b5d979559992619ab83b0e3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:20:28.556Z"
+      "persisted_at": "2026-11-17T17:28:13.745Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -114997,10 +114997,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "repository": "weaviate/weaviate",
-      "source_version": "ca73857d",
-      "content_hash": "ebded646727ec43d1afb77911df9f663a817a12a60a5f551d0259b5849cd6030",
+      "source_version": "a33c0ef1",
+      "content_hash": "c9c2c83815ecb9b44017fd374e031f31bf003f00afde3677fcf4a2dd24b106c5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T15:51:14.736Z"
+      "persisted_at": "2026-11-17T17:28:09.403Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate",
@@ -115009,10 +115009,10 @@
       "relative_path": "08_VERIFICATION/weaviate-weaviate-verification-protocol-empirical-defect-shield-for-weaviate-wea.md",
       "title": "Verification Protocol: Empirical Defect Shield for weaviate/weaviate",
       "repository": "weaviate/weaviate",
-      "source_version": "ca73857d",
-      "content_hash": "ded7fad6c7d9c8e8ac25e9ec0ccc6c1ca3de397dbd1bd1230f8d2336b1646512",
+      "source_version": "a33c0ef1",
+      "content_hash": "3d67f04b115a2ed608429f5108670625dda1d09e5ca69c0209d12005b5179bfc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T15:51:14.846Z"
+      "persisted_at": "2026-11-17T17:28:09.522Z"
     },
     "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants",
@@ -251449,9 +251449,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "83f6af6cc2b4ae6316bd689fe576c96d3a127069ed3ca2a358eee594f9a88b3b",
+      "content_hash": "9016bb62cb7980fa3e26bc5448ff33cf0200fcfa4c539302ab551c8e45872683",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:20:28.280Z"
+      "persisted_at": "2026-11-17T17:28:13.502Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -255520,14 +255520,19 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "ca73857d",
-      "content_hash": "c813ade6f401d1b29c6f15fa8be85cb4a4ad4c9444ebac3d697e13abcbf251e8",
+      "source_version": "a33c0ef1",
+      "content_hash": "5123e103b25cc6314830213e7ecf0a2be93d38da909a62818d5d49aa78d5ca8c",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
         {
           "number": 8756,
           "title": "Empirical Invariant Guard in manager_finalize_refusal_test.go",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9021,
+          "title": "raise automatic rescoreLimit for RQ 1-bit and BQ to 512",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -255536,7 +255541,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T15:51:14.293Z",
+      "verified_at": "2026-11-17T17:28:08.962Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274006,13 +274011,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-KF7A-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UE68-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0308a8bbcd1f6cd88e87019a8fe965a80628f22483ba54ec2c9e26dd56ca4f67",
+      "content_hash": "e844a080f8fd766acf82196ab5914db58304f4ae8118b01bf6bcccc8f95c050d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:20:28.154Z"
+      "persisted_at": "2026-11-17T17:28:13.379Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -274037,6 +274042,107 @@
       "content_hash": "7c2776ee47044688085671cdee23065b27b73970dfb8b767878ab2a33680decf",
       "domain_letter": "G",
       "persisted_at": "2026-11-17T17:20:29.211Z"
+    },
+    "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf": {
+      "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "slug": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "content_hash": "e2c93e84da26f55d63bb88d8b12afb73a42674c92652454760ffd812f27b91c1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T17:27:55.977Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-ggu": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-ggu",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf-research-knowledge-intellig.md",
+      "title": "Research & Knowledge Intelligence: ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF Core Invariants",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf",
+      "content_hash": "619708e99d631805cb0b2478607b4f8036d52181b4474a5c78ea22e71ccd120b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T17:27:56.323Z"
+    },
+    "rule-9021": {
+      "learning_id": "rule-9021",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9021,
+      "title": "raise automatic rescoreLimit for RQ 1-bit and BQ to 512",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "a33c0ef1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T17:28:08.962Z"
+    },
+    "candidate_directive-raise-automatic-rescorelimit-for-rq-1-bit-and-bq-to-512": {
+      "item_id": "candidate_directive-raise-automatic-rescorelimit-for-rq-1-bit-and-bq-to-512",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UDQ6-raise-automatic-rescorelimit-for-rq-1-bit-and-bq-to-512.md",
+      "title": "raise automatic rescoreLimit for RQ 1-bit and BQ to 512",
+      "repository": "weaviate-weaviate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "057b97f9354fbf5acb04791cdd8ffe14cd770b920168f45f055862b9a1315d77",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T17:28:12.801Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf-learnings-research-knowledg.md",
+      "title": "Research & Knowledge Intelligence: hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings Core Invariants",
+      "repository": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bdcfa91eab85b9921c7c5f5306bac1af50c0cf459b7644ddc72d2a7636a02c6c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T17:28:12.454Z"
+    },
+    "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-learnings-architecture-intelligence-weaviate-weaviate-learning.md",
+      "title": "Architecture Intelligence: weaviate-weaviate-learnings Core Invariants",
+      "repository": "weaviate-weaviate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d67c03566e359c252627d45d7bc50b3d60b4d484053fa075c5fd5daeb40fee9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T17:28:12.918Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/weaviate-weaviate-learnings-verification-protocol-empirical-defect-shield-for-we.md",
+      "title": "Verification Protocol: Empirical Defect Shield for weaviate-weaviate-learnings",
+      "repository": "weaviate-weaviate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e82c04dc7dffdffaef503a14b393fef247aa9192a376c5d3334253d18857cf58",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T17:28:13.042Z"
     }
   },
   "ai-builder-brain": {

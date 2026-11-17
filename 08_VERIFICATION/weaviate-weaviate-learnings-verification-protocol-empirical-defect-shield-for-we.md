@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:34.803Z",
+  "timestamp": "2026-11-17T17:28:12.698Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-weaviate-weaviate-learnings",
+  "learning_id": "LEARN-EVO-weaviate-weaviate-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [weaviate-weaviate-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:34.803Z`  
-> **Learning ID**: `LEARN-REEXTRACT-weaviate-weaviate-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T17:28:12.698Z`  
+> **Learning ID**: `LEARN-EVO-weaviate-weaviate-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `36357612`  
+> **Source Version**: `a33c0ef1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T14:08:33.760Z  
+> **Timestamp**: 2026-11-17T17:28:08.259Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T14:08:33.751Z  
+> **Harvest Timestamp**: 2026-11-17T17:28:08.254Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16945 stars
+- **Stars / Engagement**: 16953 stars
 
 ---
 
@@ -415,13 +415,14 @@ func (s *stats) getThroughputEma() float64 {
 package batch
 
 import (
+	"bytes"
 	"context"
-	"fmt"
 	"math"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	enterrors "github.com/weaviate/weaviate/entities/errors"
 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
@@ -672,7 +673,7 @@ func (w *worker) fanInReplies(
 			outer := outerIdxs[resp.offset+int(err.Index)]
 			obj := objs[outer]
 			failed[outer] = struct{}{}
-			if w.isTransientReplicationError(err.Error) && retries < MAX_RETRI
+			if w.isTransientReplicationError(err.E
 ```
 
 ### Core Architecture Module: `adapters/handlers/rest/clusterapi/shared/util.go`
@@ -1757,396 +1758,42 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8a56463` (2026-11-12)
-**Commit Message**: fix(lsmkv): return an error for damaged RoaringSet WAL record lengths
+### Incident Patch 1: `ba33f5fd` (2026-11-17)
+**Commit Message**: fix: raise automatic rescoreLimit for RQ 1-bit and BQ to 512 (#13927)
 
-parseNode and parseNodeList trusted the lengths read from the WAL. A
-total length below 8 panicked on segBuf[8:], a garbage total length
-sized an allocation before any bytes were read, and out-of-range
-additions, deletions or key lengths panicked in the decoders. The panic
-failed the bucket, and with it the shard, instead of ending replay at
-the damaged record like other WAL corruption does.
-
-Both now read through readSegmentRecord, which rejects bad total
-lengths, grows the buffer only as bytes arrive past 16 MiB, and checks
-the inner lengths with byteops' checked readers.
-
-Fixes weaviate/0-weaviate-issues#704
-
-**File**: `adapters/repos/db/lsmkv/bucket_recover_test.go` (modified, +92/-0)
+**File**: `entities/vectorindex/hnsw/bq_config.go` (modified, +1/-1)
 ```diff
-@@ -23,6 +23,7 @@ import (
- 
- 	"github.com/weaviate/weaviate/adapters/repos/db/roaringset"
- 	"github.com/weaviate/weaviate/entities/cyclemanager"
-+	"github.com/weaviate/weaviate/entities/filters"
- )
- 
- func TestBucketWalReload(t *testing.T) {
-@@ -418,3 +419,94 @@ func TestBucketRecoveryWithWALShorterThanChecksum(t *testing.T) {
- 		})
- 	}
- }
-+
-+// TestBucketRecoveryRoaringSetWALWithCorruptRecord opens a RoaringSet or
-+// RoaringSetRange bucket whose write-ahead-log ends in a damaged v0 record, the
-+// state a volume returning I/O errors left behind in production. The bucket
-+// must open with the records written before the damaged one.
-+func TestBucketRecoveryRoaringSetWALWithCorruptRecord(t *testing.T) {
-+	ctx := context.Background()
-+	logger, _ := test.NewNullLogger()
-+
-+	nodes := []struct {
-+		name string
-+		node []byte
-+	}{
-+		{name: "total length 0", node: le64(0)},
-+		{name: "total length 7", node: le64(7)},
-+		{name: "total length beyond int64", node: append(le64(1<<63+16), make([]byte, 32)...)},
-+		{name: "additions length beyond the record", node: withTotalLen(le64(1<<40), make([]byte, 8))},
-+		{name: "key length beyond the record", node: withTotalLen(le64(0), le64(0), le32(1<<20))},
-+	}
-+	strategies := []struct {
-+		strategy string
-+		write    func(t *testing.T, b *Bucket, key, value uint64)
-+		check    func(t *testing.T, b *Bucket, key, value uint64)
-+	}{
-+		{
-+			strategy: StrategyRoaringSet,
-+			write: func(t *testing.T, b *Bucket, key, value uint64) {
-+				require.NoError(t, b.RoaringSetAddOne(le64(key), value))
-+			},
-+			check: func(t *testing.T, b *Bucket, key, value uint64) {
-+				bm, release, err := b.RoaringSetGet(ctx, le64(key))
-+				require.NoError(t, err)
-+				defer release()
-+				require.Equal(t, []uint64{value}, bm.ToArray())
-+			},
-+		},
-+		{
-+			strategy: StrategyRoaringSetRange,
-+			write: func(t *testing.T, b *Bucket, key, value uint64) {
-+				require.NoError(t, b.RoaringSetRangeAdd(key, value))
-+			},
-+			check: func(t *testing.T, b *Bucket, key, value uint64) {
-+				reader := b.ReaderRoaringSetRange()
-+				defer reader.Close()
-+				bm, release, err := reader.Read(ctx, key, filters.OperatorEqual)
-+				require.NoError(t, err)
-+				defer release()
-+				require.Equal(t, []uint64{value}, bm.ToArray())
-+			},
-+		},
-+	}
-+	commitTypes := []CommitType{CommitTypeRoaringSet, CommitTypeRoaringSetList}
-+
-+	openBucket := func(t *testing.T, dir, strategy string) *Bucket {
-+		t.Helper()
-+		b, err := NewBucketCreator().NewBucket(ctx, dir, "", logger, nil,
-+			cyclemanager.NewCallbackGroupNoop(), cyclemanager.NewCallbackGroupNoop(),
-+			WithStrategy(strategy), WithBitmapBufPool(roaringset.NewBitmapBufPoolNoop()))
-+		require.NoError(t, err)
-+		return b
-+	}
-+
-+	for _, s := range strategies {
-+		for _, ct := range commitTypes {
-+			for _, n := range nodes {
-+				t.Run(fmt.Sprintf("%s/%s/%s", s.strategy, ct, n.name), func(t *testing.T) {
-+					dir := t.TempDir()
-+					b := openBucket(t, dir, s.strategy)
-+					for k := uint64(1); k <= 3; k++ {
-+						s.write(t, b, k, 100+k)
-+					}
-+					require.NoError(t, b.Shutdown(ctx))
-+
-+					wals := filesWithExt(t, dir, ".wal")
-+					require.Len(t, wals, 1)
-+					f, err := os.OpenFile(filepath.Join(dir, wals[0]), os.O_APPEND|os.O_WRONLY, 0o644)
-+					require.NoError(t, err)
-+					_, err = f.Write(append([]byte{byte(ct), 0}, n.node...))
-+					require.NoError(t, err)
-+					require.NoError(t, f.Close())
-+
-+					b = openBucket(t, dir, s.strategy)
-+					for k := uint64(1); k <= 3; k++ {
-+						s.check(t, b, k, 100+k)
-+					}
-+					require.NoError(t, b.Shutdown(ctx))
-+				})
-+			}
-+		}
-+	}
-+}
+@@ -16,7 +16,7 @@ import "github.com/weaviate/weaviate/entities/vectorindex/common"
+ const (
+ 	DefaultBQEnabled = false
+ 	// DefaultBQRescoreLimit is what RescoreLimitAuto resolves to.
+-	DefaultBQRescoreLimit = 256
++	DefaultBQRescoreLimit = 512
+ 	// DefaultBQRescoreFactor is what RescoreFactorAuto resolves to. One bit
+ 	// per dimension ranks candidates coarsely, so BQ keeps more headroom.
+ 	DefaultBQRescoreFactor = 4.0
 ```
 
-**File**: `adapters/repos/db/lsmkv/commitlogger_parser_roaring_set.go` (modified, +67/-20)
+**File**: `entities/vectorindex/hnsw/rq_config.go` (modified, +1/-1)
 ```diff
-@@ -16,9 +16,12 @@ import (
- 	"encoding/binary"
- 	"fmt"
- 	"io"
-+	"math"
-+	"slices"
- 
- 	"github.com/pkg/errors"
- 	"github.com/weaviate/weaviate/adapters/repos/db/roaringset"
-+	"github.com/weaviate/weaviate/usecases/byteops"
- )
- 
- func (p *commitloggerParser) doRoaringSet() error {
-@@ -114,16 +117,9 @@ func (prs *commitlogParserRoaringSet) parseNodeV1(commitType CommitType) error {
- }
- 
- func (prs *commitlogParserRoaringSet) parseNode(reader io.Reader) error {
--	lenBuf := make([]byte, 8)
--	if _, err := io.ReadFull(reader, lenBuf); err != nil {
--		return errors.Wrap(err, "read segment len")
--	}
--	segmentLen := binary.LittleEndian.Uint64(lenBuf)
--
--	segBuf := make([]byte, segmentLen)
--	copy(segBuf, lenBuf)
--	if _, err := io.ReadFull(reader, segBuf[8:]); err != nil {
--		return errors.Wrap(err, "read segment contents")
-+	segBuf, err := readSegmentRecord(reader)
-+	if err != nil {
-+		return err
- 	}
- 
- 	segment := roaringset.NewSegmentNodeFromBuffer(segBuf)
-@@ -140,16 +136,9 @@ func (prs *commitlogParserRoaringSet) parseNode(reader io.Reader) error {
- }
- 
- func (prs *commitlogParserRoaringSet) parseNodeList(reader io.Reader) error {
--	lenBuf := make([]byte, 8)
--	if _, err := io.ReadFull(reader, lenBuf); err != nil {
--		return errors.Wrap(err, "read segment len")
--	}
--	segmentLen := binary.LittleEndian.Uint64(lenBuf)
--
--	segBuf := make([]byte, segmentLen)
--	copy(segBuf, lenBuf)
--	if _, err := io.ReadFull(reader, segBuf[8:]); err != nil {
--		return errors.Wrap(err, "read segment contents")
-+	segBuf, err := readSegmentRecord(reader)
-+	if err != nil {
-+		return err
- 	}
- 
- 	segment := roaringset.NewSegmentNodeListFromBuffer(segBuf)
-@@ -161,3 +150,61 @@ func (prs *commitlogParserRoaringSet) parseNodeList(reader io.Reader) error {
- 
- 	return nil
- }
-+
-+// maxRecordPrealloc caps the buffer a record's length field sizes before any of
-+// the record is read. A v0 record has no checksum, so that length can be
-+// garbage; a longer record grows the buffer only as its bytes arrive.
-+const maxRecordPrealloc = 16 << 20
-+
-+// readSegmentRecord reads one length-prefixed SegmentNode or SegmentNodeList and
-+// checks that the lengths inside it stay within it. Their decoders slice by
-+// those lengths unchecked, so a damaged record would otherwise panic and fail
-+// the whole bucket instead of ending the replay at this record.
-+func readSegmentRecord(reader io.Reader) ([]byte, error) {
-+	var lenBuf [8]byte
-+	if _, err := io.ReadFull(reader, lenBuf[:]); err != nil {
-+		return nil, errors.Wrap(err, "read segment len")
-+	}
-+	segmentLen := binary.LittleEndian.Uint64(lenBuf[:])
-+	if segmentLen < 8 || segmentLen > math.MaxInt {
-+		return nil, fmt.Errorf("invalid segment len %d", segmentLen)
-+	}
-+
-+	total := int(segmentLen)
-+	segBuf := make([]byte, 8, min(total, maxRecordPrealloc))
-+	copy(segBuf, lenBuf[:])
-+	for len(segBuf) < total {
-+		start := len(segBuf)
-+		chunk := min(total-start, maxRecordPrealloc)
-+		segBuf = slices.Grow(segBuf, chunk)[:start+chunk]
-+		if _, err := io.ReadFull(reader, segBuf[start:]); err != nil {
-+			return nil, errors.Wrap(err, "read segment contents")
-+		}
-+	}
-+
-+	if err := checkSegmentLayout(segBuf); err != nil {
-+		return nil, fmt.Errorf("segment of len %d: %w", segmentLen, err)
-+	}
-+	return segBuf, nil
-+}
-+
-+// checkSegmentLayout checks the layout SegmentNode and SegmentNodeList share
-+// after the total length: uint64-prefixed additions, uint64-prefixed deletions,
-+// uint32-prefixed key.
-+func checkSegmentLayout(segBuf []byte) error {
-+	rw := byteops.NewReadWriter(segBuf)
-+	rw.MoveBufferToAbsolutePosition(8)
-+	for _, field := range [2]string{"additions", "deletions"} {
-+		lenBytes, err := rw.ReadBytesFromBufferChecked(8)
-+		if err != nil {
-+			return fmt.Errorf("read %s len: %w", field, err)
-+		}
-+		if err := rw.SkipChecked(binary.LittleEndian.Uint64(lenBytes)); err != nil {
-+			return fmt.Errorf("read %s: %w", field, err)
-+		}
-+	}
-+	if _, err := rw.ReadBytesFromBufferWithUint32LengthIndicatorChecked(); err != nil {
-+		return fmt.Errorf("read key: %w", err)
-+	}
-+	return nil
-+}
-```
-
-**File**: `adapters/repos/db/lsmkv/commitlogger_parser_roaring_set_test.go` (modified, +87/-0)
-```diff
-@@ -13,7 +13,10 @@ package lsmkv
- 
- import (
- 	"bytes"
-+	"encoding/binary"
- 	"io"
-+	"math"
-+	"runtime"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-@@ -137,3 +140,87 @@ func TestCommitlogParserRoaringSetCopiesKey(t *testing.T) {
- 		})
- 	}
- }
-+
-+func le64(v uint64) []byte { return binary.LittleEndian.AppendUint64(nil, v) }
-+
-+func le32(v uint32) []byte { return binary.LittleEndian.AppendUint32(nil, v) }
-+
-+// withTotalLen prefixes fields with a total length that matches them, so the
-+// record passes the outer length check and reaches the inner fields.
-+func withTotalLen(fields ...[]byte) []byte {
-+	body := bytes.Join(fields, nil)
-+	return append(le64(uint64(8+len(body))), body...)
-+}
-+
-+// TestCommitlogParserRoaringSetCorruptRecord pins that a damaged record is an
-+// error and not a panic. A v0 record has no checksum, so every length in it
-+// comes straight from the file. Recovery logs the error and keeps what it read
-+// before the record; a panic instead fails the bucket, and with it the shard.
-+func TestCommitlogParserRoaringSetCorruptRecord(t *testing.T) {
-+	records := []struct {
-+		name   string
-+		record []byte
-+	}{
-+		{name: "total length 0", record: le64(0)},
-+		{name: "total length 7", record: le64(7)},
-+		{name: "total length 4, more bytes follow", record: append(le64(4), make([]byte, 32)...)},
-+		{name: "total length beyond int64", record: append(le64(1<<63+16), make([]byte, 32)...)},
-+		{name: "total length beyond the data", record: append(le64(1<<20), make([]byte, 32)...)},
-+		{name: "record ends before the additions length", record: withTotalLen(le32(0))},
-+		{name: "additions length beyond the record", record: withTotalLen(le64(1<<40), make([]byte, 8))},
-+		{name: "additions length max uint64", record: withTotalLen(le64(math.MaxUint64), make([]byte, 8))},
-+		{name: "deletions length beyond the record", record: withTotalLen(le64(0), le64(1<<40))},
-+		{name: "record ends before the key length", record: withTotalLen(le64(0), le64(0))},
-+		{name: "key length beyond the record", record: withTotalLen(le64(0), le64(0), le32(1<<20))},
-+	}
-+	parsers := []struct {
-+		name  string
-+		parse func(prs *commitlogParserRoaringSet, r io.Reader) error
-+	}{
-+		{name: "bitmap record", parse: func(prs *commitlogParserRoaringSet, r io.Reader) error { return prs.parseNode(r) }},
-+		{name: "list record", parse: func(prs *commitlogParserRoaringSet, r io.Reader) error { return prs.parseNodeList(r) }},
-+	}
-+
-+	for _, p := range parsers {
-+		for _, rec := range records {
-+			t.Run(p.name+"/"+rec.name, func(t *testing.T) {
-+				consumed := false
-+				prs := &commitlogParserRoaringSet{
-+					parser: &commitloggerParser{},
-+					consume: func(*Memtable, []byte, []uint64, []uint64) error {
-+						consumed = true
-+						return nil
-+					},
-+				}
-+
-+				var err error
-+				require.NotPanics(t, func() { err = p.parse(prs, bytes.NewReader(rec.record)) })
-+				require.Error(t, err)
-+				require.False(t, consumed, "a damaged record must not reach the memtable")
-+			})
-+		}
-+	}
-+}
-+
-+// TestCommitlogParserRoaringSetLengthDoesNotSizeAllocation pins that a total
-+// length read from a damaged record does not decide how much memory replay
-+// allocates: only bytes actually present in the log do.
-+func TestCommitlogParserRoaringSetLengthDoesNotSizeAllocation(t *testing.T) {
-+	const claimed = 1 << 30
-+	record := append(le64(claimed), make([]byte, 64)...)
-+
-+	for _, parse := range []func(prs *commitlogParserRoaringSet, r io.Reader) error{
-+		func(prs *commitlogParserRoaringSet, r io.Reader) error { return prs.parseNode(r) },
-+		func(prs *commitlogParserRoaringSet, r io.Reader) error { return prs.parseNodeList(r) },
-+	} {
-+		prs := &commitlogParserRoaringSet{parser: &commitloggerParser{}}
-+
-+		var before, after runtime.MemStats
-+		runtime.ReadMemStats(&before)
-+		err := parse(prs, bytes.NewReader(record))
-+		runtime.ReadMemStats(&after)
-+
-+		require.Error(t, err)
-+		require.Less(t, after.TotalAlloc-before.TotalAlloc, uint64(claimed/16))
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `d857e797` (2026-11-12)
-**Commit Message**: Merge pull request #13870 from weaviate/fix/document-auto-generated-collection
-
-fix(auto_schema): fix description of a collection generated by auto-schema
-
-**File**: `usecases/objects/auto_schema.go` (modified, +1/-1)
-```diff
-@@ -165,7 +165,7 @@ func (m *AutoSchemaManager) createClass(ctx context.Context, principal *models.P
- 	class := &models.Class{
- 		Class:       className,
- 		Properties:  properties,
--		Description: "This property was generated by Weaviate's auto-schema feature on " + now.Format(time.ANSIC),
-+		Description: "This collection was generated by Weaviate's auto-schema feature on " + now.Format(time.ANSIC),
- 		// Auto-schema only ever creates named vectors. The legacy collection-level
- 		// vector index is left unset so the class never gets one, which also keeps
- 		// the door open for adding further named vectors later.
-```
-
----
-
-### Incident Patch 3: `24bb0782` (2026-11-11)
-**Commit Message**: fix(auto_schema): fix description of a collection generated by auto-schema
-
-**File**: `usecases/objects/auto_schema.go` (modified, +1/-1)
-```diff
-@@ -165,7 +165,7 @@ func (m *AutoSchemaManager) createClass(ctx context.Context, principal *models.P
- 	class := &models.Class{
- 		Class:       className,
- 		Properties:  properties,
--		Description: "This property was generated by Weaviate's auto-schema feature on " + now.Format(time.ANSIC),
-+		Description: "This collection was generated by Weaviate's auto-schema feature on " + now.Format(time.ANSIC),
- 		// Auto-schema only ever creates named vectors. The legacy collection-level
- 		// vector index is left unset so the class never gets one, which also keeps
- 		// the door open for adding further named vectors later.
+@@ -24,7 +24,7 @@ const (
+ 	// DefaultRQRescoreLimit and DefaultBRQRescoreLimit are what
+ 	// RescoreLimitAuto resolves to for 4/8-bit and 1-bit codes.
+ 	DefaultRQRescoreLimit  = 20
+-	DefaultBRQRescoreLimit = 256
++	DefaultBRQRescoreLimit = 512
+ 	// DefaultRQRescoreFactor and DefaultBRQRescoreFactor are what
+ 	// RescoreFactorAuto resolves to for 4/8-bit and 1-bit codes.
+ 	DefaultRQRescoreFactor  = 2.0
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13877** (closed): Cover /tasks in the RBAC no-permissions endpoint sweep (@etiennedi)
-- **PR #13873** (2026-11-12): fix(lsmkv): return an error for damaged RoaringSet WAL record lengths (@jfrancoa)
-- **PR #13870** (2026-11-12): fix(auto_schema): fix description of a collection generated by auto-schema (@bevzzz)
-- **PR #13868** (2026-11-12): Merge stable/v1.39 into stable/v1.40 (@etiennedi)
-- **PR #13867** (2026-11-12): Delete a collection's files at once even while a backup runs (@dirkkul)
-- **PR #13866** (2026-11-11): fix(replication): stop a count waiting on a replica in maintenance (@byronvoorbach)
+- **PR #13935** (2026-11-17): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
+- **PR #13931** (2026-11-17): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
+- **PR #13929** (2026-11-17): hnsw: keep compression across a reset of an empty index (@asdine)
+- **PR #13927** (2026-11-17): fix: raise automatic rescoreLimit for RQ 1-bit and BQ to 512 (@trengrj)
+- **PR #13926** (2026-11-17): test: drop the small hnsw cache case from the dynamic upgrade tests (@trengrj)
+- **PR #13923** (2026-11-16): prepare release v1.41.0-rc.0 (@antas-marcin)
 
 ---
 
@@ -2166,59 +1813,31 @@ fix(auto_schema): fix description of a collection generated by auto-schema
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lsmkv): return an error for damaged RoaringSet WAL record lengths
+## X. raise automatic rescoreLimit for RQ 1-bit and BQ to 512
 
 **RULE**:
-When implementing operations in `adapters/repos/db/lsmkv/bucket_recover_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `entities/vectorindex/hnsw/bq_config.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8a56463`: lsmkv): return an error for damaged RoaringSet WAL record lengths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba33f5fd`: raise automatic rescoreLimit for RQ 1-bit and BQ to 512. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/lsmkv/bucket_recover_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `entities/vectorindex/hnsw/bq_config.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/weaviate/weaviate/entities/filters"
-
-// TestBucketRecoveryRoaringSetWALWithCorruptRecord opens a RoaringSet or
-// RoaringSetRange bucket whose write-ahead-log ends in a damaged v0 record, the
-// state a volume returning I/O errors left behind in production. The bucket
-// must open with the records written before the damaged one.
-func TestBucketRecoveryRoaringSetWALWithCorruptRecord(t *testing.T) {
-	ctx := context.Background()
-	logger, _ := test.NewNullLogger()
-
-	nodes := []struct {
-		name string
-		node []byte
-	}{
-		{name: "total length 0", node: le64(0)},
-		{name: "total length 7", node: le64(7)},
-		{name: "total length beyond int64", node: append(le64(1<<63+16), make([]byte, 32)...)},
-		{name: "additions length beyond the record", node: withTotalLen(le64(1<<40), make([]byte, 8))},
-		{name: "key length beyond the record", node: withTotalLen(le64(0), le64(0), le32(1<<20))},
-	}
-	strategies := []struct {
-		strategy string
-		write    func(t *testing.T, b *Bucket, key, value uint64)
-		check    func(t *testing.T, b *Bucket, key, value uint64)
-	}{
-		{
-			strategy: StrategyRoaringSet,
-			write: func(t *testing.T, b *Bucket, key, value uint64) {
-				require.NoError(t, b.Roaring
+	DefaultBQRescoreLimit = 512
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+	DefaultBQRescoreLimit = 256
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8a56463` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba33f5fd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

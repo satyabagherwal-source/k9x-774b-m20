@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T17:20:24.691Z",
-  "total_cycles_completed": 10196,
-  "total_learnings_persisted": 10196,
-  "total_rules_promoted": 9761,
+  "last_updated": "2026-11-17T17:28:09.127Z",
+  "total_cycles_completed": 10198,
+  "total_learnings_persisted": 10198,
+  "total_rules_promoted": 9762,
   "history": [
-    {
-      "timestamp": "2026-11-17T03:16:54.246Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T03:17:00.145Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T03:26:11.603Z",
       "repository": "scrapinghub/dateparser",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-17T17:20:24.691Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:27:56.161Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:28:09.127Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

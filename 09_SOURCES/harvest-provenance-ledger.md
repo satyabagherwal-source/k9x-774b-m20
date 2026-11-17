@@ -10674,3 +10674,5 @@ Every entry in this ledger must capture:
 | `learn-github-keybase-client` | `https://github.com/keybase/client` | `0d1e3966` | Multi-dimensional audit evidence | 2026-11-17T17:20:20.985Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `a21523d1` | Multi-dimensional audit evidence | 2026-11-17T17:20:22.573Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `9123e6e2` | Multi-dimensional audit evidence | 2026-11-17T17:20:24.686Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-17T17:27:56.156Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `a33c0ef1` | Multi-dimensional audit evidence | 2026-11-17T17:28:09.123Z |
