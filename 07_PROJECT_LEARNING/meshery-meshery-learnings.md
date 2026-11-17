@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `424dd96c`  
+> **Source Version**: `d085ff5e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T03:37:12.948Z  
+> **Timestamp**: 2026-11-17T10:41:07.634Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T03:37:12.944Z  
+> **Harvest Timestamp**: 2026-11-17T10:41:07.629Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12209 stars
+- **Stars / Engagement**: 12224 stars
 
 ---
 
@@ -804,11 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23705** (2026-11-15): **[mesheryctl] Preserve followed Kubernetes log lines**
-  *Symptoms*: Buffer the Kubernetes log stream across reads, emitting complete lines and the final unterminated line at EOF.  Fixes #23704  Test: go test ./internal/cli/root/system -run TestPrintLogStreamPreservesLinesAcrossReads -count=1  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Kubernetes logs in follow mode now display complete lines consistently, even when log data arrives in multiple chunks.   * Any final log content without a trailing newline is also shown, with the pod name and a newline for clear formatting. Non-follow Kubernetes logs and Docker log output remain unchanged.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #23830** (2026-11-17): **[mesheryctl] Make SafeClose nil-safe and handle uninitialized logger**
+  *Symptoms*: ### Description This PR addresses nil-pointer dereference panics in `SafeClose` under `mesheryctl/pkg/utils/helpers.go`:  1. **Nil Interface & Typed Nil Guard**:    - Added checks for `co == nil` and reflected nil pointer values to prevent `runtime error: invalid memory address or nil pointer dereference` when passed a nil or typed nil `io.Closer`. 2. **Uninitialized Logger Guard**:    - Added `if Log != nil` check before logging errors returned by `co.Close()`, ensuring that failed closures do not panic during early CLI initialization or in unit tests where `Log` is nil. 3. **Unit Tests**:    - Expanded `TestSafeClose` in `mesheryctl/pkg/utils/helpers_test.go` with subtests covering:      - Untyped `nil` closer (`SafeClose(nil)`)      - Typed nil pointer (`SafeClose((*os.File)(nil))`)      - Valid closer success (`SafeClose(mc)`)      - Closer error with initialized logger      - Closer error with `Log == nil`  ### Notes for Reviewers - All unit tests pass cleanly: `go test -v -run TestSafeClose ./mesheryctl/pkg/utils/...` - Fixes #23829  ### Checklist - [x] Signed off commits (`git commit -s`) - [x] Followed repository naming conventions and guidelines - [x] Linked the related issue - [x] Added unit test coverage  <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Prevented panics when closing nil or typed-nil values, while continuing to close valid values.   * Made cl
 
-- **Issue #23704** (2026-11-15): **[mesheryctl] Followed Kubernetes logs split lines at stream read boundaries**
-  *Symptoms*: In `mesheryctl system logs --follow`, each arbitrary stream read is printed separately. A line such as `hello world` delivered in two reads can be printed as two separate log lines. A line larger than the read buffer is also split.  Expected: buffer across reads and print complete lines, retaining any final unterminated line when the stream ends.
+- **Issue #23829** (2026-11-17): **[mesheryctl] SafeClose panics with nil pointer dereference when passed nil io.Closer or uninitialized logger**
+  *Symptoms*: ### Description  In `mesheryctl/pkg/utils/helpers.go`, the `SafeClose` utility function is designed to safely close an `io.Closer` (such as HTTP response bodies, open files, and other resources) and log any closure errors.  The current implementation is:  ```go func SafeClose(co io.Closer) {     if cerr := co.Close(); cerr != nil {         Log.Error(cerr)     } } ```  However, the function does not check whether `co` is nil before calling `co.Close()`.  If a nil `io.Closer` is passed, the function can panic with:  ```text panic: runtime error: invalid memory address or nil pointer dereference ```  Additionally, if `Log` is nil when a closing error occurs, calling `Log.Error(cerr)` can also cause a nil pointer dereference.  This makes `SafeClose` unsafe in scenarios involving optional resources, early CLI initialization, or unit tests.  ### Steps to Reproduce  Call `SafeClose` with a nil `io.Closer`:  ```go func TestSafeCloseNil(t *testing.T) {     SafeClose(nil) } ```  **Actual Behavior:**  The function panics when attempting to call `Close()` on a nil interface.  ### Expected Behavior  `SafeClose` should safely handle nil values without causing a panic.  1. If `co` is nil, the function should return immediately. 2. If closing the resource returns an error, the function should check whether `Log` is initialized before logging the error. 3. Closing resources should never cause a nil pointer panic due to an uninitialized logger.  ### Proposed Fix  Add appropriate nil checks:  `
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,362 +825,247 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `44f1ee38` (2026-11-16)
-**Commit Message**: Merge pull request #23699 from antcybersec/fix/dashboard-selects-accessible-name
+### Incident Patch 1: `f80e0d97` (2026-11-17)
+**Commit Message**: fix(server): guard remaining DeleteContext logger calls against nil
 
-[UI] Add accessible names to Dashboard Workload and HoneyComb dropdowns
+CodeRabbit flagged four h.log calls in DeleteContext that the
+nil-logger guards in this PR did not cover (loadContextsForDeletion
+failure, the SendEvent failure path in the delete goroutine, and the
+final status-update error). A nil h.log there panics instead of
+returning HTTP 500. Guard them the same way as the rest of the
+handler, completing the linked issue's nil-logger requirement.
 
-**File**: `ui/components/dashboard/charts/WorkloadChart.test.tsx` (modified, +4/-0)
+Signed-off-by: Yi Nuo <[REDACTED_EMAIL]>
+
+**File**: `server/handlers/contexts_handler.go` (modified, +12/-4)
 ```diff
-@@ -54,13 +54,16 @@ vi.mock('@sistent/sistent', () => ({
-     children,
-     value,
-     onChange,
-+    inputProps,
-   }: {
-     children?: React.ReactNode;
-     value?: string;
-     onChange?: (event: { target: { value: string } }) => void;
-+    inputProps?: { 'aria-label'?: string };
-   }) => (
-     <select
-       data-testid="namespace-select"
-+      aria-label={inputProps?.['aria-label']}
-       value={value}
-       onChange={(e) => onChange?.({ target: { value: e.target.value } } as never)}
-     >
-@@ -136,6 +139,7 @@ describe('WorkloadChart', () => {
-     );
-     const select = screen.getByTestId('namespace-select');
-     expect(select).toBeInTheDocument();
-+    expect(screen.getByRole('combobox', { name: 'Namespace' })).toBeInTheDocument();
-     fireEvent.change(select, { target: { value: 'kube-system' } });
-     expect(handleSetNamespace).toHaveBeenCalledWith('kube-system');
-   });
-```
-
-**File**: `ui/components/dashboard/charts/WorkloadChart.tsx` (modified, +1/-0)
-```diff
-@@ -99,6 +99,7 @@ export default function WorkloadChart({
-           <Select
-             value={selectedNamespace}
-             onChange={(event) => handleSetNamespace(event.target.value)}
-+            inputProps={{ 'aria-label': 'Namespace' }}
-           >
-             {(namespaces || []).map((ns) => (
-               <MenuItem key={ns} value={ns}>
-```
-
-**File**: `ui/components/dashboard/widgets/HoneyComb/HoneyCombComponent.test.tsx` (modified, +4/-0)
-```diff
-@@ -107,13 +107,16 @@ vi.mock('@sistent/sistent', () => ({
-     children,
-     value,
-     onChange,
-+    inputProps,
-   }: {
-     children?: React.ReactNode;
-     value?: string;
-     onChange?: (event: { target: { value: string } }) => void;
-+    inputProps?: { 'aria-label'?: string };
-   }) => (
-     <select
-       data-testid="group-select"
-+      aria-label={inputProps?.['aria-label']}
-       value={value}
-       onChange={(e) => onChange?.({ target: { value: e.target.value } } as never)}
-     >
-@@ -177,6 +180,7 @@ describe('HoneycombComponent', () => {
-   it('renders the group-by select with the documented options', () => {
-     render(<HoneycombComponent kinds={[{ kind: 'Pod', count: 1 }]} />);
-     expect(screen.getByTestId('group-select')).toBeInTheDocument();
-+    expect(screen.getByRole('combobox', { name: 'Group by' })).toBeInTheDocument();
-     expect(screen.getByRole('option', { name: 'All Resources' })).toBeInTheDocument();
-     expect(screen.getByRole('option', { name: 'Workload' })).toBeInTheDocument();
-   });
-```
-
-**File**: `ui/components/dashboard/widgets/HoneyComb/HoneyCombComponent.tsx` (modified, +6/-1)
-```diff
-@@ -125,7 +125,12 @@ const HoneycombComponent = ({
-             Cluster Resource Overview
-           </Typography>
-           <ControlsContainer>
--            <Select value={groupBy} onChange={handleGroupChange} variant="standard">
-+            <Select
-+              value={groupBy}
-+              onChange={handleGroupChange}
-+              variant="standard"
-+              inputProps={{ 'aria-label': 'Group by' }}
-+            >
-               {groupOptions.map((option) => (
-                 <MenuItem key={option.value} value={option.value}>
-                   {option.label}
+@@ -220,7 +220,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
+ 	contexts, listErr := loadContextsForDeletion(provider, token)
+ 	if listErr != nil {
+ 		handlerErr := ErrGetK8sContexts(listErr)
+-		h.log.Error(handlerErr)
++		if h.log != nil {
++			h.log.Error(handlerErr)
++		}
+ 		writeMeshkitError(w, handlerErr, http.StatusInternalServerError)
+ 		return
+ 	}
+@@ -277,9 +279,13 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
+ 			}
+ 			event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
+ 			if err != nil {
+-				h.log.Error(err)
++				if h.log != nil {
++					h.log.Error(err)
++				}
+ 				h.reportMachineOutcome(provider, token, userID, event, err)
+-				h.log.Debug(event)
++				if h.log != nil {
++					h.log.Debug(event)
++				}
+ 				return
+ 			}
+ 
+@@ -293,7 +299,9 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
+ 	}
+ 
+ 	if err != nil {
+-		h.log.Error(err)
++		if h.log != nil {
++			h.log.Error(err)
++		}
+ 		event := newEvent().WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", contextID)).WithMetadata(map[string]interface{}{
+ 			"error": err,
+ 		}).Build()
 ```
 
 ---
 
-### Incident Patch 2: `d7ead8e6` (2026-11-15)
-**Commit Message**: Merge branch 'master' into fix/dashboard-selects-accessible-name
+### Incident Patch 2: `84eaa406` (2026-11-17)
+**Commit Message**: Merge pull request #23817 from Shikhyy/bug/Shikhyy/23813-syscheck
 
-**File**: `mesheryctl/internal/cli/root/design/import.go` (modified, +13/-0)
+[mesheryctl] Report a null server version in system check instead of panicking
+
+**File**: `mesheryctl/internal/cli/root/system/check.go` (modified, +4/-0)
 ```diff
-@@ -17,8 +17,11 @@ package design
- import (
- 	"bytes"
- 	"encoding/json"
-+	"fmt"
- 	"io"
-+	"net/url"
- 	"os"
-+	"path"
- 	"path/filepath"
+@@ -543,6 +543,10 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
+ 		if err != nil {
+ 			return errors.Errorf("\n  Unable to unmarshal data: %v", err)
+ 		}
++		// A body of null decodes without error but leaves serverVersion nil.
++		if serverVersion == nil {
++			return errors.New("\n  Invalid response: the server returned no version information")
++		}
  
- 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
-@@ -136,6 +139,16 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
- 	// use file name as default
- 	var patternName string
- 	fileName := filepath.Base(file)
-+	if utils.IsValidUrl(file) {
-+		parsed, err := url.Parse(file)
-+		if err != nil {
-+			return nil, utils.ErrParsingUrl(err)
-+		}
-+		fileName = path.Base(parsed.Path)
-+		if name == "" && (fileName == "." || fileName == "/") {
-+			return nil, utils.ErrParsingUrl(fmt.Errorf("URL %q has no file name in its path; pass --name to set the design name", file))
-+		}
-+	}
- 	if name == "" {
- 		patternName = fileName
- 	} else {
+ 		isOutdated, _, err := handlers.CheckLatestVersion(serverVersion.GetBuild())
+ 		if err != nil {
 ```
 
-**File**: `mesheryctl/internal/cli/root/design/import_test.go` (modified, +35/-0)
+**File**: `mesheryctl/internal/cli/root/system/check_null_version_test.go` (added, +40/-0)
 ```diff
-@@ -213,3 +213,38 @@ func mapKeys(m map[string]interface{}) []string {
- 	}
- 	return keys
- }
-+
-+func TestImportPatternURLDefaultNameExcludesQuery(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+	defer utils.StopMockery(t)
-+	defer resetVariables()
-+	utils.TokenFlag = utils.GetToken(t)
-+	var captured map[string]interface{}
-+	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/pattern/import", func(req *http.Request) (*http.Response, error) {
-+		if err := json.NewDecoder(req.Body).Decode(&captured); err != nil {
-+			return nil, err
-+		}
-+		return httpmock.NewStringResponse(200, `[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"sample"}]`), nil
-+	})
-+	_, err := importPattern("", "https://example.com/design.yaml?token=secret#fragment", testContext.BaseURL+"/api/pattern/import")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	assert.Equal(t, "design.yaml", captured["name"])
-+	assert.Equal(t, "https://example.com/design.yaml?token=secret#fragment", captured["url"])
-+}
-+
-+func TestImportPatternURLWithoutPathNameRequiresNameFlag(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+	defer utils.StopMockery(t)
-+	defer resetVariables()
-+	utils.TokenFlag = utils.GetToken(t)
-+	oldName := name
-+	name = ""
-+	defer func() { name = oldName }()
-+	_, err := importPattern("", "https://example.com?token=secret", testContext.BaseURL+"/api/pattern/import")
-+	assert.Error(t, err)
-+	assert.Contains(t, err.Error(), "--name")
-+}
-```
-
-**File**: `mesheryctl/internal/cli/root/system/log_stream_test.go` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,40 @@
 +package system
 +
 +import (
-+	"io"
++	"net/http"
++	"net/http/httptest"
 +	"strings"
 +	"testing"
 +
++	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 +	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 +)
 +
-+func TestPrintLogStreamPreservesLinesAcrossReads(t *testing.T) {
-+	b := utils.SetupMeshkitLoggerTesting(t, false)
-+	reader := io.MultiReader(strings.NewReader("hello "), strings.NewReader("world\nlast"))
-+	if err := printLogStream(reader, "pod"); err != nil {
-+		t.Fatal(err)
-+	}
-+	if got, want := b.String(), "pod\t|\thello world\npod\t|\tlast\n"; got != want {
-+		t.Fatalf("got %q want %q", got, want)
-+	}
-+}
-```
-
-**File**: `mesheryctl/internal/cli/root/system/logs.go` (modified, +20/-16)
-```diff
-@@ -15,6 +15,7 @@
- package system
- 
- import (
-+	"bufio"
- 	"context"
- 	"fmt"
- 	"io"
-@@ -53,14 +54,29 @@ func printLogs(logs string, podName string) {
- 	}
- }
- 
-+// printLogStream buffers across reads so a stream read boundary does not split a log line.
-+func printLogStream(stream io.Reader, podName string) error {
-+	reader := bufio.NewReader(stream)
-+	for {
-+		line, err := reader.ReadString('\n')
-+		if len(line) > 0 {
-+			printLogs(strings.TrimSuffix(line, "\n"), podName)
-+		}
-+		if err == io.EOF {
-+			return nil
-+		}
-+		if err != nil {
-+			return err
-+		}
-+	}
-+}
++// A server, proxy or provider can answer 200 with the JSON value null (what
++// json.Marshal writes for a nil pointer). Decoding that into a *config.Version
++// leaves it nil, and the next call, GetBuild, dereferenced it: mesheryctl system
++// check panicked instead of reporting that the version could not be read.
++func TestMesheryVersionHealthCheck_NullVersionResponseIsAnError(t *testing.T) {
++	utils.SetupMeshkitLoggerTesting(t, false)
 +
- type cmdSystemLogsFlags struct {
- 	Follow bool `json:"follow" validate:"boolean"`
- }
- 
- var systemLogsFlags cmdSystemLogsFlags
- 
--const BYTE_SIZE = 2000
--
- // logsCmd represents the logs command
- var logsCmd = &cobra.Command{
- 	Use:   "logs",
-@@ -240,20 +256,8 @@ mesheryctl system logs meshery-istio
- 						go func(stream io.ReadCloser, podName string) {
- 							defer wg.Done()
- 							defer func() { _ = stream.Close() }()
--							buf := make([]byte, BYTE_SIZE)
--							for {
--								numBytes, err := stream.Read(buf)
--								if numBytes > 0 {
--									logBuf := buf[0:numBytes]
--									printLogs(string(logBuf), podName)
--								}
--								if err == io.EOF {
--									break
--								}
--								if err != nil {
--									utils.Log.Errorf("error occurred while processing logs %v", err)
--									break
--								}
-+							if err := printLogStream(stream, podName); err != nil {
-+								utils.Log.Errorf("error occurred while processing logs %v", err)
- 							}
- 						}(logs, name)
- 					}
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
++		_, _ = w.Write([]byte("null"))
++	}))
++	t.Cleanup(server.Close)
++
++	hc := &HealthChecker{
++		Options: &HealthCheckOptions{},
++		mctlCfg: &config.MesheryCtlConfig{
++			Contexts:       map[string]config.Context{"test": {Endpoint: server.URL}},
++			CurrentContext: "test",
++		},
++	}
++
++	err := hc.runMesheryVersionHealthChecks()
++	if err == nil {
++		t.Fatal("a null version response must be reported as an error")
++	}
++	if !strings.Contains(err.Error(), "no version information") {
++		t.Errorf("error = %q, want it to say the server returned no version information", err)
++	}
++}
 ```
 
 ---
 
-### Incident Patch 3: `a871123d` (2026-11-15)
-**Commit Message**: Merge pull request #23703 from 0xmaster7/fix/design-import-url-name
+### Incident Patch 3: `d085ff5e` (2026-11-17)
+**Commit Message**: Merge pull request #23803 from Junnygram/fix/welcome-workflow-pagination
 
-[mesheryctl] Exclude URL query from imported design name
+[CI] Replace actions/first-interaction with github-script in welcome workflow
 
-**File**: `mesheryctl/internal/cli/root/design/import.go` (modified, +13/-0)
+**File**: `.github/workflows/welcome-first-time-contributors.yml` (modified, +148/-78)
 ```diff
-@@ -17,8 +17,11 @@ package design
- import (
- 	"bytes"
- 	"encoding/json"
-+	"fmt"
- 	"io"
-+	"net/url"
- 	"os"
-+	"path"
- 	"path/filepath"
+@@ -1,23 +1,21 @@
+ name: Welcome First-Time Contributors
  
- 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
-@@ -136,6 +139,16 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
- 	// use file name as default
- 	var patternName string
- 	fileName := filepath.Base(file)
-+	if utils.IsValidUrl(file) {
-+		parsed, err := url.Parse(file)
-+		if err != nil {
-+			return nil, utils.ErrParsingUrl(err)
-+		}
-+		fileName = path.Base(parsed.Path)
-+		if name == "" && (fileName == "." || fileName == "/") {
-+			return nil, utils.ErrParsingUrl(fmt.Errorf("URL %q has no file name in its path; pass --name to set the design name", file))
-+		}
-+	}
- 	if name == "" {
- 		patternName = fileName
- 	} else {
-```
-
-**File**: `mesheryctl/internal/cli/root/design/import_test.go` (modified, +35/-0)
-```diff
-@@ -213,3 +213,38 @@ func mapKeys(m map[string]interface{}) []string {
- 	}
- 	return keys
- }
+ # This workflow automatically welcomes new contributors when they open their first
+-# issue or pull request. It uses the actions/first-interaction action to detect
+-# first-time interactions and posts a friendly, informative comment that:
++# issue or pull request. It checks if the author has previously opened an issue or PR
++# and posts a friendly, informative comment that:
+ #   - Welcomes the contributor to the Meshery community
+ #   - Invites them to the weekly development meeting (https://meet.meshery.io)
+ #   - Encourages them to join the community Slack workspace (https://slack.meshery.io)
+ #   - Optionally invites them to fill in the newcomer form (https://meshery.io/newcomer)
+ 
+ on:
+   # Trigger on any new issue or pull request opened in this repository.
+-  # The first-interaction action will check if the actor is a first-time contributor.
+   issues:
+     types: [opened]
+   pull_request_target:
+     types: [opened]
+ 
+-  # Allow manual triggering for debugging; note that `actions/first-interaction` still only
+-  # posts messages for true first-time contributors in this repository.
++  # Allow manual triggering for debugging
+   workflow_dispatch:
+     inputs:
+       debug_mode:
+@@ -49,97 +47,169 @@ jobs:
+           echo "Actor       : ${{ github.actor }}"
+           echo "Event Name  : ${{ github.event_name }}"
+           echo "Repository  : ${{ github.repository }}"
+-          echo "Ref         : $GITHUB_REF"
++          echo "Ref         : ${{ github.ref }}"
+           echo "::endgroup::"
+ 
+       # -----------------------------------------------------------------------
+       # Step 2 – Post a welcome comment for first-time issue authors.
+-      #
+-      # The `actions/first-interaction` action only posts the comment when the
+-      # triggering user has NEVER opened an issue or PR in this repository before.
+       # -----------------------------------------------------------------------
+       - name: 🎉 Welcome First-Time Issue Author
+         if: github.event_name == 'issues'
+-        uses: actions/first-interaction@v1
++        uses: actions/github-script@v7
+         with:
+-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+-          # The issue-message is only sent to contributors opening their very
+-          # first issue in this repository.
+-          issue-message: |
+-            👋 **Welcome to Meshery, @${{ github.actor }}!**
+-
+-            Thank you for opening your first issue — we're glad you're here! 🚀
+-
+-            Meshery is a CNCF project and a vibrant open-source community. Here are a few ways to get connected and make the most of your contribution journey:
+-
+-            ---
+-
+-            📅 **Join our Weekly Community Meeting**
+-            We hold a public development meeting every week where anyone can join, ask questions, share ideas, and pair with maintainers. New contributors are especially welcome!
+-            👉 **[Add to calendar & join at meet.meshery.io](https://meet.meshery.io)**
+-
+-            💬 **Join the Meshery Community Slack**
+-            The fastest way to get help, share ideas, or just say hi is through our Slack workspace. Jump in — we'd love to meet you!
+-            👉 **[Join Slack at slack.meshery.io](https://slack.meshery.io)**
+-
+-            🌟 **Become a Community Member**
+-            Fill in our newcomer form to introduce yourself, unlock additional resources, and get added to our community directory.
+-            👉 **[Newcomer form at meshery.io/newcomer](https://meshery.io/newcomer)**
+-
+-            ---
+-
+-            A maintainer will review your issue shortly. In the meantime, feel free to explore our [contributing guide](https://docs.meshery.io/project/contributing) and [documentation](https://docs.meshery.io).
+-
+-            We're happy to have you! 🎊
++          github-token: ${{ secrets.GITHUB_TOKEN }}
++          script: |
++            const author = context.payload.issue?.user?.login || context.actor;
++            const isBot = context.payload.issue?.user?.type === 'Bot' || author.includes('[bot]');
++            if (isBot) {
++              console.log(`Skipping bot actor: ${author}`);
++              return;
++            }
 +
-+func TestImportPatternURLDefaultNameExcludesQuery(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+	defer utils.StopMockery(t)
-+	defer resetVariables()
-+	utils.TokenFlag = utils.GetToken(t)
-+	var captured map[string]interface{}
-+	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/pattern/import", func(req *http.Request) (*http.Response, error) {
-+		if err := json.NewDecoder(req.Body).Decode(&captured); err != nil {
-+			return nil, err
-+		}
-+		return httpmock.NewStringResponse(200, `[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"sample"}]`), nil
-+	})
-+	_, err := importPattern("", "https://example.com/design.yaml?token=secret#fragment", testContext.BaseURL+"/api/pattern/import")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	assert.Equal(t, "design.yaml", captured["name"])
-+	assert.Equal(t, "https://example.com/design.yaml?token=secret#fragment", captured["url"])
-+}
-+
-+func TestImportPatternURLWithoutPathNameRequiresNameFlag(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+	defer utils.StopMockery(t)
-+	defer resetVariables()
-+	utils.TokenFlag = utils.GetToken(t)
-+	oldName := name
-+	name = ""
-+	defer func() { name = oldName }()
-+	_, err := importPattern("", "https://example.com?token=secret", testContext.BaseURL+"/api/pattern/import")
-+	assert.Error(t, err)
-+	assert.Contains(t, err.Error(), "--name")
-+}
++            // Issues and PRs share one list, so a single page can be full of
++            // the other type. Page through the author's history until a prior
++            // issue is found or the history ends.
++            let priorIssues = [];
++            for await (const page of github.paginate.iterator(
++              github.rest.issues.listForRepo,
++              {
++                owner: context.repo.owner,
++                repo: context.repo.repo,
++                creator: author,
++                state: 'all',
++                per_page: 100
++              }
++            )) {
++              priorIssues = page.data.filter(
++                item => !item.pull_request && item.number < context.issue.number
++              );
++              if (priorIssues.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23705** (2026-11-15): [mesheryctl] Preserve followed Kubernetes log lines (@0xmaster7)
-- **PR #23703** (2026-11-15): [mesheryctl] Exclude URL query from imported design name (@0xmaster7)
-- **PR #23699** (2026-11-16): [UI] Add accessible names to Dashboard Workload and HoneyComb dropdowns (@antcybersec)
-- **PR #23697** (2026-11-15): [Server] Test undecodable provider response in filter save handler (@antcybersec)
-- **PR #23691** (2026-11-15): [Docs] Remove Bitcask from Meshery database docs (@Asheesh7298)
-- **PR #23688** (2026-11-15): [Server] Return 404 for a design that does not exist (@himanishpuri)
+- **PR #23830** (2026-11-17): [mesheryctl] Make SafeClose nil-safe and handle uninitialized logger (@muskan-creates352)
+- **PR #23826** (2026-11-17): chore: bump meshery/schemas to v1.3.120 (@leecalcote)
+- **PR #23824** (2026-11-17): [Server] Return 404 Not Found for non-existent Kubernetes context in GetContext and DeleteContext (@patelshivani2283-lab)
+- **PR #23822** (2026-11-17): [Server] Run load tests against every configured endpoint URL (@RameshwariS)
+- **PR #23820** (2026-11-17): [UI] Deduplicate connection transfer lists and fix active environment… (@harmanD-MAX)
+- **PR #23818** (2026-11-17): [mesheryctl] Show N/A for a component with no model in component list (@Shikhyy)
 
 ---
 
@@ -1200,31 +1085,42 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in WorkloadChart.test.tsx
+## X. server): guard remaining DeleteContext logger calls against nil
 
 **RULE**:
-When implementing operations in `ui/components/dashboard/charts/WorkloadChart.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/handlers/contexts_handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `44f1ee38`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f80e0d97`: server): guard remaining DeleteContext logger calls against nil. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/components/dashboard/charts/WorkloadChart.test.tsx`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/handlers/contexts_handler.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    inputProps,
-    inputProps?: { 'aria-label'?: string };
-      aria-label={inputProps?.['aria-label']}
-    expect(screen.getByRole('combobox', { name: 'Namespace' })).toBeInTheDocument();
+		if h.log != nil {
+			h.log.Error(handlerErr)
+		}
+				if h.log != nil {
+					h.log.Error(err)
+				}
+				if h.log != nil {
+					h.log.Debug(event)
+				}
+		if h.log != nil {
+			h.log.Error(err)
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		h.log.Error(handlerErr)
+				h.log.Error(err)
+				h.log.Debug(event)
+		h.log.Error(err)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `44f1ee38` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f80e0d97` are properly handled with clean fallback behavior.

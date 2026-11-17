@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "424dd96c",
+    "sourceVersion": "d085ff5e",
     "license": "Apache-2.0",
-    "contentHash": "f7644d78d343e4e3ccc01cf60fb87561bcbd3d3fb357093a925f80307d667d2b",
-    "lastHarvestedAt": "2026-11-16T03:37:13.801Z",
+    "contentHash": "e49f1f7783c088efe12444b2a30cb297ef3b87e9b594ee9db458c7b1bf32bdfa",
+    "lastHarvestedAt": "2026-11-17T10:41:08.554Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "0a3328bd",
+    "sourceVersion": "0f15fa2b",
     "license": "NOASSERTION",
-    "contentHash": "5024bf64f16a00eb9c0d216ad37064ee9a22d3021231313c6491a698eba702f7",
-    "lastHarvestedAt": "2026-11-16T02:06:24.599Z",
+    "contentHash": "5150389181f4d9c684975448e7b5c559dff4f2ac67c4361a154b53229fb4fa3f",
+    "lastHarvestedAt": "2026-11-17T10:41:14.208Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -5693,10 +5693,10 @@
     "repository": "mlua-rs/mlua",
     "platform": "github",
     "sourceUrl": "https://github.com/mlua-rs/mlua",
-    "sourceVersion": "e4699f2f",
+    "sourceVersion": "6308bb38",
     "license": "NOASSERTION",
-    "contentHash": "0423954249d5f7605b1f98e2a3b1efcce78cae33b77281681a58a9a145ca4a7f",
-    "lastHarvestedAt": "2026-11-15T20:50:51.713Z",
+    "contentHash": "a9d8cd26740afb9c57873e1dce414810164b569a65299152ac734ab1b8af0e60",
+    "lastHarvestedAt": "2026-11-17T10:41:00.145Z",
     "learningId": "learn-github-mlua-rs-mlua"
   },
   "apsl-react-native-keyboard-aware-scroll-view": {
@@ -11605,8 +11605,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/idol",
     "sourceVersion": "hf-speridlabs-idol",
     "license": "Open-Source",
-    "contentHash": "47b0e840297d6b526e7ac5b170a8ba007304b0f315923bc59307f34944834350",
-    "lastHarvestedAt": "2026-11-12T23:08:44.142Z",
+    "contentHash": "2d27364c35b5481b9c597abca05ad3ce348dc510c610c80e3124137579f8914e",
+    "lastHarvestedAt": "2026-11-17T10:40:58.854Z",
     "learningId": "learn-huggingface-speridlabs-idol"
   },
   "krishhgg-insomnia": {

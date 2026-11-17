@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T10:11:09.734Z",
-  "total_cycles_completed": 10085,
-  "total_learnings_persisted": 10085,
-  "total_rules_promoted": 9688,
+  "last_updated": "2026-11-17T10:41:14.213Z",
+  "total_cycles_completed": 10089,
+  "total_learnings_persisted": 10089,
+  "total_rules_promoted": 9691,
   "history": [
-    {
-      "timestamp": "2026-11-16T16:00:10.930Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T16:00:13.361Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T16:00:18.860Z",
-      "repository": "Zyphra/ZONOS3-Mini",
-      "learningId": "learn-huggingface-zyphra-zonos3-mini",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T16:08:59.592Z",
-      "repository": "stakater/Reloader",
-      "learningId": "learn-github-stakater-reloader",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T16:09:22.022Z",
       "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-17T10:11:09.734Z",
       "repository": "apache/pinot",
       "learningId": "learn-github-apache-pinot",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T10:40:58.859Z",
+      "repository": "speridlabs/idol",
+      "learningId": "learn-huggingface-speridlabs-idol",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T10:41:00.150Z",
+      "repository": "mlua-rs/mlua",
+      "learningId": "learn-github-mlua-rs-mlua",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T10:41:08.559Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T10:41:14.213Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

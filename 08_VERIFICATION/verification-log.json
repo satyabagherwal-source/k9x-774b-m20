@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-GR1T",
-    "timestamp": "2026-11-14T19:46:34.097Z",
-    "repository": "Qwen/Qwen3-4B",
-    "learningId": "learn-huggingface-qwen-qwen3-4b",
-    "contentHash": "d09138b3e349f5a16b64ee80adffc51880f9ab87a92851c20a3b5028616ae5ba",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-XCB0",
-    "timestamp": "2026-11-14T19:59:28.140Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-    "contentHash": "9bd3f60541df41266bdee248d3901528b4da6dccc94af2be2994b80bea1c5bc8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-AAQS",
-    "timestamp": "2026-11-14T20:09:32.644Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
-    "contentHash": "7a965ea26efbdc3160c463b2d3317f982c090e5943ae3c990206a34256b489de",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-3TCE",
-    "timestamp": "2026-11-14T20:32:29.774Z",
-    "repository": "sqldelight/sqldelight",
-    "learningId": "learn-github-sqldelight-sqldelight",
-    "contentHash": "e8558f709349d6bb4bbf8d8d27d98b87112bad933cf4b75451c39fa7867a4533",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-3ZV4",
     "timestamp": "2026-11-14T20:32:38.224Z",
     "repository": "vespa-engine/vespa",
@@ -7490,6 +7430,66 @@
     "repository": "apache/pinot",
     "learningId": "learn-github-apache-pinot",
     "contentHash": "48263a6dd89c0f2b747b976764daf9a3826bed5057073def9c34bc5656109612",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-AODF",
+    "timestamp": "2026-11-17T10:40:58.851Z",
+    "repository": "speridlabs/idol",
+    "learningId": "learn-huggingface-speridlabs-idol",
+    "contentHash": "2d27364c35b5481b9c597abca05ad3ce348dc510c610c80e3124137579f8914e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-APD9",
+    "timestamp": "2026-11-17T10:41:00.141Z",
+    "repository": "mlua-rs/mlua",
+    "learningId": "learn-github-mlua-rs-mlua",
+    "contentHash": "a9d8cd26740afb9c57873e1dce414810164b569a65299152ac734ab1b8af0e60",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-AVUU",
+    "timestamp": "2026-11-17T10:41:08.550Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "e49f1f7783c088efe12444b2a30cb297ef3b87e9b594ee9db458c7b1bf32bdfa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-B07W",
+    "timestamp": "2026-11-17T10:41:14.204Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "5150389181f4d9c684975448e7b5c559dff4f2ac67c4361a154b53229fb4fa3f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

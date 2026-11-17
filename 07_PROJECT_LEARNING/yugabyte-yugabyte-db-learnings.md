@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `0a3328bd`  
+> **Source Version**: `0f15fa2b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T02:06:23.741Z  
+> **Timestamp**: 2026-11-17T10:41:13.344Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T02:06:23.736Z  
+> **Harvest Timestamp**: 2026-11-17T10:41:13.339Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10664 stars
+- **Stars / Engagement**: 10665 stars
 
 ---
 
@@ -1525,6 +1525,10 @@ DEFAULT_BOOT_VOLUME_SIZE_GB = 50
 MIN_BOOT_VOLUME_SIZE_GB = 50
 BOOT_VOLUME_REPLACEMENT_TIMEOUT_SECONDS = 600
 OCI_WORK_REQUEST_TERMINAL_STATES = ("SUCCEEDED", "FAILED", "CANCELED")
+# Instance tags replace_boot_volume copies to the boot volume it keeps.
+NODE_TAG_KEYS = ("universe-uuid", "node-uuid")
+# VPUs/GB OCI gives a boot volume when none is set, as on a replacement.
+OCI_DEFAULT_BOOT_VOLUME_VPUS_PER_GB = 10
 
 AARCH64_ARCHITECTURES = ("aarch64", "arm64")
 
@@ -1668,14 +1672,7 @@ class OciCloudAdmin:
     @property
     def blockstorage_client(self):
         if self._blockstorage_client is None:
-            self._blockstorage_client = self._build_client(BlockstorageClient)
-        return self._blockstorage_client
-
-    @property
-    def dns_client(self):
-        if self._dns_client is None:
-            self._dns_client = self._build_client(DnsClient)
-        
+            self._blockstorage_cli
 ```
 
 ### Core Architecture Module: `managed/devops/opscli/ybops/utils/__init__.py`
@@ -2248,14 +2245,15 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #37989** (2026-11-16): **YSQL: Range index scan on an int2vector column returns wrong rows for < and >**
-  *Symptoms*: A range (lsm) index on an int2vector column returns wrong rows for `<` and `>`. The cause is `yb_type.c:890`, which declares INT2VECTOROID as a key type (`allow_for_primary_key = true`). Its converter, `YbDatumToBinary` (yb_type.c:287-292), passes DocDB the raw array body: header fields including the element count, then the int16 elements in little-endian order. DocDB compares binary keys with memcmp, so keys sort by element count first and then by little-endian bytes. PG's btree on int2vector uses `array_ops`/`array_cmp`, which compares elements as signed int16 first and count second. So the index order is `''`, `'0'`, `'1'`, `'10'`, `'-1'`, `'1 2'`, `'2 1'`, `'1 2 3'`. This puts `'10'` below `'1 2'`, and `a < '1 2'` returns it.  The callers of this flag read it as "DocDB ordering matches PG": - the key-type checks for indexes and primary keys (`YbCheckKeyColumnType` in yb_cmds.c, see below) - `yb_agg_pushdown_supported` (nodeAgg.c:2264, :2357) - `yb_hash_code` (pg_yb_utils.c), which hashes only key types. It keeps accepting int2vector (see below).  int2vector has had `true` since the type framework commit f8a54015950, in the same table edit as OIDVECTOROID. OIDVECTOROID needs it for `pg_proc_proname_args_nsp_index`. No catalog index keys on int2vector. INT2ARRAYOID uses the same converter on the same array body and already has `false` (yb_type.c:1327).  The fix sets int2vector's flag to `false`, the same as int2[]. User-visible effects: - `CREATE INDEX` with an int2vector k
-
-- **Issue #37980** (2026-11-15): **README: fix dead links (2 verified 404)**
-  *Symptoms*: Link audit found 2 dead URL(s) in the README, each verified HTTP 404 (re-checked 3x):  - `https://communityinviter.com/apps/yugabyte-db/register` - `https://docs.yugabyte.com/stable/stable/explore/transactions/explicit-locking/#table-level-locks`  Fixes applied: - remove_badge_chunk: removed - prose_to_text: → `Table-level locking for concurrent DDL and DML` (verified 200)  All replacement URLs were live-checked (HTTP 200) before this PR. Happy to adjust if a different replacement is preferred.
+- **Issue #38167** (2026-11-17): **[BACKPORT 2026.2][PLAT-17570] YBA: Reject pause and resume in the wrong universe state (#38077)**
+  *Symptoms*: ## Summary  Pause and resume did not check the universe state. A pause on a paused universe started a task that then failed. A resume on a running universe started a task with no check at all.  YBA: - The pause API returns 400 if the universe is already paused. - The resume API returns 400 if the universe is not paused. - The checks run before a task is created, so they apply to all clients (UI, CLI, Terraform, operator) and to VM and K8s universes. The operator and the UI pause and resume only in the right state.  yba CLI: - `yba universe pause` and `resume` check the same state before the prompt, and also fail if a task is in progress. This also protects users on an older YBA. - Resume on a running universe now exits with status 1 instead of starting a task.  Original commit: 10afd135834cf9774bd6aea777586bc0457b19e5 / #38077  ## Test plan  - [x] `UniverseActionsControllerTest`: pause on a paused universe and resume on a running universe return 400 and start no task. - [x] Go unit test for the CLI state check. - [x] Live test on local YBA (AWS): - [x] Old CLI (no CLI check): pause on a paused universe and resume on a running universe return 400 from YBA. No task starts. - [x] New CLI: the same calls fail before the prompt. Pause and resume in the right state pass. - [x] On 2026.2 with this backport: `sbt buildDependentArtifacts` and `UniverseActionsControllerTest` (10/10 pass). - [x] On 2026.2: `go build ./...` and `go test ./cmd/universe/` in yba-cli pass. 
   **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=37980) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=37980) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/yugabyte/yugabyte-db?pullRequest=37980) it.</sub>
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/37980) <!-- Reviewable:end --> 
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/38167) <!-- Reviewable:end --> 
+
+- **Issue #38166** (2026-11-17): **[BACKPORT 2026.1][PLAT-17570] YBA: Reject pause and resume in the wrong universe state (#38077)**
+  *Symptoms*: ## Summary  Pause and resume did not check the universe state. A pause on a paused universe started a task that then failed. A resume on a running universe started a task with no check at all.  YBA: - The pause API returns 400 if the universe is already paused. - The resume API returns 400 if the universe is not paused. - The checks run before a task is created, so they apply to all clients (UI, CLI, Terraform, operator) and to VM and K8s universes. The operator and the UI pause and resume only in the right state.  yba CLI: - `yba universe pause` and `resume` check the same state before the prompt, and also fail if a task is in progress. This also protects users on an older YBA. - Resume on a running universe now exits with status 1 instead of starting a task.  Original commit: 10afd135834cf9774bd6aea777586bc0457b19e5 / #38077  ## Test plan  - [x] `UniverseActionsControllerTest`: pause on a paused universe and resume on a running universe return 400 and start no task. - [x] Go unit test for the CLI state check. - [x] Live test on local YBA (AWS): - [x] Old CLI (no CLI check): pause on a paused universe and resume on a running universe return 400 from YBA. No task starts. - [x] New CLI: the same calls fail before the prompt. Pause and resume in the right state pass. - [x] On 2026.1 with this backport: `sbt buildDependentArtifacts` and `UniverseActionsControllerTest` (10/10 pass). - [x] On 2026.1: `go build ./...` and `go test ./cmd/universe/` in yba-cli pass with #38157 applie
+  **Post-Mortem & Fix Analysis**:
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/38166) <!-- Reviewable:end --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2272,206 +2270,289 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `624a0ee1` (2026-11-14)
-**Commit Message**: [#37541] Build: Add a script to remove old thirdparty directories (#37542)
+### Incident Patch 1: `4e76682e` (2026-11-16)
+**Commit Message**: [#30797] YSQL: Set index birth_time for indexes built nonconcurrently (#37103)
 
 ## Summary
 
-`/opt/yb-build/thirdparty` gains a new thirdparty version every time a checkout moves to a newer pin, and nothing removes the old ones, so the directory grows by several GB over a few months.
-New `build-support/clean_old_thirdparty.sh` is a manual tool to reclaim that space: no build runs it, and it only prints what it would remove unless `--apply` is given.
-It removes the versions that no build or test has used for `--days` days (default 30), i.e. those none of whose files has an access time within that time.
-On Linux, access times show the reads, with a day of slack since `relatime` updates them at most once a day, and the script refuses to run on a filesystem mounted with `noatime`.
-APFS, unless mounted with `strictatime`, updates an access time only when it is older than the modification time, so on macOS, `yb_build.sh` now touches a `.last_used` file in the version it uses, except on Jenkins.
-On macOS, a version used only outside `yb_build.sh`, e.g. from CLion, or only by branches without this change, is removed `--days` days after install, and downloaded again by the next build that needs 
+A CREATE INDEX run inside a transaction block is built nonconcurrently
+and skips the backfill
+that sets the index birth_time, so birth_time stays 0. The docdb read
+guard then does not throw a
+kSnapshotTooOld error for a snapshot read whose read time precedes the
+index commit, and the index
+rows (written at the commit) are not visible to that read, so it
+silently returns an incomplete
+result. This is the data loss seen in the Jepsen si.append-table test.
 
-**File**: `build-support/clean_old_thirdparty.sh` (added, +190/-0)
+On a successful nonconcurrent index create, set the index birth_time to
+the master clock time
+(>= the DDL commit time, see below) and propagate it to the tablets via
+a new
+MarkNonConcurrentIndexDone tserver admin RPC. To reject reads until
+birth_time is final, introduce
+a `birth_time_state` enum in the index metadata (IndexInfoPB), set by
+the master at index creation:
+- BIRTH_TIME_FINAL (default): birth_time, if set, is final.
+- BIRTH_TIME_PENDING_BACKFILL: online (backfilled) index, until the
+backfill completes.
+- BIRTH_TIME_PENDING_DDL_COMMIT: nonconcurrent index created in a DDL
+transaction, until the
+  transaction commits.
+
+The backfill 
+
+**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_event_triggers.out` (modified, +3/-6)
 ```diff
-@@ -0,0 +1,190 @@
-+#!/usr/bin/env bash
-+# Copyright (c) YugabyteDB, Inc.
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+# in compliance with the License.  You may obtain a copy of the License at
-+#
-+# http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software distributed under the License
-+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+# or implied.  See the License for the specific language governing permissions and limitations
-+# under the License.
-+#
-+# Removes the thirdparty directories, one per installed thirdparty version, that no build or test
-+# has used for --days days, from their parent directory.
-+# A version counts as used when the access time of any of its files falls within that time.
-+# On Linux, access times show the reads, so the script refuses to run on a noatime filesystem.
-+# APFS, unless mounted with strictatime, updates an access time only when it is older than the
-+# modification time. So on macOS, yb_build.sh touches the version's .last_used file instead, and a
-+# version used only outside yb_build.sh, e.g. from CLion, or only by branches without that, counts
-+# as used only for --days days after install.
-+#
-+# Every yugabyte-db-thirdparty-v* directory counts, including copies renamed by hand. Symbolic
-+# links, e.g. those of thirdparty installed from a PR artifact, and the <name>.tmp.* directories of
-+# downloads in progress are left alone.
-+#
-+# Usage:
-+#   build-support/clean_old_thirdparty.sh [--dir DIR] [--days N] [--apply]
-+#
-+# Options:
-+#   --dir DIR    Parent of the thirdparty directories. Default: /opt/yb-build/thirdparty
-+#   --days N     Remove the versions unused for N days (default: 30).
-+#   --apply      Delete; without it, only print what would be deleted.
-+#   -h, --help   Show this help.
-+
-+set -euo pipefail
-+
-+# shellcheck source=build-support/common-build-env.sh
-+. "${BASH_SOURCE[0]%/*}/common-build-env.sh"
-+
-+target_dir=$LOCAL_THIRDPARTY_DIR_PARENT
-+apply=false
-+days=30
-+
-+usage() {
-+  sed -n '/^# Usage:/,/^$/ p' "$0" | sed 's/^# \{0,1\}//'
-+}
-+
-+while [[ $# -gt 0 ]]; do
-+  if [[ ($1 == --dir || $1 == --days) && $# -lt 2 ]]; then
-+    echo "$1 needs a value" >&2
-+    usage >&2
-+    exit 2
-+  fi
-+  case "$1" in
-+    --dir)
-+      target_dir="$2"; shift 2 ;;
-+    --days)
-+      days="$2"; shift 2 ;;
-+    --apply)
-+      apply=true; shift ;;
-+    -h|--help)
-+      usage; exit 0 ;;
-+    *)
-+      echo "Unknown argument: $1" >&2
-+      usage >&2
-+      exit 2 ;;
-+  esac
-+done
-+
-+if [[ ! -d "$target_dir" ]]; then
-+  echo "Thirdparty directory parent not found: $target_dir" >&2
-+  exit 1
-+fi
-+
-+if ! [[ "$days" =~ ^[1-9][0-9]*$ ]]; then
-+  echo "--days must be a positive integer (got: $days)" >&2
-+  exit 2
-+fi
-+
-+# Use -amin rather than -atime, since BSD find rounds ages up to whole days, so -atime -N would
-+# match only files used within N-1 days.
-+minutes=$(( days * 24 * 60 ))
-+
-+if is_linux; then
-+  mount_options=$(findmnt -n -o OPTIONS -T "$target_dir")
-+  if [[ ,$mount_options, == *,noatime,* ]]; then
-+    echo "$target_dir is on a noatime filesystem, so the versions in use cannot be told apart" >&2
-+    exit 1
-+  fi
-+  # relatime, the default, lets access times lag reads by up to a day.
-+  minutes=$(( minutes + 24 * 60 ))
-+fi
-+
-+# Treat a find error as used, to be safe.
-+recently_used() {
-+  local found
-+  found=$(find "$1" -type f -amin "-$minutes" -print -quit) || return 0
-+  [[ -n $found ]]
-+}
-+
-+cd "$target_dir"
-+
-+shopt -s nullglob
-+keepers=()
-+victims=()
-+leftovers=()
-+for entry in yugabyte-db-thirdparty-v*; do
-+  if [[ -L $entry || ! -d $entry || $entry == *.tmp.* ]]; then
-+    continue
-+  elif [[ $entry == *.removing ]]; then
-+    leftovers+=("$entry")
-+  elif recently_used "$entry"; then
-+    keepers+=("$entry")
-+  else
-+    victims+=("$entry")
-+  fi
-+done
-+
-+print_list() {
-+  local title=$1
-+  shift
-+  if [[ $# -gt 0 ]]; then
-+    echo "$title"
-+    printf '  %s\n' "$@"
-+    echo
-+  fi
-+}
-+
-+echo "Scanning $target_dir for versions unused for $days days..."
-+echo
-+# ${a[@]+"${a[@]}"} expands an empty array under set -u in bash 3.2 too.
-+print_list "Will keep:" ${keepers[@]+"${keepers[@]}"}
-+print_list "Will remove leftovers of interrupted removals:" ${leftovers[@]+"${leftovers[@]}"}
-+print_list "Will remove:" ${victims[@]+"${victims[@]}"}
-+
-+if [[ ${#victims[@]} -eq 0 && ${#leftovers[@]} -eq 0 ]]; then
-+  echo "Nothing to remove."
-+  exit 0
-+fi
-+
-+if ! $apply; then
-+  echo "(dry run) Re-run with --apply to delete the entries listed above."
-+  exit 0
-+fi
-+
-+# Never let a bad name reach rm -rf.
-+check_name() {
-+  if [[ $1 != yugabyte-db-thirdparty-v* || $1 == */* || $1 == *..* ]]; then
-+    echo "Refusing to remove suspicious entry: $1" >&2
-+    exit 3
-+  fi
-+}
-+
-+echo "Removing $(( ${#leftovers[@]} + ${#victims[@]} )) entries..."
-+failed=0
-+for entry in ${leftovers[@]+"${leftovers[@]}"}; do
-+
+@@ -99,12 +99,9 @@ BEFORE INSERT ON trigger_unique_test
+ FOR EACH ROW EXECUTE FUNCTION normalize_code();
+ -- Insert 'abc', trigger turns it into 'ABC'
+ INSERT INTO trigger_unique_test VALUES (1, 'abc');
+-SELECT * FROM trigger_unique_test WHERE code = 'ABC';
+- id | code 
+-----+------
+-  1 | ABC
+-(1 row)
+-
++-- TODO(#37091): re-enable once a transaction can read an index it created; this
++-- read currently hangs until the CREATE INDEX commits.
++-- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
+ -- This should fail because 'abc' was normalized to 'ABC'
+ INSERT INTO trigger_unique_test VALUES (2, 'ABC');
+ ERROR:  duplicate key value violates unique constraint "idx_code_unique"
 ```
 
-**File**: `yb_build.sh` (modified, +7/-0)
+**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_indices.out` (modified, +3/-6)
 ```diff
-@@ -1010,6 +1010,13 @@ activate_virtualenv
- set_pythonpath
- verify_thirdparty_not_stale
- find_or_download_thirdparty
-+# Records the use of a downloaded thirdparty version for build-support/clean_old_thirdparty.sh on
-+# macOS, where APFS updates access times only on the first read after a change. CI does not run it.
-+if is_mac && ! is_jenkins && [[ $YB_THIRDPARTY_DIR == "$LOCAL_THIRDPARTY_DIR_PARENT"/* &&
-+      ! -L $YB_THIRDPARTY_DIR ]]; then
-+  # umask 0 lets other users update the file once it exists.
-+  ( umask 0; touch "$YB_THIRDPARTY_DIR/.last_used" ) 2>/dev/null || true
-+fi
- detect_toolchain
- find_make_or_ninja_and_update_cmake_opts
- find_compiler_by_type
+@@ -39,12 +39,9 @@ INSERT INTO idx_vis_test VALUES (1, 10), (2, 20);
+ -- Statement 2: Read via Index
+ -- Must advance HT to see previous statement's index writes.
+ SET enable_seqscan = off;
+-SELECT * FROM idx_vis_test WHERE val = 20;
+- id | val 
+-----+-----
+-  2 |  20
+-(1 row)
+-
++-- TODO(#37091): re-enable once a transaction can read an index it created; this
++-- read currently hangs until the CREATE INDEX commits.
++-- SELECT * FROM idx_vis_test WHERE val = 20;
+ RESET enable_seqscan;
+ COMMIT;
+ -- -----------------------------------------------------------------------------
+```
+
+**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_triggers.out` (modified, +3/-6)
+```diff
+@@ -98,12 +98,9 @@ BEFORE INSERT ON trigger_unique_test
+ FOR EACH ROW EXECUTE FUNCTION normalize_code();
+ -- Insert 'abc', trigger turns it into 'ABC'
+ INSERT INTO trigger_unique_test VALUES (1, 'abc');
+-SELECT * FROM trigger_unique_test WHERE code = 'ABC';
+- id | code 
+-----+------
+-  1 | ABC
+-(1 row)
+-
++-- TODO(#37091): re-enable once a transaction can read an index it created; this
++-- read currently hangs until the CREATE INDEX commits.
++-- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
+ -- This should fail because 'abc' was normalized to 'ABC'
+ INSERT INTO trigger_unique_test VALUES (2, 'ABC');
+ ERROR:  duplicate key value violates unique constraint "idx_code_unique"
+```
+
+**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_event_triggers.sql` (modified, +3/-1)
+```diff
+@@ -90,7 +90,9 @@ FOR EACH ROW EXECUTE FUNCTION normalize_code();
+ 
+ -- Insert 'abc', trigger turns it into 'ABC'
+ INSERT INTO trigger_unique_test VALUES (1, 'abc');
+-SELECT * FROM trigger_unique_test WHERE code = 'ABC';
++-- TODO(#37091): re-enable once a transaction can read an index it created; this
++-- read currently hangs until the CREATE INDEX commits.
++-- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
+ 
+ -- This should fail because 'abc' was normalized to 'ABC'
+ INSERT INTO trigger_unique_test VALUES (2, 'ABC');
+```
+
+**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_indices.sql` (modified, +3/-1)
+```diff
+@@ -35,7 +35,9 @@ INSERT INTO idx_vis_test VALUES (1, 10), (2, 20);
+ -- Statement 2: Read via Index
+ -- Must advance HT to see previous statement's index writes.
+ SET enable_seqscan = off;
+-SELECT * FROM idx_vis_test WHERE val = 20;
++-- TODO(#37091): re-enable once a transaction can read an index it created; this
++-- read currently hangs until the CREATE INDEX commits.
++-- SELECT * FROM idx_vis_test WHERE val = 20;
+ RESET enable_seqscan;
+ 
+ COMMIT;
+```
+
+**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_triggers.sql` (modified, +3/-1)
+```diff
+@@ -90,7 +90,9 @@ FOR EACH ROW EXECUTE FUNCTION normalize_code();
+ 
+ -- Insert 'abc', trigger turns it into 'ABC'
+ INSERT INTO trigger_unique_test VALUES (1, 'abc');
+-SELECT * FROM trigger_unique_test WHERE code = 'ABC';
++-- TODO(#37091): re-enable once a transaction can read an index it created; this
++-- read currently hangs until the CREATE INDEX commits.
++-- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
+ 
+ -- This should fail because 'abc' was normalized to 'ABC'
+ INSERT INTO trigger_unique_test VALUES (2, 'ABC');
+```
+
+**File**: `src/yb/client/client-internal.cc` (modified, +5/-1)
+```diff
+@@ -3279,12 +3279,16 @@ Result<TableSizeInfo> YBClient::Data::GetTableDiskSize(
+ }
+ 
+ Status YBClient::Data::ReportYsqlDdlTxnStatus(
+-    const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline) {
++    const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
++    const CoarseTimePoint& deadline) {
+   master::ReportYsqlDdlTxnStatusRequestPB req;
+   master::ReportYsqlDdlTxnStatusResponsePB resp;
+ 
+   req.set_transaction_id(txn.transaction_id.data(), txn.transaction_id.size());
+   req.set_is_committed(is_committed);
++  if (propagated_hybrid_time.is_valid()) {
++    req.set_propagated_hybrid_time(propagated_hybrid_time.ToUint64());
++  }
+   RETURN_NOT_OK(SyncLeaderMasterRpc(
+       deadline, req, &resp, "ReportYsqlDdlTxnStatus",
+       &master::MasterDdlProxy::ReportYsqlDdlTxnStatusAsync));
+```
+
+**File**: `src/yb/client/client-internal.h` (modified, +2/-1)
+```diff
+@@ -495,7 +495,8 @@ class YBClient::Data {
+ 
+   // Provide the status of the transaction to YB-Master.
+   Status ReportYsqlDdlTxnStatus(
+-      const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline);
++      const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
++      const CoarseTimePoint& deadline);
+ 
+   Status IsYsqlDdlVerificationInProgress(
+     const TransactionMetadata& txn,
+```
+
+---
+
+### Incident Patch 2: `ad5b77ee` (2026-11-17)
+**Commit Message**: [PLAT-23577] YBA: Revert "Increment YBC client server version on YBA to 2.2.0.4-b14"
+
+Summary:
+This reverts commit ded6b58d388 / D60109.
+
+DB tests install the YBC named in `managed/src/main/resources/ybc_version.conf` (`build-support/common-test-env.sh`), so the bump also replaced yb-controller under the C++ backup tests. Since it landed, about 55 backup and xCluster tests fail on every alma8 release, arm release and alma9 asan run on master, e.g. `YBBackupDuringAlterTable.*`, `CqlBackupTest.*`, `PgVectorIndexBackupRestoreTest.*`, `PgVectorIndexTest.Backup/*`, `XClusterDDLReplicationTest.*`, `XClusterAutomaticModeTest.*` and `PgMasterFailoverTest.NonRespondingMaster*`. Every failing backup ends with `Final Status: SNAPSHOT_DIRECTORY_NOT_FOUND`, and the restore after it with `HTTP_BAD_REQUEST`. D60109 landed while Jenkins was running no tests, so its CI did not catch this.
+
+b14 is 35 ybc commits past b13, not only the CVE rebuilds. Among them is the tablet source check from yugabyte/ybc#290 and yugabyte/ybc#291, which is where `SNAPSHOT_DIRECTORY_NOT_FOUND` is raised; it appears to reject uploads in the test minicluster.
+
+NOTE: This also drops the CVE fixes b14 carries in yb-control
+
+**File**: `managed/build.sbt` (modified, +1/-1)
+```diff
+@@ -1097,7 +1097,7 @@ dependencyOverrides += "org.bouncycastle" % "bc-fips" % bouncyCastleFipsVersion
+ dependencyOverrides += "org.bouncycastle" % "bcutil-fips" % bouncyCastleUtilFipsVersion
+ 
+ libraryDependencies += "org.yb" % "yb-client" % "0.8.125-SNAPSHOT"
+-libraryDependencies += "org.yb" % "ybc-client" % "2.2.0.4-b14"
++libraryDependencies += "org.yb" % "ybc-client" % "2.2.0.4-b13"
+ libraryDependencies += "org.yb" % "yb-perf-advisor" % "1.0.0-b35"
+ libraryDependencies += "com.yugabyte.troubleshoot" % "perf-advisor-client" % "0.2.0"
+ 
+```
+
+**File**: `managed/src/main/resources/ybc_version.conf` (modified, +1/-1)
+```diff
+@@ -1,3 +1,3 @@
+ {
+-  stable_version = "2.2.0.4-b14"
++  stable_version = "2.2.0.4-b13"
+ }
+```
+
+---
+
+### Incident Patch 3: `c87fc3dc` (2026-11-17)
+**Commit Message**: [PLAT-21316] YBA: Fix DrConfigControllerTest.testSetTablesWithMatviewRejected (#38146)
+
+## Summary
+
+`DrConfigControllerTest.testSetTablesWithMatviewRejected` fails on
+master. It calls `XClusterConfigController.getSetTablesTaskParams` with
+null `bootstrapParams`. For a DR config, that method checks
+`bootstrapParams` before the materialized view check, so the test gets
+"bootstrapParams in the payload must be passed in" instead of the
+materialized view error.
+
+The test now builds `bootstrapParams` the way
+`DrConfigController.setTables` does:
+`drConfig.getBootstrapBackupParams()` converted with
+`DrConfigHelper.getBootstrapParamsFromRestartBootstrapParams`. Test-only
+change.
+
+## Test plan
+
+- [x] `sbt "testOnly com.yugabyte.yw.controllers.DrConfigControllerTest
+-- --tests=testSetTablesWithMatviewRejected"` fails on master with the
+error above
+- [x] `sbt "testOnly
+com.yugabyte.yw.controllers.DrConfigControllerTest"` passes with the fix
+(26/26)
+- [x] `sbt Test/javafmtCheck`
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `managed/src/test/java/com/yugabyte/yw/controllers/DrConfigControllerTest.java` (modified, +9/-1)
+```diff
+@@ -54,6 +54,7 @@
+ import com.yugabyte.yw.forms.DrConfigSwitchoverForm;
+ import com.yugabyte.yw.forms.DrConfigTaskParams;
+ import com.yugabyte.yw.forms.UniverseDefinitionTaskParams.SoftwareUpgradeState;
++import com.yugabyte.yw.forms.XClusterConfigCreateFormData.BootstrapParams;
+ import com.yugabyte.yw.forms.XClusterConfigCreateFormData.BootstrapParams.BootstrapBackupParams;
+ import com.yugabyte.yw.forms.XClusterConfigRestartFormData.RestartBootstrapParams;
+ import com.yugabyte.yw.forms.XClusterConfigTaskParams;
+@@ -1493,6 +1494,13 @@ public void testSetTablesWithMatviewRejected() throws Exception {
+             Json.toJson(setTablesForm));
+     assertOk(setTablesResult);
+ 
++    // Pass bootstrapParams as DrConfigController.setTables does; without them a DR config fails
++    // the bootstrapParams check before the materialized view check runs.
++    BootstrapParams bootstrapParams =
++        app.injector()
++            .instanceOf(DrConfigHelper.class)
++            .getBootstrapParamsFromRestartBootstrapParams(
++                drConfig.getBootstrapBackupParams(), setTablesForm.tables);
+     PlatformServiceException exception =
+         assertThrows(
+             PlatformServiceException.class,
+@@ -1503,7 +1511,7 @@ public void testSetTablesWithMatviewRejected() throws Exception {
+                     sourceUniverse,
+                     targetUniverse,
+                     setTablesForm.tables,
+-                    null /* bootstrapParams */,
++                    bootstrapParams,
+                     false /* autoIncludeIndexTables */,
+                     true /* dryRun */,
+                     true /* validateRequestedChange */));
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #37989** (closed): YSQL: Range index scan on an int2vector column returns wrong rows for < and > (@dhruva4869)
-- **PR #37980** (closed): README: fix dead links (2 verified 404) (@Hisernberg)
-- **PR #37955** (closed): [#37931] DocDB: Wait for leader readiness in snapshot preflush test (@4arjun)
-- **PR #37933** (2026-11-14): [BACKPORT 2025.2][#37536] DocDB: Fix distinct scan skipping live rows after a deleted row (#37550) (@spolitov)
-- **PR #37923** (2026-11-14): [pg19][#37922] YSQL: Add the tracking issue to the yb.orig.base_type cstring TODO (@teyenc)
-- **PR #37913** (2026-11-14): [pg19][#37911] test: Expect postgres_fdw to be installed in yb.port.pgaudit (@ninilo97)
+- **PR #38167** (2026-11-17): [BACKPORT 2026.2][PLAT-17570] YBA: Reject pause and resume in the wrong universe state (#38077) (@Deepti-yb)
+- **PR #38166** (2026-11-17): [BACKPORT 2026.1][PLAT-17570] YBA: Reject pause and resume in the wrong universe state (#38077) (@Deepti-yb)
+- **PR #38161** (2026-11-17): [BACKPORT 2026.2][PLAT-23280] YBA: Let YBA skip the restart for collector-only telemetry changes in the CLI (#38069) (@Deepti-yb)
+- **PR #38160** (2026-11-17): [BACKPORT 2026.1][PLAT-23280] YBA: Let YBA skip the restart for collector-only telemetry changes in the CLI (#38069) (@Deepti-yb)
+- **PR #38157** (2026-11-17): [BACKPORT 2026.1][PLAT-16529] YBA: Fix the 2026.1 yba-cli build with the missing roll batch size helpers (@Deepti-yb)
+- **PR #38148** (2026-11-17): [doc] Pin product switcher (@ddhodge)
 
 ---
 
@@ -2491,47 +2572,34 @@ On macOS, a version used only outside `yb_build.sh`, e.g. from CLion, or only by
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#37541] Build: Add a script to remove old thirdparty directories
+## X. [#30797] YSQL: Set index birth_time for indexes built nonconcurrently
 
 **RULE**:
-When implementing operations in `build-support/clean_old_thirdparty.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_event_triggers.out`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `624a0ee1`: [#37541] Build: Add a script to remove old thirdparty directories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e76682e`: [#30797] YSQL: Set index birth_time for indexes built nonconcurrently. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `build-support/clean_old_thirdparty.sh`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_event_triggers.out`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-#!/usr/bin/env bash
-# Copyright (c) YugabyteDB, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-# in compliance with the License.  You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software distributed under the License
-# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-# or implied.  See the License for the specific language governing permissions and limitations
-# under the License.
-#
-# Removes the thirdparty directories, one per installed thirdparty version, that no build or test
-# has used for --days days, from their parent directory.
-# A version counts as used when the access time of any of its files falls within that time.
-# On Linux, access times show the reads, so the script refuses to run on a noatime filesystem.
-# APFS, unless mounted with strictatime, updates an access time only when it is older than the
-# modification time. So on macOS, yb_build.sh touches the version's .last_used file instead, and a
-# version used only outside yb_build.sh, e.g. from CLion, or only by 
+-- TODO(#37091): re-enable once a transaction can read an index it created; this
+-- read currently hangs until the CREATE INDEX commits.
+-- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+SELECT * FROM trigger_unique_test WHERE code = 'ABC';
+ id | code 
+  1 | ABC
+(1 row)
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `624a0ee1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e76682e` are properly handled with clean fallback behavior.

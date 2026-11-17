@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T10:11:09.738Z",
+  "last_updated": "2026-11-17T10:41:14.216Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "f7644d78d343e4e3ccc01cf60fb87561bcbd3d3fb357093a925f80307d667d2b",
-      "verified_at": "2026-11-16T03:37:13.808Z",
+      "content_hash": "e49f1f7783c088efe12444b2a30cb297ef3b87e9b594ee9db458c7b1bf32bdfa",
+      "verified_at": "2026-11-17T10:41:08.562Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T03:37:13.808Z"
+      "last_updated": "2026-11-17T10:41:08.562Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "5024bf64f16a00eb9c0d216ad37064ee9a22d3021231313c6491a698eba702f7",
-      "verified_at": "2026-11-16T02:06:24.607Z",
+      "content_hash": "5150389181f4d9c684975448e7b5c559dff4f2ac67c4361a154b53229fb4fa3f",
+      "verified_at": "2026-11-17T10:41:14.215Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T02:06:24.607Z"
+      "last_updated": "2026-11-17T10:41:14.215Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -8661,14 +8661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mlua-rs-mlua",
-      "content_hash": "0423954249d5f7605b1f98e2a3b1efcce78cae33b77281681a58a9a145ca4a7f",
-      "verified_at": "2026-11-15T20:50:51.720Z",
+      "content_hash": "a9d8cd26740afb9c57873e1dce414810164b569a65299152ac734ab1b8af0e60",
+      "verified_at": "2026-11-17T10:41:00.153Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T20:50:51.720Z"
+      "last_updated": "2026-11-17T10:41:00.153Z"
     },
     "APSL/react-native-keyboard-aware-scroll-view": {
       "repository": "APSL/react-native-keyboard-aware-scroll-view",
@@ -17451,14 +17451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-speridlabs-idol",
-      "content_hash": "47b0e840297d6b526e7ac5b170a8ba007304b0f315923bc59307f34944834350",
-      "verified_at": "2026-11-12T23:08:44.151Z",
+      "content_hash": "2d27364c35b5481b9c597abca05ad3ce348dc510c610c80e3124137579f8914e",
+      "verified_at": "2026-11-17T10:40:58.862Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T23:08:44.151Z"
+      "last_updated": "2026-11-17T10:40:58.862Z"
     },
     "meta/docusaurus": {
       "repository": "meta/docusaurus",

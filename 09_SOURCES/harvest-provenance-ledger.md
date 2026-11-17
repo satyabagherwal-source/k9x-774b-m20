@@ -10554,3 +10554,7 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `f13e7dfc` | Multi-dimensional audit evidence | 2026-11-17T10:10:56.914Z |
 | `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `bcc4b90a` | Multi-dimensional audit evidence | 2026-11-17T10:11:01.963Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `5edf0f12` | Multi-dimensional audit evidence | 2026-11-17T10:11:09.728Z |
+| `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-17T10:40:58.854Z |
+| `learn-github-mlua-rs-mlua` | `https://github.com/mlua-rs/mlua` | `6308bb38` | Multi-dimensional audit evidence | 2026-11-17T10:41:00.145Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `d085ff5e` | Multi-dimensional audit evidence | 2026-11-17T10:41:08.554Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `0f15fa2b` | Multi-dimensional audit evidence | 2026-11-17T10:41:14.208Z |

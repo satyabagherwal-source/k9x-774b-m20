@@ -10521,3 +10521,7 @@
 | `CYCLE-20261117-81ZI` | `2026-11-17T10:10:56.910Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8949` | Yes (`f467f04b...`) |
 | `CYCLE-20261117-85VS` | `2026-11-17T10:11:01.960Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8950` | Yes (`2b9de76c...`) |
 | `CYCLE-20261117-8BVG` | `2026-11-17T10:11:09.724Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8951` | Yes (`48263a6d...`) |
+| `CYCLE-20261117-AODF` | `2026-11-17T10:40:58.851Z` | `speridlabs/idol` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md` | Yes (`2d27364c...`) |
+| `CYCLE-20261117-APD9` | `2026-11-17T10:41:00.141Z` | `mlua-rs/mlua` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8952` | Yes (`a9d8cd26...`) |
+| `CYCLE-20261117-AVUU` | `2026-11-17T10:41:08.550Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8953` | Yes (`e49f1f77...`) |
+| `CYCLE-20261117-B07W` | `2026-11-17T10:41:14.204Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8954` | Yes (`51503891...`) |

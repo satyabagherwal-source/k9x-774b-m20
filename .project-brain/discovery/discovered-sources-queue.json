@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T10:11:14.499Z",
+  "updated_at": "2026-11-17T10:41:18.370Z",
   "stats": {
-    "total_discovered": 4922,
-    "approved_pending_harvest": 4636,
+    "total_discovered": 4926,
+    "approved_pending_harvest": 4640,
     "harvested_count": 0,
     "rejected_count": 286,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4631,
-      "OFFICIAL_DOCUMENTATION": 160,
+      "COMMUNITY_AND_EXPERT": 4633,
+      "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 102,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 19,
@@ -106303,6 +106303,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
         "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-37651CB18502": {
+      "id": "SRC-37651CB18502",
+      "url": "https://meet.meshery.io/",
+      "title": "https://meet.meshery.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T10:41:18.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-CDFF51819089": {
+      "id": "SRC-CDFF51819089",
+      "url": "https://meshery.io/newcomer",
+      "title": "https://meshery.io/newcomer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T10:41:18.309Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-D7AF755BA788": {
+      "id": "SRC-D7AF755BA788",
+      "url": "https://docs.meshery.io/project/contributing",
+      "title": "https://docs.meshery.io/project/contributing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T10:41:18.341Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-49B819F082F6": {
+      "id": "SRC-49B819F082F6",
+      "url": "https://docs.meshery.io/",
+      "title": "https://docs.meshery.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T10:41:18.370Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
       }
     }
   }

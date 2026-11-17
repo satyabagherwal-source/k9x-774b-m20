@@ -4,24 +4,24 @@
 {
   "source_repository": "mlua-rs/mlua",
   "source_url": "https://github.com/mlua-rs/mlua",
-  "source_version": "e4699f2f",
+  "source_version": "6308bb38",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-15T20:50:51.886Z",
+  "timestamp": "2026-11-17T10:41:00.343Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mlua-rs-mlua",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mlua-rs/mlua](https://github.com/mlua-rs/mlua) (Revision: `e4699f2f`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-15T20:50:51.886Z`  
+> **Provenance**: Harvested from [mlua-rs/mlua](https://github.com/mlua-rs/mlua) (Revision: `6308bb38`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T10:41:00.343Z`  
 > **Learning ID**: `learn-github-mlua-rs-mlua`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: B (Product Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 69%
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from mlua-rs/mlua:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mlua-rs/mlua](https://github.com/mlua-rs/mlua))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T20:50:50.567Z  
+> **Harvest Timestamp**: 2026-11-17T10:40:59.253Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: High level Lua 5.5/5.4/5.3/5.2/5.1 (including LuaJIT) and Luau bindings to Rust with async/await support
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2947 stars
+- **Stars / Engagement**: 2951 stars
 
 ---
 
@@ -84,7 +84,9 @@ use crate::types::{
     ReentrantMutex, ReentrantMutexGuard, RegistryKey, VmState, XRc, XWeak,
 };
 use crate::userdata::{AnyUserData, UserData, UserDataProxy, UserDataRegistry, UserDataStorage};
-use crate::util::{StackGuard, assert_stack, check_stack, protect_lua_closure, push_string, rawset_field};
+use crate::util::{
+    StackGuard, abort_on_unwind, assert_stack, check_stack, protect_lua_closure, push_string, rawset_field,
+};
 use crate::value::{Nil, Value};
 
 #[cfg(not(feature = "luau"))]
@@ -377,8 +379,7 @@ impl fmt::Debug for Lua {
 
 impl Default for Lua {
     #[inline]
-    fn default() -> Self {
-     
+    fn d
 ```
 
 ### Core Architecture Module: `src/state/extra.rs`
@@ -1663,6 +1664,27 @@ pub(crate) use userdata::{
     push_uninit_userdata, push_userdata, take_userdata,
 };
 
+/// Invokes a closure, aborting the process if it unwinds.
+#[inline]
+pub(crate) fn abort_on_unwind<F: FnOnce() -> R, R>(f: F) -> R {
+    #[cfg(panic = "unwind")]
+    struct AbortOnDrop;
+
+    #[cfg(panic = "unwind")]
+    impl Drop for AbortOnDrop {
+        fn drop(&mut self) {
+            std::process::abort();
+        }
+    }
+
+    #[cfg(panic = "unwind")]
+    let abort_on_drop = AbortOnDrop;
+    let result = f();
+    #[cfg(panic = "unwind")]
+    std::mem::forget(abort_on_drop);
+    result
+}
+
 // Checks that Lua has enough free stack space for future stack operations. On failure, this will
 // panic with an internal error message.
 #[inline]
@@ -1899,20 +1921,7 @@ pub(crate) unsafe fn to_string(state: *mut ffi::lua_State, index: c_int) -> Stri
     match ffi::lua_type(state, index) {
         ffi::LUA_TNONE => "<none>".to_string(),
         ffi::LUA_TNIL => "<nil>".to_string(),
-        ffi::LUA_TBOOLEAN => (ffi::lua_toboolean(state, index) != 1).to_string(),
-        ffi::LUA_TLIGHTUSERDATA => {
-            format!("<lightuserdata {:?}>", ffi::lua_topointer(state, index))
-        }
-        ffi::LUA_TNUMBER => {
-            let mut isint = 0;
-            let i = ffi::lua_tointegerx(state, index, &mut isint);
-            if isint == 0 {
-                ffi::lua_tonumber(state, index).to_string()
-            } else {
-                i.to_string()
-            }
-        }
-        #[cfg(feat
+        ffi::LUA_TB
 ```
 
 ### Core Architecture Module: `src/util/path.rs`
@@ -2377,305 +2386,265 @@ impl TypeKey for Option<std::task::Waker> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e4699f2f` (2026-11-15)
-**Commit Message**: Fix scope teardown re-entry aliasing
+### Incident Patch 1: `1bda8eb3` (2026-11-15)
+**Commit Message**: Fix stale argument count in Thread::resume
 
-Closes #765
+Closes #758
 
-**File**: `src/scope.rs` (modified, +2/-2)
+**File**: `src/thread.rs` (modified, +3/-1)
 ```diff
-@@ -28,14 +28,14 @@ pub struct Scope<'scope, 'env: 'scope> {
- type DestructorCallback<'a> = Box<dyn FnOnce(&RawLua, ValueRef) -> Vec<Box<dyn FnOnce() + 'a>>>;
+@@ -340,7 +340,9 @@ impl Thread {
  
- // Implement Drop on Destructors instead of Scope to avoid compilation error
--struct Destructors<'a>(RefCell<Option<Vec<(ValueRef, DestructorCallback<'a>)>>>);
-+struct Destructors<'a>(Box<RefCell<Option<Vec<(ValueRef, DestructorCallback<'a>)>>>>);
- 
- struct UserDestructors<'a>(RefCell<Vec<Box<dyn FnOnce() + 'a>>>);
- 
- impl<'scope, 'env: 'scope> Scope<'scope, 'env> {
-     pub(crate) fn new(lua: LuaGuard) -> Self {
-         Scope {
--            destructors: Destructors(RefCell::new(Some(Vec::new()))),
-+            destructors: Destructors(Box::new(RefCell::new(Some(Vec::new())))),
-             lua,
-             user_destructors: UserDestructors(RefCell::new(Vec::new())),
-             _scope_invariant: PhantomData,
+             if !hook_yielded {
+                 let nargs = args.push_into_stack_multi(&lua)?;
+-                if nargs > 0 {
++                // Argument conversion may change this thread, so re-read its state
++                (pushed_nargs, hook_yielded) = self.resumable_state(&lua)?;
++                if !hook_yielded && nargs > 0 {
+                     check_stack(thread_state, nargs)?;
+                     ffi::lua_xmove(state, thread_state, nargs);
+                     pushed_nargs += nargs;
 ```
 
----
-
-### Incident Patch 2: `c15d1f73` (2026-11-15)
-**Commit Message**: Fix userdata metatable re-registration race
-
-Closes #764.
-
-**File**: `src/state/raw.rs` (modified, +4/-3)
+**File**: `tests/thread.rs` (modified, +22/-0)
 ```diff
-@@ -1145,13 +1145,14 @@ impl RawLua {
-     ) -> Result<AnyUserData> {
-         let state = self.state();
-         let _sg = StackGuard::new(state);
--        check_stack(state, 3)?;
-+        check_stack(state, 4)?;
- 
--        // We generate metatable first to make sure it *always* available when userdata pushed
-+        // Keep the metatable alive while allocating userdata, which may run GC finalizers.
-         let mt_id = get_metatable_id()?;
-+        ffi::lua_rawgeti(state, ffi::LUA_REGISTRYINDEX, mt_id as _);
-         let protect = !self.unlikely_memory_error();
-         push_userdata(state, data, protect)?;
--        ffi::lua_rawgeti(state, ffi::LUA_REGISTRYINDEX, mt_id as _);
-+        ffi::lua_insert(state, -2);
-         ffi::lua_setmetatable(state, -2);
- 
-         // Set empty environment for Lua 5.1
-```
-
-**File**: `tests/userdata.rs` (modified, +32/-0)
-```diff
-@@ -958,6 +958,38 @@ fn test_userdata_reregister_type() -> Result<()> {
+@@ -317,6 +317,28 @@ fn test_thread_resume_bad_arg() -> Result<()> {
      Ok(())
  }
  
-+#[cfg(not(feature = "luau"))]
++#[cfg(feature = "async")]
 +#[test]
-+fn test_userdata_reregister_during_creation() -> Result<()> {
-+    use std::sync::atomic::{AtomicBool, Ordering};
++fn test_thread_resume_reentrant_arg_conversion() -> Result<()> {
++    struct ReplaceArgs(Thread);
 +
-+    struct Reentrant;
-+    impl UserData for Reentrant {}
++    impl IntoLua for ReplaceArgs {
++        fn into_lua(self, lua: &Lua) -> Result<Value> {
++            self.0
++                .reset(lua.load("return select('#', ...)").into_function()?)?;
++            drop(self.0.clone().into_async::<()>((1, 2))?);
++            Ok(Value::Nil)
++        }
++    }
 +
 +    let lua = Lua::new();
-+    let called = Arc::new(AtomicBool::new(false));
-+    let called2 = Arc::clone(&called);
-+    let reregister = lua.create_function(move |lua, ()| {
-+        called2.store(true, Ordering::Relaxed);
-+        lua.register_userdata_type::<Reentrant>(|_| {})
-+    })?;
-+    lua.globals().set("reregister", reregister)?;
-+
-+    #[cfg(not(any(feature = "lua51", feature = "luajit")))]
-+    lua.load("for _ = 1, 50 do setmetatable({}, { __gc = reregister }) end")
-+        .exec()?;
-+    #[cfg(any(feature = "lua51", feature = "luajit"))]
-+    lua.load("for _ = 1, 50 do local ud = newproxy(true); getmetatable(ud).__gc = reregister end")
-+        .exec()?;
-+    called.store(false, Ordering::Relaxed);
-+    for _ in 0..2000 {
-+        drop(lua.create_userdata(Reentrant)?);
-+    }
-+    assert!(called.load(Ordering::Relaxed));
++    let thread = lua.create_thread(lua.load("return").into_function()?)?;
++    drop(thread.clone().into_async::<()>(0)?);
++    assert_eq!(thread.resume::<i32>(ReplaceArgs(thread.clone()))?, 3);
 +
 +    Ok(())
 +}
 +
  #[test]
- fn test_any_userdata_wrap() -> Result<()> {
+ fn test_thread_event_create() -> Result<()> {
      let lua = Lua::new();
 ```
 
 ---
 
-### Incident Patch 3: `682fb4cd` (2026-11-15)
-**Commit Message**: Fix userdata reference drop ordering
+### Incident Patch 2: `7f4d8275` (2026-11-15)
+**Commit Message**: Fix userdata serde type erasure safety
 
-Closes #760 and #763.
-
-**File**: `Cargo.toml` (modified, +1/-0)
+**File**: `src/userdata.rs` (modified, +5/-4)
 ```diff
-@@ -55,6 +55,7 @@ bstr = { version = "1.0", features = ["std"], default-features = false }
- either = "1.0"
- num-traits = { version = "0.2.14" }
- rustc-hash = "2.0"
-+maybe-dangling = "=0.1.2"
- futures-util = { version = "0.3", optional = true, default-features = false, features = ["std"] }
- serde = { version = "1.0", optional = true }
- erased-serde = { version = "0.4", optional = true }
-```
-
-**File**: `src/userdata/ref.rs` (modified, +135/-83)
-```diff
-@@ -3,6 +3,8 @@ use std::ops::{Deref, DerefMut};
- use std::os::raw::c_int;
- use std::{fmt, mem};
+@@ -24,6 +24,7 @@ use std::future::Future;
  
-+use maybe_dangling::MaybeDangling;
-+
- use crate::error::{Error, Result};
- use crate::state::{Lua, RawLua};
- use crate::traits::FromLua;
-@@ -27,12 +29,62 @@ use {
-     std::rc::Rc,
+ #[cfg(feature = "serde")]
+ use {
++    cell::SerializeHeader,
+     serde::ser::{self, Serialize, Serializer},
+     std::result::Result as StdResult,
  };
- 
-+#[cfg(all(feature = "userdata-wrappers", not(feature = "send")))]
-+type RcRefCellRef<T> = MaybeDangling<Ref<'static, T>>;
-+#[cfg(all(feature = "userdata-wrappers", not(feature = "send")))]
-+type RcRefCellRefMut<T> = MaybeDangling<RefMut<'static, T>>;
-+
-+struct UserDataGuard<T: 'static> {
-+    // Keep the guard before its owner so the lock is released before the allocation is freed.
-+    _guard: MaybeDangling<LockGuard<'static, RawLock>>,
-+    variant: UserDataVariant<T>,
-+}
-+
-+impl<T> UserDataGuard<T> {
-+    #[inline]
-+    fn try_read(variant: UserDataVariant<T>) -> Result<Self> {
-+        let guard = variant
-+            .raw_lock()
-+            .try_lock_shared_guarded()
-+            .map_err(|_| Error::UserDataBorrowError)?;
-+        let guard = unsafe { mem::transmute::<LockGuard<'_, _>, LockGuard<'static, _>>(guard) };
-+        Ok(Self::new(variant, guard))
-+    }
-+
-+    #[inline]
-+    fn try_write(variant: UserDataVariant<T>) -> Result<Self> {
-+        let guard = variant
-+            .raw_lock()
-+            .try_lock_exclusive_guarded()
-+            .map_err(|_| Error::UserDataBorrowMutError)?;
-+        let guard = unsafe { mem::transmute::<LockGuard<'_, _>, LockGuard<'static, _>>(guard) };
-+        Ok(Self::new(variant, guard))
-+    }
-+
-+    #[inline(always)]
-+    fn new(variant: UserDataVariant<T>, guard: LockGuard<'static, RawLock>) -> Self {
-+        Self {
-+            _guard: MaybeDangling::new(guard),
-+            variant,
-+        }
-+    }
-+
-+    #[inline(always)]
-+    fn as_ptr(&self) -> *mut T {
-+        self.variant.as_ptr()
-+    }
-+
-+    #[inline(always)]
-+    fn get(&self) -> &T {
-+        // SAFETY: `variant` owns the value and `_guard` keeps it locked.
-+        unsafe { &*self.as_ptr() }
-+    }
-+}
-+
- /// A wrapper type for a userdata value that provides read access.
- ///
- /// It implements [`FromLua`] and can be used to receive a typed userdata from Lua.
- pub struct UserDataRef<T: 'static> {
--    // It's important to drop the guard first, as it refers to the `inner` data.
--    _guard: LockGuard<'static, RawLock>,
-     inner: UserDataRefInner<T>,
- }
- 
-@@ -66,10 +118,9 @@ impl<T> TryFrom<UserDataVariant<T>> for UserDataRef<T> {
-         // - with `send` feature, `T: Sync` is guaranteed by the `MaybeSync` bound on userdata
-         //   creation
-         // - without `send` feature, single-threaded access makes shared lock safe for any `T`
--        let guard = variant.raw_lock().try_lock_shared_guarded();
--        let guard = guard.map_err(|_| Error::UserDataBorrowError)?;
--        let guard = unsafe { mem::transmute::<LockGuard<_>, LockGuard<'static, _>>(guard) };
--        Ok(UserDataRef::from_parts(UserDataRefInner::Default(variant), guard))
-+        Ok(UserDataRef {
-+            inner: UserDataRefInner::Default(UserDataGuard::try_read(variant)?),
-+        })
+@@ -1091,8 +1092,8 @@ impl AnyUserData {
+         let is_serializable = || unsafe {
+             // Userdata must be registered and not destructed
+             let _ = lua.get_userdata_ref_type_id(&self.0)?;
+-            let ud = &*get_userdata::<UserDataStorage<()>>(lua.ref_thread(), self.0.index);
+-            Ok::<_, Error>(ud.is_serializable())
++            let header = &*get_userdata::<SerializeHeader>(lua.ref_thread(), self.0.index);
++            Ok::<_, Error>(header.is_serializable())
+         };
+         is_serializable().unwrap_or(false)
      }
- }
- 
-@@ -85,21 +136,13 @@ impl<T: 'static> FromLua for UserDataRef<T> {
- }
- 
- impl<T: 'static> UserDataRef<T> {
--    #[inline(always)]
--    fn from_parts(inner: UserDataRefInner<T>, guard: LockGuard<'static, RawLock>) -> Self {
--        Self { _guard: guard, inner }
--    }
--
-     #[cfg(feature = "userdata-wrappers")]
-     fn remap<U>(
-         self,
--        f: impl FnOnce(UserDataVariant<T>) -> Result<UserDataRefInner<U>>,
-+        f: impl FnOnce(UserDataGuard<T>) -> Result<UserDataRefInner<U>>,
-     ) -> Result<UserDataRef<U>> {
--        match &self.inner {
--            UserDataRefInner::Default(variant) => {
--                let inner = f(variant.clone())?;
--                Ok(UserDataRef::from_parts(inner, self._guard))
--            }
-+        match self.inner {
-+            UserDataRefInner::Default(guard) => Ok(UserDataRef { inner: f(guard)? }),
-             _ => Err(Error::UserDataTypeMismatch),
+@@ -1222,8 +1223,8 @@ impl Serialize for AnyUserData {
+             let _ = lua
+                 .get_userdata_ref_type_id(&self.0)
+                 .map_err(ser::Error::custom)?;
+-            let ud = &*get_userdata::<UserDataStorage<()>>(lua.ref_thread(), self.0.index);
+-            ud.serialize(serializer)
++            let header = &*get_userdata::<SerializeHeader>(lua.ref_thread(), self.0.index);
++            header.serialize(serializer)
          }
      }
-@@ -150,68 +193,79 @@ impl<T: 'static> UserDataRef<T> {
- #[cfg(all(feature = "userdata-wrappers", not(feature = "send")))]
- impl<T> UserDataRef<Rc<T>> {
-     fn transform_rc(self) -> Result<UserDataRef<T>> {
--        self.remap(|variant| Ok(UserDataRefInner::Rc(variant)))
-+        self.remap(|owner| Ok(UserDataRefInner::Rc(owner)))
-     }
  }
- 
- #[cfg(all(feature = "userdata-wrappers", not(feature = "send")))]
- impl<T> UserDataRef<Rc<RefCell<T>>> {
-     fn transform_rc_refcell(self) -> Result<UserDataRef<T>> {
--        self.remap(|variant| unsafe {
--            let obj = &*variant.as_ptr();
--            let r#ref = obj.try_borrow().map_err(|_| Error::UserDataBorrowError)?;
--            let borrow = std::mem::transmute::<Ref<T>, Ref<'static, T>>(r#ref);
--            Ok(UserDataRefInner::RcRefCell(borrow, variant))
-+        self.remap(|owner| {
-+            let obj = owner.get();
-+            let borrow = obj.try_borrow().map_err
 ```
 
-**File**: `tests/userdata.rs` (modified, +36/-0)
+**File**: `src/userdata/cell.rs` (modified, +144/-56)
 ```diff
-@@ -1524,6 +1524,42 @@ fn test_userdata_wrappers() -> Result<()> {
-     Ok(())
- }
+@@ -6,6 +6,8 @@ use serde::ser::{Serialize, Serializer};
  
-+#[cfg(all(feature = "userdata-wrappers", feature = "send"))]
-+#[test]
-+fn test_userdata_wrapper_ref_drop_race() -> Result<()> {
-+    use std::sync::mpsc;
+ use crate::error::{Error, Result};
+ use crate::types::XRc;
++#[cfg(feature = "serde")]
++use crate::types::XWeak;
+ 
+ use super::lock::{RawLock, RwLock, UserDataLock};
+ use super::r#ref::{UserDataRef, UserDataRefMut};
+@@ -16,7 +18,14 @@ type DynSerialize = dyn erased_serde::Serialize;
+ #[cfg(all(feature = "serde", feature = "send"))]
+ type DynSerialize = dyn erased_serde::Serialize + Send + Sync;
+ 
+-pub(crate) enum UserDataStorage<T> {
++#[cfg_attr(feature = "serde", repr(C))]
++pub(crate) struct UserDataStorage<T> {
++    #[cfg(feature = "serde")]
++    header: SerializeHeader, // Must remain first for erased access.
++    inner: UserDataStorageInner<T>,
++}
 +
-+    use parking_lot::Mutex;
-+
-+    struct MyUserData;
-+
-+    let lua = Lua::new();
-+
-+    let ud = lua.create_any_userdata(Arc::new(Mutex::new(MyUserData)))?;
-+    let (tx, rx) = mpsc::sync_channel::<UserDataRef<MyUserData>>(0);
-+    let thread = std::thread::spawn(move || {
-+        while let Ok(ud) = rx.recv() {
-+            drop(ud);
-+        }
-+    });
-+
-+    for _ in 0..10_000 {
-+        tx.send(ud.borrow::<MyUserData>()?).unwrap();
-+        loop {
-+            if let Ok(mut inner) = ud.borrow_mut::<Arc<Mutex<MyUserData>>>() {
-+                *inner = Arc::new(Mutex::new(MyUserData));
-+                break;
-+            }
-+            std::hint::spin_loop();
++enum UserDataStorageInner<T> {
+     Owned(UserDataVariant<T>),
+     Scoped(ScopedUserDataVariant<T>),
+ }
+@@ -58,7 +67,7 @@ impl<T> UserDataVariant<T> {
+     fn try_borrow_scoped_mut<R>(&self, f: impl FnOnce(&mut T) -> R) -> Result<R> {
+         let _guard =
+             (self.raw_lock().try_lock_exclusive_guarded()).map_err(|_| Error::UserDataBorrowMutError)?;
+-        Ok(f(unsafe { &mut *self.as_ptr() }))
++        Ok(f(unsafe { &mut *self.as_mut_ptr() }))
+     }
+ 
+     // Immutably borrows the wrapped value and returns an owned reference.
+@@ -114,7 +123,16 @@ impl<T> UserDataVariant<T> {
+     }
+ 
+     #[inline(always)]
+-    pub(super) fn as_ptr(&self) -> *mut T {
++    pub(super) unsafe fn as_ptr(&self) -> *const T {
++        match self {
++            Self::Default(inner) => inner.data_ptr(),
++            #[cfg(feature = "serde")]
++            Self::Serializable(inner) => unsafe { (&**inner.data_ptr()) as *const DynSerialize as *const T },
 +        }
 +    }
 +
-+    drop(tx);
-+    thread.join().unwrap();
-+
-+    Ok(())
++    #[inline(always)]
++    pub(super) unsafe fn as_mut_ptr(&self) -> *mut T {
+         match self {
+             Self::Default(inner) => inner.data_ptr(),
+             #[cfg(feature = "serde")]
+@@ -124,17 +142,37 @@ impl<T> UserDataVariant<T> {
+ }
+ 
+ #[cfg(feature = "serde")]
+-impl Serialize for UserDataStorage<()> {
+-    fn serialize<S: Serializer>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> {
+-        match self {
+-            Self::Owned(variant @ UserDataVariant::Serializable(inner)) => unsafe {
+-                let _guard = (variant.raw_lock().try_lock_shared_guarded())
+-                    .map_err(|_| serde::ser::Error::custom(Error::UserDataBorrowError))?;
+-                (*inner.data_ptr()).serialize(serializer)
+-            },
+-            _ => Err(serde::ser::Error::custom("cannot serialize <userdata>")),
++#[derive(Default)]
++pub(super) struct SerializeHeader {
++    inner: Option<XWeak<RwLock<Box<DynSerialize>>>>,
 +}
 +
- #[cfg(feature = "luau")]
- #[test]
- fn test_userdata_namecall() -> Result<()> {
++#[cfg(feature = "serde")]
++impl SerializeHeader {
++    #[inline]
++    fn new(inner: &XRc<RwLock<Box<DynSerialize>>>) -> Self {
++        Self {
++            inner: Some(XRc::downgrade(inner)),
+         }
+     }
++
++    #[inline]
++    pub(super) fn is_serializable(&self) -> bool {
++        self.inner.is_some()
++    }
++}
++
++#[cfg(feature = "serde")]
++impl Serialize for SerializeHeader {
++    fn serialize<S: Serializer>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> {
++        let inner = (self.inner)
++            .as_ref()
++            .and_then(XWeak::upgrade)
++            .ok_or_else(|| serde::ser::Error::custom("cannot serialize <userdata>"))?;
++        let _guard = (unsafe { inner.raw() }.try_lock_shared_guarded())
++            .map_err(|_| serde::ser::Error::custom(Error::UserDataBorrowError))?;
++        unsafe { (*inner.data_ptr()).serialize(serializer) }
++    }
+ }
+ 
+ pub(crate) enum ScopedUserDataVariant<T> {
+@@ -157,17 +195,21 @@ impl<T> Drop for ScopedUserDataVariant<T> {
+ impl<T: 'static> UserDataStorage<T> {
+     #[inline(always)]
+     pub(crate) fn new(data: T) -> Self {
+-        Self::Owned(UserDataVariant::Default(XRc::new(RwLock::new(data))))
++        Self::from_inner(UserDataStorageInner::Owned(UserDataVariant::Default(XRc::new(
++            RwLock::new(data),
++        ))))
+     }
+ 
+     #[inline(always)]
+     pub(crate) fn new_ref(data: &T) -> Self {
+-        Self::Scoped(ScopedUserDataVariant::Ref(data))
++        Self::from_inner(UserDataStorageInner::Scoped(ScopedUserDataVariant::Ref(data)))
+     }
+ 
+     #[inline(always)]
+     pub(crate) fn new_ref_mut(data: &mut T) -> Self {
+-        Self::Scoped(ScopedUserDataVariant::RefMut(RefCell::new(data)))
++        Self::from_inner(UserDataStorageInner::Scoped(ScopedUserDataVariant::RefMut(
++            RefCell::new(data),
++        )))
+     }
+ 
+     #[cfg(feature = "serde")]
+@@ -177,89 +219,102 @@ impl<T: 'static> UserDataStorage<T> {
+         T: Serialize + crate::types::MaybeSend + crate::types::MaybeSync,
+     {
+         let data = Box::new(data) as Box<DynSerialize>;
+-        let variant = UserDataVariant::Serializable(XRc::new(RwLock::new(data)));
+-        Self::Owned(variant)
+-    }
+-
+-    #[cfg(feature = "serde")]
+-    #[inline(always)]
+-    pub(crate) fn is_serializable(&self) -> bool {
+-        matches!(self, Self::Ow
+```
+
+**File**: `src/userdata/ref.rs` (modified, +8/-3)
+```diff
+@@ -70,8 +70,13 @@ impl<T> UserDataGuard<T> {
+     }
+ 
+     #[inline(always)]
+-    fn as_ptr(&self) -> *mut T {
+-        self.variant.as_ptr()
++    fn as_ptr(&self) -> *const T {
++        unsafe { self.variant.as_ptr() }
++    }
++
++    #[inline(always)]
++    unsafe fn as_mut_ptr(&mut self) -> *mut T {
++        unsafe { self.variant.as_mut_ptr() }
+     }
+ 
+     #[inline(always)]
+@@ -480,7 +485,7 @@ impl<T> DerefMut for UserDataRefMutInner<T> {
+     #[inline]
+     fn deref_mut(&mut self) -> &mut T {
+         match self {
+-            Self::Default(inner) => unsafe { &mut *inner.as_ptr() },
++            Self::Default(inner) => unsafe { &mut *inner.as_mut_ptr() },
+ 
+             #[cfg(all(feature = "userdata-wrappers", not(feature = "send")))]
+             Self::RcRefCell(x, ..) => x,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2704,33 +2673,33 @@ Closes #760 and #763.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. scope teardown re-entry aliasing
+## X. stale argument count in Thread::resume
 
 **RULE**:
-When implementing operations in `src/scope.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mlua-rs/mlua. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/thread.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mlua-rs/mlua. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e4699f2f`: scope teardown re-entry aliasing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bda8eb3`: stale argument count in Thread::resume. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/scope.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/thread.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-struct Destructors<'a>(Box<RefCell<Option<Vec<(ValueRef, DestructorCallback<'a>)>>>>);
-            destructors: Destructors(Box::new(RefCell::new(Some(Vec::new())))),
+                // Argument conversion may change this thread, so re-read its state
+                (pushed_nargs, hook_yielded) = self.resumable_state(&lua)?;
+                if !hook_yielded && nargs > 0 {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-struct Destructors<'a>(RefCell<Option<Vec<(ValueRef, DestructorCallback<'a>)>>>);
-            destructors: Destructors(RefCell::new(Some(Vec::new()))),
+                if nargs > 0 {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e4699f2f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bda8eb3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
