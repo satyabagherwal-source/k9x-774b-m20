@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T07:20:47.938Z",
-  "total_records": 1475,
+  "last_updated": "2026-11-17T07:28:25.806Z",
+  "total_records": 1477,
   "domains": {
     "A": {
       "total": 9,
@@ -1004,7 +1004,7 @@
       ]
     },
     "H": {
-      "total": 340,
+      "total": 342,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1345,7 +1345,9 @@
         "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants",
         "DOM-H-B6148692",
         "domain_intelligence-technical-construction-intelligence-react-react-native-learnings-core-invariants",
-        "DOM-H-F8265FBB"
+        "DOM-H-F8265FBB",
+        "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-learnings-core-invariants"
       ]
     },
     "I": {
@@ -22109,8 +22111,8 @@
       "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
       "repository": "etcd-io/etcd",
-      "content_hash": "4b8d84d1ea06ad4c210166af797722ef4cd2080010f6cce71aa3ea97760668db",
-      "created_at": "2026-11-15T23:59:58.816Z"
+      "content_hash": "50f42800a10917a58af0c4fbf9f563e2fd2e28d62e7de73609abd8ed9155be17",
+      "created_at": "2026-11-17T07:28:21.244Z"
     },
     "DOM-D-CB5F7DEE": {
       "record_id": "DOM-D-CB5F7DEE",
@@ -22211,8 +22213,8 @@
       "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-learnings-content-information-intelligence-etcd-io-etcd-learnings-c.md",
       "repository": "etcd-io-etcd-learnings",
-      "content_hash": "f318034b16f45216bfd3a2ddb97d53e2f48076a8350e8f1022f5d4b3ce93e160",
-      "created_at": "2026-11-16T00:01:04.305Z"
+      "content_hash": "36c01378c7b1a69fc8efa3f75f7fe77ff5fe0511ffe725a18634ceb7456125aa",
+      "created_at": "2026-11-17T07:28:25.806Z"
     },
     "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants",
@@ -22397,8 +22399,8 @@
       "title": "Architecture Intelligence: clastix/kamaji Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clastix-kamaji-architecture-intelligence-clastix-kamaji-core-invariants.md",
       "repository": "clastix/kamaji",
-      "content_hash": "3164a80b593ee3a311ba4f6b4ddfb90fdef086a2d837db1b67ab07b6ff9fb89e",
-      "created_at": "2026-11-16T00:56:52.102Z"
+      "content_hash": "bb740e44ad32257012a9245a80b642f7e24eee797f2bd99c6e3337b4c3bec683",
+      "created_at": "2026-11-17T07:28:16.123Z"
     },
     "domain_intelligence-architecture-intelligence-clastix-kamaji-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clastix-kamaji-learnings-core-invariants",
@@ -22406,8 +22408,8 @@
       "title": "Architecture Intelligence: clastix-kamaji-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clastix-kamaji-learnings-architecture-intelligence-clastix-kamaji-learnings-core.md",
       "repository": "clastix-kamaji-learnings",
-      "content_hash": "6f793c19e8f57d312907abbdec7f17bb662dde9cfe3e6da0045b30821a174898",
-      "created_at": "2026-11-16T00:56:55.361Z"
+      "content_hash": "4c3f2641b64fcad46db5749e31022cccdca435263bba83058c7d7481eb2fb860",
+      "created_at": "2026-11-17T07:28:25.071Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants",
@@ -25676,6 +25678,24 @@
       "repository": "storybookjs-storybook-learnings",
       "content_hash": "a7c80252bf815bba6fe4e7ee24b291c14a0e03200b7321f4de6be8324a92db95",
       "created_at": "2026-11-17T07:20:47.168Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: transact-rs/sqlx Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-transact-rs-sqlx-technical-construction-intelligence-transact-rs-sqlx-core-invar.md",
+      "repository": "transact-rs/sqlx",
+      "content_hash": "6c2a8da0d329bdcba5e0782c224d8a0edf2a1eca40110383706d081ab5d3128f",
+      "created_at": "2026-11-17T07:28:08.240Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: transact-rs-sqlx-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-transact-rs-sqlx-learnings-technical-construction-intelligence-transact-rs-sqlx-.md",
+      "repository": "transact-rs-sqlx-learnings",
+      "content_hash": "fbeae491be9954898d20f5ba049ec3f9a1a751884b549bd0f830816d09f54d80",
+      "created_at": "2026-11-17T07:28:24.445Z"
     }
   }
 }

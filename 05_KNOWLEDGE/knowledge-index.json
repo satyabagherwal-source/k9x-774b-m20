@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T07:20:48.059Z",
-  "total_verified_learnings": 8863,
+  "last_updated": "2026-11-17T07:28:25.931Z",
+  "total_verified_learnings": 8864,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19915,
+  "total_items": 19927,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -248851,17 +248851,23 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "f577f0d8",
-      "content_hash": "98c6c67b5fb2a8dba84fb602bee594bde65827a9ba8b9d8d56a742e5eabcda04",
+      "source_version": "b32ff8a1",
+      "content_hash": "f64ed31cfcc354bd2fa132c566b7e8701614d016379bc0b48745be07c01b4cf7",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 8904,
+          "title": "Empirical Invariant Guard in CONTRIBUTING.md",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T23:59:58.399Z",
+      "verified_at": "2026-11-17T07:28:20.790Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248889,10 +248895,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
       "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
       "repository": "etcd-io/etcd",
-      "source_version": "f577f0d8",
-      "content_hash": "4b8d84d1ea06ad4c210166af797722ef4cd2080010f6cce71aa3ea97760668db",
+      "source_version": "b32ff8a1",
+      "content_hash": "50f42800a10917a58af0c4fbf9f563e2fd2e28d62e7de73609abd8ed9155be17",
       "domain_letter": "I",
-      "persisted_at": "2026-11-15T23:59:58.816Z"
+      "persisted_at": "2026-11-17T07:28:21.244Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd",
@@ -248901,10 +248907,10 @@
       "relative_path": "08_VERIFICATION/etcd-io-etcd-verification-protocol-empirical-defect-shield-for-etcd-io-etcd.md",
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io/etcd",
       "repository": "etcd-io/etcd",
-      "source_version": "f577f0d8",
-      "content_hash": "386f5762f71f1de5b089193344333e2b8b8cd6d48af63d244344dba04388f48f",
+      "source_version": "b32ff8a1",
+      "content_hash": "a233da23cc717c9999f1de9b117b73e4b8cf979248d7ea5c66f8fee66d410219",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T23:59:58.917Z"
+      "persisted_at": "2026-11-17T07:28:21.364Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria",
@@ -248938,9 +248944,9 @@
       "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
       "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "f318034b16f45216bfd3a2ddb97d53e2f48076a8350e8f1022f5d4b3ce93e160",
+      "content_hash": "36c01378c7b1a69fc8efa3f75f7fe77ff5fe0511ffe725a18634ceb7456125aa",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T00:01:04.305Z"
+      "persisted_at": "2026-11-17T07:28:25.806Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-etcd-io-etcd-learnings",
@@ -248950,9 +248956,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io-etcd-learnings",
       "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb84e0dffa8725c860043a6fa609bc5c7f41e51c4c689e6129e34dd94c8c5242",
+      "content_hash": "24946028d3d83dead53dab8a4c114269991ad9648b3823696b911c7142b013db",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:01:04.437Z"
+      "persisted_at": "2026-11-17T07:28:25.931Z"
     },
     "learn-github-metrolistgroup-metrolist": {
       "learning_id": "learn-github-metrolistgroup-metrolist",
@@ -249763,14 +249769,19 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "60204b0c",
-      "content_hash": "9d8fa97c88ecf1149dabda8f5c662700425cf494fd0b8d2294f1427e2ae69ef5",
+      "source_version": "afdb6e7a",
+      "content_hash": "1401fba93be506cc52c648c838b7c5a3ea4d1d964800352712326260d85f50ec",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
         {
           "number": 8679,
           "title": "exclusive etcd DataStore",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8903,
+          "title": "standard Ready condition on TenantControlPlane",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -249779,7 +249790,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T00:56:51.622Z",
+      "verified_at": "2026-11-17T07:28:15.664Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249821,10 +249832,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clastix-kamaji-architecture-intelligence-clastix-kamaji-core-invariants.md",
       "title": "Architecture Intelligence: clastix/kamaji Core Invariants",
       "repository": "clastix/kamaji",
-      "source_version": "60204b0c",
-      "content_hash": "3164a80b593ee3a311ba4f6b4ddfb90fdef086a2d837db1b67ab07b6ff9fb89e",
+      "source_version": "afdb6e7a",
+      "content_hash": "bb740e44ad32257012a9245a80b642f7e24eee797f2bd99c6e3337b4c3bec683",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:56:52.102Z"
+      "persisted_at": "2026-11-17T07:28:16.123Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji",
@@ -249833,10 +249844,10 @@
       "relative_path": "08_VERIFICATION/clastix-kamaji-verification-protocol-empirical-defect-shield-for-clastix-kamaji.md",
       "title": "Verification Protocol: Empirical Defect Shield for clastix/kamaji",
       "repository": "clastix/kamaji",
-      "source_version": "60204b0c",
-      "content_hash": "6dbf1e6fe03e03c578beca1d60d937e56dd1bec974862d2dacaf4011a55d9b56",
+      "source_version": "afdb6e7a",
+      "content_hash": "f5f33704e708dc19c6d7789a436d2f91de9d92bd0922f54beba4848cf5eca600",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:56:52.217Z"
+      "persisted_at": "2026-11-17T07:28:16.246Z"
     },
     "candidate_directive-datastore-exclusive-etcd-datastore": {
       "item_id": "candidate_directive-datastore-exclusive-etcd-datastore",
@@ -249858,9 +249869,9 @@
       "title": "Architecture Intelligence: clastix-kamaji-learnings Core Invariants",
       "repository": "clastix-kamaji-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f793c19e8f57d312907abbdec7f17bb662dde9cfe3e6da0045b30821a174898",
+      "content_hash": "4c3f2641b64fcad46db5749e31022cccdca435263bba83058c7d7481eb2fb860",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:56:55.361Z"
+      "persisted_at": "2026-11-17T07:28:25.071Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clastix-kamaji-learnings",
@@ -249870,9 +249881,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clastix-kamaji-learnings",
       "repository": "clastix-kamaji-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a8cffb996fe5b01b6af4add45f7bed2e2f2aa60817a0806230afce20e20fad3",
+      "content_hash": "738215b71bc9eed6868022b384668dd26624f5f84e0ee24bce1f9059cc95f867",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:56:55.478Z"
+      "persisted_at": "2026-11-17T07:28:25.193Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants",
@@ -266237,6 +266248,177 @@
       "content_hash": "a7c80252bf815bba6fe4e7ee24b291c14a0e03200b7321f4de6be8324a92db95",
       "domain_letter": "G",
       "persisted_at": "2026-11-17T07:20:47.168Z"
+    },
+    "learn-github-transact-rs-sqlx": {
+      "learning_id": "learn-github-transact-rs-sqlx",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "transact-rs/sqlx",
+      "repository": "transact-rs/sqlx",
+      "slug": "transact-rs-sqlx",
+      "platform": "github",
+      "source_url": "https://github.com/transact-rs/sqlx",
+      "source_version": "488c4113",
+      "content_hash": "ae5f9fba7cba7e9f9c47f59e5fe443d05695fb4273facf02b5f53dff048985d4",
+      "dossier_path": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8902,
+          "title": "synchronize transaction depth when SQLite auto-rolls back",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T07:28:07.782Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8902": {
+      "learning_id": "rule-8902",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8902,
+      "title": "synchronize transaction depth when SQLite auto-rolls back",
+      "source_url": "https://github.com/transact-rs/sqlx",
+      "source_version": "488c4113",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T07:28:07.782Z"
+    },
+    "candidate_directive-synchronize-transaction-depth-when-sqlite-auto-rolls-back": {
+      "item_id": "candidate_directive-synchronize-transaction-depth-when-sqlite-auto-rolls-back",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EOC7-synchronize-transaction-depth-when-sqlite-auto-rolls-back.md",
+      "title": "synchronize transaction depth when SQLite auto-rolls back",
+      "repository": "transact-rs/sqlx",
+      "source_version": "488c4113",
+      "content_hash": "c943b26817528f58ca5fa6eef833fc19149a0801636f1d868c539286144245e9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:28:08.122Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-transact-rs-sqlx-technical-construction-intelligence-transact-rs-sqlx-core-invar.md",
+      "title": "Technical Construction Intelligence: transact-rs/sqlx Core Invariants",
+      "repository": "transact-rs/sqlx",
+      "source_version": "488c4113",
+      "content_hash": "6c2a8da0d329bdcba5e0782c224d8a0edf2a1eca40110383706d081ab5d3128f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:28:08.240Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-transact-rs-sqlx": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-transact-rs-sqlx",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/transact-rs-sqlx-verification-protocol-empirical-defect-shield-for-transact-rs-s.md",
+      "title": "Verification Protocol: Empirical Defect Shield for transact-rs/sqlx",
+      "repository": "transact-rs/sqlx",
+      "source_version": "488c4113",
+      "content_hash": "c6bb8261266a039fc62d1bc2e0128bb5c79915eab4c451b7d8c9b4222ab20380",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:28:08.365Z"
+    },
+    "rule-8903": {
+      "learning_id": "rule-8903",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8903,
+      "title": "standard Ready condition on TenantControlPlane",
+      "source_url": "https://github.com/clastix/kamaji",
+      "source_version": "afdb6e7a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T07:28:15.664Z"
+    },
+    "candidate_directive-standard-ready-condition-on-tenantcontrolplane": {
+      "item_id": "candidate_directive-standard-ready-condition-on-tenantcontrolplane",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F1BN-standard-ready-condition-on-tenantcontrolplane.md",
+      "title": "standard Ready condition on TenantControlPlane",
+      "repository": "clastix-kamaji-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2e3831f76eaffc84acb15f42d0279ee5bc934d31fe2921f5198cbdd1c57ba596",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T07:28:24.948Z"
+    },
+    "rule-8904": {
+      "learning_id": "rule-8904",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8904,
+      "title": "Empirical Invariant Guard in CONTRIBUTING.md",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "b32ff8a1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T07:28:20.790Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-contributing-md": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-contributing-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F1W4-empirical-invariant-guard-in-contributing-md.md",
+      "title": "Empirical Invariant Guard in CONTRIBUTING.md",
+      "repository": "etcd-io-etcd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "db83ccce109812ba69cc559e07c788540caa4183e12f1e3f3e21595a0cc8b9dc",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T07:28:25.684Z"
+    },
+    "candidate_directive-sqlite-synchronize-transaction-depth-when-sqlite-auto-rolls-back": {
+      "item_id": "candidate_directive-sqlite-synchronize-transaction-depth-when-sqlite-auto-rolls-back",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F0UB-sqlite-synchronize-transaction-depth-when-sqlite-auto-rolls-back.md",
+      "title": "sqlite): synchronize transaction depth when SQLite auto-rolls back",
+      "repository": "transact-rs-sqlx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ca46b81b95b21c3cca46054932203fc702b8836b053bfea9d4861ee322837114",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:28:24.327Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-transact-rs-sqlx-learnings-technical-construction-intelligence-transact-rs-sqlx-.md",
+      "title": "Technical Construction Intelligence: transact-rs-sqlx-learnings Core Invariants",
+      "repository": "transact-rs-sqlx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fbeae491be9954898d20f5ba049ec3f9a1a751884b549bd0f830816d09f54d80",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:28:24.445Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-transact-rs-sqlx-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-transact-rs-sqlx-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/transact-rs-sqlx-learnings-verification-protocol-empirical-defect-shield-for-tra.md",
+      "title": "Verification Protocol: Empirical Defect Shield for transact-rs-sqlx-learnings",
+      "repository": "transact-rs-sqlx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1e4fa5f4739d26042ce0972d357dfd94b7ef2287f7c2f43dbc4f286f937c8369",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:28:24.568Z"
     }
   },
   "ai-builder-brain": {

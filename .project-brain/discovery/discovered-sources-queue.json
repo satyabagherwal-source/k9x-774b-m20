@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T07:20:47.664Z",
+  "updated_at": "2026-11-17T07:28:25.520Z",
   "stats": {
-    "total_discovered": 4867,
-    "approved_pending_harvest": 4583,
+    "total_discovered": 4875,
+    "approved_pending_harvest": 4591,
     "harvested_count": 0,
     "rejected_count": 284,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4587,
+      "COMMUNITY_AND_EXPERT": 4595,
       "OFFICIAL_DOCUMENTATION": 150,
       "STANDARDS_AND_SPECIFICATIONS": 101,
       "ENGINEERING_BLOGS": 3,
@@ -105107,6 +105107,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
         "fileName": "nucleoidai-nucleoid-learnings.md"
+      }
+    },
+    "SRC-FC18B20FD2F4": {
+      "id": "SRC-FC18B20FD2F4",
+      "url": "https://github.com/moby/moby",
+      "title": "https://github.com/moby/moby",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:28:24.718Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
+      }
+    },
+    "SRC-717F9AF4C87A": {
+      "id": "SRC-717F9AF4C87A",
+      "url": "https://github.com/moby/moby/releases",
+      "title": "https://github.com/moby/moby/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:28:24.750Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
+      }
+    },
+    "SRC-E6BE30D2A566": {
+      "id": "SRC-E6BE30D2A566",
+      "url": "https://github.com/moby/moby/compare/api/v1.56.1...api/v1.57.0",
+      "title": "https://github.com/moby/moby/compare/api/v1.56.1...api/v1.57.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:28:24.784Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
+      }
+    },
+    "SRC-7F946352D481": {
+      "id": "SRC-7F946352D481",
+      "url": "https://protobuf.dev/",
+      "title": "https://protobuf.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:28:25.401Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-ED4412F15F47": {
+      "id": "SRC-ED4412F15F47",
+      "url": "https://github.com/protocolbuffers/protobuf/releases/tag/v3.20.3",
+      "title": "https://github.com/protocolbuffers/protobuf/releases/tag/v3.20.3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:28:25.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-C19B4C337603": {
+      "id": "SRC-C19B4C337603",
+      "url": "https://github.com/protocolbuffers/protobuf/releases/tag/v36.2",
+      "title": "https://github.com/protocolbuffers/protobuf/releases/tag/v36.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:28:25.460Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-2221198ECF95": {
+      "id": "SRC-2221198ECF95",
+      "url": "https://www.yamllint.com/",
+      "title": "https://www.yamllint.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:28:25.492Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-929491743BF7": {
+      "id": "SRC-929491743BF7",
+      "url": "https://jqlang.github.io/jq",
+      "title": "https://jqlang.github.io/jq",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:28:25.520Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
+        "fileName": "etcd-io-etcd-learnings.md"
       }
     }
   }

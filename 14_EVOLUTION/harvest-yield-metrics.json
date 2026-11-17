@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T07:20:19.592Z",
-  "total_cycles_completed": 10054,
-  "total_learnings_persisted": 10054,
-  "total_rules_promoted": 9641,
+  "last_updated": "2026-11-17T07:28:20.966Z",
+  "total_cycles_completed": 10057,
+  "total_learnings_persisted": 10057,
+  "total_rules_promoted": 9644,
   "history": [
-    {
-      "timestamp": "2026-11-16T11:45:10.710Z",
-      "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
-      "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T11:45:16.839Z",
-      "repository": "meilisearch/meilisearch",
-      "learningId": "learn-github-meilisearch-meilisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T12:48:12.969Z",
-      "repository": "Pika-Labs/Pika-H3-Flex",
-      "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T12:48:14.208Z",
       "repository": "rook/rook",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T07:20:19.592Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:28:07.955Z",
+      "repository": "transact-rs/sqlx",
+      "learningId": "learn-github-transact-rs-sqlx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:28:15.839Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:28:20.966Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

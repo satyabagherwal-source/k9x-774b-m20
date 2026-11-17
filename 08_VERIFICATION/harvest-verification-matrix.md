@@ -10477,3 +10477,6 @@
 | `CYCLE-20261117-4FF9` | `2026-11-17T07:20:10.005Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8900` | Yes (`7393efc9...`) |
 | `CYCLE-20261117-4MTD` | `2026-11-17T07:20:19.585Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8901` | Yes (`d8cf873c...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T07:20:46.792Z` | `storybookjs-storybook` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F8265FBB` [Domain H] | Yes (`082c5a41...`) |
+| `CYCLE-20261117-EO7F` | `2026-11-17T07:28:07.947Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8902` | Yes (`ae5f9fba...`) |
+| `CYCLE-20261117-EUAE` | `2026-11-17T07:28:15.830Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8903` | Yes (`1401fba9...`) |
+| `CYCLE-20261117-EY8T` | `2026-11-17T07:28:20.957Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8904` | Yes (`f64ed31c...`) |

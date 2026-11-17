@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-MJ0Q",
-    "timestamp": "2026-11-14T17:03:05.930Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "4109c8eec9e1dae92523781da57457f52c2d30477d0e515d0555fe9d1715ff69",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-MWAZ",
-    "timestamp": "2026-11-14T17:03:23.147Z",
-    "repository": "autotrust/GEV-26B-Decide",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-    "contentHash": "cbb115a815af1a22c714344f3c010bbcfd86bdb0279479b3ee921181cce085dd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-ECZ5",
-    "timestamp": "2026-11-14T17:24:44.465Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "857ae9e371ea27abd2f4371d198d8b20fd52abfce1a083ef03c0a90648093bb6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-EEEZ",
     "timestamp": "2026-11-14T17:24:46.331Z",
     "repository": "astral-sh/uv",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "d8cf873c8778e59d3e419f78c566e6b6b1cc179ebb966371c35c67942691c59e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-EO7F",
+    "timestamp": "2026-11-17T07:28:07.947Z",
+    "repository": "transact-rs/sqlx",
+    "learningId": "learn-github-transact-rs-sqlx",
+    "contentHash": "ae5f9fba7cba7e9f9c47f59e5fe443d05695fb4273facf02b5f53dff048985d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-EUAE",
+    "timestamp": "2026-11-17T07:28:15.830Z",
+    "repository": "clastix/kamaji",
+    "learningId": "learn-github-clastix-kamaji",
+    "contentHash": "1401fba93be506cc52c648c838b7c5a3ea4d1d964800352712326260d85f50ec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-EY8T",
+    "timestamp": "2026-11-17T07:28:20.957Z",
+    "repository": "etcd-io/etcd",
+    "learningId": "learn-github-etcd-io-etcd",
+    "contentHash": "f64ed31cfcc354bd2fa132c566b7e8701614d016379bc0b48745be07c01b4cf7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

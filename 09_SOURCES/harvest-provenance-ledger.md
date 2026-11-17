@@ -10510,3 +10510,6 @@ Every entry in this ledger must capture:
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `5aea8b6a` | Multi-dimensional audit evidence | 2026-11-17T07:20:10.008Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `92cbd316` | Multi-dimensional audit evidence | 2026-11-17T07:20:19.588Z |
 | `learn-dom-h-f8265fbb` | `project://storybookjs-storybook` | `5aea8b6a` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md` | 2026-11-17T07:20:46.792Z |
+| `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `488c4113` | Multi-dimensional audit evidence | 2026-11-17T07:28:07.951Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `afdb6e7a` | Multi-dimensional audit evidence | 2026-11-17T07:28:15.834Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `b32ff8a1` | Multi-dimensional audit evidence | 2026-11-17T07:28:20.961Z |

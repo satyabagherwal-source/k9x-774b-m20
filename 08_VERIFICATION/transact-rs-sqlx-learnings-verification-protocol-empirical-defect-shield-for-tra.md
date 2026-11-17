@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:56.767Z",
+  "timestamp": "2026-11-17T07:28:24.218Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-transact-rs-sqlx-learnings",
+  "learning_id": "LEARN-EVO-transact-rs-sqlx-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [transact-rs-sqlx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:56.767Z`  
-> **Learning ID**: `LEARN-REEXTRACT-transact-rs-sqlx-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T07:28:24.218Z`  
+> **Learning ID**: `LEARN-EVO-transact-rs-sqlx-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source**: github ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
-> **Source Version**: `987b8c5a`  
+> **Source Version**: `488c4113`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T06:56:01.366Z  
+> **Timestamp**: 2026-11-17T07:28:07.050Z  
 > **Learning ID**: `learn-github-transact-rs-sqlx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T06:56:01.360Z  
+> **Harvest Timestamp**: 2026-11-17T07:28:07.047Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17658 stars
+- **Stars / Engagement**: 17681 stars
 
 ---
 
@@ -1006,350 +1006,873 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47b9f8e7` (2026-11-09)
-**Commit Message**: fix(postgres): keep draining resolved type dependencies in fill_cache. (#4498)
+### Incident Patch 1: `6ead2994` (2026-11-16)
+**Commit Message**: fix(sqlite): synchronize transaction depth when SQLite auto-rolls back (#4473)
 
-`resolved_dependencies` contains rows already removed from
-`missing_dependencies`. When a dependent row still had an uncached
-dependency, `continue 'outer` discarded the rest of the deque, leaving
-their dependents unresolved.
+When SQLite encounters errors such as SQLITE_FULL, SQLITE_IOERR, or SQLITE_CORRUPT during a statement execution, it automatically rolls back the active transaction and resets autocommit mode to active (1).
 
-Keep draining the deque after re-registering the blocked row.
+Previously, when the application or Transaction drop guard subsequently invoked rollback or commit, SQLx attempted to execute a ROLLBACK / RELEASE statement. Because no SQLite transaction was active, the statement failed, leaving shared.transaction_depth stuck at its previous value (>= 1). Subsequent attempts to start transactions via begin_with failed with InvalidSavePointStatement.
 
-Fixes #4497.
+This change updates the SQLite connection worker:
+- In Command::Rollback, if depth > 0 but !conn.handle.in_transaction(), reset shared.transaction_depth to 0 and treat the rollback as Ok(()).
+- In Command::Commit, if res.is_err() and !conn.handle.in_transaction(), reset shared.transaction_depth to 0.
+- In Command::Begin, synchronize depth to 0 if !conn.handle.in_transaction().
+- Adds regression test reproducing SQLITE_FULL via page limit.
 
-**File**: `sqlx-postgres/src/connection/resolve.rs` (modified, +9/-1)
+Fixes #4434
+
+Signed-off-by: Samran Asif <[REDACTED_EMAIL]>
+Co-authored-by: Austin
+
+**File**: `sqlx-sqlite/src/connection/worker.rs` (modified, +43/-16)
 ```diff
-@@ -453,7 +453,15 @@ impl TypeResolver {
- 
-                         self.push_type("NULL", missing_oid.0);
- 
--                        continue 'outer;
-+                        // Keep draining rows whose dependency was just resolved;
-+                        // abandoning them here would leave them unresolved forever.
-+                        match resolved_dependencies.pop_back() {
-+                            Some(next_row) => {
-+                                type_row = next_row;
-+                                continue;
-+                            }
-+                            None => continue 'outer,
-+                        }
+@@ -213,7 +213,12 @@ impl ConnectionWorker {
+                         update_cached_statements_size(&conn, &shared.cached_statements_size);
                      }
+                     Command::Begin { tx, statement } => {
+-                        let depth = shared.transaction_depth.load(Ordering::Acquire);
++                        let mut depth = shared.transaction_depth.load(Ordering::Acquire);
++
++                        if depth > 0 && !conn.handle.in_transaction() {
++                            shared.transaction_depth.store(0, Ordering::Release);
++                            depth = 0;
++                        }
  
-                     resolved_dependencies.extend(
+                         let is_custom_statement = statement.is_some();
+                         let statement = match statement {
+@@ -255,23 +260,33 @@ impl ConnectionWorker {
+                                     shared.transaction_depth.fetch_sub(1, Ordering::Release);
+                                 })
+                             {
+-                                // The rollback failed. To prevent leaving the connection
+-                                // in an inconsistent state we shutdown this worker which
+-                                // causes any subsequent operation on the connection to fail.
+-                                tracing::error!(%error, "failed to rollback cancelled transaction");
+-                                break;
++                                if !conn.handle.in_transaction() {
++                                        shared.transaction_depth.store(0, Ordering::Release);
++                                    } else {
++                                        // The rollback failed. To prevent leaving the connection
++                                        // in an inconsistent state we shutdown this worker which
++                                        // causes any subsequent operation on the connection to fail.
++                                        tracing::error!(%error, "failed to rollback cancelled transaction");
++                                        break;
++                                    }
+                             }
+                         }
+                     }
+                     Command::Commit { tx } => {
+                         let depth = shared.transaction_depth.load(Ordering::Acquire);
+ 
+                         let res = if depth > 0 {
+-                            conn.handle
+-                                .exec(commit_ansi_transaction_sql(depth).as_str())
+-                                .map(|_| {
+-                                    shared.transaction_depth.fetch_sub(1, Ordering::Release);
+-                                })
++                            let res = conn.handle
++                                    .exec(commit_ansi_transaction_sql(depth).as_str())
++                                    .map(|_| {
++                                        shared.transaction_depth.fetch_sub(1, Ordering::Release);
++                                    });
++
++                                if res.is_err() && !conn.handle.in_transaction() {
++                                    shared.transaction_depth.store(0, Ordering::Release);
++                                }
++
++                                res
+                         } else {
+                             Ok(())
+                         };
+@@ -293,11 +308,23 @@ impl ConnectionWorker {
+                         let depth = shared.transaction_depth.load(Ordering::Acquire);
+ 
+                         let res = if depth > 0 {
+-                            conn.handle
+-                                .exec(rollback_ansi_transaction_sql(depth).as_str())
+-                                .map(|_| {
+-                                    shared.transaction_depth.fetch_sub(1, Ordering::Release);
+-                                })
++                            if !conn.handle.in_transaction() {
++                                    shared.transaction_depth.store(0, Ordering::Release);
++                                    Ok(())
++                                } else {
++                                    let res = conn.handle
++                                        .exec(rollback_ansi_transaction_sql(depth).as_str())
++                                        .map(|_| {
++                                            shared.transaction_depth.fetch_sub(1, Ordering::Release);
++                                        });
++
++                                    if res.is_err() && !conn.handle.in_transaction() {
++                                        shared.transaction_depth.store(0, Ordering::Release);
++                                        Ok(())
++                                    } else {
++                                        res
++                                    }
++                                }
+                         } else {
+                             Ok(())
+                         };
 ```
 
-**File**: `tests/postgres/describe.rs` (modified, +30/-0)
+**File**: `tests/sqlite/sqlite.rs` (modified, +32/-0)
 ```diff
-@@ -119,3 +119,33 @@ async fn it_describes_composite() -> anyhow::Result<()> {
- 
+@@ -1396,6 +1396,38 @@ async fn it_can_recover_from_bad_transaction_begin() -> anyhow::Result<()> {
      Ok(())
  }
-+
-+// Regression test for #4497: resolving one custom type could drop other
-+// pending dependencies, leaving them unresolved on a cold type cache.
+ 
 +#[sqlx_macros::test]
-+async fn it_describes_nested_custom_types() -> anyhow::Result<()> {
-+    let mut conn = new::<Postgres>().await?;
-+    conn.execute(
-+        r#"
-+DROP TYPE IF EXISTS issue_4497_holder CASCADE;
-+DROP TYPE IF EXISTS issue_4497_pair CASCADE;
-+DROP TYPE IF EXISTS issue_4497_leaf_b CASCADE;
-+DROP TYPE IF EXISTS issue_4497_leaf_a CASCADE;
++async fn it_resets_depth_when_sqlite_auto_rolls_back() -> anyhow::Result<()> {
++    let mut conn = SqliteConnectOptions::new()
++        .in_memory(true)
++        .connect()
++        .await?;
 +
-+CREATE TYPE issue_4497_leaf_a AS (x int4);
-+CREATE TYPE issue_4497_leaf_b AS (y int4);
-+CREATE TYPE issue_4497_pair AS (a issue_4497_leaf_a, b issue_4497_leaf_b);
-+CREATE TYPE issue_4497_holder AS (items issue_4497_leaf_a[]);
-+"#,
-+    )
-+    .await?;
++    conn.execute("PRAGMA page_size = 512;").await?;
++    conn.execute("PRAGMA max_page_count = 2;").await?;
++    conn.execute("CREATE TABLE test (x TEXT);").await?;
 +
-+    // A fresh connection so the type-OID cache is cold.
-+    let mut conn = new::<Postgres>().await?;
-+    conn.describe(
-+        "SELECT NULL::issue_4497_pair[] AS pairs, NULL::issue_4497_holder AS holder".into_sql_str(),
-+    )
-+    .await?;
++    let mut tx = conn.begin().await?;
++    // Trigger SQLITE_FULL by exceeding max_page_count
++    let res = sqlx::query("INSERT INTO test VALUES (zeroblob(2048));")
++        .execute(&mut *tx)
++        .await;
++    assert!(res.is_err());
++
++    // When SQLite automatically rolls back, rollback should succeed and reset depth
++    tx.rollback().await?;
++
++    // Subsequent begin_with must succeed instead of failing with InvalidSavePointStatement
++    let mut tx2 = conn.begin_with("BEGIN IMMEDIATE").await?;
++    let value = sqlx::query_scalar::<_, i32>("SELECT 1")
++        .fetch_one(&mut *tx2)
++        .await?;
++    assert_eq!(value, 1);
++    tx2.commit().await?;
 +
 +    Ok(())
 +}
++
+ fn transaction_state(handle: &mut LockedSqliteHandle) -> SqliteTransactionState {
+     use libsqlite3_sys::{sqlite3_txn_state, SQLITE_TXN_NONE, SQLITE_TXN_READ, SQLITE_TXN_WRITE};
+ 
 ```
 
 ---
 
-### Incident Patch 2: `987b8c5a` (2026-11-10)
-**Commit Message**: fix(postgres): preserve quoted "NULL" elements when decoding text arrays (#4488)
+### Incident Patch 2: `ea37ec4a` (2026-11-16)
+**Commit Message**: fix(tls): don't wait for incoming data in `RustlsSocket::poll_flush()` (#4450)
 
-* fix(postgres): preserve quoted "NULL" elements when decoding text arrays
+* fix(tls): don't wait for incoming data in `RustlsSocket::poll_flush()`
 
-In PostgreSQL's text array serialization format, an unquoted `NULL` element represents SQL NULL, whereas a quoted `"NULL"` element represents the literal four-character string `"NULL"`.
+`RustlsSocket::poll_flush` called `poll_complete_io`, which, once nothing
+is left to write, reads and waits until the peer sends something. A close
+always flushes first (`BufferedSocket::shutdown`), so `close_hard()` on a
+connection whose peer has nothing more to say never ends; and
+`return_to_pool` awaits `close_hard()` without a timeout when the ping on
+release fails, so each such connection holds its pool slot until the
+process exits.
 
-Previously, the text array decoder unquoted the element text before checking `if value == "NULL"`, erroneously decoding string `"NULL"` into `None` (SQL NULL) and causing silent data loss.
+That happens whenever a connection comes back to the pool with a statement
+still running that the server then cancels, its statement timeout firing
+after the future holding it was dropped: the ping on release receives the
+cancellation as an error, and through PgBouncer in transaction mode over
+TLS, the server's last answers having come with it, the pooler sends
+nothing more. Ten such closes leave a pool of ten that hands out nothing.
 
-This patch tracks whether the parsed element was surrounded by quotes (`was_quoted`) so that only unquoted `NULL` tokens are treated as SQL NULL.
+Flush now writes the pending TLS records and returns once none is left,
+as the write half of `complete_io` does, so the close ends whether or not
+the peer speaks ag
 
-Closes #4452
-
-* style: format sqlx-postgres/src/types/array.rs with cargo fmt
-
-**File**: `sqlx-postgres/src/types/array.rs` (modified, +42/-1)
+**File**: `sqlx-core/src/net/tls/tls_rustls.rs` (modified, +161/-1)
 ```diff
-@@ -269,6 +269,7 @@ where
-                 let delimiter = ',';
-                 let mut done = false;
-                 let mut in_quotes = false;
-+                let mut was_quoted = false;
-                 let mut in_escape = false;
-                 let mut value = String::with_capacity(10);
-                 let mut chars = s.chars();
-@@ -285,6 +286,7 @@ where
+@@ -67,7 +67,21 @@ impl<S: Socket> Socket for RustlsSocket<S> {
+     }
  
-                                 '"' => {
-                                     in_quotes = !in_quotes;
-+                                    was_quoted = true;
-                                 }
+     fn poll_flush(&mut self, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+-        self.poll_complete_io(cx)
++        // Only write out the pending TLS records: once nothing is left to write,
++        // `poll_complete_io()` reads and waits for the peer to send something,
++        // so a close (which flushes first) would hang if the peer has nothing more to say.
++        while self.state.wants_write() {
++            match self.state.write_tls(&mut self.inner) {
++                // The transport accepts no more; `complete_io()` treats this as EOF too.
++                Ok(0) => break,
++                Ok(_) => {}
++                Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
++                    ready!(self.inner.poll_ready(cx))?;
++                }
++                Err(e) => return Poll::Ready(Err(e)),
++            }
++        }
++        Poll::Ready(self.inner.flush())
+     }
  
-                                 '\\' => {
-@@ -307,7 +309,7 @@ where
-                         }
-                     }
- 
--                    let value_opt = if value == "NULL" {
-+                    let value_opt = if !was_quoted && value == "NULL" {
-                         None
-                     } else {
-                         Some(value.as_bytes())
-@@ -321,10 +323,49 @@ where
-                     })?);
- 
-                     value.clear();
-+                    was_quoted = false;
-                 }
- 
-                 Ok(elements)
-             }
-         }
+     fn poll_shutdown(&mut self, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+@@ -356,3 +370,149 @@ impl ServerCertVerifier for NoHostnameTlsVerifier {
+         self.verifier.supported_verify_schemes()
      }
  }
 +
 +#[cfg(test)]
 +mod tests {
++    use std::future::Future;
++    use std::pin::pin;
++    use std::task::Waker;
++
++    use rustls::{ConnectionCommon, ServerConfig, ServerConnection};
++
 +    use super::*;
-+    use crate::decode::Decode;
++    use crate::net::BufferedSocket;
 +
-+    #[test]
-+    fn test_text_array_decode_quoted_null() {
-+        let s = "{\"NULL\",NULL,null}";
-+        let value_ref = PgValueRef {
-+            value: Some(s.as_bytes()),
-+            row: None,
-+            type_info: PgTypeInfo::with_name("text[]"),
-+            format: PgValueFormat::Text,
-+        };
++    // A self-signed certificate and its key, for the test server only.
++    const CERT: &str = "\
++-----BEGIN CERTIFICATE-----
++MIIBIjCB1aADAgECAhQRcu62KABJbi99FYkUEAUGt9j9JDAFBgMrZXAwFDESMBAG
++A1UEAwwJbG9jYWxob3N0MCAXDTI2MTAwODIyMzE0OVoYDzIxMjYwOTE0MjIzMTQ5
++WjAUMRIwEAYDVQQDDAlsb2NhbGhvc3QwKjAFBgMrZXADIQCIT8wE5M9/LF5HKWU7
++hFe/SqknU66oA0FPmjfdziJ/IqM3MDUwFAYDVR0RBA0wC4IJbG9jYWxob3N0MB0G
++A1UdDgQWBBRarcSa6Ue2Ob0JlPlE/409LAm6STAFBgMrZXADQQBpNitWpyHm05qH
++3Z4w/YG/Ufe05/aDwRAwOKM9snf+pqJ8eG+WnxupOK9oJY/GpmTpW2XSBpVHyGRJ
++SmndpuEE
++-----END CERTIFICATE-----";
 +
-+        let decoded: Vec<Option<String>> =
-+            <Vec<Option<String>> as Decode<Postgres>>::decode(value_ref).unwrap();
-+        assert_eq!(
-+            decoded,
-+            vec![Some("NULL".to_string()), None, Some("null".to_string()),]
-+        );
++    const KEY: &str = "\
++-----BEGIN PRIVATE KEY-----
++MC4CAQAwBQYDK2VwBCIEID8jex+k7LAgC5JfhRHaleP+dhL1s4NemFDa1CMKvcuu
++-----END PRIVATE KEY-----";
++
++    /// A peer that takes every write and never sends anything.
++    #[derive(Default)]
++    struct SilentPeer {
++        received: Vec<u8>,
 +    }
 +
-+    #[test]
-+    fn test_text_array_decode_string_vec_quoted_null() {
-+        let s = "{\"NULL\",\"foo\"}";
-+        let value_ref = PgValueRef {
-+            value: Some(s.as_bytes()),
-+            row: None,
-+            type_info: PgTypeInfo::with_name("text[]"),
-+            format: PgValueFormat::Text,
-+        };
++    impl Socket for SilentPeer {
++        fn try_read(&mut self, _buf: &mut dyn ReadBuf) -> io::Result<usize> {
++            Err(io::ErrorKind::WouldBlock.into())
++        }
 +
-+        let decoded: Vec<String> = <Vec<String> as Decode<Postgres>>::decode(value_ref).unwrap();
-+        assert_eq!(decoded, vec!["NULL".to_string(), "foo".to_string(),]);
-+    }
-+}
-```
-
-**File**: `tests/postgres/types.rs` (modified, +8/-0)
-```diff
-@@ -86,6 +86,14 @@ test_type!(string_vec<Vec<String>>(Postgres,
- 
-     "array['Hello, World', '', 'Goodbye']::text[]"
-         == vec!["Hello, World", "", "Goodbye"],
++        fn try_write(&mut self, buf: &[u8]) -> io::Result<usize> {
++            self.received.extend_from_slice(buf);
++            Ok(buf.len())
++        }
 +
-+    "array['NULL', 'null']::text[]"
-+        == vec!["NULL", "null"],
-+));
++        fn poll_read_ready(&mut self, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
++            Poll::Pending
++        }
 +
-+test_type!(string_vec_opt<Vec<Option<String>>>(Postgres,
-+    "array['NULL', NULL, 'null']::text[]"
-+        == vec![Some("NULL".to_string()), None, Some("null".to_string())],
- ));
- 
- test_type!(string_array<[String; 3]>(Postgres,
-```
-
----
-
-### Incident Patch 3: `fd56e1df` (2026-11-09)
-**Commit Message**: fix(macros): reject `#[repr(C)]` on enums in `derive(Type)` (#4508)
-
-* fix(macros): ignore non-integer reprs like repr(C) when deriving Type for enums
-
-The derive took the first path-only item of #[repr(..)] as the integer type, so #[repr(C)] produced `as C` casts that don't compile. Only use integer reprs; anything else is treated like an enum without a repr.
-
-* fix(macros): reject #[repr(C)] on enums in derive(Type)
-
-repr(C) doesn't say whether the enum should be encoded as a string or as a
-C-like integer, and the C integer type differs per target. Instead of guessing,
-emit a compile error that points at #[repr(i32)] or removing the repr.
-
-Integer reprs work as before (also combined with C, e.g. #[repr(C, u8)]).
-Layout-only reprs like align(..), packed, transparent and Rust are still
-ignored since they don't affect the encoding.
-
-**File**: `sqlx-macros-core/src/derives/attributes.rs` (modified, +80/-2)
-```diff
-@@ -57,6 +57,8 @@ pub struct SqlxContainerAttributes {
-     pub type_name: Option<TypeName>,
-     pub rename_all: Option<RenameAll>,
-     pub repr: Option<Ident>,
-+    /// Set when `#[repr(C)]` is present; enums reject this (see `check_enum_attributes`).
-+    pub repr_c: Option<Ident>,
-     pub no_pg_array: bool,
-     pub default: bool,
- }
-@@ -78,6 +80,7 @@ pub struct SqlxChildAttributes {
- pub fn parse_container_attributes(input: &[Attribute]) -> syn::Result<SqlxContainerAttributes> {
-     let mut transparent = None;
-     let mut repr = None;
-+    let mut repr_c = None;
-     let mut type_name = None;
-     let mut rename_all = None;
-     let mut no_pg_array = None;
-@@ -127,15 +130,25 @@ pub fn parse_container_attributes(input: &[Attribute]) -> syn::Result<SqlxContai
-             let list: Punctuated<Meta, Token![,]> =
-                 attr.parse_args_with(<Punctuated<Meta, Token![,]>>::parse_terminated)?;
- 
--            if let Some(path) = list.iter().find_map(|f| f.require_path_only().ok()) {
--                try_set!(repr, path.get_ident().unwrap().clone(), list);
-+            for ident in list
-+                .iter()
-+                .filter_map(|f| f.require_path_only().ok()?.get_ident())
-+            {
-+                if is_integer_repr(ident) {
-+                    try_set!(repr, ident.clone(), list);
-+                } else if ident == "C" {
-+                    repr_c = Some(ident.clone());
-+                }
-+                // Other reprs (`Rust`, `transparent`, `align(..)`, `packed`) only affect
-+                // layout and say nothing about how the enum is encoded, so they're ignored.
-             }
-         }
-     }
- 
-     Ok(SqlxContainerAttributes {
-         transparent: transparent.unwrap_or(false),
-         repr,
-+        repr_c,
-         type_name,
-         rename_all,
-         no_pg_array: no_pg_array.unwrap_or(false),
-@@ -223,6 +236,23 @@ pub fn check_transparent_attributes(
-     Ok(attributes)
- }
- 
-+fn is_integer_repr(ident: &Ident) -> bool {
-+    matches!(
-+        ident.to_string().as_str(),
-+        "u8" | "u16"
-+            | "u32"
-+            | "u64"
-+            | "u128"
-+            | "usize"
-+            | "i8"
-+            | "i16"
-+            | "i32"
-+            | "i64"
-+            | "i128"
-+            | "isize"
-+    )
-+}
++        fn poll_write_ready(&mut self, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
++            Poll::Ready(Ok(()))
++        }
 +
- pub fn check_enum_attributes(input: &DeriveInput) -> syn::Result<SqlxContainerAttributes> {
-     let attributes = parse_container_attributes(&input.attrs)?;
- 
-@@ -232,6 +262,16 @@ pub fn check_enum_attributes(input: &DeriveInput) -> syn::Result<SqlxContainerAt
-         input
-     );
- 
-+    if let Some(ident) = &attributes.repr_c {
-+        if attributes.repr.is_none() {
-+            fail!(
-+                ident,
-+                "#[repr(C)] is ambiguous for #[derive(sqlx::Type)]: use an explicit integer repr \
-+                 like #[repr(i32)] to encode as an integer, or remove #[repr(C)] to encode as a string"
-+            );
++        fn poll_shutdown(&mut self, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
++            Poll::Ready(Ok(()))
 +        }
 +    }
 +
-     Ok(attributes)
- }
++    /// Has `to` read and process `records`.
++    fn deliver<D>(mut records: &[u8], to: &mut ConnectionCommon<D>) {
++        while !records.is_empty() {
++            to.read_tls(&mut records).unwrap();
++            to.process_new_packets().unwrap();
++        }
++    }
++
++    /// Delivers the TLS records queued in `from` to `to`.
++    fn transfer<A, B>(from: &mut ConnectionCommon<A>, to: &mut ConnectionCommon<B>) {
++        let mut records = Vec::new();
++        while from.wants_write() {
++            from.write_tls(&mut records).unwrap();
++        }
++        deliver(&records, to);
++    }
++
++    #[track_caller]
++    fn assert_ready_ok(poll: Poll<io::Result<()>>) {
++        assert!(
++            matches!(poll, Poll::Ready(Ok(()))),
++            "expected `Ready(Ok(()))`, got {poll:?}"
++        );
++    }
++
++    // A flush with nothing left to write used to read and wait for the peer to send something,
++    // so a close, which flushes first, never ended if the peer had nothing more to say (#4449).
++    #[test]
++    fn flush_and_shutdown_do_not_wait_for_a_silent_peer() {
++        let mut cx = Context::from_waker(Waker::noop());
++
++        // The client's config as `sslmode=require` builds it; loading no files, it's ready at once.
++        let tls_config = TlsConfig {
++            accept_invalid_certs: true,
++            accept_invalid_hostnames: true,
++            root_cert_path: None,
++            client_cert_path: None,
++            client_key_path: None,
++        };
++        let Poll::Ready(Ok(RustlsConnector { config })) = pin!(connector(tls_config)).poll(&mut cx)
++        else {
++            panic!("`connector()` should be ready at once");
++        };
++
++        let server_config = ServerConfig::builder_with_provider(config.crypto_provider().clone())
++            .with_safe_default_protocol_versions()
++            .unwrap()
++            .with_no_client_auth()
++            .with_single_cert(
++                vec![CertificateDer::
+```
+
+---
+
+### Incident Patch 3: `488c4113` (2026-11-17)
+**Commit Message**: fix: handle IPv6 properly at all levels (#4529)
+
+* fix: handle IPv6 properly at all levels
+
+* fix: Clippy lint
+
+**File**: `.github/workflows/sqlx.yml` (modified, +133/-17)
+```diff
+@@ -418,7 +418,7 @@ jobs:
+           DATABASE_URL: postgres://postgres@localhost:5432/sqlx?sslmode=verify-ca&sslrootcert=.%2Ftests%2Fcerts%2Fca.crt&sslkey=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&sslcert=.%2Ftests%2Fcerts%2Fclient.crt
+           RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
  
-@@ -305,3 +345,41 @@ pub fn check_struct_attributes(
+-      # Test with `hostaddr` and `verify-full`
++      # Test with `hostaddr` and `verify-full` (test connection only)
+       - run: |
+           SKIP_ARGS=()
+           for test in $PG_ISOLATED_TESTS; do
+@@ -427,12 +427,24 @@ jobs:
+           cargo test \
+             --no-default-features \
+             --features any,postgres,macros,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }} \
+-            -- \
+-            "${SKIP_ARGS[@]}"
++            --test postgres \
++            -- --exact it_connects
+         env:
+           DATABASE_URL: postgres://postgres@sqlx.test:5432/sqlx?hostaddr=127.0.0.1&sslmode=verify-full&sslrootcert=.%2Ftests%2Fcerts%2Fca.crt&sslkey=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&sslcert=.%2Ftests%2Fcerts%2Fclient.crt
+           RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
  
-     Ok(attributes)
- }
++      # Test with IPv6 and `verify-full` (test connection only)
++      # The generated certificate includes a `subjectAltName` with an IPv6-mapped `127.0.0.1`
++      - run: |
++          cargo test \
++            --no-default-features \
++            --features any,postgres,macros,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }} \
++            --test postgres \
++            -- --exact it_connects
++        env:
++          DATABASE_URL: postgres://postgres@[::ffff:127.0.0.1]:5432/sqlx?sslmode=verify-full&sslrootcert=.%2Ftests%2Fcerts%2Fca.crt&sslkey=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&sslcert=.%2Ftests%2Fcerts%2Fclient.crt
++          RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
+   postgres-isolated:
+     name: Postgres Isolated
+     runs-on: ubuntu-24.04
+@@ -587,21 +599,41 @@ jobs:
+           SQLX_OFFLINE_DIR: .sqlx
+           RUSTFLAGS: --cfg mysql_${{ matrix.mysql }}
+ 
+-      # client SSL authentication
++  # client SSL authentication
++  mysql-ssl-auth:
++    name: MySQL SSL Auth
++    runs-on: ubuntu-24.04
++    strategy:
++      matrix:
++        mysql: [ 8 ]
++        runtime: [ async-global-executor, smol, tokio ]
++        tls: [ native-tls, rustls-aws-lc-rs, rustls-ring ]
++        include:
++          - { mysql: 8, runtime: tokio, tls: rustls-aws-lc-rs-native-roots }
++    needs: check
++    timeout-minutes: 30
++    steps:
++      - uses: actions/checkout@v5
+ 
+-      - if: ${{ matrix.tls != 'none' }}
+-        run: |
+-          docker stop mysql_${{ matrix.mysql }}
++      - name: Setup Rust
++        run: rustup show active-toolchain || rustup toolchain install
 +
-+    fn enum_input(attrs: TokenStream) -> DeriveInput {
-+        syn::parse2(quote::quote! {
-+            #attrs
-+            enum Foo { A, B }
-+        })
-+        .unwrap()
++      - uses: Swatinem/rust-cache@v2
++
++      # Generate TLS certificates
++      - run: ./gen-certs.sh
++        working-directory: tests/certs
++
++      - run: |
+           docker compose -f tests/docker-compose.yml run -d -p 3306:3306 --name mysql_${{ matrix.mysql }}_client_ssl mysql_${{ matrix.mysql }}_client_ssl
+           docker exec mysql_${{ matrix.mysql }}_client_ssl bash -c '
+             until (command -v mysqladmin >/dev/null && mysqladmin ping -uroot --silent) || \
+-                  (command -v mariadb-admin >/dev/null && mariadb-admin ping -uroot --silent); do
++                (command -v mariadb-admin >/dev/null && mariadb-admin ping -uroot --silent); do
+               sleep 2
+-            done
++          done
+           '
+ 
+-      - if: ${{ matrix.tls != 'none' }}
+-        run: |
++      - run: |
+           SKIP_ARGS=()
+           for test in $MYSQL_ISOLATED_TESTS; do
+             SKIP_ARGS+=(--skip "$test")
+@@ -615,6 +647,37 @@ jobs:
+           DATABASE_URL: mysql://root@localhost:3306/sqlx?sslmode=verify_ca&ssl-ca=.%2Ftests%2Fcerts%2Fca.crt&ssl-key=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&ssl-cert=.%2Ftests%2Fcerts%2Fclient.crt
+           RUSTFLAGS: --cfg mysql_${{ matrix.mysql }}
+ 
++      # Test with `tls-sni-servername=sqlx.test` and `sslmode=verify_identity` (test connection only)
++      - run: |
++          SKIP_ARGS=()
++          for test in $MYSQL_ISOLATED_TESTS; do
++            SKIP_ARGS+=(--skip "$test")
++          done
++          cargo test \
++            --no-default-features \
++            --features any,mysql,macros,migrate,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }} \
++            --test mysql \
++            -- --exact it_connects
++        env:
++          DATABASE_URL: mysql://root@localhost:3306/sqlx?tls-sni-servername=sqlx.test&sslmode=verify_identity&ssl-ca=.%2Ftests%2Fcerts%2Fca.crt&ssl-key=.%2Ftests%2Fcerts%2Fkeys%2Fclient.key&ssl-cert=.%2Ftests%2Fcerts%2Fclient.crt
++          RUSTFLAGS: --cfg mysql_${{ matrix.mysql }}
++
++      # Test with IPv6 and `sslmode=verify_identity` (test connection only)
++      # The generated certificate includes a `subjectAltName` with an IPv6-mapped `127.0.0.1`
++      - run: |
++          SKIP_ARGS
+```
+
+**File**: `sqlx-core/src/net/mod.rs` (modified, +117/-2)
+```diff
+@@ -2,6 +2,121 @@ mod socket;
+ pub mod tls;
+ 
+ pub use socket::{
+-    connect_tcp, connect_uds, BufferedSocket, Socket, SocketHost, SocketIntoBox, WithSocket,
+-    WriteBuffer,
++    connect_tcp, connect_uds, BufferedSocket, Socket, SocketIntoBox, WithSocket, WriteBuffer,
+ };
++use std::fmt::{Debug, Display, Formatter};
++use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
++
++#[derive(Clone, PartialEq, Eq)]
++pub struct UrlHost {
++    original: Box<str>,
++    brackets: Brackets,
++}
++
++#[derive(Clone, PartialEq, Eq)]
++enum Brackets {
++    None,
++    Included,
++    Needed,
++}
++
++impl UrlHost {
++    pub fn empty() -> Self {
++        UrlHost {
++            original: "".into(),
++            brackets: Brackets::None,
++        }
 +    }
 +
-+    #[test]
-+    fn enum_repr_c_is_rejected() {
-+        let input = enum_input(quote::quote!(#[repr(C)]));
-+        let err = check_enum_attributes(&input)
-+            .err()
-+            .expect("repr(C) should be rejected");
-+        assert!(err.to_string().contains("#[repr(i32)]"), "{err}");
++    pub fn localhost() -> Self {
++        UrlHost {
++            original: "localhost".into(),
++            brackets: Brackets::None,
++        }
 +    }
 +
-+    #[test]
-+    fn enum_repr_c_with_integer_is_accepted() {
-+        let input = enum_input(quote::quote!(#[repr(C, u8)]));
-+        let attrs = check_enum_attributes(&input).unwrap();
-+        assert_eq!(attrs.repr.unwrap(), "u8");
++    fn check_brackets(&mut self) {
++        if self.original.starts_with('[') && self.original.ends_with(']') {
++            self.brackets = Brackets::Included;
++        } else if self.original.parse::<Ipv6Addr>().is_ok() {
++            // IPv6 address passed through `.host()`, should be bracketed in a URL
++            self.brackets = Brackets::Needed;
++        } else {
++            self.brackets = Brackets::None;
++        }
 +    }
 +
-+    #[test]
-+    fn enum_layout_only_reprs_are_ignored() {
-+        let input = enum_input(quote::quote!(#[repr(align(8))]));
-+        assert!(check_enum_attributes(&input).unwrap().repr.is_none());
++    pub fn set(&mut self, s: &str) {
++        self.original = s.into();
++        self.check_brackets();
++    }
 +
-+        let input = enum_input(quote::quote!(#[repr(i16, align(8))]));
-+        assert_eq!(check_enum_attributes(&input).unwrap().repr.unwrap(), "i16");
++    pub fn original(&self) -> &str {
++        &self.original
++    }
++
++    pub fn stripped(&self) -> &str {
++        self.original.trim_matches(&['[', ']'][..])
++    }
++}
++
++impl From<String> for UrlHost {
++    fn from(value: String) -> Self {
++        let mut this = Self {
++            original: value.into(),
++            brackets: Brackets::None,
++        };
++        this.check_brackets();
++        this
++    }
++}
++
++impl Debug for UrlHost {
++    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
++        Debug::fmt(&self.original, f)
++    }
++}
++
++impl Display for UrlHost {
++    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
++        if let Brackets::Needed = self.brackets {
++            write!(f, "[{}]", self.original)
++        } else {
++            f.write_str(&self.original)
++        }
++    }
++}
++
++impl<'a> From<&'a UrlHost> for SocketHost<'a> {
++    fn from(host: &'a UrlHost) -> Self {
++        SocketHost::Str(host.stripped())
++    }
++}
++
++#[derive(Clone, Copy)]
++pub enum SocketHost<'a> {
++    Str(&'a str),
++    // Separating `Ipv4Addr` and `Ipv6Addr` makes for a flatter enum
++    Ipv4(Ipv4Addr),
++    Ipv6(Ipv6Addr),
++}
++
++impl From<IpAddr> for SocketHost<'_> {
++    fn from(value: IpAddr) -> Self {
++        match value {
++            IpAddr::V4(addr) => Self::Ipv4(addr),
++            IpAddr::V6(addr) => Self::Ipv6(addr),
++        }
++    }
++}
++
++impl SocketHost<'_> {
++    fn try_as_ip(&self) -> Result<IpAddr, &str> {
++        match *self {
++            // `Url::host()` returns the host wrapped in brackets which the socket API isn't expecting
++            Self::Str(s) => s.trim_matches(&['[', ']'][..]).parse().map_err(|_| s),
++            Self::Ipv4(addr) => Ok(addr.into()),
++            Self::Ipv6(addr) => Ok(addr.into()),
++        }
 +    }
 +}
 ```
 
+**File**: `sqlx-core/src/net/socket/mod.rs` (modified, +20/-48)
+```diff
+@@ -1,17 +1,15 @@
+-use std::fmt::Display;
+ use std::future::Future;
+ use std::io;
+-use std::net::{AddrParseError, IpAddr};
+ use std::path::Path;
+ use std::pin::Pin;
+ use std::task::{ready, Context, Poll};
+ 
++use crate::io::ReadBuf;
++use crate::net::SocketHost;
+ pub use buffered::{BufferedSocket, WriteBuffer};
+ use bytes::BufMut;
+ use cfg_if::cfg_if;
+ 
+-use crate::io::ReadBuf;
+-
+ mod buffered;
+ 
+ pub trait Socket: Send + Sync + Unpin + 'static {
+@@ -183,43 +181,18 @@ impl<S: Socket + ?Sized> Socket for Box<S> {
+     }
+ }
+ 
+-#[derive(Clone, Copy)]
+-pub enum SocketHost<'a> {
+-    Name(&'a str),
+-    Addr(IpAddr),
+-}
+-
+-impl TryFrom<SocketHost<'_>> for IpAddr {
+-    type Error = AddrParseError;
+-
+-    fn try_from(host: SocketHost<'_>) -> Result<Self, Self::Error> {
+-        match host {
+-            // IPv6 addresses in URLs will be wrapped in brackets and the `url` crate doesn't trim those.
+-            SocketHost::Name(name) => name.trim_matches(&['[', ']'][..]).parse(),
+-            SocketHost::Addr(addr) => Ok(addr),
+-        }
+-    }
+-}
+-
+-impl Display for SocketHost<'_> {
+-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+-        match self {
+-            SocketHost::Name(name) => name.fmt(f),
+-            SocketHost::Addr(addr) => addr.fmt(f),
+-        }
+-    }
+-}
+-
+ pub async fn connect_tcp<Ws: WithSocket>(
+     host: SocketHost<'_>,
+     port: u16,
+     with_socket: Ws,
+ ) -> crate::Result<Ws::Output> {
+     #[cfg(feature = "_rt-tokio")]
+     if crate::rt::rt_tokio::available() {
+-        let socket = match host {
+-            SocketHost::Name(name) => tokio::net::TcpStream::connect((name, port)).await?,
+-            SocketHost::Addr(addr) => tokio::net::TcpStream::connect((addr, port)).await?,
++        use tokio::net::TcpStream;
++
++        let socket = match host.try_as_ip() {
++            Ok(addr) => TcpStream::connect((addr, port)).await?,
++            Err(host) => TcpStream::connect((host, port)).await?,
+         };
+ 
+         socket.set_nodelay(true)?;
+@@ -230,7 +203,7 @@ pub async fn connect_tcp<Ws: WithSocket>(
+         if #[cfg(feature = "_rt-async-io")] {
+             Ok(with_socket.with_socket(connect_tcp_async_io(host, port).await?).await)
+         } else {
+-            crate::rt::missing_rt((host, port, with_socket))
++            crate::rt::missing_rt((host.try_as_ip(), port, with_socket))
+         }
+     }
+ }
+@@ -243,21 +216,20 @@ pub async fn connect_tcp<Ws: WithSocket>(
+ #[cfg(feature = "_rt-async-io")]
+ async fn connect_tcp_async_io(host: SocketHost<'_>, port: u16) -> crate::Result<impl Socket> {
+     use async_io::Async;
+-    use std::net::{IpAddr, TcpStream, ToSocketAddrs};
+-
+-    if let Ok(addr) = IpAddr::try_from(host) {
+-        let socket = Async::<TcpStream>::connect((addr, port)).await?;
+-        socket.get_ref().set_nodelay(true)?;
+-        return Ok(socket);
+-    }
++    use std::net::{TcpStream, ToSocketAddrs};
+ 
+-    let host = host.to_string();
++    let host: Box<str> = match host.try_as_ip() {
++        Ok(addr) => {
++            let socket = Async::<TcpStream>::connect((addr, port)).await?;
++            socket.get_ref().set_nodelay(true)?;
++            return Ok(socket);
++        }
++        Err(host) => host.into(),
++    };
+ 
+-    let addresses = crate::rt::spawn_blocking(move || {
+-        let addr = (host.as_str(), port);
+-        ToSocketAddrs::to_socket_addrs(&addr)
+-    })
+-    .await?;
++    let addresses =
++        crate::rt::spawn_blocking(move || ToSocketAddrs::to_socket_addrs(&(&host[..], port)))
++            .await?;
+ 
+     let mut last_err = None;
+ 
+```
+
+**File**: `sqlx-mysql/src/connection/establish.rs` (modified, +1/-3)
+```diff
+@@ -9,7 +9,6 @@ use crate::protocol::Capabilities;
+ use crate::{MySqlConnectOptions, MySqlConnection, MySqlSslMode};
+ use bytes::buf::Buf;
+ use bytes::Bytes;
+-use sqlx_core::net::SocketHost;
+ 
+ impl MySqlConnection {
+     pub(crate) async fn establish(options: &MySqlConnectOptions) -> Result<Self, Error> {
+@@ -18,8 +17,7 @@ impl MySqlConnection {
+         let handshake = match &options.socket {
+             Some(path) => crate::net::connect_uds(path, do_handshake).await?,
+             None => {
+-                crate::net::connect_tcp(SocketHost::Name(&options.host), options.port, do_handshake)
+-                    .await?
++                crate::net::connect_tcp((&options.host).into(), options.port, do_handshake).await?
+             }
+         };
+ 
+```
+
+**File**: `sqlx-mysql/src/connection/tls.rs` (modified, +4/-1)
+```diff
+@@ -86,7 +86,10 @@ pub(super) async fn maybe_upgrade<S: Socket>(
+ 
+     tls::handshake(
+         stream.socket.into_inner(),
+-        options.tls_server_name.as_deref().unwrap_or(&options.host),
++        options
++            .tls_sni_servername
++            .as_deref()
++            .unwrap_or_else(|| options.host.stripped()),
+         connector,
+         MapStream {
+             server_version: stream.server_version,
+```
+
+**File**: `sqlx-mysql/src/options/mod.rs` (modified, +12/-11)
+```diff
+@@ -1,3 +1,4 @@
++use sqlx_core::net::UrlHost;
+ use std::{
+     path::{Path, PathBuf},
+     sync::{Arc, OnceLock},
+@@ -65,13 +66,13 @@ pub use ssl_mode::MySqlSslMode;
+ /// ```
+ #[derive(Debug, Clone)]
+ pub struct MySqlConnectOptions {
+-    pub(crate) host: String,
++    pub(crate) host: UrlHost,
+     pub(crate) port: u16,
+     pub(crate) socket: Option<PathBuf>,
+     pub(crate) username: String,
+     pub(crate) password: Option<String>,
+     pub(crate) database: Option<String>,
+-    pub(crate) tls_server_name: Option<String>,
++    pub(crate) tls_sni_servername: Option<String>,
+     pub(crate) ssl_options: SslOptions,
+     pub(crate) statement_cache_capacity: usize,
+     pub(crate) charset: String,
+@@ -105,14 +106,14 @@ impl MySqlConnectOptions {
+     pub fn new() -> Self {
+         Self {
+             port: 3306,
+-            host: String::from("localhost"),
++            host: UrlHost::localhost(),
+             socket: None,
+             username: String::from("root"),
+             password: None,
+             database: None,
+             charset: String::from("utf8mb4"),
+             collation: None,
+-            tls_server_name: None,
++            tls_sni_servername: None,
+             ssl_options: SslOptions {
+                 ssl_mode: MySqlSslMode::Preferred,
+                 ssl_ca: None,
+@@ -136,7 +137,7 @@ impl MySqlConnectOptions {
+     /// The default behavior when the host is not specified,
+     /// is to connect to localhost.
+     pub fn host(mut self, host: &str) -> Self {
+-        host.clone_into(&mut self.host);
++        self.host.set(host);
+         self
+     }
+ 
+@@ -150,10 +151,10 @@ impl MySqlConnectOptions {
+     /// # use sqlx_mysql::MySqlConnectOptions;
+     /// let _options = MySqlConnectOptions::new()
+     ///     .host("haproxy.example.com")
+-    ///     .tls_server_name("mysql.example.com");
++    ///     .tls_sni_servername("mysql.example.com");
+     /// ```
+-    pub fn tls_server_name(mut self, server_name: &str) -> Self {
+-        self.tls_server_name = Some(server_name.to_owned());
++    pub fn tls_sni_servername(mut self, server_name: &str) -> Self {
++        self.tls_sni_servername = Some(server_name.to_owned());
+         self
+     }
+ 
+@@ -480,7 +481,7 @@ impl MySqlConnectOptions {
+     /// assert_eq!(options.get_host(), "127.0.0.1");
+     /// ```
+     pub fn get_host(&self) -> &str {
+-        &self.host
++        self.host.original()
+     }
+ 
+     /// Get the server's port.
+@@ -586,7 +587,7 @@ mod tests {
+ 
+     #[test]
+     fn tls_server_name_is_stored() {
+-        let opts = MySqlConnectOptions::new().tls_server_name("sni.example.com");
+-        assert_eq!(opts.tls_server_name.as_deref(), Some("sni.example.com"));
++        let opts = MySqlConnectOptions::new().tls_sni_servername("sni.example.com");
++        assert_eq!(opts.tls_sni_servername.as_deref(), Some("sni.example.com"));
+     }
+ }
+```
+
+**File**: `sqlx-mysql/src/options/parse.rs` (modified, +19/-0)
+```diff
+@@ -67,6 +67,8 @@ impl MySqlConnectOptions {
+ 
+                 "sslkey" | "ssl-key" => options = options.ssl_client_key(&*value),
+ 
++                "tls-sni-servername" => options = options.tls_sni_servername(&value),
++
+                 "statement-cache-capacity" => {
+                     options =
+                         options.statement_cache_capacity(value.parse().map_err(Error::config)?);
+@@ -197,3 +199,20 @@ fn it_parses_timezone() {
+         .unwrap();
+     assert_eq!(opts.timezone.as_deref(), Some("+08:00"));
+ }
++
++#[test]
++fn ipv6_url_round_trips() {
++    let url = "mysql://username:p%40ssw0rd@[2001:db8::1]:3306/database";
++
++    let opts = MySqlConnectOptions::from_str(url).unwrap();
++
++    assert_eq!(opts.host.original(), "[2001:db8::1]");
++    assert_eq!(opts.host.stripped(), "2001:db8::1");
++
++    assert_eq!(
++        opts.build_url().as_str(),
++        // `build_url()` adds some parameters that weren't in the URL originally,
++        // but this should not be harmful
++        "mysql://username:p%40ssw0rd@[2001:db8::1]:3306/database?ssl-mode=PREFERRED&charset=utf8mb4&statement-cache-capacity=100"
++    )
++}
+```
+
+**File**: `sqlx-postgres/src/connection/stream.rs` (modified, +1/-2)
+```diff
+@@ -14,7 +14,6 @@ use futures_channel::mpsc::UnboundedSender;
+ use futures_util::SinkExt;
+ use log::Level;
+ use sqlx_core::bytes::Buf;
+-use sqlx_core::net::SocketHost;
+ 
+ // the stream is a separate type from the connection to uphold the invariant where an instantiated
+ // [PgConnection] is a **valid** connection to postgres
+@@ -48,7 +47,7 @@ impl PgStream {
+                 net::connect_tcp(
+                     options
+                         .hostaddr
+-                        .map_or_else(|| SocketHost::Name(&options.host), SocketHost::Addr),
++                        .map_or_else(|| (&options.host).into(), Into::into),
+                     options.port,
+                     MaybeUpgradeTls(options),
+                 )
+```
+
 #### Recent Merged Pull Requests:
+- **PR #4529** (2026-11-17): fix: handle IPv6 properly at all levels (@abonander)
+- **PR #4526** (2026-11-16): docs(FAQ): Replace versioned docs.rs link with latest (@TheJanzap)
+- **PR #4525** (2026-11-16): sqlx-sqlite: bump the upper bound on libsqlite3-sys to allow 0.40.x (@lthiery)
 - **PR #4515** (closed): fix(sqlite): reset transaction depth after SQLite rolls back on its own (@yxshee)
 - **PR #4514** (2026-11-08): fix(postgres): make `hostaddr` semantics match `libpq` (@abonander)
 - **PR #4508** (2026-11-09): fix(macros): reject `#[repr(C)]` on enums in `derive(Type)` (@thelastbackspace)
-- **PR #4503** (2026-11-08): fix(mysql): decode DECIMAL columns into integer types correctly (@Map130)
-- **PR #4502** (2026-11-08): Bump the upper bound on libsqlite3-sys to allow 0.39.x (@joshtriplett)
-- **PR #4498** (2026-11-09): fix(postgres): keep draining resolved type dependencies in fill_cache (@ducnhan123-co)
 
 ---
 
@@ -1369,39 +1892,64 @@ ignored since they don't affect the encoding.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres): keep draining resolved type dependencies in fill_cache. (#4498)
+## X. sqlite): synchronize transaction depth when SQLite auto-rolls back
 
 **RULE**:
-When implementing operations in `sqlx-postgres/src/connection/resolve.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sqlx-sqlite/src/connection/worker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47b9f8e7`: postgres): keep draining resolved type dependencies in fill_cache. (#4498). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ead2994`: sqlite): synchronize transaction depth when SQLite auto-rolls back. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-postgres/src/connection/resolve.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-sqlite/src/connection/worker.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        // Keep draining rows whose dependency was just resolved;
-                        // abandoning them here would leave them unresolved forever.
-                        match resolved_dependencies.pop_back() {
-                            Some(next_row) => {
-                                type_row = next_row;
-                                continue;
-                            }
-                            None => continue 'outer,
+                        let mut depth = shared.transaction_depth.load(Ordering::Acquire);
+
+                        if depth > 0 && !conn.handle.in_transaction() {
+                            shared.transaction_depth.store(0, Ordering::Release);
+                            depth = 0;
                         }
+                                if !conn.handle.in_transaction() {
+                                        shared.transaction_depth.store(0, Ordering::Release);
+                                    } else {
+                                        // The rollback failed. To prevent leaving the connection
+                                        // in an inconsistent state we shutdown this worker which
+                                        // causes any subsequent operation on the connection to fail.
+                                        tracing::error!(%error, "failed to rollback cancelled transaction");
+                                        break;
+                                    }
+                            let res = conn.handle
+                                    .exec(commit_ansi_transaction_sql(depth).as_str())
+                                    .map(|_| {
+        
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-                        continue 'outer;
+// Induced defect failure mode:
+                        let depth = shared.transaction_depth.load(Ordering::Acquire);
+                                // The rollback failed. To prevent leaving the connection
+                                // in an inconsistent state we shutdown this worker which
+                                // causes any subsequent operation on the connection to fail.
+                                tracing::error!(%error, "failed to rollback cancelled transaction");
+                                break;
+                            conn.handle
+                                .exec(commit_ansi_transaction_sql(depth).as_str())
+                                .map(|_| {
+                                    shared.transaction_depth.fetch_sub(1, Ordering::Release);
+                                })
+                            conn.handle
+                                .exec(rollback_ansi_transaction_sql(depth).as_str())
+                                .map(|_| {
+                                    shared.transaction_depth.fetch_sub(1, Ordering::Release);
+                                })
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47b9f8e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ead2994` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

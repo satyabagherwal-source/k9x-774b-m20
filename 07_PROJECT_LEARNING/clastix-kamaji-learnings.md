@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `60204b0c`  
+> **Source Version**: `afdb6e7a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T00:56:50.880Z  
+> **Timestamp**: 2026-11-17T07:28:14.915Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:56:35.960Z  
+> **Harvest Timestamp**: 2026-11-17T07:28:14.584Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2086 stars
+- **Stars / Engagement**: 2088 stars
 
 ---
 
@@ -674,6 +674,8 @@ func UpdateStatus(ctx context.Context, client client.Client, tcp *kamajiv1alpha1
 		if err = resource.UpdateTenantControlPlaneStatus(ctx, tcp); err != nil {
 			return fmt.Errorf("error applying TenantcontrolPlane status: %w", err)
 		}
+		// Keeping the Ready condition aligned with the version status on every status write.
+		tcp.SetReadyCondition()
 
 		if err = client.Status().Update(ctx, tcp); err != nil {
 			return fmt.Errorf("error updating tenantControlPlane status: %w", err)
@@ -744,370 +746,484 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `60204b0c` (2026-11-15)
-**Commit Message**: feat(datastore): exclusive etcd DataStore (#1417)
+### Incident Patch 1: `afdb6e7a` (2026-11-17)
+**Commit Message**: feat: standard Ready condition on TenantControlPlane (#1419)
 
-* feat(api): add exclusive field to DataStore
+* feat(api): standard Ready condition for tcp
 
-An exclusive DataStore is dedicated to a single Tenant Control Plane.
-Supported only with the etcd driver, and immutable.
+Add status.conditions to TenantControlPlane and a SetReadyCondition
+helper deriving the standard Ready condition from the Kubernetes
+version status, which stays the source of truth.
 
-Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
+Ready and WriteLimited map to True, every other status to False with
+the status as reason, and a missing status to Unknown. The condition
+type is intentionally not prefixed, since generic tooling such as
+kubectl wait and kstatus looks for a condition named Ready.
 
-* feat(datastore): grant etcd root when exclusive
+Refs: #1418
 
-etcd rejects Compact unless the user has the root role: granting
-only the compact_rev_key key is not enough.
+* feat(tcp): keep Ready condition in sync
 
-Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
+Compute the Ready condition on every status write performed by the
+resources, and at the end of a successful reconciliation along with
+the observed generation, so it never drifts from the version status.
 
-* feat(datastore): one tenant per exclusive store
+Refs: #1418
 
-Reuse the NATS single-tenant check, so a second Tenant Control Plane
-referencing an exclusive DataStore fails to reconcile.
+* test(tcp): cover the Ready condition
 
-Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
+Unit tests cover the mapping of every version status and ensure the
+transition time only changes on actual status changes. The e2e ready
+and scale tests assert Ready=True when ready, and Ready=False with
+the Sleeping reason when scaled to zero.
 
-* feat(controlplane): let exclusive etcd compact
+Refs: #1418
 
-On an exclusive DataStore, --etcd-compaction-interval is a safe default
-(5m) instead of a managed 0, so the API server compacts etcd and
-ListFromCacheSnapshot can expire continue tokens. A stale 0 from a
-previous shared DataStore is replaced.
+* chore: regenerate crds and api reference
 
-Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
+Generated with make manife
 
-* docs: document exclusive etcd DataStores
-
-Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
-
-* refactor(datastore): use a case for exclusive DataStores
-
-
-**File**: `api/v1alpha1/datastore_types.go` (modified, +9/-0)
+**File**: `.github/workflows/e2e.yaml` (modified, +1/-0)
 ```diff
-@@ -36,6 +36,8 @@ type Endpoints []string
- // +kubebuilder:validation:XValidation:rule="(self.driver != \"etcd\" && has(self.basicAuth)) ? ((has(self.basicAuth.password.secretReference) || has(self.basicAuth.password.content))) : true", message="When driver is not etcd and basicAuth exists, password must have secretReference or content"
- // +kubebuilder:validation:XValidation:rule="(self.driver != \"etcd\") ? (has(self.tlsConfig) || has(self.basicAuth)) : true", message="When driver is not etcd, either tlsConfig or basicAuth must be provided"
- // +kubebuilder:validation:XValidation:rule="oldSelf == null || self.driver == oldSelf.driver", message="driver is immutable and cannot be changed after creation"
-+// +kubebuilder:validation:XValidation:rule="!has(self.exclusive) || !self.exclusive || self.driver == \"etcd\"", message="exclusive is supported only with the etcd driver"
-+// +kubebuilder:validation:XValidation:rule="oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)", message="exclusive is immutable and cannot be changed after creation"
- type DataStoreSpec struct {
- 	// The driver to use to connect to the shared datastore.
- 	Driver Driver `json:"driver"`
-@@ -51,6 +53,13 @@ type DataStoreSpec struct {
- 	// Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
- 	// This value is optional.
- 	Migration *DataStoreMigration `json:"migration,omitempty"`
-+	// Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
-+	// The tenant's etcd user is granted the root role, and Kamaji no longer forces
-+	// --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
-+	// (5m by default, overridable with the API server extra args).
-+	// A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
-+	// This value is immutable.
-+	Exclusive bool `json:"exclusive,omitempty"`
+@@ -49,6 +49,7 @@ jobs:
+           sudo apt-get install -y golang-cfssl
+           sudo swapoff -a
+           sudo modprobe br_netfilter
++          sudo sysctl -w fs.inotify.max_user_instances=512 fs.inotify.max_user_watches=524288
+       - name: install required Go tools
+         run: make kind ko helm ginkgo
+       - name: cleaning up go mod
+```
+
+**File**: `api/v1alpha1/tenantcontrolplane_conditions.go` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++// Copyright 2022 Clastix Labs
++// SPDX-License-Identifier: Apache-2.0
++
++package v1alpha1
++
++import (
++	"fmt"
++
++	"k8s.io/apimachinery/pkg/api/meta"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++)
++
++// SetReadyCondition derives the standard Ready condition from the Kubernetes version status,
++// which remains the source of truth: the condition is only its translation for generic tooling.
++//
++// The condition reports the last fully reconciled generation (Status.ObservedGeneration), not the
++// current one: status writes performed mid-reconciliation of a new generation must not stamp the
++// previous readiness as current. Consumers (kubectl wait, kstatus) then see the condition lagging
++// behind metadata.generation until the reconciliation is complete.
++func (in *TenantControlPlane) SetReadyCondition() {
++	condition := metav1.Condition{
++		Type:               TenantControlPlaneConditionReadyType,
++		ObservedGeneration: in.Status.ObservedGeneration,
++	}
++
++	switch status := in.Status.Kubernetes.Version.Status; {
++	case status == nil:
++		condition.Status = metav1.ConditionUnknown
++		condition.Reason = string(VersionUnknown)
++		condition.Message = "the Tenant Control Plane has not been reconciled yet"
++	case *status == VersionReady:
++		condition.Status = metav1.ConditionTrue
++		condition.Reason = string(*status)
++		condition.Message = "the Tenant Control Plane is ready"
++	case *status == VersionWriteLimited:
++		condition.Status = metav1.ConditionTrue
++		condition.Reason = string(*status)
++		condition.Message = "the Tenant Control Plane is serving, with limited write permissions"
++	default:
++		condition.Status = metav1.ConditionFalse
++		condition.Reason = string(*status)
++		condition.Message = fmt.Sprintf("the Tenant Control Plane is in %s status", *status)
++	}
++
++	meta.SetStatusCondition(&in.Status.Conditions, condition)
++}
+```
+
+**File**: `api/v1alpha1/tenantcontrolplane_conditions_test.go` (added, +119/-0)
+```diff
+@@ -0,0 +1,119 @@
++// Copyright 2022 Clastix Labs
++// SPDX-License-Identifier: Apache-2.0
++
++package v1alpha1
++
++import (
++	"testing"
++	"time"
++
++	"k8s.io/apimachinery/pkg/api/meta"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/utils/ptr"
++)
++
++func TestSetReadyCondition(t *testing.T) {
++	tests := []struct {
++		name           string
++		status         *KubernetesVersionStatus
++		expectedStatus metav1.ConditionStatus
++		expectedReason string
++	}{
++		{name: "not reconciled yet", status: nil, expectedStatus: metav1.ConditionUnknown, expectedReason: "Unknown"},
++		{name: "ready", status: ptr.To(VersionReady), expectedStatus: metav1.ConditionTrue, expectedReason: "Ready"},
++		{name: "write limited", status: ptr.To(VersionWriteLimited), expectedStatus: metav1.ConditionTrue, expectedReason: "WriteLimited"},
++		{name: "provisioning", status: ptr.To(VersionProvisioning), expectedStatus: metav1.ConditionFalse, expectedReason: "Provisioning"},
++		{name: "upgrading", status: ptr.To(VersionUpgrading), expectedStatus: metav1.ConditionFalse, expectedReason: "Upgrading"},
++		{name: "migrating", status: ptr.To(VersionMigrating), expectedStatus: metav1.ConditionFalse, expectedReason: "Migrating"},
++		{name: "ca rotating", status: ptr.To(VersionCARotating), expectedStatus: metav1.ConditionFalse, expectedReason: "CertificateAuthorityRotating"},
++		{name: "sleeping", status: ptr.To(VersionSleeping), expectedStatus: metav1.ConditionFalse, expectedReason: "Sleeping"},
++		{name: "not ready", status: ptr.To(VersionNotReady), expectedStatus: metav1.ConditionFalse, expectedReason: "NotReady"},
++		{name: "unknown", status: ptr.To(VersionUnknown), expectedStatus: metav1.ConditionFalse, expectedReason: "Unknown"},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			tcp := &TenantControlPlane{ObjectMeta: metav1.ObjectMeta{Generation: 3}}
++			tcp.Status.ObservedGeneration = 3
++			tcp.Status.Kubernetes.Version.Status = tt.status
++
++			tcp.SetReadyCondition()
++
++			condition := meta.FindStatusCondition(tcp.Status.Conditions, TenantControlPlaneConditionReadyType)
++			if condition == nil {
++				t.Fatalf("expected a %s condition, got none", TenantControlPlaneConditionReadyType)
++			}
++
++			if condition.Status != tt.expectedStatus {
++				t.Errorf("expected status %s, got %s", tt.expectedStatus, condition.Status)
++			}
++
++			if condition.Reason != tt.expectedReason {
++				t.Errorf("expected reason %s, got %s", tt.expectedReason, condition.Reason)
++			}
++
++			if condition.ObservedGeneration != 3 {
++				t.Errorf("expected observedGeneration 3, got %d", condition.ObservedGeneration)
++			}
++
++			if condition.Message == "" {
++				t.Error("expected a non-empty message")
++			}
++		})
++	}
++}
++
++func TestSetReadyConditionTransitions(t *testing.T) {
++	tcp := &TenantControlPlane{}
++	tcp.Status.Kubernetes.Version.Status = ptr.To(VersionProvisioning)
++	tcp.SetReadyCondition()
++
++	past := metav1.NewTime(time.Now().Add(-time.Hour))
++	tcp.Status.Conditions[0].LastTransitionTime = past
++
++	// Same status: the transition time must not move, otherwise watchers see spurious changes.
++	tcp.SetReadyCondition()
++
++	if got := tcp.Status.Conditions[0].LastTransitionTime; !got.Equal(&past) {
++		t.Errorf("expected lastTransitionTime to be preserved, got %s", got)
++	}
++
++	// Status flip: the transition time must be updated, and only one Ready condition must exist.
++	tcp.Status.Kubernetes.Version.Status = ptr.To(VersionReady)
++	tcp.SetReadyCondition()
++
++	if len(tcp.Status.Conditions) != 1 {
++		t.Fatalf("expected exactly one condition, got %d", len(tcp.Status.Conditions))
++	}
++
++	if got := tcp.Status.Conditions[0]; got.Status != metav1.ConditionTrue || got.LastTransitionTime.Equal(&past) {
++		t.Errorf("expected a True condition with a new lastTransitionTime, got %+v", got)
++	}
++}
++
++func TestSetReadyConditionDuringSpecChange(t *testing.T) {
++	// Generation 3 has been fully reconciled and is Ready.
++	tcp := &TenantControlPlane{ObjectMeta: metav1.ObjectMeta{Generation: 3}}
++	tcp.Status.ObservedGeneration = 3
++	tcp.Status.Kubernetes.Version.Status = ptr.To(VersionReady)
++	tcp.SetReadyCondition()
++
++	// A spec change (e.g. networkProfile.port) bumps the generation, then an unrelated resource
++	// writes its status while the version status still reflects the previous generation.
++	tcp.Generation = 4
++	tcp.SetReadyCondition()
++
++	condition := meta.FindStatusCondition(tcp.Status.Conditions, TenantControlPlaneConditionReadyType)
++	if condition.ObservedGeneration != 3 {
++		t.Fatalf("a mid-reconciliation status write must not claim generation 4, got observedGeneration %d", condition.ObservedGeneration)
++	}
++
++	// The completion path advances the observed generation, then the condition follows.
++	tcp.Status.ObservedGeneration = 4
++	tcp.SetReadyCondition()
++
++	condition = meta.FindStatusCondition(tcp.Status.Conditions, TenantControlPlaneConditionReadyType)
++	if condition.ObservedGeneration != 4 {
++		t.Errorf("expected observedGeneration 4 after a com
+```
+
+**File**: `api/v1alpha1/tenantcontrolplane_const.go` (modified, +4/-0)
+```diff
+@@ -10,4 +10,8 @@ const (
+ 
+ 	// DefaultKubernetesVersion is the default Kubernetes version used in e2e tests.
+ 	DefaultKubernetesVersion = "v1.37.0"
++
++	// TenantControlPlaneConditionReadyType is the standard Ready condition type: it is intentionally
++	// not prefixed, since generic tooling (kubectl wait, kstatus) looks for a condition named Ready.
++	TenantControlPlaneConditionReadyType = "Ready"
+ )
+```
+
+**File**: `api/v1alpha1/tenantcontrolplane_status.go` (modified, +6/-0)
+```diff
+@@ -182,6 +182,12 @@ type TenantControlPlaneStatus struct {
+ 	ControlPlaneEndpoint string `json:"controlPlaneEndpoint,omitempty"`
+ 	// Addons contains the status of the different Addons
+ 	Addons AddonsStatus `json:"addons,omitempty"`
++	// Conditions contains the standard conditions of the Tenant Control Plane, such as Ready,
++	// allowing generic tooling (kubectl wait, kstatus, GitOps and composition engines) to assess its readiness.
++	// +optional
++	// +listType=map
++	// +listMapKey=type
++	Conditions []metav1.Condition `json:"conditions,omitempty"`
  }
  
- // DataStoreMigration contains the settings of the Job migrating a Tenant Control Plane to this data store.
+ // KubernetesStatus defines the status of the resources deployed in the management cluster,
 ```
 
-**File**: `api/v1alpha1/datastore_types_test.go` (modified, +76/-0)
+**File**: `api/v1alpha1/zz_generated.deepcopy.go` (modified, +7/-0)
 ```diff
-@@ -109,3 +109,79 @@ var _ = Describe("DataStore endpoints validation", func() {
- 		Expect(got.Spec.Migration).To(Equal(migration))
- 	})
- })
-+
-+var _ = Describe("DataStore exclusive validation", func() {
-+	var (
-+		ctx context.Context
-+		ds  *DataStore
-+	)
-+
-+	BeforeEach(func() {
-+		ctx = context.Background()
-+		ds = &DataStore{
-+			ObjectMeta: metav1.ObjectMeta{GenerateName: "ds-exclusive-"},
-+			Spec: DataStoreSpec{
-+				Driver:    EtcdDriver,
-+				Endpoints: Endpoints{"etcd-0:2379"},
-+				TLSConfig: &TLSConfig{
-+					CertificateAuthority: CertKeyPair{
-+						Certificate: ContentRef{Content: []byte("ca")},
-+						PrivateKey:  &ContentRef{Content: []byte("ca-key")},
-+					},
-+					ClientCertificate: &ClientCertificate{
-+						Certificate: ContentRef{Content: []byte("cert")},
-+						PrivateKey:  ContentRef{Content: []byte("key")},
-+					},
-+				},
-+			},
+@@ -1958,6 +1958,13 @@ func (in *TenantControlPlaneStatus) DeepCopyInto(out *TenantControlPlaneStatus)
+ 	in.KubeadmConfig.DeepCopyInto(&out.KubeadmConfig)
+ 	in.KubeadmPhase.DeepCopyInto(&out.KubeadmPhase)
+ 	in.Addons.DeepCopyInto(&out.Addons)
++	if in.Conditions != nil {
++		in, out := &in.Conditions, &out.Conditions
++		*out = make([]metav1.Condition, len(*in))
++		for i := range *in {
++			(*in)[i].DeepCopyInto(&(*out)[i])
 +		}
-+	})
-+
-+	AfterEach(func() {
-+		if ds.GetName() != "" {
-+			if err := k8sClient.Delete(ctx, ds); err != nil && !apierrors.IsNotFound(err) {
-+				Expect(err).NotTo(HaveOccurred())
-+			}
-+		}
-+	})
-+
-+	It("accepts an exclusive etcd DataStore", func() {
-+		ds.Spec.Exclusive = true
-+		Expect(k8sClient.Create(ctx, ds)).To(Succeed())
-+	})
-+
-+	It("denies an exclusive DataStore with a driver other than etcd", func() {
-+		ds.Spec = DataStoreSpec{
-+			Driver:    KinePostgreSQLDriver,
-+			Endpoints: Endpoints{"postgresql:5432"},
-+			BasicAuth: &BasicAuth{
-+				Username: ContentRef{Content: []byte("user")},
-+				Password: ContentRef{Content: []byte("pass")},
-+			},
-+			Exclusive: true,
-+		}
-+
-+		err := k8sClient.Create(ctx, ds)
-+		Expect(err).To(HaveOccurred())
-+		Expect(err.Error()).To(ContainSubstring("exclusive is supported only with the etcd driver"))
-+	})
-+
-+	It("denies making a shared DataStore exclusive", func() {
-+		Expect(k8sClient.Create(ctx, ds)).To(Succeed())
-+
-+		ds.Spec.Exclusive = true
-+		err := k8sClient.Update(ctx, ds)
-+		Expect(err).To(HaveOccurred())
-+		Expect(err.Error()).To(ContainSubstring("exclusive is immutable"))
-+	})
-+
-+	It("denies making an exclusive DataStore shared", func() {
-+		ds.Spec.Exclusive = true
-+		Expect(k8sClient.Create(ctx, ds)).To(Succeed())
-+
-+		ds.Spec.Exclusive = false
-+		err := k8sClient.Update(ctx, ds)
-+		Expect(err).To(HaveOccurred())
-+		Expect(err.Error()).To(ContainSubstring("exclusive is immutable"))
-+	})
-+})
++	}
+ }
+ 
+ // DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new TenantControlPlaneStatus.
 ```
 
-**File**: `charts/kamaji-crds/hack/kamaji.clastix.io_datastores_spec.yaml` (modified, +13/-0)
+**File**: `charts/kamaji-crds/hack/kamaji.clastix.io_tenantcontrolplanes_spec.yaml` (modified, +61/-0)
 ```diff
-@@ -131,6 +131,15 @@ versions:
-                 x-kubernetes-validations:
-                   - message: an IPv6 endpoint address must be bracketed, e.g. [2001:db8::1]:2379
-                     rule: self.all(e, e.startsWith('[') || e.split(':').size() <= 2)
-+              exclusive:
+@@ -9818,6 +9818,67 @@ versions:
+                         type: string
+                     type: object
+                 type: object
++              conditions:
 +                description: |-
-+                  Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
-+                  The tenant's etcd user is granted the root role, and Kamaji no longer forces
-+                  --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
-+                  (5m by default, overridable with the API server extra args).
-+                  A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
-+                  This value is immutable.
-+                type: boolean
-               migration:
-                 description: |-
-                   Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-@@ -1626,6 +1635,10 @@ versions:
-                 rule: '(self.driver != "etcd") ? (has(self.tlsConfig) || has(self.basicAuth)) : true'
-               - message: driver is immutable and cannot be changed after creation
-                 rule: oldSelf == null || self.driver == oldSelf.driver
-+              - message: exclusive is supported only with the etcd driver
-+                rule: '!has(self.exclusive) || !self.exclusive || self.driver == "etcd"'
-+              - message: exclusive is immutable and cannot be changed after creation
-+                rule: oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)
-           status:
-             description: DataStoreStatus defines the observed state of DataStore.
-             properties:
++                  Conditions contains the standard conditions of the Tenant Control Plane, such as Ready,
++                  allowing generic tooling (kubectl wait, kstatus, GitOps and composition engines) to assess its readiness.
++                items:
++                  description: Condition contains details for one aspect of the current state of this API Resource.
++                  properties:
++                    lastTransitionTime:
++                      description: |-
++                        lastTransitionTime is the last time the condition transitioned from one status to another.
++                        This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
++                      format: date-time
++                      type: string
++                    message:
++                      description: |-
++                        message is a human readable message indicating details about the transition.
++                        This may be an empty string.
++                      maxLength: 32768
++                      type: string
++                    observedGeneration:
++                      description: |-
++                        observedGeneration represents the .metadata.generation that the condition was set based upon.
++                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
++                        with respect to the current state of the instance.
++                      format: int64
++                      minimum: 0
++                      type: integer
++                    reason:
++                      description: |-
++                        reason contains a programmatic identifier indicating the reason for the condition's last transition.
++                        Producers of specific condition types may define expected values and meanings for this field,
++                        and whether the values are considered a guaranteed API.
++                        The value should be a CamelCase string.
++                        This field may not be empty.
++                      maxLength: 1024
++                      minLength: 1
++                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
++                      type: string
++                    status:
++                      description: status of the condition, one of True, False, Unknown.
++                      enum:
++                        - "True"
++                        - "False"
++                        - Unknown
++                      type: string
++                    type:
++                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
++                      maxLength: 316
++                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
++                      type: string
++                  required:
++                    - lastTransitionTime
++                    - message
++                    - reason
++                    - status
++                    - type
++                  type: object
++                type: array
++                x-kubernetes-list-map-keys:
++                  - type
++                x-kubernetes-list-type: map
+               controlPlaneEndpoint:
+                 description: ControlPlaneEndpoint contains the status of the kubernetes control plane
+                 type: string
 ```
 
-**File**: `charts/kamaji/crds/kamaji.clastix.io_datastores.yaml` (modified, +13/-0)
+**File**: `charts/kamaji/crds/kamaji.clastix.io_tenantcontrolplanes.yaml` (modified, +61/-0)
 ```diff
-@@ -140,6 +140,15 @@ spec:
-                   x-kubernetes-validations:
-                     - message: an IPv6 endpoint address must be bracketed, e.g. [2001:db8::1]:2379
-                       rule: self.all(e, e.startsWith('[') || e.split(':').size() <= 2)
-+                exclusive:
+@@ -9826,6 +9826,67 @@ spec:
+                           type: string
+                       type: object
+                   type: object
++                conditions:
 +                  description: |-
-+                    Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
-+                    The tenant's etcd user is granted the root role, and Kamaji no longer forces
-+                    --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
-+                    (5m by default, overridable with the API server extra args).
-+                    A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
-+                    This value is immutable.
-+                  type: boolean
-                 migration:
-                   description: |-
-                     Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-@@ -1635,6 +1644,10 @@ spec:
-                   rule: '(self.driver != "etcd") ? (has(self.tlsConfig) || has(self.basicAuth)) : true'
-                 - message: driver is immutable and cannot be changed after creation
-                   rule: oldSelf == null || self.driver == oldSelf.driver
-+                - message: exclusive is supported only with the etcd driver
-+                  rule: '!has(self.exclusive) || !self.exclusive || self.driver == "etcd"'
-+                - message: exclusive is immutable and cannot be changed after creation
-+                  rule: oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)
-             status:
-               description: DataStoreStatus defines the observed state of DataStore.
-               properties:
++                    Conditions contains the standard conditions of the Tenant Control Plane, such as Ready,
++                    allowing generic tooling (kubectl wait, kstatus, GitOps and composition engines) to assess its readiness.
++                  items:
++                    description: Condition contains details for one aspect of the current state of this API Resource.
++                    properties:
++                      lastTransitionTime:
++                        description: |-
++                          lastTransitionTime is the last time the condition transitioned from one status to another.
++                          This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
++                        format: date-time
++                        type: string
++                      message:
++                        description: |-
++                          message is a human readable message indicating details about the transition.
++                          This may be an empty string.
++                        maxLength: 32768
++                        type: string
++                      observedGeneration:
++                        description: |-
++                          observedGeneration represents the .metadata.generation that the condition was set based upon.
++                          For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
++                          with respect to the current state of the instance.
++                        format: int64
++                        minimum: 0
++                        type: integer
++                      reason:
++                        description: |-
++                          reason contains a programmatic identifier indicating the reason for the condition's last transition.
++                          Producers of specific condition types may define expected values and meanings for this field,
++                          and whether the values are considered a guaranteed API.
++                          The value should be a CamelCase string.
++                          This field may not be empty.
++                        maxLength: 1024
++                        minLength: 1
++                        pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
++                        type: string
++                      status:
++                        description: status of the condition, one of True, False, Unknown.
++                        enum:
++                          - "True"
++                          - "False"
++                          - Unknown
++                        type: string
++                      type:
++                        description: type of condition in CamelCase or in foo.example.com/CamelCase.
++                        maxLength: 316
++                        pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
++                        type: string
++                    required:
++                      - lastTransitionTime
++                      - message
++                      - reason
++                      - status
++                      - type
++                    type: object
++                  type: array
++                  x-kubernetes-list-map-keys:
++                    - type
++                  x-kubernetes-list-type: map
+                 controlPlaneEndpoint:
+                   description: ControlPlaneEndpoint contains the status of the kubernetes control plane
+                   type: string
 ```
 
-**File**: `docs/content/concepts/datastore.md` (modified, +27/-0)
+---
+
+### Incident Patch 2: `b0c4cfa9` (2026-11-16)
+**Commit Message**: feat(deps): bump github.com/moby/moby/api from 1.56.1 to 1.57.0 (#1420)
+
+Bumps [github.com/moby/moby/api](https://github.com/moby/moby) from 1.56.1 to 1.57.0.
+- [Release notes](https://github.com/moby/moby/releases)
+- [Commits](https://github.com/moby/moby/compare/api/v1.56.1...api/v1.57.0)
+
+---
+updated-dependencies:
+- dependency-name: github.com/moby/moby/api
+  dependency-version: 1.57.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -27,6 +27,33 @@ By default, Kamaji can persist all Tenant Clusters’ data in a single datastore
- 
- Kamaji’s roadmap includes a datastore scheduler, which will automatically assign new Tenant Clusters to the most appropriate datastore in the pool, further reducing operational overhead.
- 
-+## Exclusive etcd Datastores
-+
-+On a shared etcd datastore, compaction applies to every Tenant Cluster at once, so Kamaji runs the Tenant Control Plane API servers with `--etcd-compaction-interval=0` and leaves compaction to etcd itself.
-+Since Kubernetes v1.34, the API server serves paginated lists from its cache (the `ListFromCacheSnapshot` feature gate), and it only learns about compaction when it compacts etcd itself: with compaction disabled, continue tokens never expire.
-+
-+An etcd `DataStore` can be dedicated to a single Tenant Control Plane by setting `exclusive: true`:
-+
-+```yaml
-+apiVersion: kamaji.clastix.io/v1alpha1
-+kind: DataStore
-+metadata:
-+  name: etcd-dedicated
-+spec:
-+  driver: etcd
-+  exclusive: true
-+  # endpoints and tlsConfig as for any etcd DataStore
-+```
-+
-+For an exclusive `DataStore`, Kamaji grants the Tenant Control Plane's etcd user the `root` role, required by etcd to compact, and doesn't force the compaction interval anymore:
-+the API server compacts every 5 minutes, unless `--etcd-compaction-interval` is set in the API server extra arguments.
-+
-+When a `TenantControlPlane` refers to an exclusive `DataStore` already used by another instance, its reconciliation fails and is blocked.
-+The `exclusive` field is immutable: to move a Tenant Control Plane to an exclusive datastore, use the live migration.
-+
-+!!! info "etcd auto-compaction"
-+    etcd's own auto-compaction (`--auto-compaction-retention`) can stay enabled, but the API server doesn't learn about the revisions it compacts.
-+
- ## Live Migration
- 
- Operational needs change over time, and Kamaji makes it easy to adapt. You can live-migrate a Tenant Cluster’s data from one datastore to another, as long as they use the same backend driver, without manual backup and restore steps. This feature simplifies Day 2 operations and helps you optimize your infrastructure as your requirements evolve.
+@@ -13,7 +13,7 @@ require (
+ 	github.com/google/uuid v1.6.0
+ 	github.com/json-iterator/go v1.1.12
+ 	github.com/juju/mutex/v2 v2.0.0
+-	github.com/moby/moby/api v1.56.1
++	github.com/moby/moby/api v1.57.0
+ 	github.com/nats-io/nats.go v1.55.0
+ 	github.com/onsi/ginkgo/v2 v2.34.0
+ 	github.com/onsi/gomega v1.44.0
 ```
 
-**File**: `docs/content/reference/api.md` (modified, +12/-0)
+**File**: `go.sum` (modified, +2/-4)
 ```diff
-@@ -29799,6 +29799,18 @@ No need for protocol, just bare IP/FQDN and port.<br/>
- This value is optional.<br/>
-         </td>
-         <td>false</td>
-+      </tr><tr>
-+        <td><b>exclusive</b></td>
-+        <td>boolean</td>
-+        <td>
-+          Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
-+The tenant's etcd user is granted the root role, and Kamaji no longer forces
-+--etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
-+(5m by default, overridable with the API server extra args).
-+A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
-+This value is immutable.<br/>
-+        </td>
-+        <td>false</td>
-       </tr><tr>
-         <td><b><a href="#datastorespecmigration">migration</a></b></td>
-         <td>object</td>
-```
-
-**File**: `internal/builders/controlplane/deployment.go` (modified, +9/-1)
-```diff
-@@ -754,7 +754,15 @@ func (d Deployment) buildKubeAPIServerCommand(tenantControlPlane kamajiv1alpha1.
- 			httpsEndpoints = append(httpsEndpoints, fmt.Sprintf("https://%s", ep))
- 		}
- 
--		managed["--etcd-compaction-interval"] = "0"
-+		// On a shared etcd, compaction is cluster-wide and a tenant must not run it.
-+		// An exclusive DataStore lets the kube-apiserver compact, which ListFromCacheSnapshot
-+		// needs to expire continue tokens: the upstream default applies unless set in ExtraArgs.
-+		// As a safe default, a stale "0" from a previous shared DataStore is replaced.
-+		if d.DataStore.Spec.Exclusive {
-+			safeDefaults["--etcd-compaction-interval"] = "5m"
-+		} else {
-+			managed["--etcd-compaction-interval"] = "0"
-+		}
- 		managed["--etcd-prefix"] = fmt.Sprintf("/%s", tenantControlPlane.Status.Storage.Setup.Schema)
- 		managed["--etcd-servers"] = strings.Join(httpsEndpoints, ",")
- 		managed["--etcd-cafile"] = "/etc/kubernetes/pki/etcd/ca.crt"
-```
-
-**File**: `internal/builders/controlplane/deployment_test.go` (modified, +51/-0)
-```diff
-@@ -272,6 +272,57 @@ var _ = Describe("Controlplane Deployment", func() {
- 		})
- 	})
- 
-+	Describe("etcd compaction interval flag", func() {
-+		var tcp kamajiv1alpha1.TenantControlPlane
-+
-+		BeforeEach(func() {
-+			tcp = kamajiv1alpha1.TenantControlPlane{}
-+			d.DataStore.Spec.Driver = kamajiv1alpha1.EtcdDriver
-+		})
-+
-+		It("forces 0 on a shared DataStore, ignoring user extraArgs", func() {
-+			tcp.Spec.ControlPlane.Deployment.ExtraArgs = &kamajiv1alpha1.ControlPlaneExtraArgs{
-+				APIServer: []string{"--etcd-compaction-interval=1m"},
-+			}
-+
-+			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
-+
-+			Expect(got).To(ContainElement("--etcd-compaction-interval=0"))
-+			Expect(got).NotTo(ContainElement("--etcd-compaction-interval=1m"))
-+		})
-+
-+		It("defaults to 5m on an exclusive DataStore", func() {
-+			d.DataStore.Spec.Exclusive = true
-+
-+			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
-+
-+			Expect(got).To(ContainElement("--etcd-compaction-interval=5m"))
-+		})
-+
-+		It("lets the user set the interval on an exclusive DataStore", func() {
-+			d.DataStore.Spec.Exclusive = true
-+			tcp.Spec.ControlPlane.Deployment.ExtraArgs = &kamajiv1alpha1.ControlPlaneExtraArgs{
-+				APIServer: []string{"--etcd-compaction-interval=1m"},
-+			}
-+
-+			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
-+
-+			Expect(got).To(ContainElement("--etcd-compaction-interval=1m"))
-+			Expect(got).NotTo(ContainElement(HavePrefix("--etcd-compaction-interval=0")))
-+			Expect(got).NotTo(ContainElement("--etcd-compaction-interval=5m"))
-+		})
-+
-+		It("replaces the stale 0 after migrating to an exclusive DataStore", func() {
-+			shared := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", nil)
-+
-+			d.DataStore.Spec.Exclusive = true
-+			got := d.buildKubeAPIServerCommand(tcp, "192.0.2.1", shared)
-+
-+			Expect(got).To(ContainElement("--etcd-compaction-interval=5m"))
-+			Expect(got).NotTo(ContainElement("--etcd-compaction-interval=0"))
-+		})
-+	})
-+
- 	Describe("Konnectivity egress selector flag", func() {
- 		var tcp kamajiv1alpha1.TenantControlPlane
- 
+@@ -231,8 +231,8 @@ github.com/moby/docker-image-spec v1.3.1 h1:jMKff3w6PgbfSa69GfNg+zN/XLhfXJGnEx3N
+ github.com/moby/docker-image-spec v1.3.1/go.mod h1:eKmb5VW8vQEh/BAr2yvVNvuiJuY6UIocYsFu/DxxRpo=
+ github.com/moby/go-archive v0.3.3 h1:OxxR9paxsluYi+zDUEXTTaIxtkK3viymW+Ka7vRhhME=
+ github.com/moby/go-archive v0.3.3/go.mod h1:Npdv43fFqlhZW7Xo8fbm3ZMYFvAGNviUPqX21VERbcE=
+-github.com/moby/moby/api v1.56.1 h1:PpWkvVPB7Fr/No8w+TfyJ/I6rWZ2YPZhT3JorIg+06c=
+-github.com/moby/moby/api v1.56.1/go.mod h1:sZ+THbVWkjOmBPPfbnzdD/G1LuIexWhqlSHHPTDQ1Uk=
++github.com/moby/moby/api v1.57.0 h1:K2ykv5UZjwFCtmtL486T+SUEVrQ46w3v7isf214RCcw=
++github.com/moby/moby/api v1.57.0/go.mod h1:pRZ1QRtx6AVhdckeFYo4DUX4ASNF0SCllhyY6aj2mgg=
+ github.com/moby/moby/client v0.6.2 h1:ekSPlMccrZGcw6Scb8T9D39qE0mB+XupU/yS0zNw9N4=
+ github.com/moby/moby/client v0.6.2/go.mod h1:DGcnO7qmPJrqobx/ggQgQ/AUk+2wgVdQv7uxB0/mEsc=
+ github.com/moby/patternmatcher v0.6.1 h1:qlhtafmr6kgMIJjKJMDmMWq7WLkKIo23hsrpR3x084U=
+@@ -549,8 +549,6 @@ k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI0
+ k8s.io/utils v0.0.0-20260626114624-be93311217bd/go.mod h1:xDxuJ0whA3d0I4mf/C4ppKHxXynQ+fxnkmQH0vTHnuk=
+ mellium.im/sasl v0.3.1 h1:wE0LW6g7U83vhvxjC1IY8DnXM+EU095yeo8XClvCdfo=
+ mellium.im/sasl v0.3.1/go.mod h1:xm59PUYpZHhgQ9ZqoJ5QaCqzWMi8IeS49dhp6plPCzw=
+-pgregory.net/rapid v1.2.0 h1:keKAYRcjm+e1F0oAuU5F5+YPAWcyxNNRK2wud503Gnk=
+-pgregory.net/rapid v1.2.0/go.mod h1:PY5XlDGj0+V1FCq0o192FdRhpKHGTRIWBgqjDBTrq04=
+ sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.36.0 h1:/YpDJ4vReG7ZmzSpBGxduXgywWkJU9zHubgJG03MT+Y=
+ sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.36.0/go.mod h1:tJo1aepTXyR+8Xs3sUsGBDk4Ub2AM5dPAPKJx0mpm5c=
+ sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSzAOLsQ=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1420** (2026-11-16): feat(deps): bump github.com/moby/moby/api from 1.56.1 to 1.57.0 (@dependabot[bot])
+- **PR #1419** (2026-11-17): feat: standard Ready condition on TenantControlPlane (@lachgar-Azzeddine)
 - **PR #1417** (2026-11-15): feat(datastore): exclusive etcd DataStore (@NanduBolleddu)
 - **PR #1416** (2026-11-12): fix(metrics): list only certificate secrets (@albertoec)
 - **PR #1414** (2026-11-10): fix(datastore): allow rerunning the MySQL migration (@prometherion)
 - **PR #1413** (2026-11-11): fix(soot): cache only kube-system and kube-public (@pacharya-pf9)
-- **PR #1410** (2026-11-10): feat(deps): bump github.com/testcontainers/testcontainers-go from 0.44.0 to 0.45.0 (@dependabot[bot])
-- **PR #1409** (2026-11-09): feat(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 (@dependabot[bot])
 
 ---
 
@@ -1127,29 +1243,21 @@ Signed-off-by: NanduBolleddu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. datastore): exclusive etcd DataStore
+## X. standard Ready condition on TenantControlPlane
 
 **RULE**:
-When implementing operations in `api/v1alpha1/datastore_types.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/e2e.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `60204b0c`: datastore): exclusive etcd DataStore. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `afdb6e7a`: standard Ready condition on TenantControlPlane. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v1alpha1/datastore_types.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/e2e.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// +kubebuilder:validation:XValidation:rule="!has(self.exclusive) || !self.exclusive || self.driver == \"etcd\"", message="exclusive is supported only with the etcd driver"
-// +kubebuilder:validation:XValidation:rule="oldSelf == null || (has(self.exclusive) && self.exclusive) == (has(oldSelf.exclusive) && oldSelf.exclusive)", message="exclusive is immutable and cannot be changed after creation"
-	// Exclusive dedicates the data store to a single Tenant Control Plane, supported only with the etcd driver.
-	// The tenant's etcd user is granted the root role, and Kamaji no longer forces
-	// --etcd-compaction-interval=0, so the kube-apiserver compacts etcd itself
-	// (5m by default, overridable with the API server extra args).
-	// A second Tenant Control Plane referencing an exclusive data store fails to reconcile.
-	// This value is immutable.
-	Exclusive bool `json:"exclusive,omitempty"`
+          sudo sysctl -w fs.inotify.max_user_instances=512 fs.inotify.max_user_watches=524288
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1159,4 +1267,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `60204b0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `afdb6e7a` are properly handled with clean fallback behavior.

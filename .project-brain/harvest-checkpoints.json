@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T07:20:19.595Z",
+  "last_updated": "2026-11-17T07:28:20.969Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "9d8fa97c88ecf1149dabda8f5c662700425cf494fd0b8d2294f1427e2ae69ef5",
-      "verified_at": "2026-11-16T00:56:51.815Z",
+      "content_hash": "1401fba93be506cc52c648c838b7c5a3ea4d1d964800352712326260d85f50ec",
+      "verified_at": "2026-11-17T07:28:15.842Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T00:56:51.815Z"
+      "last_updated": "2026-11-17T07:28:15.842Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "98c6c67b5fb2a8dba84fb602bee594bde65827a9ba8b9d8d56a742e5eabcda04",
-      "verified_at": "2026-11-15T23:59:58.550Z",
+      "content_hash": "f64ed31cfcc354bd2fa132c566b7e8701614d016379bc0b48745be07c01b4cf7",
+      "verified_at": "2026-11-17T07:28:20.968Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T23:59:58.550Z"
+      "last_updated": "2026-11-17T07:28:20.968Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -8046,14 +8046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-transact-rs-sqlx",
-      "content_hash": "5a8ffc2eb5da6ce435bb444cacaa541e522927260dba74bf29148b7890b97579",
-      "verified_at": "2026-11-12T06:56:13.662Z",
+      "content_hash": "ae5f9fba7cba7e9f9c47f59e5fe443d05695fb4273facf02b5f53dff048985d4",
+      "verified_at": "2026-11-17T07:28:07.958Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T06:56:13.662Z"
+      "last_updated": "2026-11-17T07:28:07.958Z"
     },
     "bergside/typeui": {
       "repository": "bergside/typeui",
