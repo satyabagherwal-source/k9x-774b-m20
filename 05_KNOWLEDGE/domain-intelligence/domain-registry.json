@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T12:26:14.581Z",
-  "total_records": 1547,
+  "last_updated": "2026-11-17T12:46:17.254Z",
+  "total_records": 1549,
   "domains": {
     "A": {
       "total": 11,
@@ -1034,7 +1034,7 @@
       ]
     },
     "H": {
-      "total": 371,
+      "total": 373,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1406,7 +1406,9 @@
         "DOM-H-F963174B",
         "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-learnings-",
         "domain_intelligence-technical-construction-intelligence-diggerhq-digger-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-fastify-fastify-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants"
       ]
     },
     "I": {
@@ -14626,8 +14628,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "979e8cb2eee84edaa15bc304024b65f3efbc1acffa1f5ddc1dc4c3167ea3819c",
-      "created_at": "2026-11-16T18:27:20.375Z"
+      "content_hash": "d29f64c06cc594915dc076c310ca7323e3e591f8af6318d489e707e84bda9d55",
+      "created_at": "2026-11-17T12:46:12.674Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15076,8 +15078,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "f5161d930b983041fa945c358ed29a91d7d3f3f9a1e416160bd9e85a458372ed",
-      "created_at": "2026-11-16T18:27:24.759Z"
+      "content_hash": "4bfc9a9b863145c1fb82795240f7b975f2d994e471eb03ebc8121e40703394a9",
+      "created_at": "2026-11-17T12:46:16.716Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -22718,8 +22720,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "2fb290047e02d7f3696354773369bcd89a13d8bd5efe4507dd0d3b9c61a92b9e",
-      "created_at": "2026-11-17T09:56:55.471Z"
+      "content_hash": "7ad30714dfda1de95bd629d1640cfa83ce101805ec977292343840e5e5bcdcd2",
+      "created_at": "2026-11-17T12:46:17.254Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -26941,6 +26943,24 @@
       "repository": "diggerhq-digger-learnings",
       "content_hash": "9ad5b90d9b001d3fe416de5e0fac12a2d6369126d0b2c07076da6db08ae248bd",
       "created_at": "2026-11-17T12:26:14.581Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fastify-fastify-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-fastify-fastify-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: fastify/fastify Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-technical-construction-intelligence-fastify-fastify-core-invaria.md",
+      "repository": "fastify/fastify",
+      "content_hash": "e931065747e069ab12380cf80786fb9b485992c4cba406e3485e9591ded37441",
+      "created_at": "2026-11-17T12:41:40.435Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: fastify-fastify-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-learnings-technical-construction-intelligence-fastify-fastify-le.md",
+      "repository": "fastify-fastify-learnings",
+      "content_hash": "52b41156fc1ec7e7a6176904c3711691b2f1fad792e24611dc3a28c870cd9376",
+      "created_at": "2026-11-17T12:46:16.055Z"
     }
   }
 }

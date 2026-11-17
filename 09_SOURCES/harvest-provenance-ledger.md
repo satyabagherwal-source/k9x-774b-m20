@@ -10584,3 +10584,5 @@ Every entry in this ledger must capture:
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `0374c91e` | Multi-dimensional audit evidence | 2026-11-17T12:25:04.830Z |
 | `learn-dom-d-46e6b1db` | `project://hf-minimaxai-minimax-h3-image-pe` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md` | 2026-11-17T12:25:35.495Z |
 | `learn-dom-d-84284456` | `project://hf-internlm-sage-s2.1-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md` | 2026-11-17T12:26:13.627Z |
+| `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `36a67047` | Multi-dimensional audit evidence | 2026-11-17T12:41:40.140Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e1506250` | Multi-dimensional audit evidence | 2026-11-17T12:46:12.371Z |

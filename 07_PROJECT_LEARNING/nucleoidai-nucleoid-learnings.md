@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `f9c95d84`  
+> **Source Version**: `e1506250`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T11:25:39.308Z  
+> **Timestamp**: 2026-11-17T12:46:11.455Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T11:25:39.303Z  
+> **Harvest Timestamp**: 2026-11-17T12:41:08.308Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1512,394 +1512,127 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f9c95d84` (2026-11-17)
-**Commit Message**: NUC 112 Node Names of Reasoning Selections
+### Incident Patch 1: `e1506250` (2026-11-17)
+**Commit Message**: Draft NUC 113 Implicit Receivers in Method Bodies
 
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Reasoning enhancement): the frozen candidate meets
-every hard criterion and passes every policy check, including the
-required token non-regression gate. The cycle found no stale Draft, drew
-Reasoning enhancement uniformly from the five eligible categories,
-allocated NUC 112 in 92cbd316, and completed it with fresh baselines,
-candidate, proposer, Rust improvement pass and evaluator.
+Category: Syntax enhancement, drawn uniformly at random (index 0 of the
+five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
+continuous /nuc-proposal cycle, so the token non-regression gate is
+required for this category.
 
-Reasoning pipelines gain a final stage, SELECTION |> nodes, that gives
-the node names of a selection's steps in the selection's order: with a =
-1, b = a + 2 and c = b * 2, c |> why |> nodes is ["c","b","a"] and c |>
-why |> stated |> nodes is ["a"]. It is exactly the accepted
-(SELECTION).map(step => step.node), where a reference alone is its own
-one-step selection, so c |> nodes is ["c"], and an undefined selection
-stays undefined. It builds the same step records, so later anonymous
-objects keep their numbering, but records no read of their node fields,
-so a standing declaration's graph stays bounded where the accepted
-spelling adds a pending obj:N.node node per step on every eva
+Requested change: inside the bodies of a class's methods and
+constructors, a . that begins an operand and is followed by a property
+name reads that property of the receiver this, so def area() => .w * .h
+is def area() => this.w * this.h and return .total in a method's
+indented body is return this.total. It completes NUC 102's implicit
+receivers, which read the assigned object inside property values, for
+class code that is not such a value, including Python-style self
+methods. A whole argument .name stays a NUC 79 selector, property
+assignments keep NUC 102's receiver, statements starting with . keep
+their error, lambdas and functions nested in a method keep theirs, and
+def f() => .a outside classes keeps SyntaxError("Unexpected '.'"). Only
+programs that were syntax errors at the accepted revision change.
 
-**File**: `README.md` (modified, +31/-0)
+This allocation changes only the Draft and its two index rows.
+
+Co-Authored-By: Claude Opus
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -2349,6 +2349,37 @@ assert(line, "honey... 12")
-   `item + ".".repeat(8 - item.length)`, so a new item and price realign it.
-   See the [root contract](nucleoid.spec.md#reactive-string-padding).
+@@ -67,6 +67,7 @@ Created: 31-Jul-2026
+ | [102](nuc-0102.md) | Implicit Receiver Properties | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
+ | [104](nuc-0104.md) | Any and All Class References | Accepted |
+ | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
++| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
  
-+## Node names of reasoning selections
-+
-+**Nodes names the facts a heater rests on and what insulation moves**
-+
-+```nuc
-+outside = 4
-+target = 21
-+insulation = 0.8
-+loss = (target - outside) * insulation
-+heater = loss * 2
-+causes = heater |> why |> stated |> nodes
-+moved = insulation |> affects |> nodes
-+assert(causes, ["target", "outside", "insulation"])
-+assert(moved, ["loss", "heater"])
-+solar = 5
-+heater = loss * 2 - solar
-+assert(causes, ["solar", "target", "outside", "insulation"])
-+```
-+
-+- [NUC 112](docs/nuc-0112.md) adds the final reasoning stage `|> nodes`,
-+  which names the nodes of a selection's steps in their order.
-+  `heater |> why |> stated |> nodes` names the facts the heater rests on,
-+  and `insulation |> affects |> nodes` what a change of the insulation
-+  reaches.
-+- Both lists are the names that
-+  `(heater |> why |> stated).map(step => step.node)` and
-+  `(insulation |> affects).map(step => step.node)` give, and they stay live
-+  the same way: once the heater also accounts for the solar gain, `solar`
-+  joins the facts it rests on. See the
-+  [root contract](nucleoid.spec.md#node-names-of-reasoning-selections).
-+
- ## Reactive list flattening
+ ### Runtime features
  
- **Flat turns nested lists into one live list**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
-```diff
-@@ -767,19 +767,23 @@
- {"id":"spec-0767","description":"Nucleoid pads strings at the end with padEnd","code":"items = [\"tea\", \"jam\", \"honey\"]\nwidth = 6\nrows = items.map(item -> item.padEnd(width) + \"|\")\ntitle = \"Total\"\nrule = title.padEnd(12, \".:\")\nassert(rows, [\"tea   |\", \"jam   |\", \"honey |\"])\nassert(rule, \"Total.:.:.:.\")\nwidth = 4\ntitle = \"Sum\"\nassert(rows, [\"tea |\", \"jam |\", \"honey|\"])\nrule","return":"\"Sum.:.:.:.:.\""}
- {"id":"spec-0768","description":"Nucleoid keeps padded strings live in declarations and class level rules","code":"label = \"7\"\nwidth = 3\nfill = \"0\"\nshown = label.padStart(width, fill)\nassert(shown, \"007\")\nlabel = \"42\"\nassert(shown, \"042\")\nwidth = 5\nassert(shown, \"00042\")\nfill = \"\"\nassert(shown, \"42\")\nfill = \"*\"\nassert(shown, \"***42\")\nclass Ticket(id):\n    this.id = id\n$Ticket.code = \"T-\" + String($Ticket.id).padStart(4, \"0\")\nfirst = Ticket(7)\nsecond = Ticket(42)\nassert([first.code, second.code], [\"T-0007\", \"T-0042\"])\nfirst.id = 12345\n[first.code, second.code]","return":"[\"T-12345\",\"T-0042\"]"}
- {"id":"spec-0769","description":"Nucleoid rolls back failed updates through padded strings","code":"ids = []\ncodes = ids.map(id -> id.padStart(size, \"0\"))\nfailure = \"\"\ntry:\n    ids.push(\"7\")\ncatch error:\n    failure = error\nassert(failure, ReferenceError(\"size is not defined\"))\nassert([ids, codes], [[], []])\nsize = 3\nids.push(\"7\", \"42\")\nassert(codes, [\"007\", \"042\"])\ntry:\n    ids.push(\"5\")\n    size = 2\n    assert(codes, [\"07\", \"42\", \"05\"])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\n[codes, size]","return":"[[\"007\",\"042\"],3]"}
--{"id":"spec-0770","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0771","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0772","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0773","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0774","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0775","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
--{"id":"spec-0776","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN], false)\
-```
-
-**File**: `dataset/nucleoid.synth.76.jsonl` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-76-0001","description":"Nodes names every step of an explanation, in the explanation's order","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> nodes","return":"[\"total\",\"subtotal\",\"shipping\",\"price\",\"qty\"]"}
-+{"id":"synth-76-0002","description":"Nodes after stated names the facts that a conclusion rests on","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> stated |> nodes","return":"[\"seed\"]"}
-+{"id":"synth-76-0003","description":"Nodes after derived names the conclusions on the way to a value","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> derived |> nodes","return":"[\"result\",\"middle\"]"}
-+{"id":"synth-76-0004","description":"Nodes after affects names what a change of one fact reaches","code":"rate = 0.2\nprice = 10\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nprice |> affects |> nodes","return":"[\"subtotal\",\"tax\",\"total\"]"}
-+{"id":"synth-76-0005","description":"Nodes on the model names every node in model order and leaves out a declaration that holds reasoning","code":"a = 1\nb = a + 2\nnames = b |> why |> nodes\nmodel |> nodes","return":"[\"a\",\"b\"]"}
-+{"id":"synth-76-0006","description":"A prefix stage composes with nodes","code":"a = 1\nb = a + 2\nc = b * 2\nwhy c |> nodes","return":"[\"c\",\"b\",\"a\"]"}
-+{"id":"synth-76-0007","description":"A reference alone names its own node","code":"a = 1\nb = a + 2\nb |> nodes","return":"[\"b\"]"}
-+{"id":"synth-76-0008","description":"Nodes after depth names a conclusion and what it reads directly","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> depth(1) |> nodes","return":"[\"total\",\"subtotal\",\"shipping\"]"}
-+{"id":"synth-76-0009","description":"Nodes after path names the steps by which one value reaches another","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> path(price) |> nodes","return":"[\"total\",\"subtotal\",\"price\"]"}
-+{"id":"synth-76-0010","description":"Nodes after intersect names the causes two explanations share","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntax |> why |> intersect(shipping |> why) |> nodes","return":"[\"quantity\"]"}
-+{"id":"synth-76-0011","description":"A standing declaration of node names follows a rewiring of the graph","code":"a = 1\nb = a + 2\nc = b * 2\nnames = c |> why |> nodes\nx = 5\nb = x + 1\nnames","return":"[\"c\",\"b\",\"x\"]"}
-+{"id":"synth-76-0012","description":"A class-level rule names the nodes behind each instance's own value","code":"rate = 2\nclass Machine(load, hours):\n    this.load = load\n    this.hours = hours\n$Machine.wear = $Machine.load * $Machine.hours * rate\n$Machine.inputs = $Machine.wear |> why |> nodes\npress = Machine(5, 10)\npress.inputs","return":"[\"press.wear\",\"press.load\",\"press.hours\",\"rate\"]"}
-```
-
-**File**: `docs/README.md` (modified, +65/-2)
-```diff
-@@ -3885,6 +3885,9 @@ pace
- - A selection is an ordered list of steps with `node`, `holds`, `rule`, `state`, and `from` fields.
- - `state` is `"stated"` for an independent fact or `"derived"` for a relationship or class-level rule.
- - List functions such as `map`, `find`, and `some` can inspect the steps.
-+- `selection |> nodes` lists the steps' `node` names, as
-+  `(selection).map(step => step.node)` does for the selection the pipeline
-+  denotes ([NUC 112](nuc-0112.md)).
- 
- ```
- a = 1
-@@ -4096,6 +4099,58 @@ common.map(step => step.node)
-   [intersect and except reasoning selections](../nucleoid.spec.md#intersect-and-except-reasoning-selections)
-   section.
- 
-+### Node names of reasoning selections
-+
-+```
-+price = 10
-+qty = 3
-+shipping = 5
-+subtotal = price * qty
-+total = subtotal + shipping
-+facts = total |> why |> stated |> nodes
-+reach = price |> affects |> nodes
-+assert(facts, ["shipping", "price", "qty"])
-+assert(reach, ["subtotal", "total"])
-+base = 4
-+shipping = base + 1
-+facts
-+```
-+
-+- This is the complete `Nucleoid names the nodes of selections with nodes`
-+  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `["base","price","qty"]`.
-+- [NUC 112](nuc-0112.md) adds the final stage `selection |> nodes`. It gives
-+  the `node` names of the selection's steps as a list of strings, in their
-+  order, so `total |> why |> stated |> nodes` names the facts the total rests
-+  on and `price |> affects |> nodes` what a change of the price reaches. It is
-+  exactly `(selection).map(step => step.node)`, where `selection` is the
-+  selection that the pipeline before `nodes` denotes, read as the stages read
-+  their source.
-+- The selection is written as a pipeline's source is: a reference, which
-+  denotes its own one-step selection rather than its value, `model`, a prefix
-+  stage such as `why total`, or a pipeline of any of the stages above. So
-+  `total |> nodes` is `["total"]`, as
-+  `(total |> why |> depth(0)).map(step => step.node)` is, while
-+  `(total).map(step => step.node)` raises
-+  `TypeError("number.map is not a function")`. An empty selection gives `[]`,
-+  and a selection that a `depth(null)` makes undefined gives undefined.
-+- The stage ends the pipeline: a stage after it, or an `intersect`, `except`
-+  or `path` argument that ends with it, has a list of names rather than a
-+  selection and raises `TypeError("Cannot explain <source>")`, as it does
-+  after the accepted spelling.
-+- Only `|>` followed by `nodes` is the stage; `nodes` stays an ordinary name
-+  everywhere else, and there is no prefix form. A local or parameter,
-+  variable, function or class named `nodes` shadows the stage, as bindings
-+  shadow the state filters, `depth`, `diff`, `path`, `intersect` and
-+  `except`: the pipeline then raises `TypeError("nodes is not an operation")`
-+  before selecting its source.
-+- The list stays live through every observation its selection made, and a
-+  declaration that holds it is a reasoning observer. It renders as
-+  `selection|>nodes`.
-+- The authoritative contract is the
-+  [node names of reasoning selections](../nucleoid.spec.md#node-names-of-reasoning-selections)
-+  section.
-+
- ### Live structure
- 
- - A reasoning assignment follows both values and graph structure.
-@@ -4134,8 +4189,11 @@ c = b * 2
-   and its `before` and `after` fields, the [NUC 88](nuc-0088.md)
-   candidate adds a `path(target)` stage that NUC 11 does not plan, and the
-   [NUC 106](nuc-0106.md) candidate adds `intersect(other)` and
--  `except(other)` stages, which NUC 11 does not plan either. Other NUC 11
--  operations remain proposals, not dependencies.
-+  `except(other)` stages, which NUC 11 does not plan either, and the
-+  [NUC 112](nuc-0112.md) candidate adds a final `nodes` stage, which names
-+  the nodes of a selection and, unlike NUC 11's operations, returns a list
-+  rather than a selection. Other NUC 11 operations remain proposals, not
-+  dependencies.
- 
- ### Quantifiers
- 
-@@ -4614,6 +4672,11 @@ why a |> except(why b)                what a rests on and b does not (NUC 106)
- affects a |> intersect(affects b)     what a and b both move (NUC 106)
- selection |> intersect(other)         steps whose node other also selects (NUC 106)
- selection |> except(other)            steps whose node other does not select (NUC 106)
-+reference |> why |> nodes             the node names of an explanation, in its order (NUC 112)
-+reference |> why |> stated |> nodes   the names of the facts an explanation rests on (NUC 112)
-+reference |> affects |> nodes         the names of what a change of the reference reaches (NUC 112)
-+model |> nodes                        the names of the current model's nodes (NUC 112)
-+selection |> nodes                    the list (selection).map(step => step.node); ends the pipeline (NUC 112)
- all name in collection: condition     true when the condition holds for every member (NUC 62)
- every name in collection: condition   the same quantifier as all (NUC 98)
- any n
-```
-
-**File**: `docs/examples.md` (modified, +29/-0)
-```diff
-@@ -3874,6 +3874,35 @@ east.aisle = "EAST"
-   not padded. See [NUC 111](nuc-0111.md) and the
-   [root contract](../nucleoid.spec.md#reactive-string-padding).
- 
-+## Node names of reasoning selections
-+
-+**Nodes names the facts and rules behind a loan decision**
-+
-+```nuc
-+income = 5000
-+debt = 1200
-+score = 700
-+ratio = debt / income
-+approved = ratio < 0.4 && score > 650
-+facts = approved |> why |> stated |> nodes
-+rules = approved |> why |> derived |> nodes
-+assert([facts, rules], [["score", "debt", "income"], ["approved", "ratio"]])
-+years = 3
-+approved = ratio < 0.4 && score > 650 && years > 2
-+moved = income |> affects |> nodes
-+assert(moved, ["ratio", "approved"])
-+[facts, rules]
-+# return: [["score","years","debt","income"],["approved","ratio"]]
-+```
-+
-+- `approved |> why |> stated |> nodes` names the facts the decision rests
-+  on and `approved |> why |> derived |> nodes` the rules it passes through,
-+  each in the order of the explanation. `income |> affects |> nodes` names
-+  what a change of income reaches.
-+- The names follow the model: once the decision also asks for more than two
-+  years of history, `years` joins the facts. See [NUC 112](nuc-0112.md) and the
-+  [root contract](../nucleoid.spec.md#node-names-of-reasoning-selections).
-+
- ## Reactive list flattening
- 
- **Flattening keeps the dirty tiles of every room counted**
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -142,7 +142,7 @@ Created: 31-Jul-2026
- | [88](nuc-0088.md) | Derivation Path Selections | Accepted |
- | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
- | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
--| [112](nuc-0112.md) | Node Names of Reasoning Selections | Draft |
-+| [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
- 
- ### Language compatibility
- 
-@@ -278,7 +278,7 @@ Created: 31-Jul-2026
- | [109](nuc-0109.md) | Operator Section Arguments | Standards Track | Syntax enhancement | Accepted |
+@@ -279,6 +280,7 @@ Created: 31-Jul-2026
  | [110](nuc-0110.md) | Python String Method Aliases | Standards Track | Language compatibility | Accepted |
  | [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
--| [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
++| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0112.md` (modified, +1251/-22)
+**File**: `docs/nuc-0113.md` (added, +73/-0)
 ```diff
-@@ -4,65 +4,1294 @@
- NUC: 112
- Title: Node Names of Reasoning Selections
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Reasoning enhancement
- Created: 17-Nov-2026
-+Requires: 48, 82, 83, 88, 106
- ```
- 
- ## Abstract
- 
- - Adds a final reasoning stage, `SELECTION |> nodes`, that gives the node
--  names of a selection's steps, in the selection's order. With `a = 1`,
--  `b = a + 2` and `c = b * 2`, `c |> why |> nodes` is `["c", "b", "a"]`,
--  `c |> why |> stated |> nodes` is `["a"]` and `a |> affects |> nodes` is
--  `["b", "c"]`.
--- It is exactly the accepted `(SELECTION).map(step => step.node)`, and it
--  stays live as that spelling does: a declaration
--  `names = total |> why |> nodes` follows later changes of the graph.
-+  names of a selection's steps, in the selection's order, as a list of
-+  strings. With `a = 1`, `b = a + 2` and `c = b * 2`, `c |> why |> nodes` is
-+  `["c", "b", "a"]`, `c |> why |> stated |> nodes` is `["a"]` and
-+  `a |> affects |> nodes` is `["b", "c"]`.
-+- It is exactly the accepted `(SELECTION).map(step => step.node)`, where
-+  `SELECTION` is the selection that the pipeline denotes, read as the
-+  accepted stages read their source, so a reference alone is its own
-+  one-step selection and `c |> nodes` is `["c"]`. It stays live as that
-+  spelling does: a declaration `names = total |> why |> nodes` follows later
-+  changes of the graph.
- - It ends a pipeline over any selection source the accepted stages take: a
--  reference, `model`, or a pipeline of accepted stages such as `why`,
--  `affects`, `stated`, `derived`, `depth`, `path`, `intersect` and
--  `except`. It has no prefix form, because `nodes c` already reads as two
--  juxtaposed statements.
--- Only programs that raised `TypeError("nodes is not an operation")`
--  change. A binding named `nodes` keeps that error for the pipeline, as
--  bindings named `stated` and `derived` keep theirs.
-+  reference, `model`, a prefix stage such as `why c`, or a pipeline of
-+  accepted stages such as `why`, `affects`, `stated`, `derived`, `depth`,
-+  `path`, `intersect`, `except` and `diff`. What follows it reads a list of
-+  names, not a selection, as after the accepted spelling, so
-+  `c |> why |> nodes |> why` raises `TypeError("Cannot explain c|>why|>nodes")`.
-+- It has no prefix form, because `nodes c` already reads as two juxtaposed
-+  statements. A local or parameter, state variable, function or class named
-+  `nodes` makes the pipeline raise `TypeError("nodes is not an operation")`,
-+  as bindings named `stated` and `derived` do for theirs.
-+- No keyword, lexer token, error type or message is added. Every accepted
-+  program keeps its parse and behavior. Only inputs that were parse errors at
-+  the accepted revision change: most raised the parse-time
-+  `TypeError("nodes is not an operation")`, and where the statement parser
-+  backtracks from an unpacking or object-destructuring pattern, some raised
-+  `SyntaxError("Unexpected ','")` or `SyntaxError("Unexpected '='")` first.
-+- The public `Stage` enum gains the variant `Stage::Nodes`, which needs human
-+  SemVer review. No project version is changed. The authoritative contract is
-+  [Node names of reasoning selections](../nucleoid.spec.md#node-names-of-reasoning-selections).
- 
- ## Motivation
- 
- - An explanation is a list of steps, and the question most programs ask of
-   it is which nodes take part: which facts support a conclusion, and what a
-   change reaches. The accepted spelling maps the steps, as in
-   `(total |> why |> stated).map(step => step.node)`, and the executable
--  documents write that mapping more than 190 times: 132 in the
--  specification's cases, 25 in the executable reference, 21 in the
--  examples and 8 each in the two READMEs.
-+  documents write that mapping 194 times: 132 in the specification's cases,
-+  25 in the executable reference, 21 in the examples and 8 each in the two
-+  READMEs.
- - At the accepted revision, `c |> why |> nodes` raises
-   `TypeError("nodes is not an operation")` while the program is parsed.
- - A stage keeps the question inside the pipeline that asks it, so a world
-   model reads its explanations as the rest of its reasoning reads, left to
-   right: `alarm |> why |> stated |> nodes` names the facts that raise an
-   alarm.
-+- The accepted spelling also builds a record object for every step and then
-+  reads one field of each. Inside a declaration, each read of a fresh
-+  record's `node` field adds a pending graph node: after
-+  `names = (why c).map(.node)` and two writes of `a`, `--graph` lists nine
-+  pending nodes, `obj:0.node` to `obj:8.node`, of which only the last three
-+  are still read. A standing declaration so grows the graph by one node for
-+  every step each time it is evaluated.
-+- The most compact accepted spelling, `(why c).map(.node)` with a
-+  [NUC 79](nuc-0079.md) selector, is 10 lexer tokens, and
-+  `(c |> why |> stated).map(.node)` is 13, against 4 for `why c |> nodes
-```
-
-**File**: `docs/nucleoid.g4` (modified, +9/-1)
-```diff
-@@ -489,7 +489,8 @@ stage
-     | AFFECTS
-     | STATED
-     | DERIVED
--    | DIFF                                                // Expr::Reason
-+    | DIFF
-+    | NODES                                               // Expr::Reason
-     | DEPTH LPAREN expression RPAREN                       // Expr::Depth
-     | PATH LPAREN expression RPAREN                        // Expr::Path
-     | (INTERSECT | EXCEPT) LPAREN expression RPAREN        // Expr::Combine
-@@ -869,6 +870,7 @@ enumName
-     | PATH
-     | INTERSECT
-     | EXCEPT
-+    | NODES
-     | MODEL
-     | FIRST
-     | LAST
-@@ -954,6 +956,7 @@ DEPTH            : 'depth';
- PATH             : 'path';
- INTERSECT        : 'intersect';
- EXCEPT           : 'except';
-+NODES            : 'nodes';
- MODEL            : 'model';
- FIRST            : 'first';
- LAST             : 'last';
-@@ -1143,6 +1146,11 @@ fragment REGEX_CHAR
-  * catch without a name     -> the binding "error".
-  * model directly before |> -> Expr::Model.
-  * |> intersect(model)      -> its other selection is Expr::Model; also except.
-+ * s |> nodes               -> Expr::Reason with Stage::Nodes, the node names of
-+ *                             s's selection. It ends the pipeline: a stage
-+ *                             after it, or an intersect, except or path
-+ *                             argument that ends with it, parses and then
-+ *                             raises TypeError("Cannot explain <source>").
-  * An object containing spread uses Expr::SpreadObject, with later entries
-  * winning; otherwise it uses Expr::ObjectLiteral. Numeric keys become text.
-  *
+@@ -0,0 +1,73 @@
++# NUC 113 -- Implicit Receivers in Method Bodies
++
++```
++NUC: 113
++Title: Implicit Receivers in Method Bodies
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Syntax enhancement
++Created: 17-Nov-2026
++```
++
++## Abstract
++
++- Inside the body of a method that a class declares, a `.` that begins an
++  operand and is followed by a property name reads that property of the
++  instance the method runs on, its receiver `this`. So
++  `def area() => .w * .h` is `def area() => this.w * this.h`, and
++  `return .total - .paid` in a method's indented body is
++  `return this.total - this.paid`.
++- It completes [NUC 102](nuc-0102.md)'s implicit receivers, which read the
++  assigned object inside the value of a property assignment, for the code
++  of a class that is not such a value: the bodies of its methods and
++  constructors, written with `def` directly in a class's indented body or
++  as the class header's own indented body, with expression or indented
++  bodies and with Python-style `self` parameters ([NUC 107](nuc-0107.md)).
++- Every accepted reading keeps its meaning. A whole argument `.name` stays a
++  [NUC 79](nuc-0079.md) property selector, a property assignment inside a
++  method keeps NUC 102's receiver, a statement that starts with `.` keeps
++  its error, a lambda or function nested in a method keeps its accepted
++  error, since `this` is not defined there, and outside classes
++  `def f() => .a` keeps its accepted `SyntaxError("Unexpected '.'")`.
++- Only programs that were syntax errors at the accepted revision change.
++
++## Motivation
++
++- Methods read the properties of their own instance more than anything
++  else: in the executable documents, 27 lines that give a method's value
++  read them through `this.`, as in `return this.count` and
++  `def combine left right => this.base + left + right`.
++- NUC 102 gave class-level rules and property values the short receiver
++  form, so `$Rect.area = .w * .h` and `this.area = .w * .h` read the
++  receiver's properties, but a method that computes the same value still
++  spells every read out: at the accepted revision `def area() => .w * .h`
++  raises `SyntaxError("Unexpected '.'")` while the program is parsed.
++- Each read saves one lexer token, `this.w` being three and `.w` two, so a
++  world model's methods read as its rules already do.
++- Prior art: Ruby's `@name`, CoffeeScript's `@name` and the implicit `this`
++  of Kotlin, Swift and Java, which let a method name its own instance's
++  members without spelling the receiver.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1928,51 +1661,22 @@ spelling adds a pending obj:N.node node per step on every eva
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 112 Node Names of Reasoning Selections
+## X. Draft NUC 113 Implicit Receivers in Method Bodies
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f9c95d84`: NUC 112 Node Names of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1506250`: Draft NUC 113 Implicit Receivers in Method Bodies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Node names of reasoning selections
-
-**Nodes names the facts a heater rests on and what insulation moves**
-
-```nuc
-outside = 4
-target = 21
-insulation = 0.8
-loss = (target - outside) * insulation
-heater = loss * 2
-causes = heater |> why |> stated |> nodes
-moved = insulation |> affects |> nodes
-assert(causes, ["target", "outside", "insulation"])
-assert(moved, ["loss", "heater"])
-solar = 5
-heater = loss * 2 - solar
-assert(causes, ["solar", "target", "outside", "insulation"])
-```
-
-- [NUC 112](docs/nuc-0112.md) adds the final reasoning stage `|> nodes`,
-  which names the nodes of a selection's steps in their order.
-  `heater |> why |> stated |> nodes` names the facts the heater rests on,
-  and `insulation |> affects |> nodes` what a change of the insulation
-  reaches.
-- Both lists are the names that
-  `(heater |> why |> stated).map(step => step.node)` and
-  `(insulation |> affects).map(step => step.node)` give, and they stay live
-  the same way: once the heater also accounts for the solar gain, `solar`
-  joins the facts it rests on. See the
-  [root contract](nucleoid.spec.md#node-names-of-reasoning-selections).
-
+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1982,4 +1686,4 @@ assert(causes, ["solar", "target", "outside", "insulation"])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f9c95d84` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1506250` are properly handled with clean fallback behavior.

@@ -2003,10 +2003,10 @@
     "repository": "fastify/fastify",
     "platform": "github",
     "sourceUrl": "https://github.com/fastify/fastify",
-    "sourceVersion": "0b076ca5",
+    "sourceVersion": "36a67047",
     "license": "MIT",
-    "contentHash": "b70a45c74e774a36ede2fd790795eddcca4eaf3193005ed21a2a6cbe83573d46",
-    "lastHarvestedAt": "2026-11-08T01:09:50.382Z",
+    "contentHash": "15c6145e574d755721b215bff3ae8b2e0719924a0ea79be7dcfc70d4e24b424f",
+    "lastHarvestedAt": "2026-11-17T12:41:40.140Z",
     "learningId": "learn-github-fastify-fastify"
   },
   "expressjs-express": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "f9c95d84",
+    "sourceVersion": "e1506250",
     "license": "Apache-2.0",
-    "contentHash": "f592b8bf74bdb32d44768135f739e63ac4ff624336ac4d34115f2eb05e2400ee",
-    "lastHarvestedAt": "2026-11-17T11:25:39.716Z",
+    "contentHash": "c5a693b4e972a1c73ccb481c5f8c866c21e7d0850ad6ac26c7c4ae4a3d16b430",
+    "lastHarvestedAt": "2026-11-17T12:46:12.371Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {

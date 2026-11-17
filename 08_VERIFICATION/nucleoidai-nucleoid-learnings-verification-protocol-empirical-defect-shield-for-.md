@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T07:20:47.733Z",
+  "timestamp": "2026-11-17T12:46:16.507Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T07:20:47.733Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T12:46:16.507Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `92cbd316`  
+> **Source Version**: `e1506250`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T07:20:18.770Z  
+> **Timestamp**: 2026-11-17T12:46:11.455Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T07:20:18.765Z  
+> **Harvest Timestamp**: 2026-11-17T12:41:08.308Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1537,102 +1537,104 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `92cbd316` (2026-11-17)
-**Commit Message**: Draft NUC 112 Node Names of Reasoning Selections
+### Incident Patch 1: `e1506250` (2026-11-17)
+**Commit Message**: Draft NUC 113 Implicit Receivers in Method Bodies
 
-Category: Reasoning enhancement, drawn uniformly at random (index 3 of the
+Category: Syntax enhancement, drawn uniformly at random (index 0 of the
 five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
 continuous /nuc-proposal cycle, so the token non-regression gate is
 required for this category.
 
-Requested change: add a final reasoning stage, SELECTION |> nodes, that
-gives the node names of a selection's steps in the selection's order, so
-with a = 1, b = a + 2 and c = b * 2, c |> why |> nodes is ["c", "b", "a"]
-and c |> why |> stated |> nodes is ["a"]. It is exactly the accepted
-(SELECTION).map(step => step.node), stays live as that spelling does, and
-ends a pipeline over any source the accepted stages take; it has no
-prefix form, because nodes c already reads as two juxtaposed statements.
-Only programs that raised TypeError("nodes is not an operation") change,
-and a binding named nodes keeps that error for the pipeline, as bindings
-named stated and derived keep theirs.
+Requested change: inside the bodies of a class's methods and
+constructors, a . that begins an operand and is followed by a property
+name reads that property of the receiver this, so def area() => .w * .h
+is def area() => this.w * this.h and return .total in a method's
+indented body is return this.total. It completes NUC 102's implicit
+receivers, which read the assigned object inside property values, for
+class code that is not such a value, including Python-style self
+methods. A whole argument .name stays a NUC 79 selector, property
+assignments keep NUC 102's receiver, statements starting with . keep
+their error, lambdas and functions nested in a method keep theirs, and
+def f() => .a outside classes keeps SyntaxError("Unexpected '.'"). Only
+programs that were syntax errors at the accepted revision change.
 
 This allocation changes only the Draft and its two index rows.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
+Co-Authored-By: Claude Opus
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -142,6 +142,7 @@ Created: 31-Jul-2026
- | [88](nuc-0088.md) | Derivation Path Selections | Accepted |
- | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
- | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
-+| [112](nuc-0112.md) | Node Names of Reasoning Selections | Draft |
+@@ -67,6 +67,7 @@ Created: 31-Jul-2026
+ | [102](nuc-0102.md) | Implicit Receiver Properties | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
+ | [104](nuc-0104.md) | Any and All Class References | Accepted |
+ | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
++| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
  
- ### Language compatibility
+ ### Runtime features
  
-@@ -277,6 +278,7 @@ Created: 31-Jul-2026
- | [109](nuc-0109.md) | Operator Section Arguments | Standards Track | Syntax enhancement | Accepted |
+@@ -279,6 +280,7 @@ Created: 31-Jul-2026
  | [110](nuc-0110.md) | Python String Method Aliases | Standards Track | Language compatibility | Accepted |
  | [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
-+| [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
++| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0112.md` (added, +72/-0)
+**File**: `docs/nuc-0113.md` (added, +73/-0)
 ```diff
-@@ -0,0 +1,72 @@
-+# NUC 112 -- Node Names of Reasoning Selections
+@@ -0,0 +1,73 @@
++# NUC 113 -- Implicit Receivers in Method Bodies
 +
 +```
-+NUC: 112
-+Title: Node Names of Reasoning Selections
++NUC: 113
++Title: Implicit Receivers in Method Bodies
 +Author: Can Mingir <canmingir@gmail.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Reasoning enhancement
++Category: Syntax enhancement
 +Created: 17-Nov-2026
 +```
 +
 +## Abstract
 +
-+- Adds a final reasoning stage, `SELECTION |> nodes`, that gives the node
-+  names of a selection's steps, in the selection's order. With `a = 1`,
-+  `b = a + 2` and `c = b * 2`, `c |> why |> nodes` is `["c", "b", "a"]`,
-+  `c |> why |> stated |> nodes` is `["a"]` and `a |> affects |> nodes` is
-+  `["b", "c"]`.
-+- It is exactly the accepted `(SELECTION).map(step => step.node)`, and it
-+  stays live as that spelling does: a declaration
-+  `names = total |> why |> nodes` follows later changes of the graph.
-+- It ends a pipeline over any selection source the accepted stages take: a
-+  reference, `model`, or a pipeline of accepted stages such as `why`,
-+  `affects`, `stated`, `derived`, `depth`, `path`, `intersect` and
-+  `except`. It has no prefix form, because `nodes c` already reads as two
-+  juxtaposed statements.
-+- Only programs that raised `TypeError("nodes is not an operation")`
-+  change. A binding named `nodes` keeps that error for the pipeline, as
-+  bindings named `stated` and `derived` keep theirs.
++- Inside the body of a method that a class declares, a `.` that begins an
++  operand and is followed by a property name reads that property of the
++  instance the method runs on, its receiver `this`. So
++  `def area() => .w * .h` is `def area() => this.w * this.h`, and
++  `return .total - .paid` in a method's indented body is
++  `return this.total - this.paid`.
++- It completes [NUC 102](nuc-0102.md)'s implicit receivers, which read the
++  assigned object inside the value of a property assignment, for the code
++  of a class that is not such a value: the bodies of its methods and
++  constructors, written with `def` directly in a class's indented body or
++  as the class header's own indented body, with expression or indented
++  bodies and with Python-style `self` parameters ([NUC 107](nuc-0107.md)).
++- Every accepted reading keeps its meaning. A whole argument `.name` stays a
++  [NUC 79](nuc-0079.md) property selector, a property assignment inside a
++  method keeps NUC 102's receiver, a statement that starts with `.` keeps
++  its error, a lambda or function nested in a method keeps its accepted
++  error, since `this` is not defined there, and outside classes
++  `def f() => .a` keeps its accepted `SyntaxError("Unexpected '.'")`.
++- Only programs that were syntax errors at the accepted revision change.
 +
 +## Motivation
 +
-+- An explanation is a list of steps, and the question most programs ask of
-+  it is which nodes take part: which facts support a conclusion, and what a
-+  change reaches. The accepted spelling maps the steps, as in
-+  `(total |> why |> stated).map(step => step.node)`, and the executable
-+  documents write that mapping more than 190 times: 132 in the
-+  specification's cases, 25 in the executable reference, 21 in the
-+  examples and 8 each in the two READMEs.
-+- At the accepted revision, `c |> why |> nodes` raises
-+  `TypeError("nodes is not an operation")` while the program is parsed.
-+- A stage keeps the question inside the pipeline that asks it, so a world
-+  model reads its explanations as the rest of its reasoning reads, left to
-+  right: `alarm |> why |> stated |> nodes` names the facts that raise an
-+  alarm.
-+- Prior art: the node lists that graph and logic tools return for a
-+  derivation, and the accepted stages of NUC 48, NUC 82, NUC 88 and
-+  NUC 106, which shape selections inside the same pipeline.
++- Methods read the properties of their own instance more than anything
++  else: in the executable documents, 27 lines that give a method's value
++  read them through `this.`, as in `return this.count` and
++  `def combine left right => this.base + left + right`.
++- NUC 102 gave class-level rules and property values the short receiver
++  form, so `$Rect.area = .w * .h` and `this.area = .w * .h` read the
++  receiver's properties, but a method that computes the same value still
++  spells every read out: at the accepted revision `def area() => .w * .h`
++  raises `SyntaxError("Unexpected '.'")` while the program is parsed.
++- Each read saves one lexer token, `this.w` being three and `.w` two, so a
++  world model's methods read as its rules already do.
++- Prior art: Ruby's `@name`, CoffeeScript's `@name` and the implicit `this`
++  of Kotlin, Swift and Java, which let a method name its own instance's
++  members without spelling the receiver.
 +
 +## Rationale
 +
@@ -1656,414 +1658,6 @@ Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 +
 +This document is licensed under the Apache License, Version 2.0. See
 +[LICENSE](../LICENSE) for the full text.
-```
-
----
-
-### Incident Patch 2: `63af36ba` (2026-11-17)
-**Commit Message**: NUC 111 Reactive String Padding
-
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Utility enhancement): the frozen candidate meets
-every hard criterion and passes every policy check, including the
-required token non-regression gate. The cycle found no stale Draft, drew
-Utility enhancement uniformly from the five eligible categories,
-allocated NUC 111 in 8f730054, and completed it with fresh baselines,
-candidate, proposer, Rust improvement pass and evaluator.
-
-Strings gain JavaScript's standard padding methods:
-TEXT.padStart(length, fill) puts copies of fill before TEXT until the
-result holds length characters, so "7".padStart(3, "0") is "007", and
-TEXT.padEnd(length, fill) puts them after it, so "ab".padEnd(4, ".") is
-"ab..". length converts as the count of repeat does; a missing fill, or
-the runtime's undefined value, pads with one space; a longer fill is cut
-to the missing count of characters; a TEXT that already holds length
-characters, or an empty fill, gives TEXT unchanged; and a result too
-large to allocate raises TypeError("Padded string is too large") through
-an exact, fallible reservation. The methods belong to strings only and
-are reached
-
-**File**: `README.md` (modified, +23/-0)
-```diff
-@@ -2326,6 +2326,29 @@ assert(tables, "report.csv, notes.csv")
-   to `tables`. See the
-   [root contract](nucleoid.spec.md#python-string-method-aliases).
- 
-+## Reactive string padding
-+
-+**Padding keeps a price list aligned as it changes**
-+
-+```nuc
-+item = "tea"
-+price = "4"
-+line = item.padEnd(8, ".") + price.padStart(3)
-+assert(line, "tea.....  4")
-+item = "honey"
-+price = "12"
-+assert(line, "honey... 12")
-+```
-+
-+- [NUC 111](docs/nuc-0111.md) adds JavaScript's `padStart` and `padEnd` to
-+  strings: `price.padStart(3)` puts spaces before the price until it holds
-+  three characters, and `item.padEnd(8, ".")` puts dots after the item until
-+  it holds eight. A fill of several characters is cut to the gap, and text
-+  that already holds the length is returned as it is.
-+- `line` stays live like its `repeat` spelling,
-+  `item + ".".repeat(8 - item.length)`, so a new item and price realign it.
-+  See the [root contract](nucleoid.spec.md#reactive-string-padding).
-+
- ## Reactive list flattening
- 
- **Flat turns nested lists into one live list**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
-```diff
-@@ -763,19 +763,23 @@
- {"id":"spec-0763","description":"Nucleoid tests prefixes and suffixes with startswith and endswith","code":"files = [\"report.csv\", \"notes.txt\", \"draft_report.csv\"]\ntables = files.filter(file -> file.endswith(\".csv\"))\ndrafts = files.filter(file -> file.startswith(\"draft_\"))\nassert(tables, [\"report.csv\", \"draft_report.csv\"])\nassert(drafts, [\"draft_report.csv\"])\nassert(tables, files.filter(file -> file.endsWith(\".csv\")))\nassert([\"Ada\".startswith(\"A\"), \"Ada\".startswith(\"a\"), \"Ada\".endswith(\"\")], [true, false, true])\nassert(\"draft_report.csv\".startswith(\"report\", 6), false)\nfiles.push(\"draft_plan.txt\", \"data.CSV\")\nassert(drafts, [\"draft_report.csv\", \"draft_plan.txt\"])\nassert(tables, [\"report.csv\", \"draft_report.csv\"])\nfiles.shift()\ntables","return":"[\"draft_report.csv\"]"}
- {"id":"spec-0764","description":"Nucleoid joins lists and class populations with the separator as the receiver","code":"class Tag(name):\n    this.name = name\nnames = [\"ada\", \"bo\"]\nsep = \", \"\nlabel = sep.join(names)\nshown = \" | \".join(Tag.map(tag -> tag.name))\nassert([label, shown], [\"ada, bo\", \"\"])\nred = Tag(\"red\")\nblue = Tag(\"blue\")\nassert(shown, \"red | blue\")\nassert([label, \"/\".join(Tag)], [names.join(sep), Tag.join(\"/\")])\nassert(\"-\".join([\"a\", 1, null, true, []]), \"a-1-null-true-\")\nnames.push(\"cy\")\nsep = \" / \"\nassert(label, \"ada / bo / cy\")\n\"\".join(names)","return":"\"adabocy\""}
- {"id":"spec-0765","description":"Nucleoid rolls back failed updates through Python string methods","code":"class File(name):\n    this.name = name\n$File.table = $File.name.endswith(\".csv\")\nreport = File(\"report.csv\")\nnotes = File(\"notes.txt\")\nassert([report.table, notes.table], [true, false])\nnotes.name = \"notes.csv\"\nassert(notes.table, true)\nfailure = \"\"\ntry:\n    report.name = 7\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.endswith is not a function\"))\nassert([report.name, report.table], [\"report.csv\", true])\nnames = [\"ada\", \"bo\"]\nlabel = \", \".join(names)\ntry:\n    names = \"ada\"\ncatch error:\n    failure = error\nassert(failure, TypeError(\", .join is not a function\"))\nassert([names, label], [[\"ada\", \"bo\"], \"ada, bo\"])\ntry:\n    names.push(\"cy\")\n    report.name = \"report.txt\"\n    assert([label, report.table], [\"ada, bo, cy\", false])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\n[label, report.table]","return":"[\"ada, bo\",true]"}
--{"id":"spec-0766","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0767","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0768","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0769","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0770","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0771","description":"Nucleoid rolls back failed flattenin
-```
-
-**File**: `dataset/nucleoid.synth.75.jsonl` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+{"id":"synth-75-0001","description":"padStart zero-pads identifiers to a fixed width, and an identifier that already holds the width keeps all of it","code":"ids = [\"7\", \"42\", \"123\", \"1234\"]\nids.map(id -> id.padStart(3, \"0\"))","return":"[\"007\",\"042\",\"123\",\"1234\"]"}
-+{"id":"synth-75-0002","description":"padEnd aligns labels in a column, padding with one space when no fill is given","code":"items = [\"tea\", \"honey\", \"jam\"]\nitems.map(item -> item.padEnd(6) + \"|\")","return":"[\"tea   |\",\"honey |\",\"jam   |\"]"}
-+{"id":"synth-75-0003","description":"A clock reading pads its hours and minutes to two digits each","code":"h = 9\nm = 5\nString(h).padStart(2, \"0\") + \":\" + String(m).padStart(2, \"0\")","return":"\"09:05\""}
-+{"id":"synth-75-0004","description":"A fill of several characters is repeated and cut to the missing count, keeping its start","code":"[\"5\".padStart(4, \"ab\"), \"abc\".padEnd(6, \"123456\"), \"abc\".padStart(10, \"123\")]","return":"[\"aba5\",\"abc123\",\"1231231abc\"]"}
-+{"id":"synth-75-0005","description":"An empty fill, or text that already holds the length, gives the text unchanged","code":"[\"abc\".padStart(6, \"\"), \"abc\".padEnd(2, \"0\"), \"\".padStart(3, \"\")]","return":"[\"abc\",\"abc\",\"\"]"}
-+{"id":"synth-75-0006","description":"A padded declaration follows later writes of its receiver, its length and its fill","code":"label = \"7\"\nwidth = 3\nfill = \"0\"\nshown = label.padStart(width, fill)\nlabel = \"42\"\nwidth = 5\nfill = \"*\"\nshown","return":"\"***42\""}
-+{"id":"synth-75-0007","description":"A class-level rule pads the number of each instance on its own","code":"class Ticket(id):\n    this.id = id\n$Ticket.code = \"T-\" + String($Ticket.id).padStart(4, \"0\")\nfirst = Ticket(7)\nsecond = Ticket(42)\nfirst.id = 123\n[first.code, second.code]","return":"[\"T-0123\",\"T-0042\"]"}
-+{"id":"synth-75-0008","description":"The length converts as the count of repeat does: fractions truncate, numeric strings and true convert, and negatives or NaN pad nothing","code":"[\"5\".padStart(2.9, \"0\"), \"5\".padStart(\"3\", \"0\"), \"5\".padStart(true, \"0\"), \"5\".padStart(-4, \"0\"), \"5\".padStart(0 / 0, \"0\")]","return":"[\"05\",\"005\",\"5\",\"5\",\"5\"]"}
-+{"id":"synth-75-0009","description":"The keyword undefined is null and fills with its text, while a missing property fills with spaces","code":"o = {}\n[\"5\".padStart(4, undefined), \"5\".padStart(4, o.missing), \"5\".padStart(4, null)]","return":"[\"nul5\",\"   5\",\"nul5\"]"}
-+{"id":"synth-75-0010","description":"Lengths count characters, so text and fills outside ASCII pad one character at a time","code":"[\"日\".padStart(3, \"本\"), \"é\".padEnd(3, \"·\"), \"x\".padEnd(4, \"日本\")]","return":"[\"本本日\",\"é··\",\"x日本日\"]"}
-+{"id":"synth-75-0011","description":"A result too large to allocate raises a TypeError, and the failed write is rolled back","code":"width = 3\nshown = \"7\".padStart(width, \"0\")\nfailure = \"\"\ntry:\n    width = 1 / 0\ncatch error:\n    failure = error\n[failure, width, shown]","return":"[\"TypeError: Padded string is too large\",3,\"007\"]"}
-+{"id":"synth-75-0012","description":"Padding stays a string method: a null receiver gives undefined and a number keeps its TypeError","code":"n = null\nresult = \"\"\ntry:\n    result = (5).padStart(3, \"0\")\ncatch error:\n    result = error\n[n.padStart(3), result]","return":"[null,\"TypeError: number.padStart is not a function\"]"}
-+{"id":"synth-75-0013","description":"A report line pads its label with dots and its price with spaces, and follows both","code":"item = \"tea\"\nprice = \"4\"\nline = item.padEnd(8, \".\") + price.padStart(3)\nitem = \"honey\"\nprice = \"12\"\nline","return":"\"honey... 12\""}
-```
-
-**File**: `docs/README.md` (modified, +40/-1)
-```diff
-@@ -2528,7 +2528,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
- | `Boolean` | `Boolean(value)` |
- | `Number` | `Number.MAX_INTEGER` |
- | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
--| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, and Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)) |
-+| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), and Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)) |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
- | `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), and `partition` ([NUC 108](nuc-0108.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
- | `Class` | the global list of declared types; `Class.length` |
-@@ -2635,6 +2635,43 @@ listing == scripts.join(", ")
-   [root section](../nucleoid.spec.md#python-string-method-aliases) and its
-   three appended entries define the results, liveness and rollback.
- 
-+### Reactive string padding
-+
-+```
-+ids = ["7", "42"]
-+codes = ids.map(id -> id.padStart(3, "0"))
-+rows = ids.map(id -> id.padEnd(4, ".") + "|")
-+assert(codes, ["007", "042"])
-+assert(rows, ["7...|", "42..|"])
-+ids.push("123")
-+assert(codes, ["007", "042", "123"])
-+rows[2]
-+```
-+
-+- [NUC 111](nuc-0111.md) adds JavaScript's `padStart` and `padEnd` to
-+  strings. `text.padStart(n, fill)` puts copies of `fill` before `text`
-+  until the result holds `n` characters, and `text.padEnd(n, fill)` puts
-+  them after it, so `rows[2]` is `"123.|"`.
-+- `n` converts as the count of `repeat` does: a fraction truncates, and NaN
-+  or a negative number is 0. `fill` converts to its string form, and a
-+  missing fill, or an undefined value, is one space.
-+- A fill of several characters is cut to the gap, so
-+  `"5".padStart(4, "ab")` is `"aba5"`. Text that already holds `n`
-+  characters, and an empty fill, give the text unchanged. Lengths count
-+  characters, as `length`, `slice` and `repeat` do.
-+- A result too large to allocate raises
-+  `TypeError("Padded string is too large")`, without an arbitrary cap.
-+- Each call reads its receiver and then its arguments, and stays live like
-+  its `repeat` spelling: `codes` follows the pushed id. `why` names the
-+  receiver, the length and the fill, in that order.
-+- Only these calls on strings change. Numbers, lists and other receivers,
-+  reads such as `text.padStart` without a call, functions, properties and
-+  methods of the same names, and `String.padStart` keep their behavior.
-+- This is the executable entry
-+  `Nucleoid pads strings with padStart and padEnd` in `tests/reference.md`.
-+  The [root section](../nucleoid.spec.md#reactive-string-padding) and its
-+  four appended entries define the results, liveness and rollback.
-+
- ### Numeric clamping keeps bounds live
- 
- ```
-@@ -4316,6 +4353,7 @@ Messages are exact and are part of the observable behaviour of the language.
- | A `:=` declaration whose value nests lists 192 levels or more | `Maximum expression depth exceeded` |
- | Explaining something that is not a reference, such as the power in `why x ** 2` | `Cannot explain <expression>`, for example `Cannot explain x**2` |
- | Repeated string output is too large to represent or allocate | `Repeated string is too large` |
-+| Padded string output of `padStart` or `padEnd` is too large to represent or allocate | `Padded string is too large` |
- | A `while` loop whose condition still holds after 100,000 iterations of one run | `Loop did not terminate` |
- | An undeclared constructor label | `Unknown constructor argument '<name>' for <class>` |
- | A repeated constructor bin
-```
-
-**File**: `docs/examples.md` (modified, +27/-0)
-```diff
-@@ -3847,6 +3847,33 @@ first.items.push("rye")
-   [NUC 110](nuc-0110.md) and the
-   [root contract](../nucleoid.spec.md#python-string-method-aliases).
- 
-+## Reactive string padding
-+
-+**Padded labels follow every bin's aisle and slot**
-+
-+```nuc
-+class Bin(aisle, slot):
-+    this.aisle = aisle
-+    this.slot = slot
-+$Bin.label = $Bin.aisle.padEnd(3, "-") + String($Bin.slot).padStart(3, "0")
-+north = Bin("N", 7)
-+east = Bin("E2", 45)
-+assert([north.label, east.label], ["N--007", "E2-045"])
-+north.slot = 12
-+east.aisle = "EAST"
-+[north.label, east.label]
-+# return: ["N--012","EAST045"]
-+```
-+
-+- Each bin's class-level rule writes its label from two padded parts: the
-+  aisle, padded at the end with dashes to three characters, and the slot
-+  number, padded at the start with zeros to three digits.
-+  `$Bin.aisle.padEnd(3, "-")` is `$Bin.aisle + "-".repeat(3 - $Bin.aisle.length)`.
-+- A new slot and a renamed aisle update the label of the bin they touch. An
-+  aisle that already holds three characters or more, such as `"EAST"`, is
-+  not padded. See [NUC 111](nuc-0111.md) and the
-+  [root contract](../nucleoid.spec.md#reactive-string-padding).
-+
- ## Reactive list flattening
- 
- **Flattening keeps the dirty tiles of every room counted**
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -126,7 +126,7 @@ Created: 31-Jul-2026
- | [103](nuc-0103.md) | Reactive List Flattening | Accepted |
- | [105](nuc-0105.md) | List and Population Sorting by Key | Accepted |
- | [108](nuc-0108.md) | List and Population Partitions | Accepted |
--| [111](nuc-0111.md) | Reactive String Padding | Draft |
-+| [111](nuc-0111.md) | Reactive String Padding | Accepted |
- 
- ### Reasoning enhancement
- 
-@@ -276,7 +276,7 @@ Created: 31-Jul-2026
- | [108](nuc-0108.md) | List and Population Partitions | Standards Track | Utility enhancement | Accepted |
- | [109](nuc-0109.md) | Operator Section Arguments | Standards Track | Syntax enhancement | Accepted |
- | [110](nuc-0110.md) | Python String Method Aliases | Standards Track | Language compatibility | Accepted |
--| [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Draft |
-+| [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0111.md` (modified, +1345/-11)
-```diff
-@@ -4,7 +4,7 @@
- NUC: 111
- Title: Reactive String Padding
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Utility enhancement
- Created: 16-Nov-2026
-@@ -24,48 +24,1382 @@ Created: 16-Nov-2026
-   unchanged.
- - Lengths count characters as the accepted `length`, `slice` and `repeat`
-   do, and `length` converts as the count of the accepted `repeat` does. A
--  result too large to allocate raises a typed error, as `repeat` does.
-+  result too large to allocate raises
-+  `TypeError("Padded string is too large")`, as `repeat` raises
-+  `TypeError("Repeated string is too large")`.
-+- A declaration or class-level rule that calls a padding method stays live:
-+  `label = String(n).padStart(3, "0")` follows later writes of `n`.
- - Only calls on a string receiver that raised
-   `TypeError("<receiver>.padStart is not a function")` or
-   `TypeError("<receiver>.padEnd is not a function")` change, along with the
-   programs that caught that error. Numbers, lists, objects, `null` and every
-   other receiver, property reads without a call, the static `String.<name>`
-   calls and every accepted result are unchanged.
-+- No token, keyword, syntax, syntax-tree node, error type, option or public
-+  item is added; one error message is. The authoritative contract is
-+  [Reactive string padding](../nucleoid.spec.md#reactive-string-padding).
- 
- ## Motivation
- 
- - World models render values as text: clock times such as `09:05`,
--  zero-padded identifiers such as `A-007`, and aligned columns of a report.
-+  zero-padded identifiers such as `T-0007`, and aligned columns of a report.
-   At the accepted revision:
-   - `"7".padStart(3, "0")` raises `TypeError("7.padStart is not a function")`;
-   - `"ab".padEnd(4, ".")` raises `TypeError("ab.padEnd is not a function")`.
- - The accepted spelling repeats the fill and writes the receiver twice:
--  `"0".repeat(3 - id.length) + id`. With a computed receiver it repeats the
--  computation too, as in `"0".repeat(2 - String(h).length) + String(h)`,
--  and a fill of more than one character also needs a `slice`.
-+  `"0".repeat(3 - id.length) + id`. With a computed receiver it converts
-+  the receiver a second time for its length, as in
-+  `"0".repeat(2 - String(h).length) + h`, and a fill of more than one
-+  character also needs a `slice`:
-+  `"ab".repeat(4 - s.length).slice(0, 4 - s.length) + s`.
-+- `id.padStart(3, "0")` is 8 lexer tokens against 12 for its `repeat`
-+  spelling, `String(h).padStart(2, "0")` 11 against 15, and
-+  `title.padEnd(12, ".:")` 8 against 23 for its cut spelling.
-+- The short accepted idiom `("00" + id).slice(-3)`, 11 tokens, is not a
-+  padding: it cuts every value to three characters, so `"1234"` becomes
-+  `"234"`, where `"1234".padStart(3, "0")` keeps all four.
- - `padStart` and `padEnd` are standard JavaScript, which LLMs write
-   routinely when they format output. Python's `str.rjust`, `str.ljust` and
--  `str.zfill` meet the same need.
-+  `str.zfill`, Kotlin's `padStart` and `padEnd`, C#'s `PadLeft` and
-+  `PadRight` and Rust's `format!("{:0>3}", id)` meet the same need.
- - The methods join the accepted string helpers `repeat`, `slice`, `trim`
-   and `replaceAll`. Like them, they are reached only through calls on
-   strings, and a declaration that calls them stays live:
-   `label = String(n).padStart(3, "0")` follows later writes of `n`.
-+- No accepted document case, dataset record, ARC dataset or test calls
-+  either name. The repository's own TypeScript in `arc/` uses `padStart`
-+  for the two needs this proposal serves: `String(index).padStart(2, "0")`
-+  numbers terminal rows, and `String(instance_index++).padStart(12, "0")`
-+  zero-pads object identifiers.
- 
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- **Confirmed category and mode.** The allocating continuous cycle drew
-+  Utility enhancement with one tool-backed uniform draw over the five
-+  categories that NUC 1's registry marks eligible for automatic selection,
-+  index 2 with probability 1/5 and no redraw, and recorded the requested
-+  change in the allocation commit `8f730054`, which this revision pins.
-+  Token comparison is therefore required. Runtime applicability does not
-+  apply to this category.
-+- **Selection.** Within the category the caller chose JavaScript's
-+  `String.prototype.padStart` and `padEnd` over the other built-ins missing
-+  at the accepted revision: the string methods `at`, `lastIndexOf`,
-+  `trimStart` and `trimEnd`, `Math.hypot` and `Math.gcd`, and the list
-+  helpers `sumBy`, `take` and `compact`. Padding renders values that world
-+  models show as text, LLMs write it routinely, and its accepted spelling is
-+  long and repeats the receiver. [NUC 103](nuc-0103.md) only lists
-+  `padStart` among the helpers it considered and set aside; no NUC proposes
-+  it.
-+- **Optional evidence.** No hint was supplied. Advisory usefulness is
-+  unscored (`missing_rubric`), not zero. Strategy learning is
-+  `not_configu
-```
-
-**File**: `nucleoid.spec.md` (modified, +142/-0)
-```diff
-@@ -371,6 +371,69 @@ operator-chain diagnostics and source positions are preserved.
-   specify the executable behavior. `tests/python_string_aliases.rs` executes
-   the rest.
- 
-+## Reactive string padding
-+
-+- [NUC 111](docs/nuc-0111.md) adds JavaScript's standard padding methods to
-+  string receivers. `TEXT.padStart(length, fill)` puts copies of `fill`
-+  before `TEXT` until the result holds `length` characters, and
-+  `TEXT.padEnd(length, fill)` puts them after it, so `"7".padStart(3, "0")`
-+  is `"007"` and `"ab".padEnd(4, ".")` is `"ab.."`. No token, keyword,
-+  syntax tree node, error type or public item is added.
-+- **Length.** The first argument converts to a number and then as the count
-+  of `repeat` does: NaN and negative numbers give 0, and fractions truncate.
-+  So `"3"` gives 3, `true` 1, `2.9` 2, and `null` and a missing length 0.
-+- **Fill.** The second argument converts to its string form, as other string
-+  arguments do, so `0` fills with `"0"` and `null` with `"null"`. A missing
-+  fill, or an undefined value such as a missing property, is one space,
-+  `" "`. The keyword `undefined` is `null`, so `"5".padStart(3, undefined)`
-+  is `"nu5"`.
-+- **Padding.** With `missing` the length minus the number of characters of
-+  `TEXT`, the result is `TEXT` unchanged when `missing` is 0 or less or the
-+  fill is empty. Otherwise the padding is the characters of the fill
-+  repeated and cut to exactly `missing` characters, before `TEXT` for
-+  `padStart` and after it for `padEnd`: `"5".padStart(4, "ab")` is
-+  `"aba5"` and `"abc".padEnd(6, "123456")` is `"abc123"`. Characters are
-+  Unicode scalar values, as `length`, `slice` and `repeat` count them, so
-+  `"日".padStart(3, "本")` is `"本本日"`. Further arguments are evaluated and
-+  ignored.
-+- **Bounds.** The method sizes its whole result with checked arithmetic and
-+  reserves it fallibly before writing. A result too large to represent or
-+  allocate raises `TypeError("Padded string is too large")`, as `repeat`
-+  raises `TypeError("Repeated string is too large")`; no arbitrary cap is
-+  added.
-+- **Evaluation.** The receiver is read first, then every argument once, left
-+  to right, as for every call, and argument errors propagate before the
-+  method runs. A `null` or undefined receiver gives undefined without
-+  evaluating the arguments, and a declaration whose receiver or argument
-+  reads a `null` binding holds `null` until it is defined, as for `repeat`.
-+- **Live.** A declaration or class-level rule that calls a padding method
-+  depends on what its receiver and arguments read:
-+  `shown = label.padStart(width, fill)` follows writes of `label`, `width`
-+  and `fill`, and `$Ticket.code = String($Ticket.id).padStart(4, "0")`
-+  follows each ticket's `id`. Errors roll back through the existing
-+  transaction.
-+- **Rendering.** Statements, `why`, `affects`, `--graph` and graph keys show
-+  the call as written. Its dependencies are what the call reads, in reading
-+  order: the receiver, the length, then the fill.
-+- **Unchanged.** Only calls of `padStart` and `padEnd` on a string receiver
-+  change; each raised `TypeError("<receiver>.<name> is not a function")`.
-+  Numbers, lists and every other receiver keep their results, so
-+  `(5).padStart(3, "0")` still raises
-+  `TypeError("number.padStart is not a function")`. Reads without a call,
-+  such as `text.padStart`, stay undefined; `text.padStart = 1` keeps raising
-+  `TypeError("Cannot assign 'padStart' on string")`; functions, callable
-+  object properties and instance methods named `padStart` or `padEnd` keep
-+  their routing; and `String.padStart` and `String.padEnd` keep raising
-+  `TypeError("String.<name> is not a function")`.
-+- **JavaScript differences.** Lengths count Unicode scalar values rather
-+  than UTF-16 code units, the keyword `undefined` is `null`, so it fills
-+  with `"null"` where JavaScript fills with spaces, and a result too large
-+  raises this `TypeError` where JavaScript raises a `RangeError`.
-+- The four entries beginning
-+  `Nucleoid pads strings at the start with padStart` through
-+  `Nucleoid rolls back failed updates through padded strings` specify the
-+  executable behavior. `tests/string_padding.rs` executes the rest.
-+
- ## Bare single-parameter named arrows
- 
- A named arrow definition or method may spell `def double(amount) => amount * 2`
-@@ -24789,6 +24852,85 @@ catch error:
- [label, report.table]
- # return: ["ada, bo",true]
- ---
-+# Nucleoid pads strings at the start with padStart
-+
-+ids = ["7", "42", "123", "1234"]
-+codes = ids.map(id -> id.padStart(3, "0"))
-+h = 9
-+m = 5
-+clock = String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0")
-+assert(codes, ["007", "042", "123", "1234"])
-+assert(clock, "09:05")
-+ids.push("5")
-+h = 14
-+assert(codes, ["007", "042", "123", "1234", "005"])
-+clock
-+# return: "14:05"
-+---
-+# Nucleoid pads strings at the end with padEnd
-+
-+items = ["tea", "jam", "honey"]
-+width = 6
-+rows = items.map(item -> item.padEnd(width) + "|")
-+title
 ```
 
 #### Recent Merged Pull Requests:
@@ -2092,13 +1686,13 @@ are reached
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 112 Node Names of Reasoning Selections
+## X. Draft NUC 113 Implicit Receivers in Method Bodies
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `92cbd316`: Draft NUC 112 Node Names of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1506250`: Draft NUC 113 Implicit Receivers in Method Bodies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -2106,8 +1700,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [112](nuc-0112.md) | Node Names of Reasoning Selections | Draft |
-| [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2117,7 +1711,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `92cbd316` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1506250` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -10551,3 +10551,5 @@
 | `CYCLE-20261117-0JSQ` | `2026-11-17T12:25:04.826Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8964` | Yes (`a582e4fd...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T12:25:35.495Z` | `hf-minimaxai-minimax-h3-image-pe` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-46E6B1DB` [Domain D] | Yes (`a87ac91a...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T12:26:13.627Z` | `hf-internlm-sage-s2.1-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-84284456` [Domain D] | Yes (`1395e3de...`) |
+| `CYCLE-20261117-LVS8` | `2026-11-17T12:41:40.136Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8965` | Yes (`15c6145e...`) |
+| `CYCLE-20261117-RPU7` | `2026-11-17T12:46:12.367Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8966` | Yes (`c5a693b4...`) |

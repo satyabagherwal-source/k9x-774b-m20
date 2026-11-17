@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T12:25:04.839Z",
+  "last_updated": "2026-11-17T12:46:12.380Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3141,14 +3141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastify-fastify",
-      "content_hash": "b70a45c74e774a36ede2fd790795eddcca4eaf3193005ed21a2a6cbe83573d46",
-      "verified_at": "2026-11-08T01:09:50.398Z",
+      "content_hash": "15c6145e574d755721b215bff3ae8b2e0719924a0ea79be7dcfc70d4e24b424f",
+      "verified_at": "2026-11-17T12:41:40.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T01:09:50.398Z"
+      "last_updated": "2026-11-17T12:41:40.148Z"
     },
     "expressjs/express": {
       "repository": "expressjs/express",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "f592b8bf74bdb32d44768135f739e63ac4ff624336ac4d34115f2eb05e2400ee",
-      "verified_at": "2026-11-17T11:25:39.736Z",
+      "content_hash": "c5a693b4e972a1c73ccb481c5f8c866c21e7d0850ad6ac26c7c4ae4a3d16b430",
+      "verified_at": "2026-11-17T12:46:12.379Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T11:25:39.736Z"
+      "last_updated": "2026-11-17T12:46:12.379Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T12:26:14.204Z",
+  "updated_at": "2026-11-17T12:46:15.743Z",
   "stats": {
-    "total_discovered": 4969,
-    "approved_pending_harvest": 4682,
+    "total_discovered": 4975,
+    "approved_pending_harvest": 4688,
     "harvested_count": 0,
     "rejected_count": 287,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4674,
+      "COMMUNITY_AND_EXPERT": 4680,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 103,
       "ENGINEERING_BLOGS": 3,
@@ -107330,6 +107330,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/diggerhq-digger-learnings.md",
         "fileName": "diggerhq-digger-learnings.md"
+      }
+    },
+    "SRC-3FC86703F4DD": {
+      "id": "SRC-3FC86703F4DD",
+      "url": "https://github.com/fastify/fastify",
+      "title": "https://github.com/fastify/fastify",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:46:15.581Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+        "fileName": "fastify-fastify-learnings.md"
+      }
+    },
+    "SRC-A3F4587CB9C4": {
+      "id": "SRC-A3F4587CB9C4",
+      "url": "https://stackoverflow.com/questions/58977876/generic-conditional-type-resolves-to-never-when-the-generic-type-is-set-to-never",
+      "title": "https://stackoverflow.com/questions/58977876/generic-conditional-type-resolves-to-never-when-the-generic-type-is-set-to-never",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:46:15.614Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+        "fileName": "fastify-fastify-learnings.md"
+      }
+    },
+    "SRC-A00CE9EA7B85": {
+      "id": "SRC-A00CE9EA7B85",
+      "url": "https://github.com/fastify/.github/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/fastify/.github/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:46:15.655Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+        "fileName": "fastify-fastify-learnings.md"
+      }
+    },
+    "SRC-2FDF872270E1": {
+      "id": "SRC-2FDF872270E1",
+      "url": "https://github.com/fastify/.github/blob/main/CODE_OF_CONDUCT.md",
+      "title": "https://github.com/fastify/.github/blob/main/CODE_OF_CONDUCT.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:46:15.684Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+        "fileName": "fastify-fastify-learnings.md"
+      }
+    },
+    "SRC-94C53301FB66": {
+      "id": "SRC-94C53301FB66",
+      "url": "https://github.com/getsentry/sentry-javascript/issues/18418",
+      "title": "https://github.com/getsentry/sentry-javascript/issues/18418",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:46:15.713Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+        "fileName": "fastify-fastify-learnings.md"
+      }
+    },
+    "SRC-65EEE707773C": {
+      "id": "SRC-65EEE707773C",
+      "url": "https://fastify.dev/docs/latest/Reference/Errors",
+      "title": "https://fastify.dev/docs/latest/Reference/Errors",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:46:15.743Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+        "fileName": "fastify-fastify-learnings.md"
       }
     }
   }

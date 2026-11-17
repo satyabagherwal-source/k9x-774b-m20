@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T12:26:14.919Z",
-  "total_verified_learnings": 8883,
+  "last_updated": "2026-11-17T12:46:17.504Z",
+  "total_verified_learnings": 8884,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20157,
+  "total_items": 20166,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "68a0936bb7da33b6006e64a568c51f799d9342545e9be69374d7c6acdb95a030",
+      "content_hash": "728d0e7821a174bd1a47ee227b4cfbf71728c9370874d6a983656e5450c8f6de",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T09:56:55.679Z"
+      "persisted_at": "2026-11-17T12:46:17.374Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "24ba6d53e8ff26fedcb896fdffbafb222789faef85de67726b68973c8b224ba3",
+      "content_hash": "82143b1c32b813f7396502bc87796dbe652f02fbf9c520f7b1e35e890615f477",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T09:56:55.798Z"
+      "persisted_at": "2026-11-17T12:46:17.504Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -227864,8 +227864,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "f9c95d84",
-      "content_hash": "f592b8bf74bdb32d44768135f739e63ac4ff624336ac4d34115f2eb05e2400ee",
+      "source_version": "e1506250",
+      "content_hash": "c5a693b4e972a1c73ccb481c5f8c866c21e7d0850ad6ac26c7c4ae4a3d16b430",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -227928,6 +227928,11 @@
           "number": 8901,
           "title": "Draft NUC 112 Node Names of Reasoning Selections",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8966,
+          "title": "Draft NUC 113 Implicit Receivers in Method Bodies",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227935,7 +227940,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T11:25:39.545Z",
+      "verified_at": "2026-11-17T12:46:12.204Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227977,10 +227982,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "8ee7817e",
-      "content_hash": "979e8cb2eee84edaa15bc304024b65f3efbc1acffa1f5ddc1dc4c3167ea3819c",
+      "source_version": "e1506250",
+      "content_hash": "d29f64c06cc594915dc076c310ca7323e3e591f8af6318d489e707e84bda9d55",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:27:20.375Z"
+      "persisted_at": "2026-11-17T12:46:12.674Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -227989,10 +227994,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "f9c95d84",
-      "content_hash": "d7f8db274a984016b2b668e7d0893bef3cacf45faeb72c64726848dd4e600bf1",
+      "source_version": "e1506250",
+      "content_hash": "7f2141e9f927173ccf4dff6daf9c73c4d7b12afec8e96979917abfb787d1d0a5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T11:25:40.158Z"
+      "persisted_at": "2026-11-17T12:46:12.800Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -228959,9 +228964,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "f5161d930b983041fa945c358ed29a91d7d3f3f9a1e416160bd9e85a458372ed",
+      "content_hash": "4bfc9a9b863145c1fb82795240f7b975f2d994e471eb03ebc8121e40703394a9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:27:24.759Z"
+      "persisted_at": "2026-11-17T12:46:16.716Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -228971,9 +228976,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "7eb9eecb98d612dbfd06b788885e73cc2706075a5a405436e251d0fe61bf2ebd",
+      "content_hash": "9c9120f32fae67c1daffce02bca3e4dde9d8c2cea702d93dbff31f1bd90f3c72",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:20:48.059Z"
+      "persisted_at": "2026-11-17T12:46:16.836Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -251212,13 +251217,13 @@
       "item_id": "candidate_directive-engine-detect-uv-run-script-shebangs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Q0MS-engine-detect-uv-run-script-shebangs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RTIP-engine-detect-uv-run-script-shebangs.md",
       "title": "engine): detect uv run script shebangs",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "244a71cde2cd1b40e278d054636e9b9025fe5423d71b357010f22e40afcc66f1",
+      "content_hash": "149eb98161ddd23dd6d8a31f91fed204de502d9418f892beb13e168fb64d261d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T09:56:55.348Z"
+      "persisted_at": "2026-11-17T12:46:17.138Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -251228,9 +251233,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2fb290047e02d7f3696354773369bcd89a13d8bd5efe4507dd0d3b9c61a92b9e",
+      "content_hash": "7ad30714dfda1de95bd629d1640cfa83ce101805ec977292343840e5e5bcdcd2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T09:56:55.471Z"
+      "persisted_at": "2026-11-17T12:46:17.254Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -269883,6 +269888,139 @@
       "content_hash": "211b5a35c01b80e4bfbd9d72dfca07586362eb89e5c03ce5176c253fcde10d6b",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T12:26:14.919Z"
+    },
+    "learn-github-fastify-fastify": {
+      "learning_id": "learn-github-fastify-fastify",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fastify/fastify",
+      "repository": "fastify/fastify",
+      "slug": "fastify-fastify",
+      "platform": "github",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "36a67047",
+      "content_hash": "15c6145e574d755721b215bff3ae8b2e0719924a0ea79be7dcfc70d4e24b424f",
+      "dossier_path": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8965,
+          "title": "docs(security): list non-canonical content schema keys as a non-vulnerability",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T12:41:39.966Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8965": {
+      "learning_id": "rule-8965",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8965,
+      "title": "docs(security): list non-canonical content schema keys as a non-vulnerability",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "36a67047",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T12:41:39.966Z"
+    },
+    "candidate_directive-docs-security-list-non-canonical-content-schema-keys-as-a-non-vulnerability": {
+      "item_id": "candidate_directive-docs-security-list-non-canonical-content-schema-keys-as-a-non-vulnerability",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RSL8-docs-security-list-non-canonical-content-schema-keys-as-a-non-vulnerability.md",
+      "title": "docs(security): list non-canonical content schema keys as a non-vulnerability",
+      "repository": "fastify-fastify-learnings",
+      "source_version": "HEAD",
+      "content_hash": "468bb51c77c97256bb799e9a3503bd8a94361d60e24b7fcffa1bd1547593fed6",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T12:46:15.933Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fastify-fastify-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-fastify-fastify-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-technical-construction-intelligence-fastify-fastify-core-invaria.md",
+      "title": "Technical Construction Intelligence: fastify/fastify Core Invariants",
+      "repository": "fastify/fastify",
+      "source_version": "36a67047",
+      "content_hash": "e931065747e069ab12380cf80786fb9b485992c4cba406e3485e9591ded37441",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T12:41:40.435Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/fastify-fastify-verification-protocol-empirical-defect-shield-for-fastify-fastif.md",
+      "title": "Verification Protocol: Empirical Defect Shield for fastify/fastify",
+      "repository": "fastify/fastify",
+      "source_version": "36a67047",
+      "content_hash": "5972bc87174e8eeac393e67ee342b09758ce7118b38b535d299f8c4550770ab4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T12:41:40.566Z"
+    },
+    "rule-8966": {
+      "learning_id": "rule-8966",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8966,
+      "title": "Draft NUC 113 Implicit Receivers in Method Bodies",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "e1506250",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T12:46:12.204Z"
+    },
+    "candidate_directive-draft-nuc-113-implicit-receivers-in-method-bodies": {
+      "item_id": "candidate_directive-draft-nuc-113-implicit-receivers-in-method-bodies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RT3V-draft-nuc-113-implicit-receivers-in-method-bodies.md",
+      "title": "Draft NUC 113 Implicit Receivers in Method Bodies",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c6d47680969167a3f4257182fb092627d2e5b1c33fdf1a79d1b73df3380a34ea",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T12:46:16.603Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-learnings-technical-construction-intelligence-fastify-fastify-le.md",
+      "title": "Technical Construction Intelligence: fastify-fastify-learnings Core Invariants",
+      "repository": "fastify-fastify-learnings",
+      "source_version": "HEAD",
+      "content_hash": "52b41156fc1ec7e7a6176904c3711691b2f1fad792e24611dc3a28c870cd9376",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T12:46:16.055Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/fastify-fastify-learnings-verification-protocol-empirical-defect-shield-for-fast.md",
+      "title": "Verification Protocol: Empirical Defect Shield for fastify-fastify-learnings",
+      "repository": "fastify-fastify-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a1236acd10d2026a5558b5bbf06bc25828c8a72dceb9c8a9d4ba339578c820d8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T12:46:16.176Z"
     }
   },
   "ai-builder-brain": {

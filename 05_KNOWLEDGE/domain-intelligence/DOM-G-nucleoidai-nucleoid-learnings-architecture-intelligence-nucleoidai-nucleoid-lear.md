@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T18:27:24.543Z",
+  "timestamp": "2026-11-17T12:46:16.507Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T18:27:24.543Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T12:46:16.507Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `8ee7817e`  
+> **Source Version**: `e1506250`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T18:27:19.193Z  
+> **Timestamp**: 2026-11-17T12:46:11.455Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:27:19.188Z  
+> **Harvest Timestamp**: 2026-11-17T12:41:08.308Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1177,16 +1177,10 @@ import * as milestone from "./lib/milestone.ts";
 import * as Matrix from "./lib/Matrix.ts";
 import object from "./object.ts";
 
-export async function declarations({
-  puzzle_id,
-  only_puzzle_dataset,
-  train_dataset,
-}) {
+export async function declarations({ train_dataset }) {
   milestone.inferring_declarations();
 
   const { declarations, output_canvas } = await llm.generate({
-    puzzle_id,
-    only_puzzle_dataset,
     grammar: true,
     messages: [
       {
@@ -1210,16 +1204,10 @@ export async function declarations({
   return { declarations, output_canvas };
 }
 
-export async function instances({
-  puzzle_id,
-  only_puzzle_dataset,
-  train_dataset,
-}) {
+export async function instances({ train_dataset }) {
   milestone.segmenting_training_objects();
 
   const { instances } = await llm.generate({
-    puzzle_id,
-    only_puzzle_dataset,
     messages: [
       {
         role: "user",
@@ -1254,145 +1242,6 @@ export async function instances({
   return { instances };
 }
 
-// Each synthesis turns the extracted instances of a training pair clockwise by
-// its rotation and moves them by its offset, so every training pair gains three
-// synthesized pairs.
-const SYNTHESES = [
-  { rotation: 90, offset: { x: 1, y: 1 } },
-  { rotation: 90, offset: { x: -1, y: 1 } },
-  { rotation: 90, offset: { x: -1, y: -1 } },
-];
-
-// Draws the object of an instance matrix turned clockwise by the rotation about
-// the pivot, the bounding box the instance turns about, which keeps its top-left
-// corner, and moved by the offset, on a canvas of the matrix's size that grows
-// as needed. The gaps between the object's and the pivot's edges turn with
-// them, so the object keeps its place relative to the pivot. An object without
-// cells stays an all-zero canvas.
-function turn(matrix, pivot, rotation: number, offset) {
-  const object = Matrix.locate(matrix);
-  const rows: number = matrix.length;
-  const cols: number = matrix[0]?.length ?? 0;
-  if (object.width === 0) {
-    return Matrix.draw([], rows, cols, 0, 0);
-  }
-
-  const turned = Matrix.rotate(object.matrix, rotation);
-  const left: number = object.x - pivot.x;
-  const top: number = object.y - pivot.y;
-  const right: number = pivot.x + pivot.width - (object.x + object.width);
-  const bottom: number = pivot.y + pivot.height - (object.y + object.height);
-  const [x, y] = [
-    [left, top],
-    [bottom, left],
-    [right, bottom],
-    [top, right],
-  ][(((rotation / 90) % 4) + 4) % 4];
-
-  return Matrix.draw(
-    turned,
-    rows,
-    cols,
-    pivot.x + offset.x + x,
-    pivot.y + offset.y + y
-  );
-}
-
-// Draws the drawing on the frame that covers every drawing, so their grids line
-// up, and returns its grid, which starts at the frame's top-left cell.
-function frame(drawing, drawings) {
-  const blanks = drawings.map((other) => ({
-    ...other,
-    matrix: other.matrix.map((row) => row.map(() => 0)),
-  }));
-  return Matrix.merge(drawing, ...blanks).matrix;
-}
-
-// The bounding box an instance turns about: its input object's, or its output
-// object's when the input is empty.
-function pivot_box(instance) {
-  const input = Matrix.locate(instance.input_instance_matrix);
-  return input.width > 0
-    ? input
-    : Matrix.locate(instance.output_instance_matrix);
-}
-
-// The training pair that one synthesis makes of a training pair's extracted
-// instances: each instance's input and output objects turn together about its
-// input object's bounding box, or its output object's when the input is empty,
-// and move by the offset, so each keeps its place relative to the other. Every
-// grid of the pair shares one frame, which covers the instances' canvas and
-// every turned object and starts at its top-left cell, so the pair's positions
-// are never negative. The pair's input and output matrices merge its
-// instances' grids, the output under the output canvas, so a later object wins
-// where turned objects overlap.
-function synthesized_pair(instances, { rotation, offset }, output_canvas) {
-  const drawings = instances.map((instance) => {
-    const pivot = pivot_box(instance);
-
-    return {
-      source: instance.instance_name,
-      input: turn(instance.input_instance_matrix, pivot, rotation, offset),
-      output: turn(instance.output_instance_matrix, pivot, rotation, offset),
-    };
-  });
-  const drawn = drawings.flatMap(({ input, output }) => [input, output]);
-  const synthesized = drawings.map(({ source, input, output }) => ({
-    input_instance_matrix: frame(input, drawn),
-    output_instance_matrix: frame(output, drawn),
-    synthesis: { source, rotation, offset: { ...offset } },
-  }));
-
-  const input_matrix = Matrix.merge(
-    ...synthesized.map(({ input_instance_matrix }) => input_instance_matrix)
-  ).matrix;
-  const output_matrix = Matrix.merge(
-    ...synthesized.map(({ output_instance_matrix }) => output_instance_matrix)
-  ).matrix;
-
-  return {
-    input_matrix,
-    output_matrix: Matrix.canvas(output_matrix, output_canvas),
-    instances: synthesized,
-  };
-}
-
-// Synthesizes three training pairs from a training pair's extracted instances,
-// one per synthesis, each holding every instance turned and moved by it. An
-// instance whose object is a single pixel is not synthesized, and a pair
-// without other instances synthesizes none.
-export function synthesize({ instances, output_canvas }) {
-  const sources = instances.filter((instance) => {
-    const { width, height } = pivot_box(instance);
-    return width !== 1 || height !== 1;
-  });
-  const dataset =
-    sources.length > 0
-      ? SYNTHESES.map((synthesis) =>
-          synthesized_pair(sources, synthesis, output_canvas)
-        )
-      : [];
-
-  milestone.training_objects_synthesized({ dataset });
-
-  return { dataset };
-}
-
-// Runs an implementation after the world model's class on the pair's canvas
-// and returns the object it constructs.
-async function evaluate(train_dataset, input_matrix, implementation: string) {
-  const canvas_width: number = input_matrix[0].length;
-  const canvas_height: number = input_matrix.length;
-  return nucleoid.run(
-    [
-      `canvas_width = ${canvas_width}`,
-      `canvas_height = ${canvas_height}`,
-      train_dataset.declarations[0],
-      implementation,
-    ].join("\n\n")
-  );
-}
-
 export async function value({ train_dataset, input_matrix, instance }) {
   milestone.constructing_instance({ instance_name: instance.instance_name });
 
@@ -1412,10 +1261,15 @@ export async function value({ train_dataset, input_matrix, instance }) {
 
   milestone.evaluating_rules({ instance_name: instance.instance_name });
 
-  const input_value = await evaluate(
-    train_dataset,
-    input_matrix,
-    implementation
+  const canvas_width: number = input_matrix[0].length;
+  const canvas_height: number = input_matrix.length;
+  const input_value = await nucleoid.run(
+    [
+      `canvas_width = ${canvas_width}`,
+      `canvas_height = ${canvas_height}`,
+      train_dataset.declarations[0],
+      implementation,
+    ].join("\n\n")
   );
 
   milestone.instance_constructed({
@@ -1429,53 +1283,39 @@ export async function value({ train_dataset, input_matrix, instance }) {
   return { implementation, input_value };
 }
 
-// The orientation of a shape turned clockwise by the rotation, as the datasets
-// label orientation by shape: a shape that the turn leaves unchanged, such as a
-// square, keeps its orientation, a shape that a half turn leaves
-// unchanged, such as a bar, counts it modulo 180 degrees, and any other shape
-// counts it modulo 360 degrees.
-function turned_orientation(matrix, orientation: number, rotation: number) {
-  const shape = Matrix.crop(matrix);
-  const unchanged = (degrees: number): boolean =>
-    JSON.stringify(Matrix.rotate(shape, degrees)) === JSON.stringify(shape);
-  if (unchanged(rotation)) {
-    return orientation;
-  }
+export async function state(train_dataset) {
+  const objects = [];
 
-  const period: number = unchanged(180) ? 180 : 360;
-  return (((orientation + rotation) % period) + period) % period;
-}
-
-// Sets the constructor argument that an implementation gives once as an
-// integer, such as x=5, to the value computed from its old one.
-function set_argument(
-  implementation: string,
-  name: string,
-  value: (old: number) => number,
-  instance_name: string
-): string {
-  const argument = new RegExp(`\\b${name}\\s*=\\s*(-?\\d+)`, "g");
-  const count: number = [...implementation.matchAll(argument)].length;
-  if (count !== 1) {
-    throw new Error(
-      `Implementation of ${instance_name} gives ${name} ${count} times, not once`
+  for (const dataset of train_dataset.dataset) {
+    const implementations = dataset.instances.map(
+      ({ implementation }) => implementation
     );
+
+    const canvas_width: number = dataset.input_matrix[0].length;
+    const canvas_height: number = dataset.input_matrix.length;
+    const obj_list = await nucleoid.run(
+      [
+        `canvas_width = ${canvas_width}`,
+        `canvas_height = ${canvas_height}`,
+        ...train_dataset.declarations,
+        ...implementations,
+        "Obj[:]",
+      ].join("\n\n")
+    );
+
+    objects.push(...obj_list);
+
+    [...obj_list].forEach((instance) => {
+      const found_instance = dataset.instances.find(
+        ({ instance_name }) => instance.id === instance_name
+      );
+      found_instance.output_value = instance;
+    });
   }
 
-  return implementation.replace(
-    argument,
-    (_, old: string) => `${name}=${value(Number(old))}`
-  );
+  milestone.state({ phase: "analysis", obj_list: objects });
 }
 
-// A synthesized instance's implementation, written from its source's without
-// an LLM call: the source's implementation under the instance's name, with the
-// position and size of the instance's input object and the source's
-// orientation turned with it. Every other argument, such as a color, carries
-// over unchanged.
-function synthesized_implementation(source, instance): string {
-  if (!source.implementation.includes(source.instance_name)) {
-   
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1487,12 +1327,10 @@ import * as nucleoid from "./lib/nucleoid";
 import * as milestone from "./lib/milestone.ts";
 import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
+import synthesizer from "./synthesizer.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(
-  puzzle_id: string = "d631b094",
-  only_puzzle_dataset: boolean = false
-) {
+export async function start(puzzle_id: string = "3aa6fb7a") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1511,7 +1349,6 @@ export async function start(
   milestone.start({
     version: await nucleoid.version(),
     puzzle_id,
-    only_puzzle_dataset,
     train: arc_train,
     test_input_matrix,
   });
@@ -1523,35 +1360,14 @@ export async function start(
     `obj${String(instance_index++).padStart(12, "0")}`;
 
   const { declarations, output_canvas } = await analyzer.declarations({
-    puzzle_id,
-    only_puzzle_dataset,
     train_dataset,
   });
 
   train_dataset.declarations = declarations;
   train_dataset.output_canvas = output_canvas;
 
-  const construct = async (dataset, build): Promise<void> => {
-    for (const instance of dataset.instances) {
-      const { implementation, input_value } = await build({
-        puzzle_id,
-        only_puzzle_dataset,
-        train_dataset,
-        instance,
-        input_matrix: dataset.input_matrix,
-      });
-
-      instance.implementation = implementation;
-      instance.input_value = input_value;
-    }
-  };
-
-  const synthesized_dataset = [];
-
   for (const dataset of train_dataset.dataset) {
     const { instances } = await analyzer.instances({
-      puzzle_id,
-      only_puzzle_dataset,
       train_dataset: { ...train_dataset, dataset: [dataset] },
     });
 
@@ -1559,28 +1375,7 @@ export async function start(
       instance.instance_name = next_instance_name();
     }
 
-    const { dataset: synthesized } = analyzer.synthesize({
-      instances,
-      output_canvas,
-    });
-
-    synthesized_dataset.push(...synthesized);
-
     dataset.instances = instances;
-
-    await construct(dataset, analyzer.value);
-  }
-
-  // The synthesized pairs follow the training pairs, and their instances are
-  // derived from their sources without an LLM call.
-  for (const dataset of synthesized_dataset) {
-    for (const instance of dataset.instances) {
-      instance.instance_name = next_instance_name();
-    }
-
-    train_dataset.dataset.push(dataset);
-
-    await construct(dataset, analyzer.derive);
   }
 
   await analyzer.state(train_dataset);
@@ -1588,8 +1383,6 @@ export async function start(
   milestone.visualization();
 
   const { instances } = await visualizer.instances({
-    puzzle_id,
-    only_puzzle_dataset,
     train_dataset,
     test_input_matrix,
   });
@@ -1608,8 +1401,6 @@ export async function start(
     const instance_name: string = next_instance_name();
 
     const { implementation, input_value } = await visualizer.value({
-      puzzle_id,
-      only_puzzle_dataset,
       train_dataset,
       test_input_matrix,
       instance_name,
@@ -1624,13 +1415,13 @@ export async function start(
     });
   }
 
+  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
+
   await visualizer.state({ declarations, test_input_matrix, input_instances });
 
   for (const input_instance of input_instances) {
     const { output_instance_drawing } = await visualizer.output_instance_matrix(
       {
-        puzzle_id,
-        only_puzzle_dataset,
         test_input_matrix,
         train_dataset,
         instance: input_instance,
@@ -1656,7 +1447,6 @@ export async function start(
 
   const debug = {
     puzzle_id,
-    only_puzzle_dataset,
     train_dataset,
     test_input_instances: input_instances,
     test_input_matrix,
@@ -1750,128 +1540,104 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ee7817e` (2026-11-16)
-**Commit Message**: Draft NUC 109 Operator Section Arguments
+### Incident Patch 1: `e1506250` (2026-11-17)
+**Commit Message**: Draft NUC 113 Implicit Receivers in Method Bodies
 
 Category: Syntax enhancement, drawn uniformly at random (index 0 of the
 five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle, so the token non-regression gate applies
-to this category.
+continuous /nuc-proposal cycle, so the token non-regression gate is
+required for this category.
 
-Requested change: let a call argument that begins with a symbol binary
-operator that cannot begin an expression (==, !=, ===, !==, <, <=, >,
->=, *, %, **, &&, || or ??) stand for the one-parameter function that
-applies the operator to its parameter, an operator section:
-xs.filter(> 4) passes x -> x > 4, so [3, 8, 1, 9].filter(> 4) is [8, 9].
-The rest of the argument, up to its "," or ")", is read as if the
-parameter stood before the operator, with the usual precedence, and its
-names read as in the body of the equivalent lambda, once per call. The
-parameter has no name. Sections are whole positional call arguments, as
-NUC 79's property selectors are; every other position keeps its accepted
-reading. + and - keep their unary readings, and / and the word operators
-are not section operators. Only inputs that raised
-SyntaxError("Unexpected '<operator>'") change; an accepted program that
-holds a section only in an i
+Requested change: inside the bodies of a class's methods and
+constructors, a . that begins an operand and is followed by a property
+name reads that property of the receiver this, so def area() => .w * .h
+is def area() => this.w * this.h and return .total in a method's
+indented body is return this.total. It completes NUC 102's implicit
+receivers, which read the assigned object inside property values, for
+class code that is not such a value, including Python-style self
+methods. A whole argument .name stays a NUC 79 selector, property
+assignments keep NUC 102's receiver, statements starting with . keep
+their error, lambdas and functions nested in a method keep theirs, and
+def f() => .a outside classes keeps SyntaxError("Unexpected '.'"). Only
+programs that were syntax errors at the accepted revision change.
+
+This allocation changes only the Draft and its two index rows.
+
+Co-Authored-By: Claude Opus
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -66,6 +66,7 @@ Created: 31-Jul-2026
- | [98](nuc-0098.md) | Every Quantifiers, Class References and Predicate Sentences | Accepted |
+@@ -67,6 +67,7 @@ Created: 31-Jul-2026
  | [102](nuc-0102.md) | Implicit Receiver Properties | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
  | [104](nuc-0104.md) | Any and All Class References | Accepted |
-+| [109](nuc-0109.md) | Operator Section Arguments | Draft |
+ | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
++| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
  
  ### Runtime features
  
-@@ -271,6 +272,7 @@ Created: 31-Jul-2026
- | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [107](nuc-0107.md) | Python-Style Self Parameters | Standards Track | Language compatibility | Accepted |
- | [108](nuc-0108.md) | List and Population Partitions | Standards Track | Utility enhancement | Accepted |
-+| [109](nuc-0109.md) | Operator Section Arguments | Standards Track | Syntax enhancement | Draft |
+@@ -279,6 +280,7 @@ Created: 31-Jul-2026
+ | [110](nuc-0110.md) | Python String Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
+ | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
++| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0109.md` (added, +99/-0)
+**File**: `docs/nuc-0113.md` (added, +73/-0)
 ```diff
-@@ -0,0 +1,99 @@
-+# NUC 109 -- Operator Section Arguments
+@@ -0,0 +1,73 @@
++# NUC 113 -- Implicit Receivers in Method Bodies
 +
 +```
-+NUC: 109
-+Title: Operator Section Arguments
++NUC: 113
++Title: Implicit Receivers in Method Bodies
 +Author: Can Mingir <canmingir@gmail.com>
 +Status: Draft
 +Type: Standards Track
 +Category: Syntax enhancement
-+Created: 16-Nov-2026
-+Requires: 60, 64, 79
++Created: 17-Nov-2026
 +```
 +
 +## Abstract
 +
-+- Lets a call argument that begins with a binary operator stand for the
-+  function of one parameter that applies the operator to it, an *operator
-+  section*:
-+  - `xs.filter(> 4)` passes the function `x -> x > 4`, so
-+    `[3, 8, 1, 9].filter(> 4)` is `[8, 9]`.
-+  - The section's operator is one of the symbol binary operators that
-+    cannot begin an expression: `==`, `!=`, `===`, `!==`, `<`, `<=`, `>`,
-+    `>=`, `*`, `%`, `**`, `&&`, `||` and `??`.
-+  - The rest of the argument, up to the `,` or `)` that ends it, is read as
-+    if the parameter stood before the operator, with the usual precedence.
-+    So `xs.count(% 2 == 0)` counts the even items, `xs.map(* 2 + 1)` maps
-+    `x -> x * 2 + 1` and `xs.map(?? 0)` maps `x -> x ?? 0`.
-+- The parameter has no name, so a section reads it only as the operator's
-+  left operand, and no name in the argument can shadow it. Every name in
-+  the operand reads as it does in the body of the equivalent lambda, once
-+  per call of the function. So the standing declaration
-+  `big = xs.filter(> limit)` follows later writes of `xs` and of `limit`,
-+  as `xs.filter(x -> x > limit)` does.
-+- A section is a whole positional argument of a call, as
-+  [NUC 79](nuc-0079.md)'s property selectors are: of a method, a function
-+  or a constructor. Grouping parentheses, list items, object values, named
-+  arguments and every other position keep their accepted readings and
-+  errors.
-+- `+` and `-` keep their accepted unary readings, so `xs.map(- 1)` still
-+  passes the number `-1`. `/`, which may begin a regular expression after
-+  `(`, and the word operators `is`, `is not`, `in`, `not in`, `and` and
-+  `or` are not section operators.
-+- Only inputs that were errors at the accepted revision change: every
-+  section raised `SyntaxError("Unexpected '<operator>'")` there. An accepted
-+  program that holds a section where the accepted parser never reads it,
-+  such as the ignored tail of the template interpolation
-+  `` `v ${xs.length, xs.filter(> 4)}` ``, keeps its result.
-+- No token, keyword, error type or message format, option or public item
-+  is added.
++- Inside the body of a method that a class declares, a `.` that begins an
++  operand and is followed by a property name reads that property of the
++  instance the method runs on, its receiver `this`. So
++  `def area() => .w * .h` is `def area() => this.w * this.h`, and
++  `return .total - .paid` in a method's indented body is
++  `return this.total - this.paid`.
++- It completes [NUC 102](nuc-0102.md)'s implicit receivers, which read the
++  assigned object inside the value of a property assignment, for the code
++  of a class that is not such a value: the bodies of its methods and
++  constructors, written with `def` directly in a class's indented body or
++  as the class header's own indented body, with expression or indented
++  bodies and with Python-style `self` parameters ([NUC 107](nuc-0107.md)).
++- Every accepted reading keeps its meaning. A whole argument `.name` stays a
++  [NUC 79](nuc-0079.md) property selector, a property assignment inside a
++  method keeps NUC 102's receiver, a statement that starts with `.` keeps
++  its error, a lambda or function nested in a method keeps its accepted
++  error, since `this` is not defined there, and outside classes
++  `def f() => .a` keeps its accepted `SyntaxError("Unexpected '.'")`.
++- Only programs that were syntax errors at the accepted revision change.
 +
 +## Motivation
 +
-+- World models compare values with thresholds, categories and defaults
-+  everywhere: the cells that are not background, the readings over a
-+  limit, the even positions, the missing values and their defaults.
-+  Accepted Nucleoid writes each such test as a lambda that names a
-+  parameter only to use it once, at once, as the operator's left operand:
-+
-+  ```
-+  cells = [0, 3, 0, 7, 7]
-+  [cells.filter(c -> c != 0), cells.count(c -> c == 7), cells.map(c -> c * 2)]
-+  ```
-+
-+  It returns `[[3, 7, 7], 2, [0, 6, 0, 14, 14]]`.
-+- With sections the same line reads
-+  `[cells.filter(!= 0), cells.count(== 7), cells.map(* 2)]`. Every section
-+  saves three lexer tokens: the parameter, the arrow and the parameter's
-+  one use.
-+- [NUC 79](nuc-0079.md)'s property selectors already pass `.name` for
-+  `x -> x.name`. It rejected operators over selectors and an implicit `it`
-+  or `_` placeholder, because a named implicit parameter needs scope rules
-+  of its own. A section needs none: its parameter has no name and stands
-+  only where the operator's left operand would.
-+- Prior art: Haskell's operator sections `(> 4)`, Scala's placeholder
-+  `_ > 4`, Swift's `$0 > 4`, Kotlin's `it > 4` and Raku's Whatever-star
-+  `* > 4`.
++- Methods read the properties of their own instance more than anything
++  else: in the executable documents, 27 lines that give a method's value
++  read them through `this.`, as in `return this.count` and
++  `def combine left right => this.base + left + right`.
++- NUC 102 gave class-level rules and property values the short receiver
++  form, so `$Rect.area = .w * .h` and `this.area = .w * .h` read the
++  receiver's properties, but a method that computes the same value still
++  spells every read out: at the accepted revision `def area() => .w * .h`
++  raises `SyntaxError("Unexpected '.'")` while the program is parsed.
++- Each read saves one lexer token, `this.w` being three and `.w` two, so a
++  world model's methods read as its rules already do.
++- Prior art: Ruby's `@name`, CoffeeScript's `@name` and the implicit `this`
++  of Kotlin, Swift and Java, which let a method name its own instance's
++  members without spelling the receiver.
 +
 +## Rationale
 +
@@ -1923,13 +1689,13 @@ holds a section only in an i
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 109 Operator Section Arguments
+## X. Draft NUC 113 Implicit Receivers in Method Bodies
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ee7817e`: Draft NUC 109 Operator Section Arguments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e1506250`: Draft NUC 113 Implicit Receivers in Method Bodies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1937,8 +1703,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [109](nuc-0109.md) | Operator Section Arguments | Draft |
-| [109](nuc-0109.md) | Operator Section Arguments | Standards Track | Syntax enhancement | Draft |
+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1948,7 +1714,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ee7817e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e1506250` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

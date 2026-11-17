@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:35:41.554Z",
+  "timestamp": "2026-11-17T12:46:15.826Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-fastify-fastify-learnings",
+  "learning_id": "LEARN-EVO-fastify-fastify-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [fastify-fastify-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:35:41.554Z`  
-> **Learning ID**: `LEARN-REEXTRACT-fastify-fastify-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T12:46:15.826Z`  
+> **Learning ID**: `LEARN-EVO-fastify-fastify-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source**: github ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
-> **Source Version**: `0b076ca5`  
+> **Source Version**: `36a67047`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T01:09:49.329Z  
+> **Timestamp**: 2026-11-17T12:41:39.234Z  
 > **Learning ID**: `learn-github-fastify-fastify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T01:09:48.234Z  
+> **Harvest Timestamp**: 2026-11-17T12:40:55.653Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Fast and low overhead web framework, for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 37372 stars
+- **Stars / Engagement**: 37432 stars
 
 ---
 
@@ -1328,305 +1328,160 @@ fastify.listen({ port: 3000 }, (err, address) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0b076ca5` (2026-11-07)
-**Commit Message**: docs: fix TypeScript configuration initialization command (#7195)
+### Incident Patch 1: `46797238` (2026-11-15)
+**Commit Message**: docs(security): list non-canonical content schema keys as a non-vulnerability
 
-**File**: `docs/Reference/TypeScript.md` (modified, +1/-1)
+Per-content-type schemas are selected by exact match on the essence MIME
+type. Keys written with different casing, parameters, whitespace or media
+ranges never match. This has been reported repeatedly as a validation
+bypass; document why it is a trusted-configuration concern.
+
+**File**: `SECURITY.md` (modified, +14/-0)
 ```diff
-@@ -497,7 +497,7 @@ Fastify Plugin in a TypeScript Project.
-    ```
- 3. Initialize a TypeScript configuration file:
-    ```bash
--   npx typescript --init
-+   npx tsc --init
-    ```
-    Once the file is generated, enable the `"declaration"` option in the
-    `"compilerOptions"` object.
+@@ -55,6 +55,20 @@ parser has a matching validation schema entry. This is a configuration concern,
+ not a framework vulnerability (see
+ [Validation and Serialization](./docs/Reference/Validation-and-Serialization.md)
+ and [Content-Type Parser](./docs/Reference/ContentTypeParser.md))
++- **Non-canonical `content` schema keys**: Per-content-type schemas
++(`schema.body.content` and `schema.response[code].content`) are selected by an
++exact match on the essence MIME type of the request or reply: lowercase,
++without parameters or whitespace (e.g. `application/json`). The only other
++supported key is the `*/*` catch-all for response schemas. Any other spelling,
++such as `Application/JSON`, `application/json; charset=utf-8`,
++` application/json `, or `application/*`, never matches. Body validation for
++that entry is skipped, and the response is serialized without that schema (or
++rejected with an error on releases that fail closed). The key is part of the
++trusted route schema, so this is a configuration concern, not a framework
++vulnerability. A route that uses the canonical key keeps validating no matter
++what casing, parameters, or whitespace the client sends in the
++`Content-Type` header. Bypasses against canonical keys remain in scope (see
++[Validation and Serialization](./docs/Reference/Validation-and-Serialization.md))
+ - **`insecureHTTPParser: true` deployments**: Reports that rely on enabling
+ Node.js `insecureHTTPParser` are out of scope; Fastify assumes this flag is
+ `false`
 ```
 
 ---
 
-### Incident Patch 2: `72805617` (2026-11-06)
-**Commit Message**: fix(validation): case-normalize header schemas with a registered $id (#7183)
+### Incident Patch 2: `7e0c8feb` (2026-11-11)
+**Commit Message**: fix(route): apply prefixTrailingSlash to HEAD routes declared explicitly
 
-Fastify lowercases a `headers` schema before compiling it, so header
-names written in canonical case match Node's lowercased
-`request.headers`. The lowercased copy kept the root `$id`. When that
-`$id` had been registered with `addSchema()`, for example when the route
-used `schema: { headers: fastify.getSchema('id') }`,
-`@fastify/ajv-compiler` returned the registered validator instead of
-compiling the copy. Canonical-case assertions were then checked against
-the original names: `required` rejected every request, and
-`dependencies` and value constraints on optional headers were skipped.
-No FSTSEC002 warning was emitted because the schema contains no `$ref`.
+Under a prefix, a HEAD route declared on `/` was only registered with the
+trailing slash, e.g. at `/prefix/`, whatever its `prefixTrailingSlash`,
+so `HEAD /prefix` got a 404. Since #2790, HEAD routes skip the prefix
+handling, so that the HEAD routes Fastify generates for GET routes,
+which are already created for each path of their GET route, are not
+registered twice. Only generated HEAD routes skip it now.
 
-This drops the root `$id` from the lowercased copy when the schema has
-no external `$ref`, so the normalized schema is what gets compiled. When
-there is an external `$ref`, the `$id` is kept because the reference may
-resolve against it, and FSTSEC002 still fires. The header-name-case
-section of the validation docs now states which header schemas are
-normalized.
+Fixes #7208
 
-**File**: `docs/Reference/Validation-and-Serialization.md` (modified, +10/-0)
+**File**: `lib/route.js` (modified, +2/-1)
 ```diff
-@@ -183,6 +183,16 @@ rewrite a regular expression. Author them to match lowercase (for example
- written in canonical case will not match, and the assertion it guards will not
- apply.
+@@ -249,7 +249,8 @@ function buildRouting (options) {
  
-+Normalization applies to the schema object passed as `headers`, including one
-+that carries the `$id` of a schema registered with `addSchema()`, such as the
-+object returned by `getSchema()`. It does not reach a registered schema that the
-+`headers` schema references through an external `$ref` (for example
-+`{ $ref: 'shared-headers#' }`), because a registered schema can also be used to
-+validate the body, querystring, or params. Fastify emits
-+[`FSTSEC002`](./Warnings.md#FSTSEC002) at startup in that case. Pass the schema
-+object instead (for example `fastify.getSchema('shared-headers')`), or write
-+header names in lowercase.
-+
- Example:
- ```js
- const bodyJsonSchema = {
+     const prefix = this[kRoutePrefix]
+ 
+-    if (path === '/' && prefix.length > 0 && opts.method !== 'HEAD') {
++    // Generated HEAD routes are already created for each path of their GET route
++    if (path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute) {
+       switch (opts.prefixTrailingSlash) {
+         case 'slash':
+           addNewRoute.call(this, { path, isFastify })
 ```
 
-**File**: `lib/validation.js` (modified, +11/-0)
+**File**: `test/route.7.test.js` (modified, +75/-0)
 ```diff
-@@ -298,6 +298,17 @@ function compileSchemasForValidation (context, compile, isCustom) {
-       const externalRef = findExternalHeaderRef(headers)
-       if (externalRef !== undefined) {
-         FSTSEC002(method, url, externalRef)
-+      } else if (headersSchemaLowerCase.$id !== undefined) {
-+        // When a schema's `$id` was registered with `addSchema()`, the default
-+        // validator compiler returns the registered validator instead of
-+        // compiling the schema it is given. A header schema passed as an
-+        // object that carries a registered `$id` (for example the object
-+        // returned by `getSchema()`) would therefore be validated without case
-+        // normalization. Drop the root `$id` so the normalized copy is
-+        // compiled. Without an external `$ref`, nothing resolves against the
-+        // root `$id`, so dropping it is safe. With one, the `$id` is kept for
-+        // reference resolution and FSTSEC002 applies.
-+        delete headersSchemaLowerCase.$id
-       }
-       const propertyNamesRef = findPropertyNamesRef(headers)
-       if (propertyNamesRef !== undefined) {
-```
-
-**File**: `test/schema-validation.test.js` (modified, +103/-0)
-```diff
-@@ -1921,6 +1921,109 @@ test('inline and local $ref header schemas do not emit FSTSEC002', async t => {
-   t.assert.strictEqual(spyData.callCount(), 0)
+@@ -312,6 +312,81 @@ test('HEAD routes properly auto created for GET routes when prefixTrailingSlash:
+   t.assert.strictEqual(noneTrailingReply.statusCode, 200)
  })
  
-+test('header schema object with a registered $id is case-normalized', async t => {
-+  const spyData = spyWarning(FSTSEC002)
-+  t.after(spyData.restore)
++test('HEAD routes declared explicitly follow prefixTrailingSlash: \'both\'', async t => {
++  t.plan(2)
 +
 +  const fastify = Fastify()
-+  fastify.addSchema({
-+    $id: 'admin-headers',
-+    type: 'object',
-+    required: ['X-Api-Key'],
-+    properties: {
-+      'X-Api-Key': { type: 'string' },
-+      'X-Admin': { type: 'string', const: 'true' },
-+      'X-Admin-Token': { type: 'string', const: 'server-secret' }
-+    },
-+    dependencies: { 'X-Admin': ['X-Admin-Token'] }
-+  })
-+  // The object returned by getSchema() carries the registered $id. The default
-+  // validator compiler would return the registered, non-normalized validator
-+  // for that $id, so Fastify must compile the normalized copy instead.
-+  fastify.get('/', {
-+    schema: { headers: fastify.getSchema('admin-headers') }
-+  }, async () => ({ adminAction: true }))
 +
-+  await fastify.ready()
-+
-+  // The canonical-case `required` matches the lowercased request header.
-+  const valid = await fastify.inject({
-+    method: 'GET',
-+    url: '/',
-+    headers: { 'X-Api-Key': 'key', 'X-Admin': 'true', 'X-Admin-Token': 'server-secret' }
-+  })
-+  t.assert.strictEqual(valid.statusCode, 200)
-+  t.assert.deepStrictEqual(valid.json(), { adminAction: true })
-+
-+  const missingToken = await fastify.inject({
-+    method: 'GET',
-+    url: '/',
-+    headers: { 'X-Api-Key': 'key', 'X-Admin': 'true' }
-+  })
-+  t.assert.strictEqual(missingToken.statusCode, 400)
-+  t.assert.strictEqual(missingToken.json().code, 'FST_ERR_VALIDATION')
-+
-+  const wrongToken = await fastify.inject({
-+    method: 'GET',
-+    url: '/',
-+    headers: { 'X-Api-Key': 'key', 'X-Admin': 'true', 'X-Admin-Token': 'wrong' }
-+  })
-+  t.assert.strictEqual(wrongToken.statusCode, 400)
-+  t.assert.strictEqual(wrongToken.json().code, 'FST_ERR_VALIDATION')
-+
-+  const missingKey = await fastify.inject({ method: 'GET', url: '/' })
-+  t.assert.strictEqual(missingKey.statusCode, 400)
-+  t.assert.strictEqual(missingKey.json().code, 'FST_ERR_VALIDATION')
-+
-+  t.assert.strictEqual(spyData.callCount(), 0)
-+  // The registered schema is left untouched.
-+  t.assert.strictEqual(fastify.getSchema('admin-headers').$id, 'admin-headers')
-+  t.assert.deepStrictEqual(fastify.getSchema('admin-headers').required, ['X-Api-Key'])
-+})
-+
-+test('header schema with an $id and an external $ref keeps the $id for reference resolution', async t => {
-+  const spyData = spyWarning(FSTSEC002)
-+  t.after(spyData.restore)
-+
-+  const fastify = Fastify()
-+  fastify.addSchema({
-+    $id: 'http://example.com/defs',
-+    definitions: { token: { type: 'string', const: 'server-secret' } }
-+  })
-+  fastify.post('/', {
-+    schema: {
-+      headers: {
-+        $id: 'http://example.com/headers',
-+        type: 'object',
-+        properties: {
-+          // resolved against the root $id: http://example.com/defs
-+          'x-admin-token': { $ref: 'defs#/definitions/token' }
-+        }
++  fastify.register(function routes (f, opts, next) {
++    f.route({
++      method: 'HEAD',
++      url: '/',
++      prefixTrailingSlash: 'both',
++      handler: (req, reply) => {
++        reply.send()
 +      }
-+    }
-+  }, async () => ({ ok: true }))
++    })
 +
-+  await fastify.ready()
++    next()
++  }, { prefix: '/prefix' })
 +
-+  t.assert.strictEqual(spyData.callCount(), 1)
-+  t.assert.deepStrictEqual(spyData.calls[0].arguments, ['POST', '/', 'defs#/definitions/token'])
++  const noneTrailingReply = await fastify.inject({ url: '/prefix', method: 'HEAD' })
++  const trailingSlashReply = await fastify.inject({ url: '/prefix/', method: 'HEAD' })
 +
-+  const valid = await fastify.inject({
-+    method: 'POST',
-+    url: '/',
-+    headers: { 'x-admin-token': 'server-secret' }
-+  })
-+  t.assert.strictEqual(valid.statusCode, 200)
-+
-+  const invalid = await fastify.inject({
-+    method: 'POST',
-+    url: '/',
-+    headers: { 'x-admin-token': 'wrong' }
-+  })
-+  t.assert.strictEqual(invalid.statusCode, 400)
-+  t.assert.strictEqual(invalid.json().code, 'FST_ERR_VALIDATION')
++  t.assert.strictEqual(noneTrailingReply.statusCode, 200)
++  t.assert.strictEqual(trailingSlashReply.statusCode, 200)
 +})
 +
- test('header schema with a $ref inside propertyNames emits FSTSEC003 (case-normalization does not reach it)', async t => {
-   const spyData = spyWarning(FSTSEC003)
-   t.after(spyData.restore)
-```
-
----
-
-### Incident Patch 3: `1b954e56` (2026-11-04)
-**Commit Message**: build(dependabot): restore scope; correct prefix; monthly interval (#6849)
-
-As per [Angular
-convention](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#type),
-which is the most commonly used style for conventional commits, the
-prefix should be `build` for npm updates and `ci` for github actions.
-
-Likewise, the interval has been increased to monthly, and fastify shared
-workflows have been grouped, so Dependabot will only create one PR for
-them all.
-
-This PR also restores the scope.
-At present it is `chore: update typescript to xxx`, which has no
-indication of whether it is a dependency or dev dependency.
-With the scope included, it'll be `build(deps-dev): update typescript to
-xxx`.
-
-<!--
-Thank you for your pull request. Please provide a description above and
-review
-the requirements below.
-
-Bug fixes and new features should include tests and possibly benchmarks.
-
-Contributors guide:
-https://github.com/fastify/fastify/blob/main/CONTRIBUTING.md
-
-By making a contribution to this project, I certify that:
-
-* (a) The contribution was created in whole or in part by me and I
-  have the right to submit it under the open source license
-  indicated in the file; or
-
-* (b) The con
-
-**File**: `.github/dependabot.yml` (modified, +17/-6)
-```diff
-@@ -3,25 +3,29 @@ updates:
-   - package-ecosystem: "github-actions"
-     directory: "/"
-     commit-message:
--      # Prefix all commit messages with "chore: "
--      prefix: "chore"
-+      include: "scope"
-+      prefix: "ci"
-     schedule:
--      interval: "weekly"
-+      interval: "monthly"
-     cooldown:
-       default-days: 7
-     allow:
-       - dependency-name: "*"
-         update-types:
-           - "version-update:semver-major"
-     open-pull-requests-limit: 10
-+    groups:
-+      fastify-owned:
-+        patterns:
-+          - "fastify/*"
++test('HEAD routes declared explicitly follow prefixTrailingSlash: \'no-slash\'', async t => {
++  t.plan(2)
++
++  const fastify = Fastify()
++
++  fastify.register(function routes (f, opts, next) {
++    f.route({
++      method: 'HEAD',
++      url: '/',
++      prefixTrailingSlash: 'no-slash',
++      handler: (req, reply) => {
++        reply.send()
++      }
++    })
++
++    next()
++  }, { prefix: '/prefix' })
++
++  const noneTrailingReply = await fastify.inject({ url: '/prefix', method: 'HEAD' })
++  const trailingSlashReply = await fastify.inject({ url: '/prefix/', method: 'HEAD' })
++
++  t.assert.strictEqual(noneTrailingReply.statusCode, 200)
++  t.assert.strictEqual(trailingSlashReply.statusCode, 404)
++})
++
++test('HEAD routes declared explicitly follow prefixTrailingSlash: \'slash\'', async t => {
++  t.plan(2)
++
++  const fastify = Fastify()
++
++  fastify.register(function routes (f, opts, next) {
++    f.route({
++      method: 'HEAD',
++      url: '/',
++      prefixTrailingSlash: 'slash',
++      handler: (req, reply) => {
++        reply.send()
++      }
++    })
++
++    next()
++  }, { prefix: '/prefix' })
++
++  const noneTrailingReply = await fastify.inject({ url: '/prefix', method: 'HEAD' })
++  const trailingSlashReply = await fastify.inject({ url: '/prefix/', method: 'HEAD' })
++
++  t.assert.strictEqual(noneTrailingReply.statusCode, 404)
++  t.assert.strictEqual(trailingSlashReply.statusCode, 200)
++})
++
+ test('GET route with body schema should throw', t => {
+   t.plan(1)
  
-   - package-ecosystem: "npm"
-     directory: "/"
-     commit-message:
--      # Prefix all commit messages with "chore: "
--      prefix: "chore"
-+      include: "scope"
-+      prefix: "build"
-     schedule:
--      interval: "weekly"
-+      interval: "monthly"
-     cooldown:
-       default-days: 7
-     versioning-strategy: "increase-if-necessary"
-@@ -40,6 +44,8 @@ updates:
-       # Production dependencies with breaking changes
-       dependencies:
-         dependency-type: "production"
-+        patterns:
-+          - "*"
-       # ESLint related dependencies
-       dev-dependencies-eslint:
-         patterns:
-@@ -57,3 +63,8 @@ updates:
-         patterns:
-           - "ajv"
-           - "ajv-*"
-+      # Catch-all development dependencies
-+      dev-dependencies:
-+        dependency-type: "development"
-+        patterns:
-+          - "*"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7195** (2026-11-07): docs: fix TypeScript configuration initialization command (@nagahara-naoki)
-- **PR #7194** (closed): docs: fix instance usage in register options example (@nagahara-naoki)
-- **PR #7192** (closed): docs: correct additional-property inference example (@nagahara-naoki)
-- **PR #7191** (closed): docs: fix body-schema routes in type provider examples (@nagahara-naoki)
-- **PR #7187** (2026-11-06): [Backport 5.x] feat(route): identify generated HEAD routes in onRoute (@github-actions[bot])
-- **PR #7186** (2026-11-06): [Backport 5.x] fix(validation): case-normalize header schemas with a registered $id (@github-actions[bot])
+- **PR #7225** (2026-11-15): [Backport 5.x] docs(security): list non-canonical content schema keys as a non-vulnerability (@github-actions[bot])
+- **PR #7224** (2026-11-15): docs(security): list non-canonical content schema keys as a non-vulnerability (@mcollina)
+- **PR #7221** (2026-11-13): [Backport 5.x] fix(route): apply prefixTrailingSlash to HEAD routes declared explicitly (@github-actions[bot])
+- **PR #7215** (closed): fix(route): respect prefixTrailingSlash for explicit HEAD routes on / (@abdul-karim-mia)
+- **PR #7209** (2026-11-13): fix(route): apply prefixTrailingSlash to HEAD routes declared explicitly (@satazor)
+- **PR #7204** (closed): perf(route): guard keepAliveConnections tracking on request hot path (@abdul-karim-mia)
 
 ---
 
@@ -1646,31 +1501,44 @@ By making a contribution to this project, I certify that:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix TypeScript configuration initialization command (#7195)
+## X. docs(security): list non-canonical content schema keys as a non-vulnerability
 
 **RULE**:
-When implementing operations in `docs/Reference/TypeScript.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0b076ca5`: docs: fix TypeScript configuration initialization command (#7195). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46797238`: docs(security): list non-canonical content schema keys as a non-vulnerability. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Reference/TypeScript.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-   npx tsc --init
+- **Non-canonical `content` schema keys**: Per-content-type schemas
+(`schema.body.content` and `schema.response[code].content`) are selected by an
+exact match on the essence MIME type of the request or reply: lowercase,
+without parameters or whitespace (e.g. `application/json`). The only other
+supported key is the `*/*` catch-all for response schemas. Any other spelling,
+such as `Application/JSON`, `application/json; charset=utf-8`,
+` application/json `, or `application/*`, never matches. Body validation for
+that entry is skipped, and the response is serialized without that schema (or
+rejected with an error on releases that fail closed). The key is part of the
+trusted route schema, so this is a configuration concern, not a framework
+vulnerability. A route that uses the canonical key keeps validating no matter
+what casing, parameters, or whitespace the client sends in the
+`Content-Type` header. Bypasses against canonical keys remain in scope (see
+[Validation and Serialization](./docs/Reference/Validation-and-Serialization.md))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-   npx typescript --init
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0b076ca5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46797238` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

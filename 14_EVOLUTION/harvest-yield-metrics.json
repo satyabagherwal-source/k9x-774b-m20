@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T12:25:04.836Z",
-  "total_cycles_completed": 10109,
-  "total_learnings_persisted": 10109,
-  "total_rules_promoted": 9703,
+  "last_updated": "2026-11-17T12:46:12.377Z",
+  "total_cycles_completed": 10111,
+  "total_learnings_persisted": 10111,
+  "total_rules_promoted": 9705,
   "history": [
-    {
-      "timestamp": "2026-11-16T18:38:35.916Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:46:43.743Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T18:46:44.025Z",
       "repository": "fb55/htmlparser2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-17T12:25:04.836Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T12:41:40.146Z",
+      "repository": "fastify/fastify",
+      "learningId": "learn-github-fastify-fastify",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T12:46:12.377Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
