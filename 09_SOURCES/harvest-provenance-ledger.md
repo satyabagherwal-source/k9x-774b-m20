@@ -10481,3 +10481,4 @@ Every entry in this ledger must capture:
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `8404f23a` | Multi-dimensional audit evidence | 2026-11-17T04:43:55.366Z |
 | `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `4e00c805` | Multi-dimensional audit evidence | 2026-11-17T04:56:47.994Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `911f5a91` | Multi-dimensional audit evidence | 2026-11-17T04:56:53.593Z |
+| `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `1cbef31b` | Multi-dimensional audit evidence | 2026-11-17T05:19:45.815Z |

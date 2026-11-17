@@ -10448,3 +10448,4 @@
 | `CYCLE-20261117-JHWI` | `2026-11-17T04:43:55.362Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8870` | Yes (`b79b24c8...`) |
 | `CYCLE-20261117-022E` | `2026-11-17T04:56:47.990Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8871` | Yes (`e4882eac...`) |
 | `CYCLE-20261117-06DX` | `2026-11-17T04:56:53.589Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8872` | Yes (`803b7210...`) |
+| `CYCLE-20261117-TL78` | `2026-11-17T05:19:45.812Z` | `a2ui-project/a2ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8873` | Yes (`b88241c7...`) |

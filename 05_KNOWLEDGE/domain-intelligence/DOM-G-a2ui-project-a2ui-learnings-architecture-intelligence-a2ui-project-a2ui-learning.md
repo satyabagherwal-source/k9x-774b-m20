@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T16:05:41.237Z",
+  "timestamp": "2026-11-17T05:19:49.690Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-a2ui-project-a2ui-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [a2ui-project-a2ui-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T16:05:41.237Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T05:19:49.690Z`  
 > **Learning ID**: `LEARN-EVO-a2ui-project-a2ui-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), F (Design Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
 - **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
 > **Source**: github ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
-> **Source Version**: `f2c410ae`  
+> **Source Version**: `1cbef31b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T16:04:56.722Z  
+> **Timestamp**: 2026-11-17T05:19:45.007Z  
 > **Learning ID**: `learn-github-a2ui-project-a2ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T16:04:56.717Z  
+> **Harvest Timestamp**: 2026-11-17T05:19:44.600Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open-source generative UI framework: agents stream layout data, and apps render it with native components in React, Angular, Lit, Flutter, SwiftUI and Jetpack Compose.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 17289 stars
+- **Stars / Engagement**: 17516 stars
 
 ---
 
@@ -2032,13 +2032,11 @@ class A2uiRendererCallsStore:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4231** (2026-11-13): **Support zod >= 4.6.6 in @a2ui/web_core and @a2ui/react**
-  *Symptoms*: `@a2ui/web_core` (latest 0.15.0) depends on `zod ^3.25.76`, and `@a2ui/react` pulls it in. Zod versions below 4.6.6 have two open security advisories (reported as Dependabot alerts in consuming projects), and there is no patched zod 3 release, so consumers cannot resolve them without upstream moving to zod 4.  Request: support zod >= 4.6.6 (ideally as the supported major, or via a peer range that allows both) in `@a2ui/web_core` and `@a2ui/react`.  Consumers currently can only mitigate by bounding input size before validation.
-  **Post-Mortem & Fix Analysis**:
-  > Closing as a duplicate of #4192 (and related #2160).
+- **Issue #4249** (2026-11-17): **fix(web_core): recognize DataBinding and FunctionCall schemas in isDynamicDef**
+  *Symptoms*: # Description  In `@a2ui/web_core`, `GenericBinder.isDynamicDef(defName, typeName)` checks whether a schema definition represents a dynamic value (data binding or function call): ```typescript function isDynamicDef(defName: string, typeName?: string): boolean {   return (     (defName === 'DataBinding' || defName === 'FunctionCall' || defName.startsWith('Dynamic')) &&     typeName !== 'ZodObject' &&     typeName !== 'ZodArray'   ); } ```  However, `CommonSchemas.DataBinding` (`DataBindingSchema`) and `CommonSchemas.FunctionCall` (`FunctionCallSchema`) are defined as `z.object({...})`, meaning their `typeName` is `'ZodObject'`. When a component property schema directly uses `CommonSchemas.DataBinding` or `CommonSchemas.FunctionCall`, `typeName !== 'ZodObject'` evaluates to `false`. Consequently, `getFieldBehavior` treats the property as static `{type: 'OBJECT'}` instead of `{type: 'DYNAMIC'}`: 1. Snapshot values retain raw `{path: '...'}` objects instead of resolving against `surface.dataModel`. 2. Two-way setters (`setValue`) are not synthesized.  This PR fixes `isDynamicDef` to return `true` immediately when `defName === 'DataBinding' || defName === 'FunctionCall'`, reserving the `typeName !== 'ZodObject' && typeName !== 'ZodArray'` check for `Dynamic*` schemas.  Fixes #3809  ## Pre-launch Checklist  One time:  - [x] I signed the [CLA]. - [x] I read the [Contributors Guide]. - [x] I read the [Style Guide]. - [ ] I have built and run at least one [sample].  For this PR:  - [x
 
-- **Issue #4218** (2026-11-13): **docs(site): update L+R Alder copy and walkthrough video on Get Help page**
-  *Symptoms*: Updates the L+R (Alder) entry on the Get Help page (`docs/site/src/pages/get-help.astro`) and replaces `docs/public/assets/consultants/lr-walkthrough.mp4` per email feedback from Alex Levin:  - Updated `appTagline` to `Conversational stylist for fashion retail` - Updated `summary` to: "Pairs a guided style chat with a live outfit-building 'dressing room' cart across foldable phones and web ecommerce. Host code validates catalog and bag state locally, and an in-app inspector displays raw A2UI message batches." - Updated `videoLabel` to `Walkthrough` and `videoCaption` to `L+R · Alder walkthrough` - Replaced `docs/public/assets/consultants/lr-walkthrough.mp4` with the provided `ALDER-walkthrough.mp4` video - Verified `agencyUrl` (`https://www.levinriegner.com/integrated-offerings/a2ui-consulting-development/`) is already up to date  ### Verification - `npm --prefix docs/site test`: 21 passed, 1 skipped (pre-build dist check) - `npm --prefix docs/site run build`: 36 pages built, 2402 internal links and 2226 fragment anchors verified with 0 errors
+- **Issue #4244** (2026-11-16): **fix(angular): prevent NG0205 destroyed-injector errors across multi-spec test runs**
+  *Symptoms*: > **Architecture & Contract Brief** > - Root cause: `initializeAngularReactivity` kept only the first `EnvironmentInjector` (`if (isAttached) return`), leaving `@a2ui/web_core` bound to a destroyed `TestBed` injector (`NG0205`). > - Contract impact: Public `@a2ui/angular` signatures are unchanged. Effects stay on the earliest live `EnvironmentInjector` and promote the next live injector upon destruction or `NG0205`. > - Regression test: Added `typescript/renderers/angular/src/core/reactivity.spec.ts` covering `TestBed` resets, overlapping and nested injectors, code-based and message-only `NG0205` eviction, and fallback behavior. > - Key judgment call: Kept earliest-live host selection rather than last-wins so transient route injectors cleaned up by Angular Router cannot destroy effects on root surfaces.  ## Summary  Track active `EnvironmentInjector` instances in `@a2ui/angular` so destroyed injectors are pruned and effects promote to the next live injector across multi-spec `TestBed` runs.  Fixes #3949  ## Changes  - Replace the single-shot `isAttached` early return in `typescript/renderers/angular/src/core/reactivity.ts` with an ordered set of live `EnvironmentInjector` instances pruned via `DestroyRef.onDestroy` hooks and `.destroyed` checks. - Keep effects hosted on the earliest live `EnvironmentInjector`, evicting any injector that throws `NG0205` during `angularEffect` registration. - Delegate effect creation to `@a2ui/web_core`'s default signal backend once no live `En
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2055,1246 +2053,610 @@ class A2uiRendererCallsStore:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d2fcf37` (2026-11-12)
-**Commit Message**: fix(swift/core): drop theme from a v1.0 createSurface in relaxed mode (#4099)
+### Incident Patch 1: `dd29fa27` (2026-11-16)
+**Commit Message**: docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c (#4186)
 
-* fix(swift/core): drop theme from a v1.0 createSurface in relaxed mode
+## Summary
 
-The v1.0 spec says a createSurface carrying theme fails strict validation
-and relaxed renderers drop it. web_core drops it when unknown elements are
-allowed, but the Swift V10VersionAdapter rejected it in every mode.
+Synchronizes
+`blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md` with the
+`a2ui_agent` module blueprint
+(`24d1bf9c830071f74c9c908433e73cc6cbe0aa33`) and the `agent_functions`
+feature blueprint (`87b945802660c507bc84f7f47a25199b4939efbe`),
+documenting the RPC layer, v1.0 `@`-prefixed component envelope
+handling, and local `PromptGenerator` and transport-adapter decisions.
 
-Add an allowUnknownElements overload of VersionAdapter.extractOperations,
-mirroring web_core's options argument. V10VersionAdapter removes theme from
-each createSurface when it is set, and MessageProcessor passes its
-validation config's allowUnknownElements. Strict mode still rejects theme,
-and other unknown createSurface keys are still rejected, as in web_core.
+## Changes
 
-Un-skip v10_theme_dropped_in_permissive_mode_renders_like_none in the
-SwiftUI adapter harness and add core tests for both modes.
+- Advanced `module_blueprint_commit` in
+`blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md` to
+`24d1bf9c830071f74c9c908433e73cc6cbe0aa33` and added `agent_functions:
+87b945802660c507bc84f7f47a25199b4939efbe` under `implemented_features`.
+- Added the `Bidirectional Function RPC` architecture entry
+(`RendererToAgentMessageProcessor` and `RendererFunctionCalls` in
+`lib/src/rpc/`) and removed the nonexistent `BlockLexer` reference from
+`Parser & Streaming Layer`.
+- Documented `Single-Method PromptGenerator (No skill_generator)`, `No
+Built-in Transport Adapters`, and `Component Envelope Keys` under `Local
+Technical Decisions & Overrides`.
 
-* fix(swift/core): strip v1.0 createSurface theme without recursion
-
-The relaxed-mode theme stripper now only visits the one-level shapes
-extractOperations accepts (single message, array, messages wrapper),
-so deeply nested untrusted payloads can't drive unbounded recursion.
-
-* refactor(swift/core): drop v1.0 theme through a per-mes
-
-**File**: `swift/core/Sources/A2UICore/Processing/Adapters/BaseVersionAdapter.swift` (modified, +49/-10)
+**File**: `blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md` (modified, +7/-2)
 ```diff
-@@ -48,23 +48,49 @@ open class BaseVersionAdapter: VersionAdapter, @unchecked Sendable {
-   }
- 
-   open func extractOperations(from payload: JSONValue) throws -> [InternalOperation] {
-+    try extractOperations(from: payload, allowUnknownElements: false)
-+  }
-+
-+  /// Validates the payload as ``extractOperations(from:)`` does, passing `allowUnknownElements`
-+  /// to ``preparePayloadForValidation(_:action:allowUnknownElements:)`` for each message.
-+  open func extractOperations(
-+    from payload: JSONValue,
-+    allowUnknownElements: Bool
-+  ) throws -> [InternalOperation] {
-     switch payload {
-     case .null:
-       return []
-     case .array(let items):
--      return try extractOperationsFromArray(items)
--    case .object(let dict):
--      if let messages = dict["messages"]?.arrayValue {
--        return try extractOperationsFromArray(messages)
-+      return try extractOperationsFromArray(items, allowUnknownElements: allowUnknownElements)
-+    case .object(let messageObject):
-+      if let messages = messageObject["messages"]?.arrayValue {
-+        return try extractOperationsFromArray(
-+          messages,
-+          allowUnknownElements: allowUnknownElements
-+        )
-       }
--      return try extractOperationsFromSingleMessageObject(dict)
-+      return try extractOperationsFromSingleMessageObject(
-+        messageObject,
-+        allowUnknownElements: allowUnknownElements
-+      )
-     default:
-       return []
-     }
-   }
- 
-+  /// Lets subclasses normalize a single message before validation, such as dropping properties
-+  /// that relaxed renderers ignore. The default returns `message` unchanged.
-+  open func preparePayloadForValidation(
-+    _ message: OrderedDictionary<String, JSONValue>,
-+    action: String,
-+    allowUnknownElements: Bool
-+  ) -> OrderedDictionary<String, JSONValue> {
-+    message
-+  }
-+
-   private func extractOperationsFromArray(
--    _ items: [JSONValue]
-+    _ items: [JSONValue],
-+    allowUnknownElements: Bool
-   ) throws -> [InternalOperation] {
-     guard !items.isEmpty else { return [] }
-     for (index, item) in items.enumerated() {
-@@ -88,17 +114,23 @@ open class BaseVersionAdapter: VersionAdapter, @unchecked Sendable {
-     }
-     return try items.enumerated().flatMap { index, item -> [InternalOperation] in
-       do {
--        return try extractOperations(from: item)
-+        return try extractOperations(from: item, allowUnknownElements: allowUnknownElements)
-       } catch let error as A2UIValidationError {
-         throw rewriteMessageIndex(in: error, to: index)
-       }
-     }
-   }
- 
-   private func extractOperationsFromSingleMessageObject(
--    _ dict: OrderedDictionary<String, JSONValue>
-+    _ rawMessage: OrderedDictionary<String, JSONValue>,
-+    allowUnknownElements: Bool
-   ) throws -> [InternalOperation] {
--    let action = try extractSingleAction(from: dict)
-+    let action = try extractSingleAction(from: rawMessage)
-+    let dict = preparePayloadForValidation(
-+      rawMessage,
-+      action: action,
-+      allowUnknownElements: allowUnknownElements
-+    )
-     guard let actionObj = dict[action]?.objectValue else {
-       throw A2UIValidationError(
-         "Payload for action '\(action)' must be an object",
-@@ -118,11 +150,18 @@ open class BaseVersionAdapter: VersionAdapter, @unchecked Sendable {
-   }
- 
-   open func adaptMessage(_ message: AgentToRendererMessage) throws -> [InternalOperation] {
-+    try adaptMessage(message, allowUnknownElements: false)
-+  }
-+
-+  open func adaptMessage(
-+    _ message: AgentToRendererMessage,
-+    allowUnknownElements: Bool
-+  ) throws -> [InternalOperation] {
-     let encoder = JSONEncoder()
-     encoder.userInfo[.a2uiProtocolVersion] = message.version
-     let data = try encoder.encode(message)
-     let jsonValue = try JSONValue.parse(data)
--    let ops = try extractOperations(from: jsonValue)
-+    let ops = try extractOperations(from: jsonValue, allowUnknownElements: allowUnknownElements)
-     if case .updateDataModel(let msg) = message, msg.value == nil {
-       return ops.map { op in
-         if case .updateDataModel(let updateOp) = op {
-```
-
-**File**: `swift/core/Sources/A2UICore/Processing/Adapters/V10VersionAdapter.swift` (modified, +21/-1)
-```diff
-@@ -19,7 +19,8 @@ import OrderedJSON
- ///
- /// Supports `createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface`,
- /// `callRendererFunction`, and `agentFunctionResponse`. Per the v1.0 specification and
--/// core blueprint rule 6, `theme` is not extracted on `createSurface`.
-+/// core blueprint rule 6, `theme` is not extracted on `createSurface`: a `createSurface` that
-+/// carries it is rejected, unless unknown elements are allowed, in which case `theme` is dropped.
- public final class V10VersionAdapter: BaseVersionAdapter, @unchecked Sendable {
-   private static let supportedActions: Set<String> = Set(InternalOperation.allOperationTypes)
-   private static let supportedCatalogVersions: Set<String> = ["1.0"]
-@@ -36,6 +37,25 @@ public final class V10VersionAdapter: BaseVersionAdapter, @unchecked Sendable {
-     Self.supportedCatalogVersions
-   }
- 
-+  /// Drops `theme` from a `createSurface` before validation when `allowUnknownElements` is set,
-+  /// as relaxed renderers do; otherwise `theme` is rejected as an unrecognized property.
-+  public override func preparePayloadForValidation(
-+    _ message: OrderedDictionary<String, JSONValue>,
-+    action: String,
-+    allowUnknownElements: Bool
-+  ) -> OrderedDictionary<String, JSONValue> {
-+    guard allowUnknownElements,
-+      action == "createSurface",
-+      var createSurface = message["createSurface"]?.objectValue,
-+      createSurface.removeValue(forKey: "theme") != nil
-+    else {
-+      return message
-+    }
-+    var updatedMessage = message
-+    updatedMessage["createSurface"] = .object(createSurface)
-+    return updatedMessage
-+  }
-+
-   public override func extractOperationsFromObject(
-     _ message: OrderedDictionary<String, JSONValue>,
-     action: String,
-```
-
-**File**: `swift/core/Sources/A2UICore/Processing/Adapters/VersionAdapter.swift` (modified, +38/-0)
-```diff
-@@ -35,8 +35,46 @@ public protocol VersionAdapter: Sendable {
-   /// Validates a raw JSON payload and normalizes it into version-neutral operations.
-   func extractOperations(from payload: JSONValue) throws -> [InternalOperation]
- 
-+  /// Validates a raw JSON payload and normalizes it into version-neutral operations, applying
-+  /// the processor's unknown-element policy where the protocol version defines one.
-+  ///
-+  /// - Parameters:
-+  ///   - payload: The raw JSON message payload or message array.
-+  ///   - allowUnknownElements: Whether the caller's validation config permits unknown elements
-+  ///     (see ``ValidationConfig/allowUnknownElements``).
-+  func extractOperations(
-+    from payload: JSONValue,
-+    allowUnknownElements: Bool
-+  ) throws -> [InternalOperation]
-+
-   /// Normalizes a decoded ``AgentToRendererMessage`` into version-neutral operations.
-   func adaptMessage(_ message: AgentToRendererMessage) throws -> [InternalOperation]
-+
-+  /// Normalizes a decoded ``AgentToRendererMessage`` into version-neutral operations, applying
-+  /// the same unknown-element policy as ``extractOperations(from:allowUnknownElements:)``.
-+  func adaptMessage(
-+    _ message: AgentToRendererMessage,
-+    allowUnknownElements: Bool
-+  ) throws -> [InternalOperation]
-+}
-+
-+extension VersionAdapter {
-+  /// Ignores `allowUnknownElements` and validates the payload as
-+  /// ``extractOperations(from:)`` does.
-+  public func extractOperations(
-+    from payload: JSONValue,
-+    allowUnknownElements: Bool
-+  ) throws -> [InternalOperation] {
-+    try extractOperations(from: payload)
-+  }
-+
-+  /// Ignores `allowUnknownElements` and adapts the message as ``adaptMessage(_:)`` does.
-+  public func adaptMessage(
-+    _ message: AgentToRendererMessage,
-+    allowUnknownElements: Bool
-+  ) throws -> [InternalOperation] {
-+    try adaptMessage(message)
-+  }
- }
- 
- /// Evaluates whether a catalog's declared protocol version is compatible with an expected
-```
-
-**File**: `swift/core/Sources/A2UICore/Processing/MessageProcessor.swift` (modified, +8/-2)
-```diff
-@@ -640,7 +640,10 @@ public final class MessageProcessor: ObservableObject {
-     do {
-       let adapter = try adapterFactory.resolveFromPayload(payload)
-       envelopeVersion = adapter.version
--      operations = try adapter.extractOperations(from: payload)
-+      operations = try adapter.extractOperations(
-+        from: payload,
-+        allowUnknownElements: validationConfig.allowUnknownElements
-+      )
-     } catch {
-       let rawContext = extractRawEnvelopeContext(from: payload, error: error)
-       let surfaceID = extractSurfaceID(from: error, fallback: rawContext.surfaceID ?? "")
-@@ -822,7 +825,10 @@ public final class MessageProcessor: ObservableObject {
- 
-   private func adaptToOperations(_ message: AgentToRendererMessage) throws -> [InternalOperation] {
-     let adapter = adapterFactory.getAdapter(for: message.version)
--    return try adapter.adaptMessage(message)
-+    return try adapter.adaptMessage(
-+      message,
-+      allowUnknownElements: validationConfig.allowUnknownElements
-+    )
-   }
- 
-   private func extractSurfaceID(from error: Error, fallback: String) -> String {
-```
-
-**File**: `swift/core/Tests/A2UICoreTests/MessageProcessorTests.swift` (modified, +72/-0)
-```diff
-@@ -218,6 +218,78 @@ struct MessageProcessorTests {
-     #expect(try processor.getRendererDataModel() == nil)
-   }
- 
-+  // MARK: - v1.0 createSurface theme
-+
-+  private static let v10CreateSurfaceWithTheme = """
-+    {
-+      "version": "1.0",
-+      "createSurface": {
-+        "surfaceId": "s1",
-+        "catalogId": "cat-v10",
-+        "theme": { "primaryColor": "#FF00AA" }
-+      }
-+    }
-+    """
-+
-+  private func makeV10Catalog() throws -> Catalog<AnyComponentAPI> {
-+    Catalog(
-+      id: "cat-v10",
-+      protocolVersion: .v10,
-+      components: [
-+        AnyComponentAPI(name: "Text", schema: try Schema(instance: "{\"type\": \"object\"}"))
-+      ]
-+    )
-+  }
-+
-+  @Test func relaxedProcessorDropsV10CreateSurfaceTheme() throws {
-+    let processor = MessageProcessor(catalogs: [try makeV10Catalog()])
-+    try processor.processMessages(try JSONValue.parse(Self.v10CreateSurfaceWithTheme))
-+    let surface = try #require(processor.surfaceGroupModel["s1"])
-+    #expect(surface.theme == nil)
-+  }
-+
-+  @Test func strictProcessorRejectsV10CreateSurfaceTheme() throws {
-+    let processor = MessageProcessor(
-+      catalogs: [try makeV10Catalog()],
-+      validationConfig: .strict
-+    )
-+    let error = try #require(throws: A2UIValidationError.self) {
-+      try processor.processMessages(try JSONValue.parse(Self.v10CreateSurfaceWithTheme))
-+    }
-+    #expect(error.message.contains("unrecognized property 'theme'"))
-+    #expect(processor.surfaceGroupModel["s1"] == nil)
-+  }
-+
-+  @Test(arguments: [true, false])
-+  func processMessageAppliesUnknownElementPolicyToV10CreateSurfaceTheme(
-+    allowUnknownElements: Bool
-+  ) throws {
-+    let handler = TestProcessorActionHandler()
-+    let processor = MessageProcessor(
-+      catalogs: [try makeV10Catalog()],
-+      actionHandler: handler,
-+      validationConfig: allowUnknownElements ? .relaxed : .strict
-+    )
-+    processor.process(
-+      message: .createSurface(
-+        CreateSurfaceMessage(
-+          surfaceID: "s1",
-+          catalogID: "cat-v10",
-+          theme: ["primaryColor": .string("#FF00AA")],
-+          version: .v10
-+        )
-+      )
-+    )
-+    if allowUnknownElements {
-+      let surface = try #require(processor.surfaceGroupModel["s1"])
-+      #expect(surface.theme == nil)
-+      #expect(handler.capturedErrors.isEmpty)
-+    } else {
-+      #expect(processor.surfaceGroupModel["s1"] == nil)
-+      #expect(handler.capturedErrors.count == 1)
-+    }
-+  }
-+
-   @Test func getRendererDataModelMultiVersionRequiresExplicitVersion() throws {
-     let v091Catalog = Catalog(
-       id: "cat-v091",
-```
-
-**File**: `swift/core/Tests/A2UICoreTests/VersionAdapterTests.swift` (modified, +56/-0)
-```diff
-@@ -172,6 +172,62 @@ struct VersionAdapterTests {
-     }
-   }
- 
-+  private static let v10CreateSurfaceWithThemeMessage = """
-+    {
-+      "version": "1.0",
-+      "createSurface": {
-+        "surfaceId": "s1",
-+        "catalogId": "basic",
-+        "theme": { "primaryColor": "#FF0000" }
-+      }
-+    }
-+    """
-+
-+  @Test(
-+    arguments: [
-+      v10CreateSurfaceWithThemeMessage,
-+      "[\(v10CreateSurfaceWithThemeMessage)]",
-+      "{ \"messages\": [\(v10CreateSurfaceWithThemeMessage)] }",
-+    ]
-+  )
-+  func v10AdapterDropsCreateSurfaceThemeOnlyWhenUnknownElementsAllowed(
-+    rawPayload: String
-+  ) throws {
-+    let adapter = V10VersionAdapter()
-+    let payload = try JSONValue.parse(rawPayload)
-+
-+    #expect(throws: A2UIValidationError.self) {
-+      _ = try adapter.extractOperations(from: payload, allowUnknownElements: false)
-+    }
-+    let operations = try adapter.extractOperations(from: payload, allowUnknownElements: true)
-+    #expect(operations.count == 1)
-+    guard case .createSurface(let createOperation) = try #require(operations.first) else {
-+      Issue.record("Expected .createSurface operation")
-+      return
-+    }
-+    #expect(createOperation.surfaceID == "s1")
-+    #expect(createOperation.catalogID == "basic")
-+    #expect(createOperation.theme == nil)
-+  }
-+
-+  @Test func v10AdapterStillRejectsOtherUnknownCreateSurfaceKeysWhenUnknownElementsAllowed()
-+    throws
-+  {
-+    let adapter = V10VersionAdapter()
-+    let payload: JSONValue = try .parse(
-+      """
-+      {
-+        "version": "1.0",
-+        "createSurface": { "surfaceId": "s1", "catalogId": "basic", "styles": {} }
-+      }
-+      """
-+    )
-+    let error = try #require(throws: A2UIValidationError.self) {
-+      _ = try adapter.extractOperations(from: payload, allowUnknownElements: true)
-+    }
-+    #expect(error.message.contains("unrecognized property 'styles'"))
-+  }
-+
-   // MARK: - Action Validation & Cross-Version Action Errors
- 
-   @Test func crossVersionActionRejectedWithSpecificErrorMessage() throws {
-```
-
-**File**: `swift/swiftui/Tests/A2UISwiftUITests/AdapterHarness.swift` (modified, +1/-4)
-```diff
-@@ -306,10 +306,7 @@ enum AdapterHarness {
- 
-   /// Reasoned skip entries keyed by `"<case>"` or `"<case>/<op|expectKey>"`.
-   @MainActor
--  static let unsupported: [String: String] = [
--    "v10_theme_dropped_in_permissive_mode_renders_like_none":
--      "Theme dropping in permissive mode not yet implemented in A2UICore Swift V10VersionAdapter"
--  ]
-+  static let unsupported: [String: String] = [:]
- 
-   @MainActor private static var matchedUnsupportedKeys: Set<String> = []
-   @MainActor private static var completedCasesBySuite: [String: Set<String>] = [:]
-```
-
----
-
-### Incident Patch 2: `b4365c1d` (2026-11-12)
-**Commit Message**: a11y(swiftui): announce visible text changes in live regions (#4021)
-
-* a11y(swiftui): announce visible text changes in live regions
-
-A live component announced only its explicit accessibility label, so a
-live Text or a live Column/Card banner without a label stayed silent when
-its text changed.
-
-Components now report their visible text through A2UIAccessibleTextKey
-(.a2uiAccessibleText(_:)). A2UIText reports its text without Markdown
-syntax. A live, non-hidden node announces its explicit label if set,
-otherwise the joined subtree text, whenever it changes. Hidden subtrees
-report no text, and a live region doesn't pass its text to ancestors, so
-nested live regions announce once.
-
-Part 1 of #3147.
-
-* a11y(swiftui): report text only inside live regions and keep list numbers
-
-Components now build and report their visible text only inside a live
-region, so surfaces without one don't parse Markdown a second time.
-Ordered list items keep their numbers in the announced text.
-
-* a11y(swiftui): read an ordered list item's number once
-
-A list item with several paragraphs repeated its number before each one.
-Number only the item's first block, as the screen shows it.
-
-* fix(swiftui): make att
-
-**File**: `swift/CHANGELOG.md` (modified, +5/-0)
-```diff
-@@ -11,6 +11,11 @@
-   `A2UIChoicePicker` Dynamic Type scaling, multi-line `TextField(axis: .vertical)` for `longText`
-   `A2UITextField`, and SVG path parsing improvements in `SVGPathParser` / `SVGPathShape`).
-   [#4023](https://github.com/a2ui-project/a2ui/pull/4023)
-+- Announce visible text changes in `live` regions: a live component or container now announces its
-+  explicit `label` followed by the text its subtree reports with the new `.a2uiAccessibleText(_:)`
-+  modifier (collected through `A2UIAccessibleTextKey`). `A2UIText` reports its text without
-+  Markdown syntax, and custom components that render text can call the modifier too.
-+  [#4021](https://github.com/a2ui-project/a2ui/pull/4021)
- 
- ## 0.10.0
- 
-```
-
-**File**: `swift/swiftui/README.md` (modified, +12/-5)
-```diff
-@@ -80,11 +80,17 @@ extra work:
- - `label`: `accessibilityLabel`
- - `description`: `accessibilityHint`
- - `hidden`: `accessibilityHidden` for the whole subtree
--- `live` (`polite` / `assertive`) announces the explicit `label` whenever it changes, for
--  example when it is bound to the data model
-+- `live` (`polite` / `assertive`) announces the explicit `label` followed by the visible text
-+  inside the component whenever either changes, for example when it is bound to the data model
- 
- Only values the agent sets are applied, so SwiftUI keeps inferring labels from visible text.
- 
-+A live region reads the text that components inside it report. If your component renders text,
-+call `.a2uiAccessibleText(text)` with the text as it reads on screen (for example without Markdown
-+syntax), before any `.a2uiAccessibilityElement(for:children:)`, so an explicit label on a
-+`.combine` element replaces it. The basic catalog's `Text` does this. Outside a live region the
-+text is not built.
-+
- SwiftUI applies a label set on a stack to every element inside it. If your component's root is a
- stack:
- 
-@@ -104,9 +110,10 @@ the selected trait. On iOS 17 and macOS 14 and later, the row of tab headers als
- bar trait.
- 
- Limitations: SwiftUI drops an accessibility hint on a group, so `description` has no effect on
--layout containers or other `.contain` groups (for example `ChoicePicker`). Announcing changes to
--a live component's visible text, rather than its label, is tracked in
--[#3147](https://github.com/a2ui-project/a2ui/issues/3147).
-+layout containers or other `.contain` groups (for example `ChoicePicker`), tracked in
-+[#3147](https://github.com/a2ui-project/a2ui/issues/3147). Of the basic catalog components, only
-+`Text` reports its visible text to live regions so far. On iOS 17 and macOS 14, changing a bound
-+`hidden` value rebuilds the component's subtree, which resets its state.
- 
+@@ -1,8 +1,9 @@
  ---
+ codebase_path: dart/a2ui_agent
+ associated_module: a2ui_agent
+-module_blueprint_commit: a641e84f2861d1ff068df7616e06d08bfd4d0a88
++module_blueprint_commit: 24d1bf9c830071f74c9c908433e73cc6cbe0aa33
+ implemented_features:
++  agent_functions: 87b945802660c507bc84f7f47a25199b4939efbe
+   agent_renderer_app: 21e8df7f8e67619c30682ede25f17f0a9cfa96f8
+ local_development:
+   test_command: 'dart test'
+@@ -17,14 +18,18 @@ local_development:
+ The official Dart implementation of the A2UI Agent SDK (`a2ui_agent`), targeting A2UI protocols v0.9 and v1.0 across Direct JSON and Express inference formats.
  
-```
-
-**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAccessibilityHiddenKey.swift` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+// Copyright 2024 Google LLC
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+import SwiftUI
-+
-+/// Environment key that is `true` inside a subtree hidden from assistive technologies, where a
-+/// live region announces nothing.
-+struct A2UIAccessibilityHiddenKey: EnvironmentKey {
-+  static let defaultValue = false
-+}
-+
-+extension EnvironmentValues {
-+  /// Whether an ancestor hides this view from assistive technologies with `hidden`.
-+  var a2uiAccessibilityHidden: Bool {
-+    get { self[A2UIAccessibilityHiddenKey.self] }
-+    set { self[A2UIAccessibilityHiddenKey.self] = newValue }
-+  }
-+}
-```
-
-**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAccessibilityModifier.swift` (modified, +73/-14)
-```diff
-@@ -25,9 +25,12 @@ import SwiftUI
- /// - `description` becomes `accessibilityHint`. SwiftUI only keeps a hint on a single
- ///   accessibility element, so it is dropped on layout containers and other groups.
- /// - `hidden` becomes `accessibilityHidden` for the whole subtree.
--/// - `live` (`polite` or `assertive`) posts an announcement of the explicit label whenever it
--///   changes, for example when it is bound to the data model. Announcing changes to a component's
--///   visible text is tracked in https://github.com/a2ui-project/a2ui/issues/3147.
-+/// - `live` (`polite` or `assertive`) posts an announcement whenever the region's text changes:
-+///   the explicit label if set, followed by the visible text that components in the subtree
-+///   report with ``SwiftUI/View/a2uiAccessibleText(_:)``. This works for a live `Text` and for a
-+///   live container such as a `Column` or `Card`. A label on a `Text` replaces its visible text,
-+///   so it is read once. Nothing is announced while the region or an ancestor is hidden. See
-+///   ``A2UIAccessibleTextKey``.
- ///
- /// SwiftUI applies a label set on a stack to every element inside it. A component whose root is
- /// a stack should call ``SwiftUI/View/a2uiAccessibilityControl(for:)`` on its focusable control,
-@@ -88,32 +91,88 @@ public struct A2UIAccessibilityModifier: ViewModifier {
-     attributes?.live == "assertive"
-   }
+ - **Inference Formats & Prompt Generation**: Implements `InferenceFormat` and `PromptGenerator` (`lib/src/inference_format.dart`, `lib/src/prompt/generator.dart`) with concrete strategies for Direct JSON (`lib/src/inference_formats/direct_json/`) and Express (`lib/src/inference_formats/express/`).
+-- **Parser & Streaming Layer**: `Parser`, `BlockLexer`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON streaming.
++- **Parser & Streaming Layer**: `Parser`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON and Express streaming.
+ - **Express Compiler & Decompiler**: `ExpressCompiler` and `ExpressDecompiler` (`lib/src/inference_formats/express/`) compile A2UI Express DSL scopes into protocol messages and decompile messages back into Express syntax using an ANTLR-generated parser (`generated/`).
+ - **Processor Facades & Catalog Negotiation**: `A2uiGenerator`, `A2uiRequestProcessor`, `CatalogConfig`, `CatalogProvider`, `readRendererCapabilities` (with `a2uiClientCapabilitiesKey` and `a2uiRendererCapabilitiesKey` in `lib/src/utils/renderer_capabilities.dart`), `resolveCatalogs`, and `RendererState` (`lib/src/processor/`, `lib/src/utils/`) manage capability extraction and negotiation, pruning transformers (`lib/src/catalog_transformers/`), and multi-catalog surface validation against `a2ui_core`.
++- **Bidirectional Function RPC**: `RendererToAgentMessageProcessor` and `RendererFunctionCalls` (`lib/src/rpc/`) dispatch `callAgentFunction` requests against registered catalog `AgentFunction` implementations and manage pending `callRendererFunction` invocations.
  
--  /// The text announced when it changes: the explicit label of a live component. `nil` when
--  /// nothing is announced.
-+  /// The text announced when it changes, for a component whose subtree reports no visible
-+  /// text. Same as ``announcementText(subtreeText:)`` with no text.
-   public var announcementText: String? {
-+    announcementText(subtreeText: [])
-+  }
-+
-+  /// The text announced when it changes: the explicit label of a live component followed by
-+  /// the visible text its subtree reports through ``A2UIAccessibleTextKey``, one entry per line.
-+  /// `nil` when nothing is announced.
-+  public func announcementText(subtreeText: [String]) -> String? {
-     guard isLiveRegion, !isHidden else { return nil }
--    return label
-+    let parts = ([label].compactMap { $0 } + subtreeText).filter { !$0.isEmpty }
-+    return parts.isEmpty ? nil : parts.joined(separator: "\n")
-   }
+ ## **Local Technical Decisions & Overrides**
  
-   public func body(content: Content) -> some View {
--    hidden(
--      content
--        .a2uiOptionalAccessibilityIdentifier(appliesAccessibilityIdentifier ? identifier : nil)
--        .a2uiOptionalAccessibilityLabel(appliesLabelAndHint ? label : nil)
--        .a2uiOptionalAccessibilityHint(appliesLabelAndHint ? hint : nil)
-+    liveRegion(
-+      hidden(
-+        labelText(
-+          content
-+            .a2uiOptionalAccessibilityIdentifier(appliesAccessibilityIdentifier ? identifier : nil)
-+            .a2uiOptionalAccessibilityLabel(appliesLabelAndHint ? label : nil)
-+            .a2uiOptionalAccessibilityHint(appliesLabelAndHint ? hint : nil)
-+        )
-+      )
-     )
--    .modifier(AnnouncementTrigger(text: announcementText, assertive: isAssertive))
-   }
+ - **Protocol Version Selection from Active Catalogs**: Emitted message envelopes take their protocol version from the active `Catalog` instances negotiated for the request rather than a hardcoded default.
+ - **ANTLR-Generated Express Grammar**: The Express lexer and parser under `lib/src/inference_formats/express/generated/` are generated from the canonical `specification/inference_formats/express/Express.g4` grammar.
++- **Single-Method `PromptGenerator` (No `skill_generator`)**: Because `dart/a2ui_agent` does not implement the optional `skill_generator` feature, `PromptGenerator` (`lib/src/prompt/generator.dart`) declares a single abstract `String generate()` method rather than splitting prompt construction into `generateBaseRules`, `generateCatalogInstructions`, `generateExamples`, and `assembleInstructions` hooks, and `lib/a2ui_agent.dart` exports `DirectJsonPromptGenerator` and `ExpressPromptGenerator` directly.
++- **No Built-in Transport Adapters**: `dart/a2ui_agent` stays transport-agnostic and does not bundle A2A or ADK framework wrappers; callers pass decoded `RendererToAgentMessage` payloads to `RendererToAgentMessageProcessor` and read transport metadata through `readRendererCapabilities`.
++- **Component Envelope Keys**: On v1.0 components, `ExpressCompiler` (`lib/src/inference_formats/express/compiler.dart`) emits `@catalogId`, `@metadata`, and `@checks`; `CatalogSchemaHelper` (`lib/src/inference_formats/express/schema_helper.dart`) strips `@catalogId`, `@metadata`, `@accessibility`, and `@checks` (plus standard bare mixins) from Express signatures while keeping custom bare properties; `ExpressDecompiler` (`lib/src/inference_formats/express/decompiler.dart`) dual-reads `@`-prefixed and undeclared legacy bare `catalogId`, `metadata`, and `checks`; and `MessageReader` (`lib/src/utils/message_reader.dart`) and `RendererState` (`lib/src/utils/renderer_state.dart`) accept `@catalogId` alongside legacy bare `catalogId` during validation and surface tracking.
  
--  @ViewBuilder
-+  /// Reports the explicit label of a component inside a live region, ahead of its subtree text,
-+  /// so the region reads it too. A live component announces its own label instead.
-+  private func labelText<V: View>(_ view: V) -> some View {
-+    view.a2uiAccessibleText(isLiveRegion ? nil : label)
-+  }
-+
-+  /// Hides the view and its subtree from assistive technologies when `hidden` is set.
-+  ///
-+  /// `hidden` can be bound to the data model. On iOS 18 and macOS 15 and later the view tree is
-+  /// the same either way, so changing it keeps the component's state. The live region trigger
-+  /// sits outside this modifier, so it stays mounted on every version.
-   private func hidden<V: View>(_ view: V) -> some View {
--    if isHidden {
-+    let isHidden = isHidden
-+    return
-+      accessibilityHiddenIfNeeded(view, isHidden: isHidden)
-+      // Text that assistive technologies can't reach is not announced by a live ancestor.
-+      .transformPreference(A2UIAccessibleTextKey.self) { text in
-+        if isHidden { text = [] }
-+      }
-+      .transformEnvironment(\.a2uiInLiveRegion) { isInLiveRegion in
-+        if isHidden { isInLiveRegion = false }
-+      }
-+      .transformEnvironment(\.a2uiAccessibilityHidden) { isAncestorHidden in
-+        if isHidden { isAncestorHidden = true }
-+      }
-+  }
-+
-+  /// Applies `accessibilityHidden(true)` only when the component is hidden. An outer
-+  /// `accessibilityHidden(false)` would expose descendants that hide themselves, such as a
-+  /// `hidden` child of a `Column` or the title `Text` of a `TextField`.
-+  @ViewBuilder
-+  private func accessibilityHiddenIfNeeded<V: View>(_ view: V, isHidden: Bool) -> some View {
-+    if #available(iOS 18, macOS 15, tvOS 18, watchOS 11, visionOS 2, *) {
-+      // With `isEnabled: false` the modifier does nothing, and the view tree doesn't change.
-+      view.accessibilityHidden(true, isEnabled: isHidd
-```
-
-**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAccessibleTextKey.swift` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+// Copyright 2024 Google LLC
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+import SwiftUI
-+
-+/// Collects the visible text that components report with
-+/// ``SwiftUI/View/a2uiAccessibleText(_:)``, in tree order.
-+///
-+/// ``A2UIAccessibilityModifier`` reads this key on a live region (`live` is `polite` or
-+/// `assertive`) and announces the joined text when it changes, so a live `Text` and a live
-+/// container such as a `Column` or `Card` both announce their updates without the adapter
-+/// knowing any catalog property names. A hidden subtree reports no text, and a live region
-+/// reports none to its ancestors, so an update is announced once, by the nearest live region.
-+/// Components report text only inside a live region, so the rest of a surface does no extra work.
-+public struct A2UIAccessibleTextKey: PreferenceKey {
-+  public static let defaultValue: [String] = []
-+
-+  public static func reduce(value: inout [String], nextValue: () -> [String]) {
-+    value.append(contentsOf: nextValue())
-+  }
-+}
-```
-
-**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAccessibleTextReporter.swift` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+// Copyright 2024 Google LLC
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+import SwiftUI
-+
-+/// Reports a view's text through ``A2UIAccessibleTextKey`` when the view is inside a live
-+/// region, ahead of any text its subtree reports. Outside one, the text is never evaluated.
-+struct A2UIAccessibleTextReporter: ViewModifier {
-+  @Environment(\.a2uiInLiveRegion) private var isInLiveRegion
-+
-+  let text: () -> String?
-+
-+  func body(content: Content) -> some View {
-+    let reportedText = reportedText
-+    return content.transformPreference(A2UIAccessibleTextKey.self) { subtreeText in
-+      subtreeText.insert(contentsOf: reportedText, at: 0)
-+    }
-+  }
-+
-+  private var reportedText: [String] {
-+    guard isInLiveRegion, let text = text(), !text.isEmpty else { return [] }
-+    return [text]
-+  }
-+}
-```
-
-**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAnnouncer.swift` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+// Copyright 2024 Google LLC
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+import SwiftUI
-+
-+/// Posts the announcements of live regions (`live` is `polite` or `assertive`).
-+///
-+/// The default posts an `AccessibilityNotification.Announcement`. Tests replace it through the
-+/// `a2uiAnnouncer` environment value to observe what a live region announces.
-+@_spi(Testing)
-+public struct A2UIAnnouncer: Sendable {
-+  /// Posts `text`. `isAssertive` is `true` when the announcement interrupts current speech.
-+  public let announce: @MainActor @Sendable (_ text: String, _ isAssertive: Bool) -> Void
-+
-+  public init(
-+    announce: @escaping @MainActor @Sendable (_ text: String, _ isAssertive: Bool) -> Void
-+  ) {
-+    self.announce = announce
-+  }
-+
-+  /// Posts an `AccessibilityNotification.Announcement`, with high priority when assertive.
-+  public static let accessibilityNotification = A2UIAnnouncer { text, isAssertive in
-+    A2UIAccessibilityModifier.announce(text, assertive: isAssertive)
-+  }
-+}
-```
-
-**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAnnouncerKey.swift` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+// Copyright 2024 Google LLC
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+import SwiftUI
-+
-+/// Environment key for the ``A2UIAnnouncer`` that live regions post their announcements with.
-+struct A2UIAnnouncerKey: EnvironmentKey {
-+  static let defaultValue = A2UIAnnouncer.accessibilityNotification
-+}
-+
-+extension EnvironmentValues {
-+  /// Posts the announcements of live regions. Set it to observe them in tests.
-+  @_spi(Testing)
-+  public var a2uiAnnouncer: A2UIAnnouncer {
-+    get { self[A2UIAnnouncerKey.self] }
-+    set { self[A2UIAnnouncerKey.self] = newValue }
-+  }
-+}
+ ## **Validation & Execution Recipes**
+ 
 ```
 
 ---
 
-### Incident Patch 3: `dada9a12` (2026-11-11)
-**Commit Message**: refactor(swift): adopt iOS 17+ SwiftUI idioms, split multi-type files, and cache SVG paths (#4023)
+### Incident Patch 2: `fbed1176` (2026-11-13)
+**Commit Message**: fix(web_core): settle surface actions once group action listeners settle (#4205)
 
-* refactor(swift): adopt iOS 17+ SwiftUI idioms, split multi-type files, and cache SVG paths
+### Summary
 
-- Replace EnvironmentKey boilerplate with @Entry in A2UIThemeKey, A2UICatalogsKey, and A2UISurfaceMetadataKey
-- Replace multiline TextEditor + manual placeholder inset hack in A2UITextField with native TextField(..., axis: .vertical) and .lineLimit(3...8)
-- Split MarkdownBlockView out of A2UIText and use positional enumeration so identical Markdown blocks do not collide in ForEach
-- Split SVGPathShape and SVGPathParser out of A2UIIcon, cache parsed Path in SVGPathShape.init, and use @ScaledMetric for Dynamic Type icon scaling
-- Split FlowLayout out of A2UIChoicePicker, remove dead type cast, and add 44pt minimum tap height + .contentShape(.rect) on checkbox rows
-- Remove redundant iOS 17 availability check in A2UITabs, adopt .scrollIndicators(_:) in A2UITabs and A2UIList, and replace deprecated .cornerRadius(_:) with .clipShape(.rect(cornerRadius:)) in InspectorPanes
+[`SurfaceGroupModel.addSurface`](https://github.com/a2ui-project/a2ui/blob/a3b0a06c0710701763f124a61324b5781468e327/typescript/core/web_core/src/state/surface-group-model.ts#L69-L72) returns the `this._onAction.emit(action)` promise from its surface `onAction` subscription, so [`SurfaceModel.dispatchAction`](https://github.com/a2ui-project/a2ui/blob/a3b0a06c0710701763f124a61324b5781468e327/typescript/core/web_core/src/state/surface-model.ts#L752) resolves only after group-level `onAction` listeners finish processing the action.
 
-Signed-off-by: Peter Friese <[REDACTED_EMAIL]>
+[#3579](https://github.com/a2ui-project/a2ui/pull/3579) discarded that promise with `void` when adding error propagation. That caused `SurfaceModel.dispatchAction` to settle immediately for hosts listening on `SurfaceGroupModel.onAction` or `MessageProcessor`'s `actionHandler`, ending pending action UI states before async listeners completed.
 
-* fix(swift): address review feedback on environment keys, layout, Markdown, 
+### Changes
 
-**File**: `swift/CHANGELOG.md` (modified, +6/-0)
+1. Return `this._onAction.emit(action)` from the `surface.onAction` subscription in [`typescript/core/web_core/src/state/surface-group-model.ts`](https://github.com/a2ui-project/a2ui/blob/a3b0a06c0710701763f124a
+
+**File**: `typescript/core/web_core/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -5,6 +5,12 @@
- - Report the component definition ID rather than the synthesized `:index` instance ID as
-   `sourceComponentID` on actions dispatched from template-expanded components.
-   [#4043](https://github.com/a2ui-project/a2ui/pull/4043)
-+- Deprecate `A2UICatalogsKey`, `A2UIDefaultCatalogIDKey`, and `A2UIThemeKey` in `A2UISwiftUI` in
-+  favor of `EnvironmentValues.a2uiCatalogs`, `EnvironmentValues.a2uiDefaultCatalogID`, and
-+  `EnvironmentValues.a2uiTheme`, and update `BasicCatalogSwiftUI` components (`A2UIIcon` and
-+  `A2UIChoicePicker` Dynamic Type scaling, multi-line `TextField(axis: .vertical)` for `longText`
-+  `A2UITextField`, and SVG path parsing improvements in `SVGPathParser` / `SVGPathShape`).
-+  [#4023](https://github.com/a2ui-project/a2ui/pull/4023)
+@@ -41,6 +41,7 @@
+ - `extractRefFields`, `NodeResolver`, `GenericBinder`, `scrapeSchemaBehavior`, `scrapeComponentBehavior` (newly exported), and `Catalog.componentRefMap` now resolve child references and dynamic bindings across wrapped (`ZodCatch`, `ZodPipeline`), composite (`ZodIntersection`, `ZodUnion`, `ZodDiscriminatedUnion`), empty-shape (`z.object({})`), open (`.passthrough()`, `.catchall()`, `z.record()`, `z.any()`, `z.unknown()`), and unannotated `child` / `children` component schemas ([#3783](https://github.com/a2ui-project/a2ui/issues/3783), [#3938](https://github.com/a2ui-project/a2ui/pull/3938)).
+ - Export `getMarkdownRenderer`, `markdown`, and `setMarkdownRenderer` from `@a2ui/web_core/universal`, make `Catalog<T, F>` covariant in `T` and `F`, and infer `T` from the `catalogs` argument of `new MessageProcessor(catalogs)` so `SurfaceModel` instances carry the component implementation type of their registered catalogs ([#3423](https://github.com/a2ui-project/a2ui/issues/3423), [#4181](https://github.com/a2ui-project/a2ui/pull/4181)).
+ - `A2uiLitElement.adoptLightDomStyles` scopes styles per element class, so a subclass registered under another tag gets its own stylesheet instead of reusing its parent's. [#4129](https://github.com/a2ui-project/a2ui/pull/4129)
++- Return the `onAction` emit promise from `SurfaceGroupModel` surface subscriptions so `SurfaceModel.dispatchAction` resolves only after group `onAction` listeners settle. [#4205](https://github.com/a2ui-project/a2ui/pull/4205)
  
- ## 0.10.0
+ ## 0.15.0
  
 ```
 
-**File**: `swift/sample/Sources/A2UISampleClient/Views/InspectorPanes.swift` (modified, +2/-2)
+**File**: `typescript/core/web_core/src/state/surface-group-model.test.ts` (modified, +26/-0)
 ```diff
-@@ -61,7 +61,7 @@ public struct MessageStreamPane: View {
-                 index == currentStepIndex
-                   ? Color.blue.opacity(0.1) : Color(.secondarySystemBackground)
-               )
--              .cornerRadius(6)
-+              .clipShape(.rect(cornerRadius: 6))
-               .overlay(
-                 RoundedRectangle(cornerRadius: 6)
-                   .stroke(index == currentStepIndex ? Color.blue : Color.clear, lineWidth: 1.5)
-@@ -108,7 +108,7 @@ public struct DataModelPane: View {
-           .frame(maxWidth: .infinity, alignment: .leading)
-           .padding(12)
-           .background(Color(.secondarySystemBackground))
--          .cornerRadius(8)
-+          .clipShape(.rect(cornerRadius: 8))
-           .padding(.horizontal, 16)
+@@ -88,6 +88,32 @@ describe('SurfaceGroupModel', () => {
+     assert.strictEqual(receivedAction.sourceComponentId, 'c1');
+   });
  
-         Spacer()
++  it('settles surface actions once the group action listeners settle', async () => {
++    let completeAction!: () => void;
++    model.onAction.subscribe(
++      () =>
++        new Promise<void>(resolve => {
++          completeAction = resolve;
++        }),
++    );
++    const surface = new SurfaceModel('s1', catalog, new Map(), {});
++    model.addSurface(surface);
++    let isSettled = false;
++
++    const dispatched = surface.dispatchAction({event: {name: 'test'}}, 'c1').then(() => {
++      isSettled = true;
++    });
++    await Promise.resolve();
++    await Promise.resolve();
++
++    assert.strictEqual(isSettled, false);
++
++    completeAction();
++    await dispatched;
++
++    assert.strictEqual(isSettled, true);
++  });
++
+   it('stops propagating actions after deletion', async () => {
+     let callCount = 0;
+     model.onAction.subscribe(() => {
 ```
 
-**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UICatalogsKey.swift` (modified, +6/-12)
+**File**: `typescript/core/web_core/src/state/surface-group-model.ts` (modified, +3/-3)
 ```diff
-@@ -15,28 +15,22 @@
- import A2UICore
- import SwiftUI
+@@ -67,9 +67,9 @@ export class SurfaceGroupModel<T extends ComponentApi> {
+     this.surfaces.set(surface.id, surface);
  
--/// Environment key for propagating the active component catalogs through
--/// the SwiftUI view hierarchy.
-+/// Environment key storing the active A2UI component catalogs for SwiftUI rendering.
-+@available(*, deprecated, message: "Use EnvironmentValues.a2uiCatalogs instead.")
- public struct A2UICatalogsKey: EnvironmentKey {
-   public static let defaultValue: [String: Catalog<ComponentImplementation>] = [:]
- }
- 
--/// Environment key for propagating the default catalog ID through
--/// the SwiftUI view hierarchy.
-+/// Environment key storing the default catalog ID used for unqualified component lookups.
-+@available(*, deprecated, message: "Use EnvironmentValues.a2uiDefaultCatalogID instead.")
- public struct A2UIDefaultCatalogIDKey: EnvironmentKey {
-   public static let defaultValue: String? = nil
- }
- 
- extension EnvironmentValues {
-   /// The active A2UI component catalogs for SwiftUI rendering.
--  public var a2uiCatalogs: [String: Catalog<ComponentImplementation>] {
--    get { self[A2UICatalogsKey.self] }
--    set { self[A2UICatalogsKey.self] = newValue }
--  }
-+  @Entry public var a2uiCatalogs: [String: Catalog<ComponentImplementation>] = [:]
- 
-   /// The default catalog ID used for unqualified component lookups.
--  public var a2uiDefaultCatalogID: String? {
--    get { self[A2UIDefaultCatalogIDKey.self] }
--    set { self[A2UIDefaultCatalogIDKey.self] = newValue }
--  }
-+  @Entry public var a2uiDefaultCatalogID: String? = nil
- }
+     // Subscribe to surface actions and errors and propagate
+-    const sub = surface.onAction.subscribe(action => {
+-      void this._onAction.emit(action);
+-    });
++    // Return the emit promise so that `surface.dispatchAction` only settles
++    // once the group's action listeners have settled.
++    const sub = surface.onAction.subscribe(action => this._onAction.emit(action));
+     this.surfaceUnsubscribers.set(surface.id, sub);
+     const errSub = surface.onError.subscribe(err => {
+       void this._onError.emit(err);
 ```
 
-**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UISurfaceMetadataKey.swift` (modified, +1/-8)
+---
+
+### Incident Patch 3: `8da65014` (2026-11-16)
+**Commit Message**: fix(core): enforce function catalog validation across TypeScript, Dart, Python, and Swift (#4173) (#4187)
+
+## Summary
+
+Brings `@a2ui/web_core` (TypeScript), `a2ui_core` (Dart), `a2ui-core`
+(Python), and `A2UICore` / `BasicCatalog` (Swift) to full 43/43 parity
+on the v0.9
+`specification/v0_9/test/cases/function_catalog_validation.json` test
+suite, and executes that suite in CI across all four Core SDKs.
+
+Resolves #4173
+
+## Changes
+
+- **TypeScript (`typescript/core/web_core`)**:
+- Updated `scripts/generate-catalog-schemas.mjs` and
+`src/catalog/schema_loader.ts` to emit and enforce `anyOf`
+required-property disjunctions, array `minItems` / `maxItems`, and
+`format: 'uri'` checks, and regenerated the basic catalog schema
+modules.
+- Added pre-v1.0 `returnType` checking and recursive nested function
+argument validation in `src/validation/payload-validator.ts`.
+- Wired `specification/v0_9/test/cases/function_catalog_validation.json`
+into `src/validation/payload-validator.test.ts` and
+`src/v0_9/schema/schema_generators.test.ts`.
+- **Dart (`dart/a2ui_core`)**:
+- Updated `PayloadValidator._resolve` in
+`lib/src/validation/validator.dart` to enforce RFC 3986 URI syntax on
+`'format': 'uri'` subs
+
+**File**: `dart/a2ui_core/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -15,14 +15,7 @@
- import OrderedJSON
- import SwiftUI
+@@ -2,6 +2,7 @@
  
--struct A2UISurfaceMetadataKey: EnvironmentKey {
--  static let defaultValue: [String: JSONValue]? = nil
--}
--
- extension EnvironmentValues {
-   /// The A2UI surface metadata dictionary injected by ``Surface``.
--  public var a2uiSurfaceMetadata: [String: JSONValue]? {
--    get { self[A2UISurfaceMetadataKey.self] }
--    set { self[A2UISurfaceMetadataKey.self] = newValue }
--  }
-+  @Entry public var a2uiSurfaceMetadata: [String: JSONValue]? = nil
- }
+ ## Unreleased
+ 
++- **Breaking:** `PayloadValidator` enforces RFC 3986 scheme-prefixed URI syntax (`^[A-Za-z][A-Za-z0-9+.-]*:\S*$`) on string subschemas with `"format": "uri"` (such as `openUrl.args.url`) without mutating `Catalog.toJson()`, rejecting strings lacking a scheme or containing whitespace ([#4173](https://github.com/a2ui-project/a2ui/issues/4173), [#4187](https://github.com/a2ui-project/a2ui/pull/4187)).
+ - **Breaking:** (v1_0) Update `ComponentCommon` and `Checkable` schemas, `Catalog.toJson()`, `Catalog.validationSchema`, and `ComponentModel.toJson()` to emit `@catalogId`, `@metadata`, `@accessibility`, and `@checks` on v1.0 surfaces, while `PayloadValidator` and `MessageProcessor` gate component `metadata` and `catalogId` envelope handling to v1.0+ surfaces (so pre-1.0 surfaces treat them as ordinary component properties), dual-read legacy bare `catalogId`, `metadata`, `accessibility`, and `checks` when undeclared as custom properties by the component schema, validate `@metadata.extensions` keys as UAX #31 identifiers, reject `null` `@catalogId` / legacy `catalogId`, and reject components specifying both `@`-prefixed and bare forms of the same mixin ([#1376](https://github.com/a2ui-project/a2ui/issues/1376), [#3466](https://github.com/a2ui-project/a2ui/issues/3466), [#3511](https://github.com/a2ui-project/a2ui/issues/3511), [#4012](https://github.com/a2ui-project/a2ui/issues/4012), [#4037](https://github.com/a2ui-project/a2ui/pull/4037), [#4044](https://github.com/a2ui-project/a2ui/pull/4044)).
+ - Add explicit type annotations to internal local and pattern variables to satisfy the `specify_nonobvious_local_variable_types` analyzer lint on Dart 3.15+ ([#4233](https://github.com/a2ui-project/a2ui/pull/4233)).
+ 
 ```
 
-**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIThemeKey.swift` (modified, +3/-7)
+**File**: `dart/a2ui_core/lib/src/validation/validator.dart` (modified, +27/-5)
 ```diff
-@@ -12,20 +12,16 @@
+@@ -1216,14 +1216,36 @@ class PayloadValidator<C extends ComponentApi, F extends FunctionApi> {
+   }();
+ 
+   Schema _resolve(Map<String, Object?> schema) => Schema.fromMap(
+-        resolveSchemaRefs(
+-          schema,
+-          _resolutionDocument,
+-          commonTypes: commonTypesSchema,
+-          fallbackCommonTypes: _fallbackCommonTypes,
++        _enforceStrictUriFormat(
++          resolveSchemaRefs(
++            schema,
++            _resolutionDocument,
++            commonTypes: commonTypesSchema,
++            fallbackCommonTypes: _fallbackCommonTypes,
++          ),
+         ),
+       );
+ 
++  static const String _uriFormatPattern = r'^[A-Za-z][A-Za-z0-9+.-]*:\S*$';
++
++  static Map<String, Object?> _enforceStrictUriFormat(
++    Map<String, Object?> schema,
++  ) =>
++      _enforceStrictUriValue(schema)! as Map<String, Object?>;
++
++  static Object? _enforceStrictUriValue(Object? value) => switch (value) {
++        final Map<Object?, Object?> map => <String, Object?>{
++            for (final MapEntry<Object?, Object?> entry in map.entries)
++              '${entry.key}': _enforceStrictUriValue(entry.value),
++            if (map['format'] == 'uri' && !map.containsKey('pattern'))
++              'pattern': _uriFormatPattern,
++          },
++        final List<Object?> list => <Object?>[
++            for (final Object? item in list) _enforceStrictUriValue(item),
++          ],
++        _ => value,
++      };
++
+   static const Map<String, Object?> _anyV1FunctionCall = {
+     'type': 'object',
+     'properties': {
+```
+
+**File**: `dart/a2ui_core/test/validator_test.dart` (modified, +46/-0)
+```diff
+@@ -12,6 +12,9 @@
  // See the License for the specific language governing permissions and
  // limitations under the License.
  
--import A2UICore
- import OrderedJSON
- import SwiftUI
- 
--/// Environment key for propagating the active surface theme through
--/// the SwiftUI view hierarchy.
-+/// Environment key storing the active A2UI surface theme.
-+@available(*, deprecated, message: "Use EnvironmentValues.a2uiTheme instead.")
- public struct A2UIThemeKey: EnvironmentKey {
-   public static let defaultValue: [String: JSONValue]? = nil
- }
- 
- extension EnvironmentValues {
-   /// The active A2UI surface theme, if any.
--  public var a2uiTheme: [String: JSONValue]? {
--    get { self[A2UIThemeKey.self] }
--    set { self[A2UIThemeKey.self] = newValue }
--  }
-+  @Entry public var a2uiTheme: [String: JSONValue]? = nil
++import 'dart:convert';
++import 'dart:io';
++
+ import 'package:a2ui_core/a2ui_core.dart';
+ import 'package:a2ui_core/src/validation/component_graph.dart'
+     show maxFunctionCallArgs, maxFunctionCallDepth;
+@@ -1675,4 +1678,47 @@ void v1RulesTests() {
+       );
+     });
+   });
++
++  group('v0.9 function_catalog_validation.json specification suite', () {
++    final suiteJson = jsonDecode(
++      File(
++        '../../specification/v0_9/test/cases/function_catalog_validation.json',
++      ).readAsStringSync(),
++    ) as Map<String, Object?>;
++    final List<Map<String, Object?>> tests =
++        (suiteJson['tests'] as List<Object?>).cast<Map<String, Object?>>();
++
++    for (final testCase in tests) {
++      final description = testCase['description']! as String;
++      final expectedValid = testCase['valid']! as bool;
++      final data = testCase['data']! as Map<String, Object?>;
++      final update = data['updateComponents']! as Map<String, Object?>;
++      final List<Map<String, Object?>> components =
++          (update['components'] as List<Object?>).cast<Map<String, Object?>>();
++
++      test(description, () {
++        final validator = PayloadValidator<ComponentApi, FunctionApi>(
++          catalog: BasicCatalog.v0_9(),
++          config: ValidationConfig.strict,
++        );
++        if (expectedValid) {
++          for (final component in components) {
++            expect(
++              () => validator.validateComponent(component),
++              returnsNormally,
++            );
++          }
++        } else {
++          expect(
++            () {
++              for (final component in components) {
++                validator.validateComponent(component);
++              }
++            },
++            throwsA(isA<A2uiValidationError>()),
++          );
++        }
++      });
++    }
++  });
  }
 ```
 
-**File**: `swift/swiftui/Sources/BasicCatalog/A2UIChoicePicker.swift` (modified, +4/-67)
+**File**: `python/a2ui_core/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -29,58 +29,7 @@ extension BasicCatalogImplementation {
-   }
- }
+@@ -1,5 +1,6 @@
+ ## Unreleased
  
--// MARK: - Layout
--
--/// A custom SwiftUI layout arranging child views in wrapping horizontal rows.
--struct FlowLayout: Layout {
--  var spacing: CGFloat = 8
--  var lineSpacing: CGFloat = 8
--
--  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
--    guard !subviews.isEmpty else { return .zero }
--    let maxWidth = proposal.width ?? .infinity
--    var currentX: CGFloat = 0
--    var currentY: CGFloat = 0
--    var lineHeight: CGFloat = 0
--    var maxLineWidth: CGFloat = 0
--
--    for subview in subviews {
--      let size = subview.sizeThatFits(.unspecified)
--      if currentX + size.width > maxWidth && currentX > 0 {
--        maxLineWidth = max(maxLineWidth, currentX - spacing)
--        currentX = 0
--        currentY += lineHeight + lineSpacing
--        lineHeight = 0
--      }
--      currentX += size.width + spacing
--      lineHeight = max(lineHeight, size.height)
--    }
--    maxLineWidth = max(maxLineWidth, currentX > 0 ? currentX - spacing : 0)
--
--    return CGSize(width: maxLineWidth, height: currentY + lineHeight)
--  }
--
--  func placeSubviews(
--    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
--  ) {
--    guard !subviews.isEmpty else { return }
--    var currentX: CGFloat = bounds.minX
--    var currentY: CGFloat = bounds.minY
--    var lineHeight: CGFloat = 0
--
--    for subview in subviews {
--      let size = subview.sizeThatFits(.unspecified)
--      if currentX + size.width > bounds.maxX && currentX > bounds.minX {
--        currentX = bounds.minX
--        currentY += lineHeight + lineSpacing
--        lineHeight = 0
--      }
--      subview.place(at: CGPoint(x: currentX, y: currentY), proposal: ProposedViewSize(size))
--      currentX += size.width + spacing
--      lineHeight = max(lineHeight, size.height)
--    }
--  }
--}
-+// MARK: - View
++- **BREAKING CHANGE**: Enforce basic catalog function argument and return-type validation across `StrictBaseModel`, `SchemaValidator`, and `PayloadValidator`: reject `str` and `bool` values on pure `int`/`float` fields (such as `length.min`, `length.max`, `numeric.min`, and `numeric.max`), enforce `anyOf` required-branch constraints (`SchemaKeywords.required_any_of`), enforce RFC 3986 scheme-prefixed URI syntax (`^[A-Za-z][A-Za-z0-9+.-]*:\S*$`) on `"format": "uri"` fields (such as `openUrl.args.url`), and validate declared `returnType` values on nested function calls against the catalog function definition on pre-1.0 surfaces. Recommended migration: pass numeric values to `min` and `max`, supply at least one bound on `length` and `numeric`, pass a scheme-prefixed URI to `openUrl.url`, and match or omit `returnType` on nested function calls ([#4173](https://github.com/a2ui-project/a2ui/issues/4173), [#4187](https://github.com/a2ui-project/a2ui/pull/4187)).
+ - **BREAKING CHANGE**: (v1_0) Update `ComponentCommon` and `Checkable` schemas, `Catalog.validation_schema`, and `ComponentModel.component_tree` to emit `@catalogId`, `@metadata`, `@accessibility`, and `@checks` on v1.0 surfaces (`ComponentModel.component_tree` writes envelope metadata under `@metadata`), while `PayloadValidator` and `MessageProcessor` gate component `metadata` and `catalogId` envelope handling to v1.0+ surfaces (so pre-1.0 surfaces treat them as ordinary component properties), dual-read legacy bare `catalogId`, `metadata`, `accessibility`, and `checks` when undeclared as custom properties by the component schema, validate `@metadata.extensions` keys as UAX #31 identifiers, reject `null` `@catalogId` / legacy `catalogId`, and reject components specifying both `@`-prefixed and bare forms of the same mixin ([#1376](https://github.com/a2ui-project/a2ui/issues/1376), [#3466](https://github.com/a2ui-project/a2ui/issues/3466), [#3511](https://github.com/a2ui-project/a2ui/issues/3511), [#4012](https://github.com/a2ui-project/a2ui/issues/4012), [#4037](https://github.com/a2ui-project/a2ui/pull/4037), [#4044](https://github.com/a2ui-project/a2ui/pull/4044)).
  
- /// SwiftUI component view for the A2UI Basic Catalog `ChoicePicker` selection component.
- public struct A2UIChoicePicker: View {
-@@ -137,20 +86,6 @@ public struct A2UIChoicePicker: View {
-       }
-     }
- 
--    if let rawArray = node.properties["options"] as? [Any] {
--      return rawArray.enumerated().compactMap { index, element in
--        if let str = element as? String {
--          return OptionItem(id: str, label: str, value: str)
--        }
--        if let dict = element as? [String: Any] {
--          let label = (dict["label"] as? String) ?? "Option \(index + 1)"
--          let value = (dict["value"] as? String) ?? "\(index)"
--          return OptionItem(id: value, label: label, value: value)
--        }
--        return nil
--      }
--    }
--
-     if let json = node.jsonValue(for: "options"), let array = json.arrayValue {
-       return array.enumerated().map { index, item in
-         if let str = item.stringValue {
-@@ -247,7 +182,7 @@ public struct A2UIChoicePicker: View {
-         }
-         .padding(8)
-         .background(Color.gray.opacity(0.12))
--        .cornerRadius(8)
-+        .clipShape(.rect(cornerRadius: 8))
-         .accessibilityIdentifier("A2UIChoicePicker_Search_\(node.id)")
-       }
- 
-@@ -314,6 +249,8 @@ public struct A2UIChoicePicker: View {
-             Spacer()
-           }
-           .padding(.vertical, 4)
-+          .frame(minHeight: 44)
-+          .contentShape(.rect)
-         }
-         .buttonStyle(.plain)
-         .a2uiOptionAccessibility(
+ ## 0.6.0 (2026-11-10)
 ```
 
-**File**: `swift/swiftui/Sources/BasicCatalog/A2UIIcon.swift` (modified, +9/-243)
+**File**: `python/a2ui_core/src/a2ui/core/schema/_json_schema.py` (modified, +32/-0)
 ```diff
-@@ -15,6 +15,7 @@
- import A2UICore
- import A2UISwiftUI
- import BasicCatalog
-+import Foundation
- import OrderedJSON
- import SwiftUI
+@@ -29,13 +29,16 @@
+ from contextlib import contextmanager
+ from contextvars import ContextVar
+ import copy
++import re
+ import sys
+ from typing import Annotated, Any, Final
  
-@@ -29,232 +30,13 @@ extension BasicCatalogImplementation {
+ from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, TypeAdapter
+ from pydantic.json_schema import JsonSchemaValue
+ from pydantic_core import core_schema
  
- // MARK: - View
++_URI_RE: Final[re.Pattern[str]] = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:\S*\Z")
++
+ # Pydantic rejects `$ref`s it has not registered while it generates a schema,
+ # so declared keywords reference other defs through these markers, which
+ # `resolve_ref_markers` replaces afterwards: one for the catalog's function
+@@ -373,6 +376,21 @@ def required_one_of(self) -> list[list[str]] | None:
+             return None
+         return [list(branch["required"]) for branch in branches]
  
--/// A SwiftUI shape rendering an SVG path `d` attribute data string.
--public struct SVGPathShape: Shape {
--  public let pathData: String
--
--  public init(pathData: String) {
--    self.pathData = pathData
--  }
--
--  public func path(in rect: CGRect) -> Path {
--    let rawPath = SVGPathParser.parse(pathData)
--    let boundingBox = rawPath.boundingRect
--    guard boundingBox.width > 0, boundingBox.height > 0 else {
--      return rawPath
--    }
--
--    let contentWidth = max(boundingBox.width, boundingBox.maxX)
--    let contentHeight = max(boundingBox.height, boundingBox.maxY)
--    let refSize = max(max(contentWidth, contentHeight), 24.0)
--
--    let scale = min(rect.width / refSize, rect.height / refSize)
--
--    var transform = CGAffineTransform.identity
--    let scaledWidth = boundingBox.width * scale
--    let scaledHeight = boundingBox.height * scale
--    let offsetX = rect.minX + (rect.width - scaledWidth) / 2.0 - (boundingBox.minX * scale)
--    let offsetY = rect.minY + (rect.height - scaledHeight) / 2.0 - (boundingBox.minY * scale)
--
--    transform = transform.translatedBy(x: offsetX, y: offsetY)
--    transform = transform.scaledBy(x: scale, y: scale)
--
--    return rawPath.applying(transform)
--  }
--}
--
--/// Lightweight parser converting SVG path data strings into SwiftUI `Path` instances.
--public enum SVGPathParser {
--  public static func parse(_ d: String) -> Path {
--    var path = Path()
--    var currentPoint: CGPoint = .zero
--    var startPoint: CGPoint = .zero
--    var lastControlPoint: CGPoint? = nil
--
--    let tokens = tokenize(d)
--    var index = 0
--
--    func nextNumber() -> CGFloat? {
--      guard index < tokens.count else { return nil }
--      if case .number(let val) = tokens[index] {
--        index += 1
--        return CGFloat(val)
--      }
--      return nil
--    }
--
--    func nextPoint(relative: Bool) -> CGPoint? {
--      guard let x = nextNumber(), let y = nextNumber() else { return nil }
--      return relative ? CGPoint(x: currentPoint.x + x, y: currentPoint.y + y) : CGPoint(x: x, y: y)
--    }
--
--    while index < tokens.count {
--      guard case .command(let cmd) = tokens[index] else {
--        index += 1
--        continue
--      }
--      index += 1
--
--      switch cmd {
--      case "M", "m":
--        let isRel = (cmd == "m")
--        if let pt = nextPoint(relative: isRel) {
--          currentPoint = pt
--          startPoint = pt
--          path.move(to: pt)
--          lastControlPoint = nil
--          while let nextPt = nextPoint(relative: isRel) {
--            currentPoint = nextPt
--            path.addLine(to: nextPt)
--          }
--        }
--
--      case "L", "l":
--        let isRel = (cmd == "l")
--        while let pt = nextPoint(relative: isRel) {
--          currentPoint = pt
--          path.addLine(to: pt)
--          lastControlPoint = nil
--        }
--
--      case "H", "h":
--        let isRel = (cmd == "h")
--        while let x = nextNumber() {
--          let targetX = isRel ? currentPoint.x + x : x
--          currentPoint = CGPoint(x: targetX, y: currentPoint.y)
--          path.addLine(to: currentPoint)
--          lastControlPoint = nil
--        }
--
--      case "V", "v":
--        let isRel = (cmd == "v")
--        while let y = nextNumber() {
--          let targetY = isRel ? currentPoint.y + y : y
--          currentPoint = CGPoint(x: currentPoint.x, y: targetY)
--          path.addLine(to: currentPoint)
--          lastControlPoint = nil
--        }
--
--      case "C", "c":
--        let isRel = (cmd == "c")
--        while let cp1 = nextPoint(relative: isRel),
--          let cp2 = nextPoint(relative: isRel),
--          let endPt = nextPoint(relative: isRel)
--        {
--          path.addCurve(to: endPt, control1: cp1, control2: cp2)
--          lastControlPoint = cp2
--          currentPoint = endPt
--        }
--
--      case "S", "s":
--        let isRel = (cmd == "s")
--        while let cp2 = nextPoint(relative: isRel),
--          let endPt = nextPoint(relative: isRel)
--        {
--          let cp1: CGPoint
--          if let last = lastControlPoint {
--            cp1 = CGPoint(x: 2 * currentPoint.x - last.x, y: 2 * currentPoint.y - last.y)
--          } else {
--            cp1 = currentPoint
--          }
--          path.addCurve(to: endPt, control1: cp1, control2: cp2)
--          lastControlPoint = cp2
--          currentPoint = endPt
--        }
--
--      case "Q", "q":
--        let isRel = (cmd == "q")
--        while let cp = nextPoint(relative: isRel),
--          let endPt = nextPoint(relative: isRel)
--        {
--          path.addQuadCurve(to: endPt, control: cp)
--          lastControlPoint = cp
--          currentPoint = endPt
--        }
--
--      case "T", "t":
--        let isRel = (cmd == "t")
--        while let endPt = nextPoint(relative: isRel) {
--          let cp: CGPoint
--     
++    def required_any_of(self) -> list[list[str]] | None:
++        """Returns the property groups of an `anyOf` of required properties.
++
++        For example `LengthArgs` and `NumericArgs` require at least one of
++        `min` and `max`. Returns None if the keywords have no such `anyOf`.
++        """
++        branches = self.keywords.get("anyOf")
++        if not (
++            isinstance(branches, list)
++            and branches
++            and all(isinstance(b, dict) and set(b) == {"required"} for b in branches)
++        ):
++            return None
++        return [list(branch["required"]) for branch in branches]
++
+     def apply(self, schema: dict[str, Any]) -> None:
+         """Applies the keywords to `schema` in place."""
+         if self.spec_only and not is_spec_schema():
+@@ -392,6 +410,20 @@ def __call__(self, schema: dict[str, Any], cls: type[Any]) -> None:
+         if self.declared_by(cls):
+             self.apply(schema)
+ 
++    def __get_pydantic_core_schema__(
++        self, source: Any, handler: GetCoreSchemaHandler
++    ) -> core_schema.CoreSchema:
++        inner = handler(source)
++        if self.keywords.get("format") != "uri":
++            return inner
++        return core_schema.no_info_after_validator_function(self._validate_uri, inner)
++
++    @staticmethod
++    def _validate_uri(value: Any) -> Any:
++        if isinstance(value, str) and _URI_RE.match(value) is None:
++            raise ValueError(f"Invalid URI '{value}'")
++        return value
++
+     def __get_pydantic_json_schema__(
+         self, schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+     ) -> JsonSchemaValue:
 ```
 
-**File**: `swift/swiftui/Sources/BasicCatalog/A2UIList.swift` (modified, +4/-2)
+**File**: `python/a2ui_core/src/a2ui/core/schema/common_types.py` (modified, +95/-1)
 ```diff
-@@ -51,7 +51,7 @@ public struct A2UIList: View {
+@@ -15,13 +15,14 @@
+ from __future__ import annotations
+ import functools
+ import sys
++import types
+ import typing
+ from typing import Any, Dict, List, Optional, Union
+ from pydantic import BaseModel, ConfigDict, Field, GetCoreSchemaHandler, ValidationInfo, field_validator, model_validator, StrictBool, StrictFloat, StrictInt, StrictStr
+ from pydantic_core import CoreSchema, PydanticUndefined
+ from typing_extensions import Self, TypeAliasType
  
-   public var body: some View {
-     if direction == "horizontal" {
--      ScrollView(.horizontal, showsIndicators: false) {
-+      ScrollView(.horizontal) {
-         LazyHStack(alignment: verticalAlignment, spacing: 12) {
-           ForEach(children) { childNode in
-             ComponentNodeView(node: childNode)
-@@ -62,9 +62,10 @@ public struct A2UIList: View {
-         }
-         .padding(.horizontal, 4)
-       }
-+      .scrollIndicators(.hidden, axes: .horizontal)
-       .a2uiAccessibilityElement(for: node, children: .contain)
-     } else {
--      ScrollView(.vertical, showsIndicators: true) {
-+      ScrollView(.vertical) {
-         LazyVStack(alignment: horizontalAlignment, spacing: 8) {
-           ForEach(children) { childNode in
-             ComponentNodeView(node: childNode)
-@@ -74,6 +75,7 @@ public struct A2UIList: View {
-         }
-         .padding(.vertical, 4)
-       }
-+      .scrollIndicators(.automatic, axes: .vertical)
-       .frame(maxWidth: align == "stretch" ? .infinity : nil)
-       .a2uiAccessibilityElement(for: node, children: .contain)
-     }
+-from ._json_schema import SchemaKeywords
++from ._json_schema import _URI_RE, SchemaKeywords
+ 
+ 
+ class ComponentReference:
+@@ -47,9 +48,102 @@ class ListReference(ComponentReference):
+     """Marker class indicating a field holds a list of component references."""
+ 
+ 
++def _unwrap_leaf_types(annotation: Any) -> list[Any]:
++    """Unwraps Union, UnionType, Annotated, and TypeAliasType into leaf types."""
++    if isinstance(annotation, TypeAliasType):
++        return _unwrap_leaf_types(annotation.__value__)
++    origin = typing.get_origin(annotation)
++    if origin is typing.Annotated:
++        args = typing.get_args(annotation)
++        return _unwrap_leaf_types(args[0]) if args else []
++    if origin is Union or origin is types.UnionType:
++        leaves: list[Any] = []
++        for arg in typing.get_args(annotation):
++            leaves.extend(_unwrap_leaf_types(arg))
++        return leaves
++    return [annotation]
++
++
++def _is_strict_numeric_field(annotation: Any) -> bool:
++    """Returns whether non-None leaf annotations are strictly int or float."""
++    non_none = [t for t in _unwrap_leaf_types(annotation) if t is not type(None)]
++    return bool(non_none) and all(t is int or t is float for t in non_none)
++
++
++def _has_uri_format(extra: Any) -> bool:
++    """Returns whether `json_schema_extra` declares `format: "uri"`."""
++    if isinstance(extra, dict):
++        return extra.get("format") == "uri"
++    if isinstance(extra, SchemaKeywords):
++        return extra.keywords.get("format") == "uri"
++    return False
++
++
++@functools.cache
++def _strict_field_checks(
++    cls: type[BaseModel],
++) -> tuple[frozenset[str], frozenset[str]]:
++    """Returns `(numeric_keys, uri_keys)` for `cls` (including aliases)."""
++    numeric_keys: set[str] = set()
++    uri_keys: set[str] = set()
++    for name, field in cls.model_fields.items():
++        keys = {name, field.alias or name}
++        if isinstance(field.validation_alias, str):
++            keys.add(field.validation_alias)
++        if _is_strict_numeric_field(field.annotation):
++            numeric_keys.update(keys)
++        if _has_uri_format(field.json_schema_extra):
++            uri_keys.update(keys)
++    return frozenset(numeric_keys), frozenset(uri_keys)
++
++
+ class StrictBaseModel(BaseModel):
+     model_config = ConfigDict(extra="forbid", populate_by_name=True)
+ 
++    @model_validator(mode="before")
++    @classmethod
++    def _validate_strict_fields(cls, data: Any) -> Any:
++        if not isinstance(data, dict):
++            return data
++        numeric_keys, uri_keys = _strict_field_checks(cls)
++        for key in numeric_keys.intersection(data):
++            if isinstance(data[key], (str, bool)):
++                raise ValueError(
++                    f"Field '{key}' expected a numeric value, got"
++                    f" {type(data[key]).__name__}"
++                )
++        for key in uri_keys.intersection(data):
++            val = data[key]
++            if isinstance(val, str) and _URI_RE.match(val) is None:
++                raise ValueError(f"Field '{key}' must be a valid URI, got '{val}'")
++        return data
++
++    @model_validator(mode="after")
++    def _check_required_any_of(self) -> Self:
++        keywords = type(self).model_config.get("json_schema_extra")
++        branches = (
++            keywords.required_any_of() if isinstance(keywords, SchemaKeywords) else None
++        )
++        if not branches:
++            return self
++        names = {
++            field.alias or name: name for name, field in type(self).model_fields.items()
++        }
++        matched = any(
++            all(
++                names.get(prop, prop) in self.model_fields_set
++                and getattr(self, names.get(prop, prop), None) is not None
++                for prop in branch
++            )
++            for branch in branches
++        )
++        if not matched:
++            choices = " | ".join(", ".join(branch) for branch in branches)
++            raise ValueError(
++                f"{type(self).__name__} must set at least one of: {choices}"
++            )
++        return self
++
+     @field_validator("version", mode="after", check_fields=False)
+     @classmethod
+     def validate_version_field(cls, v: Any, info: ValidationInfo) -> Any:
+```
+
+**File**: `python/a2ui_core/src/a2ui/core/validation/payload_validator.py` (modified, +52/-0)
+```diff
+@@ -1150,6 +1150,58 @@ def _validate_nested_call(
+                 )
+             )
+ 
++        self._check_pre_v10_return_type(
++            fn_name, call, call_path, at_least_v10, full_check, errors
++        )
++
++    def _check_pre_v10_return_type(
++        self,
++        fn_name: str,
++        call: dict[str, Any],
++        call_path: str,
++        at_least_v10: bool,
++        full_check: bool,
++        errors: list[A2uiErrorDetail],
++    ) -> None:
++        """Checks an explicit pre-v1.0 `returnType` against the catalog definition."""
++        if at_least_v10 or not full_check or "returnType" not in call:
++            return
++        expected_rt = self._expected_function_return_type(fn_name)
++        actual_rt = call["returnType"]
++        if (
++            expected_rt is not None
++            and expected_rt != "any"
++            and actual_rt != expected_rt
++        ):
++            errors.append(
++                A2uiErrorDetail(
++                    path=f"{call_path}.returnType",
++                    code="invalid_function_call",
++                    message=(
++                        f"Function '{fn_name}' expects returnType"
++                        f" '{expected_rt}', got '{actual_rt}'"
++                    ),
++                )
++            )
++
++    def _expected_function_return_type(self, fn_name: str) -> str | None:
++        """Returns the catalog function's declared returnType, or None."""
++        fn_def, fn_schema, _ = self._find_function_definition(fn_name)
++        return_type = getattr(fn_def, "return_type", None)
++        if isinstance(return_type, str):
++            return return_type
++        if isinstance(fn_schema, dict):
++            top = fn_schema.get("returnType")
++            if isinstance(top, str):
++                return top
++            props = fn_schema.get("properties")
++            if isinstance(props, dict):
++                rt_prop = props.get("returnType")
++                const_rt = rt_prop.get("const") if isinstance(rt_prop, dict) else None
++                if isinstance(const_rt, str):
++                    return const_rt
++        return None
++
+     def _validate_system_function(
+         self,
+         fn_name: str,
+```
+
+**File**: `python/a2ui_core/src/a2ui/core/validation/schema_validator.py` (modified, +22/-2)
+```diff
+@@ -136,13 +136,33 @@ def _refuse_retrieval(uri: str) -> referencing.Resource[Any]:
+     retrieve=_refuse_retrieval  # type: ignore[call-arg]
+ )
+ 
++_URI_RE: Final[regex.Pattern[str]] = regex.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:\S*\Z")
++
++_FORMAT_CHECKER: Final[jsonschema.FormatChecker] = jsonschema.FormatChecker()
++
++
++@_FORMAT_CHECKER.checks("uri")
++def _is_valid_uri(instance: object) -> bool:
++    return not isinstance(instance, str) or _URI_RE.match(instance) is not None
++
++
+ _orig_init = SchemaValidator.__init__
+ 
+ 
+ def _init_schema_validator(
+-    self: Any, *args: Any, registry: Any = _NO_RETRIEVAL_REGISTRY, **kwargs: Any
++    self: Any,
++    *args: Any,
++    registry: Any = _NO_RETRIEVAL_REGISTRY,
++    format_checker: Any = _FORMAT_CHECKER,
++    **kwargs: Any,
+ ) -> None:
+-    _orig_init(self, *args, registry=registry, **kwargs)
++    _orig_init(
++        self,
++        *args,
++        registry=registry,
++        format_checker=format_checker,
++        **kwargs,
++    )
+ 
+ 
+ SchemaValidator.__init__ = _init_schema_validator
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4218** (2026-11-13): docs(site): update L+R Alder copy and walkthrough video on Get Help page (@abdallahshaban557)
-- **PR #4213** (2026-11-13): docs: remove docs/public and MkDocs scaffolding (#4209) (@ditman)
-- **PR #4212** (2026-11-13): docs: retarget workflows, context7, and repo links away from docs/public (#4209) (@ditman)
-- **PR #4211** (2026-11-13): docs: move active assets and CNAME out of docs/public (#4209) (@ditman)
-- **PR #4198** (2026-11-12): fix(samples): combine VegaChart and basic components into single v0.9 catalog (@josemontespg)
-- **PR #4182** (2026-11-12): Fix/renderers decouple v09 and universal imports (@ditman)
+- **PR #4249** (closed): fix(web_core): recognize DataBinding and FunctionCall schemas in isDynamicDef (@jihanurrahman33)
+- **PR #4244** (2026-11-16): fix(angular): prevent NG0205 destroyed-injector errors across multi-spec test runs (@gspencergoog)
+- **PR #4235** (2026-11-14): docs(site): update landing page closing CTA (@yjbanov)
+- **PR #4234** (2026-11-16): chore(github): add CODEOWNERS for /specification/ (@gspencergoog)
+- **PR #4233** (2026-11-13): fix(dart): add explicit types for specify_nonobvious_local_variable_types lint (@ditman)
+- **PR #4229** (closed): feat(web_core)!: migrate the TypeScript packages to zod 4 (@pomahtuk)
 
 ---
 
@@ -3314,66 +2676,37 @@ Signed-off-by: Peter Friese <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. swift/core): drop theme from a v1.0 createSurface in relaxed mode (#4099)
+## X. docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c
 
 **RULE**:
-When implementing operations in `swift/core/Sources/A2UICore/Processing/Adapters/BaseVersionAdapter.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d2fcf37`: swift/core): drop theme from a v1.0 createSurface in relaxed mode (#4099). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd29fa27`: docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `swift/core/Sources/A2UICore/Processing/Adapters/BaseVersionAdapter.swift`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    try extractOperations(from: payload, allowUnknownElements: false)
-  }
-
-  /// Validates the payload as ``extractOperations(from:)`` does, passing `allowUnknownElements`
-  /// to ``preparePayloadForValidation(_:action:allowUnknownElements:)`` for each message.
-  open func extractOperations(
-    from payload: JSONValue,
-    allowUnknownElements: Bool
-  ) throws -> [InternalOperation] {
-      return try extractOperationsFromArray(items, allowUnknownElements: allowUnknownElements)
-    case .object(let messageObject):
-      if let messages = messageObject["messages"]?.arrayValue {
-        return try extractOperationsFromArray(
-          messages,
-          allowUnknownElements: allowUnknownElements
-        )
-      return try extractOperationsFromSingleMessageObject(
-        messageObject,
-        allowUnknownElements: allowUnknownElements
-      )
-  /// Lets subclasses normalize a single message before validation, such as dropping properties
-  /// that relaxed renderers ignore. The default returns `message` unchanged.
-  open func preparePayloadForValidation(
-    _ message: OrderedDictionary<String, JSONValue>,
-    action: String,
-    allowUnknownElements: Bool
-  ) -> OrderedDictionary
+module_blueprint_commit: 24d1bf9c830071f74c9c908433e73cc6cbe0aa33
+  agent_functions: 87b945802660c507bc84f7f47a25199b4939efbe
+- **Parser & Streaming Layer**: `Parser`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON and Express streaming.
+- **Bidirectional Function RPC**: `RendererToAgentMessageProcessor` and `RendererFunctionCalls` (`lib/src/rpc/`) dispatch `callAgentFunction` requests against registered catalog `AgentFunction` implementations and manage pending `callRendererFunction` invocations.
+- **Single-Method `PromptGenerator` (No `skill_generator`)**: Because `dart/a2ui_agent` does not implement the optional `skill_generator` feature, `PromptGenerator` (`lib/src/prompt/generator.dart`) declares a single abstract `String generate()` method rather than splitting prompt construction into `generateBaseRules`, `generateCatalogInstructions`, `generateExamples`, and `assembleInstructions` hooks, and `lib/a2ui_agent.dart` exports `DirectJsonPromptGenerator` and `ExpressPromptGenerator` directly.
+- **No Built-in Transport Adapters**: `dart/a2ui_agent` stays transport-agnostic and does not bundle A
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-      return try extractOperationsFromArray(items)
-    case .object(let dict):
-      if let messages = dict["messages"]?.arrayValue {
-        return try extractOperationsFromArray(messages)
-      return try extractOperationsFromSingleMessageObject(dict)
-    _ items: [JSONValue]
-        return try extractOperations(from: item)
-    _ dict: OrderedDictionary<String, JSONValue>
-    let action = try extractSingleAction(from: dict)
-    let ops = try extractOperations(from: jsonValue)
+// Induced defect failure mode:
+module_blueprint_commit: a641e84f2861d1ff068df7616e06d08bfd4d0a88
+- **Parser & Streaming Layer**: `Parser`, `BlockLexer`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON streaming.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d2fcf37` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd29fa27` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T04:56:59.127Z",
-  "total_verified_learnings": 8845,
+  "last_updated": "2026-11-17T05:19:51.027Z",
+  "total_verified_learnings": 8846,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19772,
+  "total_items": 19775,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113113,10 +113113,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-a2ui-project-a2ui-architecture-intelligence-a2ui-project-a2ui-core-invariants.md",
       "title": "Architecture Intelligence: a2ui-project/a2ui Core Invariants",
       "repository": "a2ui-project/a2ui",
-      "source_version": "f2c410ae",
-      "content_hash": "c7dc5f308aaf4e04c151ce7844bcff59a0030e10545240ef04bab086d93bd03e",
+      "source_version": "1cbef31b",
+      "content_hash": "3bc182911858b8117495b629f783381f4da89181d5d6492231d0f0f71e0e7d77",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T16:04:57.326Z"
+      "persisted_at": "2026-11-17T05:19:46.112Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui",
@@ -113125,10 +113125,10 @@
       "relative_path": "08_VERIFICATION/a2ui-project-a2ui-verification-protocol-empirical-defect-shield-for-a2ui-project.md",
       "title": "Verification Protocol: Empirical Defect Shield for a2ui-project/a2ui",
       "repository": "a2ui-project/a2ui",
-      "source_version": "f2c410ae",
-      "content_hash": "fabc3d275481f822a47d6723ae9d2d164dfb0bfc660ad16c7851d53491b81b42",
+      "source_version": "1cbef31b",
+      "content_hash": "d887c29f22a9e1a1fc4b3c8ea128bcccf1f07e87d9792a890dec1ff0e9f39744",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:04:57.386Z"
+      "persisted_at": "2026-11-17T05:19:46.225Z"
     },
     "candidate_directive-mcp-preserve-distinct-block-search-results-by-relationship-id-2414": {
       "item_id": "candidate_directive-mcp-preserve-distinct-block-search-results-by-relationship-id-2414",
@@ -113186,9 +113186,9 @@
       "title": "Architecture Intelligence: a2ui-project-a2ui-learnings Core Invariants",
       "repository": "a2ui-project-a2ui-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1008e8ea2aa507ff9e7ef3279960d9f25fa98b334885b537be1c8d22b7de7d2",
+      "content_hash": "0f9afcdf666dd5f83a83ee188191a817cf75acdb471e06ed919c845f6b161368",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T16:05:41.394Z"
+      "persisted_at": "2026-11-17T05:19:49.899Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui-learnings",
@@ -113198,9 +113198,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for a2ui-project-a2ui-learnings",
       "repository": "a2ui-project-a2ui-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c78a93c59417ff8af94df5a95aa73241ea37480ecd24e2022a21b1ff1a604f9",
+      "content_hash": "8026e28c52738dcef1451c38c18c477fc79b734a437ccb36f2f89d01ae7eb362",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:05:41.467Z"
+      "persisted_at": "2026-11-17T05:19:50.007Z"
     },
     "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria": {
       "item_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria",
@@ -218063,13 +218063,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3MEY-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TP26-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "a4becc8295115701558a9aeb3c573b78964b259aee8ca483767ccbc3a050aa00",
+      "content_hash": "c03a5e0319d184ccca6ddd93d3f68e4bb1489f99b049360def35f4e88b9e3dbf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:31:34.715Z"
+      "persisted_at": "2026-11-17T05:19:50.815Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218079,9 +218079,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "740c9f2ee320e68682e86dfdb56a2b5ddec10c019482d4341924d2ffc1089fba",
+      "content_hash": "ba75530fd96745893dd0763ab8cc5b87ebcd21540c772d253daae22b96fce46e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:31:34.832Z"
+      "persisted_at": "2026-11-17T05:19:50.922Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218091,9 +218091,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "a86a7b7fdc410af63a9c6d7b7da99d58c54998d450ddfcd2a61b04bf6ef16c48",
+      "content_hash": "e770952c88f26a733267fbe7dd1b7c4843d96827a423a4de778329385a4369ad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:31:34.951Z"
+      "persisted_at": "2026-11-17T05:19:51.027Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -226929,13 +226929,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-KP83-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TOOL-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "0983def224c9ed8ec5555065042f2d1c1106526a91fb9eafa9112c4235692b43",
+      "content_hash": "c7861100d3f127abe9596122cb0700aff417733c9ce90cbe1220308ecd86a64b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:24:53.428Z"
+      "persisted_at": "2026-11-17T05:19:50.325Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226945,9 +226945,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "2efca1973dc6fecf4528069a08ef94ce9c70160a646a71844122d617477d3d35",
+      "content_hash": "93ba34a61d8cac7dddbcfd37ff2281f8bce657cccc65044fa7ae4f69eb11c514",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:24:53.696Z"
+      "persisted_at": "2026-11-17T05:19:50.430Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226957,9 +226957,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "e4f656810a0ca6f3dde51584b8ab0516ca74a6b263319a8741254a52234701c7",
+      "content_hash": "bf64bc5253f06d82a8c57fb146dd2e51071a664e4d9f467aa4d577396f16f5ac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T02:24:53.872Z"
+      "persisted_at": "2026-11-17T05:19:50.539Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -264031,6 +264031,65 @@
       "content_hash": "205d48345788de7a0ba58fb71c24dc08dfe9763c449cec32d537e670bbc6e61b",
       "domain_letter": "B",
       "persisted_at": "2026-11-17T04:56:57.939Z"
+    },
+    "learn-github-a2ui-project-a2ui": {
+      "learning_id": "learn-github-a2ui-project-a2ui",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "a2ui-project/a2ui",
+      "repository": "a2ui-project/a2ui",
+      "slug": "a2ui-project-a2ui",
+      "platform": "github",
+      "source_url": "https://github.com/a2ui-project/a2ui",
+      "source_version": "1cbef31b",
+      "content_hash": "b88241c73a49fb53abc3a1125ca74a9b780dc2152fb6eb5c3b3b045347dc35f5",
+      "dossier_path": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8873,
+          "title": "docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T05:19:45.664Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8873": {
+      "learning_id": "rule-8873",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8873,
+      "title": "docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c",
+      "source_url": "https://github.com/a2ui-project/a2ui",
+      "source_version": "1cbef31b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T05:19:45.664Z"
+    },
+    "candidate_directive-docs-blueprints-sync-dart-a2ui_agent-codebase-blueprint-to-24d1bf9c": {
+      "item_id": "candidate_directive-docs-blueprints-sync-dart-a2ui_agent-codebase-blueprint-to-24d1bf9c",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TO9N-docs-blueprints-sync-dart-a2ui_agent-codebase-blueprint-to-24d1bf9c.md",
+      "title": "docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c",
+      "repository": "a2ui-project-a2ui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ddaa170965b6c8603a71843a0b1bd8e1fc343c3c16610f41d09dc3c244284ce",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T05:19:49.791Z"
     }
   },
   "ai-builder-brain": {

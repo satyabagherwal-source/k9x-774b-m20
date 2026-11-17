@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-INZD",
-    "timestamp": "2026-11-14T14:40:07.657Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-    "contentHash": "bce3a10f6dfa7cb5a9e43b3ae4f30034f712b97d477f9b632b2691be2b4afc93",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-IPJ4",
     "timestamp": "2026-11-14T14:40:09.664Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7490,6 +7475,21 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "803b72102688fcd02f05a3224ef90425752d7b31bb94f83e669090297fe9f5d3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-TL78",
+    "timestamp": "2026-11-17T05:19:45.812Z",
+    "repository": "a2ui-project/a2ui",
+    "learningId": "learn-github-a2ui-project-a2ui",
+    "contentHash": "b88241c73a49fb53abc3a1125ca74a9b780dc2152fb6eb5c3b3b045347dc35f5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

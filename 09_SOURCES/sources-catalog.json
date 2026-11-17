@@ -12033,10 +12033,10 @@
     "repository": "a2ui-project/a2ui",
     "platform": "github",
     "sourceUrl": "https://github.com/a2ui-project/a2ui",
-    "sourceVersion": "f2c410ae",
+    "sourceVersion": "1cbef31b",
     "license": "Apache-2.0",
-    "contentHash": "aa731da3ebc6d0163e8599ab1b44d23f8bc49bc3e68b3708d0b5ebfed34b547f",
-    "lastHarvestedAt": "2026-11-13T16:04:57.116Z",
+    "contentHash": "b88241c73a49fb53abc3a1125ca74a9b780dc2152fb6eb5c3b3b045347dc35f5",
+    "lastHarvestedAt": "2026-11-17T05:19:45.815Z",
     "learningId": "learn-github-a2ui-project-a2ui"
   },
   "milind-soni-openmausbot": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T04:56:58.976Z",
+  "last_updated": "2026-11-17T05:19:50.922Z",
   "total_records": 1444,
   "domains": {
     "A": {
@@ -7742,8 +7742,8 @@
       "title": "Architecture Intelligence: a2ui-project/a2ui Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-a2ui-project-a2ui-architecture-intelligence-a2ui-project-a2ui-core-invariants.md",
       "repository": "a2ui-project/a2ui",
-      "content_hash": "c7dc5f308aaf4e04c151ce7844bcff59a0030e10545240ef04bab086d93bd03e",
-      "created_at": "2026-11-13T16:04:57.326Z"
+      "content_hash": "3bc182911858b8117495b629f783381f4da89181d5d6492231d0f0f71e0e7d77",
+      "created_at": "2026-11-17T05:19:46.112Z"
     },
     "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-core-invariants",
@@ -7811,8 +7811,8 @@
       "title": "Architecture Intelligence: a2ui-project-a2ui-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-a2ui-project-a2ui-learnings-architecture-intelligence-a2ui-project-a2ui-learning.md",
       "repository": "a2ui-project-a2ui-learnings",
-      "content_hash": "a1008e8ea2aa507ff9e7ef3279960d9f25fa98b334885b537be1c8d22b7de7d2",
-      "created_at": "2026-11-13T16:05:41.394Z"
+      "content_hash": "0f9afcdf666dd5f83a83ee188191a817cf75acdb471e06ed919c845f6b161368",
+      "created_at": "2026-11-17T05:19:49.899Z"
     },
     "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria": {
       "record_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria",
@@ -10835,8 +10835,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "740c9f2ee320e68682e86dfdb56a2b5ddec10c019482d4341924d2ffc1089fba",
-      "created_at": "2026-11-17T04:31:34.832Z"
+      "content_hash": "ba75530fd96745893dd0763ab8cc5b87ebcd21540c772d253daae22b96fce46e",
+      "created_at": "2026-11-17T05:19:50.922Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -14235,8 +14235,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "2efca1973dc6fecf4528069a08ef94ce9c70160a646a71844122d617477d3d35",
-      "created_at": "2026-11-17T02:24:53.696Z"
+      "content_hash": "93ba34a61d8cac7dddbcfd37ff2281f8bce657cccc65044fa7ae4f69eb11c514",
+      "created_at": "2026-11-17T05:19:50.430Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
