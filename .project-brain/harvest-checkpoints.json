@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T06:10:58.657Z",
+  "last_updated": "2026-11-17T06:20:40.414Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "d9d6d6bebbdabd7fa03ab1ea5f54e3750d061bddbfc123f772cb5483a952d4f3",
-      "verified_at": "2026-11-17T03:26:20.718Z",
+      "content_hash": "720f849a7818f7fc77852a9f377d75c773909e4cce38fc724b9b13e1938a3a9f",
+      "verified_at": "2026-11-17T06:19:39.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:26:20.718Z"
+      "last_updated": "2026-11-17T06:19:39.278Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "26b3d23c27b32b9a84dad04b7cec039af2d74d2667424f9879f1f9ec2205a8f2",
-      "verified_at": "2026-11-15T23:59:53.279Z",
+      "content_hash": "20e7b053022307d15e9072811f10a8561def4f5134a512fb3278554a2f5086fa",
+      "verified_at": "2026-11-17T06:20:38.392Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T23:59:53.279Z"
+      "last_updated": "2026-11-17T06:20:38.392Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -15216,14 +15216,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vitest-dev-vitest",
-      "content_hash": "b4fa5b2d9d1e4cab74d6c8323d790e2e2f7b6979596be426309deb5316fe6fcc",
-      "verified_at": "2026-11-12T14:44:44.104Z",
+      "content_hash": "ed46ab0772fe8babadd7efb22e058449319ae222859d2d8c8066ee26d7b97b07",
+      "verified_at": "2026-11-17T06:20:40.413Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T14:44:44.104Z"
+      "last_updated": "2026-11-17T06:20:40.413Z"
     },
     "Mijick/Popups": {
       "repository": "Mijick/Popups",

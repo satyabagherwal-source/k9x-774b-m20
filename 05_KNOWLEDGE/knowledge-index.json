@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T06:11:32.254Z",
-  "total_verified_learnings": 8852,
+  "last_updated": "2026-11-17T06:20:47.169Z",
+  "total_verified_learnings": 8853,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19822,
+  "total_items": 19844,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112798,25 +112798,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "a33d49c4",
-      "content_hash": "fb0822775dda4ff83d18231cdffae6643f3ce7b7cd5d7ae4a22d93786408972d",
+      "content_hash": "98e6519181e4f49f1601cc2bb35c51d3f35aa2b7467e582dc02b0022682f3739",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T03:26:21.080Z"
+      "persisted_at": "2026-11-17T06:19:39.653Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "a33d49c4",
-      "content_hash": "14e4f575d7fc3911af135b50fa40335f2e2e4e5ff913770c017966187e887c2d",
+      "content_hash": "92a41357a7f41ae5544e76253933387e2540ef3a195034236a71a4865ca32f4b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:26:21.381Z"
+      "persisted_at": "2026-11-17T06:19:39.946Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -215391,13 +215391,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "a33d49c4",
-      "content_hash": "d9d6d6bebbdabd7fa03ab1ea5f54e3750d061bddbfc123f772cb5483a952d4f3",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "720f849a7818f7fc77852a9f377d75c773909e4cce38fc724b9b13e1938a3a9f",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215430,7 +215430,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:26:20.509Z",
+      "verified_at": "2026-11-17T06:19:39.069Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215444,26 +215444,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "f6a9bbfc",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "a33d49c4",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-17T00:10:42.908Z"
+      "verified_at": "2026-11-17T06:19:39.069Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-T1BE-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-01ZC-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "zeronsh-zeron-learnings",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "44e00b374c21ed48f7718fa81288ee45fc065947e4ad3c04decf4ad1e4b4b762",
+      "content_hash": "a47520cef815a91687f6790517201e9d25cd61647023f31060226b230a61a519",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T00:11:24.269Z"
+      "persisted_at": "2026-11-17T06:20:46.734Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -230666,8 +230666,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "1952010a",
-      "content_hash": "26b3d23c27b32b9a84dad04b7cec039af2d74d2667424f9879f1f9ec2205a8f2",
+      "source_version": "161cab6a",
+      "content_hash": "20e7b053022307d15e9072811f10a8561def4f5134a512fb3278554a2f5086fa",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -230680,6 +230680,21 @@
           "number": 8669,
           "title": "preserve stored memory JSON value types",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8885,
+          "title": "Zero Silent Event Dropping in Real-Time Pub/Sub Streams",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8886,
+          "title": "Single-Snapshot Invariant on Multi-Replica Idempotent Mutations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8887,
+          "title": "Cross-Platform Lexicographic Key Sequencing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230687,7 +230702,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T23:59:53.107Z",
+      "verified_at": "2026-11-17T06:20:38.161Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230729,10 +230744,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-technical-construction-intelligence-agent-field-agentfiel.md",
       "title": "Technical Construction Intelligence: Agent-Field/agentfield Core Invariants",
       "repository": "Agent-Field/agentfield",
-      "source_version": "1952010a",
-      "content_hash": "1bfc9d5d98660f9d83bd07ff1c108eb763206a4bf74aa1f3482eedb62381789a",
+      "source_version": "161cab6a",
+      "content_hash": "f105b4f6e2d1b54382f371a67be28e869c07bf24e01938cacfb9e5460731140a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T23:59:53.547Z"
+      "persisted_at": "2026-11-17T06:20:39.080Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield",
@@ -230741,10 +230756,10 @@
       "relative_path": "08_VERIFICATION/agent-field-agentfield-verification-protocol-empirical-defect-shield-for-agent-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for Agent-Field/agentfield",
       "repository": "Agent-Field/agentfield",
-      "source_version": "1952010a",
-      "content_hash": "07e3933cfc5050623ef863922e407b26200ad6c01fde18b824d84c4e50dee3e1",
+      "source_version": "161cab6a",
+      "content_hash": "85122896b049767e5b1bc34e9ce5b67d61aeff5c3ad7c65ffdee07cf5a64937e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T23:59:53.661Z"
+      "persisted_at": "2026-11-17T06:20:39.378Z"
     },
     "learn-github-trinodb-trino": {
       "learning_id": "learn-github-trinodb-trino",
@@ -230902,9 +230917,9 @@
       "title": "Technical Construction Intelligence: agent-field-agentfield-learnings Core Invariants",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "02ec7ea34092abda52e3866a04425ff185b0682e47f558d7e399797ee1f47da2",
+      "content_hash": "b503719843cd6d5c51770e5cd71806cb78b67eacea997d9e07e78cc68ec6caf8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T00:01:01.877Z"
+      "persisted_at": "2026-11-17T06:20:46.009Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield-learnin",
@@ -230914,9 +230929,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-field-agentfield-learnings",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "3099ef39d3f5add68e5ba0b49229b71a5936393c9c90b71d41e7b03194cbcab5",
+      "content_hash": "a7152871f2932e4e04972b9205a54712c2c37c0c890732a1aea2a58057be577e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:01:02.011Z"
+      "persisted_at": "2026-11-17T06:20:46.301Z"
     },
     "learn-huggingface-mudler-locate-anything-cpp-gguf": {
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
@@ -252387,9 +252402,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "63b65708f546a42127af4625d4c4ebf5193381756499a90dd887a7d9f97fc00c",
+      "content_hash": "5fda713ab0823c1db1dcfd2d99ed41798f1c234bdb1162295b558e59bfffc29f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:02:20.026Z"
+      "persisted_at": "2026-11-17T06:20:46.878Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -252399,9 +252414,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "da9a8e32837773d266df307a806dffae447be12669d4b1db91f504926d323b08",
+      "content_hash": "135d9794d834be95289c94c046f09336d1c2b58cc7b584a4b3fc6c5a2529cd69",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:02:20.140Z"
+      "persisted_at": "2026-11-17T06:20:47.169Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -260537,13 +260552,13 @@
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/provablehq-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "a33d49c4",
-      "content_hash": "ffc1d8aa87800e048bb9f4cb0cd7dea6c2800c33fced0ada65d7341940533ae9",
+      "content_hash": "82d6f762b35fcf54449ce21dfe9117f8910607dcbbd4b5c571943774e482617e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T03:26:21.239Z"
+      "persisted_at": "2026-11-17T06:19:39.806Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -264827,6 +264842,313 @@
       "content_hash": "7656178cca1dac4dc73bdeff36fb9f3827e24daee41a0ab6f199c514b42e92f8",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T06:11:31.313Z"
+    },
+    "rule-8885": {
+      "learning_id": "rule-8885",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8885,
+      "title": "Zero Silent Event Dropping in Real-Time Pub/Sub Streams",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "161cab6a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:20:38.161Z"
+    },
+    "rule-8886": {
+      "learning_id": "rule-8886",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8886,
+      "title": "Single-Snapshot Invariant on Multi-Replica Idempotent Mutations",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "161cab6a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:20:38.161Z"
+    },
+    "rule-8887": {
+      "learning_id": "rule-8887",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8887,
+      "title": "Cross-Platform Lexicographic Key Sequencing Invariant",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "161cab6a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:20:38.161Z"
+    },
+    "candidate_directive-zero-silent-event-dropping-in-real-time-pub-sub-streams": {
+      "item_id": "candidate_directive-zero-silent-event-dropping-in-real-time-pub-sub-streams",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0132-zero-silent-event-dropping-in-real-time-pub-sub-streams.md",
+      "title": "Zero Silent Event Dropping in Real-Time Pub/Sub Streams",
+      "repository": "agent-field-agentfield-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3a8e8d12280635e3cdd4bc94c88e640fc4910fd0f98db2c5e4bbca32cc71bcf2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:20:45.568Z"
+    },
+    "candidate_directive-single-snapshot-invariant-on-multi-replica-idempotent-mutations": {
+      "item_id": "candidate_directive-single-snapshot-invariant-on-multi-replica-idempotent-mutations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0132-single-snapshot-invariant-on-multi-replica-idempotent-mutations.md",
+      "title": "Single-Snapshot Invariant on Multi-Replica Idempotent Mutations",
+      "repository": "agent-field-agentfield-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7a314c6cba173ecf9005740d11c37cf38dee5e6b11d5d557fa9c984e339ee082",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:20:45.715Z"
+    },
+    "candidate_directive-cross-platform-lexicographic-key-sequencing-invariant": {
+      "item_id": "candidate_directive-cross-platform-lexicographic-key-sequencing-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0133-cross-platform-lexicographic-key-sequencing-invariant.md",
+      "title": "Cross-Platform Lexicographic Key Sequencing Invariant",
+      "repository": "agent-field-agentfield-learnings",
+      "source_version": "HEAD",
+      "content_hash": "934e484fb02288ccdbbe0210473df54d6ca3f5700b988c3a66ae4839549c5a7f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:20:45.862Z"
+    },
+    "agent_contract-agent-contract-agent-field-agentfield-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-agent-field-agentfield-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/agent-field-agentfield-agent-contract-agent-field-agentfield-autonomous-speciali.md",
+      "title": "Agent Contract: Agent-Field/agentfield Autonomous Specialist Persona",
+      "repository": "Agent-Field/agentfield",
+      "source_version": "161cab6a",
+      "content_hash": "6ca4909f659b5b459f9a7bc6c5368147436727af6ae63463cc7dd2ff4d2d8c57",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:20:39.233Z"
+    },
+    "learn-github-vitest-dev-vitest": {
+      "learning_id": "learn-github-vitest-dev-vitest",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "vitest-dev/vitest",
+      "repository": "vitest-dev/vitest",
+      "slug": "vitest-dev-vitest",
+      "platform": "github",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "4e905a1b",
+      "content_hash": "ed46ab0772fe8babadd7efb22e058449319ae222859d2d8c8066ee26d7b97b07",
+      "dossier_path": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8888,
+          "title": "Verification-Before-Reuse Pool Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8889,
+          "title": "Definite Execution Verification for Lazy Deferred Promises",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8890,
+          "title": "State-Derived Custom Matcher Context Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T06:20:40.203Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8888": {
+      "learning_id": "rule-8888",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8888,
+      "title": "Verification-Before-Reuse Pool Invariant",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "4e905a1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:20:40.203Z"
+    },
+    "rule-8889": {
+      "learning_id": "rule-8889",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8889,
+      "title": "Definite Execution Verification for Lazy Deferred Promises",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "4e905a1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:20:40.203Z"
+    },
+    "rule-8890": {
+      "learning_id": "rule-8890",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8890,
+      "title": "State-Derived Custom Matcher Context Invariant",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "4e905a1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:20:40.203Z"
+    },
+    "candidate_directive-verification-before-reuse-pool-invariant": {
+      "item_id": "candidate_directive-verification-before-reuse-pool-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-008V-verification-before-reuse-pool-invariant.md",
+      "title": "Verification-Before-Reuse Pool Invariant",
+      "repository": "vitest-dev-vitest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cf6e1ce8c7c409b6f816a48b7d34e843101990996e3a0861f50e2adf6fc952d3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:20:44.482Z"
+    },
+    "candidate_directive-definite-execution-verification-for-lazy-deferred-promises": {
+      "item_id": "candidate_directive-definite-execution-verification-for-lazy-deferred-promises",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-008W-definite-execution-verification-for-lazy-deferred-promises.md",
+      "title": "Definite Execution Verification for Lazy Deferred Promises",
+      "repository": "vitest-dev-vitest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7bed994f26bb0ebfa4f8e9dc433a9497cf9ff75d8ab66657685e21bfdca845ec",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:20:44.630Z"
+    },
+    "candidate_directive-state-derived-custom-matcher-context-invariant": {
+      "item_id": "candidate_directive-state-derived-custom-matcher-context-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-008X-state-derived-custom-matcher-context-invariant.md",
+      "title": "State-Derived Custom Matcher Context Invariant",
+      "repository": "vitest-dev-vitest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5cb4545d360a3a1d182fb6f0549be8db93050720824689ed0de0c04f939e9074",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:20:44.776Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-vitest-dev-vitest-quality-verification-intelligence-vitest-dev-vitest-core-invar.md",
+      "title": "Quality & Verification Intelligence: vitest-dev/vitest Core Invariants",
+      "repository": "vitest-dev/vitest",
+      "source_version": "4e905a1b",
+      "content_hash": "964d3a6bb1a7504e5603277ebbb80a8f311a7ad0df2376c25bd464a5f3072db3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:20:41.058Z"
+    },
+    "agent_contract-agent-contract-vitest-dev-vitest-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-vitest-dev-vitest-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/vitest-dev-vitest-agent-contract-vitest-dev-vitest-autonomous-specialist-persona.md",
+      "title": "Agent Contract: vitest-dev/vitest Autonomous Specialist Persona",
+      "repository": "vitest-dev/vitest",
+      "source_version": "4e905a1b",
+      "content_hash": "8235a676e06df62a15e5328740e6ad9fb460d99d19b51012f9d214f44d15f8c3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:20:41.209Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-vitest-dev-vitest": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vitest-dev-vitest",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/vitest-dev-vitest-verification-protocol-empirical-defect-shield-for-vitest-dev-v.md",
+      "title": "Verification Protocol: Empirical Defect Shield for vitest-dev/vitest",
+      "repository": "vitest-dev/vitest",
+      "source_version": "4e905a1b",
+      "content_hash": "0898f138d02e4ee0f6b01c11b249015247c69f2b14f7cdea0541aff028e442f5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:20:41.346Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-vitest-dev-vitest-learnings-quality-verification-intelligence-vitest-dev-vitest-.md",
+      "title": "Quality & Verification Intelligence: vitest-dev-vitest-learnings Core Invariants",
+      "repository": "vitest-dev-vitest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "568ef209ab082429c75ef6c1f66a45bad34463e538b026fcdd6a2d158f9fc1e7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:20:44.923Z"
+    },
+    "agent_contract-agent-contract-vitest-dev-vitest-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-vitest-dev-vitest-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/vitest-dev-vitest-learnings-agent-contract-vitest-dev-vitest-learnings-autonomou.md",
+      "title": "Agent Contract: vitest-dev-vitest-learnings Autonomous Specialist Persona",
+      "repository": "vitest-dev-vitest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "348b91fe4fcf170ba5e3e1a98a9264f5024070bce6df718b33b4a550aa8d484d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:20:45.076Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-vitest-dev-vitest-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vitest-dev-vitest-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/vitest-dev-vitest-learnings-verification-protocol-empirical-defect-shield-for-vi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for vitest-dev-vitest-learnings",
+      "repository": "vitest-dev-vitest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "58aed2012138d6037fc7ae51ff4b61c3407c1067723721f9405150d9920727bf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:20:45.216Z"
+    },
+    "agent_contract-agent-contract-agent-field-agentfield-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-agent-field-agentfield-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/agent-field-agentfield-learnings-agent-contract-agent-field-agentfield-learnings.md",
+      "title": "Agent Contract: agent-field-agentfield-learnings Autonomous Specialist Persona",
+      "repository": "agent-field-agentfield-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6b97ffe92f4be87275c945b7cd8a2294a2c8bae2a0447633751ba19ce96973cb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:20:46.162Z"
+    },
+    "agent_contract-agent-contract-aleo-labs-protocol-snarkos-learnings-autonomous-specialist-person": {
+      "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-learnings-autonomous-specialist-person",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-learnings-agent-contract-aleo-labs-protocol-snarkos-l.md",
+      "title": "Agent Contract: aleo-labs-protocol-snarkos-learnings Autonomous Specialist Persona",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b6a02014d1c1b3d0c53a827b9200cc1ecb8e7bca10c7f150b7de7e1fc166d80e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:20:47.030Z"
     }
   },
   "ai-builder-brain": {

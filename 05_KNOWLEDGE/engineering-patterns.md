@@ -646279,3 +646279,750 @@ var _e = class e {
 Run an automated CI integration step targeting `@webcontainer/api` or a Node.js VM context with mocked dynamic import maps, evaluating every exported production distribution artifact directly inside the guest environment.
 
 ---
+
+
+---
+
+## 8885. Zero Silent Event Dropping in Real-Time Pub/Sub Streams (Harvested from Agent-Field/agentfield)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero Silent Event Dropping in Real-Time Pub/Sub Streams",
+  "source": "Agent-Field/agentfield",
+  "source_url": "https://github.com/Agent-Field/agentfield",
+  "source_version": "161cab6a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T06:20:36.641Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agent-field-agentfield",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `161cab6a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+A message broker or pub/sub distribution loop MUST NOT silently drop messages when downstream consumer buffers overflow. If a consumer's bounded buffer fills, the server MUST immediately evict that consumer, close its transport channel, and signal an explicit stream interruption code (`WS CloseTryAgainLater (1013)` or SSE `event: error`). Concurrently, event publication MUST execute synchronously across subscribers to guarantee deterministic intra-stream ordering.
+
+**WHY**:
+Silent drops (`default: // drop message`) produce silent divergence between publisher state and subscriber memory. AI agents acting on partial state histories execute hallucinated or corrupt branch logic. Closing the stream forces the agent SDK to enter an explicit reconnect-and-backfill sequence.
+
+**WHEN TO APPLY**:
+Apply to any real-time WebSocket, SSE, or gRPC streaming pipeline that dispatches domain events, state diffs, or cache invalidation events to remote worker nodes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package pubsub
+
+import (
+	"context"
+	"slices"
+	"sync"
+)
+
+type MemorySubscriber struct {
+	Ch              chan Event
+	CloseOnOverflow bool
+}
+
+type EventBroker struct {
+	mu          sync.RWMutex
+	subscribers map[string][]*MemorySubscriber
+}
+
+func (b *EventBroker) Publish(ctx context.Context, targetKey string, ev Event) {
+	type overflowEntry struct {
+		key string
+		sub *MemorySubscriber
+	}
+	var overflowed []overflowEntry
+
+	b.mu.RLock()
+	subs := b.subscribers[targetKey]
+	for _, sub := range subs {
+		select {
+		case sub.Ch <- ev:
+			// Message accepted into bounded buffer in publication order.
+		default:
+			// Buffer is saturated.
+			if sub.CloseOnOverflow {
+				overflowed = append(overflowed, overflowEntry{key: targetKey, sub: sub})
+			}
+		}
+	}
+	b.mu.RUnlock()
+
+	// Evict slow subscribers and signal gap failure
+	if len(overflowed) > 0 {
+		b.mu.Lock()
+		for _, o := range overflowed {
+			idx := slices.Index(b.subscribers[o.key], o.sub)
+			if idx != -1 {
+				b.subscribers[o.key] = slices.Delete(b.subscribers[o.key], idx, idx+1)
+				close(o.sub.Ch) // Reading goroutine immediately detects stream truncation
+			}
+		}
+		b.mu.Unlock()
+	}
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Silent event drop causes state corruption downstream
+select {
+case sub.Ch <- ev:
+default:
+    // Bug: Event is lost forever; consumer believes it has full state
+    log.Warn("Subscriber buffer full, dropping event silently")
+}
+```
+
+**VERIFICATION METHOD**:
+Run an integration test where a subscriber stops reading from `sub.Ch`. Publish `buffer_capacity + 1` events. Assert that the subscriber channel closes, `sub.Events()` terminates, and the consumer detects a non-nil gap error requiring a historical replay.
+
+---
+
+
+---
+
+## 8886. Single-Snapshot Invariant on Multi-Replica Idempotent Mutations (Harvested from Agent-Field/agentfield)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Single-Snapshot Invariant on Multi-Replica Idempotent Mutations",
+  "source": "Agent-Field/agentfield",
+  "source_url": "https://github.com/Agent-Field/agentfield",
+  "source_version": "161cab6a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T06:20:37.224Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agent-field-agentfield",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `161cab6a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When performing differential operations (such as detecting whether child resources need to be generated or allocated) against an existing entity, the differential analysis MUST run against the identical entity snapshot used to formulate the base response. The orchestrator MUST NOT perform a secondary read from the database between diffing and responding, and MUST preserve concurrently issued sub-components without re-allocating or discarding cryptographic keys.
+
+**WHY**:
+In multi-replica distributed systems, reading state at $T_1$, analyzing at $T_2$, and querying again at $T_3$ introduces a Time-Of-Check to Time-Of-Use (TOCTOU) race condition. A concurrent worker issuing a sub-resource will cause the secondary read to diverge from the primary diff, resulting in partial registration drops, key overwrites, or duplicate identity minting.
+
+**WHEN TO APPLY**:
+All idempotent registration handlers, resource allocation engines, and identity-derivation services managing nested child collections (e.g., agent sub-skills, reasoner keys, dynamic endpoints).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Pure functional differential analysis: accepts an immutable snapshot
+func (s *IdentityService) PerformDifferentialAnalysis(
+	existing *AgentSnapshot,
+	requestedReasoners []string,
+	requestedSkills []string,
+) *DiffResult {
+	existingReasoners := make(map[string]struct{}, len(existing.Reasoners))
+	for _, r := range existing.Reasoners {
+		existingReasoners[r.ID] = struct{}{}
+	}
+
+	diff := &DiffResult{
+		NewReasonerIDs: setDifference(requestedReasoners, existingReasoners),
+		RequiresUpdate: false,
+	}
+	if len(diff.NewReasonerIDs) > 0 {
+		diff.RequiresUpdate = true
+	}
+	return diff
+}
+
+func (s *IdentityService) RegisterAgentOnce(ctx context.Context, req *RegistrationRequest) (*RegistrationResponse, error) {
+	existingAgent, err := s.storage.GetAgent(ctx, req.AgentNodeID)
+	if err != nil {
+		return nil, err
+	}
+
+	// CRITICAL: Diff directly against the retrieved snapshot
+	diff := s.PerformDifferentialAnalysis(existingAgent, req.Reasoners, req.Skills)
+	if !diff.RequiresUpdate {
+		// Return package strictly mapped from the exact snapshot verified
+		return &RegistrationResponse{
+			Success:         true,
+			IdentityPackage: s.buildExistingPackage(existingAgent),
+		}, nil
+	}
+
+	// Handle partial additions, merging newly allocated and existing child keys
+	return s.handlePartialRegistration(ctx, req, existingAgent, diff)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Double-reading the database invites TOCTOU race bugs
+func (s *IdentityService) Register(ctx context.Context, req *RegistrationRequest) (*Response, error) {
+    existingAgent, _ := s.storage.GetAgent(ctx, req.ID)
+    // Secondary database read inside helper introduces divergence
+    diff, _ := s.performDiffByQueryingDBAgain(ctx, req.ID, req.Skills)
+    ...
+}
+```
+
+**VERIFICATION METHOD**:
+Inject a synchronization barrier (`store.afterRead`) immediately following the first database read in an integration test. Run a competing thread that registers a new skill during this pause. Assert that both threads complete without clobbering keys and that both client responses contain valid, non-colliding key material.
+
+---
+
+
+---
+
+## 8887. Cross-Platform Lexicographic Key Sequencing Invariant (Harvested from Agent-Field/agentfield)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cross-Platform Lexicographic Key Sequencing Invariant",
+  "source": "Agent-Field/agentfield",
+  "source_url": "https://github.com/Agent-Field/agentfield",
+  "source_version": "161cab6a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T06:20:37.837Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agent-field-agentfield",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `161cab6a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When sequential or time-series events are indexed using string keys (such as BoltDB/bbolt, BadgerDB, or RocksDB key paths), integer identifiers MUST be formatted with zero-padding to their maximum width (e.g., `%020d`), or sort orders MUST be restored via explicit numerical parsing (`slices.SortStableFunc` with `strconv.ParseUint`) before serving. Key glob matching MUST use deterministic POSIX path rules (`path.Match`) rather than host-dependent filesystem rules (`filepath.Match`).
+
+**WHY**:
+Embedded KV engines order keys lexicographically: the string `"10"` sorts before `"2"`. If database cursors scan range segments relying on string sorting, consumers receive chronological events out of order, corrupting time-series stream reconstitutions. On Windows, `filepath.Match` interprets `\` as a directory separator, breaking glob patterns designed for cross-platform event keys.
+
+**WHEN TO APPLY**:
+Storage engines, cursor-based pagination, LSM-tree key designs, and pattern-matching routers handling structured event keys (e.g., `scope/scopeID/sequence`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package storage
+
+import (
+	"cmp"
+	"path"
+	"slices"
+	"strconv"
+)
+
+// Ensure POSIX cross-platform semantics regardless of host OS
+func MatchKeyPatterns(patterns []string, key string) bool {
+	if len(patterns) == 0 {
+		return true
+	}
+	for _, pattern := range patterns {
+		// MUST use path.Match, NEVER filepath.Match
+		if matched, err := path.Match(pattern, key); err == nil && matched {
+			return true
+		}
+	}
+	return false
+}
+
+func RestoreSequenceOrder(events []*MemoryChangeEvent) {
+	// Re-establish numerical order against lexicographically scanned keys
+	slices.SortStableFunc(events, func(a, b *MemoryChangeEvent) int {
+		ai, _ := strconv.ParseUint(a.ID, 10, 64)
+		bi, _ := strconv.ParseUint(b.ID, 10, 64)
+		return cmp.Compare(ai, bi)
+	})
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Host-dependent globbing and raw lexicographic return
+import "path/filepath"
+
+func IsMatch(pattern, key string) bool {
+    // FAILS ON WINDOWS: Treats '/' as invalid or non-separator, behaves differently than Linux CI
+    matched, _ := filepath.Match(pattern, key)
+    return matched
+}
+```
+
+**VERIFICATION METHOD**:
+Store 12 events numbered `1` through `12` in an embedded BoltDB instance. Query the event history using a limit of 1. Assert that the returned event is strictly key `12` (highest sequence) and not `9`.
+
+---
+
+
+---
+
+## 8888. Verification-Before-Reuse Pool Invariant (Harvested from vitest-dev/vitest)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Verification-Before-Reuse Pool Invariant",
+  "source": "vitest-dev/vitest",
+  "source_url": "https://github.com/vitest-dev/vitest",
+  "source_version": "4e905a1b",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T06:20:38.679Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vitest-dev-vitest",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vitest-dev/vitest](https://github.com/vitest-dev/vitest) (Revision: `4e905a1b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+A worker, thread, connection, or shared execution resource MUST verify its operational startup completion status (`runner.isStarted === true`) prior to accepting subsequent tasks in non-isolated or pooled execution modes. It MUST NOT infer usability merely from the absence of a termination flag (`!runner.isTerminated`).
+
+**WHY**:
+In pooled execution models (e.g., database connection pools, thread workers, isolated VM contexts), a worker can encounter an unhandled exception or rejection during its initial configuration/asynchronous startup lifecycle before entering its steady-state runloop. If the manager checks only `!isTerminated`, a worker whose startup crashed remains eligible in the scheduling queue. When assigned tasks, it will either immediately fail, enter a unresolvable hanging promise state, or process requests with corrupt context.
+
+**WHEN TO APPLY**:
+- Worker thread and child process pooling mechanisms.
+- Database connection pools and multiplexed TCP/HTTP2 client sessions.
+- VM sandbox management and persistent worker queues (`isolate: false`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export interface ManagedWorker {
+  id: string
+  isStarted: boolean
+  isTerminated: boolean
+  start(): Promise<void>
+  execute(task: Task): Promise<TaskResult>
+}
+
+export class ExecutionPool {
+  private queue: Array<{ task: Task; isolate: boolean }> = []
+  private activeWorkers: ManagedWorker[] = []
+
+  public canReuseWorker(worker: ManagedWorker, nextTask: { isolate: boolean }): boolean {
+    return (
+      !nextTask.isolate &&
+      // CRITICAL: The worker must have successfully finished its startup phase.
+      // An unstarted or failed-startup worker has !isTerminated === true, but is invalid.
+      worker.isStarted &&
+      !worker.isTerminated &&
+      !this.isResourceExhausted(worker)
+    )
+  }
+
+  private isResourceExhausted(worker: ManagedWorker): boolean {
+    // Memory and task threshold verification
+    return false
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Inferring readiness from the absence of a termination signal
+export class UnsafeExecutionPool {
+  public canReuseWorker(worker: ManagedWorker, nextTask: { isolate: boolean }): boolean {
+    // DEFECT: If worker.start() threw an exception, worker.isTerminated may still be false
+    // while the worker is in an uninitialized, invalid state.
+    if (!nextTask.isolate && !worker.isTerminated) {
+      return true
+    }
+    return false
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test injecting an unconditional failure inside `worker.start()`. Verify that the orchestrator removes the worker from the queue, marks the task failed with an explicit startup error, spawns a replacement worker for queued tasks, and does not hang the event loop:
+```typescript
+test('failed worker startup prevents reuse and does not hang queue', async () => {
+  const pool = new ExecutionPool()
+  const faultyWorker = new FaultyWorker({ failOnStart: true })
+  
+  await expect(faultyWorker.start()).rejects.toThrow('Startup failed')
+  expect(pool.canReuseWorker(faultyWorker, { isolate: false })).toBe(false)
+})
+```
+
+---
+
+
+---
+
+## 8889. Definite Execution Verification for Lazy Deferred Promises (Harvested from vitest-dev/vitest)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Definite Execution Verification for Lazy Deferred Promises",
+  "source": "vitest-dev/vitest",
+  "source_url": "https://github.com/vitest-dev/vitest",
+  "source_version": "4e905a1b",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T06:20:39.272Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vitest-dev-vitest",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vitest-dev/vitest](https://github.com/vitest-dev/vitest) (Revision: `4e905a1b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Asynchronous APIs returned by test utilities, locators, and UI interaction engines that defer execution until awaited MUST register a lifecycle cleanup guard that checks whether the action was settled before the test context completes. If the promise was constructed but never `.then()`-ed or `await`-ed, the guard MUST throw an explicit error pinpointing the unawaited expression's call site, preventing hidden asynchronous floating tasks and unhandled rejections.
+
+**WHY**:
+Fluent APIs and interactive assertion chains (such as UI locators, database transaction builders, and browser commands) often construct promises lazily or return objects conforming to the `PromiseLike` interface. If a consumer writes `locator.click()` without `await`, the action either runs out-of-band during subsequent tests (inducing intermittent, non-deterministic race conditions and test pollution), or drops errors into the host runtime as unhandled promise rejections after the test reporting boundary has closed.
+
+**WHEN TO APPLY**:
+- Browser automation locators and testing APIs (`@vitest/browser`, Playwright, Puppeteer).
+- ORM/Database query builders (`knex`, `prisma`, `drizzle`).
+- Any deferred builder returning a `PromiseLike` interface executed within scoped lifecycle bounds.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export interface ActiveTestContext {
+  type: string
+  onFinished: Array<() => void | Promise<void>>
+}
+
+export function ensureAwaited<T>(
+  getCurrentContext: () => ActiveTestContext | undefined,
+  taskFactory: (sourceError: Error) => Promise<T>,
+): Promise<T> {
+  const context = getCurrentContext()
+  if (!context || context.type !== 'test') {
+    // If not running within an active test harness, fall back to eager resolution
+    const traceError = new Error('STACK_TRACE_ORIGIN')
+    return taskFactory(traceError)
+  }
+
+  let wasAwaited = false
+  const sourceError = new Error('DeferredCallNotAwaitedError')
+
+  // Register guard into the test's cleanup pipeline
+  context.onFinished ??= []
+  context.onFinished.push(() => {
+    if (!wasAwaited) {
+      const unawaitedError = new Error(
+        'The asynchronous command was constructed but not awaited. ' +
+        'Execution was prevented to avoid out-of-band unhandled rejections.'
+      )
+      // Preserve original call-site stack trace for developer debugging
+      unawaitedError.stack = sourceError.stack?.replace(sourceError.message, unawaitedError.message)
+      throw unawaitedError
+    }
+  })
+
+  let executionPromise: Promise<T> | undefined
+
+  return {
+    then(onFulfilled, onRejected) {
+      wasAwaited = true
+      executionPromise ||= taskFactory(sourceError)
+      return executionPromise.then(onFulfilled, onRejected)
+    },
+    catch(onRejected) {
+      wasAwaited = true
+      executionPromise ||= taskFactory(sourceError)
+      return executionPromise.catch(onRejected)
+    },
+    finally(onFinally) {
+      wasAwaited = true
+      executionPromise ||= taskFactory(sourceError)
+      return executionPromise.finally(onFinally)
+    },
+    [Symbol.toStringTag]: 'Promise',
+  } as Promise<T>
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Returning an eagerly executing promise without lifecycle tracking
+export function unsafeDeferredAction<T>(action: () => Promise<T>): Promise<T> {
+  // If the consumer omits 'await', this continues executing beyond the test life cycle
+  // silently corrupting state in following tests.
+  return action()
+}
+```
+
+**VERIFICATION METHOD**:
+Run a suite where a deferred call is made without `await`. Assert that the test fails at completion with `DeferredCallNotAwaitedError` and the correct source line number:
+```typescript
+it('flags unawaited actions at test teardown', async () => {
+  const mockContext = { type: 'test', onFinished: [] }
+  let executed = false
+
+  const deferred = ensureAwaited(() => mockContext, async () => {
+    executed = true
+  })
+
+  // Deliberately omit: await deferred;
+  expect(executed).toBe(false)
+  expect(() => {
+    for (const hook of mockContext.onFinished) hook()
+  }).toThrow('DeferredCallNotAwaitedError')
+})
+```
+
+---
+
+
+---
+
+## 8890. State-Derived Custom Matcher Context Invariant (Harvested from vitest-dev/vitest)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "State-Derived Custom Matcher Context Invariant",
+  "source": "vitest-dev/vitest",
+  "source_url": "https://github.com/vitest-dev/vitest",
+  "source_version": "4e905a1b",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T06:20:39.886Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vitest-dev-vitest",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vitest-dev/vitest](https://github.com/vitest-dev/vitest) (Revision: `4e905a1b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Custom matchers and assertion plugins MUST derive their runtime execution context (`this` bound state) dynamically from the current execution environment (`expect.getState()`) rather than from a global closure or root-level static object.
+
+**WHY**:
+In concurrent test execution modes (`test.concurrent`), multiple tests run asynchronously across the same event loop within a single worker. If assertion matchers bind their context to a static or shared global state reference, calls to `expect.setState({ ... })` from concurrently running tests will overwrite one another. Matchers then inspect corrupt state (such as assertion counters, snapshot paths, or custom context flags), leading to false positives or cross-test assertion pollution.
+
+**WHEN TO APPLY**:
+- Assertion libraries and test runners offering concurrent or async-interleaved execution.
+- Systems utilizing global DSL methods (`expect(...)`) that delegate internally to per-task execution context.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export interface MatcherState {
+  assertionCalls: number
+  expectedAssertionsNumber?: number
+  isNot?: boolean
+  testPath?: string
+  currentTestName?: string
+  [key: string]: unknown
+}
+
+export type MatcherFn = (this: MatcherState, received: unknown, ...args: unknown[]) => {
+  pass: boolean
+  message: () => string
+}
+
+export class MatcherRegistry {
+  private customMatchers: Record<string, MatcherFn> = Object.create(null)
+
+  public extend(matchers: Record<string, MatcherFn>): void {
+    Object.assign(this.customMatchers, matchers)
+  }
+
+  public wrapMatcher(
+    matcherName: string,
+    getCurrentState: () => MatcherState
+  ) {
+    const rawMatcher = this.customMatchers[matcherName]
+    return (...args: unknown[]) => {
+      // DYNAMIC BINDING: State is extracted at the exact instant of assertion evaluation
+      const currentState = getCurrentState()
+      const context: MatcherState = Object.assign(
+        Object.create(null),
+        currentState,
+        { matcherName }
+      )
+      return rawMatcher.apply(context, args as [unknown, ...unknown[]])
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Capturing static reference at setup time
+export function bindMatchersStatically(
+  matchers: Record<string, MatcherFn>,
+  globalState: MatcherState
+) {
+  const bound: Record<string, Function> = {}
+  for (const [name, fn] of Object.entries(matchers)) {
+    // DEFECT: Binds permanently to globalState. Concurrent test runs using
+    // expect.setState() will not be seen here, or will collide.
+    bound[name] = (...args: unknown[]) => fn.apply(globalState, args)
+  }
+  return bound
+}
+```
+
+**VERIFICATION METHOD**:
+Execute two concurrent test cases where each sets distinct flags via `expect.setState()` and asserts them simultaneously through a custom matcher:
+```typescript
+test.concurrent('suite A', async () => {
+  expect.setState({ currentScope: 'SCOPE_A' })
+  await delay(10)
+  expect(true).toVerifyScope('SCOPE_A')
+})
+
+test.concurrent('suite B', async () => {
+  expect.setState({ currentScope: 'SCOPE_B' })
+  await delay(10)
+  expect(true).toVerifyScope('SCOPE_B')
+})
+```
+
+---

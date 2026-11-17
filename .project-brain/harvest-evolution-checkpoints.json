@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T06:11:32.371Z",
+  "last_updated": "2026-11-17T06:20:47.308Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T04:43:59.398Z",
@@ -148,7 +148,7 @@
       "staged_for_review": 0
     },
     "aleo-labs-protocol-snarkos-learnings.md": {
-      "processed_at": "2026-11-16T18:02:19.656Z",
+      "processed_at": "2026-11-17T06:20:46.450Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -878,8 +878,8 @@
       "staged_for_review": 1
     },
     "agent-field-agentfield-learnings.md": {
-      "processed_at": "2026-11-16T00:01:01.447Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T06:20:45.361Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "mohamedrejeb-calf-learnings.md": {
@@ -1178,9 +1178,9 @@
       "staged_for_review": 1
     },
     "vitest-dev-vitest-learnings.md": {
-      "processed_at": "2026-11-12T14:45:00.249Z",
+      "processed_at": "2026-11-17T06:20:44.234Z",
       "promoted_canonical": 0,
-      "staged_for_review": 1
+      "staged_for_review": 2
     },
     "clockworklabs-spacetimedb-learnings.md": {
       "processed_at": "2026-11-12T14:45:15.021Z",
@@ -3248,7 +3248,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1485,
+  "total_dossiers_evaluated": 1488,
   "total_canonical_promoted": 299,
-  "total_staged_for_review": 1172
+  "total_staged_for_review": 1175
 }

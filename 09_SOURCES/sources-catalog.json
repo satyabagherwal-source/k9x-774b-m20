@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "bec6d69e",
+    "sourceVersion": "a33d49c4",
     "license": "Apache-2.0",
-    "contentHash": "946cdfcdc67c61dbb1dc7e24a1e045eb341f79e92095b6cf93832fee554d6f46",
-    "lastHarvestedAt": "2026-11-17T00:38:41.538Z",
+    "contentHash": "720f849a7818f7fc77852a9f377d75c773909e4cce38fc724b9b13e1938a3a9f",
+    "lastHarvestedAt": "2026-11-17T06:19:39.268Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "1952010a",
+    "sourceVersion": "161cab6a",
     "license": "Apache-2.0",
-    "contentHash": "26b3d23c27b32b9a84dad04b7cec039af2d74d2667424f9879f1f9ec2205a8f2",
-    "lastHarvestedAt": "2026-11-15T23:59:53.271Z",
+    "contentHash": "20e7b053022307d15e9072811f10a8561def4f5134a512fb3278554a2f5086fa",
+    "lastHarvestedAt": "2026-11-17T06:20:38.382Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -10113,10 +10113,10 @@
     "repository": "vitest-dev/vitest",
     "platform": "github",
     "sourceUrl": "https://github.com/vitest-dev/vitest",
-    "sourceVersion": "47c87ebb",
+    "sourceVersion": "4e905a1b",
     "license": "MIT",
-    "contentHash": "b4fa5b2d9d1e4cab74d6c8323d790e2e2f7b6979596be426309deb5316fe6fcc",
-    "lastHarvestedAt": "2026-11-12T14:44:44.065Z",
+    "contentHash": "ed46ab0772fe8babadd7efb22e058449319ae222859d2d8c8066ee26d7b97b07",
+    "lastHarvestedAt": "2026-11-17T06:20:40.403Z",
     "learningId": "learn-github-vitest-dev-vitest"
   },
   "mijick-popups": {

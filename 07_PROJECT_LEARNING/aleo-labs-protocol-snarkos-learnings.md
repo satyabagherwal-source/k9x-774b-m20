@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `bec6d69e`  
+> **Source Version**: `a33d49c4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T00:38:40.378Z  
+> **Timestamp**: 2026-11-17T06:19:38.529Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:38:40.369Z  
+> **Harvest Timestamp**: 2026-11-17T06:19:38.430Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1988,314 +1988,244 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bec6d69e` (2026-11-17)
-**Commit Message**: Merge pull request #4684 from aleo-labs-protocol/ci/fork-pr-fleet
+### Incident Patch 1: `c81c424a` (2026-11-17)
+**Commit Message**: Merge pull request #4682 from aleo-labs-protocol/build/drop-feature-config-checks
 
-Run fleet CI for approved fork pull requests
-
-**File**: `.github/workflows/ci.yml` (modified, +25/-18)
+**File**: `Cargo.lock` (modified, +1/-32)
 ```diff
-@@ -23,9 +23,17 @@ concurrency:
- env:
-   CARGO_TERM_COLOR: always
+@@ -4753,7 +4753,7 @@ dependencies = [
+  "ci_info",
+  "getopts",
+  "nias",
+- "toml 0.5.11",
++ "toml",
+ ]
  
--# Every self-hosted job carries the same guard: a fork's code never runs on
--# the fleet, whose target dirs, sccache and home directories persist between
--# jobs.
-+# GitHub holds an outside contributor's pull request run until a maintainer
-+# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
-+# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
-+# skipped start-cpu-runners, and run only in this repository, which alone may
-+# use the fleet.
-+#
-+# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
-+# a run as `in_progress`, and fires the `workflow_run` event that starts the
-+# boxes, only once none of its ready jobs is waiting for a runner. With no
-+# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
-+# that event starts.
- jobs:
-   start-cpu-runners:
-     # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
-@@ -37,7 +45,8 @@ jobs:
-       role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
-       label: cpu
-       # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
--      # box absorbs fewer of them within the critical path.
-+      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
-+      # repeats this.
-       jobs-per-box: 2
-       runner-app-id: ${{ vars.RUNNER_APP_ID }}
-     if: >-
-@@ -99,12 +108,13 @@ jobs:
-       - run: .github/merge-fixup.test.sh
+ [[package]]
+@@ -5117,15 +5117,6 @@ dependencies = [
+  "serde_core",
+ ]
  
-   lint:
--    needs: start-cpu-runners
-+    needs: [check-shared-refs, start-cpu-runners]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 90
--    if: >-
--      github.event.pull_request == null ||
--      github.event.pull_request.head.repo.full_name == github.repository
-+    if: &fleet-if >-
-+      !cancelled() && needs.check-shared-refs.result == 'success' &&
-+      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-+      github.repository == 'aleo-labs-protocol/snarkOS'
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with: { persist-credentials: false }
-@@ -209,13 +219,11 @@ jobs:
-         with: *aleo-resources
+-[[package]]
+-name = "serde_spanned"
+-version = "1.1.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
+-dependencies = [
+- "serde_core",
+-]
+-
+ [[package]]
+ name = "serde_urlencoded"
+ version = "0.7.1"
+@@ -5373,7 +5364,6 @@ dependencies = [
+  "snarkos-node-tcp",
+  "snarkvm",
+  "tikv-jemallocator",
+- "toml 1.1.6+spec-1.1.0",
+  "tracing",
+ ]
  
-   test:
--    needs: start-cpu-runners
-+    needs: [check-shared-refs, start-cpu-runners]
-     permissions: { contents: read, actions: write }
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 90
--    if: >-
--      github.event.pull_request == null ||
--      github.event.pull_request.head.repo.full_name == github.repository
-+    if: *fleet-if
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -245,12 +253,10 @@ jobs:
+@@ -7451,21 +7441,6 @@ dependencies = [
+  "serde",
+ ]
  
-   # The node binary the devnet jobs run, built once per workflow run.
-   build-snarkos:
--    needs: start-cpu-runners
-+    needs: [check-shared-refs, start-cpu-runners]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 60
--    if: >-
--      github.event.pull_request == null ||
--      github.event.pull_request.head.repo.full_name == github.repository
-+    if: *fleet-if
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with: { persist-credentials: false }
-@@ -280,8 +286,9 @@ jobs:
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: ${{ matrix.timeout }}
-     if: >-
--      github.event.pull_request == null ||
--      github.event.pull_request.head.repo.full_name == github.repository
-+      !cancelled() && needs.build-snarkos.result == 'success' &&
-+      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-+      github.repository == 'aleo-labs-protocol/snarkOS'
-     strategy:
-       fail-fast: false
-       matrix:
+-[[package]]
+-name = "toml"
+-version = "1.1.6+spec-1.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
+-dependencies = [
+- "indexmap 2.14.2",
+- "serde_core",
+- "serde_spanned",
+- "toml_datetime",
+- "toml_parser",
+- "toml_writer",
+- "winnow",
+-]
+-
+ [[package]]
+ name = "toml_datetime"
+ version = "1.1.1+spec-1.1.0"
+@@ -7496,12 +7471,6 @@ dependencies = [
+  "winnow",
+ ]
+ 
+-[[package]]
+-name = "toml_writer"
+-version = "1.1.2+spec-1.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
+-
+ [[package]]
+ name = "tonic"
+ version = "0.14.6"
 ```
 
-**File**: `.github/workflows/fork-pr-runners.yml` (added, +40/-0)
+**File**: `Cargo.toml` (modified, +0/-11)
 ```diff
-@@ -0,0 +1,40 @@
-+name: fork-pr-runners
-+
-+# Starts the self-hosted boxes for a pull request from a fork when its run
-+# starts. GitHub holds an outside contributor's run until a maintainer approves
-+# it.
-+#
-+# A fork's `pull_request` run gets no secrets, so its own start-runner job is
-+# skipped. GitHub runs this workflow from the default branch, with this
-+# repository's secrets. A fork's run fires `requested` before approval and
-+# `in_progress` after it.
-+#
-+# SECURITY: this workflow holds the runner role, which can change a box's user
-+# data. It must never check out or run the pull request's code. It must never
-+# put a `workflow_run` field into a `run:` script either: the fork controls its
-+# branch name, its commit messages and its workflow names.
-+on:
-+  workflow_run:
-+    workflows: [CI]
-+    types: [in_progress]
-+
-+permissions: {}
-+
-+jobs:
-+  start-runners:
-+    # A mirror receives this file by push; see ci.yml.
-+    if: >-
-+      github.repository == 'aleo-labs-protocol/snarkOS' &&
-+      github.event.workflow_run.event == 'pull_request' &&
-+      github.event.workflow_run.head_repository.full_name != github.repository
-+    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
-+    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
-+    permissions: { id-token: write, contents: read, actions: read }
-+    secrets:
-+      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
-+    with:
-+      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
-+      label: cpu
-+      # The same box share as ci.yml's start-cpu-runners.
-+      jobs-per-box: 2
-+      runner-app-id: ${{ vars.RUNNER_APP_ID }}
+@@ -382,19 +382,8 @@ version = "0.11.2"
+ [build-dependencies.built]
+ workspace = true
+ 
+-[build-dependencies.toml]
+-version = "1"
+-
+ [profile.release]
+ lto = "thin"
+-# uncomment the 2 lines below when building with the locktick feature or use the `release-locktick` profile
+-# debug = "line-tables-only"
+-# strip = "none"
+-
+-[profile.release-locktick]
+-inherits = "release"
+-debug = "line-tables-only"
+-strip = "none"
+ 
+ [profile.dev]
+ debug = "line-tables-only"
 ```
 
----
-
-### Incident Patch 2: `a12e356f` (2026-11-17)
-**Commit Message**: Run fleet CI for approved fork pull requests
-
-A fork's pull_request run gets no secrets, so it cannot start the self-hosted
-boxes, and its fleet jobs were skipped. fork-pr-runners.yml starts the boxes
-from the default branch when a maintainer approves the run. The fleet jobs now
-run when start-cpu-runners succeeded or was skipped, only in this repository,
-and after check-shared-refs, so the approved run reaches in_progress before any
-fleet job waits for a box.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +25/-18)
+**File**: `build.rs` (modified, +1/-115)
 ```diff
-@@ -23,9 +23,17 @@ concurrency:
- env:
-   CARGO_TERM_COLOR: always
+@@ -13,116 +13,7 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
  
--# Every self-hosted job carries the same guard: a fork's code never runs on
--# the fleet, whose target dirs, sccache and home directories persist between
--# jobs.
-+# GitHub holds an outside contributor's pull request run until a maintainer
-+# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
-+# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
-+# skipped start-cpu-runners, and run only in this repository, which alone may
-+# use the fleet.
-+#
-+# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
-+# a run as `in_progress`, and fires the `workflow_run` event that starts the
-+# boxes, only once none of its ready jobs is waiting for a runner. With no
-+# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
-+# that event starts.
- jobs:
-   start-cpu-runners:
-     # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
-@@ -37,7 +45,8 @@ jobs:
-       role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
-       label: cpu
-       # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
--      # box absorbs fewer of them within the critical path.
-+      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
-+      # repeats this.
-       jobs-per-box: 2
-       runner-app-id: ${{ vars.RUNNER_APP_ID }}
-     if: >-
-@@ -99,12 +108,13 @@ jobs:
-       - run: .github/merge-fixup.test.sh
+-use std::{env, fs, path::Path, process};
+-use toml::Value;
+-
+-fn check_locktick_profile() {
+-    let locktick_enabled = env::var("CARGO_FEATURE_LOCKTICK").is_ok();
+-    if locktick_enabled {
+-        // First check the env variables that can override the TOML values.
+-        let (mut valid_debug_override, mut valid_strip_override) = (false, false);
+-
+-        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_DEBUG") {
+-            if val != "line-tables-only" {
+-                eprintln!(
+-                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_DEBUG may only be set to `line-tables-only`."
+-                );
+-                process::exit(1);
+-            } else {
+-                valid_debug_override = true;
+-            }
+-        }
+-        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_STRIP") {
+-            if val != "none" {
+-                eprintln!(
+-                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_STRIP may only be set to `none`."
+-                );
+-                process::exit(1);
+-            } else {
+-                valid_strip_override = true;
+-            }
+-        }
+-
+-        if valid_debug_override && valid_strip_override {
+-            // Both overrides are compatible with locktick, no need to check the TOML.
+-            return;
+-        }
+-
+-        // If the relevant overrides were either invalid or not present, check the TOML.
+-        let profile = env::var("PROFILE").unwrap_or_else(|_| "".to_string());
+-        let manifest = Path::new(&env::var("CARGO_MANIFEST_DIR").unwrap()).join("Cargo.toml");
+-        let contents = fs::read_to_string(&manifest).expect("failed to read Cargo.toml");
+-        let doc: Value = toml::from_str(&contents).expect("invalid TOML in Cargo.toml");
+-
+-        let profile_table = doc.get("profile").and_then(|p| p.get(profile));
+-        if let Some(Value::Table(profile_settings)) = profile_table {
+-            if let Some(debug) = profile_settings.get("debug") {
+-                match debug {
+-                    Value::String(s) if s == "line-tables-only" => {
+-                        println!("cargo:info=manifest has debuginfo=line-tables-only");
+-                    }
+-                    _ => {
+-                        eprintln!(
+-                            "🔴 When enabling the locktick feature, the profile must have debug set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
+-                        );
+-                        process::exit(1);
+-                    }
+-                }
+-            } else {
+-                eprintln!(
+-                    "🔴 When enabling the locktick feature, the profile must have `debug` set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
+-                );
+-                process::exit(1);
+-            }
+-            if let Some(debug) = profile_settings.get("strip") {
+-                match debug {
+-                    Value::String(s) if s == "none" => {
+-                        println!("cargo:info=manifest has strip=none");
+-                    }
+-                    _ => {
+-                        eprintln!(
+-                            "🔴 When enabling the locktick feature, the profile must have `strip` set to `none`. Uncomment the relevant lines in Cargo.toml."
+-                        );
+-                        process::exit(1);
+-                    }
+-                }
+-            }
+-        }
+-    }
+-}
+-
+-fn is_clippy() -> bool {
+-    env::var("RUSTC_WORKSPACE_WRAPPER").is_ok_and(|var| var.contains("clippy"))
+-}
+-
+-fn check_tokio_console_flags() {
+-    // Don't run this check under clippy, otherwise it will cause issues with --all-features.
+-    if is_clippy() {
+-        return;
+-    }
+-
+-    // Skip if the feature is not used.
+-    let feature_enabled = env::var("CARGO_FEATURE_TOKIO_CONSOLE").is_ok();
+-    if !feature_enabled {
+-        return;
+-    }
+-
+-    // Check for the presence of RUSTFLAGS.
+-    let Ok(rustflags) = env::var("CARGO_ENCODED_RUSTFLAGS") else {
+-        eprintln!(
+-            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
+-        );
+-        process::exit(1);
+-    };
+-
+-    // Check for the presence of `tokio_unstable` within RUSTFLAGS.
+-    if !rustflags.contains("tokio_unstable") {
+-        eprintln!(
+-            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
+-        );
+-        process::exit(1);
+-    }
+-}
++use std::{env, fs, path::Path};
  
-   lint:
--    needs: start-cpu-runners
-+    needs: [check-shared-refs, start-cpu-runners]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 90
--    if: >-
--      github.event.pull_request == null ||
--      github.event.pull_request.head.repo.full_name == github.repository
-+    if: &fleet-if >-
-+      !cancelled() && needs.check-shared-refs.result == 'success' &&
-+      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-+      github.repository == 'aleo-labs-protocol/snarkOS'
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with: { persist-credentials: false }
-@@ -209,13 +219,11 @@ jobs:
-         with: *aleo-resources
+ // The build script.
  
-   test:
--    needs: start-cpu-runners
-+    needs: [check-shared-refs, start-cpu-runners]
-     permissions: { contents: read, actions: write }
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 90
--    if: >-
--      github.event.pull_request == null ||
--      github.event.pull_request.head.repo.full_name == github.repository
-+    if: *fleet-if
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -245,12 +253,10 @@ jobs:
+@@ -150,11 +41,6 @@ fn emit_version_env() {
+ }
  
-   # The node binary the devnet jobs run, built once per workflow run.
-   build-snarkos:
--    needs: start-cpu-runners
-+    needs: [check-shared-refs, start-cpu-runners]
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: 60
--    if: >-
--      github.event.pull_request == null ||
--      github.event.pull_request.head.repo.full_name == github.repository
-+    if: *fleet-if
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with: { persist-credentials: false }
-@@ -280,8 +286,9 @@ jobs:
-     runs-on: [self-hosted, linux, x64, cpu]
-     timeout-minutes: ${{ matrix.timeout }}
-     if: >-
--      github.event.pull_request == null ||
--      github.event.pull_request.head.repo.full_name == github.repository
-+      !cancelled() && needs.build-snarkos.result == 'success' &&
-+      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-+      github.repository == 'aleo-labs-protocol/snarkOS'
-     strategy:
-       fail-fast: false
-       matrix:
-```
-
-**File**: `.github/workflows/fork-pr-runners.yml` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+name: fork-pr-runners
-+
-+# Starts the self-hosted boxes for a pull request from a fork when its run
-+# starts. GitHub holds an outside contributor's run until a maintainer approves
-+# it.
-+#
-+# A fork's `pull_request` run gets no secrets, so its own start-runner job is
-+# skipped. GitHub runs this workflow from the default branch, with this
-+# repository's secrets. A fork's run fires `requested` before approval and
-+# `in_progress` after it.
-+#
-+# SECURITY: this workflow holds the runner role, which can change a box's user
-+# data. It must never check out or run the pull request's code. It must never
-+# put a `workflow_run` field into a `run:` script either: the fork controls its
-+# branch name, its commit messages and its workflow names.
-+on:
-+  workflow_run:
-+    workflows: [CI]
-+    types: [in_progress]
-+
-+permissions: {}
-+
-+jobs:
-+  start-runners:
-+    # A mirror receives this file by push; see ci.yml.
-+    if: >-
-+      github.repository == 'aleo-labs-protocol/snarkOS' &&
-+      github.event.workflow_run.event == 'pull_request' &&
-+      github.event.workflow_run.head_repository.full_name != github.repository
-+    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
-+    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
-+    permissions: { id-token: write, contents: read, actions: read }
-+    secrets:
-+      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
-+    with:
-+      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
-+      label: cpu
-+      # The same box share as ci.yml's start-cpu-runners.
-+      jobs-per-box: 2
-+      runner-app-id: ${{ vars.RUNNER_APP_ID }}
+ fn main() {
+-    // Check if locktick feature is correctly enabled.
+-    check_locktick_profile();
+-    // Check if the tokio_console feature is correctly enabled.
+-    check_tokio_console_flags();
+-
+     // Register the rele
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4690** (2026-11-17): [Release] Testnet v4.13.1 (@snarkworld)
+- **PR #4689** (2026-11-17): Scan every top-level use statement for lock imports (@cbeck88-ai-dev)
+- **PR #4685** (closed): [Release] Use published snarkVM 4.13.0 crates for mainnet (@snarkworld)
 - **PR #4684** (2026-11-17): Run fleet CI for approved fork pull requests (@cbeck88)
-- **PR #4679** (2026-11-16): Bump snarkVM to aleo-labs-protocol/snarkVM@d36b2f743 (@aleo-labs-merge-bot[bot])
-- **PR #4678** (2026-11-17): [Release] Mainnet v4.13.0 (@snarkworld)
-- **PR #4676** (2026-11-16): chore(deps): bump taiki-e/install-action from 2.90.2 to 2.90.3 in the github-actions group (@dependabot[bot])
-- **PR #4675** (2026-11-16): Bump snarkVM to aleo-labs-protocol/snarkVM@6e917bc9b (@aleo-labs-merge-bot[bot])
-- **PR #4673** (2026-11-16): ci: read the consensus version from one node, not a probe devnet (@cbeck88)
+- **PR #4683** (2026-11-17): Merge mainnet into staging (@aleo-labs-merge-bot[bot])
+- **PR #4682** (2026-11-17): Remove the locktick profile and tokio_console flag checks from build.rs (@cbeck88-ai-dev)
 
 ---
 
@@ -2315,67 +2245,59 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ci.yml
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bec6d69e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c81c424a`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# GitHub holds an outside contributor's pull request run until a maintainer
-# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
-# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
-# skipped start-cpu-runners, and run only in this repository, which alone may
-# use the fleet.
-#
-# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
-# a run as `in_progress`, and fires the `workflow_run` event that starts the
-# boxes, only once none of its ready jobs is waiting for a runner. With no
-# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
-# that event starts.
-      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
-      # repeats this.
-    needs: [check-shared-refs, start-cpu-runners]
-    if: &fleet-if >-
-      !cancelled() && needs.check-shared-refs.result == 'success' &&
-      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
-      github.repository == 'aleo-labs-protocol/snarkOS'
-    needs: [check-shared-refs, start-cpu-runners]
-    if: *fleet-if
-    needs: [check-shared-refs, start-cpu-runners]
-    if: *fleet-if
-      !cancelled() &&
+ "toml",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-# Every self-hosted job carries the same guard: a fork's code never runs on
-# the fleet, whose target dirs, sccache and home directories persist between
-# jobs.
-      # box absorbs fewer of them within the critical path.
-    needs: start-cpu-runners
-    if: >-
-      github.event.pull_request == null ||
-      github.event.pull_request.head.repo.full_name == github.repository
-    needs: start-cpu-runners
-    if: >-
-      github.event.pull_request == null ||
-      github.event.pull_request.head.repo.full_name == github.repository
-    needs: start-cpu-runners
-    if: >-
-      github.event.pull_request == null ||
-      github.event.pull_request.head.repo.full_name == github.repository
-      github.event.pull_request == null ||
-      github.event.pull_request.head.repo.full_name == github.repository
+ "toml 0.5.11",
+[[package]]
+name = "serde_spanned"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
+dependencies = [
+ "serde_core",
+]
+
+ "toml 1.1.6+spec-1.1.0",
+[[package]]
+name = "toml"
+version = "1.1.6+spec-1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
+dependencies = [
+ "indexmap 2.14.2",
+ "serde_core",
+ "serde_spanned",
+ "toml_datetime",
+ "toml_parser",
+ "toml_writer",
+ "winnow",
+]
+
+[[package]]
+name = "toml_writer"
+version = "1.1.2+spec-1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bec6d69e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c81c424a` are properly handled with clean fallback behavior.

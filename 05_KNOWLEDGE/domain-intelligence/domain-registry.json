@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T06:11:32.106Z",
-  "total_records": 1453,
+  "last_updated": "2026-11-17T06:20:46.878Z",
+  "total_records": 1455,
   "domains": {
     "A": {
       "total": 9,
@@ -1436,7 +1436,7 @@
       ]
     },
     "K": {
-      "total": 58,
+      "total": 60,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1495,7 +1495,9 @@
         "domain_intelligence-quality-verification-intelligence-fallow-rs-fallow-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-core-invariants",
         "domain_intelligence-quality-verification-intelligence-rdfjs-n3-js-learnings-core-invariants",
-        "DOM-K-4B4C2E13"
+        "DOM-K-4B4C2E13",
+        "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants"
       ]
     },
     "L": {
@@ -7557,10 +7559,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "fb0822775dda4ff83d18231cdffae6643f3ce7b7cd5d7ae4a22d93786408972d",
-      "created_at": "2026-11-17T03:26:21.080Z"
+      "content_hash": "98e6519181e4f49f1601cc2bb35c51d3f35aa2b7467e582dc02b0022682f3739",
+      "created_at": "2026-11-17T06:19:39.653Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -15702,8 +15704,8 @@
       "title": "Technical Construction Intelligence: Agent-Field/agentfield Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-technical-construction-intelligence-agent-field-agentfiel.md",
       "repository": "Agent-Field/agentfield",
-      "content_hash": "1bfc9d5d98660f9d83bd07ff1c108eb763206a4bf74aa1f3482eedb62381789a",
-      "created_at": "2026-11-15T23:59:53.547Z"
+      "content_hash": "f105b4f6e2d1b54382f371a67be28e869c07bf24e01938cacfb9e5460731140a",
+      "created_at": "2026-11-17T06:20:39.080Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants",
@@ -15780,8 +15782,8 @@
       "title": "Technical Construction Intelligence: agent-field-agentfield-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-learnings-technical-construction-intelligence-agent-field.md",
       "repository": "agent-field-agentfield-learnings",
-      "content_hash": "02ec7ea34092abda52e3866a04425ff185b0682e47f558d7e399797ee1f47da2",
-      "created_at": "2026-11-16T00:01:01.877Z"
+      "content_hash": "b503719843cd6d5c51770e5cd71806cb78b67eacea997d9e07e78cc68ec6caf8",
+      "created_at": "2026-11-17T06:20:46.009Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants",
@@ -22975,8 +22977,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "63b65708f546a42127af4625d4c4ebf5193381756499a90dd887a7d9f97fc00c",
-      "created_at": "2026-11-16T18:02:20.026Z"
+      "content_hash": "5fda713ab0823c1db1dcfd2d99ed41798f1c234bdb1162295b558e59bfffc29f",
+      "created_at": "2026-11-17T06:20:46.878Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -25390,6 +25392,24 @@
       "repository": "qwikdev-qwik-learnings",
       "content_hash": "5075c45fa158395c5c36f92649f6b72e8682ed5fe458777e6268040ea47acb4a",
       "created_at": "2026-11-17T06:11:30.523Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: vitest-dev/vitest Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-vitest-dev-vitest-quality-verification-intelligence-vitest-dev-vitest-core-invar.md",
+      "repository": "vitest-dev/vitest",
+      "content_hash": "964d3a6bb1a7504e5603277ebbb80a8f311a7ad0df2376c25bd464a5f3072db3",
+      "created_at": "2026-11-17T06:20:41.058Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-vitest-dev-vitest-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: vitest-dev-vitest-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-vitest-dev-vitest-learnings-quality-verification-intelligence-vitest-dev-vitest-.md",
+      "repository": "vitest-dev-vitest-learnings",
+      "content_hash": "568ef209ab082429c75ef6c1f66a45bad34463e538b026fcdd6a2d158f9fc1e7",
+      "created_at": "2026-11-17T06:20:44.923Z"
     }
   }
 }

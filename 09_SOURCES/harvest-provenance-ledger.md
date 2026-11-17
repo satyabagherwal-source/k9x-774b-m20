@@ -10492,3 +10492,6 @@ Every entry in this ledger must capture:
 | `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `50dbd865` | Multi-dimensional audit evidence | 2026-11-17T06:09:56.215Z |
 | `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `cfa0e890` | Multi-dimensional audit evidence | 2026-11-17T06:10:58.648Z |
 | `learn-dom-b-6afc12dd` | `project://qwikdev-qwik` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/qwikdev-qwik-learnings.md` | 2026-11-17T06:11:29.907Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `a33d49c4` | Multi-dimensional audit evidence | 2026-11-17T06:19:39.268Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `161cab6a` | Multi-dimensional audit evidence | 2026-11-17T06:20:38.382Z |
+| `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `4e905a1b` | Multi-dimensional audit evidence | 2026-11-17T06:20:40.403Z |

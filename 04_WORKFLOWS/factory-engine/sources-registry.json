@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T06:11:01.940Z",
-    "lastVerified": "2026-11-17T06:11:01.940Z",
+    "lastChecked": "2026-11-17T06:20:44.052Z",
+    "lastVerified": "2026-11-17T06:20:44.052Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,8 +370,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-17T05:19:48.973Z",
-    "lastVerified": "2026-11-17T05:19:48.973Z",
+    "lastChecked": "2026-11-17T06:19:40.609Z",
+    "lastVerified": "2026-11-17T06:19:40.609Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -2523,14 +2523,14 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T00:38:40.369Z",
-    "lastVerified": "2026-11-17T00:38:40.369Z",
+    "lastChecked": "2026-11-17T06:19:38.430Z",
+    "lastVerified": "2026-11-17T06:19:38.430Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "946cdfcdc67c61dbb1dc7e24a1e045eb341f79e92095b6cf93832fee554d6f46",
+    "contentHash": "720f849a7818f7fc77852a9f377d75c773909e4cce38fc724b9b13e1938a3a9f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4631,14 +4631,14 @@
     "officialUrl": "https://github.com/Agent-Field/agentfield",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T23:59:52.413Z",
-    "lastVerified": "2026-11-15T23:59:52.413Z",
+    "lastChecked": "2026-11-17T06:19:36.758Z",
+    "lastVerified": "2026-11-17T06:19:36.758Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "26b3d23c27b32b9a84dad04b7cec039af2d74d2667424f9879f1f9ec2205a8f2",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "contentHash": "20e7b053022307d15e9072811f10a8561def4f5134a512fb3278554a2f5086fa",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4720,9 +4720,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-15T16:06:57.965Z",
+    "lastChecked": "2026-11-17T06:19:25.405Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-15T16:06:57.965Z"
+    "lastVerified": "2026-11-17T06:19:25.405Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
@@ -5516,9 +5516,9 @@
   "tako8ki-gobang": {
     "name": "gobang",
     "officialUrl": "https://github.com/TaKO8Ki/gobang",
-    "lastChecked": "2026-11-15T22:46:47.529Z",
+    "lastChecked": "2026-11-17T06:19:37.903Z",
     "revisionIdentifier": "7b1b5f7e",
-    "lastVerified": "2026-11-15T22:46:47.529Z"
+    "lastVerified": "2026-11-17T06:19:37.903Z"
   },
   "salvo-rs-salvo": {
     "name": "salvo-rs/salvo",
@@ -12652,14 +12652,14 @@
     "officialUrl": "https://github.com/vitest-dev/vitest",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-12T14:44:31.821Z",
-    "lastVerified": "2026-11-12T14:44:31.821Z",
+    "lastChecked": "2026-11-17T06:19:32.322Z",
+    "lastVerified": "2026-11-17T06:19:32.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vitest-dev-vitest",
-    "contentHash": "b4fa5b2d9d1e4cab74d6c8323d790e2e2f7b6979596be426309deb5316fe6fcc",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "contentHash": "ed46ab0772fe8babadd7efb22e058449319ae222859d2d8c8066ee26d7b97b07",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13194,9 +13194,9 @@
   "margelo-react-native-blur": {
     "name": "react-native-blur",
     "officialUrl": "https://github.com/margelo/react-native-blur",
-    "lastChecked": "2026-11-13T16:58:42.277Z",
+    "lastChecked": "2026-11-17T06:19:30.399Z",
     "revisionIdentifier": "7edfaa0f",
-    "lastVerified": "2026-11-13T16:58:42.277Z"
+    "lastVerified": "2026-11-17T06:19:30.399Z"
   },
   "pallets-flask": {
     "name": "flask",

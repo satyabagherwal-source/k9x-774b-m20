@@ -10459,3 +10459,6 @@
 | `CYCLE-20261117-M41F` | `2026-11-17T06:09:56.211Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8881` | Yes (`37ef03bf...`) |
 | `CYCLE-20261117-NG7O` | `2026-11-17T06:10:58.644Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8882, Rule 8883, Rule 8884` | Yes (`211ec8bc...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T06:11:29.907Z` | `qwikdev-qwik` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-6AFC12DD` [Domain B] | Yes (`cc4731e2...`) |
+| `CYCLE-20261117-YLXC` | `2026-11-17T06:19:39.264Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`720f849a...`) |
+| `CYCLE-20261117-ZVJD` | `2026-11-17T06:20:38.377Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8885, Rule 8886, Rule 8887` | Yes (`20e7b053...`) |
+| `CYCLE-20261117-ZX3J` | `2026-11-17T06:20:40.399Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8888, Rule 8889, Rule 8890` | Yes (`ed46ab07...`) |
