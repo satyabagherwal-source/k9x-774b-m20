@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T19:45:01.105Z",
+  "last_updated": "2026-11-17T19:54:42.901Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "1b81cfe40a3f916f663566894d90b000e8b81aa815317320a599c9006564fb58",
-      "verified_at": "2026-11-17T19:19:50.734Z",
+      "content_hash": "6968df8a19a40615d472a1290762e337d784addbddb02a73af313dd995b24cb2",
+      "verified_at": "2026-11-17T19:53:47.445Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:19:50.734Z"
+      "last_updated": "2026-11-17T19:53:47.445Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "abd19c27ee3a190e547bff1e659144fa69f4fb937116746a00df45090c9bb356",
-      "verified_at": "2026-11-16T21:10:24.544Z",
+      "content_hash": "21a5665e7451f82569e44ffe06d682e90adba0fce494dbd826227174fb63fbc4",
+      "verified_at": "2026-11-17T19:54:42.900Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T21:10:24.544Z"
+      "last_updated": "2026-11-17T19:54:42.900Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "37d077e4275c0879f9e8da1deb597db64dd186e30ea168aca55b47cde2e2f64c",
-      "verified_at": "2026-11-16T22:47:37.893Z",
+      "content_hash": "446667f9ae3934ed8bc4be901cb400bab1a6bff36810889b786a6d9f14a28eb9",
+      "verified_at": "2026-11-17T19:53:40.539Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T22:47:37.893Z"
+      "last_updated": "2026-11-17T19:53:40.539Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "2d407fbe529c2f138259823d5734173a7197114a47f19d916867f9740e678ccb",
-      "verified_at": "2026-11-16T21:10:35.772Z",
+      "content_hash": "c96e3ead7e09cfde07614ec7b0d5f8eb3f81f50972ab86eeae8e89ded75f5ea1",
+      "verified_at": "2026-11-17T19:53:45.646Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T21:10:35.772Z"
+      "last_updated": "2026-11-17T19:53:45.646Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",
@@ -18726,14 +18726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-thinkingmachines-inkling-2-small",
-      "content_hash": "845378fe300a1bc7082e0ed1793e7ab5c5b971692d0b0be7c4efded35cb1dce9",
-      "verified_at": "2026-11-13T09:17:37.250Z",
+      "content_hash": "ec9649c39cec40173a1ed59146a2c3f250b376aa413a621364be695fe62449e0",
+      "verified_at": "2026-11-17T19:54:06.327Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T09:17:37.250Z"
+      "last_updated": "2026-11-17T19:54:06.327Z"
     },
     "tuist/tuist": {
       "repository": "tuist/tuist",

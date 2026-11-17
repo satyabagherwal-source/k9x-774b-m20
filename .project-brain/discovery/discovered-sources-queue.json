@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T19:12:35.655Z",
+  "updated_at": "2026-11-17T19:54:47.882Z",
   "stats": {
-    "total_discovered": 5110,
-    "approved_pending_harvest": 4821,
+    "total_discovered": 5113,
+    "approved_pending_harvest": 4824,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4808,
+      "COMMUNITY_AND_EXPERT": 4809,
       "OFFICIAL_DOCUMENTATION": 163,
-      "STANDARDS_AND_SPECIFICATIONS": 106,
+      "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 22,
       "LEGAL_AND_REGULATORY": 2,
@@ -110418,6 +110418,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
         "fileName": "langchain4j-langchain4j-learnings.md"
+      }
+    },
+    "SRC-EBB7D055F64C": {
+      "id": "SRC-EBB7D055F64C",
+      "url": "https://github.com/siderolabs/talos/pull/14879",
+      "title": "https://github.com/siderolabs/talos/pull/14879",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T19:54:47.813Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-CCF68177E0BD": {
+      "id": "SRC-CCF68177E0BD",
+      "url": "https://www.rfc-editor.org/rfc/rfc5881",
+      "title": "IETF RFC 5881",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T19:54:47.849Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-9B83566DD625": {
+      "id": "SRC-9B83566DD625",
+      "url": "https://www.rfc-editor.org/rfc/rfc5883",
+      "title": "IETF RFC 5883",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T19:54:47.881Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
       }
     }
   }

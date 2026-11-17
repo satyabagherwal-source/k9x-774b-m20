@@ -4,22 +4,22 @@
 {
   "source_repository": "databendlabs/databend",
   "source_url": "https://github.com/databendlabs/databend",
-  "source_version": "342ec629",
+  "source_version": "58dd5893",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T21:10:35.935Z",
+  "timestamp": "2026-11-17T19:53:45.826Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-databendlabs-databend",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `342ec629`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T21:10:35.935Z`  
+> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `58dd5893`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T19:53:45.826Z`  
 > **Learning ID**: `learn-github-databendlabs-databend`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `databendlabs/databend` (Commit: `342ec629`)
+- **Target Repository**: `databendlabs/databend` (Commit: `58dd5893`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:10:34.941Z  
+> **Harvest Timestamp**: 2026-11-17T19:53:44.675Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9497 stars
+- **Stars / Engagement**: 9498 stars
 
 ---
 
@@ -1207,11 +1207,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21099** (2026-11-16): **fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Two small, independent changes, one commit each.  **1. Default `cache.data_max_ratio` to 0.**  With the shared cache backend on by default (#21091), the data pool reserved 10% of `max_server_memory_usage` for deserialized column data (`memory_cache_table_data`). That pool is the first one reclaimed under memory pressure and re-reads are already served by the disk cache, so the memory is better left to queries. With a 0 cap `SharedStore::check_admissible` rejects every insert into the pool, so no column data is kept in memory; the meta and index pools (10% / 40%) and the disk cache (`cache.disk.*`) are unchanged. Users who want the pool back set `cache.data_max_ratio` explicitly. Legacy options such as `table_data_deserialized_data_bytes` were already ignored by the shared backend, so they do not re-enable it.  **2. Decode `TableIndexType::Bloom` written by newer releases.**  A page-index branch rolling out in production writes `TableIndex.index_type = 4` (`BLOOM`). `proto-conv` on `main` only knows values 0..=3 and returns `Incompatible("invalid IndexType: 4")`, which fails the whole `TableMeta`. `list_tables` then skips the table (or, before #20663, fails the database), so it disappears from the admin tables API and `SHOW CREATE TABLE`.  This adds the enum placeholders (`TableIndexType::Bloom = 4`, `MarkedDeletedIndexType::BLOOM = 6`, `Display` → `BLOOM`, the `mark_t
+- **Issue #21111** (2026-11-17): **fix(query): finish queries correctly on the queries executor**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Fixes how queries finish on the executor shared by all the queries (`enable_queries_executor`, off by default). It does not enable the executor; nothing changes when the switch is off.  | Bug | Case | main | This PR | |---|---|---|---| | Bug 1 | Client stops reading the result | The result sink blocks a shared worker; enough such queries hold every worker | The sink waits asynchronously, no worker is held | | Bug 2 | A query fails or is killed while its other processors run | Finish callbacks run concurrently with those processors | Finish callbacks run after no worker runs a task of the query | | Bug 3 | Tasks of a finished query still queued | Run | Dropped | | Bug 4 | The result is read right after a query fails | The finish flag is set before the error is stored, so the error can be missed | The error is stored before the flag | | Bug 5 | All processors finish in their first event | The query hangs | The query completes | | Bug 6 | Stopped early without an error, e.g. `finish(None)` | Returns `Ok` | Returns an error, as the per-query executor | | Bug 7 | Fails to start, or dropped without being executed | Finish callbacks are skipped | Finish callbacks run | | Bug 8 | Executor finishes with tasks queued | Tasks dropped with the executor, possibly after the global IO runtime (aborts in tests) | Tasks dropped in `finish`; none queued afterwards | | Bug 9 | A first e
 
-- **Issue #21093** (2026-11-15): **fix(query): link cosine HNSW graphs with normalized vectors**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - On main, `HNSWIndex::build` normalizes cosine vectors only for SQ8 and links the graph with the raw vectors (inner product), so non-unit-length data gets a poor graph and needs a much larger ef. Link the graph with the normalized vectors; L1/L2 are unchanged. - Test: `test_cosine_graph_ignores_vector_lengths` (recall 0.196 before, 0.904 after).  Cohere 1M (768d, cosine, top 100), aarch64 8 vCPU, warm cache, refine 2, single round. Both columns use the same binary (it also carries a separate aarch64 SQ8 kernel tweak, not part of this PR), so they differ only in how the index was built:  | | 18 blocks (default)<br>main | 18 blocks (default)<br>this PR | 4 × 250K rows<br>main | 4 × 250K rows<br>this PR | 1 × 1M rows<br>this PR | |---|---:|---:|---:|---:|---:| | ef | 200 | 200 | 800 | 200 | 400 | | Recall@100 | 0.9677 | 0.9858 | 0.9686 | 0.9767 | 0.9742 | | c1 QPS | 86.3 | 85.1 | 97.6 | 111.7 | 103.5 | | c8 QPS | 334.9 | 335.8 | 415.7 | 524.7 | 570.9 | | c80 QPS | 438.0 | 437.1 | 583.1 | **812.2** | **948.4** | | c80 P99 (ms) | 295.0 | 293.3 | 219.1 | 149.5 | 129.2 |  At Recall ≥ 0.9677, the best c80 goes from 583.1 QPS (main, 4 × 250K, ef 800) to 948.4 QPS (this PR, 1 × 1M, ef 400), **+63%**. main needs ef 800 on 4 blocks because ef 200 only reaches recall 0.8943.  Layouts: `CREATE TABLE t (id BIGINT, emb VECTOR(768), VECTOR INDEX vi (emb) distance='cosine' m=16 ef_con
+- **Issue #21104** (2026-11-17): **fix(storage): bound fuse_page Thrift decoding and drop thrift dep**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  `fuse_page` previously decoded Parquet `PageHeader` metadata through `thrift` 0.17's `TCompactInputProtocol` and the deprecated `parquet::format::PageHeader` API. Because `TCompactInputProtocol::read_bytes` eagerly allocates a `Vec<u8>` sized directly from the wire varint before reading payload bytes, a corrupted or crafted column chunk header could trigger multi-gigabyte allocations from a few bytes of input.  - Add reusable zero-allocation Parquet/Thrift helpers in `databend-storages-common-blocks`:   - `thrift_compact::ThriftCompactReader`: bounded Thrift Compact Protocol slice reader that checks binary and container lengths against remaining slice bytes before advancing, enforces a recursion depth budget (64), and validates field wire types.   - `parquet_page::{read_parquet_page_header, iter_parquet_page_headers, ParquetPageHeader}`: decodes Parquet v1/v2/dictionary/index page headers lazily over an in-memory column chunk slice without intermediate `Vec` materialization. - Simplify `fuse_page` to stream `iter_parquet_page_headers`, drop `#![allow(deprecated)]`, and remove the direct `thrift` dependency from `Cargo.toml` and `src/query/storages/fuse/Cargo.toml`. - Validated with unit tests in `databend_storages_common_blocks::parquet_page::tests` (`ArrowWriter` v1/v2 multi-page round-trips with page statistics, `u32::MAX` binary length prefixes, oversized/negative 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1228,462 +1228,691 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7a0a58b` (2026-11-16)
-**Commit Message**: fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0 (#21099)
+### Incident Patch 1: `58dd5893` (2026-11-17)
+**Commit Message**: fix(query): finish queries correctly on the queries executor (#21111)
 
-* chore(cache): turn the in-memory column data pool off by default
+* ci(query): let unit tests run on the queries executor
 
-Default cache.data_max_ratio to 0 so the shared cache backend reserves
-no server memory for deserialized column data; the disk cache and the
-meta and index pools are unchanged. Users who want the in-memory pool
-back set cache.data_max_ratio explicitly.
+ConfigBuilder::enable_queries_executor starts the executor shared by all the
+queries. The test guard finishes it and waits for its workers on teardown:
+they would outlive the test and look up the global instances of a dropped
+test.
 
-* fix(meta): decode BLOOM table index type written by newer releases
+* fix(query): do not hold a shared worker for an unconsumed result
 
-Table metadata written by the page-index rollout carries
-TableIndexType::Bloom (index_type = 4). Without the variant, proto-conv
-rejects the whole TableMeta, so the table disappears from the admin
-tables API and SHOW CREATE TABLE.
+The sink of a pulling query blocks its thread when the result channel is
+full. On the queries executor that thread is a worker shared by all the
+queries, so a client that stops reading could hold every worker. The sink
+now waits asynchronously there; the per-query executor is unchanged.
 
-Add the enum placeholder (and MarkedDeletedIndexType::BLOOM) so the
-metadata decodes and displays, while creating or refreshing a BLOOM
-index stays rejected in this release.
+* fix(query): drop the queued tasks when the queries executor finishes
 
-* chore(cache): align tests with the data pool off by default
+The queued tasks hold the graphs of the queries. They were dropped with the
+executor itself, which may outlive what the processors need to shut down,
+e.g. the global IO runtime that an async sink uses on drop. finish now takes
+them out of the queue and drops them out of the lock, and no task is queued
+once the executor is finished.
 
-Tests that exercise the data pool set cache.data_max_ratio explicitly;
-the system.caches and system.configs golden files follow the default.
+* fix(query): finish a query of the queries executor after its tasks stop
 
-**File**: `src/meta/api/src/api_impl/schema_api.rs` (modified, +1/-0)
+
+
+**File**: `src/query/pipeline/src/sinks/async_sink.rs` (modified, +18/-16)
 ```diff
-@@ -790,6 +790,7 @@ pub fn mark_table_index_as_deleted(
-         TableIndexType::Ngram => MarkedDeletedIndexType::NGRAM,
-         TableIndexType::Vector => MarkedDeletedIndexType::VECTOR,
-         TableIndexType::Spatial => MarkedDeletedIndexType::SPATIAL,
-+        TableIndexType::Bloom => MarkedDeletedIndexType::BLOOM,
-     };
-     let marked_deleted_table_index_meta = MarkedDeletedIndexMeta {
-         dropped_on: Utc::now(),
-```
-
-**File**: `src/meta/app/src/schema/index.rs` (modified, +1/-0)
-```diff
-@@ -74,6 +74,7 @@ pub enum MarkedDeletedIndexType {
-     NGRAM = 3,
-     VECTOR = 4,
-     SPATIAL = 5,
-+    BLOOM = 6,
- }
- 
- #[derive(Clone, Debug, Eq, PartialEq)]
-```
-
-**File**: `src/meta/app/src/schema/table/mod.rs` (modified, +8/-0)
-```diff
-@@ -290,6 +290,11 @@ pub enum TableIndexType {
-     Ngram = 1,
-     Vector = 2,
-     Spatial = 3,
-+    /// Granule-level Bloom index written by newer releases.
-+    ///
-+    /// This release only decodes the variant so table metadata that carries it
-+    /// remains readable; creating or refreshing such an index is rejected.
-+    Bloom = 4,
- }
- 
- #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Eq, PartialEq)]
-@@ -490,6 +495,9 @@ impl Display for TableIndexType {
-             TableIndexType::Spatial => {
-                 write!(f, "SPATIAL")
-             }
-+            TableIndexType::Bloom => {
-+                write!(f, "BLOOM")
+@@ -73,22 +73,24 @@ impl<T: AsyncSink + 'static> AsyncSinker<T> {
+ impl<T: AsyncSink + 'static> Drop for AsyncSinker<T> {
+     fn drop(&mut self) {
+         drop_guard(move || {
+-            if !self.called_on_start || !self.called_on_finish {
+-                if let Some(mut inner) = self.inner.take() {
+-                    GlobalIORuntime::instance().spawn({
+-                        let called_on_start = self.called_on_start;
+-                        let called_on_finish = self.called_on_finish;
+-                        async move {
+-                            if !called_on_start && T::CALL_ON_START_ON_ERROR {
+-                                let _ = inner.on_start().await;
+-                            }
+-
+-                            if !called_on_finish && T::CALL_ON_FINISH_ON_ERROR {
+-                                let _ = inner.on_finish().await;
+-                            }
+-                        }
+-                    });
+-                }
++            let run_on_start = !self.called_on_start && T::CALL_ON_START_ON_ERROR;
++            let run_on_finish = !self.called_on_finish && T::CALL_ON_FINISH_ON_ERROR;
++            // Nothing to run: do not touch the global runtime, which a sink
++            // dropped late may outlive.
++            if !run_on_start && !run_on_finish {
++                return;
 +            }
++
++            if let Some(mut inner) = self.inner.take() {
++                GlobalIORuntime::instance().spawn(async move {
++                    if run_on_start {
++                        let _ = inner.on_start().await;
++                    }
++
++                    if run_on_finish {
++                        let _ = inner.on_finish().await;
++                    }
++                });
+             }
+         })
+     }
+```
+
+**File**: `src/query/service/src/pipelines/executor/executor_graph.rs` (modified, +115/-15)
+```diff
+@@ -28,6 +28,7 @@ use std::time::SystemTime;
+ use databend_common_base::base::WatchNotify;
+ use databend_common_base::runtime::ExecutorStats;
+ use databend_common_base::runtime::ExecutorStatsSnapshot;
++use databend_common_base::runtime::LimitMemGuard;
+ use databend_common_base::runtime::MemStat;
+ use databend_common_base::runtime::ParentMemStat;
+ use databend_common_base::runtime::PerfEvent;
+@@ -216,6 +217,8 @@ const DEFAULT_POINTS: u64 = 3;
+ 
+ struct ExecutingGraph {
+     finished_nodes: AtomicUsize,
++    /// The tasks of the graph running on a worker of the queries executor.
++    running_tasks: AtomicUsize,
+     graph: StableGraph<Arc<Node>, EdgeInfo>,
+     /// points store two values
+     ///
+@@ -263,6 +266,7 @@ impl ExecutingGraph {
+         Ok(ExecutingGraph {
+             graph,
+             finished_nodes: AtomicUsize::new(0),
++            running_tasks: AtomicUsize::new(0),
+             points: AtomicU64::new((DEFAULT_POINTS << 32) | init_epoch as u64),
+             max_points: AtomicU64::new(DEFAULT_POINTS),
+             query_id,
+@@ -312,6 +316,7 @@ impl ExecutingGraph {
+         let executor_stats = ExecutorStats::new();
+         Ok(ExecutingGraph {
+             finished_nodes: AtomicUsize::new(0),
++            running_tasks: AtomicUsize::new(0),
+             graph,
+             points: AtomicU64::new((DEFAULT_POINTS << 32) | init_epoch as u64),
+             max_points: AtomicU64::new(DEFAULT_POINTS),
+@@ -965,31 +970,63 @@ impl RunningGraph {
+     }
+ 
+     /// Flag the graph should finish and no more tasks should be scheduled.
++    ///
++    /// The first call decides the result of the graph. Its error is stored before
++    /// the flag is set, so whoever sees the flag sees the error too. The waiter of
++    /// the graph is woken once no worker runs a task of it.
+     pub fn should_finish<C>(&self, cause: Result<(), C>) -> Result<()> {
+         let cause = cause.with_context(|| "should finish");
+ 
+-        if self.0.should_finish.load(Ordering::SeqCst) {
+-            return Ok(());
++        {
++            let mut finished_error = self.0.finished_error.lock();
++            if self.0.should_finish.load(Ordering::SeqCst) {
++                return Ok(());
++            }
++            *finished_error = cause.as_ref().err().cloned();
++            // It is also the interrupt flag of the processors.
++            self.0.should_finish.store(true, Ordering::SeqCst);
          }
+-        self.0.should_finish.store(true, Ordering::SeqCst);
++
++        self.0.finished_notify.notify_waiters();
++        self.notify_finished_if_idle();
++
++        // After the notifications: the diagnostics wait for locks that other
++        // queries hold, e.g. the one of `DataExchangeManager::shutdown_query`,
++        // and may run on a thread that exceeded its memory limit.
+         if let Err(cause) = &cause {
++            let _guard = LimitMemGuard::enter_unlimited();
+             log_memory_limit_diagnostics(cause, "memory limit exceeded");
+         }
+-        self.0.finished_notify.notify_waiters();
+-        self.interrupt();
+-        let mut finished_error = self.0.finished_error.lock();
+-        if finished_error.is_none() {
+-            *finished_error = cause.err();
+-            drop(finished_error);
++        Ok(())
++    }
++
++    /// Counts a task of the graph as running until the guard is dropped.
++    ///
++    /// Check `is_should_finish` after this, not before: a graph that finishes in
++    /// between has woken its waiter already, which then runs concurrently with
++    /// the task.
++    pub(crate) fn track_running_task(self: &Arc<Self>) -> RunningTaskGuard {
++        self.0.running_tasks.fetch_add(1, Ordering::SeqCst);
++        RunningTaskGuard {
++            graph: self.clone(),
++        }
++    }
++
++    /// Wakes the waiter of the graph, which runs the finish callbacks of the
++    /// query, once the graph should finish and no worker runs a task of it.
++    ///
++    /// The async tasks of the graph are not waited for: they are aborted by
++    /// `finished_notify`, as on the per-query executor.
++    fn notify_finished_if_idle(&self) {
++        if !self.is_should_finish() || self.0.running_tasks.load(Ordering::SeqCst) != 0 {
++            return;
+         }
+ 
+-        if let Some(notify) = self.0.finish_condvar_notify.clone() {
+-            let (lock, cvar) = &*notify;
+-            let mut started = lock.lock();
+-            *started = true;
+-            cvar.notify_one();
++        if let Some(notify) = &self.0.finish_condvar_notify {
++            let (lock, cvar) = &**notify;
++            *lock.lock() = true;
++            cvar.notify_all();
+         }
+-        Ok(())
+     }
+ 
+     /// Checks if the graph should finish and no more tasks should be scheduled.
+@@ -1194,6 +1231,18 @@ impl RunningGraph {
      }
  }
-```
-
-**File**: `src/meta/proto-conv/tests/it/proto_conv.rs` (modified, +30/-0)
-```diff
-@@ -387,6 +387,36 @@ fn test_pb_from_to() -> anyhow::Result<()> {
-     Ok(())
- }
  
-+/// Table metadata written by a newer release may carry a `BLOOM` table index
-+/// (`index_type = 4`). This release must still decode that metadata, so the
-+/// table remains visible to listing and `SHOW CREATE TABLE`, while any
-+/// unknown value is rejected as before.
-+#[test]
-+fn test_table_index_type_bloom_placeholder() -> anyhow::Result<()> {
-+    let mut index = new_table_index();
-+    index.index_type = TableIndexType::Bloom;
-+    index.options = btreemap! {s("filter_type") => s("binary_fuse32")};
-+
-+    let mut p = index.to_pb();
-+    assert_eq!(p.index_type, 4);
-+    let got = mt::TableIndex::from_pb(p.clone())?;
-+    assert_eq!(index, got);
-+    assert_eq!(got.index_type.to_string(), "BLOOM");
-+
-+    let mut tbl = new_table_meta();
-+    tbl.indexes.insert(index.name.clone(), index);
-+    let got = mt::TableMeta::from_pb(tbl.to_pb())?;
-+    assert_eq!(tbl, got);
-+
-+    p.index_type = 99;
-+    assert_eq!(
-+        Incompatible::new(s("invalid IndexType: 99")),
-+        mt::TableIndex::from_pb(p).unwrap_err()
-+    );
-+
-+    Ok(())
++/// A task of a graph running on a worker of the queries executor.
++pub(crate) struct RunningTaskGuard {
++    graph: Arc<RunningGraph>,
 +}
 +
- #[test]
- fn test_incompatible() -> anyhow::Result<()> {
-     let db_meta = new_db_meta();
++impl Drop for RunningTaskGuard {
++    fn drop(&mut self) {
++       
 ```
 
-**File**: `src/meta/schema-api-test-suite/src/schema_api_test_suite.rs` (modified, +4/-2)
+**File**: `src/query/service/src/pipelines/executor/global_queries_executor.rs` (modified, +5/-0)
 ```diff
-@@ -7482,7 +7482,8 @@ impl SchemaApiTestSuite {
-                     ver: VER,
-                     min_reader_ver: MIN_READER_VER,
-                     name: "idx".to_string(),
--                    index_type: 4,
-+                    // No `TableIndexType` variant has this value.
-+                    index_type: 99,
-                     ..Default::default()
-                 });
-                 let table_key = TableId::new(table_id);
-@@ -7709,7 +7710,8 @@ impl SchemaApiTestSuite {
-                     ver: VER,
-                     min_reader_ver: MIN_READER_VER,
-                     name: "idx".to_string(),
--                    index_type: 4,
-+                    // No `TableIndexType` variant has this value.
-+                    index_type: 99,
-                     ..Default::default()
-                 });
-                 upsert_test_data(mt, &TableId::new(table_id), table_pb.encode_to_vec()).await?;
+@@ -38,4 +38,9 @@ impl GlobalQueriesExecutor {
+     pub fn instance() -> Arc<QueriesPipelineExecutor> {
+         GlobalInstance::get()
+     }
++
++    /// The executor, `None` if `enable_queries_executor` is off.
++    pub fn try_instance() -> Option<Arc<QueriesPipelineExecutor>> {
++        GlobalInstance::try_get()
++    }
+ }
 ```
 
-**File**: `src/query/config/src/config.rs` (modified, +4/-3)
+**File**: `src/query/service/src/pipelines/executor/pipeline_executor.rs` (modified, +82/-29)
 ```diff
-@@ -3582,11 +3582,12 @@ pub struct CacheConfig {
-     )]
-     pub index_max_ratio: u64,
+@@ -20,6 +20,8 @@ use std::time::Instant;
+ use databend_common_base::base::WatchNotify;
+ use databend_common_base::runtime::ExecutorStatsSnapshot;
+ use databend_common_base::runtime::GlobalIORuntime;
++use databend_common_base::runtime::LimitMemGuard;
++use databend_common_base::runtime::ThreadTracker;
+ use databend_common_base::runtime::catch_unwind;
+ use databend_common_base::runtime::defer;
+ use databend_common_exception::ErrorCode;
+@@ -32,6 +34,7 @@ use databend_common_pipeline::core::PlanProfile;
+ use futures_util::future::Either;
+ use futures_util::future::select;
+ use log::info;
++use log::warn;
+ use parking_lot::Condvar;
+ use parking_lot::Mutex;
  
--    /// Shared backend: percentage of the server memory limit for column data.
-+    /// Shared backend: percentage of the server memory limit for column data. 0 disables the
-+    /// in-memory column data pool.
-     #[clap(
-         long = "cache-data-max-ratio",
-         value_name = "VALUE",
--        default_value = "10"
-+        default_value = "0"
-     )]
-     pub data_max_ratio: u64,
+@@ -55,6 +58,42 @@ pub struct QueryWrapper {
+     finished_notify: Arc<WatchNotify>,
+ }
  
-@@ -3652,7 +3653,7 @@ impl Default for CacheConfig {
-             shared_memory_enabled: true,
-             meta_max_ratio: 10,
-             index_max_ratio: 40,
--            data_max_ratio: 10,
-+            data_max_ratio: 0,
-             kind_max_bytes: BTreeMap::new(),
++impl QueryWrapper {
++    /// Runs the finish callbacks of the query with its result. Only the first
++    /// call runs them.
++    fn on_finished(&self, res: Result<()>) -> Result<()> {
++        let mut on_finished_chain = self.on_finished_chain.lock();
++
++        // untracking for on finished
++        let tracking_payload = ThreadTracker::new_tracking_payload();
++        let _guard = ThreadTracker::tracking(tracking_payload);
++        let profiling = self
++            .graph
++            .fetch_profiling(Some(self.settings.executor_node_id.clone()));
++        on_finished_chain.apply(ExecutionInfo::create(res, profiling))
++    }
++}
++
++/// Runs the finish callbacks of a query that never executed, as the per-query
++/// executor does on drop. A no-op once `execute` has run them.
++impl Drop for QueryWrapper {
++    fn drop(&mut self) {
++        let _guard = LimitMemGuard::enter_unlimited();
++
++        // Drops the tasks that the wakers of its processors may still queue.
++        if let Err(cause) = self.graph.should_finish::<()>(Ok(())) {
++            warn!("Shutdown failure: {:?}", cause);
++        }
++
++        let cause = self.graph.get_error().unwrap_or_else(|| {
++            ErrorCode::Internal("Pipeline illegal state: not successfully shutdown")
++        });
++        if let Err(cause) = self.on_finished(Err(cause)) {
++            warn!("Shutdown failure: {:?}", cause);
++        }
++    }
++}
++
+ pub enum PipelineExecutor {
+     QueryPipelineExecutor(Arc<QueryPipelineExecutor>),
+     QueriesPipelineExecutor(QueryWrapper),
+@@ -179,37 +218,51 @@ impl PipelineExecutor {
+         match self {
+             PipelineExecutor::QueryPipelineExecutor(executor) => executor.execute(),
+             PipelineExecutor::QueriesPipelineExecutor(query_wrapper) => {
+-                Self::init(
+-                    &query_wrapper.on_init_callback,
+-                    &query_wrapper.settings.query_id,
+-                )?;
+-                GlobalQueriesExecutor::instance().send_graph(query_wrapper.graph.clone())?;
+-                Self::start_executor_daemon(
+-                    query_wrapper,
+-                    query_wrapper.settings.max_execute_time_in_seconds,
+-                )?;
+-                let (lock, cvar) = &*query_wrapper.finish_condvar_wait;
+-                let mut finished = lock.lock();
+-                if !*finished {
+-                    cvar.wait(&mut finished);
+-                }
++                let res = Self::run_on_queries_executor(query_wrapper);
++                query_wrapper.on_finished(res.clone()).and(res)
++            }
++        }
++    }
  
-             // ----- the following options/args are all deprecated               ----
+-                query_wrapper.finished_notify.notify_waiters();
++    /// Runs the graph of the query on the queries executor until it finishes.
++    fn run_on_queries_executor(query_wrapper: &QueryWrapper) -> Result<()> {
++        let graph = &query_wrapper.graph;
++        let started = Self::init(
++            &query_wrapper.on_init_callback,
++            &query_wrapper.settings.query_id,
++        )
++        .and_then(|_| GlobalQueriesExecutor::instance().send_graph(graph.clone()));
++        match &started {
++            Ok(_) => Self::start_executor_daemon(
++                query_wrapper,
++                query_wrapper.settings.max_execute_time_in_seconds,
++            )?,
++            // A processor may have woken a worker from its first event before
++            // another one failed, so a task of the graph may be running: wait
++            // for it as well. The tasks still queued are dropped.
++            Err(cause) => graph.should_finish(Err(cause.clone()))?,
++        }
+ 
+-                let may_error = query_wrapper.graph.get_error();
+-                match may_error {
+-                    None => {
+-                        let mut finished_chain = query_wrapper.on_finished_chain.lock();
+-                        let info = ExecutionInfo::create(Ok(()), self.fetch_profiling(true));
+-                        finished_chain.apply(info)
+-                    }
+-                    Some(cause) => {
+-                        let mut finished_chain = query_wrapper.on_finished_chain.lock();
+-                        let profiling = self.fetch_profiling(true);
+-                        let info = ExecutionInfo::create(Err(cause.cl
 ```
 
-**File**: `src/query/service/tests/it/configs.rs` (modified, +9/-0)
+**File**: `src/query/service/src/pipelines/executor/pipeline_pulling_executor.rs` (modified, +58/-17)
 ```diff
-@@ -1030,6 +1030,15 @@ fn test_server_memory_limit_defaults() {
-     assert!(config.query.common.max_memory_limit_enabled);
-     assert!(config.cache.shared_memory_enabled);
-     assert_eq!(config.query.common.max_server_memory_usage, 0);
-+    // The in-memory column data pool is off by default; metadata and index pools stay on.
-+    assert_eq!(
+@@ -17,7 +17,9 @@ use std::sync::atomic::AtomicBool;
+ use std::sync::atomic::Ordering;
+ 
+ use async_channel::Receiver;
++use async_channel::SendError;
+ use async_channel::Sender;
++use async_trait::async_trait;
+ use databend_common_base::base::Progress;
+ use databend_common_base::base::ProgressValues;
+ use databend_common_base::runtime::Thread;
+@@ -33,6 +35,8 @@ use databend_common_pipeline::core::Pipeline;
+ use databend_common_pipeline::core::Processor;
+ use databend_common_pipeline::core::ProcessorPtr;
+ use databend_common_pipeline::core::basic_callback;
++use databend_common_pipeline::sinks::AsyncSink;
++use databend_common_pipeline::sinks::AsyncSinker;
+ use databend_common_pipeline::sinks::Sink;
+ use databend_common_pipeline::sinks::Sinker;
+ use fastrace::func_path;
+@@ -105,6 +109,7 @@ impl PipelinePullingExecutor {
+         pipeline: &mut Pipeline,
+         tx: Sender<DataBlock>,
+         progress: Option<Arc<Progress>>,
++        settings: &ExecutorSettings,
+     ) -> Result<()> {
+         if !pipeline.is_pulling_pipeline()? {
+             return Err(ErrorCode::Internal(
+@@ -117,6 +122,7 @@ impl PipelinePullingExecutor {
+                 tx.clone(),
+                 progress.clone(),
+                 input,
++                settings.enable_queries_executor,
+             )))
+         })?;
+ 
+@@ -137,7 +143,7 @@ impl PipelinePullingExecutor {
+ 
+         let (sender, receiver) = async_channel::bounded(std::cmp::max(1, pipeline.output_len()));
+ 
+-        Self::wrap_pipeline(&mut pipeline, sender, None)?;
++        Self::wrap_pipeline(&mut pipeline, sender, None, &settings)?;
+         let executor = PipelineExecutor::create(pipeline, settings)?;
+ 
+         Ok(PipelinePullingExecutor {
+@@ -170,7 +176,7 @@ impl PipelinePullingExecutor {
+         let (sender, receiver) =
+             async_channel::bounded(std::cmp::max(1, main_pipeline.output_len()));
+ 
+-        Self::wrap_pipeline(&mut main_pipeline, sender, result_progress)?;
++        Self::wrap_pipeline(&mut main_pipeline, sender, result_progress, &settings)?;
+ 
+         let mut pipelines = build_res.sources_pipelines;
+         pipelines.push(main_pipeline);
+@@ -285,15 +291,39 @@ struct PullingSink {
+ }
+ 
+ impl PullingSink {
++    /// The sink waits for the consumer of the query when the channel is full. On
++    /// the queries executor it waits asynchronously: blocking would hold a worker
++    /// shared by all the queries for as long as the consumer does not read.
+     pub fn create(
+         tx: Sender<DataBlock>,
+         progress: Option<Arc<Progress>>,
+         input: Arc<InputPort>,
++        enable_queries_executor: bool,
+     ) -> Box<dyn Processor> {
+-        Sinker::create(input, PullingSink {
++        let sink = PullingSink {
+             sender: Some(tx),
+             progress,
+-        })
++        };
++        match enable_queries_executor {
++            true => AsyncSinker::create(input, sink),
++            false => Sinker::create(input, sink),
++        }
++    }
++
++    fn record_progress(&self, data_block: &DataBlock) {
++        if let Some(progress) = &self.progress {
++            progress.incr(&ProgressValues {
++                rows: data_block.num_rows(),
++                bytes: data_block.memory_size(),
++            });
++        }
++    }
++
++    fn send_error(cause: SendError<DataBlock>) -> ErrorCode {
++        ErrorCode::Internal(format!(
++            "Logical error, cannot push data into SyncSender, cause {:?}",
++            cause
++        ))
+     }
+ }
+ 
+@@ -306,22 +336,33 @@ impl Sink for PullingSink {
+     }
+ 
+     fn consume(&mut self, data_block: DataBlock) -> Result<()> {
+-        if let Some(progress) = &self.progress {
+-            progress.incr(&ProgressValues {
+-                rows: data_block.num_rows(),
+-                bytes: data_block.memory_size(),
+-            });
+-        }
+-
++        self.record_progress(&data_block);
+         if let Some(sender) = &self.sender {
+-            if let Err(cause) = sender.send_blocking(data_block) {
+-                return Err(ErrorCode::Internal(format!(
+-                    "Logical error, cannot push data into SyncSender, cause {:?}",
+-                    cause
+-                )));
+-            }
++            sender.send_blocking(data_block).map_err(Self::send_error)?;
+         }
++        Ok(())
++    }
++}
+ 
++#[async_trait]
++impl AsyncSink for PullingSink {
++    const NAME: &'static str = "PullingExecutorSink";
++    // Nothing to run on drop: the sender is dropped with the sink. Running the
++    // hooks there would need the global runtime, which a query dropped late
++    // may outlive.
++    const CALL_ON_START_ON_ERROR: bool = false;
++    const CALL_ON_FINISH_ON_ERROR: bool = false;
++
++    async fn on_finish(&mut self) -> Result<()> {
++        drop(self.sender.take());
+         Ok(())
+     }
++
++    async fn consume(&mut self, data_block: DataBlock) -> Result<bool> {
++        self.record_progress(&data_block);
++        if let Some(sender) = &self.sender {
++            sender.send(data_block).
+```
+
+**File**: `src/query/service/src/pipelines/executor/queries_executor_tasks.rs` (modified, +29/-0)
+```diff
+@@ -46,6 +46,15 @@ impl WorkersTasks {
+         }
+     }
+ 
++    /// Takes all the queued tasks, so they are dropped out of the lock.
++    pub fn take_tasks(&mut self) -> (ExecutorTasks, ExecutorTasks) {
++        let workers_size = self.workers_waiting_status.total_size();
 +        (
-+            config.cache.meta_max_ratio,
-+            config.cache.index_max_ratio,
-+            config.cache.data_max_ratio
-+        ),
-+        (10, 40, 0)
-+    );
++            mem::replace(&mut self.current_tasks, ExecutorTasks::create(workers_size)),
++            mem::replace(&mut self.next_tasks, ExecutorTasks::create(workers_size)),
++        )
++    }
++
+     pub fn swap_tasks(&mut self) {
+         mem::swap(&mut self.current_tasks, &mut self.next_tasks);
+     }
+@@ -88,7 +97,14 @@ impl QueriesExecutorTasksQueue {
+             wakeup_workers.push(worker_id);
+         }
  
-     let mut system = sysinfo::System::new();
-     system.refresh_memory();
++        // No worker runs the queued tasks any more. They hold the graphs of the
++        // queries, whose processors must not be dropped with the executor: it may
++        // outlive what they need to shut down, e.g. the global runtimes. The flag
++        // is set before the lock is taken, so no task is queued after this.
++        let queued_tasks = workers_tasks.take_tasks();
+         drop(workers_tasks);
++        drop(queued_tasks);
++
+         for wakeup_worker in wakeup_workers {
+             workers_condvar.wakeup(wakeup_worker);
+         }
+@@ -165,6 +181,9 @@ impl QueriesExecutorTasksQueue {
+ 
+     pub fn init_sync_tasks(&self, tasks: VecDeque<ProcessorWrapper>, condvar: Arc<WorkersCondvar>) {
+         let mut workers_tasks = self.workers_tasks.lock();
++        if self.is_finished() {
++            return;
++        }
+ 
+         let mut worker_id = 0;
+         for proc in tasks.into_iter() {
+@@ -191,6 +210,9 @@ impl QueriesExecutorTasksQueue {
+         condvar: Arc<WorkersCondvar>,
+     ) {
+         let mut workers_tasks = self.workers_tasks.lock();
++        if self.is_finished() {
++            return;
++        }
+ 
+         let mut worker_id = 0;
+         for proc in tasks.into_iter() {
+@@ -208,6 +230,10 @@ impl QueriesExecutorTasksQueue {
+ 
+     pub fn completed_async_task(&self, condvar: Arc<WorkersCondvar>, task: CompletedAsyncTask) {
+         let mut workers_tasks = self.workers_tasks.lock();
++        if self.is_finished() {
++            condvar.dec_active_async_worker();
++            return;
++        }
+         // The worker id of a waker is not always the id of a worker of this
+         // executor, e.g. a fuse source passes its index among the sources.
+         let workers = workers_tasks.workers_waiting_status.total_size();
+@@ -248,6 +274,9 @@ impl QueriesExecutorTasksQueue {
+         mut next_tasks: VecDeque<ExecutorTask>,
+     ) {
+         let mut workers_tasks = self.workers_tasks.lock();
++        if self.is_finished() {
++            return;
++        }
+ 
+         if let Some(mut tasks) = current_tasks {
+             while let Some(task) = tasks.pop_front() {
 ```
 
-**File**: `src/query/service/tests/it/servers/admin/v1/mod.rs` (modified, +1/-0)
+**File**: `src/query/service/src/pipelines/executor/queries_pipeline_executor.rs` (modified, +19/-0)
 ```diff
-@@ -18,3 +18,4 @@ mod clustering_information;
- mod config;
- mod perf;
- mod status;
-+mod tenant_tables;
+@@ -118,6 +118,12 @@ impl QueriesPipelineExecutor {
+             let sync_queue = std::mem::take(&mut init_schedule_queue.sync_queue);
+             self.global_tasks_queue
+                 .init_sync_tasks(sync_queue, self.workers_condvar.clone());
++
++            // All its processors finished in their first event, so no worker runs
++            // a task of the graph that would finish it.
++            if graph.is_all_nodes_finished() {
++                graph.should_finish::<()>(Ok(()))?;
++            }
+             Ok(())
+         }
+     }
+@@ -222,6 +228,19 @@ impl QueriesPipelineExecutor {
+ 
+                 while !self.global_tasks_queue.is_finished() && context.has_task() {
+                     let task_info = context.get_task_info();
++                    // Counted before the check: a graph that finishes in between
++                    // waits for this task before running its finish callbacks.
++                    let _running_task = task_info
++                        .as_ref()
++                        .map(|(graph, _)| graph.track_running_task());
++                    if task_info
++                        .as_ref()
++                        .is_some_and(|(graph, _)| graph.is_should_finish())
++                    {
++                        drop(context.take_task());
++                        continue;
++                    }
++
+                     let execute_res = catch_unwind(|| context.execute_task(Some(self)));
+                     match execute_res {
+                         Ok(res) => {
+```
+
+**File**: `src/query/service/src/test_kits/config.rs` (modified, +6/-0)
+```diff
+@@ -167,6 +167,12 @@ ADDRESS = 'https://databend.com';"
+         self
+     }
+ 
++    /// Run the queries on the executor shared by all the queries.
++    pub fn enable_queries_executor(mut self) -> ConfigBuilder {
++        self.conf.query.common.enable_queries_executor = true;
++        self
++    }
++
+     pub fn table_meta_segment_bytes(mut self, value: u64) -> ConfigBuilder {
+         self.conf.cache.table_meta_segment_bytes = value;
+         self
 ```
 
 ---
 
-### Incident Patch 2: `342ec629` (2026-11-16)
-**Commit Message**: fix(query): hash equal bitmap, geometry and interval values consistently (#20971)
+### Incident Patch 2: `db269224` (2026-11-17)
+**Commit Message**: fix(storage): bound fuse_page Thrift decoding and drop thrift dep (#21104)
 
-* fix(query): preserve equality across group hash representations
+* fix(storage): bound fuse_page Thrift decoding and drop thrift dep
 
-* fix(query): hash canonical bitmap containers without member expansion
+* refactor(storage): extract bounded Thrift and Parquet page header readers
 
-* fix(query): validate bitmap range hashing without a direct dependency
-
-* fix(query): compare bitmap members across roaring stores
-
-* test(query): focus value hash regressions and expand SQL coverage
-
----------
-
-Co-authored-by: kould <[REDACTED_EMAIL]>
-
-**File**: `src/query/expression/src/aggregate/group_hash.rs` (modified, +6/-47)
+**File**: `Cargo.lock` (modified, +0/-12)
 ```diff
-@@ -34,7 +34,6 @@ use crate::types::decimal::Decimal;
- use crate::types::i256;
- use crate::types::number::Number;
- use crate::types::*;
--use crate::utils::bitmap::normalize_bitmap_column;
- use crate::visitor::ValueVisitor;
- use crate::with_decimal_mapped_type;
- use crate::with_number_mapped_type;
-@@ -243,10 +242,7 @@ fn combine_group_hash_const_nonnull<const IS_FIRST: bool>(
-         Scalar::Date(value) => value.agg_hash(),
-         Scalar::Boolean(value) => value.agg_hash(),
-         Scalar::String(value) => value.as_bytes().agg_hash(),
--        Scalar::Binary(value)
--        | Scalar::Bitmap(value)
--        | Scalar::Variant(value)
--        | Scalar::Geometry(value) => value.agg_hash(),
-+        Scalar::Binary(value) | Scalar::Variant(value) => value.agg_hash(),
-         Scalar::Geography(value) => value.0.agg_hash(),
-         _ => scalar.as_ref().agg_hash(),
-     };
-@@ -366,8 +362,8 @@ impl<const IS_FIRST: bool> ValueVisitor for HashVisitor<'_, IS_FIRST> {
-     }
+@@ -4290,7 +4290,6 @@ dependencies = [
+  "tantivy",
+  "tantivy-jieba",
+  "tempfile",
+- "thrift",
+  "tokio",
+  "typetag",
+  "uuid",
+@@ -15084,15 +15083,6 @@ dependencies = [
+  "once_cell",
+ ]
  
-     fn visit_bitmap(&mut self, column: BinaryColumn) -> Result<()> {
--        let column = normalize_bitmap_column(&column);
--        self.combine_group_hash_string_column::<BitmapType>(column.as_ref());
-+        // Equal bitmaps can have different encodings, including within the hybrid format.
-+        self.combine_group_hash_type_column::<AnyType>(&Column::Bitmap(column));
-         Ok(())
-     }
- 
-@@ -377,7 +373,7 @@ impl<const IS_FIRST: bool> ValueVisitor for HashVisitor<'_, IS_FIRST> {
-     }
- 
-     fn visit_geometry(&mut self, column: BinaryColumn) -> Result<()> {
--        self.combine_group_hash_string_column::<GeometryType>(&column);
-+        self.combine_group_hash_type_column::<AnyType>(&Column::Geometry(column));
-         Ok(())
-     }
- 
-@@ -508,7 +504,6 @@ where I: Index
-             Scalar::Binary(v) => v.agg_hash(),
-             Scalar::String(v) => v.as_bytes().agg_hash(),
-             Scalar::Variant(v) => v.agg_hash(),
--            Scalar::Geometry(v) => v.agg_hash(),
-             Scalar::Geography(v) => v.0.agg_hash(),
-             Scalar::Opaque(v) => v.as_ref().agg_hash(),
-             v => v.as_ref().agg_hash(),
-@@ -575,11 +570,7 @@ where I: Index
-     }
- 
-     fn visit_bitmap(&mut self, column: crate::types::BinaryColumn) -> Result<()> {
--        let column = normalize_bitmap_column(&column);
--        self.visit_indices(|i| {
--            let value = column.as_ref().index(i.to_usize()).unwrap();
--            value.agg_hash()
--        })
-+        self.visit_typed_column::<BitmapType>(column, &DataType::Bitmap)
-     }
- 
-     fn visit_string(&mut self, column: crate::types::StringColumn) -> Result<()> {
-@@ -591,7 +582,7 @@ where I: Index
-     }
- 
-     fn visit_geometry(&mut self, column: crate::types::BinaryColumn) -> Result<()> {
--        self.visit_binary(column)
-+        self.visit_typed_column::<GeometryType>(column, &DataType::Geometry)
-     }
- 
-     fn visit_geography(&mut self, column: crate::types::GeographyColumn) -> Result<()> {
-@@ -794,8 +785,6 @@ mod tests {
-     use databend_common_column::bitmap::Bitmap;
-     use databend_common_column::types::months_days_micros;
-     use databend_common_column::types::timestamp_tz;
--    use databend_common_io::HybridBitmap;
--    use roaring::RoaringTreemap;
- 
-     use super::*;
-     use crate::BlockEntry;
-@@ -804,7 +793,6 @@ mod tests {
-     use crate::ProjectedBlock;
-     use crate::Value;
-     use crate::types::ArgType;
--    use crate::types::BitmapType;
-     use crate::types::DecimalSize;
-     use crate::types::Int32Type;
-     use crate::types::NullableColumn;
-@@ -1106,35 +1094,6 @@ mod tests {
-         Ok(())
-     }
- 
--    #[test]
--    fn test_bitmap_group_hash_legacy_bytes_normalized() -> Result<()> {
--        let values = [1_u64, 5, 42];
+-[[package]]
+-name = "threadpool"
+-version = "1.8.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d050e60b33d41c19108b32cea32164033a9013fe3b46cbd4457559bfbf77afaa"
+-dependencies = [
+- "num_cpus",
+-]
 -
--        let mut hybrid = HybridBitmap::new();
--        for v in values {
--            hybrid.insert(v);
--        }
--        let mut hybrid_bytes = Vec::new();
--        hybrid.serialize_into(&mut hybrid_bytes).unwrap();
--
--        let mut tree = RoaringTreemap::new();
--        for v in values {
--            tree.insert(v);
--        }
--        let mut legacy_bytes = Vec::new();
--        tree.serialize_into(&mut legacy_bytes).unwrap();
--
--        let bitmap_column = BitmapType::from_data(vec![hybrid_bytes, legacy_bytes]);
--        let block = DataBlock::new(vec![bitmap_column.into()], 2);
--
--        let mut hashes = vec![0_u64; block.num_rows()];
--        group_hash_entries(ProjectedBlock::from(block.columns()), &mut hashes);
--
--        // Legacy-encoded bitmap should hash identically to hybrid-encoded bitmap.
--        assert_eq!(hashes[0], hashes[1]);
--        Ok(())
--    }
--
-     #[test]
-     fn test_dict_value_hashes_match_group_hash_entries() {
-         const ROWS: usize = 5000;
+ [[package]]
+ name = "thrift"
+ version = "0.17.0"
+@@ -15101,9 +15091,7 @@ checksum = "7e54bc85fc7faa8bc175c4bab5b92ba8d9a3ce893d0e9f42cc455c8ab16a9e09"
+ dependencies = [
+  "byteorder",
+  "integer-encoding 3.0.4",
+- "log",
+  "ordered-float 2.10.1",
+- "threadpool",
+ ]
+ 
+ [[package]]
 ```
 
-**File**: `src/query/expression/src/utils/bitmap.rs` (modified, +39/-0)
+**File**: `Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -13,14 +13,53 @@
- // limitations under the License.
- 
- use std::borrow::Cow;
-+use std::hash::Hash;
-+use std::hash::Hasher;
-+use std::io;
- 
- use databend_common_column::binary::BinaryColumn;
- use databend_common_column::binary::BinaryColumnBuilder;
- use databend_common_io::HYBRID_KIND_LARGE;
- use databend_common_io::HYBRID_KIND_SMALL;
- use databend_common_io::HYBRID_MAGIC;
- use databend_common_io::HYBRID_VERSION;
-+use databend_common_io::HybridBitmap;
- use databend_common_io::deserialize_bitmap;
-+
-+/// Hash a canonical compressed representation, not every decoded member.
-+/// Small hybrid sets are bounded by their one-byte serialized length; large
-+/// bitmaps stay in Roaring's array/bitset containers throughout hashing.
-+pub fn hash_bitmap<H: Hasher>(bytes: &[u8], state: &mut H) {
-+    let mut tree = match deserialize_bitmap(bytes) {
-+        Ok(HybridBitmap::Small(values)) => values.into_iter().collect(),
-+        Ok(HybridBitmap::Large(tree)) => tree,
-+        Err(_) => {
-+            bytes.hash(state);
-+            return;
-+        }
-+    };
-+    // Self-intersection preserves members while normalizing container stores by
-+    // cardinality and removing empty containers. In particular, decoding a run
-+    // can otherwise leave an array store at the array/bitset threshold.
-+    // This works on compressed containers, without enumerating the large set.
-+    tree &= tree.clone();
-+    // The writer only feeds a Hasher, so serialization cannot fail with I/O.
-+    tree.serialize_into(BitmapHashWriter(state)).unwrap();
-+}
-+
-+struct BitmapHashWriter<'a, H>(&'a mut H);
-+
-+impl<H: Hasher> io::Write for BitmapHashWriter<'_, H> {
-+    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
-+        self.0.write(bytes);
-+        Ok(bytes.len())
-+    }
-+
-+    fn flush(&mut self) -> io::Result<()> {
-+        Ok(())
-+    }
-+}
-+
- #[inline]
- pub fn is_hybrid_encoding(bytes: &[u8]) -> bool {
-     if bytes.is_empty() {
+@@ -477,7 +477,6 @@ terminal_size = "0.4.2"
+ test-harness = "0.3.0"
+ testcontainers = "0.23"
+ thiserror = { version = "1" }
+-thrift = "0.17.0"
+ tikv-jemalloc-ctl = { version = "0.6.0", features = ["use_std", "stats"] }
+ tikv-jemalloc-sys = "0.6.0"
+ tokio = { version = "1.54.1", features = ["full"] }
 ```
 
-**File**: `src/query/expression/src/values.rs` (modified, +8/-11)
+**File**: `src/query/storages/common/blocks/src/lib.rs` (modified, +3/-0)
 ```diff
-@@ -57,6 +57,7 @@ use string::StringColumnBuilder;
+@@ -14,8 +14,11 @@
  
- use crate::BlockEntry;
- use crate::ColumnView;
-+use crate::bitmap::hash_bitmap;
- use crate::bitmap::is_hybrid_encoding;
- use crate::property::Domain;
- use crate::types::EncodedColumn;
-@@ -1038,7 +1039,11 @@ impl PartialOrd for Scalar {
-                 let Ok(map_2) = deserialize_bitmap(b2) else {
-                     return None;
-                 };
--                map_1.eq(&map_2).then_some(Ordering::Equal)
-+                // Roaring's equality distinguishes array and bitset stores.
-+                // Decoding a run can leave an oversized array at the threshold,
-+                // so compare members through compressed intersection instead.
-+                (map_1.len() == map_2.len() && map_1.intersection_len(&map_2) == map_1.len())
-+                    .then_some(Ordering::Equal)
-             }
-             (Scalar::Tuple(t1), Scalar::Tuple(t2)) => t1.partial_cmp(t2),
-             (Scalar::Variant(v1), Scalar::Variant(v2)) => {
-@@ -1160,7 +1165,7 @@ impl Hash for ScalarRef<'_> {
-             ScalarRef::Timestamp(v) => v.hash(state),
-             ScalarRef::TimestampTz(v) => v.hash(state),
-             ScalarRef::Date(v) => v.hash(state),
--            ScalarRef::Interval(v) => v.0.hash(state),
-+            ScalarRef::Interval(v) => v.hash(state),
-             ScalarRef::Array(v) | ScalarRef::Map(v) => {
-                 v.len().hash(state);
-                 for value in v.iter() {
-@@ -1170,15 +1175,7 @@ impl Hash for ScalarRef<'_> {
-             // `Scalar::eq` compares bitmaps by their decoded members, so the
-             // hash must not depend on the encoding. Undecodable payloads only
-             // compare equal bytewise and fall back to hashing the bytes.
--            ScalarRef::Bitmap(v) => match deserialize_bitmap(v) {
--                Ok(bitmap) => {
--                    bitmap.len().hash(state);
--                    for member in bitmap.iter() {
--                        member.hash(state);
--                    }
--                }
--                Err(_) => v.hash(state),
--            },
-+            ScalarRef::Bitmap(v) => hash_bitmap(v, state),
-             ScalarRef::Tuple(v) => {
-                 v.hash(state);
-             }
+ #![allow(clippy::collapsible_if, clippy::uninlined_format_args)]
+ 
++mod parquet_page;
+ mod parquet_rs;
+ mod parquet_writer;
++pub mod thrift_compact;
++pub use parquet_page::*;
+ pub use parquet_rs::*;
+ pub use parquet_writer::*;
+ pub mod memory;
 ```
 
-**File**: `src/query/expression/tests/it/group_hash.rs` (added, +356/-0)
+**File**: `src/query/storages/common/blocks/src/parquet_page.rs` (added, +564/-0)
 ```diff
-@@ -0,0 +1,356 @@
+@@ -0,0 +1,564 @@
 +// Copyright 2021 Datafuse Labs
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -1698,330 +1927,1023 @@ Co-authored-by: kould <[REDACTED_EMAIL]>
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+use std::collections::HashMap;
-+use std::hash::DefaultHasher;
-+use std::hash::Hash;
-+use std::hash::Hasher;
++use databend_common_exception::ErrorCode;
++use databend_common_exception::Result;
 +
-+use databend_common_expression::types::DictColumn;
-+use databend_common_expression::types::EncodedColumn;
-+use databend_common_expression::types::Int16Type;
-+use databend_common_expression::types::NarrowBuffer;
-+use databend_common_expression::types::StringType;
-+use databend_common_expression::*;
-+use databend_common_io::HybridBitmap;
-+use roaring::RoaringBitmap;
-+use roaring::RoaringTreemap;
++use crate::thrift_compact::CompactType;
++use crate::thrift_compact::ThriftCompactReader;
 +
-+fn repeated(scalar: Scalar, rows: usize) -> BlockEntry {
-+    BlockEntry::new_const_column(scalar.as_ref().infer_data_type(), scalar, rows)
++const PAGE_TYPE_DATA_PAGE: i32 = 0;
++const PAGE_TYPE_INDEX_PAGE: i32 = 1;
++const PAGE_TYPE_DICTIONARY_PAGE: i32 = 2;
++const PAGE_TYPE_DATA_PAGE_V2: i32 = 3;
++
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub enum ParquetPageKind {
++    DataPageV1 {
++        num_values: u64,
++        encoding: i32,
++    },
++    DataPageV2 {
++        num_values: u64,
++        num_rows: u64,
++        encoding: i32,
++    },
++    DictionaryPage {
++        num_values: u64,
++        encoding: i32,
++    },
++    IndexPage,
++    Unknown(i32),
 +}
 +
-+fn scalar_hash(scalar: &impl Hash) -> u64 {
-+    let mut hasher = DefaultHasher::new();
-+    scalar.hash(&mut hasher);
-+    hasher.finish()
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub struct ParquetPageHeader {
++    pub kind: ParquetPageKind,
++    pub compressed_size: u64,
++    pub uncompressed_size: u64,
++    pub header_size: u64,
++    pub page_offset: u64,
 +}
 +
-+// All rows in a class have the same logical value. No expected hash is derived
-+// from the hash implementation: compare representations and layouts instead.
-+fn assert_hash_class(scalars: &[Scalar]) -> databend_common_exception::Result<()> {
-+    let first = &scalars[0];
-+    let data_type = first.as_ref().infer_data_type();
-+    let mut map = HashMap::new();
-+    let mut builder = ColumnBuilder::with_capacity(&data_type, scalars.len() + 2);
-+    builder.push(first.as_ref());
-+    for scalar in scalars {
-+        // Check equality in both directions before diagnosing HashMap hashing.
-+        assert_eq!(scalar, first);
-+        assert_eq!(first, scalar);
-+        assert_eq!(scalar_hash(scalar), scalar_hash(first));
-+        map.insert(scalar.clone(), ());
-+        builder.push(scalar.as_ref());
++impl ParquetPageHeader {
++    pub fn is_index_page(&self) -> bool {
++        matches!(self.kind, ParquetPageKind::IndexPage)
 +    }
-+    assert_eq!(map.len(), 1);
-+    builder.push(first.as_ref());
-+    // Slice off padding so binary/array buffers and validity can have offsets.
-+    let column = builder.build().slice(1..scalars.len() + 1);
-+    let rows = scalars.len();
-+    let dictionary = Column::Encoded(Box::new(EncodedColumn::Dict(DictColumn::new(
-+        NarrowBuffer::pack((0..rows).rev().map(|index| index as u64), (rows - 1) as u64),
-+        column.clone(),
-+    ))));
-+    let suffix = Int16Type::from_data(vec![4_i16; rows]);
-+    let entries = [BlockEntry::Column(column), BlockEntry::Column(dictionary)]
-+        .into_iter()
-+        .chain(scalars.iter().cloned().flat_map(|value| {
-+            let entry = repeated(value.clone(), rows);
-+            let nullable =
-+                BlockEntry::new_const_column(data_type.clone().wrap_nullable(), value, rows);
-+            [entry, nullable]
-+        }))
-+        .collect::<Vec<_>>();
 +
-+    for projection in [vec![0], vec![0, 1], vec![1, 0]] {
-+        let null_block = DataBlock::new(
-+            vec![
-+                BlockEntry::new_const_column(data_type.clone().wrap_nullable(), Scalar::Null, rows),
-+                suffix.clone().into(),
-+            ],
-+            rows,
-+        );
-+        let mut null_hashes = vec![0; rows];
-+        group_hash_entries(
-+            ProjectedBlock::project(&projection, &null_block),
-+            &mut null_hashes,
-+        );
-+        // Compare the same layouts both without NULLs and with actual masked
-+        // payloads. Indexed hashing selects a valid row and a NULL row.
-+        for nullable in [false, true] {
-+            let mut expected = None;
-+            for entry in &entries {
-+                let entry = if nullable {
-+                    entry
-+                        .to_column()
-+                        .remove_nullable()
-+                        .wrap_nullable(Some((0..rows).map(|row| row != rows - 1).collect()))
-+                        .into()
-+                } else {
-+                    entry.clone()
-+                };
-+                let block = DataBlock::new(vec![entry, suffix.clone().into()], rows);
-+                let mut hashes = vec![u64::MAX; rows];
-+                group_hash_entries(ProjectedBlock::project(&projection, &block), &mut hashes);
-+                let valid_rows = if nullable { rows - 1 } else { rows };
-+                assert!(hashes[..valid_rows].iter().all(|hash| *hash == hashes[0]));
-+                if nullable {
-+                    assert_eq!(hashes[rows - 1], null_hashes[rows - 1]);
-+                }
-+                if let Some(expected) = &expected {
-+                    assert_eq!(&hashes, expected);
-+                } else {
-+                    expected = Some(hashes.clone());
-+ 
++    pub fn page_type_name(&self) -> &'static str {
++        match self.kind {
++            ParquetPageKind::DataPageV1 { .. } => "data_page_v1",
++            ParquetPageKind::DataPageV2 { .. } => "data_page_v2",
++            ParquetPageKind::DictionaryPage { .. } => "dictionary",
++            ParquetPageKind::IndexPage => "index_page",
++            ParquetPageKind::Unknown(_) => "unknown",
++        }
++    }
++
++    pub fn encoding_name(&self) -> &'static str {
++        match self.kind {
++            ParquetPageKind::DataPageV1 { encoding, .. }
++            | ParquetPageKind::DataPageV2 { encoding, .. }
++            | ParquetPageKind::DictionaryPage { encoding, .. } => parquet_encoding_name(encoding),
++            ParquetPageKind::IndexPage | ParquetPageKind::Unknown(_) => "unknown",
++        }
++    }
++
++    pub fn num_values(&self) -> u64 {
++        match self.kind {
++            ParquetPageKind::DataPageV1 { num_values, .. }
++            | ParquetPageKind::DataPageV2 { num_values, .. }
++            | ParquetPageKind::DictionaryPage { num_values, .. } => num_values,
++            ParquetPageKind::IndexPage | ParquetPageKind::Unknown(_) => 0,
++        }
++    }
++
++    pub fn num_rows(&self) -> Option<u64> {
++        match self.kind {
++            ParquetPageKind::DataPageV1 { num_values, .. } => Some(num_values),
++            ParquetPageKind::DataPageV2 { num_rows, .. } => Some(num_rows),
++            ParquetPageKind::DictionaryPage { .. }
++            | ParquetPageKind::IndexPage
++            | ParquetPageKind::Unknown(_) => None,
++        }
++    }
++}
++
++pub fn parquet_encoding_name(encoding: i32) -> &'static str {
++    match encoding {
++        0 => "plain",
++        2 => "plain_dictionary",
++        3 => "rle",
++        4 => "bit_packed",
++        5 => "delta_binary_packed",
++        6 => "delta_length_byte_array",
++        7 => "delta_byte_array",
++        8 => "rle_dictionary",
++        9 => "byte_stream_split",
++        _ => "unknown",
++    }
++}
++
++/// Decodes a single Parquet `PageHeader` from the start of `input` without allocating.
++pub fn read_parquet_page_header(input: &[u8], page_offset: u64) -> Result<ParquetPageHeader> {
++    let mut reader = ThriftCompactReader::new(input);
++    let mut page_type = None;
++    let mut uncompressed_size = None;
++    let mut compressed_size = None;
++    let mut data_v1 = None;
++    let mut dict = None;
++    let mut data_v2 = None;
++
++    reader.read_root_struct(|r, field_id, ty| {
++        match field_id {
++            1 => page_type = Some(r.read_i32(ty)?),
++            2 => uncompressed_size = Some(r.read_i32(ty)?),
++            3 => compressed_size = Some(r.read_i32(ty)?),
++            4 => {
++                let _ = r.read_i32(ty)?;
++            }
++            5 => data_v1 = Some(read_data_page_v1(r, ty)?),
++            6 => r.read_struct(ty, |r, _, ty| r.skip_value(ty))?,
++            7 => dict = Some(read_dictionary_page(r, ty)?),
++            8 => data_v2 = Some(read_data_page_v2(r, ty)?),
++            _ => r.skip_value(ty)?,
++        }
++        Ok(())
++    })?;
++
++    let header_size = (input.len() - reader.remaining()) as u64;
++    let page_type = required_field(page_type, "PageHeader.type")?;
++    let uncompressed_size = non_negative_i32(
++        required_field(uncompressed_size, "PageHead
 ```
 
-**File**: `src/query/expression/tests/it/main.rs` (modified, +1/-0)
+**File**: `src/query/storages/common/blocks/src/thrift_compact.rs` (added, +319/-0)
 ```diff
-@@ -40,6 +40,7 @@ mod filter_executor;
- mod fold_rules;
- mod function_factory;
- mod group_by;
-+mod group_hash;
- mod hilbert;
- mod kernel;
- mod meta_scalar;
+@@ -0,0 +1,319 @@
++// Copyright 2021 Datafuse Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use databend_common_exception::ErrorCode;
++use databend_common_exception::Result;
++
++const MAX_VARINT32_BYTES: usize = 5;
++const MAX_VARINT64_BYTES: usize = 10;
++pub const DEFAULT_MAX_THRIFT_DEPTH: usize = 64;
++
++/// Wire types in the Thrift Compact Protocol.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub enum CompactType {
++    /// Struct boolean field whose value is encoded in the field header nibble.
++    InlineBool(bool),
++    /// Collection boolean element stored as a 1-byte value (`0x00..=0x02`).
++    Bool,
++    I8,
++    I16,
++    I32,
++    I64,
++    Double,
++    Binary,
++    List,
++    Set,
++    Map,
++    Struct,
++    Uuid,
++}
++
++impl CompactType {
++    fn from_common_nibble(nibble: u8) -> Result<Self> {
++        match nibble {
++            0x03 => Ok(Self::I8),
++            0x04 => Ok(Self::I16),
++            0x05 => Ok(Self::I32),
++            0x06 => Ok(Self::I64),
++            0x07 => Ok(Self::Double),
++            0x08 => Ok(Self::Binary),
++            0x09 => Ok(Self::List),
++            0x0A => Ok(Self::Set),
++            0x0B => Ok(Self::Map),
++            0x0C => Ok(Self::Struct),
++            0x0D => Ok(Self::Uuid),
++            other => Err(thrift_err(format!(
++                "unknown Thrift compact wire type {other}"
++            ))),
++        }
++    }
++
++    fn from_field_nibble(nibble: u8) -> Result<Self> {
++        match nibble {
++            0x01 => Ok(Self::InlineBool(true)),
++            0x02 => Ok(Self::InlineBool(false)),
++            other => Self::from_common_nibble(other),
++        }
++    }
++
++    fn from_elem_nibble(nibble: u8) -> Result<Self> {
++        match nibble {
++            // Both 0x01 and 0x02 are valid for collection booleans per the Thrift compact spec.
++            0x01 | 0x02 => Ok(Self::Bool),
++            other => Self::from_common_nibble(other),
++        }
++    }
++
++    fn min_wire_size(self) -> usize {
++        match self {
++            Self::InlineBool(_) => 0,
++            Self::Double => 8,
++            Self::Uuid => 16,
++            _ => 1,
++        }
++    }
++}
++
++/// Bounded, zero-allocation Thrift Compact Protocol reader over an in-memory byte slice.
++///
++/// Binary and container lengths are validated against the remaining slice before advancing,
++/// avoiding eager heap allocations from untrusted length prefixes.
++pub struct ThriftCompactReader<'a> {
++    buf: &'a [u8],
++    depth_budget: usize,
++}
++
++impl<'a> ThriftCompactReader<'a> {
++    pub fn new(buf: &'a [u8]) -> Self {
++        Self {
++            buf,
++            depth_budget: DEFAULT_MAX_THRIFT_DEPTH,
++        }
++    }
++
++    pub fn remaining(&self) -> usize {
++        self.buf.len()
++    }
++
++    pub fn read_byte(&mut self) -> Result<u8> {
++        let (&b, rest) = self
++            .buf
++            .split_first()
++            .ok_or_else(|| thrift_err("unexpected EOF"))?;
++        self.buf = rest;
++        Ok(b)
++    }
++
++    pub fn read_slice(&mut self, len: usize) -> Result<&'a [u8]> {
++        let (head, tail) = self
++            .buf
++            .split_at_checked(len)
++            .ok_or_else(|| thrift_err("unexpected EOF"))?;
++        self.buf = tail;
++        Ok(head)
++    }
++
++    pub fn read_varint32(&mut self) -> Result<u32> {
++        let mut result = 0u32;
++        let mut shift = 0u32;
++        for _ in 0..MAX_VARINT32_BYTES {
++            let b = self.read_byte()?;
++            result |= u32::from(b & 0x7F) << shift;
++            if b & 0x80 == 0 {
++                return Ok(result);
++            }
++            shift += 7;
++        }
++        Err(thrift_err("varint32 exceeds 5 bytes"))
++    }
++
++    pub fn read_zigzag_i32(&mut self) -> Result<i32> {
++        let n = self.read_varint32()?;
++        Ok(((n >> 1) as i32) ^ -(n as i32 & 1))
++    }
++
++    pub fn read_bool(&mut self, ty: CompactType) -> Result<bool> {
++        match ty {
++            CompactType::InlineBool(v) => Ok(v),
++            CompactType::Bool => match self.read_byte()? {
++                0x01 => Ok(true),
++                0x00 | 0x02 => Ok(false),
++                other => Err(thrift_err(format!("invalid boolean value {other}"))),
++            },
++            other => Err(unexpected_type(other, "Bool")),
++        }
++    }
++
++    pub fn read_i32(&mut self, ty: CompactType) -> Result<i32> {
++        if ty != CompactType::I32 {
++            return Err(unexpected_type(ty, "I32"));
++        }
++
 ```
 
-**File**: `tests/sqllogictests/suites/mode/cluster/shuffle_value_hash.test` (added, +40/-0)
+**File**: `src/query/storages/fuse/Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -0,0 +1,40 @@
-+# Integration smoke coverage for scalar/materialized bitmap shuffle inputs,
-+# single/composite keys and NULLs. to_bitmap canonicalizes member order, so
-+# these are not cross-encoding regressions; those require the Rust fixtures.
-+# Cross-encoding JOIN key serialization remains outside this hash-only fix.
-+
-+statement ok
-+set prefer_broadcast_join = 0
-+
-+statement ok
-+create or replace table shuffle_value_left(tag int not null, bits bitmap null)
-+
-+statement ok
-+create or replace table shuffle_value_right(tag int not null, bits bitmap null)
-+
-+statement ok
-+insert into shuffle_value_left values (1, to_bitmap('2,9')), (2, to_bitmap('4')), (3, null)
-+
-+statement ok
-+insert into shuffle_value_right values (1, to_bitmap('9,2')), (2, to_bitmap('4')), (3, null)
-+
-+query I
-+select count(*) from shuffle_value_left l join shuffle_value_right r on l.bits = r.bits and l.tag = r.tag
-+----
-+2
-+
-+query I
-+select count(*) from (select tag, to_bitmap('2,9') as bits from shuffle_value_left) l join shuffle_value_right r on l.bits = r.bits and l.tag = r.tag
-+----
-+1
-+
-+query I
-+select count(*) from shuffle_value_left l join shuffle_value_right r on l.bits = r.bits
-+----
-+2
-+
-+statement ok
-+drop table shuffle_value_left
-+
-+statement ok
-+drop table shuffle_value_right
+@@ -80,7 +80,6 @@ siphasher = { workspace = true }
+ tantivy = { workspace = true }
+ tantivy-jieba = { workspace = true }
+ tempfile = { workspace = true }
+-thrift = { workspace = true }
+ tokio = { workspace = true }
+ typetag = { workspace = true }
+ uuid = { workspace = true }
 ```
 
-**File**: `tests/sqllogictests/suites/query/functions/02_0087_function_interval_hash.test` (added, +52/-0)
+**File**: `src/query/storages/fuse/src/table_functions/fuse_page.rs` (modified, +18/-189)
 ```diff
-@@ -0,0 +1,52 @@
-+# Scalar interval hashes must follow duration equality, including inside
-+# arrays, tuples and maps. Keep these SQL-visible cases here rather than
-+# duplicating them in the expression crate's group-hash layout tests.
-+
-+# Establish the equality contract independently of hash-based deduplication.
-+skipif mysql
-+query BB
-+select to_interval('1 month') = to_interval('30 days'), to_interval('30 days') = to_interval('29 days 24 hours')
-+----
-+1 1
-+
-+# Constant folding: three storage representations of one duration.
-+skipif mysql
-+query I
-+select array_length(array_distinct([to_interval('1 month'), to_interval('30 days'), to_interval('29 days 24 hours')]))
-+----
-+1
-+
-+# Runtime evaluation: expose each row instead of hiding the result in a sum.
-+skipif mysql
-+query II
-+select number, array_length(array_distinct([to_interval(if(number % 2 = 0, '1 month', '30 days')), to_interval('30 days')])) from numbers(4) order by number
-+----
-+0 1
-+1 1
-+2 1
-+3 1
-+
-+# Recursive scalar hashing must use the same duration semantics in every
-+# supported nested container, including a tuple with a NULL field.
-+skipif mysql
-+query III
-+select
-+    array_length(array_distinct([[to_interval('1 month')], [to_interval('30 days')]])),
-+    array_length(array_distinct([tuple(null, to_interval('1 month')), tuple(null, to_interval('30 days'))])),
-+    array_length(array_distinct([map(['key'], [to_interval('1 month')]), map(['key'], [to_interval('30 days')])]))
-+----
-+1 1 1
-+
-+# Negative durations must canonicalize too, not only positive intervals.
-+skipif mysql
-+query I
-+select array_length(array_distinct([to_interval('-1 month'), to_interval('-30 days'), to_interval('-29 days -24 hours')]))
-+----
-+1
-+
-+# Do not collapse a genuinely different duration; NULL is ignored by array_distinct.
-+skipif mysql
-+query I
-+select array_length(array_distinct([null, to_interval('1 month'), to_interval('30 days'), to_interval('31 days')]))
-+----
-+2
+@@ -1,5 +1,3 @@
+-#![allow(deprecated)]
+-
+ // Copyright 2021 Datafuse Labs
+ //
+ // Licensed under the Apache License, Version 2.0 (the "License");
+@@ -14,7 +12,6 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-use std::io::Read;
+ use std::sync::Arc;
+ 
+ use databend_common_catalog::table::Table;
+@@ -33,14 +30,11 @@ use databend_common_expression::types::StringType;
+ use databend_common_expression::types::TimestampType;
+ use databend_common_expression::types::UInt64Type;
+ use databend_common_expression::types::string::StringColumnBuilder;
++use databend_storages_common_blocks::iter_parquet_page_headers;
+ use databend_storages_common_cache::CachePolicy;
+ use databend_storages_common_table_meta::meta::SegmentInfo;
+ use databend_storages_common_table_meta::meta::TableSnapshot;
+ use opendal::Operator;
+-use parquet::format::PageHeader;
+-use parquet::format::PageType;
+-use parquet::thrift::TSerializable;
+-use thrift::protocol::TCompactInputProtocol;
+ 
+ use crate::FuseStorageFormat;
+ use crate::FuseTable;
+@@ -52,18 +46,6 @@ use crate::table_functions::function_template::TableMetaFunc;
+ pub struct FusePage;
+ pub type FusePageFunc = TableMetaFuncTemplate<FusePage>;
+ 
+-struct PageMetaRow<'a> {
+-    column_name: &'a str,
+-    page_type: &'static str,
+-    encoding: &'static str,
+-    num_values: u64,
+-    num_rows: Option<u64>,
+-    compressed_size: u64,
+-    uncompressed_size: u64,
+-    header_size: u64,
+-    page_offset: u64,
+-}
+-
+ #[async_trait::async_trait]
+ impl TableMetaFunc for FusePage {
+     fn schema() -> Arc<TableSchema> {
+@@ -164,26 +146,29 @@ impl TableMetaFunc for FusePage {
+                             parquet_meta.len,
+                         )
+                         .await?;
+-                        for (page_ordinal_in_column, page) in parse_page_headers(
++                        let mut page_ordinal_in_column = 0u64;
++                        for page in iter_parquet_page_headers(
+                             field.name(),
+                             parquet_meta.offset,
+-                            column_bytes.as_slice(),
+-                        )?
+-                        .into_iter()
+-                        .enumerate()
+-                        {
++                            column_bytes.as_ref(),
++                        ) {
++                            let page = page?;
++                            if page.is_index_page() {
++                                continue;
++                            }
+                             block_location.put_and_commit(&block.location.0);
+-                            column_name.put_and_commit(page.column_name);
+-                            page_type.put_and_commit(page.page_type);
+-                            encoding.put_and_commit(page.encoding);
+-                            page_ordinal.push(page_ordinal_in_column as u64);
+-                            num_values.push(page.num_values);
+-                            num_rows.push(page.num_rows);
++                            column_name.put_and_commit(field.name());
++                            page_type.put_and_commit(page.page_type_name());
++                            encoding.put_and_commit(page.encoding_name());
++                            page_ordinal.push(page_ordinal_in_column);
++                            num_values.push(page.num_values());
++                            num_rows.push(page.num_rows());
+                             compressed_size.push(page.compressed_size);
+                             uncompressed_size.push(page.uncompressed_size);
+                             header_size.push(page.header_size);
+                             page_offset.push(page.page_offset);
+ 
++                            page_ordinal_in_column += 1;
+                             rows += 1;
+                             if rows >= limit {
+                                 break 'FOR;
+@@ -220,7 +205,7 @@ async fn read_parquet_column_chunk(
+     location: &str,
+     offset: u64,
+     len: u64,
+-) -> Result<Vec<u8>> {
++) -> Result<bytes::Bytes> {
+     let end = offset.checked_add(len).ok_or_else(|| {
+         ErrorCode::ParquetFileInvalid(format!(
+             "invalid parquet file {}, column chunk length overflow",
+@@ -232,161 +217,5 @@ async fn read_parquet_column_chunk(
+         .range(offset..end)
+         .await
+         .map_err(|err| ErrorCode::StorageOther(err.to_string()))?;
+-    Ok(buffer.to_vec())
+-}
+-
+-fn parse_page_headers<'a>(
+-    column_name: &'a str,
+-    column_offset: u64,
+-    column_bytes: &'a [u8],
+-) -> Result<Vec<PageMetaRow<'a>>> {
+-    let mut cursor = std::io::Cursor::new(column_bytes);
+-    let total_len = column_bytes.len() as u64;
+-    let mut pages = Vec::new();
+-
+-    while cursor.position() < total_len {
+-        let header_offset = cursor.position();
+-        let (header_len, header) = read_page_header_len(&mut cursor)?;
+-        let compressed_size =
+-            convert_i32_to_u64(header.compressed_page_size, "compresse
 ```
 
 ---
 
-### Incident Patch 3: `3c30b0dd` (2026-11-16)
-**Commit Message**: fix(query): bind a CTE body in its definition's scope (#21076)
+### Incident Patch 3: `9012edc8` (2026-11-17)
+**Commit Message**: fix(query): correct HNSW graph construction and SQ8 scoring in vector indexes (#21097)
 
-* fix(query): bind a CTE body in its definition's scope
+* fix(query): correct HNSW graph construction and SQ8 scoring in vector indexes
 
-A non-materialized CTE was rebound at every reference with the referencing
-context chained as its parent, so its body could bind columns that only the
-referencing query provides. `WITH t AS (SELECT x) ... , LATERAL (SELECT * FROM
-t)` therefore returned a row instead of rejecting `x`, and the meaning of the
-same CTE depended on where it was used.
+* fix calibration_count = 0
 
-Bind the body without the referencing scope, so an unknown column is reported
-where the CTE is defined. The context the CTE scan hands back still chains to
-the referencing query: a correlated subquery that reads the CTE has to reach
-the query it sits in.
-
-* test(query): cover CTE binding scope with a sqllogictest instead of a binder unit test
-
-**File**: `src/query/sql/src/planner/binder/table.rs` (modified, +10/-1)
+**File**: `src/query/service/tests/it/indexes/vector_index/pruning.rs` (modified, +30/-57)
 ```diff
-@@ -179,7 +179,12 @@ impl Binder {
-         cte_info: &CteInfo,
-     ) -> Result<(SExpr, BindContext)> {
-         let mut new_bind_context = BindContext {
--            parent: Some(Box::new(bind_context.clone())),
-+            // A CTE definition is bound at the point of its `WITH` clause, not at the point
-+            // where it is referenced. Chaining the referencing context as a parent would let
-+            // the body bind its columns — a CTE referenced from a lateral subquery would
-+            // silently correlate with whatever the subquery's left side produces. Earlier
-+            // CTEs still resolve through the cloned `cte_context`.
-+            parent: None,
-             binding_depth: bind_context.next_depth()?,
-             bound_internal_columns: BTreeMap::new(),
-             bound_virtual_columns: BTreeMap::new(),
-@@ -207,6 +212,10 @@ impl Binder {
+@@ -741,13 +741,13 @@ async fn test_block_pruner() -> anyhow::Result<()> {
+         // Third query: l2_distance with query_values1
+         vec![
+             vec![
+-                VectorScoreResult::new(0, 0, 0, 3.5187712),
+-                VectorScoreResult::new(0, 0, 9, 3.5518785),
++                VectorScoreResult::new(0, 0, 0, 0.0),
++                VectorScoreResult::new(0, 0, 9, 0.4838298),
++                VectorScoreResult::new(0, 0, 1, 0.59597003),
+             ],
+             vec![
+-                VectorScoreResult::new(1, 3, 6, 3.4702706),
+-                VectorScoreResult::new(1, 3, 7, 3.5206928),
+-                VectorScoreResult::new(1, 3, 1, 3.556445),
++                VectorScoreResult::new(1, 0, 9, 0.51379997),
++                VectorScoreResult::new(1, 0, 5, 0.58313537),
+             ],
+         ],
+         // Fourth query: cosine_distance with query_values2
+@@ -771,12 +771,17 @@ async fn test_block_pruner() -> anyhow::Result<()> {
+             ],
+         ],
+         // Sixth query: l2_distance with query_values2
+-        vec![vec![VectorScoreResult::new(1, 1, 8, 3.4763064)], vec![
+-            VectorScoreResult::new(1, 3, 5, 3.4903116),
+-            VectorScoreResult::new(1, 3, 9, 3.4926815),
+-            VectorScoreResult::new(1, 3, 0, 3.527872),
+-            VectorScoreResult::new(1, 3, 8, 3.560473),
+-        ]],
++        vec![
++            vec![
++                VectorScoreResult::new(0, 1, 6, 0.48633155),
++                VectorScoreResult::new(0, 1, 5, 0.7715289),
++            ],
++            vec![VectorScoreResult::new(1, 1, 8, 0.0)],
++            vec![
++                VectorScoreResult::new(1, 4, 8, 0.47685158),
++                VectorScoreResult::new(1, 4, 7, 0.71438366),
++            ],
++        ],
+     ];
  
-         let (s_expr, mut res_bind_context) =
-             self.bind_query(&mut new_bind_context, &cte_info.query)?;
-+        // The body above was bound without the referencing scope, but the scan it produced is
-+        // part of the referencing query: a correlated subquery that reads the CTE still has to
-+        // reach the columns of the query it sits in.
-+        res_bind_context.parent = Some(Box::new(bind_context.clone()));
-         let mut cols_alias = cte_info.columns_alias.clone();
-         if let Some(alias) = alias {
-             for (idx, col_alias) in alias.columns.iter().enumerate() {
+     let mut extras = Vec::new();
+@@ -887,32 +892,17 @@ async fn test_block_pruner() -> anyhow::Result<()> {
+                 VectorScoreResult::new(1, 0, 9, 0.7167929),
+             ],
+         ],
+-        // Third query: l2_distance with filter and query_values1
++        // Third query: l2_distance with filter and query_values1. L2 scores are
++        // small, so few rows pass `> 2.0`; these are the TopN rows themselves,
++        // which `filtered_topn` leaves unchanged.
+         vec![
++            vec![VectorScoreResult::new(0, 0, 7, 2.1106725)],
+             vec![
+-                VectorScoreResult::new(0, 0, 0, 3.5187712),
+-                VectorScoreResult::new(0, 0, 1, 3.5688834),
+-                VectorScoreResult::new(0, 0, 2, 4.158467),
+-                VectorScoreResult::new(0, 0, 3, 3.8972623),
+-                VectorScoreResult::new(0, 0, 4, 3.9402654),
+-                VectorScoreResult::new(0, 0, 5, 3.8295133),
+-                VectorScoreResult::new(0, 0, 6, 4.16049),
+-                VectorScoreResult::new(0, 0, 7, 4.1032534),
+-                VectorScoreResult::new(0, 0, 8, 4.2184787),
+-                VectorScoreResult::new(0, 0, 9, 3.5518785),
+-            ],
+-            vec![
+-                VectorScoreResult::new(1, 3, 0, 3.9212408),
+-                VectorScoreResult::new(1, 3, 1, 3.556445),
+-                VectorScoreResult::new(1, 3, 2, 3.7241573),
+-                VectorScoreResult::new(1, 3, 3, 4.1835504),
+-                VectorScoreResult::new(1, 3, 4, 3.6078227),
+-                VectorScoreResult::new(1, 3, 5, 3.5779395),
+-                VectorScoreResult::new(1, 3, 6, 3.4702706),
+-                VectorScoreResult::new(1, 3, 7, 3.5206928),
+-                VectorScoreResult::new(1, 3, 8, 3.8251386),
+-                VectorScoreResult::new(1, 3, 9, 3.616931),
++                VectorScoreResult::new(0, 3, 6, 2.0039008),
++                VectorScoreResult::new(0, 3, 1, 2.0506036),
+             ],
++            vec![VectorScoreResult::new(1, 0, 6, 2.0104616)],
++            vec![VectorScoreResult::new(1, 1, 4, 2.070966)],
+         ],
+         // Fourth query: cosine_distance with filter and query_values2
+         vec![],
+@@ -967,32 +957,15 @@ async fn test_block_pruner() -> anyhow::Result<()> {
+                 VectorScoreResult::new(1, 3, 9, 2.011335),
+             ],
+         ],
+-        // Sixth query: l2_distance with filter and query_values2
++        // Sixth query: l2_distance with filter and query_values2, TopN rows as above.
+         vec![
+             vec![
+-                VectorScoreResult::new(1, 1, 0, 3.819309),
+-                VectorScoreResult::new(1, 1, 1, 3.8105543),
+-                VectorScoreResult::new(1, 1, 2, 3.8291273),
+-                VectorScoreResult::new(1, 1, 3, 3.7389958),
+-                VectorScoreResult::new(1, 1, 4, 3.5913217),
+-                VectorScoreResult::new(1, 1, 5, 3.870244),
+-                VectorScoreResult::new(1, 1, 6, 3.7941854),
+-                VectorScoreResult::new(1, 1, 7, 3.585766),
+-                VectorScoreResult::new(1, 1, 8, 3.4763064),
+-                VectorScoreResult::new(1, 1, 9, 3.709784),
+-            ],
+-            vec![
+-                VectorScoreResult::new(1,
 ```
 
-**File**: `tests/sqllogictests/suites/query/cte/cte_scope.test` (added, +46/-0)
+**File**: `src/query/storages/common/index/src/hnsw_index/graph_layers_builder.rs` (modified, +59/-3)
 ```diff
-@@ -0,0 +1,46 @@
-+# A CTE body is bound where its WITH clause is, so it can never resolve a column
-+# that only the query referencing it provides. Issue #20983.
+@@ -248,13 +248,18 @@ impl GraphLayersBuilder {
+ 
+     /// Map a uniform `[0, 1)` sample to a geometric level.
+     ///
++    /// With `level_factor = 1 / ln(m)`, `floor` gives `P(level >= l) = m^-l`,
++    /// the distribution from the HNSW paper: 1 in `m` points reaches level 1.
++    /// Rounding instead would give `m^-(l - 0.5)`, putting 4x as many points on
++    /// level 1 at `m = 16` and growing the upper layers with no search benefit.
++    ///
+     /// `Uniform::new(0.0, 1.0)` is half-open, so `sample` can be exactly `0.0`.
+-    /// `ln(0.0)` is `-inf`, and `(-(-inf) * factor).round() as usize` saturates
++    /// `ln(0.0)` is `-inf`, and `(-(-inf) * factor).floor() as usize` saturates
+     /// to `usize::MAX`, which then makes `set_levels` allocate unboundedly.
+     /// Clamp to the smallest positive `f64` so the level stays bounded (qdrant#9959).
+     fn level_from_sample(sample: f64, level_factor: f64) -> usize {
+         let sample = sample.max(f64::MIN_POSITIVE);
+-        (-sample.ln() * level_factor).round() as usize
++        (-sample.ln() * level_factor).floor() as usize
+     }
+ 
+     pub(crate) fn get_point_level(&self, point_id: PointOffsetType) -> usize {
+@@ -468,8 +473,13 @@ impl GraphLayersBuilder {
+ 
+ #[cfg(test)]
+ mod tests {
++    use rand::SeedableRng as _;
++    use rand::rngs::SmallRng;
 +
-+# The enclosing SELECT does not provide x.
-+statement error 1065
-+WITH t AS (SELECT x) SELECT * FROM t
+     use super::*;
+ 
++    const M: usize = 8;
 +
-+# Another item of the referencing FROM does not provide x.
-+statement error 1065
-+WITH t AS (SELECT x) SELECT * FROM (SELECT 1 AS x) s, t
+     #[test]
+     fn test_level_from_sample() {
+         // A zero uniform sample used to make ln(0) = -inf and saturate the
+@@ -482,6 +492,52 @@ mod tests {
+         );
+         // Other samples keep their level.
+         assert_eq!(GraphLayersBuilder::level_from_sample(0.5, level_factor), 0);
+-        assert_eq!(GraphLayersBuilder::level_from_sample(0.1, level_factor), 1);
++        assert_eq!(GraphLayersBuilder::level_from_sample(0.05, level_factor), 1);
++    }
 +
-+# The left side of a LATERAL subquery used to leak into the CTE body and
-+# this query returned `1 1`.
-+statement error 1065
-+WITH t AS (SELECT x) SELECT * FROM (SELECT 1 AS x) s, LATERAL (SELECT * FROM t)
++    #[test]
++    fn level_from_sample_level_boundaries() {
++        // A point reaches level `l` exactly when `sample <= m^-l`.
++        let m = M as f64;
++        let level_factor = 1.0 / m.ln();
++        let level = |sample: f64| GraphLayersBuilder::level_from_sample(sample, level_factor);
 +
-+# A self-contained CTE is still readable from a lateral subquery.
-+query II
-+WITH t AS (SELECT 1 AS x) SELECT * FROM (SELECT 1 AS x) s, LATERAL (SELECT * FROM t)
-+----
-+1 1
++        assert_eq!(level(0.99), 0);
++        assert_eq!(level(1.1 / m), 0);
++        assert_eq!(level(0.9 / m), 1);
++        assert_eq!(level(1.1 / (m * m)), 1);
++        assert_eq!(level(0.9 / (m * m)), 2);
++        // Rounding would put this sample on level 1 (`-ln(0.2) / ln(8) = 0.77`).
++        assert_eq!(level(0.2), 0);
++    }
 +
-+# A CTE body may still reference a CTE defined earlier in the same WITH clause.
-+query I
-+WITH a AS (SELECT 1 AS x), b AS (SELECT x + 1 AS y FROM a) SELECT * FROM b
-+----
-+2
++    #[test]
++    fn get_random_layer_follows_geometric_distribution() {
++        let level_factor = 1.0 / (M as f64).ln();
++        let distribution = Uniform::new(0.0, 1.0);
++        let mut rng = SmallRng::seed_from_u64(42);
++        let samples: u32 = 1_000_000;
 +
-+# A correlated subquery that reads a CTE still reaches the columns of the
-+# query it sits in (the TPC-DS Q1 shape).
-+statement ok
-+create or replace table cte_scope_t(k int, v int)
++        let mut at_or_above = [0usize; 4];
++        for _ in 0..samples {
++            let sample: f64 = rng.sample(distribution);
++            let level = GraphLayersBuilder::level_from_sample(sample, level_factor);
++            for (l, count) in at_or_above.iter_mut().enumerate() {
++                if level >= l {
++                    *count += 1;
++                }
++            }
++        }
 +
-+statement ok
-+insert into cte_scope_t values (1, 10), (1, 30), (2, 5)
++        // `P(level >= l) = M^-l`
++        for (l, &count) in at_or_above.iter().enumerate().skip(1) {
++            let expected = f64::from(samples) * (M as f64).powi(-i32::try_from(l).unwrap());
++            let observed = count as f64;
++            let tolerance = 5.0 * expected.sqrt() + 1.0;
++            assert!(
++                (observed - expected).abs() <= tolerance,
++                "level >= {l}: observed {observed}, expected {expected:.0} +- {tolerance:.0}",
++            );
++        }
+     }
+ }
+```
+
+**File**: `src/query/storages/common/index/src/hnsw_index/hnsw.rs` (modified, +3/-0)
+```diff
+@@ -397,8 +397,11 @@ impl HNSWIndex {
+         };
+ 
+         let builder = Vec::new();
++        // NULL rows hold a placeholder vector: encode them to keep point ids as
++        // block rows, but fit the value range on the real vectors only.
+         let encoded_vectors = EncodedVectorsU8::encode(
+             (0..params.count).map(|i| &data.as_ref()[i * params.dim..(i + 1) * params.dim]),
++            (0..params.count).map(|i| validity.as_ref().is_none_or(|bitmap| bitmap.get_bit(i))),
+             builder,
+             &params,
+             None,
+```
+
+**File**: `src/query/storages/common/index/src/hnsw_index/links_container.rs` (modified, +83/-9)
+```diff
+@@ -14,9 +14,8 @@
+ // limitations under the License.
+ 
+ // Ported from qdrant `lib/segment/src/index/hnsw_index/links_container.rs`
+-// (v1.20.0, "Heuristic optimization", qdrant#6501). The redundancy test keeps the
+-// strict comparison of the original heuristic, so the selected links are the same.
+-// Unlike qdrant, the first link is also marked as processed.
++// (v1.20.0, "Heuristic optimization", qdrant#6501), with the redundancy test of
++// qdrant#10239. Unlike qdrant, the first link is also marked as processed.
+ 
+ use std::cell::Cell;
+ use std::iter::Copied;
+@@ -25,11 +24,28 @@ use crate::hnsw_index::common::types::PointOffsetType;
+ use crate::hnsw_index::common::types::ScoreType;
+ use crate::hnsw_index::common::types::ScoredPointOffset;
+ 
+-/// Neighbour-selection ("not closer than base") test: a candidate is dropped when
+-/// an already selected link is closer to it than the target is.
++/// Neighbour-selection ("not closer than base") test.
++///
++/// A candidate is dropped when an already selected link is closer to it than the
++/// target is. The comparison is strict, *except* between candidates that are
++/// exactly equidistant from the target: without that exception a group of
++/// byte-identical vectors is mutually non-pruning and fills every link slot,
++/// turning the group into a sink with no edges leaving it.
++///
++/// Restricting the non-strict comparison to `candidate_score == existing_score`
++/// keeps ordinary (non-duplicate) candidates unaffected: for them the equality
++/// case has measure zero.
+ #[inline]
+-fn is_redundant(candidate_to_existing: ScoreType, candidate_score: ScoreType) -> bool {
+-    candidate_to_existing > candidate_score
++fn is_redundant(
++    candidate_to_existing: ScoreType,
++    candidate_score: ScoreType,
++    existing_score: ScoreType,
++) -> bool {
++    if candidate_score == existing_score {
++        candidate_to_existing >= candidate_score
++    } else {
++        candidate_to_existing > candidate_score
++    }
+ }
+ 
+ /// The links of a point on one level, sorted from the closest, and how many of
+@@ -85,13 +101,20 @@ impl LinksContainer {
+             self.processed_by_heuristic = 0;
+             return;
+         }
++        // Scores of the already selected links, to detect exact ties (see `is_redundant`).
++        let mut selected_scores: Vec<ScoreType> = Vec::with_capacity(level_m);
+         'outer: for candidate in candidates {
+-            for &existing in &self.links {
+-                if is_redundant(score(candidate.idx, existing), candidate.score) {
++            for (&existing, &existing_score) in self.links.iter().zip(&selected_scores) {
++                if is_redundant(
++                    score(candidate.idx, existing),
++                    candidate.score,
++                    existing_score,
++                ) {
+                     continue 'outer;
+                 }
+             }
+             self.links.push(candidate.idx);
++            selected_scores.push(candidate.score);
+             if self.links.len() >= level_m {
+                 break;
+             }
+@@ -213,6 +236,7 @@ impl LinksContainer {
+                 if is_redundant(
+                     score(candidate.idx, existing.idx),
+                     candidate.cached_score(target_point_id, &mut score),
++                    existing.cached_score(target_point_id, &mut score),
+                 ) {
+                     continue 'outer;
+                 }
+@@ -387,6 +411,56 @@ mod tests {
+         assert_eq!(links_container.links(), &[1, 2, 3, 4, 5, 6]);
+     }
+ 
++    /// A group of byte-identical vectors must not consume each other's whole link
++    /// budget: every copy is equidistant from every other, so under a strictly
++    /// greater comparison none of them prunes any other and the group ends up as a
++    /// sink at level 0 with no edges leaving it.
++    #[test]
++    fn test_exact_duplicates_do_not_fill_the_link_list() {
++        const M: usize = 6;
++        const COPIES: usize = 8;
 +
-+query II
-+WITH c AS (SELECT k, v FROM cte_scope_t)
-+SELECT k, v FROM c c1
-+WHERE v > (SELECT avg(v) * 1.2 FROM c c2 WHERE c1.k = c2.k)
-+ORDER BY k
-+----
-+1 30
++        // Point 0 is the target. Points 1..=COPIES are byte-identical to it.
++        // The remaining points are ordinary neighbours, all a little further away.
++        let mut points: Vec<Vec<f32>> = vec![vec![0.0, 0.0]; COPIES + 1];
++        points.extend([vec![1.0, 0.0], vec![0.0, 1.0], vec![-1.0, 0.0], vec![
++            0.0, -1.0,
++        ]]);
++        let scorer = |a: PointOffsetType, b: PointOffsetType| {
++            -((points[a as usize][0] - points[b as usize][0]).powi(2)
++                + (points[a as usize][1] - points[b as usize][1]).powi(2))
++            .sqrt()
++        };
 +
-+statement ok
-+drop table cte_scope_t
++        let mut candidates = FixedLengthPriorityQueue::new(points.len() - 1);
++        for id in 1..points.len() as PointOffsetType {
++            candidates.push(ScoredPointOffset {
++                idx: id,
++                score: scorer(0, id),
++            });
++        }
++
++        let mut container = LinksContainer::with_capacity(M);
++        container.fill_from_sorted_with_heuristic(candidates.into_iter_sorted(),
+```
+
+**File**: `src/query/storages/common/index/src/hnsw_index/point_scorer.rs` (modified, +1/-0)
+```diff
+@@ -248,6 +248,7 @@ mod tests {
+         };
+         let encoded = EncodedVectorsU8::encode(
+             data.chunks(dim),
++            std::iter::repeat_n(true, count),
+             Vec::new(),
+             &params,
+             None,
+```
+
+**File**: `src/query/storages/common/index/src/hnsw_index/quantization/encoded_vectors.rs` (modified, +50/-0)
+```diff
+@@ -79,6 +79,25 @@ impl DistanceType {
+     }
+ }
+ 
++/// The vectors of `data` to fit the quantization parameters on, and how many there are.
++///
++/// `keep` holds one flag per vector of `data`, set for the vectors to fit on.
++pub(crate) fn calibration_vectors<V>(
++    data: impl Iterator<Item = V> + Clone,
++    keep: impl Iterator<Item = bool> + Clone,
++) -> (impl Iterator<Item = V> + Clone, usize) {
++    debug_assert_eq!(
++        keep.clone().count(),
++        data.clone().count(),
++        "calibration mask must have one flag per vector",
++    );
++    let count = keep.clone().filter(|&keep| keep).count();
++    let vectors = data
++        .zip(keep)
++        .filter_map(|(vector, keep)| keep.then_some(vector));
++    (vectors, count)
++}
++
+ pub(crate) fn validate_vector_parameters<'a>(
+     data: impl Iterator<Item = impl AsRef<[f32]> + 'a> + Clone,
+     vector_parameters: &VectorParameters,
+@@ -103,3 +122,34 @@ pub(crate) fn validate_vector_parameters<'a>(
+     }
+     Ok(())
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn test_calibration_vectors() {
++        let data = [[1.0f32], [2.0], [3.0]];
++        let (vectors, count) = calibration_vectors(data.iter(), [true, false, true].into_iter());
++        assert_eq!(count, 2);
++        assert_eq!(vectors.collect::<Vec<_>>(), [&[1.0], &[3.0]]);
++    }
++
++    #[test]
++    #[cfg(debug_assertions)]
++    #[should_panic(expected = "calibration mask must have one flag per vector")]
++    fn test_calibration_vectors_rejects_short_mask() {
++        let data = [[1.0f32], [2.0], [3.0]];
++        let (vectors, _) = calibration_vectors(data.iter(), [true, true].into_iter());
++        vectors.for_each(drop);
++    }
++
++    #[test]
++    #[cfg(debug_assertions)]
++    #[should_panic(expected = "calibration mask must have one flag per vector")]
++    fn test_calibration_vectors_rejects_long_mask() {
++        let data = [[1.0f32], [2.0], [3.0]];
++        let (vectors, _) = calibration_vectors(data.iter(), [true; 4].into_iter());
++        vectors.for_each(drop);
++    }
++}
+```
+
+**File**: `src/query/storages/common/index/src/hnsw_index/quantization/encoded_vectors_u8.rs` (modified, +370/-46)
+```diff
+@@ -31,10 +31,15 @@ use crate::hnsw_index::quantization::encoded_storage::EncodedStorageBuilder;
+ use crate::hnsw_index::quantization::encoded_vectors::DistanceType;
+ use crate::hnsw_index::quantization::encoded_vectors::EncodedVectors;
+ use crate::hnsw_index::quantization::encoded_vectors::VectorParameters;
++use crate::hnsw_index::quantization::encoded_vectors::calibration_vectors;
+ use crate::hnsw_index::quantization::encoded_vectors::validate_vector_parameters;
+ use crate::hnsw_index::quantization::quantile::find_min_max_from_iter;
+ use crate::hnsw_index::quantization::quantile::find_quantile_interval;
+ 
++// Ported from qdrant `lib/quantization/src/encoded_vectors_u8.rs`. Deviation: a
++// constant range is widened in `alpha_offset_from_min_max`, qdrant quantizes it
++// with `alpha = 0`.
++
+ pub const ALIGNMENT: usize = 16;
+ 
+ pub struct EncodedVectorsU8<TStorage: EncodedStorage> {
+@@ -61,15 +66,59 @@ struct Metadata {
+     vector_parameters: VectorParameters,
+ }
+ 
++impl Metadata {
++    #[inline]
++    fn postprocess_score(&self, score: f32, query_offset: f32, vector_offset: f32) -> f32 {
++        self.multiplier * score + query_offset + vector_offset
++    }
++
++    #[inline]
++    fn postprocess_internal_score(
++        &self,
++        score: f32,
++        vector_1_offset: f32,
++        vector_2_offset: f32,
++    ) -> f32 {
++        let query_offset = vector_1_offset - self.get_shift();
++        self.postprocess_score(score, query_offset, vector_2_offset)
++    }
++
++    fn get_shift(&self) -> f32 {
++        // Dotprod after shifting produces a number which is not related to vector and query
++        // (x - a)(y - a) = xy - ax - ay + a^2
++        // this a^2 is returned here
++        let shift = match self.vector_parameters.distance_type {
++            DistanceType::Dot => self.actual_dim as f32 * self.offset * self.offset,
++            // L2 is computed from squared code differences. The common quantizer offset cancels
++            // before squaring, so adding an absolute offset^2 shift would make scores depend on
++            // translating all vectors and the query by the same constant.
++            DistanceType::L1 | DistanceType::L2 => 0.0,
++        };
++        if self.vector_parameters.invert {
++            -shift
++        } else {
++            shift
++        }
++    }
++}
++
+ impl EncodedVectorsU8<HugePageBytes> {
+     pub(crate) fn memory_size(&self) -> usize {
+         std::mem::size_of::<Self>() + self.encoded_vectors.capacity()
+     }
+ }
+ 
+ impl<TStorage: EncodedStorage> EncodedVectorsU8<TStorage> {
++    /// Encode vector data using scalar quantization.
++    ///
++    /// Every vector of `orig_data` is encoded, but the value range (min/max or quantile) is
++    /// fitted only on the vectors whose flag in `keep` is set. `keep` holds one flag per vector;
++    /// clear the flags of vectors that are not real (e.g. the placeholders of NULL vectors).
++    /// If no flag is set while `orig_data` is not empty, no vector is real, so no score matters,
++    /// and a zero range is used.
+     pub fn encode<'a>(
+         orig_data: impl Iterator<Item = impl AsRef<[f32]> + 'a> + Clone,
++        keep: impl Iterator<Item = bool> + Clone,
+         mut storage_builder: impl EncodedStorageBuilder<TStorage>,
+         vector_parameters: &VectorParameters,
+         quantile: Option<f32>,
+@@ -92,12 +141,17 @@ impl<TStorage: EncodedStorage> EncodedVectorsU8<TStorage> {
+         }
+ 
+         debug_assert!(validate_vector_parameters(orig_data.clone(), vector_parameters).is_ok());
+-        let (alpha, offset) = Self::find_alpha_offset_size_dim(orig_data.clone());
++        let (calibration_data, calibration_count) = calibration_vectors(orig_data.clone(), keep);
++        let (alpha, offset) = if calibration_count == 0 {
++            (0.0, 0.0)
++        } else {
++            Self::find_alpha_offset_size_dim(calibration_data.clone())
++        };
+         let (alpha, offset) = if let Some(quantile) = quantile {
+             if let Some((min, max)) = find_quantile_interval(
+-                orig_data.clone(),
++                calibration_data,
+                 vector_parameters.dim,
+-                vector_parameters.count,
++                calibration_count,
+                 quantile,
+             ) {
+                 Self::alpha_offset_from_min_max(min, max)
+@@ -108,6 +162,30 @@ impl<TStorage: EncodedStorage> EncodedVectorsU8<TStorage> {
+             (alpha, offset)
+         };
+ 
++        let multiplier = match vector_parameters.distance_type {
++            // (alpha*x - offset) * (alpha*y - offset) = alpha^2*x*y - alpha*offset*x - alpha*offset*y + offset^2
++            // multiplier is applied to xy term only, so we need to multiply score by alpha^2
++            DistanceType::Dot => alpha * alpha,
++            // |(alpha*x - offset) - (alpha*y - offset)| = alpha*|x - y|
++            // multiplier is applied to |x - y| term only, so we need to multiply score by alpha
++            DistanceType::L1 => alpha,
++            // ((alpha*
+```
+
+**File**: `tests/sqllogictests/suites/query/index/09_vector_index/09_0000_vector_index_base.test` (modified, +12/-10)
+```diff
+@@ -177,14 +177,16 @@ SELECT id, l1_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.3159103
+ 2 1.8405688
+ 11 1.8465419
+ 
++# Row 1 is the query vector: its SQ8 distance is the quantization error alone,
++# not shifted by the quantizer offset of its block.
+ query IR
+ SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271, 0.73689797, 0.49985862, 0.64527255, 0.29313098]::vector(8)) AS similarity FROM t ORDER BY similarity ASC LIMIT 5;
+ ----
+-1 0.052975703
+-10 0.73442644
+-12 0.84724534
+-8 0.92271036
+-3 0.9368646
++1 0.00069053395
++10 0.6369769
++12 0.764318
++8 0.9160794
++3 0.9353659
+ 
+ query IR
+ SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271, 0.73689797, 0.49985862, 0.64527255, 0.29313098]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
+@@ -198,11 +200,11 @@ SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271
+ query IR
+ SELECT id, l2_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.31591033, 0.48453478, 0.51902057, 0.74154714, 0.75059576]::vector(8)) AS similarity FROM t ORDER BY similarity ASC LIMIT 5;
+ ----
+-4 0.41017252
+-16 0.69951516
+-6 0.73418504
+-2 0.7379028
+-11 0.8144757
++4 0.4067377
++16 0.6988953
++6 0.72583383
++11 0.7278242
++2 0.73599905
+ 
+ query IR
+ SELECT id, l2_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.31591033, 0.48453478, 0.51902057, 0.74154714, 0.75059576]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21111** (2026-11-17): fix(query): finish queries correctly on the queries executor (@bohutang)
+- **PR #21104** (2026-11-17): fix(storage): bound fuse_page Thrift decoding and drop thrift dep (@sundy-li)
+- **PR #21102** (2026-11-17): refactor(storage): look up search pin ranges by start (@bohutang)
+- **PR #21101** (closed): [EXPERIMENTAL - DO NOT MERGE] feat(query): add /v1/data/search and speed up full-text top-k search (@bohutang)
 - **PR #21099** (2026-11-16): fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0 (@zhang2014)
-- **PR #21093** (2026-11-15): fix(query): link cosine HNSW graphs with normalized vectors (@bohutang)
-- **PR #21092** (2026-11-13): fix(query): truncate REPLACE statements in query logs (@TCeason)
-- **PR #21091** (2026-11-15): feat(query): enable the memory limit and the shared cache by default (@bohutang)
-- **PR #21090** (2026-11-13): refactor(query): scan only the rows matched by the inverted index (@bohutang)
-- **PR #21087** (2026-11-13): feat(query): support native charset conversion for binary strings (@sundy-li)
+- **PR #21097** (2026-11-17): fix(query): correct HNSW graph construction and SQ8 scoring in vector indexes (@b41sh)
 
 ---
 
@@ -2041,31 +2963,63 @@ the query it sits in.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta): decode BLOOM table index type; default cache.data_max_ratio to 0
+## X. query): finish queries correctly on the queries executor
 
 **RULE**:
-When implementing operations in `src/meta/api/src/api_impl/schema_api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/pipeline/src/sinks/async_sink.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7a0a58b`: meta): decode BLOOM table index type; default cache.data_max_ratio to 0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58dd5893`: query): finish queries correctly on the queries executor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/api/src/api_impl/schema_api.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/pipeline/src/sinks/async_sink.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        TableIndexType::Bloom => MarkedDeletedIndexType::BLOOM,
+            let run_on_start = !self.called_on_start && T::CALL_ON_START_ON_ERROR;
+            let run_on_finish = !self.called_on_finish && T::CALL_ON_FINISH_ON_ERROR;
+            // Nothing to run: do not touch the global runtime, which a sink
+            // dropped late may outlive.
+            if !run_on_start && !run_on_finish {
+                return;
+            }
+
+            if let Some(mut inner) = self.inner.take() {
+                GlobalIORuntime::instance().spawn(async move {
+                    if run_on_start {
+                        let _ = inner.on_start().await;
+                    }
+
+                    if run_on_finish {
+                        let _ = inner.on_finish().await;
+                    }
+                });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            if !self.called_on_start || !self.called_on_finish {
+                if let Some(mut inner) = self.inner.take() {
+                    GlobalIORuntime::instance().spawn({
+                        let called_on_start = self.called_on_start;
+                        let called_on_finish = self.called_on_finish;
+                        async move {
+                            if !called_on_start && T::CALL_ON_START_ON_ERROR {
+                                let _ = inner.on_start().await;
+                            }
+
+                            if !called_on_finish && T::CALL_ON_FINISH_ON_ERROR {
+                                let _ = inner.on_finish().await;
+                            }
+                        }
+                    });
+                }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7a0a58b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58dd5893` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

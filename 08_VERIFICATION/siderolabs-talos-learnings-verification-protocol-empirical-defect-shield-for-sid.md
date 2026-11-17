@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T22:47:42.234Z",
+  "timestamp": "2026-11-17T19:54:47.946Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-siderolabs-talos-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [siderolabs-talos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T22:47:42.234Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T19:54:47.946Z`  
 > **Learning ID**: `LEARN-EVO-siderolabs-talos-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `a5b5d7de`  
+> **Source Version**: `23d2aaec`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T22:47:37.134Z  
+> **Timestamp**: 2026-11-17T19:53:39.586Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T22:47:37.129Z  
+> **Harvest Timestamp**: 2026-11-17T19:53:39.473Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11538 stars
+- **Stars / Engagement**: 11547 stars
 
 ---
 
@@ -2136,11 +2136,11 @@ func a
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14988** (2026-11-16): **fix: ignore the default router in RAs on unnumbered BGP links**
-  *Symptoms*: Talos sets accept_ra=2 on unnumbered BGP links to learn the neighbor's link-local address, but left accept_ra_defrtr at 1. A neighbor sending RAs with a non-zero router lifetime (FRR does by default) made the kernel install a "proto ra" default route at metric 1024, and the kernel then refused the default route learned over BGP with "file exists".  Set accept_ra_defrtr=0 on those links, so the default route comes from BGP only.  Fixes: #14967
+- **Issue #14993** (2026-11-17): **feat: add trustGuestRxFilters to hypervisor VM interfaces**
+  *Symptoms*: Add an optional per-interface trustGuestRxFilters flag to the hypervisor virtual machine config. Without it, libvirt drops the receive filter updates a virtio NIC sends when the guest joins a multicast group, so IPv6 multicast (NDP, DHCPv6) never reaches the guest and IPv6 autoconfiguration never starts. With it, the updates propagate to the host-side macvtap device; since the guest can then also put the host filter in promiscuous or all-multicast mode, trust it only on a host link dedicated to the guest.  Defaults to disabled.  Forked from https://github.com/siderolabs/talos/pull/14879  Signed-off-by: Joakim Hindersson <joakim.hindersson@elastx.se> 
 
-- **Issue #14987** (2026-11-16): **fix: do not install BGP routes over connected prefixes**
-  *Symptoms*: Talos installs address prefix routes at metric 1024 and BGP routes at metric 0. When a peer advertised the node's own subnet, for example FRR with "redistribute connected", the BGP route for the same prefix won, and traffic to every host on the link went through the peer.  Skip learned routes whose prefix matches an address prefix in the instance's routing domain, the same way originated prefixes are already skipped.  Fixes: #14965
+- **Issue #14992** (2026-11-17): **fix: allow two busy unmounts in TestUnmountBusy**
+  *Symptoms*: Point.Unmount retries EBUSY for up to 5s. "b-other" can wait behind two busy attempts on "a-busy": one in an iteration that ran before its teardown, one in the iteration that handles it. That is ~10s, the default assertion timeout, so the test flaked in CI.  Raise the "b-other" assertion timeout to 20s and keep the teardown order, so a controller that stalls on the busy mount still fails.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2157,539 +2157,296 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4f583972` (2026-11-16)
-**Commit Message**: fix: keep healthy BGP instances running when one fails
+### Incident Patch 1: `b04d378c` (2026-11-17)
+**Commit Message**: fix: allow two busy unmounts in TestUnmountBusy
 
-BGPController returned the first error from any instance or peer.
-The deferred cleanup then stopped every GoBGP server, and the
-controller restarted with backoff, failing the same way each time.
-One neighbor that GoBGP rejected took down all sessions on the
-node, and peers after the failing one were never configured.
+Point.Unmount retries EBUSY for up to 5s. "b-other" can wait behind
+two busy attempts on "a-busy": one in an iteration that ran before
+its teardown, one in the iteration that handles it. That is ~10s,
+the default assertion timeout, so the test flaked in CI.
 
-Log failures per peer and per instance, keep reconciling the rest,
-and retry the failed ones from the controller loop with exponential
-backoff instead of restarting the controller. Transient failures,
-such as a busy listen port, now recover without an input change.
+Raise the "b-other" assertion timeout to 20s and keep the teardown
+order, so a controller that stalls on the busy mount still fails.
 
-Fixes: #14962
+Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/network/bgp.go` (modified, +44/-9)
+**File**: `internal/app/machined/pkg/controllers/block/mount_test.go` (modified, +8/-1)
 ```diff
-@@ -9,7 +9,9 @@ import (
- 	"fmt"
- 	"net/netip"
- 	"slices"
-+	"time"
- 
-+	"github.com/cenkalti/backoff/v7"
- 	"github.com/cosi-project/runtime/pkg/controller"
- 	"github.com/cosi-project/runtime/pkg/resource"
- 	"github.com/cosi-project/runtime/pkg/safe"
-@@ -96,18 +98,33 @@ func (ctrl *BGPController) Run(ctx context.Context, r controller.Runtime, logger
- 
- 	defer neighWatcher.Done()
- 
-+	retryBackoff := backoff.NewExponentialBackOff()
-+
-+	var retryCh <-chan time.Time
-+
- 	for {
- 		select {
- 		case <-ctx.Done():
- 			return nil
- 		case <-r.EventCh():
- 		case <-ctrl.reconcileCh:
-+		case <-retryCh:
- 		}
- 
--		if err := ctrl.reconcile(ctx, r, logger); err != nil {
-+		failed, err := ctrl.reconcile(ctx, r, logger)
-+		if err != nil {
- 			return err
- 		}
- 
-+		// failed instances and peers are retried here: a controller restart would also stop the healthy ones
-+		if failed {
-+			retryCh = time.After(retryBackoff.NextBackOff())
-+		} else {
-+			retryBackoff.Reset()
-+
-+			retryCh = nil
-+		}
-+
- 		r.ResetRestartBackoff()
- 	}
- }
-@@ -153,28 +170,32 @@ func instanceOutputs(ctx context.Context, name resource.ID, instance *internalbg
- 	}
- }
- 
-+// reconcile reports whether an instance failed and needs a retry.
-+//
- //nolint:gocyclo,cyclop
--func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime, logger *zap.Logger) error {
-+func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime, logger *zap.Logger) (bool, error) {
- 	configs, err := safe.ReaderListAll[*network.BGPInstanceConfig](ctx, r)
- 	if err != nil {
--		return fmt.Errorf("error listing BGP instance configs: %w", err)
-+		return false, fmt.Errorf("error listing BGP instance configs: %w", err)
- 	}
- 
- 	linkStatuses, err := safe.ReaderListAll[*network.LinkStatus](ctx, r)
- 	if err != nil {
--		return fmt.Errorf("error listing link statuses: %w", err)
-+		return false, fmt.Errorf("error listing link statuses: %w", err)
- 	}
- 
- 	addressStatuses, err := safe.ReaderListAll[*network.AddressStatus](ctx, r)
- 	if err != nil {
--		return fmt.Errorf("error listing address statuses: %w", err)
-+		return false, fmt.Errorf("error listing address statuses: %w", err)
- 	}
- 
- 	runtimeState := internalbgp.NewRuntimeStateFromResources(linkStatuses.All(), addressStatuses.All())
- 	neighborResolver := internalbgp.NewNeighborResolver()
- 
- 	desired := map[resource.ID]struct{}{}
- 
-+	var failed bool
-+
- 	for configResource := range configs.All() {
- 		name := configResource.Metadata().ID()
- 		desired[name] = struct{}{}
-@@ -214,11 +235,21 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
- 			ctrl.effectiveListenPort(),
- 			ctrl.signal,
- 		); err != nil {
--			return fmt.Errorf("error configuring BGP instance %q: %w", name, err)
-+			instanceLogger.Error("error configuring BGP instance", zap.Error(err))
-+
-+			failed = true
-+
-+			if !instance.Running() {
-+				continue
-+			}
- 		}
- 
- 		if err = instance.ReconcileOriginated(resolved.AdvertisedPrefixes); err != nil {
--			return fmt.Errorf("error originating routes for BGP instance %q: %w", name, err)
-+			instanceLogger.Error("error originating BGP routes", zap.Error(err))
-+
-+			failed = true
-+
-+			continue
- 		}
- 
- 		instance.SetOutputState(
-@@ -255,7 +286,11 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
- 
- 		desiredCount, ready, importErr := internalbgp.ReconcileImportedPaths(name, instance, ctrl.instances, desired)
- 		if importErr != nil {
--			return fmt.Errorf("error resolving route imports for BGP instance %q: %w", name, importErr)
-+			logger.With(zap.String("instance", name)).Error("error resolving BGP route imports", zap.Error(importErr))
-+
-+			failed = true
-+
-+			continue
- 		}
- 
- 		if !ready {
-@@ -293,7 +328,7 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
- 		)
- 	}
- 
--	return ctrl.writeOutputs(ctx, r, outputs)
-+	return failed, ctrl.writeOutputs(ctx, r, outputs)
- }
- 
- func (ctrl *BGPController) effectiveListenPort() int32 {
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/bgp_controller_test.go` (modified, +112/-0)
-```diff
-@@ -5,12 +5,14 @@
- package network_test
+@@ -5,11 +5,13 @@
+ package block_test
  
  import (
-+	"net"
- 	"net/netip"
++	"context"
+ 	"os"
+ 	"path/filepath"
  	"testing"
  	"time"
  
- 	"github.com/cosi-project/runtime/pkg/resource/rtestutils"
++	"github.com/cosi-project/runtime/pkg/resource/rtestutils"
  	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
  	"github.com/stretchr/testify/suite"
  
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/ctest"
-@@ -181,6 +183,64 @@ func (suite *BGPControllerSuite) TestRuntimeStatusResolutionAndServerRestart() {
- 	)
- }
+@@ -212,7 +214,12 @@ func (suite *MountSuite) TestUnmountBusy() {
+ 		suite.Require().NoError(err)
+ 	}
  
-+func (suite *BGPControllerSuite) TestRejectedPeerDoesNotStopOtherPeers() {
-+	fabric := network.NewBGPInstanceConfig("fabric")
-+	*fabric.TypedSpec() = network.BGPInstanceConfigSpec{
-+		LocalASN:      65001,
-+		RouterID:      netip.MustParseAddr("10.0.0.1"),
-+		VRFTable:      nethelpers.TableMain,
-+		InstallRoutes: true,
-+		Neighbors: []network.BGPNeighborConfigSpec{
-+			{
-+				Address: netip.MustParseAddr("192.0.2.1"),
-+				PeerASN: 65002,
-+				Passive: true,
-+			},
-+			{
-+				// GoBGP rejects it: the zone names a link which does not exist
-+				Address: netip.MustParseAddr("fe80::1%bgpmissing0"),
-+				PeerASN: 65002,
-+				Passive: true,
-+			},
-+		},
-+	}
+-	ctest.AssertResource(suite, "b-other", func(mountRequest *block.MountRequest, asrt *assert.Assertions) {
++	// each busy unmount attempt blocks for ~5s retrying EBUSY, and "b-other" may wait behind two of them:
++	// one in an iteration that ran before its teardown, one in the iteration handling it
++	ctx, cancel := context.WithTimeout(suite.Ctx(), 20*time.Second)
++	defer cancel()
 +
-+	workload := network.NewBGPInstanceConfig("workload")
-+	*workload.TypedSpec() = network.BGPInstanceConfigSpec{
-+		LocalASN:      65003,
-+		RouterID:      netip.MustParseAddr("10.0.0.2"),
-+		VRFTable:      88,
-+		InstallRoutes: true,
-+		Neighbors: []network.BGPNeighborConfigSpec{
-+			{
-+				Address: netip.MustParseAddr("192.0.2.2"),
-+				PeerASN: 65004,
-+				Passive: true,
-+			},
-+		},
-+	}
-+
-+	suite.Create(fabric)
-+	suite.Create(workload)
-+
-+	var created time.Time
-+
-+	rtestutils.AssertResource(suite.Ctx(), suite.T(), suite.State(), "fabric/192.0.2.1", func(res *network.BGPPeerStatus, _ *assert.Assertions) {
-+		created = res.Metadata().Created()
-+	}, rtestutils.WithNamespace(network.NamespaceName))
-+
-+	rtestutils.AssertResource(suite.Ctx(), suite.T(), suite.State(), "workload/192.0.2.2", func(*network.BGPPeerStatus, *assert.Assertions) {}, rtestutils.WithNamespace(network.NamespaceName))
-+
-+	rtestutils.AssertNoResource[*network.BGPPeerStatus](suite.Ctx(), suite.T(), suite.State(), "fabric/fe80::1%bgpmissing0", rtestutils.WithNamespace(network.NamespaceName))
-+
-+	// a restarted controller would stop every server and recreate the statuses
-+	time.Sleep(time.Second)
-+
-+	rtestutils.AssertResource(suite.Ctx(), suite.T(), suite.State(), "fabric/192.0.2.1", func(res *network.BGPPeerStatus, assertions *assert.Assertions) {
-+		assertions.Equal(created, res.Metadata().Created())
-+	}, rtestutils.WithNamespace(network.NamespaceName))
-+}
-+
- func TestBGPControllerSuite(t *testing.T) {
- 	t.Parallel()
- 
-@@ -191,3 +251,55 @@ func TestBGPControllerSuite(t *testing.T) {
- 		},
++	rtestutils.AssertResource(ctx, suite.T(), suite.State(), "b-other", func(mountRequest *block.MountRequest, asrt *assert.Assertions) {
+ 		asrt.True(mountRequest.Metadata().Finalizers().Empty())
  	})
- }
-+
-+type BGPControllerRetrySuite struct {
-+	ctest.DefaultSuite
-+
-+	listener net.Listener
-+}
-+
-+func (suite *BGPControllerRetrySuite) TestFailedInstanceIsRetried() {
-+	fabric := network.NewBGPInstanceConfig("fabric")
-+	*fabric.TypedSpec() = network.BGPInstanceConfigSpec{
-+		LocalASN:      65001,
-+		RouterID:      netip.MustParseAddr("10.0.0.1"),
-+		VRFTable:      nethelpers.TableMain,
-+		InstallRoutes: true,
-+		Neighbors: []network.BGPNeighborConfigSpec{
-+			{
-+				Address: netip.MustParseAddr("192.0.2.1"),
-+				PeerASN: 65002,
-+				Passive: true,
-+			},
-+		},
-+	}
-+
-+	suite.Create(fabric)
-+
-+	// the server can not start while the listen port is taken
-+	time.Sleep(time.Second)
-+
-+	rtestutils.AssertNoResource[*network.BGPPeerStatus](suite.Ctx(), suite.T(), suite.State(), "fabric/192.0.2.1", rtestutils.WithNamespace(network.NamespaceName))
-+
-+	// freeing the port changes no controller input: only the retry starts the server
-+	suite.Require().NoError(suite.listener.Close())
-+
-+	rtestutils.AssertResource(suite.Ctx(), suite.T(), suite.State(), "fabric/192.0.2.1", func(*network.BGPPeerStatus, *assert.Assertions) {}, rtestutils.WithNamespace(network.NamespaceName))
-+}
-+
-+func TestBGPControllerRetrySuite(t *testing.T) {
-+	t.Parallel()
-+
-+	listener, err := (&net.ListenConfig{}).Listen(t.Context(), "tcp", ":0")
-+	require.NoError(t, err)
-+
-+	port := int32(listener.Addr().(*net.TCPAddr).Port)
-+
-+	suite.Run(t, &BGPControllerRetrySuite{
-+		listener: listener,
-+		Timeout:  10 * time.Second,
-+		AfterSetup: func(s *ctest.DefaultSuite) {
-+			s.Require().NoError(s.Runtime().RegisterController(&netctrl.BGPController{ListenPort: port}))
-+		},
-+	})
-+}
+ 
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance.go` (modified, +14/-4)
+---
+
+### Incident Patch 2: `a3f33fd5` (2026-11-16)
+**Commit Message**: fix: use multihop BFD for ebgpMultiHop neighbors
+
+BuildPeer never set the GoBGP BFD multihop flag, so BFD to an
+ebgpMultiHop neighbor ran as single-hop BFD on port 3784. Single-hop
+BFD (RFC 5881) drops packets with a TTL below 255, and packets from
+a peer more than one hop away arrive with a lower TTL, so the BFD
+session never came up.
+
+Enable multihop BFD (RFC 5883) when the neighbor's TTL is above 1.
+
+Fixes: #14971
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp.go` (modified, +2/-0)
 ```diff
-@@ -6,6 +6,7 @@ package bgp
- 
- import (
- 	"context"
-+	"errors"
- 	"fmt"
- 	"log/slog" //nolint:loglinter // GoBGP's logger compatibility interface requires slog.
- 	"net/netip"
-@@ -234,6 +235,7 @@ func (instance *Instance) SetOutputState(
- }
- 
- // reconcilePeers adds, removes and updates peers to match the resolved set.
-+// A peer GoBGP rejects is skipped and retried on the next reconcile; the other peers are still reconciled.
- //
- // Changed peers are updated in place: GoBGP applies BFD and timer changes to the live session, and resets it
- // only for changes which need a new OPEN message (e.g. ASN or transport settings).
-@@ -242,6 +244,8 @@ func (instance *Instance) reconcilePeers(
- 	config network.BGPInstanceConfigSpec,
- 	resolved []Peer,
- ) error {
-+	var errs error
-+
- 	desired := make(map[string]string, len(resolved))
- 
- 	for _, peer := range resolved {
-@@ -254,7 +258,9 @@ func (instance *Instance) reconcilePeers(
+@@ -76,6 +76,8 @@ func BuildPeer(peer Peer, multipath bool) *gobgpapi.Peer {
+ 			DesiredMinimumTxInterval: uint32(peer.Config.BFD.TransmitInterval.Microseconds()),
+ 			RequiredMinimumReceive:   uint32(peer.Config.BFD.ReceiveInterval.Microseconds()),
+ 			DetectionMultiplier:      uint32(peer.Config.BFD.DetectMultiplier),
++			// single-hop BFD (RFC 5881) drops packets with a TTL below 255
++			Multihop: peer.Config.EBGPMultiHop > 1,
  		}
- 
- 		if err := instance.server.DeletePeer(ctx, &gobgpapi.DeletePeerRequest{Address: address}); err != nil {
--			return fmt.Errorf("error deleting BGP peer: %w", err)
-+			errs = errors.Join(errs, fmt.Errorf("error deleting BGP peer %s: %w", address, err))
-+
-+			continue
- 		}
- 
- 		delete(instance.peers, address)
-@@ -266,16 +272,20 @@ func (instance *Instance) reconcilePeers(
- 		switch {
- 		case !ok:
- 			if err := instance.server.AddPeer(ctx, &gobgpapi.AddPeerRequest{Peer: BuildPeer(peer, config.Multipath)}); err != nil {
--				return fmt.Errorf("error adding BGP peer: %w", err)
-+				errs = errors.Join(errs, fmt.Errorf("error adding BGP peer %s: %w", peer.Address, err))
-+
-+				continue
- 			}
- 		case hash != desired[peer.Address]:
- 			if _, err := instance.server.UpdatePeer(ctx, &gobgpapi.UpdatePeerRequest{Peer: BuildPeer(peer, config.Multipath)}); err != nil {
--				return fmt.Errorf("error updating BGP peer: %w", err)
-+				errs = errors.Join(errs, fmt.Errorf("error updating BGP peer %s: %w", peer.Address, err))
-+
-+				continue
- 			}
- 		}
- 
- 		instance.peers[peer.Address] = desired[peer.Address]
  	}
  
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp_test.go` (modified, +11/-0)
+```diff
+@@ -57,9 +57,20 @@ func TestBuildPeer(t *testing.T) {
+ 	assert.Equal(t, uint32(300000), peer.GetBfd().GetDesiredMinimumTxInterval())
+ 	assert.Equal(t, uint32(400000), peer.GetBfd().GetRequiredMinimumReceive())
+ 	assert.Equal(t, uint32(3), peer.GetBfd().GetDetectionMultiplier())
++	assert.True(t, peer.GetBfd().GetMultihop(), "BFD to a multihop neighbor must use multihop BFD")
+ 	require.Len(t, peer.GetAfiSafis(), 2)
+ 	assert.True(t, peer.GetAfiSafis()[0].GetUseMultiplePaths().GetConfig().GetEnabled())
+ 	assert.True(t, peer.GetAfiSafis()[1].GetUseMultiplePaths().GetConfig().GetEnabled())
++
++	singleHop := internalbgp.BuildPeer(internalbgp.Peer{
++		Address: "192.0.2.1",
++		Config: network.BGPNeighborConfigSpec{
++			PeerASN: 65002,
++			BFD:     &network.BGPBFDConfigSpec{},
++		},
++	}, false)
++
++	assert.False(t, singleHop.GetBfd().GetMultihop())
+ }
+ 
+ func TestBuildOriginatedPath(t *testing.T) {
+```
+
+---
+
+### Incident Patch 3: `26aa4126` (2026-11-15)
+**Commit Message**: fix: detach the host /proc in the sandbox namespace
+
+sandboxd mounted a procfs scoped to its PID namespace over the host
+/proc it inherited. A privileged pod that entered the sandbox mount
+namespace could unmount the scoped /proc and get the host /proc back,
+with machined's fds and detached mounts.
+
+sandboxd now detaches the host /proc and mounts the scoped one on the
+rootfs /proc dir. That mount sits on the root mount, which is a peer
+of machined's, so it would cover machined's /proc: the root mount
+alone is made a slave first.
+
+A mount made directly on the root after that arrives in the sandbox
+as a slave, and mounts made under it in the sandbox stop reaching
+machined. sandboxd now waits for the volumes CRI uses, so /var and
+/opt are copied in as peers, and it is stopped with the ephemeral
+services since it holds them.
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/runtime/v1alpha1/v1alpha1_sequencer_tasks.go` (modified, +3/-1)
+```diff
+@@ -428,7 +428,9 @@ func PreShutdownServices(runtime.Sequence, any) (runtime.TaskExecutionFunc, stri
+ func StopServicesEphemeral(runtime.Sequence, any) (runtime.TaskExecutionFunc, string) {
+ 	return func(ctx context.Context, logger *log.Logger, r runtime.Runtime) (err error) {
+ 		// stopping 'cri' service stops everything which depends on it (kubelet, etcd, ...)
+-		return system.Services(r).StopWithRevDepenencies(ctx, "cri", "trustd")
++		//
++		// sandboxd holds the same volumes as cri, so it is stopped as well.
++		return system.Services(r).StopWithRevDepenencies(ctx, "cri", "trustd", sandboxd.ServiceID)
+ 	}, "stopServicesForUpgrade"
+ }
+ 
+```
+
+**File**: `internal/app/machined/pkg/sandboxd/init.go` (modified, +50/-10)
+```diff
+@@ -25,6 +25,7 @@ import (
+ 
+ 	"github.com/siderolabs/talos/internal/pkg/selinux"
+ 	"github.com/siderolabs/talos/pkg/machinery/constants"
++	"github.com/siderolabs/talos/pkg/xfs/fsopen"
+ )
+ 
+ // Control protocol between machined (Client) and sandboxd.
+@@ -96,6 +97,53 @@ func ignoreTerminationSignals() func() {
+ 	return func() { signal.Stop(signals) }
+ }
+ 
++// scopeProc replaces the inherited host /proc with one scoped to THIS PID namespace.
++//
++// The host /proc is detached rather than overmounted: unmounting an overmount
++// exposes the host /proc again, with machined's fds and detached mounts.
++//
++// Only the root mount is made a slave: the scoped /proc lands on it and must not
++// cover machined's /proc. The mounts under it stay peers of machined's (sandboxd
++// starts once the volumes CRI uses are mounted, see services.Sandboxd).
++// /proc is made private so detaching it does not detach machined's /proc.
++func scopeProc() error {
++	if err := unix.MountSetattr(unix.AT_FDCWD, "/", 0, &unix.MountAttr{Propagation: unix.MS_SLAVE}); err != nil {
++		return fmt.Errorf("make / a slave: %w", err)
++	}
++
++	if err := unix.MountSetattr(unix.AT_FDCWD, "/", 0, &unix.MountAttr{Propagation: unix.MS_SHARED}); err != nil {
++		return fmt.Errorf("make / shared: %w", err)
++	}
++
++	if err := unix.MountSetattr(unix.AT_FDCWD, "/proc", unix.AT_RECURSIVE, &unix.MountAttr{Propagation: unix.MS_PRIVATE}); err != nil {
++		return fmt.Errorf("make /proc private: %w", err)
++	}
++
++	if err := unix.Unmount("/proc", unix.MNT_DETACH); err != nil {
++		return fmt.Errorf("detach host /proc: %w", err)
++	}
++
++	procfs := fsopen.New("proc")
++	defer procfs.Close() //nolint:errcheck
++
++	fd, err := procfs.Open()
++	if err != nil {
++		return fmt.Errorf("create scoped /proc: %w", err)
++	}
++
++	if err = unix.MountSetattr(fd, "", unix.AT_EMPTY_PATH, &unix.MountAttr{
++		Attr_set: unix.MOUNT_ATTR_NOSUID | unix.MOUNT_ATTR_NODEV | unix.MOUNT_ATTR_NOEXEC,
++	}); err != nil {
++		return fmt.Errorf("harden scoped /proc: %w", err)
++	}
++
++	if _, err = procfs.MountAt("/proc"); err != nil {
++		return fmt.Errorf("mount scoped /proc: %w", err)
++	}
++
++	return nil
++}
++
+ // Main is the entry point for the sandboxd subprocess. It is PID 1 of
+ // the sandbox PID+mount namespace and:
+ //  1. protects itself from the OOM killer and scopes /proc to this PID namespace,
+@@ -107,16 +155,8 @@ func Main() {
+ 	// else: its death collapses the entire namespace.
+ 	setSelfOOMScoreAdj(oomScoreAdjInit)
+ 
+-	// Make /proc private so the overmount below stays in this mount namespace,
+-	// then remount /proc scoped to THIS PID namespace.
+-	if err := syscall.Mount("", "/proc", "", syscall.MS_PRIVATE|syscall.MS_REC, ""); err != nil {
+-		logf("make /proc private: %v", err)
+-		os.Exit(1)
+-	}
+-
+-	if err := syscall.Mount("proc", "/proc", "proc",
+-		syscall.MS_NOSUID|syscall.MS_NOEXEC|syscall.MS_NODEV, ""); err != nil {
+-		logf("remount /proc: %v", err)
++	if err := scopeProc(); err != nil {
++		logf("%v", err)
+ 		os.Exit(1)
+ 	}
+ 
+```
+
+**File**: `internal/app/machined/pkg/system/services/sandboxd.go` (modified, +6/-2)
+```diff
+@@ -55,8 +55,12 @@ func (s *Sandboxd) DependsOn(runtime.Runtime) []string {
+ }
+ 
+ // Volumes implements the Service interface.
+-func (s *Sandboxd) Volumes(runtime.Runtime) []string {
 -	return nil
-+	return errs
- }
-```
-
----
-
-### Incident Patch 2: `a9a62344` (2026-11-16)
-**Commit Message**: fix: retry failed routes without restarting RouteSpecController
-
-RouteSpecController returned when the kernel refused any route, so
-the controller restarted with backoff. While it waited, no other
-route change was applied. A BGP peer advertising a prefix that the
-kernel already routes (the node's pod CIDR, or a default route from
-a router advertisement) kept it failing, with the backoff reaching
-29 seconds for every route on the node.
-
-Log the failed routes and retry them from the controller loop with
-exponential backoff, so that other route changes are still applied
-on the next event.
-
-Fixes: #14966
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/network/route_spec.go` (modified, +15/-1)
-```diff
-@@ -9,7 +9,9 @@ import (
- 	"fmt"
- 	"net/netip"
- 	"slices"
-+	"time"
- 
-+	"github.com/cenkalti/backoff/v7"
- 	"github.com/cosi-project/runtime/pkg/controller"
- 	"github.com/cosi-project/runtime/pkg/resource"
- 	"github.com/cosi-project/runtime/pkg/safe"
-@@ -80,11 +82,16 @@ func (ctrl *RouteSpecController) Run(ctx context.Context, r controller.Runtime,
- 		ctrl.installedProtocols = map[resource.ID]nethelpers.RouteProtocol{}
- 	}
- 
-+	retryBackoff := backoff.NewExponentialBackOff()
-+
-+	var retryCh <-chan time.Time
-+
- 	for {
- 		select {
- 		case <-ctx.Done():
- 			return nil
- 		case <-r.EventCh():
-+		case <-retryCh:
- 		}
- 
- 		// list source network configuration resources
-@@ -125,8 +132,15 @@ func (ctrl *RouteSpecController) Run(ctx context.Context, r controller.Runtime,
- 			}
- 		}
- 
-+		// failed routes are retried here: a controller restart would also delay every other route change
- 		if err = multiErr.ErrorOrNil(); err != nil {
--			return err
-+			logger.Error("error syncing routes", zap.Error(err))
-+
-+			retryCh = time.After(retryBackoff.NextBackOff())
-+		} else {
-+			retryBackoff.Reset()
-+
-+			retryCh = nil
- 		}
- 
- 		r.ResetRestartBackoff()
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/route_spec_test.go` (modified, +49/-0)
-```diff
-@@ -1354,6 +1354,55 @@ func TestRouteScopeMatches(t *testing.T) {
- 	}
++//
++// The sandbox root is a slave of the host root: a mount made directly on it after
++// sandboxd starts arrives as a slave, and mounts under it in the sandbox no longer
++// reach machined. Waiting for the volumes CRI uses copies them in as peers.
++func (s *Sandboxd) Volumes(r runtime.Runtime) []string {
++	return (&CRI{}).Volumes(r)
  }
  
-+func (suite *RouteSpecSuite) TestFailingRouteDoesNotDelayOtherRoutes() {
-+	link := uniqueDummyInterface()
-+
-+	conn, err := rtnetlink.Dial(nil)
-+	suite.Require().NoError(err)
-+
-+	defer conn.Close() //nolint:errcheck
-+
-+	index := suite.createDummyInterface(conn, link, netip.MustParsePrefix("10.77.0.2/31"))
-+
-+	defer conn.Link.Delete(index) //nolint:errcheck
-+
-+	gateway := netip.MustParseAddr("10.77.0.3")
-+
-+	newRoute := func(id string, destination netip.Prefix, priority uint32) *network.RouteSpec {
-+		route := network.NewRouteSpec(network.NamespaceName, id)
-+		*route.TypedSpec() = network.RouteSpecSpec{
-+			Family:      nethelpers.FamilyInet4,
-+			Destination: destination,
-+			Gateway:     gateway,
-+			Table:       nethelpers.TableMain,
-+			Protocol:    nethelpers.ProtocolStatic,
-+			Type:        nethelpers.TypeUnicast,
-+			Scope:       nethelpers.ScopeGlobal,
-+			ConfigLayer: network.ConfigOperator,
-+			Priority:    priority,
-+		}
-+
-+		return route
-+	}
-+
-+	// the kernel refuses it: the connected route of the link has the same destination and metric
-+	suite.Create(newRoute("failing", netip.MustParsePrefix("10.77.0.2/31"), 0))
-+
-+	// let failures pile up, as a restarted controller would back off longer with each of them
-+	time.Sleep(10 * time.Second)
-+
-+	destination := netip.MustParsePrefix("10.79.0.0/24")
-+	start := time.Now()
-+
-+	suite.Create(newRoute("unrelated", destination, 1024))
-+
-+	for suite.assertRoute(destination, gateway, func(rtnetlink.RouteMessage) error { return nil }) != nil {
-+		time.Sleep(20 * time.Millisecond)
-+	}
-+
-+	suite.Assert().Less(time.Since(start), time.Second, "a failing route must not delay the others")
-+}
-+
- func TestRouteSpecSuite(t *testing.T) {
- 	t.Parallel()
+ // HealthFunc implements the HealthcheckedService interface. The namespace is
+```
+
+**File**: `internal/pkg/selinux/policy/file_contexts` (modified, +1/-0)
+```diff
+@@ -18,6 +18,7 @@
+ /bin	system_u:object_r:bin_exec_t:s0
+ /lib	system_u:object_r:lib_t:s0
+ /sbin	system_u:object_r:bin_exec_t:s0
++/proc	-d	system_u:object_r:procfs_t:s0
+ /lib64	system_u:object_r:lib_t:s0
+ /usr/sbin	system_u:object_r:bin_exec_t:s0
+ /usr/lib64	system_u:object_r:lib_t:s0
+```
+
+**File**: `internal/pkg/selinux/policy/selinux/immutable/fs.cil` (modified, +2/-0)
+```diff
+@@ -50,6 +50,8 @@
+ (type procfs_t)
+ (call filesystem_f (procfs_t))
+ (context procfs_t (system_u object_r procfs_t (systemLow systemLow)))
++; The /proc mountpoint on the rootfs: sandboxd mounts its scoped procfs here once the host one is detached.
++(filecon "/proc" dir (system_u object_r procfs_t (systemLow systemLow)))
+ (genfscon proc "/" procfs_t)
+ (genfscon proc "/sysvipc" procfs_t)
  
 ```
 
----
-
-### Incident Patch 3: `b292f3d5` (2026-11-16)
-**Commit Message**: fix: keep the peer ASN in AS_PATH with a neighbor localASN
-
-A neighbor localASN set GoBGP's ReplacePeerAsn, which is
-as-override. GoBGP replaced the peer's own ASN in every AS_PATH
-sent to it, so the peer accepted routes that had already passed
-through its AS and its loop detection never fired. GoBGP also
-refuses as-override on iBGP sessions, so a localASN equal to the
-peerASN passed validation and failed when the peer was added.
-
-Set only the local ASN. GoBGP still uses it in OPEN and prepends
-it to AS_PATH, which is what the field is for.
-
-Fixes: #14963
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp.go` (modified, +0/-1)
+**File**: `internal/pkg/selinux/policy/selinux/services/sandboxd.cil` (modified, +3/-2)
 ```diff
-@@ -50,7 +50,6 @@ func BuildPeer(peer Peer, multipath bool) *gobgpapi.Peer {
+@@ -29,8 +29,9 @@
+ (allow sandboxd_t service_exec_f (file (execute)))
+ (allow sandboxd_t service_exec_f (fs_classes (ro)))
  
- 	if peer.Config.LocalASN != 0 {
- 		result.Conf.LocalAsn = peer.Config.LocalASN
--		result.Conf.ReplacePeerAsn = true
- 	}
+-; Anchor the namespace: overmount a fresh procfs scoped to the new PID namespace.
+-(allow sandboxd_t procfs_t (filesystem (mount remount)))
++; Anchor the namespace: replace the host procfs with a fresh one scoped to the new PID namespace.
++; Once the host procfs is detached, the mountpoint is the /proc dir of the rootfs, also procfs_t.
++(allow sandboxd_t procfs_t (filesystem (mount remount unmount)))
+ (allow sandboxd_t procfs_t (dir (mounton)))
  
- 	if peer.Config.Passive || peer.BindInterface != "" {
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp_test.go` (modified, +1/-1)
-```diff
-@@ -47,7 +47,7 @@ func TestBuildPeer(t *testing.T) {
- 	assert.Equal(t, "fe80::1%eth0", peer.GetConf().GetNeighborAddress())
- 	assert.Equal(t, uint32(65002), peer.GetConf().GetPeerAsn())
- 	assert.Equal(t, uint32(65003), peer.GetConf().GetLocalAsn())
--	assert.True(t, peer.GetConf().GetReplacePeerAsn())
-+	assert.False(t, peer.GetConf().GetReplacePeerAsn(), "localASN must not rewrite the peer ASN in AS_PATH")
- 	assert.True(t, peer.EbgpMultihop.Enabled)
- 	assert.Equal(t, uint32(2), peer.EbgpMultihop.MultihopTtl)
- 	assert.True(t, peer.GetTransport().GetPassiveMode())
+ ; Control + per-service SEQPACKET sockets are created by machined (init_t).
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14993** (2026-11-17): feat: add trustGuestRxFilters to hypervisor VM interfaces (@shanduur)
+- **PR #14992** (2026-11-17): fix: allow two busy unmounts in TestUnmountBusy (@shanduur)
+- **PR #14989** (2026-11-17): fix: use multihop BFD for ebgpMultiHop neighbors (@frezbo)
 - **PR #14988** (2026-11-16): fix: ignore the default router in RAs on unnumbered BGP links (@frezbo)
 - **PR #14987** (2026-11-16): fix: do not install BGP routes over connected prefixes (@frezbo)
 - **PR #14984** (2026-11-16): fix: retry failed routes without restarting RouteSpecController (@frezbo)
-- **PR #14983** (2026-11-16): fix: install IPv6 routes from numbered peers via the global next-hop (@frezbo)
-- **PR #14979** (2026-11-16): fix: keep healthy BGP instances running when one fails (@frezbo)
-- **PR #14978** (2026-11-16): fix: keep the peer ASN in AS_PATH with a neighbor localASN (@frezbo)
 
 ---
 
@@ -2709,77 +2466,38 @@ Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep healthy BGP instances running when one fails
+## X. allow two busy unmounts in TestUnmountBusy
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/network/bgp.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/controllers/block/mount_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4f583972`: keep healthy BGP instances running when one fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b04d378c`: allow two busy unmounts in TestUnmountBusy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/network/bgp.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/block/mount_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"time"
-	"github.com/cenkalti/backoff/v7"
-	retryBackoff := backoff.NewExponentialBackOff()
+	"context"
+	"github.com/cosi-project/runtime/pkg/resource/rtestutils"
+	// each busy unmount attempt blocks for ~5s retrying EBUSY, and "b-other" may wait behind two of them:
+	// one in an iteration that ran before its teardown, one in the iteration handling it
+	ctx, cancel := context.WithTimeout(suite.Ctx(), 20*time.Second)
+	defer cancel()
 
-	var retryCh <-chan time.Time
-
-		case <-retryCh:
-		failed, err := ctrl.reconcile(ctx, r, logger)
-		if err != nil {
-		// failed instances and peers are retried here: a controller restart would also stop the healthy ones
-		if failed {
-			retryCh = time.After(retryBackoff.NextBackOff())
-		} else {
-			retryBackoff.Reset()
-
-			retryCh = nil
-		}
-
-// reconcile reports whether an instance failed and needs a retry.
-//
-func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime, logger *zap.Logger) (bool, error) {
-		return false, fmt.Errorf("error listing BGP instance configs: %w", err)
-		return false, fmt.Errorf("error listing link statuses: %w", err)
-		return false, fmt.Errorf("error listing address statuses: %w", err)
-	var failed bool
-
-			instanceLogger.Error("error configuring BGP instance", zap.Error(err))
-
-			failed = true
-
-			if !instance.Running() {
-				continue
-			}
-			instanceLogger.Error("error originating BGP routes", zap.Error(err))
-
-			failed = true
-
-			continue
-			logger.With(zap.String("instance", name)).Error("error resolving BGP route imports", zap.Error(importErr)
+	rtestutils.AssertResource(ctx, suite.T(), suite.State(), "b-other", func(mountRequest *block.MountRequest, asrt *assert.Assertions) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		if err := ctrl.reconcile(ctx, r, logger); err != nil {
-func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime, logger *zap.Logger) error {
-		return fmt.Errorf("error listing BGP instance configs: %w", err)
-		return fmt.Errorf("error listing link statuses: %w", err)
-		return fmt.Errorf("error listing address statuses: %w", err)
-			return fmt.Errorf("error configuring BGP instance %q: %w", name, err)
-			return fmt.Errorf("error originating routes for BGP instance %q: %w", name, err)
-			return fmt.Errorf("error resolving route imports for BGP instance %q: %w", name, importErr)
-	return ctrl.writeOutputs(ctx, r, outputs)
+	ctest.AssertResource(suite, "b-other", func(mountRequest *block.MountRequest, asrt *assert.Assertions) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4f583972` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b04d378c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

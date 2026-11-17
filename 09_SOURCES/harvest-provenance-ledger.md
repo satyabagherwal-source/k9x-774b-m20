@@ -10718,3 +10718,8 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `c09aaa6a` | Multi-dimensional audit evidence | 2026-11-17T19:44:54.488Z |
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `92186138` | Multi-dimensional audit evidence | 2026-11-17T19:44:57.003Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3bd9f72f` | Multi-dimensional audit evidence | 2026-11-17T19:45:01.097Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `23d2aaec` | Multi-dimensional audit evidence | 2026-11-17T19:53:40.531Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `58dd5893` | Multi-dimensional audit evidence | 2026-11-17T19:53:45.639Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `1cc9974a` | Multi-dimensional audit evidence | 2026-11-17T19:53:47.438Z |
+| `learn-huggingface-thinkingmachines-inkling-2-small` | `https://huggingface.co/thinkingmachines/Inkling-2-Small` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-17T19:54:06.318Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `9c7cb976` | Multi-dimensional audit evidence | 2026-11-17T19:54:42.892Z |

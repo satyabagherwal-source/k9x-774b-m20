@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T19:45:05.480Z",
-  "total_records": 1669,
+  "last_updated": "2026-11-17T19:54:48.173Z",
+  "total_records": 1673,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 719,
+      "total": 721,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -768,7 +768,9 @@
         "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-3d-coder-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva",
         "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-small-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-small-learnings-co"
       ]
     },
     "E": {
@@ -1125,7 +1127,7 @@
       ]
     },
     "H": {
-      "total": 396,
+      "total": 398,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1522,7 +1524,9 @@
         "DOM-H-28B99DBA",
         "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-core-invar",
         "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-learnings-",
-        "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar"
+        "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar",
+        "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari"
       ]
     },
     "I": {
@@ -10658,8 +10662,8 @@
       "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
       "repository": "databendlabs/databend",
-      "content_hash": "7f8b434f1bb98caa0d9f0797ab2b33215015cf6d7db8c1b68240ba3d2952fb08",
-      "created_at": "2026-11-15T10:48:15.109Z"
+      "content_hash": "1fdfe207f0274bbddc2a9d9146513e59efe63c338ee40f2cc5445ea08bf3bed8",
+      "created_at": "2026-11-17T19:53:45.954Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants",
@@ -12374,8 +12378,8 @@
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "repository": "siderolabs/talos",
-      "content_hash": "53d66afbeec977542f6ea3d7591237a3d534ad158917fe2c281015f2cfff6c41",
-      "created_at": "2026-11-16T22:47:38.138Z"
+      "content_hash": "7363353427fdeb171b07092036c3fe53d3a17bbbac65856155bb45183b84697f",
+      "created_at": "2026-11-17T19:53:40.851Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -12496,8 +12500,8 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-learnings-technical-construction-intelligence-siderolabs-talos-.md",
       "repository": "siderolabs-talos-learnings",
-      "content_hash": "57f1e4d0e258b1ebe349e3a17db129d9b0ffc51e800de7af8ba4cf70223e7e05",
-      "created_at": "2026-11-16T22:47:42.405Z"
+      "content_hash": "43c301a67cc1e92df86d6b387451a449412d0cd27f6cb9fca8c2ad87b2ba00a1",
+      "created_at": "2026-11-17T19:54:48.173Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
@@ -14748,8 +14752,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "d29f64c06cc594915dc076c310ca7323e3e591f8af6318d489e707e84bda9d55",
-      "created_at": "2026-11-17T12:46:12.674Z"
+      "content_hash": "9357241dc7b667b63a8d4c73190652b9e4490f263798cbe10827d58f3aa1eb93",
+      "created_at": "2026-11-17T19:53:47.756Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -28285,6 +28289,42 @@
       "repository": "hf-liquidai-lfm3-1.7b-learnings",
       "content_hash": "2485758a72823db03c7a292b328a7d9404c4d5f6548d0def1994ba50717bc583",
       "created_at": "2026-11-17T19:45:04.421Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-small-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-small-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: thinkingmachines/Inkling-2-Small Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-small-research-knowledge-intelligence-thinkingmach.md",
+      "repository": "thinkingmachines/Inkling-2-Small",
+      "content_hash": "6fbd213b9462d95f0d5b0946f84e0787dd02859aa68260ad36cef5d507142acc",
+      "created_at": "2026-11-17T19:54:06.497Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: codewhale-hq/Codewhale Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-codewhale-hq-codewhale-technical-construction-intelligence-codewhale-hq-codewhal.md",
+      "repository": "codewhale-hq/Codewhale",
+      "content_hash": "fe8867154895356b3728feb660e3670129b3915344b23f941cb1a458b00acdea",
+      "created_at": "2026-11-17T19:54:43.454Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-codewhale-hq-codewhale-learnings-technical-construction-intelligence-codewhale-h.md",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "content_hash": "0f52ac69369cd0b56b1853b65498b55545c1f4f3d3a45cb5651d226b40cae6c6",
+      "created_at": "2026-11-17T19:54:47.058Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-small-learnings-co": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-small-learnings-co",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-thinkingmachines-inkling-2-small-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-small-learnings-research-knowledge-intelligence-hf.md",
+      "repository": "hf-thinkingmachines-inkling-2-small-learnings",
+      "content_hash": "8654ba3f719352535418141afc8c28fb36ccc71652a81b3df4cdda8126f2261a",
+      "created_at": "2026-11-17T19:54:47.618Z"
     }
   }
 }

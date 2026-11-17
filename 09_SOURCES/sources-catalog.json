@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "16ae8c24",
+    "sourceVersion": "1cc9974a",
     "license": "Apache-2.0",
-    "contentHash": "1b81cfe40a3f916f663566894d90b000e8b81aa815317320a599c9006564fb58",
-    "lastHarvestedAt": "2026-11-17T19:19:50.709Z",
+    "contentHash": "6968df8a19a40615d472a1290762e337d784addbddb02a73af313dd995b24cb2",
+    "lastHarvestedAt": "2026-11-17T19:53:47.438Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "a5b5d7de",
+    "sourceVersion": "23d2aaec",
     "license": "MPL-2.0",
-    "contentHash": "37d077e4275c0879f9e8da1deb597db64dd186e30ea168aca55b47cde2e2f64c",
-    "lastHarvestedAt": "2026-11-16T22:47:37.886Z",
+    "contentHash": "446667f9ae3934ed8bc4be901cb400bab1a6bff36810889b786a6d9f14a28eb9",
+    "lastHarvestedAt": "2026-11-17T19:53:40.531Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "342ec629",
+    "sourceVersion": "58dd5893",
     "license": "Apache-2.0",
-    "contentHash": "2d407fbe529c2f138259823d5734173a7197114a47f19d916867f9740e678ccb",
-    "lastHarvestedAt": "2026-11-16T21:10:35.764Z",
+    "contentHash": "c96e3ead7e09cfde07614ec7b0d5f8eb3f81f50972ab86eeae8e89ded75f5ea1",
+    "lastHarvestedAt": "2026-11-17T19:53:45.639Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "336cd8a4",
+    "sourceVersion": "9c7cb976",
     "license": "MIT",
-    "contentHash": "10f08cf6e988a2cc6c3eeb99b5b4098ab9db301b8f95cc98f8f0686f1022c857",
-    "lastHarvestedAt": "2026-11-16T07:19:48.962Z",
+    "contentHash": "21a5665e7451f82569e44ffe06d682e90adba0fce494dbd826227174fb63fbc4",
+    "lastHarvestedAt": "2026-11-17T19:54:42.892Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {
@@ -12445,8 +12445,8 @@
     "sourceUrl": "https://huggingface.co/thinkingmachines/Inkling-2-Small",
     "sourceVersion": "hf-thinkingmachines-inkling-2-small",
     "license": "Open-Source",
-    "contentHash": "845378fe300a1bc7082e0ed1793e7ab5c5b971692d0b0be7c4efded35cb1dce9",
-    "lastHarvestedAt": "2026-11-13T09:17:37.239Z",
+    "contentHash": "ec9649c39cec40173a1ed59146a2c3f250b376aa413a621364be695fe62449e0",
+    "lastHarvestedAt": "2026-11-17T19:54:06.318Z",
     "learningId": "learn-huggingface-thinkingmachines-inkling-2-small"
   },
   "tuist-tuist": {

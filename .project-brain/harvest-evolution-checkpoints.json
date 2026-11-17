@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T19:45:05.714Z",
+  "last_updated": "2026-11-17T19:54:48.431Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T19:12:36.114Z",
@@ -48,9 +48,9 @@
       "staged_for_review": 1
     },
     "codewhale-hq-codewhale-learnings.md": {
-      "processed_at": "2026-11-16T07:19:58.503Z",
+      "processed_at": "2026-11-17T19:54:46.491Z",
       "promoted_canonical": 0,
-      "staged_for_review": 1
+      "staged_for_review": 0
     },
     "callstack-agent-device-learnings.md": {
       "processed_at": "2026-11-14T17:25:24.308Z",
@@ -483,7 +483,7 @@
       "staged_for_review": 1
     },
     "siderolabs-talos-learnings.md": {
-      "processed_at": "2026-11-16T22:47:42.156Z",
+      "processed_at": "2026-11-17T19:54:47.764Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1688,8 +1688,8 @@
       "staged_for_review": 0
     },
     "hf-thinkingmachines-inkling-2-small-learnings.md": {
-      "processed_at": "2026-11-13T09:17:56.199Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T19:54:47.457Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "tanstack-router-learnings.md": {
@@ -3358,7 +3358,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1692,
+  "total_dossiers_evaluated": 1695,
   "total_canonical_promoted": 324,
-  "total_staged_for_review": 1324
+  "total_staged_for_review": 1325
 }

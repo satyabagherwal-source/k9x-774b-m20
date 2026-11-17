@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T19:45:01.102Z",
-  "total_cycles_completed": 10239,
-  "total_learnings_persisted": 10239,
-  "total_rules_promoted": 9788,
+  "last_updated": "2026-11-17T19:54:42.897Z",
+  "total_cycles_completed": 10244,
+  "total_learnings_persisted": 10244,
+  "total_rules_promoted": 9794,
   "history": [
-    {
-      "timestamp": "2026-11-17T06:20:38.389Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T06:20:40.410Z",
-      "repository": "vitest-dev/vitest",
-      "learningId": "learn-github-vitest-dev-vitest",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T06:28:22.787Z",
-      "repository": "cypress-io/cypress",
-      "learningId": "learn-github-cypress-io-cypress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T06:28:31.352Z",
-      "repository": "gluesql/gluesql",
-      "learningId": "learn-github-gluesql-gluesql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T06:36:02.196Z",
-      "repository": "webdriverio/webdriverio",
-      "learningId": "learn-github-webdriverio-webdriverio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T06:36:05.750Z",
       "repository": "kirillzyusko/react-native-keyboard-controller",
@@ -1403,6 +1368,41 @@
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:53:40.536Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:53:45.644Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:53:47.443Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:54:06.324Z",
+      "repository": "thinkingmachines/Inkling-2-Small",
+      "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:54:42.897Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

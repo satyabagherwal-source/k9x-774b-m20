@@ -10685,3 +10685,8 @@
 | `CYCLE-20261117-Q66T` | `2026-11-17T19:44:54.485Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9040` | Yes (`ec374229...`) |
 | `CYCLE-20261117-Q84O` | `2026-11-17T19:44:57.000Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9041` | Yes (`ceb0afc4...`) |
 | `CYCLE-20261117-QBAE` | `2026-11-17T19:45:01.094Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9042` | Yes (`b3c856d1...`) |
+| `CYCLE-20261117-1G33` | `2026-11-17T19:53:40.527Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9043` | Yes (`446667f9...`) |
+| `CYCLE-20261117-1K0Z` | `2026-11-17T19:53:45.635Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9044` | Yes (`c96e3ead...`) |
+| `CYCLE-20261117-1LEY` | `2026-11-17T19:53:47.434Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9045` | Yes (`6968df8a...`) |
+| `CYCLE-20261117-1ZZE` | `2026-11-17T19:54:06.314Z` | `thinkingmachines/Inkling-2-Small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md` | Yes (`ec9649c3...`) |
+| `CYCLE-20261117-2S7C` | `2026-11-17T19:54:42.888Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9046, Rule 9047, Rule 9048` | Yes (`21a5665e...`) |

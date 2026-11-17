@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "e1506250",
+  "source_version": "1cc9974a",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T12:46:12.553Z",
+  "timestamp": "2026-11-17T19:53:47.626Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `e1506250`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T12:46:12.553Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `1cc9974a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T19:53:47.626Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T12:41:08.308Z  
+> **Harvest Timestamp**: 2026-11-17T19:53:46.485Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1231,7 +1231,9 @@ export async function instances({ train_dataset }) {
 export async function value({ train_dataset, input_matrix, instance }) {
   milestone.constructing_instance({ instance_name: instance.instance_name });
 
-  const { x, y, width, height } = Matrix.locate(instance.input_instance_matrix);
+  const { x, y, width, height, volume } = Matrix.locate(
+    instance.input_instance_matrix
+  );
 
   const orientation = await object.orientation({ train_dataset, instance });
 
@@ -1243,6 +1245,7 @@ export async function value({ train_dataset, input_matrix, instance }) {
     width,
     height,
     orientation,
+    volume,
   });
 
   milestone.evaluating_rules({ instance_name: instance.instance_name });
@@ -1373,7 +1376,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     test_input_matrix,
   });
 
-  let result_drawing = Matrix.draw(
+  let result_matrix = Matrix.draw(
     [],
     test_input_matrix.length,
     test_input_matrix[0].length,
@@ -1403,24 +1406,23 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
 
+  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
+
   await visualizer.state({ declarations, test_input_matrix, input_instances });
 
   for (const input_instance of input_instances) {
-    const { output_instance_drawing } = await visualizer.output_instance_matrix(
-      {
-        test_input_matrix,
-        train_dataset,
-        instance: input_instance,
-      }
-    );
+    const { output_instance_matrix } = await visualizer.output_instance_matrix({
+      test_input_matrix,
+      train_dataset,
+      instance: input_instance,
+    });
 
-    input_instance.output_instance_matrix = output_instance_drawing.matrix;
-    input_instance.output_instance_epoch = output_instance_drawing.epoch;
+    input_instance.output_instance_matrix = output_instance_matrix;
 
-    result_drawing = Matrix.merge(result_drawing, output_instance_drawing);
+    result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
-  const result_matrix = Matrix.canvas(result_drawing.matrix, output_canvas);
+  result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
   milestone.comparison({ test_output_matrix, result_matrix });
 
@@ -1526,127 +1528,444 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1506250` (2026-11-17)
-**Commit Message**: Draft NUC 113 Implicit Receivers in Method Bodies
+### Incident Patch 1: `1cc9974a` (2026-11-17)
+**Commit Message**: Add object volume to ARC visualization
 
-Category: Syntax enhancement, drawn uniformly at random (index 0 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle, so the token non-regression gate is
-required for this category.
+Count nonzero cells in each object and pass the volume to synthesis prompts. Update the ARC dataset examples to include the new property.
 
-Requested change: inside the bodies of a class's methods and
-constructors, a . that begins an operand and is followed by a property
-name reads that property of the receiver this, so def area() => .w * .h
-is def area() => this.w * this.h and return .total in a method's
-indented body is return this.total. It completes NUC 102's implicit
-receivers, which read the assigned object inside property values, for
-class code that is not such a value, including Python-style self
-methods. A whole argument .name stays a NUC 79 selector, property
-assignments keep NUC 102's receiver, statements starting with . keep
-their error, lambdas and functions nested in a method keep theirs, and
-def f() => .a outside classes keeps SyntaxError("Unexpected '.'"). Only
-programs that were syntax errors at the accepted revision change.
-
-This allocation changes only the Draft and its two index rows.
-
-Co-Authored-By: Claude Opus
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +15/-8)
 ```diff
-@@ -67,6 +67,7 @@ Created: 31-Jul-2026
- | [102](nuc-0102.md) | Implicit Receiver Properties | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
- | [104](nuc-0104.md) | Any and All Class References | Accepted |
- | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
-+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
- 
- ### Runtime features
- 
-@@ -279,6 +280,7 @@ Created: 31-Jul-2026
- | [110](nuc-0110.md) | Python String Method Aliases | Standards Track | Language compatibility | Accepted |
- | [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
- | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
-+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
- 
- ## Copyright
- 
+@@ -112,11 +112,11 @@ formatting exactly:
+ - `declarations[0]` holds every class declaration of the world model, because
+   the solver runs it alone to build input states. Existing datasets declare
+   one class, `Obj(x: int, y: int, width: int, height: int, orientation: int,
+-  ...)`; add another class only for a distinct kind of object the
+-  transformation needs. Each class whose instances are annotated objects
++  volume: int, ...)`; add another class only for a distinct kind of object
++  the transformation needs. Each class whose instances are annotated objects
+   takes the standard entries `x: int, y: int, width: int, height: int,
+-  orientation: int` first, in that order, and its body assigns every
+-  parameter to `this` and sets an initial tag either way: a literal,
++  orientation: int, volume: int` first, in that order, and its body assigns
++  every parameter to `this` and sets an initial tag either way: a literal,
+   `this.tag = 'lNNNN'`, or a `tag: str` parameter, `this.tag = tag`, whose
+   value each implementation passes, as in `dataset.27a28665.json`. Add only
+   the descriptive properties the transformation needs, such as categorical
+@@ -129,6 +129,12 @@ formatting exactly:
+   size from the input value with `@first`, as in
+   `$Obj.width = $Obj.width@first + 1`. Use them for an object's size instead
+   of separate size properties such as `bar_height` or `bar_width`.
++- `volume` is the number of nonzero cells in the object's input mask, not the
++  area of its bounding box; the solver measures it with `Matrix.locate` and
++  sends it to the implementation call as `input_volume`. Like `width` and
++  `height`, it does not change when only the orientation changes. Use it for
++  an object's cell count instead of a separate property such as
++  `cell_count`.
+ - The solver starts every Nucleoid program with `canvas_width` and
+   `canvas_height`, the column and row counts of the pair's `input_matrix`
+   (every `nucleoid.run` call in `arc/src/analyzer.ts` and
+@@ -219,10 +225,11 @@ The caller decides whether to propose the feature; you never start a NUC.
+   unique across all datasets
+   (`node -e "console.log(require('crypto').randomBytes(6).toString('hex'))"`).
+ - `implementation` is `<instance_name> = <Class>(x=<input_x>, y=<input_y>,
+-  width=<width>, height=<height>, orientation=<input_orientation>, ...)`,
+-  constructing the instance's class (`Obj` in existing datasets) with named
+-  arguments matching its parameters, where `width` and `height` are the input
+-  mask's nonzero bounding-box column and row counts.
++  width=<width>, height=<height>, orientation=<input_orientation>,
++  volume=<volume>, ...)`, constructing the instance's class (`Obj` in existing
++  datasets) with named arguments matching its parameters, where `width` and
++  `height` are the input mask's nonzero bounding-box column and row counts and
++  `volume` is its number of nonzero cells.
+ - Before that code, `implementation` holds `#` comment lines that describe the
+   object, as in every existing dataset: its kind and colors, then its size,
+   position and, when it points, its direction, such as
 ```
 
-**File**: `docs/nuc-0113.md` (added, +73/-0)
+**File**: `arc/README.md` (modified, +188/-154)
 ```diff
-@@ -0,0 +1,73 @@
-+# NUC 113 -- Implicit Receivers in Method Bodies
+@@ -336,11 +336,12 @@ color-9 point with its color-2 rim below and a color-4 point with its color-8
+ rim above, and a vertical line that extends up from its bottom endpoint with
+ a horizontal line that extends left from its right endpoint.
+ Each genesis class takes the standard entries `x`, `y`, `width`, `height`,
+-and `orientation` first, then its descriptive properties in their existing
+-order, and every implementation passes the input shape's bounding-box
+-`width` and `height`. A rule that grows a shape computes its new size from
+-its first values in the branch that sets its output tag: a core corner grows
+-from 2 by 2 to 3 by 3 with its outside marker, and its origin moves one
++`orientation`, and `volume` first, then its descriptive properties in their
++existing order, and every implementation passes the input shape's bounding-box
++`width` and `height` and its input mask's `volume`, its number of nonzero
++cells, which no rule changes. A rule that grows a shape computes its new size
++from its first values in the branch that sets its output tag: a core corner
++grows from 2 by 2 to 3 by 3 with its outside marker, and its origin moves one
+ column left when it points west, at orientation 225 or 315, and one row up
+ when it points north, at orientation 45 or 315; a curve point grows from
+ 1 by 1 to 3 by 2 with its rim; and a line of 3 or 4 cells grows by one cell,
+@@ -373,9 +374,9 @@ Every dataset writes its assignments with `is`, the opt-in assignment of
+ the comparisons of [NUC 86](../docs/nuc-0086.md). Constructors set
+ `this.x is x`, class-level rules set `$Obj.height is $Obj.height@first * 2`,
+ and implementations construct
+-`obj0c2414cf33eb is Obj(x=0, y=0, width=3, height=3, orientation=0)`; each
+-`target is value` builds exactly the syntax tree of `target = value`. When a
+-whole value, or the whole right operand of an `is` comparison, is one bare
++`obj0c2414cf33eb is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=6)`;
++each `target is value` builds exactly the syntax tree of `target = value`. When
++a whole value, or the whole right operand of an `is` comparison, is one bare
+ word, it reads the name of that spelling if one exists and otherwise its own
+ text, so tags and directions drop their quotes there, as in
+ `this.tag is l9100` and `$Obj.extension_direction is right`. No dataset
+@@ -401,7 +402,7 @@ so they change no snapshot:
+ ```nuc
+ # A corner whose vertex and both segments are color 9,
+ # 2 by 2 at x 5, y 1, pointing southeast
+-obj7e96305711c2 is Obj(x=5, y=1, width=2, height=2, orientation=135, vertex_color=9, vertical_segment_color=9, horizontal_segment_color=9)
++obj7e96305711c2 is Obj(x=5, y=1, width=2, height=2, orientation=135, volume=3, vertex_color=9, vertical_segment_color=9, horizontal_segment_color=9)
+ ```
+ 
+ Every `input_instance_matrix` has exactly its pair's `input_matrix` row and
+@@ -435,9 +436,10 @@ reproduce the second and third training outputs and the test output, whose
+ periods divide the height, but not the first training output: its pattern
+ repeats every four rows, so the rows added below repeat its rows 2 to 4, and
+ its row 7 is 0, 2, 2 rather than 2, 2, 0. The class takes the standard entries
+-`x`, `y`, `width`, `height`, and `orientation` first, in that order, where
+-`width` and `height` are the column and row counts of the pattern's box, the
+-nonzero bounding box of its input mask, and then `color` and `period`, the
++`x`, `y`, `width`, `height`, `orientation`, and `volume` first, in that order,
++where `width` and `height` are the column and row counts of the pattern's box,
++the nonzero bounding box of its input mask, and `volume` the number of its
++nonzero cells, and then `color` and `period`, the
+ number of rows after which the pattern starts over, as scalars, with no parts
+ list, canvas size, or matrix of cells. Each implementation passes `width` and
+ `height` right after `y`, such as `width=3, height=6` for the first training
+@@ -475,9 +477,9 @@ annotated by the same rules.
+ instances in total (2, 5, 3, and 5 per pair).
+ Color-1 points gain color-7 orthogonal neighbors; color-2 points gain color-4
+ diagonal neighbors. Color-6 and color-8 points remain unchanged.
+-The class takes the standard entries `x`, `y`, `width`, `height`, and
+-`orientation`, then `vertex_color`; every point is 1 by 1, so each
+-implementation passes `width=1, height=1`.
++The class takes the standard entries `x`, `y`, `width`, `height`,
++`orientation`, and `volume`, then `vertex_color`; every point is 1 by 1, so
++each implementation passes `width=1, height=1` and `volume=1`.
+ The declarative rules introduce `marker_color`, which is absent before the
+ rules run, and, in the same branches that shift the origin, grow each cross
+ to 3 by 3 with `$Obj.width is $Obj.width@first + 2` and
+@@ -512,11 +514,12 @@ third, 2 turns 6 in the first, second, and fourth and 6 turns 2 in the third,
+ in the second and third and 9 turns 8 in the fourth; colors 0 and 7 do not
+ appear. Colors are categorical, an
+```
+
+**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +28/-3)
+```diff
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/017c7c7b.json`](../data/training/017c7c7b.json) |
+-| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c`; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c`; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested for any version, so no proposal strategy was selected; versions 2 and 3 use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md) |
+-| Solver changes | None; one suggested change awaits review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None; one suggested change awaits review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 2 local runs on 4-Nov-2026: version 1 exit 2, version 2 exit 0; version 3 not run; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -314,6 +314,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
 +
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
++
++```nuc
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int, period: int):
++obj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)
 +```
-+NUC: 113
-+Title: Implicit Receivers in Method Bodies
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Syntax enhancement
-+Created: 17-Nov-2026
++
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 4 input and 4 output snapshots of the 4 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +28/-3)
+```diff
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/0ca9ddb6.json`](../data/training/0ca9ddb6.json) |
+-| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), both Accepted; the conditions also use the accepted `is` of [NUC 86](../../docs/nuc-0086.md), which this puzzle did not request |
+-| Solver changes | None specific to this puzzle; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None specific to this puzzle; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -392,6 +392,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
++
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
++
++```nuc
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int):
++obj08c8feaa60ea is Obj(x=2, y=3, width=1, height=1, orientation=0, volume=1, vertex_color=2)
 +```
 +
-+## Abstract
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 15 input and 15 output snapshots of the 4 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
 +
-+- Inside the body of a method that a class declares, a `.` that begins an
-+  operand and is followed by a property name reads that property of the
-+  instance the method runs on, its receiver `this`. So
-+  `def area() => .w * .h` is `def area() => this.w * this.h`, and
-+  `return .total - .paid` in a method's indented body is
-+  `return this.total - this.paid`.
-+- It completes [NUC 102](nuc-0102.md)'s implicit receivers, which read the
-+  assigned object inside the value of a property assignment, for the code
-+  of a class that is not such a value: the bodies of its methods and
-+  constructors, written with `def` directly in a class's indented body or
-+  as the class header's own indented body, with expression or indented
-+  bodies and with Python-style `self` parameters ([NUC 107](nuc-0107.md)).
-+- Every accepted reading keeps its meaning. A whole argument `.name` stays a
-+  [NUC 79](nuc-0079.md) property selector, a property assignment inside a
-+  method keeps NUC 102's receiver, a statement that starts with `.` keeps
-+  its error, a lambda or function nested in a method keeps its accepted
-+  error, since `this` is not defined there, and outside classes
-+  `def f() => .a` keeps its accepted `SyntaxError("Unexpected '.'")`.
-+- Only programs that were syntax errors at the accepted revision change.
+ ## Runs
+ 
+ | Date | Run | Commit | Exit status | Difference | Seconds |
+```
+
+**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +28/-3)
+```diff
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/0d3d703e.json`](../data/training/0d3d703e.json) |
+-| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c`; partner test respelled with `is not` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c`; partner test respelled with `is not` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the list `includes` that [NUC 61](../../docs/nuc-0061.md) specifies, and the accepted `is not` of [NUC 86](../../docs/nuc-0086.md) |
+-| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026, exit 0; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -280,6 +280,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
 +
-+## Motivation
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
 +
-+- Methods read the properties of their own instance more than anything
-+  else: in the executable documents, 27 lines that give a method's value
-+  read them through `this.`, as in `return this.count` and
-+  `def combine left right => this.base + left + right`.
-+- NUC 102 gave class-level rules and property values the short receiver
-+  form, so `$Rect.area = .w * .h` and `this.area = .w * .h` read the
-+  receiver's properties, but a method that computes the same value still
-+  spells every read out: at the accepted revision `def area() => .w * .h`
-+  raises `SyntaxError("Unexpected '.'")` while the program is parsed.
-+- Each read saves one lexer token, `this.w` being three and `.w` two, so a
-+  world model's methods read as its rules already do.
-+- Prior art: Ruby's `@name`, CoffeeScript's `@name` and the implicit `this`
-+  of Kotlin, Swift and Java, which let a method name its own instance's
-+  members without spelling the receiver.
++```nuc
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):
++obj4d683f973e7d is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=3)
++```
 +
-+## Rationale
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 15 input and 15 output snapshots of the 5 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
 +
-+- Pending: the proposer completes this section.
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +28/-3)
+```diff
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/25d8a9c8.json`](../data/training/25d8a9c8.json) |
+-| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record; condition respelled with `is` on 6-Nov-2026; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record; condition respelled with `is` on 6-Nov-2026; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the list query `distinct` of [NUC 71](../../docs/nuc-0071.md), the conditional expression of [NUC 59](../../docs/nuc-0059.md), and the accepted `is` of [NUC 86](../../docs/nuc-0086.md) |
+-| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -296,6 +296,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
 +
-+## Specification
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
 +
-+- Pending: the proposer completes this section.
++```nuc
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, parts: list):
++obj264fe4293acf is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3, parts=[4, 4, 4])
++```
 +
-+## Errors
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 15 input and 15 output snapshots of the 5 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
 +
-+- Pending: the proposer completes this section.
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-25ff71a9.md` (modified, +28/-3)
+```diff
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/25ff71a9.json`](../data/training/25ff71a9.json) |
+-| Instruction dataset | [`dataset.25ff71a9.json`](../src/dataset/dataset.25ff71a9.json): the puzzle's 4 original training pairs and its 2 test pairs, 6 figure instances, one per pair; committed with this record; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.25ff71a9.json`](../src/dataset/dataset.25ff71a9.json): the puzzle's 4 original training pairs and its 2 test pairs, 6 figure instances, one per pair; committed with this record; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the class-level `@first` anchor of [NUC 55](../../docs/nuc-0055.md), built on the state versions of [NUC 53](../../docs/nuc-0053.md) |
+-| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -229,6 +229,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
 +
-+## Reference Implementation
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
 +
-+- Pending: the proposer completes this section.
++```nuc
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):
++obj56f6c04f44d8 is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3)
++```
 +
-+## Copyright
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 6 input and 6 output snapshots of the 6 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
 +
-+Copyright 2020 Nucleoid
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-27a28665.md` (modified, +28/-3)
+```diff
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/27a28665.json`](../data/training/27a28665.json) |
+-| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 3, which `88c781d` committed, replacing version 2's 50 cell instances, which had replaced version 1 before any run; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 3, which `88c781d` committed, replacing version 2's 50 cell instances, which had replaced version 1 before any run; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `FIT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; version 3's rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), and version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md) |
+-| Solver changes | None; two suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None; two suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026 for version 2, exit 0; version 3 not run; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -278,6 +278,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
 +
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
++
++```nuc
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str):
++obj3fc7d6382a47 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l4262')
++```
++
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 10 input and 10 output snapshots of the 10 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
 #### Recent Merged Pull Requests:
@@ -1675,32 +1994,52 @@ Co-Authored-By: Claude Opus
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 113 Implicit Receivers in Method Bodies
+## X. Add object volume to ARC visualization
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e1506250`: Draft NUC 113 Implicit Receivers in Method Bodies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cc9974a`: Add object volume to ARC visualization. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
-| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
+  volume: int, ...)`; add another class only for a distinct kind of object
+  the transformation needs. Each class whose instances are annotated objects
+  orientation: int, volume: int` first, in that order, and its body assigns
+  every parameter to `this` and sets an initial tag either way: a literal,
+- `volume` is the number of nonzero cells in the object's input mask, not the
+  area of its bounding box; the solver measures it with `Matrix.locate` and
+  sends it to the implementation call as `input_volume`. Like `width` and
+  `height`, it does not change when only the orientation changes. Use it for
+  an object's cell count instead of a separate property such as
+  `cell_count`.
+  width=<width>, height=<height>, orientation=<input_orientation>,
+  volume=<volume>, ...)`, constructing the instance's class (`Obj` in existing
+  datasets) with named arguments matching its parameters, where `width` and
+  `height` are the input mask's nonzero bounding-box column and row counts and
+  `volume` is its number of nonzero cells.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  ...)`; add another class only for a distinct kind of object the
+  transformation needs. Each class whose instances are annotated objects
+  orientation: int` first, in that order, and its body assigns every
+  parameter to `this` and sets an initial tag either way: a literal,
+  width=<width>, height=<height>, orientation=<input_orientation>, ...)`,
+  constructing the instance's class (`Obj` in existing datasets) with named
+  arguments matching its parameters, where `width` and `height` are the input
+  mask's nonzero bounding-box column and row counts.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1506250` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cc9974a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

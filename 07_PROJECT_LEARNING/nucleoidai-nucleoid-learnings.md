@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `16ae8c24`  
+> **Source Version**: `1cc9974a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T19:19:50.338Z  
+> **Timestamp**: 2026-11-17T19:53:46.490Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:19:50.333Z  
+> **Harvest Timestamp**: 2026-11-17T19:53:46.485Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1217,7 +1217,9 @@ export async function instances({ train_dataset }) {
 export async function value({ train_dataset, input_matrix, instance }) {
   milestone.constructing_instance({ instance_name: instance.instance_name });
 
-  const { x, y, width, height } = Matrix.locate(instance.input_instance_matrix);
+  const { x, y, width, height, volume } = Matrix.locate(
+    instance.input_instance_matrix
+  );
 
   const orientation = await object.orientation({ train_dataset, instance });
 
@@ -1229,6 +1231,7 @@ export async function value({ train_dataset, input_matrix, instance }) {
     width,
     height,
     orientation,
+    volume,
   });
 
   milestone.evaluating_rules({ instance_name: instance.instance_name });
@@ -1511,652 +1514,444 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `16ae8c24` (2026-11-17)
-**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
+### Incident Patch 1: `1cc9974a` (2026-11-17)
+**Commit Message**: Add object volume to ARC visualization
 
-**File**: `README.md` (modified, +104/-0)
+Count nonzero cells in each object and pass the volume to synthesis prompts. Update the ARC dataset examples to include the new property.
+
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +15/-8)
 ```diff
-@@ -2276,6 +2276,110 @@ assert(totals, [[40, 15, 90], [25]])
-   its place on the other. See the
-   [root contract](nucleoid.spec.md#list-and-population-partitions).
+@@ -112,11 +112,11 @@ formatting exactly:
+ - `declarations[0]` holds every class declaration of the world model, because
+   the solver runs it alone to build input states. Existing datasets declare
+   one class, `Obj(x: int, y: int, width: int, height: int, orientation: int,
+-  ...)`; add another class only for a distinct kind of object the
+-  transformation needs. Each class whose instances are annotated objects
++  volume: int, ...)`; add another class only for a distinct kind of object
++  the transformation needs. Each class whose instances are annotated objects
+   takes the standard entries `x: int, y: int, width: int, height: int,
+-  orientation: int` first, in that order, and its body assigns every
+-  parameter to `this` and sets an initial tag either way: a literal,
++  orientation: int, volume: int` first, in that order, and its body assigns
++  every parameter to `this` and sets an initial tag either way: a literal,
+   `this.tag = 'lNNNN'`, or a `tag: str` parameter, `this.tag = tag`, whose
+   value each implementation passes, as in `dataset.27a28665.json`. Add only
+   the descriptive properties the transformation needs, such as categorical
+@@ -129,6 +129,12 @@ formatting exactly:
+   size from the input value with `@first`, as in
+   `$Obj.width = $Obj.width@first + 1`. Use them for an object's size instead
+   of separate size properties such as `bar_height` or `bar_width`.
++- `volume` is the number of nonzero cells in the object's input mask, not the
++  area of its bounding box; the solver measures it with `Matrix.locate` and
++  sends it to the implementation call as `input_volume`. Like `width` and
++  `height`, it does not change when only the orientation changes. Use it for
++  an object's cell count instead of a separate property such as
++  `cell_count`.
+ - The solver starts every Nucleoid program with `canvas_width` and
+   `canvas_height`, the column and row counts of the pair's `input_matrix`
+   (every `nucleoid.run` call in `arc/src/analyzer.ts` and
+@@ -219,10 +225,11 @@ The caller decides whether to propose the feature; you never start a NUC.
+   unique across all datasets
+   (`node -e "console.log(require('crypto').randomBytes(6).toString('hex'))"`).
+ - `implementation` is `<instance_name> = <Class>(x=<input_x>, y=<input_y>,
+-  width=<width>, height=<height>, orientation=<input_orientation>, ...)`,
+-  constructing the instance's class (`Obj` in existing datasets) with named
+-  arguments matching its parameters, where `width` and `height` are the input
+-  mask's nonzero bounding-box column and row counts.
++  width=<width>, height=<height>, orientation=<input_orientation>,
++  volume=<volume>, ...)`, constructing the instance's class (`Obj` in existing
++  datasets) with named arguments matching its parameters, where `width` and
++  `height` are the input mask's nonzero bounding-box column and row counts and
++  `volume` is its number of nonzero cells.
+ - Before that code, `implementation` holds `#` comment lines that describe the
+   object, as in every existing dataset: its kind and colors, then its size,
+   position and, when it points, its direction, such as
+```
+
+**File**: `arc/README.md` (modified, +188/-154)
+```diff
+@@ -336,11 +336,12 @@ color-9 point with its color-2 rim below and a color-4 point with its color-8
+ rim above, and a vertical line that extends up from its bottom endpoint with
+ a horizontal line that extends left from its right endpoint.
+ Each genesis class takes the standard entries `x`, `y`, `width`, `height`,
+-and `orientation` first, then its descriptive properties in their existing
+-order, and every implementation passes the input shape's bounding-box
+-`width` and `height`. A rule that grows a shape computes its new size from
+-its first values in the branch that sets its output tag: a core corner grows
+-from 2 by 2 to 3 by 3 with its outside marker, and its origin moves one
++`orientation`, and `volume` first, then its descriptive properties in their
++existing order, and every implementation passes the input shape's bounding-box
++`width` and `height` and its input mask's `volume`, its number of nonzero
++cells, which no rule changes. A rule that grows a shape computes its new size
++from its first values in the branch that sets its output tag: a core corner
++grows from 2 by 2 to 3 by 3 with its outside marker, and its origin moves one
+ column left when it points west, at orientation 225 or 315, and one row up
+ when it points north, at orientation 45 or 315; a curve point grows from
+ 1 by 1 to 3 by 2 with its rim; and a line of 3 or 4 cells grows by one cell,
+@@ -373,9 +374,9 @@ Every dataset writes its assignments with `is`, the opt-in assignment of
+ the comparisons of [NUC 86](../docs/nuc-0086.md). Constructors set
+ `this.x is x`, class-level rules set `$Obj.height is $Obj.height@first * 2`,
+ and implementations construct
+-`obj0c2414cf33eb is Obj(x=0, y=0, width=3, height=3, orientation=0)`; each
+-`target is value` builds exactly the syntax tree of `target = value`. When a
+-whole value, or the whole right operand of an `is` comparison, is one bare
++`obj0c2414cf33eb is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=6)`;
++each `target is value` builds exactly the syntax tree of `target = value`. When
++a whole value, or the whole right operand of an `is` comparison, is one bare
+ word, it reads the name of that spelling if one exists and otherwise its own
+ text, so tags and directions drop their quotes there, as in
+ `this.tag is l9100` and `$Obj.extension_direction is right`. No dataset
+@@ -401,7 +402,7 @@ so they change no snapshot:
+ ```nuc
+ # A corner whose vertex and both segments are color 9,
+ # 2 by 2 at x 5, y 1, pointing southeast
+-obj7e96305711c2 is Obj(x=5, y=1, width=2, height=2, orientation=135, vertex_color=9, vertical_segment_color=9, horizontal_segment_color=9)
++obj7e96305711c2 is Obj(x=5, y=1, width=2, height=2, orientation=135, volume=3, vertex_color=9, vertical_segment_color=9, horizontal_segment_color=9)
+ ```
  
-+## Operator section arguments
+ Every `input_instance_matrix` has exactly its pair's `input_matrix` row and
+@@ -435,9 +436,10 @@ reproduce the second and third training outputs and the test output, whose
+ periods divide the height, but not the first training output: its pattern
+ repeats every four rows, so the rows added below repeat its rows 2 to 4, and
+ its row 7 is 0, 2, 2 rather than 2, 2, 0. The class takes the standard entries
+-`x`, `y`, `width`, `height`, and `orientation` first, in that order, where
+-`width` and `height` are the column and row counts of the pattern's box, the
+-nonzero bounding box of its input mask, and then `color` and `period`, the
++`x`, `y`, `width`, `height`, `orientation`, and `volume` first, in that order,
++where `width` and `height` are the column and row counts of the pattern's box,
++the nonzero bounding box of its input mask, and `volume` the number of its
++nonzero cells, and then `color` and `period`, the
+ number of rows after which the pattern starts over, as scalars, with no parts
+ list, canvas size, or matrix of cells. Each implementation passes `width` and
+ `height` right after `y`, such as `width=3, height=6` for the first training
+@@ -475,9 +477,9 @@ annotated by the same rules.
+ instances in total (2, 5, 3, and 5 per pair).
+ Color-1 points gain color-7 orthogonal neighbors; color-2 points gain color-4
+ diagonal neighbors. Color-6 and color-8 points remain unchanged.
+-The class takes the standard entries `x`, `y`, `width`, `height`, and
+-`orientation`, then `vertex_color`; every point is 1 by 1, so each
+-implementation passes `width=1, height=1`.
++The class takes the standard entries `x`, `y`, `width`, `height`,
++`orientation`, and `volume`, then `vertex_color`; every point is 1 by 1, so
++each implementation passes `width=1, height=1` and `volume=1`.
+ The declarative rules introduce `marker_color`, which is absent before the
+ rules run, and, in the same branches that shift the origin, grow each cross
+ to 3 by 3 with `$Obj.width is $Obj.width@first + 2` and
+@@ -512,11 +514,12 @@ third, 2 turns 6 in the first, second, and fourth and 6 turns 2 in the third,
+ in the second and third and 9 turns 8 in the fourth; colors 0 and 7 do not
+ appear. Colors are categorical, an
+```
+
+**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +28/-3)
+```diff
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/017c7c7b.json`](../data/training/017c7c7b.json) |
+-| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c`; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.017c7c7b.json`](../src/dataset/dataset.017c7c7b.json): the puzzle's 3 original training pairs and its test pair, one whole-pattern instance each (4 instances); version 3, which is version 2 without its `resume_row` rule (version 1 had 36 point instances); committed in `a5a793d` and moved to the standard entries in `521aa3c`; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested for any version, so no proposal strategy was selected; versions 2 and 3 use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md) |
+-| Solver changes | None; one suggested change awaits review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None; one suggested change awaits review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 2 local runs on 4-Nov-2026: version 1 exit 2, version 2 exit 0; version 3 not run; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -314,6 +314,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
 +
-+**Operator sections pass a comparison without naming a parameter**
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
 +
 +```nuc
-+cells = [0, 3, 0, 7, 7]
-+filled = cells.filter(!= 0)
-+sevens = cells.count(== 7)
-+assert([filled, sevens], [[3, 7, 7], 2])
-+cells.push(7)
-+assert([filled, sevens], [[3, 7, 7, 7], 3])
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int, period: int):
++obj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)
 +```
 +
-+- [NUC 109](docs/nuc-0109.md) lets a call argument that begins with a
-+  binary operator stand for the function that applies the operator to its
-+  argument: `cells.filter(!= 0)` is `cells.filter(cell -> cell != 0)`, and
-+  `cells.count(== 7)` counts the sevens.
-+- The rest of the argument is read as if the item stood before the
-+  operator, with the usual precedence, so `xs.map(* 2 + 1)` maps
-+  `x -> x * 2 + 1`. Both declarations stay live like their lambdas: another
-+  seven extends `filled` and raises `sevens`. See the
-+  [root contract](nucleoid.spec.md#operator-section-arguments).
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 4 input and 4 output snapshots of the 4 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
 +
-+## Python string method aliases
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +28/-3)
+```diff
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/0ca9ddb6.json`](../data/training/0ca9ddb6.json) |
+-| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.0ca9ddb6.json`](../src/dataset/dataset.0ca9ddb6.json): the puzzle's 3 training pairs and its test pair, 15 point instances; conditions respelled with `is` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), both Accepted; the conditions also use the accepted `is` of [NUC 86](../../docs/nuc-0086.md), which this puzzle did not request |
+-| Solver changes | None specific to this puzzle; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None specific to this puzzle; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 5 GitHub Actions runs, 1-2 Nov 2026; all exit 0; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -392,6 +392,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
 +
-+**Python string methods classify files and list them**
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
 +
 +```nuc
-+class File(name):
-+    this.name = name
-+$File.table = $File.name.endswith(".csv")
-+report = File("report.csv")
-+notes = File("notes.txt")
-+tables = ", ".join(File.filter(file -> file.table).map(file -> file.name))
-+assert([report.table, notes.table, tables], [true, false, "report.csv"])
-+notes.name = "notes.csv"
-+assert(tables, "report.csv, notes.csv")
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, vertex_color: int):
++obj08c8feaa60ea is Obj(x=2, y=3, width=1, height=1, orientation=0, volume=1, vertex_color=2)
 +```
 +
-+- [NUC 110](docs/nuc-0110.md) adds Python's names for three string methods:
-+  `name.endswith(".csv")` is `name.endsWith(".csv")`,
-+  `name.startswith("draft_")` is `name.startsWith("draft_")`, and
-+  `", ".join(names)`, with the separator as the receiver, is
-+  `names.join(", ")`.
-+- `join` takes a list or a class's instances, so `", ".join(File)` joins
-+  the files as `File.join(", ")` does. The class-level rule and the list
-+  stay live: renaming the notes to a CSV file makes it a table and adds it
-+  to `tables`. See the
-+  [root contract](nucleoid.spec.md#python-string-method-aliases).
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 15 input and 15 output snapshots of the 4 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
 +
-+## Reactive string padding
+ ## Runs
+ 
+ | Date | Run | Commit | Exit status | Difference | Seconds |
+```
+
+**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +28/-3)
+```diff
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/0d3d703e.json`](../data/training/0d3d703e.json) |
+-| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c`; partner test respelled with `is not` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.0d3d703e.json`](../src/dataset/dataset.0d3d703e.json): the puzzle's 4 original training pairs and its test pair, 15 stripe instances, three per pair; committed in `ebd026c`; partner test respelled with `is not` on 6-Nov-2026; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the list `includes` that [NUC 61](../../docs/nuc-0061.md) specifies, and the accepted `is not` of [NUC 86](../../docs/nuc-0086.md) |
+-| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026, exit 0; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -280,6 +280,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
 +
-+**Padding keeps a price list aligned as it changes**
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
 +
 +```nuc
-+item = "tea"
-+price = "4"
-+line = item.padEnd(8, ".") + price.padStart(3)
-+assert(line, "tea.....  4")
-+item = "honey"
-+price = "12"
-+assert(line, "honey... 12")
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, color: int):
++obj4d683f973e7d is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=3)
 +```
 +
-+- [NUC 111](docs/nuc-0111.md) adds JavaScript's `padStart` and `padEnd` to
-+  strings: `price.padStart(3)` puts spaces before the price until it holds
-+  three characters, and `item.padEnd(8, ".")` puts dots after the item until
-+  it holds eight. A fill of several characters is cut to the gap, and text
-+  that already holds the length is returned as it is.
-+- `line` stays live like its `repeat` spelling,
-+  `item + ".".repeat(8 - item.length)`, so a new item and price realign it.
-+  See the [root contract](nucleoid.spec.md#reactive-string-padding).
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 15 input and 15 output snapshots of the 5 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
 +
-+## Node names of reasoning selections
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +28/-3)
+```diff
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/25d8a9c8.json`](../data/training/25d8a9c8.json) |
+-| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record; condition respelled with `is` on 6-Nov-2026; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.25d8a9c8.json`](../src/dataset/dataset.25d8a9c8.json): the puzzle's 4 original training pairs and its test pair, 15 row instances, three per pair; committed with this record; condition respelled with `is` on 6-Nov-2026; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the list query `distinct` of [NUC 71](../../docs/nuc-0071.md), the conditional expression of [NUC 59](../../docs/nuc-0059.md), and the accepted `is` of [NUC 86](../../docs/nuc-0086.md) |
+-| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
+ 
+ ## Puzzle
+ 
+@@ -296,6 +296,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
 +
-+**Nodes names the facts a heater rests on and what insulation moves**
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
 +
 +```nuc
-+outside = 4
-+target = 21
-+insulation = 0.8
-+loss = (target - outside) * insulation
-+heater = loss * 2
-+causes = heater |> why |> stated |> nodes
-+moved = insulation |> affects |> nodes
-+assert(causes, ["target", "outside", "insulation"])
-+assert(moved, ["loss", "heater"])
-+solar = 5
-+heater = loss * 2 - solar
-+assert(causes, ["solar", "target", "outside", "insulation"])
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, parts: list):
++obj264fe4293acf is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3, parts=[4, 4, 4])
 +```
 +
-+- [NUC 112](docs/nuc-0112.md) adds the final reasoning stage `|> nodes`,
-+  which names the nodes of a selection's steps in their order.
-+  `heater |> why |> stated |> nodes` names the facts the heater rests on,
-+  and `insulation |> affects |> nodes` what a change of the insulation
-+  reaches.
-+- Both lists are the names that
-+  `(heater |> why |> stated).map(step => step.node)` and
-+  `(insulation |> affects).map(step => step.node)` give, and they stay live
-+  the same way: once the heater also accounts for the solar gain, `solar`
-+  joins the facts it rests on. See the
-+  [root contract](nucleoid.spec.md#node-names-of-reasoning-selections).
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 15 input and 15 output snapshots of the 5 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
 +
- ## Reactive list flattening
+ ## Runs
  
- **Flat turns nested lists into one live list**
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +33/-16)
+**File**: `arc/docs/ARC-NUC-25ff71a9.md` (modified, +28/-3)
 ```diff
-@@ -754,19 +754,36 @@
- {"id":"spec-0754","description":"Nucleoid maps and counts each side of a partition","code":"class Shape(name, area):\n    this.name = name\n    this.area = area\nparts = Shape.partition(shape -> shape.area >= 10)\nnames = parts.map(side -> side.map(shape -> shape.name))\nsizes = parts.map(side -> side.length)\nShape(\"square\", 16)\nShape(\"dot\", 1)\nbar = Shape(\"bar\", 12)\nassert([names, sizes], [[[\"square\", \"bar\"], [\"dot\"]], [2, 1]])\nbar.area = 4\nassert(names, [[\"square\"], [\"dot\", \"bar\"]])\nShape(\"ring\", 30)\nsizes","return":"[2,2]"}
- {"id":"spec-0755","description":"Nucleoid partitions items by the truthiness of the predicate result","code":"answers = [\"yes\", \"\", 0, 7, false, \"no\"]\ngiven = answers.partition(answer -> answer)\nassert(given, [[\"yes\", 7, \"no\"], [\"\", 0, false]])\nanswers.push([], \"\", true)\nanswers.shift()\nassert(given, [[7, \"no\", [], true], [\"\", 0, false, \"\"]])\ngiven[1].length","return":"4"}
- {"id":"spec-0756","description":"Nucleoid rolls back failed partition updates","code":"parcels = [{code: \"b2\", kg: 4}, {code: \"A7\", kg: 9}]\nweights = parcels.partition(parcel -> parcel.code.toUpperCase() < \"B\").map(side -> side.map(parcel -> parcel.kg))\nfailure = \"\"\ntry:\n    parcels.push({code: 7, kg: 1})\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.toUpperCase is not a function\"))\nassert([parcels.length, weights], [2, [[9], [4]]])\nparcels.push({code: \"a1\", kg: 2})\nassert(weights, [[9, 2], [4]])\ntry:\n    parcels[0].code = \"a0\"\n    assert(weights, [[4, 9, 2], []])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nweights","return":"[[9,2],[4]]"}
--{"id":"spec-0757","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0758","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0759","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0760","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0761","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0762","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
--{"id":"spec-0763","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN], false)\nassert(\"e
-```
-
-**File**: `dataset/nucleoid.synth.73.jsonl` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-73-0001","description":"An operator section passes the function that applies its operator to each item","code":"readings = [12, 31, 7, 45, 18]\nreadings.filter(> 20)","return":"[31,45]"}
-+{"id":"synth-73-0002","description":"A section reads the rest of its argument with the usual precedence, as if the item stood before the operator","code":"values = [3, 8, 1, 9]\n[values.map(* 2 + 1), values.count(% 2 == 0), values.map(> 4 ? \"big\" : \"small\")]","return":"[[7,17,3,19],1,[\"small\",\"big\",\"small\",\"big\"]]"}
-+{"id":"synth-73-0003","description":"Nullish and logical sections fill missing values and empty names with defaults","code":"scores = [7, null, 3]\nnames = [\"ada\", \"\"]\n[scores.map(?? 0), names.map(|| \"anonymous\")]","return":"[[7,0,3],[\"ada\",\"anonymous\"]]"}
-+{"id":"synth-73-0004","description":"A standing section follows later writes of the names its operand reads and of its receiver","code":"limit = 20\nreadings = [12, 31, 7]\nover = readings.filter(> limit)\nlimit = 10\nreadings.push(45)\nover","return":"[12,31,45]"}
-+{"id":"synth-73-0005","description":"Arithmetic sections give keys: * -1 sorts in descending order and % 10 picks by the last digit","code":"nums = [13, 42, 7, 29]\n[nums.sortBy(* -1), nums.maxBy(% 10), nums.minBy(% 10)]","return":"[[42,29,13,7],29,42]"}
-+{"id":"synth-73-0006","description":"Partition with a comparison section splits the items it keeps from the items it drops","code":"xs = [3, 8, 1, 9]\nxs.partition(> 4)","return":"[[8,9],[3,1]]"}
-+{"id":"synth-73-0007","description":"A section is an ordinary function argument of user functions and constructors","code":"def keep(values, test) => values.filter(test)\nclass Gate(test):\n    this.test = test\ngate = Gate(>= 50)\n[keep([20, 90, 50], gate.test), keep([1, 2, 3], != 2)]","return":"[[90,50],[1,3]]"}
-+{"id":"synth-73-0008","description":"A class-level rule's section reads each instance's own properties","code":"class Sensor(readings, limit):\n    this.readings = readings\n    this.limit = limit\n$Sensor.alarms = $Sensor.readings.count(> $Sensor.limit)\nnorth = Sensor([12, 31, 7], 20)\nnorth.limit = 10\nnorth.alarms","return":"2"}
-+{"id":"synth-73-0009","description":"A section that fails for a new item rolls back the update that brought the item","code":"counts = [3, 5]\nfilled = counts.map(?? spare())\nfailure = \"\"\ntry:\n    counts.push(null)\ncatch error:\n    failure = error\n[failure, counts.length, filled]","return":"[\"ReferenceError: spare is not defined\",2,[3,5]]"}
-+{"id":"synth-73-0010","description":"Sections nest: the rest of a section may call a function with a section of its own","code":"xs = [3, 8, 1, 9]\nys = [5, 6, 7]\nxs.filter(> ys.count(>= 6))","return":"[3,8,9]"}
-+{"id":"synth-73-0011","description":"A section explains as function(), as an anonymous lambda does","code":"xs = [3, 8]\nbig = xs.filter(> 4)\n(why big)[0].rule","return":"\"big = xs.filter(function())\""}
-+{"id":"synth-73-0012","description":"Power and strict-equality sections compare and raise each item","code":"xs = [1, 2, 3]\n[xs.map(** 2), xs.filter(=== 2), xs.some(!== 1)]","return":"[[1,4,9],[2],true]"}
-```
-
-**File**: `dataset/nucleoid.synth.74.jsonl` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{"id":"synth-74-0001","description":"endswith tests a suffix exactly as endsWith does, so file names sort into kinds","code":"files = [\"report.csv\", \"notes.txt\", \"data.csv\"]\nfiles.filter(file -> file.endswith(\".csv\"))","return":"[\"report.csv\",\"data.csv\"]"}
-+{"id":"synth-74-0002","description":"startswith tests a prefix exactly as startsWith does, and the match is case-sensitive","code":"names = [\"Ada\", \"alan\", \"Alice\"]\n[names.filter(name -> name.startswith(\"A\")), \"alan\".startswith(\"A\")]","return":"[[\"Ada\",\"Alice\"],false]"}
-+{"id":"synth-74-0003","description":"A string joins a list with itself as the separator, exactly as the list's join with that separator","code":"names = [\"ada\", \"bo\", \"cy\"]\n[\", \".join(names), names.join(\", \")]","return":"[\"ada, bo, cy\",\"ada, bo, cy\"]"}
-+{"id":"synth-74-0004","description":"join takes a class population, so a string can join the names of every instance","code":"class Tag(name):\n    this.name = name\nTag(\"red\")\nTag(\"blue\")\n\" | \".join(Tag.map(tag -> tag.name))","return":"\"red | blue\""}
-+{"id":"synth-74-0005","description":"A standing join with the separator as the receiver follows later pushes to its list","code":"names = [\"ada\"]\nlabel = \", \".join(names)\nnames.push(\"bo\")\nlabel","return":"\"ada, bo\""}
-+{"id":"synth-74-0006","description":"A separator held in a variable keeps the join live when the separator changes","code":"parts = [\"2026\", \"11\", \"16\"]\nsep = \"-\"\nday = sep.join(parts)\nsep = \"/\"\nday","return":"\"2026/11/16\""}
-+{"id":"synth-74-0007","description":"A class-level rule with endswith follows each instance's own name","code":"class File(name):\n    this.name = name\n$File.table = $File.name.endswith(\".csv\")\nnotes = File(\"notes.txt\")\nnotes.name = \"notes.csv\"\nnotes.table","return":"true"}
-+{"id":"synth-74-0008","description":"Like startsWith, startswith ignores a position argument, unlike Python","code":"[\"abc\".startswith(\"b\", 1), \"abc\".startsWith(\"b\", 1)]","return":"[false,false]"}
-+{"id":"synth-74-0009","description":"join writes items that are not strings in their string form, where Python raises","code":"\"-\".join([\"a\", 1, null, true])","return":"\"a-1-null-true\""}
-+{"id":"synth-74-0010","description":"A string argument to join keeps raising the accepted TypeError; join does not iterate characters","code":"result = \"\"\ntry:\n    result = \"-\".join(\"abc\")\ncatch error:\n    result = error\nresult","return":"\"TypeError: -.join is not a function\""}
-+{"id":"synth-74-0011","description":"A failed update through an alias rolls back, so the rule keeps its value","code":"class File(name):\n    this.name = name\n$File.table = $File.name.endswith(\".csv\")\nreport = File(\"report.csv\")\nfailure = \"\"\ntry:\n    report.name = 7\ncatch error:\n    failure = error\n[report.name, report.table, failure]","return":"[\"report.csv\",true,\"TypeError: number.endswith is not a function\"]"}
-```
-
-**File**: `dataset/nucleoid.synth.75.jsonl` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+{"id":"synth-75-0001","description":"padStart zero-pads identifiers to a fixed width, and an identifier that already holds the width keeps all of it","code":"ids = [\"7\", \"42\", \"123\", \"1234\"]\nids.map(id -> id.padStart(3, \"0\"))","return":"[\"007\",\"042\",\"123\",\"1234\"]"}
-+{"id":"synth-75-0002","description":"padEnd aligns labels in a column, padding with one space when no fill is given","code":"items = [\"tea\", \"honey\", \"jam\"]\nitems.map(item -> item.padEnd(6) + \"|\")","return":"[\"tea   |\",\"honey |\",\"jam   |\"]"}
-+{"id":"synth-75-0003","description":"A clock reading pads its hours and minutes to two digits each","code":"h = 9\nm = 5\nString(h).padStart(2, \"0\") + \":\" + String(m).padStart(2, \"0\")","return":"\"09:05\""}
-+{"id":"synth-75-0004","description":"A fill of several characters is repeated and cut to the missing count, keeping its start","code":"[\"5\".padStart(4, \"ab\"), \"abc\".padEnd(6, \"123456\"), \"abc\".padStart(10, \"123\")]","return":"[\"aba5\",\"abc123\",\"1231231abc\"]"}
-+{"id":"synth-75-0005","description":"An empty fill, or text that already holds the length, gives the text unchanged","code":"[\"abc\".padStart(6, \"\"), \"abc\".padEnd(2, \"0\"), \"\".padStart(3, \"\")]","return":"[\"abc\",\"abc\",\"\"]"}
-+{"id":"synth-75-0006","description":"A padded declaration follows later writes of its receiver, its length and its fill","code":"label = \"7\"\nwidth = 3\nfill = \"0\"\nshown = label.padStart(width, fill)\nlabel = \"42\"\nwidth = 5\nfill = \"*\"\nshown","return":"\"***42\""}
-+{"id":"synth-75-0007","description":"A class-level rule pads the number of each instance on its own","code":"class Ticket(id):\n    this.id = id\n$Ticket.code = \"T-\" + String($Ticket.id).padStart(4, \"0\")\nfirst = Ticket(7)\nsecond = Ticket(42)\nfirst.id = 123\n[first.code, second.code]","return":"[\"T-0123\",\"T-0042\"]"}
-+{"id":"synth-75-0008","description":"The length converts as the count of repeat does: fractions truncate, numeric strings and true convert, and negatives or NaN pad nothing","code":"[\"5\".padStart(2.9, \"0\"), \"5\".padStart(\"3\", \"0\"), \"5\".padStart(true, \"0\"), \"5\".padStart(-4, \"0\"), \"5\".padStart(0 / 0, \"0\")]","return":"[\"05\",\"005\",\"5\",\"5\",\"5\"]"}
-+{"id":"synth-75-0009","description":"The keyword undefined is null and fills with its text, while a missing property fills with spaces","code":"o = {}\n[\"5\".padStart(4, undefined), \"5\".padStart(4, o.missing), \"5\".padStart(4, null)]","return":"[\"nul5\",\"   5\",\"nul5\"]"}
-+{"id":"synth-75-0010","description":"Lengths count characters, so text and fills outside ASCII pad one character at a time","code":"[\"日\".padStart(3, \"本\"), \"é\".padEnd(3, \"·\"), \"x\".padEnd(4, \"日本\")]","return":"[\"本本日\",\"é··\",\"x日本日\"]"}
-+{"id":"synth-75-0011","description":"A result too large to allocate raises a TypeError, and the failed write is rolled back","code":"width = 3\nshown = \"7\".padStart(width, \"0\")\nfailure = \"\"\ntry:\n    width = 1 / 0\ncatch error:\n    failure = error\n[failure, width, shown]","return":"[\"TypeError: Padded string is too large\",3,\"007\"]"}
-+{"id":"synth-75-0012","description":"Padding stays a string method: a null receiver gives undefined and a number keeps its TypeError","code":"n = null\nresult = \"\"\ntry:\n    result = (5).padStart(3, \"0\")\ncatch error:\n    result = error\n[n.padStart(3), result]","return":"[null,\"TypeError: number.padStart is not a function\"]"}
-+{"id":"synth-75-0013","description":"A report line pads its label with dots and its price with spaces, and follows both","code":"item = \"tea\"\nprice = \"4\"\nline = item.padEnd(8, \".\") + price.padStart(3)\nitem = \"honey\"\nprice = \"12\"\nline","return":"\"honey... 12\""}
-```
-
-**File**: `dataset/nucleoid.synth.76.jsonl` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-76-0001","description":"Nodes names every step of an explanation, in the explanation's order","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> nodes","return":"[\"total\",\"subtotal\",\"shipping\",\"price\",\"qty\"]"}
-+{"id":"synth-76-0002","description":"Nodes after stated names the facts that a conclusion rests on","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> stated |> nodes","return":"[\"seed\"]"}
-+{"id":"synth-76-0003","description":"Nodes after derived names the conclusions on the way to a value","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> derived |> nodes","return":"[\"result\",\"middle\"]"}
-+{"id":"synth-76-0004","description":"Nodes after affects names what a change of one fact reaches","code":"rate = 0.2\nprice = 10\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nprice |> affects |> nodes","return":"[\"subtotal\",\"tax\",\"total\"]"}
-+{"id":"synth-76-0005","description":"Nodes on the model names every node in model order and leaves out a declaration that holds reasoning","code":"a = 1\nb = a + 2\nnames = b |> why |> nodes\nmodel |> nodes","return":"[\"a\",\"b\"]"}
-+{"id":"synth-76-0006","description":"A prefix stage composes with nodes","code":"a = 1\nb = a + 2\nc = b * 2\nwhy c |> nodes","return":"[\"c\",\"b\",\"a\"]"}
-+{"id":"synth-76-0007","description":"A reference alone names its own node","code":"a = 1\nb = a + 2\nb |> nodes","return":"[\"b\"]"}
-+{"id":"synth-76-0008","description":"Nodes after depth names a conclusion and what it reads directly","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> depth(1) |> nodes","return":"[\"total\",\"subtotal\",\"shipping\"]"}
-+{"id":"synth-76-0009","description":"Nodes after path names the steps by which one value reaches another","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> path(price) |> nodes","return":"[\"total\",\"subtotal\",\"price\"]"}
-+{"id":"synth-76-0010","description":"Nodes after intersect names the causes two explanations share","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntax |> why |> intersect(shipping |> why) |> nodes","return":"[\"quantity\"]"}
-+{"id":"synth-76-0011","description":"A standing declaration of node names follows a rewiring of the graph","code":"a = 1\nb = a + 2\nc = b * 2\nnames = c |> why |> nodes\nx = 5\nb = x + 1\nnames","return":"[\"c\",\"b\",\"x\"]"}
-+{"id":"synth-76-0012","description":"A class-level rule names the nodes behind each instance's own value","code":"rate = 2\nclass Machine(load, hours):\n    this.load = load\n    this.hours = hours\n$Machine.wear = $Machine.load * $Machine.hours * rate\n$Machine.inputs = $Machine.wear |> why |> nodes\npress = Machine(5, 10)\npress.inputs","return":"[\"press.wear\",\"press.load\",\"press.hours\",\"rate\"]"}
-```
-
-**File**: `dataset/nucleoid.synth.77.jsonl` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-77-0001","description":"A method's expression body reads its own instance with leading dots","code":"class Rect(this.w, this.h):\n    def area() => .w * .h\nr = Rect(3, 4)\nassert(r.area(), 12)\nr.h = 5\nr.area()","return":"15"}
-+{"id":"synth-77-0002","description":"A method's indented body reads its instance in conditions and returns","code":"class Account(this.balance):\n    def status():\n        if .balance < 0:\n            return \"overdrawn\"\n        return \"ok\"\na = Account(-5)\nb = Account(10)\nassert(a.status(), \"overdrawn\")\n[a.status(), b.status()]","return":"[\"overdrawn\",\"ok\"]"}
-+{"id":"synth-77-0003","description":"Methods read their instance in templates and call its other methods","code":"class Item(this.name, this.price, this.qty):\n    def total() => .price * .qty\n    def label() => `${.name}: ${.total()}`\ni = Item(\"pen\", 2, 3)\nassert(i.label(), \"pen: 6\")\ni.qty = 4\ni.label()","return":"\"pen: 8\""}
-+{"id":"synth-77-0004","description":"A Python-style self method reads its instance with leading dots","code":"class Counter:\n    def __init__(self, start):\n        self.count = start\n    def bump(self, step):\n        self.count = .count + step\n        return .count\nc = Counter(5)\nassert(c.bump(2), 7)\nc.bump(3)","return":"10"}
-+{"id":"synth-77-0005","description":"A constructor body reads the instance it is building","code":"class Box(w, h):\n    this.w = w\n    this.h = h\n    if .w == .h:\n        this.kind = \"square\"\n    else:\n        this.kind = \"oblong\"\nassert(Box(2, 2).kind, \"square\")\n[Box(2, 2).kind, Box(2, 3).kind]","return":"[\"square\",\"oblong\"]"}
-+{"id":"synth-77-0006","description":"Variables and destructuring declarations in a method read the instance","code":"class Pair(this.a, this.b):\n    def swapped():\n        first, second = [.b, .a]\n        total = .a + .b\n        return [first, second, total]\np = Pair(1, 2)\nassert(p.swapped()[2], 3)\np.swapped()","return":"[2,1,3]"}
-+{"id":"synth-77-0007","description":"A property assignment in a method reads the object of its own target","code":"class Shop(this.markup):\n    def price(item):\n        item.final = .cost * 2\n        return item.final + .markup\nlamp = {cost: 10}\ns = Shop(1)\nassert(s.price(lamp), 21)\nlamp.final","return":"20"}
-+{"id":"synth-77-0008","description":"A lambda in a method takes an instance property through a local","code":"class Scaler(this.factor):\n    def scale(xs):\n        factor = .factor\n        return xs.map(x -> x * factor)\nassert(Scaler(2).scale([5]), [10])\nScaler(3).scale([1, 2])","return":"[3,6]"}
-+{"id":"synth-77-0009","description":"A comprehension source and a quantifier condition read the instance","code":"class Grades(this.scores, this.minimum):\n    def passed() => [s for s in .scores if s >= 50]\n    def all_passed() => all s in .scores: s >= .minimum\ng = Grades([40, 70, 90], 50)\nassert(g.passed(), [70, 90])\n[g.passed(), g.all_passed()]","return":"[[70,90],false]"}
-+{"id":"synth-77-0010","description":"A class-level rule calls a method that reads with leading dots","code":"class Rect(this.w, this.h):\n    def area() => .w * .h\n$Rect.big = .area() > 10\nr = Rect(3, 4)\ns = Rect(2, 2)\nassert(r.big, true)\n[r.big, s.big]","return":"[true,false]"}
-+{"id":"synth-77-0011","description":"A declaration that calls a reading method follows the instance","code":"class Temp(this.c):\n    def f() => .c * 9 / 5 + 32\nt = Temp(100)\nreading = t.f()\nassert(reading, 212)\nt.c = 0\nreading","return":"32"}
-+{"id":"synth-77-0012","description":"A subclass method reads the properties its parent declares","code":"class Shape(this.w, this.h)\nclass Prism(this.d) extends Shape:\n    def volume() => .w * .h * .d\np = Prism(4)\np.w = 2\np.h = 3\nassert(p.volume(), 24)\np.volume()","return":"24"}
-```
-
-**File**: `docs/README.md` (modified, +201/-4)
-```diff
-@@ -1398,6 +1398,28 @@ order.label
- - Because `is` is a name and `not` a keyword, `o.p = (1 is .a)` keeps its error while `o.p = (1 is not .a)` reads `o.a`, as `(1 is not o.a)`. Without grouping, `o.p = 1 is not .a` is the three statements `o.p = 1`, `is` and `not .a`, and keeps its error.
- - Receivers are read only in a final parse that runs after every accepted parse has failed, so every input the accepted grammar reads keeps its reading. See the authoritative [implicit receiver properties](../nucleoid.spec.md#implicit-receiver-properties) section.
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/25ff71a9.json`](../data/training/25ff71a9.json) |
+-| Instruction dataset | [`dataset.25ff71a9.json`](../src/dataset/dataset.25ff71a9.json): the puzzle's 4 original training pairs and its 2 test pairs, 6 figure instances, one per pair; committed with this record; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.25ff71a9.json`](../src/dataset/dataset.25ff71a9.json): the puzzle's 4 original training pairs and its 2 test pairs, 6 figure instances, one per pair; committed with this record; orientation labelled by shape and the shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `EXACT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; the rule uses the class-level `@first` anchor of [NUC 55](../../docs/nuc-0055.md), built on the state versions of [NUC 53](../../docs/nuc-0053.md) |
+-| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None; suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026, exit 1 before any model call (`OPENROUTER_API_KEY is required`); difference unknown; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
  
-+### Implicit receivers in method bodies
+ ## Puzzle
+ 
+@@ -229,6 +229,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
 +
-+```
-+class Rect(this.w, this.h):
-+    def area() => .w * .h
-+    def label():
-+        return `${.w}x${.h}`
-+r = Rect(2, 3)
-+a = r.area()
-+assert([a, r.label()], [6, "2x3"])
-+r.w = 5
-+[a, r.label()]
-+# return: [15, "5x3"]
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
++
++```nuc
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int):
++obj56f6c04f44d8 is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3)
 +```
 +
-+- [NUC 113](nuc-0113.md) reads a `.` that begins an operand, directly followed by a name, in the code of a class body as that property of the instance, `this`: `def area() => .w * .h` is `def area() => this.w * this.h`. `tests/method_receivers.rs` runs this program, which returns `[15, "5x3"]`.
-+- The code is that of the methods a class declares with `def` or `function` in every parameter form, `self` parameters included, its `def init` and `def __init__` constructors and the statements of its own body, in subclasses too, with expression and indented bodies, every statement in them and template interpolations.
-+- A property assignment keeps its own receiver, so in a method `other.p = .q` reads `other.q`, while the values of variables, label arguments and destructuring declarations read `this`. Computed, indexed and versioned targets give no receiver.
-+- `this` is not defined in the lambdas, arrows, `function` expressions, operator sections, nested declarations and comprehension elements and conditions of a method, so their dots keep their errors; a comprehension's source and a quantifier's condition read the instance.
-+- These keep their accepted readings and errors: a call argument that starts with `.`, which is a selector or its error; `is` values; a statement or target that starts with `.`; a dot after a name; and every dot outside a class body, such as `def f() => .a`, object functions and class-level rules.
-+- A read builds the written-out `this.NAME`, so values, dependencies, live updates, `why`, `affects`, rendering, rollback and errors are those of that spelling, and only inputs that were syntax errors at the accepted revision change. See the authoritative [implicit receivers in method bodies](../nucleoid.spec.md#implicit-receivers-in-method-bodies) section.
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 6 input and 6 output snapshots of the 6 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
 +
- ---
+ ## Runs
  
- ## 6. Class-Level Rules
-@@ -2257,6 +2279,29 @@ names
- - Selectors stay live and roll back like the lambda they abbreviate. They render as written, so `why` explains `dearest = Item.max(.price)`; anonymous lambdas keep rendering as `function()`.
- - Anything else that starts with `.` keeps its error: `f(.a + 1)`, `x = .a`, `[.a]` and `assert: .a, 1` still raise `SyntaxError("Unexpected '.'")`. A selector names at most 127 properties. See the authoritative [property selector arguments](../nucleoid.spec.md#property-selector-arguments) section.
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-27a28665.md` (modified, +28/-3)
+```diff
+@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+ | Item | Status |
+ | --- | --- |
+ | Puzzle | [`data/training/27a28665.json`](../data/training/27a28665.json) |
+-| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 3, which `88c781d` committed, replacing version 2's 50 cell instances, which had replaced version 1 before any run; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026 |
++| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 3, which `88c781d` committed, replacing version 2's 50 cell instances, which had replaced version 1 before any run; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
+ | Output canvas | `FIT` |
+ | Nucleoid enhancements | None requested, so no proposal strategy was selected; version 3's rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), and version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md) |
+-| Solver changes | None; two suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default |
++| Solver changes | None; two suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+ | Solver runs | 1 local run on 4-Nov-2026 for version 2, exit 0; version 3 not run; none of the current version; none of the 8-Nov-2026 `is` version |
+-| Updated | 8-Nov-2026 |
++| Updated | 17-Nov-2026 |
  
-+### Operator section arguments
+ ## Puzzle
+ 
+@@ -278,6 +278,31 @@ counts that rank them are unchanged. No NUC was requested, so no proposal
+ strategy was selected and strategy learning did not apply. No solver run has
+ measured this version, so its difference is unknown, not zero.
+ 
++### Volume
 +
++On 17-Nov-2026, at the user's request, `volume` joined the standard object
++entries as the sixth, after `orientation`: the number of nonzero cells in the
++object's input mask, not the area of its bounding box. The solver's
++`init_class` in `src/lib/llm.ts` declares it, `Matrix.locate` measures it, and
++`object.implementation` receives the measured count as `input_volume`. The
++class takes `volume: int` right after `orientation: int` and sets
++`this.volume is volume` right after `this.orientation is orientation`, and
++every implementation passes it right after `orientation`:
++
++```nuc
++class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str):
++obj3fc7d6382a47 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l4262')
 +```
-+prices = [12, 30, 8, 45]
-+limit = 10
-+picked = prices.filter(> limit)
-+doubled = picked.map(* 2)
-+cheap = prices.count(<= limit)
-+assert(picked, [12, 30, 45])
-+assert([doubled, cheap], [[24, 60, 90], 1])
-+limit = 20
-+assert([doubled, cheap], [[60, 90], 2])
-+stock = [4, null, 7]
-+stock.map(?? 0)
-+```
 +
-+- This is the complete `Nucleoid writes one-parameter functions as operator sections` program in `tests/reference.md`, without its title and expected-return metadata; it returns `[4,0,7]`.
-+- [NUC 109](nuc-0109.md) lets a call argument that begins with a binary operator stand for the one-parameter function that applies the operator to its argument: `prices.filter(> limit)` is `prices.filter(price -> price > limit)`. A section is a whole argument of a parenthesized argument list, from the operator to the `,` or `)` that ends it, in any call, method call, constructor call, `new` call or `super(...)`.
-+- The operators are `==`, `!=`, `===`, `!==`, `<`, `<=`, `>`, `>=`, `*`, `%`, `**`, `&&`, `||` and `??`. `+` and `-` stay signs, so `xs.map(- 1)` passes `-1`; `!`, `/` and the words `is`, `in`, `not`, `and` and `or` do not begin a section.
-+- The rest of the argument is read with the usual precedence as if the parameter stood before the operator: `* 2 + 1` is `v -> v * 2 + 1` and `% 2 == 0` is `v -> v % 2 == 0`. The parameter has no name, so the rest cannot read or shadow it, and its names are read on each call, as in the lambda's body.
-+- The parser builds the lambda's tree, so sections stay live, explain, render as `function()` and roll back exactly as the lambda does. Grouping parentheses, list items, object values, named arguments, subscripts and pipeline stage arguments keep their accepted errors, and `xs.filter(> 4 && < 9)` raises `SyntaxError
-```
-
----
-
-### Incident Patch 2: `409f439a` (2026-11-17)
-**Commit Message**: Simplify ARC matrix composition
-
-Return plain matrices instead of epoch-based drawings. Reject negative positions, grow canvases right or down, and update visualization and documentation.
-
-**File**: `.claude/agents/arc-debug.agent.md` (modified, +14/-13)
-```diff
-@@ -116,11 +116,13 @@ between that code and the log. At the time of writing, `start()` writes
- 8. `visualizer.state` (Nucleoid): test `output_value`.
- 9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, drawn by
-    `Matrix.draw` at `output_value.x` / `output_value.y` on the test input's
--   canvas: `output_instance_matrix`, and `output_instance_epoch`, the column
--   and row of position (0, 0) in it. Positions count from that epoch, the test
--   input's top-left cell, so they can be negative. Logs written before the
--   epoch have no `output_instance_epoch`; their epoch is `{ x: 0, y: 0 }`.
--10. `Matrix.merge` of the test output drawings, lined up at their epochs, then
-+   canvas: `output_instance_matrix`. Positions count from the test input's
-+   top-left cell, and `Matrix.draw` rejects a negative one, which fails the
-+   run. Older logs may also hold `output_instance_epoch`, the column and row
-+   of position (0, 0) in a drawing that could grow left or up; a nonzero one
-+   means that drawing did.
-+10. `Matrix.merge` of the drawn matrices onto a zero canvas of the test input's
-+    size, lined up at their top-left cells, then
-     `Matrix.canvas(..., output_canvas)`: `result_matrix`.
- 11. `Matrix.difference(result_matrix, test_output_matrix)`: `difference`;
-     `0` is an exact match.
-@@ -198,14 +200,13 @@ Run every check that applies and record each result:
-   unturned.
-   Report those separately from the extracted instances' disagreements, which
-   alone show the world model mispredicting its own training data.
--- **Test composition.** Every test `output_value` has integer `x` and `y`; a
--  negative one lies left of or above the test input. Every drawn
--  `output_instance_matrix` keeps the test input's shape with the epoch
--  `{ x: 0, y: 0 }`; a larger one means the instance reached past an edge and
--  `Matrix.draw` grew the grid that way, and a nonzero `output_instance_epoch`
--  means it grew left or up. Recompute the drawings, merge and canvas and
--  compare the result with `result_matrix`, noting cells that a later instance
--  overwrote.
-+- **Test composition.** Every test `output_value` has non-negative integer `x`
-+  and `y`; a negative one lies left of or above the test input, and
-+  `Matrix.draw` rejects it. Every drawn `output_instance_matrix` keeps the test
-+  input's shape; a larger one means the instance reached past the right or
-+  bottom edge and `Matrix.draw` grew the grid that way. Recompute the drawn
-+  matrices, merge and canvas and compare the result with `result_matrix`,
-+  noting cells that a later instance overwrote.
- - **Scoring (scoring-only).** Compare the shapes of `result_matrix` and
-   `test_output_matrix`. Recompute the difference and compare it with the
-   logged `difference`. Count the mismatched cells and give their coordinates.
-```
-
-**File**: `arc/README.md` (modified, +36/-56)
-```diff
-@@ -198,9 +198,6 @@ instance name. In the visualization, each test object's synthesis shows its
- `2.12.1`, rather than continuing the synthesis count, and an `Output state`
- panel right after the `Output crop`: the object's row of the
- `Visualization · State` table, before its `Placed output`.
--A `Placed output` that grew left of or above the test input's top-left cell
--adds its epoch, the column and row of position (0, 0) in the drawn grid, as in
--`Placed output · <instance> · epoch x=1 y=0`.
- The visualization's output-crop header also shows the object's output
- orientation as an arrow emoji and its degrees, such as
- `2.13.1 Output crop · <instance> · ➡️ 90°`, and every input- and
-@@ -2779,29 +2776,20 @@ For identified instances, the LLM represents instances in `nuc` lang, this is pa
- For each input instance in test, the LLM generates output instance since it has all information needed from **knowledge packets**.
- 
- Finally, `Matrix.draw` draws each output crop at its output position on the
--test input's canvas before `Matrix.merge` combines the drawings. Positions count
--from the epoch, position (0, 0), which is the test input's top-left cell, so an
--object left of or above the test input has a negative position. A drawing grows
--left, up, right, or down as needed to retain the entire placed crop instead of
--rejecting an undersized reference, and its epoch records where position (0, 0)
--landed. Merging lines the drawings up at their epochs and covers every cell any
--of them covers. Zero is transparent; later nonzero cells win on overlap, as
--before. An erased output object uses `[[0]]` with an explicit output position.
--The run log keeps each test instance's drawn matrix as `output_instance_matrix`
--and its epoch as `output_instance_epoch`.
--`Matrix.canvas` then frames the merged drawing's matrix with the inferred
-+test input's canvas before `Matrix.merge` combines the drawn matrices.
-+Positions are zero-based columns and rows from the test input's top-left cell,
-+and `Matrix.draw` rejects a negative one, so the run fails explicitly. The
-+canvas grows right or down as needed to retain the entire placed crop instead
-+of rejecting an undersized reference. Merging lines the matrices up at their
-+top-left cells and keeps the largest height and width across its inputs. Zero
-+is transparent; later nonzero cells win on overlap, as before. An erased output
-+object uses `[[0]]` with an explicit output position. The run log keeps each
-+test instance's drawn matrix as `output_instance_matrix`.
-+`Matrix.canvas` then frames the merged matrix with the inferred
- `output_canvas`: `EXACT` keeps the composed canvas, which starts at the test
--input's dimensions and grows in every direction a drawing needed, and `FIT`
--crops it to its nonzero bounding box with `Matrix.crop`. Any other value fails
--explicitly.
--
--A drawing is `{ matrix, epoch }`: a matrix together with its epoch, the
--zero-based column `x` and row `y` of the matrix cell at position (0, 0).
--Positions left of or above the epoch are negative. A matrix by itself is a
--drawing whose epoch is its top-left cell, `{ x: 0, y: 0 }`, so `Matrix.locate`,
--`Matrix.crop`, `Matrix.move`, and `Matrix.merge` accept either, while
--`Matrix.draw`, `Matrix.move`, and `Matrix.merge` return drawings. A drawing
--whose epoch is not a pair of integers is rejected.
-+input's dimensions and grows right or down where a drawn matrix needed, and
-+`FIT` crops it to its nonzero bounding box with `Matrix.crop`. Any other value
-+fails explicitly.
- 
- `Matrix.crop(matrix)` returns a new matrix containing the smallest rectangle
- around all nonzero cells. All-zero borders are removed from all four sides:
-@@ -2813,27 +2801,23 @@ position metadata. Use `Matrix.locate` to retain the original position with
- the crop.
- 
- `Matrix.locate(matrix)` returns `{ matrix, x, y, width, height }`, pairing the
--same tight crop with the position of its top-left cell and its size: `x` is the
--column and `y` is the row, both counted from the epoch, `width` is the crop's
--column count and `height` is its row count. For a plain matrix, whose epoch is
--its top-left cell, the position is the zero-based column and row in that
--matrix; in a drawing it can be negative. Empty and all-zero matrices return
-+same tight crop with its zero-based top-left position in the original matrix
-+and its size: `x` is the column, `y` is the row, `width` is the crop's column
-+count and `height` is its row count. Empty and all-zero matrices return
- `{ matrix: [], x: 0, y: 0, width: 0, height: 0 }`. It uses the same validation
- as `Matrix.crop` and does not modify the input. For a located result,
- `Matrix.draw(result.matrix, rows, cols, result.x, result.y)` restores the crop
--to its position on a canvas that covers at least the supplied dimensions from
--the epoch, and so does `Matrix.pad` when the position is not negative.
--
--`Matrix.draw(matrix, rows, cols, x, y)` returns the drawing of `matrix` with
--its top-left cell at position (`x`, `y`)
-```
-
-**File**: `arc/src/app.ts` (modified, +11/-14)
-```diff
-@@ -65,7 +65,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
-     test_input_matrix,
-   });
- 
--  let result_drawing = Matrix.draw(
-+  let result_matrix = Matrix.draw(
-     [],
-     test_input_matrix.length,
-     test_input_matrix[0].length,
-@@ -100,21 +100,18 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
-   await visualizer.state({ declarations, test_input_matrix, input_instances });
- 
-   for (const input_instance of input_instances) {
--    const { output_instance_drawing } = await visualizer.output_instance_matrix(
--      {
--        test_input_matrix,
--        train_dataset,
--        instance: input_instance,
--      }
--    );
--
--    input_instance.output_instance_matrix = output_instance_drawing.matrix;
--    input_instance.output_instance_epoch = output_instance_drawing.epoch;
--
--    result_drawing = Matrix.merge(result_drawing, output_instance_drawing);
-+    const { output_instance_matrix } = await visualizer.output_instance_matrix({
-+      test_input_matrix,
-+      train_dataset,
-+      instance: input_instance,
-+    });
++No rule reads or changes `volume`, so each output state keeps its input volume.
++Offline, with the accepted runtime at `16ae8c2` (last runtime change
++`1612d6c`), all 10 input and 10 output snapshots of the 10 pairs replay, each
++equal to its previous snapshot with `volume` added. The grids, masks,
++positions, and instance names are unchanged, and every form the dataset uses
++was already in the [dataset grammar](../nucleoid.ebnf). No NUC was requested,
++so no proposal strategy was selected and strategy learning did not apply. No
++solver run has measured this version, so its difference is unknown, not zero.
 +
-+    input_instance.output_instance_matrix = output_instance_matrix;
-+
-+    result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
-   }
+ ## Runs
  
--  const result_matrix = Matrix.canvas(result_drawing.matrix, output_canvas);
-+  result_matrix = Matrix.canvas(result_matrix, output_canvas);
- 
-   milestone.comparison({ test_output_matrix, result_matrix });
- 
-```
-
-**File**: `arc/src/lib/Matrix.ts` (modified, +43/-70)
-```diff
-@@ -2,23 +2,7 @@ export function crop(matrix) {
-   return locate(matrix).matrix;
- }
- 
--// A drawing pairs a matrix with its epoch, the column and row of the cell at
--// position (0, 0), so positions left of or above the epoch are negative. A
--// matrix by itself is a drawing whose epoch is its top-left cell.
--function drawing(value) {
--  if (!Array.isArray(value?.matrix)) {
--    return { matrix: value, epoch: { x: 0, y: 0 } };
--  }
--  if (!Number.isInteger(value.epoch?.x) || !Number.isInteger(value.epoch?.y)) {
--    throw new Error(
--      `Drawing epoch ${JSON.stringify(value.epoch)} must be integers`
--    );
--  }
--  return value;
--}
--
--export function locate(value) {
--  const { matrix, epoch } = drawing(value);
-+export function locate(matrix) {
-   const rows: number = matrix.length;
-   const cols: number = matrix[0]?.length ?? 0;
-   let top: number = rows;
-@@ -46,8 +30,8 @@ export function locate(value) {
-     matrix: matrix
-       .slice(top, bottom + 1)
-       .map((row) => row.slice(left, right + 1)),
--    x: left - epoch.x,
--    y: top - epoch.y,
-+    x: left,
-+    y: top,
-     width: right - left + 1,
-     height: bottom - top + 1,
-   };
-@@ -85,43 +69,40 @@ export function silhouette(matrix) {
- }
- 
- // Draws the nonzero cells of each placement, a matrix whose top-left cell sits
--// at position (x, y), on a canvas that covers the frame and every placement,
--// so a later nonzero cell wins on overlap. The epoch of the drawing it returns
--// locates position (0, 0) on that canvas.
--function compose(frame, placements, action: string) {
--  let { left, top, right, bottom } = frame;
-+// at column x and row y, on a canvas of at least rows by cols cells that grows
-+// right or down to cover every placement, so a later nonzero cell wins on
-+// overlap.
-+function compose(rows: number, cols: number, placements, action: string) {
-+  let bottom: number = rows;
-+  let right: number = cols;
-   for (const { matrix, x, y } of placements) {
--    const cols: number = matrix[0]?.length ?? 0;
-+    const width: number = matrix[0]?.length ?? 0;
-     for (const row of matrix) {
--      if (row.length !== cols) {
-+      if (row.length !== width) {
-         throw new Error(`Matrix must be rectangular for ${action}`);
-       }
-     }
--    left = Math.min(left, x);
--    top = Math.min(top, y);
--    right = Math.max(right, x + cols);
-+    right = Math.max(right, x + width);
-     bottom = Math.max(bottom, y + matrix.length);
-   }
- 
--  const result = Array.from({ length: bottom - top }, () =>
--    Array(right - left).fill(0)
--  );
-+  const result = Array.from({ length: bottom }, () => Array(right).fill(0));
-   for (const { matrix, x, y } of placements) {
-     for (let i: number = 0; i < matrix.length; i++) {
-       for (let j: number = 0; j < matrix[i].length; j++) {
-         if (matrix[i][j] !== 0) {
--          result[y - top + i][x - left + j] = matrix[i][j];
-+          result[y + i][x + j] = matrix[i][j];
-         }
-       }
-     }
-   }
- 
--  return { matrix: result, epoch: { x: 0 - left, y: 0 - top } };
-+  return result;
- }
- 
--// Draws the matrix with its top-left cell at position (x, y) on a canvas that
--// covers rows by cols cells from the epoch and grows in any direction to keep
--// the whole matrix, so x and y may be negative.
-+// Draws the matrix with its top-left cell at column x and row y on a canvas of
-+// at least rows by cols cells, which grows right or down to keep the whole
-+// matrix.
- export function draw(matrix, rows: number, cols: number, x: number, y: number) {
-   if (![rows, cols].every((size) => Number.isInteger(size) && size >= 0)) {
-     throw new Error("Drawing dimensions must be non-negative integers");
-@@ -131,8 +112,12 @@ export function draw(matrix, rows: number, cols: number, x: number, y: number) {
-       `Drawing position ${JSON.stringify({ x, y })} must be integers`
-     );
-   }
--  const frame = { left: 0, top: 0, right: cols, bottom: rows };
--  return compose(frame, [{ matrix, x, y }], "drawing");
-+  if (x < 0 || y < 0) {
-+    throw new Error(
-+      `Drawing position ${JSON.stringify({ x, y })} must not be negative`
-+    );
-+  }
-+  return compose(rows, cols, [{ matrix, x, y }], "drawing");
- }
- 
- export function pad(
-@@ -148,8 +133,7 @@ export function pad(
-   if (left < 0 || top < 0) {
-     throw new Error("Padding offsets must be non-negative");
-   }
--  const frame = { left: 0, top: 0, right: cols, bottom: rows };
--  return compose(frame, [{ matrix, x: left, y: top }], "padding").matrix;
-+  return compose(rows, cols, [{ matrix, x: left, y: top }], "padding");
- }
- 
- // Turns the matrix clockwise by a multiple of 90 degrees, the direction in
-@@ -188,42 +172,31 @@ export function rotate(matrix, degrees: number) {
- }
- 
- // Moves the nonzero cells together so that their bounding box starts at
--// position (x, y), the position locate reports, which may be negative. The
--// drawing covers the cells of the matrix or drawing it moves and grows in any
--// direction when the moved cells need more room.
--exp
-```
-
-**File**: `arc/src/lib/milestone.ts` (modified, +9/-14)
-```diff
-@@ -6,14 +6,6 @@ function oriented(title: string, orientation: unknown): string {
-   return direction ? `${title} · ${direction}` : title;
- }
- 
--// Adds a drawing's epoch, the column and row of position (0, 0) in its grid,
--// when the drawing grew left of or above that position.
--function epoched(title: string, epoch): string {
--  return epoch && (epoch.x !== 0 || epoch.y !== 0)
--    ? `${title} · epoch x=${epoch.x} y=${epoch.y}`
--    : title;
--}
--
- export function start({ version, puzzle_id, train, test_input_matrix }) {
-   terminal.header({ version, puzzle_id });
-   terminal.puzzle({ train, testInput: test_input_matrix });
-@@ -241,12 +233,15 @@ export function output_composed({
-   );
- }
- 
--export function output_placed({ instance_name, output_instance_drawing }) {
--  const { matrix, epoch } = output_instance_drawing;
--  terminal.grid(epoched(`Placed output · ${instance_name}`, epoch), matrix, {
--    key: "placed_output",
--    loop: true,
--  });
-+export function output_placed({
-+  instance_name,
-+  output_instance_placed_matrix,
-+}) {
-+  terminal.grid(
-+    `Placed output · ${instance_name}`,
-+    output_instance_placed_matrix,
-+    { key: "placed_output", loop: true }
-+  );
- }
- 
- export function comparison({ test_output_matrix, result_matrix }) {
-```
-
-**File**: `arc/src/visualizer.ts` (modified, +3/-3)
-```diff
-@@ -183,17 +183,17 @@ export async function output_instance_matrix({
- 
-   milestone.output_composed(instance);
- 
--  const output_instance_drawing = Matrix.draw(
-+  const output_instance_placed_matrix = Matrix.draw(
-     Matrix.crop(output_instance_matrix),
-     test_input_matrix.length,
-     test_input_matrix[0].length,
-     x,
-     y
-   );
- 
--  milestone.output_placed({ ...instance, output_instance_drawing });
-+  milestone.output_placed({ ...instance, output_instance_placed_matrix });
- 
--  return { output_instance_drawing };
-+  return { output_instance_matrix: output_instance_placed_matrix };
- }
- 
- export async function state({
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
 #### Recent Merged Pull Requests:
@@ -2185,62 +1980,49 @@ Return plain matrices instead of epoch-based drawings. Reject negative positions
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
+## X. Add object volume to ARC visualization
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `16ae8c24`: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cc9974a`: Add object volume to ARC visualization. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Operator section arguments
-
-**Operator sections pass a comparison without naming a parameter**
-
-```nuc
-cells = [0, 3, 0, 7, 7]
-filled = cells.filter(!= 0)
-sevens = cells.count(== 7)
-assert([filled, sevens], [[3, 7, 7], 2])
-cells.push(7)
-assert([filled, sevens], [[3, 7, 7, 7], 3])
-```
-
-- [NUC 109](docs/nuc-0109.md) lets a call argument that begins with a
-  binary operator stand for the function that applies the operator to its
-  argument: `cells.filter(!= 0)` is `cells.filter(cell -> cell != 0)`, and
-  `cells.count(== 7)` counts the sevens.
-- The rest of the argument is read as if the item stood before the
-  operator, with the usual precedence, so `xs.map(* 2 + 1)` maps
-  `x -> x * 2 + 1`. Both declarations stay live like their lambdas: another
-  seven extends `filled` and raises `sevens`. See the
-  [root contract](nucleoid.spec.md#operator-section-arguments).
-
-## Python string method aliases
-
-**Python string methods classify files and list them**
-
-```nuc
-class File(name):
-    this.name = name
-$File.table = $File.name.endswith(".csv")
-report = File("report.csv")
-notes = File("notes.txt")
-tables = ", ".join(File.filter(file -> file.table).map(file -> file.name))
-assert([report.tab
+  volume: int, ...)`; add another class only for a distinct kind of object
+  the transformation needs. Each class whose instances are annotated objects
+  orientation: int, volume: int` first, in that order, and its body assigns
+  every parameter to `this` and sets an initial tag either way: a literal,
+- `volume` is the number of nonzero cells in the object's input mask, not the
+  area of its bounding box; the solver measures it with `Matrix.locate` and
+  sends it to the implementation call as `input_volume`. Like `width` and
+  `height`, it does not change when only the orientation changes. Use it for
+  an object's cell count instead of a separate property such as
+  `cell_count`.
+  width=<width>, height=<height>, orientation=<input_orientation>,
+  volume=<volume>, ...)`, constructing the instance's class (`Obj` in existing
+  datasets) with named arguments matching its parameters, where `width` and
+  `height` are the input mask's nonzero bounding-box column and row counts and
+  `volume` is its number of nonzero cells.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  ...)`; add another class only for a distinct kind of object the
+  transformation needs. Each class whose instances are annotated objects
+  orientation: int` first, in that order, and its body assigns every
+  parameter to `this` and sets an initial tag either way: a literal,
+  width=<width>, height=<height>, orientation=<input_orientation>, ...)`,
+  constructing the instance's class (`Obj` in existing datasets) with named
+  arguments matching its parameters, where `width` and `height` are the input
+  mask's nonzero bounding-box column and row counts.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `16ae8c24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cc9974a` are properly handled with clean fallback behavior.

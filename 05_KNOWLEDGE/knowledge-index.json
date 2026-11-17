@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T19:45:05.605Z",
-  "total_verified_learnings": 8934,
+  "last_updated": "2026-11-17T19:54:48.311Z",
+  "total_verified_learnings": 8935,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20550,
+  "total_items": 20567,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216930,8 +216930,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "342ec629",
-      "content_hash": "2d407fbe529c2f138259823d5734173a7197114a47f19d916867f9740e678ccb",
+      "source_version": "58dd5893",
+      "content_hash": "c96e3ead7e09cfde07614ec7b0d5f8eb3f81f50972ab86eeae8e89ded75f5ea1",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -216949,6 +216949,11 @@
           "number": 8791,
           "title": "decode BLOOM table index type; default cache.data_max_ratio to 0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9044,
+          "title": "finish queries correctly on the queries executor",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216956,7 +216961,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T21:10:35.611Z",
+      "verified_at": "2026-11-17T19:53:45.457Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216998,10 +217003,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
       "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
       "repository": "databendlabs/databend",
-      "source_version": "4fc66b82",
-      "content_hash": "7f8b434f1bb98caa0d9f0797ab2b33215015cf6d7db8c1b68240ba3d2952fb08",
+      "source_version": "58dd5893",
+      "content_hash": "1fdfe207f0274bbddc2a9d9146513e59efe63c338ee40f2cc5445ea08bf3bed8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T10:48:15.109Z"
+      "persisted_at": "2026-11-17T19:53:45.954Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend",
@@ -217010,10 +217015,10 @@
       "relative_path": "08_VERIFICATION/databendlabs-databend-verification-protocol-empirical-defect-shield-for-databend.md",
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs/databend",
       "repository": "databendlabs/databend",
-      "source_version": "342ec629",
-      "content_hash": "adfdc8ba2a71b5d9fda799c87eb0d357306bd624c74207b6f36088dc7b2600d1",
+      "source_version": "58dd5893",
+      "content_hash": "381aaef0e2ec4ef6c0558cff8ec629198ef1dcb53fd9aafb44175d861ea71bf5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:10:36.149Z"
+      "persisted_at": "2026-11-17T19:53:46.089Z"
     },
     "learn-huggingface-google-t5-t5-small": {
       "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -221553,8 +221558,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "a5b5d7de",
-      "content_hash": "37d077e4275c0879f9e8da1deb597db64dd186e30ea168aca55b47cde2e2f64c",
+      "source_version": "23d2aaec",
+      "content_hash": "446667f9ae3934ed8bc4be901cb400bab1a6bff36810889b786a6d9f14a28eb9",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -221567,6 +221572,11 @@
           "number": 8805,
           "title": "keep healthy BGP instances running when one fails",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9043,
+          "title": "allow two busy unmounts in TestUnmountBusy",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221574,7 +221584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T22:47:37.751Z",
+      "verified_at": "2026-11-17T19:53:40.349Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221616,10 +221626,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "repository": "siderolabs/talos",
-      "source_version": "a5b5d7de",
-      "content_hash": "53d66afbeec977542f6ea3d7591237a3d534ad158917fe2c281015f2cfff6c41",
+      "source_version": "23d2aaec",
+      "content_hash": "7363353427fdeb171b07092036c3fe53d3a17bbbac65856155bb45183b84697f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:47:38.138Z"
+      "persisted_at": "2026-11-17T19:53:40.851Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos",
@@ -221628,10 +221638,10 @@
       "relative_path": "08_VERIFICATION/siderolabs-talos-verification-protocol-empirical-defect-shield-for-siderolabs-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs/talos",
       "repository": "siderolabs/talos",
-      "source_version": "a5b5d7de",
-      "content_hash": "e194f1e94d51b9a8230265a7f4d4dcec6789fb588d0dd1c09fd61f6503893b0b",
+      "source_version": "23d2aaec",
+      "content_hash": "2ce531aa979dd8f464c5d1fad8e1775b14502807db08bc679a5375a563ec271e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:47:38.237Z"
+      "persisted_at": "2026-11-17T19:53:40.989Z"
     },
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
@@ -222044,9 +222054,9 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "57f1e4d0e258b1ebe349e3a17db129d9b0ffc51e800de7af8ba4cf70223e7e05",
+      "content_hash": "43c301a67cc1e92df86d6b387451a449412d0cd27f6cb9fca8c2ad87b2ba00a1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:47:42.405Z"
+      "persisted_at": "2026-11-17T19:54:48.173Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings",
@@ -222056,9 +222066,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs-talos-learnings",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "d82484d2aad9c4f43c53159ab53f9d8b465a89b3f88ed8a6f3c06721aa315e23",
+      "content_hash": "d063e8f5826e132573d9cb409716477c304d6f715cd8c59fef4843c1418da3b6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:47:42.524Z"
+      "persisted_at": "2026-11-17T19:54:48.311Z"
     },
     "learn-huggingface-bigscience-bloom": {
       "learning_id": "learn-huggingface-bigscience-bloom",
@@ -228080,8 +228090,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "16ae8c24",
-      "content_hash": "1b81cfe40a3f916f663566894d90b000e8b81aa815317320a599c9006564fb58",
+      "source_version": "1cc9974a",
+      "content_hash": "6968df8a19a40615d472a1290762e337d784addbddb02a73af313dd995b24cb2",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -228154,6 +228164,11 @@
           "number": 8992,
           "title": "Draft NUC 114 List and Population Products",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9045,
+          "title": "Add object volume to ARC visualization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228161,7 +228176,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:19:50.546Z",
+      "verified_at": "2026-11-17T19:53:47.262Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228203,10 +228218,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "e1506250",
-      "content_hash": "d29f64c06cc594915dc076c310ca7323e3e591f8af6318d489e707e84bda9d55",
+      "source_version": "1cc9974a",
+      "content_hash": "9357241dc7b667b63a8d4c73190652b9e4490f263798cbe10827d58f3aa1eb93",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T12:46:12.674Z"
+      "persisted_at": "2026-11-17T19:53:47.756Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -228215,10 +228230,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "16ae8c24",
-      "content_hash": "7cd0d513b66d3966164a50d542d012a9db3c08b63d32c2da37d4efe594f39e27",
+      "source_version": "1cc9974a",
+      "content_hash": "6dba92c3847c21ce34851ed1149302269c56d189154377645842afd50b1dac88",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:19:51.101Z"
+      "persisted_at": "2026-11-17T19:53:47.893Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -229771,13 +229786,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "554cb1b7",
-      "content_hash": "abd19c27ee3a190e547bff1e659144fa69f4fb937116746a00df45090c9bb356",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "9c7cb976",
+      "content_hash": "21a5665e7451f82569e44ffe06d682e90adba0fce494dbd826227174fb63fbc4",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -229793,6 +229808,21 @@
           "number": 8789,
           "title": "decide the reasoning dialect by endpoint, not by model id",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9046,
+          "title": "Generational Host State-Aware Retry Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9047,
+          "title": "Multi-Process Durable Transaction Lock Ceiling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9048,
+          "title": "Capability Non-Escalation Derivation via Bounded Monotonicity",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229800,7 +229830,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T21:10:24.381Z",
+      "verified_at": "2026-11-17T19:54:42.713Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229851,25 +229881,25 @@
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "554cb1b7",
-      "content_hash": "ca2a51f770be4221757ffc09538ce7eb884fba028b5a3625bb217caf35031b64",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-16T21:10:24.931Z"
+      "source_version": "9c7cb976",
+      "content_hash": "390a022bf87b6b6c09938f3643573026dc65da433ed42f73c530bf67ae26f13d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T19:54:43.593Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
+      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "554cb1b7",
-      "content_hash": "ed08bc1dbc5c5882b9f51f2e248c4355de71635068e66e061a1e2fedcfff41c2",
+      "source_version": "9c7cb976",
+      "content_hash": "597f371cb728b43b5fc2a3c43f76c9d1eea798a2385a0335f09e0656d1f36b2a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:10:25.038Z"
+      "persisted_at": "2026-11-17T19:54:43.716Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -229903,9 +229933,9 @@
       "title": "Agent Contract: codewhale-hq-codewhale-learnings Autonomous Specialist Persona",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "31e35f684e93475cabe21f63cdc8578b77fbb082e0e528e6a5d23875f685a972",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-16T07:19:58.943Z"
+      "content_hash": "34941223a827fd1e254b64edef52541de15c50206092ebe7e339b9577e48ff62",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T19:54:47.192Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin",
@@ -229915,9 +229945,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq-codewhale-learnings",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "0df9b948521967cd9360ff98de125aac36620d1d97256306c95867d46889fb75",
+      "content_hash": "9781f598e1628ee8659272da2c68c0491436bfaba2560de10100e68a9122f1fb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T07:19:59.024Z"
+      "persisted_at": "2026-11-17T19:54:47.325Z"
     },
     "learn-huggingface-bingsu-adetailer": {
       "learning_id": "learn-huggingface-bingsu-adetailer",
@@ -275925,6 +275955,237 @@
       "content_hash": "6b9d20c412185c5e4d5b6df972e64a23b77ea8f4099bf5500081985c433adbce",
       "domain_letter": "L",
       "persisted_at": "2026-11-17T19:45:05.364Z"
+    },
+    "rule-9043": {
+      "learning_id": "rule-9043",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9043,
+      "title": "allow two busy unmounts in TestUnmountBusy",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "23d2aaec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T19:53:40.349Z"
+    },
+    "candidate_directive-allow-two-busy-unmounts-in-testunmountbusy": {
+      "item_id": "candidate_directive-allow-two-busy-unmounts-in-testunmountbusy",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2W6O-allow-two-busy-unmounts-in-testunmountbusy.md",
+      "title": "allow two busy unmounts in TestUnmountBusy",
+      "repository": "siderolabs-talos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0e3fd0430fc5d6a6bd219cf87e8843dd18c2c196c5f08d68aaefce0041552996",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T19:54:48.050Z"
+    },
+    "rule-9044": {
+      "learning_id": "rule-9044",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9044,
+      "title": "finish queries correctly on the queries executor",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "58dd5893",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T19:53:45.457Z"
+    },
+    "candidate_directive-finish-queries-correctly-on-the-queries-executor": {
+      "item_id": "candidate_directive-finish-queries-correctly-on-the-queries-executor",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1K67-finish-queries-correctly-on-the-queries-executor.md",
+      "title": "finish queries correctly on the queries executor",
+      "repository": "databendlabs/databend",
+      "source_version": "58dd5893",
+      "content_hash": "6a25c4694f6528a867a15a094843bf87b708c6b6cf22eab19e4f9e68c4c2d2c0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T19:53:45.827Z"
+    },
+    "rule-9045": {
+      "learning_id": "rule-9045",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9045,
+      "title": "Add object volume to ARC visualization",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "1cc9974a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T19:53:47.262Z"
+    },
+    "candidate_directive-add-object-volume-to-arc-visualization": {
+      "item_id": "candidate_directive-add-object-volume-to-arc-visualization",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1LK9-add-object-volume-to-arc-visualization.md",
+      "title": "Add object volume to ARC visualization",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "1cc9974a",
+      "content_hash": "2d66c706090fd0f63c359c426e3669a61bb4f4cfb3eabec3217132de440f31a0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T19:53:47.629Z"
+    },
+    "learn-huggingface-thinkingmachines-inkling-2-small": {
+      "learning_id": "learn-huggingface-thinkingmachines-inkling-2-small",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "thinkingmachines/Inkling-2-Small",
+      "repository": "thinkingmachines/Inkling-2-Small",
+      "slug": "hf-thinkingmachines-inkling-2-small",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/thinkingmachines/Inkling-2-Small",
+      "source_version": "hf-thinkingmachines-inkling-2-small",
+      "content_hash": "ec9649c39cec40173a1ed59146a2c3f250b376aa413a621364be695fe62449e0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T19:54:06.147Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-small-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-small-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-small-research-knowledge-intelligence-thinkingmach.md",
+      "title": "Research & Knowledge Intelligence: thinkingmachines/Inkling-2-Small Core Invariants",
+      "repository": "thinkingmachines/Inkling-2-Small",
+      "source_version": "hf-thinkingmachines-inkling-2-small",
+      "content_hash": "6fbd213b9462d95f0d5b0946f84e0787dd02859aa68260ad36cef5d507142acc",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T19:54:06.497Z"
+    },
+    "rule-9046": {
+      "learning_id": "rule-9046",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9046,
+      "title": "Generational Host State-Aware Retry Invariant",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "9c7cb976",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T19:54:42.713Z"
+    },
+    "rule-9047": {
+      "learning_id": "rule-9047",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9047,
+      "title": "Multi-Process Durable Transaction Lock Ceiling",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "9c7cb976",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T19:54:42.713Z"
+    },
+    "rule-9048": {
+      "learning_id": "rule-9048",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9048,
+      "title": "Capability Non-Escalation Derivation via Bounded Monotonicity",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "9c7cb976",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T19:54:42.713Z"
+    },
+    "candidate_directive-generational-host-state-aware-retry-invariant": {
+      "item_id": "candidate_directive-generational-host-state-aware-retry-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2V4N-generational-host-state-aware-retry-invariant.md",
+      "title": "Generational Host State-Aware Retry Invariant",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7012bc9c4501eeffcf9708b555c53f3f2928faae8aedca469420a9dd0b2e9bb8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T19:54:46.682Z"
+    },
+    "candidate_directive-multi-process-durable-transaction-lock-ceiling": {
+      "item_id": "candidate_directive-multi-process-durable-transaction-lock-ceiling",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2V4O-multi-process-durable-transaction-lock-ceiling.md",
+      "title": "Multi-Process Durable Transaction Lock Ceiling",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f32ee860256f52f2e7e7bfff343af048cccb5b9dce44ee38de50612f777ed5a7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T19:54:46.805Z"
+    },
+    "candidate_directive-capability-non-escalation-derivation-via-bounded-monotonicity": {
+      "item_id": "candidate_directive-capability-non-escalation-derivation-via-bounded-monotonicity",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2V4P-capability-non-escalation-derivation-via-bounded-monotonicity.md",
+      "title": "Capability Non-Escalation Derivation via Bounded Monotonicity",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a7eae417b16bfdc2a11fb534c17e1145b396677a4ccfaafd94f46dd07ad57fd1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T19:54:46.932Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-codewhale-hq-codewhale-technical-construction-intelligence-codewhale-hq-codewhal.md",
+      "title": "Technical Construction Intelligence: codewhale-hq/Codewhale Core Invariants",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "9c7cb976",
+      "content_hash": "fe8867154895356b3728feb660e3670129b3915344b23f941cb1a458b00acdea",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T19:54:43.454Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-codewhale-hq-codewhale-learnings-technical-construction-intelligence-codewhale-h.md",
+      "title": "Technical Construction Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0f52ac69369cd0b56b1853b65498b55545c1f4f3d3a45cb5651d226b40cae6c6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T19:54:47.058Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-small-learnings-co": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-thinkingmachines-inkling-2-small-learnings-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-small-learnings-research-knowledge-intelligence-hf.md",
+      "title": "Research & Knowledge Intelligence: hf-thinkingmachines-inkling-2-small-learnings Core Invariants",
+      "repository": "hf-thinkingmachines-inkling-2-small-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8654ba3f719352535418141afc8c28fb36ccc71652a81b3df4cdda8126f2261a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T19:54:47.618Z"
     }
   },
   "ai-builder-brain": {
