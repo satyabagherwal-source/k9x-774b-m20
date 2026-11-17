@@ -10578,3 +10578,9 @@ Every entry in this ledger must capture:
 | `learn-dom-h-f963174b` | `project://react-navigation-react-navigation` | `3820f31f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md` | 2026-11-17T11:41:15.942Z |
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `08f29f57` | Multi-dimensional audit evidence | 2026-11-17T12:09:28.067Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `2e591454` | Multi-dimensional audit evidence | 2026-11-17T12:09:32.780Z |
+| `learn-huggingface-minimaxai-minimax-h3-image-pe` | `https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-17T12:24:44.484Z |
+| `learn-huggingface-internlm-sage-s2-1-flash` | `https://huggingface.co/internlm/Sage-S2.1-Flash` | `hf-internl` | Multi-dimensional audit evidence | 2026-11-17T12:24:46.791Z |
+| `learn-github-diggerhq-digger` | `https://github.com/diggerhq/digger` | `3dc1c51e` | Multi-dimensional audit evidence | 2026-11-17T12:24:56.758Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `0374c91e` | Multi-dimensional audit evidence | 2026-11-17T12:25:04.830Z |
+| `learn-dom-d-46e6b1db` | `project://hf-minimaxai-minimax-h3-image-pe` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md` | 2026-11-17T12:25:35.495Z |
+| `learn-dom-d-84284456` | `project://hf-internlm-sage-s2.1-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md` | 2026-11-17T12:26:13.627Z |

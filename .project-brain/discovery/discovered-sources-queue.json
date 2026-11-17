@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T12:09:38.143Z",
+  "updated_at": "2026-11-17T12:26:14.204Z",
   "stats": {
-    "total_discovered": 4964,
-    "approved_pending_harvest": 4677,
+    "total_discovered": 4969,
+    "approved_pending_harvest": 4682,
     "harvested_count": 0,
     "rejected_count": 287,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4669,
+      "COMMUNITY_AND_EXPERT": 4674,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 103,
       "ENGINEERING_BLOGS": 3,
@@ -107220,6 +107220,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
         "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-F6DE200BF248": {
+      "id": "SRC-F6DE200BF248",
+      "url": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE",
+      "title": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:25:35.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md",
+        "fileName": "hf-minimaxai-minimax-h3-image-pe-learnings.md"
+      }
+    },
+    "SRC-C9012AE9FA8E": {
+      "id": "SRC-C9012AE9FA8E",
+      "url": "https://huggingface.co/internlm/Sage-S2.1-Flash",
+      "title": "https://huggingface.co/internlm/Sage-S2.1-Flash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:26:13.645Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md",
+        "fileName": "hf-internlm-sage-s2.1-flash-learnings.md"
+      }
+    },
+    "SRC-73A5F910365E": {
+      "id": "SRC-73A5F910365E",
+      "url": "https://github.com/diggerhq/digger",
+      "title": "https://github.com/diggerhq/digger",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:26:14.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/diggerhq-digger-learnings.md",
+        "fileName": "diggerhq-digger-learnings.md"
+      }
+    },
+    "SRC-1C40B7DAF580": {
+      "id": "SRC-1C40B7DAF580",
+      "url": "https://gitlab.com/diggerhq/test",
+      "title": "https://gitlab.com/diggerhq/test",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:26:14.172Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/diggerhq-digger-learnings.md",
+        "fileName": "diggerhq-digger-learnings.md"
+      }
+    },
+    "SRC-02810844809D": {
+      "id": "SRC-02810844809D",
+      "url": "https://%v/%s/%s/pull/%d/checks?check_run_id=%d",
+      "title": "https://%v/%s/%s/pull/%d/checks?check_run_id=%d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:26:14.204Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/diggerhq-digger-learnings.md",
+        "fileName": "diggerhq-digger-learnings.md"
       }
     }
   }

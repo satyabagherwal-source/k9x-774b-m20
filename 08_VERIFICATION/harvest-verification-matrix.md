@@ -10545,3 +10545,9 @@
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T11:41:15.942Z` | `react-navigation-react-navigation` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F963174B` [Domain H] | Yes (`67b2268f...`) |
 | `CYCLE-20261117-GGZH` | `2026-11-17T12:09:28.061Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8961` | Yes (`b9197e92...`) |
 | `CYCLE-20261117-GKMG` | `2026-11-17T12:09:32.776Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8962` | Yes (`dece0dd9...`) |
+| `CYCLE-20261117-043K` | `2026-11-17T12:24:44.480Z` | `MiniMaxAI/MiniMax-H3-Image-PE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md` | Yes (`46a9d839...`) |
+| `CYCLE-20261117-05VM` | `2026-11-17T12:24:46.786Z` | `internlm/Sage-S2.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md` | Yes (`c367061a...`) |
+| `CYCLE-20261117-0DKI` | `2026-11-17T12:24:56.754Z` | `diggerhq/digger` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8963` | Yes (`e13be020...`) |
+| `CYCLE-20261117-0JSQ` | `2026-11-17T12:25:04.826Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8964` | Yes (`a582e4fd...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T12:25:35.495Z` | `hf-minimaxai-minimax-h3-image-pe` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-46E6B1DB` [Domain D] | Yes (`a87ac91a...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T12:26:13.627Z` | `hf-internlm-sage-s2.1-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-84284456` [Domain D] | Yes (`1395e3de...`) |

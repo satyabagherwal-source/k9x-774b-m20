@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-GROX",
-    "timestamp": "2026-11-14T21:38:33.393Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "e93e9c87515301cd1ae5fbd3f551cdffa9ac092ebed960ed2de972b111d59360",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-W2MJ",
-    "timestamp": "2026-11-14T21:50:27.403Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-    "contentHash": "6f07474fa387533dbadb621e1e9a1a9a5e14f0756eba21058c7a105c175b5641",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-W9M7",
-    "timestamp": "2026-11-14T21:50:36.463Z",
-    "repository": "onejs/one",
-    "learningId": "learn-github-onejs-one",
-    "contentHash": "fb7258adbfc0674b7ebe182f4e47cdd564d50ff61fc4252296dac7428d66be32",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-WF33",
-    "timestamp": "2026-11-14T21:50:43.551Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "9beabd2c33d5528d54005efbb3d2d7a1ea053765953c346a3c0c175fe3be55bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-N751",
     "timestamp": "2026-11-14T22:11:32.965Z",
     "repository": "ClickHouse/ClickHouse",
@@ -7490,6 +7430,66 @@
     "repository": "projectdiscovery/nuclei",
     "learningId": "learn-github-projectdiscovery-nuclei",
     "contentHash": "dece0dd9a83801700cc6c8a1d6d86fd2f840f7acd949cfab294f79da9b5b0fee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-043K",
+    "timestamp": "2026-11-17T12:24:44.480Z",
+    "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
+    "contentHash": "46a9d839ec2eacb07ce92bc48884e8776c2e506e05c6fad4ba236fb5005b4827",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-05VM",
+    "timestamp": "2026-11-17T12:24:46.786Z",
+    "repository": "internlm/Sage-S2.1-Flash",
+    "learningId": "learn-huggingface-internlm-sage-s2-1-flash",
+    "contentHash": "c367061a8a6e8715305162b90840477f2dfe5cfa5eeb954c49cc83022e1eacb9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-0DKI",
+    "timestamp": "2026-11-17T12:24:56.754Z",
+    "repository": "diggerhq/digger",
+    "learningId": "learn-github-diggerhq-digger",
+    "contentHash": "e13be0207a9b7064ac197aafe8d5f7c19338cc259f9a94989ff03c45a4f4131d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-0JSQ",
+    "timestamp": "2026-11-17T12:25:04.826Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "a582e4fd73190db69e709fa985841dce2ac37c676bcab48ff9b5a359d67d0e35",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

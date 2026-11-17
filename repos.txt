@@ -5148,3 +5148,9 @@ https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6
 https://huggingface.co/nex-agi/Nex-N2.6
 # [HUGGINGFACE-AI-MODELS] maxwell-model/Maxwell-V1-Flash (1247 score) - Verified Hugging Face Model: maxwell-model/Maxwell-V1-Flash (96 likes, 287 downl
 https://huggingface.co/maxwell-model/Maxwell-V1-Flash
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-17T12:24:38.095Z] ---
+# [HUGGINGFACE-AI-MODELS] MiniMaxAI/MiniMax-H3-Image-PE (3230 score) - Verified Hugging Face Model: MiniMaxAI/MiniMax-H3-Image-PE (123 likes, 3181 down
+https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE
+# [HUGGINGFACE-AI-MODELS] internlm/Sage-S2.1-Flash (1107 score) - Verified Hugging Face Model: internlm/Sage-S2.1-Flash (77 likes, 337 downloads)
+https://huggingface.co/internlm/Sage-S2.1-Flash

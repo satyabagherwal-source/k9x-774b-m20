@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T12:09:39.458Z",
-  "total_records": 1539,
+  "last_updated": "2026-11-17T12:26:14.581Z",
+  "total_records": 1547,
   "domains": {
     "A": {
       "total": 11,
@@ -47,7 +47,7 @@
       ]
     },
     "D": {
-      "total": 636,
+      "total": 642,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -684,7 +684,13 @@
         "DOM-D-1453C5CA",
         "domain_intelligence-research-knowledge-intelligence-hf-nex-agi-nex-n2-6-learnings-core-invariants",
         "DOM-D-4085BE40",
-        "domain_intelligence-research-knowledge-intelligence-hf-maxwell-model-maxwell-v1-flash-learnings-core"
+        "domain_intelligence-research-knowledge-intelligence-hf-maxwell-model-maxwell-v1-flash-learnings-core",
+        "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-image-pe-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-internlm-sage-s2-1-flash-core-invariants",
+        "DOM-D-46E6B1DB",
+        "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-pe-learnings-core-",
+        "DOM-D-84284456",
+        "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar"
       ]
     },
     "E": {
@@ -1028,7 +1034,7 @@
       ]
     },
     "H": {
-      "total": 369,
+      "total": 371,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1398,7 +1404,9 @@
         "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-core-invar",
         "domain_intelligence-technical-construction-intelligence-tiangolo-fastapi-learnings-core-invariants",
         "DOM-H-F963174B",
-        "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-learnings-"
+        "domain_intelligence-technical-construction-intelligence-react-navigation-react-navigation-learnings-",
+        "domain_intelligence-technical-construction-intelligence-diggerhq-digger-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants"
       ]
     },
     "I": {
@@ -22798,8 +22806,8 @@
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "repository": "ytsaurus/ytsaurus",
-      "content_hash": "a9238ad413de2801766cefdba176ff6b8de7889aad3e07b0e3bc640b08157693",
-      "created_at": "2026-11-16T03:37:26.899Z"
+      "content_hash": "d2de6782d868c5d98afb139b2270ae7bdaebc60e7c4876c1283cd99cf6422b19",
+      "created_at": "2026-11-17T12:25:05.125Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -26795,6 +26803,144 @@
       "repository": "react-navigation-react-navigation-learnings",
       "content_hash": "b8d82cb5fda7204ddf5e15fa782fea8d5421879f09a4a59e7794be21783bfadd",
       "created_at": "2026-11-17T11:41:16.348Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-image-pe-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-image-pe-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3-Image-PE Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-pe-research-knowledge-intelligence-minimaxai-minim.md",
+      "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
+      "content_hash": "761a4f27e5800576890f6b58925ff04c33b4fd858e5cac1f21a5ff35edee8a56",
+      "created_at": "2026-11-17T12:24:44.671Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-internlm-sage-s2-1-flash-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-internlm-sage-s2-1-flash-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: internlm/Sage-S2.1-Flash Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internlm-sage-s2-1-flash-research-knowledge-intelligence-internlm-sage-s2-1-f.md",
+      "repository": "internlm/Sage-S2.1-Flash",
+      "content_hash": "1570c694a72ebfd9b18ac5ec2410d77bf5ac128f2856f2d20c7de444bcaef3ee",
+      "created_at": "2026-11-17T12:24:46.970Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-diggerhq-digger-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-diggerhq-digger-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: diggerhq/digger Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-diggerhq-digger-technical-construction-intelligence-diggerhq-digger-core-invaria.md",
+      "repository": "diggerhq/digger",
+      "content_hash": "0364fcb021f0e417c534dd0cbbc84574f61b031c49c5921c5d33abcd4cb17be7",
+      "created_at": "2026-11-17T12:24:57.066Z"
+    },
+    "DOM-D-46E6B1DB": {
+      "record_id": "DOM-D-46E6B1DB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): MiniMaxAI/MiniMax-H3-Image-PE",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE](https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE))  \n> **Source Version**: `hf-minimaxai`  \n> **License**: Op",
+      "content_hash": "a87ac91af0ff84778d48da32f1d2eb96c34577080de43c402c6c78607ad448b9",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-minimaxai-minimax-h3-image-pe/hf-minimaxai-minimax-h3-image-pe-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T12:25:08.016Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-minimaxai-minimax-h3-image-pe)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-minimaxai-minimax-h3-image-pe"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T12:25:35.475Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-pe-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-pe-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-image-pe-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-pe-learnings-research-knowledge-intelligence-hf-mi.md",
+      "repository": "hf-minimaxai-minimax-h3-image-pe-learnings",
+      "content_hash": "28a271c6ad63a21b118b4de83903739712938f5bc378ca484fa0135ef05a228d",
+      "created_at": "2026-11-17T12:25:35.717Z"
+    },
+    "DOM-D-84284456": {
+      "record_id": "DOM-D-84284456",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): internlm/Sage-S2.1-Flash",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/internlm/Sage-S2.1-Flash](https://huggingface.co/internlm/Sage-S2.1-Flash))  \n> **Source Version**: `hf-internlm-`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "1395e3de99799e1fe3666bfb79ebd9ad8398dcbe22f3efe72e77f690a02e8909",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-internlm-sage-s2.1-flash/hf-internlm-sage-s2.1-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T12:25:35.910Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-internlm-sage-s2.1-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-internlm-sage-s2.1-flash"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T12:26:13.592Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-internlm-sage-s2.1-flash-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internlm-sage-s2-1-flash-learnings-research-knowledge-intelligence-hf-internl.md",
+      "repository": "hf-internlm-sage-s2.1-flash-learnings",
+      "content_hash": "390eff58ae6964db550cb32413af587e17dff80f14ef02b9469beee9bf7ca075",
+      "created_at": "2026-11-17T12:26:13.871Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: diggerhq-digger-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-diggerhq-digger-learnings-technical-construction-intelligence-diggerhq-digger-le.md",
+      "repository": "diggerhq-digger-learnings",
+      "content_hash": "9ad5b90d9b001d3fe416de5e0fac12a2d6369126d0b2c07076da6db08ae248bd",
+      "created_at": "2026-11-17T12:26:14.581Z"
     }
   }
 }

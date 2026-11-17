@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T12:09:39.800Z",
+  "last_updated": "2026-11-17T12:26:15.072Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T10:51:43.041Z",
@@ -3291,9 +3291,24 @@
       "processed_at": "2026-11-17T11:27:16.768Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-minimaxai-minimax-h3-image-pe-learnings.md": {
+      "processed_at": "2026-11-17T12:25:35.495Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "hf-internlm-sage-s2.1-flash-learnings.md": {
+      "processed_at": "2026-11-17T12:26:13.627Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "diggerhq-digger-learnings.md": {
+      "processed_at": "2026-11-17T12:26:14.091Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1557,
-  "total_canonical_promoted": 318,
-  "total_staged_for_review": 1227
+  "total_dossiers_evaluated": 1560,
+  "total_canonical_promoted": 320,
+  "total_staged_for_review": 1228
 }

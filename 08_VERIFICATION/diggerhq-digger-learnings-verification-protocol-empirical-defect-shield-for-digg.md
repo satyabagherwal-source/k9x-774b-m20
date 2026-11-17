@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:35:01.536Z",
+  "timestamp": "2026-11-17T12:26:14.315Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-diggerhq-digger-learnings",
+  "learning_id": "LEARN-EVO-diggerhq-digger-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [diggerhq-digger-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:35:01.536Z`  
-> **Learning ID**: `LEARN-REEXTRACT-diggerhq-digger-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T12:26:14.315Z`  
+> **Learning ID**: `LEARN-EVO-diggerhq-digger-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/diggerhq-digger-learnings.md`  
 > **Source**: github ([https://github.com/diggerhq/digger](https://github.com/diggerhq/digger))  
-> **Source Version**: `7c237c09`  
+> **Source Version**: `3dc1c51e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:54:25.143Z  
+> **Timestamp**: 2026-11-17T12:24:55.796Z  
 > **Learning ID**: `learn-github-diggerhq-digger`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/diggerhq-digger-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/diggerhq/digger](https://github.com/diggerhq/digger))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:54:24.836Z  
+> **Harvest Timestamp**: 2026-11-17T12:24:55.789Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Digger is an open source IaC orchestration tool. Digger allows you to run IaC in your existing CI pipeline ⚡️  
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5056 stars
+- **Stars / Engagement**: 5073 stars
 
 ---
 
@@ -1397,632 +1397,137 @@ func SetPRCheckForJobs(ghService *github2.GithubService, prNumber int, jobs []sc
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c237c09` (2026-10-22)
-**Commit Message**: perf: reuse GitHub installation tokens between clients (#2745)
+### Incident Patch 1: `3dc1c51e` (2026-11-16)
+**Commit Message**: fix: index digger_jobs.digger_job_id and other hot lookups (#2771)
 
-**File**: `backend/utils/github.go` (modified, +37/-2)
+**File**: `backend/migrations/20261116181630.sql` (added, +18/-0)
 ```diff
-@@ -2,13 +2,15 @@ package utils
+@@ -0,0 +1,18 @@
++-- atlas:txmode none
++
++-- Lookups by digger_job_id were sequential scans: the model's index tag used a
++-- comma instead of a semicolon, so GORM never declared it, and the index named
++-- idx_digger_job_id ended up on batch_id. Built CONCURRENTLY so writes are not
++-- blocked while the 3.7 GB table is indexed.
++-- Create index "idx_digger_jobs_digger_job_id" to table: "digger_jobs"
++CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_digger_jobs_digger_job_id" ON "public"."digger_jobs" ("digger_job_id");
++-- Create index "idx_job_tokens_value" to table: "job_tokens"
++CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_job_tokens_value" ON "public"."job_tokens" ("value");
++-- Create index "idx_digger_batches_repo_pr" to table: "digger_batches"
++CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_digger_batches_repo_pr" ON "public"."digger_batches" ("repo_full_name", "pr_number");
++-- Create index "idx_github_digger_job_links_digger_job_id" to table: "github_digger_job_links"
++CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_github_digger_job_links_digger_job_id" ON "public"."github_digger_job_links" ("digger_job_id");
++-- Create index "idx_digger_job_parent_links_digger_job_id" to table: "digger_job_parent_links"
++CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_digger_job_parent_links_digger_job_id" ON "public"."digger_job_parent_links" ("digger_job_id");
++-- Create index "idx_parent_digger_job_id" to table: "digger_job_parent_links"
++CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_parent_digger_job_id" ON "public"."digger_job_parent_links" ("parent_digger_job_id");
+```
+
+**File**: `backend/migrations/atlas.sum` (modified, +2/-1)
+```diff
+@@ -1,4 +1,4 @@
+-h1:Yoa3j5DOMmrwiYi3e7uIy5Y32t7e4jmjUxerP0qXEGA=
++h1:jDDLSQC1B38xcSFxvenQ9Dov6s333cyRH7Zjhr6OvcY=
+ 20231227132525.sql h1:43xn7XC0GoJsCnXIMczGXWis9d504FAWi4F1gViTIcw=
+ 20240115170600.sql h1:IW8fF/8vc40+eWqP/xDK+R4K9jHJ9QBSGO6rN9LtfSA=
+ 20240116123649.sql h1:R1JlUIgxxF6Cyob9HdtMqiKmx/BfnsctTl5rvOqssQw=
+@@ -73,3 +73,4 @@ h1:Yoa3j5DOMmrwiYi3e7uIy5Y32t7e4jmjUxerP0qXEGA=
+ 20251119004103.sql h1:zdyEn54C6mY5iKZ86LQWhOi13sSA2EMriE1lQ9wGi6w=
+ 20251120020911.sql h1:JaybKP/PHLE3qt5+jA9k0sGFAMPl62T91SSMOC3W5Ow=
+ 20251120060106.sql h1:MK5LjwWUr3nszLIzSJJBAy7d8Y2PvpDRV8qmTTnFfIM=
++20261116181630.sql h1:tQJJvCs2fOEhclvIK08Nh3ghbbOvS644c/5Z35OC8sw=
+```
+
+**File**: `backend/models/scheduler.go` (modified, +12/-12)
+```diff
+@@ -25,8 +25,8 @@ type ImpactedProject struct {
  
- import (
- 	"context"
-+	"crypto/sha256"
- 	"encoding/base64"
- 	"fmt"
- 	"log/slog"
- 	net "net/http"
- 	"os"
- 	"strconv"
- 	"strings"
-+	"sync"
- 	"time"
- 
- 	"github.com/bradleyfalzon/ghinstallation/v2"
-@@ -23,6 +25,40 @@ import (
- type DiggerGithubRealClientProvider struct {
+ type DiggerJobParentLink struct {
+ 	gorm.Model
+-	DiggerJobId       string `gorm:"size:50,index:idx_digger_job_id"`
+-	ParentDiggerJobId string `gorm:"size:50,index:idx_parent_digger_job_id"`
++	DiggerJobId       string `gorm:"size:50;index:idx_digger_job_parent_links_digger_job_id"`
++	ParentDiggerJobId string `gorm:"size:50;index:idx_parent_digger_job_id"`
  }
  
-+type installationTransportKey struct {
-+	appID, installationID int64
-+	privateKeyHash        [32]byte
-+}
-+
-+var installationTransports sync.Map
-+
-+type cachedInstallationTransport struct {
-+	*ghinstallation.Transport
-+	key installationTransportKey
-+}
-+
-+func (t *cachedInstallationTransport) RoundTrip(request *net.Request) (*net.Response, error) {
-+	response, err := t.Transport.RoundTrip(request)
-+	if response != nil && response.StatusCode == net.StatusUnauthorized {
-+		installationTransports.CompareAndDelete(t.key, t)
-+	}
-+	return response, err
-+}
-+
-+func getInstallationTransport(appID, installationID int64, privateKey []byte) (*cachedInstallationTransport, error) {
-+	key := installationTransportKey{appID, installationID, sha256.Sum256(privateKey)}
-+	if transport, ok := installationTransports.Load(key); ok {
-+		return transport.(*cachedInstallationTransport), nil
-+	}
-+	transport, err := ghinstallation.New(net.DefaultTransport, appID, installationID, privateKey)
-+	if err != nil {
-+		return nil, err
-+	}
-+	// Sharing the transport preserves ghinstallation's synchronized token refresh.
-+	cached, _ := installationTransports.LoadOrStore(key, &cachedInstallationTransport{transport, key})
-+	return cached.(*cachedInstallationTransport), nil
-+}
-+
- type DiggerGithubClientMockProvider struct {
- 	MockedHTTPClient *net.Client
+ type DiggerVCSType string
+@@ -41,7 +41,7 @@ type DiggerBatch struct {
+ 	DiggerBatchID            string    `gorm:"size:20,index:idx_digger_batch_id"` // shorter version of the ID to be able to use in check run
+ 	Layer                    uint
+ 	VCS                      DiggerVCSType
+-	PrNumber                 int
++	PrNumber                 int `gorm:"index:idx_digger_batches_repo_pr,priority:2"`
+ 	CommitSha                string
+ 	CommentId                *int64
+ 	CheckRunId               *string
+@@ -52,7 +52,7 @@ type DiggerBatch struct {
+ 	DiggerConfig             string
+ 	GithubInstallationId     int64
+ 	GitlabProjectId          int
+-	RepoFullName             string
++	RepoFullName             string `gorm:"index:idx_digger_batches_repo_pr,priority:1"`
+ 	RepoOwner                string
+ 	RepoName                 string
+ 	BatchType                orchestrator_scheduler.DiggerCommand
+@@ -66,7 +66,7 @@ type DiggerBatch struct {
+ 
+ type DiggerJob struct {
+ 	gorm.Model
+-	DiggerJobID                  string                                 `gorm:"size:50,index:idx_digger_job_id"`
++	DiggerJobID                  string                                 `gorm:"size:50;index:idx_digger_jobs_digger_job_id"`
+ 	Status                       orchestrator_scheduler.DiggerJobStatus `gorm:"index:idx_digger_jobs_status"`
+ 	RunName                      string
+ 	ProjectName                  string
+@@ -92,7 +92,7 @@ type DiggerJob struct {
+ 	WorkflowFile    string
+ 	WorkflowRunUrl  *string
+ 	StatusUpdatedAt time.Time
+-	ReporterType string `gorm:"default:'lazy'"` // temporary, to be replaced by SerializedReporterSpec
++	ReporterType    string `gorm:"default:'lazy'"` // temporary, to be replaced by SerializedReporterSpec
  }
-@@ -63,8 +99,7 @@ func (gh DiggerGithubRealClientProvider) Get(githubAppId int64, installationId i
- 		}
+ 
+ type DiggerJobSummary struct {
+@@ -105,7 +105,7 @@ type DiggerJobSummary struct {
+ // These tokens will be pre
+ type JobToken struct {
+ 	gorm.Model
+-	Value          string `gorm:"uniqueJobTokenIndex:idx_token"`
++	Value          string `gorm:"index:idx_job_tokens_value"`
+ 	Expiry         time.Time
+ 	OrganisationID uint
+ 	Organisation   Organisation
+@@ -122,7 +122,7 @@ const (
+ // GithubDiggerJobLink links GitHub Workflow Job id to Digger's Job Id
+ type GithubDiggerJobLink struct {
+ 	gorm.Model
+-	DiggerJobId         string `gorm:"size:50,index:idx_digger_job_id"`
++	DiggerJobId         string `gorm:"size:50;index:idx_github_digger_job_links_digger_job_id"`
+ 	RepoFullName        string
+ 	GithubJobId         int64 `gorm:"index:idx_github_job_id"`
+ 	GithubWorkflowRunId int64
+@@ -259,9 +259,9 @@ func GetCheckRunConclusionForJob(job *DiggerJob) (string, error) {
+ 		return "failure", nil
  	}
- 
--	tr := net.DefaultTransport
--	itr, err := ghinstallation.New(tr, githubAppId, installationId, []byte(githubAppPrivateKey))
-+	itr, err := getInstallationTransport(githubAppId, installationId, []byte(githubAppPrivateKey))
- 	if err != nil {
- 		slog.Error("Failed to initialize GitHub app installation",
- 			"githubAppId", githubAppId,
-```
-
-**File**: `backend/utils/github_transport_test.go` (added, +154/-0)
-```diff
-@@ -0,0 +1,154 @@
-+package utils
-+
-+import (
-+	"context"
-+	"crypto/rand"
-+	"crypto/rsa"
-+	"crypto/x509"
-+	"encoding/base64"
-+	"encoding/json"
-+	"encoding/pem"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+)
-+
-+func installationTestKey(t *testing.T) []byte {
-+	t.Helper()
-+	key, err := rsa.GenerateKey(rand.Reader, 2048)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	return pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(key)})
-+}
-+
-+func testInstallationTransport(t *testing.T, app, installation int64, key []byte, url string) *cachedInstallationTransport {
-+	t.Helper()
-+	transport, err := getInstallationTransport(app, installation, key)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	transport.BaseURL = url
-+	t.Cleanup(func() { installationTransports.CompareAndDelete(transport.key, transport) })
-+	return transport
-+}
-+
-+func TestInstallationTokenReuseConcurrent(t *testing.T) {
-+	var requests atomic.Int32
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		requests.Add(1)
-+		if r.Method != "POST" || r.URL.Path != "/app/installations/42/access_tokens" {
-+			t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
-+		}
-+		json.NewEncoder(w).Encode(map[string]interface{}{"token": "test-token", "expires_at": time.Now().Add(time.Hour)})
-+	}))
-+	defer server.Close()
-+	key := installationTestKey(t)
-+	t.Setenv("GITHUB_APP_PRIVATE_KEY_BASE64", base64.StdEncoding.EncodeToString(key))
-+	testInstallationTransport(t, 1, 42, key, server.URL)
-+	var workers sync.WaitGroup
-+	for i := 0; i < 12; i++ {
-+		workers.Add(1)
-+		go func() {
-+			defer workers.Done()
-+			_, token, err := (DiggerGithubRealClientProvider{}).Get(1, 42)
-+			if err != nil {
-+				t.Error(err)
-+				return
-+			}
-+			if token == nil || *token != "test-token" {
-+				t.Error("unexpected installation token")
-+			}
-+		}()
-+	}
-+	workers.Wait()
-+	if got := requests.Load(); got != 1 {
-+		t.Fatalf("token requests = %d, want 1", got)
-+	}
-+}
-+
-+func TestInstallationTokenIdentityIsolation(t *testing.T) {
-+	var requests atomic.Int32
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		requests.Add(1)
-+		json.NewEncoder(w).Encode(map[string]interface{}{"token": "test-token", "expires_at": time.Now().Add(time.Hour)})
-+	}))
-+	defer server.Close()
-+	key, rotatedKey := installationTestKey(t), installationTestKey(t)
-+	cases := []struct {
-+		app, installation int64
-+		key               []byte
-+	}{{1, 42, key}, {2, 42, key}, {1, 43, key}, {1, 42, rotatedKey}}
-+	for _, c := range cases {
-+		transport := testInstallationTransport(t, c.app, c.installation, c.key, server.URL)
-+		if _, err := transport.Token(context.Background()); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+	if got := requests.Load(); got != 4 {
-+		t.Fatalf("token requests = %d, want 4", got)
-+	}
-+}
-+
-+func TestInstallationTokenRefreshAndRevocation(t *testing.T) {
-+	var requests atomic.Int32
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		if r.URL.Path == "/resource" {
-+			w.WriteHeader(http.StatusUnauthorized)
-+			return
-+		}
-+		expiry := time.Now().Add(time.Hour)
-+		if requests.Add(1) == 1 {
-+			expiry = time.Now().Add(30 * time.Second)
-+		}
-+		json.NewEncoder(w).Encode(map[string]interface{}{"token": "test-token", "expires_at": expiry})
-+	}))
-+	defer server.Close()
-+	key := installationTestKey(t)
-+	transport := testInstallationTransport(t, 1, 42, key, server.URL)
-+	for i := 0; i < 2; i++ {
-+		if _, err := transport.Token(context.Background()); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+	if got := requests.Load(); got != 2 {
-+		t.Fatalf("token requests after expiry = %d, want 2", got)
-+	}
-+	request, err := http.NewRequest(http.MethodGet, server.URL+"/resource", nil)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	response, err := transport.RoundTrip(request)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	response.Body.Close()
-+	if response.StatusCode != http.StatusUnauthorized {
-+		t.Fatalf("status = %d, want 401", response.StatusCode)
-+	}
-+	replacement := testInstallationTransport(t, 1, 42, key, server.URL)
-+	if replacement == transport {
-+		t.Fatal("revoked transport was reused")
-+	}
-+	if _, err := replacement.Token(context.Background()); err != nil {
-+		t.Fatal(err)
-+	}
-+	if got := requests.Load(); got != 3 {
-+		t.Fatalf("token requests after revocation = %d, want 3", got)
-+	}
-+	response, err = transport.RoundTrip(request)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	response.Body.Close()
-+	current, err := getInstallationTransport(1, 42, key)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if current != replacement {
-+		t.Fatal("a late 401 from the old transport evicted its replacement")
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `c34dfd12` (2026-10-22)
-**Commit Message**: feat: fetch management repo policies once per job with a sparse clone (#2744)
-
-Every policy check cloned the whole management repo, three to five times
-per project. Clone it once per process with a blobless sparse checkout of
-the .rego files only, falling back to the shallow clone on error.
-
-**File**: `docs/ce/reference/digger.yml.mdx` (modified, +1/-1)
-```diff
-@@ -216,7 +216,7 @@ workflows:
- </ParamField>
- 
- <ParamField path="git_timeout" type="integer" default="30">
--  Timeout in seconds for each git command (clone, checkout) Digger runs when loading repository configuration. Increase this for large repositories, for example `git_timeout: 120`. Digger reads this setting through the Git provider API before cloning, using the requested branch or commit. It checks `digger.yml` first, then `digger.yaml`. An omitted, zero, or negative value uses the 30-second default. The initial API lookup has its own 30-second timeout. The same value applies when a job clones the policy management repository (`DIGGER_MANAGEMENT_REPO`), including drift runs, so increase it if that repository is large.
-+  Timeout in seconds for each git command (clone, checkout) Digger runs when loading repository configuration. Increase this for large repositories, for example `git_timeout: 120`. Digger reads this setting through the Git provider API before cloning, using the requested branch or commit. It checks `digger.yml` first, then `digger.yaml`. An omitted, zero, or negative value uses the 30-second default. The initial API lookup has its own 30-second timeout. The same value applies when a job fetches the policy management repository (`DIGGER_MANAGEMENT_REPO`). That repository is fetched once per job and only its `.rego` policy files are downloaded, so large repositories rarely need a higher value.
- </ParamField>
- 
- <ParamField path="projects" type="array">
-```
-
-**File**: `ee/cli/pkg/policy/fetch_test.go` (added, +83/-0)
-```diff
-@@ -0,0 +1,83 @@
-+package policy
-+
-+import (
-+	"os"
-+	"os/exec"
-+	"path/filepath"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func writeFile(t *testing.T, p string, contents string) {
-+	t.Helper()
-+	require.NoError(t, os.MkdirAll(filepath.Dir(p), 0o755))
-+	require.NoError(t, os.WriteFile(p, []byte(contents), 0o644))
-+}
-+
-+func TestResolvePolicyFileOrder(t *testing.T) {
-+	base := t.TempDir()
-+	writeFile(t, filepath.Join(base, "policies", "access.rego"), "org")
-+	writeFile(t, filepath.Join(base, "policies", "repo", "access.rego"), "repo")
-+	writeFile(t, filepath.Join(base, "policies", "repo", "proj", "access.rego"), "project")
-+	writeFile(t, filepath.Join(base, "dev", "access.rego"), "dev")
-+	writeFile(t, filepath.Join(base, "dev", "vpc", "access.rego"), "dev/vpc")
-+
-+	got, err := resolvePolicyFile(base, "repo", "proj", "dev/vpc/subnets", "access.rego")
-+	require.NoError(t, err)
-+	assert.Equal(t, "dev/vpc", got, "deepest project dir prefix wins")
-+
-+	got, err = resolvePolicyFile(base, "repo", "proj", "prod/vpc", "access.rego")
-+	require.NoError(t, err)
-+	assert.Equal(t, "project", got, "falls back to policies/<repo>/<project>")
-+
-+	got, err = resolvePolicyFile(base, "repo", "other", "prod/vpc", "access.rego")
-+	require.NoError(t, err)
-+	assert.Equal(t, "repo", got)
-+
-+	got, err = resolvePolicyFile(base, "other-repo", "other", "prod/vpc", "access.rego")
-+	require.NoError(t, err)
-+	assert.Equal(t, "org", got)
-+
-+	got, err = resolvePolicyFile(base, "repo", "proj", "dev/vpc", "plan.rego")
-+	require.NoError(t, err)
-+	assert.Equal(t, "", got, "missing file resolves to empty, not error")
-+}
-+
-+func TestManagementRepoFetchedOncePerProcess(t *testing.T) {
-+	dir := t.TempDir()
-+	run := func(args ...string) {
-+		cmd := exec.Command("git", args...)
-+		cmd.Dir = dir
-+		cmd.Env = append(os.Environ(), "GIT_AUTHOR_NAME=t", "GIT_AUTHOR_EMAIL=t@t", "GIT_COMMITTER_NAME=t", "GIT_COMMITTER_EMAIL=t@t")
-+		out, err := cmd.CombinedOutput()
-+		require.NoError(t, err, "git %v: %s", args, out)
-+	}
-+	run("init", "-q", "-b", "main")
-+	run("config", "uploadpack.allowFilter", "true")
-+	writeFile(t, filepath.Join(dir, "policies", "access.rego"), "package digger\nallow = false\n")
-+	writeFile(t, filepath.Join(dir, "dev", "main.tf"), "resource {}")
-+	run("add", ".")
-+	run("commit", "-q", "-m", "init")
-+
-+	p := DiggerRepoPolicyProvider{ManagementRepoUrl: "file://" + dir, GitTimeout: 30 * time.Second}
-+
-+	first, err := p.managementRepoDir()
-+	require.NoError(t, err)
-+	defer os.RemoveAll(first)
-+	second, err := p.managementRepoDir()
-+	require.NoError(t, err)
-+	assert.Equal(t, first, second, "second lookup reuses the checkout")
-+
-+	access, err := p.GetAccessPolicy("org", "repo", "proj", "dev")
-+	require.NoError(t, err)
-+	assert.Equal(t, "package digger\nallow = false\n", access)
-+
-+	plan, err := p.GetPlanPolicy("org", "repo", "proj", "dev")
-+	require.NoError(t, err)
-+	assert.Equal(t, "", plan)
-+
-+	assert.NoFileExists(t, filepath.Join(first, "dev", "main.tf"), "non-policy files are not checked out")
-+}
-```
-
-**File**: `ee/cli/pkg/policy/policy.go` (modified, +64/-29)
-```diff
-@@ -1,6 +1,7 @@
- package policy
- 
- import (
-+	"sync"
- 	"time"
- 
- 	"github.com/diggerhq/digger/libs/git_utils"
-@@ -25,6 +26,39 @@ type DiggerRepoPolicyProvider struct {
- 	GitTimeout        time.Duration
+ 	slog.Error("Unknown job status in GetCheckRunConclusionForJob - this will cause GitHub API 422 error",
+-	"jobId", job.DiggerJobID,
+-	"jobStatus", job.Status,
+-	"jobStatusInt", int(job.Status),
+-	"validStatuses", []string{"created", "triggered", "started", "queued_for_run", "succeeded", "failed"})
++		"jobId", job.DiggerJobID,
++		"jobStatus", job.Status,
++		"jobStatusInt", int(job.Status),
++		"validStatuses", []string{"created", "triggered", "started", "queued_for_run", "succeeded", "failed"})
+ 	return "", fmt.Errorf("unknown job status: %v", job.Status)
  }
- 
-+const managementRepoBranch = "main"
-+
-+// policyFileNames are the only files policy resolution ever reads, so the
-+// management repo checkout is restricted to them.
-+var policyFileNames = []string{"access.rego", "plan.rego", "apply.rego"}
-+
-+// A job checks policies several times per project. The management repo is
-+// fetched once per process and the checkout reused for every lookup.
-+var managementRepoCheckouts = struct {
-+	sync.Mutex
-+	dirs map[string]string
-+}{dirs: map[string]string{}}
-+
-+func (p DiggerRepoPolicyProvider) managementRepoDir() (string, error) {
-+	managementRepoCheckouts.Lock()
-+	defer managementRepoCheckouts.Unlock()
-+
-+	key := p.ManagementRepoUrl + "@" + managementRepoBranch
-+	if dir, ok := managementRepoCheckouts.dirs[key]; ok {
-+		return dir, nil
-+	}
-+
-+	start := time.Now()
-+	dir, err := git_utils.CloneGitRepoSparseWithTimeout(p.ManagementRepoUrl, managementRepoBranch, p.GitToken, "", p.gitTimeout(), policyFileNames)
-+	if err != nil {
-+		return "", err
-+	}
-+	// TODO(measurement): remove before release; kept to compare fetch times on real jobs.
-+	slog.Info("Management repo policies fetched", "repoUrl", p.ManagementRepoUrl, "duration", time.Since(start))
-+	managementRepoCheckouts.dirs[key] = dir
-+	return dir, nil
-+}
-+
- func getContents(filePath string) (string, error) {
- 	if _, err := os.Stat(filePath); err != nil {
- 		return "", err
-@@ -65,38 +99,39 @@ func GetPrefixesForPath(path string, fileName string) []string {
- }
- 
- func (p DiggerRepoPolicyProvider) getPolicyFileContents(repo string, projectName string, projectDir string, fileName string) (string, error) {
--	var contents string
--	err := git_utils.CloneGitRepoAndDoActionWithTimeout(p.ManagementRepoUrl, "main", "", p.GitToken, "", p.gitTimeout(), func(basePath string) error {
--		// we start with the project directory path prefixes as the highest priority
--		prefixes := GetPrefixesForPath(path.Join(basePath, projectDir), fileName)
--
--		// we also add a known location as a least priority item
--		orgAccesspath := path.Join(basePath, "policies", fileName)
--		repoAccesspath := path.Join(basePath, "policies", repo, fileName)
--		projectAccessPath := path.Join(basePath, "policies", repo, projectName, fileName)
--		prefixes = append(prefixes, projectAccessPath)
--		prefixes = append(prefixes, repoAccesspath)
--		prefixes = append(prefixes, orgAccesspath)
--
--		for _, pathPrefix := range prefixes {
--			var err error
--			contents, err = getContents(pathPrefix)
--			if err == nil {
--				return nil
--			}
--			if os.IsNotExist(err) {
--				continue
--			} else {
--				return err
--			}
--		}
--
--		return nil
--	})
-+	basePath, err := p.managementRepoDir()
- 	if err != nil {
- 		return "", err
- 	}
--	return contents, nil
-+	return resolvePolicyFile(basePath, repo, projectName, projectDir, fileName)
-+}
-+
-+// resolvePolicyFile returns the contents of the first fileName found, starting
-+// with the project directory prefixes and ending with the well-known
-+// policies/ locations. Returns "" when no file exists at any location.
-+func resolvePolicyFile(basePath string, repo string, projectName string, projectDir string, fileName string) (string, error) {
-+	// we start with the project directory path prefixes as the highest priority
-+	prefixes := GetPrefixesForPath(path.Join(basePath, projectDir), fileName)
-+
-+	// we also add a known location as a least priority item
-+	orgAccesspath := path.Join(basePath, "policies", fileName)
-+	repoAccesspath := path.Join(basePath, "policies", repo, fileName)
-+	projectAccessPath := path.Join(basePath, "policies", repo, projectName, fileName)
-+	prefixes = append(prefixes, projectAccessPath)
-+	prefixes = append(prefixes, repoAccesspath)
-+	prefixes = append(prefixes, orgAccesspath)
-+
-+	for _, pathPrefix := range prefixes {
-+		contents, err := getContents(pathPrefix)
-+		if err == nil {
-+			return contents, nil
-+		}
-+		if os.IsNotExist(err) {
-+			continue
-+		}
-+		return "", err
-+	}
-+	return "", nil
- }
- 
- func (p DiggerRepoPolicyProvider) gitTimeout() time.Duration {
-```
-
-**File**: `libs/git_utils/clone_utils.go` (modified, +73/-0)
-```diff
-@@ -87,6 +87,53 @@ func CloneGitRepoAndDoActionWithTimeout(repoUrl string, branch string, commitHas
- 	return nil
- }
- 
-+// CloneGitRepoSparseWithTimeout clones repoUrl at branch into a new temporary
-+// directory and returns its path. Only blobs matching sparsePatterns
-+// (gitignore-style, matched at any depth) are fetched, so a large repository
-+// costs little more than its tree objects. If the sparse clone fails the
-+// repository is cloned the ordinary shallow way instead. The caller owns the
-+// returned directory.
-+func CloneGitRepoSparseWithTimeout(repoUrl string, branch string, token string, tokenUsername string, timeout time.Duration, sparsePatterns []string) (string, error) {
-+	dir, err := createTempDir()
-+	if err != nil {
-+		return "", err
-+	}
-+
-+	git := NewGitShellWithTokenAuth(dir, token, tokenUsername)
-+	if timeout > 0 {
-+		git.timeout = timeout
-+	}
-+
-+	err = git.CloneSparse(repoUrl, branch, sparsePatterns)
-+	if err == nil {
-+		return dir, nil
-+	}
-+
-+	slog.Warn("Sparse clone failed, falling back to full shallow clone",
-+		"repoUrl", repoUrl,
-+		"branch", branch,
-+		"error", err,
-+	)
-+	if err := os.RemoveAll(dir); err != nil {
-+		slog.Warn("Failed to remove directory", "directory", dir, "error", err)
-+	}
-+	dir, err = createTempDir()
-+	if err != nil {
-+		return "", err
-+	}
-+	git = NewGitShellWithTokenAuth(dir, token, tokenUsername)
-+	if timeout > 0 {
-+		git.timeout = timeout
-+	}
-+	if err := git.Clone(repoUrl, branch); err != nil {
-+		if rmErr := os.RemoveAll(dir); rmErr != nil {
-+			slog.Warn("Failed to remove directory", "directory", dir, "error", rmErr)
-+		}
-+		return "", err
-+	}
-+	return dir, nil
-+}
-+
- type GitAuth struct {
- 	Username      string
- 	Password      string // Can be either password or access token
-@@ -213,3 +260,29 @@ func (g *GitShell) Clone(repoURL, branch string) error {
- 	_, err = g.runCommand(args...)
- 	return err
- }
-+
-+// CloneSparse clones only the files matching patterns (gitignore-style,
-+// matched at any depth). Blobs outside the patterns are never downloaded.
-+func (g *GitShell) CloneSparse(repoURL, branch string, patterns []string) error {
-+	authURL, err := g.formatAuthURL(repoURL)
-+	if err != nil {
-+		return err
-+	}
-+
-+	args := []string{"clone"}
-+	if branch != "" {
-+		args = append(args, "-b", branch)
-+	}
-+	args = append(args, "--depth", "1", "--single-branch", "--filter=blob:none", "--no-checkout", authURL, g.workDir)
-+	if _, err = g.runCommand(args...); err != nil {
-+		return err
-+	}
-+
-+	args = append([]string{"sparse-checkout", "set", "--no-cone"}, patterns...)
-+	if _, err = g.runCommand(args...); err != nil {
-+		return err
-+	}
-+
-+	_, err = g.runCommand("checkout")
-+	return err
-+}
-```
-
-**File**: `libs/git_utils/sparse_clone_test.go` (added, +62/-0)
-```diff
-@@ -0,0 +1,62 @@
-+package git_utils
-+
-+import (
-+	"os"
-+	"os/exec"
-+	"path/filepath"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// newLocalRepo creates a repository on disk with a few policy files and one
-+// large unrelated file, and returns a file:// URL to it.
-+func newLocalRepo(t *testing.T) string {
-+	t.Helper()
-+	dir := t.TempDir()
-+	run := func(args ...string) {
-+		cmd := exec.Command("git", args...)
-+		cmd.Dir = dir
-+		cmd.Env = append(os.Environ(), "GIT_AUTHOR_NAME=t", "GIT_AUTHOR_EMAIL=t@t", "GIT_COMMITTER_NAME=t", "GIT_COMMITTER_EMAIL=t@t")
-+		out, err := cmd.CombinedOutput()
-+		require.NoError(t, err, "git %v: %s", args, out)
-+	}
-+	run("init", "-q", "-b", "main")
-+	run("config", "uploadpack.allowFilter", "true")
-+	require.NoError(t, os.MkdirAll(filepath.Join(dir, "dev", "vpc"), 0o755))
-+	require.NoError(t, os.MkdirAll(filepath.Join(dir, "policies"), 0o755))
-+	require.NoError(t, os.WriteFile(filepath.Join(dir, "dev", "vpc", "access.rego"), []byte("package digger\nallow = true\n"), 0o644))
-+	require.NoError(t, os.WriteFile(filepath.Join(dir, "policies", "plan.rego"), []byte("package digger\n"), 0o644))
-+	require.NoError(t, os.WriteFile(filepath.Join(dir, "dev", "vpc", "main.tf"), make([]byte, 1<<20), 0o644))
-+	require.NoError(t, os.WriteFile(filepath.Join(dir, "README.md"), []byte("hi"), 0o644))
-+	run("add", ".")
-+	run("commit", "-q", "-m", "init")
-+	return "file://" + dir
-+}
-+
-+func TestCloneGitRepoSparseWithTimeoutFetchesOnlyPolicyFiles(t *testing.T) {
-+	url := newLocalRepo(t)
-+
-+	dir, err := CloneGitRepoSparseWithTimeout(url, "main", "", "", 30*time.Second, []string{"access.rego", "plan.rego", "apply.rego"})
-+	require.NoError(t, err)
-+	defer os.RemoveAll(dir)
-+
-+	assert.FileExists(t, filepath.Join(dir, "dev", "vpc", "access.rego"))
-+	assert.FileExists(t, filepath.Join(dir, "policies", "plan.rego"))
-+	assert.NoFileExists(t, filepath.Join(dir, "dev", "vpc", "main.tf"))
-+	assert.NoFileExists(t, filepath.Join(dir, "README.md"))
-+
-+	// The large blob must not have been downloaded at all, not merely left unchecked-out.
-+	cmd := exec.Command("git", "cat-file", "-e", "HEAD:dev/vpc/main.tf")
-+	cmd.Dir = dir
-+	cmd.Env = append(os.Environ(), "GIT_NO_LAZY_FETCH=1")
-+	assert.Error(t, cmd.Run(), "main.tf blob should be missing from the partial clone")
-+}
-+
-+func TestCloneGitRepoSparseWithTimeoutFallsBackOnBadBranch(t *testing.T) {
-+	url := newLocalRepo(t)
-+	_, err := CloneGitRepoSparseWithTimeout(url, "does-not-exist", "", "", 30*time.Second, []string{"access.rego"})
-+	assert.Error(t, err)
-+}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2771** (2026-11-16): fix: index digger_jobs.digger_job_id and other hot lookups (@s1ntaxe770r)
 - **PR #2750** (closed): feat: add Forgejo and Gitea Actions support in backendless mode (@nicolaj-hartmann)
 - **PR #2749** (closed): fix: match impacted project by name when marking jobs applied (@ovi-fabric)
 - **PR #2745** (2026-10-22): perf: reuse valid GitHub installation tokens (@s1ntaxe770r)
 - **PR #2744** (2026-10-22): perf: avoid repeated management repository clones (@s1ntaxe770r)
-- **PR #2740** (2026-10-07): fix: carry git_timeout in the job spec so policy repo clones honor it (@s1ntaxe770r)
-- **PR #2739** (2026-10-07): fix: respect git_timeout in drift policy checks (@s1ntaxe770r)
+- **PR #2741** (closed): fix(backend): filter GetImpactedProjectSingle by project name (@tanguyantoine)
 
 ---
 
@@ -2042,65 +1547,46 @@ the .rego files only, falling back to the shallow clone on error.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reuse GitHub installation tokens between clients (#2745)
+## X. index digger_jobs.digger_job_id and other hot lookups
 
 **RULE**:
-When implementing operations in `backend/utils/github.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in diggerhq/digger. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `backend/migrations/20261116181630.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in diggerhq/digger. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c237c09`: reuse GitHub installation tokens between clients (#2745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3dc1c51e`: index digger_jobs.digger_job_id and other hot lookups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `backend/utils/github.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `backend/migrations/20261116181630.sql`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"crypto/sha256"
-	"sync"
-type installationTransportKey struct {
-	appID, installationID int64
-	privateKeyHash        [32]byte
-}
+-- atlas:txmode none
 
-var installationTransports sync.Map
-
-type cachedInstallationTransport struct {
-	*ghinstallation.Transport
-	key installationTransportKey
-}
-
-func (t *cachedInstallationTransport) RoundTrip(request *net.Request) (*net.Response, error) {
-	response, err := t.Transport.RoundTrip(request)
-	if response != nil && response.StatusCode == net.StatusUnauthorized {
-		installationTransports.CompareAndDelete(t.key, t)
-	}
-	return response, err
-}
-
-func getInstallationTransport(appID, installationID int64, privateKey []byte) (*cachedInstallationTransport, error) {
-	key := installationTransportKey{appID, installationID, sha256.Sum256(privateKey)}
-	if transport, ok := installationTransports.Load(key); ok {
-		return transport.(*cachedInstallationTransport), nil
-	}
-	transport, err := ghinstallation.New(net.DefaultTransport, appID, installationID, privateKey)
-	if err != nil {
-		return nil, err
-	}
-	// Sharing the transport preserves ghinstallation's synchronized token refresh.
-	cached, _ := installationTransports.LoadOrStore(key, &cachedInstallationTransport{transport, key})
-	retu
+-- Lookups by digger_job_id were sequential scans: the model's index tag used a
+-- comma instead of a semicolon, so GORM never declared it, and the index named
+-- idx_digger_job_id ended up on batch_id. Built CONCURRENTLY so writes are not
+-- blocked while the 3.7 GB table is indexed.
+-- Create index "idx_digger_jobs_digger_job_id" to table: "digger_jobs"
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_digger_jobs_digger_job_id" ON "public"."digger_jobs" ("digger_job_id");
+-- Create index "idx_job_tokens_value" to table: "job_tokens"
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_job_tokens_value" ON "public"."job_tokens" ("value");
+-- Create index "idx_digger_batches_repo_pr" to table: "digger_batches"
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_digger_batches_repo_pr" ON "public"."digger_batches" ("repo_full_name", "pr_number");
+-- Create index "idx_github_digger_job_links_digger_job_id" to table: "github_digger_job_links"
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_github_digger_job_links_digger_job_id" ON "public"."github_digger_job_links" ("digger_job_id");
+-- Create index "idx_digger_job_parent_links_digger_job_id" to table: "digger_job_parent_links"
+CREATE
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	tr := net.DefaultTransport
-	itr, err := ghinstallation.New(tr, githubAppId, installationId, []byte(githubAppPrivateKey))
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c237c09` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3dc1c51e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

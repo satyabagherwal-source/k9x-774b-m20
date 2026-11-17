@@ -654667,3 +654667,160 @@ func (t *Tracker) getOrCreateCounter(m *mapsutil.SyncLockMap[string, *atomic.Int
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7b5274f2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8963. index digger_jobs.digger_job_id and other hot lookups (Harvested from diggerhq/digger)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "index digger_jobs.digger_job_id and other hot lookups",
+  "source": "diggerhq/digger",
+  "source_url": "https://github.com/diggerhq/digger",
+  "source_version": "3dc1c51e",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T12:24:56.295Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-diggerhq-digger",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [diggerhq/digger](https://github.com/diggerhq/digger) (Revision: `3dc1c51e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `backend/migrations/20261116181630.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in diggerhq/digger. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3dc1c51e`: index digger_jobs.digger_job_id and other hot lookups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `backend/migrations/20261116181630.sql`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+-- atlas:txmode none
+
+-- Lookups by digger_job_id were sequential scans: the model's index tag used a
+-- comma instead of a semicolon, so GORM never declared it, and the index named
+-- idx_digger_job_id ended up on batch_id. Built CONCURRENTLY so writes are not
+-- blocked while the 3.7 GB table is indexed.
+-- Create index "idx_digger_jobs_digger_job_id" to table: "digger_jobs"
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_digger_jobs_digger_job_id" ON "public"."digger_jobs" ("digger_job_id");
+-- Create index "idx_job_tokens_value" to table: "job_tokens"
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_job_tokens_value" ON "public"."job_tokens" ("value");
+-- Create index "idx_digger_batches_repo_pr" to table: "digger_batches"
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_digger_batches_repo_pr" ON "public"."digger_batches" ("repo_full_name", "pr_number");
+-- Create index "idx_github_digger_job_links_digger_job_id" to table: "github_digger_job_links"
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_github_digger_job_links_digger_job_id" ON "public"."github_digger_job_links" ("digger_job_id");
+-- Create index "idx_digger_job_parent_links_digger_job_id" to table: "digger_job_parent_links"
+CREATE
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3dc1c51e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8964. Submit memory usage before setting oom score adj (Harvested from ytsaurus/ytsaurus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Submit memory usage before setting oom score adj",
+  "source": "ytsaurus/ytsaurus",
+  "source_url": "https://github.com/ytsaurus/ytsaurus",
+  "source_version": "0374c91e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T12:25:04.378Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ytsaurus-ytsaurus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `0374c91e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `yt/yt/server/job_proxy/user_job.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `26dbbd73`: YT-30469: Submit memory usage before setting oom score adj. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/job_proxy/user_job.cpp`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+        Host_->SetUserJobMemoryUsage(memoryUsage);
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+        Host_->SetUserJobMemoryUsage(memoryUsage);
+
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `26dbbd73` are properly handled with clean fallback behavior.

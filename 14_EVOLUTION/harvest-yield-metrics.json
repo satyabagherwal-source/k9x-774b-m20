@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T12:09:32.786Z",
-  "total_cycles_completed": 10105,
-  "total_learnings_persisted": 10105,
-  "total_rules_promoted": 9701,
+  "last_updated": "2026-11-17T12:25:04.836Z",
+  "total_cycles_completed": 10109,
+  "total_learnings_persisted": 10109,
+  "total_rules_promoted": 9703,
   "history": [
-    {
-      "timestamp": "2026-11-16T18:27:17.594Z",
-      "repository": "SeaQL/sea-orm",
-      "learningId": "learn-github-seaql-sea-orm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:27:20.092Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:38:23.589Z",
-      "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
-      "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:38:25.241Z",
-      "repository": "iii-hq/iii",
-      "learningId": "learn-github-iii-hq-iii",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T18:38:35.916Z",
       "repository": "microsoft/agent-governance-toolkit",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-17T12:09:32.786Z",
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T12:24:44.490Z",
+      "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T12:24:46.796Z",
+      "repository": "internlm/Sage-S2.1-Flash",
+      "learningId": "learn-huggingface-internlm-sage-s2-1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T12:24:56.763Z",
+      "repository": "diggerhq/digger",
+      "learningId": "learn-github-diggerhq-digger",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T12:25:04.836Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

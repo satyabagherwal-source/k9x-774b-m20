@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T12:09:39.628Z",
-  "total_verified_learnings": 8880,
+  "last_updated": "2026-11-17T12:26:14.919Z",
+  "total_verified_learnings": 8883,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20140,
+  "total_items": 20157,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -234227,8 +234227,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "ffcd9432",
-      "content_hash": "71005b99faddb41bfccfbe9e61f8896571408aa3022295db359af57492a90a64",
+      "source_version": "0374c91e",
+      "content_hash": "a582e4fd73190db69e709fa985841dce2ac37c676bcab48ff9b5a359d67d0e35",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -234241,6 +234241,11 @@
           "number": 8700,
           "title": "test_replication_card_migration class timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8964,
+          "title": "Submit memory usage before setting oom score adj",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234248,7 +234253,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T03:37:26.475Z",
+      "verified_at": "2026-11-17T12:25:04.643Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234302,10 +234307,10 @@
       "relative_path": "08_VERIFICATION/ytsaurus-ytsaurus-verification-protocol-empirical-defect-shield-for-ytsaurus-yts.md",
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus/ytsaurus",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "ffcd9432",
-      "content_hash": "10c473e47e36ced0003f458c7c286659f3a2b0e342831255216b1bab554405cb",
+      "source_version": "0374c91e",
+      "content_hash": "830bcb2a433998dd2877dc53612f2434f2d9f9043d89fcb77768d4a2c04f626a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:37:27.009Z"
+      "persisted_at": "2026-11-17T12:25:05.253Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
@@ -251648,10 +251653,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "ffcd9432",
-      "content_hash": "a9238ad413de2801766cefdba176ff6b8de7889aad3e07b0e3bc640b08157693",
+      "source_version": "0374c91e",
+      "content_hash": "d2de6782d868c5d98afb139b2270ae7bdaebc60e7c4876c1283cd99cf6422b19",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T03:37:26.899Z"
+      "persisted_at": "2026-11-17T12:25:05.125Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -269619,6 +269624,265 @@
       "content_hash": "2e78f65645c591388acfefd17d4849a95521b04da90369de2bace0d33ac4ba66",
       "domain_letter": "G",
       "persisted_at": "2026-11-17T12:09:38.371Z"
+    },
+    "learn-huggingface-minimaxai-minimax-h3-image-pe": {
+      "learning_id": "learn-huggingface-minimaxai-minimax-h3-image-pe",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "MiniMaxAI/MiniMax-H3-Image-PE",
+      "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
+      "slug": "hf-minimaxai-minimax-h3-image-pe",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE",
+      "source_version": "hf-minimaxai-minimax-h3-image-pe",
+      "content_hash": "46a9d839ec2eacb07ce92bc48884e8776c2e506e05c6fad4ba236fb5005b4827",
+      "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T12:24:44.267Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-image-pe-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-image-pe-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-pe-research-knowledge-intelligence-minimaxai-minim.md",
+      "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3-Image-PE Core Invariants",
+      "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
+      "source_version": "hf-minimaxai-minimax-h3-image-pe",
+      "content_hash": "761a4f27e5800576890f6b58925ff04c33b4fd858e5cac1f21a5ff35edee8a56",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T12:24:44.671Z"
+    },
+    "learn-huggingface-internlm-sage-s2-1-flash": {
+      "learning_id": "learn-huggingface-internlm-sage-s2-1-flash",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "internlm/Sage-S2.1-Flash",
+      "repository": "internlm/Sage-S2.1-Flash",
+      "slug": "hf-internlm-sage-s2.1-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/internlm/Sage-S2.1-Flash",
+      "source_version": "hf-internlm-sage-s2.1-flash",
+      "content_hash": "c367061a8a6e8715305162b90840477f2dfe5cfa5eeb954c49cc83022e1eacb9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T12:24:46.596Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-internlm-sage-s2-1-flash-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-internlm-sage-s2-1-flash-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internlm-sage-s2-1-flash-research-knowledge-intelligence-internlm-sage-s2-1-f.md",
+      "title": "Research & Knowledge Intelligence: internlm/Sage-S2.1-Flash Core Invariants",
+      "repository": "internlm/Sage-S2.1-Flash",
+      "source_version": "hf-internlm-sage-s2.1-flash",
+      "content_hash": "1570c694a72ebfd9b18ac5ec2410d77bf5ac128f2856f2d20c7de444bcaef3ee",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T12:24:46.970Z"
+    },
+    "learn-github-diggerhq-digger": {
+      "learning_id": "learn-github-diggerhq-digger",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "diggerhq/digger",
+      "repository": "diggerhq/digger",
+      "slug": "diggerhq-digger",
+      "platform": "github",
+      "source_url": "https://github.com/diggerhq/digger",
+      "source_version": "3dc1c51e",
+      "content_hash": "e13be0207a9b7064ac197aafe8d5f7c19338cc259f9a94989ff03c45a4f4131d",
+      "dossier_path": "07_PROJECT_LEARNING/diggerhq-digger-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/diggerhq-digger-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8963,
+          "title": "index digger_jobs.digger_job_id and other hot lookups",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T12:24:56.566Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8963": {
+      "learning_id": "rule-8963",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8963,
+      "title": "index digger_jobs.digger_job_id and other hot lookups",
+      "source_url": "https://github.com/diggerhq/digger",
+      "source_version": "3dc1c51e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T12:24:56.566Z"
+    },
+    "candidate_directive-index-digger_jobs-digger_job_id-and-other-hot-lookups": {
+      "item_id": "candidate_directive-index-digger_jobs-digger_job_id-and-other-hot-lookups",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-21I1-index-digger_jobs-digger_job_id-and-other-hot-lookups.md",
+      "title": "index digger_jobs.digger_job_id and other hot lookups",
+      "repository": "diggerhq-digger-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f8e3e46dbf8ecb57743a8d35e74c7002bfd8817e1dda95b75dbe7e2ef41ed394",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T12:26:14.426Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-diggerhq-digger-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-diggerhq-digger-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-diggerhq-digger-technical-construction-intelligence-diggerhq-digger-core-invaria.md",
+      "title": "Technical Construction Intelligence: diggerhq/digger Core Invariants",
+      "repository": "diggerhq/digger",
+      "source_version": "3dc1c51e",
+      "content_hash": "0364fcb021f0e417c534dd0cbbc84574f61b031c49c5921c5d33abcd4cb17be7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T12:24:57.066Z"
+    },
+    "agent_contract-agent-contract-diggerhq-digger-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-diggerhq-digger-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/diggerhq-digger-agent-contract-diggerhq-digger-autonomous-specialist-persona.md",
+      "title": "Agent Contract: diggerhq/digger Autonomous Specialist Persona",
+      "repository": "diggerhq/digger",
+      "source_version": "3dc1c51e",
+      "content_hash": "cd4b5df6edb069f035fd1757399c9f2822513726d4318f7da966930205dc55d2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T12:24:57.198Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-diggerhq-digger": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-diggerhq-digger",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/diggerhq-digger-verification-protocol-empirical-defect-shield-for-diggerhq-digge.md",
+      "title": "Verification Protocol: Empirical Defect Shield for diggerhq/digger",
+      "repository": "diggerhq/digger",
+      "source_version": "3dc1c51e",
+      "content_hash": "bc749d5b7e323506ddd130720f8612365bd448c3a768c54d87c04d72f4444027",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T12:24:57.317Z"
+    },
+    "rule-8964": {
+      "learning_id": "rule-8964",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8964,
+      "title": "Submit memory usage before setting oom score adj",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "0374c91e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T12:25:04.643Z"
+    },
+    "candidate_directive-submit-memory-usage-before-setting-oom-score-adj": {
+      "item_id": "candidate_directive-submit-memory-usage-before-setting-oom-score-adj",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0JXK-submit-memory-usage-before-setting-oom-score-adj.md",
+      "title": "Submit memory usage before setting oom score adj",
+      "repository": "ytsaurus/ytsaurus",
+      "source_version": "0374c91e",
+      "content_hash": "a0724898739742a516a7557af2b59a581c708f37a057e69a006f2c56eb49c7d2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T12:25:05.001Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-pe-learnings-core-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-pe-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-pe-learnings-research-knowledge-intelligence-hf-mi.md",
+      "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-image-pe-learnings Core Invariants",
+      "repository": "hf-minimaxai-minimax-h3-image-pe-learnings",
+      "source_version": "HEAD",
+      "content_hash": "28a271c6ad63a21b118b4de83903739712938f5bc378ca484fa0135ef05a228d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T12:25:35.717Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internlm-sage-s2-1-flash-learnings-research-knowledge-intelligence-hf-internl.md",
+      "title": "Research & Knowledge Intelligence: hf-internlm-sage-s2.1-flash-learnings Core Invariants",
+      "repository": "hf-internlm-sage-s2.1-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "390eff58ae6964db550cb32413af587e17dff80f14ef02b9469beee9bf7ca075",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T12:26:13.871Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-diggerhq-digger-learnings-technical-construction-intelligence-diggerhq-digger-le.md",
+      "title": "Technical Construction Intelligence: diggerhq-digger-learnings Core Invariants",
+      "repository": "diggerhq-digger-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9ad5b90d9b001d3fe416de5e0fac12a2d6369126d0b2c07076da6db08ae248bd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T12:26:14.581Z"
+    },
+    "agent_contract-agent-contract-diggerhq-digger-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-diggerhq-digger-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/diggerhq-digger-learnings-agent-contract-diggerhq-digger-learnings-autonomous-sp.md",
+      "title": "Agent Contract: diggerhq-digger-learnings Autonomous Specialist Persona",
+      "repository": "diggerhq-digger-learnings",
+      "source_version": "HEAD",
+      "content_hash": "912bcd84eb47c622b4b3e69cda5bd3fb7a9ef2b2a04d395e7a2403801c6b001d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T12:26:14.766Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-diggerhq-digger-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-diggerhq-digger-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/diggerhq-digger-learnings-verification-protocol-empirical-defect-shield-for-digg.md",
+      "title": "Verification Protocol: Empirical Defect Shield for diggerhq-digger-learnings",
+      "repository": "diggerhq-digger-learnings",
+      "source_version": "HEAD",
+      "content_hash": "211b5a35c01b80e4bfbd9d72dfca07586362eb89e5c03ce5176c253fcde10d6b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T12:26:14.919Z"
     }
   },
   "ai-builder-brain": {
