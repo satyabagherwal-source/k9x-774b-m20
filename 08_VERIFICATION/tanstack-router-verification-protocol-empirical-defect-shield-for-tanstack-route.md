@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for tanstack/router
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for TanStack/router
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "tanstack/router",
-  "source_url": "https://github.com/tanstack/router",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "TanStack/router",
+  "source_url": "https://github.com/TanStack/router",
+  "source_version": "0b6d4f3f",
+  "license": "MIT",
+  "timestamp": "2026-11-17T20:03:28.886Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-tanstack-router",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tanstack/router](https://github.com/tanstack/router) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [TanStack/router](https://github.com/TanStack/router) (Revision: `0b6d4f3f`).  
+> **License**: MIT | **Timestamp**: `2026-11-17T20:03:28.886Z`  
+> **Learning ID**: `learn-github-tanstack-router`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tanstack/router` (Commit: `historical`)
+- **Target Repository**: `TanStack/router` (Commit: `0b6d4f3f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
-> **Source**: github ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
-> **Source Version**: `7dbce080`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T07:08:52.457Z  
-> **Learning ID**: `learn-github-tanstack-router`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): TanStack/router
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/router](https://github.com/TanStack/router))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T07:08:52.448Z  
+> **Harvest Timestamp**: 2026-11-17T20:03:27.760Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 🤖 A client-first, server-capable, fully type-safe router and full-stack framework for the web (React and more).
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15289 stars
+- **Stars / Engagement**: 15320 stars
 
 ---
 
@@ -709,346 +695,167 @@ export const apiHandlers = [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bbf9b758` (2026-11-08)
-**Commit Message**: fix(router-devtools-core): restore embedded panel styling (#8888)
+### Incident Patch 1: `0b6d4f3f` (2026-11-13)
+**Commit Message**: perf(start-plugin-core): count imported modules once in the Rsbuild manifest pass (#8926)
 
-* fix(router-devtools-core): restore embedded panel styling
+The static-dependency pass behind the Rsbuild Start manifest runs after
+every client compilation, dev updates included. It walked every
+connection of every module of every chunk and read the imported module's
+chunks each time. Count an imported module once per chunk, from its
+first active connection, and read a module's chunks once per
+compilation (memoized on the resolver created per compilation).
 
-All devtools size tokens are `calc(var(--tsrd-font-size) * n)`, but only the
-floating devtools set `--tsrd-font-size` (via JS). The embedded
-TanStackRouterDevtoolsPanel never had it defined, so every size declaration
-was dropped: inherited font sizes, zero padding/gap/indentation and invisible
-route status dots. Regressed in #1222 (v1.17.0).
-
-Fall back to `1rem` when the variable is unset. Floating behavior is unchanged.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(react-router): read devtools mode from a validated search param
-
-Use root route validateSearch + useSearch instead of raw URLSearchParams,
-and render the shadow DOM panel through a portal instead of mounting the
-whole app in a shadow root.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(react-router): validate devtools search param with zod
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(react-router): add links to switch devtools variants
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
+The manifest is unchanged.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.changeset/happy-radios-call.md` (added, +5/-0)
+**File**: `.changeset/rsbuild-manifest-module-chunks-once.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@tanstack/router-devtools-core': patch
++'@tanstack/start-plugin-core': patch
 +---
 +
-+Fix broken styling of the embedded `TanStackRouterDevtoolsPanel` (including inside shadow DOM) by giving the devtools size tokens a `1rem` fallback when `--tsrd-font-size` is not set.
++Rsbuild: the Start manifest pass that runs after every client compilation (builds and each dev update) reads an imported module's chunks once per compilation and counts the module once per importing chunk, instead of once per import connection. The manifest is unchanged; the pass takes about 40 % less time (on a 333-route app, tens of milliseconds less per HMR update).
 ```
 
-**File**: `e2e/react-router/basic/package.json` (modified, +2/-1)
+**File**: `packages/start-plugin-core/src/rsbuild/normalized-client-build.ts` (modified, +32/-6)
 ```diff
-@@ -17,7 +17,8 @@
-     "react": "^19.0.0",
-     "react-dom": "^19.0.0",
-     "redaxios": "catalog:",
--    "tailwindcss": "^4.2.2"
-+    "tailwindcss": "^4.2.2",
-+    "zod": "catalog:"
-   },
-   "devDependencies": {
-     "@playwright/test": "^1.61.0",
-```
-
-**File**: `e2e/react-router/basic/src/main.tsx` (modified, +58/-2)
-```diff
-@@ -1,3 +1,5 @@
-+import { useState } from 'react'
-+import { createPortal } from 'react-dom'
- import ReactDOM from 'react-dom/client'
- import {
-   ErrorComponent,
-@@ -9,12 +11,19 @@ import {
-   createRouter,
-   redirect,
- } from '@tanstack/react-router'
--import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-+import {
-+  TanStackRouterDevtoolsInProd as TanStackRouterDevtools,
-+  TanStackRouterDevtoolsPanelInProd as TanStackRouterDevtoolsPanel,
-+} from '@tanstack/react-router-devtools'
-+import { z } from 'zod'
- import { NotFoundError, fetchPost, fetchPosts } from './posts'
- import './styles.css'
- import type { ErrorComponentProps } from '@tanstack/react-router'
+@@ -219,6 +219,7 @@ function computeDynamicImports(chunk: RspackCompilationChunk): Array<string> {
+ function computeStaticDependencyChunks(
+   compilation: RspackCompilation,
+   chunk: RspackCompilationChunk,
++  chunksOfModule: (module: RspackModule) => Array<RspackCompilationChunk>,
+ ): Array<RspackCompilationChunk> {
+   const importedChunks: Array<RspackCompilationChunk> = []
+   const seen = new Set<RspackCompilationChunk>([chunk])
+@@ -258,20 +259,28 @@ function computeStaticDependencyChunks(
+   }
+   availableChunks ??= new Set()
  
- const rootRoute = createRootRoute({
-+  validateSearch: z.object({
-+    devtools: z.enum(['panel', 'shadow']).optional().catch(undefined),
-+  }),
-   component: RootComponent,
-   notFoundComponent: () => {
-     return (
-@@ -27,6 +36,8 @@ const rootRoute = createRootRoute({
- })
++  // Every connection to a module adds the same chunks, so a module counts
++  // once, from its first active connection (an inactive one adds nothing and
++  // leaves the module to a later active one).
++  const counted = new Set<RspackModule>()
+   for (const module of modules) {
+     for (const dependency of module.dependencies) {
+       const connection = compilation.moduleGraph.getConnection(dependency)
+       const importedModule = connection?.module
+-      if (!connection || !importedModule || localModules.has(importedModule)) {
++      if (
++        !connection ||
++        !importedModule ||
++        localModules.has(importedModule) ||
++        counted.has(importedModule)
++      ) {
+         continue
+       }
+       if (connection.getActiveState(runtime) === false) {
+         continue
+       }
++      counted.add(importedModule)
  
- function RootComponent() {
-+  const { devtools } = rootRoute.useSearch()
-+
-   return (
-     <>
-       <div className="p-2 flex gap-2 text-lg border-b">
-@@ -86,12 +97,57 @@ function RootComponent() {
-             </Link>
-           </svg>
-         </div>
-+        <div className="ml-auto flex gap-2 text-sm items-center">
-+          Devtools:
-+          {(['floating', 'panel', 'shadow'] as const).map((mode) => (
-+            <Link
-+              key={mode}
-+              to="."
-+              search={(prev) => ({
-+                ...prev,
-+                devtools: mode === 'floating' ? undefined : mode,
-+              })}
-+              className={
-+                (devtools ?? 'floating') === mode ? 'font-bold' : undefined
-+              }
-+            >
-+              {mode}
-+            </Link>
-+          ))}
-+        </div>
-       </div>
-       <Outlet />
--      <TanStackRouterDevtools position="bottom-right" />
-+      {devtools === 'panel' ? (
-+        <TanStackRouterDevtoolsPanel />
-+      ) : devtools === 'shadow' ? (
-+        <ShadowDevtoolsPanel />
-+      ) : (
-+        <TanStackRouterDevtools position="bottom-right" />
-+      )}
-     </>
-   )
- }
-+
-+function ShadowDevtoolsPanel() {
-+  const [shadowRoot, setShadowRoot] = useState<ShadowRoot>()
-+
-+  return (
-+    <div
-+      ref={(host) => {
-+        if (host) {
-+          setShadowRoot(host.shadowRoot ?? host.attachShadow({ mode: 'open' }))
-+        }
-+      }}
-+    >
-+      {shadowRoot
-+        ? createPortal(
-+            <TanStackRouterDevtoolsPanel shadowDOMTarget={shadowRoot} />,
-+            shadowRoot,
-+          )
-+        : null}
-+    </div>
-+  )
-+}
- const indexRoute = createRoute({
-   getParentRoute: () => rootRoute,
-   path: '/',
+-      for (const importedChunk of compilation.chunkGraph.getModuleChunksIterable(
+-        importedModule,
+-      )) {
++      for (const importedChunk of chunksOfModule(importedModule)) {
+         if (availableChunks.has(importedChunk) && !seen.has(importedChunk)) {
+           seen.add(importedChunk)
+           importedChunks.push(importedChunk)
+@@ -290,17 +299,34 @@ type GetStaticDependencyChunks = (
+ /**
+  * Memoize static dependency resolution per chunk. Every chunk is resolved once
+  * for its own `imports`, and CSS-only chunks are resolved again from each
+- * importer that reaches them.
++ * importer that reaches them. A module's chunks are read once, for every chunk
++ * that imports it. Both memos live as long as the resolver, which is created
++ * per normalized compilation.
+  */
+ function createStaticDependencyChunkResolver(
+   compilation: RspackCompilation,
+ ): GetStaticDependencyChunks {
+   const cache = new Map<RspackCompilationChunk, Array<RspackCompilationChunk>>()
++  const moduleChunks = new Map<RspackModule, Array<RspackCompilationChunk>>()
++  const chunksOfModule = (module: RspackModule) => {
++    let chunks = moduleChunks.get(module)
++    if (!chunks) {
++      chunks = Array.from(
++        compilation.chunkGraph.getModuleChunksIterable(module),
++      )
++      moduleChunks.set(module, chunks)
++    }
++    return chunks
++  }
+ 
+   return (chunk) => {
+     let importedChunks = cache.get(chunk)
+     if (!importedChunks) {
+-      importedChunks = computeStaticDependencyChunks(compilation, chunk)
++      importedChunks = computeStaticDependencyChunks(
++        compilation,
++        chunk,
++        chunksOfModule,
++      )
+       cache.set(chunk, importedChunks)
+     }
+     return importedChunks
 ```
 
-**File**: `e2e/react-router/basic/tests/devtools.spec.ts` (added, +42/-0)
+**File**: `packages/start-plugin-core/tests/rsbuild/normalized-client-build.test.ts` (modified, +37/-0)
 ```diff
-@@ -0,0 +1,42 @@
-+import { expect } from '@playwright/test'
-+import { test } from '@tanstack/router-e2e-utils'
+@@ -469,6 +469,43 @@ describe('normalizeRspackClientBuild', () => {
+     ])
+   })
+ 
++  test('imports the chunk of a side-effect-free module used after its inactive import', async () => {
++    // The import statement's own connection to `lib.js` is inactive (no side
++    // effects); the later connection for the used `lib` binding is active.
++    const { clientBuild } = await buildClientFixture(
++      {
++        'index.js': `globalThis.route = () => import(/* webpackChunkName: "alpha" */ './alpha.js?tsr-split=component')`,
++        'alpha.js': `
++        import { lib } from './lib.js'
++        export const render = () => lib() + 'alpha'
++      `,
++        'lib.js': `export const lib = () => 'lib'`,
++      },
++      {
++        module: { rules: [{ test: /lib\.js$/, sideEffects: false }] },
++        optimization: {
++          splitChunks: {
++            minSize: 0,
++            cacheGroups: {
++              default: false,
++              defaultVendors: false,
++              vendor: {
++                name: 'vendor',
++                test: /lib\.js$/,
++                chunks: 'all',
++                enforce: true,
++              },
++            },
++          },
++        },
++      },
++    )
 +
-+for (const mode of ['panel', 'shadow', 'floating']) {
-+  test(`devtools preserve typography and explorer indentation in ${mode} mode`, async ({
-+    page,
-+  }) => {
-+    await page.goto(mode === 'floating' ? '/' : `/?devtools=${mode}`)
-+    if (mode === 'floating') {
-+      await page
-+        .getByRole('button', { name: 'Open TanStack Router Devtools' })
-+        .click()
-+    }
-+
-+    const panel = page.locator('.TanStackRouterDevtoolsPanel')
-+    const router = panel.getByRole('button', { name: /^Router\s*\d+ items/ })
-+    const state = panel.getByRole('button', { name: /^state\s*\d+ items/ })
-+    await expect(router).toBeVisible()
-+    await expect(state).toBeVisible()
-+    await expect(router).toHaveCSS('font-size', '12px')
-+    await expect(router).toHaveCSS('gap', '4px')
-+    await expect(
-+      panel.getByText('Pathname', { exact: true }).locator('..'),
-+    ).toHaveCSS('padding-left', '8px')
-+
-+    const routerBox = await router.boundingBox()
-+    const stateBox = await state.boundingBox()
-+    expect(stateBox!.x - routerBox!.x).toBe(18)
-+
-+    if (mode !== 'floating') {
-+      await page.addStyleTag({ content: ':root { font-size: 20px; }' })
-+      await expect(router).toHaveCSS('font-size', '15px')
-+      await expect(router).toHaveCSS('gap', '5px')
-+
-+      await page.addStyleTag({
-+        content: ':root { --tsrd-font-size: 24px; }',
-+      })
-+      await expect(router).toHaveCSS('font-size', '18px')
-+      await expect(router).toHaveCSS('gap', '6px')
-+    }
++    expect(clientBuild.chunksByFileName.get('alpha.js')?.imports).toEqual([
++      'vendor.js',
++    ])
 +  })
-+}
-```
-
-**File**: `packages/router-devtools-core/src/tokens.ts` (modified, +73/-73)
-```diff
-@@ -161,37 +161,37 @@ export const tokens = {
-   },
-   font: {
-     size: {
--      '2xs': 'calc(var(--tsrd-font-size) * 0.625)',
--      xs: 'calc(var(--tsrd-font-size) * 0.75)',
--      sm: 'calc(var(--tsrd-font-size) * 0.875)',
--      md: 'var(--tsrd-font-size)',
--      lg: 'calc(var(--tsrd-font-size) * 1.125)',
--      xl: 'calc(var(--tsrd-font-size) * 1.25)',
--      '2xl': 'calc(var(--tsrd-font-size) * 1.5)',
--      '3xl': 'calc(var(--tsrd-font-size) * 1.875)',
--      '4xl': 'calc(var(--tsrd-font-size) * 2.25)',
--      '5xl': 'calc(var(--tsrd-font-size) * 3)',
--      '6xl': 'calc(var(--tsrd-font-size) * 3.75)',
--      '7xl': 'calc(var(--tsrd-font-size) * 4.5)',
--      '8xl': 'calc(var(--tsrd-font-size) * 6)',
--      '9xl': 'calc(var(--tsrd-font-size) * 8)',
-+      '2xs': 'calc(var(--tsrd-font-size, 1rem) * 0.625)',
-+      xs: 'calc(var(--tsrd-font-size, 1rem) * 0.75)',
-+      sm: 'calc(var(--tsrd-font-size, 1rem) * 0.875)',
-+      md: 'var(--tsrd-font-size, 1rem)',
-+      lg: 'calc(var(--tsrd-font-size, 1rem) * 1.125)',
-+      xl: 'calc(var(--tsrd-font-size, 1rem) * 1.25)',
-+      '2xl': 'calc(var(--tsrd-font-size, 1rem) * 1.5)',
-+      '3xl': 'calc(var(--tsrd-font-size, 1rem) * 1.875)',
-+      '4xl': 'calc(var(--tsrd-font-size, 1rem) * 2.25)',
-+      '5xl': 'calc(var(--tsrd-font-size, 1rem) * 3)',
-+      '6xl': 'calc(var(--tsrd-font-size, 1rem) * 3.75)',
-+      '7xl': 'calc(var(--tsrd-font-size, 1rem) * 4.5)',
-+      '8xl': 'calc(var(--tsrd-font-size, 1rem) * 6)',
-+      '9xl': 'calc(var(--tsrd-font-size, 1rem) * 8)',
-     },
-     lineHeight: {
--      '3xs': 'calc(var(--tsrd-font-size) * 0.75)',
--      '2xs': 'calc(var(--tsrd-font-size) * 0.875)',
--      xs: 'calc(var(--tsrd-font-size) * 1)',
--      sm: 'calc(var(--tsrd-font-size) * 1.25)',
--      md: 'calc(var(--tsrd-font-size) * 1.5)',
--      lg: 'calc(var(--tsrd-font-size) * 1.75)',
--      xl: 'calc(var(--tsrd-font-size) * 2)',
--      '2xl': 'calc(var(--tsrd-font-size) * 2.25)',
--      '3xl': 'calc(var(--tsrd-font-size) * 2.5)',
--      '4xl': 'calc(var(--tsrd-font-size) * 2.75)',
--      '5xl': 'calc(var(--tsrd-font-size) * 3)',
--      '6xl': 'calc(var(--tsrd-font-size) * 3.25)',
--      '7xl': 'calc(var(--tsrd-font-size) * 3.5)',
--      '8xl': 'calc(var(--tsrd-font-size) * 3.75)',
--      '9xl': 'calc(var(--tsrd-font-size) * 4)',
-+      '3xs': 'calc(var(--tsrd-font-size, 1rem) * 0.75)',
-+      '2xs': 'calc(var(--tsrd-font-size, 1rem) * 0.875)',
-+      xs: 'calc(var(--tsrd-font-size, 1rem) * 1)',
-+      sm: 'calc(var(--tsrd-font-size, 1rem) * 1.25)',
-+      md: 'calc(var(--tsrd-font-size, 1rem) * 1.5)',
-+      lg: 'calc(var(--tsrd-font-size, 1rem) * 1.75)',
-+      xl: 'calc(var(--tsrd-font-size, 1rem) * 2)',
-+      '2xl': 'calc(var(--tsrd-font-size, 1rem) * 2.25)',
-+      '3xl': 'calc(var(--tsrd-font-size, 1rem) * 2.5)',
-+      '4xl': 'calc(var(--tsrd-font-size, 1rem) * 2.75)',
-+      '5xl': 'calc(var(--tsrd-font-size, 1rem) * 3)',
-+      '6xl': 'calc(var(--tsrd-font-size, 1rem) * 3.25)',
-+      '7xl': 'calc(var(--tsrd-font-size, 1rem) * 3.5)',
-+      '8xl': 'calc(var(--tsrd-font-size, 1rem) * 3.75)',
-+      '9xl': 'calc(var(--tsrd-font-size, 1rem) * 4)',
-     },
-     weight: {
-       thin: '100',
-@@ -220,55 +220,55 @@ export const tokens = {
-   border: {
-     radius: {
-       none: '0px',
--      xs: 'calc(var(--tsrd-font-size) * 0.125)',
--      sm: 'calc(var(--tsrd-font-size) * 0.25)',
--      md: 'calc(var(--tsrd-font-size) * 0.375)',
--      lg: 'calc(var(--tsrd-font-size) * 0.5)',
--      xl: 'calc(var(--tsrd-font-size) * 0.75)',
--      '2xl': 'calc(var(--tsrd-font-size) * 1)',
--      '3xl': 'calc(var(--tsrd-font-size) * 1.5)',
-+      xs: 'calc(var(--tsrd-font-size, 1rem) * 0.125)',
-+      sm: 'calc(var(--tsrd-font-size, 1rem) * 0.25)',
-+      md: 'calc(var(--tsrd-font-size, 1rem) * 0.375)',
-+      lg: 'calc(var(--tsrd-font-size, 1rem) * 0.5)',
-+      xl: 'calc(var(--tsrd-font-size, 1rem) * 0.75)',
-+      '2xl': 'calc(var(--tsrd-font-size, 1rem) * 1)',
-+      '3xl': 'calc(var(--tsrd-font-size, 1rem) * 1.5)',
-       full: '9999px',
-     },
-   },
-   size: {
-     0: '0px',
--    0.25: 'calc(var(--tsrd-font-size) * 0.0625)',
--    0.5: 'calc(var(--tsrd-font-size) * 0.125)',
--    1: 'calc(var(--tsrd-font-size) * 0.25)',
--    1.5: 'calc(var(--tsrd-font-size) * 0.375)',
--    2: 'calc(var(--tsrd-font-size) * 0.5)',
--    2.5: 'calc(var(--tsrd-font-size) * 0.625)',
--    3: 'calc(var(--tsrd-font-size) * 0.75)',
--    3.5: 'calc(var(--tsrd-font-size) * 0.875)',
--    4: 'calc(var(--tsrd-font-size) * 1)',
--    4.5: 'calc(var(--tsrd-font-size) * 1.125)',
--    5: 'calc(var(--tsrd-font-size) * 1.25)',
--    5.5: 'calc(var(--tsrd-font-size) * 1.375)',
--    6: 'calc(var(--tsrd-font-size) * 1.5)',
--    6.5: 'calc(var(--tsrd-font-size) * 1.625)',
--    7: 'calc(var(--tsrd-font-size) * 1.75)',
--    8: 'calc(var(--tsrd-font-size) * 2)',
--    9: 'calc(var(--tsrd-font-size) * 2.25)',
--    10: 'calc(var(--tsrd-font-size) * 2.5)',
--    11: 'calc(var(--tsrd-font-size) * 2.75)',
--    12:
-```
-
-**File**: `pnpm-lock.yaml` (modified, +3/-0)
-```diff
-@@ -684,6 +684,9 @@ importers:
-       tailwindcss:
-         specifier: ^4.2.2
-         version: 4.2.2
-+      zod:
-+        specifier: 'catalog:'
-+        version: 4.5.4
-     devDependencies:
-       '@playwright/test':
-         specifier: ^1.63.0
++
+   test('uses a dependency in the parent group without importing its copy in another entry', async () => {
+     const { clientBuild } = await buildClientFixture(
+       {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8888** (2026-11-08): fix(router-devtools-core): restore embedded panel styling (@schiller-manuel)
-- **PR #8871** (2026-11-04): fix(start-plugin-core): require exsolve ^1.1.3, and see new entry files after a dev server restart (@Sheraff)
-- **PR #8870** (2026-11-04): fix(router-plugin): write `import.meta.hot.accept(` out in Vite route HMR (@Sheraff)
-- **PR #8869** (2026-11-04): fix(vue-start): pre-bundle @tanstack/vue-store so a cold dev start doesn't reload the page (@Sheraff)
-- **PR #8867** (2026-11-04): fix(router-utils): parse decorators after `export` (@Sheraff)
-- **PR #8863** (2026-11-04): fix(start-plugin-core): keep the app's server.compress on Rsbuild (@Sheraff)
+- **PR #8926** (2026-11-13): perf(start-plugin-core): count imported modules once in the Rsbuild manifest pass (@Sheraff)
+- **PR #8919** (2026-11-12): fix(react-start-rsc): bump RSC bundler deps for RSC (@DogPawHat)
+- **PR #8913** (2026-11-09): test(react-start): wait for SSR between HMR saves (@schiller-manuel)
+- **PR #8912** (2026-11-09): chore(pnpm): upgrade to pnpm 12 (@schiller-manuel)
+- **PR #8907** (2026-11-08): fix(start-plugin-core): restore the build of the Rsbuild virtual modules (@Sheraff)
+- **PR #8895** (closed): fix(history): discard stale blocker resolution after an intervening navigation (@EnesKartal)
 
 ---
 
@@ -1068,35 +875,35 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. router-devtools-core): restore embedded panel styling (#8888)
+## X. start-plugin-core): count imported modules once in the Rsbuild manifest pass
 
 **RULE**:
-When implementing operations in `.changeset/happy-radios-call.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/rsbuild-manifest-module-chunks-once.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/router. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bbf9b758`: router-devtools-core): restore embedded panel styling (#8888). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0b6d4f3f`: start-plugin-core): count imported modules once in the Rsbuild manifest pass. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/happy-radios-call.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/rsbuild-manifest-module-chunks-once.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-'@tanstack/router-devtools-core': patch
+'@tanstack/start-plugin-core': patch
 ---
 
-Fix broken styling of the embedded `TanStackRouterDevtoolsPanel` (including inside shadow DOM) by giving the devtools size tokens a `1rem` fallback when `--tsrd-font-size` is not set.
+Rsbuild: the Start manifest pass that runs after every client compilation (builds and each dev update) reads an imported module's chunks once per compilation and counts the module once per importing chunk, instead of once per import connection. The manifest is unchanged; the pass takes about 40 % less time (on a 333-route app, tens of milliseconds less per HMR update).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bbf9b758` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0b6d4f3f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

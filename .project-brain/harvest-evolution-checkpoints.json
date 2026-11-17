@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T19:54:48.431Z",
+  "last_updated": "2026-11-17T20:03:47.381Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T19:12:36.114Z",
@@ -493,7 +493,7 @@
       "staged_for_review": 1
     },
     "moby-buildkit-learnings.md": {
-      "processed_at": "2026-11-16T22:55:50.458Z",
+      "processed_at": "2026-11-17T20:03:46.435Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1423,7 +1423,7 @@
       "staged_for_review": 0
     },
     "biomejs-biome-learnings.md": {
-      "processed_at": "2026-11-16T07:37:18.903Z",
+      "processed_at": "2026-11-17T20:03:44.963Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1693,7 +1693,7 @@
       "staged_for_review": 0
     },
     "tanstack-router-learnings.md": {
-      "processed_at": "2026-11-13T09:17:56.230Z",
+      "processed_at": "2026-11-17T20:03:45.784Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3358,7 +3358,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1695,
+  "total_dossiers_evaluated": 1698,
   "total_canonical_promoted": 324,
-  "total_staged_for_review": 1325
+  "total_staged_for_review": 1328
 }

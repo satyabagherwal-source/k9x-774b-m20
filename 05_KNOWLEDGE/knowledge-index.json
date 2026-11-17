@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T19:54:48.311Z",
-  "total_verified_learnings": 8935,
+  "last_updated": "2026-11-17T20:03:47.262Z",
+  "total_verified_learnings": 8936,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20567,
+  "total_items": 20583,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217283,8 +217283,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "1d25918c",
-      "content_hash": "cbbb2d2fa65bbf1c237a4c5730a7022f7d0f8ef543cb8d46bd755e0b9a2b9b1c",
+      "source_version": "d772968d",
+      "content_hash": "a2f4e489ec4fddf37170d5dace16a2fde335426526ed07a2d1bdc6489e061191",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -217302,6 +217302,11 @@
           "number": 8792,
           "title": "retain CPU-clock samples in ARM vector profiles",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9052,
+          "title": "keep NaN and infinite float constants in pushed-down filters",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217309,7 +217314,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T21:23:29.567Z",
+      "verified_at": "2026-11-17T20:03:38.860Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217363,10 +217368,10 @@
       "relative_path": "08_VERIFICATION/paradedb-paradedb-verification-protocol-empirical-defect-shield-for-paradedb-par.md",
       "title": "Verification Protocol: Empirical Defect Shield for paradedb/paradedb",
       "repository": "paradedb/paradedb",
-      "source_version": "1d25918c",
-      "content_hash": "f75abb4fb79f510031a8ea3327d2d997e8102d8eb89eaae8552e8f316c115d80",
+      "source_version": "d772968d",
+      "content_hash": "0a439d103ceee2ddde09097045573e33806f4c0980dea80d8ebee2093338e7c1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:23:30.289Z"
+      "persisted_at": "2026-11-17T20:03:39.467Z"
     },
     "learn-huggingface-amazon-chronos-2": {
       "learning_id": "learn-huggingface-amazon-chronos-2",
@@ -217885,8 +217890,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "2d4d05d7",
-      "content_hash": "9bfc970eba53a321d05d2c424ddce64b3d9e3a96664ab97789787417698c90ee",
+      "source_version": "ab1e41df",
+      "content_hash": "b9d861094915540141be11ad4c82124659495784a6fe43af689082fba52a684d",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -217914,6 +217919,11 @@
           "number": 8994,
           "title": "cross-agent evidence cards with quorum and guard, replicated and integr",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9053,
+          "title": "test(installer): do not require a signature check on runners with no verifier",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217921,7 +217931,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:59:57.507Z",
+      "verified_at": "2026-11-17T20:03:41.586Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217972,13 +217982,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bitterbot-ai-bitterbot-desktop",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/bitterbot-ai-bitterbot-desktop-learnings-verification-protocol-empirical-defect-.md",
-      "title": "Verification Protocol: Empirical Defect Shield for bitterbot-ai-bitterbot-desktop-learnings",
-      "repository": "bitterbot-ai-bitterbot-desktop-learnings",
-      "source_version": "HEAD",
-      "content_hash": "51a7fbdae2fb5904e06afee2e5d293422214982abe2f89d9568c99be133951a9",
+      "relative_path": "08_VERIFICATION/bitterbot-ai-bitterbot-desktop-verification-protocol-empirical-defect-shield-for.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Bitterbot-AI/bitterbot-desktop",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "source_version": "ab1e41df",
+      "content_hash": "195f06e2f8da6062f46941d6032e3ce9857f2fde1ca580de50f93919b9d15f07",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:00:03.151Z"
+      "persisted_at": "2026-11-17T20:03:42.191Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -222117,8 +222127,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "5f79fbc6",
-      "content_hash": "58ed5bccba2e7419f390c49b217bb14adc3d6d7281f1f78aab27ec54f1cf63ab",
+      "source_version": "6aebc64b",
+      "content_hash": "abbc83ae6838ea01112d8c2c7f51f5f5b14f4d934012a81cbee3157971d12c69",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -222131,6 +222141,11 @@
           "number": 8806,
           "title": "Empirical Invariant Guard in grpc.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9051,
+          "title": "Empirical Invariant Guard in gha.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222138,7 +222153,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T22:55:47.053Z",
+      "verified_at": "2026-11-17T20:03:33.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222180,10 +222195,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "repository": "moby/buildkit",
-      "source_version": "5f79fbc6",
-      "content_hash": "dcdfb2b30e99f1f612637789f1c60f4945ad4eabfd39c8a9bf4dad70d9578707",
+      "source_version": "6aebc64b",
+      "content_hash": "51a04179f2a89360926b2ea13bf7460c57a85a770e33729ac941b3f4374dbd74",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T22:55:47.541Z"
+      "persisted_at": "2026-11-17T20:03:34.084Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit",
@@ -222192,10 +222207,10 @@
       "relative_path": "08_VERIFICATION/moby-buildkit-verification-protocol-empirical-defect-shield-for-moby-buildkit.md",
       "title": "Verification Protocol: Empirical Defect Shield for moby/buildkit",
       "repository": "moby/buildkit",
-      "source_version": "5f79fbc6",
-      "content_hash": "a2a272d0a0a6388e920262303d4287ddce8bb74f0470f2d490bfe82bd0d25c62",
+      "source_version": "6aebc64b",
+      "content_hash": "e0beef5529742bc39b6231a061042a56f45ed763a7454f8f6b9e3c7b8dd7f17b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:55:47.694Z"
+      "persisted_at": "2026-11-17T20:03:34.212Z"
     },
     "learn-github-tailscale-tailscale": {
       "learning_id": "learn-github-tailscale-tailscale",
@@ -222323,9 +222338,9 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "8337afe799d2023b399bcdeae01f36ebd26ee0a9bde671ac8870fd1c049e1b13",
+      "content_hash": "5e6e48d22c409a5dba9361769e756920fed93d5b811d38a0a05d7308115aed3e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T22:55:50.840Z"
+      "persisted_at": "2026-11-17T20:03:47.127Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings",
@@ -222335,9 +222350,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for moby-buildkit-learnings",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "af100651eeb2e5bc7a0423aa7e20cf6baaaebb99cfa88fc697fce7fe556a6f8c",
+      "content_hash": "05a550bbcdf022dc939d80b4052e2520ae0555ee7213cb463304644943493af9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:55:50.962Z"
+      "persisted_at": "2026-11-17T20:03:47.262Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -230356,8 +230371,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "103dc4ef",
-      "content_hash": "1cedd318c33fffce85df6678332d4785aaf70b5c951c19294a9e81f032dc1d05",
+      "source_version": "7c3aa0dd",
+      "content_hash": "40be3ab1f3094ed5e831de943aec08adeea9ecaa6ba67f9e41c99e17f5a4a033",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -230370,6 +230385,11 @@
           "number": 8725,
           "title": "format/html/svelte): keep comments after block delimiters and opening tags",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9049,
+          "title": "parse/html): don't panic on a second CDATA start marker",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230377,7 +230397,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T07:37:15.659Z",
+      "verified_at": "2026-11-17T20:03:27.809Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230419,10 +230439,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-architecture-intelligence-biomejs-biome-core-invariants.md",
       "title": "Architecture Intelligence: biomejs/biome Core Invariants",
       "repository": "biomejs/biome",
-      "source_version": "103dc4ef",
-      "content_hash": "4c10f20ef17a39d8bba8ca9edcc36a4abb9c4e8a3166bda5223d0af55dfbba61",
+      "source_version": "7c3aa0dd",
+      "content_hash": "76334f2af5373fb26b9b10c093e4048e540bbebe17b37b45b91bf07c791b1971",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T07:37:16.073Z"
+      "persisted_at": "2026-11-17T20:03:28.298Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome",
@@ -230585,9 +230605,9 @@
       "title": "Architecture Intelligence: biomejs-biome-learnings Core Invariants",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "f81c68060c85fb872c273f1987803dc536e002de01498feccb7f80fc5ecc29c8",
+      "content_hash": "aa07ebc5b24c505301e32b8b08e117a8e69f2c429706e0aa70d0d2ea07add38c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T07:37:19.460Z"
+      "persisted_at": "2026-11-17T20:03:45.518Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings",
@@ -230597,9 +230617,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for biomejs-biome-learnings",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "4a59d389472e06a66e6083cc9ec37179fbfead7e356448c5f820511aa409fe65",
+      "content_hash": "33b8a7bbcd7bbacc3e2694cc1e6f60d63bab9c66dfcd8eb55a3753f1d2c6194c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T07:37:19.568Z"
+      "persisted_at": "2026-11-17T20:03:45.653Z"
     },
     "candidate_directive-deps-bump-aiohttp": {
       "item_id": "candidate_directive-deps-bump-aiohttp",
@@ -237122,10 +237142,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "2d4d05d7",
-      "content_hash": "a4f3b49143e5f2197ea88c62ee7c7153291e4d812fe4ce353767a7ea71829caa",
+      "source_version": "ab1e41df",
+      "content_hash": "def226df49ea3033d0a69b3da650f61bca1ae7a08dd5ad80cb512468e4f058e4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T15:59:58.135Z"
+      "persisted_at": "2026-11-17T20:03:42.060Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -244097,10 +244117,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "repository": "paradedb/paradedb",
-      "source_version": "1d25918c",
-      "content_hash": "bdf7300597b98edeba730f09fd0a9144517af22e585302f1925a88516f72a5c0",
+      "source_version": "d772968d",
+      "content_hash": "ec6aeddd2949dda0aae5447c9eeb4817950504eddb69711ade175acc1a98ffcd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T21:23:30.140Z"
+      "persisted_at": "2026-11-17T20:03:39.336Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i",
@@ -276186,6 +276206,229 @@
       "content_hash": "8654ba3f719352535418141afc8c28fb36ccc71652a81b3df4cdda8126f2261a",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T19:54:47.618Z"
+    },
+    "rule-9049": {
+      "learning_id": "rule-9049",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9049,
+      "title": "parse/html): don't panic on a second CDATA start marker",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "7c3aa0dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T20:03:27.809Z"
+    },
+    "candidate_directive-parse-html-don-t-panic-on-a-second-cdata-start-marker": {
+      "item_id": "candidate_directive-parse-html-don-t-panic-on-a-second-cdata-start-marker",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EESW-parse-html-don-t-panic-on-a-second-cdata-start-marker.md",
+      "title": "parse/html): don't panic on a second CDATA start marker",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76ed3856cba9521f945bf5238fcf239616428d9a5c108d8c167ee8b85f88b853",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T20:03:45.393Z"
+    },
+    "learn-github-tanstack-router": {
+      "learning_id": "learn-github-tanstack-router",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "TanStack/router",
+      "repository": "TanStack/router",
+      "slug": "tanstack-router",
+      "platform": "github",
+      "source_url": "https://github.com/TanStack/router",
+      "source_version": "0b6d4f3f",
+      "content_hash": "a0eb4bb195f3f3d2d67163865d3240539cd52bfdd476e5d550c6fc988afc8419",
+      "dossier_path": "07_PROJECT_LEARNING/tanstack-router-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tanstack-router-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9050,
+          "title": "count imported modules once in the Rsbuild manifest pass",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T20:03:28.518Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9050": {
+      "learning_id": "rule-9050",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9050,
+      "title": "count imported modules once in the Rsbuild manifest pass",
+      "source_url": "https://github.com/TanStack/router",
+      "source_version": "0b6d4f3f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T20:03:28.518Z"
+    },
+    "candidate_directive-count-imported-modules-once-in-the-rsbuild-manifest-pass": {
+      "item_id": "candidate_directive-count-imported-modules-once-in-the-rsbuild-manifest-pass",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E22D-count-imported-modules-once-in-the-rsbuild-manifest-pass.md",
+      "title": "count imported modules once in the Rsbuild manifest pass",
+      "repository": "TanStack/router",
+      "source_version": "0b6d4f3f",
+      "content_hash": "99587c27e8adf65fc4c1a1262ac2cad2d660c1da78f2127ebe064c7e1e923c54",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T20:03:28.886Z"
+    },
+    "domain_intelligence-architecture-intelligence-tanstack-router-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tanstack-router-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tanstack-router-architecture-intelligence-tanstack-router-core-invariants.md",
+      "title": "Architecture Intelligence: TanStack/router Core Invariants",
+      "repository": "TanStack/router",
+      "source_version": "0b6d4f3f",
+      "content_hash": "d804400be6d42af5531e39bf5dad156fc3397bc450eaa45578a791f532bdea00",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T20:03:29.015Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-router": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-router",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tanstack-router-verification-protocol-empirical-defect-shield-for-tanstack-route.md",
+      "title": "Verification Protocol: Empirical Defect Shield for TanStack/router",
+      "repository": "TanStack/router",
+      "source_version": "0b6d4f3f",
+      "content_hash": "9c0086294ccad6fd1996b284dfe1d1d548900ee7a93d68f1a0820072a3596b4b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T20:03:29.145Z"
+    },
+    "rule-9051": {
+      "learning_id": "rule-9051",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9051,
+      "title": "Empirical Invariant Guard in gha.go",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "6aebc64b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T20:03:33.590Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-gha-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-gha-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EG1I-empirical-invariant-guard-in-gha-go.md",
+      "title": "Empirical Invariant Guard in gha.go",
+      "repository": "moby-buildkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d2e5be14876ed1253f56a1c15661d7f767dd83cb0a57151e87dfe10b4d822a1b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T20:03:47.001Z"
+    },
+    "rule-9052": {
+      "learning_id": "rule-9052",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9052,
+      "title": "keep NaN and infinite float constants in pushed-down filters",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "d772968d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T20:03:38.860Z"
+    },
+    "candidate_directive-keep-nan-and-infinite-float-constants-in-pushed-down-filters": {
+      "item_id": "candidate_directive-keep-nan-and-infinite-float-constants-in-pushed-down-filters",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EA18-keep-nan-and-infinite-float-constants-in-pushed-down-filters.md",
+      "title": "keep NaN and infinite float constants in pushed-down filters",
+      "repository": "paradedb/paradedb",
+      "source_version": "d772968d",
+      "content_hash": "4f4eb9b7b5ba1d10dd93c36cba11ad1503459ab3f6cb3c1b4c1df65fef4f80cb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T20:03:39.215Z"
+    },
+    "rule-9053": {
+      "learning_id": "rule-9053",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9053,
+      "title": "test(installer): do not require a signature check on runners with no verifier",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "ab1e41df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T20:03:41.586Z"
+    },
+    "candidate_directive-test-installer-do-not-require-a-signature-check-on-runners-with-no-verifier": {
+      "item_id": "candidate_directive-test-installer-do-not-require-a-signature-check-on-runners-with-no-verifier",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EC4X-test-installer-do-not-require-a-signature-check-on-runners-with-no-verifier.md",
+      "title": "test(installer): do not require a signature check on runners with no verifier",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "source_version": "ab1e41df",
+      "content_hash": "7d1e9e2fd81d1a47d472f3a5c0d5384eedaa173ea1efc167dd2932e371d59aa4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T20:03:41.940Z"
+    },
+    "candidate_directive-start-plugin-core-count-imported-modules-once-in-the-rsbuild-manifest-pass": {
+      "item_id": "candidate_directive-start-plugin-core-count-imported-modules-once-in-the-rsbuild-manifest-pass",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EFB0-start-plugin-core-count-imported-modules-once-in-the-rsbuild-manifest-pass.md",
+      "title": "start-plugin-core): count imported modules once in the Rsbuild manifest pass",
+      "repository": "tanstack-router-learnings",
+      "source_version": "HEAD",
+      "content_hash": "052cbfd78e27477609afa203031d206bf9f2e6e1ace63d4df500a0af6376266f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T20:03:46.044Z"
+    },
+    "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tanstack-router-learnings-architecture-intelligence-tanstack-router-learnings-co.md",
+      "title": "Architecture Intelligence: tanstack-router-learnings Core Invariants",
+      "repository": "tanstack-router-learnings",
+      "source_version": "HEAD",
+      "content_hash": "89372041c0acaae20e39615b77790b43ed7525e65ac9b00cf262af6941d31e0a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T20:03:46.172Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-router-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-router-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tanstack-router-learnings-verification-protocol-empirical-defect-shield-for-tans.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tanstack-router-learnings",
+      "repository": "tanstack-router-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6eea88b6c50b4a3831409a879c3a7d6f3447284ab84a1124b319c46ba4afd3d9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T20:03:46.308Z"
     }
   },
   "ai-builder-brain": {

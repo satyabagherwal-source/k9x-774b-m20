@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T19:54:48.050Z",
+  "last_updated": "2026-11-17T20:03:47.001Z",
   "directives": [
     {
       "id": "CD-001",
@@ -25829,6 +25829,90 @@
       "source_repo": "siderolabs-talos",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-623A10-allow-two-busy-unmounts-in-testunmountbu.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-EESW",
+      "directive_title": "parse/html): don't panic on a second CDATA start marker",
+      "source_repo": "biomejs-biome-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EESW-parse-html-don-t-panic-on-a-second-cdata-start-marker.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-E22D",
+      "directive_title": "count imported modules once in the Rsbuild manifest pass",
+      "source_repo": "TanStack/router",
+      "source_commit": "0b6d4f3f",
+      "staged_file": "11_INBOX/candidate-directives/CD-E22D-count-imported-modules-once-in-the-rsbuild-manifest-pass.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-EG1I",
+      "directive_title": "Empirical Invariant Guard in gha.go",
+      "source_repo": "moby-buildkit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EG1I-empirical-invariant-guard-in-gha-go.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-EA18",
+      "directive_title": "keep NaN and infinite float constants in pushed-down filters",
+      "source_repo": "paradedb/paradedb",
+      "source_commit": "d772968d",
+      "staged_file": "11_INBOX/candidate-directives/CD-EA18-keep-nan-and-infinite-float-constants-in-pushed-down-filters.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-EC4X",
+      "directive_title": "test(installer): do not require a signature check on runners with no verifier",
+      "source_repo": "Bitterbot-AI/bitterbot-desktop",
+      "source_commit": "ab1e41df",
+      "staged_file": "11_INBOX/candidate-directives/CD-EC4X-test-installer-do-not-require-a-signature-check-on-runners-with-no-verifier.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-6CB467",
+      "directive_title": "parse/html): don't panic on a second CDATA start marker",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "biomejs-biome",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6CB467-parse-html-don-t-panic-on-a-second-cdata.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-EFB0",
+      "directive_title": "start-plugin-core): count imported modules once in the Rsbuild manifest pass",
+      "source_repo": "tanstack-router-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EFB0-start-plugin-core-count-imported-modules-once-in-the-rsbuild-manifest-pass.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-EA72DA",
+      "directive_title": "Empirical Invariant Guard in gha.go",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "moby-buildkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EA72DA-empirical-invariant-guard-in-gha-go.md",
       "staged_date": "2026-11-17"
     }
   ]

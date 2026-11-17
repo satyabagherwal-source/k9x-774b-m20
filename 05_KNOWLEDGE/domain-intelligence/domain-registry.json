@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T19:54:48.173Z",
-  "total_records": 1673,
+  "last_updated": "2026-11-17T20:03:47.127Z",
+  "total_records": 1675,
   "domains": {
     "A": {
       "total": 11,
@@ -824,7 +824,7 @@
       ]
     },
     "G": {
-      "total": 298,
+      "total": 300,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1123,7 +1123,9 @@
         "domain_intelligence-architecture-intelligence-arxanas-git-branchless-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-core-invariants",
-        "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-learnings-core-invaria"
+        "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-learnings-core-invaria",
+        "domain_intelligence-architecture-intelligence-tanstack-router-core-invariants",
+        "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants"
       ]
     },
     "H": {
@@ -12518,8 +12520,8 @@
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "repository": "moby/buildkit",
-      "content_hash": "dcdfb2b30e99f1f612637789f1c60f4945ad4eabfd39c8a9bf4dad70d9578707",
-      "created_at": "2026-11-16T22:55:47.541Z"
+      "content_hash": "51a04179f2a89360926b2ea13bf7460c57a85a770e33729ac941b3f4374dbd74",
+      "created_at": "2026-11-17T20:03:34.084Z"
     },
     "DOM-D-F2B017DF": {
       "record_id": "DOM-D-F2B017DF",
@@ -12578,8 +12580,8 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-learnings-architecture-intelligence-moby-buildkit-learnings-core-i.md",
       "repository": "moby-buildkit-learnings",
-      "content_hash": "8337afe799d2023b399bcdeae01f36ebd26ee0a9bde671ac8870fd1c049e1b13",
-      "created_at": "2026-11-16T22:55:50.840Z"
+      "content_hash": "5e6e48d22c409a5dba9361769e756920fed93d5b811d38a0a05d7308115aed3e",
+      "created_at": "2026-11-17T20:03:47.127Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -15688,8 +15690,8 @@
       "title": "Architecture Intelligence: biomejs/biome Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-architecture-intelligence-biomejs-biome-core-invariants.md",
       "repository": "biomejs/biome",
-      "content_hash": "4c10f20ef17a39d8bba8ca9edcc36a4abb9c4e8a3166bda5223d0af55dfbba61",
-      "created_at": "2026-11-16T07:37:16.073Z"
+      "content_hash": "76334f2af5373fb26b9b10c093e4048e540bbebe17b37b45b91bf07c791b1971",
+      "created_at": "2026-11-17T20:03:28.298Z"
     },
     "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants",
@@ -15748,8 +15750,8 @@
       "title": "Architecture Intelligence: biomejs-biome-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-learnings-architecture-intelligence-biomejs-biome-learnings-core-i.md",
       "repository": "biomejs-biome-learnings",
-      "content_hash": "f81c68060c85fb872c273f1987803dc536e002de01498feccb7f80fc5ecc29c8",
-      "created_at": "2026-11-16T07:37:19.460Z"
+      "content_hash": "aa07ebc5b24c505301e32b8b08e117a8e69f2c429706e0aa70d0d2ea07add38c",
+      "created_at": "2026-11-17T20:03:45.518Z"
     },
     "DOM-L-817D65B4": {
       "record_id": "DOM-L-817D65B4",
@@ -17951,8 +17953,8 @@
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "a4f3b49143e5f2197ea88c62ee7c7153291e4d812fe4ce353767a7ea71829caa",
-      "created_at": "2026-11-17T15:59:58.135Z"
+      "content_hash": "def226df49ea3033d0a69b3da650f61bca1ae7a08dd5ad80cb512468e4f058e4",
+      "created_at": "2026-11-17T20:03:42.060Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -20489,8 +20491,8 @@
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "repository": "paradedb/paradedb",
-      "content_hash": "bdf7300597b98edeba730f09fd0a9144517af22e585302f1925a88516f72a5c0",
-      "created_at": "2026-11-16T21:23:30.140Z"
+      "content_hash": "ec6aeddd2949dda0aae5447c9eeb4817950504eddb69711ade175acc1a98ffcd",
+      "created_at": "2026-11-17T20:03:39.336Z"
     },
     "DOM-D-53AB726C": {
       "record_id": "DOM-D-53AB726C",
@@ -28325,6 +28327,24 @@
       "repository": "hf-thinkingmachines-inkling-2-small-learnings",
       "content_hash": "8654ba3f719352535418141afc8c28fb36ccc71652a81b3df4cdda8126f2261a",
       "created_at": "2026-11-17T19:54:47.618Z"
+    },
+    "domain_intelligence-architecture-intelligence-tanstack-router-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tanstack-router-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: TanStack/router Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tanstack-router-architecture-intelligence-tanstack-router-core-invariants.md",
+      "repository": "TanStack/router",
+      "content_hash": "d804400be6d42af5531e39bf5dad156fc3397bc450eaa45578a791f532bdea00",
+      "created_at": "2026-11-17T20:03:29.015Z"
+    },
+    "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tanstack-router-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tanstack-router-learnings-architecture-intelligence-tanstack-router-learnings-co.md",
+      "repository": "tanstack-router-learnings",
+      "content_hash": "89372041c0acaae20e39615b77790b43ed7525e65ac9b00cf262af6941d31e0a",
+      "created_at": "2026-11-17T20:03:46.172Z"
     }
   }
 }

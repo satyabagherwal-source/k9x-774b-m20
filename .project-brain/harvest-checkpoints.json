@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T19:54:42.901Z",
+  "last_updated": "2026-11-17T20:03:41.764Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "58ed5bccba2e7419f390c49b217bb14adc3d6d7281f1f78aab27ec54f1cf63ab",
-      "verified_at": "2026-11-16T22:55:47.225Z",
+      "content_hash": "abbc83ae6838ea01112d8c2c7f51f5f5b14f4d934012a81cbee3157971d12c69",
+      "verified_at": "2026-11-17T20:03:33.776Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T22:55:47.225Z"
+      "last_updated": "2026-11-17T20:03:33.776Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "9bfc970eba53a321d05d2c424ddce64b3d9e3a96664ab97789787417698c90ee",
-      "verified_at": "2026-11-17T15:59:57.734Z",
+      "content_hash": "b9d861094915540141be11ad4c82124659495784a6fe43af689082fba52a684d",
+      "verified_at": "2026-11-17T20:03:41.763Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:59:57.734Z"
+      "last_updated": "2026-11-17T20:03:41.763Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "cbbb2d2fa65bbf1c237a4c5730a7022f7d0f8ef543cb8d46bd755e0b9a2b9b1c",
-      "verified_at": "2026-11-16T21:23:29.771Z",
+      "content_hash": "a2f4e489ec4fddf37170d5dace16a2fde335426526ed07a2d1bdc6489e061191",
+      "verified_at": "2026-11-17T20:03:39.035Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T21:23:29.771Z"
+      "last_updated": "2026-11-17T20:03:39.035Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
@@ -11511,14 +11511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "1cedd318c33fffce85df6678332d4785aaf70b5c951c19294a9e81f032dc1d05",
-      "verified_at": "2026-11-16T07:37:15.812Z",
+      "content_hash": "40be3ab1f3094ed5e831de943aec08adeea9ecaa6ba67f9e41c99e17f5a4a033",
+      "verified_at": "2026-11-17T20:03:27.998Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T07:37:15.812Z"
+      "last_updated": "2026-11-17T20:03:27.998Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",
@@ -17106,14 +17106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-router",
-      "content_hash": "5bd9d8c3106be9ec4541bb7e4758f925a7ce35efe6b500ece2d3eefb4d023578",
-      "verified_at": "2026-11-13T09:17:21.789Z",
+      "content_hash": "a0eb4bb195f3f3d2d67163865d3240539cd52bfdd476e5d550c6fc988afc8419",
+      "verified_at": "2026-11-17T20:03:28.716Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T09:17:21.790Z"
+      "last_updated": "2026-11-17T20:03:28.716Z"
     },
     "tencent/Hy-SimulMT-30B-A3B-FP8": {
       "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",

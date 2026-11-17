@@ -4,23 +4,23 @@
 {
   "source_repository": "moby/buildkit",
   "source_url": "https://github.com/moby/buildkit",
-  "source_version": "5f79fbc6",
+  "source_version": "6aebc64b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T22:55:47.416Z",
+  "timestamp": "2026-11-17T20:03:33.960Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-moby-buildkit",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `5f79fbc6`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T22:55:47.416Z`  
+> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `6aebc64b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T20:03:33.960Z`  
 > **Learning ID**: `learn-github-moby-buildkit`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
 - **Confidence Rating**: 91%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T22:55:46.172Z  
+> **Harvest Timestamp**: 2026-11-17T20:03:32.868Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10425 stars
+- **Stars / Engagement**: 10426 stars
 
 ---
 
@@ -2309,11 +2309,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7426** (2026-11-16): **session: clarify reconnect failures and test disconnect cleanup**
-  *Symptoms*: relates to https://github.com/moby/buildkit/issues/7409  The session dialer gives gRPC a single established connection and rejects subsequent dial attempts. When that connection fails, the resulting "only one connection allowed" error can misleadingly suggest that concurrent clients have exhausted a shared connection limit. Replace it with "session connection cannot be re-established" to describe the actual restriction without changing reconnection or teardown behavior.  Add a regression test that completes a health RPC before breaking the connection, then verifies that health monitoring cancels the session, the handler exits and removes it from the manager, and the gRPC client reaches shutdown.
+- **Issue #7430** (2026-11-17): **prune with only minFreeSpace (--free-storage) removes one record even when enough space is free**
+  *Symptoms*: ## Bug description  When only `minFreeSpace` is set (`buildctl prune --free-storage`, or `minFreeSpace` in a GC policy), one record is removed even when the free space is already above the target. The expected result is that nothing is removed.  Cause, at v0.35.0:  - `calculateKeepBytes` ([manager.go#L1155-L1180](https://github.com/moby/buildkit/blob/v0.35.0/cache/manager.go#L1155-L1180)) sets `keepBytes = totalSize` when only `minFreeSpace` is set and enough space is free ([L1171-L1174](https://github.com/moby/buildkit/blob/v0.35.0/cache/manager.go#L1171-L1174)).   The comment there says "we don't delete anything". - `pruneOnce` returns early only if `opt.totalSize < opt.keepBytes` ([manager.go#L1183](https://github.com/moby/buildkit/blob/v0.35.0/cache/manager.go#L1183)).   With `totalSize == keepBytes` the check is false, so it continues. - In this mode (`gcMode`) it removes one record ([manager.go#L1264-L1267](https://github.com/moby/buildkit/blob/v0.35.0/cache/manager.go#L1275-L1278)). - The loop in `prune` ([manager.go#L1146-L1152](https://github.com/moby/buildkit/blob/v0.35.0/cache/manager.go#L1148-L1153)) subtracts the released size from `totalSize`, and the next pass stops, so exactly one record is removed for each call.  A possible fix is to return early when `totalSize <= keepBytes`, or to return 0 from `calculateKeepBytes` in this case.  ## Reproduction  I did not write an isolated test. From a CI daemon with one cache GC policy that had only `minFreeSpace`: the lo
 
-- **Issue #7420** (2026-11-13): **session: allow large filesync pattern lists in go1.27**
-  *Symptoms*: Lift Go 1.27's header value count limit for session connections while preserving the header byte limit and compatibility with earlier Go versions.  Add regression coverage for large include and exclude pattern lists.  fixes https://github.com/docker/buildx/issues/4209  @viiqswim
+- **Issue #7429** (2026-11-17): **GC interrupted by SIGTERM leaves snapshot directories that are never removed, and maxUsedSpace ignores them**
+  *Symptoms*: ## Bug description  If buildkitd stops (SIGTERM) while a garbage collection is removing snapshot directories, the remaining directories are never removed, not even after a restart. BuildKit's disk usage accounting does not count them, so `maxUsedSpace` and `reservedSpace` never trigger a prune. The disk stays full, and builds fail with `mkdir .../snapshots/new-...: no space left on device`.  Setup: a CI setup that runs one buildkitd for each job and stops it with SIGTERM soon after the build. Its state directory is on an ext4 volume that the next job reuses. Overlayfs snapshotter, which BuildKit creates with `AsynchronousRemove` ([main_oci_worker.go#L413](https://github.com/moby/buildkit/blob/v0.35.0/cmd/buildkitd/main_oci_worker.go#L413)).  ## How it happens (from reading the source at v0.35.0 and containerd v2.4.2)  1. `Controller.gc` ([control.go#L678](https://github.com/moby/buildkit/blob/v0.35.0/control/control.go#L678)) prunes the cache records, and `cacheManager.Prune` then calls containerd's `DB.GarbageCollect` ([manager.go#L1080-L1096](https://github.com/moby/buildkit/blob/v0.35.0/cache/manager.go#L1080-L1096)). 2. `DB.GarbageCollect` removes the unreferenced snapshots from the metadata, commits, and marks the snapshotter in `dirtySS` ([db.go#L408](https://github.com/containerd/containerd/blob/v2.4.2/core/metadata/db.go#L408)).    It then runs the snapshotter's `Cleanup` in a goroutine ([db.go#L449-L466](https://github.com/containerd/containerd/blob/v2.4.2/core/metad
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2330,122 +2330,303 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f79fbc6` (2026-11-16)
-**Commit Message**: Merge pull request #7426 from crazy-max/session-disconnect-cleanup
+### Incident Patch 1: `6aebc64b` (2026-11-17)
+**Commit Message**: Merge pull request #7414 from crazy-max/fix-cache-signing-config-dependencies
 
-session: clarify reconnect failures and test disconnect cleanup
+remotecache: avoid pulling in cache signature verification deps
 
-**File**: `session/grpc.go` (modified, +1/-1)
+**File**: `cache/remotecache/gha/gha.go` (modified, +6/-5)
 ```diff
-@@ -70,7 +70,7 @@ func grpcClientConn(ctx context.Context, conn net.Conn, opts map[string][]string
- 	var dialCount atomic.Int64
- 	dialer := grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
- 		if c := dialCount.Add(1); c > 1 {
--			return nil, errors.New("only one connection allowed")
-+			return nil, errors.New("session connection cannot be re-established")
- 		}
- 		return conn, nil
- 	})
+@@ -17,6 +17,7 @@ import (
+ 	cerrdefs "github.com/containerd/errdefs"
+ 	"github.com/moby/buildkit/cache/remotecache"
+ 	"github.com/moby/buildkit/cache/remotecache/signing"
++	signingconfig "github.com/moby/buildkit/cache/remotecache/signing/config"
+ 	v1 "github.com/moby/buildkit/cache/remotecache/v1"
+ 	cacheimporttypes "github.com/moby/buildkit/cache/remotecache/v1/types"
+ 	"github.com/moby/buildkit/session"
+@@ -61,11 +62,11 @@ type Config struct {
+ 	Version    int
+ 	Timeout    time.Duration
+ 
+-	*signing.Config
++	*signingconfig.Config
+ 	verifier signing.Verifier
+ }
+ 
+-func getConfig(conf *signing.Config, v signing.VerifierProvider, attrs map[string]string) (*Config, error) {
++func getConfig(conf *signingconfig.Config, v signing.VerifierProvider, attrs map[string]string) (*Config, error) {
+ 	scope, ok := attrs[attrScope]
+ 	if !ok {
+ 		scope = "buildkit"
+@@ -115,7 +116,7 @@ func getConfig(conf *signing.Config, v signing.VerifierProvider, attrs map[strin
+ 	}
+ 
+ 	if conf == nil {
+-		conf = &signing.Config{}
++		conf = &signingconfig.Config{}
+ 	}
+ 
+ 	return &Config{
+@@ -132,7 +133,7 @@ func getConfig(conf *signing.Config, v signing.VerifierProvider, attrs map[strin
+ }
+ 
+ // ResolveCacheExporterFunc for Github actions cache exporter.
+-func ResolveCacheExporterFunc(conf *signing.Config, v signing.VerifierProvider) remotecache.ResolveCacheExporterFunc {
++func ResolveCacheExporterFunc(conf *signingconfig.Config, v signing.VerifierProvider) remotecache.ResolveCacheExporterFunc {
+ 	return func(ctx context.Context, g session.Group, attrs map[string]string) (remotecache.Exporter, error) {
+ 		cfg, err := getConfig(conf, v, attrs)
+ 		if err != nil {
+@@ -352,7 +353,7 @@ func (ce *exporter) Finalize(ctx context.Context) (_ map[string]string, err erro
+ }
+ 
+ // ResolveCacheImporterFunc for Github actions cache importer.
+-func ResolveCacheImporterFunc(conf *signing.Config, v signing.VerifierProvider) remotecache.ResolveCacheImporterFunc {
++func ResolveCacheImporterFunc(conf *signingconfig.Config, v signing.VerifierProvider) remotecache.ResolveCacheImporterFunc {
+ 	return func(ctx context.Context, g session.Group, attrs map[string]string) (remotecache.Importer, ocispecs.Descriptor, error) {
+ 		cfg, err := getConfig(conf, v, attrs)
+ 		if err != nil {
 ```
 
-**File**: `session/grpc_test.go` (added, +71/-0)
+**File**: `cache/remotecache/gha/gha_test.go` (modified, +10/-10)
 ```diff
-@@ -0,0 +1,71 @@
-+package session
-+
-+import (
-+	"context"
-+	"net"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/connectivity"
-+	"google.golang.org/grpc/health"
-+	"google.golang.org/grpc/health/grpc_health_v1"
-+)
-+
-+func TestSessionDisconnectCleanup(t *testing.T) {
-+	t.Parallel()
-+
-+	ctx, cancel := context.WithCancelCause(t.Context())
-+	defer cancel(context.Canceled)
-+	manager, err := NewManager()
-+	require.NoError(t, err)
-+
-+	clientConn, serverConn := net.Pipe()
-+	defer clientConn.Close()
-+	defer serverConn.Close()
-+	server := grpc.NewServer()
-+	defer server.Stop()
-+	grpc_health_v1.RegisterHealthServer(server, health.NewServer())
-+	go serve(ctx, server, serverConn)
-+
-+	done := make(chan error, 1)
-+	go func() {
-+		done <- manager.HandleConn(ctx, clientConn, map[string][]string{
-+			headerSessionID:                  {"disconnect-test"},
-+			headerSessionHealthCustomTimeout: {"1000"},
-+		})
-+	}()
-+
-+	checkCtx, checkCancel := context.WithTimeoutCause(ctx, 10*time.Second, context.DeadlineExceeded)
-+	defer checkCancel()
-+	caller, err := manager.Get(checkCtx, "disconnect-test", false)
-+	require.NoError(t, err)
-+	require.NotNil(t, caller)
-+	cc := caller.Conn()
-+	callerCtx := caller.Context(ctx)
-+	_, err = grpc_health_v1.NewHealthClient(cc).Check(checkCtx, &grpc_health_v1.HealthCheckRequest{}, grpc.WaitForReady(true))
-+	require.NoError(t, err)
-+
-+	// Break an established transport without canceling the handler's context.
-+	require.NoError(t, serverConn.Close())
-+	select {
-+	case err := <-done:
-+		require.NoError(t, err)
-+	case <-time.After(10 * time.Second):
-+		t.Fatal("session handler did not exit after disconnect")
-+	}
-+	require.NoError(t, context.Cause(ctx))
-+	select {
-+	case <-callerCtx.Done():
-+		require.ErrorContains(t, context.Cause(callerCtx), "session healthcheck failed fatally")
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("session context was not canceled")
-+	}
-+	caller, err = manager.Get(ctx, "disconnect-test", true)
-+	require.NoError(t, err)
-+	require.Nil(t, caller)
-+	require.Eventually(t, func() bool {
-+		return cc.GetState() == connectivity.Shutdown
-+	}, 5*time.Second, 10*time.Millisecond)
-+}
+@@ -15,7 +15,7 @@ import (
+ 	"testing"
+ 	"time"
+ 
+-	"github.com/moby/buildkit/cache/remotecache/signing"
++	signingconfig "github.com/moby/buildkit/cache/remotecache/signing/config"
+ 	"github.com/moby/buildkit/client"
+ 	"github.com/moby/buildkit/client/llb"
+ 	"github.com/moby/buildkit/util/testutil/integration"
+@@ -186,7 +186,7 @@ func requiresLinux(t *testing.T) {
+ func TestIndexKeySigning(t *testing.T) {
+ 	for _, tc := range []struct {
+ 		name   string
+-		config signing.Config
++		config signingconfig.Config
+ 		key    string
+ 	}{
+ 		{
+@@ -195,22 +195,22 @@ func TestIndexKeySigning(t *testing.T) {
+ 		},
+ 		{
+ 			name: "signing",
+-			config: signing.Config{
+-				Sign: &signing.SignConfig{Command: []string{"sign-cache"}},
++			config: signingconfig.Config{
++				Sign: &signingconfig.SignConfig{Command: []string{"sign-cache"}},
+ 			},
+ 			key: "index-buildkit-1-e3b0c442-sig",
+ 		},
+ 		{
+ 			name: "required verification",
+-			config: signing.Config{
+-				Verify: signing.VerifyConfig{Required: true},
++			config: signingconfig.Config{
++				Verify: signingconfig.VerifyConfig{Required: true},
+ 			},
+ 			key: "index-buildkit-1-e3b0c442-sig",
+ 		},
+ 		{
+ 			name: "legacy empty signing command",
+-			config: signing.Config{
+-				Sign: &signing.SignConfig{},
++			config: signingconfig.Config{
++				Sign: &signingconfig.SignConfig{},
+ 			},
+ 			key: "index-buildkit-1-e3b0c442-sig",
+ 		},
+@@ -279,8 +279,8 @@ func TestLoadScopeSignature(t *testing.T) {
+ 			})
+ 			require.NoError(t, err)
+ 			token := base64.RawURLEncoding.EncodeToString([]byte(`{"alg":"none"}`)) + "." + base64.RawURLEncoding.EncodeToString(claims) + "."
+-			cfg, err := getConfig(&signing.Config{
+-				Verify: signing.VerifyConfig{Required: tc.required},
++			cfg, err := getConfig(&signingconfig.Config{
++				Verify: signingconfig.VerifyConfig{Required: tc.required},
+ 			}, nil, map[string]string{
+ 				attrToken:      token,
+ 				attrURL:        "https://cache.example",
 ```
 
----
-
-### Incident Patch 2: `21bb455f` (2026-11-16)
-**Commit Message**: session: clarify the error when a connection cannot be re-established
-
-Describe the session dialer's inability to reconnect instead of implying
-that callers have exceeded a shared connection limit. This changes only
-the diagnostic message, not session teardown or reconnection behavior.
-
-Signed-off-by: CrazyMax <[REDACTED_EMAIL]>
-
-**File**: `session/grpc.go` (modified, +1/-1)
+**File**: `cache/remotecache/signing/config/config.go` (renamed, +1/-1)
 ```diff
-@@ -70,7 +70,7 @@ func grpcClientConn(ctx context.Context, conn net.Conn, opts map[string][]string
- 	var dialCount atomic.Int64
- 	dialer := grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
- 		if c := dialCount.Add(1); c > 1 {
--			return nil, errors.New("only one connection allowed")
-+			return nil, errors.New("session connection cannot be re-established")
- 		}
- 		return conn, nil
+@@ -1,4 +1,4 @@
+-package signing
++package config
+ 
+ import "github.com/sigstore/sigstore-go/pkg/fulcio/certificate"
+ 
+```
+
+**File**: `cache/remotecache/signing/verify.go` (modified, +4/-3)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 	"encoding/json"
+ 	"strings"
+ 
++	"github.com/moby/buildkit/cache/remotecache/signing/config"
+ 	"github.com/moby/buildkit/util/bklog"
+ 	policy "github.com/moby/policy-helpers"
+ 	"github.com/moby/policy-helpers/types"
+@@ -22,12 +23,12 @@ type Verifier interface {
+ type VerifierProvider func() (*policy.Verifier, error)
+ 
+ // NewVerifier returns a verifier applying the given policy to cache signatures.
+-func NewVerifier(rules VerifyPolicy, provider VerifierProvider) Verifier {
++func NewVerifier(rules config.VerifyPolicy, provider VerifierProvider) Verifier {
+ 	return &verifier{rules: rules, provider: provider}
+ }
+ 
+ type verifier struct {
+-	rules    VerifyPolicy
++	rules    config.VerifyPolicy
+ 	provider VerifierProvider
+ }
+ 
+@@ -54,7 +55,7 @@ func (v *verifier) Verify(ctx context.Context, dgst digest.Digest, bundle []byte
+ }
+ 
+ // verifyPolicy checks the authenticated certificate and timestamps.
+-func verifyPolicy(ctx context.Context, sig *types.SignatureInfo, policyRules VerifyPolicy) error {
++func verifyPolicy(ctx context.Context, sig *types.SignatureInfo, policyRules config.VerifyPolicy) error {
+ 	if sig.Signer == nil {
+ 		return errors.New("signature verification failed: no signer found")
+ 	}
+```
+
+**File**: `cache/remotecache/signing/verify_test.go` (modified, +12/-11)
+```diff
+@@ -3,6 +3,7 @@ package signing
+ import (
+ 	"testing"
+ 
++	"github.com/moby/buildkit/cache/remotecache/signing/config"
+ 	policy "github.com/moby/policy-helpers"
+ 	"github.com/moby/policy-helpers/types"
+ 	digest "github.com/opencontainers/go-digest"
+@@ -99,7 +100,7 @@ func TestVerifyPolicy(t *testing.T) {
+ 	}
+ 	for _, tc := range []struct {
+ 		name       string
+-		policy     VerifyPolicy
++		policy     config.VerifyPolicy
+ 		signer     *certificate.Summary
+ 		timestamps []types.TimestampVerificationResult
+ 		wantErr    string
+@@ -114,7 +115,7 @@ func TestVerifyPolicy(t *testing.T) {
+ 		},
+ 		{
+ 			name: "matching identity and extension",
+-			policy: VerifyPolicy{
++			policy: config.VerifyPolicy{
+ 				Summary: certificate.Summary{
+ 					CertificateIssuer:      "https://issuer.example",
+ 					SubjectAlternativeName: "https://github.com/org/*",
+@@ -127,7 +128,7 @@ func TestVerifyPolicy(t *testing.T) {
+ 		},
+ 		{
+ 			name: "wrong issuer",
+-			policy: VerifyPolicy{
++			policy: config.VerifyPolicy{
+ 				Summary: certificate.Summary{
+ 					CertificateIssuer: "https://other.example",
+ 				},
+@@ -137,7 +138,7 @@ func TestVerifyPolicy(t *testing.T) {
+ 		},
+ 		{
+ 			name: "wrong workflow",
+-			policy: VerifyPolicy{
++			policy: config.VerifyPolicy{
+ 				Summary: certificate.Summary{
+ 					SubjectAlternativeName: "https://github.com/trusted/*",
+ 				},
+@@ -147,7 +148,7 @@ func TestVerifyPolicy(t *testing.T) {
+ 		},
+ 		{
+ 			name: "missing required extension",
+-			policy: VerifyPolicy{
++			policy: config.VerifyPolicy{
+ 				Summary: certificate.Summary{
+ 					Extensions: certificate.Extensions{
+ 						SourceRepositoryURI: "https://github.com/org/repo",
+@@ -159,7 +160,7 @@ func TestVerifyPolicy(t *testing.T) {
+ 		},
+ 		{
+ 			name: "multiple verified timestamps",
+-			policy: VerifyPolicy{
++			policy: config.VerifyPolicy{
+ 				TimestampThreshold: 2,
+ 			},
+ 			signer: signer,
+@@ -174,7 +175,7 @@ func TestVerifyPolicy(t *testing.T) {
+ 		},
+ 		{
+ 			name: "log also counts toward timestamp threshold",
+-			policy: VerifyPolicy{
++			policy: config.VerifyPolicy{
+ 				TimestampThreshold: 1,
+ 			},
+ 			signer: signer,
+@@ -186,7 +187,7 @@ func TestVerifyPolicy(t *testing.T) {
+ 		},
+ 		{
+ 			name: "insufficient timestamps",
+-			policy: VerifyPolicy{
++			policy: config.VerifyPolicy{
+ 				TimestampThreshold: 1,
+ 			},
+ 			signer:  signer,
+@@ -234,7 +235,7 @@ func TestVerifierProvider(t *testing.T) {
+ 		},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+-			v := NewVerifier(VerifyPolicy{}, tc.provider)
++			v := NewVerifier(config.VerifyPolicy{}, tc.provider)
+ 			err := v.Verify(t.Context(), digest.FromString("payload"), nil)
+ 			require.ErrorContains(t, err, tc.wantErr)
+ 			if tc.name == "provider failure" {
+@@ -246,7 +247,7 @@ func TestVerifierProvider(t *testing.T) {
+ 
+ func TestVerifierRejectsMalformedBundle(t *testing.T) {
+ 	calls := 0
+-	v := NewVerifier(VerifyPolicy{}, func() (*policy.Verifier, error) {
++	v := NewVerifier(config.VerifyPolicy{}, func() (*policy.Verifier, error) {
+ 		calls++
+ 		// Malformed bundles are rejected before loading trust material.
+ 		return &policy.Verifier{}, nil
+@@ -257,7 +258,7 @@ func TestVerifierRejectsMalformedBundle(t *testing.T) {
+ }
+ 
+ func TestVerifierNegativeTlogThreshold(t *testing.T) {
+-	v := NewVerifier(VerifyPolicy{TlogThreshold: new(-1)}, func() (*policy.Verifier, error) {
++	v := NewVerifier(config.VerifyPolicy{TlogThreshold: new(-1)}, func() (*policy.Verifier, error) {
+ 		return &policy.Verifier{}, nil
  	})
+ 	err := v.Verify(t.Context(), digest.FromString("cache index"), nil)
+```
+
+**File**: `cmd/buildkitd/config/config.go` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ package config
+ 
+ import (
+-	"github.com/moby/buildkit/cache/remotecache/signing"
++	signingconfig "github.com/moby/buildkit/cache/remotecache/signing/config"
+ 	"github.com/moby/buildkit/util/db/compaction"
+ 	resolverconfig "github.com/moby/buildkit/util/resolver/config"
+ )
+@@ -105,7 +105,7 @@ func (c CompactionConfig) Policy() (compaction.Config, error) {
+ }
+ 
+ type CacheConfig struct {
+-	GHA *signing.Config `toml:"gha"`
++	GHA *signingconfig.Config `toml:"gha"`
+ }
+ 
+ type SystemConfig struct {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2453,8 +2634,8 @@ Signed-off-by: CrazyMax <[REDACTED_EMAIL]>
 - **PR #7420** (2026-11-13): session: allow large filesync pattern lists in go1.27 (@tonistiigi)
 - **PR #7419** (2026-11-13): exporter: skip empty attestation manifests (@crazy-max)
 - **PR #7417** (closed): fix attestation manifest serializing layers as null with zero statements (@ToniAdreal)
+- **PR #7414** (2026-11-17): remotecache: avoid pulling in cache signature verification deps (@crazy-max)
 - **PR #7413** (2026-11-15): Dockerfile: update runc binary to v1.5.3 (@thaJeztah)
-- **PR #7407** (2026-11-11): [v0.35] vendor: update policy helpers to 6acab594b423 (@tonistiigi)
 
 ---
 
@@ -2474,31 +2655,40 @@ Signed-off-by: CrazyMax <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in grpc.go
+## X. Empirical Invariant Guard in gha.go
 
 **RULE**:
-When implementing operations in `session/grpc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cache/remotecache/gha/gha.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5f79fbc6`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6aebc64b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `session/grpc.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cache/remotecache/gha/gha.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			return nil, errors.New("session connection cannot be re-established")
+	signingconfig "github.com/moby/buildkit/cache/remotecache/signing/config"
+	*signingconfig.Config
+func getConfig(conf *signingconfig.Config, v signing.VerifierProvider, attrs map[string]string) (*Config, error) {
+		conf = &signingconfig.Config{}
+func ResolveCacheExporterFunc(conf *signingconfig.Config, v signing.VerifierProvider) remotecache.ResolveCacheExporterFunc {
+func ResolveCacheImporterFunc(conf *signingconfig.Config, v signing.VerifierProvider) remotecache.ResolveCacheImporterFunc {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			return nil, errors.New("only one connection allowed")
+	*signing.Config
+func getConfig(conf *signing.Config, v signing.VerifierProvider, attrs map[string]string) (*Config, error) {
+		conf = &signing.Config{}
+func ResolveCacheExporterFunc(conf *signing.Config, v signing.VerifierProvider) remotecache.ResolveCacheExporterFunc {
+func ResolveCacheImporterFunc(conf *signing.Config, v signing.VerifierProvider) remotecache.ResolveCacheImporterFunc {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f79fbc6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6aebc64b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

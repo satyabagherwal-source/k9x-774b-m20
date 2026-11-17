@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `2d4d05d7`  
+> **Source Version**: `ab1e41df`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T15:59:56.586Z  
+> **Timestamp**: 2026-11-17T20:03:40.882Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:59:56.579Z  
+> **Harvest Timestamp**: 2026-11-17T20:03:40.876Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1570,814 +1570,47 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2d4d05d7` (2026-11-17)
-**Commit Message**: feat(skills): cross-agent evidence cards with quorum and guard, replicated and integrated (#377)
+### Incident Patch 1: `ab1e41df` (2026-11-17)
+**Commit Message**: test(installer): do not require a signature check on runners with no verifier (#378)
 
-* feat(benchmarks): cross-agent evidence-card experiment harness
+The beta-pin test passed --require-signature unconditionally. macOS runners
+that ship neither minisign nor OpenSSL 3 fail it, which turned main red on
+2d4d05d7 while the same image passed on the PR run.
 
-Adds the PLAN-63 study: one recipient and three donors earn experience on
-the latent-convention pool, donors export Ed25519-signed card bundles, and
-the recipient is evaluated on held-out tasks under twelve evidence arms.
-Registered gate: peer minus own, peer minus placebo, coverage difference
-in differences, pool with one lying donor minus no card.
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-annotateSkillsPromptLines lets a card carry a ready-made evidence line.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* feat(benchmarks): live pool, quorum and guard follow-up for cross-agent cards
-
-Registers a follow-up to the cross-agent card study before it runs: a live
-cohort whose agents see each other's records as they go, a quorum reading of
-the pool (one vote per donor), and a guard that drops donors contradicting
-the recipient's own verified outcomes. Adds --phase live and --phase eval2,
-and --concurrency for trials that do not read each other's records.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* docs(benchmarks): cross-agent card study and foll
-
-**File**: `.oxfmtrc.jsonc` (modified, +1/-0)
+**File**: `src/infra/install-sh.test.ts` (modified, +7/-2)
 ```diff
-@@ -19,6 +19,7 @@
-     "benchmarks/learning-strategy/datasets/",
-     "benchmarks/learning-strategy/published/",
-     "benchmarks/collective-learning/published/",
-+    "benchmarks/skill-prior/published/",
-     "test/fixtures/collective-learning/",
-     "benchmarks/learning-strategy/telecom/vendor/",
-     "benchmarks/learning-strategy/telecom/qualification-*.json",
-```
-
-**File**: `benchmarks/skill-prior/README.md` (modified, +278/-0)
-```diff
-@@ -416,8 +416,286 @@ an accept is 92-99% in every memory arm.
- 
- Spend $34.70 (Haiku) and $18.79 (gpt-5.4-mini).
- 
-+## Cross-agent evidence cards (registered 2026-11-14, run 2026-11-15)
-+
-+Every study above has one agent. This one asks the network question
-+directly: at the same per-agent budget, is experience that other agents
-+earned worth more to a recipient than the experience it earned itself?
-+
-+One recipient and three donors each work two episodes in every cell of the
-+latent-convention pool, with accept/reject feedback only and their own
-+earlier outcomes shown as `<evidence>` lines. Each donor then signs its
-+per-cell counts into a card bundle. The recipient verifies each bundle
-+(signature against the stated origin, a fixed set of trusted donor keys, no
-+cell claiming more runs than the budget, and a content hash per skill so a
-+card about an edited SKILL.md is dropped), and is evaluated on held-out
-+instances under twelve arms that differ only in the evidence lines:
-+
-+| Arm                         | Evidence shown                                            |
-+| --------------------------- | --------------------------------------------------------- |
-+| `none`                      | nothing                                                   |
-+| `own-half`                  | the recipient's first half of its budget                  |
-+| `own`                       | the recipient's full budget                               |
-+| `peer1`                     | one donor's full budget                                   |
-+| `peer`                      | three donors' budgets, pooled                             |
-+| `own-half+peer`, `own+peer` | both sources                                              |
-+| `peer-liar`                 | the pool with one donor replaced by a signed false report |
-+| `stale`, `own+stale`        | a pool earned in a workspace with a different convention  |
-+| `placebo`                   | the pool's usage counts with no outcome                   |
-+| `oracle`                    | exact records                                             |
-+
-+A line names its source, for example `Your own runs here: REJECTED every
-+time it was used (1 use). Runs here by 3 other agents: ACCEPTED every time
-+it was used (2 uses).` Every variant of the family gets a line once the arm
-+has any record in the cell, so "not tried yet" stays visible.
-+
-+The unit of analysis is the cell, because a cell's instances share one
-+card. Intervals resample families and then cells within a family; tests are
-+exact one-sided sign tests over cells at 0.025. The confirmatory family is
-+tested in a fixed order, and everything after the first failure is
-+exploratory:
-+
-+1. `peer` minus `own` (primary).
-+2. `peer` minus `placebo`.
-+3. (`peer` minus `none`) minus (`own+peer` minus `own`): the pool adds more
-+   where the recipient has no experience. Interval only.
-+4. `peer-liar` minus `none`.
-+
-+The report also gives `peer1` minus `own` with its interval (no claim: 72
-+cells cannot support a useful non-inferiority margin), the pool's gain at
-+three levels of local experience, flips per task in both directions, and a
-+reference reader that uses each card perfectly, which is the ceiling the
-+shown records can support.
-+
-+```sh
-+# Free dry run with a simulated reader; no model calls.
-+node --import tsx benchmarks/skill-prior/cross-agent-run.ts --phase all --simulate
-+
-+# The study: 2,304 episodes, about $30 on Claude Haiku 4.5 at the online
-+# study's price per episode. Resumable; stops at --ceiling-usd (default 50).
-+node --import tsx benchmarks/skill-prior/cross-agent-run.ts --phase experience --yes
-+node --import tsx benchmarks/skill-prior/cross-agent-run.ts --phase eval --yes
-+
-+# Donors on another model (use a new output directory).
-+node --import tsx benchmarks/skill-prior/cross-agent-run.ts --phase all --yes --donor-model openai/gpt-5.4-mini --out ~/bitterbot-skill-prior/cross-agent-gpt-donors
-+```
-+
-+Limits: the pool is synthetic and its conventions are exact, so effects are
-+upper bounds. Agents share one host and exchange a signed file; the mesh
-+transport is not exercised. A pooled count is only as good as its sources:
-+the reference reader collapses in the `stale` and `peer-liar` arms, and what
-+the model does there is one of the things the study measures.
-+
-+### Result (2026-11-15, Claude Haiku 4.5, 72 cells, 144 instances per arm)
-+
-+The registered primary was **not confirmed**: pooled peer cards did not beat
-+the recipient's own experience (+5.6 pp, 95% CI [-9.0, 20.1], sign p 0.155).
-+Every later step is therefore exploratory.
-+
-+| Arm      |  Pass | Arm           |  Pass |
-+| -------- | ----: | ------------- | ----: |
-+| none     | 19.4% | own+peer      | 68.8% |
-+| placebo  | 23.6% | own-half+peer | 66.0% |
-+| own-half | 31.9% | oracle        | 81.3% |
-+| peer1    | 47.2% | own+stale     | 41.0% |
-+| own      | 51.4% | peer-liar     | 10.4% |
-+| peer     | 56.9% | stale         |  4.9% |
-+
-+| Cont
-```
-
-**File**: `benchmarks/skill-prior/cross-agent-run.ts` (added, +1200/-0)
-```diff
-@@ -0,0 +1,1200 @@
-+import { createHash } from "node:crypto";
-+import fs from "node:fs/promises";
-+/**
-+ * Cross-agent evidence cards: is experience other agents earned worth more to
-+ * a recipient than the experience it earned itself, at equal per-agent budget?
-+ * (Design and registration: docs/plans/PLAN-63-CROSS-AGENT-EVIDENCE-CARDS.md;
-+ * methods: benchmarks/skill-prior/README.md, "Cross-agent evidence cards".)
-+ *
-+ *   # free end-to-end dry run with a simulated reader (no model calls)
-+ *   node --import tsx benchmarks/skill-prior/cross-agent-run.ts --phase all --simulate
-+ *
-+ *   # the study
-+ *   node --import tsx benchmarks/skill-prior/cross-agent-run.ts --phase experience --yes
-+ *   node --import tsx benchmarks/skill-prior/cross-agent-run.ts --phase eval --yes
-+ *
-+ * Phases:
-+ *   experience  One recipient (r0) and N donors (d1..dN) each work `--budget`
-+ *               episodes in every `<workspace>:<family>` cell on their own
-+ *               development seeds. An agent sees only its own earlier outcomes
-+ *               in the cell, as `<evidence>` lines on the skills index, and
-+ *               gets accept/reject after each episode. Each donor then signs
-+ *               its records into a card bundle under <out>/bundles.
-+ *   eval        The recipient verifies and imports the bundles, then faces
-+ *               held-out instances (the `final` seed split) under twelve arms
-+ *               that differ only in the `<evidence>` lines (see XA_ARMS).
-+ *               The protocol is hashed before the first run. Primary: peer
-+ *               minus own on pass, per cell. Then a fixed-sequence family
-+ *               (GATE); everything after the first failure is exploratory.
-+ *   all         experience, then eval.
-+ *
-+ * Records go to <out>/records.jsonl (resumable by key); trial dirs, journal,
-+ * keys and bundles live under <out> (default ~/bitterbot-skill-prior/cross-agent),
-+ * never under ~/.bitterbot.
-+ */
-+import os from "node:os";
-+import path from "node:path";
-+import { parseArgs } from "node:util";
-+import { keyPairFromPrivateKeyPem } from "../../src/commerce/envelope.js";
-+import { loadConfig } from "../../src/config/config.js";
-+import { startEventJournal } from "../../src/infra/event-journal.js";
-+import { type ArmSummary, readCorrect, renderArmTable, summarizeArm } from "./analysis.js";
-+import { shuffled } from "./conventions-analysis.js";
-+import {
-+  CONVENTION_POOL,
-+  CONVENTION_POOL_NAMES,
-+  type ConventionInstance,
-+  conventionInstance,
-+  conventionOf,
-+  ENVS,
-+} from "./conventions.js";
-+import {
-+  type ArmInputs,
-+  bundleDigest,
-+  type CardBundle,
-+  cardLines,
-+  type CardView,
-+  cellContrast,
-+  type CellRecords,
-+  type EvalRow,
-+  exportCardBundle,
-+  flips,
-+  GATE,
-+  generateKeyPair,
-+  importCardBundle,
-+  type KeyPair,
-+  SIGN_ALPHA,
-+  originOf,
-+  type Records,
-+  referencePick,
-+  renderContrastRows,
-+  renderGate,
-+  runGate,
-+  viewFor,
-+  XA_ARMS,
-+  type XaArm,
-+  type Arm2Inputs,
-+  donorTrust,
-+  GATE2,
-+  liarRecords,
-+  poolRecords,
-+  QUORUM,
-+  TRUST_MAX_RATE,
-+  TRUST_MIN_CONTRADICTIONS,
-+  viewFor2,
-+  XA2_ARMS,
-+  type Xa2Arm,
-+  GATE_REP,
-+  REP_ARMS,
-+} from "./cross-agent.js";
-+import {
-+  estimateUsd,
-+  makeExecutor,
-+  trialKey,
-+  type TrialRecord,
-+  type TrialSpec,
-+} from "./executor.js";
-+import { creditedSkill, type EpisodeTrace, recordsFrom } from "./online.js";
-+import { FAMILIES, writePool } from "./pool.js";
-+import { mulberry32, seedsIn } from "./tasks.js";
-+
-+const SALT = "cross-agent-v1";
-+
-+const { values: args } = parseArgs({
-+  options: {
-+    phase: { type: "string" },
-+    donors: { type: "string", default: "3" },
-+    budget: { type: "string", default: "2" },
-+    "eval-seeds": { type: "string", default: "2" },
-+    model: { type: "string", default: "anthropic/claude-haiku-4-5" },
-+    "donor-model": { type: "string" },
-+    out: { type: "string" },
-+    "ceiling-usd": { type: "string", default: "50" },
-+    "max-runs": { type: "string" },
-+    concurrency: { type: "string", default: "1" },
-+    "seed-offset": { type: "string", default: "0" },
-+    families: { type: "string" },
-+    envs: { type: "string" },
-+    arms: { type: "string" },
-+    "timeout-ms": { type: "string" },
-+    "keep-trials": { type: "boolean", default: false },
-+    simulate: { type: "boolean", default: false },
-+    "sim-follow": { type: "string", default: "0.9" },
-+    yes: { type: "boolean", default: false },
-+  },
-+});
-+
-+const phase = args.phase;
-+if (
-+  phase !== "experience" &&
-+  phase !== "eval" &&
-+  phase !== "all" &&
-+  phase !== "live" &&
-+  phase !== "eval2" &&
-+  phase !== "rep"
-+) {
-+  throw new Error("--phase must be experience | eval | all | live | eval2 | rep");
-+}
-+const SIM = args.simulate;
-+const families = args.families
-+  ? (args.families.split(",").map((f) => f.trim()) as (typeof FAMILIES)[number][])
-+  : [...FAMILIES];
-+const envs = args.envs
-+  ? (args.envs.split(",").map((e) => e.trim()) as (typeof E
-```
-
-**File**: `benchmarks/skill-prior/cross-agent.test.ts` (added, +382/-0)
-```diff
-@@ -0,0 +1,382 @@
-+import { describe, expect, it } from "vitest";
-+import {
-+  type ArmInputs,
-+  cardLines,
-+  cellContrast,
-+  donorTrust,
-+  GATE2,
-+  guardedPool,
-+  quorumRecords,
-+  viewFor2,
-+  XA2_ARMS,
-+  type EvalRow,
-+  exportCardBundle,
-+  flips,
-+  generateKeyPair,
-+  importCardBundle,
-+  liarRecords,
-+  originOf,
-+  poolRecords,
-+  referencePick,
-+  runGate,
-+  viewFor,
-+  XA_ARMS,
-+} from "./cross-agent.js";
-+
-+const V = ["xp-f-a", "xp-f-b", "xp-f-c", "xp-f-d"];
-+const SKILLS = Object.fromEntries(V.map((v) => [v, `hash-${v}`]));
-+
-+describe("card bundles", () => {
-+  const key = generateKeyPair();
-+  const cells = {
-+    "alder:f": { "xp-f-a": { passed: 0, runs: 1 }, "xp-f-b": { passed: 1, runs: 1 } },
-+    "birch:f": { "xp-f-c": { passed: 0, runs: 0 } },
-+  };
-+  const bundle = exportCardBundle({ key, model: "m", budget: 2, skills: SKILLS, cells });
-+
-+  it("round-trips a signed bundle and omits empty cells and unused skills", () => {
-+    expect(Object.keys(bundle.cells)).toEqual(["alder:f"]);
-+    expect(Object.keys(bundle.skills).toSorted()).toEqual(["xp-f-a", "xp-f-b"]);
-+    const res = importCardBundle(JSON.parse(JSON.stringify(bundle)), { localSkills: SKILLS });
-+    expect(res).toMatchObject({ ok: true, origin: originOf(key), dropped: [] });
-+    expect(res.ok && res.cells["alder:f"]).toEqual(cells["alder:f"]);
-+  });
-+
-+  it("refuses a tampered bundle", () => {
-+    const forged = JSON.parse(JSON.stringify(bundle));
-+    forged.cells["alder:f"]["xp-f-a"].passed = 1;
-+    expect(importCardBundle(forged, { localSkills: SKILLS })).toEqual({
-+      ok: false,
-+      reason: "bad signature",
-+    });
-+  });
-+
-+  it("refuses an origin the recipient does not trust", () => {
-+    const other = generateKeyPair();
-+    expect(
-+      importCardBundle(bundle, {
-+        localSkills: SKILLS,
-+        trustedOrigins: new Set([originOf(other)]),
-+      }),
-+    ).toEqual({ ok: false, reason: "origin not trusted" });
-+  });
-+
-+  it("refuses claims beyond the budget, even when signed", () => {
-+    const greedy = exportCardBundle({
-+      key,
-+      model: "m",
-+      budget: 2,
-+      skills: SKILLS,
-+      cells: { "alder:f": { "xp-f-a": { passed: 9, runs: 9 } } },
-+    });
-+    const res = importCardBundle(greedy, { localSkills: SKILLS });
-+    expect(res.ok).toBe(false);
-+    const inflated = exportCardBundle({
-+      key,
-+      model: "m",
-+      budget: 50,
-+      skills: SKILLS,
-+      cells: { "alder:f": { "xp-f-a": { passed: 9, runs: 9 } } },
-+    });
-+    expect(importCardBundle(inflated, { localSkills: SKILLS, maxBudget: 2 }).ok).toBe(false);
-+  });
-+
-+  it("drops records about a skill whose content differs locally", () => {
-+    const res = importCardBundle(bundle, {
-+      localSkills: { ...SKILLS, "xp-f-b": "edited" },
-+    });
-+    expect(res.ok && res.dropped).toEqual(["alder:f/xp-f-b"]);
-+    expect(res.ok && Object.keys(res.cells["alder:f"]!)).toEqual(["xp-f-a"]);
-+  });
-+
-+  it("rejects malformed input", () => {
-+    expect(importCardBundle(null, { localSkills: SKILLS }).ok).toBe(false);
-+    expect(importCardBundle({ protocol: "x" }, { localSkills: SKILLS }).ok).toBe(false);
-+  });
-+});
-+
-+describe("pooling and card lines", () => {
-+  it("sums counts and counts contributing agents", () => {
-+    const p = poolRecords([
-+      { "xp-f-a": { passed: 0, runs: 1 } },
-+      {},
-+      { "xp-f-a": { passed: 1, runs: 1 }, "xp-f-b": { passed: 0, runs: 1 } },
-+    ]);
-+    expect(p.agents).toBe(2);
-+    expect(p.records).toEqual({
-+      "xp-f-a": { passed: 1, runs: 2 },
-+      "xp-f-b": { passed: 0, runs: 1 },
-+    });
-+  });
-+
-+  it("shows nothing without records and a line on every variant with them", () => {
-+    expect(cardLines({}, V)).toEqual({});
-+    expect(cardLines({ own: {} }, V)).toEqual({});
-+    const lines = cardLines(
-+      {
-+        own: { "xp-f-a": { passed: 0, runs: 1 } },
-+        peer: { records: { "xp-f-b": { passed: 2, runs: 2 } }, agents: 2 },
-+      },
-+      V,
-+    );
-+    expect(Object.keys(lines)).toEqual(V);
-+    expect(lines["xp-f-a"]).toBe(
-+      "Your own runs here: REJECTED every time it was used (1 use). Runs here by 2 other agents: not tried yet.",
-+    );
-+    expect(lines["xp-f-b"]).toContain("Runs here by 2 other agents: ACCEPTED every time");
-+    expect(lines["xp-f-c"]).toContain("Your own runs here: not tried yet.");
-+  });
-+
-+  it("placebo lines carry usage and no outcome", () => {
-+    const lines = cardLines(
-+      {
-+        peer: { records: { "xp-f-b": { passed: 2, runs: 2 } }, agents: 1 },
-+        peerUsageOnly: true,
-+      },
-+      V,
-+    );
-+    expect(lines["xp-f-b"]).toBe("Runs here by 1 other agent: 2 runs logged.");
-+    expect(Object.values(lines).join(" ")).not.toMatch(/ACCEPTED|REJECTED/);
-+  });
-+});
-+
-+describe("arms", () => {
-+  const x: ArmInputs = {
-+    ownHalf: { "xp-f-b": { passed: 0, runs: 1 } },
-+    own: { "xp-f-b": { passed: 0, runs: 1 }, "xp-f-c": { passed: 0, runs: 1 } },
-+    donors: [
-+      { "xp-f-a": 
-```
-
-**File**: `benchmarks/skill-prior/cross-agent.ts` (added, +754/-0)
-```diff
-@@ -0,0 +1,754 @@
-+/**
-+ * Cross-agent evidence cards (pure core for cross-agent-run.ts).
-+ *
-+ * The question: does a recipient agent do better with outcome records that
-+ * OTHER agents earned than with the records it earned itself, when every
-+ * agent spends the same budget? Each agent (one recipient, N donors) works
-+ * `budget` episodes in every `<workspace>:<family>` cell of the
-+ * latent-convention pool with accept/reject feedback only. A donor exports
-+ * what it learned as a signed card bundle; the recipient verifies each bundle
-+ * and shows the pooled peer record next to its own on the skills index.
-+ *
-+ * Everything here is deterministic and free of model calls: the bundle
-+ * format, the arms and the lines they show, the reference reader used for
-+ * dry runs, and the cell-level analysis.
-+ */
-+
-+import { createHash } from "node:crypto";
-+import { signRecord, verifyRecord } from "../../src/agents/skills/collective/signatures.js";
-+import {
-+  type CellRecords,
-+  type Records,
-+  donorTrust,
-+  guardedPool,
-+  poolRecords,
-+  quorumRecords,
-+} from "../../src/agents/skills/skill-cards.js";
-+import { type SkillEvidence, verbalRecord } from "../../src/agents/skills/skill-prior.js";
-+import { type KeyPair, generateKeyPair } from "../../src/commerce/envelope.js";
-+import type { JsonValue } from "../../src/commerce/sku.js";
-+import { exactSignTest } from "../../src/memory/skill-evolution/sign-test.js";
-+import { clusterBootstrapCi, shuffled } from "./conventions-analysis.js";
-+import { mulberry32 } from "./tasks.js";
-+
-+export { generateKeyPair, type KeyPair };
-+// The pooling, quorum and guard logic the studies measured is the runtime's.
-+export {
-+  QUORUM,
-+  TRUST_MAX_RATE,
-+  TRUST_MIN_CONTRADICTIONS,
-+  donorTrust,
-+  guardedPool,
-+  poolRecords,
-+  quorumRecords,
-+  type CellRecords,
-+  type DonorTrust,
-+  type Records,
-+} from "../../src/agents/skills/skill-cards.js";
-+
-+// ------------------------------------------------------------------ bundles
-+
-+export const CARD_PROTOCOL = "bitterbot/skill-cards/1";
-+
-+/** What a donor sends: outcome counts per cell and skill, bound to skill content. */
-+export interface CardBundle {
-+  protocol: typeof CARD_PROTOCOL;
-+  /** `ed25519:<64 hex>`: the donor's public key, which is also its identity. */
-+  origin: string;
-+  /** Model that earned the records (reported, for cross-model analysis). */
-+  model: string;
-+  /** Episodes the donor spent per cell. */
-+  budget: number;
-+  /** skill name -> sha256 of the SKILL.md the records are about. */
-+  skills: Record<string, string>;
-+  cells: CellRecords;
-+  signature: string;
-+}
-+
-+export function originOf(key: KeyPair): string {
-+  return `ed25519:${key.publicKeyHex}`;
-+}
-+
-+export function exportCardBundle(args: {
-+  key: KeyPair;
-+  model: string;
-+  budget: number;
-+  skills: Readonly<Record<string, string>>;
-+  cells: CellRecords;
-+}): CardBundle {
-+  const cells: CellRecords = {};
-+  for (const [cell, recs] of Object.entries(args.cells)) {
-+    const kept = Object.fromEntries(Object.entries(recs).filter(([, e]) => e.runs > 0));
-+    if (Object.keys(kept).length > 0) {
-+      cells[cell] = kept;
+@@ -352,13 +352,18 @@ describeInstaller("scripts/install.sh", () => {
+     const stable = runInstaller([], {}, freshHome());
+     expect(stable.status, stable.out).toBe(0);
+     expect(fs.readlinkSync(path.join(stable.home, ".bitterbot/app/current"))).toBe("1.5.0");
++    // Some macOS runners ship neither minisign nor OpenSSL 3. There the
++    // signature cannot be required, and the pin is still exercised.
++    const canVerify = opensslCanVerify() || hasCommand("minisign");
+     const beta = runInstaller(
+-      ["--version", "1.10.0-beta.1", "--require-signature"],
++      ["--version", "1.10.0-beta.1", ...(canVerify ? ["--require-signature"] : [])],
+       {},
+       stable.home,
+     );
+     expect(beta.status, beta.out).toBe(0);
+-    expect(beta.out).toContain("Verified:");
++    if (canVerify) {
++      expect(beta.out).toContain("Verified:");
 +    }
-+  }
-+  const used = new Set(Object.values(cells).flatMap((r) => Object.keys(r)));
-+  return signRecord(
-+    CARD_PROTOCOL,
-+    {
-+      protocol: CARD_PROTOCOL,
-+      origin: originOf(args.key),
-+      model: args.model,
-+      budget: args.budget,
-+      skills: Object.fromEntries(Object.entries(args.skills).filter(([name]) => used.has(name))),
-+      cells,
-+    },
-+    args.key,
-+  ) as CardBundle;
-+}
-+
-+export type ImportResult =
-+  | { ok: true; origin: string; cells: CellRecords; dropped: string[] }
-+  | { ok: false; reason: string };
-+
-+const isCount = (e: unknown): e is SkillEvidence => {
-+  const x = e as Partial<SkillEvidence> | null;
-+  return (
-+    !!x &&
-+    Number.isSafeInteger(x.passed) &&
-+    Number.isSafeInteger(x.runs) &&
-+    x.passed! >= 0 &&
-+    x.runs! >= x.passed!
-+  );
-+};
-+
-+/**
-+ * The recipient's side of the exchange. A bundle is used only if its
-+ * signature verifies against its stated origin, the origin is one the
-+ * recipient accepts, and no claim exceeds the stated budget. Records about a
-+ * skill whose content differs from the recipient's copy are dropped: a card
-+ * is evidence about one exact SKILL.md, not about a name.
-+ */
-+export function importCardBundle(
-+  input: unknown,
-+  opts: {
-+    localSkills: Readonly<Record<string, string>>;
-+    trustedOrigins?: ReadonlySet<string>;
-+    maxBudget?: number;
-+  },
-+): ImportResult {
-+  const b = input as Partial<CardBundle> | null;
-+  if (
-+    !b ||
-+    b.protocol !== CARD_PROTOCOL ||
-+    typeof b.origin !== "string" ||
-+    typeof b.signature !== "string" ||
-+    typeof b.model !== "string" ||
-+    !Number.isSafeInteger(b.budget) ||
-+    !b.cells ||
-+    typeof b.cells !== "object" ||
-+    !b.skills ||
-+    typeof b.skills !== "object"
-+  ) {
-+    return { ok: false, reason: "malformed bundle" };
-+  }
-+  
-```
-
-**File**: `benchmarks/skill-prior/executor.ts` (modified, +6/-0)
-```diff
-@@ -15,6 +15,7 @@ import { resolveDefaultAgentId } from "../../src/agents/agent-scope.js";
- import { runEmbeddedPiAgent } from "../../src/agents/embedded-runner.js";
- import {
-   annotateSkillsPrompt,
-+  annotateSkillsPromptLines,
-   reorderSkillsPrompt,
-   type SkillEvidence,
-   type SkillEvidenceStyle,
-@@ -56,6 +57,8 @@ export interface TrialSpec {
-   /** Verified outcome counts shown as an `<evidence>` line on these skills' index entries. */
-   evidence?: Readonly<Record<string, SkillEvidence>>;
-   evidenceStyle?: SkillEvidenceStyle;
-+  /** Ready-made `<evidence>` text per skill (cross-agent cards); applied after `evidence`. */
-+  evidenceLines?: Readonly<Record<string, string>>;
- }
- 
- export interface TrialRecord {
-@@ -194,6 +197,9 @@ export function makeExecutor(deps: ExecutorDeps) {
-     if (spec.evidence) {
-       snapshot.prompt = annotateSkillsPrompt(snapshot.prompt, spec.evidence, spec.evidenceStyle);
-     }
-+    if (spec.evidenceLines) {
-+      snapshot.prompt = annotateSkillsPromptLines(snapshot.prompt, spec.evidenceLines);
-+    }
-     const indexOrder = skillOrderInPrompt(snapshot.prompt);
-     const runId = crypto.randomUUID();
-     const sessionKey = makeSkillEvolveValidationSessionKey(agentId, runId.slice(0, 8));
-```
-
-**File**: `benchmarks/skill-prior/published.test.ts` (added, +136/-0)
-```diff
-@@ -0,0 +1,136 @@
-+import fs from "node:fs";
-+import path from "node:path";
-+import { fileURLToPath } from "node:url";
-+import { gunzipSync } from "node:zlib";
-+import { describe, expect, it } from "vitest";
-+import {
-+  GATE,
-+  GATE2,
-+  GATE_REP,
-+  importCardBundle,
-+  runGate,
-+  type CardBundle,
-+  type EvalRow,
-+  type GateStep,
-+} from "./cross-agent.js";
-+
-+/**
-+ * The published cross-agent evidence must reproduce its own headline
-+ * numbers: every gate step recomputed from the raw records has to match
-+ * the summary written when the study ran.
-+ */
-+const here = path.dirname(fileURLToPath(import.meta.url));
-+const published = path.join(here, "published");
-+
-+interface Rec {
-+  phase: string;
-+  arm: string;
-+  cell?: string;
-+  family: string;
-+  taskId: string;
-+  pass: number;
-+  error: string | null;
-+}
-+
-+function rowsOf(dir: string, phases: readonly string[]): EvalRow[] {
-+  const raw = gunzipSync(fs.readFileSync(path.join(published, dir, "records.jsonl.gz")));
-+  return raw
-+    .toString("utf-8")
-+    .split("\n")
-+    .filter(Boolean)
-+    .map((l) => JSON.parse(l) as Rec)
-+    .filter((r) => phases.includes(r.phase))
-+    .map((r) => ({
-+      arm: r.arm,
-+      cell: r.cell!,
-+      family: r.family,
-+      taskId: r.taskId,
-+      pass: r.error === null ? r.pass : 0,
-+    }));
-+}
-+
-+interface SummaryStep {
-+  id: string;
-+  n: number;
-+  mean: number;
-+  wins: number;
-+  losses: number;
-+  ties: number;
-+  passed: boolean;
-+  confirmatory: boolean;
-+}
-+
-+function summaryGate(dir: string, file: string): SummaryStep[] {
-+  return (
-+    JSON.parse(fs.readFileSync(path.join(published, dir, file), "utf-8")) as {
-+      gate: SummaryStep[];
-+    }
-+  ).gate;
-+}
-+
-+const CASES: ReadonlyArray<{
-+  name: string;
-+  dir: string;
-+  phases: readonly string[];
-+  summary: string;
-+  gate: readonly GateStep[];
-+}> = [
-+  {
-+    name: "first study",
-+    dir: "cross-agent-20261115",
-+    phases: ["xa-eval"],
-+    summary: "summary-xa-eval.json",
-+    gate: GATE,
-+  },
-+  {
-+    name: "follow-up",
-+    dir: "cross-agent-20261115",
-+    phases: ["xa-eval", "xa-eval2"],
-+    summary: "summary-xa-eval2.json",
-+    gate: GATE2,
-+  },
-+  {
-+    name: "replication",
-+    dir: "cross-agent-rep-20261116",
-+    phases: ["xa-rep"],
-+    summary: "summary-xa-rep.json",
-+    gate: GATE_REP,
-+  },
-+];
-+
-+describe("published cross-agent evidence", () => {
-+  for (const c of CASES) {
-+    it(`${c.name}: the gate recomputed from the records matches the summary`, () => {
-+      const got = runGate(rowsOf(c.dir, c.phases), c.gate);
-+      const want = summaryGate(c.dir, c.summary);
-+      expect(got.map((g) => g.id)).toEqual(want.map((w) => w.id));
-+      got.forEach((g, i) => {
-+        const w = want[i]!;
-+        expect(g.n).toBe(w.n);
-+        expect(g.mean).toBeCloseTo(w.mean, 10);
-+        expect([g.wins, g.losses, g.ties]).toEqual([w.wins, w.losses, w.ties]);
-+        expect(g.passed).toBe(w.passed);
-+        expect(g.confirmatory).toBe(w.confirmatory);
-+      });
-+    });
-+  }
-+
-+  it("replication: all three registered steps are confirmed", () => {
-+    const got = runGate(rowsOf("cross-agent-rep-20261116", ["xa-rep"]), GATE_REP);
-+    expect(got.map((g) => g.passed && g.confirmatory)).toEqual([true, true, true]);
-+  });
-+
-+  it("every published bundle carries a valid signature from its stated origin", () => {
-+    for (const dir of ["cross-agent-20261115", "cross-agent-rep-20261116"]) {
-+      const bdir = path.join(published, dir, "bundles");
-+      for (const f of fs.readdirSync(bdir)) {
-+        const b = JSON.parse(fs.readFileSync(path.join(bdir, f), "utf-8")) as CardBundle;
-+        const res = importCardBundle(b, {
-+          trustedOrigins: new Set([b.origin]),
-+          localSkills: b.skills,
-+        });
-+        expect(res.ok, `${dir}/${f}`).toBe(true);
-+      }
-+    }
-+  });
-+});
-```
-
-**File**: `benchmarks/skill-prior/published/README.md` (added, +39/-0)
-```diff
-@@ -0,0 +1,39 @@
-+# Published evidence: cross-agent evidence cards
-+
-+Raw data and generated reports for the three studies described in
-+[`../README.md`](../README.md) under "Cross-agent evidence cards".
-+
-+| Folder                      | Study                                                                   | Episodes | Models                                                               |
-+| --------------------------- | ----------------------------------------------------------------------- | -------: | -------------------------------------------------------------------- |
-+| `cross-agent-20261115/`     | First study (`xa-exp`, `xa-eval`) and follow-up (`xa-live`, `xa-eval2`) |    3,744 | recipient and donors `anthropic/claude-haiku-4-5`                    |
-+| `cross-agent-rep-20261116/` | Registered replication (`xa-exp`, `xa-live`, `xa-rep`)                  |    2,160 | recipient `anthropic/claude-haiku-4-5`, donors `openai/gpt-5.4-mini` |
-+
-+Each folder holds:
-+
-+- `records.jsonl.gz`: one line per episode (phase, arm, task, cell, seed,
-+  skills-index order, variants read, pass, tokens, model, error).
-+- `report-*.md` and `summary-*.json`: what the runner wrote when the phase
-+  finished. Absolute paths were shortened to `~`; nothing else was edited.
-+- `protocol-*.json`: the protocol and its hash, written before the first
-+  evaluation run of the phase.
-+- `bundles/*.json`: the signed card bundles the recipient imported
-+  (`d1..d3` one-off donors, `l1..l3` live cohort). They carry public keys
-+  and signatures only.
-+
-+`../published.test.ts` recomputes every gate step from the raw records and
-+checks it against the summaries, and verifies each bundle's signature. Run:
-+
-+```bash
-+pnpm exec vitest run benchmarks/skill-prior/published.test.ts
-+```
-+
-+To regenerate a report with the runner, unpack the records into an output
-+directory and run the phase again; finished episodes are skipped, so no
-+model is called:
-+
-+```bash
-+mkdir -p /tmp/xa-rep && gunzip -c cross-agent-rep-20261116/records.jsonl.gz > /tmp/xa-rep/records.jsonl
-+```
-+
-+Not published: per-trial workspaces, the journal database and the agents'
-+private signing keys.
+     expect(fs.readlinkSync(path.join(beta.home, ".bitterbot/app/current"))).toBe("1.10.0-beta.1");
+     expect(fs.readlinkSync(path.join(beta.home, ".bitterbot/app/previous"))).toBe("1.5.0");
+   });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #378** (2026-11-17): test(installer): do not require a signature check on runners with no verifier (@VGIL77)
 - **PR #377** (2026-11-17): feat(skills): cross-agent evidence cards with quorum and guard, replicated and integrated (@VGIL77)
 - **PR #376** (2026-11-14): feat(skills): add verified collective learning and reproducible pilot evidence (@VGIL77)
 - **PR #373** (2026-11-13): fix(wallet): stop @coinbase/agentkit sending analytics to Coinbase (@VGIL77)
 - **PR #371** (2026-11-08): fix(memory): trim the embedding cache on every write; the agent explains its memory from its guide (@VGIL77)
 - **PR #370** (2026-11-08): feat(agents): the agent knows which of its parts are on, from the live config (@VGIL77)
-- **PR #369** (2026-11-07): feat(skills): add verified live outcome writer in shadow mode (@VGIL77)
 
 ---
 
@@ -2397,28 +1630,35 @@ Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skills): cross-agent evidence cards with quorum and guard, replicated and integr
+## X. test(installer): do not require a signature check on runners with no verifier
 
 **RULE**:
-When implementing operations in `.oxfmtrc.jsonc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/infra/install-sh.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2d4d05d7`: skills): cross-agent evidence cards with quorum and guard, replicated and integrated. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab1e41df`: test(installer): do not require a signature check on runners with no verifier. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.oxfmtrc.jsonc`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/infra/install-sh.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "benchmarks/skill-prior/published/",
+    // Some macOS runners ship neither minisign nor OpenSSL 3. There the
+    // signature cannot be required, and the pin is still exercised.
+    const canVerify = opensslCanVerify() || hasCommand("minisign");
+      ["--version", "1.10.0-beta.1", ...(canVerify ? ["--require-signature"] : [])],
+    if (canVerify) {
+      expect(beta.out).toContain("Verified:");
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      ["--version", "1.10.0-beta.1", "--require-signature"],
+    expect(beta.out).toContain("Verified:");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2d4d05d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab1e41df` are properly handled with clean fallback behavior.

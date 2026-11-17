@@ -10723,3 +10723,8 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `1cc9974a` | Multi-dimensional audit evidence | 2026-11-17T19:53:47.438Z |
 | `learn-huggingface-thinkingmachines-inkling-2-small` | `https://huggingface.co/thinkingmachines/Inkling-2-Small` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-17T19:54:06.318Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `9c7cb976` | Multi-dimensional audit evidence | 2026-11-17T19:54:42.892Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `7c3aa0dd` | Multi-dimensional audit evidence | 2026-11-17T20:03:27.990Z |
+| `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `0b6d4f3f` | Multi-dimensional audit evidence | 2026-11-17T20:03:28.708Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `6aebc64b` | Multi-dimensional audit evidence | 2026-11-17T20:03:33.769Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `d772968d` | Multi-dimensional audit evidence | 2026-11-17T20:03:39.027Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `ab1e41df` | Multi-dimensional audit evidence | 2026-11-17T20:03:41.756Z |
