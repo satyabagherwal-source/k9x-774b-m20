@@ -2,25 +2,25 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-17T08:09:41.906Z",
+  "updated_at": "2026-11-17T08:21:42.298Z",
   "statistics": {
-    "total_nodes": 298,
-    "total_edges": 152,
+    "total_nodes": 303,
+    "total_edges": 154,
     "domain_distribution": {
       "D": 222,
       "M": 1,
-      "H": 31,
+      "H": 32,
       "J": 12,
-      "K": 14,
+      "K": 16,
       "L": 4,
       "G": 1,
-      "F": 9,
+      "F": 10,
       "B": 2,
       "E": 1,
-      "I": 1
+      "I": 2
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 151,
+      "CONSTRAINED_BY_ARCHITECTURE": 153,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -6687,6 +6687,109 @@
       ],
       "created_at": "2026-11-17T08:09:41.906Z",
       "updated_at": "2026-11-17T08:09:41.906Z"
+    },
+    "DOM-K-8B2A4B0A": {
+      "id": "DOM-K-8B2A4B0A",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Infinite Run Stall Caused by Console Activity Masking Test Timeout (BUG-AVA-02)",
+      "summary": "The timeout handler in `lib/test.js` marked the test state as failed but did not force teardown of asynchronous streams. Because the test co -> Never rely solely on natural event loop exhaustion (`beforeExit`) to terminate a failed worker process. If a test has officially timed out o",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://avajs-ava/avajs-ava-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:19:33.855Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (avajs-ava)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-17T08:19:58.540Z",
+      "updated_at": "2026-11-17T08:19:58.540Z"
+    },
+    "DOM-I-6DA6494F": {
+      "id": "DOM-I-6DA6494F",
+      "domain": "I",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Non-Standard OSS License Classification Ingestion (BUG-OSIA-02)",
+      "summary": "The schema requires a strict `license` property, but GitHub's License API only parses standard OSI approved licenses. Non-commercial license -> Schema validation definitions for open data catalogs must maintain an escape-hatch primitive (`other`, `custom`, `unspecified`) alongside st",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://dkhamsing-open-source-ios-apps/dkhamsing-open-source-ios-apps-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:19:59.323Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dkhamsing-open-source-ios-apps)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "I",
+        "Content & Information Intelligence"
+      ],
+      "created_at": "2026-11-17T08:20:26.788Z",
+      "updated_at": "2026-11-17T08:20:26.788Z"
+    },
+    "DOM-K-93409B61": {
+      "id": "DOM-K-93409B61",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "CLI UI Stream Decoupling & Buffer Assertion Divergence (BUG-TF-39554)",
+      "summary": "An architectural migration from HashiCorp's legacy `cli.Ui` interface to an internal `terminal.Streams` and `views.View` pattern left dual r -> When refactoring an I/O subsystem across hundreds of test harnesses, never allow both the old and new abstractions to coexist in test harnes",
+      "confidence": 0.62,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hashicorp-terraform/hashicorp-terraform-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:20:27.605Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hashicorp-terraform)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence",
+        "H",
+        "F"
+      ],
+      "created_at": "2026-11-17T08:20:59.184Z",
+      "updated_at": "2026-11-17T08:20:59.184Z"
+    },
+    "NODE-F-domain-bridge-f": {
+      "id": "NODE-F-domain-bridge-f",
+      "domain": "F",
+      "type": "DOMAIN_CONCEPT_BRIDGE",
+      "title": "Domain F Concept Space",
+      "summary": "",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {},
+      "tags": [],
+      "created_at": "2026-11-17T08:20:59.185Z",
+      "updated_at": "2026-11-17T08:20:59.185Z"
+    },
+    "DOM-H-61F97060": {
+      "id": "DOM-H-61F97060",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Dependency Cycle during Resource Forget with `destroy = false` (BUG-TF-39501)",
+      "summary": "The graph reduction pass for destruction treats `destroy = false` as a \"forget\" node instead of an \"apply-destroy\" node. The graph edge inve -> Graph edge inversion during lifecycle reversal must distinguish between nodes that perform active teardown mutations (which depend on provid",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hashicorp-terraform/hashicorp-terraform-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:20:27.605Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hashicorp-terraform)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-17T08:21:42.298Z",
+      "updated_at": "2026-11-17T08:21:42.298Z"
     }
   },
   "edges": [
@@ -8209,6 +8312,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-F8265FBB [H] with Domain G",
       "created_at": "2026-11-17T07:20:46.790Z"
+    },
+    {
+      "id": "EDGE-2564DED3B375",
+      "sourceId": "DOM-K-93409B61",
+      "targetId": "NODE-H-domain-bridge-h",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-K-93409B61 [K] with Domain H",
+      "created_at": "2026-11-17T08:20:59.184Z"
+    },
+    {
+      "id": "EDGE-7BE2598690FA",
+      "sourceId": "DOM-K-93409B61",
+      "targetId": "NODE-F-domain-bridge-f",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-K-93409B61 [K] with Domain F",
+      "created_at": "2026-11-17T08:20:59.185Z"
     }
   ]
 }

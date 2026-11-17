@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T08:09:42.989Z",
+  "last_updated": "2026-11-17T08:21:42.738Z",
   "directives": [
     {
       "id": "CD-001",
@@ -22940,6 +22940,134 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9BAB9C-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-9CJ9",
+      "directive_title": "Invariant Isolation of Upstream Runtime Flags across Worker Thread Spawns",
+      "source_repo": "avajs-ava-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9CJ9-invariant-isolation-of-upstream-runtime-flags-across-worker-thread-spawns.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-9CJA",
+      "directive_title": "Dual-Barrier RefCounter with Timer Shielding for Event Loop Drain Detection",
+      "source_repo": "avajs-ava-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9CJA-dual-barrier-refcounter-with-timer-shielding-for-event-loop-drain-detection.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-BKKA",
+      "directive_title": "Two-Tier Atomic State Commit Invariant with Interruption Flushing",
+      "source_repo": "hashicorp-terraform-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BKKA-two-tier-atomic-state-commit-invariant-with-interruption-flushing.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-BKKN",
+      "directive_title": "Mutual Incompatibility Enforcement for Environment & Configuration Credentials",
+      "source_repo": "hashicorp-terraform-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BKKN-mutual-incompatibility-enforcement-for-environment-configuration-credentials.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-7NK0",
+      "directive_title": "Mutual Incompatibility Enforcement for Environment & Configuration Credentials",
+      "source_repo": "hashicorp/terraform",
+      "source_commit": "b3fb138b",
+      "staged_file": "11_INBOX/candidate-directives/CD-7NK0-mutual-incompatibility-enforcement-for-environment-configuration-credentials.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-7P4E",
+      "directive_title": "Invariant Non-Associativity of Truncating and Conditional Mutations",
+      "source_repo": "apple/foundationdb",
+      "source_commit": "17a225f7",
+      "staged_file": "11_INBOX/candidate-directives/CD-7P4E-invariant-non-associativity-of-truncating-and-conditional-mutations.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-7P4F",
+      "directive_title": "Copy-on-Write Prefix Invariant for Concurrently Snapped Mutation Stacks",
+      "source_repo": "apple/foundationdb",
+      "source_commit": "17a225f7",
+      "staged_file": "11_INBOX/candidate-directives/CD-7P4F-copy-on-write-prefix-invariant-for-concurrently-snapped-mutation-stacks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-7P4G",
+      "directive_title": "Distributed Lock Monotonicity Invariant on Version Progression",
+      "source_repo": "apple/foundationdb",
+      "source_commit": "17a225f7",
+      "staged_file": "11_INBOX/candidate-directives/CD-7P4G-distributed-lock-monotonicity-invariant-on-version-progression.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-9YEI",
+      "directive_title": "Tail-Append Single-File Serialization Invariant",
+      "source_repo": "dkhamsing-open-source-ios-apps-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9YEI-tail-append-single-file-serialization-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-8QYH",
+      "directive_title": "Tail-Append Single-File Serialization Invariant",
+      "source_repo": "dkhamsing/open-source-ios-apps",
+      "source_commit": "f50676d2",
+      "staged_file": "11_INBOX/candidate-directives/CD-8QYH-tail-append-single-file-serialization-invariant.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-14689C",
+      "directive_title": "Worker Thread Rejection of Node.js Host Exec Arguments (BUG-AVA-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "avajs-ava",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-14689C-worker-thread-rejection-of-node-js-host-.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-8CFE86",
+      "directive_title": "Monolithic State Git Merge Conflict Cascade (BUG-OSIA-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dkhamsing-open-source-ios-apps",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8CFE86-monolithic-state-git-merge-conflict-casc.md",
       "staged_date": "2026-11-17"
     }
   ]

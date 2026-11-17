@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "b0c66974",
+    "sourceVersion": "f50676d2",
     "license": "CC0-1.0",
-    "contentHash": "5f388e7b4c5a375e29b57d7fda9cf38158de29c3744fbe8a0ebb1f9da546db47",
-    "lastHarvestedAt": "2026-11-13T18:52:26.067Z",
+    "contentHash": "87d0001dfdf1d96e79bf751bba822a4610682fc0b3cdc542df96ea0afe632962",
+    "lastHarvestedAt": "2026-11-17T08:19:30.627Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "7b843103",
+    "sourceVersion": "b3fb138b",
     "license": "NOASSERTION",
-    "contentHash": "b7254f41efe982fbc954c71332cb7411e64ed2d817ff2980a901085786778ca7",
-    "lastHarvestedAt": "2026-11-14T18:34:43.890Z",
+    "contentHash": "b3a6429bd044c53a37048a8bf61edf8ca76f89f31c5e4b2eaabc99ac62bb8ede",
+    "lastHarvestedAt": "2026-11-17T08:18:39.585Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "04c62ec9",
+    "sourceVersion": "17a225f7",
     "license": "Apache-2.0",
-    "contentHash": "3b872964c15e736fbc08afcc645c9dd173030e8202b97a7aca77b9415ef5646e",
-    "lastHarvestedAt": "2026-11-16T00:36:52.314Z",
+    "contentHash": "cef38dbbc335ec876e4ab232d44ea04b4a71966136101b9b047758ec8472540d",
+    "lastHarvestedAt": "2026-11-17T08:18:41.621Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -10223,10 +10223,10 @@
     "repository": "avajs/ava",
     "platform": "github",
     "sourceUrl": "https://github.com/avajs/ava",
-    "sourceVersion": "a4fb2094",
+    "sourceVersion": "ce2839c1",
     "license": "MIT",
-    "contentHash": "130d36cabc5fa0f5d78022a3025935ea89ec3e0627647220294f013ecf7a79e1",
-    "lastHarvestedAt": "2026-11-07T23:06:23.411Z",
+    "contentHash": "db976478b70a99f914b8688e87457cb37535c8accb5978b3691c72cdd197fc94",
+    "lastHarvestedAt": "2026-11-17T08:18:28.977Z",
     "learningId": "learn-github-avajs-ava"
   },
   "maxrave-dev-kotlin-footguns": {

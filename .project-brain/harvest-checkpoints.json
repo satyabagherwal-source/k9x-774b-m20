@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T08:09:12.963Z",
+  "last_updated": "2026-11-17T08:19:30.646Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3291,14 +3291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
-      "content_hash": "5f388e7b4c5a375e29b57d7fda9cf38158de29c3744fbe8a0ebb1f9da546db47",
-      "verified_at": "2026-11-13T18:52:26.083Z",
+      "content_hash": "87d0001dfdf1d96e79bf751bba822a4610682fc0b3cdc542df96ea0afe632962",
+      "verified_at": "2026-11-17T08:19:30.645Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T18:52:26.083Z"
+      "last_updated": "2026-11-17T08:19:30.645Z"
     },
     "moby/buildkit": {
       "repository": "moby/buildkit",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "b7254f41efe982fbc954c71332cb7411e64ed2d817ff2980a901085786778ca7",
-      "verified_at": "2026-11-14T18:34:43.897Z",
+      "content_hash": "b3a6429bd044c53a37048a8bf61edf8ca76f89f31c5e4b2eaabc99ac62bb8ede",
+      "verified_at": "2026-11-17T08:18:39.592Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T18:34:43.897Z"
+      "last_updated": "2026-11-17T08:18:39.592Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "3b872964c15e736fbc08afcc645c9dd173030e8202b97a7aca77b9415ef5646e",
-      "verified_at": "2026-11-16T00:36:52.322Z",
+      "content_hash": "cef38dbbc335ec876e4ab232d44ea04b4a71966136101b9b047758ec8472540d",
+      "verified_at": "2026-11-17T08:18:41.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T00:36:52.322Z"
+      "last_updated": "2026-11-17T08:18:41.627Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -15366,14 +15366,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-avajs-ava",
-      "content_hash": "130d36cabc5fa0f5d78022a3025935ea89ec3e0627647220294f013ecf7a79e1",
-      "verified_at": "2026-11-07T23:06:23.430Z",
+      "content_hash": "db976478b70a99f914b8688e87457cb37535c8accb5978b3691c72cdd197fc94",
+      "verified_at": "2026-11-17T08:18:28.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T23:06:23.430Z"
+      "last_updated": "2026-11-17T08:18:28.984Z"
     },
     "mochajs/mocha": {
       "repository": "mochajs/mocha",

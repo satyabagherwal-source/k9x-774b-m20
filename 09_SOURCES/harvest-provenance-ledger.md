@@ -10521,3 +10521,11 @@ Every entry in this ledger must capture:
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `b32f30a4` | Multi-dimensional audit evidence | 2026-11-17T08:07:58.744Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `b9dc726d` | Multi-dimensional audit evidence | 2026-11-17T08:09:12.955Z |
 | `learn-dom-k-642a388a` | `project://rqlite-rqlite` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md` | 2026-11-17T08:09:41.908Z |
+| `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `ce2839c1` | Multi-dimensional audit evidence | 2026-11-17T08:18:28.977Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `b3fb138b` | Multi-dimensional audit evidence | 2026-11-17T08:18:39.585Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `17a225f7` | Multi-dimensional audit evidence | 2026-11-17T08:18:41.621Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `f50676d2` | Multi-dimensional audit evidence | 2026-11-17T08:19:30.627Z |
+| `learn-dom-k-8b2a4b0a` | `project://avajs-ava` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/avajs-ava-learnings.md` | 2026-11-17T08:19:58.542Z |
+| `learn-dom-i-6da6494f` | `project://dkhamsing-open-source-ios-apps` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md` | 2026-11-17T08:20:26.789Z |
+| `learn-dom-k-93409b61` | `project://hashicorp-terraform` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md` | 2026-11-17T08:20:59.186Z |
+| `learn-dom-h-61f97060` | `project://hashicorp-terraform` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md` | 2026-11-17T08:21:42.300Z |

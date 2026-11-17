@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T08:09:43.102Z",
-  "total_records": 1487,
+  "last_updated": "2026-11-17T08:21:42.860Z",
+  "total_records": 1496,
   "domains": {
     "A": {
       "total": 9,
@@ -722,7 +722,7 @@
       ]
     },
     "G": {
-      "total": 279,
+      "total": 281,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1002,11 +1002,13 @@
         "domain_intelligence-architecture-intelligence-zarf-dev-zarf-core-invariants",
         "domain_intelligence-architecture-intelligence-zarf-dev-zarf-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-storybookjs-storybook-core-invariants",
-        "domain_intelligence-architecture-intelligence-storybookjs-storybook-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-storybookjs-storybook-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-avajs-ava-core-invariants",
+        "domain_intelligence-architecture-intelligence-avajs-ava-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 347,
+      "total": 349,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1354,11 +1356,13 @@
         "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants",
         "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-apple-foundationdb-core-invariants",
+        "DOM-H-61F97060"
       ]
     },
     "I": {
-      "total": 73,
+      "total": 76,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1432,7 +1436,10 @@
         "domain_intelligence-content-information-intelligence-permify-permify-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-karmada-io-karmada-core-invariants",
         "domain_intelligence-content-information-intelligence-karmada-io-karmada-learnings-core-invariants",
-        "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants"
+        "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants",
+        "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
+        "DOM-I-6DA6494F",
+        "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-learnings-core-i"
       ]
     },
     "J": {
@@ -1463,7 +1470,7 @@
       ]
     },
     "K": {
-      "total": 65,
+      "total": 67,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1529,7 +1536,9 @@
         "domain_intelligence-quality-verification-intelligence-mswjs-msw-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-core-invariants",
         "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-learnings-core-invariants",
-        "DOM-K-642A388A"
+        "DOM-K-642A388A",
+        "DOM-K-8B2A4B0A",
+        "DOM-K-93409B61"
       ]
     },
     "L": {
@@ -16762,8 +16771,8 @@
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "repository": "hashicorp/terraform",
-      "content_hash": "a4e565bf28c25de0e70669e827464c8e2405e68334bef99479e0ec8c9efc87ee",
-      "created_at": "2026-11-14T18:34:44.138Z"
+      "content_hash": "0abed73565bb7b5565a5e2e5142ba28f5937607cee6a7564a200f3865a27df89",
+      "created_at": "2026-11-17T08:18:40.086Z"
     },
     "DOM-D-666917A5": {
       "record_id": "DOM-D-666917A5",
@@ -16822,8 +16831,8 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-learnings-architecture-intelligence-hashicorp-terraform-lear.md",
       "repository": "hashicorp-terraform-learnings",
-      "content_hash": "f394f710dd938c132602f6a24fe272d8633ec40479ce91223a62946ce60374c5",
-      "created_at": "2026-11-14T18:35:11.353Z"
+      "content_hash": "be822fd7ff7dde5d8698e07c230404589a91c46bc3b0e549ae05d3286b791812",
+      "created_at": "2026-11-17T08:21:42.860Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co",
@@ -25821,6 +25830,201 @@
       "repository": "rqlite-rqlite-learnings",
       "content_hash": "0209bcf20b0fee5e2a187c5c9f1ea8e7f31bcef6f494a4611a517acdc33b1a16",
       "created_at": "2026-11-17T08:09:42.430Z"
+    },
+    "domain_intelligence-architecture-intelligence-avajs-ava-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-avajs-ava-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: avajs/ava Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-avajs-ava-architecture-intelligence-avajs-ava-core-invariants.md",
+      "repository": "avajs/ava",
+      "content_hash": "0772b2b8e6992b585bbb2d59dd9a70b96539827714bd6f488e6b6924cacf2a6a",
+      "created_at": "2026-11-17T08:18:29.349Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apple-foundationdb-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-apple-foundationdb-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: apple/foundationdb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apple-foundationdb-technical-construction-intelligence-apple-foundationdb-core-i.md",
+      "repository": "apple/foundationdb",
+      "content_hash": "4513d91fc2fe451e53caf175b32d3cb2402b68a75280bc65eae1be9a7094d0ca",
+      "created_at": "2026-11-17T08:18:42.090Z"
+    },
+    "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: dkhamsing/open-source-ios-apps Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dkhamsing-open-source-ios-apps-content-information-intelligence-dkhamsing-open-s.md",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "content_hash": "add23271c6b401ce0e6496c2fe2f16c3307fd96d0c0e343dd1c734133aa941b4",
+      "created_at": "2026-11-17T08:19:31.018Z"
+    },
+    "DOM-K-8B2A4B0A": {
+      "record_id": "DOM-K-8B2A4B0A",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Infinite Run Stall Caused by Console Activity Masking Test Timeout (BUG-AVA-02)",
+      "content": "Never rely solely on natural event loop exhaustion (`beforeExit`) to terminate a failed worker process. If a test has officially timed out or failed fast, the runner must explicitly invoke `process.exit(1)` rather than waiting for rogue user timers or ongoing stdout stream activity to drain.",
+      "content_hash": "7495d1a5874dbea5ccceaf6783cf1df2194bd0654895fccba3e36c8066d99311",
+      "summary": "The timeout handler in `lib/test.js` marked the test state as failed but did not force teardown of asynchronous streams. Because the test co -> Never rely solely on natural event loop exhaustion (`beforeExit`) to terminate a failed worker process. If a test has officially timed out o",
+      "provenance": {
+        "source_uri": "project://avajs-ava/avajs-ava-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:19:33.855Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (avajs-ava)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Closed Issue `#3373`, Follow-up PR `#3374`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:19:58.524Z"
+    },
+    "domain_intelligence-architecture-intelligence-avajs-ava-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-avajs-ava-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: avajs-ava-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-avajs-ava-learnings-architecture-intelligence-avajs-ava-learnings-core-invariant.md",
+      "repository": "avajs-ava-learnings",
+      "content_hash": "cd917fecfc60600ef77d9f1a4428c3c993672e0e87c079c0770fcb465980848f",
+      "created_at": "2026-11-17T08:19:59.004Z"
+    },
+    "DOM-I-6DA6494F": {
+      "record_id": "DOM-I-6DA6494F",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [],
+      "title": "Non-Standard OSS License Classification Ingestion (BUG-OSIA-02)",
+      "content": "Schema validation definitions for open data catalogs must maintain an escape-hatch primitive (`other`, `custom`, `unspecified`) alongside strict enums to prevent workflow breakage on edge-case metadata.",
+      "content_hash": "2a7f3c956e2cec6972ffbe6a4bbe44983214f33eb9beb094b209d2e5a7d7aaf0",
+      "summary": "The schema requires a strict `license` property, but GitHub's License API only parses standard OSI approved licenses. Non-commercial license -> Schema validation definitions for open data catalogs must maintain an escape-hatch primitive (`other`, `custom`, `unspecified`) alongside st",
+      "provenance": {
+        "source_uri": "project://dkhamsing-open-source-ios-apps/dkhamsing-open-source-ios-apps-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:19:59.323Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dkhamsing-open-source-ios-apps)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "PR #2526 body notes:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:20:26.767Z"
+    },
+    "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-learnings-core-i": {
+      "record_id": "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-learnings-core-i",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: dkhamsing-open-source-ios-apps-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dkhamsing-open-source-ios-apps-learnings-content-information-intelligence-dkhams.md",
+      "repository": "dkhamsing-open-source-ios-apps-learnings",
+      "content_hash": "f3277f18b05125b60507ff892e4bf332a7e0f233f7e3b7d16cf6ddc9898e62b9",
+      "created_at": "2026-11-17T08:20:27.352Z"
+    },
+    "DOM-K-93409B61": {
+      "record_id": "DOM-K-93409B61",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        },
+        {
+          "letter": "F",
+          "id": "design",
+          "name": "Design Intelligence"
+        }
+      ],
+      "title": "CLI UI Stream Decoupling & Buffer Assertion Divergence (BUG-TF-39554)",
+      "content": "When refactoring an I/O subsystem across hundreds of test harnesses, never allow both the old and new abstractions to coexist in test harnesses; remove the legacy struct fields to force compiler verification of assertion sinks.",
+      "content_hash": "d5dd26282285a2bbe28536fabc3d71f737bf898d815af8ffc7a3944d80b0ea0d",
+      "summary": "An architectural migration from HashiCorp's legacy `cli.Ui` interface to an internal `terminal.Streams` and `views.View` pattern left dual r -> When refactoring an I/O subsystem across hundreds of test harnesses, never allow both the old and new abstractions to coexist in test harnes",
+      "provenance": {
+        "source_uri": "project://hashicorp-terraform/hashicorp-terraform-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:20:27.605Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hashicorp-terraform)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `b3fb138b` & `726ba11b`. Modifications in `internal/command/show_test.go`, `init2_test.go`, `providers_test.go`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H",
+          "F"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.62,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:20:59.168Z"
+    },
+    "DOM-H-61F97060": {
+      "record_id": "DOM-H-61F97060",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Dependency Cycle during Resource Forget with `destroy = false` (BUG-TF-39501)",
+      "content": "Graph edge inversion during lifecycle reversal must distinguish between nodes that perform active teardown mutations (which depend on providers existing) and nodes that omit teardown actions (forget/noop nodes).",
+      "content_hash": "fcb38a8a2cba29404b477857771eef67cf434b370ff89b0bbeb699f1644b57cb",
+      "summary": "The graph reduction pass for destruction treats `destroy = false` as a \"forget\" node instead of an \"apply-destroy\" node. The graph edge inve -> Graph edge inversion during lifecycle reversal must distinguish between nodes that perform active teardown mutations (which depend on provid",
+      "provenance": {
+        "source_uri": "project://hashicorp-terraform/hashicorp-terraform-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:20:27.605Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hashicorp-terraform)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Closed Issue #39501."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:21:42.284Z"
     }
   }
 }

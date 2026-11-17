@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T08:09:43.334Z",
+  "last_updated": "2026-11-17T08:21:43.245Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T08:09:42.782Z",
@@ -983,9 +983,9 @@
       "staged_for_review": 1
     },
     "hashicorp-terraform-learnings.md": {
-      "processed_at": "2026-11-14T18:35:11.057Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-17T08:21:42.300Z",
+      "promoted_canonical": 2,
+      "staged_for_review": 0
     },
     "aquasecurity-trivy-learnings.md": {
       "processed_at": "2026-11-14T19:03:30.960Z",
@@ -3256,9 +3256,19 @@
       "processed_at": "2026-11-17T06:47:45.491Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "avajs-ava-learnings.md": {
+      "processed_at": "2026-11-17T08:19:58.542Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
+    },
+    "dkhamsing-open-source-ios-apps-learnings.md": {
+      "processed_at": "2026-11-17T08:20:26.790Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1515,
-  "total_canonical_promoted": 302,
-  "total_staged_for_review": 1196
+  "total_dossiers_evaluated": 1518,
+  "total_canonical_promoted": 306,
+  "total_staged_for_review": 1198
 }
