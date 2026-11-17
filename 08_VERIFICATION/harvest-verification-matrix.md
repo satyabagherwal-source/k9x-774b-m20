@@ -10672,3 +10672,5 @@
 | `CYCLE-20261117-ZSRJ` | `2026-11-17T18:56:24.415Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9034` | Yes (`30bcb05b...`) |
 | `CYCLE-20261117-AMB8` | `2026-11-17T19:04:49.268Z` | `XHToken/Spark-X2.6-4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md` | Yes (`cd57dcd4...`) |
 | `CYCLE-20261117-AOFU` | `2026-11-17T19:04:52.026Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9035` | Yes (`8b2dc88d...`) |
+| `CYCLE-20261117-K7RC` | `2026-11-17T19:12:16.968Z` | `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md` | Yes (`05b3a2c9...`) |
+| `CYCLE-20261117-KJI0` | `2026-11-17T19:12:32.184Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9036` | Yes (`3721ca6f...`) |

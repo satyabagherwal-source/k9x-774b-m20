@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T19:05:03.022Z",
-  "total_verified_learnings": 8929,
+  "last_updated": "2026-11-17T19:12:36.532Z",
+  "total_verified_learnings": 8930,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20517,
+  "total_items": 20524,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "2df7e3ecaeebb7cbf968b7918db5f15c80275fcabb4a727ba770e3097cba6f55",
+      "content_hash": "bd3df7cdbc3215da49039a0850ae32ab82d559cf2a9840fb815ec7043336392c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T14:15:20.433Z"
+      "persisted_at": "2026-11-17T19:12:36.532Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -215573,8 +215573,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "886c258b",
-      "content_hash": "d47689e61914138bc417fa40d90acb68e6b9912bd02e817c10c749f3e5351dec",
+      "source_version": "698c89f6",
+      "content_hash": "3721ca6fa07af895eea61b5e31c18ecff95f1b1f2da98eafd247b2bf359bd341",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -215587,6 +215587,11 @@
           "number": 8783,
           "title": "restore the interrupt status when execute() is interrupted",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9036,
+          "title": "race in AiServiceCaptureTest.should_rethrow_error_of_failed_token_stream",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215594,7 +215599,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:55:51.884Z",
+      "verified_at": "2026-11-17T19:12:31.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215636,10 +215641,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "repository": "langchain4j/langchain4j",
-      "source_version": "886c258b",
-      "content_hash": "5e859acac458868e8b7834f7b27abb39dc73049edf1abffd5377702a5529d800",
+      "source_version": "698c89f6",
+      "content_hash": "c41bfa3c44f0015570e8ccfe8e08d990a8868a355131864bf9c1f4f17ddaad35",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T18:55:52.287Z"
+      "persisted_at": "2026-11-17T19:12:32.436Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j",
@@ -215648,10 +215653,10 @@
       "relative_path": "08_VERIFICATION/langchain4j-langchain4j-verification-protocol-empirical-defect-shield-for-langch.md",
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j/langchain4j",
       "repository": "langchain4j/langchain4j",
-      "source_version": "886c258b",
-      "content_hash": "ddbc4d1aad73b82f57238e82484adf224cc040e2b0f40c6a919b8e8b7dd9e6e7",
+      "source_version": "698c89f6",
+      "content_hash": "72bb62b148bc9fb29df9216463145916146630b8ae45fc3c10f3a29231efee36",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:55:52.390Z"
+      "persisted_at": "2026-11-17T19:12:32.573Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c",
@@ -269385,13 +269390,13 @@
       "item_id": "candidate_directive-portico-fix-typos-on-development-community-and-security-pages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YC8I-portico-fix-typos-on-development-community-and-security-pages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KMP8-portico-fix-typos-on-development-community-and-security-pages.md",
       "title": "portico: Fix typos on development community and security pages.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f6c1310cc598253dc1d9214227b85db22b639ce1cc866cc9125e09e5f1a6a86b",
+      "content_hash": "57d562a30796c494a5da0459db6c57677b64a2a86c121f7bef90c11cb4b73815",
       "domain_letter": "L",
-      "persisted_at": "2026-11-17T14:15:20.181Z"
+      "persisted_at": "2026-11-17T19:12:36.337Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
@@ -269401,9 +269406,9 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1da5726bc3e68ff03917e05f058db8679a93dee73aee1898174def05b6f6349e",
+      "content_hash": "e5431d4acd99bf55a05e8ca855199c6f7cb4f4b1746fb784e909a34e7c6620bc",
       "domain_letter": "A",
-      "persisted_at": "2026-11-17T14:15:20.299Z"
+      "persisted_at": "2026-11-17T19:12:36.428Z"
     },
     "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it": {
       "item_id": "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it",
@@ -275405,6 +275410,107 @@
       "content_hash": "aa33b8e062f287a48924398e0a94066a127c9e325055598299c6712b36183f5a",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T19:05:01.990Z"
+    },
+    "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb": {
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "slug": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "content_hash": "05b3a2c91c8f79c8d9cdb1c635b559d3135b82afe16c71e12e0dda04f4226576",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T19:12:16.816Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-core-inv": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-research-knowledge-intelligence-nvidi.md",
+      "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB Core Invariants",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
+      "content_hash": "c38722dd1c10ad24946dc0ef95dd138dc5717b106657e4512fd6978175693c00",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T19:12:17.117Z"
+    },
+    "rule-9036": {
+      "learning_id": "rule-9036",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9036,
+      "title": "race in AiServiceCaptureTest.should_rethrow_error_of_failed_token_stream",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "698c89f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T19:12:31.984Z"
+    },
+    "candidate_directive-race-in-aiservicecapturetest-should_rethrow_error_of_failed_token_stream": {
+      "item_id": "candidate_directive-race-in-aiservicecapturetest-should_rethrow_error_of_failed_token_stream",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KMAH-race-in-aiservicecapturetest-should_rethrow_error_of_failed_token_stream.md",
+      "title": "race in AiServiceCaptureTest.should_rethrow_error_of_failed_token_stream",
+      "repository": "langchain4j-langchain4j-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d88ca0e000bf121c20c5a6910d8e437f6c3af4101f69005dee31090894f8656",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T19:12:35.801Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learn": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learn",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learnings-research-knowledge-intellig.md",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings Core Invariants",
+      "repository": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a8ee0cc8a95bd17670c516aad45896526c0bddd5ed1f3de9185593970c1d47fd",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T19:12:35.473Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-learnings-technical-construction-intelligence-langchain4.md",
+      "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
+      "repository": "langchain4j-langchain4j-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3e1ca443225d853790006641cfed473b88b5d1166cd82da45c850c757f38b960",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T19:12:35.899Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/langchain4j-langchain4j-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for langchain4j-langchain4j-learnings",
+      "repository": "langchain4j-langchain4j-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8cb6563a477816085e9c022de56f34cc375e9591bf321e330a504cb8414f1fbf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T19:12:36.012Z"
     }
   },
   "ai-builder-brain": {

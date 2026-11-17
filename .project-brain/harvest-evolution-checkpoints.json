@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T19:05:03.186Z",
+  "last_updated": "2026-11-17T19:12:36.637Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-17T14:15:19.918Z",
+      "processed_at": "2026-11-17T19:12:36.114Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1648,8 +1648,8 @@
       "staged_for_review": 0
     },
     "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md": {
-      "processed_at": "2026-11-13T07:55:49.995Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T19:12:35.331Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "iplug2-iplug2-learnings.md": {
@@ -3351,9 +3351,14 @@
       "processed_at": "2026-11-17T18:35:39.185Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "langchain4j-langchain4j-learnings.md": {
+      "processed_at": "2026-11-17T19:12:35.629Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1677,
+  "total_dossiers_evaluated": 1680,
   "total_canonical_promoted": 324,
-  "total_staged_for_review": 1314
+  "total_staged_for_review": 1316
 }

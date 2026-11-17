@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "886c258b",
+    "sourceVersion": "698c89f6",
     "license": "Apache-2.0",
-    "contentHash": "d47689e61914138bc417fa40d90acb68e6b9912bd02e817c10c749f3e5351dec",
-    "lastHarvestedAt": "2026-11-16T18:55:52.026Z",
+    "contentHash": "3721ca6fa07af895eea61b5e31c18ecff95f1b1f2da98eafd247b2bf359bd341",
+    "lastHarvestedAt": "2026-11-17T19:12:32.187Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -10825,8 +10825,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb",
     "license": "Open-Source",
-    "contentHash": "7e9ddacb466b3888794dc91f354512a37b80ef35183462c9ea01a8e0a54c2de1",
-    "lastHarvestedAt": "2026-11-13T07:55:02.126Z",
+    "contentHash": "05b3a2c91c8f79c8d9cdb1c635b559d3135b82afe16c71e12e0dda04f4226576",
+    "lastHarvestedAt": "2026-11-17T19:12:16.971Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb"
   },
   "gaurav-gosain-tuios": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T19:05:02.663Z",
-  "total_records": 1658,
+  "last_updated": "2026-11-17T19:12:36.428Z",
+  "total_records": 1661,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 709,
+      "total": 711,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -758,7 +758,9 @@
         "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-gguf-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv"
+        "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv",
+        "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-core-inv",
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learn"
       ]
     },
     "E": {
@@ -1115,7 +1117,7 @@
       ]
     },
     "H": {
-      "total": 395,
+      "total": 396,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1511,7 +1513,8 @@
         "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva",
         "DOM-H-28B99DBA",
         "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-core-invar",
-        "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-learnings-"
+        "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-learnings-",
+        "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar"
       ]
     },
     "I": {
@@ -10119,8 +10122,8 @@
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "repository": "langchain4j/langchain4j",
-      "content_hash": "5e859acac458868e8b7834f7b27abb39dc73049edf1abffd5377702a5529d800",
-      "created_at": "2026-11-16T18:55:52.287Z"
+      "content_hash": "c41bfa3c44f0015570e8ccfe8e08d990a8868a355131864bf9c1f4f17ddaad35",
+      "created_at": "2026-11-17T19:12:32.436Z"
     },
     "DOM-D-9936936B": {
       "record_id": "DOM-D-9936936B",
@@ -26645,8 +26648,8 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-zulip-zulip-learnings-human-need-intelligence-zulip-zulip-learnings-core-invaria.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "1da5726bc3e68ff03917e05f058db8679a93dee73aee1898174def05b6f6349e",
-      "created_at": "2026-11-17T14:15:20.299Z"
+      "content_hash": "e5431d4acd99bf55a05e8ca855199c6f7cb4f4b1746fb784e909a34e7c6620bc",
+      "created_at": "2026-11-17T19:12:36.428Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants",
@@ -28175,6 +28178,33 @@
       "repository": "hf-xhtoken-spark-x2.6-4b-gguf-learnings",
       "content_hash": "aa33b8e062f287a48924398e0a94066a127c9e325055598299c6712b36183f5a",
       "created_at": "2026-11-17T19:05:01.990Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-research-knowledge-intelligence-nvidi.md",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+      "content_hash": "c38722dd1c10ad24946dc0ef95dd138dc5717b106657e4512fd6978175693c00",
+      "created_at": "2026-11-17T19:12:17.117Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learn": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learn",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learnings-research-knowledge-intellig.md",
+      "repository": "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings",
+      "content_hash": "a8ee0cc8a95bd17670c516aad45896526c0bddd5ed1f3de9185593970c1d47fd",
+      "created_at": "2026-11-17T19:12:35.473Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-learnings-technical-construction-intelligence-langchain4.md",
+      "repository": "langchain4j-langchain4j-learnings",
+      "content_hash": "3e1ca443225d853790006641cfed473b88b5d1166cd82da45c850c757f38b960",
+      "created_at": "2026-11-17T19:12:35.899Z"
     }
   }
 }

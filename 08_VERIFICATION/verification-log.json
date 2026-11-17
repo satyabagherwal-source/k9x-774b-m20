@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-29BU",
-    "timestamp": "2026-11-15T16:07:01.050Z",
-    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
-    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-    "contentHash": "ebcff82856f5c1ddb65f39cb50c14d066d277ef57bc1d768c61822e1eeced4fc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-2EIL",
-    "timestamp": "2026-11-15T16:07:07.773Z",
-    "repository": "TableProApp/TablePro",
-    "learningId": "learn-github-tableproapp-tablepro",
-    "contentHash": "3eebd6309c39c324212cd5d5b7135ef8230f932b5f421fb41e040ed4da6413d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-M4P8",
     "timestamp": "2026-11-15T16:50:27.788Z",
     "repository": "Jarvis322/macos-sysdata",
@@ -7490,6 +7460,36 @@
     "repository": "agent-of-empires/agent-of-empires",
     "learningId": "learn-github-agent-of-empires-agent-of-empires",
     "contentHash": "8b2dc88d4f9d16543a9a28402459a263c9c8c4e52dbe16a2fa37390f2ceafed6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-K7RC",
+    "timestamp": "2026-11-17T19:12:16.968Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
+    "contentHash": "05b3a2c91c8f79c8d9cdb1c635b559d3135b82afe16c71e12e0dda04f4226576",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-KJI0",
+    "timestamp": "2026-11-17T19:12:32.184Z",
+    "repository": "langchain4j/langchain4j",
+    "learningId": "learn-github-langchain4j-langchain4j",
+    "contentHash": "3721ca6fa07af895eea61b5e31c18ecff95f1b1f2da98eafd247b2bf359bd341",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

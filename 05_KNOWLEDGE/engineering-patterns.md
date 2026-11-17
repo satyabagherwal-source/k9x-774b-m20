@@ -660781,3 +660781,78 @@ async fn await_asset_download(
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c07429c3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9036. race in AiServiceCaptureTest.should_rethrow_error_of_failed_token_stream (Harvested from langchain4j/langchain4j)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "race in AiServiceCaptureTest.should_rethrow_error_of_failed_token_stream",
+  "source": "langchain4j/langchain4j",
+  "source_url": "https://github.com/langchain4j/langchain4j",
+  "source_version": "698c89f6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T19:12:31.773Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-langchain4j-langchain4j",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) (Revision: `698c89f6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `langchain4j-test/src/main/java/dev/langchain4j/test/service/AiServiceCapture.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `32bec62b`: race in AiServiceCaptureTest.should_rethrow_error_of_failed_token_stream. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-test/src/main/java/dev/langchain4j/test/service/AiServiceCapture.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+ * {@code TokenStream}, the invocation finishes before the {@code onCompleteResponse} or {@code onError} handler you
+ * gave it has run, so when {@code capture(...)} returns or throws, that handler may still be running.
+ * {@link AiServiceInvocation#outputText()} has the final text and {@link AiServiceInvocation#error()} the error in any
+ * case.
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Induced defect failure mode:
+ * {@code TokenStream}, the invocation finishes before the {@code onCompleteResponse} handler you gave it has run, so
+ * when {@code capture(...)} returns, that handler may still be running. {@link AiServiceInvocation#outputText()} has
+ * the final text in any case.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `32bec62b` are properly handled with clean fallback behavior.

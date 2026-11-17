@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T19:05:00.674Z",
-    "lastVerified": "2026-11-17T19:05:00.674Z",
+    "lastChecked": "2026-11-17T19:12:35.213Z",
+    "lastVerified": "2026-11-17T19:12:35.213Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,8 +370,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-17T18:35:36.538Z",
-    "lastVerified": "2026-11-17T18:35:36.538Z",
+    "lastChecked": "2026-11-17T19:12:28.877Z",
+    "lastVerified": "2026-11-17T19:12:28.877Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -952,9 +952,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-17T15:16:32.523Z",
+    "lastChecked": "2026-11-17T19:12:23.864Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-17T15:16:32.523Z"
+    "lastVerified": "2026-11-17T19:12:23.864Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -1582,8 +1582,8 @@
     "officialUrl": "https://github.com/goharbor/harbor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-16T21:39:52.148Z",
-    "lastVerified": "2026-11-16T21:39:52.148Z",
+    "lastChecked": "2026-11-17T19:12:21.481Z",
+    "lastVerified": "2026-11-17T19:12:21.481Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goharbor-harbor",
@@ -2065,12 +2065,12 @@
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-16T18:55:51.191Z",
-    "lastVerified": "2026-11-16T18:55:51.191Z",
+    "lastChecked": "2026-11-17T19:12:31.377Z",
+    "lastVerified": "2026-11-17T19:12:31.377Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "d47689e61914138bc417fa40d90acb68e6b9912bd02e817c10c749f3e5351dec",
+    "contentHash": "3721ca6fa07af895eea61b5e31c18ecff95f1b1f2da98eafd247b2bf359bd341",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -4745,9 +4745,9 @@
   "akveo-kittentricks": {
     "name": "kittenTricks",
     "officialUrl": "https://github.com/akveo/kittenTricks",
-    "lastChecked": "2026-11-14T08:05:23.643Z",
+    "lastChecked": "2026-11-17T19:12:18.913Z",
     "revisionIdentifier": "e9d81da3",
-    "lastVerified": "2026-11-14T08:05:23.643Z"
+    "lastVerified": "2026-11-17T19:12:18.913Z"
   },
   "kubeshop-botkube": {
     "name": "botkube",
@@ -8502,9 +8502,9 @@
   "pamburus-hl": {
     "name": "hl",
     "officialUrl": "https://github.com/pamburus/hl",
-    "lastChecked": "2026-11-16T05:41:20.945Z",
+    "lastChecked": "2026-11-17T19:12:13.896Z",
     "revisionIdentifier": "3aae7bc7",
-    "lastVerified": "2026-11-16T05:41:20.945Z"
+    "lastVerified": "2026-11-17T19:12:13.896Z"
   },
   "hf-qwen-qwen3-4b": {
     "name": "Qwen/Qwen3-4B",
@@ -13852,12 +13852,12 @@
     "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T07:55:01.603Z",
-    "lastVerified": "2026-11-13T07:55:01.603Z",
+    "lastChecked": "2026-11-17T19:12:16.443Z",
+    "lastVerified": "2026-11-17T19:12:16.443Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
-    "contentHash": "7e9ddacb466b3888794dc91f354512a37b80ef35183462c9ea01a8e0a54c2de1",
+    "contentHash": "05b3a2c91c8f79c8d9cdb1c635b559d3135b82afe16c71e12e0dda04f4226576",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

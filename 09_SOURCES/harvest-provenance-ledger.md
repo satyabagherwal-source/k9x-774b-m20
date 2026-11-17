@@ -10705,3 +10705,5 @@ Every entry in this ledger must capture:
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `8c05d01e` | Multi-dimensional audit evidence | 2026-11-17T18:56:24.419Z |
 | `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-17T19:04:49.273Z |
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `3bfd7c01` | Multi-dimensional audit evidence | 2026-11-17T19:04:52.031Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-17T19:12:16.971Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `698c89f6` | Multi-dimensional audit evidence | 2026-11-17T19:12:32.187Z |

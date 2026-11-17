@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T19:05:00.929Z",
+  "updated_at": "2026-11-17T19:12:35.655Z",
   "stats": {
-    "total_discovered": 5109,
-    "approved_pending_harvest": 4820,
+    "total_discovered": 5110,
+    "approved_pending_harvest": 4821,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4807,
+      "COMMUNITY_AND_EXPERT": 4808,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -110396,6 +110396,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
         "fileName": "agent-of-empires-agent-of-empires-learnings.md"
+      }
+    },
+    "SRC-2010DAC8C922": {
+      "id": "SRC-2010DAC8C922",
+      "url": "https://github.com/langchain4j/langchain4j",
+      "title": "https://github.com/langchain4j/langchain4j",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T19:12:35.655Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
+        "fileName": "langchain4j-langchain4j-learnings.md"
       }
     }
   }
