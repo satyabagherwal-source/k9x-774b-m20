@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-3ZV4",
-    "timestamp": "2026-11-14T20:32:38.224Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "a98cc0a7023ddf123e164393f84d3354f45ddb86339a93440510fdef590b3b54",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-40KW",
-    "timestamp": "2026-11-14T20:32:39.152Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "b2657f28e0b881f1f599e73ba5a63e8a7bbeb3f563ca610ecb82793f6ca1ad78",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-8385",
     "timestamp": "2026-11-14T20:35:49.205Z",
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -7490,6 +7460,36 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "5150389181f4d9c684975448e7b5c559dff4f2ac67c4361a154b53229fb4fa3f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-O8X4",
+    "timestamp": "2026-11-17T10:51:32.008Z",
+    "repository": "zulip/zulip",
+    "learningId": "learn-github-zulip-zulip",
+    "contentHash": "dec91f3b6fe914115d76f59d3791a255e5d4e430b515c0eeedcc72190c5a2046",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-OEY5",
+    "timestamp": "2026-11-17T10:51:39.821Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "5d7153712acf569c1a45464490a50056e0fc2f962930136efa8e8d765988de0f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

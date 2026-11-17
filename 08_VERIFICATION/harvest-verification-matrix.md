@@ -10525,3 +10525,5 @@
 | `CYCLE-20261117-APD9` | `2026-11-17T10:41:00.141Z` | `mlua-rs/mlua` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8952` | Yes (`a9d8cd26...`) |
 | `CYCLE-20261117-AVUU` | `2026-11-17T10:41:08.550Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8953` | Yes (`e49f1f77...`) |
 | `CYCLE-20261117-B07W` | `2026-11-17T10:41:14.204Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8954` | Yes (`51503891...`) |
+| `CYCLE-20261117-O8X4` | `2026-11-17T10:51:32.008Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8955` | Yes (`dec91f3b...`) |
+| `CYCLE-20261117-OEY5` | `2026-11-17T10:51:39.821Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8956` | Yes (`5d715371...`) |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T10:41:18.649Z",
-  "total_records": 1522,
+  "last_updated": "2026-11-17T10:51:44.861Z",
+  "total_records": 1524,
   "domains": {
     "A": {
-      "total": 9,
+      "total": 11,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -15,7 +15,9 @@
         "domain_intelligence-human-need-intelligence-kumahq-kuma-core-invariants",
         "domain_intelligence-human-need-intelligence-gravitl-netmaker-core-invariants",
         "domain_intelligence-human-need-intelligence-defguard-defguard-core-invariants",
-        "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants"
+        "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants",
+        "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants",
+        "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants"
       ]
     },
     "B": {
@@ -8255,8 +8257,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "1b16e6080826e44a2ed7af293337d0ac0162ef7e9b1abecd1ab3f38726142957",
-      "created_at": "2026-11-17T07:40:20.633Z"
+      "content_hash": "75941359b8743c57adc70adfc8dcd622f967e86d25a63e01740479cc020f1149",
+      "created_at": "2026-11-17T10:51:44.861Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -16509,8 +16511,8 @@
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "repository": "GreptimeTeam/greptimedb",
-      "content_hash": "aea31ca69162125cfcf229a448af9a6953c17e9d959c9a87c1e32d81913301a3",
-      "created_at": "2026-11-16T02:17:33.422Z"
+      "content_hash": "fd7c69f0e57481b324540317510ab78990b397403d7d740ddd55a0b222a812e7",
+      "created_at": "2026-11-17T10:51:40.145Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
@@ -16578,8 +16580,8 @@
       "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-learnings-architecture-intelligence-greptimeteam-greptim.md",
       "repository": "greptimeteam-greptimedb-learnings",
-      "content_hash": "0bd5e2a3dcd9a722835867c5664969090062ca7a790d509206433c178bc70554",
-      "created_at": "2026-11-14T17:51:54.565Z"
+      "content_hash": "46dac1ad9a5ad0e670bd988b65425583e337efa63f7e686f326136e2f394df51",
+      "created_at": "2026-11-17T10:51:44.168Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar",
@@ -26493,6 +26495,24 @@
       "repository": "meshery-meshery-learnings",
       "content_hash": "45e8d7a53000f0985de6fe5e2129b46e8940bafbfffa225996c4cde25c4eb04f",
       "created_at": "2026-11-17T10:41:18.649Z"
+    },
+    "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: zulip/zulip Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-zulip-zulip-human-need-intelligence-zulip-zulip-core-invariants.md",
+      "repository": "zulip/zulip",
+      "content_hash": "ac5e7c89fe96cb94253a471db4646d6196d36f3cfb0c8c192bf2c10af214c3c0",
+      "created_at": "2026-11-17T10:51:32.319Z"
+    },
+    "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-zulip-zulip-learnings-human-need-intelligence-zulip-zulip-learnings-core-invaria.md",
+      "repository": "zulip-zulip-learnings",
+      "content_hash": "55d541877aa53d7f38ad9dd420f90ebe2791c6b4bd842e6b87ee89c81c2b4bbc",
+      "created_at": "2026-11-17T10:51:43.571Z"
     }
   }
 }

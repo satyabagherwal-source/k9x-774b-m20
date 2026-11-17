@@ -4,22 +4,22 @@
 {
   "source_repository": "zulip/zulip",
   "source_url": "https://github.com/zulip/zulip",
-  "source_version": "37b5e4a9",
+  "source_version": "19e7b6bb",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T20:36:51.942Z",
+  "timestamp": "2026-11-17T10:51:32.196Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zulip-zulip",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zulip/zulip](https://github.com/zulip/zulip) (Revision: `37b5e4a9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T20:36:51.942Z`  
+> **Provenance**: Harvested from [zulip/zulip](https://github.com/zulip/zulip) (Revision: `19e7b6bb`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T10:51:32.196Z`  
 > **Learning ID**: `learn-github-zulip-zulip`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zulip/zulip` (Commit: `37b5e4a9`)
+- **Target Repository**: `zulip/zulip` (Commit: `19e7b6bb`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:36:50.868Z  
+> **Harvest Timestamp**: 2026-11-17T10:51:30.816Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26223 stars
+- **Stars / Engagement**: 26241 stars
 
 ---
 
@@ -1221,11 +1221,14 @@ def check_rabbitmq_queues() -> None:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40648** (2026-11-13): **custom_profile_fields: Reject name/hint/field_data when updating default external account fields**
-  *Symptoms*: Description / Bug Summary  In zerver/views/custom_profile_fields.py, updating a default external account field (e.g. GitHub username or X username) is restricted: only the display_in_profile_summary property is allowed to be updated.  Historically, because name, hint, and field_data were required parameters on PATCH /realm/profile_fields/{id}, a helper function update_only_display_in_profile_summary was used to allow clients to pass the existing values of those fields.  A TODO in zerver/views/custom_profile_fields.py explicitly tracks this cleanup: ``` # TODO: Make the name/hint/field_data parameters optional, and # explicitly require that the client passes None for all of them for this case. # Right now, for name/hint/field_data we allow the client to send the existing # values for the respective fields. After this TODO is done, we will only allow # the client to pass None values if the field is unchanged. ``` Now that the endpoint uses @typed_endpoint and name, hint, and field_data are optional parameters (| None = None), sending any of name, hint, or field_data when updating a default external account field should be explicitly disallowed with "Default custom field cannot be updated.", and the unused update_only_display_in_profile_summary helper function can be removed.  I have a branch ready with this cleanup and updated test coverage. **Zulip Server and web app version:**  - [ ] Zulip Cloud (`*.zulipchat.com`) - [ ] Zulip Server 12.x - [ ] Zulip Server 11.x - [ ] Zulip S
+- **Issue #40683** (2026-11-14): **Error while sending update announcements**
+  *Symptoms*: Since upgrading our self-hosted Zulip Server from 12.1 to 13.0, we received the following error once per hour:  ``` Error while sending update announcements  IndexError list index out of range  Django Version: 5.2.18 Python Executable: /usr/bin/python3 Python Version: 3.12.3 Python Path: ['/home/zulip/deployments/2026-11-12-21-29-38/.venv/lib/python3.12/site-packages', '/home/zulip/deployments/2026-11-12-21-29-38', '/usr/lib/python312.zip', '/usr/lib/python3.12', '/usr/lib/python3.12/lib-dynload', '/usr/local/lib/python3.12/dist-packages', '/usr/lib/python3/dist-packages', '/home/zulip/deployments/2026-11-12-21-29-38'] Server time: Fri, 13 Nov 2026 15:47:03 +0000 Installed Applications: '' Installed Middleware: ''   Traceback (most recent call last):   File "/home/zulip/deployments/2026-11-12-21-29-38/zerver/lib/zulip_update_announcements.py", line 830, in send_zulip_update_announcements     send_zulip_update_announcements_to_realm(realm, skip_delay)     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File "/home/zulip/deployments/2026-11-12-21-29-38/zerver/lib/zulip_update_announcements.py", line 927, in send_zulip_update_announcements_to_realm     internal_prep_zulip_update_announcements_stream_messages(     ^   File "/home/zulip/deployments/2026-11-12-21-29-38/zerver/lib/zulip_update_announcements.py", line 778, in internal_prep_zulip_update_announcements_stream_messages     content = get_zulip_update_announcements_message_for_level(level=current_level + 1)  
+  **Post-Mortem & Fix Analysis**:
+  > Thank you for this report @srittau! This is fixed in 13.1, and a separate late-breaking change required 13.2 today. Can you grab 13.2 and let us know if you experience any other challenges?
+  > The message was now delivered successfully after an update, thanks!
 
-- **Issue #40631** (2026-11-09): **docs(help): Update legacy stream references to channels in help documentation**
-  *Symptoms*: ### Documentation link: https://zulip.com/help/introduction-to-topics  ### Problem: Zulip transitioned from the term "streams" to "channels" in Zulip 9.0+. While most help center articles have been updated, several explanatory sections in `help/introduction-to-topics.md` still use the word "streams" when explaining how topics organize conversations within channels.  ### Suggested fix: Update the remaining user-facing references from "stream" / "streams" to "channel" / "channels" in `help/introduction-to-topics.md` to maintain consistency with the current Zulip interface.  *I would like to submit a PR to update this documentation.*
+- **Issue #40658** (2026-11-16): **Inbox: pressing r replies to the wrong topic after the list changes**
+  *Symptoms*: In Inbox, if I focus a topic with the arrow keys and then a topic above it gets marked as read somewhere else, pressing `r` replies to the wrong topic (the one just below the focused one).  **To reproduce**  1. Open Inbox in two tabs with a few unread topics. 2. In tab 1, arrow down to a topic near the bottom. 3. In tab 2, mark a topic near the top as read. 4. In tab 1, press `r`.  Compose opens for the next topic down, even though the focus ring is still on the one I picked. It also happens when a new unread topic shows up above the focused row.  From what I can tell, `row_focus` in `web/src/inbox_ui.ts` stores the row's position, and it isn't updated when rows above it are added or removed.  I have a small fix and can open a PR.  **AI use:** I used Claude to help find and understand this issue, and to debug and draft the fix.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1242,511 +1245,385 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `37b5e4a9` (2026-11-13)
-**Commit Message**: puppet: Fix PostgreSQL failing to start on new installs.
+### Incident Patch 1: `1bc06e2d` (2026-11-05)
+**Commit Message**: portico: Fix typos on development community and security pages.
 
-postgresql-common 294 leaves /var/log/postgresql owned by root on
-a new install. Its postinst runs systemd-tmpfiles before it creates
-the postgres user, and the error is ignored. Our configuration
-logs to that directory, so PostgreSQL failed to start with:
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-    FATAL:  could not open log file "...": Permission denied
-
-This broke every new-install CI job once 294 reached
-apt.postgresql.org. Upgrades are not affected, because older
-versions already set the owner.
-
-Fix this by managing the directory with the owner and mode that
-294's tmpfiles.d entry sets, so that systemd-tmpfiles does not
-change it back at boot. Tested in an ubuntu:resolute container with
-postgresql-common 294 and PostgreSQL 18.7.
-
-Reported upstream: https://bugs.debian.org/1153884
-
-**File**: `puppet/zulip/manifests/profile/postgresql.pp` (modified, +13/-1)
+**File**: `templates/corporate/development-community.md` (modified, +1/-1)
 ```diff
-@@ -69,6 +69,18 @@
-     fail("PostgreSQL ${version} not supported")
-   }
+@@ -263,7 +263,7 @@ topic to a different channel](/help/move-content-to-another-channel).
+ - [#learning](https://chat.zulip.org/#narrow/channel/92-learning) is
+   for posting great learning resources one comes across.
+ - [#off topic](https://chat.zulip.org/#narrow/channel/97-off-topic) is
+-  is for occasional conversations not related to Zulip, usually things
++  for occasional conversations not related to Zulip, usually things
+   of general interest to open-source communities.
  
-+  # Our configuration sets log_directory to this directory.  On a new
-+  # install, postgresql-common 294 can leave it owned by root, because
-+  # its tmpfiles.d entry runs before the postgres user exists.
-+  # https://bugs.debian.org/1153884
-+  file { '/var/log/postgresql':
-+    ensure  => directory,
-+    require => Package[$zulip::postgresql_base::postgresql],
-+    owner   => 'postgres',
-+    group   => 'postgres',
-+    mode    => '2775',
-+  }
-+
-   # PostgreSQL 18's io_method = io_uring requires a larger
-   # RLIMIT_MEMLOCK than systemd's default on Linux 6.14 and newer
-   if $facts['os']['family'] == 'Debian' {
-@@ -110,7 +122,7 @@
-   }
-   service { 'postgresql':
-     ensure    => $start,
--    require   => $require + [Exec['reload systemd']],
-+    require   => $require + [Exec['reload systemd'], File['/var/log/postgresql']],
-     subscribe => [ File[$postgresql_conf_file] ],
-   }
- }
+ You can always find the description for the channel you’re reading at
+```
+
+**File**: `templates/corporate/security.md` (modified, +1/-1)
+```diff
+@@ -111,7 +111,7 @@ security issues from being introduced in Zulip.
+ 
+ ### Development process
+ 
+-- **Comprehensive automated testing**: The Zulip server has an remarkably
++- **Comprehensive automated testing**: The Zulip server has a remarkably
+   complete automated test suite, including [complete test
+   coverage](https://app.codecov.io/gh/zulip/zulip/tree/main/zerver) in
+   security-sensitive code paths.
 ```
 
 ---
 
-### Incident Patch 2: `366c9ba5` (2026-11-05)
-**Commit Message**: create_realm: Handle race condition with RealmSubdomainUnavailableError.
+### Incident Patch 2: `5e601915` (2026-11-16)
+**Commit Message**: skills: Add write-security-advisory skill.
 
-When concurrent realm creation requests race on subdomain selection,
-the second request hits a database unique constraint and raises an
-IntegrityError.
+This is a skill for generating the first draft of a security advisory in
+the style that we usually use.
 
-Update do_create_realm to catch IntegrityError and raise a custom
-RealmSubdomainUnavailableError when the subdomain already exists,
-and remove the redundant pre-creation assertion.
+I used it for drafting multiple of recent security advisories and the
+quality of the generated draft is much more satisfactory than without
+this skill. Of course proof-reading is still required, as Claude makes
+subtle factual mistakes or uses clunky or imprecise phrasing.
 
-In the registration view, catch RealmSubdomainUnavailableError and
-re-render the form with an inline field-level error.
-
-Fixes #21160.
-
-**File**: `zerver/actions/create_realm.py` (modified, +72/-68)
+**File**: `.claude/skills/write-security-advisory/SKILL.md` (added, +105/-0)
 ```diff
-@@ -3,7 +3,7 @@
- from typing import Any
- 
- from django.conf import settings
--from django.db import transaction
-+from django.db import IntegrityError, transaction
- from django.utils.timezone import now as timezone_now
- from django.utils.translation import gettext as _
- from django.utils.translation import override as override_language
-@@ -15,6 +15,7 @@
-     do_deactivate_realm,
- )
- from zerver.lib.bulk_create import create_users
-+from zerver.lib.exceptions import RealmSubdomainUnavailableError
- from zerver.lib.push_notifications import sends_notifications_directly
- from zerver.lib.realm_description import render_realm_description
- from zerver.lib.remote_server import maybe_enqueue_audit_log_upload
-@@ -209,8 +210,6 @@ def do_create_realm(
-         raise AssertionError(
-             "Creating a realm on SOCIAL_AUTH_SUBDOMAIN or SELF_HOSTING_MANAGEMENT_SUBDOMAIN is not allowed!"
-         )
--    if Realm.objects.filter(string_id=string_id).exists():
--        raise AssertionError(f"Realm {string_id} already exists!")
-     if not server_initialized():
-         logging.info("Server not yet initialized. Creating the internal realm first.")
-         create_internal_realm()
-@@ -266,77 +265,82 @@ def do_create_realm(
-     # is required to do so correctly.
-     kwargs["push_notifications_enabled"] = sends_notifications_directly()
- 
--    with transaction.atomic(durable=True):
--        realm = Realm(string_id=string_id, name=name, **kwargs)
--        if is_demo_organization:
--            assert settings.DEMO_ORG_DEADLINE_DAYS is not None
--            realm.demo_organization_scheduled_deletion_date = realm.date_created + timedelta(
--                days=settings.DEMO_ORG_DEADLINE_DAYS
-+    try:
-+        with transaction.atomic(durable=True):
-+            realm = Realm(string_id=string_id, name=name, **kwargs)
-+            if is_demo_organization:
-+                assert settings.DEMO_ORG_DEADLINE_DAYS is not None
-+                realm.demo_organization_scheduled_deletion_date = realm.date_created + timedelta(
-+                    days=settings.DEMO_ORG_DEADLINE_DAYS
-+                )
+@@ -0,0 +1,105 @@
++---
++name: write-security-advisory
++description: "Draft or revise a GitHub security advisory for a Zulip vulnerability. Use whenever writing, reviewing, or editing advisory text, such as a GHSA or CVE description."
++---
 +
-+            # For now a dummy value of -1 is given to groups fields which
-+            # is changed later before the transaction is committed.
-+            for setting_name in Realm.REALM_PERMISSION_GROUP_SETTINGS:
-+                setattr(realm, setting_name + "_id", -1)
++# Writing a Zulip security advisory
 +
-+            realm.save()
++A security advisory is read by administrators deciding whether they're affected and
++how urgently to upgrade. Every sentence should help that decision. Anything that only
++matters to Zulip developers (how the fix works internally, data model history,
++migrations, backfills) is noise, and gets cut in review.
 +
-+            RealmAuditLog.objects.create(
-+                # acting_user will be set as the initial realm owner inside
-+                # do_create_user(..., realm_creation=True).
-+                acting_user=None,
-+                realm=realm,
-+                event_type=AuditLogEventType.REALM_CREATED,
-+                event_time=realm.date_created,
-+                extra_data={
-+                    "how_realm_creator_found_zulip": how_realm_creator_found_zulip,
-+                    "how_realm_creator_found_zulip_extra_context": how_realm_creator_found_zulip_extra_context,
-+                },
-             )
- 
--        # For now a dummy value of -1 is given to groups fields which
--        # is changed later before the transaction is committed.
--        for setting_name in Realm.REALM_PERMISSION_GROUP_SETTINGS:
--            setattr(realm, setting_name + "_id", -1)
--
--        realm.save()
--
--        RealmAuditLog.objects.create(
--            # acting_user will be set as the initial realm owner inside
--            # do_create_user(..., realm_creation=True).
--            acting_user=None,
--            realm=realm,
--            event_type=AuditLogEventType.REALM_CREATED,
--            event_time=realm.date_created,
--            extra_data={
--                "how_realm_creator_found_zulip": how_realm_creator_found_zulip,
--                "how_realm_creator_found_zulip_extra_context": how_realm_creator_found_zulip_extra_context,
--            },
--        )
--
--        RealmUserDefault.objects.create(
--            realm=realm,
--            email_address_visibility=get_email_address_visibility_default(realm.org_type),
--        )
--
--        create_system_user_groups_for_realm(realm)
-+            RealmUserDefault.objects.create(
-+                realm=realm,
-+                email_address_visibility=get_email_address_visibility_default(realm.org_type),
-+            )
- 
--        group_settings_defaults_for_org_types = {
--            "can_add_subscribers_group": {
--                Realm.ORG_TYPES["education_nonprofit"]["id"]: SystemGroups.MODERATORS,
--                Realm.ORG_TYPES["education"]["id"]: SystemGroups.MODERATORS,
--            },
--            "can_create_public_channel_group": {
--                Realm.ORG_TYPES["education_nonprofit"]["id"]: SystemGroups.ADMINISTRATORS,
--                Realm.ORG_TYPES["education"]["id"]: SystemGroups.ADMINISTRATORS,
--            },
--            "can_create_groups": {
--                Realm.ORG_TYPES["education_nonprofit"]["id"]: SystemGroups.MODERATORS,
--                Realm.ORG_TYPES["education"]["id"]: Syst
++Read `references/examples.md` before drafting: it has three advisories that show
++the expected style. Match their tone, length, and structure.
++
++## Before writing: verify the facts
++
++Advisories get cited for years, so every factual claim must come from the code or git
++history, not from a bug report or memory. Before drafting, establish:
++
++- **Affected versions.** Find the introducing commit and run
++  `git tag --contains <sha> | sort -V | head` for the first affected release, and
++  `git tag -l '<major>.*' | sort -V | tail` for the latest release. Write the range as
++  "Zulip Server X.Y through A.B". The fixed version is usually the next patch release
++  of the stable branch, but confirm it with the user.
++- **Who can trigger it.** Check the permission decorators and checks on the endpoint
++  (e.g., `@require_realm_admin`, owner-only checks), and say which role is needed.
++- **Every code path that leads to the vulnerable state.** E.g., if users can be deleted
++  with or without their messages, the advisory has to be accurate for both cases.
++- **Where a feature exists.** Code in `corporate/` (such as the `/activity/support`
++  panel) only exists on Zulip Cloud, not on self-hosted servers.
++- **User-facing names.** Use the names from the help center
++  (`starlight_help/src/content/docs/`), e.g., "Public and private data (with consent)"
++  export or "reusable invitation link", rather than internal names, except where
++  Details explains the mechanism.
++
++## Structure
++
++Start the file with a `Title:` line, then the sections as `###` headings.
++
++**Title.** Describe the behavior in plain language, as an admin would notice it.
++"Sign-up via reusable invitation links skips single sign-on" is good;
++"Fix missing check in HomepageForm" is not. If the attacker gains more than one
++capability, the title should cover all of them, without overstating any.
++
++**Summary.** Must work alone for triage. Say what an attacker can do, to whom, and under
++which conditions. End with a severity sentence that names the preconditions that limit
++it, e.g., "Severity is low: it requires a valid reusable invitation link, which only
++administrators can create by default." If a precondition is rare, state the fact that
++makes it rare (for example "User deletion isn't available in the Zulip apps…"), not a
++guess like "deleted users are rare".
++
++**Details.** The root cause: what the feature normally does, what went wrong, and why.
++Naming functions and files is fine (`get_consented_user_ids` (`zerver/lib/export.py`)),
++as is referencing an earlier CVE whose check was incomplete. Name an API endpoint
++or parameter only when it's needed to explain the root cause. Don't include
++reproduction steps or exploit scripts.
++
++**Impact.** What the attacker gains, and from whom. List the conditions an
++organization must meet to be affected, as bullets if there are several. If it helps,
++say what the attacker does _not_ gain, e.g., "This is an integrity issue only". End with
++the affected version range and then simply "This is fixed in Zulip Server X.Y." Leave out:
++
++- how the fix works, migrations, or backfills;
++- anything an admin can't act on.
++
++**Severity** (optional, for serious issues). A CVSS score, plus a note when CVSS misses
++the real-world impact.
++
++**Workarounds** (only if a real one exists). A workaround must neutralize the bug
++without upgrading, e.g., revoking reusable invitation links, or removing the configured
++email domains. "Don't use the affected feature" is not a workaround. When there's no
++real workaround, leave the section out entirely rather than writing "None" or a weak
++mitigation.
++
++**References** (optional). Links to relevant `https://zulip.com/help/...` articles,
++with anchors where useful.
++
++Don't credit the reporter in the body. GitHub's credit field handles that.
++
++## Prose
++
++Reviewers read every sentence closely. These are the most common problems in drafts:
++
++- **Imprecise words.** "never allowed" when the accurate phrase is "had not allowed"
++  (a user may have allowed it and later turned it off), or "messages of the deleted
++  user" when some deletion paths remove them ("any remaining messages").
++- **Inconsistent terms across sections.** If Details says the setting is "disabled",
++  Impact must not say it was "reset".
++- **Overloaded sentences.** One idea per sentence. Avoid tacked-on clauses
++  ("…, even when …"), 
 ```
 
-**File**: `zerver/lib/exceptions.py` (modified, +6/-0)
+**File**: `.claude/skills/write-security-advisory/references/examples.md` (added, +108/-0)
 ```diff
-@@ -534,6 +534,12 @@ def msg_format() -> str:
-         return _("Invalid subdomain")
- 
- 
-+class RealmSubdomainUnavailableError(Exception):
-+    def __init__(self, string_id: str) -> None:
-+        self.string_id = string_id
-+        super().__init__(f"Realm {string_id} already exists!")
+@@ -0,0 +1,108 @@
++# Example advisories
 +
++Three advisories that show the expected style. The first two are lower severity and
++use the standard structure. The third is a more serious issue with a Severity section,
++a Workarounds section, and an Impact-first structure.
 +
- class InvitationError(JsonableError):
-     code = ErrorCode.INVITATION_FAILED
-     data_fields = [
-```
-
-**File**: `zerver/tests/test_signup.py` (modified, +96/-0)
-```diff
-@@ -34,6 +34,7 @@
- from zerver.forms import HomepageForm
- from zerver.lib.default_streams import get_slim_realm_default_streams
- from zerver.lib.email_notifications import enqueue_welcome_emails
-+from zerver.lib.exceptions import RealmSubdomainUnavailableError
- from zerver.lib.i18n import get_default_language_for_new_user
- from zerver.lib.initial_password import initial_password
- from zerver.lib.mobile_auth_otp import (
-@@ -1904,6 +1905,101 @@ def test_signup_with_email_address_race(self) -> None:
-             )
-         )
- 
-+    def test_do_create_realm_subdomain_unavailable_error(self) -> None:
-+        """
-+        do_create_realm raises RealmSubdomainUnavailableError when attempting to
-+        create a realm with an existing subdomain.
-+        """
-+        with self.assertRaises(RealmSubdomainUnavailableError):
-+            do_create_realm("zulip", "Zulip clone")
++## Example 1: Data exposure, no workaround (fixed in 12.4)
 +
-+    def test_do_create_realm_unexpected_integrity_error(self) -> None:
-+        """
-+        do_create_realm re-raises IntegrityError when an unexpected database
-+        integrity error occurs during realm creation.
-+        """
-+        with (
-+            patch.object(Realm, "save", side_effect=IntegrityError("unexpected error")),
-+            self.assertRaises(IntegrityError),
-+        ):
-+            do_create_realm("new-realm-subdomain", "New Realm")
++```markdown
++Title: Exports with member consent include direct messages of deleted users' conversations
 +
-+    def test_realm_creation_with_subdomain_race(self) -> None:
-+        """
-+        The availability check for a realm subdomain can race with another
-+        realm creation. Verify that RealmSubdomainUnavailableError is handled
-+        by re-rendering the registration form with an error without consuming
-+        the confirmation link.
-+        """
-+        email = self.nonreg_email("newguy")
-+        realm_subdomain = "custom-test"
-+        realm_name = "Race organization"
++### Summary
 +
-+        self.submit_realm_creation_form(
-+            email,
-+            realm_subdomain=realm_subdomain,
-+            realm_name=realm_name,
-+        )
-+        confirmation_url = self.get_confirmation_url_from_outbox(email)
-+        self.client_get(confirmation_url)
++An organization export of public and private data with member consent treated every deleted user as having consented to the export of their private data. As a result, the export included direct messages from conversations that a deleted user had been part of, including messages written by other participants who had not consented. Severity is limited: creating such an export requires administrator permissions, and only conversations involving a deleted user are affected. User deletion isn't available in the Zulip apps: on self-hosted servers, it requires running the `manage.py delete_user` management command, and on Zulip Cloud, it's done by Zulip's support team.
 +
-+        with patch(
-+            "zerver.views.registration.do_create_realm",
-+            side_effect=RealmSubdomainUnavailableError(realm_subdomain),
-+        ):
-+            result = self.submit_reg_form_for_user(
-+                email,
-+                "password",
-+                realm_subdomain=realm_subdomain,
-+                realm_name=realm_name,
-+            )
++### Details
 +
-+        self.assertEqual(result.status_code, 400)
-+        self.assert_in_response(
-+            "Subdomain is already in use. Please choose a different one.", result
-+        )
-+        self.assert_in_response('id="registration"', result)
-+        self.assert_in_response('name="realm_subdomain"', result)
-+        self.assert_in_response(f'value="{realm_subdomain}"', result)
-+        self.assert_in_response(f'value="{realm_name}"', result)
++The "Public and private data (with consent)" export includes the private data of users who have allowed administrators to export it. Since Zulip Server 11.0, it also treats mirror dummy accounts as consenting. Mirror dummies are placeholder accounts that represent users from data imported from other products, such as Slack, and they only contain data that was already accessible to the exporting organization.
 +
-+        # The user can retry with the same confirmation link and only a new
-+        # organization URL.
-+        result = self.submit_reg_form_for_user(
-+            email,
-+            "password",
-+            realm_subdomain="custom-test-2",
-+            realm_name=realm_name,
-+        )
-+        self.assertEqual(result.status_code, 302)
++When a user is deleted (as opposed to deactivated), their account is turned into a mirror dummy too, so `get_consented_user_ids` (`zerver/lib/export.py`) considered them to be consenting. Deleting a user also disables their export consent setting, but since mirror dummies are considered consenting regardless of that setting, this had no effect. The deleted account remains a participant in its direct message conversations, so the export included those conversations, along with messages from the other participants.
 +
-+    def test_realm_creation_with_unexpected_integrity_error(self) -> None:
-+        email = self.nonreg_email("newguy")
-+        realm_subdomain = "custom-test"
++### Impact
 +
-+        self.submit_realm_creation_form(
-+            email,
-+            realm_subdomain=realm_subdomain,
-+            realm_name="Zulip test",
-+        )
-+        confirmation_url = self.get_confirmation_url_from_outbox(email)
-+        self.client_get(confirmation_url)
++An organization administrator could obtain, through an export with member consent, direct messages in conversations that a deleted user had been part of. This includes messages sent in such conversations by other participants who had not allowed administrators to export their private data, as well as any remaining messages of the deleted user, whose consent setting was disabled when they were deleted.
 +
-+        with (
-+            patch(
-+                "zerver.views.registration.do_create_realm",
-+                side_effect=IntegrityError("unexpected error"),
-+            ),
-+            self.assertRaises(IntegrityError),
-+            self.assertLogs("django.request", "ERROR"),
-+        ):
-+            self.submit_reg_form_for_user(
-+                email,
-+                "password",
-+                realm_subdomain=realm_subdomain,
-+                realm_name="Zulip test",
-+            )
++This affects Zulip Server 11.0 through 12.3, and only organizations with at least one deleted user.
 +
-     def test_signup_with_weak_password(self) -> None:
-         """
-         Check if signing up with a weak password fails.
-```
-
-**File**: `zerver/views/registration.py` (modified, +32/-12)
-```diff
-@@ -72,7 +72,7 @@
-     schedule_demo_organization_deletion_reminder,
- )
- from zerver.lib.email_validation import email_allowed_for_realm, validate_email_not_already_in_realm
--from zerver.lib.exceptions import JsonableError, RateLimitedError
-+from zerver.lib.exceptions import JsonableError, RateLimitedError, RealmSubdomainUnavailableError
- from zerver.lib.i18n import (
-     get_browser_language_code,
-     get_default_language_for_anonymous_user,
-@@ -834,17 +834,37 @@ def registration_helper(
-                 extra_context_field = HOW_FOUND_ZULIP_EXTRA_CONTEXT[how_found_zulip]
-                 how_found_zulip_extra_context = form.cleaned_data[extra_context_field]
- 
--            realm = do_create_realm(
--                string_id,
--                realm_name,
--                org_type=realm_type,
--                default_language=realm_default_language,
--                prereg_realm=prereg_realm,
--                how_realm_creator_found_zulip=RealmAuditLog.HOW_REALM_CREATOR_FOUND_ZULIP_OPTIONS[
--                    how_found_zulip
--                ],
--                how_realm_creator_found_zulip_extra_context=how_found_zulip_extra_context,
--            )
-+            try:
-+                realm = do_create_realm(
-+                    string_id,
-+                    realm_name,
-+                    org_type=realm_type,
-+                    default_language=realm_default_language,
-+                    prereg_realm=prereg_realm,
-+                    how_realm_creator_found_zulip=RealmAuditLog.HOW_REALM_CREATOR_FOUND_ZULIP_OPTIONS[
-+                        how_found_zulip
-+                    ],
-+                    how_realm_creator_found_zulip_extra_context=how_found_zulip_extra_context,
-+                )
-+            except RealmSubdomainUnavailableError:
-+                form.add_error(
-+                    "realm_subdomain",
-+                    _("Subdomain is already in use. Please choose a different one."),
-+                )
-+                return render_registration_form(
-+                    request,
-+                    form=form,
-+                    email=email,
-+                    key=key,
-+                    name_validated=name_validated,
-+                    realm=realm,
-+                    realm_creation=realm_creation,
-+                    password_required=password_required,
-+                    require_ldap_password=require_ldap_password,
-+                    prereg_realm=prereg_realm,
-+                    next_url=next,
-+                    status=400,
-+                )
-         assert realm is not None
- 
-         full_name = form.cleaned_data["full_name"]
++This is fixed in Zulip Server 12.4.
++
++### References
++
++- [Export your organization](https://zulip.com/help/export-your-organization)
++- [Configure whether administrators can export your private data](https://zulip.com/help/export-your-organization#configure-whether-administrators-can-export-your-private-data)
++```
++
++Notes: there was no real workaround, so Workarounds was left out. ("Use the public
++data export instead" was rejected because it just means not using the feature.)
++Sentences about a migration for users deleted before 12.0 and about existing exports
++were cut as noise.
++
++## Example 2: Authentication bypass with a workaround
++
++```markdown
++Title: Sign-up via reusable invitation links skips single sign-on
++
++### Summary
++
++In Zulip organizations where only external authentication methods are enabled (e.g., SAML, OpenID Connect or Google), anyone with a reusable invitation link could create an account without using any of those methods. They only needed to control an email address the organization allows. Severity is low: it requires a valid reusable invitation link, which only administrators can create by default.
++
++### Details
++
++A reusable invitation link's sign-up page doesn't show the email form when no password-based authentication method (email or LDAP) is enabled. However, the server still accepted an email address submitted to the link (`/join/<key>/`). It sent a confirmation email to that address, and following the confirmation link created the account and logged the user in.
++
++The check that rejects email-based sign-up in such organizations, added for CVE-2025-31478 in `HomepageForm.clean_email` (`zerver/forms.py`), was skipped for requests coming from reusable invitation links (`from_multiuse_invite`).
++
++### Impact
++
++This lets someone skip the organization's single sign-on requirement. It affects organizations that:
++- have no password-based authentication method enabled; and
++- have at least one active reusable invitation link.
++
++The person must possess the link and control the email address used. The resulting account has the role and channel subscriptions specified by the link. Restricting sign-up to specific email domains limits which addresses can be used. Revoking reusable invitation links fully mitigates the issue until upgrading.
++
++This is fixed in Zulip Server 12.4.
++```
++
++Notes: the workaround (revoking reus
 ```
 
 ---
 
-### Incident Patch 3: `b5b2af98` (2026-11-12)
-**Commit Message**: tests: Clean up realm creation subdomain race tests.
+### Incident Patch 3: `48a97cc0` (2026-11-05)
+**Commit Message**: docs: Fix typos and grammar errors.
 
-Move test_realm_creation_unexpected_integrity_error to test_realm.py
-with the other test_realm_creation_* tests. Remove the now-unnecessary
-test_realm_creation_with_unexpected_integrity_error from test_signup.py.
+This fixes repeated words, misspellings, and incorrect a/an usage
+across the developer and API documentation. It also removes an
+unmatched closing parenthesis from an API changelog entry.
 
-In test_realm_creation_with_subdomain_race, simplify the assertions
-to just the status code and error message checks. Update the docstring
-to avoid spelling out the exception name.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `zerver/tests/test_realm.py` (modified, +8/-0)
+**File**: `api_docs/changelog.md` (modified, +3/-3)
 ```diff
-@@ -15,6 +15,7 @@
- import time_machine
- from django.conf import settings
- from django.core import mail
-+from django.db import IntegrityError
- from django.test import override_settings
- from django.utils.timezone import now as timezone_now
- from typing_extensions import override
-@@ -132,6 +133,13 @@ def test_realm_creation_on_special_subdomains_disallowed(self) -> None:
-         ):
-             do_create_realm("zulipselfhosting", "Test Realm")
+@@ -1065,7 +1065,7 @@ No changes; API feature level used for the Zulip 11.0 release.
+   integration URL parameter options. Previously, these optional URL
+   parameters were included in the `config_options` field (see feature
+   level 318 entry). The `config_options` object is now reserved for
+-  configuration data that can be set when creating an bot user for a
++  configuration data that can be set when creating a bot user for a
+   specific incoming webhook integration.
  
-+    def test_realm_creation_unexpected_integrity_error(self) -> None:
-+        with (
-+            mock.patch.object(Realm, "save", side_effect=IntegrityError("unexpected error")),
-+            self.assertRaises(IntegrityError),
-+        ):
-+            do_create_realm("new-realm-subdomain", "New Realm")
-+
-     def test_permission_for_education_non_profit_organization(self) -> None:
-         realm = do_create_realm(
-             "test_education_non_profit",
+ **Feature level 402**
+@@ -3386,7 +3386,7 @@ No changes; feature level used for Zulip 7.0 release.
+ 
+ * [All REST API endpoints](/api/rest-error-handling#ignored-parameters):
+   Implemented `ignored_parameters_unsupported` as a possible return value
+-  in the JSON success response for all endpoints. This value is a array
++  in the JSON success response for all endpoints. This value is an array
+   of any parameters that were sent in the request by the client that are
+   not supported by the endpoint. Previously, unsupported parameters were
+   silently ignored, except in the subset of endpoints which already
+@@ -4646,7 +4646,7 @@ No changes; feature level used for Zulip 3.0 release.
+   `realm_bot` events no longer contain an `email` field to identify
+   the user; use the `user_id` field instead.  Previously, some (but
+   not all) events of these types contained an `email` key in addition to
+-  to `user_id`) for identifying the modified user.
++  `user_id` for identifying the modified user.
+ * [`PATCH /users/{user_id}`](/api/update-user): The `is_admin` and
+   `is_guest` parameters were removed in favor of the more general
+   `role` parameter for specifying a change in user role.
 ```
 
-**File**: `zerver/tests/test_signup.py` (modified, +3/-49)
+**File**: `docs/outreach/gsoc.md` (modified, +1/-1)
 ```diff
-@@ -1906,30 +1906,15 @@ def test_signup_with_email_address_race(self) -> None:
-         )
+@@ -226,7 +226,7 @@ Django, TypeScript/JavaScript, and CSS.
+   number of others we would like to add. Also, several extensions to the
+   framework that would dramatically improve the user experience of using
+   integrations, e.g., being able to do callbacks to third-party services
+-  like Stripe to display more user-friendly notifications. The [the integrations
++  like Stripe to display more user-friendly notifications. The [integrations
+   label on GitHub](https://github.com/zulip/zulip/labels/area%3A%20integrations)
+   lists some of the priorities here (many of which are great preparatory
+   projects). 175 or 350 hours; medium difficulty with various possible difficult
+```
+
+**File**: `docs/overview/changelog.md` (modified, +4/-4)
+```diff
+@@ -1372,7 +1372,7 @@ _Released 2025-03-20_
+   Permissions panel showing all the permissions that membership in the
+   group grants.
+ - Channel administration permissions have been restructured to be
+-  based on groups, with new settings for administrering channels,
++  based on groups, with new settings for administering channels,
+   adding subscribers, removing them, and being able to join channels.
+ - The access control model for message content in channels has been
+   generalized to allow users to be able to join a private channel at
+@@ -1578,7 +1578,7 @@ _Released 2025-03-20_
+   which collection of messages to move.
+ - Improved compose user mention typeahead to de-prioritize bots.
+ - Improved internationalization (emoji picker categories, joining
+-  lists of names without hardcoding `,` as a the separator, etc.)
++  lists of names without hardcoding `,` as the separator, etc.)
+ - Fixed a bug where new user accounts joining an organization that had
+   been idle in recent months would be created with very few messages
+   in their combined feed.
+@@ -2329,7 +2329,7 @@ _Released 2023-12-15_
+ - Linkifiers are now processed in a defined, editable order.
+ - Scheduled messages are now displayed when viewing the conversation
+   where they will be sent.
+-- Message edit history has a Shift+H keyboard shortuct and is now
++- Message edit history has a Shift+H keyboard shortcut and is now
+   accessed via the mouse exclusively by clicking on EDITED/MOVED
+   notices, simplifying the main message actions popover.
+ - Users can now delete messages sent by bots that they control as
+@@ -2747,7 +2747,7 @@ _Released 2023-05-31_
+   been migrated from a custom format string to RFC 6570 URL
+   templates. A database migration will automatically migrate existing
+   linkifiers correctly in the vast majority of cases, but some fancier
+-  linkfiers may require manual adjustment to generate correct URLs
++  linkifiers may require manual adjustment to generate correct URLs
+   following this upgrade.
+ - PostgreSQL 11 is no longer supported; if you are currently using it, you will
+   need to [upgrade PostgreSQL](../production/upgrade.md#upgrading-postgresql)
+```
+
+**File**: `docs/production/mobile-push-notifications.md` (modified, +1/-1)
+```diff
+@@ -507,7 +507,7 @@ Server or the mobile app is a version predating the 12.0 release
+ non-E2EE protocol will be used.
  
-     def test_do_create_realm_subdomain_unavailable_error(self) -> None:
--        """
--        do_create_realm raises RealmSubdomainUnavailableError when attempting to
--        create a realm with an existing subdomain.
--        """
-         with self.assertRaises(RealmSubdomainUnavailableError):
-             do_create_realm("zulip", "Zulip clone")
+ The central design goal of the legacy Push Notification Service
+-service was to avoid any message content being stored or logged by the
++was to avoid any message content being stored or logged by the
+ service, even in error cases.
  
--    def test_do_create_realm_unexpected_integrity_error(self) -> None:
--        """
--        do_create_realm re-raises IntegrityError when an unexpected database
--        integrity error occurs during realm creation.
--        """
--        with (
--            patch.object(Realm, "save", side_effect=IntegrityError("unexpected error")),
--            self.assertRaises(IntegrityError),
--        ):
--            do_create_realm("new-realm-subdomain", "New Realm")
--
-     def test_realm_creation_with_subdomain_race(self) -> None:
-         """
-         The availability check for a realm subdomain can race with another
--        realm creation. Verify that RealmSubdomainUnavailableError is handled
--        by re-rendering the registration form with an error without consuming
--        the confirmation link.
-+        realm creation. Verify that such a situation is handled by re-rendering
-+        the registration form with an error without consuming the confirmation
-+        link.
-         """
-         email = self.nonreg_email("newguy")
-         realm_subdomain = "custom-test"
-@@ -1958,10 +1943,6 @@ def test_realm_creation_with_subdomain_race(self) -> None:
-         self.assert_in_response(
-             "Subdomain is already in use. Please choose a different one.", result
-         )
--        self.assert_in_response('id="registration"', result)
--        self.assert_in_response('name="realm_subdomain"', result)
--        self.assert_in_response(f'value="{realm_subdomain}"', result)
--        self.assert_in_response(f'value="{realm_name}"', result)
+ - The Push Notification Service only stores the necessary metadata for
+```
+
+**File**: `docs/production/upload-backends.md` (modified, +1/-1)
+```diff
+@@ -286,7 +286,7 @@ lifecycle transition cost][s3-pricing].
  
-         # The user can retry with the same confirmation link and only a new
-         # organization URL.
-@@ -1973,33 +1954,6 @@ def test_realm_creation_with_subdomain_race(self) -> None:
-         )
-         self.assertEqual(result.status_code, 302)
+ ## Data export bucket
  
--    def test_realm_creation_with_unexpected_integrity_error(self) -> None:
--        email = self.nonreg_email("newguy")
--        realm_subdomain = "custom-test"
--
--        self.submit_realm_creation_form(
--            email,
--            realm_subdomain=realm_subdomain,
--            realm_name="Zulip test",
--        )
--        confirmation_url = self.get_confirmation_url_from_outbox(email)
--        self.client_get(confirmation_url)
--
--        with (
--            patch(
--                "zerver.views.registration.do_create_realm",
--                side_effect=IntegrityError("unexpected error"),
--            ),
--            self.assertRaises(IntegrityError),
--            self.assertLogs("django.request", "ERROR"),
--        ):
--            self.submit_reg_form_for_user(
--                email,
--                "password",
--                realm_subdomain=realm_subdomain,
--                realm_name="Zulip test",
--            )
--
-     def test_signup_with_weak_password(self) -> None:
-         """
-         Check if signing up with a weak password fails.
+-The [data export process](export-and-import.md#data-export) process, when
++The [data export process](export-and-import.md#data-export), when
+ [triggered from the
+ UI](https://zulip.com/help/export-your-organization), uploads the
+ completed export so it is available to download from the server; this
+```
+
+**File**: `docs/subsystems/billing.md` (modified, +1/-1)
+```diff
+@@ -127,7 +127,7 @@ Here are some flows to test when upgrading a remote Zulip organization:
+   `SELF_HOSTING_FREE_TRIAL_DAYS` to `30` days. You can change this
+   value and other settings for your development environment only in
+   `zproject/custom_dev_settings.py`, or secrets in
+-  `zproject/dev-secrets.conf`. Note that this only provides free trail
++  `zproject/dev-secrets.conf`. Note that this only provides a free trial
+   for the basic plan.
+ 
+   - Using a valid card number like `4242 4242 4242 4242`, the
+```
+
+**File**: `docs/subsystems/performance.md` (modified, +1/-1)
+```diff
+@@ -208,7 +208,7 @@ The cost for fetching `page_params` varies dramatically based
+ primarily on the organization's size, varying from 90ms-300ms for a
+ typical organization but potentially multiple seconds for large open
+ organizations with 10,000s of users. There is also smaller
+-variability based on a individual user's personal data state,
++variability based on an individual user's personal data state,
+ primarily in that having 10,000s of unread messages results in a
+ somewhat expensive query to find which channels/topics those are in.
+ 
+```
+
+**File**: `docs/subsystems/realms.md` (modified, +1/-1)
+```diff
+@@ -61,7 +61,7 @@ test the various Zulip configurations for different subdomains:
+ - The root domain (like `zulip.com` itself) is `zulipdev.com` itself.
+ - The default realm is hosted on `localhost:9991` rather than
+   `zulip.zulipdev.com`, using the [`REALM_HOSTS`
+-  feature](../production/multiple-organizations.md) feature.
++  feature](../production/multiple-organizations.md).
+ 
+ Details are below.
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40675** (closed): left_sidebar: Remove leftover home-page-input class. (@lasyaishu05-spec)
-- **PR #40673** (2026-11-13): [ai] puppet: Fix PostgreSQL failing to start on new installs. (@benprew)
-- **PR #40672** (2026-11-12): version: Start 14.0 development branch. (@benprew)
-- **PR #40671** (2026-11-12): Release Zulip Server 13.0. (@benprew)
-- **PR #40668** (2026-11-13): tests: Clean up realm creation subdomain race tests. (@Tanaya-2007)
-- **PR #40659** (closed): [ai] inbox: Fix hotkeys acting on the wrong row after a background update. (@Cyberhet)
+- **PR #40728** (2026-11-17): [Backport] oidc: Enable PKCE. (@mateuszmandera)
+- **PR #40719** (closed): message_edit: Use a `with` link in the moved-message notification. (@evykassirer)
+- **PR #40713** (2026-11-16): version: Update version for Zulip Server 13.2 release. (@mateuszmandera)
+- **PR #40712** (2026-11-16): 13.x branch cleanup  (@mateuszmandera)
+- **PR #40706** (2026-11-17): oidc: Enable PKCE. (@mateuszmandera)
+- **PR #40705** (2026-11-16): skills: Add write-security-advisory skill. (@mateuszmandera)
 
 ---
 
@@ -1766,43 +1643,31 @@ to avoid spelling out the exception name.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. puppet: Fix PostgreSQL failing to start on new installs.
+## X. portico: Fix typos on development community and security pages.
 
 **RULE**:
-When implementing operations in `puppet/zulip/manifests/profile/postgresql.pp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `templates/corporate/development-community.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `37b5e4a9`: puppet: Fix PostgreSQL failing to start on new installs.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bc06e2d`: portico: Fix typos on development community and security pages.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `puppet/zulip/manifests/profile/postgresql.pp`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `templates/corporate/development-community.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  # Our configuration sets log_directory to this directory.  On a new
-  # install, postgresql-common 294 can leave it owned by root, because
-  # its tmpfiles.d entry runs before the postgres user exists.
-  # https://bugs.debian.org/1153884
-  file { '/var/log/postgresql':
-    ensure  => directory,
-    require => Package[$zulip::postgresql_base::postgresql],
-    owner   => 'postgres',
-    group   => 'postgres',
-    mode    => '2775',
-  }
-
-    require   => $require + [Exec['reload systemd'], File['/var/log/postgresql']],
+  for occasional conversations not related to Zulip, usually things
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    require   => $require + [Exec['reload systemd']],
+  is for occasional conversations not related to Zulip, usually things
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `37b5e4a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bc06e2d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

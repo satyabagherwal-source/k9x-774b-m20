@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T10:41:18.770Z",
+  "last_updated": "2026-11-17T10:51:44.990Z",
   "total_verified_learnings": 8876,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20096,
+  "total_items": 20104,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc3fba983ef2a14f6003ff133ab111d0475a562b544598960699fc5642cc66cf",
+      "content_hash": "8516f6a1ed322b4f3fead03d0465e9428ad5d0648f6e8a8ddb64569c2c2c3a31",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T09:56:54.960Z"
+      "persisted_at": "2026-11-17T10:51:43.702Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UDH3-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OIQR-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fef76f6966b335815769e62cb54e7e32cd4ea98df6b2f5ba81a528cdc9e3af82",
+      "content_hash": "22b59b29e4d324839da26cb9f832bdbacd6411d26d40f2a4d09956d6ee3e7b7a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T07:40:20.539Z"
+      "persisted_at": "2026-11-17T10:51:44.742Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1b16e6080826e44a2ed7af293337d0ac0162ef7e9b1abecd1ab3f38726142957",
+      "content_hash": "75941359b8743c57adc70adfc8dcd622f967e86d25a63e01740479cc020f1149",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T07:40:20.633Z"
+      "persisted_at": "2026-11-17T10:51:44.861Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3b33618870534f0bd4b44eef71d4261a0f39d59132fa4d2408c97e25cfa4014d",
+      "content_hash": "f6e2defb98b37e2898aa47fb34ae6b81d62ba7164d9b6e96da8b186327a9e394",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:40:20.736Z"
+      "persisted_at": "2026-11-17T10:51:44.990Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214701,14 +214701,19 @@
       "slug": "zulip-zulip",
       "platform": "github",
       "source_url": "https://github.com/zulip/zulip",
-      "source_version": "37b5e4a9",
-      "content_hash": "0539f00dabf0151f39c210fd60d52a0a69568796d7551c124fe0de7d4d1caf62",
+      "source_version": "19e7b6bb",
+      "content_hash": "dec91f3b6fe914115d76f59d3791a255e5d4e430b515c0eeedcc72190c5a2046",
       "dossier_path": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "promoted_rules": [
         {
           "number": 8375,
           "title": "Fix PostgreSQL failing to start on new installs.",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8955,
+          "title": "Fix typos on development community and security pages.",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -214717,7 +214722,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:36:51.636Z",
+      "verified_at": "2026-11-17T10:51:31.836Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214771,10 +214776,10 @@
       "relative_path": "08_VERIFICATION/zulip-zulip-verification-protocol-empirical-defect-shield-for-zulip-zulip.md",
       "title": "Verification Protocol: Empirical Defect Shield for zulip/zulip",
       "repository": "zulip/zulip",
-      "source_version": "37b5e4a9",
-      "content_hash": "6af9f8445f41e7702757c90e5534b074ff1df200f6ff241d42b46f084318a203",
+      "source_version": "19e7b6bb",
+      "content_hash": "98605bc728ce79d94fdb8d218a21d126968ca02cea71cf4f29f8f0ca3baeede0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T20:36:52.129Z"
+      "persisted_at": "2026-11-17T10:51:32.449Z"
     },
     "learn-github-opentofu-opentofu": {
       "learning_id": "learn-github-opentofu-opentofu",
@@ -232745,8 +232750,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "7e177b06",
-      "content_hash": "cb807d47505ea6f6012ef44c56a41da56362ec8bd90211388d0ad16074b22cce",
+      "source_version": "48aa0ed3",
+      "content_hash": "5d7153712acf569c1a45464490a50056e0fc2f962930136efa8e8d765988de0f",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -232759,6 +232764,11 @@
           "number": 8693,
           "title": "avoid spurious log directory error on first start",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8956,
+          "title": "wait for a stopped region's checkpoint before reopening it",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232766,7 +232776,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T02:17:33.055Z",
+      "verified_at": "2026-11-17T10:51:39.643Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232808,10 +232818,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "7e177b06",
-      "content_hash": "aea31ca69162125cfcf229a448af9a6953c17e9d959c9a87c1e32d81913301a3",
+      "source_version": "48aa0ed3",
+      "content_hash": "fd7c69f0e57481b324540317510ab78990b397403d7d740ddd55a0b222a812e7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T02:17:33.422Z"
+      "persisted_at": "2026-11-17T10:51:40.145Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb",
@@ -232820,10 +232830,10 @@
       "relative_path": "08_VERIFICATION/greptimeteam-greptimedb-verification-protocol-empirical-defect-shield-for-grepti.md",
       "title": "Verification Protocol: Empirical Defect Shield for GreptimeTeam/greptimedb",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "7e177b06",
-      "content_hash": "a1678bc6a14b74a4af517b0ba9c2e6ecc146d8c1e8b772864b0c773f5dfd5b5e",
+      "source_version": "48aa0ed3",
+      "content_hash": "5f92b0a991306673e5229bdc1964713903c1d82fbe36bd3e23ceb0d2aff31628",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:17:33.516Z"
+      "persisted_at": "2026-11-17T10:51:40.279Z"
     },
     "candidate_directive-gh-51043-python-reject-null-required-arrow-objects": {
       "item_id": "candidate_directive-gh-51043-python-reject-null-required-arrow-objects",
@@ -232881,9 +232891,9 @@
       "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
       "repository": "greptimeteam-greptimedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "0bd5e2a3dcd9a722835867c5664969090062ca7a790d509206433c178bc70554",
+      "content_hash": "46dac1ad9a5ad0e670bd988b65425583e337efa63f7e686f326136e2f394df51",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T17:51:54.565Z"
+      "persisted_at": "2026-11-17T10:51:44.168Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb-learni",
@@ -232893,9 +232903,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for greptimeteam-greptimedb-learnings",
       "repository": "greptimeteam-greptimedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "0385e51e4e095db8d4bb22ef32700285456600cfd8b46d30a39fb58ae87b551e",
+      "content_hash": "3d7a1066702444dff6cf30c49d49090a668db4981fb8593badf86ed0f60e7875",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:51:54.676Z"
+      "persisted_at": "2026-11-17T10:51:44.297Z"
     },
     "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark": {
       "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
@@ -268964,6 +268974,106 @@
       "content_hash": "45e8d7a53000f0985de6fe5e2129b46e8940bafbfffa225996c4cde25c4eb04f",
       "domain_letter": "G",
       "persisted_at": "2026-11-17T10:41:18.649Z"
+    },
+    "rule-8955": {
+      "learning_id": "rule-8955",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8955,
+      "title": "Fix typos on development community and security pages.",
+      "source_url": "https://github.com/zulip/zulip",
+      "source_version": "19e7b6bb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T10:51:31.836Z"
+    },
+    "candidate_directive-fix-typos-on-development-community-and-security-pages": {
+      "item_id": "candidate_directive-fix-typos-on-development-community-and-security-pages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O929-fix-typos-on-development-community-and-security-pages.md",
+      "title": "Fix typos on development community and security pages.",
+      "repository": "zulip/zulip",
+      "source_version": "19e7b6bb",
+      "content_hash": "d29bb01ca5f10eaccbb86cbb94f411bbf8bf218d04989cf7c25b6c1c7d54900e",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-17T10:51:32.196Z"
+    },
+    "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-zulip-zulip-human-need-intelligence-zulip-zulip-core-invariants.md",
+      "title": "Human & Need Intelligence: zulip/zulip Core Invariants",
+      "repository": "zulip/zulip",
+      "source_version": "19e7b6bb",
+      "content_hash": "ac5e7c89fe96cb94253a471db4646d6196d36f3cfb0c8c192bf2c10af214c3c0",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-17T10:51:32.319Z"
+    },
+    "rule-8956": {
+      "learning_id": "rule-8956",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8956,
+      "title": "wait for a stopped region's checkpoint before reopening it",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "48aa0ed3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T10:51:39.643Z"
+    },
+    "candidate_directive-wait-for-a-stopped-region-s-checkpoint-before-reopening-it": {
+      "item_id": "candidate_directive-wait-for-a-stopped-region-s-checkpoint-before-reopening-it",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OF3L-wait-for-a-stopped-region-s-checkpoint-before-reopening-it.md",
+      "title": "wait for a stopped region's checkpoint before reopening it",
+      "repository": "GreptimeTeam/greptimedb",
+      "source_version": "48aa0ed3",
+      "content_hash": "12370a41ebd5427aab7dd43f561f6836f43ca76afce933d4548ed19486a313d5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T10:51:40.020Z"
+    },
+    "candidate_directive-portico-fix-typos-on-development-community-and-security-pages": {
+      "item_id": "candidate_directive-portico-fix-typos-on-development-community-and-security-pages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OHQU-portico-fix-typos-on-development-community-and-security-pages.md",
+      "title": "portico: Fix typos on development community and security pages.",
+      "repository": "zulip-zulip-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d0df811abdc634e231dca44d78b74e61dcbc753934e4fdb149b8129a1bcf1431",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-17T10:51:43.450Z"
+    },
+    "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-zulip-zulip-learnings-human-need-intelligence-zulip-zulip-learnings-core-invaria.md",
+      "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
+      "repository": "zulip-zulip-learnings",
+      "source_version": "HEAD",
+      "content_hash": "55d541877aa53d7f38ad9dd420f90ebe2791c6b4bd842e6b87ee89c81c2b4bbc",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-17T10:51:43.571Z"
+    },
+    "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it": {
+      "item_id": "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OI7H-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it.md",
+      "title": "mito2): wait for a stopped region's checkpoint before reopening it",
+      "repository": "greptimeteam-greptimedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b51c2b88fd3dcdbb72856f2827e4f37b3f5405b3bc48c8b68399ca17e5c3a45a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T10:51:44.048Z"
     }
   },
   "ai-builder-brain": {

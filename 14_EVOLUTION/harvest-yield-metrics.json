@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T10:41:14.213Z",
-  "total_cycles_completed": 10089,
-  "total_learnings_persisted": 10089,
-  "total_rules_promoted": 9691,
+  "last_updated": "2026-11-17T10:51:39.831Z",
+  "total_cycles_completed": 10091,
+  "total_learnings_persisted": 10091,
+  "total_rules_promoted": 9693,
   "history": [
-    {
-      "timestamp": "2026-11-16T16:09:22.022Z",
-      "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
-      "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T16:21:37.953Z",
-      "repository": "LiquidAI/LFM3-Audio-2B",
-      "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T16:21:40.105Z",
       "repository": "rtk-ai/rtk",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-17T10:41:14.213Z",
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T10:51:32.017Z",
+      "repository": "zulip/zulip",
+      "learningId": "learn-github-zulip-zulip",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T10:51:39.831Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -10558,3 +10558,5 @@ Every entry in this ledger must capture:
 | `learn-github-mlua-rs-mlua` | `https://github.com/mlua-rs/mlua` | `6308bb38` | Multi-dimensional audit evidence | 2026-11-17T10:41:00.145Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `d085ff5e` | Multi-dimensional audit evidence | 2026-11-17T10:41:08.554Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `0f15fa2b` | Multi-dimensional audit evidence | 2026-11-17T10:41:14.208Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `19e7b6bb` | Multi-dimensional audit evidence | 2026-11-17T10:51:32.012Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `48aa0ed3` | Multi-dimensional audit evidence | 2026-11-17T10:51:39.826Z |

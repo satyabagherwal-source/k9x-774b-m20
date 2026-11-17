@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "37b5e4a9",
+    "sourceVersion": "19e7b6bb",
     "license": "Apache-2.0",
-    "contentHash": "0539f00dabf0151f39c210fd60d52a0a69568796d7551c124fe0de7d4d1caf62",
-    "lastHarvestedAt": "2026-11-13T20:36:51.772Z",
+    "contentHash": "dec91f3b6fe914115d76f59d3791a255e5d4e430b515c0eeedcc72190c5a2046",
+    "lastHarvestedAt": "2026-11-17T10:51:32.012Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "7e177b06",
+    "sourceVersion": "48aa0ed3",
     "license": "Apache-2.0",
-    "contentHash": "cb807d47505ea6f6012ef44c56a41da56362ec8bd90211388d0ad16074b22cce",
-    "lastHarvestedAt": "2026-11-16T02:17:33.181Z",
+    "contentHash": "5d7153712acf569c1a45464490a50056e0fc2f962930136efa8e8d765988de0f",
+    "lastHarvestedAt": "2026-11-17T10:51:39.826Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
