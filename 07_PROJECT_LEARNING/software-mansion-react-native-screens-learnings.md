@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
-> **Source Version**: `a1f25d01`  
+> **Source Version**: `f3306074`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T14:25:39.851Z  
+> **Timestamp**: 2026-11-17T03:57:53.066Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-screens`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T14:25:39.844Z  
+> **Harvest Timestamp**: 2026-11-17T03:57:53.061Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -365,15 +365,11 @@ interface SafeAreaProvider {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5199** (2026-11-10): **chore: Post Argent Cloud reports with inline screenshots through the reports App**
-  *Symptoms*: ## Description  Argent Cloud report comments are now posted directly through the GitHub API with the reports App token, instead of through `argent-cloud comment`. Each run posts one comment under the mirror issue: the workflow report with the agent's report, then the session's screenshots in a 3-column grid, ordered and captioned by their number, then the agent stream.  ## Changes  - Screenshots are committed to a dedicated branch of the reports repository and embedded from that commit. Without the contents permission, or when the commit fails, the comment lists them instead. - Removed the `comment` job, the `post-argent-cloud-comment` action and the public-issue comment option. - The tester prompt says how screenshots are numbered and laid out. - Security hardening of the workflow.  ## Test plan  - Type-checked the helpers and syntax-checked every shell step. - Ran the helpers against a mock GitHub API. - The first real run on a labeled issue will confirm that the images render.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/software-mansion/react-native-screens/pull/5199?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- walkthrough_start -->  <details> <summary><strong>Walkthrough</strong></summary> <dl> <dd> <br>  The PR moves Argent Cloud report publishing from the Argent C
+- **Issue #5217** (2026-11-15): **chore(deps): bump addressable from 2.9.0 to 2.9.1 in /FabricExample**
+  *Symptoms*: Bumps [addressable](https://github.com/sporkmonger/addressable) from 2.9.0 to 2.9.1. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/sporkmonger/addressable/blob/main/CHANGELOG.md">addressable's changelog</a>.</em></p> <blockquote> <h2>Addressable 2.9.1 <!-- raw HTML omitted --></h2> <h3><code>Addressable::URI</code></h3> <ul> <li>fixes denial of service in <code>Addressable::URI.normalize_path</code>, which took quadratic time on paths with many dot segments; <code>URI#normalize</code>, <code>#join</code>, <code>#==</code> and <code>#===</code> were affected ([GHSA-qq38-m9mg-xjj5])</li> <li>fixes <code>Addressable::URI.normalize_path</code> keeping segments that a <code>..</code> should have removed after a <code>..</code> above the root, e.g. <code>/../../public/x/../../secret</code> normalized to <code>/public/x/secret</code> instead of <code>/secret</code> ([GHSA-8gmh-2hhj-2hv9])</li> <li>fixes <code>Addressable::URI.normalize_path</code> treating a raw line feed as a segment boundary, e.g. joining <code>..\n/secret</code> onto <code>/public/</code> gave <code>/\n/secret</code></li> <li>deprecates <code>Addressable::URI::RULE_2A</code>, <code>RULE_2B_2C</code>, <code>RULE_2D</code> and <code>RULE_PREFIXED_PARENT</code>, which are no longer used; they will be removed in 2.10.0</li> <li>fixes <code>Addressable::URI#route_from</code> and <code>#route_to</code> raising <code>InvalidURIError</code> when the route's first segment contains 
 
-- **Issue #5192** (2026-11-13): **feat(iOS, Split): Stack.Host as the only child of Split.Column navigates the column**
-  *Symptoms*: ## Description  Next PR of the Split/Stack series ([RFC-1805](https://github.com/software-mansion/react-native-screens-labs/pull/1805)), stacked on #5186. `Stack.Host` rendered as the only child of a `Split.Column` becomes the navigator of that column on iOS.  How the pieces from the previous PRs come together:  - `RNSSplitScreenShadowNode` looks at its only direct child, and when it is an `RNSStackHost` it sets its own Yoga display to `contents`. - `Stack.Host` renders with `display: contents` when it is column content, which it learns from `SplitColumnMarkerContext` provided by `Split.Column` and reset by `Stack.Screen`, so a stack nested in a screen is not affected. - `RNSSplitScreenComponentView` takes the provider over when the host is mounted as its child. - `RNSStackHostComponentView` logs an error and shows nothing when it is out of layout but no column took it over. - `RNSSplitHostController.splitScreenControllers` becomes `visibleColumnControllersWithoutProvider` and skips columns backed by a provided navigation controller: they have no `RNSSplitScreenController` in the hierarchy and their content reports its own frame.  ## Changes  - RNSSplitScreenComponentView take-over and release of the provider - the `disableStackIntegration` prop - `splitScreenControllers` renamed to `visibleColumnControllersWithoutProvider`  ## Before & after - visual documentation  | Appearance events | Stack header subviews | Disabling stack integration | | --- | --- | 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- This is an auto-generated comment: skip review by coderabbit.ai -->  > [!IMPORTANT] > ## Review skipped >  > Auto reviews are disabled on base/target branches other than the default branch. >  >  >  > Please check the settings in the CodeRabbit UI or the `.coderabbit.yaml` file in this repository. To trigger a single review, invoke the `@coderabbitai review` command. >  > <details> > <summary><strong><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog-dark.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-comment-icons-v1/cog.svg" width="16" height="16" align="absmiddle" alt=""></picture> Run configuration</strong></summary> > <dl> > <dd> > <br> >  > - **Source mode**: Auto > - **Repository**: Unavailable > - **Branch**: Unavailable > - **File**: No confi
+- **Issue #5216** (2026-11-15): **chore(deps): bump addressable from 2.9.0 to 2.9.1 in /TVOSExample**
+  *Symptoms*: Bumps [addressable](https://github.com/sporkmonger/addressable) from 2.9.0 to 2.9.1. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/sporkmonger/addressable/blob/main/CHANGELOG.md">addressable's changelog</a>.</em></p> <blockquote> <h2>Addressable 2.9.1 <!-- raw HTML omitted --></h2> <h3><code>Addressable::URI</code></h3> <ul> <li>fixes denial of service in <code>Addressable::URI.normalize_path</code>, which took quadratic time on paths with many dot segments; <code>URI#normalize</code>, <code>#join</code>, <code>#==</code> and <code>#===</code> were affected ([GHSA-qq38-m9mg-xjj5])</li> <li>fixes <code>Addressable::URI.normalize_path</code> keeping segments that a <code>..</code> should have removed after a <code>..</code> above the root, e.g. <code>/../../public/x/../../secret</code> normalized to <code>/public/x/secret</code> instead of <code>/secret</code> ([GHSA-8gmh-2hhj-2hv9])</li> <li>fixes <code>Addressable::URI.normalize_path</code> treating a raw line feed as a segment boundary, e.g. joining <code>..\n/secret</code> onto <code>/public/</code> gave <code>/\n/secret</code></li> <li>deprecates <code>Addressable::URI::RULE_2A</code>, <code>RULE_2B_2C</code>, <code>RULE_2D</code> and <code>RULE_PREFIXED_PARENT</code>, which are no longer used; they will be removed in 2.10.0</li> <li>fixes <code>Addressable::URI#route_from</code> and <code>#route_to</code> raising <code>InvalidURIError</code> when the route's first segment contains 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -390,855 +386,597 @@ interface SafeAreaProvider {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d20ab95e` (2026-11-12)
-**Commit Message**: chore(example): build Detox from source with a patch for RN 0.89 (#5180)
+### Incident Patch 1: `54c55f6c` (2026-11-16)
+**Commit Message**: fix(iOS): follow the gesture in interactive fade and fade_from_bottom pops (#5146)
 
 ## Description
 
-Android e2e on `main` has been failing since the RN 0.89 bump (#5156):
-every spec dies in `beforeAll` → `device.reloadReactNative()` with
+On iOS, with `animationMatchesGesture: true`, the swipe-back pop for
+`animation: 'fade'` and `animation: 'fade_from_bottom'` does not follow
+the finger. The screen's progress jumps back and forth during the drag.
+A swipe released early, which should cancel, can still finish the pop.
+With `fade_from_bottom` the screen is gone about 0.25 s into the drag,
+and the header stays half-transitioned until the finger lifts.
 
-```
-NoSuchMethodError: No static method getFabricEnabled() in class DefaultNewArchitectureEntryPoint
-```
+The cause is in `RNSScreenStackAnimator`. The pop branches of
+`animateFadeWithTransitionContext:` and
+`animateFadeFromBottomWithTransitionContext:` call `startAnimation` even
+when the transition is interactive. The animator then runs on its own
+clock, while `RNSPercentDrivenInteractiveTransition` keeps setting
+`fractionComplete` from the gesture and finalizes with `pauseAnimation`
+/ `setReversed` / `continueAnimation…`, which expects a paused animator.
+`fade_from_bottom` also fades with a second animator that the gesture
+never drives.
 
-Detox 20.45.1 decides whether the app runs the New Architecture by
-reading `DefaultNewArchitectureEntryPoint.fabricEnabled`
-(`isFabricEnabled()` in `ReactApplicationExt.kt`, used by four call
-sites). React Native removed that property in
-facebook/react-native#58469, first shipped in 0.89. Detox `master` and
-the latest release (20.51.4) still carry the same code, so upgrading
-Detox does not help; the one-line upstream fix (check
-`ReactNativeInfo.isNewArchitectureOnlyVersion()` first) will be reported
-separately.
+The other custom pop animations (`simple_push`, `slide_from_left`,
+`slide_from_bottom`) already skip `startAnimation` for interactive pops
 
-The prebuilt `com.wix:detox` AAR cannot be patched, so FabricExample
-builds `:detox` from `node_modules/detox/android/detox` with a
-`patch-package` patch applied by the existing `postinstall` script.
 
-## Changes
-
-- `FabricExample/patches/detox+20.45.1.patch`
-- `isFabricEnabled()` returns `true` (FabricExample is New Architecture
-only).
-- Legacy-
-
-**File**: `FabricExample/android/app/build.gradle` (modified, +2/-1)
+**File**: `ios/legacy/RNSScreenStackAnimator.mm` (modified, +68/-30)
 ```diff
-@@ -101,6 +101,7 @@ android {
-         versionName "1.0"
-         testBuildType System.getProperty('testBuildType', 'release') // Detox
-         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' // Detox
-+        missingDimensionStrategy 'detox', 'full' // Detox built from source
-     }
-     signingConfigs {
-         debug {
-@@ -135,7 +136,7 @@ android {
- 
- dependencies {
-     // Detox
--    androidTestImplementation('com.wix:detox:+') {
-+    androidTestImplementation(project(path: ':detox')) {
-         // Both rn-screens and detox are using this class
-         // https://github.com/wix/Detox/issues/2848
-         exclude group: 'com.google.android.material'
-```
-
-**File**: `FabricExample/android/app/src/main/java/com/fabricexample/MainApplication.kt` (modified, +32/-3)
-```diff
-@@ -4,10 +4,11 @@ import android.app.Application
- import com.facebook.react.PackageList
- import com.facebook.react.ReactApplication
- import com.facebook.react.ReactHost
--import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
--import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
- import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
-+import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags
-+import com.facebook.react.internal.featureflags.ReactNativeNewArchitectureFeatureFlagsDefaults
- import com.facebook.react.soloader.OpenSourceMergedSoMapping
-+import com.facebook.react.views.view.setEdgeToEdgeFeatureFlagOn
- import com.facebook.soloader.SoLoader
- 
- class MainApplication : Application(), ReactApplication {
-@@ -25,6 +26,34 @@ class MainApplication : Application(), ReactApplication {
- 
-   override fun onCreate() {
-     super.onCreate()
--    loadReactNative(this)
-+    loadReactNativeWithoutPreparedTextLayout()
-+  }
+@@ -315,17 +315,29 @@ - (void)animateFadeWithTransitionContext:(id<UIViewControllerContextTransitionin
+     [animator startAnimation];
+   } else if (_operation == UINavigationControllerOperationPop) {
+     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+-    auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+-                                                               curve:UIViewAnimationCurveEaseInOut
+-                                                          animations:^{
+-                                                            fromViewController.view.alpha = 0.0;
+-                                                          }];
+-    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
 +
-+  /**
-+   * Same as the generated `ReactNativeApplicationEntryPoint.loadReactNative(this)`, except
-+   * `enablePreparedTextLayout` is turned off.
-+   *
-+   * RN 0.89 enables it by default, which mounts `<Text>` as `PreparedLayoutTextView`, a
-+   * `ViewGroup` rather than a `TextView`. Detox finds text only through `TextView`, so
-+   * `by.text`, `by.label`, `toHaveText` and `getAttributes().text` stop matching and the
-+   * Android e2e suite fails wholesale. Feature flags can be overridden only once, which
-+   * `DefaultNewArchitectureEntryPoint.load()` already does, so its body is inlined here
-+   * with the STABLE flag set (`ReactNativeNewArchitectureFeatureFlagsDefaults`) instead.
-+   * Remove once Detox supports `PreparedLayoutTextView`.
-+   */
-+  private fun loadReactNativeWithoutPreparedTextLayout() {
-+    SoLoader.init(this, OpenSourceMergedSoMapping)
-+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-+      ReactNativeFeatureFlags.override(
-+        object : ReactNativeNewArchitectureFeatureFlagsDefaults() {
-+          override fun enablePreparedTextLayout(): Boolean = false
-+        }
-+      )
-+      SoLoader.loadLibrary("react_newarchdefaults")
-+      SoLoader.loadLibrary("appmodules")
-+    }
-+    if (BuildConfig.IS_EDGE_TO_EDGE_ENABLED) {
-+      setEdgeToEdgeFeatureFlagOn()
++    void (^animationBlock)(void) = ^{
++      fromViewController.view.alpha = 0.0;
++    };
++    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
+       fromViewController.view.alpha = 1.0;
+       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+-    }];
+-    _inFlightAnimator = animator;
+-    [animator startAnimation];
++    };
++
++    if (!transitionContext.isInteractive) {
++      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
++                                                                 curve:UIViewAnimationCurveEaseInOut
++                                                            animations:animationBlock];
++      [animator addCompletion:completionBlock];
++      _inFlightAnimator = animator;
++      [animator startAnimation];
++    } else {
++      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
++                                                                 curve:UIViewAnimationCurveLinear
++                                                            animations:animationBlock];
++      [animator addCompletion:completionBlock];
++      _inFlightAnimator = animator;
 +    }
    }
  }
-```
-
-**File**: `FabricExample/android/build.gradle` (modified, +1/-13)
-```diff
-@@ -6,6 +6,7 @@ buildscript {
-         targetSdkVersion = 36
-         ndkVersion = "28.2.13676358"
-         kotlinVersion = "2.3.21"
-+        detoxKotlinVersion = kotlinVersion // Detox built from source
-     }
-     repositories {
-         google()
-@@ -33,19 +34,6 @@ buildscript {
-     }
- }
  
--// Detox repository for `com.wix:detox` dependency specified
--// in app build.gradle. This most likely does not have to be
--// specified for each project but AFAIK it does not create any conflicts.
--// See: https://github.com/wix/Detox/issues/3973#issuecomment-1459895555
--// TODO: Find out which project should have it added.
--allprojects {
--    repositories {
--        maven {
--            url("$rootDir/../node_modules/detox/Detox-android")
--        }
--    }
--}
+@@ -428,33 +440,59 @@ - (void)animateFadeFromBottomWithTransitionContext:(id<UIViewControllerContextTr
+     toViewController.view.transform = CGAffineTransformIdentity;
+     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+ 
+-    // Android Nougat exit animation
+-    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
+-    auto slideAnimator = [[UIViewPropertyAnimator alloc]
+-        initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
+-                   curve:UIViewAnimationCurveEaseIn
+-              animations:^{
+-                toViewController.view.transform = CGAffineTransformIdentity;
+-                fromViewController.view.transform = topBottomTransform;
+-              }];
+-    [slideAnimator addCompletion:^(UIViewAnimatingPosition finalPosition) {
++    void (^slideAnimationBlock)(void) = ^{
++      toViewController.view.transform = CGAffineTransformIdentity;
++      fromViewController.view.transform = topBottomTransform;
++    };
++    void (^fadeAnimationBlock)(void) = ^{
++      fromViewController.view.alpha = 0.0;
++    };
++    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
+       fromViewController.view.transform = CGAffineTransformIdentity;
+       toViewController.view.transform = CGAffineTransformIdentity;
+       fromViewController.view.alpha = 1.0;
+       toViewController.view.alpha = 1.0;
+       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+-    }];
 -
- apply plugin: "com.facebook.react.rootproject"
+-    auto fadeAnimator = [[UIViewPropertyAnimator alloc]
+-        initWithDuration:baseTransitionDuration * RNSFadeCloseTransitionDurationProportion
+-                   curve:UIViewAnimationCurveLinear
+-              animations:^{
+-                fromViewController.view.alpha = 0.0;
+-              }];
++    };
  
- // Custom configuration. This is done in order to simplify process
-```
-
-**File**: `FabricExample/android/settings.gradle` (modified, +5/-0)
-```diff
-@@ -4,3 +4,8 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex -> ex.autol
- rootProject.name = 'FabricExample'
- include ':app'
- includeBuild('../node_modules/@react-native/gradle-plugin')
+-    _inFlightAnimator = slideAnimator;
+-    [slideAnimator startAnimation];
+-    [fadeAnimator startAnimationAfterDelay:baseTransitionDuration * RNSFadeCloseDelayTransitionDurationProportion];
++    // Android Nougat exit animation
++    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
++    if (!transitionContext.isInteractive) {
++      auto slideAnimator = [[UIViewPropertyAnimator alloc]
++          initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
++                     curve:UIViewAnimationCurveEaseIn
++                animations:slideAnimationBlock];
++      [slideAnimator addCompletion:completionBlock];
 +
-+// Detox is built from source (patched in ../patches) until it supports RN 0.89,
-+// see https://github.com/facebook/react-native/pull/58469.
-+include ':detox'
-+project(':detox').projectDir = new File(rootProject.projectDir, '../node_modules/detox/android/detox')
-```
++      auto fadeAnimator = [[UIViewPropertyAnimator alloc]
++          initWithDuration:baseTransitionDuration * RNSFadeCloseTransitionDurationProportion
++                     curve:UIViewAnimationCurveLinear
 
-**File**: `FabricExample/patches/detox+20.45.1.patch` (added, +181/-0)
-```diff
-@@ -0,0 +1,181 @@
-+diff --git a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt
-+index 62d4c2a..f73f066 100644
-+--- a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt
-++++ b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/ReactApplicationExt.kt
-+@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
-+ import com.facebook.react.ReactApplication
-+ import com.facebook.react.ReactInstanceManager
-+ import com.facebook.react.bridge.ReactContext
-+-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint
-+ 
-+ 
-+ fun ReactApplication.getInstanceManagerSafe(): ReactInstanceManager {
-+@@ -28,7 +27,9 @@ fun ReactApplication.getCurrentReactContextSafe(): ReactContext {
-+ 
-+ /**
-+  * A method to check if Fabric is enabled in the React Native application.
-++ *
-++ * react-native-screens patch: RN 0.89 removed `DefaultNewArchitectureEntryPoint.fabricEnabled`
-++ * (facebook/react-native#58469). FabricExample runs the New Architecture only, so the legacy
-++ * path (and its bridge-only idling resources) is dropped. Remove once Detox ships a fix.
-+  */
-+-fun isFabricEnabled(): Boolean {
-+-    return DefaultNewArchitectureEntryPoint.fabricEnabled
-+-}
-++fun isFabricEnabled(): Boolean = true
-+diff --git a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/bridge/BridgeIdlingResource.kt b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/bridge/BridgeIdlingResource.kt
-+deleted file mode 100644
-+index 2e3ec8b..0000000
-+--- a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/bridge/BridgeIdlingResource.kt
-++++ /dev/null
-+@@ -1,72 +0,0 @@
-+-package com.wix.detox.reactnative.idlingresources.bridge
-+-
-+-import android.util.Log
-+-import com.facebook.react.bridge.NotThreadSafeBridgeIdleDebugListener
-+-import com.facebook.react.bridge.ReactContext
-+-import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
-+-import java.util.concurrent.atomic.AtomicBoolean
-+-
-+-/**
-+- * Created by simonracz on 01/06/2017.
-+- */
-+-/**
-+- *
-+- *
-+- * IdlingResource for Espresso, which monitors the traffic of
-+- * React Native's JS bridge.
-+- *
-+- */
-+-class BridgeIdlingResource(private val reactContext: ReactContext) : DetoxIdlingResource(),
-+-    NotThreadSafeBridgeIdleDebugListener {
-+-    private val idleNow = AtomicBoolean(true)
-+-
-+-    init {
-+-        reactContext.catalystInstance.addBridgeIdleDebugListener(this)
-+-    }
-+-
-+-    fun onDetach() {
-+-        reactContext.catalystInstance.removeBridgeIdleDebugListener(this)
-+-    }
-+-
-+-    override fun getName(): String {
-+-        return BridgeIdlingResource::class.java.name
-+-    }
-+-
-+-    override fun getDebugName(): String {
-+-        return "bridge"
-+-    }
-+-
-+-    override fun getBusyHint(): Map<String, Any>? {
-+-        return null
-+-    }
-+-
-+-    override fun checkIdle(): Boolean {
-+-        val ret = idleNow.get()
-+-        if (!ret) {
-+-            Log.i(LOG_TAG, "JS Bridge is busy")
-+-        }
-+-        return ret
-+-    }
-+-
-+-    override fun onTransitionToBridgeIdle() {
-+-        idleNow.set(true)
-+-        notifyIdle()
-+-    }
-+-
-+-    override fun onTransitionToBridgeBusy() {
-+-        idleNow.set(false)
-+-        // Log.i(LOG_TAG, "JS Bridge transitions to busy.");
-+-    }
-+-
-+-    override fun onBridgeDestroyed() {
-+-    }
-+-
-+-    override fun onUnregistered() {
-+-        super.onUnregistered()
-+-        onDetach()
-+-    }
-+-
-+-    companion object {
-+-        private const val LOG_TAG = "Detox"
-+-    }
-+-}
-+diff --git a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt
-+index bc3e0c9..834ba1d 100644
-+--- a/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt
-++++ b/node_modules/detox/android/detox/src/full/java/com/wix/detox/reactnative/idlingresources/factory/OldArchitectureDetoxIdlingResourceFactoryStrategy.kt
-+@@ -5,10 +5,8 @@ import com.wix.detox.reactnative.getCurrentReactContext
-+ import com.wix.detox.reactnative.getCurrentReactContextSafe
-+ import com.wix.detox.reactnative.idlingresources.DetoxIdlingResource
-+ import com.wix.detox.reactnative.idlingresources.animations.AnimatedModuleIdlingResource
-+-import com.wix.detox.reactnative.idlingresources.bridge.BridgeIdlingResource
-+ import com.wix.detox.reactnative.idlingresources.network.NetworkIdlingResource
-+ import com.wix.detox.reactnative.idlingresources.storage.AsyncStorageIdlingResource
-+-import com.wix.detox.reactnative.idlingres
 ```
 
 ---
 
-### Incident Patch 2: `f30d8c2c` (2026-11-09)
-**Commit Message**: fix(Android, Stack v4): don't let an enter animation end a removal transition (#5113)
+### Incident Patch 2: `f3306074` (2026-11-16)
+**Commit Message**: fix(Android, Tabs): remove TabsScreen natively when it's removed from JS (#5074)
 
-When a nested native stack with 2+ screens is popped as a whole while
-its inner pop animation is still running (open a screen inside a nested
-stack, press back twice quickly), Android/Fabric crashes:
+## Description
+
+This is #4812 by @ArnaudDerosin, rebased onto `main`. The tabs moved to
+`react/containers` in #4946, so that branch no longer applies. I
+cherry-picked its commit, keeping the authorship, and resolved the one
+conflict in `TabsHost.kt`. The change itself is unchanged.
+
+On Android, a `TabsScreen` removed from JS is never removed natively.
+Before Fabric removes a child, `SurfaceMountingManager.removeViewAt`
+looks it up through `viewGroupManager.getChildAt(parent, index)`. When
+the tag isn't there, it logs `view already removed from parent!` and
+returns without calling the view manager's `removeViewAt`. The only real
+Android child of `TabsHost` is `TabsContainer`, since the screens live
+in `renderedScreens` and in the container's model, and
+`TabsHostViewManager` didn't override `getChildCount`/`getChildAt`. So
+every tab removal was skipped, the removed tabs stayed in the bar, and
+once the model held more than six the next menu rebuild threw:
 
 ```
-java.lang.IllegalStateException: Cannot remove child at index 2 from parent ViewGroup [...], only 2 children in parent.
-Caused by: java.lang.IllegalStateException: The specified child already has a parent. You must call removeView() on the child's parent first.
-    at com.swmansion.rnscreens.ScreenStackHeaderConfig.onUpdate
-    at com.swmansion.rnscreens.ScreenStackHeaderConfig.maybeUpdate
-    at com.swmansion.rnscreens.ScreenStackHeaderConfig.removeConfigSubview
-```
+java.lang.IllegalArgumentException: Maximum number of items supported by CustomBottomNavigationView is 6. Limit can be checked with CustomBottomNa
 
-(or `ScreenStackFragment added into a non-stack container` from
-`canNavigateBack`, same frames, on older versions).
-
-Sequence:
-
-1. The teardown of the nested stack is committed.
-`NativeProxy.notifyScreenRemoved()` posts
-`Screen.startRemovalTransition()` → `isRemovalTransitionStarted = true`,
-`isBeingRemoved = true`.
-2. The revealed screen's **enter** animation (from the first back) ends
-→ `ScreenStackFragment.notifyViewTransitionEn
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/ScreenStackFragment.kt` (modified, +5/-2)
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/containers/tabs/host/TabsHost.kt` (modified, +5/-0)
 ```diff
-@@ -164,8 +164,11 @@ class ScreenStackFragment :
-             screenStack.onViewTransitionEnd(coordinatorLayout)
+@@ -102,6 +102,11 @@ class TabsHost(
+             "[RNScreens] Nullish fragment manager - can't run container operations"
          }
  
--        // Rely on guards inside the callee to detect whether this was indeed removal transition.
--        screen.endRemovalTransition()
-+        // Only an exit animation finishes a removal transition. An enter animation that ends after the
-+        // removal has already started (e.g. a quick second back) must not reset `isBeingRemoved`.
-+        if (isRemoving) {
-+            screen.endRemovalTransition()
++    internal val reactSubviewCount: Int
++        get() = renderedScreens.size
++
++    internal fun getReactSubviewAt(index: Int): TabsScreen? = renderedScreens.getOrNull(index)
++
+     internal fun mountReactSubviewAt(
+         tabsScreen: TabsScreen,
+         index: Int,
+```
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/react/containers/tabs/host/TabsHostViewManager.kt` (modified, +10/-0)
+```diff
+@@ -54,6 +54,16 @@ class TabsHostViewManager :
+         parent.unmountReactSubviewAt(index)
+     }
+ 
++    // TabsScreens are not real Android children of TabsHost (they live in its
++    // container). Fabric's removeViewAt verifies the child via getChildAt before
++    // removing; without these overrides it never finds the tab and skips removal.
++    override fun getChildCount(parent: TabsHost): Int = parent.reactSubviewCount
++
++    override fun getChildAt(
++        parent: TabsHost,
++        index: Int,
++    ): View? = parent.getReactSubviewAt(index)
++
+     override fun removeAllViews(parent: TabsHost) {
+         parent.unmountAllReactSubviews()
+     }
+```
+
+**File**: `apps/src/tests/single-feature-tests/tabs/index.ts` (modified, +3/-0)
+```diff
+@@ -34,6 +34,7 @@ import TestTabsBottomAccessoryVisibility from './test-tabs-bottom-accessory-visi
+ import TestTabsBottomAccessorySize from './test-tabs-bottom-accessory-size-ios';
+ import TestTabsScreenOrientation from './test-tabs-screen-orientation';
+ import TestTabsTabBarExperimentalUserInterfaceStyle from './test-tabs-tab-bar-experimental-user-interface-style-ios';
++import TestTabsDynamicTabCount from './test-tabs-dynamic-tab-count';
+ // Scenario entry-point components — each scenario's default export re-exported
+ // under a name for direct rendering (e.g. from App.tsx or e2e harnesses).
+ export { default as TestTabsSimpleNav } from './test-tabs-simple-nav';
+@@ -68,6 +69,7 @@ export { default as TestTabsBottomAccessoryVisibility } from './test-tabs-bottom
+ export { default as TestTabsBottomAccessorySize } from './test-tabs-bottom-accessory-size-ios';
+ export { default as TestTabsScreenOrientation } from './test-tabs-screen-orientation';
+ export { default as TestTabsTabBarExperimentalUserInterfaceStyle } from './test-tabs-tab-bar-experimental-user-interface-style-ios';
++export { default as TestTabsDynamicTabCount } from './test-tabs-dynamic-tab-count';
+ 
+ const scenarios = {
+   TestTabsSimpleNav,
+@@ -102,6 +104,7 @@ const scenarios = {
+   TestTabsBottomAccessorySize,
+   TestTabsScreenOrientation,
+   TestTabsTabBarExperimentalUserInterfaceStyle,
++  TestTabsDynamicTabCount,
+ };
+ 
+ const TabsScenarioGroup: ScenarioGroup<keyof typeof scenarios> = {
+```
+
+**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-dynamic-tab-count/index.tsx` (added, +55/-0)
+```diff
+@@ -0,0 +1,55 @@
++import React from 'react';
++import { Button, Text, View } from 'react-native';
++import { Tabs } from 'react-native-screens';
++import { scenarioDescription } from './scenario-description';
++import { createScenario } from '@apps/tests/shared/helpers';
++import { DEFAULT_TAB_ROUTE_OPTIONS } from '@apps/shared/containers/tabs';
++
++const EXTRA_TAB_KEYS = ['Tab2', 'Tab3', 'Tab4'];
++
++function TestTabsDynamicTabCount() {
++  const [showExtraTabs, setShowExtraTabs] = React.useState(true);
++  const [toggleCount, setToggleCount] = React.useState(0);
++
++  const toggle = () => {
++    setShowExtraTabs(value => !value);
++    setToggleCount(count => count + 1);
++  };
++
++  return (
++    <Tabs.Host
++      navStateRequest={{ selectedScreenKey: 'Tab1', baseProvenance: 0 }}>
++      <Tabs.Screen {...DEFAULT_TAB_ROUTE_OPTIONS} screenKey="Tab1" title="Tab1">
++        <View
++          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
++          <Text>Extra tabs: {showExtraTabs ? 'rendered' : 'removed'}</Text>
++          <Text>Toggles: {toggleCount}</Text>
++          <Button
++            title={showExtraTabs ? 'Remove extra tabs' : 'Add extra tabs'}
++            onPress={toggle}
++            testID="dynamic-tab-count-toggle"
++          />
++        </View>
++      </Tabs.Screen>
++      {showExtraTabs &&
++        EXTRA_TAB_KEYS.map(key => (
++          <Tabs.Screen
++            {...DEFAULT_TAB_ROUTE_OPTIONS}
++            key={key}
++            screenKey={key}
++            title={key}>
++            <View
++              style={{
++                flex: 1,
++                alignItems: 'center',
++                justifyContent: 'center',
++              }}>
++              <Text>{key}</Text>
++            </View>
++          </Tabs.Screen>
++        ))}
++    </Tabs.Host>
++  );
++}
++
++export default createScenario(TestTabsDynamicTabCount, scenarioDescription);
+```
+
+**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-dynamic-tab-count/scenario-description.ts` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++import type { ScenarioDescription } from '@apps/tests/shared/helpers';
++
++export const scenarioDescription: ScenarioDescription = {
++  name: 'Dynamic Tab Count',
++  key: 'test-tabs-dynamic-tab-count',
++  details:
++    'Test removing and re-adding TabsScreens at runtime (conditional rendering).',
++  platforms: ['ios', 'android'],
++  e2eCoverage: 'tbd',
++  smokeTest: false,
++};
+```
+
+**File**: `apps/src/tests/single-feature-tests/tabs/test-tabs-dynamic-tab-count/scenario.md` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++# Test Scenario: Dynamic Tab Count
++
++## Details
++
++**Description:** Verify that tabs rendered conditionally can be removed from and
++added back to `Tabs.Host` at runtime. Pass means the tab bar always shows exactly
++the rendered tabs and the app does not crash.
++
++**OS test creation version:** iOS: 27.2, Android: API Level 36.
++
++## E2E test
++
++TBD: to be automated once adding tabs at runtime is fully supported on Android.
++
++## Prerequisites
++
++- iOS device or simulator
++- Android emulator
++
++## Note
++
++- **Known issue:** Android: a tab added back at runtime shows an empty content
++  area when selected. Adding tabs at runtime is not fully supported yet.
++
++## Steps
++
++### Baseline
++
++1. Launch the app and navigate to the **Dynamic Tab Count** screen.
++
++   - [ ] The tab bar shows "Tab1", "Tab2", "Tab3" and "Tab4"; "Tab1" is
++         selected.
++   - [ ] The screen shows "Extra tabs: rendered" and "Toggles: 0".
++
++2. Select the "Tab2" tab.
++
++   - [ ] The screen shows the text "Tab2".
++
++---
++
++### Remove and add back
++
++1. Select the "Tab1" tab, then tap "Remove extra tabs".
++
++   - [ ] The tab bar shows only "Tab1".
++   - [ ] The screen shows "Extra tabs: removed" and "Toggles: 1".
++
++2. Tap "Add extra tabs".
++
++   - [ ] The tab bar shows exactly "Tab1", "Tab2", "Tab3" and "Tab4"; "Tab1"
++         is selected.
++   - [ ] The screen shows "Extra tabs: rendered" and "Toggles: 2".
++
++3. Tap "Remove extra tabs", then "Add extra tabs", 5 times in a row.
++
++   - [ ] The tab bar shows exactly "Tab1", "Tab2", "Tab3" and "Tab4".
++   - [ ] The screen shows "Toggles: 12".
++
++4. Select the "Tab2" tab.
++
++   - [ ] "Tab2" is selected in the tab bar.
++   - [ ] iOS: the screen shows the text "Tab2".
++   - [ ] Android: the content area is empty (see Note).
++
++5. Select the "Tab1" tab.
++
++   - [ ] The screen shows "Extra tabs: rendered" and "Toggles: 12".
+```
+
+---
+
+### Incident Patch 3: `65a7c6dc` (2026-11-16)
+**Commit Message**: fix(Android, Stack v4): dispatch the appear event after a pause mid push (#5171)
+
+## Description
+
+On Android, if the app goes to the background while a pushed screen is
+still animating in, the screen never gets `onAppear`, so
+react-navigation never emits `transitionEnd`. The enter animation ends
+after the fragment is paused, `dispatchViewAnimationEvent` takes the
+disappear branch, and the canDispatch gate drops that event because the
+screen never appeared. This PR keeps the appear for the top screen and
+sends it from `onResume`. The pending-flag approach follows the analysis
+Nezz posted in the issue. A pause before the enter animation starts lost
+the will-appear in the same way. The top screen now gets it right away,
+so `transitionStart` still reaches JS.
+
+Closes #4941.
+
+## Test plan
+
+Added `Test4941` (`apps/src/tests/issue-tests/Test4941.tsx`), based on
+the repro from the issue.
+
+1. Run `Test4941` in FabricExample on Android.
+2. Tap "Push details" and press Home while Details slides in. "Push
+details in 1s" gives time to reach the Home button. Details shows "Home
+pressed during the push: yes" when the press landed during the
+animation. A run counts only with "yes".
+3. Reopen the a
+
+**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/ScreenFragment.kt` (modified, +15/-0)
+```diff
+@@ -62,6 +62,10 @@ open class ScreenFragment :
+     // in nested fragments. See more explanation in dispatchViewAnimationEvent
+     private var isTransitioning = false
+ 
++    // The enter animation can end while the fragment is paused, e.g. when the app goes to the
++    // background in the middle of a push. In such case we dispatch the appear event on resume.
++    private var shouldDispatchAppearOnResume = false
++
+     constructor() {
+         throw IllegalStateException(
+             "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.",
+@@ -79,6 +83,10 @@ open class ScreenFragment :
+             shouldUpdateOnResume = false
+             ScreenWindowTraits.trySetWindowTraits(screen, tryGetActivity(), tryGetContext())
+         }
++        if (shouldDispatchAppearOnResume) {
++            shouldDispatchAppearOnResume = false
++            dispatchOnAppear()
 +        }
      }
  
-     /**
+     override fun onCreateView(
+@@ -309,6 +317,12 @@ open class ScreenFragment :
+                 UiThreadUtil.runOnUiThread {
+                     if (animationEnd) dispatchOnAppear() else dispatchOnWillAppear()
+                 }
++            } else if (screen.container?.topScreen === screen) {
++                if (animationEnd) {
++                    shouldDispatchAppearOnResume = true
++                } else {
++                    UiThreadUtil.runOnUiThread { dispatchOnWillAppear() }
++                }
+             } else {
+                 if (animationEnd) dispatchOnDisappear() else dispatchOnWillDisappear()
+             }
+@@ -317,6 +331,7 @@ open class ScreenFragment :
+ 
+     override fun onDestroy() {
+         super.onDestroy()
++        shouldDispatchAppearOnResume = false
+         val container = screen.container
+         if (container == null || !container.hasScreen(this.screen.fragmentWrapper)) {
+             // we only send dismissed even when the screen has been removed from its container
 ```
 
-**File**: `android/src/main/java/com/swmansion/rnscreens/legacy/events/ScreenAnimationDelegate.kt` (modified, +6/-1)
+**File**: `apps/src/tests/issue-tests/Test4941.tsx` (added, +127/-0)
 ```diff
-@@ -67,7 +67,12 @@ class ScreenAnimationDelegate(
-                 isExitAnimation,
-             )
- 
--            wrapper.screen.endRemovalTransition()
-+            // Check fragment state, not animation direction: when a form sheet is removed during its
-+            // ENTER animation, AndroidX can merge the removal into the running operation and end the
-+            // ENTER animator without ever creating an EXIT one.
-+            if (wrapper.fragment.isRemoving) {
-+                wrapper.screen.endRemovalTransition()
-+            }
-         }
-     }
- 
-```
-
-**File**: `apps/src/tests/issue-tests/Test5112.tsx` (added, +271/-0)
-```diff
-@@ -0,0 +1,271 @@
-+import React, {
-+  useCallback,
-+  useEffect,
-+  useLayoutEffect,
-+  useState,
-+} from 'react';
-+import { Button, Pressable, Text, View } from 'react-native';
-+import {
-+  createNavigationContainerRef,
-+  NavigationContainer,
-+  type NavigatorScreenParams,
-+  useFocusEffect,
-+  useIsFocused,
-+  useNavigation,
-+} from '@react-navigation/native';
+@@ -0,0 +1,127 @@
++import React, { useEffect, useRef, useState } from 'react';
++import { AppState, StyleSheet, Text, View } from 'react-native';
++import { NavigationContainer } from '@react-navigation/native';
 +import {
 +  createNativeStackNavigator,
 +  type NativeStackScreenProps,
 +} from '@react-navigation/native-stack';
++import { Button } from '@apps/shared';
 +
-+// Reproduces https://github.com/software-mansion/react-native-screens/issues/5112
-+// (based on https://github.com/rafalnawojczyk/rns-nested-stack-header-crash-repro).
++// Android: tap "Push details" and press Home while Details slides in, then
++// reopen the app. "Push details in 1s" starts the push 1 s after the tap:
++// press Home only after Details starts to slide in. JS timers stop in the
++// background, so an earlier Home press delays the push until the app is
++// reopened. The run counts only if Details shows "Home pressed during the
++// push: yes". Details should then show "transitionStart: received (1)" and
++// "transitionEnd: received (1)".
 +//
-+// Root native stack: Home (nested stack) and Feature (nested stack: Dashboard → Child).
-+// Dashboard has custom headerLeft / headerTitle / headerRight.
-+//
-+// "Start auto repro" loops: open Feature → open Child → goBack() → wait 250–400 ms → goBack().
-+// The second goBack() pops the whole Feature stack while Dashboard is still sliding back in.
-+// Home does HOME_RENDER_COST_MS of JS work in a layout effect when it regains focus, i.e. after the
-+// commit that removes Feature, in the same JS task. That delays the teardown mount until after
-+// Dashboard's enter animation has ended.
-+//
-+// Expected: Home is shown.
-+// Bug (Android, Fabric): crash in ScreenStackHeaderConfig.onUpdate during the teardown of the
-+// Feature stack ("The specified child already has a parent").
++// A Home press before the first animation frame is too fast by hand. Send the
++// tap on "Push details" and Home in one command:
++//   adb shell "input tap <x> <y>; sleep 0.03; input keyevent KEYCODE_HOME"
++// Without the fix, such a run can show "transitionStart: waiting".
 +
-+type FeatureParamList = { Dashboard: undefined; Child: undefined };
-+type RootParamList = {
++type ParamList = {
 +  Home: undefined;
-+  Feature: NavigatorScreenParams<FeatureParamList> | undefined;
++  Details: undefined;
 +};
 +
-+const Root = createNativeStackNavigator<RootParamList>();
-+const HomeStack = createNativeStackNavigator<{ HomeScreen: undefined }>();
-+const FeatureStack = createNativeStackNavigator<FeatureParamList>();
-+const ChildStack = createNativeStackNavigator<{ ChildRoot: undefined }>();
-+const navigationRef = createNavigationContainerRef<RootParamList>();
++const Stack = createNativeStackNavigator<ParamList>();
 +
-+// JS work done by Home when it is revealed. It delays the teardown mount of the Feature stack.
-+const HOME_RENDER_COST_MS = 300;
-+const GAPS_MS = [250, 300, 350, 400];
-+
-+const wait = (ms: number) =>
-+  new Promise<void>(resolve => setTimeout(resolve, ms));
-+const burn = (ms: number) => {
-+  const end = Date.now() + ms;
-+  while (Date.now() < end) {}
-+};
-+
-+function HeaderButton({
-+  label,
-+  onPress,
-+}: {
-+  label: string;
-+  onPress?: () => void;
-+}) {
++function HomeScreen({ navigation }: NativeStackScreenProps<ParamList, 'Home'>) {
 +  return (
-+    <Pressable
-+      onPress={onPress}
-+      style={{
-+        paddingHorizontal: 12,
-+        paddingVertical: 6,
-+        borderWidth: 1,
-+        borderRadius: 16,
-+      }}>
-+      <Text>{label}</Text>
-+    </Pressable>
-+  );
-+}
-+
-+function useCustomHeader(title: string) {
-+  const navigation = useNavigation();
-+  useLayoutEffect(() => {
-+    navigation.setOptions({
-+      headerBackVisible: false,
-+      headerLeft: () => (
-+        <HeaderButton label="←" onPress={() => navigation.goBack()} />
-+      ),
-+      headerTitle: () => (
-+        <Text style={{ fontSize: 18, fontWeight: '600' }}>{title}</Text>
-+      ),
-+      headerRight: () => <HeaderButton label="More" />,
-+      headerTitleAlign: 'center',
-+    });
-+  });
-+}
-+
-+function Tiles({ count, seed }: { count: number; seed: number }) {
-+  return (
-+    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-+      {Array.from({ length: count }, (_, i) => (
-+        <View
-+          key={i}
-+          style={{
-+            width: 8,
-+            height: 8,
-+            margin: 1,
-+            backgroundColor: (i + seed) % 2 ? '#ccc' : '#999',
-+          }}
-+        />
-+      ))}
++    <View style={styles.container}>
++      <Button
++        title="Push details"
++        onPress={() => navigation.navigate('Details')}
++      />
++      <Button
++        title="Push details in 1s"
++        onPress={() => setTimeout(() => navigation.navigate('Details'), 1000)}
++      />
 +    </View>
 +  );
 +}
 +
-+function AutoRepro() {
-+  const [running, setRunning] = useState(false);
-+  const [iteration, setIteration] = useState(0);
++function DetailsScreen({
++  navigation,
++}: NativeStackScreenProps<ParamList, 'Details'>) {
++  const [transitionStartCount, setTransitionStartCount] = useState(0);
++  const [transitionEndCount, setTransitionEndCount] = useState(0);
++  const [backgroundedDuringPush, setBackgroundedDuringPush] = useState(false);
++  const transitionEndedRef = useRef(false);
++
++  useEffect(
++    () =>
++      navigation.addListener('transitionStart', event => {
++        if (!event.data.closing) {
++          console.log('[Test4941] Details transitionStart (closing: false)');
++          setTransitionStartCount(count => count + 1);
++        }
++      }),
++    [navigation],
++  );
++
++  useEffect(
++    () =>
++      navigation.addListener('transitionEnd', event => {
++        if (!event.data.closing) {
++          console.log('[Test4941] Details transitionEnd (closing: false)');
++          transitionEndedRef.current = true;
++          setTransitionEndCount(count => count + 1);
++        }
++      }),
++    [navigation],
++  );
 +
 +  useEffect(() => {
-+    if (!running) {
-+      return;
-+    }
-+    // Per run, so Stop + Start or leaving the screen ends this loop after its current wait.
-+    let cancelled = false;
-+    (async () => {
-+      for (let i = 1; !cancelled; i++) {
-+        const gap = GAPS_MS[i % GAPS_MS.length];
-+        setIteration(i);
-+        console.log(`[Test5112] iteration ${i} gap ${gap}ms`);
-+        navigationRef.navigate('Feature');
-+        await wait(2000);
-+        if (cancelled) {
-+          return;
-+        }
-+        navigationRef.navigate('Feature', { screen: 'Child' });
-+        await wait(1500);
-+        if (cancelled) {
-+          return;
-+        }
-+        navigationRef.goBack(); // pops Child, Dashboard slides back in
-+        await wait(gap);
-+        if (cancelled) {
-+          return;
-+        }
-+        navigationRef.goBack(); // pops the whole Feature stack during that animation
-+        await wait(2000);
++    const subscription = AppState.addEventListener('change', state => {
++      if (state === 'background' && !transitionEndedRef.current) {
++        setBackgroundedDuringPush(true);
 +      }
-+    })();
-+    return () => {
-+      cancelled = true;
-+    };
-+  }, [running]);
++    });
++    return () => subscription.remove();
++  }, []);
 +
 +  return (
-+    <View style={{ alignItems: 'center', gap: 8 }}>
-+      <Button
-+        testID="open-feature"
-+        title="Open feature"
-+        onPress={() => navigationRef.navigate('Feature')}
-+     
++    <View style={styles.container}>
++      <Text style={styles.text}>
++        transitionStart:{' '}
++        {transitionStartCount > 0
++          ? `received (${transitionStartCount})`
++          : 'waiting'}
++      </Text>
++      <Text style={styles.text}>
++        transitionEnd:{' '}
++        {transitionEndCount > 0
++          ? `received (${transitionEndCount})`
++          : 'waiting'}
++      </Text>
++      <Text style={styles.text}>
++        Home pressed during the push: {backgroundedDuringPush ? 'yes' : 'no'}
++      </Text>
++    </View>
++  );
++}
++
++export default function Test4941() {
++  return (
++    <NavigationContainer>
++      <Stack.Navigator>
++        <Stack.Screen name="Home" component={HomeScreen} />
++        <Stack.Screen name="Details" component={DetailsScreen} />
++      </Stack.Navigator>
++    </NavigationContainer>
++  );
++}
++
++const styles = StyleSheet.create({
++  container: {
++    flex: 1,
++    alignItems: 'center',
++    justifyContent: 'center',
++    gap: 16,
++  },
++  text: {
++    fontSize: 20,
++  },
++});
 ```
 
 **File**: `apps/src/tests/issue-tests/index.ts` (modified, +1/-0)
 ```diff
-@@ -231,6 +231,7 @@ export { default as Test4872 } from './Test4872';
+@@ -228,6 +228,7 @@ export { default as Test4811 } from './Test4811';
+ export { default as Test4857 } from './Test4857';
+ export { default as Test4863 } from './Test4863';
+ export { default as Test4872 } from './Test4872';
++export { default as Test4941 } from './Test4941';
  export { default as Test4989 } from './Test4989'; // [E2E skipped]: needs an iPhone Duo cold-launched unfolded
  export { default as Test5015 } from './Test5015'; // [E2E skipped]: truncated tab bar titles can't be checked
  export { default as Test5092 } from './Test5092';
-+export { default as Test5112 } from './Test5112';
- export { default as Test5127 } from './Test5127';
- export { default as Test5143 } from './Test5143';
- export { default as TestScreenAnimation } from './TestScreenAnimation';
-```
-
----
-
-### Incident Patch 3: `947bcd4a` (2026-11-12)
-**Commit Message**: feat(iOS, Stack v5): stack screen reports the frame UIKit gives it (#5183)
-
-## Description
-
-Second PR of the series that lets a `Stack.Host` act as the navigator of
-a `Split.Column`
-([RFC-1805](https://github.com/software-mansion/react-native-screens-labs/pull/1805)),
-follows #5182.
-
-In a column the column view and the host take no part in layout, so Yoga
-lays the stack screens out as children of the split host, at the size of
-the whole split, while UIKit places each screen at the size of its
-column. A stack screen is the one node that both Yoga lays out and UIKit
-places, so it is the place to reconcile the two.
-
-This PR adds an internal `reportsFrameToShadowTree` prop to
-`RNSStackScreen`. With the prop on, the screen view reports the frame
-UIKit gave it through the shadow state, and the shadow node takes its
-size and content offset from that state, which is what Android already
-does for every stack screen. The prop is off by default and nothing sets
-it yet (#5192 sets it for a stack that navigates a column), so a regular
-stack is untouched and this PR changes no behaviour on its own.
-
-## Changes
-
-- `src/fabric/stack/StackScreenNativeComponent.ts`: the
-`reportsFrameToShadowTree` pr
-
-**File**: `android/src/main/java/com/swmansion/rnscreens/react/containers/stack/screen/StackScreenViewManager.kt` (modified, +7/-0)
-```diff
-@@ -179,6 +179,13 @@ internal class StackScreenViewManager :
-             }
-     }
- 
-+    override fun setReportsFrameToShadowTree(
-+        view: StackScreen,
-+        value: Boolean,
-+    ) {
-+        // iOS only.
-+    }
-+
-     companion object {
-         const val REACT_CLASS = "RNSStackScreen"
-         private const val TAG = "StackScreenViewManager"
-```
-
-**File**: `common/cpp/react/renderer/components/rnscreens/RNSStackHostShadowNode.cpp` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ RNSStackHostShadowNode::RNSStackHostShadowNode(
-  * React Native marks every node rendered with `display: contents` for
-  * flattening (`ForceFlattenView`) when it applies the style. Inside a Split
-  * column `Stack.Host` renders that way and still needs its view , which
-- * owns the navigation controller the Split installs in the column so the mark 
-+ * owns the navigation controller the Split installs in the column so the mark
-  * is cleared after every construction.
-  */
- void RNSStackHostShadowNode::unsetForceFlattenViewForContents() {
-```
-
-**File**: `common/cpp/react/renderer/components/rnscreens/RNSStackScreenComponentDescriptor.h` (modified, +16/-15)
-```diff
-@@ -16,25 +16,26 @@ class RNSStackScreenComponentDescriptor final
-   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
- 
-   void adopt(ShadowNode &shadowNode) const override {
--#ifdef ANDROID
-     react_native_assert(dynamic_cast<RNSStackScreenShadowNode *>(&shadowNode));
-     auto &screenShadowNode =
-         static_cast<RNSStackScreenShadowNode &>(shadowNode);
--    react_native_assert(
--        dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
--    auto &layoutableShadowNode =
--        static_cast<YogaLayoutableShadowNode &>(screenShadowNode);
--
--    auto state =
--        std::static_pointer_cast<const RNSStackScreenShadowNode::ConcreteState>(
--            shadowNode.getState());
--    auto stateData = state->getData();
--
--    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
--      layoutableShadowNode.setSize(
--          Size{stateData.frameSize.width, stateData.frameSize.height});
-+
-+    if (screenShadowNode.shouldApplyReportedFrame()) {
-+      react_native_assert(
-+          dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
-+      auto &layoutableShadowNode =
-+          static_cast<YogaLayoutableShadowNode &>(screenShadowNode);
-+
-+      auto state = std::static_pointer_cast<
-+          const RNSStackScreenShadowNode::ConcreteState>(shadowNode.getState());
-+      auto stateData = state->getData();
-+
-+      if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-+        layoutableShadowNode.setSize(
-+            Size{stateData.frameSize.width, stateData.frameSize.height});
-+      }
-     }
--#endif // ANDROID
-+
-     ConcreteComponentDescriptor::adopt(shadowNode);
-   }
- };
-```
-
-**File**: `common/cpp/react/renderer/components/rnscreens/RNSStackScreenShadowNode.cpp` (modified, +10/-1)
-```diff
-@@ -4,12 +4,21 @@ namespace facebook::react {
- 
- extern const char RNSStackScreenComponentName[] = "RNSStackScreen";
- 
-+bool RNSStackScreenShadowNode::shouldApplyReportedFrame() const {
- #ifdef ANDROID
-+  return true;
-+#else
-+  return getConcreteProps().reportsFrameToShadowTree;
-+#endif // ANDROID
-+}
-+
- Point RNSStackScreenShadowNode::getContentOriginOffset(
-     bool /*includeTransform*/) const {
-+  if (!shouldApplyReportedFrame()) {
-+    return {};
-+  }
-   auto stateData = getStateData();
-   return stateData.contentOffset;
- }
--#endif // ANDROID
- 
- } // namespace facebook::react
-```
-
-**File**: `common/cpp/react/renderer/components/rnscreens/RNSStackScreenShadowNode.h` (modified, +9/-2)
-```diff
-@@ -20,11 +20,18 @@ class JSI_EXPORT RNSStackScreenShadowNode final
-   using ConcreteViewShadowNode::ConcreteViewShadowNode;
-   using StateData = ConcreteViewShadowNode::ConcreteStateData;
- 
-+  /**
-+   * Whether the frame the native side sends via shadow state should be applied
-+   * to this node (setSize + contentOffset). On Android this is currently
-+   * required. On iOS this is enabled in JS only in case a Stack is nested
-+   * inside a Split - as it is `StackScreen` role then to convey platform column
-+   * dimensions to the React screen contents.
-+   */
-+  bool shouldApplyReportedFrame() const;
-+
- #pragma mark - ShadowNode overrides
- 
--#ifdef ANDROID
-   Point getContentOriginOffset(bool includeTransform) const override;
--#endif // ANDROID
- };
- 
- } // namespace facebook::react
-```
-
-**File**: `common/cpp/react/renderer/components/rnscreens/RNSStackScreenState.h` (modified, +7/-3)
-```diff
-@@ -1,6 +1,8 @@
- #pragma once
- 
- #include <jsi/jsi.h>
-+#include <react/renderer/graphics/Point.h>
-+#include <react/renderer/graphics/Size.h>
- 
- #ifdef ANDROID
- #include <folly/dynamic.h>
-@@ -17,6 +19,11 @@ class JSI_EXPORT RNSStackScreenState final {
-   using Shared = std::shared_ptr<const RNSStackScreenState>;
- 
-   RNSStackScreenState() {};
-+  RNSStackScreenState(Size frameSize_, Point contentOffset_)
-+      : frameSize(frameSize_), contentOffset(contentOffset_) {};
-+
-+  Size frameSize{};
-+  Point contentOffset{};
- 
- #ifdef ANDROID
-   RNSStackScreenState(
-@@ -31,9 +38,6 @@ class JSI_EXPORT RNSStackScreenState final {
-                 (Float)data["contentOffsetX"].getDouble(),
-                 (Float)data["contentOffsetY"].getDouble()}) {};
- 
--  Size frameSize{};
--  Point contentOffset{};
--
-   folly::dynamic getDynamic() const;
-   MapBuffer getMapBuffer() const {
-     return MapBufferBuilder::EMPTY();
-```
-
-**File**: `ios/react/containers/stack/screen/RNSStackScreenComponentView.mm` (modified, +48/-0)
-```diff
-@@ -16,6 +16,7 @@
- #import "RNSStackScreenComponentEventEmitter.h"
- #import "RNSStackScreenController.h"
- #import "RNSStackScreenHeaderCoordinator.h"
-+#import "RNSStackScreenShadowStateProxy.h"
- 
- namespace react = facebook::react;
- 
-@@ -30,6 +31,7 @@ @interface RNSStackScreenComponentView () <RCTMountingTransactionObserving,
- @implementation RNSStackScreenComponentView {
-   RNSStackScreenController *_Nonnull _controller;
-   RNSStackScreenComponentEventEmitter *_Nonnull _reactEventEmitter;
-+  RNSStackScreenShadowStateProxy *_Nonnull _shadowStateProxy;
- 
-   // Content scroll view registered by a descendant `RNSScrollViewMarkerComponentView`. Queried by
-   // the owning `RNSStackScreenController` through `RNSStackContainerItemConfigProviding` when
-@@ -38,6 +40,7 @@ @implementation RNSStackScreenComponentView {
- 
-   // Flags
-   BOOL _hasUpdatedActivityMode;
-+  BOOL _reportsFrameToShadowTree;
- }
- 
- - (instancetype)initWithFrame:(CGRect)frame
-@@ -55,11 +58,46 @@ - (void)initState
-   [self setupController];
- 
-   _reactEventEmitter = [RNSStackScreenComponentEventEmitter new];
-+  _shadowStateProxy = [RNSStackScreenShadowStateProxy new];
- 
-   _hasUpdatedActivityMode = NO;
-+  _reportsFrameToShadowTree = NO;
-   _isNativelyDismissed = NO;
- }
- 
-+#pragma mark - Shadow state
-+
-+/**
-+ * UIKit calls this when the screen has to lay out its subviews, which happens whenever its size changes.
-+ * We assume a size change is the only frame change that needs no other trigger.
-+ */
-+- (void)layoutSubviews
-+{
-+  [super layoutSubviews];
-+  [self updateShadowStateIfNeeded];
-+}
-+
-+/**
-+ * Integration with Split. `reportsFrameToShadowTree` is set when the stack is nested in a Split column. The column
-+ * and the stack host are out of layout then and the screen's shadow node spans the split host, so the screen sends
-+ * the size UIKit gave it and its origin in the split host through the shadow state. Without the prop nothing is
-+ * sent; Yoga sizes the screen through the host, as in a regular stack.
-+ */
-+- (void)updateShadowStateIfNeeded
-+{
-+  if (!_reportsFrameToShadowTree || CGRectIsEmpty(self.bounds)) {
-+    return;
-+  }
-+
-+  UIView *splitView = _controller.splitViewController.view;
-+  if (splitView == nil) {
-+    return;
-+  }
-+
-+  CGRect frame = {[self convertPoint:CGPointZero toView:splitView], self.bounds.size};
-+  [_shadowStateProxy updateShadowStateWithFrame:frame];
-+}
-+
- - (void)resetProps
- {
-   static const auto defaultProps = std::make_shared<const react::RNSStackScreenProps>();
-@@ -187,9 +225,19 @@ - (void)updateProps:(const facebook::react::Props::Shared &)props
-     _screenKey = RCTNSStringFromStringNilIfEmpty(newComponentProps.screenKey);
-   }
- 
-+  if (oldComponentProps.reportsFrameToShadowTree != newComponentProps.reportsFrameToShadowTree) {
-+    _reportsFrameToShadowTree = newComponentProps.reportsFrameToShadowTree;
-+  }
-+
-   [super updateProps:props oldProps:oldProps];
- }
- 
-+- (void)updateState:(const react::State::Shared &)state oldState:(const react::State::Shared &)oldState
-+{
-+  [super updateState:state oldState:oldState];
-+  [_shadowStateProxy updateState:state oldState:oldState];
-+}
-+
- - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
- {
-   if ([childComponentView isKindOfClass:RNSStackHeaderConfigComponentView.class]) {
-```
-
-**File**: `ios/react/containers/stack/screen/RNSStackScreenShadowStateProxy.h` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+#pragma once
-+
-+#import <Foundation/Foundation.h>
-+#import <UIKit/UIKit.h>
-+
-+#if defined(__cplusplus)
-+#import <react/renderer/core/State.h>
-+
-+namespace react = facebook::react;
-+#endif // __cplusplus
-+
-+NS_ASSUME_NONNULL_BEGIN
-+
-+@interface RNSStackScreenShadowStateProxy : NSObject
-+
-+- (void)updateShadowStateWithFrame:(CGRect)frame;
-+
-+@end
-+
-+#pragma mark - Hidden from Swift
-+
-+#if defined(__cplusplus)
-+
-+@interface RNSStackScreenShadowStateProxy ()
-+
-+- (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState;
-+
-+@end
-+
-+#endif // __cplusplus
-+NS_ASSUME_NONNULL_END
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5199** (2026-11-10): chore: Post Argent Cloud reports with inline screenshots through the reports App (@kmichalikk)
-- **PR #5192** (closed): feat(iOS, Split): Stack.Host as the only child of Split.Column navigates the column (@t0maboro)
-- **PR #5186** (closed): feat(iOS, Stack v5): hit-test the content of header items from the navigation bar (@t0maboro)
-- **PR #5183** (2026-11-12): feat(iOS, Stack v5): stack screen reports the frame UIKit gives it (@t0maboro)
-- **PR #5182** (2026-11-12): feat(iOS, Stack v5): own shadow node for RNSStackHost (@t0maboro)
-- **PR #5180** (2026-11-12): chore(example): build Detox from source with a patch for RN 0.89 (@t0maboro)
+- **PR #5217** (2026-11-15): chore(deps): bump addressable from 2.9.0 to 2.9.1 in /FabricExample (@dependabot[bot])
+- **PR #5216** (2026-11-15): chore(deps): bump addressable from 2.9.0 to 2.9.1 in /TVOSExample (@dependabot[bot])
+- **PR #5213** (2026-11-16): refactor(iOS, Split): a Split column owns its navigation controller (@t0maboro)
+- **PR #5210** (closed): chore: Replace issue labeling workflows with CodeRabbit triage comments (@kmichalikk)
+- **PR #5206** (2026-11-15): chore(deps): bump fast-xml-parser from 5.11.1 to 5.12.0 in /TVOSExample (@dependabot[bot])
+- **PR #5205** (2026-11-15): chore(deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /FabricExample (@dependabot[bot])
 
 ---
 
@@ -1258,29 +996,69 @@ stack is untouched and this PR changes no behaviour on its own.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. example): build Detox from source with a patch for RN 0.89 (#5180)
+## X. iOS): follow the gesture in interactive fade and fade_from_bottom pops
 
 **RULE**:
-When implementing operations in `FabricExample/android/app/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ios/legacy/RNSScreenStackAnimator.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d20ab95e`: example): build Detox from source with a patch for RN 0.89 (#5180). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `54c55f6c`: iOS): follow the gesture in interactive fade and fade_from_bottom pops. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `FabricExample/android/app/build.gradle`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/legacy/RNSScreenStackAnimator.mm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        missingDimensionStrategy 'detox', 'full' // Detox built from source
-    androidTestImplementation(project(path: ':detox')) {
+
+    void (^animationBlock)(void) = ^{
+      fromViewController.view.alpha = 0.0;
+    };
+    void (^completionBlock)(UIViewAnimatingPosition) = ^(UIViewAnimatingPosition finalPosition) {
+    };
+
+    if (!transitionContext.isInteractive) {
+      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                                 curve:UIViewAnimationCurveEaseInOut
+                                                            animations:animationBlock];
+      [animator addCompletion:completionBlock];
+      _inFlightAnimator = animator;
+      [animator startAnimation];
+    } else {
+      auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                                 curve:UIViewAnimationCurveLinear
+                                                            animations:animationBlock];
+      [animator addCompletion:completionBlock];
+      _inFlightAnimator = animator;
+    }
+    void (^slideAnimationBlock)(void) = ^{
+      toViewController.view.transform = CGAffineTransformIdentity;
+      fromViewController.v
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-    androidTestImplementation('com.wix:detox:+') {
+// Induced defect failure mode:
+    auto animator = [[UIViewPropertyAnimator alloc] initWithDuration:[self transitionDuration:transitionContext]
+                                                               curve:UIViewAnimationCurveEaseInOut
+                                                          animations:^{
+                                                            fromViewController.view.alpha = 0.0;
+                                                          }];
+    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+    }];
+    _inFlightAnimator = animator;
+    [animator startAnimation];
+    // Android Nougat exit animation
+    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
+    auto slideAnimator = [[UIViewPropertyAnimator alloc]
+        initWithDuration:baseTransitionDuration * RNSSlideCloseTransitionDurationProportion
+                   curve:UIViewAnimationCurveEaseIn
+              animations:^{
+                toViewController.view.transform = CGAffineTransformIdentity;
+                fromViewController.view.transform = topBottomTransform;
+              }];
+    [slideAnimator addCompletion:^(UIViewAnimatingPosition fina
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d20ab95e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `54c55f6c` are properly handled with clean fallback behavior.

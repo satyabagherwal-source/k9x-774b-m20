@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T03:50:15.260Z",
-  "total_cycles_completed": 10012,
-  "total_learnings_persisted": 10012,
-  "total_rules_promoted": 9598,
+  "last_updated": "2026-11-17T03:58:03.342Z",
+  "total_cycles_completed": 10016,
+  "total_learnings_persisted": 10016,
+  "total_rules_promoted": 9601,
   "history": [
-    {
-      "timestamp": "2026-11-16T02:17:27.828Z",
-      "repository": "saltstack/salt",
-      "learningId": "learn-github-saltstack-salt",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T02:17:33.186Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T02:26:00.137Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T02:44:25.827Z",
-      "repository": "zvec-ai/zvec-grep",
-      "learningId": "learn-github-zvec-ai-zvec-grep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T03:03:07.756Z",
       "repository": "prof18/feed-flow",
@@ -1403,6 +1375,34 @@
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T03:57:51.069Z",
+      "repository": "solidjs/solid",
+      "learningId": "learn-github-solidjs-solid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T03:57:53.999Z",
+      "repository": "software-mansion/react-native-screens",
+      "learningId": "learn-github-software-mansion-react-native-screens",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T03:58:00.097Z",
+      "repository": "koderover/zadig",
+      "learningId": "learn-github-koderover-zadig",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T03:58:03.342Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

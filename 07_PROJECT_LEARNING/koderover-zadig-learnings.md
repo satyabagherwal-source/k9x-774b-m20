@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source**: github ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
-> **Source Version**: `1174b8c7`  
+> **Source Version**: `29b826e4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T12:34:01.088Z  
+> **Timestamp**: 2026-11-17T03:57:59.173Z  
 > **Learning ID**: `learn-github-koderover-zadig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T12:34:01.083Z  
+> **Harvest Timestamp**: 2026-11-17T03:57:59.168Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -361,6 +361,149 @@ func (c *RenderSetColl) UpdateDefaultValues(renderSet *models.RenderSet) error {
 	}}
 	_, err := c.UpdateOne(context.TODO(), query, change)
 	return err
+}
+
+```
+
+### Core Architecture Module: `pkg/cli/upgradeassistant/internal/rotation/webhook.go`
+```
+package rotation
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"math"
+	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
+	"time"
+
+	githubapi "github.com/google/go-github/v35/github"
+	common "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
+	codehost "github.com/koderover/zadig/v2/pkg/microservice/systemconfig/core/codehost/repository/models"
+	"github.com/koderover/zadig/v2/pkg/setting"
+	"github.com/koderover/zadig/v2/pkg/tool/git"
+	githubtool "github.com/koderover/zadig/v2/pkg/tool/git/github"
+	gitlabtool "github.com/koderover/zadig/v2/pkg/tool/git/gitlab"
+	giteetool "github.com/koderover/zadig/v2/pkg/tool/gitee"
+	"github.com/koderover/zadig/v2/pkg/tool/httpclient"
+	gitlabapi "github.com/xanzy/go-gitlab"
+)
+
+const webhookRequestTimeout = 30 * time.Second
+
+func prepareHookForHosts(ctx context.Context, hook *common.WebHook, hosts []*codehost.CodeHost, proxy string, allowOrphans bool) (*hookAction, error) {
+	var failures []string
+	for _, host := range hosts {
+		if strings.TrimRight(host.Address, "/") != strings.TrimRight(hook.Address, "/") {
+			continue
+		}
+		action, err := prepareHook(ctx, hook, host, proxy)
+		if err == nil {
+			return action, nil
+		}
+		failures = append(failures, err.Error())
+	}
+	if len(failures) == 0 {
+		if allowOrphans {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("webhook %s/%s hook %s: no matching code host; use --allow-orphan-webhooks only after arranging manual rotation", hook.Owner, hook.Repo, hook.HookID)
+	}
+	return nil, fmt.Errorf("webhook %s/%s hook %s: no code host can read hook: %s", hook.Owner, hook.Repo, hook.HookID, strings.Join(failures, "; "))
+}
+
+type hookAction struct {
+	hook    *common.WebHook
+	host    *codehost.CodeHost
+	refresh func(ctx context.Context, secret, callbackURL string) error
+}
+
+func (a *hookAction) failure(operation string, err error) error {
+	// Never print SDK response bodies: they may contain credentials or the new secret.
+	reason := "request failed; verify connectivity and token permissions"
+	var gh *githubapi.ErrorResponse
+	var gl *gitlabapi.ErrorResponse
+	var response *httpclient.Error
+	switch {
+	case errors.Is(err, context.Canceled):
+		reason = "request canceled"
+	case errors.Is(err, context.DeadlineExceeded):
+		reason = "request timed out"
+	case errors.As(err, &gh) && gh.Response != nil:
+		reason = fmt.Sprintf("HTTP %d", gh.Response.StatusCode)
+	case errors.As(err, &gl) && gl.Response != nil:
+		reason = fmt.Sprintf("HTTP %d", gl.Response.StatusCode)
+	case errors.As(err, &response):
+		reason = fmt.Sprintf("HTTP %d", response.Code)
+	}
+	return fmt.Errorf("webhook %s/%s, code host %d(%s), hook %s: %s: %s", a.hook.Owner, a.hook.Repo, a.host.ID, a.host.Alias, a.hook.HookID, operation, reason)
+}
+
+func prepareHook(ctx context.Context, hook *common.WebHook, host *codehost.CodeHost, proxy string) (*hookAction, error) {
+	a := &hookAction{hook: hook, host: host}
+	if host.AccessToken == "" {
+		return nil, fmt.Errorf("code host %d(%s) has no access token", host.ID, host.Alias)
+	}
+	if host.EnableProxy {
+		p, err := url.Parse(proxy)
+		if err != nil || p.Scheme == "" || p.Host == "" {
+			return nil, fmt.Errorf("code host %d(%s): enabled proxy has no valid URL", host.ID, host.Alias)
+		}
+	}
+	id, err := strconv.ParseInt(hook.HookID, 10, 64)
+	if err != nil || id <= 0 {
+		return nil, fmt.Errorf("webhook %s/%s, code host %d(%s): invalid hook ID", hook.Owner, hook.Repo, host.ID, host.Alias)
+	}
+	ctx, cancel := context.WithTimeout(ctx, webhookRequestTimeout)
+	defer cancel()
+	// Static clients never refresh OAuth tokens or write codehost state during dry-run.
+	switch host.Type {
+	case setting.SourceFromGithub:
+		cfg := &githubtool.Config{AccessToken: host.AccessToken}
+		if host.EnableProxy {
+			cfg.Proxy = proxy
+		}
+		c := githubtool.NewClient(cfg)
+		_, _, err = c.Repositories.GetHook(ctx, hook.Owner, hook.Repo, id)
+		a.refresh = func(ctx context.Context, secret, callbackURL string) error {
+			_, err := c.UpdateHook(ctx, hook.Owner, hook.Repo, id, &git.Hook{URL: callbackURL, Secret: secret})
+			return err
+		}
+	case setting.SourceFromGitlab:
+		c, clientErr := gitlabtool.NewOAuthTokenClient(host.Address, host.AccessToken, proxy, host.EnableProxy, host.DisableSSL)
+		if clientErr != nil {
+			return nil, a.failure("create client", clientErr)
+		}
+		_, _, err = c.Projects.GetProjectHook(hook.Owner+"/"+hook.Repo, int(id), gitlabapi.WithContext(ctx))
+		a.refresh = func(ctx context.Context, secret, callbackURL string) error {
+			_, _, err := c.Projects.EditProjectHook(hook.Owner+"/"+hook.Repo, int(id), &gitlabapi.EditProjectHookOptions{
+				URL: gitlabapi.String(callbackURL), Token: gitlabapi.String(secret),
+			}, gitlabapi.WithContext(ctx))
+			return err
+		}
+	case setting.SourceFromGitee, setting.SourceFromGiteeEE:
+		if id > math.MaxInt32 {
+			return nil, fmt.Errorf("webhook %s/%s, code host %d(%s): hook ID exceeds Gitee API range", hook.Owner, hook.Repo, host.ID, host.Alias)
+		}
+		c := giteetool.NewStaticClient(strings.TrimRight(host.Address, "/"), host.AccessToken, proxy, host.EnableProxy)
+		_, resp, requestErr := c.WebhooksApi.GetV5ReposOwnerRepoHooksId(ctx, hook.Owner, hook.Repo, int32(id), nil)
+		err = requestErr
+		if err != nil && resp != nil && resp.StatusCode >= 300 {
+			err = httpclient.NewGenericServerResponse(resp.StatusCode, http.MethodGet, "")
+		}
+		a.refresh = func(ctx context.Context, secret, callbackURL string) error {
+			return c.UpdateHookSecret(ctx, hook.Owner, hook.Repo, id, &git.Hook{URL: callbackURL, Secret: secret})
+		}
+	default:
+		return nil, fmt.Errorf("code host %d(%s): unsupported provider %s", host.ID, host.Alias, host.Type)
+	}
+	if err != nil {
+		return nil, a.failure("read remote hook", err)
+	}
+	return a, nil
 }
 
 ```
@@ -1032,103 +1175,6 @@ func isSubdirectory(rootDir, subDir string) bool {
 
 ```
 
-### Core Architecture Module: `pkg/cli/zadig-agent/util/file/file.go`
-```
-/*
-Copyright 2023 The KodeRover Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package util
-
-import (
-	"fmt"
-	"io/ioutil"
-	"os"
-)
-
-func GenerateTmpFile() (string, error) {
-	var tmpFile *os.File
-
-	tmpFile, err := os.CreateTemp("", "")
-	if err != nil {
-		return "", err
-	}
-
-	_ = tmpFile.Close()
-
-	return tmpFile.Name(), nil
-}
-
-func WriteFile(filename string, data []byte, perm os.FileMode) error {
-	f, err := os.OpenFile(filename, os.O_CREATE|os.O_RDWR|os.O_APPEND, perm)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	if _, err := f.Write(data); err != nil {
-		return err
-	}
-	if err := f.Close(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func ReadFile(filename string) ([]byte, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	contentByte, err := ioutil.ReadAll(file)
-	if err != nil {
-		return nil, err
-	}
-	return contentByte, nil
-}
-
-func PathExists(path string) (bool, error) {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return false, err
-}
-
-func FileExists(filePath string) (bool, error) {
-	st, err := os.Stat(filePath)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			return false, err
-		}
-		return false, nil
-	}
-
-	if st.IsDir() {
-		return false, fmt.Errorf("%s is a directory", filePath)
-	}
-
-	return true, nil
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1158,442 +1204,887 @@ func FileExists(filePath string) (bool, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5c56cc50` (2026-11-13)
-**Commit Message**: fix: avoid unnecessary agent rollouts on scheduling strategy updates (#5065)
+### Incident Patch 1: `f09f6eef` (2026-11-16)
+**Commit Message**: fix(helm): prevent concurrent chart download directory conflicts (#5086)
 
-* fix: preserve valid hub-agent tokens during cluster updates
+* fix(helm): prevent concurrent chart download directory conflicts
 
-Reuse the deployed HUB_AGENT_TOKEN when it decrypts to the current cluster ID so random AES IVs do not roll the agent on every scheduling strategy update. Keep resource reconciliation, real agent configuration changes, and credential migration intact.
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
 
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+* fix(helm): reuse chart caches under shared read and write locks
 
-* fix: validate rendered hub-agent token fields
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
 
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+* fix(helm): refresh latest charts and serialize service imports
 
-* fix: simplify rendered hub-agent manifest errors
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
 
-The rendered manifest comes from our own template, so report any
-unexpected structure with one error.
+* fix(helm): check cancellation and tolerate backup cleanup failures
 
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
 
-* fix: wrap hub-agent manifest errors with context
+* fix(delivery): preserve values image update error chain
 
-Restore the specific manifest errors and wrap NestedSlice and
-SetNestedSlice failures so the failing step stays visible.
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
 
-**File**: `pkg/microservice/aslan/core/multicluster/service/clusters.go` (modified, +71/-0)
+**File**: `.gitignore` (modified, +2/-0)
 ```diff
-@@ -56,6 +56,7 @@ import (
- 	"github.com/koderover/zadig/v2/pkg/shared/client/plutusenterprise"
- 	"github.com/koderover/zadig/v2/pkg/shared/handler"
- 	"github.com/koderover/zadig/v2/pkg/tool/clientmanager"
-+	"github.com/koderover/zadig/v2/pkg/tool/crypto"
- 	e "github.com/koderover/zadig/v2/pkg/tool/errors"
- 	"github.com/koderover/zadig/v2/pkg/tool/kube/serializer"
- 	"github.com/koderover/zadig/v2/pkg/tool/kube/updater"
-@@ -916,6 +917,71 @@ func GetClusterByAgentToken(token string, logger *zap.SugaredLogger) (*commonmod
- 	return s.GetClusterByAgentToken(token, logger)
+@@ -81,6 +81,8 @@ debug/zadig-agent
+ !pkg/microservice/aslan/core/stat/handler/ai_review_stat_query_regression_test.go
+ !pkg/microservice/aslan/core/common/service/webhook/manual_webhook_test.go
+ !pkg/microservice/aslan/core/workflow/testing/service/scanning_webhook_test.go
++!pkg/tool/helmclient/chart_download_test.go
++!pkg/microservice/aslan/core/common/service/fs/s3_cleanup_test.go
+ !pkg/microservice/halman/**/*_test.go
+ !pkg/microservice/aslan/core/system/handler/ai_assistant_test.go
+ !pkg/types/ai_assistant_test.go
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/fs/s3.go` (modified, +8/-1)
+```diff
+@@ -135,14 +135,21 @@ func DownloadAndExtractFilesFromS3(name, localBase, s3Base string, logger *zap.S
  }
  
-+func preserveHubAgentToken(agent *unstructured.Unstructured, clusterID string, clientset kubernetes.Interface) error {
-+	current, err := clientset.AppsV1().Deployments(agent.GetNamespace()).Get(context.Background(), agent.GetName(), metav1.GetOptions{})
-+	if apierrors.IsNotFound(err) {
+ func DeleteArchivedFileFromS3(names []string, s3Base string, logger *zap.SugaredLogger) error {
++	if len(names) == 0 {
 +		return nil
 +	}
-+	if err != nil {
-+		return fmt.Errorf("failed to get existing hub-agent deployment: %w", err)
-+	}
+ 	s3, err := s3service.FindDefaultS3()
+ 	if err != nil {
+ 		logger.Errorf("Failed to find default s3, err: %s", err)
+ 		return err
+ 	}
+ 
++	return deleteArchivedFilesFromS3(names, s3Base, s3, logger)
++}
 +
-+	token := ""
-+	for _, container := range current.Spec.Template.Spec.Containers {
-+		if container.Name != "agent" {
-+			continue
-+		}
-+		for _, env := range container.Env {
-+			if env.Name == setting.HubAgentToken {
-+				token = env.Value
-+				break
++func deleteArchivedFilesFromS3(names []string, s3Base string, s3 *s3service.S3, logger *zap.SugaredLogger) error {
+ 	s3PathList := make([]string, 0, len(names))
+-	for _, name := range s3PathList {
++	for _, name := range names {
+ 		tarball := fmt.Sprintf("%s.tar.gz", name)
+ 		s3Path := filepath.Join(s3.Subfolder, s3Base, tarball)
+ 		s3PathList = append(s3PathList, s3Path)
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/fs/s3_cleanup_test.go` (added, +77/-0)
+```diff
+@@ -0,0 +1,77 @@
++package fs
++
++import (
++	"encoding/xml"
++	"net/http"
++	"net/http/httptest"
++	"reflect"
++	"sync"
++	"testing"
++
++	"go.uber.org/zap"
++
++	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
++	s3service "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/s3"
++)
++
++func TestDeleteArchivedFilesFromS3(t *testing.T) {
++	for _, tc := range []struct {
++		name     string
++		names    []string
++		wantKeys []string
++		status   int
++	}{
++		{name: "only the requested revision", names: []string{"service-123"}, wantKeys: []string{"prefix/project/service/service-123.tar.gz"}, status: http.StatusOK},
++		{name: "multiple archives", names: []string{"service", "service-123"}, wantKeys: []string{"prefix/project/service/service.tar.gz", "prefix/project/service/service-123.tar.gz"}, status: http.StatusOK},
++		{name: "storage error is returned", names: []string{"service-123"}, wantKeys: []string{"prefix/project/service/service-123.tar.gz"}, status: http.StatusBadRequest},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			var keys []string
++			var mu sync.Mutex
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				if r.Method != http.MethodPost || !r.URL.Query().Has("delete") {
++					t.Errorf("unexpected request: %s %s", r.Method, r.URL)
++				}
++				var request struct {
++					Objects []struct {
++						Key string `xml:"Key"`
++					} `xml:"Object"`
++				}
++				if err := xml.NewDecoder(r.Body).Decode(&request); err != nil {
++					t.Error(err)
++				}
++				mu.Lock()
++				for _, object := range request.Objects {
++					keys = append(keys, object.Key)
++				}
++				mu.Unlock()
++				w.Header().Set("Content-Type", "application/xml")
++				w.WriteHeader(tc.status)
++				if tc.status != http.StatusOK {
++					_, _ = w.Write([]byte("<Error><Code>InvalidRequest</Code><Message>test failure</Message></Error>"))
++					return
++				}
++				_, _ = w.Write([]byte("<DeleteResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>"))
++			}))
++			defer server.Close()
++			storage := &s3service.S3{S3Storage: &models.S3Storage{
++				Endpoint: server.URL, Ak: "test-key", Sk: "test-secret", Bucket: "bucket", Subfolder: "prefix", Insecure: true,
++			}}
++			err := deleteArchivedFilesFromS3(tc.names, "project/service", storage, zap.NewNop().Sugar())
++			if (err != nil) != (tc.status != http.StatusOK) {
++				t.Fatalf("unexpected delete error: %v", err)
 +			}
-+		}
-+		break
++			mu.Lock()
++			defer mu.Unlock()
++			if !reflect.DeepEqual(keys, tc.wantKeys) {
++				t.Fatalf("deleted keys %v, want %v", keys, tc.wantKeys)
++			}
++		})
 +	}
-+	// Random AES IVs change the ciphertext on every render; retain a token only while it authenticates this cluster.
-+	id, err := crypto.AesDecrypt(token)
-+	if err != nil || id != clusterID {
++}
++
++func TestDeleteArchivedFileFromS3EmptyNames(t *testing.T) {
++	if err := DeleteArchivedFileFromS3(nil, "unused", zap.NewNop().Sugar()); err != nil {
++		t.Fatal(err)
++	}
++}
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/kube/helm.go` (modified, +0/-16)
+```diff
+@@ -19,7 +19,6 @@ package kube
+ import (
+ 	"context"
+ 	"fmt"
+-	"os"
+ 	"path/filepath"
+ 	"regexp"
+ 	"strings"
+@@ -777,12 +776,6 @@ func DownloadInstantiateChart(projectName, chartRepo, chartName, chartVersion, r
+ 	chartRef := fmt.Sprintf("%s/%s", chartRepo, chartName)
+ 	localPath := config.LocalServicePathWithRevision(projectName, releaseName, chartVersion, production)
+ 
+-	mutex := cache.NewRedisLockWithExpiry(fmt.Sprintf("helm_chart_download:%s", localPath), time.Minute*1)
+-	mutex.Lock()
+-	defer mutex.Unlock()
+-	// remove local file to untar
+-	_ = os.RemoveAll(localPath)
+-
+ 	hClient, err := commonutil.NewHelmClient(chartRepoEntry)
+ 	if err != nil {
+ 		return err
+@@ -792,7 +785,6 @@ func DownloadInstantiateChart(projectName, chartRepo, chartName, chartVersion, r
+ 	if err != nil {
+ 		return fmt.Errorf("failed to download chart, chartName: %s, chartRepo: %+v, err: %s", chartName, chartRepo, err)
+ 	}
+-	mutex.Unlock()
+ 	return nil
+ }
+ 
+@@ -841,13 +833,6 @@ func DeployMultiHelmRelease(productResp *commonmodels.Product, helmClient *helmt
+ 			chartRef := fmt.Sprintf("%s/%s", param.RenderChart.ChartRepo, param.RenderChart.ChartName)
+ 			localPath := config.LocalServicePathWithRevision(param.ProductName, param.ReleaseName, param.RenderChart.ChartVersion, param.Production)
+ 
+-			mutex := cache.NewRedisLockWithExpiry(fmt.Sprintf("helm_chart_download:%s", localPath), time.Minute*1)
+-			mutex.Lock()
+-			defer mutex.Unlock()
+-
+-			// remove local file to untar
+-			_ = os.RemoveAll(localPath)
+-
+ 			hClient, err := commonutil.NewHelmClient(chartRepo)
+ 			if err != nil {
+ 				return err
+@@ -857,7 +842,6 @@ func DeployMultiHelmRelease(productResp *commonmodels.Product, helmClient *helmt
+ 			if err != nil {
+ 				return fmt.Errorf("failed to download chart, chartName: %s, chartRepo: %+v, err: %s", param.RenderChart.ChartName, chartRepo.RepoName, err)
+ 			}
+-			mutex.Unlock()
+ 		}
+ 
+ 		errInstall := InstallOrUpgradeHelmChartWithValues(param, isRetry, helmClient)
+```
+
+**File**: `pkg/microservice/aslan/core/delivery/service/version_v2.go` (modified, +70/-49)
+```diff
+@@ -19,6 +19,7 @@ package service
+ import (
+ 	"bytes"
+ 	"cmp"
++	"context"
+ 	"encoding/json"
+ 	"fmt"
+ 	"net/http"
+@@ -917,42 +918,64 @@ func pushDeliveryChartFromVersion(projectName, versionName string, service *comm
+ 		sourceChartRepoInfo = originalChartRepoInfo
+ 	}
+ 
+-	deliveryChartPath, err := ensureChartFilesFromVersion(projectName, versionName, sourceChartRepoInfo, service)
++	cacheDir, err := makeChartFilesDir(projectName, versionName)
+ 	if err != nil {
+-		return fmt.Errorf("failed to ensure chart files from version, err: %v", err)
++		return err
+ 	}
++	var chartPackagePath string
++	deliveryChartDir := filepath.Join(cacheDir, service.ChartName+"-"+service.OriginalChartVersion)
++	err = helmtool.WithChartDirectoryLock(deliveryChartDir, func(ctx context.Context) error {
++		deliveryChartPath, err := ensureChartFilesFromVersion(ctx, projectName, versionName, sourceChartRepoInfo, service)
++		if err != nil {
++			return fmt.Errorf("failed to ensure chart files from version: %w", err)
++		}
+ 
+-	// write values.yaml file before load
+-	if err = yaml.Unmarshal([]byte(service.YamlContent), map[string]interface{}{}); err != nil {
+-		log.Errorf("invalid yaml content, serviceName: %s, yamlContent: %s", service.ServiceName, service.YamlContent)
+-		return errors.Wrapf(err, "invalid yaml content for service: %s", service.ServiceName)
+-	}
++		// write values.yaml file before load
++		if err = yaml.Unmarshal([]byte(service.YamlContent), map[string]interface{}{}); err != nil {
++			log.Errorf("invalid yaml content, serviceName: %s, yamlContent: %s", service.ServiceName, service.YamlContent)
++			return errors.Wrapf(err, "invalid yaml content for service: %s", service.ServiceName)
++		}
+ 
+-	updatedValues, err := updateValuesImage(service)
+-	if err != nil {
+-		return fmt.Errorf("failed to update values image, serviceName: %s, err: %s", service.ServiceName, err)
+-	}
+-	service.YamlContent = string(updatedValues)
++		updatedValues, err := updateValuesImage(service)
++		if err != nil {
++			return fmt.Errorf("failed to update values image, serviceName: %s, err: %w", service.ServiceName, err)
++		}
++		service.YamlContent = string(updatedValues)
+ 
+-	valuesFilePath := filepath.Join(deliveryChartPath, setting.ValuesYaml)
+-	err = os.WriteFile(valuesFilePath, updatedValues, 0644)
+-	if err != nil {
+-		return errors.Wrapf(err, "failed to write values.yaml file for service %s", service.ServiceName)
+-	}
++		if err := ctx.Err(); err != nil {
++			return err
++		}
++		valuesFilePath := filepath.Join(deliveryChartPath, setting.ValuesYaml)
++		err = os.WriteFile(valuesFilePath, updatedValues, 0644)
++		if err != nil {
++			return errors.Wrapf(err, "failed to write values.yaml file for service %s", service.ServiceName)
++		}
+ 
+-	//load chart info from local storage
+-	chartRequested, err := chartloader.Load(deliveryChartPath)
+-	if err != nil {
+-		return errors.Wrapf(err, "failed to load chart info, path %s", deliveryChartPath)
+-	}
++		if err := ctx.Err(); err != nil {
++			return err
++		}
++		//load chart info from local storage
++		chartRequested, err := chartloader.Load(deliveryChartPath)
++		if err != nil {
++			return errors.Wrapf(err, "failed to load chart info, path %s", deliveryChartPath)
++		}
+ 
+-	//set metadata
+-	chartRequested.Metadata.Name = service.ChartName
+-	chartRequested.Metadata.Version = service.ChartVersion
+-	chartRequested.Metadata.AppVersion = service.ChartVersion
++		//set metadata
++		chartRequested.Metadata.Name = service.ChartName
++		chartRequested.Metadata.Version = service.ChartVersion
++		chartRequested.Metadata.AppVersion = service.ChartVersion
+ 
+-	//create local chart package
+-	chartPackagePath, err := helmchartutil.Save(chartRequested, dir)
++		if err := ctx.Err(); err != nil {
++			return err
++		}
++		//create local chart package
++		chartPackagePath, err = helmchartutil.Save(chartRequested, dir)
++		if err != nil {
++			return errors.Wrapf(err, "failed to package chart %s version %s in %s", service.ChartName, service.ChartVersion, dir)
++		}
++
 +		return nil
++	})
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -1039,39 +1062,37 @@ func ensureChartFilesFromEnv(service *commonmodels.DeliveryVersionService, env *
+ 	return deliveryChartPath, nil
+ }
+ 
+-func ensureChartFilesFromVersion(projectName, versionName string, chartRepo *commonmodels.HelmRepo, service *commonmodels.DeliveryVersionService) (string, error) {
++func ensureChartFilesFromVersion(ctx context.Context, projectName, versionName string, chartRepo *commonmodels.HelmRepo, service *commonmodels.DeliveryVersionService) (string, error) {
+ 	chartNameWithVersion := fmt.Sprintf("%s-%s", service.ChartName, service.OriginalChartVersion)
+ 	chartFilesParent, err := makeChartFilesDir(projectName, versionName)
+ 	if err != nil {
+ 		return "", err
+ 	}
+ 
+-	err = os.RemoveAll(filepath.Join(chartFilesParent, chartNameWithVersion))
+-	if err != nil {
+-		return "", errors.Wrapf(err, "failed to remove old chart files")
+-	}
+-
+ 	hClient, err := commonutil.NewHelmClient(chartRepo)
+ 	if err != nil {
+ 		return "", err
+ 	}
+-
+-	cha
+```
+
+**File**: `pkg/microservice/aslan/core/service/service/helm.go` (modified, +115/-66)
+```diff
+@@ -18,6 +18,7 @@ package service
+ 
+ import (
+ 	"bytes"
++	"context"
+ 	"encoding/json"
+ 	"fmt"
+ 	"io/fs"
+@@ -594,90 +595,138 @@ func CreateOrUpdateHelmServiceFromChartRepo(projectName string, args *HelmServic
+ 		return nil, e.ErrCreateTemplate.AddErr(errors.Wrapf(err, "failed to init chart client for repo: %s", chartRepo.RepoName))
+ 	}
+ 
+-	chartRef := fmt.Sprintf("%s/%s", chartRepo.RepoName, chartRepoArgs.ChartName)
+-	localPath := config.LocalServicePath(projectName, chartRepoArgs.ChartName, args.Production)
++	var svc *models.Service
++	lockKey := fmt.Sprintf("helm_service_edit:%s:%s:%t", projectName, chartRepoArgs.ChartName, args.Production)
++	err = cache.WithRedisLock(lockKey, func(serviceCtx context.Context) error {
++		chartRef := fmt.Sprintf("%s/%s", chartRepo.RepoName, chartRepoArgs.ChartName)
++		localPath := config.LocalServicePath(projectName, chartRepoArgs.ChartName, args.Production)
+ 
+-	log.Infof("downloading chart %s to %s", chartRef, localPath)
+-	// remove local file to untar
+-	_ = os.RemoveAll(localPath)
+-	err = hClient.DownloadChart(commonutil.GeneHelmRepo(chartRepo), chartRef, chartRepoArgs.ChartVersion, localPath, true)
+-	if err != nil {
+-		return nil, e.ErrCreateTemplate.AddErr(errors.Wrapf(err, "failed to download chart %s/%s-%s", chartRepo.RepoName, chartRepoArgs.ChartName, chartRepoArgs.ChartVersion))
+-	}
++		log.Infof("downloading chart %s to %s", chartRef, localPath)
+ 
+-	serviceName := chartRepoArgs.ChartName
+-	rev, err := getNextServiceRevision(projectName, serviceName, args.Production)
+-	if err != nil {
+-		log.Errorf("Failed to get next revision for service %s, err: %s", serviceName, err)
+-		return nil, e.ErrCreateTemplate.AddErr(err)
+-	}
++		serviceName := chartRepoArgs.ChartName
++		var (
++			rev          int64
++			valuesYAML   []byte
++			revisionPath string
++			finalErr     error
++		)
++		defer func() {
++			if finalErr == nil || revisionPath == "" {
++				return
++			}
++			svc, err := repository.QueryTemplateService(&commonrepo.ServiceFindOption{
++				ProductName:         projectName,
++				ServiceName:         serviceName,
++				Revision:            rev,
++				IgnoreNoDocumentErr: true,
++			}, args.Production)
++			if err != nil {
++				log.Warnf("Cannot verify chart revision %s/%s/%d; retaining files: %v", projectName, serviceName, rev, err)
++				return
++			}
++			if svc != nil {
++				return
++			}
++			s3Base := config.ObjectStorageServicePath(projectName, serviceName, args.Production)
++			if err := fsservice.DeleteArchivedFileFromS3([]string{config.ServiceNameWithRevision(serviceName, rev)}, s3Base, log); err != nil {
++				log.Warnf("Failed to delete chart revision from storage: %v", err)
++			}
++			if err := os.RemoveAll(revisionPath); err != nil {
++				log.Warnf("Failed to delete chart revision %s: %v", revisionPath, err)
++			}
++		}()
++		err = hClient.WithDownloadedChart(commonutil.GeneHelmRepo(chartRepo), chartRef, chartRepoArgs.ChartVersion, localPath, func(ctx context.Context, chartPath string) error {
++			var err error
++			if err := serviceCtx.Err(); err != nil {
++				return err
++			}
++			rev, err = getNextServiceRevision(projectName, serviceName, args.Production)
++			if err != nil {
++				log.Errorf("Failed to get next revision for service %s, err: %s", serviceName, err)
++				return e.ErrCreateTemplate.AddErr(err)
++			}
++			revisionPath = config.LocalServicePathWithRevision(projectName, serviceName, fmt.Sprint(rev), args.Production)
+ 
+-	var finalErr error
+-	// clear files from both s3 and local when error occurred in next stages
+-	defer func() {
+-		if finalErr != nil {
+-			clearChartFiles(projectName, serviceName, rev, args.Production, log)
+-		}
+-	}()
++			// read values.yaml
++			fsTree := os.DirFS(localPath)
++			valuesYAML, err = util.ReadValuesYAML(fsTree, chartRepoArgs.ChartName, log)
++			if err != nil {
++				return e.ErrCreateTemplate.AddErr(err)
++			}
+ 
+-	// read values.yaml
+-	fsTree := os.DirFS(localPath)
+-	valuesYAML, err := util.ReadValuesYAML(fsTree, chartRepoArgs.ChartName, log)
+-	if err != nil {
+-		finalErr = e.ErrCreateTemplate.AddErr(err)
+-		return nil, finalErr
+-	}
++			// upload to s3 storage
++			s3Base := config.ObjectStorageServicePath(projectName, serviceName, args.Production)
+ 
+-	// upload to s3 storage
+-	s3Base := config.ObjectStorageServicePath(projectName, serviceName, args.Production)
++			err = fsservice.ArchiveAndUploadFilesToS3(fsTree, []string{serviceName, fmt.Sprintf("%s-%d", serviceName, rev)}, s3Base, log)
++			if err != nil {
++				return e.ErrCreateTemplate.AddErr(err)
++			}
+ 
+-	err = fsservice.ArchiveAndUploadFilesToS3(fsTree, []string{serviceName, fmt.Sprintf("%s-%d", serviceName, rev)}, s3Base, log)
+-	if err != nil {
+-		finalErr = e.ErrCreateTemplate.AddErr(err)
+-		return nil, finalErr
+-	}
++			if err := ctx.Err(); err != nil {
++				return err
++			}
+ 
+-	// copy service revision data from latest
+-	err = copyChartRevision(projectName, serviceName, rev, args.Production)
+-	if err != nil {
+-		log.Errorf("Failed to copy file %s, err: %s", serviceName, err)
+-		finalE
+```
+
+**File**: `pkg/tool/cache/lock.go` (modified, +46/-0)
+```diff
+@@ -18,6 +18,8 @@ package cache
+ 
+ import (
+ 	"context"
++	"errors"
++	"fmt"
+ 	"strings"
+ 	"time"
+ 
+@@ -85,3 +87,47 @@ func (lock *RedisLock) Unlock() error {
+ 	_, err := lock.mutex.Unlock()
+ 	return err
+ }
++
++// WithRedisLock renews the lease until the operation completes.
++// The callback must stop using protected state when its context is cancelled.
++func WithRedisLock(key string, use func(context.Context) error) (err error) {
++	mutex := NewRedisLockWithExpiry(key, time.Minute)
++	if err := mutex.Lock(); err != nil {
++		return fmt.Errorf("failed to acquire redis lock %s: %w", key, err)
++	}
++	ctx, cancel := context.WithCancel(context.Background())
++	done := make(chan error, 1)
++	go func() {
++		ticker := time.NewTicker(10 * time.Second)
++		defer ticker.Stop()
++		for {
++			select {
++			case <-ctx.Done():
++				done <- nil
++				return
++			case <-ticker.C:
++				renewCtx, stop := context.WithTimeout(ctx, 5*time.Second)
++				ok, err := mutex.mutex.ExtendContext(renewCtx)
++				if err == nil && !ok {
++					err = redsync.ErrExtendFailed
++				}
++				stop()
++				if err != nil {
++					if ctx.Err() != nil {
++						done <- nil
++					} else {
++						cancel()
++						done <- fmt.Errorf("lost redis lock %s: %w", key, err)
++					}
++					return
++				}
++			}
++		}
++	}()
++	defer func() {
++		cancel()
++		renewErr := <-done
++		err = errors.Join(err, renewErr, mutex.Unlock())
++	}()
++	return errors.Join(use(ctx), ctx.Err())
++}
+```
+
+**File**: `pkg/tool/helmclient/chart_download.go` (added, +161/-0)
+```diff
+@@ -0,0 +1,161 @@
++package helmclient
++
++import (
++	"context"
++	"crypto/sha256"
++	"fmt"
++	"os"
++	"path/filepath"
++
++	"helm.sh/helm/v3/pkg/chart/loader"
++	"helm.sh/helm/v3/pkg/chartutil"
++	"helm.sh/helm/v3/pkg/repo"
++
++	"github.com/koderover/zadig/v2/pkg/tool/cache"
++	"github.com/koderover/zadig/v2/pkg/tool/log"
++)
++
++func expandDownloadedChart(ctx context.Context, archive, dest string) error {
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	dest, err := filepath.Abs(dest)
++	if err != nil {
++		return err
++	}
++	ch, err := loader.LoadFile(archive)
++	if err != nil {
++		return fmt.Errorf("failed to load downloaded chart: %w", err)
++	}
++	if ch.Name() == "." || ch.Name() == ".." {
++		return fmt.Errorf("invalid downloaded chart name %q", ch.Name())
++	}
++	if err := os.MkdirAll(dest, 0755); err != nil {
++		return fmt.Errorf("failed to create chart destination: %w", err)
++	}
++	staging, err := os.MkdirTemp(dest, ".helm-download-")
++	if err != nil {
++		return fmt.Errorf("failed to create chart staging directory in %s: %w", dest, err)
++	}
++	defer func() {
++		if err := os.RemoveAll(staging); err != nil {
++			log.Warnf("Failed to clean chart staging directory %s: %v", staging, err)
++		}
++	}()
++	if err := chartutil.ExpandFile(staging, archive); err != nil {
++		return fmt.Errorf("failed to untar chart: %w", err)
 +	}
 +
-+	containers, exists, err := unstructured.NestedSlice(agent.Object, "spec", "template", "spec", "containers")
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	return replaceChartDirectory(filepath.Join(staging, ch.Name()), filepath.Join(dest, ch.Name()))
++}
++
++// Keep the previous directory until replacement succeeds, so errors can be rolled back.
++func replaceChartDirectory(source, target string) error {
++	backup, err := os.MkdirTemp(filepath.Dir(target), ".helm-backup-")
 +	if err != nil {
-+		return fmt.Errorf("failed to get containers from rendered hub-agent deployment: %w", err)
++		return fmt.Errorf("failed to create backup directory for chart %s: %w", target, err)
 +	}
-+	if !exists {
-+		return fmt.Errorf("rendered hub-agent deployment is missing containers")
++	previous := filepath.Join(backup, "chart")
++	err = os.Rename(target, previous)
++	if err != nil && !os.IsNotExist(err) {
++		_ = os.RemoveAll(backup)
++		return fmt.Errorf("failed to move old chart %s: %w", target, err)
 +	}
-+	for _, item := range containers {
-+		container, ok := item.(map[string]interface{})
-+		if !ok {
-+			return fmt.Errorf("rendered hub-agent deployment contains an invalid container")
-+		}
-+		if container["name"] != "agent" {
-+			continue
-+		}
-+		envs, ok := container["env"].([]interface{})
-+		if !ok {
-+			return fmt.Errorf("rendered hub-agent container env is missing or not a list")
-+		}
-+		for _, item := range envs {
-+			env, ok := item.(map[string]interface{})
-+			if !ok {
-+				return fmt.Errorf("rendered hub-agent container contains an invalid env entry")
-+			}
-+			if env["name"] == setting.HubAgentToken {
-+				env["value"] = token
-+				break
++	hadPrevious := err == nil
++	if err := os.Rename(source, target); err != nil {
++		if hadPrevious {
++			if restoreErr := os.Rename(previous, target); restoreErr != nil {
++				return fmt.Errorf("failed to publish chart: %w; failed to restore old chart from %s: %v", err, previous, restoreErr)
 +			}
 +		}
-+		break
++		_ = os.RemoveAll(backup)
++		return fmt.Errorf("failed to publish chart %s: %w", target, err)
 +	}
-+	if err := unstructured.SetNestedSlice(agent.Object, containers, "spec", "template", "spec", "containers"); err != nil {
-+		return fmt.Errorf("failed to set containers on rendered hub-agent deployment: %w", err)
++	if err := os.RemoveAll(backup); err != nil {
++		log.Warnf("Failed to clean old chart backup %s: %v", backup, err)
 +	}
 +	return nil
 +}
 +
- func UpgradeAgent(id string, logger *zap.SugaredLogger) error {
- 	s, err := kube.NewService("")
- 	if err != nil {
-@@ -1019,6 +1085,11 @@ func UpgradeAgent(id string, logger *zap.SugaredLogger) error {
- 				}
- 			} else if u.GetKind() == "Service" && u.GetName() == types.DindStatefulSetName {
- 				err = kube.EnsureDindServiceTLS(kubeClient, dindNamespace)
-+			} else if u.GetKind() == "Deployment" && u.GetName() == "koderover-agent-node-agent" {
-+				err = preserveHubAgentToken(u, id, clientset)
-+				if err == nil {
-+					err = updater.CreateOrPatchUnstructured(u, kubeClient)
++// WithDownloadedChart holds the cache lock until the caller finishes using its files.
++func (hClient *HelmClient) WithDownloadedChart(entry *repo.Entry, ref, version, dest string, use func(context.Context, string) error) error {
++	return WithChartDirectoryLock(dest, func(ctx context.Context) error {
++		if err := ctx.Err(); err != nil {
++			return err
++		}
++		name := filepath.Base(ref)
++		chartPath := filepath.Join(dest, name)
++		if filepath.Base(filepath.Clean(dest)) == "latest" {
++			if err := os.RemoveAll(dest); err != nil {
++				return fmt.Errorf("failed to clear latest chart %s: %w", dest, err)
++			}
++			if err := hClient.downloadChart(ctx, entry, ref, version, dest, true); err != nil {
++				return err
++			}
++		} else {
++			if err := os.MkdirAll(dest, 0755); err != nil {
++				return fmt.Errorf("failed to create chart cache directory %s: %w", dest, err)
++			}
++			source := fmt.Sprintf("%x", sha256.Sum256([]byte(entry.URL+"\x00"+ref+"\x00"+version)))
++			sourceFile := filepath.Join(dest, ".zadig-chart-"+name+".source")
++			previous, err := os.ReadFile(sourceFile)
++			if err != nil && !os.IsNotExist(err) {
++				return fmt.Errorf("failed to read chart cache source marker %s: %w", sourceFile, err)
++			}
++			hit := false
++			if version != "" && string(previous) == source {
++				cached, err := loader.Load(chartPath)
++				hit = err == nil && cached.Metadata.Version == version
++			}
++			if !hit {
++				// An empty marker keeps readers locked while the cache is being refreshed.
++				if err := os.WriteFile(sourceFile, nil, 0644); err != nil {
++					return fmt.Errorf("failed to mark chart cache refresh pending in %s: %w", sourceFile, err)
 +				}
- 			} else {
- 				err = updater.CreateOrPatchUnstructured(u, kubeClient)
- 			}
++				if err := hClient.downloadChart(ctx, entry, ref, version, dest, true); err != nil {
++					return err
++				}
++				if err := ctx.Err(); err != nil {
++					return err
++				}
++				if err := os.WriteFile(sourceFile, []byte(source), 0644); err != nil {
++					return fmt.Errorf("failed to write chart cache source marker %s: %w", sourceFile, err)
++				}
++			}
++		}
++
++		if err := ctx.Err(); err != nil {
++			return err
++		}
++		if use != nil {
++			return use(ctx, chartPath)
++		}
++		return nil
++	})
++}
++
++// WithChartDirectoryLock protects a complete file operation, including readers.
++// The callback must stop using the directory when its context is cancelled.
++func WithChartDirectoryLock(dir string, use func(context.Context) error) error {
++	dir, err 
 ```
 
 ---
 
-### Incident Patch 2: `55afbdf8` (2026-11-13)
-**Commit Message**: fix: preserve CLI OAuth target after sign-in (#5069)
-
-* fix: preserve OAuth authorization target through third-party login
+### Incident Patch 2: `37d745c5` (2026-11-16)
+**Commit Message**: docs: document Gloo security patch Dockerfile usage
 
 Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
 
-* fix(login): restore CLI authorization after local sign-in
-
-Signed-off-by: leozhang2018 <[REDACTED_EMAIL]>
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-* fix(login): pass the saved return target to Dex
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-* fix(oauth): shorten device authorization lifetime to five minutes
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-* revert(login): withdraw Dex return-target signaling
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-* fix(login): forward the saved return target to Dex
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-Signed-off-by: leozhang2018 <[REDACTED_EMAIL]>
-Co-authored-by: leozhang2018 <[REDACTED_EMAIL]>
-
-**File**: `pkg/microservice/user/core/handler/login/third_party.go` (modified, +46/-4)
+**File**: `docs/gloo-security-patch-dockerfile.md` (added, +79/-0)
 ```diff
-@@ -87,12 +87,13 @@ func Login(c *gin.Context) {
- 		ctx.RespErr = err
- 		return
- 	}
--	state, browserToken, err := login.CreateThirdPartyLoginState()
-+	state, browserToken, err := login.CreateThirdPartyLoginState(c.Query("redirect"))
- 	if err != nil {
- 		ctx.RespErr = err
- 		return
- 	}
--	authCodeURL := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline)
-+	authCodeURL := oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline,
-+		oauth2.SetAuthURLParam("redirect", c.Query("redirect")))
- 	defaultLogin := ""
- 	replaceURL := configbase.SystemAddress() + "/dex/auth"
- 	if systemConfig.DefaultLogin != setting.DefaultLoginLocal {
-@@ -107,6 +108,46 @@ func Login(c *gin.Context) {
- 	c.Redirect(http.StatusSeeOther, authCodeURL)
- }
- 
-+type completeLocalLoginArgs struct {
-+	State string `json:"state"`
-+}
+@@ -0,0 +1,79 @@
++# Gloo 系统包补丁 Dockerfile 使用说明
 +
-+// CompleteLocalLogin restores the saved redirect after a local password or MFA login.
-+func CompleteLocalLogin(c *gin.Context) {
-+	c.Header("Cache-Control", "no-store")
-+	authorization := strings.Fields(c.GetHeader(setting.AuthorizationHeader))
-+	if len(authorization) != 2 || !strings.EqualFold(authorization[0], "Bearer") {
-+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-+		return
-+	}
-+	claims, valid, err := permission.ValidateWebSessionToken(authorization[1])
-+	if err != nil || !valid || claims == nil || claims.UID == "" {
-+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-+		return
-+	}
++本文介绍如何使用 `docker/gloo-security-patch.Dockerfile`，基于原有 Gloo 镜像升级指定的 Alpine 系统包。
 +
-+	args := new(completeLocalLoginArgs)
-+	if err := c.ShouldBindJSON(args); err != nil || strings.TrimSpace(args.State) == "" {
-+		c.JSON(http.StatusBadRequest, gin.H{"error": "state is required"})
-+		return
-+	}
++适用于本次补丁使用的 `gateway`、`discovery`、`gloo` 和 `gloo-envoy-wrapper` 镜像。
 +
-+	cookie := thirdPartyLoginCookie()
-+	browserToken, err := c.Cookie(cookie.Name)
-+	if err != nil || browserToken == "" {
-+		c.JSON(http.StatusBadRequest, gin.H{"error": "login browser cookie is required"})
-+		return
-+	}
-+	redirectPath, err := login.ConsumeThirdPartyLoginState(args.State, browserToken)
-+	if err != nil {
-+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid or expired login state"})
-+		return
-+	}
-+	cookie.MaxAge = -1
-+	http.SetCookie(c.Writer, cookie)
-+	c.JSON(http.StatusOK, gin.H{"redirect": redirectPath})
-+}
++## 准备工作
 +
- // @Summary 查询第三方登录是否开启
- // @Description 返回系统当前是否配置了可用的第三方登录连接器
- // @Tags user
-@@ -177,7 +218,8 @@ func Callback(c *gin.Context) {
- 		return
- 	}
- 	// Atomically validate and consume state before exchanging the authorization code.
--	if err := login.ConsumeThirdPartyLoginState(c.Query("state"), browserToken); err != nil {
-+	redirectPath, err := login.ConsumeThirdPartyLoginState(c.Query("state"), browserToken)
-+	if err != nil {
- 		ctx.RespErr = err
- 		return
- 	}
-@@ -212,7 +254,7 @@ func Callback(c *gin.Context) {
- 		return
- 	}
- 
--	redirectURL, err := login.HandleThirdPartyLoginSuccess(user, ctx.Logger)
-+	redirectURL, err := login.HandleThirdPartyLoginSuccess(user, redirectPath, ctx.Logger)
- 	if err != nil {
- 		ctx.RespErr = err
- 		return
-```
-
-**File**: `pkg/microservice/user/core/handler/router.go` (modified, +1/-0)
-```diff
-@@ -86,6 +86,7 @@ func (*Router) Inject(router *gin.RouterGroup) {
- 		general.GET("/callback", login.Callback)
- 		general.GET("/login", login.Login)
- 		general.POST("/login", login.LocalLogin)
-+		general.POST("/login/complete", login.CompleteLocalLogin)
- 		general.POST("/login/mfa/setup", login.MFASetup)
- 		general.POST("/login/mfa/enroll", login.MFAEnroll)
- 		general.POST("/login/mfa/verify", login.MFAVerify)
-```
-
-**File**: `pkg/microservice/user/core/service/login/mfa.go` (modified, +4/-1)
-```diff
-@@ -721,12 +721,15 @@ func mfaChallengeKey(challengeToken string) string {
- 	return fmt.Sprintf("%s:%s", mfaChallengePrefix, challengeToken)
- }
- 
--func buildMFARedirectURL(challengeToken string, action MFARequiredAction, expiresAt int64) string {
-+func buildMFARedirectURL(challengeToken string, action MFARequiredAction, expiresAt int64, redirectPath string) string {
- 	query := url.Values{}
- 	query.Set("mfa_required", "true")
- 	query.Set("required_action", string(action))
- 	query.Set("mfa_challenge_token", challengeToken)
- 	query.Set("mfa_expires_at", fmt.Sprintf("%d", expiresAt))
-+	if redirectPath != "" {
-+		query.Set("redirect", redirectPath)
-+	}
- 	return "/mfa-enroll?" + query.Encode()
- }
- 
-```
-
-**File**: `pkg/microservice/user/core/service/login/oauth.go` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ const (
- 	oauthErrorAccessDenied         = "access_denied"
- 	oauthErrorExpiredToken         = "expired_token"
- 
--	oauthDeviceAuthorizationTTL = 10 * time.Minute
-+	oauthDeviceAuthorizationTTL = 5 * time.Minute
- 	oauthDevicePollInterval     = 5 * time.Second
- 	oauthAccessTokenTTL         = 2 * time.Hour
- 	oauthRefreshTokenTTL        = 7 * 24 * time.Hour
-```
-
-**File**: `pkg/microservice/user/core/service/login/third_party.go` (modified, +34/-10)
-```diff
-@@ -17,10 +17,13 @@ limitations under the License.
- package login
- 
- import (
-+	"errors"
- 	"fmt"
- 	"net/url"
-+	"strings"
- 	"time"
- 
-+	"github.com/redis/go-redis/v9"
- 	"go.uber.org/zap"
- 
- 	"github.com/koderover/zadig/v2/pkg/microservice/user/config"
-@@ -32,7 +35,14 @@ import (
- 
- const ThirdPartyLoginStateTTL = 5 * time.Minute
- 
--func CreateThirdPartyLoginState() (state, browserToken string, err error) {
-+func CreateThirdPartyLoginState(redirectPath string) (state, browserToken string, err error) {
-+	if redirectPath != "" {
-+		target, parseErr := url.ParseRequestURI(redirectPath)
-+		if parseErr != nil || target.IsAbs() || !strings.HasPrefix(target.Path, "/") ||
-+			strings.HasPrefix(target.Path, "//") || strings.Contains(target.Path, "\\") {
-+			return "", "", fmt.Errorf("login redirect must be a site-relative path")
-+		}
-+	}
- 	state, err = randomOAuthValue(32)
- 	if err != nil {
- 		log.Errorf("Failed to generate random state for third-party login, err: %s", err)
-@@ -43,7 +53,13 @@ func CreateThirdPartyLoginState() (state, browserToken string, err error) {
- 		log.Errorf("Failed to generate random browser token for third-party login, err: %s", err)
- 		return "", "", err
- 	}
--	err = cache.NewRedisCache(config.RedisUserTokenDB()).Write(
-+	redisCache := cache.NewRedisCache(config.RedisUserTokenDB())
-+	if redirectPath != "" {
-+		if err = redisCache.Write(oauthKey("login-redirect", hashOAuthValue(state)), redirectPath, ThirdPartyLoginStateTTL); err != nil {
-+			return "", "", err
-+		}
-+	}
-+	err = redisCache.Write(
- 		oauthKey("login-state", hashOAuthValue(state)), hashOAuthValue(browserToken), ThirdPartyLoginStateTTL,
- 	)
- 	if err != nil {
-@@ -53,20 +69,25 @@ func CreateThirdPartyLoginState() (state, browserToken string, err error) {
- 	return state, browserToken, nil
- }
- 
--func ConsumeThirdPartyLoginState(state, browserToken string) error {
-+func ConsumeThirdPartyLoginState(state, browserToken string) (string, error) {
- 	if state == "" || browserToken == "" {
--		return fmt.Errorf("missing login state or browser cookie")
-+		return "", fmt.Errorf("missing login state or browser cookie")
- 	}
--	consumed, err := cache.NewRedisCache(config.RedisUserTokenDB()).CompareAndDelete(
-+	redisCache := cache.NewRedisCache(config.RedisUserTokenDB())
-+	consumed, err := redisCache.CompareAndDelete(
- 		oauthKey("login-state", hashOAuthValue(state)), hashOAuthValue(browserToken),
- 	)
- 	if err != nil {
--		return err
-+		return "", err
- 	}
- 	if !consumed {
--		return fmt.Errorf("invalid or expired login state")
-+		return "", fmt.Errorf("invalid or expired login state")
-+	}
-+	redirectPath, err := redisCache.GetString(oauthKey("login-redirect", hashOAuthValue(state)))
-+	if errors.Is(err, redis.Nil) {
-+		return "", nil
- 	}
--	return nil
-+	return redirectPath, err
- }
- 
- type enabledStatus struct {
-@@ -83,7 +104,7 @@ func ThirdPartyLoginEnabled() *enabledStatus {
- 	}
- }
- 
--func HandleThirdPartyLoginSuccess(user *models.User, logger *zap.SugaredLogger) (string, error) {
-+func HandleThirdPartyLoginSuccess(user *models.User, redirectPath string, logger *zap.SugaredLogger) (string, error) {
- 	if user == nil {
- 		return "", fmt.Errorf("user not found")
- 	}
-@@ -104,12 +125,15 @@ func HandleThirdPartyLoginSuccess(user *models.User, logger *zap.SugaredLogger)
- 		}
- 		v := url.Values{}
- 		v.Add("token", resp.Token)
-+		if redirectPath != "" {
-+			v.Set("redirect", redirectPath)
-+		}
- 		return "/?" + v.Encode(), nil
- 	}
- 
- 	action, challengeToken, expiresAt, err := PrepareMFALoginChallengeForUser(user.UID, logger)
- 	if err != nil {
- 		return "", err
- 	}
--	return buildMFARedirectURL(challengeToken, action, expiresAt), nil
-+	return buildMFARedirectURL(challengeToken, action, expiresAt, redirectPath), nil
- }
++- 安装并启动 Docker，确保可以使用 `docker buildx`。
++- 确认当前代码目录包含 `docker/gloo-security-patch.Dockerfile`。
++- 准备原始镜像地址及 digest，以及需要升级的软件包和固定版本。
++
++> 该 Dockerfile 只更新系统包，不升级 Gloo、Envoy 程序版本。构建需要能够访问原镜像仓库和镜像中配置的 APK 软件源。
++
++## 构建参数
++
++| 参数 | 说明 | 示例 |
++| --- | --- | --- |
++| `BASE_IMAGE` | 原始镜像地址，使用 digest 固定构建来源 | `镜像仓库/组件@sha256:...` |
++| `APK_PACKAGES` | 需要升级的软件包，按 `包名=版本号` 填写，多个包使用空格分隔 | `busybox=1.32.1-r9 zlib=1.2.12-r3` |
++
++构建时临时使用 root 用户执行 `apk add --upgrade --no-cache`，完成后切换为 `10101` 用户，并继承基础镜像的 `ENTRYPOINT` 和 `CMD`。
++
++`APK_PACKAGES` 未填写或为空时，构建会失败。Dockerfile 不会自动校验每个包是否指定了固定版本，需要在传参时保证格式正确。
++
++## 构建镜像
++
++以下以 `gateway` 的 amd64 补丁镜像为例，在包含 Dockerfile 的代码仓库根目录执行。
++
++**第一步**：设置基础镜像和软件包参数。
++
++```bash
++BASE_IMAGE='koderover.tencentcloudcr.com/koderover-public/gateway@sha256:96eba53042b0108548aeb049440091addd3b838b61f17ca815a68aef204f0b7e'
++
++APK_PACKAGES='busybox=1.32.1-r9 ssl_client=1.32.1-r9 libcrypto1.1=1.1.1s-r0 libssl1.1=1.1.1s-r0 zlib=1.2.12-r3'
++```
++
++上述软件包版本为本次补丁实际使用的版本。后续构建新补丁时，需要根据待修复漏洞和原镜像的 Alpine 分支重新确认，不能将其作为长期通用的修复版本。
++
++**第二步**：执行构建。
++
++```bash
++docker buildx build \
++  --platform linux/amd64 \
++  --build-arg "BASE_IMAGE=${BASE_IMAGE}" \
++  --build-arg "APK_PACKAGES=${APK_PACKAGES}" \
++  --file docker/gloo-security-patch.Dockerfile \
++  --tag gloo-security-patch/gateway:local-amd64 \
++  --load \
++  .
++```
++
++参数说明：
++
++- `--platform`：本次构建的目标架构。
++- `--build-arg`：传入基础镜像和软件包参数。
++- `--file`：指定 Dockerfile 路径。
++- `--tag`：设置构建结果的镜像名称和标签，使用与原镜像不同的标签。
++- `--load`：将构建结果加载到本地 Docker。
++- `.`：使用当前目录作为构建上下文。
++
++构建成功后，本地镜像为 `gloo-security-patch/gateway:local-amd64`。此命令只在本地构建，不会推送镜像或更新环境。
++
++## 构建其他组件和架构
++
++四个组件共用同一个 Dockerfile。构建其他组件时，替换 `BASE_IMAGE`、`APK_PACKAGES` 和 `--tag`；构建 arm64 时，同时将 `--platform` 改为 `linux/arm64`，并使用能够执行该架构构建的节点。
++
++原始镜像的 Alpine 分支存在以下差异：
++
++| 架构 | 组件 | Alpine 分支 |
++| --- | --- | --- |
++| amd64 | gateway、discovery、gloo、gloo-envoy-wrapper | 3.13 |
++| arm64 | gateway、discovery | 3.13 |
++| arm64 | gloo | 3.12 |
++| arm64 | gloo-envoy-wrapper | 3.14 |
++
++基础镜像必须包含目标架构，软件包版本必须匹配对应 Alpine 分支。不同组件和架构的参数不能直接通用；包版本不可获取时，应核对版本和原软件源，不要直接更换 Alpine 分支。
++
++> 当前 Dockerfile 最终固定使用 `10101` 用户，适用于上述已核对运行用户的 Gloo 镜像，不应直接套用于运行用户不同的其他镜像。
 ```
 
 ---
 
-### Incident Patch 3: `9fa343e1` (2026-11-13)
-**Commit Message**: fix: strengthen deployment rollout readiness checks (#5087)
+### Incident Patch 3: `79613a43` (2026-11-16)
+**Commit Message**: fix: skip dind injection when unavailable (#5090)
 
 Signed-off-by: Cynthia <[REDACTED_EMAIL]>
 
-**File**: `pkg/shared/kube/wrapper/deployment.go` (modified, +8/-1)
+**File**: `pkg/microservice/aslan/core/common/service/workflowcontroller/jobcontroller/kubernetes.go` (modified, +7/-7)
 ```diff
-@@ -46,7 +46,14 @@ func (w *deployment) Unwrap() *appsv1.Deployment {
+@@ -487,7 +487,7 @@ EOF`,
+ 							Command:         []string{"/bin/sh", "-c"},
+ 							Args:            []string{jobExecutorBootingScript},
+ 							Env:             getEnvs(workflowCtx.ConfigMapMountDir, jobTaskSpec),
+-							VolumeMounts:    getVolumeMounts(workflowCtx.ConfigMapMountDir, jobTaskSpec.Properties.UseHostDockerDaemon),
++							VolumeMounts:    getVolumeMounts(workflowCtx.ConfigMapMountDir, jobTaskSpec.Properties.UseHostDockerDaemon, jobTaskSpec.Properties.DockerHost),
+ 							Resources:       getResourceRequirements(resReq, resReqSpec),
+ 							SecurityContext: &corev1.SecurityContext{
+ 								Privileged: &jobTaskSpec.Properties.EnablePrivileged,
+@@ -497,7 +497,7 @@ EOF`,
+ 							TerminationMessagePath:   job.JobTerminationFile,
+ 						},
+ 					},
+-					Volumes:     getVolumes(jobName, jobTaskSpec.Properties.UseHostDockerDaemon),
++					Volumes:     getVolumes(jobName, jobTaskSpec.Properties.UseHostDockerDaemon, jobTaskSpec.Properties.DockerHost),
+ 					Tolerations: commonutil.BuildTolerations(targetCluster.AdvancedConfig, jobTaskSpec.Properties.StrategyID),
+ 					Affinity:    commonutil.AddNodeAffinity(targetCluster.AdvancedConfig, jobTaskSpec.Properties.StrategyID),
+ 				},
+@@ -742,7 +742,7 @@ func getEnvs(configMapMountDir string, jobTaskSpec *commonmodels.JobTaskFreestyl
+ 		Value: path.Join(configMapMountDir, "job-config.xml"),
+ 	})
+ 
+-	if !jobTaskSpec.Properties.UseHostDockerDaemon {
++	if !jobTaskSpec.Properties.UseHostDockerDaemon && jobTaskSpec.Properties.DockerHost != "" {
+ 		ret = append(ret, corev1.EnvVar{
+ 			Name:  setting.DockerHost,
+ 			Value: jobTaskSpec.Properties.DockerHost,
+@@ -764,7 +764,7 @@ func getEnvs(configMapMountDir string, jobTaskSpec *commonmodels.JobTaskFreestyl
+ 	return ret
  }
  
- func (w *deployment) Ready() bool {
--	return w.Status.Replicas == w.Status.AvailableReplicas && w.Status.UnavailableReplicas == 0
-+	// UpdatedReplicas counts pods matching the latest template; old available pods do not imply a completed rollout.
-+	return w.Spec.Replicas != nil &&
-+		w.Status.ObservedGeneration >= w.Generation &&
-+		w.Status.UpdatedReplicas == *w.Spec.Replicas &&
-+		w.Status.Replicas == *w.Spec.Replicas &&
-+		w.Status.ReadyReplicas == *w.Spec.Replicas &&
-+		w.Status.AvailableReplicas == *w.Spec.Replicas &&
-+		w.Status.UnavailableReplicas == 0
+-func getVolumeMounts(configMapMountDir string, userHostDockerDaemon bool) []corev1.VolumeMount {
++func getVolumeMounts(configMapMountDir string, userHostDockerDaemon bool, dockerHost string) []corev1.VolumeMount {
+ 	resp := make([]corev1.VolumeMount, 0)
+ 
+ 	resp = append(resp, corev1.VolumeMount{
+@@ -788,7 +788,7 @@ func getVolumeMounts(configMapMountDir string, userHostDockerDaemon bool) []core
+ 			Name:      "docker-sock",
+ 			MountPath: setting.DefaultDockSock,
+ 		})
+-	} else {
++	} else if dockerHost != "" {
+ 		resp = append(resp, corev1.VolumeMount{
+ 			Name:      types.DindTLSVolumeName,
+ 			MountPath: types.DindTLSClientMountPath,
+@@ -798,7 +798,7 @@ func getVolumeMounts(configMapMountDir string, userHostDockerDaemon bool) []core
+ 	return resp
  }
  
- func (w *deployment) WorkloadResource(pods []*corev1.Pod) *resource.Workload {
+-func getVolumes(jobName string, userHostDockerDaemon bool) []corev1.Volume {
++func getVolumes(jobName string, userHostDockerDaemon bool, dockerHost string) []corev1.Volume {
+ 	resp := make([]corev1.Volume, 0)
+ 	resp = append(resp, corev1.Volume{
+ 		Name: "job-config",
+@@ -839,7 +839,7 @@ func getVolumes(jobName string, userHostDockerDaemon bool) []corev1.Volume {
+ 				},
+ 			},
+ 		})
+-	} else {
++	} else if dockerHost != "" {
+ 		resp = append(resp, corev1.Volume{
+ 			Name: types.DindTLSVolumeName,
+ 			VolumeSource: corev1.VolumeSource{
+```
+
+**File**: `pkg/tool/dockerhost/docker_host.go` (modified, +9/-1)
+```diff
+@@ -29,6 +29,7 @@ import (
+ 	"github.com/redis/go-redis/v9"
+ 	"go.uber.org/zap"
+ 	appsv1 "k8s.io/api/apps/v1"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
+ 	"k8s.io/apimachinery/pkg/util/wait"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 
+@@ -103,6 +104,9 @@ func (d *dockerhosts) GetBestHost(clusterID ClusterID, key string) string {
+ 
+ 	// round-robin
+ 	members := d.store[clusterID].GetMembers()
++	if len(members) == 0 {
++		return ""
++	}
+ 	index := d.GetBestHostIndex(clusterID)
+ 	index = (index + 1) % len(members)
+ 	member := members[index]
+@@ -165,12 +169,16 @@ func (d *dockerhosts) getDockerHostsSvc(clusterID ClusterID) []consistent.Member
+ 		Name:      "dind",
+ 		Namespace: ns,
+ 	}, dindSts)
++	if apierrors.IsNotFound(err) {
++		d.logger.Infof("Dind statefulset not found in namespace %q of cluster %q, skipping dind injection", ns, clusterID)
++		return nil
++	}
+ 	if err != nil {
+ 		d.logger.Warnf("Failed to get dind statefuleset in namespace %q of cluster %q: %s", ns, clusterID, err)
+ 		return d.getDefaultDockerHosts()
+ 	}
+ 
+-	members := []consistent.Member{}
++	var members []consistent.Member
+ 	for i := 0; i < int(*dindSts.Spec.Replicas); i++ {
+ 		members = append(members, d.genDindAddr(i))
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5092** (2026-11-16): fix(zgctl): launch trusted syncthing binary for local sync (@PetrusZ)
+- **PR #5091** (2026-11-16): fix(auth): authorize Kubernetes cluster resource queries (@PetrusZ)
+- **PR #5090** (2026-11-16): fix: skip dind injection when unavailable (@Cynthia-0203)
+- **PR #5089** (2026-11-16): fix: preserve cluster registry on Redis read failure (@Cynthia-0203)
 - **PR #5088** (closed): test: AI review sample with intentional issues (@huanghongbo-hhb)
 - **PR #5087** (2026-11-13): fix: strengthen deployment rollout readiness checks (@Cynthia-0203)
-- **PR #5083** (2026-11-13): fix(k8s): make YAML deployment and deletion order deterministic (@PetrusZ)
-- **PR #5081** (2026-11-13): fix(helm): prevent panic with empty service orchestration (@PetrusZ)
-- **PR #5079** (closed): fix(login): restore CLI authorization after local sign-in. (@leozhang2018)
-- **PR #5072** (closed): fix(openapi): keep template defaults and accept new service variable keys (@huanghongbo-hhb)
 
 ---
 
@@ -1613,55 +2104,22 @@ Signed-off-by: Cynthia <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. avoid unnecessary agent rollouts on scheduling strategy updates
+## X. helm): prevent concurrent chart download directory conflicts
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/multicluster/service/clusters.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5c56cc50`: avoid unnecessary agent rollouts on scheduling strategy updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f09f6eef`: helm): prevent concurrent chart download directory conflicts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/multicluster/service/clusters.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/koderover/zadig/v2/pkg/tool/crypto"
-func preserveHubAgentToken(agent *unstructured.Unstructured, clusterID string, clientset kubernetes.Interface) error {
-	current, err := clientset.AppsV1().Deployments(agent.GetNamespace()).Get(context.Background(), agent.GetName(), metav1.GetOptions{})
-	if apierrors.IsNotFound(err) {
-		return nil
-	}
-	if err != nil {
-		return fmt.Errorf("failed to get existing hub-agent deployment: %w", err)
-	}
-
-	token := ""
-	for _, container := range current.Spec.Template.Spec.Containers {
-		if container.Name != "agent" {
-			continue
-		}
-		for _, env := range container.Env {
-			if env.Name == setting.HubAgentToken {
-				token = env.Value
-				break
-			}
-		}
-		break
-	}
-	// Random AES IVs change the ciphertext on every render; retain a token only while it authenticates this cluster.
-	id, err := crypto.AesDecrypt(token)
-	if err != nil || id != clusterID {
-		return nil
-	}
-
-	containers, exists, err := unstructured.NestedSlice(agent.Object, "spec", "template", "spec", "containers")
-	if err != nil {
-		return fmt.Errorf("failed to get containers from rendered hub-agent deployment: %w", err)
-	}
-	if !exists {
-		return fmt.Errorf("rendered hub-agent deployment i
+!pkg/tool/helmclient/chart_download_test.go
+!pkg/microservice/aslan/core/common/service/fs/s3_cleanup_test.go
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1671,4 +2129,4 @@ func preserveHubAgentToken(agent *unstructured.Unstructured, clusterID string, c
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5c56cc50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f09f6eef` are properly handled with clean fallback behavior.

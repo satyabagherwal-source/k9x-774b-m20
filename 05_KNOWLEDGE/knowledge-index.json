@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T03:50:21.298Z",
-  "total_verified_learnings": 8836,
+  "last_updated": "2026-11-17T03:58:08.328Z",
+  "total_verified_learnings": 8838,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19700,
+  "total_items": 19718,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -220088,13 +220088,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-software-mansion-react-native-",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/software-mansion-react-native-gesture-handler-learnings-verification-protocol-em.md",
-      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-gesture-handler-learnings",
-      "repository": "software-mansion-react-native-gesture-handler-learnings",
+      "relative_path": "08_VERIFICATION/software-mansion-react-native-screens-learnings-verification-protocol-empirical-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-screens-learnings",
+      "repository": "software-mansion-react-native-screens-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf43db7446ad37ffe2286bd0c255a4ad41f3b68a160fadefcd3f91901088744a",
+      "content_hash": "bc05babf3074108abfd21a2e428c2ef35216c32ffc3b8a6df01a7861600ec807",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T10:17:20.285Z"
+      "persisted_at": "2026-11-17T03:58:07.686Z"
     },
     "learn-github-zeromicro-go-zero": {
       "learning_id": "learn-github-zeromicro-go-zero",
@@ -225556,8 +225556,8 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "4b0982fd",
-      "content_hash": "df12d3a87b05c3d35b2bd185a902d86686776856e28a76681fdbc5b5141017e7",
+      "source_version": "69db4b16",
+      "content_hash": "5b1d7d18bbe54e14654bf3d5d1faa3cd685b875017c62c71e062583a66cfab5f",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
@@ -225577,7 +225577,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T20:51:03.261Z",
+      "verified_at": "2026-11-17T03:58:03.128Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225619,10 +225619,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-architecture-intelligence-helixdb-helix-db-core-invariants.md",
       "title": "Architecture Intelligence: HelixDB/helix-db Core Invariants",
       "repository": "HelixDB/helix-db",
-      "source_version": "4b0982fd",
-      "content_hash": "56d1752a2b949a8ecafb465a80e8861b810e8e33fdcae734847eaa4f50a31251",
+      "source_version": "69db4b16",
+      "content_hash": "3046e9775067c24380aefa9dbf0252721575eeacb3fdc4d512ebb39df5f93012",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T20:51:03.706Z"
+      "persisted_at": "2026-11-17T03:58:03.538Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-helixdb-helix-db": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-helixdb-helix-db",
@@ -228507,14 +228507,19 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "1174b8c7",
-      "content_hash": "d9bafbfd77ad9298548e2d61abdacdc35d3800d7cb751c63a357c0b550c9102f",
+      "source_version": "29b826e4",
+      "content_hash": "8b4f6e71e9ecd0702c1f8db3bcdc10d6ad9bd9578f4cbe45aa82cddf196d95e7",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
         {
           "number": 8487,
           "title": "avoid unnecessary agent rollouts on scheduling strategy updates",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8863,
+          "title": "prevent concurrent chart download directory conflicts",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -228523,7 +228528,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T12:34:01.795Z",
+      "verified_at": "2026-11-17T03:57:59.925Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228589,10 +228594,10 @@
       "relative_path": "08_VERIFICATION/koderover-zadig-verification-protocol-empirical-defect-shield-for-koderover-zadi.md",
       "title": "Verification Protocol: Empirical Defect Shield for koderover/zadig",
       "repository": "koderover/zadig",
-      "source_version": "1174b8c7",
-      "content_hash": "db48edaf13967c5d6a54b317bcdd10c01d998fc2df7ce27b847aa0e8b8080c92",
+      "source_version": "29b826e4",
+      "content_hash": "9eca30edd857215103b49a06551550d5142cc5b20f481a7794c8ab06bae10819",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T12:34:02.439Z"
+      "persisted_at": "2026-11-17T03:58:00.523Z"
     },
     "learn-github-projectdiscovery-nuclei": {
       "learning_id": "learn-github-projectdiscovery-nuclei",
@@ -228765,9 +228770,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for koderover-zadig-learnings",
       "repository": "koderover-zadig-learnings",
       "source_version": "HEAD",
-      "content_hash": "bd21c3a99eb3664ec9415fcba2b935030ed50e22c9a8688cfde49f207d627bc8",
+      "content_hash": "9231c309ec96c1dded351274b567ec651620bf618c896b1c409a49970ed678c8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T12:34:37.166Z"
+      "persisted_at": "2026-11-17T03:58:08.328Z"
     },
     "learn-huggingface-argmaxinc-whisperkit-coreml": {
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
@@ -262933,6 +262938,270 @@
       "content_hash": "b95b457ef9a4cad4ea0248160c59f65e9f3e20510ebee82a3c9e538bd99036d4",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T03:50:21.049Z"
+    },
+    "learn-github-solidjs-solid": {
+      "learning_id": "learn-github-solidjs-solid",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "solidjs/solid",
+      "repository": "solidjs/solid",
+      "slug": "solidjs-solid",
+      "platform": "github",
+      "source_url": "https://github.com/solidjs/solid",
+      "source_version": "f8138641",
+      "content_hash": "6246d426bca1e65ce4e1ea35b7b3d423b428be4f9c006a8d14d7d72f2fe53c4a",
+      "dossier_path": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8861,
+          "title": "publish solid-js 1.x to the v1-latest dist-tag",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T03:57:50.851Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8861": {
+      "learning_id": "rule-8861",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8861,
+      "title": "publish solid-js 1.x to the v1-latest dist-tag",
+      "source_url": "https://github.com/solidjs/solid",
+      "source_version": "f8138641",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:57:50.851Z"
+    },
+    "candidate_directive-publish-solid-js-1-x-to-the-v1-latest-dist-tag": {
+      "item_id": "candidate_directive-publish-solid-js-1-x-to-the-v1-latest-dist-tag",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WL2G-publish-solid-js-1-x-to-the-v1-latest-dist-tag.md",
+      "title": "publish solid-js 1.x to the v1-latest dist-tag",
+      "repository": "solidjs-solid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8c949801c880ae2f1d6a4d700b0df0bc9e800a39ca0b4a7f1df406cf827cd563",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T03:58:06.761Z"
+    },
+    "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-solidjs-solid-architecture-intelligence-solidjs-solid-core-invariants.md",
+      "title": "Architecture Intelligence: solidjs/solid Core Invariants",
+      "repository": "solidjs/solid",
+      "source_version": "f8138641",
+      "content_hash": "f3448deedabdb2215505f8104465af72411046dcaa663bfc511c40ebdb92877c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T03:57:51.380Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-solidjs-solid": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-solidjs-solid",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/solidjs-solid-verification-protocol-empirical-defect-shield-for-solidjs-solid.md",
+      "title": "Verification Protocol: Empirical Defect Shield for solidjs/solid",
+      "repository": "solidjs/solid",
+      "source_version": "f8138641",
+      "content_hash": "4bb6a21486f0be038cc2fd23a59cf355bb6b753ad02cef895df1de6d29a920c0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:57:51.509Z"
+    },
+    "learn-github-software-mansion-react-native-screens": {
+      "learning_id": "learn-github-software-mansion-react-native-screens",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "software-mansion/react-native-screens",
+      "repository": "software-mansion/react-native-screens",
+      "slug": "software-mansion-react-native-screens",
+      "platform": "github",
+      "source_url": "https://github.com/software-mansion/react-native-screens",
+      "source_version": "f3306074",
+      "content_hash": "73584fd25bed15d04832be4a60f710f4e52f5659b7d1fe1b4769a499c8116760",
+      "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8862,
+          "title": "follow the gesture in interactive fade and fade_from_bottom pops",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T03:57:53.827Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8862": {
+      "learning_id": "rule-8862",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8862,
+      "title": "follow the gesture in interactive fade and fade_from_bottom pops",
+      "source_url": "https://github.com/software-mansion/react-native-screens",
+      "source_version": "f3306074",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:57:53.827Z"
+    },
+    "candidate_directive-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops": {
+      "item_id": "candidate_directive-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WBD0-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops.md",
+      "title": "follow the gesture in interactive fade and fade_from_bottom pops",
+      "repository": "software-mansion/react-native-screens",
+      "source_version": "f3306074",
+      "content_hash": "4864b69884d4ba06d86d702d33f6f93b0f014eb69208b9123c4e4741d671149a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:57:54.182Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-core-i": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-screens-technical-construction-intelligence-softwa.md",
+      "title": "Technical Construction Intelligence: software-mansion/react-native-screens Core Invariants",
+      "repository": "software-mansion/react-native-screens",
+      "source_version": "f3306074",
+      "content_hash": "dfcbcce9deaf08cdb4157a36fac24cdad36920c998c1ff335718034bfd8f8947",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:57:54.304Z"
+    },
+    "rule-8863": {
+      "learning_id": "rule-8863",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8863,
+      "title": "prevent concurrent chart download directory conflicts",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "29b826e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:57:59.925Z"
+    },
+    "candidate_directive-prevent-concurrent-chart-download-directory-conflicts": {
+      "item_id": "candidate_directive-prevent-concurrent-chart-download-directory-conflicts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WG2A-prevent-concurrent-chart-download-directory-conflicts.md",
+      "title": "prevent concurrent chart download directory conflicts",
+      "repository": "koderover/zadig",
+      "source_version": "29b826e4",
+      "content_hash": "00c75615b2a4a74403694eb9bf3633adb88d23cd7b8871fb44b2b12305ea064a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:58:00.279Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-koderover-zadig-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-koderover-zadig-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-technical-construction-intelligence-koderover-zadig-core-invaria.md",
+      "title": "Technical Construction Intelligence: koderover/zadig Core Invariants",
+      "repository": "koderover/zadig",
+      "source_version": "29b826e4",
+      "content_hash": "8612301bac90e683c208713345645df6fd6ab3c00d2345f4cc2d81fc38493b16",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:58:00.400Z"
+    },
+    "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-solidjs-solid-learnings-architecture-intelligence-solidjs-solid-learnings-core-i.md",
+      "title": "Architecture Intelligence: solidjs-solid-learnings Core Invariants",
+      "repository": "solidjs-solid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f707a2bda6c76de7da0d8ff924866127e157ea9b2d28091232421a1e2607d433",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T03:58:06.881Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-solidjs-solid-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-solidjs-solid-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/solidjs-solid-learnings-verification-protocol-empirical-defect-shield-for-solidj.md",
+      "title": "Verification Protocol: Empirical Defect Shield for solidjs-solid-learnings",
+      "repository": "solidjs-solid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "90c2dbc239d3d23a0fd829c462721c957a439f4911607f37dbf25d7d75c9b497",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:58:07.006Z"
+    },
+    "candidate_directive-ios-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops": {
+      "item_id": "candidate_directive-ios-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WLLA-ios-follow-the-gesture-in-interactive-fade-and-fade_from_bottom-pops.md",
+      "title": "iOS): follow the gesture in interactive fade and fade_from_bottom pops",
+      "repository": "software-mansion-react-native-screens-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b25316c25ce847b0851673eeaa67afa089ee1b3185236f3cdd03c3dc88490865",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:58:07.438Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-learni": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-learni",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-screens-learnings-technical-construction-intellige.md",
+      "title": "Technical Construction Intelligence: software-mansion-react-native-screens-learnings Core Invariants",
+      "repository": "software-mansion-react-native-screens-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4d25b41be9750b502f6b0a51becc60651d89e6891bfedb64268040165649a3a1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:58:07.560Z"
+    },
+    "candidate_directive-helm-prevent-concurrent-chart-download-directory-conflicts": {
+      "item_id": "candidate_directive-helm-prevent-concurrent-chart-download-directory-conflicts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WM32-helm-prevent-concurrent-chart-download-directory-conflicts.md",
+      "title": "helm): prevent concurrent chart download directory conflicts",
+      "repository": "koderover-zadig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6dbc92e5f6312500eda524149cd9f1dcf33cfc0a70ed2f093bc67ea22c11eb3c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:58:08.083Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-koderover-zadig-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-koderover-zadig-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-learnings-technical-construction-intelligence-koderover-zadig-le.md",
+      "title": "Technical Construction Intelligence: koderover-zadig-learnings Core Invariants",
+      "repository": "koderover-zadig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cf7201c432bb7c39f7f4c294c8cdab573cbc98da8dfaf31c3b4fea36e0c8b704",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:58:08.202Z"
     }
   },
   "ai-builder-brain": {

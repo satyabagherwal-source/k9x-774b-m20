@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:01.937Z",
+  "timestamp": "2026-11-17T03:58:06.651Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-solidjs-solid-learnings",
+  "learning_id": "LEARN-EVO-solidjs-solid-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [solidjs-solid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:01.937Z`  
-> **Learning ID**: `LEARN-REEXTRACT-solidjs-solid-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T03:58:06.651Z`  
+> **Learning ID**: `LEARN-EVO-solidjs-solid-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/solidjs-solid-learnings.md`  
 > **Source**: github ([https://github.com/solidjs/solid](https://github.com/solidjs/solid))  
-> **Source Version**: `99714d4e`  
+> **Source Version**: `f8138641`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T12:19:55.098Z  
+> **Timestamp**: 2026-11-17T03:57:50.083Z  
 > **Learning ID**: `learn-github-solidjs-solid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/solidjs-solid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/solidjs/solid](https://github.com/solidjs/solid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T12:14:51.036Z  
+> **Harvest Timestamp**: 2026-11-17T03:57:49.794Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A declarative, efficient, and flexible JavaScript library for building user interfaces.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 36259 stars
+- **Stars / Engagement**: 36274 stars
 
 ---
 
@@ -1517,493 +1517,115 @@ export { withSolid, customElement };
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `64010be8` (2026-11-10)
-**Commit Message**: fix(solid): release disposed transition sources during pending Suspense (#4744)
+### Incident Patch 1: `f8138641` (2026-11-16)
+**Commit Message**: chore: publish solid-js 1.x to the v1-latest dist-tag (#4955)
 
-* fix(solid): release disposed transition sources during pending Suspense (#4728)
+changeset publish always passes --tag latest, which overrides
+publishConfig.tag, so publish solid-js first with pnpm (which honors
+publishConfig) and let changeset publish skip it and tag it.
 
-* fix(solid): avoid passing forEach index into cleanNode
 
-* test: type For children as Element in #4728 regression
+Claude-Session: https://claude.ai/code/session_0117BoWNjuf3jry41gysax1f
 
-**File**: `.changeset/fix-transition-pending-store-oom.md` (added, +5/-0)
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+"solid-js": patch
-+---
-+
-+Release disposed transition sources during a pending Suspense transition so keyed store reconciles cannot retain unbounded memory.
+@@ -18,7 +18,7 @@
+     "types": "turbo run types",
+     "publish": "pnpm run build && pnpm run types && pnpm run release:only",
+     "bump": "changeset add",
+-    "release:only": "changeset publish",
++    "release:only": "node scripts/publish-solid-js.mjs && changeset publish",
+     "format": "prettier --write --cache \"**/*.[tj]s?(x)\""
+   },
+   "devDependencies": {
 ```
 
-**File**: `packages/solid/src/reactive/signal.ts` (modified, +19/-4)
+**File**: `packages/solid/package.json` (modified, +3/-0)
 ```diff
-@@ -1384,7 +1384,7 @@ export function writeSignal(node: SignalState<any> | Memo<any>, value: any, isCo
- 
- function updateComputation(node: Computation<any>) {
-   if (!node.fn) return;
--  cleanNode(node);
-+  cleanNode(node, true);
-   const time = ExecCount;
-   runComputation(
-     node,
-@@ -1417,11 +1417,11 @@ function runComputation(node: Computation<any>, value: any, time: number) {
-     if (node.pure) {
-       if (Transition && Transition.running) {
-         node.tState = STALE;
--        (node as Memo<any>).tOwned && (node as Memo<any>).tOwned!.forEach(cleanNode);
-+        (node as Memo<any>).tOwned && (node as Memo<any>).tOwned!.forEach(n => cleanNode(n));
-         (node as Memo<any>).tOwned = undefined;
-       } else {
-         node.state = STALE;
--        node.owned && node.owned.forEach(cleanNode);
-+        node.owned && node.owned.forEach(n => cleanNode(n));
-         node.owned = null;
-       }
-     }
-@@ -1704,7 +1704,14 @@ function markDownstream(node: Memo<any>) {
-   }
- }
- 
--function cleanNode(node: Owner) {
-+function releaseTransitionSource(node: SignalState<any> | Memo<any> | Owner) {
-+  if (Transition && Transition.sources.has(node as SignalState<any>)) {
-+    Transition.sources.delete(node as SignalState<any>);
-+    delete (node as SignalState<any>).tValue;
-+  }
+@@ -9,6 +9,9 @@
+     "type": "git",
+     "url": "https://github.com/solidjs/solid"
+   },
++  "publishConfig": {
++    "tag": "v1-latest"
++  },
+   "main": "./dist/server.cjs",
+   "module": "./dist/server.js",
+   "unpkg": "./dist/solid.cjs",
+```
+
+**File**: `scripts/publish-solid-js.mjs` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
++// solid-js 1.x publishes to the `v1-latest` dist-tag (see publishConfig in
++// packages/solid/package.json) so it never takes `latest` from 2.x.
++// `changeset publish` always passes `--tag latest`, which overrides
++// publishConfig, so solid-js is published here first. `changeset publish`
++// then sees the version on npm, skips it, and still creates its git tag.
++import { execFileSync } from "node:child_process";
++import { readFileSync } from "node:fs";
++
++const dir = new URL("../packages/solid/", import.meta.url);
++const { name, version } = JSON.parse(readFileSync(new URL("package.json", dir), "utf8"));
++
++let published = "";
++try {
++  published = execFileSync("npm", ["view", `${name}@${version}`, "version", "--prefer-online"], {
++    encoding: "utf8"
++  }).trim();
++} catch (e) {
++  if (!String(e.stderr).includes("E404")) throw e;
 +}
 +
-+function cleanNode(node: Owner, recompute?: boolean) {
-   let i;
-   if ((node as Computation<any>).sources) {
-     while ((node as Computation<any>).sources!.length) {
-@@ -1720,6 +1727,9 @@ function cleanNode(node: Owner) {
-           source.observerSlots![index] = s;
-         }
-       }
-+      // Drop unobserved transition copies so removed store leaves do not
-+      // accumulate on a long-lived pending Suspense transition (#4728).
-+      if (!recompute && (!obs || !obs.length) && Transition) releaseTransitionSource(source);
-     }
-   }
- 
-@@ -1734,6 +1744,10 @@ function cleanNode(node: Owner) {
-     for (i = node.owned.length - 1; i >= 0; i--) cleanNode(node.owned[i]);
-     node.owned = null;
-   }
-+  // Permanent disposal must drop Transition.sources entries. Recompute must not:
-+  // when the transition is paused (!running), cleanNode skips the pure/reset
-+  // branch above and would otherwise clear tValue before runComputation (#4728).
-+  if (!recompute) releaseTransitionSource(node);
- 
-   if (node.cleanups) {
-     for (i = node.cleanups.length - 1; i >= 0; i--) node.cleanups[i]();
-@@ -1748,6 +1762,7 @@ function reset(node: Computation<any>, top?: boolean) {
-   if (!top) {
-     node.tState = 0;
-     Transition!.disposed.add(node);
-+    releaseTransitionSource(node);
-   }
-   if (node.owned) {
-     for (let i = 0; i < node.owned.length; i++) reset(node.owned[i]);
-```
-
-**File**: `packages/solid/web/test/transition-oom-4728.spec.tsx` (added, +103/-0)
-```diff
-@@ -0,0 +1,103 @@
-+﻿/**
-+ * @jsxImportSource solid-js
-+ * @vitest-environment jsdom
-+ */
-+
-+import { describe, expect, test, vi } from "vitest";
-+import {
-+  createSignal,
-+  createResource,
-+  createComponent,
-+  enableScheduling,
-+  useTransition,
-+  startTransition,
-+  For
-+} from "../../src/index.js";
-+import { getSuspenseContext, Transition } from "../../src/reactive/signal.js";
-+import { createStore, reconcile } from "../../store/src/index.js";
-+import { render, Suspense } from "../src/index.js";
-+
-+describe("#4728 pending transition store retention", () => {
-+  test("Transition.sources stays bounded while suspense transition is pending", async () => {
-+    enableScheduling(null as any);
-+    getSuspenseContext();
-+
-+    const div = document.createElement("div");
-+    const [key, setKey] = createSignal(0);
-+    const [state, setState] = createStore({
-+      data: [
-+        { symbol: "A", value: 0 },
-+        { symbol: "B", value: 0 }
-+      ]
-+    });
-+    const [pending, start] = useTransition();
-+    let resolveResource!: (v: string) => void;
-+
-+    function Child() {
-+      const [resource] = createResource(key, id =>
-+        id === 0
-+          ? Promise.resolve("ready")
-+          : new Promise<string>(resolve => {
-+              resolveResource = resolve;
-+            })
-+      );
-+      // Use createComponent so For children stay typed as JSX.Element (not accessors).
-+      return [
-+        resource as unknown as string,
-+        createComponent(For as any, {
-+          get each() {
-+            resource();
-+            return state.data;
-+          },
-+          children: (row: { symbol: string; value: number }) =>
-+            createComponent(For as any, {
-+              each: ["symbol", "value"],
-+              children: (column: string) => (row as Record<string, string | number>)[column]
-+            })
-+        })
-+      ];
-+    }
-+
-+    const dispose = render(() => {
-+      return (
-+        <Suspense fallback="loading">
-+          <Child />
-+        </Suspense>
-+      );
-+    }, div);
-+
-+    await Promise.resolve();
-+    await Promise.resolve();
-+
-+    const transition = start(() => setKey(1));
-+    await vi.waitFor(() => expect(pending()).toBe(true));
-+
-+    for (let step = 1; step <= 300; step++) {
-+      void startTransition(() =>
-+        setState(
-+          "data",
-+          reconcile(
-+            [
-+              { symbol: step % 2 ? "A" : "B", value: step },
-+              { symbol: step % 2 ? "C" : "D", value: step }
-+            ],
-+            { key: "symbol" }
-+          )
-+        )
-+      );
-+      await new Promise(r => setImmediate(r));
-+    }
-+
-+    const sources = Transition?.sources.size ?? -1;
-+    const disposed = Transition?.disposed.size ?? -1;
-+    expect(pending()).toBe(true);
-+    expect(sources).toBeGreaterThan(0);
-+    // Live store leaves + computations only — must not grow with update count.
-+    expect(sources).toBeLessThan(100);
-+    expect(disposed).toBeLessThan(100);
-+
-+    resolveResource("done");
-+    await transition;
-+    dispose();
-+  });
-+});
++if (published) {
++  console.log(`${name}@${version} is already on npm, skipping`);
++} else {
++  execFileSync("pnpm", ["publish", "--no-git-checks"], { cwd: dir, stdio: "inherit" });
++}
 ```
 
 ---
 
-### Incident Patch 2: `f24b303b` (2026-11-10)
-**Commit Message**: fix(store): preserve class accessor precedence in createMutable (#4703)
+### Incident Patch 2: `6ea2b895` (2026-11-16)
+**Commit Message**: docs(solid): match the createReaction and createDeferred JSDoc to their signatures (#4951)
 
-* fix(store): preserve class accessor precedence in createMutable
-
-Retain the nearest descriptor while walking class prototypes so ancestor accessors cannot replace derived or own properties.
-
-* test(store): cover mutable class descriptor overrides
-
-Check derived accessors, instance accessors and own data properties, including reactive reads and derived setters.
-
-* chore: add changeset for mutable descriptor precedence
-
-Record the store bug fix as a patch release.
-
-**File**: `.changeset/retain-mutable-class-descriptors.md` (added, +5/-0)
+**File**: `packages/solid/src/reactive/signal.ts` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+"solid-js": patch
-+---
-+
-+Preserve own and derived class property descriptors when wrapping instances with `createMutable`.
-```
-
-**File**: `packages/solid/store/src/mutable.ts` (modified, +5/-3)
-```diff
-@@ -98,7 +98,7 @@ function wrap<T extends StoreNode>(value: T): T {
-   if (!p) {
-     Object.defineProperty(value, $PROXY, { value: (p = new Proxy(value, proxyTraps)) });
-     const keys = Object.keys(value),
--      desc = Object.getOwnPropertyDescriptors(value);
-+      desc: PropertyDescriptorMap = Object.getOwnPropertyDescriptors(value);
- 
-     const proto = Object.getPrototypeOf(value);
-     const isClass =
-@@ -111,8 +111,10 @@ function wrap<T extends StoreNode>(value: T): T {
-       let curProto = proto;
-       while (curProto != null) {
-         const descriptors = Object.getOwnPropertyDescriptors(curProto);
--        keys.push(...Object.keys(descriptors));
--        Object.assign(desc, descriptors);
-+        for (const prop of Object.keys(descriptors)) {
-+          keys.push(prop);
-+          if (!Object.prototype.hasOwnProperty.call(desc, prop)) desc[prop] = descriptors[prop];
-+        }
-         curProto = Object.getPrototypeOf(curProto);
-       }
-     }
-```
-
-**File**: `packages/solid/store/test/mutable.spec.ts` (modified, +72/-0)
-```diff
-@@ -74,6 +74,78 @@ describe("State Getter/Setters", () => {
-   });
- });
- 
-+describe("Class accessor precedence", () => {
-+  class BaseCounter {
-+    count = 1;
-+    get value() {
-+      return this.count;
-+    }
-+    set value(value: number) {
-+      this.count = value;
-+    }
-+  }
-+
-+  class Counter extends BaseCounter {
-+    get value() {
-+      return this.count * 2;
-+    }
-+    set value(value: number) {
-+      this.count = value / 2;
-+    }
-+  }
-+
-+  test("preserves overridden getters and setters", () => {
-+    createRoot(dispose => {
-+      const counter = createMutable(new Counter());
-+      const value = createMemo(() => counter.value);
-+      expect(value()).toBe(2);
-+      counter.count = 4;
-+      expect(value()).toBe(8);
-+      counter.value = 6;
-+      expect(counter.count).toBe(3);
-+      expect(value()).toBe(6);
-+      dispose();
-+    });
-+  });
-+
-+  test("preserves own accessors over prototype accessors", () => {
-+    createRoot(dispose => {
-+      const instance = new Counter();
-+      Object.defineProperty(instance, "value", {
-+        get() {
-+          return this.count * 3;
-+        },
-+        set(value: number) {
-+          this.count = value / 3;
-+        },
-+        configurable: true
-+      });
-+      const counter = createMutable(instance);
-+      const value = createMemo(() => counter.value);
-+      expect(value()).toBe(3);
-+      counter.value = 6;
-+      expect(counter.count).toBe(2);
-+      expect(value()).toBe(6);
-+      dispose();
-+    });
-+  });
-+
-+  test("preserves own data properties over prototype accessors", () => {
-+    const instance = new Counter();
-+    Object.defineProperty(instance, "value", {
-+      value: 10,
-+      writable: true,
-+      enumerable: true,
-+      configurable: true
-+    });
-+    const counter = createMutable(instance);
-+    expect(counter.value).toBe(10);
-+    counter.value = 20;
-+    expect(counter.value).toBe(20);
-+    expect(counter.count).toBe(1);
-+  });
-+});
-+
- describe("Simple update modes", () => {
-   test("Simple Key Value", () => {
-     const state = createMutable({ key: "" });
-```
-
----
-
-### Incident Patch 3: `27f701fb` (2026-11-10)
-**Commit Message**: fix(solid): recover from missing observerSlots after a failed allocation (#4752)
-
-**File**: `packages/solid/src/reactive/signal.ts` (modified, +37/-4)
-```diff
-@@ -1306,6 +1306,25 @@ export function enableExternalSource(
- }
- 
- // Internal
-+
-+// Rebuild a source's `observerSlots` from its observers' back-pointers.
-+// A source can end up with observers but no (or out-of-sync) slots when an
-+// array allocation fails midway through `readSignal` (see #4680); without
-+// this, `cleanNode` and a later `readSignal` throw on the missing array.
-+// Each observer subscribes to a source at most once, so the slot for
-+// `observers[i]` is the index of the source in that observer's `sources`.
-+function repairObserverSlots(source: SignalState<any> | Memo<any>) {
-+  source.observerSlots = source.observers!.map((observer, slot) => {
-+    const sources = observer.sources;
-+    if (!sources) return -1;
-+    for (let i = sources.length - 1; i >= 0; i--) {
-+      if (sources[i] === source && observer.sourceSlots && observer.sourceSlots[i] === slot)
-+        return i;
-+    }
-+    return sources.lastIndexOf(source);
-+  });
-+}
-+
- export function readSignal(this: SignalState<any> | Memo<any>) {
-   const runningTransition = Transition && Transition.running;
-   if (
-@@ -1326,16 +1345,28 @@ export function readSignal(this: SignalState<any> | Memo<any>) {
-     if (!observers || observers[observers.length - 1] !== Listener) {
-       const sSlot = observers ? observers.length : 0;
-       if (!Listener.sources) {
--        Listener.sources = [this];
--        Listener.sourceSlots = [sSlot];
-+        // Build both arrays before assigning either, so an allocation
-+        // failure cannot leave `sources` set while `sourceSlots` is null.
-+        const sources = [this];
-+        const sourceSlots = [sSlot];
-+        Listener.sources = sources;
-+        Listener.sourceSlots = sourceSlots;
-       } else {
-         Listener.sources.push(this);
-         Listener.sourceSlots!.push(sSlot);
-       }
-       if (!observers) {
--        this.observers = [Listener];
--        this.observerSlots = [Listener.sources.length - 1];
-+        // Build both arrays before assigning either, so an allocation
-+        // failure cannot leave `observers` set while `observerSlots` is null.
-+        const newObservers = [Listener];
-+        const newObserverSlots = [Listener.sources.length - 1];
-+        this.observers = newObservers;
-+        this.observerSlots = newObserverSlots;
-       } else {
-+        // The slot array may be missing or out of sync if an earlier
-+        // allocation failed; rebuild it from the back-pointers first.
-+        if (!this.observerSlots || this.observerSlots.length !== observers.length)
-+          repairObserverSlots(this);
-         observers.push(Listener);
-         this.observerSlots!.push(Listener.sources.length - 1);
-       }
-@@ -1719,6 +1750,8 @@ function cleanNode(node: Owner, recompute?: boolean) {
-         index = (node as Computation<any>).sourceSlots!.pop()!,
-         obs = source.observers;
-       if (obs && obs.length) {
-+        if (!source.observerSlots || source.observerSlots.length !== obs.length)
-+          repairObserverSlots(source);
-         const n = obs.pop()!,
-           s = source.observerSlots!.pop()!;
-         if (index < obs.length) {
-```
-
-**File**: `packages/solid/test/signals.spec.ts` (modified, +57/-0)
-```diff
-@@ -922,6 +922,63 @@ describe("runWithOwner", () => {
-   });
- });
- 
-+describe("Missing observerSlots recovery", () => {
-+  test("Disposing an observer recovers when a source has observers but null observerSlots", () => {
-+    const [count, setCount] = createSignal(0);
-+    let observer: any;
-+    let effectRuns = 0;
-+    const disposeBroken = createRoot(dispose => {
-+      createComputed(() => {
-+        observer = getOwner();
-+        count();
-+      });
-+      return dispose;
-+    });
-+    createRoot(() => {
-+      createEffect(() => {
-+        count();
-+        effectRuns++;
-+      });
-+    });
-+    expect(effectRuns).toBe(1);
-+    // Simulate the state left behind when readSignal's second array
-+    // allocation fails: the source has observers but observerSlots is null.
-+    observer.sources[0].observerSlots = null;
-+    expect(() => disposeBroken()).not.toThrow();
-+    // The surviving observer is still subscribed: writes still reach it.
-+    setCount(1);
-+    expect(effectRuns).toBe(2);
-+  });
-+
-+  test("Reading a source with null observerSlots recovers instead of throwing", () => {
-+    const [count, setCount] = createSignal(0);
-+    let observer: any;
-+    let runs = 0;
-+    const disposeBroken = createRoot(dispose => {
-+      createComputed(() => {
-+        observer = getOwner();
-+        count();
-+      });
-+      return dispose;
-+    });
-+    observer.sources[0].observerSlots = null;
-+    // A new subscription must not throw on observerSlots.push().
-+    expect(() =>
-+      createRoot(() => {
-+        createComputed(() => {
-+          count();
-+          runs++;
-+        });
-+      })
-+    ).not.toThrow();
-+    expect(runs).toBe(1);
-+    expect(() => disposeBroken()).not.toThrow();
-+    // The new observer is still subscribed after the broken one is disposed.
-+    setCount(1);
-+    expect(runs).toBe(2);
-+  });
-+});
-+
- describe("createReaction", () => {
-   test("Create and trigger a Reaction", () =>
-     new Promise(done => {
+@@ -385,7 +385,7 @@ export function createEffect<Next, Init>(
+  *   options?: { name?: string }
+  * ): (fn: () => void) => void;
+  * ```
+- * @param invalidated a function that is called when tracked function is invalidated.
++ * @param onInvalidate a function that is called when tracked function is invalidated.
+  * @param options allows to set a name in dev mode for debugging purposes
+  *
+  * @description https://docs.solidjs.com/reference/secondary-primitives/create-reaction
+@@ -785,11 +785,11 @@ export interface DeferredOptions<T> {
+  * Creates a reactive computation that only runs and notifies the reactive context when the browser is idle
+  * ```typescript
+  * export function createDeferred<T>(
+- *   fn: (v: T) => T,
++ *   source: () => T,
+  *   options?: { timeoutMs?: number, name?: string, equals?: false | ((prev: T, next: T) => boolean) }
+- * ): () => T);
++ * ): () => T;
+  * ```
+- * @param fn a function that receives its previous or the initial value, if set, and returns a new value used to react on a computation
++ * @param source the accessor whose value is deferred until the browser is idle
+  * @param options allows to set the timeout in milliseconds, use a custom comparison function and set a name in dev mode for debugging purposes
+  *
+  * @description https://docs.solidjs.com/reference/secondary-primitives/create-deferred
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4800** (2026-11-12): perf(web): move end nodes once and stamp the reconcile window (@ryansolid)
-- **PR #4799** (2026-11-12): fix(compiler): fold module constants whatever their order against a hoisted component (#4791) (@ryansolid)
-- **PR #4798** (2026-11-12): fix(signals): a guess derived from another hold's live guess entangles the two (#4788) (@ryansolid)
-- **PR #4797** (2026-11-12): fix(signals): a shown guess over a new question keeps the screen; warn OPTIMISTIC_WRITE_WHILE_LOADING (#4795) (@ryansolid)
-- **PR #4796** (2026-11-12): fix(signals): a projection's reader pulls the derive it reads through (#4782) (@ryansolid)
-- **PR #4794** (2026-11-12): fix(signals): a landing's re-derived memo re-runs the held runs that read it stale (@ryansolid)
+- **PR #4956** (2026-11-16): chore: keep examples and test-integration out of the version PR (@ryansolid)
+- **PR #4955** (2026-11-16): chore: publish solid-js 1.x to the v1-latest dist-tag (@ryansolid)
+- **PR #4954** (2026-11-16): chore: publish 2.0.0 to latest, exit pre mode, drop RC wording (@ryansolid)
+- **PR #4952** (2026-11-16): chore: point docs links at docs.solidjs.com (@ryansolid)
+- **PR #4951** (2026-11-16): docs(solid): match the createReaction and createDeferred JSDoc to their signatures (@farisbasha)
+- **PR #4949** (2026-11-16): chore(size): batch re-record after the 2026-11-16 fix batch (@ryansolid)
 
 ---
 
@@ -2023,35 +1645,31 @@ Record the store bug fix as a patch release.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. solid): release disposed transition sources during pending Suspense (#4744)
+## X. publish solid-js 1.x to the v1-latest dist-tag
 
 **RULE**:
-When implementing operations in `.changeset/fix-transition-pending-store-oom.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in solidjs/solid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in solidjs/solid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `64010be8`: solid): release disposed transition sources during pending Suspense (#4744). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8138641`: publish solid-js 1.x to the v1-latest dist-tag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-transition-pending-store-oom.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-"solid-js": patch
----
-
-Release disposed transition sources during a pending Suspense transition so keyed store reconciles cannot retain unbounded memory.
+    "release:only": "node scripts/publish-solid-js.mjs && changeset publish",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    "release:only": "changeset publish",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `64010be8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8138641` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

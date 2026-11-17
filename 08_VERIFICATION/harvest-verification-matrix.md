@@ -10431,3 +10431,7 @@
 | `CYCLE-20261117-M6QV` | `2026-11-17T03:50:01.639Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md` | Yes (`be5a7840...`) |
 | `CYCLE-20261117-M9Q9` | `2026-11-17T03:50:05.505Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8859` | Yes (`b2568005...`) |
 | `CYCLE-20261117-MH8Z` | `2026-11-17T03:50:15.251Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8860` | Yes (`20e890de...`) |
+| `CYCLE-20261117-W8YC` | `2026-11-17T03:57:51.060Z` | `solidjs/solid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8861` | Yes (`6246d426...`) |
+| `CYCLE-20261117-WB7R` | `2026-11-17T03:57:53.991Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8862` | Yes (`73584fd2...`) |
+| `CYCLE-20261117-WFX5` | `2026-11-17T03:58:00.089Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8863` | Yes (`8b4f6e71...`) |
+| `CYCLE-20261117-WIF8` | `2026-11-17T03:58:03.332Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md` | Yes (`5b1d7d18...`) |

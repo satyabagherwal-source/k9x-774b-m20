@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T03:50:21.416Z",
+  "last_updated": "2026-11-17T03:58:08.442Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T03:08:05.768Z",
@@ -783,7 +783,7 @@
       "staged_for_review": 1
     },
     "koderover-zadig-learnings.md": {
-      "processed_at": "2026-11-14T12:34:36.593Z",
+      "processed_at": "2026-11-17T03:58:07.809Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1093,7 +1093,7 @@
       "staged_for_review": 1
     },
     "solidjs-solid-learnings.md": {
-      "processed_at": "2026-11-12T12:20:20.378Z",
+      "processed_at": "2026-11-17T03:58:06.337Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1888,7 +1888,7 @@
       "staged_for_review": 0
     },
     "software-mansion-react-native-screens-learnings.md": {
-      "processed_at": "2026-11-13T14:26:28.036Z",
+      "processed_at": "2026-11-17T03:58:07.131Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3248,7 +3248,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1455,
+  "total_dossiers_evaluated": 1458,
   "total_canonical_promoted": 297,
-  "total_staged_for_review": 1144
+  "total_staged_for_review": 1147
 }

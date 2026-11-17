@@ -10464,3 +10464,7 @@ Every entry in this ledger must capture:
 | `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `5d19c5fe` | Multi-dimensional audit evidence | 2026-11-17T03:50:01.643Z |
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `99c07450` | Multi-dimensional audit evidence | 2026-11-17T03:50:05.509Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `3d7977fc` | Multi-dimensional audit evidence | 2026-11-17T03:50:15.255Z |
+| `learn-github-solidjs-solid` | `https://github.com/solidjs/solid` | `f8138641` | Multi-dimensional audit evidence | 2026-11-17T03:57:51.064Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `f3306074` | Multi-dimensional audit evidence | 2026-11-17T03:57:53.994Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `29b826e4` | Multi-dimensional audit evidence | 2026-11-17T03:58:00.092Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `69db4b16` | Multi-dimensional audit evidence | 2026-11-17T03:58:03.336Z |

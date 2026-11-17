@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `4b0982fd`  
+> **Source Version**: `69db4b16`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T20:51:02.542Z  
+> **Timestamp**: 2026-11-17T03:58:02.888Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T20:51:02.537Z  
+> **Harvest Timestamp**: 2026-11-17T03:58:02.883Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6294 stars
+- **Stars / Engagement**: 6296 stars
 
 ---
 
@@ -2085,663 +2085,89 @@ pub(super) fn validate_body(family: QueueFamily, body: &[u8]) -> Result<(), Enco
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4b0982fd` (2026-11-14)
-**Commit Message**: Claim index operations in their tasks and wait once per index DDL request (#1297)
+### Incident Patch 1: `69db4b16` (2026-11-16)
+**Commit Message**: Remove Crucible (#1302)
 
-* Time one tenant's first batch of index builds by worker concurrency
+* Remove the Crucible config
 
-* Claim index operations in their tasks instead of one at a time in the dispatch loop
+Crucible CI is turned off. Its debuginfo, incremental, telemetry and warm-up settings lived only in this file.
 
-* Wait for durability once per index DDL request instead of once per create
+* Remove the Crucible test instructions and MCP server
 
-A write batch of index creates committed and waited for a WAL upload per
-create, so 122 creates took 12 s. Creates from a query now commit applied
-and the request waits once, at its end, for every visible write to be
-durable, failed or not, so it still returns only once its DDL is durable.
+Crucible CI is turned off, so agents run tests locally again. CLAUDE.md stays: it imports AGENTS.md.
 
-* Run eight secondary index tasks by default and prove claims overlap
-
-Claims now commit in their tasks, so secondary steps overlap their WAL
-uploads: a tenant's first 122 empty builds take 12 s at eight tasks
-instead of 41 s at two. Vector and text stay at one; the total is the
-lanes' sum so secondary work never holds the permits they need.
-
-* Let the index build benchmark run against a server over HTTP
-
-* Treat a claim that lost its operation and one that lost a conflict alike
-
-* Give each benchmark run its own labels, so a server's earlier runs never leave them built
-
-* Format the
-
-**File**: `crates/db/examples/index_build_throughput.rs` (added, +275/-0)
+**File**: `.crucible.toml` (removed, +0/-28)
 ```diff
-@@ -0,0 +1,275 @@
-+//! How long one tenant's first batch of index builds takes, by worker concurrency.
-+//!
-+//! Opens a fresh disk-backed writer, creates the index set one Helix Foundry
-+//! load asks for (112 equality and range indexes, 10 text indexes partitioned
-+//! by `foundry_part`) on an empty tenant in one write batch, then polls every
-+//! operation until each has succeeded. Prints when each finished.
-+//!
-+//! `cargo run --release -p db --example index_build_throughput -- <runs>`
-+//!
-+//! - `IBT_TASKS`: `total,secondary,vector,text` worker tasks (default: the
-+//!   database's defaults).
-+//! - `IBT_FLUSH_MS`: WAL flush interval (default 100, SlateDB's).
-+//! - `IBT_ROOT`: directory for the databases (default a temp dir).
-+//! - `IBT_URL`: a running server (`http://host:8080`) to send the same requests
-+//!   to over `/v2/query` instead. The server's own
-+//!   settings apply, so `IBT_TASKS`, `IBT_FLUSH_MS` and `IBT_ROOT` don't.
-+use std::num::NonZeroU64;
-+use std::time::{Duration, Instant};
-+
-+use db::config::{IndexLifecycleConcurrency, IndexLifecycleThroughputTuning};
-+use db::encoding::keys::scope::{DataScope, TenantId};
-+use db::{HelixDB, HelixDbSource};
-+use helix_ast::{batch, index::IndexSpec, query::QueryRequest, traversal};
-+
-+type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
-+
-+/// Where the requests go: an embedded writer, or a server over HTTP.
-+enum Target {
-+    Embedded(HelixDB, DataScope),
-+    Http {
-+        client: reqwest::Client,
-+        url: String,
-+        tenant: String,
-+    },
-+}
-+
-+impl Target {
-+    async fn query(&self, request: QueryRequest) -> Result<serde_json::Value> {
-+        match self {
-+            Self::Embedded(db, scope) => Ok(db.query_scoped(request, *scope).await?),
-+            Self::Http {
-+                client,
-+                url,
-+                tenant,
-+            } => {
-+                let response = client
-+                    .post(format!("{url}/v2/query"))
-+                    .header("x-helix-tenant-id", tenant)
-+                    .header("content-type", "application/json")
-+                    .body(serde_json::to_vec(&request)?)
-+                    .send()
-+                    .await?;
-+                let status = response.status();
-+                let body = response.text().await?;
-+                if !status.is_success() {
-+                    return Err(format!("{status}: {body}").into());
-+                }
-+                Ok(serde_json::from_str(&body)?)
-+            }
-+        }
-+    }
-+}
-+
-+const OWN_NODES: [&str; 9] = [
-+    "FoundryLoad",
-+    "FoundryDocument",
-+    "FoundrySection",
-+    "FoundryMention",
-+    "FoundryEvidence",
-+    "FoundryReview",
-+    "FoundryChunk",
-+    "FoundryViolation",
-+    "FoundrySwept",
-+];
-+const OWN_EDGES: [&str; 7] = [
-+    "FOUNDRY_IN_DOCUMENT",
-+    "FOUNDRY_IN_SECTION",
-+    "FOUNDRY_MENTION_OF",
-+    "FOUNDRY_FROM_SECTION",
-+    "FOUNDRY_FROM_CHUNK",
-+    "FOUNDRY_CONCERNS",
-+    "FOUNDRY_ABOUT",
-+];
-+const TYPES: usize = 10;
-+const LINKS: usize = 15;
-+
-+/// The ontology engine's `ensure_indexes` for an ontology of `TYPES` named
-+/// types with one name each and `LINKS` links, every label after `prefix`.
-+fn foundry_specs(prefix: &str) -> Vec<IndexSpec> {
-+    let own = [
-+        ("FoundryDocument", "doc_id"),
-+        ("FoundryDocument", "content_hash"),
-+        ("FoundryDocument", "sweep"),
-+        ("FoundryEvidence", "fact_key"),
-+        ("FoundryEvidence", "fact_source"),
-+        ("FoundryEvidence", "prop_key"),
-+        ("FoundryEvidence", "row_entity"),
-+        ("FoundryReview", "chunk_key"),
-+        ("FoundryReview", "doc_id"),
-+        ("FoundryReview", "prop_key"),
-+        ("FoundrySwept", "sweep_key"),
-+        ("FoundryViolation", "violation_key"),
-+        ("FoundryViolation", "constraint"),
-+        ("FoundryChunk", "chunk_key"),
-+        ("FoundryChunk", "stream"),
-+    ]
-+    .map(|(label, prop)| IndexSpec::node_equality(format!("{prefix}{label}"), prop))
-+    .into_iter()
-+    .chain([IndexSpec::node_range(
-+        format!("{prefix}FoundryViolation"),
-+        "violation_key",
-+    )]);
-+    let types = (0..TYPES).flat_map(|t| {
-+        let ty = format!("{prefix}Type{t}");
-+        [
-+            IndexSpec::node_equality(&ty, "norm_name"),
-+            IndexSpec::node_range(&ty, "norm_name"),
-+            IndexSpec::node_equality(&ty, "foundry_part"),
-+            IndexSpec::node_equality(&ty, "name__nn"),
-+            IndexSpec::node_text(&ty, "name", Some("foundry_part")),
-+        ]
-+    });
-+    let links =
-+        (0..LINKS).map(|l| IndexSpec::edge_equality(format!("{prefix}LINK_{l}"), "fact_key"));
-+    let loads = OWN_NODES
-+        .iter()
-+        .map(|l| format!("{prefix}{l}"))
-+        .chain((0..TYPES).map(|t| format!("{prefix}Type{t}")))
-+        .map(|l| IndexSpec::node_equality(l, "foundry_load"))
-+        .chain(
-+            OWN_EDGES
-+                .iter()
-+                .map(|l| format!("{prefix}{
+@@ -1,28 +0,0 @@
+-# Crucible (https://crucibl.sh) settings for this repo, read from the default branch.
+-
+-[resources]
+-# One test build peaks at about 6.8 GiB, more than a standard VM (2 vCPU / 4 GiB).
+-size = "large"            # 8 vCPU / 16 GiB
+-build_timeout_secs = 2700 # base builds; default 1800
+-
+-[test]
+-timeout_secs = 1800       # per test VM; default 900
+-# Line-tables debuginfo, the same as rust-ci.yml, keeps target/ small. Incremental stays
+-# on for faster rebuilds of agent diffs: large VMs now have a 200 GB disk (4 x the slot
+-# disk), which leaves room for its caches.
+-# The CLI tests post telemetry; point it at a dead loopback port so it never hits egress.
+-env = { CARGO_PROFILE_DEV_DEBUG = "line-tables-only", CARGO_PROFILE_TEST_DEBUG = "line-tables-only", HELIX_TELEMETRY_ENDPOINT = "http://127.0.0.1:9/v1/events" }
+-
+-[checks]
+-# PR CI runs as GitHub Actions; Crucible runs are for agents (CLI / MCP).
+-pull_requests = false
+-
+-[warm]
+-# Replaces Crucible's detected warm-ups, so it repeats them (the two-platform fetch nextest's
+-# metadata needs, then the test build) and adds the TypeScript SDK install that rust-ci.yml
+-# runs before its tests (helix-cli's typescript_runtime tests read sdks/typescript/node_modules).
+-commands = [
+-  ["cargo", "fetch", "--target", "aarch64-unknown-linux-gnu", "--target", "x86_64-unknown-linux-gnu"],
+-  ["cargo", "test", "--workspace", "--no-run", "--message-format=json-render-diagnostics"],
+-  ["npm", "ci", "--prefix", "sdks/typescript", "--ignore-scripts", "--no-audit", "--no-fund"],
+-]
 ```
 
-**File**: `crates/db/src/config/index_lifecycle_throughput.rs` (modified, +11/-4)
+**File**: `.mcp.json` (removed, +0/-1)
 ```diff
-@@ -24,10 +24,17 @@ use std::num::NonZeroUsize;
- 
- const DEFAULT_SCAN_READ_AHEAD_BYTES: usize = 256 * 1024;
- const DEFAULT_SCAN_FETCH_TASKS: usize = 4;
--const DEFAULT_TOTAL_OPERATION_TASKS: usize = 2;
--const DEFAULT_SECONDARY_TASKS: usize = 2;
-+// Secondary steps are mostly durable commits, so tasks overlap their WAL
-+// uploads: one tenant's first 122 empty builds take 24 s with eight and 54 s
-+// with two (`examples/index_build_throughput.rs`). More vector or text tasks
-+// did not help. Every family lane and the queued-publication lane (one task per
-+// vector and text task) fits in the total at once, so secondary work never
-+// holds the permits vector, text or publication need.
-+const DEFAULT_SECONDARY_TASKS: usize = 8;
- const DEFAULT_VECTOR_TASKS: usize = 1;
- const DEFAULT_TEXT_TASKS: usize = 1;
-+const DEFAULT_TOTAL_OPERATION_TASKS: usize =
-+    DEFAULT_SECONDARY_TASKS + 2 * (DEFAULT_VECTOR_TASKS + DEFAULT_TEXT_TASKS);
- 
- /// Invalid runtime throughput policy rejected before lifecycle work starts.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-@@ -238,8 +245,8 @@ mod tests {
-         assert_eq!(tuning.scan().read_ahead_bytes().get(), 256 * 1024);
-         assert_eq!(tuning.scan().max_fetch_tasks().get(), 4);
-         assert!(!tuning.scan().cache_admission_enabled());
--        assert_eq!(tuning.concurrency().total_operation_tasks().get(), 2);
--        assert_eq!(tuning.concurrency().secondary_tasks().get(), 2);
-+        assert_eq!(tuning.concurrency().total_operation_tasks().get(), 12);
-+        assert_eq!(tuning.concurrency().secondary_tasks().get(), 8);
-         assert_eq!(tuning.concurrency().vector_tasks().get(), 1);
-         assert_eq!(tuning.concurrency().text_tasks().get(), 1);
-     }
+@@ -1 +0,0 @@
+-{ "mcpServers": { "crucible": { "type": "http", "url": "https://mcp.crucibl.sh/mcp" } } }
 ```
 
-**File**: `crates/db/src/execution/interpreter/ddl.rs` (modified, +3/-0)
+**File**: `AGENTS.md` (modified, +0/-15)
 ```diff
-@@ -3,6 +3,8 @@
- //! Status/control operations point-read or mutate the retained operation in
- //! the execution scope. Family CREATE/DROP crosses the DB-owned capability and
- //! canonical-definition boundary before atomically enqueueing durable work.
-+//! CREATE commits applied: its request waits once, at its end, for every DDL
-+//! it ran to be durable, so a batch of creates waits for one WAL upload.
+@@ -47,21 +47,6 @@ rustfmt --edition 2024 --check
  
- use super::*;
+ you should run formatting and clippy before finishing your work. Rust crates in this workspace use edition 2024 from their `Cargo.toml`; do not pass `--edition 2024` to `cargo clippy`, because Cargo does not accept that flag for Clippy. Use a current stable Rust toolchain with the matching Clippy component installed.
  
-@@ -61,6 +63,7 @@ impl<'db> ExecutionContext<'db> {
-                         self.tenant_scope,
-                         spec,
-                         *mode,
-+                        crate::transaction::CommitDurability::Applied,
-                         &self.execution_control,
-                     )
-                     .await?;
-```
-
-**File**: `crates/db/src/execution/interpreter/dispatch.rs` (modified, +2/-10)
-```diff
-@@ -180,17 +180,9 @@ impl<'db> ExecutionContext<'db> {
-                 let resume_request_scope = self.has_request_write_scope();
-                 self.check_execution_deadline()?;
-                 self.commit_request_write_scope().await?;
-+                // The request waits once, at its end, for this DDL to be
-+                // durable (`Interpreter::run`).
-                 let result = self.execute_index_ddl(input, plan).await;
--                if result.is_ok() {
--                    // A DDL that changed nothing commits nothing, and its
--                    // receipt may rest on a racing DDL's applied record.
--                    self.execution_control
--                        .run_within(
--                            self.durable_wait_limit,
--                            self.db.await_visible_writes_durable(),
--                        )
--                        .await?;
--                }
-                 if resume_request_scope && result.is_ok() {
-                     self.enable_request_write_scope().await?;
-                 }
-```
-
-**File**: `crates/db/src/execution/interpreter/mod.rs` (modified, +22/-1)
-```diff
-@@ -200,7 +200,8 @@ impl<'db> Interpreter<'db> {
+-### Running tests (Crucible)
+-
+-Run tests on Crucible (https://crucibl.sh), not with a local `cargo test`. The `crucible` MCP server is in `.mcp.json`: Claude Code asks once to trust it, then sign in with `/mcp` → `crucible` → Authenticate (Codex: `codex mcp add crucible --url https://mcp.crucibl.sh/mcp`). Run tests locally only if Crucible is unavailable: no `crucible` tools, sign-in fails, or `status` shows no ready base for `HelixDB/helix-db`.
+-
+-1. `status`: take the `base.commit` of `HelixDB/helix-db`, then `git fetch origin <base.commit>` so your clone has it (the base can lag behind `main`).
+-2. `create_diff_upload(repo: "HelixDB/helix-db", base: "<base.commit>")`, then run the `command` it returns, as given, from the repo root. It uploads `git diff <base.commit>` with untracked files included (your commits, uncommitted edits and new files) and prints one line. Don't print the diff yourself.
+-3. `run_tests(repo: "HelixDB/helix-db", base: "<base.commit>", diff_upload: "<diff_upload>")`. For one test, add `filters: ["<test name>"]`. An upload runs once: repeat steps 2 and 3 for each run.
+-4. A `{"status":"running","job_id":…}` answer: call `get_job(id: "<job_id>", wait_seconds: 45)` until it finishes.
+-5. On a failure, read `failures`, then `get_job_logs(id: "<job_id>", grep: "FAIL|panicked|error[")`. Don't page through the whole log.
+-6. Run once without `filters` before you finish. Runs use a large VM (`.crucible.toml`): run after meaningful changes, not after every edit.
+-
+-Clippy and `rustfmt` stay local; Crucible runs only the tests.
+-
+-When a result looks wrong, an error is unclear, something is slow or missing, or something works well, call `send_feedback` (`kind`, `message`, `job_id`): what you expected and what happened. Never include secrets or source code.
+-
+ ### Database Key/Value Construction, Parsing, and Use
  
-     /// Selects when this request's graph commits return.
-     ///
--    /// Reads never commit, and index DDL always commits durably.
-+    /// Reads never commit, and an index DDL request always returns once its
-+    /// DDL is durable.
-     pub(crate) const fn with_commit_durability(
-         mut self,
-         durability: crate::transaction::CommitDurability,
-@@ -261,6 +262,26 @@ impl<'db> Interpreter<'db> {
-                 plan.execution_program(),
-             )
-             .await;
-+        // Index DDL commits applied, so its request waits for durability
-+        // once for all of it, failed or not, as each DDL used to wait, and
-+        // as that wait was, within the request's deadline and the durable
-+        // wait limit. It covers every visible write: a DDL that changed
-+        // nothing commits nothing, and its receipt may rest on a racing DDL's
-+        // applied record.
-+        let result = match request_mode {
-+            RequestExecutionMode::IndexDdl => {
-+                let durable = self
-+                    .ctx
-+                    .execution_control
-+                    .run_within(
-+                        self.ctx.durable_wait_limit,
-+                        self.ctx.db.await_visible_writes_durable(),
-+                    )
-+                    .await;
-+                result.and_then(|value| durable.map(|()| value))
-+            }
-+            RequestExecutionMode::Read | RequestExecutionMode::GraphWrite => result,
-+        };
-         if let Err(err) = result {
-             self.ctx.abort_request_write_scope();
-             return Err(err);
-```
-
-**File**: `crates/db/src/index_lifecycle/lifecycle.rs` (modified, +29/-8)
-```diff
-@@ -22,7 +22,7 @@ use crate::encoding::v2::values::{
- };
- use crate::error::{HelixDbError, Result};
- use crate::execution_control;
--use crate::transaction::Mutation;
-+use crate::transaction::{CommitDurability, Mutation};
- 
- use super::failpoints::{self, IndexOutboxFailpoint};
- use super::outbox::{self, ExpectedCanonicalRevision};
-@@ -129,17 +129,21 @@ pub(crate) async fn create_index_operation_from_current_source(
-         scope,
-         definition,
-         mode,
-+        CommitDurability::Durable,
-         &execution_control,
-     )
-     .await
- }
- 
--/// Captures and enqueues one request-owned BUILD at its durable boundary.
-+/// Captures and enqueues one request-owned BUILD, returning once its commit
-+/// is as durable as `durability` asks. A query's DDL commits applied and its
-+/// request waits once for all of them.
- pub(crate) async fn create_index_operation_from_current_source_with_control(
-     db: &Db,
-     scope: DataScope,
-     definition: ValidatedDynamicIndexDefinition,
-     mode: helix_planner::ir::IndexCreateMode,
-+    durability: CommitDurability,
-     execution_control: &execution_control::ExecutionControl,
- ) -> Result<IndexDdlReceipt> {
-     failpoints::trip(IndexOutboxFailpoint::DdlEnqueueBefore)?;
-@@ -153,7 +157,10 @@ pub(crate) async fn create_index_operation_from_current_source_with_control(
-         mode,
-         initial_progress,
-         VectorPhysicalSelection::Allocate,
--        execution_control,
-+        CreateCommit {
-+            durability,
-+            execution_control,
-+        },
-     )
-     .await
- }
-@@ -175,7 +182,10 @@ pub(crate) async fn create_legacy_vector_adoption_operation(
-         helix_planner::ir::IndexCreateMode::IfNotExists,
-         InitialBuildProgress::legacy_vector(),
-         VectorPhysicalSelection::AdoptLegacy(physical_index_id),
--        &execution_control,
-+        CreateCommit {
-+            durability: CommitDurability::Durable,
-+            execution_control: &execution_control,
-+        },
-     )
-     .await
- }
-@@ -197,7 +207,10 @@ async fn create_index_operation_in_transaction(
-         mode,
-         initial_progress,
-         VectorPhysicalSelection::Allocate,
--        execution_control,
-+        CreateCommit {
-+            durability: CommitDurability::Durable,
-+            execution_control,
-+        },
-     )
-     .await
- }
-@@ -208,16 +221,24 @@ enum VectorPhysicalSelection {
-     AdoptLegacy(VectorPhysicalIndexId),
- }
- 
-+/// How one create commits: returning once as durable as `durability` asks,
-+/// unless `execution_control` stops it first.
-+#[derive(Clone, Copy)]
-+struct CreateCommit<'a> {
-+    durability: CommitDurability,
-+    execution_control: &'a execution_control::ExecutionControl,
-+}
-+
- async fn create_index_operation_in_transaction_with_physical(
-     transaction: DbTransaction,
-     scope: DataScope,
-     definition: ValidatedDynamicIndexDefinition,
-     mode: helix_planner::ir::IndexCreateMode,
-     initial_progress: InitialBuildProgress,
-     vector_physical: VectorPhysicalSelection,
--    execution_control: &execution_control::ExecutionControl,
-+    commit: CreateCommit<'_>,
- ) -> Result<IndexDdlReceipt> {
--    execution_control.check()?;
-+    commit.execution_control.check()?;
-     let family = operation_family(definition.family());
-     if initial_progress.family() != family {
-         return Err(HelixDbError::InvariantViolation(
-@@ -348,7 +369,7 @@ async fn create_index_operation_in_transaction_with_physical(
-     outbox::stage_operation(&transaction, scope, expected, &next_index, &operation).await?;
-     failpoints::trip(IndexOutboxFailpoint::DdlEnqueueAfterStaging)?;
-     transaction
--        .commit()
-+        .commit_with_options(&commit.durability.write_options())
-         .await
-         .map_err(HelixDbError::from_storage_commit)?;
-     Ok(IndexDdlReceipt::Accepted {
-```
-
-**File**: `crates/db/src/index_lifecycle/scope_gate.rs` (modified, +84/-2)
-```diff
-@@ -174,6 +174,7 @@ pub(crate) struct IndexScopeGates {
-     catalogs: Mutex<HashMap<DataScope, CatalogGate>>,
-     catalog_refreshes: Mutex<HashMap<DataScope, Weak<AsyncMutex<()>>>>,
-     publications: Mutex<HashMap<super::queue::QueueTarget, Weak<AsyncMutex<()>>>>,
-+    build_steps: Mutex<HashMap<DataScope, Weak<AsyncMutex<()>>>>,
- }
- 
- impl IndexScopeGates {
-@@ -232,15 +233,28 @@ impl IndexScopeGates {
-     }
- 
-     /// Acquires the permit `gate` names for one operation step.
-+    ///
-+    /// Gated steps of one scope first queue on the scope's build-step gate,
-+    /// so at most one waits for the fair mutation gate at a time: graph
-+    /// transactions, which take it shared, queue behind one step's exclusive
-+    /// wait however many of the scope's builds run. Nothing waits for the
-+    /// build-step gate while holding a scope gate, so it adds no lock cycle.
-+    /// The tuple drops the scope permit before the build-step gate.
-     pub(crate) async fn step_permit(
-         &self,
-         scope: DataScope,
-         gate: StepGate,
-     ) -> Box<dyn super::outbox::IndexOperationStepPermit> {
-         match gate {
-             StepGate::None => Box::new(()),
--            StepGate::WriteFence => Box::new(self.write_fence_permit(scope).await),
--            StepGate::Lifecycle => Box::new(self.lifecycle_permit(scope).await),
-+            StepGate::WriteFence => {
-+                let queued = self.build_step_gate(scope).lock_owned().await;
-+                Box::new((self.write_fence_permit(scope).await, queued))
-+            }
-+            StepGate::Lifecycle => {
-+                let queued = self.build_step_gate(scope).lock_owned().await;
-+                Box::new((self.lifecycle_permit(scope).await, queued))
-+            }
-         }
-     }
- 
-@@ -321,6 +335,20 @@ impl IndexScopeGates {
-             .clone()
-     }
- 
-+    fn build_step_gate(&self, scope: DataScope) -> Arc<AsyncMutex<()>> {
-+        let mut gates = self
-+            .build_steps
-+            .lock()
-+            .unwrap_or_else(std::sync::PoisonError::into_inner);
-+        let Some(gate) = gates.get(&scope).and_then(Weak::upgrade) else {
-+            gates.retain(|_, gate| gate.strong_count() != 0);
-+            let gate = Arc::new(AsyncMutex::new(()));
-+            gates.insert(scope, Arc::downgrade(&gate));
-+            return gate;
-+        };
-+        gate
-+    }
-+
-     fn catalog_refresh_gate(&self, scope: DataScope) -> Arc<AsyncMutex<()>> {
-         let mut gates = self
-             .catalog_refreshes
-@@ -387,6 +415,60 @@ mod tests {
-         drop(mutation);
-     }
- 
-+    /// Gated build steps of one scope queue on its build-step gate, so a
-+    /// graph write that arrives behind several of them waits for one step's
-+    /// exclusive turn, not for all of them: the fair mutation gate only ever
-+    /// holds one step's wait.
-+    #[tokio::test]
-+    async fn graph_writes_wait_behind_one_queued_build_step() {
-+        let gates = Arc::new(IndexScopeGates::default());
-+        let scope = DataScope::LegacyUnscoped;
-+        let settle = Duration::from_millis(20);
-+        let writing = gates.mutation_permit(scope).await;
-+        let (acquired, mut acquisitions) = tokio::sync::mpsc::unbounded_channel();
-+        let mut releases = Vec::new();
-+        for step in 0..3 {
-+            let (release, released) = tokio::sync::oneshot::channel::<()>();
-+            releases.push(release);
-+            let (gates, acquired) = (Arc::clone(&gates), acquired.clone());
-+            tokio::spawn(async move {
-+                let permit = gates.step_permit(scope, StepGate::WriteFence).await;
-+                acquired.send(step).expect("the test awaits acquisitions");
-+                let _ = released.await;
-+                drop(permit);
-+            });
-+        }
-+        tokio::time::sleep(settle).await;
-+        let next_write = {
-+            let gates = Arc::clone(&gates);
-+            tokio::spawn(async move { gates.mutation_permit(scope).await })
-+        };
-+        tokio::time::sleep(settle).await;
-+        drop(writing);
-+        let first = acquisitions.recv().await.expect("one step takes the fence");
-+        tokio::time::sleep(settle).await;
-+        assert!(
-+            !next_write.is_finished(),
-+            "the step holding the fence excludes writes"
-+        );
-+        releases
-+            .remove(first)
-+            .send(())
-+            .expect("the step awaits its release");
-+        let write = tokio::time::timeout(Duration::from_secs(1), next_write)
-+            .await
-+            .expect("the write is next, not behind every queued step")
-+            .expect("the write joins");
-+        assert!(
-+            acquisitions.try_recv().is_err(),
-+            "no other step holds the fence while the write runs"
-+        );
-+        drop(write);
-+        for release in releases {
-+            let _ = release.send(());
-+        }
-+    }
-+
-     /// Each step gate excludes exactly what its holder needs: none nothing,
-     /
-```
-
-**File**: `crates/db/src/index_lifecycle/worker.rs` (modified, +195/-21)
-```diff
-@@ -248,11 +248,21 @@ impl WorkerPermits {
-     }
- }
- 
--/// Typed work retained by the task set after its durable claim succeeds.
-+/// An eligible operation the task claims before its step, so claims of
-+/// separate operations commit concurrently instead of one at a time in the
-+/// dispatch loop.
-+struct PendingClaim {
-+    eligible: outbox::EligibleOperation,
-+    writer_epoch: WriterEpoch,
-+    sequence: ClaimSequence,
-+    permission: ClaimPermission,
-+}
-+
-+/// Typed work retained by the task set once its target is reserved.
- enum InFlightTask {
-     Operation {
-         target: IndexOperationId,
--        claimed: Box<outbox::ClaimedOperation>,
-+        claim: Box<PendingClaim>,
-         driver: Arc<dyn IndexOperationDriver>,
-         limits: SearchIndexBatchLimits,
-         _permits: InFlightPermits,
-@@ -283,14 +293,48 @@ impl InFlightTask {
-         let target = self.target();
-         let (delay_millis, did_work) = match self {
-             Self::Operation {
--                claimed,
-+                claim,
-                 driver,
-                 limits,
-                 _permits,
-                 #[cfg(feature = "index-lifecycle-testing")]
-                 lifecycle_metrics,
-                 ..
--            } => {
-+            } => 'operation: {
-+                let PendingClaim {
-+                    eligible,
-+                    writer_epoch,
-+                    sequence,
-+                    permission,
-+                } = *claim;
-+                let claimed = match outbox::claim_operation(
-+                    db.as_ref(),
-+                    &eligible,
-+                    writer_epoch,
-+                    sequence,
-+                    now_unix_millis(),
-+                    permission,
-+                )
-+                .await
-+                {
-+                    Ok(Some(claimed)) => claimed,
-+                    Err(error) if !error.is_transaction_conflict() => return Err(error),
-+                    // Another claim or step moved the operation first, or won a
-+                    // serializable conflict with this claim: nothing committed.
-+                    // It counts as work, because the operation may still be
-+                    // eligible: a task that did none lets the dispatcher idle
-+                    // (up to `IDLE_DELAY`) before the queue is scanned again.
-+                    lost => {
-+                        tracing::debug!(
-+                            operation_id = %eligible.record.operation_id().as_uuid(),
-+                            conflict = lost.is_err(),
-+                            "index operation claim lost; the queue offers it again"
-+                        );
-+                        #[cfg(feature = "index-lifecycle-testing")]
-+                        lifecycle_metrics.observe_worker_claim_conflict();
-+                        break 'operation (None, true);
-+                    }
-+                };
-                 #[cfg(feature = "index-lifecycle-testing")]
-                 let _in_flight =
-                     lifecycle_metrics.begin_worker_task(match claimed.record.family() {
-@@ -308,7 +352,7 @@ impl InFlightTask {
-                 lifecycle_metrics.observe_operation(
-                     outbox::execute_claimed_step_with_evidence(
-                         db.as_ref(),
--                        claimed.as_ref(),
-+                        &claimed,
-                         driver.as_ref(),
-                         limits,
-                         now_unix_millis(),
-@@ -318,7 +362,7 @@ impl InFlightTask {
-                 #[cfg(not(feature = "index-lifecycle-testing"))]
-                 outbox::execute_claimed_step(
-                     db.as_ref(),
--                    claimed.as_ref(),
-+                    &claimed,
-                     driver.as_ref(),
-                     limits,
-                     now_unix_millis(),
-@@ -1041,24 +1085,15 @@ async fn schedule_operation_task(
-         if eligible.record.family() != family {
-             continue;
-         }
--        let claimed = outbox::claim_operation(
--            db,
--            &eligible,
--            writer_epoch,
--            claim_sequences.next()?,
--            now_unix_millis(),
--            permission,
--        )
--        .await?;
--        let Some(claimed) = claimed else {
--            #[cfg(feature = "index-lifecycle-testing")]
--            lifecycle_metrics.observe_worker_claim_conflict();
--            continue;
--        };
-         return Ok(DispatchAttempt::Scheduled(Box::new(
-             InFlightTask::Operation {
-                 target: operation_id,
--                claimed: Box::new(claimed),
-+                claim: Box::new(PendingClaim {
-+                    eligible,
-+                    writer_epoch,
-+                    sequence: claim_sequences.next()?,
-+                    permission,
-+                }),
-                 driver,
-                 limits,
-                 _permits: task_permits,
-@@ -1083,3 +1118,142 @@ async fn schedule_operation_task(
- fn now_u
+ - ALL database key construction, parsing, and serialisation should be done using the structs in crates/db/src/encoding/v2
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1302** (2026-11-16): Remove Crucible (@xav-db)
 - **PR #1298** (2026-11-13): docs: fix audit findings across HelixDB, Cloud, CLI and Foundry (@xav-db)
 - **PR #1297** (2026-11-14): Claim index operations in their tasks and wait once per index DDL request (@xav-db)
 - **PR #1290** (2026-11-11): Release CLI v3.7.0 with Docker v0.0.16 default (@xav-db)
 - **PR #1289** (2026-11-11): Hand docs readers off to the dashboard at app.helix-db.com (@xav-db)
 - **PR #1288** (2026-11-11): Attribute OSS telemetry to projects and deployments, and count every query (@xav-db)
-- **PR #1287** (2026-11-10): Fix the durable wait limit contracts after commits moved to their own thread (@xav-db)
 
 ---
 
@@ -2755,56 +2181,3 @@ lanes' sum so secondary work never holds the permits they need.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Claim index operations in their tasks and wait once per index DDL request
-
-**RULE**:
-When implementing operations in `crates/db/examples/index_build_throughput.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `4b0982fd`: Claim index operations in their tasks and wait once per index DDL request. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/examples/index_build_throughput.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-//! How long one tenant's first batch of index builds takes, by worker concurrency.
-//!
-//! Opens a fresh disk-backed writer, creates the index set one Helix Foundry
-//! load asks for (112 equality and range indexes, 10 text indexes partitioned
-//! by `foundry_part`) on an empty tenant in one write batch, then polls every
-//! operation until each has succeeded. Prints when each finished.
-//!
-//! `cargo run --release -p db --example index_build_throughput -- <runs>`
-//!
-//! - `IBT_TASKS`: `total,secondary,vector,text` worker tasks (default: the
-//!   database's defaults).
-//! - `IBT_FLUSH_MS`: WAL flush interval (default 100, SlateDB's).
-//! - `IBT_ROOT`: directory for the databases (default a temp dir).
-//! - `IBT_URL`: a running server (`http://host:8080`) to send the same requests
-//!   to over `/v2/query` instead. The server's own
-//!   settings apply, so `IBT_TASKS`, `IBT_FLUSH_MS` and `IBT_ROOT` don't.
-use std::num::NonZeroU64;
-use std::time::{Duration, Instant};
-
-use db::config::{IndexLifecycleConcurrency, IndexLifecycleThroughputTuning};
-use db::encoding::keys::scope::{DataScope, TenantId};
-use db::{HelixDB, HelixDbSource};
-use helix_ast::{batch, index::IndexSpec, query::Que
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4b0982fd` are properly handled with clean fallback behavior.

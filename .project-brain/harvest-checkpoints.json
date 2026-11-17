@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T03:50:15.264Z",
+  "last_updated": "2026-11-17T03:58:03.346Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "d9bafbfd77ad9298548e2d61abdacdc35d3800d7cb751c63a357c0b550c9102f",
-      "verified_at": "2026-11-14T12:34:01.949Z",
+      "content_hash": "8b4f6e71e9ecd0702c1f8db3bcdc10d6ad9bd9578f4cbe45aa82cddf196d95e7",
+      "verified_at": "2026-11-17T03:58:00.101Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T12:34:01.949Z"
+      "last_updated": "2026-11-17T03:58:00.101Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "df12d3a87b05c3d35b2bd185a902d86686776856e28a76681fdbc5b5141017e7",
-      "verified_at": "2026-11-15T20:51:03.428Z",
+      "content_hash": "5b1d7d18bbe54e14654bf3d5d1faa3cd685b875017c62c71e062583a66cfab5f",
+      "verified_at": "2026-11-17T03:58:03.345Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T20:51:03.428Z"
+      "last_updated": "2026-11-17T03:58:03.345Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -12741,14 +12741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-screens",
-      "content_hash": "b315df1e10f20edca31ade6ef54c9e50df28a66bc4712a725d08890fc7859f69",
-      "verified_at": "2026-11-13T14:25:57.262Z",
+      "content_hash": "73584fd25bed15d04832be4a60f710f4e52f5659b7d1fe1b4769a499c8116760",
+      "verified_at": "2026-11-17T03:57:54.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:25:57.262Z"
+      "last_updated": "2026-11-17T03:57:54.003Z"
     },
     "speedyapply/JobSpy": {
       "repository": "speedyapply/JobSpy",
@@ -15006,14 +15006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-solidjs-solid",
-      "content_hash": "0921c86130f3eace1f4cd4e4e9f0ea10ede8fa8ec9fa53bdea2a446f5600fe8c",
-      "verified_at": "2026-11-12T12:20:14.347Z",
+      "content_hash": "6246d426bca1e65ce4e1ea35b7b3d423b428be4f9c006a8d14d7d72f2fe53c4a",
+      "verified_at": "2026-11-17T03:57:51.073Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T12:20:14.347Z"
+      "last_updated": "2026-11-17T03:57:51.073Z"
     },
     "zekunyan/TTGTagCollectionView": {
       "repository": "zekunyan/TTGTagCollectionView",

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T03:50:21.049Z",
-  "total_records": 1423,
+  "last_updated": "2026-11-17T03:58:08.202Z",
+  "total_records": 1429,
   "domains": {
     "A": {
       "total": 9,
@@ -710,7 +710,7 @@
       ]
     },
     "G": {
-      "total": 263,
+      "total": 265,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -974,11 +974,13 @@
         "domain_intelligence-architecture-intelligence-signerlabs-klee-core-invariants",
         "domain_intelligence-architecture-intelligence-signerlabs-klee-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-core-invariants",
-        "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-sweetpad-dev-sweetpad-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants",
+        "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 319,
+      "total": 323,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1298,7 +1300,11 @@
         "DOM-H-7AD63040",
         "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-learnings-core-",
         "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-core-i",
+        "domain_intelligence-technical-construction-intelligence-koderover-zadig-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-learni",
+        "domain_intelligence-technical-construction-intelligence-koderover-zadig-learnings-core-invariants"
       ]
     },
     "I": {
@@ -13659,8 +13665,8 @@
       "title": "Architecture Intelligence: HelixDB/helix-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-architecture-intelligence-helixdb-helix-db-core-invariants.md",
       "repository": "HelixDB/helix-db",
-      "content_hash": "56d1752a2b949a8ecafb465a80e8861b810e8e33fdcae734847eaa4f50a31251",
-      "created_at": "2026-11-15T20:51:03.706Z"
+      "content_hash": "3046e9775067c24380aefa9dbf0252721575eeacb3fdc4d512ebb39df5f93012",
+      "created_at": "2026-11-17T03:58:03.538Z"
     },
     "DOM-D-C8957CC0": {
       "record_id": "DOM-D-C8957CC0",
@@ -25032,6 +25038,60 @@
       "repository": "materializeinc-materialize-learnings",
       "content_hash": "b95b457ef9a4cad4ea0248160c59f65e9f3e20510ebee82a3c9e538bd99036d4",
       "created_at": "2026-11-17T03:50:21.049Z"
+    },
+    "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: solidjs/solid Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-solidjs-solid-architecture-intelligence-solidjs-solid-core-invariants.md",
+      "repository": "solidjs/solid",
+      "content_hash": "f3448deedabdb2215505f8104465af72411046dcaa663bfc511c40ebdb92877c",
+      "created_at": "2026-11-17T03:57:51.380Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-core-i": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-core-i",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: software-mansion/react-native-screens Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-screens-technical-construction-intelligence-softwa.md",
+      "repository": "software-mansion/react-native-screens",
+      "content_hash": "dfcbcce9deaf08cdb4157a36fac24cdad36920c998c1ff335718034bfd8f8947",
+      "created_at": "2026-11-17T03:57:54.304Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-koderover-zadig-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-koderover-zadig-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: koderover/zadig Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-technical-construction-intelligence-koderover-zadig-core-invaria.md",
+      "repository": "koderover/zadig",
+      "content_hash": "8612301bac90e683c208713345645df6fd6ab3c00d2345f4cc2d81fc38493b16",
+      "created_at": "2026-11-17T03:58:00.400Z"
+    },
+    "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: solidjs-solid-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-solidjs-solid-learnings-architecture-intelligence-solidjs-solid-learnings-core-i.md",
+      "repository": "solidjs-solid-learnings",
+      "content_hash": "f707a2bda6c76de7da0d8ff924866127e157ea9b2d28091232421a1e2607d433",
+      "created_at": "2026-11-17T03:58:06.881Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-learni": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-screens-learni",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: software-mansion-react-native-screens-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-screens-learnings-technical-construction-intellige.md",
+      "repository": "software-mansion-react-native-screens-learnings",
+      "content_hash": "4d25b41be9750b502f6b0a51becc60651d89e6891bfedb64268040165649a3a1",
+      "created_at": "2026-11-17T03:58:07.560Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-koderover-zadig-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-koderover-zadig-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: koderover-zadig-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-learnings-technical-construction-intelligence-koderover-zadig-le.md",
+      "repository": "koderover-zadig-learnings",
+      "content_hash": "cf7201c432bb7c39f7f4c294c8cdab573cbc98da8dfaf31c3b4fea36e0c8b704",
+      "created_at": "2026-11-17T03:58:08.202Z"
     }
   }
 }

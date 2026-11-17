@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "1174b8c7",
+    "sourceVersion": "29b826e4",
     "license": "NOASSERTION",
-    "contentHash": "d9bafbfd77ad9298548e2d61abdacdc35d3800d7cb751c63a357c0b550c9102f",
-    "lastHarvestedAt": "2026-11-14T12:34:01.939Z",
+    "contentHash": "8b4f6e71e9ecd0702c1f8db3bcdc10d6ad9bd9578f4cbe45aa82cddf196d95e7",
+    "lastHarvestedAt": "2026-11-17T03:58:00.092Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "4b0982fd",
+    "sourceVersion": "69db4b16",
     "license": "Apache-2.0",
-    "contentHash": "df12d3a87b05c3d35b2bd185a902d86686776856e28a76681fdbc5b5141017e7",
-    "lastHarvestedAt": "2026-11-15T20:51:03.419Z",
+    "contentHash": "5b1d7d18bbe54e14654bf3d5d1faa3cd685b875017c62c71e062583a66cfab5f",
+    "lastHarvestedAt": "2026-11-17T03:58:03.336Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -8463,10 +8463,10 @@
     "repository": "software-mansion/react-native-screens",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-screens",
-    "sourceVersion": "a1f25d01",
+    "sourceVersion": "f3306074",
     "license": "MIT",
-    "contentHash": "b315df1e10f20edca31ade6ef54c9e50df28a66bc4712a725d08890fc7859f69",
-    "lastHarvestedAt": "2026-11-13T14:25:57.226Z",
+    "contentHash": "73584fd25bed15d04832be4a60f710f4e52f5659b7d1fe1b4769a499c8116760",
+    "lastHarvestedAt": "2026-11-17T03:57:53.994Z",
     "learningId": "learn-github-software-mansion-react-native-screens"
   },
   "speedyapply-jobspy": {
@@ -9973,10 +9973,10 @@
     "repository": "solidjs/solid",
     "platform": "github",
     "sourceUrl": "https://github.com/solidjs/solid",
-    "sourceVersion": "99714d4e",
+    "sourceVersion": "f8138641",
     "license": "MIT",
-    "contentHash": "0921c86130f3eace1f4cd4e4e9f0ea10ede8fa8ec9fa53bdea2a446f5600fe8c",
-    "lastHarvestedAt": "2026-11-12T12:20:14.321Z",
+    "contentHash": "6246d426bca1e65ce4e1ea35b7b3d423b428be4f9c006a8d14d7d72f2fe53c4a",
+    "lastHarvestedAt": "2026-11-17T03:57:51.064Z",
     "learningId": "learn-github-solidjs-solid"
   },
   "zekunyan-ttgtagcollectionview": {
