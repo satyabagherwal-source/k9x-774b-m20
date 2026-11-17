@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T03:42:30.097Z",
+  "last_updated": "2026-11-17T03:50:21.416Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T03:08:05.768Z",
@@ -498,7 +498,7 @@
       "staged_for_review": 1
     },
     "materializeinc-materialize-learnings.md": {
-      "processed_at": "2026-11-15T20:42:10.782Z",
+      "processed_at": "2026-11-17T03:50:20.538Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1078,7 +1078,7 @@
       "staged_for_review": 1
     },
     "sveltejs-svelte-learnings.md": {
-      "processed_at": "2026-11-12T11:51:15.138Z",
+      "processed_at": "2026-11-17T03:50:19.587Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3241,9 +3241,14 @@
       "processed_at": "2026-11-17T03:26:26.519Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "mfontanini-presenterm-learnings.md": {
+      "processed_at": "2026-11-17T03:50:18.646Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1452,
+  "total_dossiers_evaluated": 1455,
   "total_canonical_promoted": 297,
-  "total_staged_for_review": 1141
+  "total_staged_for_review": 1144
 }

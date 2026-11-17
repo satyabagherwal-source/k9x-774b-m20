@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T03:42:29.872Z",
-  "total_records": 1417,
+  "last_updated": "2026-11-17T03:50:21.049Z",
+  "total_records": 1423,
   "domains": {
     "A": {
       "total": 9,
@@ -36,13 +36,15 @@
       ]
     },
     "C": {
-      "total": 1,
+      "total": 3,
       "record_ids": [
-        "DOM-C-A3EC3CE8"
+        "DOM-C-A3EC3CE8",
+        "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants",
+        "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants"
       ]
     },
     "D": {
-      "total": 613,
+      "total": 615,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -656,7 +658,9 @@
         "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-microsoft-mage-vl-cowork-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-microsoft-mage-vl-cowork-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-microsoft-mage-vl-cowork-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari"
       ]
     },
     "E": {
@@ -974,7 +978,7 @@
       ]
     },
     "H": {
-      "total": 317,
+      "total": 319,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1292,7 +1296,9 @@
         "domain_intelligence-technical-construction-intelligence-google-closure-compiler-core-invariants",
         "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar",
         "DOM-H-7AD63040",
-        "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-learnings-core-"
+        "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-learnings-core-",
+        "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants"
       ]
     },
     "I": {
@@ -24972,6 +24978,60 @@
       "repository": "wcandillon-react-native-skia-learnings",
       "content_hash": "f2f1216b581f7451a23be41af67677593f8e3a3a3e66f4d8c7492a7826cc62f4",
       "created_at": "2026-11-17T03:42:29.872Z"
+    },
+    "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants": {
+      "record_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants",
+      "domain_letter": "C",
+      "title": "Market & Business Intelligence: mfontanini/presenterm Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-C-mfontanini-presenterm-market-business-intelligence-mfontanini-presenterm-core-in.md",
+      "repository": "mfontanini/presenterm",
+      "content_hash": "e5a655451599b00f5a55eb4903b9e9686575dcc7deb7c8de107493304609e837",
+      "created_at": "2026-11-17T03:50:01.993Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: sveltejs/svelte Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-technical-construction-intelligence-sveltejs-svelte-core-invaria.md",
+      "repository": "sveltejs/svelte",
+      "content_hash": "ff0c3048b5320f35e7e29b7572cf87d3977c47c436e5cdb8e98168d8b52ded15",
+      "created_at": "2026-11-17T03:50:05.831Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: MaterializeInc/materialize Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-research-knowledge-intelligence-materializeinc-materi.md",
+      "repository": "MaterializeInc/materialize",
+      "content_hash": "6194aedd40bc8bd0fe5801665af3b9875eb0c2e79c05258c23ce98cb97f04029",
+      "created_at": "2026-11-17T03:50:15.584Z"
+    },
+    "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants": {
+      "record_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants",
+      "domain_letter": "C",
+      "title": "Market & Business Intelligence: mfontanini-presenterm-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-C-mfontanini-presenterm-learnings-market-business-intelligence-mfontanini-presente.md",
+      "repository": "mfontanini-presenterm-learnings",
+      "content_hash": "0facba85825622af2cf40819c91e07546d796c6225a91a96d8c143991224d750",
+      "created_at": "2026-11-17T03:50:19.329Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: sveltejs-svelte-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-learnings-technical-construction-intelligence-sveltejs-svelte-le.md",
+      "repository": "sveltejs-svelte-learnings",
+      "content_hash": "0f00f9993413c347023d4df039b3d63dadb04d3a64ad8778594d35830c70ae9a",
+      "created_at": "2026-11-17T03:50:20.283Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: materializeinc-materialize-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-learnings-research-knowledge-intelligence-materialize.md",
+      "repository": "materializeinc-materialize-learnings",
+      "content_hash": "b95b457ef9a4cad4ea0248160c59f65e9f3e20510ebee82a3c9e538bd99036d4",
+      "created_at": "2026-11-17T03:50:21.049Z"
     }
   }
 }

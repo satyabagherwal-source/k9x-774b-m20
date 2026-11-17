@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T03:42:03.759Z",
+  "updated_at": "2026-11-17T03:50:20.736Z",
   "stats": {
-    "total_discovered": 4669,
-    "approved_pending_harvest": 4399,
+    "total_discovered": 4686,
+    "approved_pending_harvest": 4416,
     "harvested_count": 0,
     "rejected_count": 270,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4395,
+      "COMMUNITY_AND_EXPERT": 4412,
       "OFFICIAL_DOCUMENTATION": 146,
       "STANDARDS_AND_SPECIFICATIONS": 100,
       "ENGINEERING_BLOGS": 3,
@@ -100849,6 +100849,380 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
         "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-3205E3CA321F": {
+      "id": "SRC-3205E3CA321F",
+      "url": "https://github.com/mfontanini/presenterm",
+      "title": "https://github.com/mfontanini/presenterm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:18.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
+        "fileName": "mfontanini-presenterm-learnings.md"
+      }
+    },
+    "SRC-4628814D9F27": {
+      "id": "SRC-4628814D9F27",
+      "url": "https://mermaid.js.org/",
+      "title": "https://mermaid.js.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:18.736Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
+        "fileName": "mfontanini-presenterm-learnings.md"
+      }
+    },
+    "SRC-A8DA610E49C3": {
+      "id": "SRC-A8DA610E49C3",
+      "url": "https://mermaid.ai/open-source/config/schema-docs/config.html",
+      "title": "https://mermaid.ai/open-source/config/schema-docs/config.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:18.824Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
+        "fileName": "mfontanini-presenterm-learnings.md"
+      }
+    },
+    "SRC-62812D81A49C": {
+      "id": "SRC-62812D81A49C",
+      "url": "https://github.com/mermaid-js/mermaid-cli",
+      "title": "https://github.com/mermaid-js/mermaid-cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:18.955Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
+        "fileName": "mfontanini-presenterm-learnings.md"
+      }
+    },
+    "SRC-138FD0435CCD": {
+      "id": "SRC-138FD0435CCD",
+      "url": "https://github.com/Latias94/merman",
+      "title": "https://github.com/Latias94/merman",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:18.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
+        "fileName": "mfontanini-presenterm-learnings.md"
+      }
+    },
+    "SRC-AEE69E51467B": {
+      "id": "SRC-AEE69E51467B",
+      "url": "https://github.com/sveltejs/rfcs",
+      "title": "https://github.com/sveltejs/rfcs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:19.768Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-6AE697C942E2": {
+      "id": "SRC-6AE697C942E2",
+      "url": "https://img.shields.io/npm/v/svelte.svg",
+      "title": "https://img.shields.io/npm/v/svelte.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:19.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-1178493D12A8": {
+      "id": "SRC-1178493D12A8",
+      "url": "https://www.npmjs.com/package/svelte",
+      "title": "https://www.npmjs.com/package/svelte",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:19.835Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-06A722E9EA9B": {
+      "id": "SRC-06A722E9EA9B",
+      "url": "https://img.shields.io/npm/l/svelte.svg",
+      "title": "https://img.shields.io/npm/l/svelte.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:19.876Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-9EDC2F4DDC67": {
+      "id": "SRC-9EDC2F4DDC67",
+      "url": "https://img.shields.io/discord/457912077277855764?label=chat&logo=discord",
+      "title": "https://img.shields.io/discord/457912077277855764?label=chat&logo=discord",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:19.907Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-E22ACF00FE5C": {
+      "id": "SRC-E22ACF00FE5C",
+      "url": "https://svelte.dev/chat",
+      "title": "https://svelte.dev/chat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:19.943Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-ECB0ACB651E0": {
+      "id": "SRC-ECB0ACB651E0",
+      "url": "https://github.com/sveltejs/svelte/blob/main/LICENSE.md",
+      "title": "https://github.com/sveltejs/svelte/blob/main/LICENSE.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:19.974Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-473FC548E792": {
+      "id": "SRC-473FC548E792",
+      "url": "https://linear.app/materializeinc/issue/EDU-118",
+      "title": "https://linear.app/materializeinc/issue/EDU-118",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:20.604Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-E3E9E4E206F0": {
+      "id": "SRC-E3E9E4E206F0",
+      "url": "https://claude.ai/code/session_016DcnmqzpzTKxjUGp8g9Qvj",
+      "title": "https://claude.ai/code/session_016DcnmqzpzTKxjUGp8g9Qvj",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:20.638Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-5EE5F83B498C": {
+      "id": "SRC-5EE5F83B498C",
+      "url": "https://learn.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/sys-sp-cdc-enable-table-transact-sql",
+      "title": "https://learn.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/sys-sp-cdc-enable-table-transact-sql",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:20.670Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-6D9CD6C2FC98": {
+      "id": "SRC-6D9CD6C2FC98",
+      "url": "https://linear.app/materializeinc/issue/EDU-110",
+      "title": "https://linear.app/materializeinc/issue/EDU-110",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:20.701Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-17BB18F2836A": {
+      "id": "SRC-17BB18F2836A",
+      "url": "https://claude.ai/code/session_016DcnmtmEWizM6P5CH8w88r",
+      "title": "https://claude.ai/code/session_016DcnmtmEWizM6P5CH8w88r",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:50:20.736Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
       }
     }
   }

@@ -4,45 +4,31 @@
 {
   "source_repository": "mfontanini/presenterm",
   "source_url": "https://github.com/mfontanini/presenterm",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "5d19c5fe",
+  "license": "BSD-2-Clause",
+  "timestamp": "2026-11-17T03:50:01.854Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-mfontanini-presenterm",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mfontanini/presenterm](https://github.com/mfontanini/presenterm) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [mfontanini/presenterm](https://github.com/mfontanini/presenterm) (Revision: `5d19c5fe`).  
+> **License**: BSD-2-Clause | **Timestamp**: `2026-11-17T03:50:01.854Z`  
+> **Learning ID**: `learn-github-mfontanini-presenterm`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `mfontanini/presenterm` (Commit: `historical`)
+- **Target Repository**: `mfontanini/presenterm` (Commit: `5d19c5fe`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
-> **Source**: github ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
-> **Source Version**: `e8091752`  
-> **License**: BSD-2-Clause  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T05:26:17.775Z  
-> **Learning ID**: `learn-github-mfontanini-presenterm`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): mfontanini/presenterm
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T05:26:17.131Z  
+> **Harvest Timestamp**: 2026-11-17T03:50:00.865Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A markdown terminal slideshow tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8962 stars
+- **Stars / Engagement**: 8988 stars
 
 ---
 
@@ -1912,14 +1898,11 @@ impl CommandsRunner {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #933** (2026-11-16): **docs: document the use of merman for mermaid graphs**
+  *Symptoms*: Docs on how to use merman instead of mermaid for graphs. merman is almost as slow as mmdc and seems quite AI-slopped up so I wouldn't recommend it but feel free to if you feel like it!
+
 - **Issue #931** (2026-11-07): **feat: allow cycling through presentation**
   *Symptoms*: This adds a `cycle_presentation` option that causes the presentation to start over after jumping to the next slide once you hit the last one.  Closes #924
-
-- **Issue #930** (2026-11-04): **fix: support bg-image in non-first slides**
-  *Symptoms*: Fixes #929 
-  **Post-Mortem & Fix Analysis**:
-  > This PARTIALLY works: - Both slides now have a background, but there's HUGE borders around?  `master`  <img width="3840" height="2160" alt="Screenshot from 2026-11-03 18-53-12" src="https://github.com/user-attachments/assets/f392ba0b-1bd8-4dd8-afd9-fda6b0c1cf84" />  `this branch`  <img width="3840" height="2160" alt="Screenshot from 2026-11-03 18-53-22" src="https://github.com/user-attachments/assets/52be434f-c4e0-46db-85e7-a8cd30fefc66" /> <img width="3840" height="2160" alt="Screenshot from 2026-11-03 18-53-24" src="https://github.com/user-attachments/assets/4e448ec5-f3e5-4292-8512-b92b8cd73349" />  ---  ```md <!-- bg_image: {path: examples/bg-wide.png, fit: cover, opacity: 20} -->  # SLIDE 1  <!-- end_slide -->  <!-- bg_image: {path: examples/bg-wide.png, fit: cover, opacity: 20} -->  # SLIDE 2 ```  
-  > lol yeah, that looked awful. Fixed it now!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1936,268 +1919,145 @@ impl CommandsRunner {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e8091752` (2026-11-07)
-**Commit Message**: feat: allow cycling through presentation (#931)
+### Incident Patch 1: `5d19c5fe` (2026-11-16)
+**Commit Message**: docs: document the use of merman for mermaid graphs (#933)
 
-This adds a `cycle_presentation` option that causes the presentation to
-start over after jumping to the next slide once you hit the last one.
+Docs on how to use merman instead of mermaid for graphs. merman is
+almost as slow as mmdc and seems quite AI-slopped up so I wouldn't
+recommend it but feel free to if you feel like it!
 
-Closes #924
-
-**File**: `config-file-schema.json` (modified, +7/-0)
+**File**: `docs/src/configuration/settings.md` (modified, +14/-0)
 ```diff
-@@ -529,6 +529,13 @@
-             "null"
-           ]
-         },
-+        "cycle_presentation": {
-+          "description": "Whether to cycle through the presentation after the last slide.",
-+          "type": [
-+            "boolean",
-+            "null"
-+          ]
-+        },
-         "end_slide_shorthand": {
-           "description": "Whether to treat a thematic break as a slide end.",
-           "type": [
-```
-
-**File**: `src/config.rs` (modified, +3/-0)
-```diff
-@@ -260,6 +260,9 @@ pub struct OptionsConfig {
+@@ -294,6 +294,20 @@ snippet:
+ The following configuration parameters can be set to alter the behavior when displaying 
+ [mermaid](https://mermaid.js.org/) diagrams.
  
-     /// Whether the first `h1` header on a slide should be considered a slide title.
-     pub h1_slide_titles: Option<bool>,
++### CLI
 +
-+    /// Whether to cycle through the presentation after the last slide.
-+    pub cycle_presentation: Option<bool>,
- }
++The path to the CLI tool to use to render mermaid graphs. This can point to any mermaid tool that respects the
++mermaid CLI's parameter names:
++
++```yaml
++mermaid:
++  # default
++  cli: "mermaid"
++
++  # use merman
++  # cli: "merman-cli"
++```
++
+ ### Config file
  
- #[derive(Clone, Debug, Default, Deserialize)]
+ A custom [mermaid config file](https://mermaid.ai/open-source/config/schema-docs/config.html) can be configured via the 
 ```
 
-**File**: `src/main.rs` (modified, +1/-0)
+**File**: `docs/src/features/code/mermaid.md` (modified, +15/-6)
 ```diff
-@@ -312,6 +312,7 @@ impl CoreComponents {
-             validate_snippets: config.snippet.validate,
-             layout_grid: false,
-             h1_slide_titles: options.h1_slide_titles.unwrap_or_default(),
-+            cycle_presentation: options.cycle_presentation.unwrap_or_default(),
-         }
-     }
+@@ -11,15 +11,24 @@ sequenceDiagram
+ ```
+ ~~~
  
-```
-
-**File**: `src/presentation/builder/mod.rs` (modified, +5/-1)
-```diff
-@@ -97,6 +97,7 @@ pub struct PresentationBuilderOptions {
-     pub validate_snippets: bool,
-     pub layout_grid: bool,
-     pub h1_slide_titles: bool,
-+    pub cycle_presentation: bool,
- }
+-**This requires having [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) installed**.
++By default this this requires having the [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) installed. Note
++that because the mermaid CLI will spin up a browser under the hood, this may not work in all environments and can 
++also be a bit slow (e.g. ~2 seconds to generate every image).
  
- impl PresentationBuilderOptions {
-@@ -108,6 +109,7 @@ impl PresentationBuilderOptions {
-         self.strict_front_matter_parsing =
-             options.strict_front_matter_parsing.unwrap_or(self.strict_front_matter_parsing);
-         self.h1_slide_titles = options.h1_slide_titles.unwrap_or(self.h1_slide_titles);
-+        self.cycle_presentation = options.cycle_presentation.unwrap_or(self.cycle_presentation);
-         if let Some(prefix) = options.command_prefix {
-             self.command_prefix = prefix;
-         }
-@@ -150,6 +152,7 @@ impl Default for PresentationBuilderOptions {
-             validate_snippets: false,
-             layout_grid: false,
-             h1_slide_titles: false,
-+            cycle_presentation: false,
-         }
-     }
- }
-@@ -287,7 +290,8 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
-         let bindings = bindings_modal_builder.build(&self.theme, &self.bindings_config);
-         let slide_index = self.index_builder.build(&self.theme, self.presentation_state.clone());
-         let modals = Modals { slide_index, bindings };
--        let presentation = Presentation::new(slides, modals, self.presentation_state);
-+        let cycle = self.options.cycle_presentation;
-+        let presentation = Presentation::new(slides, modals, cycle, self.presentation_state);
-         Ok(presentation)
-     }
+-Note that because the mermaid CLI will spin up a browser under the hood, this may not work in all environments and can 
+-also be a bit slow (e.g. ~2 seconds to generate every image). Mermaid graphs are rendered asynchronously by a number of 
+-threads that can be configured in the [configuration file](../../configuration/settings.md#snippet-rendering-threads). 
+-This configuration value currently defaults to 2.
++Alternatively, other tools like [merman](https://github.com/Latias94/merman) can be used instead by configuring
++the `mermaid.cli` parameter in [the configuration file](../../configuration/settings.md#mermaid):
++
++```yaml
++mermaid:
++  cli: "merman-cli"
++```
++
++Mermaid graphs are rendered asynchronously by a number of  threads that can be configured in
++the [configuration file](../../configuration/settings.md#snippet-rendering-threads). This configuration value
++currently defaults to 2.
  
-```
-
-**File**: `src/presentation/mod.rs` (modified, +6/-3)
-```diff
-@@ -23,13 +23,14 @@ pub(crate) struct Modals {
- pub(crate) struct Presentation {
-     slides: Vec<Slide>,
-     modals: Modals,
-+    cycle: bool,
-     pub(crate) state: PresentationState,
- }
+ The size of the rendered image can be configured by changing:
+-* The `mermaid.scale` [configuration parameter](../../configuration/settings.md#mermaid-scaling).
++* The `mermaid.scale` [configuration parameter](../../configuration/settings.md#mermaid).
+ * Using the `+width:<number>%` attribute in the code snippet.
  
- impl Presentation {
-     /// Construct a new presentation.
--    pub(crate) fn new(slides: Vec<Slide>, modals: Modals, state: PresentationState) -> Self {
--        Self { slides, modals, state }
-+    pub(crate) fn new(slides: Vec<Slide>, modals: Modals, cycle: bool, state: PresentationState) -> Self {
-+        Self { slides, modals, cycle, state }
-     }
- 
-     /// Iterate the slides in this presentation.
-@@ -152,6 +153,8 @@ impl Presentation {
-             // Going forward we show only the first chunk.
-             self.current_slide_mut().show_first_chunk();
-             true
-+        } else if self.cycle {
-+            self.jump_first_slide()
-         } else {
-             false
-         }
-@@ -173,7 +176,7 @@ impl Presentation {
- impl From<Vec<Slide>> for Presentation {
-     fn from(slides: Vec<Slide>) -> Self {
-         let modals = Modals { slide_index: vec![], bindings: vec![] };
--        Self::new(slides, modals, Default::default())
-+        Self::new(slides, modals, false, Default::default())
-     }
- }
- 
+ For example, this diagram will take up 50% of the width of the window and will preserve its aspect ratio:
 ```
 
 ---
 
-### Incident Patch 2: `b3d034ba` (2026-11-07)
-**Commit Message**: feat: allow cycling through presentation
+### Incident Patch 2: `9f1ee06d` (2026-11-16)
+**Commit Message**: docs: document the use of merman for mermaid graphs
 
-**File**: `config-file-schema.json` (modified, +7/-0)
+**File**: `docs/src/configuration/settings.md` (modified, +14/-0)
 ```diff
-@@ -529,6 +529,13 @@
-             "null"
-           ]
-         },
-+        "cycle_presentation": {
-+          "description": "Whether to cycle through the presentation after the last slide.",
-+          "type": [
-+            "boolean",
-+            "null"
-+          ]
-+        },
-         "end_slide_shorthand": {
-           "description": "Whether to treat a thematic break as a slide end.",
-           "type": [
-```
-
-**File**: `src/config.rs` (modified, +3/-0)
-```diff
-@@ -260,6 +260,9 @@ pub struct OptionsConfig {
+@@ -294,6 +294,20 @@ snippet:
+ The following configuration parameters can be set to alter the behavior when displaying 
+ [mermaid](https://mermaid.js.org/) diagrams.
  
-     /// Whether the first `h1` header on a slide should be considered a slide title.
-     pub h1_slide_titles: Option<bool>,
++### CLI
 +
-+    /// Whether to cycle through the presentation after the last slide.
-+    pub cycle_presentation: Option<bool>,
- }
++The path to the CLI tool to use to render mermaid graphs. This can point to any mermaid tool that respects the
++mermaid CLI's parameter names:
++
++```yaml
++mermaid:
++  # default
++  cli: "mermaid"
++
++  # use merman
++  # cli: "merman-cli"
++```
++
+ ### Config file
  
- #[derive(Clone, Debug, Default, Deserialize)]
+ A custom [mermaid config file](https://mermaid.ai/open-source/config/schema-docs/config.html) can be configured via the 
 ```
 
-**File**: `src/main.rs` (modified, +1/-0)
+**File**: `docs/src/features/code/mermaid.md` (modified, +15/-6)
 ```diff
-@@ -312,6 +312,7 @@ impl CoreComponents {
-             validate_snippets: config.snippet.validate,
-             layout_grid: false,
-             h1_slide_titles: options.h1_slide_titles.unwrap_or_default(),
-+            cycle_presentation: options.cycle_presentation.unwrap_or_default(),
-         }
-     }
+@@ -11,15 +11,24 @@ sequenceDiagram
+ ```
+ ~~~
  
-```
-
-**File**: `src/presentation/builder/mod.rs` (modified, +5/-1)
-```diff
-@@ -97,6 +97,7 @@ pub struct PresentationBuilderOptions {
-     pub validate_snippets: bool,
-     pub layout_grid: bool,
-     pub h1_slide_titles: bool,
-+    pub cycle_presentation: bool,
- }
+-**This requires having [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) installed**.
++By default this this requires having the [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) installed. Note
++that because the mermaid CLI will spin up a browser under the hood, this may not work in all environments and can 
++also be a bit slow (e.g. ~2 seconds to generate every image).
  
- impl PresentationBuilderOptions {
-@@ -108,6 +109,7 @@ impl PresentationBuilderOptions {
-         self.strict_front_matter_parsing =
-             options.strict_front_matter_parsing.unwrap_or(self.strict_front_matter_parsing);
-         self.h1_slide_titles = options.h1_slide_titles.unwrap_or(self.h1_slide_titles);
-+        self.cycle_presentation = options.cycle_presentation.unwrap_or(self.cycle_presentation);
-         if let Some(prefix) = options.command_prefix {
-             self.command_prefix = prefix;
-         }
-@@ -150,6 +152,7 @@ impl Default for PresentationBuilderOptions {
-             validate_snippets: false,
-             layout_grid: false,
-             h1_slide_titles: false,
-+            cycle_presentation: false,
-         }
-     }
- }
-@@ -287,7 +290,8 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
-         let bindings = bindings_modal_builder.build(&self.theme, &self.bindings_config);
-         let slide_index = self.index_builder.build(&self.theme, self.presentation_state.clone());
-         let modals = Modals { slide_index, bindings };
--        let presentation = Presentation::new(slides, modals, self.presentation_state);
-+        let cycle = self.options.cycle_presentation;
-+        let presentation = Presentation::new(slides, modals, cycle, self.presentation_state);
-         Ok(presentation)
-     }
+-Note that because the mermaid CLI will spin up a browser under the hood, this may not work in all environments and can 
+-also be a bit slow (e.g. ~2 seconds to generate every image). Mermaid graphs are rendered asynchronously by a number of 
+-threads that can be configured in the [configuration file](../../configuration/settings.md#snippet-rendering-threads). 
+-This configuration value currently defaults to 2.
++Alternatively, other tools like [merman](https://github.com/Latias94/merman) can be used instead by configuring
++the `mermaid.cli` parameter in [the configuration file](../../configuration/settings.md#mermaid):
++
++```yaml
++mermaid:
++  cli: "merman-cli"
++```
++
++Mermaid graphs are rendered asynchronously by a number of  threads that can be configured in
++the [configuration file](../../configuration/settings.md#snippet-rendering-threads). This configuration value
++currently defaults to 2.
  
-```
-
-**File**: `src/presentation/mod.rs` (modified, +6/-3)
-```diff
-@@ -23,13 +23,14 @@ pub(crate) struct Modals {
- pub(crate) struct Presentation {
-     slides: Vec<Slide>,
-     modals: Modals,
-+    cycle: bool,
-     pub(crate) state: PresentationState,
- }
+ The size of the rendered image can be configured by changing:
+-* The `mermaid.scale` [configuration parameter](../../configuration/settings.md#mermaid-scaling).
++* The `mermaid.scale` [configuration parameter](../../configuration/settings.md#mermaid).
+ * Using the `+width:<number>%` attribute in the code snippet.
  
- impl Presentation {
-     /// Construct a new presentation.
--    pub(crate) fn new(slides: Vec<Slide>, modals: Modals, state: PresentationState) -> Self {
--        Self { slides, modals, state }
-+    pub(crate) fn new(slides: Vec<Slide>, modals: Modals, cycle: bool, state: PresentationState) -> Self {
-+        Self { slides, modals, cycle, state }
-     }
- 
-     /// Iterate the slides in this presentation.
-@@ -152,6 +153,8 @@ impl Presentation {
-             // Going forward we show only the first chunk.
-             self.current_slide_mut().show_first_chunk();
-             true
-+        } else if self.cycle {
-+            self.jump_first_slide()
-         } else {
-             false
-         }
-@@ -173,7 +176,7 @@ impl Presentation {
- impl From<Vec<Slide>> for Presentation {
-     fn from(slides: Vec<Slide>) -> Self {
-         let modals = Modals { slide_index: vec![], bindings: vec![] };
--        Self::new(slides, modals, Default::default())
-+        Self::new(slides, modals, false, Default::default())
-     }
- }
- 
+ For example, this diagram will take up 50% of the width of the window and will preserve its aspect ratio:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #933** (2026-11-16): docs: document the use of merman for mermaid graphs (@mfontanini)
 - **PR #931** (2026-11-07): feat: allow cycling through presentation (@mfontanini)
 - **PR #930** (2026-11-04): fix: support bg-image in non-first slides (@mfontanini)
 - **PR #928** (2026-11-03): chore: bump dependencies (@mfontanini)
 - **PR #927** (2026-10-30): ci: fix build (@mfontanini)
 - **PR #925** (closed): docs: add Simplified Chinese README translation (README_zh.md) (@WanderLandWalker)
-- **PR #924** (closed): Add option to restart slide show after last slide (@ScottADeJong)
 
 ---
 
@@ -2217,37 +2077,44 @@ Closes #924
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. allow cycling through presentation (#931)
+## X. docs: document the use of merman for mermaid graphs
 
 **RULE**:
-When implementing operations in `config-file-schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/src/configuration/settings.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e8091752`: allow cycling through presentation (#931). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d19c5fe`: docs: document the use of merman for mermaid graphs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `config-file-schema.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/configuration/settings.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "cycle_presentation": {
-          "description": "Whether to cycle through the presentation after the last slide.",
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
+### CLI
+
+The path to the CLI tool to use to render mermaid graphs. This can point to any mermaid tool that respects the
+mermaid CLI's parameter names:
+
+```yaml
+mermaid:
+  # default
+  cli: "mermaid"
+
+  # use merman
+  # cli: "merman-cli"
+```
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e8091752` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d19c5fe` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

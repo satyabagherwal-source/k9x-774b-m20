@@ -10461,3 +10461,6 @@ Every entry in this ledger must capture:
 | `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `030d049b` | Multi-dimensional audit evidence | 2026-11-17T03:41:56.570Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `6da7ac20` | Multi-dimensional audit evidence | 2026-11-17T03:41:58.996Z |
 | `learn-dom-h-7ad63040` | `project://wcandillon-react-native-skia` | `6da7ac20` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md` | 2026-11-17T03:42:29.451Z |
+| `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `5d19c5fe` | Multi-dimensional audit evidence | 2026-11-17T03:50:01.643Z |
+| `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `99c07450` | Multi-dimensional audit evidence | 2026-11-17T03:50:05.509Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `3d7977fc` | Multi-dimensional audit evidence | 2026-11-17T03:50:15.255Z |

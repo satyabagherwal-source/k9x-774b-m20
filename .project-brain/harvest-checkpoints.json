@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T03:41:59.004Z",
+  "last_updated": "2026-11-17T03:50:15.264Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "f47afe19e35374ed4468061e2b76cd05197217b0680bb6fa78f85213e404265f",
-      "verified_at": "2026-11-15T20:42:06.013Z",
+      "content_hash": "20e890de299184242f7fde1e8e3b56fe6b1c5c3ca1cab4a5bda3be86a4964cec",
+      "verified_at": "2026-11-17T03:50:15.264Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T20:42:06.013Z"
+      "last_updated": "2026-11-17T03:50:15.264Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -6621,14 +6621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mfontanini-presenterm",
-      "content_hash": "41fadbef9850f3048fd53f421aef67c752730c537ea6bac10d7bea1ee89e1287",
-      "verified_at": "2026-11-08T05:26:18.679Z",
+      "content_hash": "be5a7840b8564b115a02cb446cc03a3632628c35b58fdf032e48a05527065dce",
+      "verified_at": "2026-11-17T03:50:01.665Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T05:26:18.679Z"
+      "last_updated": "2026-11-17T03:50:01.665Z"
     },
     "ritz078/transform": {
       "repository": "ritz078/transform",
@@ -14991,14 +14991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sveltejs-svelte",
-      "content_hash": "9970d4870c80da71bd728283ce35035c7eaa3d25e02115b59d8dbc3bc78d0b02",
-      "verified_at": "2026-11-12T11:50:57.923Z",
+      "content_hash": "b25680054919553309a7c0ba87e260552c84ad612b4203391bc31e5b438290ef",
+      "verified_at": "2026-11-17T03:50:05.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T11:50:57.923Z"
+      "last_updated": "2026-11-17T03:50:05.517Z"
     },
     "solidjs/solid": {
       "repository": "solidjs/solid",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T03:42:29.988Z",
-  "total_verified_learnings": 8834,
+  "last_updated": "2026-11-17T03:50:21.298Z",
+  "total_verified_learnings": 8836,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19681,
+  "total_items": 19700,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -225328,8 +225328,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "2026293a",
-      "content_hash": "f47afe19e35374ed4468061e2b76cd05197217b0680bb6fa78f85213e404265f",
+      "source_version": "3d7977fc",
+      "content_hash": "20e890de299184242f7fde1e8e3b56fe6b1c5c3ca1cab4a5bda3be86a4964cec",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -225342,6 +225342,11 @@
           "number": 8647,
           "title": "Nightly fixes (2026-11-13)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8860,
+          "title": "build txn-wal batches without hollow runs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225349,7 +225354,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T20:42:05.818Z",
+      "verified_at": "2026-11-17T03:50:15.052Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225403,10 +225408,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/materializeinc-materialize-agent-contract-materializeinc-materialize-autonomous-.md",
       "title": "Agent Contract: MaterializeInc/materialize Autonomous Specialist Persona",
       "repository": "MaterializeInc/materialize",
-      "source_version": "2026293a",
-      "content_hash": "402ec803cffac2be6b40f379672a93ba059f258836dfbfe8d7879c1e82672fcf",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-15T20:42:06.485Z"
+      "source_version": "3d7977fc",
+      "content_hash": "481a319b53eae7cddfcfbcf9ad430c3d348bcd9d71dcbfce474f6ae62e9b42a3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T03:50:15.718Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize",
@@ -225415,10 +225420,10 @@
       "relative_path": "08_VERIFICATION/materializeinc-materialize-verification-protocol-empirical-defect-shield-for-mat.md",
       "title": "Verification Protocol: Empirical Defect Shield for MaterializeInc/materialize",
       "repository": "MaterializeInc/materialize",
-      "source_version": "2026293a",
-      "content_hash": "b2f96b5b3748bf980e4bb0f1f13e83e2c122169217962d6d66ea3ac0c954eaf1",
+      "source_version": "3d7977fc",
+      "content_hash": "c002058af4cc3fde45904928f233d86a1e3e29da72f146441d402a752f7b6f0d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T20:42:06.612Z"
+      "persisted_at": "2026-11-17T03:50:15.837Z"
     },
     "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100": {
       "item_id": "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100",
@@ -247039,9 +247044,9 @@
       "title": "Agent Contract: materializeinc-materialize-learnings Autonomous Specialist Persona",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "a8d5ee61b0bcb8203d5606a52f39f62d3af5de408600ce77361501c99fb7fe6b",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-15T20:42:11.682Z"
+      "content_hash": "8374ca6f893f105f272390dc8b40602d2e1ac2d7e8815896e6f0708c448d90e4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T03:50:21.177Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea",
@@ -247051,9 +247056,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for materializeinc-materialize-learnings",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f94998cba25fe0fc1ee49223ba8251928b57c4ffdcf74142b5dd06ddd2f3c4e",
+      "content_hash": "d892eb52efa22b2da821decc47a35c86d3e2fcf524b33c1c0289780425bc4cfc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T20:42:11.819Z"
+      "persisted_at": "2026-11-17T03:50:21.298Z"
     },
     "learn-github-mlua-rs-mlua": {
       "learning_id": "learn-github-mlua-rs-mlua",
@@ -262660,6 +262665,274 @@
       "content_hash": "f43a945fbc07ae2b8c6650dd298e1f4ba25f0d57fe44bc73d65985f75658ec39",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T03:42:29.988Z"
+    },
+    "learn-github-mfontanini-presenterm": {
+      "learning_id": "learn-github-mfontanini-presenterm",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mfontanini/presenterm",
+      "repository": "mfontanini/presenterm",
+      "slug": "mfontanini-presenterm",
+      "platform": "github",
+      "source_url": "https://github.com/mfontanini/presenterm",
+      "source_version": "5d19c5fe",
+      "content_hash": "be5a7840b8564b115a02cb446cc03a3632628c35b58fdf032e48a05527065dce",
+      "dossier_path": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T03:50:01.439Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-document-the-use-of-merman-for-mermaid-graphs": {
+      "item_id": "candidate_directive-document-the-use-of-merman-for-mermaid-graphs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M6WQ-document-the-use-of-merman-for-mermaid-graphs.md",
+      "title": "document the use of merman for mermaid graphs",
+      "repository": "mfontanini/presenterm",
+      "source_version": "5d19c5fe",
+      "content_hash": "5240a51620fa355690cb4769a17ac05a8b404a6ee8aac456a9d45a69cc265f13",
+      "domain_letter": "C",
+      "persisted_at": "2026-11-17T03:50:01.855Z"
+    },
+    "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants": {
+      "item_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-C-mfontanini-presenterm-market-business-intelligence-mfontanini-presenterm-core-in.md",
+      "title": "Market & Business Intelligence: mfontanini/presenterm Core Invariants",
+      "repository": "mfontanini/presenterm",
+      "source_version": "5d19c5fe",
+      "content_hash": "e5a655451599b00f5a55eb4903b9e9686575dcc7deb7c8de107493304609e837",
+      "domain_letter": "C",
+      "persisted_at": "2026-11-17T03:50:01.993Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mfontanini-presenterm-verification-protocol-empirical-defect-shield-for-mfontani.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mfontanini/presenterm",
+      "repository": "mfontanini/presenterm",
+      "source_version": "5d19c5fe",
+      "content_hash": "b27adea244abfbd1151d5cd8997bb2040c019e4ce2b6afa32103569213a2f1ad",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:50:02.123Z"
+    },
+    "learn-github-sveltejs-svelte": {
+      "learning_id": "learn-github-sveltejs-svelte",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sveltejs/svelte",
+      "repository": "sveltejs/svelte",
+      "slug": "sveltejs-svelte",
+      "platform": "github",
+      "source_url": "https://github.com/sveltejs/svelte",
+      "source_version": "99c07450",
+      "content_hash": "b25680054919553309a7c0ba87e260552c84ad612b4203391bc31e5b438290ef",
+      "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8859,
+          "title": "codeblock syntax",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T03:50:05.339Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8859": {
+      "learning_id": "rule-8859",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8859,
+      "title": "codeblock syntax",
+      "source_url": "https://github.com/sveltejs/svelte",
+      "source_version": "99c07450",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:50:05.339Z"
+    },
+    "candidate_directive-codeblock-syntax": {
+      "item_id": "candidate_directive-codeblock-syntax",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ML1C-codeblock-syntax.md",
+      "title": "codeblock syntax",
+      "repository": "sveltejs-svelte-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2fa8add822395c0e5881ce5b2d862cdcd0b2ecee1ccfac375eaa7e1a6364a7cc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:50:20.164Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-technical-construction-intelligence-sveltejs-svelte-core-invaria.md",
+      "title": "Technical Construction Intelligence: sveltejs/svelte Core Invariants",
+      "repository": "sveltejs/svelte",
+      "source_version": "99c07450",
+      "content_hash": "ff0c3048b5320f35e7e29b7572cf87d3977c47c436e5cdb8e98168d8b52ded15",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:50:05.831Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sveltejs-svelte-verification-protocol-empirical-defect-shield-for-sveltejs-svelt.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sveltejs/svelte",
+      "repository": "sveltejs/svelte",
+      "source_version": "99c07450",
+      "content_hash": "eace75dcb4e274b1de37ea2125f8e7a84ebe7486e3df5580a64acc347e57c08f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:50:05.962Z"
+    },
+    "rule-8860": {
+      "learning_id": "rule-8860",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8860,
+      "title": "build txn-wal batches without hollow runs",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "3d7977fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:50:15.052Z"
+    },
+    "candidate_directive-build-txn-wal-batches-without-hollow-runs": {
+      "item_id": "candidate_directive-build-txn-wal-batches-without-hollow-runs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MHEE-build-txn-wal-batches-without-hollow-runs.md",
+      "title": "build txn-wal batches without hollow runs",
+      "repository": "MaterializeInc/materialize",
+      "source_version": "3d7977fc",
+      "content_hash": "27e51027300fb70a85afa0d313f3e10c33441290f32f116538be82caaf69f086",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T03:50:15.452Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-research-knowledge-intelligence-materializeinc-materi.md",
+      "title": "Research & Knowledge Intelligence: MaterializeInc/materialize Core Invariants",
+      "repository": "MaterializeInc/materialize",
+      "source_version": "3d7977fc",
+      "content_hash": "6194aedd40bc8bd0fe5801665af3b9875eb0c2e79c05258c23ce98cb97f04029",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T03:50:15.584Z"
+    },
+    "candidate_directive-docs-document-the-use-of-merman-for-mermaid-graphs": {
+      "item_id": "candidate_directive-docs-document-the-use-of-merman-for-mermaid-graphs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MKAO-docs-document-the-use-of-merman-for-mermaid-graphs.md",
+      "title": "docs: document the use of merman for mermaid graphs",
+      "repository": "mfontanini-presenterm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7cf2dd90e808544244a29e78db2ab7892d3efb49c55fb76854fd23dda4c81ab2",
+      "domain_letter": "C",
+      "persisted_at": "2026-11-17T03:50:19.205Z"
+    },
+    "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants": {
+      "item_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-C-mfontanini-presenterm-learnings-market-business-intelligence-mfontanini-presente.md",
+      "title": "Market & Business Intelligence: mfontanini-presenterm-learnings Core Invariants",
+      "repository": "mfontanini-presenterm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0facba85825622af2cf40819c91e07546d796c6225a91a96d8c143991224d750",
+      "domain_letter": "C",
+      "persisted_at": "2026-11-17T03:50:19.329Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mfontanini-presenterm-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mfontanini-presenterm-learnings",
+      "repository": "mfontanini-presenterm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "18d588dc8daedbd67d6979f74fc6f91b88c17b798a4b4c7885ef32725e100894",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:50:19.458Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-learnings-technical-construction-intelligence-sveltejs-svelte-le.md",
+      "title": "Technical Construction Intelligence: sveltejs-svelte-learnings Core Invariants",
+      "repository": "sveltejs-svelte-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0f00f9993413c347023d4df039b3d63dadb04d3a64ad8778594d35830c70ae9a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:50:20.283Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sveltejs-svelte-learnings-verification-protocol-empirical-defect-shield-for-svel.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sveltejs-svelte-learnings",
+      "repository": "sveltejs-svelte-learnings",
+      "source_version": "HEAD",
+      "content_hash": "244414afb6b8975e3f40635ec8f380b5e8568eae8c5b20afc4203bdfacd3d382",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:50:20.413Z"
+    },
+    "candidate_directive-persist-build-txn-wal-batches-without-hollow-runs": {
+      "item_id": "candidate_directive-persist-build-txn-wal-batches-without-hollow-runs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MLMJ-persist-build-txn-wal-batches-without-hollow-runs.md",
+      "title": "persist: build txn-wal batches without hollow runs",
+      "repository": "materializeinc-materialize-learnings",
+      "source_version": "HEAD",
+      "content_hash": "147816f50a51c406759d34a05575380ccfb9131e4a0b937c9457e0f22512b507",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T03:50:20.928Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-learnings-research-knowledge-intelligence-materialize.md",
+      "title": "Research & Knowledge Intelligence: materializeinc-materialize-learnings Core Invariants",
+      "repository": "materializeinc-materialize-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b95b457ef9a4cad4ea0248160c59f65e9f3e20510ebee82a3c9e538bd99036d4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T03:50:21.049Z"
     }
   },
   "ai-builder-brain": {
