@@ -10668,3 +10668,5 @@
 | `CYCLE-20261117-ICHG` | `2026-11-17T18:42:50.164Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9031` | Yes (`c0aeeb76...`) |
 | `CYCLE-20261117-K7N0` | `2026-11-17T18:44:17.196Z` | `Nanbeige/Nanbeige4.3-33B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9032, Rule 9033, Rule null` | Yes (`0bca3a96...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T18:44:44.098Z` | `hf-nanbeige-nanbeige4.3-33b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-28B99DBA` [Domain H] | Yes (`39b39c66...`) |
+| `CYCLE-20261117-ZKKI` | `2026-11-17T18:56:13.794Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md` | Yes (`77319363...`) |
+| `CYCLE-20261117-ZSRJ` | `2026-11-17T18:56:24.415Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9034` | Yes (`30bcb05b...`) |

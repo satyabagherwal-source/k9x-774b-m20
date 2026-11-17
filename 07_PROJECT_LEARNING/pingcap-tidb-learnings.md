@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `573231ac`  
+> **Source Version**: `8c05d01e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T21:10:30.181Z  
+> **Timestamp**: 2026-11-17T18:56:23.561Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:10:30.176Z  
+> **Harvest Timestamp**: 2026-11-17T18:56:23.555Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40739 stars
+- **Stars / Engagement**: 40740 stars
 
 ---
 
@@ -1920,11 +1920,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #73233** (2026-11-16): **ddl: advance table revision on rename**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #73228  Problem Summary:  RENAME TABLE preserves table IDs but can leave their revisions unchanged. After exchanging two table names through separate renames, the table-ID/revision map can therefore match the old map even though the name-to-ID bindings changed. This allows the per-table plan-cache key proposed in #72856 to reuse a stale JOIN plan.  ### What changed and how does it work?  Advance the table revision in the shared rename helper before writing the renamed TableInfo. The new name and revision become visible together in the first DDL phase, independently of foreign-key metadata updates, without extra metadata writes or schema synchronization rounds.  Add DDL regression coverage for sequential and atomic swaps, cross-database moves, ALTER TABLE RENAME, foreign keys enabled/disabled, self-references and child references, rollback, and retry before commit. Verify that the intermediate public state already exposes the new revision. Plan-cache tests are deferred until #72856 lands.  ### Chec
+- **Issue #73305** (2026-11-17): **ddl, executor: serialize MLog column additions with MV refresh**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  Internal MV refresh sessions do not participate in MDL, so adding columns to an MV's output MLog can race with refresh. A resumed ADD COLUMN also needs to wait without exhausting the DDL error budget, while OUT OF PLACE refresh must avoid a circular wait with its DDL scheduling claim.  ### What changed and how does it work?  Ports #73109 to master.  - Acquire the base MV's refresh advisory lock for MLog ADD COLUMN through schema synchronization and job completion/rollback. New conflicting jobs return error 8182 so an OOP cutover can proceed. - Let already-started ADD COLUMN and multi-schema jobs wait for refresh without incrementing their DDL error count or cancelling persisted intermediate columns. - Reject intermediate output-MLog schemas before OOP refresh submits shadow/cutover DDL. Preserve master's existing COMPLETE IN PLACE restriction and scheduler lock-release lifecycle.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [x] I
 
-- **Issue #73228** (2026-11-16): **planner: cached JOIN returns wrong results after sequential table renames after #72856**
-  *Symptoms*: ## Bug Report  ### 1. Minimal reproduce step (Required)  This tracks a wrong-result regression introduced by #72856. **Once #72856 is merged, master will be affected by the rename scenario below unless this is fixed.** At filing time, the PR is still open; the issue was reproduced on its head, while its base passes.  With the default repeatable-read isolation and prepared plan cache enabled, warm a two-table JOIN plan, swap the table names through three separate single-table `RENAME TABLE` statements, and execute the prepared statement again. No non-default configuration is required; `tidb_enable_foreign_key` remains `ON`, and these tables have no foreign keys.  ```sql -- Session A USE test; CREATE TABLE t1 (a INT); CREATE TABLE t2 (a INT); INSERT INTO t1 VALUES (1); INSERT INTO t2 VALUES (2); PREPARE s FROM 'SELECT t1.a,t2.a FROM t1 JOIN t2'; EXECUTE s; -- (1, 2) EXECUTE s; -- (1, 2) SELECT @@last_plan_from_cache; -- 1  -- Session B USE test; RENAME TABLE t1 TO tmp; RENAME TABLE t2 TO t1; RENAME TABLE tmp TO t2;  -- Session A EXECUTE s; -- wrong on PR head: (1, 2) SELECT @@last_plan_from_cache; -- 1 on PR head SELECT t1.a,t2.a FROM t1 JOIN t2; -- correct: (2, 1) ```  The three separate rename statements matter: a single multi-table rename follows a different metadata-update path.  ### 2. What did you expect to see? (Required)  The final `EXECUTE s` should return `(2, 1)`, matching the ordinary SELECT after the table names are exchanged. A cached plan must not retain the old 
+- **Issue #73304** (2026-11-17): **ddl, executor: protect materialized views during flashback**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  FLASHBACK TABLE and FLASHBACK CLUSTER can restore materialized view (MV) or materialized view log (MLog) metadata without matching maintenance state. FLASHBACK DATABASE also needs to restore refresh/purge/source baselines and keep saved view definitions valid when the database is renamed.  ### What changed and how does it work?  Ports #72692 and #72808 to master.  - Reject FLASHBACK TABLE for MV, MLog and shadow tables, including dropped objects in history; check both current and target snapshots before FLASHBACK CLUSTER proceeds. - Recover refresh, purge and fast-refresh source records in the same transaction that publishes the recovered database. Use the final DROP DATABASE schema diff commit timestamp to recover the state immediately before removal. - Rewrite schema identifiers in saved view/MV definitions when renaming the recovered database, preserving literals and SQL modes. Adapt the shared timestamp helper to master's `infoschema/issyncer` loader and retain master's
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1941,311 +1941,156 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce0faf10` (2026-11-16)
-**Commit Message**: sessiontxn: respect redaction in deadlock retry logs (#73193)
+### Incident Patch 1: `b127b9ab` (2026-11-17)
+**Commit Message**: session: prevent killed memory tracker panics during commit cleanup (#71169)
 
-close pingcap/tidb#73191
+close pingcap/tidb#69304
 
-**File**: `pkg/sessiontxn/isolation/BUILD.bazel` (modified, +4/-1)
+**File**: `pkg/session/test/txn/txn_test.go` (modified, +21/-0)
 ```diff
-@@ -58,7 +58,7 @@ go_test(
-         "serializable_test.go",
-     ],
-     flaky = True,
--    shard_count = 28,
-+    shard_count = 29,
-     deps = [
-         ":isolation",
-         "//pkg/config",
-@@ -77,6 +77,7 @@ go_test(
-         "//pkg/testkit",
-         "//pkg/testkit/testfork",
-         "//pkg/testkit/testsetup",
-+        "//pkg/util/logutil",
-         "@com_github_pingcap_errors//:errors",
-         "@com_github_pingcap_failpoint//:failpoint",
-         "@com_github_pingcap_kvproto//pkg/kvrpcpb",
-@@ -85,5 +86,7 @@ go_test(
-         "@com_github_tikv_client_go_v2//oracle",
-         "@com_github_tikv_client_go_v2//tikv",
-         "@org_uber_go_goleak//:goleak",
-+        "@org_uber_go_zap//:zap",
-+        "@org_uber_go_zap//zaptest/observer",
-     ],
- )
-```
-
-**File**: `pkg/sessiontxn/isolation/readcommitted.go` (modified, +4/-3)
-```diff
-@@ -32,6 +32,7 @@ import (
- 	"github.com/pingcap/tidb/pkg/sessiontxn"
- 	isolation_metrics "github.com/pingcap/tidb/pkg/sessiontxn/isolation/metrics"
- 	"github.com/pingcap/tidb/pkg/util/logutil"
-+	"github.com/pingcap/tidb/pkg/util/redact"
- 	tikverr "github.com/tikv/client-go/v2/error"
- 	"github.com/tikv/client-go/v2/oracle"
- 	"go.uber.org/zap"
-@@ -215,13 +216,14 @@ func (p *PessimisticRCTxnContextProvider) handleAfterQueryError(queryErr error)
+@@ -507,6 +507,27 @@ func TestMemBufferCleanupMemoryLeak(t *testing.T) {
  }
  
- func (p *PessimisticRCTxnContextProvider) handleAfterPessimisticLockError(ctx context.Context, lockErr error) (sessiontxn.StmtErrorAction, error) {
--	txnCtx := p.sctx.GetSessionVars().TxnCtx
-+	sessVars := p.sctx.GetSessionVars()
-+	txnCtx := sessVars.TxnCtx
- 	retryable := false
- 	if deadlock, ok := errors.Cause(lockErr).(*tikverr.ErrDeadlock); ok && deadlock.IsRetryable {
- 		logutil.Logger(p.ctx).Info("single statement deadlock, retry statement",
- 			zap.Uint64("txn", txnCtx.StartTS),
- 			zap.Uint64("lockTS", deadlock.LockTs),
--			zap.Stringer("lockKey", kv.Key(deadlock.LockKey)),
-+			zap.Stringer("lockKey", redact.Stringer(sessVars.EnableRedactLog, kv.Key(deadlock.LockKey))),
- 			zap.Uint64("deadlockKeyHash", deadlock.DeadlockKeyHash))
- 		retryable = true
- 
-@@ -233,7 +235,6 @@ func (p *PessimisticRCTxnContextProvider) handleAfterPessimisticLockError(ctx co
- 			return sessiontxn.ErrorAction(err)
- 		}
- 	} else if terror.ErrorEqual(kv.ErrWriteConflict, lockErr) {
--		sessVars := p.sctx.GetSessionVars()
- 		waitTime := time.Since(sessVars.StmtCtx.GetLockWaitStartTime())
- 		if waitTime.Milliseconds() >= sessVars.LockWaitTimeout {
- 			return sessiontxn.ErrorAction(tikverr.ErrLockWaitTimeout)
-```
-
-**File**: `pkg/sessiontxn/isolation/repeatable_read.go` (modified, +2/-1)
-```diff
-@@ -30,6 +30,7 @@ import (
- 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
- 	"github.com/pingcap/tidb/pkg/sessiontxn"
- 	"github.com/pingcap/tidb/pkg/util/logutil"
-+	"github.com/pingcap/tidb/pkg/util/redact"
- 	tikverr "github.com/tikv/client-go/v2/error"
- 	"go.uber.org/zap"
- )
-@@ -248,7 +249,7 @@ func (p *PessimisticRRTxnContextProvider) handleAfterPessimisticLockError(ctx co
- 		logutil.Logger(p.ctx).Info("single statement deadlock, retry statement",
- 			zap.Uint64("txn", txnCtx.StartTS),
- 			zap.Uint64("lockTS", deadlock.LockTs),
--			zap.Stringer("lockKey", kv.Key(deadlock.LockKey)),
-+			zap.Stringer("lockKey", redact.Stringer(sessVars.EnableRedactLog, kv.Key(deadlock.LockKey))),
- 			zap.Uint64("deadlockKeyHash", deadlock.DeadlockKeyHash))
- 
- 		// In fair locking mode, when statement retry happens, `retryFairLockingIfNeeded` should be
-```
-
-**File**: `pkg/sessiontxn/isolation/repeatable_read_test.go` (modified, +58/-0)
-```diff
-@@ -34,8 +34,11 @@ import (
- 	"github.com/pingcap/tidb/pkg/sessiontxn/isolation"
- 	"github.com/pingcap/tidb/pkg/testkit"
- 	"github.com/pingcap/tidb/pkg/testkit/testfork"
-+	"github.com/pingcap/tidb/pkg/util/logutil"
- 	"github.com/stretchr/testify/require"
- 	tikverr "github.com/tikv/client-go/v2/error"
-+	"go.uber.org/zap"
-+	"go.uber.org/zap/zaptest/observer"
- )
- 
- func newDeadLockError(isRetryable bool) error {
-@@ -135,6 +138,61 @@ func TestPessimisticRRErrorHandle(t *testing.T) {
- 	require.Nil(t, err)
- }
- 
-+func TestPessimisticDeadlockLogRedaction(t *testing.T) {
-+	store := testkit.CreateMockStore(t)
-+	tk := testkit.NewTestKit(t, store)
-+	defer tk.MustExec("rollback")
-+	sessVars := tk.Session().GetSessionVars()
-+	originalMode := sessVars.EnableRedactLog
-+	originalGlobalMode := errors.RedactLogEnabled.Load()
-+	t.Cleanup(func() {
-+		sessVars.EnableRedactLog = originalMode
-+		errors.RedactLogEnabled.Store(originalGlobalMode)
-+	})
-+
-+	for _, isolationLevel := range []string{ast.RepeatableRead, ast.ReadCommitted} {
-+		tk.MustExec("rollback")
-+		tk.MustExec(fmt.Sprintf("set @@tx_isolation = '%s'", isolationLevel))
+ func TestPanicOnRollbackKilledTxn(t *testing.T) {
++	t.Run("commit cleanup", func(t *testing.T) {
++		store := testkit.CreateMockStore(t)
++		tk := testkit.NewTestKit(t, store)
++		tk.MustExec("use test")
++		tk.MustExec("create table t(id int)")
 +		tk.MustExec("begin pessimistic")
-+		provider := sessiontxn.GetTxnManager(tk.Session()).GetContextProvider()
-+		for _, tc := range []struct {
-+			mode       string
-+			globalMode string
-+			expected   string
-+		}{
-+			{mode: "OFF", globalMode: "ON", expected: "646561646c6f636b2d6b6579"},
-+			{mode: "ON", globalMode: "OFF", expected: ""},
-+			{mode: "MARKER", globalMode: "OFF", expected: "‹646561646c6f636b2d6b6579›"},
-+		} {
-+			// The log must use the session mode even when the process-wide mode differs.
-+			sessVars.EnableRedactLog = tc.mode
-+			errors.RedactLogEnabled.Store(tc.globalMode)
-+			core, recorded := observer.New(zap.InfoLevel)
-+			ctx := logutil.WithLogger(context.Background(), zap.New(core))
-+			require.NoError(t, provider.OnStmtStart(ctx, nil))
-+			deadlock := &tikverr.ErrDeadlock{
-+				Deadlock: &kvrpcpb.Deadlock{
-+					LockTs:          123,
-+					LockKey:         []byte("deadlock-key"),
-+					DeadlockKeyHash: 456,
-+				},
-+				IsRetryable: true,
-+			}
-+			action, err := provider.OnStmtErrorForNextAction(ctx, sessiontxn.StmtErrAfterPessimisticLock, deadlock)
-+			require.NoError(t, err)
-+			require.Equal(t, sessiontxn.StmtActionRetryReady, action)
-+			entries := recorded.FilterMessage("single statement deadlock, retry statement").All()
-+			require.Len(t, entries, 1)
-+			fields := entries[0].ContextMap()
-+			require.Equal(t, tc.expected, fields["lockKey"], "%s, %s", isolationLevel, tc.mode)
-+			require.Equal(t, sessVars.TxnCtx.StartTS, fields["txn"])
-+			require.Equal(t, uint64(123), fields["lockTS"])
-+			require.Equal(t, uint64(456), fields["deadlockKeyHash"])
-+			require.Equal(t, []byte("deadlock-key"), deadlock.LockKey)
++		tk.MustExec("insert into t values(1)")
++		for range 6 {
++			tk.MustExec("insert into t select * from t")
 +		}
-+	}
-+}
-+
- func TestRepeatableReadProviderTS(t *testing.T) {
++		tracker := memory.NewTracker(-1, -1)
++		tracker.IsRootTrackerOfSess = true
++		tracker.Killer = &sqlkiller.SQLKiller{}
++		tk.Session().GetSessionVars().MemTracker.AttachTo(tracker)
++		tracker.Killer.SendKillSignal(sqlkiller.QueryInterrupted)
++		var err error
++		require.NotPanics(t, func() { err = tk.Session().CommitTxn(context.Background()) })
++		require.NoError(t, err)
++		tracker.Killer.Reset()
++		tk.MustQuery("select count(*) from t").Check(testkit.Rows("64"))
++	})
  	store := testkit.CreateMockStore(t)
  	tk := testkit.NewTestKit(t, store)
+ 	tk.MustExec("use test")
+```
+
+**File**: `pkg/session/txn.go` (modified, +3/-0)
+```diff
+@@ -415,6 +415,9 @@ func ResetMockAutoRandIDRetryCount(failTimes int64) {
+ // Commit overrides the Transaction interface.
+ func (txn *LazyTxn) Commit(ctx context.Context) error {
+ 	defer txn.reset()
++	// Commit and its deferred cleanup may release MemDB memory after the session
++	// tracker has been killed. Match Rollback's protection for that terminal phase.
++	txn.SetMemoryFootprintChangeHook(func(uint64) {})
+ 
+ 	txn.mu.Lock()
+ 	txn.updateState(txninfo.TxnCommitting)
 ```
 
 ---
 
-### Incident Patch 2: `049bb177` (2026-11-16)
-**Commit Message**: planner: fix sql inject when analyze table with table name and db name (#73190)
+### Incident Patch 2: `347e8c61` (2026-11-17)
+**Commit Message**: ddl, dumpling: reduce memory use when scanning table metadata (#73234)
 
-close pingcap/tidb#73188
+close pingcap/tidb#73229
 
-**File**: `pkg/ddl/index.go` (modified, +2/-1)
+**File**: `dumpling/export/kv.go` (modified, +12/-5)
 ```diff
-@@ -89,6 +89,7 @@ import (
- 	tidblogutil "github.com/pingcap/tidb/pkg/util/logutil"
- 	decoder "github.com/pingcap/tidb/pkg/util/rowDecoder"
- 	"github.com/pingcap/tidb/pkg/util/size"
-+	"github.com/pingcap/tidb/pkg/util/sqlescape"
- 	"github.com/pingcap/tidb/pkg/util/sqlexec"
- 	"github.com/tikv/client-go/v2/oracle"
- 	"github.com/tikv/client-go/v2/tikv"
-@@ -1628,7 +1629,7 @@ func (w *worker) analyzeTableInner(job *model.Job, tblInfo *model.TableInfo, dbN
- 				w.sessPool.Put(sessCtx)
- 				close(doneCh)
- 			}()
--			dbTable := fmt.Sprintf("`%s`.`%s`", dbName, tblName)
-+			dbTable := sqlescape.MustEscapeSQL("%n.%n", dbName, tblName)
- 
- 			exec, ok := sessCtx.(sqlexec.RestrictedSQLExecutor)
- 			if !ok {
-```
-
-**File**: `pkg/ddl/index_modify_test.go` (modified, +29/-0)
-```diff
-@@ -445,6 +445,35 @@ func TestAnalyzeStuck(t *testing.T) {
- 	}, time.Minute, 200*time.Millisecond)
- }
- 
-+func TestAnalyzeTableWithQuotedIdentifiers(t *testing.T) {
-+	store := testkit.CreateMockStoreWithSchemaLease(t, indexModifyLease, mockstore.WithDDLChecker())
-+	tk := testkit.NewTestKit(t, store)
-+	tk.MustExec("set @@tidb_stats_update_during_ddl = 1")
-+
-+	quoteIdent := func(name string) string {
-+		return "`" + strings.ReplaceAll(name, "`", "``") + "`"
-+	}
-+	dbName := "db`name"
-+	tableName := "table`name"
-+	quotedDB := quoteIdent(dbName)
-+	quotedTable := quoteIdent(tableName)
-+
-+	tk.MustExec("create database " + quotedDB)
-+	t.Cleanup(func() {
-+		tk.MustExec("drop database " + quotedDB)
-+	})
-+	tk.MustExec("create table " + quotedDB + "." + quotedTable + " (id int)")
-+	tk.MustExec("insert into " + quotedDB + "." + quotedTable + " values (1)")
-+	tk.MustExec("delete from mysql.analyze_jobs")
-+
-+	tk.MustExec("alter table " + quotedDB + "." + quotedTable + " add index idx_id (id)")
-+	tk.MustQuery(
-+		"select count(*) from mysql.analyze_jobs where table_schema = ? and table_name = ?",
-+		dbName,
-+		tableName,
-+	).Check(testkit.Rows("1"))
-+}
-+
- func TestAnalyzeOwnerResignNoReRun(t *testing.T) {
- 	store, _ := testkit.CreateMockStoreAndDomainWithSchemaLease(t, indexModifyLease, mockstore.WithDDLChecker())
- 
-```
-
----
-
-### Incident Patch 3: `1858a2c5` (2026-11-15)
-**Commit Message**: planner: recognize IS NOT NULL filters for partial-index plan cache (#71956)
-
-close pingcap/tidb#71955
-
-**File**: `pkg/planner/core/casetest/index/index_test.go` (modified, +23/-0)
-```diff
-@@ -459,6 +459,29 @@ func TestPartialIndexWithPlanCache(t *testing.T) {
- 		tk.MustQuery(fmt.Sprintf("explain for connection %d", tkProcess.ID)).CheckContain("idx2")
- 		tk.MustExec("execute stmt using @a")
- 		tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("0"))
-+
-+		// Explicit and join-derived IS NOT NULL filters must remain cacheable.
-+		tk.MustExec("insert into t values (1, 10), (2, 20), (NULL, 30)")
-+		tk.MustExec("create table partial_cache_outer(a int, b int)")
-+		tk.MustExec("insert into partial_cache_outer values (1, 10), (2, 20), (NULL, 30)")
-+		for _, query := range []string{
-+			"select a, b from t use index(idx1) where a is not null and b = ?",
-+			"select t.a, t.b from partial_cache_outer l join t use index(idx1) on l.a = t.a where l.b = ?",
-+		} {
-+			tk.MustExec("prepare stmt from '" + query + "'")
-+			tk.MustExec("set @a = 10")
-+			tk.MustQuery("execute stmt using @a").Check(testkit.Rows("1 10"))
-+			tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("0"))
-+			tk.MustExec("set @a = 20")
-+			tk.MustQuery("execute stmt using @a").Check(testkit.Rows("2 20"))
-+			tkProcess = tk.Session().ShowProcess()
-+			ps[0] = tkProcess
-+			tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("1"))
-+			tk.MustQuery(fmt.Sprintf("explain for connection %d", tkProcess.ID)).CheckContain("idx1")
-+			tk.MustExec("set @a = 30")
-+			tk.MustQuery("execute stmt using @a").Check(testkit.Rows())
-+			tk.MustQuery("select @@last_plan_from_cache").Check(testkit.Rows("1"))
-+		}
- 	})
- }
- 
-```
-
-**File**: `pkg/planner/core/partidx/check_constraint.go` (modified, +8/-0)
-```diff
-@@ -207,6 +207,14 @@ func checkIsNullRejected(sctx planctx.PlanContext, targetCol *expression.Column,
- 			return false
+@@ -161,14 +161,21 @@ func (d *Dumper) loadKVTables(reader tidbmeta.Reader) ([]kvDatabaseTables, error
+ 		if database.State != model.StatePublic || !d.conf.TableFilter.MatchSchema(database.Name.O) {
+ 			continue
  		}
+-		tables, err := reader.ListTables(d.tctx, database.ID)
++		tables := make([]*model.TableInfo, 0)
++		err := reader.IterTables(database.ID, func(table *model.TableInfo) error {
++			if err := d.tctx.Err(); err != nil {
++				return err
++			}
++			if table.State != model.StatePublic || table.IsView() || table.IsSequence() ||
++				!d.conf.TableFilter.MatchTable(database.Name.O, table.Name.O) {
++				return nil
++			}
++			tables = append(tables, table)
++			return nil
++		})
+ 		if err != nil {
+ 			return nil, err
+ 		}
+-		tables = slices.DeleteFunc(tables, func(table *model.TableInfo) bool {
+-			return table.State != model.StatePublic || table.IsView() || table.IsSequence() ||
+-				!d.conf.TableFilter.MatchTable(database.Name.O, table.Name.O)
+-		})
+ 		if len(tables) == 0 && !d.conf.DumpEmptyDatabase {
+ 			continue
+ 		}
+```
+
+**File**: `pkg/ddl/placement_policy.go` (modified, +3/-7)
+```diff
+@@ -458,16 +458,12 @@ func CheckPlacementPolicyNotInUseFromMeta(t *meta.Mutator, policy *model.PolicyI
+ 			return dbterror.ErrPlacementPolicyInUse.GenWithStackByArgs(policy.Name)
+ 		}
+ 
+-		tables, err := t.ListTables(context.Background(), dbInfo.ID)
++		err := t.IterTables(dbInfo.ID, func(tblInfo *model.TableInfo) error {
++			return checkPlacementPolicyNotUsedByTable(tblInfo, policy)
++		})
+ 		if err != nil {
+ 			return err
+ 		}
+-
+-		for _, tblInfo := range tables {
+-			if err := checkPlacementPolicyNotUsedByTable(tblInfo, policy); err != nil {
+-				return err
+-			}
+-		}
  	}
-+	if filter.FuncName.L == ast.UnaryNot {
-+		inner, ok := filter.GetArgs()[0].(*expression.ScalarFunction)
-+		if !ok || inner.FuncName.L != ast.IsNull {
-+			return false
-+		}
-+		col, ok := inner.GetArgs()[0].(*expression.Column)
-+		return ok && col.Equal(sctx.GetExprCtx().GetEvalCtx(), targetCol)
-+	}
- 	if _, ok := expression.CompareOpMap[filter.FuncName.L]; ok {
- 		if filter.FuncName.L == ast.NullEQ {
- 			return false
+ 	return nil
+ }
+```
+
+**File**: `pkg/ddl/table.go` (modified, +3/-9)
+```diff
+@@ -1582,22 +1582,16 @@ func checkConstraintNamesNotExists(t *meta.Mutator, schemaID int64, constraints
+ 	if len(constraints) == 0 {
+ 		return nil
+ 	}
+-	tbInfos, err := t.ListTables(context.Background(), schemaID)
+-	if err != nil {
+-		return err
+-	}
+-
+-	for _, tb := range tbInfos {
++	return t.IterTables(schemaID, func(tb *model.TableInfo) error {
+ 		for _, constraint := range constraints {
+ 			if constraint.State != model.StateWriteOnly {
+ 				if constraintInfo := tb.FindConstraintInfoByName(constraint.Name.L); constraintInfo != nil {
+ 					return infoschema.ErrCheckConstraintDupName.GenWithStackByArgs(constraint.Name.L)
+ 				}
+ 			}
+ 		}
+-	}
+-
+-	return nil
++		return nil
++	})
+ }
+ 
+ func checkTableIDNotExists(t *meta.Mutator, schemaID, tableID int64) error {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #73233** (2026-11-16): ddl: advance table revision on rename (@winoros)
-- **PR #73209** (2026-11-16): executor: avoid MV refresh schema reloads for unrelated DDL (@windtalker)
-- **PR #73193** (2026-11-16): sessiontxn: respect redaction in deadlock retry logs (@cfzjywxk)
-- **PR #73190** (2026-11-16): planner: fix sql inject when analyze table with table name and db name (@elsa0520)
-- **PR #73185** (2026-11-16): planner: parameterize plan digest lookup (@qw4990)
-- **PR #73177** (2026-11-16): planner: remove the tests of the deprecated cascades planner (@terry1purcell)
+- **PR #73305** (2026-11-17): ddl, executor: serialize MLog column additions with MV refresh (@windtalker)
+- **PR #73304** (2026-11-17): ddl, executor: protect materialized views during flashback (@windtalker)
+- **PR #73288** (2026-11-17): parser: fix MV IF NOT EXISTS with HIGH_NOT_PRECEDENCE (@windtalker)
+- **PR #73285** (2026-11-17): executor: avoid MV refresh schema reloads for unrelated DDL (@windtalker)
+- **PR #73269** (2026-11-17): ddl, parser: improve materialized view DDL safeguards (@windtalker)
+- **PR #73268** (2026-11-17): ddl, executor: add materialized view maintenance error codes (@windtalker)
 
 ---
 
@@ -2265,31 +2110,48 @@ close pingcap/tidb#71955
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sessiontxn: respect redaction in deadlock retry logs
+## X. session: prevent killed memory tracker panics during commit cleanup
 
 **RULE**:
-When implementing operations in `pkg/sessiontxn/isolation/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/session/test/txn/txn_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce0faf10`: sessiontxn: respect redaction in deadlock retry logs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b127b9ab`: session: prevent killed memory tracker panics during commit cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sessiontxn/isolation/BUILD.bazel`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/session/test/txn/txn_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    shard_count = 29,
-        "//pkg/util/logutil",
-        "@org_uber_go_zap//:zap",
-        "@org_uber_go_zap//zaptest/observer",
+	t.Run("commit cleanup", func(t *testing.T) {
+		store := testkit.CreateMockStore(t)
+		tk := testkit.NewTestKit(t, store)
+		tk.MustExec("use test")
+		tk.MustExec("create table t(id int)")
+		tk.MustExec("begin pessimistic")
+		tk.MustExec("insert into t values(1)")
+		for range 6 {
+			tk.MustExec("insert into t select * from t")
+		}
+		tracker := memory.NewTracker(-1, -1)
+		tracker.IsRootTrackerOfSess = true
+		tracker.Killer = &sqlkiller.SQLKiller{}
+		tk.Session().GetSessionVars().MemTracker.AttachTo(tracker)
+		tracker.Killer.SendKillSignal(sqlkiller.QueryInterrupted)
+		var err error
+		require.NotPanics(t, func() { err = tk.Session().CommitTxn(context.Background()) })
+		require.NoError(t, err)
+		tracker.Killer.Reset()
+		tk.MustQuery("select count(*) from t").Check(testkit.Rows("64"))
+	})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    shard_count = 28,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce0faf10` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b127b9ab` are properly handled with clean fallback behavior.

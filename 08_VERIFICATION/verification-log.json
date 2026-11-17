@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-J08G",
-    "timestamp": "2026-11-15T14:56:03.568Z",
-    "repository": "seo-skills/seo-audit-skill",
-    "learningId": "learn-github-seo-skills-seo-audit-skill",
-    "contentHash": "f0576e7c724480e6d241a6526a39c230f00768d82dc0051053f73b26c95c72b1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-I4QG",
-    "timestamp": "2026-11-15T15:23:22.360Z",
-    "repository": "siteline/swiftui-introspect",
-    "learningId": "learn-github-siteline-swiftui-introspect",
-    "contentHash": "e686d618a018fa041e7cc62b648a4ea293dee7b999d221b8cf106371b105f172",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-I6SE",
     "timestamp": "2026-11-15T15:23:25.022Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7462,36 @@
     "contentHash": "0bca3a96d522ce417610274f279f242c895253f26c214c3e3b88b5189858d038",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-ZKKI",
+    "timestamp": "2026-11-17T18:56:13.794Z",
+    "repository": "briaai/Fibo-2.0-dev",
+    "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+    "contentHash": "77319363e73a84a12dddc790abb6b0f0a9f21a95f821718ea1e49d6969b4dfb0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-ZSRJ",
+    "timestamp": "2026-11-17T18:56:24.415Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "30bcb05b737061f22294bc237f0b9e7fb429a4ab2799eb8f99b0e7c4173e0b1e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

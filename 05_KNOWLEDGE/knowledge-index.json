@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T18:44:46.152Z",
-  "total_verified_learnings": 8927,
+  "last_updated": "2026-11-17T18:56:29.173Z",
+  "total_verified_learnings": 8928,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20503,
+  "total_items": 20509,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EQ9X-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZW8M-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1011fa4d650dffe85b5926c47f0daabbb4b310c34b6a69189e8ea512a3d98fd",
+      "content_hash": "4028e410efdf6f6637945ae5680438b5cb39640213955bbc37b56ea9f205bc01",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T15:24:04.106Z"
+      "persisted_at": "2026-11-17T18:56:28.921Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d096b8b41c399bfb20b4514d41608cb1f760de74f29337159e3671f03e98165",
+      "content_hash": "a41d0ca4fe60da871d7be2c91d6b79b4dd8064a2413946bc74cd57fb03c93ddb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T15:24:04.203Z"
+      "persisted_at": "2026-11-17T18:56:29.040Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8df0b9daa2b1ee0300f89be67bf551aecd695b20e73d8932d4e09d0d0c2a870a",
+      "content_hash": "d1ddf2d65d2e4929dca5fd5ae602922babd07f35a7980f17889f958f3f0e8743",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:24:04.318Z"
+      "persisted_at": "2026-11-17T18:56:29.173Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219960,8 +219960,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "573231ac",
-      "content_hash": "93bef85a3e0e86c7870f69c74a398ecfa5eb174db4cfe91c3d5a5c5bac26b257",
+      "source_version": "8c05d01e",
+      "content_hash": "30bcb05b737061f22294bc237f0b9e7fb429a4ab2799eb8f99b0e7c4173e0b1e",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -219979,6 +219979,11 @@
           "number": 8790,
           "title": "respect redaction in deadlock retry logs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9034,
+          "title": "prevent killed memory tracker panics during commit cleanup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219986,7 +219991,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T21:10:30.902Z",
+      "verified_at": "2026-11-17T18:56:24.256Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220028,10 +220033,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "repository": "pingcap/tidb",
-      "source_version": "573231ac",
-      "content_hash": "b39aea47b36c173854e8a0c821ec1c69e37683eec216395f2905535ff786812b",
+      "source_version": "8c05d01e",
+      "content_hash": "3bba46162b0c364ef8b0ae9909a47c1c1cceadd702ac408eef6907af663e8736",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T21:10:31.339Z"
+      "persisted_at": "2026-11-17T18:56:24.696Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb",
@@ -220040,10 +220045,10 @@
       "relative_path": "08_VERIFICATION/pingcap-tidb-verification-protocol-empirical-defect-shield-for-pingcap-tidb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pingcap/tidb",
       "repository": "pingcap/tidb",
-      "source_version": "573231ac",
-      "content_hash": "6b165418d0302d4700b6d0715632a0989fa3f3e911f4c92c55d5d8368e269175",
+      "source_version": "8c05d01e",
+      "content_hash": "b60875acffd0b7d7f17170dc300ef2b860ef244249bc2e42c288cdc83eabb02b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:10:31.453Z"
+      "persisted_at": "2026-11-17T18:56:24.813Z"
     },
     "rule-8415": {
       "learning_id": "rule-8415",
@@ -220115,9 +220120,9 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "0fd8c07f27d29c0107f2acfdc935c3a1d285405a083d60c75dd42ad6e8e16311",
+      "content_hash": "15ffaa10d5684e040052fc56dc9889cb0b315708a0a5a34268d79e12c1eed341",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T21:10:40.071Z"
+      "persisted_at": "2026-11-17T18:56:28.304Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings",
@@ -220127,9 +220132,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pingcap-tidb-learnings",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "003ed93e3edb5a785740335b36c01ca0d38bec204e0e855ea8a5fa9f78fba49a",
+      "content_hash": "3296ca34005c009a381ae05dcc4bf109dfca5cfa1296e0a342a8d50d8d153f49",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:10:40.179Z"
+      "persisted_at": "2026-11-17T18:56:28.437Z"
     },
     "candidate_directive-deps-bump-lock-file": {
       "item_id": "candidate_directive-deps-bump-lock-file",
@@ -275193,6 +275198,95 @@
       "content_hash": "f505728a567c22c37ddcacd07e60c8fb08fd77feb78b98700c338342c9a2065c",
       "domain_letter": "G",
       "persisted_at": "2026-11-17T18:44:46.014Z"
+    },
+    "learn-huggingface-briaai-fibo-2-0-dev": {
+      "learning_id": "learn-huggingface-briaai-fibo-2-0-dev",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "briaai/Fibo-2.0-dev",
+      "repository": "briaai/Fibo-2.0-dev",
+      "slug": "hf-briaai-fibo-2.0-dev",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/briaai/Fibo-2.0-dev",
+      "source_version": "hf-briaai-fibo-2.0-dev",
+      "content_hash": "77319363e73a84a12dddc790abb6b0f0a9f21a95f821718ea1e49d6969b4dfb0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T18:56:13.601Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-fibo-2-0-dev-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-.md",
+      "title": "Research & Knowledge Intelligence: briaai/Fibo-2.0-dev Core Invariants",
+      "repository": "briaai/Fibo-2.0-dev",
+      "source_version": "hf-briaai-fibo-2.0-dev",
+      "content_hash": "56eaec8693bb32e5f89c994e5399400246fbd595bab36a194a371bb690bdc1a7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T18:56:13.974Z"
+    },
+    "rule-9034": {
+      "learning_id": "rule-9034",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9034,
+      "title": "prevent killed memory tracker panics during commit cleanup",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "8c05d01e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T18:56:24.256Z"
+    },
+    "candidate_directive-prevent-killed-memory-tracker-panics-during-commit-cleanup": {
+      "item_id": "candidate_directive-prevent-killed-memory-tracker-panics-during-commit-cleanup",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZSW9-prevent-killed-memory-tracker-panics-during-commit-cleanup.md",
+      "title": "prevent killed memory tracker panics during commit cleanup",
+      "repository": "pingcap/tidb",
+      "source_version": "8c05d01e",
+      "content_hash": "f9a953dd7982844df72d94f911e301a7d702edd2ba7cc1410d9c831736cd9a28",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T18:56:24.587Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-fibo-2-0-dev-learnings-research-knowledge-intelligence-hf-briaai-fibo-.md",
+      "title": "Research & Knowledge Intelligence: hf-briaai-fibo-2.0-dev-learnings Core Invariants",
+      "repository": "hf-briaai-fibo-2.0-dev-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2c157409ac29dfb72ff25d1622e04d5e350a1420c8913a3bb7fc4cc643d23623",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T18:56:27.750Z"
+    },
+    "candidate_directive-session-prevent-killed-memory-tracker-panics-during-commit-cleanup": {
+      "item_id": "candidate_directive-session-prevent-killed-memory-tracker-panics-during-commit-cleanup",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZVO0-session-prevent-killed-memory-tracker-panics-during-commit-cleanup.md",
+      "title": "session: prevent killed memory tracker panics during commit cleanup",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e2995ce60ed9045eb15d8e570cbde577fb7ef4d5bb884dcd34be185ef6237836",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T18:56:28.179Z"
     }
   },
   "ai-builder-brain": {

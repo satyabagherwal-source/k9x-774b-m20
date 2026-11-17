@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T18:44:46.266Z",
+  "last_updated": "2026-11-17T18:56:29.284Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-17T15:24:03.795Z",
+      "processed_at": "2026-11-17T18:56:28.568Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -413,7 +413,7 @@
       "staged_for_review": 1
     },
     "pingcap-tidb-learnings.md": {
-      "processed_at": "2026-11-16T21:10:39.734Z",
+      "processed_at": "2026-11-17T18:56:27.905Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1638,8 +1638,8 @@
       "staged_for_review": 1
     },
     "hf-briaai-fibo-2.0-dev-learnings.md": {
-      "processed_at": "2026-11-13T07:39:41.794Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T18:56:27.573Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-xhtoken-spark-x2.6-4b-gguf-learnings.md": {
@@ -3353,7 +3353,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1671,
+  "total_dossiers_evaluated": 1674,
   "total_canonical_promoted": 324,
-  "total_staged_for_review": 1310
+  "total_staged_for_review": 1312
 }

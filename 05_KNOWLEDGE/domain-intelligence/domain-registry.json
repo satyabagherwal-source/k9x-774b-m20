@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T18:44:46.014Z",
-  "total_records": 1652,
+  "last_updated": "2026-11-17T18:56:29.040Z",
+  "total_records": 1654,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 705,
+      "total": 707,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -754,7 +754,9 @@
         "domain_intelligence-research-knowledge-intelligence-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-",
         "domain_intelligence-research-knowledge-intelligence-huggingfacebio-carbon-x-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor",
-        "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants"
       ]
     },
     "E": {
@@ -8385,8 +8387,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "2d096b8b41c399bfb20b4514d41608cb1f760de74f29337159e3671f03e98165",
-      "created_at": "2026-11-17T15:24:04.203Z"
+      "content_hash": "a41d0ca4fe60da871d7be2c91d6b79b4dd8064a2413946bc74cd57fb03c93ddb",
+      "created_at": "2026-11-17T18:56:29.040Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11700,8 +11702,8 @@
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "repository": "pingcap/tidb",
-      "content_hash": "b39aea47b36c173854e8a0c821ec1c69e37683eec216395f2905535ff786812b",
-      "created_at": "2026-11-16T21:10:31.339Z"
+      "content_hash": "3bba46162b0c364ef8b0ae9909a47c1c1cceadd702ac408eef6907af663e8736",
+      "created_at": "2026-11-17T18:56:24.696Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants",
@@ -11769,8 +11771,8 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-learnings-content-information-intelligence-pingcap-tidb-learnings-c.md",
       "repository": "pingcap-tidb-learnings",
-      "content_hash": "0fd8c07f27d29c0107f2acfdc935c3a1d285405a083d60c75dd42ad6e8e16311",
-      "created_at": "2026-11-16T21:10:40.071Z"
+      "content_hash": "15ffaa10d5684e040052fc56dc9889cb0b315708a0a5a34268d79e12c1eed341",
+      "created_at": "2026-11-17T18:56:28.304Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants",
@@ -28115,6 +28117,24 @@
       "repository": "emberstack-kubernetes-reflector-learnings",
       "content_hash": "f505728a567c22c37ddcacd07e60c8fb08fd77feb78b98700c338342c9a2065c",
       "created_at": "2026-11-17T18:44:46.014Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: briaai/Fibo-2.0-dev Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-fibo-2-0-dev-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-.md",
+      "repository": "briaai/Fibo-2.0-dev",
+      "content_hash": "56eaec8693bb32e5f89c994e5399400246fbd595bab36a194a371bb690bdc1a7",
+      "created_at": "2026-11-17T18:56:13.974Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-briaai-fibo-2.0-dev-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-fibo-2-0-dev-learnings-research-knowledge-intelligence-hf-briaai-fibo-.md",
+      "repository": "hf-briaai-fibo-2.0-dev-learnings",
+      "content_hash": "2c157409ac29dfb72ff25d1622e04d5e350a1420c8913a3bb7fc4cc643d23623",
+      "created_at": "2026-11-17T18:56:27.750Z"
     }
   }
 }

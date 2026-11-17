@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T18:44:17.218Z",
-  "total_cycles_completed": 10222,
-  "total_learnings_persisted": 10222,
-  "total_rules_promoted": 9779,
+  "last_updated": "2026-11-17T18:56:24.423Z",
+  "total_cycles_completed": 10224,
+  "total_learnings_persisted": 10224,
+  "total_rules_promoted": 9780,
   "history": [
-    {
-      "timestamp": "2026-11-17T04:31:20.420Z",
-      "repository": "rollup/rollup",
-      "learningId": "learn-github-rollup-rollup",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T04:31:29.802Z",
-      "repository": "typedb/typedb",
-      "learningId": "learn-github-typedb-typedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T04:43:44.464Z",
       "repository": "LiquidAI/LFM3-1.7B-GGUF",
@@ -1403,6 +1389,20 @@
       "repository": "Nanbeige/Nanbeige4.3-33B",
       "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:56:13.803Z",
+      "repository": "briaai/Fibo-2.0-dev",
+      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:56:24.423Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

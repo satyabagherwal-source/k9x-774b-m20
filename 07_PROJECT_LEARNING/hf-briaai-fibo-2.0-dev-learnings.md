@@ -3,7 +3,7 @@
 > **Source Version**: `hf-briaai-fi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T07:39:20.906Z  
+> **Timestamp**: 2026-11-17T18:56:13.387Z  
 > **Learning ID**: `learn-huggingface-briaai-fibo-2-0-dev`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/briaai/Fibo-2.0-dev](https://huggingface.co/briaai/Fibo-2.0-dev))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T07:39:20.725Z  
+> **Harvest Timestamp**: 2026-11-17T18:56:13.185Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2634 downloads | 215 likes
+- **Stars / Engagement**: 2851 downloads | 218 likes
 
 ---
 

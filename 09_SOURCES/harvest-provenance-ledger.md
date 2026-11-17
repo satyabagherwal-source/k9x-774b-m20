@@ -10701,3 +10701,5 @@ Every entry in this ledger must capture:
 | `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `c453c64e` | Multi-dimensional audit evidence | 2026-11-17T18:42:50.168Z |
 | `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-11-17T18:44:17.199Z |
 | `learn-dom-h-28b99dba` | `project://hf-nanbeige-nanbeige4.3-33b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | 2026-11-17T18:44:44.098Z |
+| `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-17T18:56:13.798Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `8c05d01e` | Multi-dimensional audit evidence | 2026-11-17T18:56:24.419Z |
