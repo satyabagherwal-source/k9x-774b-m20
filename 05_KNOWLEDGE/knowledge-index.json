@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T23:20:48.913Z",
-  "total_verified_learnings": 8951,
+  "last_updated": "2026-11-17T23:42:40.792Z",
+  "total_verified_learnings": 8952,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20707,
+  "total_items": 20710,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "edfffe135715acd8c21d30a1cda8c2119fd5d6822e3dc6c8bee9caf8294cefbe",
+      "content_hash": "6552e99bd82c389972ef6417db8f48f9706d897ac80148cd2161da1bc19113b7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T22:27:28.302Z"
+      "persisted_at": "2026-11-17T23:42:39.746Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff3a8f15d635cb1fa73e5e58ea302dbcb2086d4aee1dd8c05f2c298ebb3c0d1d",
+      "content_hash": "a5b21273a5a20c58748c9804dfa642c8cab5ff8d1edc01e01bbed84303be1af5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T22:27:28.461Z"
+      "persisted_at": "2026-11-17T23:42:39.897Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -235063,9 +235063,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "c12722eb0620d80626c1094c5ff5950f79feb141bcfd34bbb4ef2eb9464a7732",
+      "content_hash": "a15fe390b571f5bf1cf2f66d57aeec81c4031f98f55320080212b0a283adeb6f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T14:41:31.486Z"
+      "persisted_at": "2026-11-17T23:42:40.792Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -251714,9 +251714,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d6c686feda843d7ce809b5b32032f280b8ba8b3270ed74b375295b69dc3f1f39",
+      "content_hash": "d89711113dad567d47edb102b509f17c23879dac3dee30010deee36ca716ba1a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T22:27:28.103Z"
+      "persisted_at": "2026-11-17T23:42:39.546Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -274296,13 +274296,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-J7ZI-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7X1L-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2388883c116536517e00ef90eaaacf75143d2e01630a48ff53369914e9aa9401",
+      "content_hash": "651de347a616590cde38cadb77f93cf5c4da10320863bad4459fa3f42c10bc67",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T22:27:27.924Z"
+      "persisted_at": "2026-11-17T23:42:39.375Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -278360,6 +278360,57 @@
       "content_hash": "eca0befea3d2b7e474bb1887d879ad3c01d87d619e4c564c870ca26110f10b77",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T23:20:47.731Z"
+    },
+    "learn-huggingface-meta-llama-llama-3-1-8b-instruct": {
+      "learning_id": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "meta-llama/Llama-3.1-8B-Instruct",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "slug": "hf-meta-llama-llama-3.1-8b-instruct",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "content_hash": "73705fcb5e70ba62e592e49ed43367593869164980aa67d378639d0dc811c393",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T23:42:26.451Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-3-1-8b-instruct-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-3-1-8b-instruct-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-3-1-8b-instruct-research-knowledge-intelligence-meta-llama-l.md",
+      "title": "Research & Knowledge Intelligence: meta-llama/Llama-3.1-8B-Instruct Core Invariants",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "content_hash": "b089db7751f0bb2990e1d5929b465731ba47c60977ebce8dd8612ae79942d9b5",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T23:42:26.925Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-3-1-8b-instruct-learnings-research-knowledge-intelligence-hf.md",
+      "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-3.1-8b-instruct-learnings Core Invariants",
+      "repository": "hf-meta-llama-llama-3.1-8b-instruct-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c241d945f90395dc0046599b6025207baf7d2d1b449e306f0a7439192b25ce56",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T23:42:38.847Z"
     }
   },
   "ai-builder-brain": {

@@ -10745,3 +10745,4 @@
 | `CYCLE-20261117-DZRP` | `2026-11-17T23:19:23.221Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9082, Rule 9083, Rule 9084` | Yes (`cb7fd523...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T23:20:03.425Z` | `hf-stabilityai-stable-diffusion-xl-base-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-D0F5C3D5` [Domain H] | Yes (`009bdf73...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T23:20:46.643Z` | `hf-stabilityai-stable-diffusion-xl-base-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-DEB23BA9` [Domain F] | Yes (`20db0594...`) |
+| `CYCLE-20261117-7N9B` | `2026-11-17T23:42:26.687Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`73705fcb...`) |

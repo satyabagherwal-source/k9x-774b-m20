@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T23:19:27.012Z",
-    "lastVerified": "2026-11-17T23:19:27.012Z",
+    "lastChecked": "2026-11-17T23:42:38.471Z",
+    "lastVerified": "2026-11-17T23:42:38.471Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -230,9 +230,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-17T18:05:33.191Z",
+    "lastChecked": "2026-11-17T23:42:33.446Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-17T18:05:33.191Z"
+    "lastVerified": "2026-11-17T23:42:33.446Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -369,8 +369,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-17T22:27:26.040Z",
-    "lastVerified": "2026-11-17T22:27:26.041Z",
+    "lastChecked": "2026-11-17T23:42:38.458Z",
+    "lastVerified": "2026-11-17T23:42:38.458Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -1163,12 +1163,12 @@
     "officialUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T12:51:35.287Z",
-    "lastVerified": "2026-11-13T12:51:35.287Z",
+    "lastChecked": "2026-11-17T23:42:26.010Z",
+    "lastVerified": "2026-11-17T23:42:26.010Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "e3cbcf3eae4f0ac8c19da7535440cfd39794a345a0f4e04700e4e35733b5877e",
+    "contentHash": "73705fcb5e70ba62e592e49ed43367593869164980aa67d378639d0dc811c393",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -3246,12 +3246,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "openkruise-kruise": {
-    "name": "openkruise/kruise",
+    "name": "kruise",
     "officialUrl": "https://github.com/openkruise/kruise",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-17T02:02:17.577Z",
-    "lastVerified": "2026-11-17T02:02:17.577Z",
+    "lastChecked": "2026-11-17T23:42:30.952Z",
+    "lastVerified": "2026-11-17T23:42:30.952Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openkruise-kruise",
@@ -3260,7 +3260,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "df1edb99"
   },
   "pingcap-autoflow": {
     "name": "autoflow",
@@ -3601,9 +3602,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-11-17T00:24:03.399Z",
+    "lastChecked": "2026-11-17T23:42:35.940Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-11-17T00:24:03.399Z"
+    "lastVerified": "2026-11-17T23:42:35.940Z"
   },
   "imsnif-bandwhich": {
     "name": "bandwhich",
@@ -6025,9 +6026,9 @@
   "itinance-react-native-fs": {
     "name": "react-native-fs",
     "officialUrl": "https://github.com/itinance/react-native-fs",
-    "lastChecked": "2026-11-14T15:49:29.624Z",
+    "lastChecked": "2026-11-17T23:42:28.531Z",
     "revisionIdentifier": "64aa755c",
-    "lastVerified": "2026-11-14T15:49:29.624Z"
+    "lastVerified": "2026-11-17T23:42:28.531Z"
   },
   "gocd-gocd": {
     "name": "gocd/gocd",
@@ -9360,9 +9361,9 @@
   "mrjackwills-oxker": {
     "name": "oxker",
     "officialUrl": "https://github.com/mrjackwills/oxker",
-    "lastChecked": "2026-11-16T15:59:56.135Z",
+    "lastChecked": "2026-11-17T23:42:23.456Z",
     "revisionIdentifier": "791342c0",
-    "lastVerified": "2026-11-16T15:59:56.135Z"
+    "lastVerified": "2026-11-17T23:42:23.456Z"
   },
   "hf-liquidai-lfm2.5-24b-a2b-gguf": {
     "name": "LiquidAI/LFM2.5-24B-A2B-GGUF",

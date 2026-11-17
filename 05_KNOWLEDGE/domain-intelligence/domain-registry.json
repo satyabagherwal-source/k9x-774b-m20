@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T23:20:48.695Z",
-  "total_records": 1715,
+  "last_updated": "2026-11-17T23:42:40.792Z",
+  "total_records": 1717,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 748,
+      "total": 750,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -797,7 +797,9 @@
         "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-r1-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-3-1-8b-instruct-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co"
       ]
     },
     "E": {
@@ -17365,8 +17367,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "c12722eb0620d80626c1094c5ff5950f79feb141bcfd34bbb4ef2eb9464a7732",
-      "created_at": "2026-11-17T14:41:31.486Z"
+      "content_hash": "a15fe390b571f5bf1cf2f66d57aeec81c4031f98f55320080212b0a283adeb6f",
+      "created_at": "2026-11-17T23:42:40.792Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -22886,8 +22888,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "d6c686feda843d7ce809b5b32032f280b8ba8b3270ed74b375295b69dc3f1f39",
-      "created_at": "2026-11-17T22:27:28.103Z"
+      "content_hash": "d89711113dad567d47edb102b509f17c23879dac3dee30010deee36ca716ba1a",
+      "created_at": "2026-11-17T23:42:39.546Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -28861,6 +28863,24 @@
       "repository": "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings",
       "content_hash": "328ffa020c9fd4374f24775ae4eb49d33485651ab05ad66103b88af72a06de48",
       "created_at": "2026-11-17T23:20:47.514Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-3-1-8b-instruct-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-3-1-8b-instruct-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: meta-llama/Llama-3.1-8B-Instruct Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-3-1-8b-instruct-research-knowledge-intelligence-meta-llama-l.md",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "content_hash": "b089db7751f0bb2990e1d5929b465731ba47c60977ebce8dd8612ae79942d9b5",
+      "created_at": "2026-11-17T23:42:26.925Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-3.1-8b-instruct-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-3-1-8b-instruct-learnings-research-knowledge-intelligence-hf.md",
+      "repository": "hf-meta-llama-llama-3.1-8b-instruct-learnings",
+      "content_hash": "c241d945f90395dc0046599b6025207baf7d2d1b449e306f0a7439192b25ce56",
+      "created_at": "2026-11-17T23:42:38.847Z"
     }
   }
 }

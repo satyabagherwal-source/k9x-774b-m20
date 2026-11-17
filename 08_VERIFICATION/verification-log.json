@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-KPRJ",
-    "timestamp": "2026-11-16T00:45:15.247Z",
-    "repository": "rainbow-me/rainbow",
-    "learningId": "learn-github-rainbow-me-rainbow",
-    "contentHash": "8cd413f82579552a67da1ae7a49015be1ab615599dfb26cdb9a44ef98dfc4cfb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-ZFVT",
     "timestamp": "2026-11-16T00:56:42.281Z",
     "repository": "trinodb/trino",
@@ -7492,6 +7477,21 @@
     "contentHash": "cb7fd523cfe8d44272526e9049ef1bcc1002853a8c36a92acbaa29aa0520ef4c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-7N9B",
+    "timestamp": "2026-11-17T23:42:26.687Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+    "contentHash": "73705fcb5e70ba62e592e49ed43367593869164980aa67d378639d0dc811c393",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

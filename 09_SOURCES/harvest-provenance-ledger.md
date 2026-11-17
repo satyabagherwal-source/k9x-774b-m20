@@ -10778,3 +10778,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-17T23:19:23.225Z |
 | `learn-dom-h-d0f5c3d5` | `project://hf-stabilityai-stable-diffusion-xl-base-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | 2026-11-17T23:20:03.425Z |
 | `learn-dom-f-deb23ba9` | `project://hf-stabilityai-stable-diffusion-xl-base-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | 2026-11-17T23:20:46.643Z |
+| `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-17T23:42:26.691Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T23:20:48.503Z",
+  "last_updated": "2026-11-17T23:42:40.067Z",
   "directives": [
     {
       "id": "CD-001",
@@ -25122,11 +25122,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-J7ZI",
+      "id": "CD-7X1L",
       "directive_title": "rust): address the remaining issues in #418",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-J7ZI-rust-address-the-remaining-issues-in-418.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-7X1L-rust-address-the-remaining-issues-in-418.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -26513,6 +26513,24 @@
       "source_repo": "gravitl-netmaker",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1BA33B-v1-8-0-release-notes.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-D04066",
+      "directive_title": "rust): address the remaining issues in #418",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D04066-rust-address-the-remaining-issues-in-418.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-10DB8F",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-10DB8F-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-17"
     }
   ]
