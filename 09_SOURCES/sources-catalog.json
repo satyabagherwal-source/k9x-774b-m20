@@ -145,8 +145,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceVersion": "hf-sentence-transformers-all-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "dd739cfecd4f9bd6af950cd5c5c3379f7e3412ea256dbd042e57a8afb5b5dbb5",
-    "lastHarvestedAt": "2026-11-13T10:55:17.921Z",
+    "contentHash": "62c5a79ef00004e18d5bb71368d95b33fe365ff82dbd8f93fe3c466e3e78c9c7",
+    "lastHarvestedAt": "2026-11-17T20:45:29.861Z",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "87e6cde2",
+    "sourceVersion": "bf89cdfb",
     "license": "Apache-2.0",
-    "contentHash": "a8f7fdff6627b84b88323e7709e495bdd1955ea34bcb5cd225e9ba6621ecb7ee",
-    "lastHarvestedAt": "2026-11-16T22:19:30.759Z",
+    "contentHash": "9d66194101a98e7569ae33a73b5aa00c91ee58ac133638a0bff0b5f2db0c1b54",
+    "lastHarvestedAt": "2026-11-17T20:45:40.340Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -2403,10 +2403,10 @@
     "repository": "kubeedge/kubeedge",
     "platform": "github",
     "sourceUrl": "https://github.com/kubeedge/kubeedge",
-    "sourceVersion": "5251e89f",
+    "sourceVersion": "3a9cb19f",
     "license": "Apache-2.0",
-    "contentHash": "4e463c0b04a9781a794247ff0ef8999dd44149292f7e367a76fe8f0dc013fb04",
-    "lastHarvestedAt": "2026-11-16T23:35:04.866Z",
+    "contentHash": "766e6afb5ad16907e8c2e48e4766e5cf0cf9b8a8599e91453e843f10092c6348",
+    "lastHarvestedAt": "2026-11-17T20:45:36.357Z",
     "learningId": "learn-github-kubeedge-kubeedge"
   },
   "giancarloerra-socraticode": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "16249fae",
+    "sourceVersion": "935a8e49",
     "license": "NOASSERTION",
-    "contentHash": "96132406565710a1df78d54ef7c3604469f8b07e3139a97f492597e433afe10d",
-    "lastHarvestedAt": "2026-11-17T16:38:51.366Z",
+    "contentHash": "9a7d93fbafbbf85871099d1e0fd8ed6478f1da61803b19d2a14624bcde427f3c",
+    "lastHarvestedAt": "2026-11-17T20:45:38.354Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "f3e855fa",
+    "sourceVersion": "1f5eac54",
     "license": "MIT",
-    "contentHash": "5a32608da0e49143da8447e93f57c2b0a0ce3235319d689f56e33024dd8b330f",
-    "lastHarvestedAt": "2026-11-14T16:38:26.786Z",
+    "contentHash": "94ec51dfda37d7129cdbeabc726243d1e6dde6fa74026d5d8b99c2a4521a89c8",
+    "lastHarvestedAt": "2026-11-17T20:45:28.045Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {

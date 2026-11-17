@@ -4,23 +4,23 @@
 {
   "source_repository": "zama-ai/tfhe-rs",
   "source_url": "https://github.com/zama-ai/tfhe-rs",
-  "source_version": "16249fae",
+  "source_version": "935a8e49",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T16:38:51.557Z",
+  "timestamp": "2026-11-17T20:45:38.554Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zama-ai-tfhe-rs",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `16249fae`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T16:38:51.557Z`  
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `935a8e49`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T20:45:38.554Z`  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
 - **Confidence Rating**: 88%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:38:50.382Z  
+> **Harvest Timestamp**: 2026-11-17T20:45:37.378Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1948,100 +1948,471 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1f5d2ab4` (2026-11-17)
-**Commit Message**: chore: make pip timeout longer to avoid problem with potentially safe-chain (#4181)
+### Incident Patch 1: `935a8e49` (2026-11-17)
+**Commit Message**: chore(deps): bump compression and serve in /tfhe/web_wasm_parallel_tests (#4172)
 
-**File**: `make/python.mk` (modified, +8/-0)
+Bumps [compression](https://github.com/expressjs/compression) to 1.8.2 and updates ancestor dependency [serve](https://github.com/vercel/serve). These dependencies need to be updated together.
+
+
+Updates `compression` from 1.8.1 to 1.8.2
+- [Release notes](https://github.com/expressjs/compression/releases)
+- [Changelog](https://github.com/expressjs/compression/blob/master/HISTORY.md)
+- [Commits](https://github.com/expressjs/compression/compare/v1.8.1...v1.8.2)
+
+Updates `serve` from 14.2.6 to 14.2.8
+- [Release notes](https://github.com/vercel/serve/releases)
+- [Changelog](https://github.com/vercel/serve/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/vercel/serve/compare/v14.2.6...v14.2.8)
+
+---
+updated-dependencies:
+- dependency-name: compression
+  dependency-version: 1.8.2
+  dependency-type: indirect
+- dependency-name: serve
+  dependency-version: 14.2.8
+  dependency-type: direct:development
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `tfhe/web_wasm_parallel_tests/package-lock.json` (modified, +52/-210)
 ```diff
-@@ -27,6 +27,14 @@ define activate_python_venv
- . "$(1)/bin/activate" && \
- $(activate_safe_chain)
- endef
-+# Seconds pip waits for the network to answer (connection or data) before giving up on a request,
-+# instead of its default of 15: packages are installed through Safe-Chain, which checks them before
-+# handing them over to pip and can take longer than that to answer. PIP_DEFAULT_TIMEOUT is the
-+# environment variable pip reads its --timeout option from: exporting it applies the value to every
-+# pip call of every recipe, and it takes precedence over the pip configuration files, including the
-+# one Safe-Chain generates. A value from the environment or the command line is used instead, e.g.
-+# 'make ... PIP_DEFAULT_TIMEOUT=120'.
-+export PIP_DEFAULT_TIMEOUT?=60
- # Install the given *requirements.txt lock files with pip in the venv at the given path, refusing
- # anything that is not a venv, with the packages checked by Safe-Chain. The pinned pip is installed
- # first, the pip bundled with Python may be too old to install the lock files, see
+@@ -14,7 +14,7 @@
+       },
+       "devDependencies": {
+         "prettier": "^3.3.3",
+-        "serve": "^14.2.5",
++        "serve": "^14.2.8",
+         "webpack": "^5.105.0",
+         "webpack-cli": "^5.1.4"
+       }
+@@ -470,27 +470,6 @@
+         "node": ">=8"
+       }
+     },
+-    "node_modules/arch": {
+-      "version": "2.2.0",
+-      "resolved": "https://registry.npmjs.org/arch/-/arch-2.2.0.tgz",
+-      "integrity": "sha512-Of/R0wqp83cgHozfIYLbBMnej79U/SVGOOyuB3VVFv1NRM/PSFMK12x9KVtiYzJqmnU5WR2qp0Z5rHb7sWGnFQ==",
+-      "dev": true,
+-      "funding": [
+-        {
+-          "type": "github",
+-          "url": "https://github.com/sponsors/feross"
+-        },
+-        {
+-          "type": "patreon",
+-          "url": "https://www.patreon.com/feross"
+-        },
+-        {
+-          "type": "consulting",
+-          "url": "https://feross.org/support"
+-        }
+-      ],
+-      "license": "MIT"
+-    },
+     "node_modules/arg": {
+       "version": "5.0.2",
+       "resolved": "https://registry.npmjs.org/arg/-/arg-5.0.2.tgz",
+@@ -778,24 +757,6 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
+-    "node_modules/clipboardy": {
+-      "version": "3.0.0",
+-      "resolved": "https://registry.npmjs.org/clipboardy/-/clipboardy-3.0.0.tgz",
+-      "integrity": "sha512-Su+uU5sr1jkUy1sGRpLKjKrvEOVXgSgiSInwa/qeID6aJ07yh+5NWc3h2QfjHjBnfX4LhtFcuAWKUsJ3r+fjbg==",
+-      "dev": true,
+-      "license": "MIT",
+-      "dependencies": {
+-        "arch": "^2.2.0",
+-        "execa": "^5.1.1",
+-        "is-wsl": "^2.2.0"
+-      },
+-      "engines": {
+-        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+-      },
+-      "funding": {
+-        "url": "https://github.com/sponsors/sindresorhus"
+-      }
+-    },
+     "node_modules/clone-deep": {
+       "version": "4.0.1",
+       "resolved": "https://registry.npmjs.org/clone-deep/-/clone-deep-4.0.1.tgz",
+@@ -845,41 +806,29 @@
+       }
+     },
+     "node_modules/compression": {
+-      "version": "1.8.1",
+-      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.1.tgz",
+-      "integrity": "sha512-9mAqGPHLakhCLeNyxPkK4xVo746zQ/czLH1Ky+vkitMnWfWZps8r0qXuwhwizagCRttsL4lfG4pIOvaWLpAP0w==",
++      "version": "1.8.2",
++      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.2.tgz",
++      "integrity": "sha512-o8vI5RE5A6EVVOd9o41jKp41aJom+QTEO/Bx8MYNjexMo/Bv2WOjUfZr+aL0WnYSgymUy6zeguqLTsIhV0gMvQ==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "bytes": "3.1.2",
+         "compressible": "~2.0.18",
+         "debug": "2.6.9",
++        "destroy": "1.2.0",
+         "negotiator": "~0.6.4",
+         "on-headers": "~1.1.0",
+         "safe-buffer": "5.2.1",
+         "vary": "~1.1.2"
+       },
+       "engines": {
+         "node": ">= 0.8.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/express"
+       }
+     },
+-    "node_modules/compression/node_modules/debug": {
+-      "version": "2.6.9",
+-      "resolved": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
+-      "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
+-      "dev": true,
+-      "license": "MIT",
+-      "dependencies": {
+-        "ms": "2.0.0"
+-      }
+-    },
+-    "node_modules/compression/node_modules/ms": {
+-      "version": "2.0.0",
+-      "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
+-      "integrity": "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==",
+-      "dev": true,
+-      "license": "MIT"
+-    },
+     "node_modules/concat-map": {
+       "version": "0.0.1",
+       "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz",
+@@ -912,6 +861,16 @@
+         "node": ">= 8"
+       }
+     },
++    "node_modules/debug": {
++      "version": "2.6.9",
++      "resolved": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
++      "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "ms": "2.0.0"
++      }
++    },
+     "node_modules/deep-extend": {
+       "version": "0.6.0",
+       "resolved": "https://registry.npmjs.org/deep-extend/-/deep-extend-0.6.0.tgz",
+@@ -922,6 +881,17 @@
+         "node": ">=4.0.0"
+       }
+     },
++    "node_modules/destroy": {
++      "version": "1.2.0",
++      "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
++      "integrity": "sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==",
++      "dev": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">= 0.8",
++        "npm": "1.2.8000 || >= 1.4.16"
++      }
++    },
+     "node_modules/eastasianwidth": {
+       "version": "0.2.0",
+       "resolved": "https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz",
+@@ -1054,30 +1024,6 @@
+         "no
+```
+
+**File**: `tfhe/web_wasm_parallel_tests/package.json` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@
+   "license": "BSD-3-Clause-Clear",
+   "devDependencies": {
+     "prettier": "^3.3.3",
+-    "serve": "^14.2.5",
++    "serve": "^14.2.8",
+     "webpack": "^5.105.0",
+     "webpack-cli": "^5.1.4"
+   },
 ```
 
 ---
 
-### Incident Patch 2: `468bb000` (2026-11-17)
-**Commit Message**: chore: simpler CODEOWNERS while still respecting guidelines (#4183)
+### Incident Patch 2: `0d4e9c9d` (2026-11-17)
+**Commit Message**: chore(integer): add test profiles to the radix test harness (#4155)
 
-- .github, manifests and CI sensitive locations retain more precise owners
+* chore(integer): add test profiles to the radix test harness
 
-**File**: `CODEOWNERS` (modified, +11/-21)
+TFHE_RS_TEST_PROFILE selects how extensively the harness tests: the
+profile sets the block counts and the number of random cases.
+
+There's an OpCost enum as not all operation have the same cost
+and so operation can give a hint of their cost allowing the profile
+to adjust or not. For example, the division is very costly so some
+profiles might want to reduce tested block counts, but other (like fhevm
+profile) can choose to still test all their block counts.
+
+Parameters are not taken into account (i.e profile do not adapt to the
+msg-mod/carry-mod) as the preferred way for now is to select a more or less
+intensive profile
+
+Each backend has its profile(s) as CI costs differ.
+The CPU defines cpu_light, cpu_baseline, cpu_extensive, cpu_fhevm.
+The fhevm profiles test the widths FHEVM exposes,
+up to 128 bits for now (the clear models are u128).
+
+Vector operations keep their own sizes until we know
+how to parameterize them.
+
+* chore(integer): rename SizeRequirements to RadixInputSize
+
+**File**: `.github/workflows/aws_tfhe_fast_tests.yml` (modified, +3/-1)
 ```diff
-@@ -11,42 +11,32 @@
+@@ -259,10 +259,12 @@ jobs:
+         run: |
+           BIG_TESTS_INSTANCE=TRUE FAST_TESTS=TRUE make test_shortint_ci
  
- /tfhe/examples/hpu                      @zama-ai/hardware
++      # Only the default operations of tier 0, every tier 0 test runs on approval (see
++      # aws_tfhe_integer_tests) and on a schedule (see aws_tfhe_integer_tests_tier_0)
+       - name: Run integer tests
+         if: needs.should-run.outputs.integer_test == 'true'
+         run: |
+-          BIG_TESTS_INSTANCE=TRUE FAST_TESTS=TRUE make test_integer_ci
++          BIG_TESTS_INSTANCE=TRUE FAST_TESTS=TRUE TIERS=0 TFHE_RS_TEST_PROFILE=cpu_light make test_integer_ci
  
--/tfhe/src/core_crypto/                  @IceTDrinker @mayeul-zama @zama-ai/tfhe-rs
- /tfhe/src/core_crypto/gpu               @zama-ai/gpu
- /tfhe/src/core_crypto/hpu               @zama-ai/hardware
+       - name: Run transciphering tests
+         if: needs.should-run.outputs.transciphering_test == 'true'
+```
+
+**File**: `.github/workflows/aws_tfhe_integer_tests.yml` (modified, +4/-2)
+```diff
+@@ -58,8 +58,9 @@ jobs:
+               - .github/workflows/aws_tfhe_integer_tests_tier_*.yml
+               - .config/nextest.toml
  
--/tfhe/src/shortint/                     @mayeul-zama @nsarlin-zama @zama-ai/tfhe-rs
--
--/tfhe/src/integer/                      @tmontaigu @nsarlin-zama @zama-ai/tfhe-rs
- /tfhe/src/integer/gpu                   @zama-ai/gpu
- /tfhe/src/integer/hpu                   @zama-ai/hardware
+-  # Tier 0 (prod params) on approval and on each merge to main, the other tiers run on a schedule
+-  # in aws_tfhe_integer_tests_tier_N
++  # Tier 0 (prod params) on the FHEVM widths, on approval and on each merge to main.
++  # Tiers 1 to 3, and tier 0 on the baseline profile, run on a schedule in
++  # aws_tfhe_integer_tests_tier_N
+   integer-tests:
+     name: aws_tfhe_integer_tests/integer-tests
+     needs: should-run
+@@ -74,6 +75,7 @@ jobs:
+     uses: ./.github/workflows/aws_tfhe_integer_tests_common.yml
+     with:
+       tiers: "0"
++      profile: cpu_fhevm
+     secrets:
+       REPO_CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+```
+
+**File**: `.github/workflows/aws_tfhe_integer_tests_common.yml` (modified, +8/-2)
+```diff
+@@ -1,4 +1,5 @@
+-# Run the CPU integer tests of some parameter tiers, unsigned and signed tests in parallel
++# Run the CPU integer tests of some parameter tiers with a test profile, unsigned and signed tests
++# in parallel
+ name: aws_tfhe_integer_tests_common
  
--/tfhe/src/high_level_api/               @tmontaigu @nsarlin-zama @zama-ai/tfhe-rs
--
--/tfhe-zk-pok/                           @nsarlin-zama @tmontaigu @zama-ai/tfhe-rs
- /tfhe-zk-pok/src/gpu                    @zama-ai/gpu
+ on:
+@@ -8,6 +9,10 @@ on:
+         description: "Comma separated parameter tiers to test, e.g. 0 or 1,2"
+         type: string
+         required: true
++      profile:
++        description: "Test profile of the radix test harness, e.g. cpu_light or cpu_baseline"
++        type: string
++        required: true
+     secrets:
+       REPO_CHECKOUT_TOKEN:
+         required: false
+@@ -52,6 +57,7 @@ jobs:
+     env:
+       SIGN: ${{ matrix.sign }}
+       TIERS: ${{ inputs.tiers }}
++      TFHE_RS_TEST_PROFILE: ${{ inputs.profile }}
+     steps:
+       - name: Checkout tfhe-rs
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+@@ -91,4 +97,4 @@ jobs:
+         uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
+         env:
+           SLACK_COLOR: ${{ job.status }}
+-          SLACK_MESSAGE: "Integer tests (${{ matrix.sign }}, tiers ${{ inputs.tiers }}) finished with status: ${{ job.status }}. (${{ env.PULL_REQUEST_MD_LINK }}[action run](${{ env.ACTION_RUN_URL }}))"
++          SLACK_MESSAGE: "Integer tests (${{ matrix.sign }}, tiers ${{ inputs.tiers }}, profile ${{ inputs.profile }}) finished with status: ${{ job.status }}. (${{ env.PULL_REQUEST_MD_LINK }}[action run](${{ env.ACTION_RUN_URL }}))"
+```
+
+**File**: `.github/workflows/aws_tfhe_integer_tests_tier_0.yml` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++# CPU integer tests of the tier 0 parameters (prod params, see CPU_INTEGER_TIERS in
++# scripts/test_filtering.py) on the baseline profile.
++# Tier 0 also runs in aws_tfhe_fast_tests on each pull request (light profile) and in
++# aws_tfhe_integer_tests on approval and on each merge to main (FHEVM profile).
++name: aws_tfhe_integer_tests_tier_0
++
++on:
++  # Run tier 0 on any branch
++  workflow_dispatch:
++    inputs:
++      profile:
++        description: "Test profile of the radix test harness"
++        type: choice
++        options:
++          - cpu_light
++          - cpu_baseline
++          - cpu_extensive
++          - cpu_fhevm
++        default: cpu_baseline
++  schedule:
++    # Tier 0, nightly after each work day
++    - cron: "0 1 * * MON-FRI"
++
++permissions:
++  contents: read
++
++jobs:
++  integer-tests:
++    name: aws_tfhe_integer_tests_tier_0/integer-tests
++    if: github.event_name == 'workflow_dispatch' || github.repository == 'zama-ai/tfhe-rs'
++    # Runs on main are not cancelled by the next one
++    concurrency:
++      group: ${{ github.workflow_ref }}
++      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
++    uses: ./.github/workflows/aws_tfhe_integer_tests_common.yml
++    with:
++      tiers: "0"
++      # Scheduled runs have no inputs
++      profile: ${{ inputs.profile || 'cpu_baseline' }}
++    secrets:
++      REPO_CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN }}
++      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
++      BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
++      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+```
+
+**File**: `.github/workflows/aws_tfhe_integer_tests_tier_1.yml` (modified, +12/-0)
+```diff
+@@ -5,6 +5,16 @@ name: aws_tfhe_integer_tests_tier_1
+ on:
+   # Run tier 1 on any branch
+   workflow_dispatch:
++    inputs:
++      profile:
++        description: "Test profile of the radix test harness"
++        type: choice
++        options:
++          - cpu_light
++          - cpu_baseline
++          - cpu_extensive
++          - cpu_fhevm
++        default: cpu_baseline
+   schedule:
+     # Tier 1, nightly after each work day
+     - cron: "0 2 * * MON-FRI"
+@@ -23,6 +33,8 @@ jobs:
+     uses: ./.github/workflows/aws_tfhe_integer_tests_common.yml
+     with:
+       tiers: "1"
++      # Scheduled runs have no inputs
++      profile: ${{ inputs.profile || 'cpu_baseline' }}
+     secrets:
+       REPO_CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+```
+
+**File**: `.github/workflows/aws_tfhe_integer_tests_tier_2.yml` (modified, +12/-0)
+```diff
+@@ -5,6 +5,16 @@ name: aws_tfhe_integer_tests_tier_2
+ on:
+   # Run tier 2 on any branch, e.g. before merging a change to multi-bit
+   workflow_dispatch:
++    inputs:
++      profile:
++        description: "Test profile of the radix test harness"
++        type: choice
++        options:
++          - cpu_light
++          - cpu_baseline
++          - cpu_extensive
++          - cpu_fhevm
++        default: cpu_baseline
+   schedule:
+     # Tier 2, every other day
+     - cron: "0 3 * * MON,WED,FRI"
+@@ -23,6 +33,8 @@ jobs:
+     uses: ./.github/workflows/aws_tfhe_integer_tests_common.yml
+     with:
+       tiers: "2"
++      # Scheduled runs have no inputs
++      profile: ${{ inputs.profile || 'cpu_baseline' }}
+     secrets:
+       REPO_CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+```
+
+**File**: `.github/workflows/aws_tfhe_integer_tests_tier_3.yml` (modified, +12/-0)
+```diff
+@@ -5,6 +5,16 @@ name: aws_tfhe_integer_tests_tier_3
+ on:
+   # Run tier 3 on any branch
+   workflow_dispatch:
++    inputs:
++      profile:
++        description: "Test profile of the radix test harness"
++        type: choice
++        options:
++          - cpu_light
++          - cpu_baseline
++          - cpu_extensive
++          - cpu_fhevm
++        default: cpu_light
+   schedule:
+     # Tier 3, weekly
+     - cron: "0 4 * * SAT"
+@@ -23,6 +33,8 @@ jobs:
+     uses: ./.github/workflows/aws_tfhe_integer_tests_common.yml
+     with:
+       tiers: "3"
++      # Scheduled runs have no inputs
++      profile: ${{ inputs.profile || 'cpu_light' }}
+     secrets:
+       REPO_CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+```
+
+**File**: `.github/workflows/m1_tests.yml` (modified, +2/-1)
+```diff
+@@ -173,9 +173,10 @@ jobs:
+         run: |
+           make test_shortint_ci
  
--/tfhe-benchmark/                        @tmontaigu @SouchonTheo @zama-ai/tfhe-rs
--
--/utils/                                 @nsarlin-zama @SouchonTheo @zama-ai/tfhe-rs
--
--/Makefile                               @IceTDrinker @nsarlin-zama @zama-ai/tfhe-rs
-+/utils/                                 @zama-ai/tfhe-rs-devops
-+/Makefile                               @zama-ai/tfhe-rs-devops
++      # Only the default operations of tier 0 (FAST_TESTS is set for the whole job)
+       - name: Run integer tests
+         run: |
+-          make test_integer_ci
++          TIERS=0 TFHE_RS_TEST_PROFILE=cpu_light make test_integer_ci
  
- # GitHub related configurations, workflows and codeowners
- # and more
--/.github/                               @tmontaigu @SouchonTheo @zama-ai/tfhe-rs
-+/.github/                               @zama-ai/tfhe-rs-devops
- # No fallback on purpose
- /CODEOWNERS                             @IceTDrinker @nsarlin-zama
- 
--/ci/                                    @nsarlin-zama @SouchonTheo @zama-ai/tfhe-rs
--/scripts/                               @nsarlin-zama @SouchonTheo @zama-ai/tfhe-rs
-+/ci/                                    @zama-ai/tfhe-rs-devops
-+/scripts/                               @zama-ai/tfhe-rs-devops
- 
- # Protect manifests
--**/Cargo.toml                           @mayeul-zama @tmontaigu @zama-ai/tfhe-rs
--**/package.json                         @IceTDrinker @tmontaigu @zama-ai/tfhe-rs
--**/*requirements.in                     @IceTDrinker @tmontaigu @zama-ai/tfhe-rs
--**/*requirements.txt                    @IceTDrinker @tmontaigu @zama-ai/tfhe-rs
-+**/Cargo.toml                           @zama-ai/tfhe-rs-devops
-+**/package.json                         @zama-ai/tfhe-rs-devops
-+**/*requirements.in                     @zama-ai/tfhe-rs-devops
-+**/*requirements.txt                    @zama-ai/tfhe-rs-devops
- 
- # Various configurations
--/.cargo/audit.toml                      @nsarlin-zama @IceTDrinker @zama-ai/tfhe-rs
--/.cargo/deny.toml                       @nsarlin-zama @IceTDrinker @zama-ai/tfhe-rs
-+/.cargo/audit.toml                      @zama-ai/tfhe-rs-devops
-+/.cargo/deny.toml                       @zama-ai/tfhe-rs-devops
+       - name: Gen Keys if required
+         run: |
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4183** (2026-11-17): chore: simpler CODEOWNERS while still respecting guidelines (@IceTDrinker)
 - **PR #4181** (2026-11-17): chore: make pip timeout longer to avoid problem with potentially safe… (@IceTDrinker)
+- **PR #4172** (2026-11-17): chore(deps): bump compression and serve in /tfhe/web_wasm_parallel_tests (@dependabot[bot])
 - **PR #4163** (2026-11-12): chore: make codeowners more flexible (@IceTDrinker)
 - **PR #4162** (2026-11-12): chore: bump rustix to 1.1.6 (@nsarlin-zama)
-- **PR #4157** (2026-11-12): fix(integer): reject unexpected last block in modulus switched radix … (@mayeul-zama)
-- **PR #4156** (2026-11-13): fix(integer): signed radix squashing could pack unclean ciphertexts (@IceTDrinker)
+- **PR #4158** (closed): fix(gpu): wide sums, scalar max/min, shift amounts, match_value and compact lists (@pdroalves)
 
 ---
 
@@ -2061,38 +2432,97 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. make pip timeout longer to avoid problem with potentially safe-chain
+## X. deps): bump compression and serve in /tfhe/web_wasm_parallel_tests
 
 **RULE**:
-When implementing operations in `make/python.mk`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/web_wasm_parallel_tests/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1f5d2ab4`: make pip timeout longer to avoid problem with potentially safe-chain. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `935a8e49`: deps): bump compression and serve in /tfhe/web_wasm_parallel_tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `make/python.mk`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/web_wasm_parallel_tests/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Seconds pip waits for the network to answer (connection or data) before giving up on a request,
-# instead of its default of 15: packages are installed through Safe-Chain, which checks them before
-# handing them over to pip and can take longer than that to answer. PIP_DEFAULT_TIMEOUT is the
-# environment variable pip reads its --timeout option from: exporting it applies the value to every
-# pip call of every recipe, and it takes precedence over the pip configuration files, including the
-# one Safe-Chain generates. A value from the environment or the command line is used instead, e.g.
-# 'make ... PIP_DEFAULT_TIMEOUT=120'.
-export PIP_DEFAULT_TIMEOUT?=60
+        "serve": "^14.2.8",
+      "version": "1.8.2",
+      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.2.tgz",
+      "integrity": "sha512-o8vI5RE5A6EVVOd9o41jKp41aJom+QTEO/Bx8MYNjexMo/Bv2WOjUfZr+aL0WnYSgymUy6zeguqLTsIhV0gMvQ==",
+        "destroy": "1.2.0",
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/express"
+    "node_modules/debug": {
+      "version": "2.6.9",
+      "resolved": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
+      "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "ms": "2.0.0"
+      }
+    },
+    "node_modules/destroy": {
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
+      "integrity": "sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 0.8",
+        "npm": "1.2.8000 || >= 1.4.16"
+      }
+    },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        "serve": "^14.2.5",
+    "node_modules/arch": {
+      "version": "2.2.0",
+      "resolved": "https://registry.npmjs.org/arch/-/arch-2.2.0.tgz",
+      "integrity": "sha512-Of/R0wqp83cgHozfIYLbBMnej79U/SVGOOyuB3VVFv1NRM/PSFMK12x9KVtiYzJqmnU5WR2qp0Z5rHb7sWGnFQ==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/feross"
+        },
+        {
+          "type": "patreon",
+          "url": "https://www.patreon.com/feross"
+        },
+        {
+          "type": "consulting",
+          "url": "https://feross.org/support"
+        }
+      ],
+      "license": "MIT"
+    },
+    "node_modules/clipboardy": {
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/clipboardy/-/clipboardy-3.0.0.tgz",
+      "integrity": "sha512-Su+uU5sr1jkUy1sGRpLKjKrvEOVXgSgiSInwa/qeID6aJ07yh+5NWc3h2QfjHjBnfX4LhtFcuAWKUsJ3r+fjbg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "arch": "^2.2.0",
+        "execa": "^5.1.1",
+        "is-wsl": "^2.2.0"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "funding": {
+        "url": "https://github.com/spons
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1f5d2ab4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `935a8e49` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

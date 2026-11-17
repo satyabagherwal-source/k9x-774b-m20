@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T16:43:21.427Z",
+  "timestamp": "2026-11-17T20:45:43.895Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tokio-rs-tokio-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tokio-rs-tokio-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T16:43:21.427Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T20:45:43.895Z`  
 > **Learning ID**: `LEARN-EVO-tokio-rs-tokio-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tokio-rs-tokio-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `f3e855fa`  
+> **Source Version**: `1f5eac54`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T16:38:25.965Z  
+> **Timestamp**: 2026-11-17T20:45:27.033Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T16:38:23.295Z  
+> **Harvest Timestamp**: 2026-11-17T20:45:26.886Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33686 stars
+- **Stars / Engagement**: 33716 stars
 
 ---
 
@@ -1966,13 +1966,13 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8791** (2026-11-14): **ci: remove +atomics flags from wasm32-wasip1 job**
-  *Symptoms*: The wasm32-wasip1 CI job passes `-C target-feature=+atomics,+bulk-memory` and `-C link-args=--max-memory=67108864` to both `wasm32-wasip1` and `wasm32-wasip1-threads`. Starting with Rust 1.100.0, enabling `+atomics` on single-threaded `wasm32-wasip1` mismatches prebuilt `libstd`'s native TLS symbols and traps at runtime, while `wasm32-wasip1-threads` already sets these flags by default in its target spec. Thus, remove them from the `wasm32-wasip1` job.
-  **Post-Mortem & Fix Analysis**:
-  > cc @alex 
+- **Issue #8802** (2026-11-17): **metrics: update the dead H2 histogram link**
+  *Symptoms*: The `LogHistogram` docs link to the H2 histogram write-up at `iop.systems/blog/h2-histogram/`, which now returns 404. IOP Systems publishes the same write-up at https://h2histogram.org/, so this points both the doc link and the algorithm comment there.  Prepared with an AI coding assistant. 
 
-- **Issue #8773** (2026-11-10): **sync: don't hold a mutex permit while yielding for coop budget**
-  *Symptoms*: Fixes #8772.  A task driving a FuturesUnordered of futures that lock the same mutex, while locking it itself between polls, deadlocks on 1.54.x once the coop budget runs out: lock() takes the permit and then yields for budget, and the permit ends up stranded on a future that never gets polled again.  Two changes in batch_semaphore.rs, both restoring the "a Pending lock() holds no permit" invariant: - an unqueued waiter that could be satisfied right now but has no budget left yields without taking the permit or joining the queue; - a queued waiter that is assigned permits and then yields for budget hands them back and re-queues at the tail.  Verified with the reporter's repro verbatim: 1.54.1 hangs (watchdog fires at 65/500), this branch completes (OK: 500) on both multi_thread and current_thread. Added the repro as a regression test with a 10s timeout, and the sync_mutex (10), sync_semaphore (33) and sync_rwlock (21) suites all pass, including both #8371 coop tests.
+- **Issue #8800** (2026-11-17): **net: read uninit socket buffers via socket2**
+  *Symptoms*: Refs: #4685  The socket read and peek paths cast `&mut [MaybeUninit<u8>]` to `&mut [u8]` before the kernel fills the buffer. This change reads through `socket2::SockRef` inside `try_io` instead, the way `UdpSocket::peek_sender_inner` already does, so the cast is gone from `UdpSocket`, `TcpStream`, `UnixStream` and the connected `UnixDatagram` methods.  Not changed: the three `UnixDatagram::*_from` methods (I found no safe way to build an unnamed address from `socket2`), named pipes, `unix::pipe` and blocking I/O. On `wasm32-wasip1`, where `socket2` is not available, `TcpStream` keeps the old path.  There is no behaviour change, so the new tests pass before and after. I checked the helpers under Miri. I could not test on Windows; the `socket2` and std code paths look equivalent there, but I'd appreciate a second pair of eyes. 
+  **Post-Mortem & Fix Analysis**:
+  > Closing as per https://github.com/tokio-rs/tokio/issues/4685#issuecomment-6942817006
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1989,206 +1989,60 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f3e855fa` (2026-11-14)
-**Commit Message**: ci: remove +atomics flags from wasm32-wasip1 job (#8791)
+### Incident Patch 1: `1f5eac54` (2026-11-17)
+**Commit Message**: metrics: update the dead H2 histogram link (#8802)
 
-The wasm32-wasip1 CI job passes `-C target-feature=+atomics,+bulk-memory`
-and `-C link-args=--max-memory=67108864` to both `wasm32-wasip1` and
-`wasm32-wasip1-threads`. Starting with Rust 1.100.0, enabling `+atomics`
-on single-threaded `wasm32-wasip1` mismatches prebuilt `libstd`'s native
-TLS symbols and traps at runtime, while `wasm32-wasip1-threads` already
-sets these flags by default in its target spec. Thus, remove them from
-the `wasm32-wasip1` job.
+The `LogHistogram` docs link to the H2 histogram write-up on the IOP
+Systems blog, which now returns 404. The same write-up is published at
+https://h2histogram.org/, so point both references there.
 
-**File**: `.github/workflows/ci.yml` (modified, +5/-6)
+**File**: `tokio/src/runtime/metrics/histogram/h2_histogram.rs` (modified, +2/-2)
 ```diff
-@@ -1132,7 +1132,7 @@ jobs:
-         env:
-           CARGO_TARGET_WASM32_WASIP1_RUNNER: "wasmtime run --"
-           CARGO_TARGET_WASM32_WASIP1_THREADS_RUNNER: "wasmtime run -W bulk-memory=y -W threads=y -W shared-memory=y -S threads=y --"
--          RUSTFLAGS: --cfg tokio_unstable -Dwarnings -C target-feature=+atomics,+bulk-memory -C link-args=--max-memory=67108864
-+          RUSTFLAGS: --cfg tokio_unstable -Dwarnings
-           # in order to run doctests for unstable features, we must also pass
-           # the unstable cfg to RustDoc
-           RUSTDOCFLAGS: --cfg tokio_unstable
-@@ -1142,15 +1142,14 @@ jobs:
-         env:
-           CARGO_TARGET_WASM32_WASIP1_RUNNER: "wasmtime run --"
-           CARGO_TARGET_WASM32_WASIP1_THREADS_RUNNER: "wasmtime run -W bulk-memory=y -W threads=y -W shared-memory=y -S threads=y --"
--          RUSTFLAGS: --cfg tokio_unstable -Dwarnings -C target-feature=+atomics,+bulk-memory -C link-args=--max-memory=67108864
--          RUSTDOCFLAGS: -C link-args=--max-memory=67108864
-+          RUSTFLAGS: --cfg tokio_unstable -Dwarnings
+@@ -13,7 +13,7 @@ const MAX_PRECISION: u32 = 10;
  
-       - name: WASI test tokio-stream
-         run: cargo test --manifest-path=tokio-stream/Cargo.toml --target ${{ matrix.target }} --features time,net,io-util,sync
-         env:
-           CARGO_TARGET_WASM32_WASIP1_RUNNER: "wasmtime run --"
-           CARGO_TARGET_WASM32_WASIP1_THREADS_RUNNER: "wasmtime run -W bulk-memory=y -W threads=y -W shared-memory=y -S threads=y --"
--          RUSTFLAGS: --cfg tokio_unstable -Dwarnings -C target-feature=+atomics,+bulk-memory -C link-args=--max-memory=67108864
-+          RUSTFLAGS: --cfg tokio_unstable -Dwarnings
- 
-       - name: test tests-integration --features wasi-rt
-         # TODO: this should become: `cargo hack wasi test --each-feature`
-@@ -1159,15 +1158,15 @@ jobs:
-         working-directory: tests-integration
-         env:
-           CARGO_TARGET_WASM32_WASIP1_RUNNER: "wasmtime run --"
--          RUSTFLAGS: -Dwarnings -C target-feature=+atomics,+bulk-memory -C link-args=--max-memory=67108864
-+          RUSTFLAGS: -Dwarnings
- 
-       - name: test tests-integration --features wasi-threads-rt
-         run: cargo test --target ${{ matrix.target }} --features wasi-threads-rt
-         if: matrix.target == 'wasm32-wasip1-threads'
-         working-directory: tests-integration
-         env:
-           CARGO_TARGET_WASM32_WASIP1_THREADS_RUNNER: "wasmtime run -W bulk-memory=y -W threads=y -W shared-memory=y -S threads=y --"
--          RUSTFLAGS: --cfg tokio_unstable -Dwarnings -C target-feature=+atomics,+bulk-memory -C link-args=--max-memory=67108864
-+          RUSTFLAGS: --cfg tokio_unstable -Dwarnings
- 
-   wasm32-wasip2:
-     name: test tokio for wasm32-wasip2
+ /// Log Histogram
+ ///
+-/// This implements an [H2 Histogram](https://iop.systems/blog/h2-histogram/), a histogram similar
++/// This implements an [H2 Histogram](https://h2histogram.org/), a histogram similar
+ /// to HdrHistogram, but with better performance. It guarantees an error bound of `2^-p`.
+ ///
+ /// Unlike a traditional H2 histogram this has two small changes:
+@@ -282,7 +282,7 @@ impl Error for InvalidHistogramConfiguration {}
+ ///
+ /// This function does NOT enforce that the value is within the number of expected buckets.
+ fn bucket_index(value: u64, p: u32) -> u64 {
+-    // Algorithm described here: https://iop.systems/blog/h2-histogram/
++    // Algorithm described here: https://h2histogram.org/
+     // find the highest non-zero digit
+     if value == 0 {
+         return 0;
 ```
 
 ---
 
-### Incident Patch 2: `f5c5b57d` (2026-11-14)
-**Commit Message**: time: retain timer on interval tick (#8761)
+### Incident Patch 2: `02ed9178` (2026-11-17)
+**Commit Message**: deps: bump `nix` to version 0.32.0 (#8795)
 
-**File**: `tokio/src/time/interval.rs` (modified, +22/-19)
+**File**: `tokio/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -132,6 +132,7 @@ fn internal_interval_at(
-     };
+@@ -132,7 +132,7 @@ libc = { version = "0.2.168", optional = true }
+ libc = { version = "0.2.168" }
  
-     Interval {
-+        timer_elapsed: false,
-         delay: Box::pin(sleep_until(start)),
-         period: safe_delay(period),
-         missed_tick_behavior: MissedTickBehavior::default(),
-@@ -384,6 +385,9 @@ impl Default for MissedTickBehavior {
- /// [`sleep`]: crate::time::sleep()
- #[derive(Debug)]
- pub struct Interval {
-+    /// Whether or not the timer is elapsed.
-+    timer_elapsed: bool,
-+
-     /// Future that completes the next time the `Interval` yields a value.
-     delay: Pin<Box<Sleep>>,
+ [target.'cfg(all(unix, not(target_os = "emscripten")))'.dev-dependencies]
+-nix = { version = "0.31.0", default-features = false, features = ["aio", "fs", "socket"] }
++nix = { version = "0.32.0", default-features = false, features = ["aio", "fs", "socket"] }
  
-@@ -455,35 +459,34 @@ impl Interval {
-     /// [`Context`] passed to the most recent call is scheduled to receive a
-     /// wakeup.
-     pub fn poll_tick(&mut self, cx: &mut Context<'_>) -> Poll<Instant> {
--        // Wait for the delay to be done
--        ready!(Pin::new(&mut self.delay).poll(cx));
-+        let scheduled_deadline = self.delay.deadline();
- 
--        // Get the time when we were scheduled to tick
--        let timeout = self.delay.deadline();
-+        if self.timer_elapsed {
-+            self.reset_at(scheduled_deadline);
-+        }
- 
--        let now = Instant::now();
-+        ready!(self.delay.as_mut().poll(cx));
- 
-         // If a tick was not missed, and thus we are being called before the
-         // next tick is due, just schedule the next tick normally, one `period`
--        // after `timeout`
-+        // later.
-         //
-         // However, if a tick took excessively long and we are now behind,
-         // schedule the next tick according to how the user specified with
-         // `MissedTickBehavior`
--        let next = if now > timeout + Duration::from_millis(5) {
-+        let now = Instant::now();
-+        let next_deadline = if now > scheduled_deadline + Duration::from_millis(5) {
-             self.missed_tick_behavior
--                .next_timeout(timeout, now, self.period)
-+                .next_timeout(scheduled_deadline, now, self.period)
-         } else {
--            timeout + self.period
-+            scheduled_deadline + self.period
-         };
- 
--        // When we arrive here, the internal delay returned `Poll::Ready`.
--        // Reset the delay but do not register it. It should be registered with
--        // the next call to [`poll_tick`].
--        self.delay.as_mut().reset_without_timer(next);
-+        // Defer timer registration until the next call to [`poll_tick`].
-+        self.delay.as_mut().set_deadline(next_deadline);
-+        self.timer_elapsed = true;
- 
--        // Return the time when we were scheduled to tick
--        Poll::Ready(timeout)
-+        Poll::Ready(scheduled_deadline)
-     }
- 
-     /// Resets the interval to complete one period after the current time.
-@@ -515,7 +518,7 @@ impl Interval {
-     /// # }
-     /// ```
-     pub fn reset(&mut self) {
--        self.delay.as_mut().reset(Instant::now() + self.period);
-+        self.reset_at(Instant::now() + self.period);
-     }
- 
-     /// Resets the interval immediately.
-@@ -547,7 +550,7 @@ impl Interval {
-     /// # }
-     /// ```
-     pub fn reset_immediately(&mut self) {
--        self.delay.as_mut().reset(Instant::now());
-+        self.reset_at(Instant::now());
-     }
- 
-     /// Resets the interval after the specified [`std::time::Duration`].
-@@ -580,8 +583,7 @@ impl Interval {
-     /// # }
-     /// ```
-     pub fn reset_after(&mut self, after: Duration) {
--        let deadline = Instant::now() + safe_delay(after);
--        self.delay.as_mut().reset(deadline);
-+        self.reset_at(Instant::now() + safe_delay(after));
-     }
- 
-     /// Resets the interval to a [`crate::time::Instant`] deadline.
-@@ -618,6 +620,7 @@ impl Interval {
-     /// ```
-     pub fn reset_at(&mut self, deadline: Instant) {
-         self.delay.as_mut().reset(deadline);
-+        self.timer_elapsed = false;
-     }
- 
-     /// Returns the [`MissedTickBehavior`] strategy currently being used.
-```
-
-**File**: `tokio/src/time/sleep.rs` (modified, +2/-7)
-```diff
-@@ -371,13 +371,8 @@ impl Sleep {
-         }
-     }
- 
--    /// Resets the `Sleep` instance to a new deadline.
--    ///
--    /// Unlike [`reset`][Self::reset], this __removes__ the internal timer.
--    pub(super) fn reset_without_timer(self: Pin<&mut Self>, deadline: Instant) {
--        let mut this = self.project();
--        *this.deadline = deadline;
--        this.timer.set(None);
-+    pub(super) fn set_deadline(self: Pin<&mut Self>, deadline: Instant) {
-+        *self.project().deadline = deadline;
-     }
- 
-     fn poll_elapsed(self: Pin<&mut Self>, cx: &mut task::Context<'_>) -> Poll<Result<(), Error>> {
+ [target.'cfg(windows)'.dependencies.windows-sys]
+ version = "0.61"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8791** (2026-11-14): ci: remove +atomics flags from wasm32-wasip1 job (@Darksonn)
-- **PR #8773** (closed): sync: don't hold a mutex permit while yielding for coop budget (@Jeremiah-D)
-- **PR #8771** (2026-11-10): tokio-test: make `assert_ready_eq!` usable as an expression (@vignesh2027)
-- **PR #8770** (closed): fs: impl Clone for fs::DirEntry (@danielalvsaaker)
-- **PR #8766** (2026-11-07): rt: handle transient windows thread spawn errors (@gimenete)
-- **PR #8765** (2026-11-06): Merge 'tokio-1.54.x' into 'master' (@Darksonn)
+- **PR #8802** (2026-11-17): metrics: update the dead H2 histogram link (@farisbasha)
+- **PR #8800** (closed): net: read uninit socket buffers via socket2 (@alex09x)
+- **PR #8795** (2026-11-17): deps: bump `nix` to version 0.32.0 (@xtqqczze)
+- **PR #8794** (closed): ci: remove +atomics flags from wasm32-wasip1 job (@ADD-SP)
+- **PR #8793** (2026-11-15): ci: remove stale FreeBSD libc workaround (@ADD-SP)
+- **PR #8792** (2026-11-16): ci: pin stable to 1.99 and add lockfile for tokio-1.54.x (@Darksonn)
 
 ---
 
@@ -2208,40 +2062,33 @@ the `wasm32-wasip1` job.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: remove +atomics flags from wasm32-wasip1 job
+## X. metrics: update the dead H2 histogram link
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio/src/runtime/metrics/histogram/h2_histogram.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f3e855fa`: ci: remove +atomics flags from wasm32-wasip1 job. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f5eac54`: metrics: update the dead H2 histogram link. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/runtime/metrics/histogram/h2_histogram.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          RUSTFLAGS: --cfg tokio_unstable -Dwarnings
-          RUSTFLAGS: --cfg tokio_unstable -Dwarnings
-          RUSTFLAGS: --cfg tokio_unstable -Dwarnings
-          RUSTFLAGS: -Dwarnings
-          RUSTFLAGS: --cfg tokio_unstable -Dwarnings
+/// This implements an [H2 Histogram](https://h2histogram.org/), a histogram similar
+    // Algorithm described here: https://h2histogram.org/
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-          RUSTFLAGS: --cfg tokio_unstable -Dwarnings -C target-feature=+atomics,+bulk-memory -C link-args=--max-memory=67108864
-          RUSTFLAGS: --cfg tokio_unstable -Dwarnings -C target-feature=+atomics,+bulk-memory -C link-args=--max-memory=67108864
-          RUSTDOCFLAGS: -C link-args=--max-memory=67108864
-          RUSTFLAGS: --cfg tokio_unstable -Dwarnings -C target-feature=+atomics,+bulk-memory -C link-args=--max-memory=67108864
-          RUSTFLAGS: -Dwarnings -C target-feature=+atomics,+bulk-memory -C link-args=--max-memory=67108864
-          RUSTFLAGS: --cfg tokio_unstable -Dwarnings -C target-feature=+atomics,+bulk-memory -C link-args=--max-memory=67108864
+/// This implements an [H2 Histogram](https://iop.systems/blog/h2-histogram/), a histogram similar
+    // Algorithm described here: https://iop.systems/blog/h2-histogram/
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f3e855fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f5eac54` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

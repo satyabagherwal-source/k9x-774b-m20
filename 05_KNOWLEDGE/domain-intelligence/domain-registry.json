@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T20:33:27.787Z",
-  "total_records": 1682,
+  "last_updated": "2026-11-17T20:45:45.126Z",
+  "total_records": 1686,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 726,
+      "total": 728,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -775,7 +775,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-convaiinnovations-laya-learnings-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-edge0-audio8-asr-infinite-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-asr-infinite-learnings-core-inva",
-        "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-gguf-lear"
+        "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-gguf-lear",
+        "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-minilm-l6-v2-core-inva",
+        "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-minilm-l6-v2-learni"
       ]
     },
     "E": {
@@ -1134,7 +1136,7 @@
       ]
     },
     "H": {
-      "total": 398,
+      "total": 400,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1533,7 +1535,9 @@
         "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-learnings-",
         "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-learnings-core-invar",
         "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari"
+        "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari",
+        "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-learnings-core-invariants"
       ]
     },
     "I": {
@@ -9531,8 +9535,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "b8adee97426ad053e017ce8f2dc501d57210734ddaa3671f874fddfd74700685",
-      "created_at": "2026-11-17T16:38:51.694Z"
+      "content_hash": "243a764ffa6402d5e849305f9e5ebeb4344289fe81aa9e501a3b4898aacba52c",
+      "created_at": "2026-11-17T20:45:38.695Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -16234,8 +16238,8 @@
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "repository": "tokio-rs/tokio",
-      "content_hash": "4016ec25c2e10f17e7818a33033e53097480e1cb2b92dc5f75c004abe6b1871d",
-      "created_at": "2026-11-14T16:38:27.074Z"
+      "content_hash": "ed0826acbb327f83244fb5662fa043af558d5ab44d845ec656c8fa951e5e3489",
+      "created_at": "2026-11-17T20:45:28.376Z"
     },
     "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants",
@@ -16261,8 +16265,8 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-learnings-technical-construction-intelligence-tokio-rs-tokio-lear.md",
       "repository": "tokio-rs-tokio-learnings",
-      "content_hash": "b80337bbf7cd2686f9b0455c4962b04d399ea3f9ba632d60318e695aef7a8199",
-      "created_at": "2026-11-14T16:43:21.636Z"
+      "content_hash": "0341cbec9c7c51d2ebe6c22f35267f27637dbab9c4b6a4792ce8fc43f56708b2",
+      "created_at": "2026-11-17T20:45:44.137Z"
     },
     "DOM-D-65E545AD": {
       "record_id": "DOM-D-65E545AD",
@@ -24342,8 +24346,8 @@
       "title": "Quality & Verification Intelligence: crate/crate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-crate-crate-quality-verification-intelligence-crate-crate-core-invariants.md",
       "repository": "crate/crate",
-      "content_hash": "989ed2e5a7cf54cc5dadbde69e91a618b3d36136e7754345bab00168225a669f",
-      "created_at": "2026-11-16T22:19:31.124Z"
+      "content_hash": "e1595e1ca6e04e3ac864433afbb20c4beed04d09d5d21a72964994c696698dcf",
+      "created_at": "2026-11-17T20:45:40.670Z"
     },
     "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-falkordb-falkordb-learnings-core-invariants",
@@ -28415,6 +28419,42 @@
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings",
       "content_hash": "3fe5d42b8ee0ec5534c6292c3af53044fe7535d7552caa56d60fc716a67f8f2d",
       "created_at": "2026-11-17T20:33:27.216Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-minilm-l6-v2-core-inva": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-minilm-l6-v2-core-inva",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sentence-transformers/all-MiniLM-L6-v2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-minilm-l6-v2-research-knowledge-intelligence-senten.md",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "content_hash": "25deb2987cfaf9f50d52cd95d19bafe4263d628bbeb534a552f1fac9b587fd25",
+      "created_at": "2026-11-17T20:45:30.053Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kubeedge/kubeedge Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kubeedge-kubeedge-technical-construction-intelligence-kubeedge-kubeedge-core-inv.md",
+      "repository": "kubeedge/kubeedge",
+      "content_hash": "a55ad8adae6cc88ac6c91b81f97758897b0921d0d065af2e83fd36e4f40b2f9b",
+      "created_at": "2026-11-17T20:45:36.688Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-minilm-l6-v2-learni": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-minilm-l6-v2-learni",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-all-minilm-l6-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-minilm-l6-v2-learnings-research-knowledge-intellige.md",
+      "repository": "hf-sentence-transformers-all-minilm-l6-v2-learnings",
+      "content_hash": "110aadd30db565c8fee6d9b2e8d4c7a2350dd7ca51205e92d3d557dcd05a522e",
+      "created_at": "2026-11-17T20:45:44.601Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kubeedge-kubeedge-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kubeedge-kubeedge-learnings-technical-construction-intelligence-kubeedge-kubeedg.md",
+      "repository": "kubeedge-kubeedge-learnings",
+      "content_hash": "2a89cc4363d10d218feab4d3571eda55da980ce8479cdd4bd4edd94f6cc71523",
+      "created_at": "2026-11-17T20:45:45.126Z"
     }
   }
 }

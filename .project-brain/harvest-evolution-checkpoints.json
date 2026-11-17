@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T20:33:28.058Z",
+  "last_updated": "2026-11-17T20:45:45.398Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T19:12:36.114Z",
@@ -1538,7 +1538,7 @@
       "staged_for_review": 0
     },
     "kubeedge-kubeedge-learnings.md": {
-      "processed_at": "2026-11-16T23:35:15.846Z",
+      "processed_at": "2026-11-17T20:45:44.758Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1728,8 +1728,8 @@
       "staged_for_review": 0
     },
     "hf-sentence-transformers-all-minilm-l6-v2-learnings.md": {
-      "processed_at": "2026-11-13T10:55:52.540Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T20:45:44.421Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md": {
@@ -2658,7 +2658,7 @@
       "staged_for_review": 0
     },
     "tokio-rs-tokio-learnings.md": {
-      "processed_at": "2026-11-14T16:43:21.274Z",
+      "processed_at": "2026-11-17T20:45:43.616Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3358,7 +3358,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1707,
+  "total_dossiers_evaluated": 1710,
   "total_canonical_promoted": 324,
-  "total_staged_for_review": 1334
+  "total_staged_for_review": 1336
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T20:33:23.031Z",
+  "last_updated": "2026-11-17T20:45:40.350Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -81,14 +81,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "dd739cfecd4f9bd6af950cd5c5c3379f7e3412ea256dbd042e57a8afb5b5dbb5",
-      "verified_at": "2026-11-13T10:55:17.929Z",
+      "content_hash": "62c5a79ef00004e18d5bb71368d95b33fe365ff82dbd8f93fe3c466e3e78c9c7",
+      "verified_at": "2026-11-17T20:45:29.870Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T10:55:17.929Z"
+      "last_updated": "2026-11-17T20:45:29.870Z"
     },
     "cross-encoder/ms-marco-MiniLM-L6-v2": {
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "a8f7fdff6627b84b88323e7709e495bdd1955ea34bcb5cd225e9ba6621ecb7ee",
-      "verified_at": "2026-11-16T22:19:30.768Z",
+      "content_hash": "9d66194101a98e7569ae33a73b5aa00c91ee58ac133638a0bff0b5f2db0c1b54",
+      "verified_at": "2026-11-17T20:45:40.349Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T22:19:30.768Z"
+      "last_updated": "2026-11-17T20:45:40.349Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -3741,14 +3741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubeedge-kubeedge",
-      "content_hash": "4e463c0b04a9781a794247ff0ef8999dd44149292f7e367a76fe8f0dc013fb04",
-      "verified_at": "2026-11-16T23:35:04.874Z",
+      "content_hash": "766e6afb5ad16907e8c2e48e4766e5cf0cf9b8a8599e91453e843f10092c6348",
+      "verified_at": "2026-11-17T20:45:36.366Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:35:04.874Z"
+      "last_updated": "2026-11-17T20:45:36.366Z"
     },
     "giancarloerra/SocratiCode": {
       "repository": "giancarloerra/SocratiCode",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "96132406565710a1df78d54ef7c3604469f8b07e3139a97f492597e433afe10d",
-      "verified_at": "2026-11-17T16:38:51.374Z",
+      "content_hash": "9a7d93fbafbbf85871099d1e0fd8ed6478f1da61803b19d2a14624bcde427f3c",
+      "verified_at": "2026-11-17T20:45:38.363Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:38:51.374Z"
+      "last_updated": "2026-11-17T20:45:38.363Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "5a32608da0e49143da8447e93f57c2b0a0ce3235319d689f56e33024dd8b330f",
-      "verified_at": "2026-11-14T16:38:26.793Z",
+      "content_hash": "94ec51dfda37d7129cdbeabc726243d1e6dde6fa74026d5d8b99c2a4521a89c8",
+      "verified_at": "2026-11-17T20:45:28.054Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T16:38:26.793Z"
+      "last_updated": "2026-11-17T20:45:28.054Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",

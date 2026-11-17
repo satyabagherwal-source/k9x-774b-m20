@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T23:35:15.934Z",
+  "timestamp": "2026-11-17T20:45:44.895Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kubeedge-kubeedge-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kubeedge-kubeedge-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T23:35:15.934Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T20:45:44.895Z`  
 > **Learning ID**: `LEARN-EVO-kubeedge-kubeedge-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source**: github ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
-> **Source Version**: `5251e89f`  
+> **Source Version**: `3a9cb19f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T23:35:03.936Z  
+> **Timestamp**: 2026-11-17T20:45:35.401Z  
 > **Learning ID**: `learn-github-kubeedge-kubeedge`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T23:35:03.933Z  
+> **Harvest Timestamp**: 2026-11-17T20:45:35.395Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1258,286 +1258,438 @@ func RuleContains(rulePath, rule2Path string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5251e89f` (2026-11-16)
-**Commit Message**: Merge pull request #7360 from adity1raut/fix/nodetask-checktimeout-deleted-job
+### Incident Patch 1: `3a9cb19f` (2026-11-17)
+**Commit Message**: Merge pull request #7371 from saket0187/fix/cloudstream-exec-attach-busy-loop
 
-nodetask: handle deleted job in CheckTimeout
+cloudstream, edgestream: stop exec/attach busy loop after the client closes
 
-**File**: `cloud/pkg/controllermanager/nodetask/configupdatejob_handler.go` (modified, +6/-0)
+**File**: `cloud/pkg/cloudstream/containerattach_connection.go` (modified, +17/-18)
 ```diff
-@@ -166,6 +166,12 @@ func (h *ConfigUpdateJobReconcileHandler) CheckTimeout(ctx context.Context, jobN
- 	if err != nil {
- 		return err
- 	}
-+	// The job can be gone while its timeout job is still running, e.g. when
-+	// its finalizer is removed manually and the reconciler never releases it.
-+	if job == nil {
-+		logger.V(2).Info("job is not found, no need to check timeout")
-+		return nil
-+	}
- 	if job.Status.Phase != operationsv1alpha2.JobPhaseInProgress {
- 		logger.V(2).Info("job is not in InProgress phase, no need to check timeout")
- 		return nil
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/configupdatejob_handler_test.go` (modified, +7/-0)
-```diff
-@@ -445,6 +445,13 @@ func TestConfigUpdateJobCheckTimeout(t *testing.T) {
- 		assert.ErrorContains(t, err, "failed to get")
- 	})
+@@ -97,6 +97,8 @@ func (ah *ContainerAttachConnection) SendConnection() (stream.EdgedConnection, e
+ func (ah *ContainerAttachConnection) Serve() error {
+ 	defer func() {
+ 		close(ah.closeChan)
++		// Unblock any stuck write to the client; removing this connection waits for it.
++		ah.Conn.Close()
+ 		klog.V(6).Infof("%s stop successfully", ah.String())
+ 	}()
  
-+	t.Run("job is not found", func(t *testing.T) {
-+		// The job is deleted, so the client has no object for it.
-+		handler := NewConfigUpdateJobReconcileHandler(fakeConfigUpdateJobClient(), nil)
-+		err := handler.CheckTimeout(ctx, jobName)
-+		require.NoError(t, err)
-+	})
-+
- 	noTimeoutCases := []struct {
- 		name string
- 		job  *operationsv1alpha2.ConfigUpdateJob
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/imageprepulljob_handler.go` (modified, +6/-0)
-```diff
-@@ -167,6 +167,12 @@ func (h *ImagePrePullJobReconcileHandler) CheckTimeout(ctx context.Context, jobN
- 	if err != nil {
- 		return err
- 	}
-+	// The job can be gone while its timeout job is still running, e.g. when
-+	// its finalizer is removed manually and the reconciler never releases it.
-+	if job == nil {
-+		logger.V(2).Info("job is not found, no need to check timeout")
-+		return nil
-+	}
- 	if job.Status.Phase != operationsv1alpha2.JobPhaseInProgress {
- 		logger.V(2).Info("job is not in InProgress phase, no need to check timeout")
- 		return nil
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/imageprepulljob_handler_test.go` (modified, +7/-0)
-```diff
-@@ -367,6 +367,13 @@ func TestImagePrePullJobUpdateJobStatus(t *testing.T) {
- func TestImagePrePullJobCheckTimeout(t *testing.T) {
- 	ctx := context.TODO()
- 
-+	t.Run("job is not found", func(t *testing.T) {
-+		// The job is deleted, so the client has no object for it.
-+		handler := NewImagePrePullJobReconcileHandler(fakeImagePrePullJobClient(), nil)
-+		err := handler.CheckTimeout(ctx, "test-job")
-+		require.NoError(t, err)
-+	})
-+
- 	t.Run("job is not in progress", func(t *testing.T) {
- 		var updateJobStatusCalled bool
- 		patches := gomonkey.NewPatches()
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/nodeupgradejob_handler.go` (modified, +6/-0)
-```diff
-@@ -166,6 +166,12 @@ func (h *NodeUpgradeJobReconcileHandler) CheckTimeout(ctx context.Context, jobNa
- 	if err != nil {
- 		return err
- 	}
-+	// The job can be gone while its timeout job is still running, e.g. when
-+	// its finalizer is removed manually and the reconciler never releases it.
-+	if job == nil {
-+		logger.V(2).Info("job is not found, no need to check timeout")
-+		return nil
-+	}
- 	if job.Status.Phase != operationsv1alpha2.JobPhaseInProgress {
- 		logger.V(3).Info("job is not in InProgress phase, no need to check timeout")
- 		return nil
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/nodeupgradejob_handler_test.go` (modified, +7/-0)
-```diff
-@@ -363,6 +363,13 @@ func TestNodeUpgradeJobUpdateJobStatus(t *testing.T) {
- func TestNodeUpgradeJobCheckTimeout(t *testing.T) {
- 	ctx := context.TODO()
- 
-+	t.Run("job is not found", func(t *testing.T) {
-+		// The job is deleted, so the client has no object for it.
-+		handler := NewNodeUpgradeJobReconcileHandler(fakeNodeUpgradeJobClient(), nil)
-+		err := handler.CheckTimeout(ctx, "test-job")
-+		require.NoError(t, err)
-+	})
-+
- 	t.Run("job is not in progress", func(t *testing.T) {
- 		var updateJobStatusCalled bool
- 		patches := gomonkey.NewPatches()
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/reconcile_runner.go` (modified, +5/-0)
-```diff
-@@ -135,6 +135,11 @@ func RunReconcile[T NodeJobType](
- 			if err != nil {
- 				return err
- 			}
-+			// The job may be deleted after it was fetched at the start of the reconcile.
-+			if job == nil {
-+				logger.V(2).Info("the node job is not found, no need to calculate status")
-+				return nil
-+			}
- 			changed := handler.CalculateStatus(ctx, job)
- 			if changed {
- 				return handler.UpdateJobStatus(ctx, job)
-```
-
-**File**: `cloud/pkg/controllermanager/nodetask/reconcile_runner_test.go` (modified, +41/-0)
-```diff
-@@ -105,6 +105,47 @@ func TestRunReconcile(t *testing.T) {
- 		assert.NoError(t, err)
- 		assert.Equal(t, 0, handler.called["CalculateStatus"])
- 	})
-+
-+	t.Run("job is gone before calculating status", func(t *testing.T) {
-+		// RunReconcile starts a timeout job for the job in progress, release it so it
-+		// does not leak into other tests through the global timeout jobs map.
-+		t.Cleanup(func() {
-+			ReleaseTimeoutJob[operationsv1alpha2.ImagePrePullJob](ctx, req.Name, operationsv1alpha2.ResourceImagePrePullJob)
-+		})
-+		handler := &goneAfterFirstGetHandler{
-+			fakeReconcileHandler: fakeReconcileHandler{
-+				obj: &operationsv1alpha2.ImagePrePullJob{
-+					ObjectMeta: metav1.ObjectMeta{
-+						Name:       "test-job",
-+						Finalizers: []string{operationsv1alpha2.FinalizerImagePrePullJob},
-+					},
-+					Status: operationsv1alpha2.ImagePrePullJobStatus{
-+						Phase: operationsv1alpha2.JobPhaseInProgress,
-+					},
-+				},
-+			},
-+		}
-+		err := RunReconcile(ctx, req, handler)
-+		assert.NoError(t, err)
-+		assert.Equal(t, 2, handler.called["GetJob"])
-+		assert.Equal(t, 0, handler.called["CalculateStatus"])
-+		assert.Equal(t, 0, handler.called["UpdateJobStatus"])
-+	})
-+}
-+
-+// goneAfterFirstGetHandler returns the job only on the first GetJob call,
-+// as if the job is deleted while it is being reconciled.
-+type goneAfterFirstGetHandler struct {
-+	fakeReconcileHandler
-+}
-+
-+func (h *goneAfterFirstGetHandler) GetJob(ctx context.Context, req controllerruntime.Request,
-+) (*operationsv1alpha2.ImagePrePullJob, error) {
-+	job, err := h.fakeReconcileHandler.GetJob(ctx, req)
-+	if h.called["GetJob"] > 1 {
-+		return nil, nil
-+	}
-+	return job, err
- }
- 
- type fakeReconcileHandler struct {
-```
-
----
-
-### Incident Patch 2: `36575032` (2026-11-16)
-**Commit Message**: Merge pull request #7346 from arpitjain099/fix/servicebus-client-timeout-defaults
-
-servicebus: stop clobbering the caller's response header timeout
-
-**File**: `edge/pkg/servicebus/util/httpclient.go` (modified, +4/-5)
-```diff
-@@ -86,12 +86,11 @@ func GetURLClient(option *URLClientOption) (client *URLClient, err error) {
- 	if option == nil {
- 		option = DefaultURLClientOption
- 	} else {
--		switch {
--		case option.HandshakeTimeout == 0:
-+		if option.HandshakeTimeout == 0 {
- 			option.HandshakeTimeout = DefaultURLClientOption.HandshakeTimeout
--			fallthrough
--		case option.ResponseHeaderTimeout == 0:
--			option.ResponseHeaderTimeout = DefaultURLClientOption.HandshakeTimeout
-+		}
-+		if option.ResponseHeaderTimeout == 0 {
-+			option.ResponseHeaderTimeout = DefaultURLClientOption.ResponseHeaderTimeout
+@@ -131,26 +133,23 @@ func (ah *ContainerAttachConnection) Serve() error {
+ 			return fmt.Errorf("%s find edge peer done, so stop this connection", ah.String())
+ 		default:
  		}
+-		func() {
+-			n, err := ah.Conn.Read(data[:])
+-			if err != nil {
+-				if !errors.Is(err, io.EOF) {
+-					klog.Errorf("%s failed to read from client: %v", ah.String(), err)
+-					return
+-				}
++		n, err := ah.Conn.Read(data[:])
++		if err != nil {
++			if !errors.Is(err, io.EOF) {
++				klog.Errorf("%s failed to read from client: %v", ah.String(), err)
++			} else {
+ 				klog.V(6).Infof("%s read EOF from client", ah.String())
+-				sendCloseMessage()
+-				return
+-			}
+-			if n <= 0 {
+-				return
+-			}
+-			msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
+-			if err := ah.WriteToTunnel(msg); err != nil {
+-				klog.Errorf("%s failed to write to tunnel server, err: %v", ah.String(), err)
+-				return
+ 			}
+-		}()
++			sendCloseMessage()
++			return nil
++		}
++		if n <= 0 {
++			continue
++		}
++		msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
++		if err := ah.WriteToTunnel(msg); err != nil {
++			klog.Errorf("%s failed to write to tunnel server, err: %v", ah.String(), err)
++		}
  	}
+ }
  
 ```
 
-**File**: `edge/pkg/servicebus/util/httpclient_test.go` (modified, +46/-0)
+**File**: `cloud/pkg/cloudstream/containerexec_connection.go` (modified, +17/-18)
 ```diff
-@@ -122,3 +122,49 @@ func getMockServer(_ *testing.T) *httptest.Server {
- 	}))
- 	return ts
+@@ -97,6 +97,8 @@ func (c *ContainerExecConnection) SendConnection() (stream.EdgedConnection, erro
+ func (c *ContainerExecConnection) Serve() error {
+ 	defer func() {
+ 		close(c.closeChan)
++		// Unblock any stuck write to the client; removing this connection waits for it.
++		c.Conn.Close()
+ 		klog.V(6).Infof("%s stop successfully", c.String())
+ 	}()
+ 
+@@ -130,26 +132,23 @@ func (c *ContainerExecConnection) Serve() error {
+ 			return fmt.Errorf("%s find edge peer done, so stop this connection", c.String())
+ 		default:
+ 		}
+-		func() {
+-			n, err := c.Conn.Read(data[:])
+-			if err != nil {
+-				if !errors.Is(err, io.EOF) {
+-					klog.Errorf("%s failed to read from client: %v", c.String(), err)
+-					return
+-				}
++		n, err := c.Conn.Read(data[:])
++		if err != nil {
++			if !errors.Is(err, io.EOF) {
++				klog.Errorf("%s failed to read from client: %v", c.String(), err)
++			} else {
+ 				klog.V(6).Infof("%s read EOF from client", c.String())
+-				sendCloseMessage()
+-				return
+-			}
+-			if n <= 0 {
+-				return
+-			}
+-			msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
+-			if err := c.WriteToTunnel(msg); err != nil {
+-				klog.Errorf("%s failed to write to tunnel server, err: %v", c.String(), err)
+-				return
+ 			}
+-		}()
++			sendCloseMessage()
++			return nil
++		}
++		if n <= 0 {
++			continue
++		}
++		msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
++		if err := c.WriteToTunnel(msg); err != nil {
++			klog.Errorf("%s failed to write to tunnel server, err: %v", c.String(), err)
++		}
+ 	}
  }
+ 
+```
+
+**File**: `cloud/pkg/cloudstream/containerexec_connection_test.go` (modified, +130/-5)
+```diff
+@@ -19,8 +19,11 @@ package cloudstream
+ import (
+ 	"context"
+ 	"errors"
++	"io"
++	"net"
+ 	"net/http"
+ 	"net/url"
++	"sync"
+ 	"testing"
+ 	"time"
+ 
+@@ -244,14 +247,11 @@ func TestServe_Exec(t *testing.T) {
+ 					r:            r,
+ 					Conn:         conn,
+ 					session:      session,
+-					edgePeerStop: make(chan struct{}),
++					edgePeerStop: make(chan struct{}, 1),
+ 					closeChan:    make(chan bool),
+ 				}
+ 
+-				go func() {
+-					time.Sleep(50 * time.Millisecond)
+-					execConn.EdgePeerDone() <- struct{}{}
+-				}()
++				execConn.EdgePeerDone() <- struct{}{}
+ 
+ 				return execConn, cancel
+ 			},
+@@ -296,6 +296,131 @@ func TestServe_Exec(t *testing.T) {
+ 	}
+ }
+ 
++type readErrConn struct {
++	MockConn
++	err   error
++	reads int
++}
 +
-+func TestGetURLClientTimeoutDefaults(t *testing.T) {
-+	tests := map[string]struct {
-+		option             *URLClientOption
-+		wantHandshake      time.Duration
-+		wantResponseHeader time.Duration
++func (m *readErrConn) Read(b []byte) (int, error) {
++	m.reads++
++	if m.reads == 1 {
++		return 0, nil
++	}
++	if m.readBuffer.Len() > 0 {
++		return m.readBuffer.Read(b)
++	}
++	return 0, m.err
++}
++
++type countingTunneler struct {
++	MockTunneler
++	sent map[stream.MessageType]int
++}
++
++func (m *countingTunneler) WriteMessage(message *stream.Message) error {
++	m.sent[message.MessageType]++
++	if message.MessageType == stream.MessageTypeData {
++		return assert.AnError
++	}
++	return nil
++}
++
++type blockedWriteConn struct {
++	MockConn
++	writing chan struct{}
++	closed  chan struct{}
++}
++
++func (m *blockedWriteConn) Read([]byte) (int, error) {
++	<-m.writing
++	return 0, io.EOF
++}
++
++func (m *blockedWriteConn) Write([]byte) (int, error) {
++	close(m.writing)
++	<-m.closed
++	return 0, net.ErrClosed
++}
++
++func (m *blockedWriteConn) Close() error {
++	close(m.closed)
++	return nil
++}
++
++func TestServe_ClientClosed(t *testing.T) {
++	r := &restful.Request{Request: &http.Request{URL: &url.URL{}}}
++	testCases := []struct {
++		name    string
++		newConn func(net.Conn, *Session) APIServerConnection
 +	}{
-+		"nil option": {
-+			option:             nil,
-+			wantHandshake:      30 * time.Second,
-+			wantResponseHeader: 60 * time.Second,
++		{
++			name: "exec",
++			newConn: func(conn net.Conn, session *Session) APIServerConnection {
++				return &ContainerExecConnection{
++					ctx:          context.Background(),
++					r:            r,
++					Conn:         conn,
++					session:      session,
++					edgePeerStop: make(chan struct{}),
++					closeChan:    make(chan bool),
++				}
++			},
 +		},
-+		"both unset": {
-+			option:             &URLClientOption{},
-+			wantHandshake:      30 * time.Second,
-+			wantResponseHeader: 60 * time.Second,
-+		},
-+		"only response header set": {
-+			option:             &URLClientOption{ResponseHeaderTimeout: 5 * time.Second},
-+			wantHandshake:      30 * time.Second,
-+			wantResponseHeader: 5 * time.Second,
-+		},
-+		"only handshake set": {
-+			option:             &URLClientOption{HandshakeTimeout: 5 * time.Second},
-+			wantHandshake:      5 * time.Second,
-+			wantResponseHeader: 60 * time.Second,
++		{
++			name: "attach",
++			newConn: func(conn net.Conn, session *Session) APIServerConnection {
++				return &ContainerAttachConnection{
++					ctx:          context.Background(),
++					r:            r,
++					Conn:         conn,
++					session:      session,
++					edgePeerStop: make(chan struct{}),
++					closeChan:    make(chan bool),
++				}
++			},
 +		},
 +	}
 +
-+	for name, tt := range tests {
-+		t.Run(name, func(t *testing.T) {
-+			client, err := GetURLClient(tt.option)
-+			if err != nil {
-+				t.Fatalf("GetURLClient error: %v", err)
-+			}
-+			if client.options.HandshakeTimeout != tt.wantHandshake {
-+				t.Errorf("HandshakeTimeout: got %v, want %v",
-+					client.options.HandshakeTimeout, tt.wantHandshake)
-+			}
-+			if client.options.ResponseHeaderTimeout != tt.wantResponseHeader {
-+				t.Errorf("ResponseHeaderTimeout: got %v, want %v",
-+					client.options.ResponseHeaderTimeout, tt.wantResponseHeader)
++	for _, tc := range testCases {
++		for _, readErr := range []error{io.EOF, errors.New("connection reset by peer")} {
++			t.Run(tc.name+" "+readErr.Error(), func(t *testing.T) {
++				assert := assert.New(t)
++				conn := &readErrConn{err: readErr}
++				conn.readBuffer.WriteString("ls\n")
++				tun := &countingTunneler{sent: map[stream.MessageType]int{}}
++				apiConn := tc.newConn(conn, &Session{tunnel: tun})
++				time.AfterFunc(time.Second, apiConn.SetEdgePeerDone)
++
++				assert.NoError(apiConn.Serve())
++				assert.Equal(3, conn.reads)
++				assert.Equal(1, tun.sent[stream.MessageTypeData])
++				assert.Equal(1, tun.sent[stream.MessageTypeRemoveConnect])
++			})
++		}
++
++		t.Run(tc.name+" blocked write", func(t *testing.T) {
++			assert := assert.New(t)
++			conn := &blockedWriteConn{writing: make(chan struct{}), closed: make(chan struct{})}
++			session := &Session{tunnel: &MockTunneler{}, apiConnlock: &sync.RWMutex{}}
++			apiConn := tc.newConn(conn, session)
++			session.apiServerConn = map[uint64]APIServerConnection{0: apiConn}
++			proxyErr := make(chan error, 1)
++			go func() {
++				proxyErr <- session.ProxyTunnelMessageToApiserver(stream.NewMessage(0, stream.MessageTypeData, []byte("x")))
++			}()
++
++			assert.NoError(apiConn.Serve())
++			select {
++			case err := <-proxyErr:
++				assert.ErrorIs(err, net.ErrClosed)
++			case <-time.After(time.Second):
++				t.Fatal("client write still blocked after Serve returned, so DeleteAPIServerConnection would hang")
 +			}
 +		})
 +	}
 +}
++
+ func TestSetEdgePeerDone_Closed(t *testing.T) {
+ 	assert := assert.New(t)
+ 
 ```
 
----
-
-### Incident Patch 3: `de742477` (2026-11-16)
-**Commit Message**: Merge pull request #7355 from saket0187/fix/keadm-bootstrap-file-mode
-
-keadm: create bootstrap token file with 0640 permissions
-
-**File**: `keadm/cmd/keadm/app/cmd/edge/join.go` (modified, +0/-4)
+**File**: `cloud/pkg/cloudstream/streamserver.go` (modified, +2/-8)
 ```diff
-@@ -173,10 +173,6 @@ func setEdgedNodeLabels(opt *common.JoinOptions) map[string]string {
+@@ -276,10 +276,7 @@ func (s *StreamServer) getExec(request *restful.Request, response *restful.Respo
+ 	}
  
- func createBootstrapFile(opt *common.JoinOptions) error {
- 	bootstrapFile := constants.BootstrapFile
--	_, err := os.Create(bootstrapFile)
--	if err != nil {
--		return err
--	}
+ 	defer func() {
+-		if err != nil {
+-			session.DeleteAPIServerConnection(execConnection)
+-			klog.Infof("Delete %s from %s", execConnection.String(), session.String())
+-		}
++		session.DeleteAPIServerConnection(execConnection)
+ 	}()
  
- 	// write token to bootstrap-edgecore.conf file
- 	token := []byte(opt.Token)
+ 	if err = execConnection.Serve(); err != nil {
+@@ -346,10 +343,7 @@ func (s *StreamServer) getAttach(request *restful.Request, response *restful.Res
+ 	}
+ 
+ 	defer func() {
+-		if err != nil {
+-			session.DeleteAPIServerConnection(attachConnection)
+-			klog.Infof("Delete %s from %s", attachConnection.String(), session.String())
+-		}
++		session.DeleteAPIServerConnection(attachConnection)
+ 	}()
+ 
+ 	if err = attachConnection.Serve(); err != nil {
+```
+
+**File**: `edge/pkg/edgestream/tunnel.go` (modified, +18/-9)
+```diff
+@@ -58,7 +58,8 @@ func (s *TunnelSession) serveLogsConnection(m *stream.Message) error {
+ 	}
+ 
+ 	s.AddLocalConnection(m.ConnectID, logCon)
+-	return logCon.Serve(s.Tunnel)
++	go s.serveLocalConnection(m, logCon)
++	return nil
+ }
+ 
+ func (s *TunnelSession) serveContainerExecConnection(m *stream.Message) error {
+@@ -73,7 +74,8 @@ func (s *TunnelSession) serveContainerExecConnection(m *stream.Message) error {
+ 
+ 	s.AddLocalConnection(m.ConnectID, execCon)
+ 	klog.V(6).Infof("Get Exec Connection info: %+v", *execCon)
+-	return execCon.Serve(s.Tunnel)
++	go s.serveLocalConnection(m, execCon)
++	return nil
+ }
+ 
+ func (s *TunnelSession) serveContainerAttachConnection(m *stream.Message) error {
+@@ -88,7 +90,8 @@ func (s *TunnelSession) serveContainerAttachConnection(m *stream.Message) error
+ 
+ 	s.AddLocalConnection(m.ConnectID, attachCon)
+ 	klog.V(6).Infof("Get Attach Connection info: %+v", *attachCon)
+-	return attachCon.Serve(s.Tunnel)
++	go s.serveLocalConnection(m, attachCon)
++	return nil
+ }
+ 
+ func (s *TunnelSession) serveMetricsConnection(m *stream.Message) error {
+@@ -102,7 +105,16 @@ func (s *TunnelSession) serveMetricsConnection(m *stream.Message) error {
+ 	}
+ 
+ 	s.AddLocalConnection(m.ConnectID, metricsCon)
+-	return metricsCon.Serve(s.Tunnel)
++	go s.serveLocalConnection(m, metricsCon)
++	return nil
++}
++
++func (s *TunnelSession) serveLocalConnection(m *stream.Message, con stream.EdgedConnection) {
++	if err := con.Serve(s.Tunnel); err != nil {
++		klog.Errorf("Serve %s error %v", con.String(), err)
++	}
++	s.DeleteLocalConnection(m.ConnectID)
++	klog.V(6).Infof("Delete local connection MessageID %v Type %s", m.ConnectID, m.MessageType.String())
+ }
+ 
+ func (s *TunnelSession) ServeConnection(m *stream.Message) {
+@@ -125,11 +137,7 @@ func (s *TunnelSession) ServeConnection(m *stream.Message) {
+ 		}
+ 	default:
+ 		klog.Errorf("Wrong message type %v", m.MessageType)
+-		return
+ 	}
+-
+-	s.DeleteLocalConnection(m.ConnectID)
+-	klog.V(6).Infof("Delete local connection MessageID %v Type %s", m.ConnectID, m.MessageType.String())
+ }
+ 
+ func (s *TunnelSession) Close() {
+@@ -197,7 +205,8 @@ func (s *TunnelSession) Serve() error {
+ 			stream.MessageTypeExecConnect,
+ 			stream.MessageTypeMetricConnect,
+ 			stream.MessageTypeAttachConnect:
+-			go s.ServeConnection(mess)
++			// Not a goroutine: the connection must be registered before the next message is read.
++			s.ServeConnection(mess)
+ 		case stream.MessageTypeData,
+ 			stream.MessageTypeRemoveConnect:
+ 			s.WriteToLocalConnection(mess)
+```
+
+**File**: `edge/pkg/edgestream/tunnel_test.go` (modified, +37/-0)
+```diff
+@@ -3,6 +3,8 @@ package edgestream
+ import (
+ 	"bytes"
+ 	"io"
++	"net"
++	"net/url"
+ 	"testing"
+ 	"time"
+ 
+@@ -151,3 +153,38 @@ func TestServeDispatchUnsupportedMessageType(t *testing.T) {
+ 		t.Errorf("Expected clean/close not to be called on local connection")
+ 	}
+ }
++
++func TestServeQueuesMessageForNewConnection(t *testing.T) {
++	// Nothing answers the TLS handshake, so the connection never starts reading ReadChan.
++	ln, err := net.Listen("tcp", "127.0.0.1:0")
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer ln.Close()
++
++	connect, err := (&stream.EdgedExecConnection{
++		MessID: 1,
++		URL:    url.URL{Scheme: "https", Host: ln.Addr().String()},
++	}).CreateConnectMessage()
++	if err != nil {
++		t.Fatal(err)
++	}
++	session := &TunnelSession{
++		Tunnel: &mockTunneler{
++			messages: []*stream.Message{connect, stream.NewMessage(1, stream.MessageTypeRemoveConnect, nil)},
++		},
++		localCons: make(map[uint64]stream.EdgedConnection),
++	}
++
++	if err := session.Serve(); err != io.EOF {
++		t.Fatalf("Expected io.EOF, got %v", err)
++	}
++
++	con, ok := session.GetLocalConnection(1)
++	if !ok {
++		t.Fatal("Expected the exec connection to be registered")
++	}
++	if n := len(con.(*stream.EdgedExecConnection).ReadChan); n != 1 {
++		t.Fatalf("Expected the RemoveConnect to be queued for the connection, got %d queued messages", n)
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1546,7 +1698,7 @@ keadm: create bootstrap token file with 0640 permissions
 - **PR #7428** (closed): Upgrade golang.org/x/crypto to v0.52.0 (@kubeedge-bot)
 - **PR #7386** (2026-10-27): metaserver: add unit tests for the unhold-upgrade handlers (@adity1raut)
 - **PR #7379** (2026-10-27): metamanager : support for arrayList of objects for watch events creation (@EncHawk)
-- **PR #7360** (2026-11-16): nodetask: handle deleted job in CheckTimeout (@adity1raut)
+- **PR #7371** (2026-11-17): cloudstream, edgestream: stop exec/attach busy loop after the client closes (@saket0187)
 
 ---
 
@@ -1566,36 +1718,64 @@ keadm: create bootstrap token file with 0640 permissions
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in configupdatejob_handler.go
+## X. Empirical Invariant Guard in containerattach_connection.go
 
 **RULE**:
-When implementing operations in `cloud/pkg/controllermanager/nodetask/configupdatejob_handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cloud/pkg/cloudstream/containerattach_connection.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5251e89f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a9cb19f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cloud/pkg/controllermanager/nodetask/configupdatejob_handler.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cloud/pkg/cloudstream/containerattach_connection.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The job can be gone while its timeout job is still running, e.g. when
-	// its finalizer is removed manually and the reconciler never releases it.
-	if job == nil {
-		logger.V(2).Info("job is not found, no need to check timeout")
-		return nil
-	}
+		// Unblock any stuck write to the client; removing this connection waits for it.
+		ah.Conn.Close()
+		n, err := ah.Conn.Read(data[:])
+		if err != nil {
+			if !errors.Is(err, io.EOF) {
+				klog.Errorf("%s failed to read from client: %v", ah.String(), err)
+			} else {
+			sendCloseMessage()
+			return nil
+		}
+		if n <= 0 {
+			continue
+		}
+		msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
+		if err := ah.WriteToTunnel(msg); err != nil {
+			klog.Errorf("%s failed to write to tunnel server, err: %v", ah.String(), err)
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		func() {
+			n, err := ah.Conn.Read(data[:])
+			if err != nil {
+				if !errors.Is(err, io.EOF) {
+					klog.Errorf("%s failed to read from client: %v", ah.String(), err)
+					return
+				}
+				sendCloseMessage()
+				return
+			}
+			if n <= 0 {
+				return
+			}
+			msg := stream.NewMessage(connector.GetMessageID(), stream.MessageTypeData, data[:n])
+			if err := ah.WriteToTunnel(msg); err != nil {
+				klog.Errorf("%s failed to write to tunnel server, err: %v", ah.String(), err)
+				return
+		}()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5251e89f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a9cb19f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

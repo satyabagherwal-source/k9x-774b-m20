@@ -10739,3 +10739,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-17T20:33:06.543Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `a5f06105` | Multi-dimensional audit evidence | 2026-11-17T20:33:09.211Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5523d642` | Multi-dimensional audit evidence | 2026-11-17T20:33:23.023Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `1f5eac54` | Multi-dimensional audit evidence | 2026-11-17T20:45:28.045Z |
+| `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-17T20:45:29.861Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `3a9cb19f` | Multi-dimensional audit evidence | 2026-11-17T20:45:36.357Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `935a8e49` | Multi-dimensional audit evidence | 2026-11-17T20:45:38.354Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `bf89cdfb` | Multi-dimensional audit evidence | 2026-11-17T20:45:40.340Z |

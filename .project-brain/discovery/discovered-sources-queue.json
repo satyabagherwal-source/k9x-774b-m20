@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T20:33:26.478Z",
+  "updated_at": "2026-11-17T20:45:43.788Z",
   "stats": {
-    "total_discovered": 5154,
-    "approved_pending_harvest": 4865,
+    "total_discovered": 5157,
+    "approved_pending_harvest": 4868,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4850,
+      "COMMUNITY_AND_EXPERT": 4853,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -111386,6 +111386,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
         "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-5AA56209C4A0": {
+      "id": "SRC-5AA56209C4A0",
+      "url": "https://h2histogram.org/",
+      "title": "https://h2histogram.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T20:45:43.709Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
+        "fileName": "tokio-rs-tokio-learnings.md"
+      }
+    },
+    "SRC-2BD6590F345D": {
+      "id": "SRC-2BD6590F345D",
+      "url": "https://github.com/tokio-rs/tokio/issues/4685",
+      "title": "https://github.com/tokio-rs/tokio/issues/4685",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T20:45:43.751Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
+        "fileName": "tokio-rs-tokio-learnings.md"
+      }
+    },
+    "SRC-06173B19799A": {
+      "id": "SRC-06173B19799A",
+      "url": "https://iop.systems/blog/h2-histogram",
+      "title": "https://iop.systems/blog/h2-histogram",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T20:45:43.788Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
+        "fileName": "tokio-rs-tokio-learnings.md"
       }
     }
   }
