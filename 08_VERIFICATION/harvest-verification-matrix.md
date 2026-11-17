@@ -10627,3 +10627,6 @@
 | `CYCLE-20261117-D4IM` | `2026-11-17T16:46:48.094Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9009` | Yes (`81a98ea5...`) |
 | `CYCLE-20261117-D849` | `2026-11-17T16:46:52.762Z` | `stakater/Reloader` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9010` | Yes (`af427e77...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T16:47:25.011Z` | `hf-sensenova-sensenova-loop-9b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-66A27B84` [Domain D] | Yes (`2fc9aeab...`) |
+| `CYCLE-20261117-NA1G` | `2026-11-17T16:54:41.812Z` | `Qwen/Qwen3-14B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md` | Yes (`927eaa62...`) |
+| `CYCLE-20261117-NGJ3` | `2026-11-17T16:54:50.223Z` | `margelo/react-native-vision-camera` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9011` | Yes (`8607ee64...`) |
+| `CYCLE-20261117-NKVY` | `2026-11-17T16:54:55.870Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9012` | Yes (`e31a3d15...`) |

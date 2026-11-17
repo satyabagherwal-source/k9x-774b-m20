@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T16:47:25.848Z",
+  "updated_at": "2026-11-17T16:54:59.918Z",
   "stats": {
-    "total_discovered": 5045,
-    "approved_pending_harvest": 4757,
+    "total_discovered": 5053,
+    "approved_pending_harvest": 4764,
     "harvested_count": 0,
-    "rejected_count": 288,
+    "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4745,
+      "COMMUNITY_AND_EXPERT": 4753,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -108995,6 +108995,175 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
         "fileName": "sceneview-sceneview-learnings.md"
+      }
+    },
+    "SRC-478AC74430A8": {
+      "id": "SRC-478AC74430A8",
+      "url": "https://github.com/margelo/react-native-vision-camera",
+      "title": "https://github.com/margelo/react-native-vision-camera",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:54:59.290Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md",
+        "fileName": "margelo-react-native-vision-camera-learnings.md"
+      }
+    },
+    "SRC-0E931969CF55": {
+      "id": "SRC-0E931969CF55",
+      "url": "https://github.com/react-native-community/nightly-tests/actions/runs/43711180821/job/132802917826",
+      "title": "https://github.com/react-native-community/nightly-tests/actions/runs/43711180821/job/132802917826",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:54:59.314Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md",
+        "fileName": "margelo-react-native-vision-camera-learnings.md"
+      }
+    },
+    "SRC-5D51C12585AF": {
+      "id": "SRC-5D51C12585AF",
+      "url": "https://v/",
+      "title": "https://v/",
+      "status": "REJECTED_ANONYMOUS_OR_MISSING_PUBLISHER",
+      "rejection_reasons": [
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T16:54:59.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md",
+        "fileName": "margelo-react-native-vision-camera-learnings.md"
+      }
+    },
+    "SRC-25B4B9FE1CA0": {
+      "id": "SRC-25B4B9FE1CA0",
+      "url": "https://github.com/mrousavy/nitro",
+      "title": "https://github.com/mrousavy/nitro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:54:59.374Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md",
+        "fileName": "margelo-react-native-vision-camera-learnings.md"
+      }
+    },
+    "SRC-208A4794ACDD": {
+      "id": "SRC-208A4794ACDD",
+      "url": "https://github.com/margelo/nitro",
+      "title": "https://github.com/margelo/nitro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:54:59.398Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md",
+        "fileName": "margelo-react-native-vision-camera-learnings.md"
+      }
+    },
+    "SRC-4527DAB86FC0": {
+      "id": "SRC-4527DAB86FC0",
+      "url": "https://github.com/cilium/cilium/actions/runs/43909849539/job/133467728864",
+      "title": "https://github.com/cilium/cilium/actions/runs/43909849539/job/133467728864",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:54:59.866Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-0EAE4C66F96D": {
+      "id": "SRC-0EAE4C66F96D",
+      "url": "https://github.com/cilium/cilium/actions/runs/44054612089",
+      "title": "https://github.com/cilium/cilium/actions/runs/44054612089",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:54:59.892Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-7AC2A8C3E41C": {
+      "id": "SRC-7AC2A8C3E41C",
+      "url": "https://github.com/cilium/cilium/pull/50024",
+      "title": "https://github.com/cilium/cilium/pull/50024",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:54:59.917Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }

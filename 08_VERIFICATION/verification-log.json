@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-OC1A",
-    "timestamp": "2026-11-15T07:32:18.286Z",
-    "repository": "burner22/numbat",
-    "learningId": "learn-huggingface-burner22-numbat",
-    "contentHash": "38afcc6883c2384dbc22c750a33c07a673ea8d562f2f8ae56dad8bf32f25e63e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-0J16",
-    "timestamp": "2026-11-15T07:41:47.226Z",
-    "repository": "Edge0/Audio8-TTS-Realistic-Air",
-    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
-    "contentHash": "3bb2af68d457fd360dbf72782a9b379d30b5621d0611dadfe0ff9d430e59c288",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-0O0R",
-    "timestamp": "2026-11-15T07:41:53.691Z",
-    "repository": "mrkai77/Loop",
-    "learningId": "learn-github-mrkai77-loop",
-    "contentHash": "feed40183186728bdb4d5b73878ac526921f8317e498d524e5abc437fbcbbf2f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-0RYN",
     "timestamp": "2026-11-15T07:41:58.799Z",
     "repository": "gravitl/netmaker",
@@ -7490,6 +7445,51 @@
     "repository": "stakater/Reloader",
     "learningId": "learn-github-stakater-reloader",
     "contentHash": "af427e774b3eeae9ef0ad50307353136b733ad2cd6294081a6db36cb2c696460",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-NA1G",
+    "timestamp": "2026-11-17T16:54:41.812Z",
+    "repository": "Qwen/Qwen3-14B",
+    "learningId": "learn-huggingface-qwen-qwen3-14b",
+    "contentHash": "927eaa62ae03f17fe5a2f67373e1c36b5e19c4e7c6cef06a63303cb462ebedb2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-NGJ3",
+    "timestamp": "2026-11-17T16:54:50.223Z",
+    "repository": "margelo/react-native-vision-camera",
+    "learningId": "learn-github-margelo-react-native-vision-camera",
+    "contentHash": "8607ee6414e646a379be77539449080d4772f6a59ddd4c07ff086341870fd4c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-NKVY",
+    "timestamp": "2026-11-17T16:54:55.870Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "e31a3d15adbd12e6ea2508c5687abe9c9b093ae04055224db5e50d0e962aaec7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

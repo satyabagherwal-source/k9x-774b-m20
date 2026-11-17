@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T16:47:26.353Z",
-  "total_verified_learnings": 8910,
+  "last_updated": "2026-11-17T16:55:00.263Z",
+  "total_verified_learnings": 8912,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20385,
+  "total_items": 20397,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111973,10 +111973,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "71959474",
-      "content_hash": "a7dbbef3d9e289831bceb3e37f18aaa754a61ca81919e0ab04896a011fb3638a",
+      "source_version": "f0eb96d2",
+      "content_hash": "ad23444842199bf369d2b2312cf7685414764bd8834a320e108fa0d9364b5b3f",
       "domain_letter": "B",
-      "persisted_at": "2026-11-17T11:40:43.531Z"
+      "persisted_at": "2026-11-17T16:54:56.126Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -111985,10 +111985,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "911f5a91",
-      "content_hash": "21af4b0862edbfabe78edc598ca0b0008df15eac48cbdc85bea17db7b883f95b",
+      "source_version": "f0eb96d2",
+      "content_hash": "9ea64eb0fdb71f129d4582c3b093245133f171a127ccefe8dfb69167528a6cbe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:56:54.114Z"
+      "persisted_at": "2026-11-17T16:54:56.236Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112010,9 +112010,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "6778badde9779866e3ff793e1e2fb72ea7b09f83c39ea5e56e4b9e8133bb94b0",
+      "content_hash": "5e6ce6c2999d1e8886802bff4bada5777c63160f2d7a11079643302f43301480",
       "domain_letter": "B",
-      "persisted_at": "2026-11-17T04:56:58.085Z"
+      "persisted_at": "2026-11-17T16:55:00.150Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112022,9 +112022,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "3cc12c2aa8bad937be6dc8fe8b8056336bde02569f140686fefbbe15f7a391a5",
+      "content_hash": "a34a36ffa08b757e2750f73a888913a1fcac2a6ac5b771d09c0e434cd746b5b0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:56:58.239Z"
+      "persisted_at": "2026-11-17T16:55:00.263Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -214005,8 +214005,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "71959474",
-      "content_hash": "a962139db2e9d024469a20289c45223bd025247aad8279ceec815cbffe337e71",
+      "source_version": "f0eb96d2",
+      "content_hash": "e31a3d15adbd12e6ea2508c5687abe9c9b093ae04055224db5e50d0e962aaec7",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214044,6 +214044,11 @@
           "number": 8872,
           "title": "docs(ztunnel): add built-in CA limitations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9012,
+          "title": "Update docs-builder references for existing images",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214051,7 +214056,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T11:40:43.176Z",
+      "verified_at": "2026-11-17T16:54:55.723Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273347,6 +273352,190 @@
       "content_hash": "dcadc4f32702c0feecb255220ae81740c0d205464e1bffe138b8865e0f0dee49",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T16:47:26.067Z"
+    },
+    "learn-huggingface-qwen-qwen3-14b": {
+      "learning_id": "learn-huggingface-qwen-qwen3-14b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Qwen/Qwen3-14B",
+      "repository": "Qwen/Qwen3-14B",
+      "slug": "hf-qwen-qwen3-14b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
+      "source_version": "hf-qwen-qwen3-14b",
+      "content_hash": "927eaa62ae03f17fe5a2f67373e1c36b5e19c4e7c6cef06a63303cb462ebedb2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T16:54:41.663Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-14b-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants.md",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3-14B Core Invariants",
+      "repository": "Qwen/Qwen3-14B",
+      "source_version": "hf-qwen-qwen3-14b",
+      "content_hash": "3a8e51e9a5ed4223529d7ff09cdf0825174923ca9030baec5b7b8b58951ad371",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:54:41.970Z"
+    },
+    "learn-github-margelo-react-native-vision-camera": {
+      "learning_id": "learn-github-margelo-react-native-vision-camera",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "margelo/react-native-vision-camera",
+      "repository": "margelo/react-native-vision-camera",
+      "slug": "margelo-react-native-vision-camera",
+      "platform": "github",
+      "source_url": "https://github.com/margelo/react-native-vision-camera",
+      "source_version": "087977a6",
+      "content_hash": "8607ee6414e646a379be77539449080d4772f6a59ddd4c07ff086341870fd4c1",
+      "dossier_path": "07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9011,
+          "title": "Regenerate specs with nitrogen 0.37.2 for Kotlin 2.4",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T16:54:50.091Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9011": {
+      "learning_id": "rule-9011",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9011,
+      "title": "Regenerate specs with nitrogen 0.37.2 for Kotlin 2.4",
+      "source_url": "https://github.com/margelo/react-native-vision-camera",
+      "source_version": "087977a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:54:50.091Z"
+    },
+    "candidate_directive-regenerate-specs-with-nitrogen-0-37-2-for-kotlin-2-4": {
+      "item_id": "candidate_directive-regenerate-specs-with-nitrogen-0-37-2-for-kotlin-2-4",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NNPW-regenerate-specs-with-nitrogen-0-37-2-for-kotlin-2-4.md",
+      "title": "Regenerate specs with nitrogen 0.37.2 for Kotlin 2.4",
+      "repository": "margelo-react-native-vision-camera-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6ddf12910136e74d57ed72c1761b02fddce03e9f968ae0c660915616b6547357",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T16:54:59.540Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-core-inva": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-margelo-react-native-vision-camera-technical-construction-intelligence-margelo-r.md",
+      "title": "Technical Construction Intelligence: margelo/react-native-vision-camera Core Invariants",
+      "repository": "margelo/react-native-vision-camera",
+      "source_version": "087977a6",
+      "content_hash": "89534e727c9d98416ddbeeda35a8a7d0aac3d572c65861dd7d53b8e20c66bc05",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T16:54:50.468Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-margelo-react-native-vision-ca": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-margelo-react-native-vision-ca",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/margelo-react-native-vision-camera-learnings-verification-protocol-empirical-def.md",
+      "title": "Verification Protocol: Empirical Defect Shield for margelo-react-native-vision-camera-learnings",
+      "repository": "margelo-react-native-vision-camera-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f7515cfeb7ef1e9dc30a88caf8fb1d0239b73e8b67ddc9c48d51a24420e36acb",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T16:54:59.742Z"
+    },
+    "rule-9012": {
+      "learning_id": "rule-9012",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9012,
+      "title": "Update docs-builder references for existing images",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "f0eb96d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:54:55.723Z"
+    },
+    "candidate_directive-update-docs-builder-references-for-existing-images": {
+      "item_id": "candidate_directive-update-docs-builder-references-for-existing-images",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NL09-update-docs-builder-references-for-existing-images.md",
+      "title": "Update docs-builder references for existing images",
+      "repository": "cilium/cilium",
+      "source_version": "f0eb96d2",
+      "content_hash": "33d5e7845a813b55dbe9b503913572928892ac4529bc3d00182cff3e099bfa15",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-17T16:54:56.026Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-14b-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-14b-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-14b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-14b-le.md",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-14b-learnings Core Invariants",
+      "repository": "hf-qwen-qwen3-14b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6f55c87e4c8239e8ac00ed771b31803995935dc177387d774af8b65e163dc4a9",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:54:59.122Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-learnings": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-learnings",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-margelo-react-native-vision-camera-learnings-technical-construction-intelligence.md",
+      "title": "Technical Construction Intelligence: margelo-react-native-vision-camera-learnings Core Invariants",
+      "repository": "margelo-react-native-vision-camera-learnings",
+      "source_version": "HEAD",
+      "content_hash": "07e599923853048392443fbb22f627404a079f4dec5cc5df1b91fae3bff6743f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T16:54:59.636Z"
+    },
+    "candidate_directive-ci-update-docs-builder-references-for-existing-images": {
+      "item_id": "candidate_directive-ci-update-docs-builder-references-for-existing-images",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NO42-ci-update-docs-builder-references-for-existing-images.md",
+      "title": "ci: Update docs-builder references for existing images",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dfb1c32e25ddab4788339894059edd9709f7e1c5ed2a9e88dd5ca5c0082c955f",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-17T16:55:00.051Z"
     }
   },
   "ai-builder-brain": {

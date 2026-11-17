@@ -10660,3 +10660,6 @@ Every entry in this ledger must capture:
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `996349a5` | Multi-dimensional audit evidence | 2026-11-17T16:46:48.098Z |
 | `learn-github-stakater-reloader` | `https://github.com/stakater/Reloader` | `5f3fdbdc` | Multi-dimensional audit evidence | 2026-11-17T16:46:52.765Z |
 | `learn-dom-d-66a27b84` | `project://hf-sensenova-sensenova-loop-9b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md` | 2026-11-17T16:47:25.011Z |
+| `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-17T16:54:41.815Z |
+| `learn-github-margelo-react-native-vision-camera` | `https://github.com/margelo/react-native-vision-camera` | `087977a6` | Multi-dimensional audit evidence | 2026-11-17T16:54:50.226Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f0eb96d2` | Multi-dimensional audit evidence | 2026-11-17T16:54:55.873Z |

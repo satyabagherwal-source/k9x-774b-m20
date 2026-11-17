@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T16:46:52.773Z",
+  "last_updated": "2026-11-17T16:54:55.880Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "a962139db2e9d024469a20289c45223bd025247aad8279ceec815cbffe337e71",
-      "verified_at": "2026-11-17T11:40:43.361Z",
+      "content_hash": "e31a3d15adbd12e6ea2508c5687abe9c9b093ae04055224db5e50d0e962aaec7",
+      "verified_at": "2026-11-17T16:54:55.880Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T11:40:43.361Z"
+      "last_updated": "2026-11-17T16:54:55.880Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -6426,14 +6426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-margelo-react-native-vision-camera",
-      "content_hash": "c4952a70ee4fe514a8323154718efc0e6fded96a002c0453842e61de976f8003",
-      "verified_at": "2026-11-04T08:03:21.374Z",
+      "content_hash": "8607ee6414e646a379be77539449080d4772f6a59ddd4c07ff086341870fd4c1",
+      "verified_at": "2026-11-17T16:54:50.233Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T08:03:21.374Z"
+      "last_updated": "2026-11-17T16:54:50.233Z"
     },
     "vinceanalytics/vince": {
       "repository": "vinceanalytics/vince",
@@ -15816,14 +15816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-14b",
-      "content_hash": "fe486c95f2e4385cd010dfd36c8aee661312e051e9ce4e48ebb149bf45b104e3",
-      "verified_at": "2026-11-13T05:15:42.537Z",
+      "content_hash": "927eaa62ae03f17fe5a2f67373e1c36b5e19c4e7c6cef06a63303cb462ebedb2",
+      "verified_at": "2026-11-17T16:54:41.821Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T05:15:42.537Z"
+      "last_updated": "2026-11-17T16:54:41.821Z"
     },
     "SolaceProducts/solace-agent-mesh": {
       "repository": "SolaceProducts/solace-agent-mesh",

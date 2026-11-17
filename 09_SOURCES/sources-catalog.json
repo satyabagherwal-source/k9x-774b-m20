@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "71959474",
+    "sourceVersion": "f0eb96d2",
     "license": "Apache-2.0",
-    "contentHash": "a962139db2e9d024469a20289c45223bd025247aad8279ceec815cbffe337e71",
-    "lastHarvestedAt": "2026-11-17T11:40:43.353Z",
+    "contentHash": "e31a3d15adbd12e6ea2508c5687abe9c9b093ae04055224db5e50d0e962aaec7",
+    "lastHarvestedAt": "2026-11-17T16:54:55.873Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4203,10 +4203,10 @@
     "repository": "margelo/react-native-vision-camera",
     "platform": "github",
     "sourceUrl": "https://github.com/margelo/react-native-vision-camera",
-    "sourceVersion": "e3084ac5",
+    "sourceVersion": "087977a6",
     "license": "MIT",
-    "contentHash": "c4952a70ee4fe514a8323154718efc0e6fded96a002c0453842e61de976f8003",
-    "lastHarvestedAt": "2026-11-04T08:03:21.365Z",
+    "contentHash": "8607ee6414e646a379be77539449080d4772f6a59ddd4c07ff086341870fd4c1",
+    "lastHarvestedAt": "2026-11-17T16:54:50.226Z",
     "learningId": "learn-github-margelo-react-native-vision-camera"
   },
   "vinceanalytics-vince": {
@@ -10525,8 +10525,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-14B",
     "sourceVersion": "hf-qwen-qwen3-14b",
     "license": "Open-Source",
-    "contentHash": "fe486c95f2e4385cd010dfd36c8aee661312e051e9ce4e48ebb149bf45b104e3",
-    "lastHarvestedAt": "2026-11-13T05:15:42.528Z",
+    "contentHash": "927eaa62ae03f17fe5a2f67373e1c36b5e19c4e7c6cef06a63303cb462ebedb2",
+    "lastHarvestedAt": "2026-11-17T16:54:41.815Z",
     "learningId": "learn-huggingface-qwen-qwen3-14b"
   },
   "solaceproducts-solace-agent-mesh": {

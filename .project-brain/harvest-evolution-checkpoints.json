@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T16:47:26.489Z",
+  "last_updated": "2026-11-17T16:55:00.350Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -398,7 +398,7 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-17T04:56:57.687Z",
+      "processed_at": "2026-11-17T16:54:59.841Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1553,8 +1553,8 @@
       "staged_for_review": 0
     },
     "hf-qwen-qwen3-14b-learnings.md": {
-      "processed_at": "2026-11-13T05:16:25.325Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T16:54:58.971Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "nats-io-nats.go-learnings.md": {
@@ -3336,9 +3336,14 @@
       "processed_at": "2026-11-17T16:47:25.011Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "margelo-react-native-vision-camera-learnings.md": {
+      "processed_at": "2026-11-17T16:54:59.265Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1632,
+  "total_dossiers_evaluated": 1635,
   "total_canonical_promoted": 323,
-  "total_staged_for_review": 1281
+  "total_staged_for_review": 1283
 }

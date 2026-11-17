@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:41:10.013Z",
+  "timestamp": "2026-11-17T16:54:59.470Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-margelo-react-native-vision-camera-learnings",
+  "learning_id": "LEARN-EVO-margelo-react-native-vision-camera-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [margelo-react-native-vision-camera-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:41:10.013Z`  
-> **Learning ID**: `LEARN-REEXTRACT-margelo-react-native-vision-camera-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T16:54:59.470Z`  
+> **Learning ID**: `LEARN-EVO-margelo-react-native-vision-camera-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md`  
 > **Source**: github ([https://github.com/margelo/react-native-vision-camera](https://github.com/margelo/react-native-vision-camera))  
-> **Source Version**: `e3084ac5`  
+> **Source Version**: `087977a6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T08:03:20.572Z  
+> **Timestamp**: 2026-11-17T16:54:49.484Z  
 > **Learning ID**: `learn-github-margelo-react-native-vision-camera`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/margelo/react-native-vision-camera](https://github.com/margelo/react-native-vision-camera))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T08:02:52.425Z  
+> **Harvest Timestamp**: 2026-11-17T16:54:49.480Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 📸 A powerful, high-performance React Native Camera library.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9649 stars
+- **Stars / Engagement**: 9662 stars
 
 ---
 
@@ -561,11 +561,13 @@ export function normalizeRotationDegrees(degrees: number): number {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4238** (2026-11-03): **✨ React Native Skia v3**
-  *Symptoms*: ### Prerequisites  - [x] I have searched [existing issues](https://github.com/margelo/react-native-vision-camera/issues?q=is%3Aissue) for a similar request.  ### What problem are you trying to solve?  React Native Skia v3 has been out for a while and is being actively developed with significant improvements to performance and its new architecture. Does React Native Vision Camera have any plans to upgrade its React Native Skia dependency to support the latest version?  | | v3 | v2 | |:--|:--|:--| | npm | `react-native-skia` | `react-native-skia@2` | | Skia backend | Graphite (Vulkan/Metal) | Ganesh (OpenGL/Metal) | | Architecture | multi-threaded | single-threaded |  ### Proposed API / solution  .  ### Alternatives considered  _No response_  ### Platforms this should target  Both  ### Would you be willing to contribute this?  No, I'm requesting only.  ### Additional context  _No response_  ### Submission  - [x] I described the problem, not just the solution. - [x] I wrote this request in my own words. I did not paste AI-generated proposals.
+- **Issue #4243** (2026-11-16): **fix: Regenerate specs with nitrogen 0.37.2 for Kotlin 2.4**
+  *Symptoms*: ## What  React Native nightly bumped Kotlin to 2.4.21 (facebook/react-native#59888), which breaks the Android build in the [nightly tests](https://github.com/react-native-community/nightly-tests/actions/runs/43711180821/job/132802917826):  ``` e: .../nitrogen/generated/android/kotlin/com/margelo/nitro/camera/views/HybridPreviewViewManager.kt:82:9 Check for instance is always 'false'. e: .../nitrogen/generated/android/kotlin/com/margelo/nitro/camera/views/HybridFrameRendererViewManager.kt:82:9 Check for instance is always 'false'. ```  The generated `hybridView is RecyclableView` check is impossible because `HybridPreviewView` and `HybridFrameRendererView` are final classes. Kotlin 2.4 turns it into an error that `@Suppress("USELESS_IS_CHECK")` no longer hides. Nitro fixed this in nitrogen 0.37.2 (mrousavy/nitro#2011).  ## Changes  - Bump `nitrogen` and `react-native-nitro-modules` to `0.37.2` and regenerate specs. Most of the diff is the repo link in file headers changing. - Raise `react-native-nitro-modules` peer dependency from `*` to `>=0.37.2`, since the regenerated code uses APIs added in 0.37.2.  ## Testing  `:react-native-vision-camera:compileDebugKotlin` passes in `apps/simple-camera` with Kotlin temporarily set to 2.4.21.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-- **Issue #4218** (2026-10-14): **fix(android): prevent CameraX executor starvation**
-  *Symptoms*: ## Summary  Prevent long-running Android frame worklets from starving CameraX's internal `ImageAnalysis` background work.  This removes the explicit `setBackgroundExecutor(executor)` configuration from both the regular frame output and the depth frame output. Analyzer callbacks and the `HybridNativeThread` continue to share their existing single-thread `IdentifiableExecutor`, preserving serialized frame processing, while CameraX can use its own performance-tuned background executor for internal pipeline work.  ## Problem  `HybridFrameOutput` previously used the same `IdentifiableExecutor("com.margelo.camera.frame")` for three different responsibilities:  1. CameraX `ImageAnalysis` internal background work via `ImageAnalysis.Builder.setBackgroundExecutor(...)`. 2. Serialized analyzer callbacks via `imageAnalysis.setAnalyzer(...)`. 3. The `HybridNativeThread` used by the frame worklet runtime.  A synchronous frame worklet therefore blocked not only the next analyzer callback, which is expected, but also CameraX's own background tasks on the same single-thread queue.  In a Perfetto trace with an approximately two-second synchronous worklet, CameraX tasks queued behind the worklet for up to approximately 1.95 seconds. This stalled the image-analysis pipeline and caused the camera preview to visibly freeze. Separating CameraX's background work from the analyzer/worklet executor kept the preview smooth under the same workload.  ## User-visible impact  This execu
+- **Issue #4241** (2026-11-16): **feat: Bump the camera-libs group across 2 directories with 7 updates**
+  *Symptoms*: Bumps the camera-libs group with 1 update in the /packages/react-native-vision-camera-barcode-scanner/android directory: androidx.camera:camera-core. Bumps the camera-libs group with 7 updates in the /packages/react-native-vision-camera/android directory:  | Package | From | To | | --- | --- | --- | | androidx.camera:camera-core | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-camera2 | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-camera2-pipe | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-lifecycle | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-video | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-view | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-extensions | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-camera2 | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-camera2-pipe | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-lifecycle | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-video | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-view | `1.7.0-alpha03` | `1.7.0-rc02` | | androidx.camera:camera-extensions | `1.7.0-alpha03` | `1.7.0-rc02` |   Updates `androidx.camera:camera-core` from 1.7.0-alpha03 to 1.7.0-rc02  Updates `androidx.camera:camera-core` from 1.7.0-alpha03 to 1.7.0-rc02  Updates `androidx.camera:camera-camera2` from 1.7.0-alpha03 to 1.7.0-rc02  Updates `androidx.camera:camera-camera2-pipe` from 1.7.0-alpha03 to 1.7.0-rc02  Updates
+  **Post-Mortem & Fix Analysis**:
+  > [vc]: #VhbXp949zLdnFsCrSQqMCPZ+QuRq3FWLwl+/+c+1/RQ=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJyZWFjdC1uYXRpdmUtdmlzaW9uLWNhbWVyYS1kb2NzIiwicHJvamVjdElkIjoicHJqX1JJb09mcEZmTkl5ZTI0WWRlV1JUOWloV2xubHoiLCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vbWFyZ2Vsby9yZWFjdC1uYXRpdmUtdmlzaW9uLWNhbWVyYS1kb2NzLzlURWVFSllwQ1BKNXdZTlJDbnk0ZDE5SlZkQlYiLCJwcmV2aWV3VXJsIjoicmVhY3QtbmF0aXZlLXZpc2lvbi1jYW1lcmEtZG9jcy1naXQtZGVwZW5kYWJvdC1nLWM3NWE2NC1tYXJnZWxvLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoicmVhY3QtbmF0aXZlLXZpc2lvbi1jYW1lcmEtZG9jcy1naXQtZGVwZW5kYWJvdC1nLWM3NWE2NC1tYXJnZWxvLnZlcmNlbC5hcHAifSwicm9vdERpcmVjdG9yeSI6ImRvY3MifV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPW1hcmdlbG8mcmVwbz1yZWFjdC1uYXRpdmUtdmlzaW9uLWNhbWVyYSZwcj00MjQxIn0= The latest updates on your projects. Learn more about [Vercel for GitHub](https://v
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -582,155 +584,213 @@ export function normalizeRotationDegrees(degrees: number): number {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3084ac5` (2026-11-02)
-**Commit Message**: fix: Compile Android resizer shaders on AGP 9 (#4190)
+### Incident Patch 1: `0de03210` (2026-11-16)
+**Commit Message**: fix: Regenerate specs with nitrogen 0.37.2 for Kotlin 2.4 (#4243)
 
-* fix: Compile resizer shaders with the selected NDK
-
-* chore: Remove redundant release shader CI check
-
-**File**: `packages/react-native-vision-camera-resizer/android/build.gradle` (modified, +2/-6)
+**File**: `apps/simple-camera/package.json` (modified, +1/-1)
 ```diff
-@@ -50,10 +50,6 @@ android {
-     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
-     buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
- 
--    shaders {
--      glslcArgs.addAll(["-O"])
--    }
--
-     externalNativeBuild {
-       cmake {
-         cppFlags "-frtti -fexceptions -Wall -Wextra -fstack-protector-all"
-@@ -122,8 +118,6 @@ android {
- 
-   sourceSets {
-     main {
--      shaders.srcDirs = ["src/main/shaders"]
--
-       if (isNewArchitectureEnabled()) {
-         java.srcDirs += [
-           // React Codegen files
-@@ -134,6 +128,8 @@ android {
-   }
- }
- 
-+apply from: "./compile-shaders.gradle"
-+
- repositories {
-   mavenCentral()
-   google()
+@@ -26,7 +26,7 @@
+     "react-native": "0.85.3",
+     "react-native-gesture-handler": "^3.0.0",
+     "react-native-nitro-image": "0.15.2",
+-    "react-native-nitro-modules": "0.37.0",
++    "react-native-nitro-modules": "0.37.2",
+     "react-native-reanimated": "4.4.0",
+     "react-native-safe-area-context": "^5.8.0",
+     "react-native-screens": "^4.25.2",
 ```
 
-**File**: `packages/react-native-vision-camera-resizer/android/compile-shaders.gradle` (added, +72/-0)
+**File**: `bun.lock` (modified, +16/-14)
 ```diff
-@@ -0,0 +1,72 @@
-+import org.gradle.api.file.DirectoryProperty
-+import org.gradle.api.file.RegularFileProperty
-+import org.gradle.api.tasks.CacheableTask
-+import org.gradle.api.tasks.InputDirectory
-+import org.gradle.api.tasks.InputFile
-+import org.gradle.api.tasks.OutputDirectory
-+import org.gradle.api.tasks.PathSensitive
-+import org.gradle.api.tasks.PathSensitivity
-+import org.gradle.api.tasks.TaskAction
-+import org.gradle.process.ExecOperations
-+
-+import javax.inject.Inject
-+
-+@CacheableTask
-+abstract class CompileResizerShader extends DefaultTask {
-+  // Include helper files in the input snapshot so edits to #includes recompile the shader.
-+  @InputDirectory
-+  @PathSensitive(PathSensitivity.RELATIVE)
-+  abstract DirectoryProperty getShaderDirectory()
-+
-+  @InputFile
-+  @PathSensitive(PathSensitivity.NONE)
-+  abstract RegularFileProperty getCompilerFile()
-+
-+  @OutputDirectory
-+  abstract DirectoryProperty getOutputDirectory()
-+
-+  @Inject
-+  abstract ExecOperations getExecOperations()
-+
-+  @TaskAction
-+  void compile() {
-+    def inputFile = shaderDirectory.file("Resizer.comp").get().asFile
-+    def outputFile = outputDirectory.file("shaders/Resizer.comp.spv").get().asFile
-+    outputFile.parentFile.mkdirs()
-+    execOperations.exec {
-+      commandLine compilerFile.get().asFile, "-O", inputFile, "-o", outputFile
-+    }
-+  }
-+}
-+
-+// Own shader compilation on all AGP versions. AGP 9 disables its built-in task by
-+// default and requires a compiler path in the consuming app's local.properties.
-+android.buildFeatures.shaders = false
-+
-+def osName = System.getProperty("os.name").toLowerCase(Locale.ROOT)
-+def hostTag
-+if (osName.contains("windows")) {
-+  hostTag = "windows-x86_64"
-+} else if (osName.contains("mac") || osName.contains("darwin")) {
-+  // The NDK uses this directory on both Intel and Apple Silicon Macs.
-+  hostTag = "darwin-x86_64"
-+} else if (osName.contains("linux")) {
-+  hostTag = "linux-x86_64"
-+} else {
-+  throw new GradleException("Unsupported host OS for the VisionCamera Resizer shader compiler: ${osName}")
-+}
-+
-+def compilerName = osName.contains("windows") ? "glslc.exe" : "glslc"
-+def shaderCompiler = androidComponents.sdkComponents.ndkDirectory.map { ndk ->
-+  ndk.file("shader-tools/${hostTag}/${compilerName}")
-+}
-+def shaderSources = layout.projectDirectory.dir("src/main/shaders")
-+
-+androidComponents.onVariants(androidComponents.selector().all()) { variant ->
-+  def compileShader = tasks.register("compile${variant.name.capitalize()}ResizerShader", CompileResizerShader) {
-+    shaderDirectory.set(shaderSources)
-+    compilerFile.set(shaderCompiler)
-+  }
-+  // AGP supplies the output directory and makes asset merging depend on this task.
-+  variant.sources.assets.addGeneratedSourceDirectory(compileShader) { it.outputDirectory }
-+}
-```
-
-**File**: `packages/react-native-vision-camera-resizer/android/src/main/cpp/vulkan/VulkanShaderAssetLoader.cpp` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ namespace {
-       throw std::runtime_error("Android asset manager is not available for Vulkan shader loading.");
-     }
+@@ -33,7 +33,7 @@
+         "react-native": "0.85.3",
+         "react-native-gesture-handler": "^3.0.0",
+         "react-native-nitro-image": "0.15.2",
+-        "react-native-nitro-modules": "0.37.0",
++        "react-native-nitro-modules": "0.37.2",
+         "react-native-reanimated": "4.4.0",
+         "react-native-safe-area-context": "^5.8.0",
+         "react-native-screens": "^4.25.2",
+@@ -106,11 +106,11 @@
+       "version": "5.2.4",
+       "devDependencies": {
+         "@types/react": "19.2.15",
+-        "nitrogen": "0.37.0",
++        "nitrogen": "0.37.2",
+         "react": "19.2.3",
+         "react-native": "0.85.3",
+         "react-native-nitro-image": "0.15.2",
+-        "react-native-nitro-modules": "0.37.0",
++        "react-native-nitro-modules": "0.37.2",
+         "typescript": "6.0.3",
+       },
+       "peerDependencies": {
+@@ -128,11 +128,11 @@
+       "version": "5.2.4",
+       "devDependencies": {
+         "@types/react": "19.2.15",
+-        "nitrogen": "0.37.0",
++        "nitrogen": "0.37.2",
+         "react": "19.2.3",
+         "react-native": "0.85.3",
+         "react-native-nitro-image": "0.15.2",
+-        "react-native-nitro-modules": "0.37.0",
++        "react-native-nitro-modules": "0.37.2",
+         "react-native-vision-camera": "*",
+         "typescript": "6.0.3",
+       },
+@@ -152,10 +152,10 @@
+       "version": "5.2.4",
+       "devDependencies": {
+         "@types/react": "19.2.15",
+-        "nitrogen": "0.37.0",
++        "nitrogen": "0.37.2",
+         "react": "19.2.3",
+         "react-native": "0.85.3",
+-        "react-native-nitro-modules": "0.37.0",
++        "react-native-nitro-modules": "0.37.2",
+         "react-native-vision-camera": "*",
+         "typescript": "6.0.3",
+       },
+@@ -174,10 +174,10 @@
+       "version": "5.2.4",
+       "devDependencies": {
+         "@types/react": "19.2.15",
+-        "nitrogen": "0.37.0",
++        "nitrogen": "0.37.2",
+         "react": "19.2.3",
+         "react-native": "0.85.3",
+-        "react-native-nitro-modules": "0.37.0",
++        "react-native-nitro-modules": "0.37.2",
+         "react-native-vision-camera": "*",
+         "typescript": "6.0.3",
+       },
+@@ -199,7 +199,7 @@
+         "@types/react": "19.2.15",
+         "react": "19.2.3",
+         "react-native": "0.85.3",
+-        "react-native-nitro-modules": "0.37.0",
++        "react-native-nitro-modules": "0.37.2",
+         "react-native-reanimated": "4.4.0",
+         "react-native-vision-camera": "*",
+         "react-native-vision-camera-worklets": "*",
+@@ -221,10 +221,10 @@
+       "version": "5.2.4",
+       "devDependencies": {
+         "@types/react": "19.2.15",
+-        "nitrogen": "0.37.0",
++        "nitrogen": "0.37.2",
+         "react": "19.2.3",
+         "react-native": "0.85.3",
+-        "react-native-nitro-modules": "0.37.0",
++        "react-native-nitro-modules": "0.37.2",
+         "react-native-vision-camera": "*",
+         "react-native-worklets": "0.9.1",
+         "typescript": "6.0.3",
+@@ -2220,7 +2220,9 @@
  
--    // The shader is precompiled by AGP and packaged as an app asset, so native code only needs to read the SPIR-V bytes.
-+    // The shader is precompiled by Gradle and packaged as an app asset, so native code only needs to read the SPIR-V bytes.
-     std::unique_ptr<AAsset, decltype(&AAsset_close)> asset(AAssetManager_open(assetManager, assetPath, AASSET_MODE_BUFFER), &AAsset_close);
-     if (asset == nullptr) [[unlikely]] {
-       throw std::runtime_error(std::string("Failed to open Vulkan shader asset `") + assetPath +
+     "next-themes": ["next-themes@0.4.6", "", { "peerDependencies": { "react": "^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc", "react-dom": "^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc" } }, "sha512-pZvgD5L0IEvX5/9GWyHMf3m8BKiVQwsCMHfoFosXtXBMnaS0ZnIJ9ST4b4NqLVKDEm8QBxoNNGNaBv2JNF6XNA=="],
+ 
+-    "nitrogen": ["nitrogen@0.37.0", "", { "dependencies": { "chalk": "^5.3.0", "react-native-nitro-modules": "^0.37.0", "ts-morph": "^28.0.0", "yargs": "^18.0.0", "zod": "^4.4.3" }, "bin": { "nitrogen": "lib/index.js" } }, "sha512-lrWmvctRyazMLU6y4ThUl6q129wMCOvmQfdtqCeZShgmmh3Nbplm9dSJLN2OZSBnDWA5k+T2P8aiNyjr1yiJAg=="],
++    "nitro-core": ["nitro-core@0.37.2", "", {}, "sha512-dhagikz9VXXzfidRH/vPNJfYWPmTBArDOo9wE/wEqeERU9C8uRWz9YccOyNUOvADccPAZq319yzhDMoJ9excSQ=="],
++
++    "nitrogen": ["nitrogen@0.37.2", "", { "dependencies": { "chalk": "^5.3.0", "nitro-core": "0.37.2", "ts-morph": "^28.0.0", "yargs": "^18.0.0", "zod": "^4.4.3" }, "bin": { "nitrogen": "lib/index.js" } }, "sha512-dqQIrtU9EmFgUa+FLnUeITQRjQGsq3K1rH+fvgRflA64Xmy04oJGXl6arerzsKIocg8nZoWZiq7z803iw+4gNg=="],
+ 
+     "nocache": ["nocache@3.0.4", "", {}, "sha512-WDD0bdg9mbq6F4mRxEYcPWwfA1vxd0mrvKOyxI7Xj/atfRHVeutzuWByG//jfm4uPzp0y4Kj051EORCBSQMycw=="],
+ 
+@@ -2406,7 +2408,7 @@
+ 
+     "react-native-nitro-image": ["react-native-nitro-image@0.15.2", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-nitro-modules": "*" }, "optionalPeers": ["react-native-nitro-modules"] }, "sha512-WiaGnORmfNIIqtRJW76TWYNet1YZx1MWDlSOxd0jfcIBN4KjkVVMDVpvO01eCfpxKVG0ez9nA2iLQkPVlGFj+A=="],
+ 
+-    "react-native-nitro-modules": ["react-native-nitro-modules@0.37.0", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-ULS2CBZcdwGw5d4Y35EV/tbCOsNsQOnQ9LC9CehMhDNm5c90lwF/LxRamzKuFpjI547G7teTQgD0peqYSGnP9g=="],
++    "react-native-nitro-modules": ["react-native-nitro-modules@0.37.2", "", { "dependencies": { "nitro-core": "0.37.2" }, "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-Odnrq/p6/q0R
 ```
 
-**File**: `packages/react-native-vision-camera-resizer/package.json` (modified, +1/-0)
+**File**: `packages/react-native-vision-camera-barcode-scanner/nitrogen/generated/android/VisionCameraBarcodeScanner+autolinking.cmake` (modified, +1/-1)
 ```diff
-@@ -13,6 +13,7 @@
-     "lib",
-     "nitrogen",
-     "android/build.gradle",
-+    "android/compile-shaders.gradle",
-     "android/gradle.properties",
-     "android/fix-prefab.gradle",
-     "android/CMakeLists.txt",
+@@ -1,7 +1,7 @@
+ #
+ # VisionCameraBarcodeScanner+autolinking.cmake
+ # This file was generated by nitrogen. DO NOT MODIFY THIS FILE.
+-# https://github.com/mrousavy/nitro
++# https://github.com/margelo/nitro
+ # Copyright © Marc Rousavy @ Margelo
+ #
+ 
+```
+
+**File**: `packages/react-native-vision-camera-barcode-scanner/nitrogen/generated/android/VisionCameraBarcodeScanner+autolinking.gradle` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ ///
+ /// VisionCameraBarcodeScanner+autolinking.gradle
+ /// This file was generated by nitrogen. DO NOT MODIFY THIS FILE.
+-/// https://github.com/mrousavy/nitro
++/// https://github.com/margelo/nitro
+ /// Copyright © Marc Rousavy @ Margelo
+ ///
+ 
+```
+
+**File**: `packages/react-native-vision-camera-barcode-scanner/nitrogen/generated/android/VisionCameraBarcodeScannerOnLoad.cpp` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ ///
+ /// VisionCameraBarcodeScannerOnLoad.cpp
+ /// This file was generated by nitrogen. DO NOT MODIFY THIS FILE.
+-/// https://github.com/mrousavy/nitro
++/// https://github.com/margelo/nitro
+ /// Copyright © Marc Rousavy @ Margelo
+ ///
+ 
+```
+
+**File**: `packages/react-native-vision-camera-barcode-scanner/nitrogen/generated/android/VisionCameraBarcodeScannerOnLoad.hpp` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ ///
+ /// VisionCameraBarcodeScannerOnLoad.hpp
+ /// This file was generated by nitrogen. DO NOT MODIFY THIS FILE.
+-/// https://github.com/mrousavy/nitro
++/// https://github.com/margelo/nitro
+ /// Copyright © Marc Rousavy @ Margelo
+ ///
+ 
+```
+
+**File**: `packages/react-native-vision-camera-barcode-scanner/nitrogen/generated/android/c++/JBarcodeFormat.hpp` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ ///
+ /// JBarcodeFormat.hpp
+ /// This file was generated by nitrogen. DO NOT MODIFY THIS FILE.
+-/// https://github.com/mrousavy/nitro
++/// https://github.com/margelo/nitro
+ /// Copyright © Marc Rousavy @ Margelo
+ ///
+ 
+```
+
+**File**: `packages/react-native-vision-camera-barcode-scanner/nitrogen/generated/android/c++/JBarcodeScannerOptions.hpp` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ ///
+ /// JBarcodeScannerOptions.hpp
+ /// This file was generated by nitrogen. DO NOT MODIFY THIS FILE.
+-/// https://github.com/mrousavy/nitro
++/// https://github.com/margelo/nitro
+ /// Copyright © Marc Rousavy @ Margelo
+ ///
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4243** (2026-11-16): fix: Regenerate specs with nitrogen 0.37.2 for Kotlin 2.4 (@riteshshukla04)
+- **PR #4241** (2026-11-16): feat: Bump the camera-libs group across 2 directories with 7 updates (@dependabot[bot])
+- **PR #4234** (closed): feat: Bump the camera-libs group across 2 directories with 7 updates (@dependabot[bot])
 - **PR #4218** (2026-10-14): fix(android): prevent CameraX executor starvation (@ismaelsousa)
 - **PR #4190** (2026-11-02): fix: Compile Android resizer shaders on AGP 9 (@mrousavy)
 - **PR #4176** (2026-08-29): chore: Update links for the move to the margelo org (@mrousavy)
-- **PR #4175** (closed): fix: align iOS frame coordinates with camera sensor (@huytdps13400)
-- **PR #4173** (closed): feat: Add native tap-to-focus reset listener (@mrousavy)
-- **PR #4172** (2026-08-26): feat: Add native tap-to-focus lifecycle listeners (@mrousavy)
 
 ---
 
@@ -750,37 +810,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Compile Android resizer shaders on AGP 9 (#4190)
+## X. Regenerate specs with nitrogen 0.37.2 for Kotlin 2.4
 
 **RULE**:
-When implementing operations in `packages/react-native-vision-camera-resizer/android/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in margelo/react-native-vision-camera. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/simple-camera/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in margelo/react-native-vision-camera. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3084ac5`: Compile Android resizer shaders on AGP 9 (#4190). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0de03210`: Regenerate specs with nitrogen 0.37.2 for Kotlin 2.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-vision-camera-resizer/android/build.gradle`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/simple-camera/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-apply from: "./compile-shaders.gradle"
-
+    "react-native-nitro-modules": "0.37.2",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-    shaders {
-      glslcArgs.addAll(["-O"])
-    }
-
-      shaders.srcDirs = ["src/main/shaders"]
-
+// Induced defect failure mode:
+    "react-native-nitro-modules": "0.37.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3084ac5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0de03210` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

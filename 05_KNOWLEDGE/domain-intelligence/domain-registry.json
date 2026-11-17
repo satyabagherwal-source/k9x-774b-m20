@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T16:47:26.195Z",
-  "total_records": 1615,
+  "last_updated": "2026-11-17T16:55:00.150Z",
+  "total_records": 1619,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 682,
+      "total": 684,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -731,7 +731,9 @@
         "domain_intelligence-research-knowledge-intelligence-internscience-sage-a1-5-core-invariants",
         "DOM-D-66A27B84",
         "domain_intelligence-research-knowledge-intelligence-hf-sensenova-sensenova-loop-9b-learnings-core-in",
-        "domain_intelligence-research-knowledge-intelligence-hf-internscience-sage-a1-5-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-internscience-sage-a1-5-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-14b-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1081,7 +1083,7 @@
       ]
     },
     "H": {
-      "total": 386,
+      "total": 388,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1468,7 +1470,9 @@
         "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor",
         "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-lea",
         "domain_intelligence-technical-construction-intelligence-synalinks-synalinks-skills-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-surrealdb-surrealdb-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-surrealdb-surrealdb-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-core-inva",
+        "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-learnings"
       ]
     },
     "I": {
@@ -7358,8 +7362,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "a7dbbef3d9e289831bceb3e37f18aaa754a61ca81919e0ab04896a011fb3638a",
-      "created_at": "2026-11-17T11:40:43.531Z"
+      "content_hash": "ad23444842199bf369d2b2312cf7685414764bd8834a320e108fa0d9364b5b3f",
+      "created_at": "2026-11-17T16:54:56.126Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -7376,8 +7380,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "6778badde9779866e3ff793e1e2fb72ea7b09f83c39ea5e56e4b9e8133bb94b0",
-      "created_at": "2026-11-17T04:56:58.085Z"
+      "content_hash": "5e6ce6c2999d1e8886802bff4bada5777c63160f2d7a11079643302f43301480",
+      "created_at": "2026-11-17T16:55:00.150Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -27720,6 +27724,42 @@
       "repository": "hf-internscience-sage-a1.5-learnings",
       "content_hash": "8e829be7c19f511facebab12d06021611174a77f82100ab0094a6911c56e86cb",
       "created_at": "2026-11-17T16:47:25.599Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3-14B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-14b-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants.md",
+      "repository": "Qwen/Qwen3-14B",
+      "content_hash": "3a8e51e9a5ed4223529d7ff09cdf0825174923ca9030baec5b7b8b58951ad371",
+      "created_at": "2026-11-17T16:54:41.970Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-core-inva": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-core-inva",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: margelo/react-native-vision-camera Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-margelo-react-native-vision-camera-technical-construction-intelligence-margelo-r.md",
+      "repository": "margelo/react-native-vision-camera",
+      "content_hash": "89534e727c9d98416ddbeeda35a8a7d0aac3d572c65861dd7d53b8e20c66bc05",
+      "created_at": "2026-11-17T16:54:50.468Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-14b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-14b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-14b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-14b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-14b-le.md",
+      "repository": "hf-qwen-qwen3-14b-learnings",
+      "content_hash": "6f55c87e4c8239e8ac00ed771b31803995935dc177387d774af8b65e163dc4a9",
+      "created_at": "2026-11-17T16:54:59.122Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-learnings": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-learnings",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: margelo-react-native-vision-camera-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-margelo-react-native-vision-camera-learnings-technical-construction-intelligence.md",
+      "repository": "margelo-react-native-vision-camera-learnings",
+      "content_hash": "07e599923853048392443fbb22f627404a079f4dec5cc5df1b91fae3bff6743f",
+      "created_at": "2026-11-17T16:54:59.636Z"
     }
   }
 }
