@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T19:12:36.637Z",
+  "last_updated": "2026-11-17T19:19:55.422Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T19:12:36.114Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-17T19:05:02.180Z",
+      "processed_at": "2026-11-17T19:19:54.779Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-17T12:46:16.297Z",
+      "processed_at": "2026-11-17T19:19:54.173Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1663,8 +1663,8 @@
       "staged_for_review": 1
     },
     "hf-fastvideo-fasth3-omni-comfy-learnings.md": {
-      "processed_at": "2026-11-13T08:13:20.797Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T19:19:53.845Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-baidu-unlimited-ocr-2-learnings.md": {
@@ -3358,7 +3358,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1680,
+  "total_dossiers_evaluated": 1683,
   "total_canonical_promoted": 324,
-  "total_staged_for_review": 1316
+  "total_staged_for_review": 1318
 }

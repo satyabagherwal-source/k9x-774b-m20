@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T19:12:32.191Z",
-  "total_cycles_completed": 10228,
-  "total_learnings_persisted": 10228,
+  "last_updated": "2026-11-17T19:19:50.724Z",
+  "total_cycles_completed": 10230,
+  "total_learnings_persisted": 10230,
   "total_rules_promoted": 9782,
   "history": [
-    {
-      "timestamp": "2026-11-17T05:19:45.820Z",
-      "repository": "a2ui-project/a2ui",
-      "learningId": "learn-github-a2ui-project-a2ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T05:37:08.627Z",
-      "repository": "pimalaya/himalaya",
-      "learningId": "learn-github-pimalaya-himalaya",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T05:37:11.199Z",
       "repository": "TanStack/query",
@@ -1403,6 +1389,20 @@
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:19:33.146Z",
+      "repository": "FastVideo/FastH3-Omni-Comfy",
+      "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:19:50.724Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

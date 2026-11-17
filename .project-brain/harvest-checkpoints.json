@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T19:12:32.194Z",
+  "last_updated": "2026-11-17T19:19:50.734Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "98439934243fc01e2973880e2c76305f356fe9c2f989933c3203ba062b1fb70f",
-      "verified_at": "2026-11-17T15:51:37.372Z",
+      "content_hash": "1b81cfe40a3f916f663566894d90b000e8b81aa815317320a599c9006564fb58",
+      "verified_at": "2026-11-17T19:19:50.734Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:51:37.372Z"
+      "last_updated": "2026-11-17T19:19:50.734Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -16326,14 +16326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-      "content_hash": "1bf42b6e6e45cc0f3eb28a9af194fe7291fa68d5128d5127551831ca2350db2a",
-      "verified_at": "2026-11-13T08:05:21.942Z",
+      "content_hash": "a4b51ce810d6495c86a12ca00a0cb2406ab2ddce1a5471b7a7c05a6793c89d41",
+      "verified_at": "2026-11-17T19:19:33.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T08:05:21.942Z"
+      "last_updated": "2026-11-17T19:19:33.148Z"
     },
     "YoanWai/agent-manager": {
       "repository": "YoanWai/agent-manager",

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-fastvideo`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T08:05:21.576Z  
+> **Timestamp**: 2026-11-17T19:19:32.772Z  
 > **Learning ID**: `learn-huggingface-fastvideo-fasth3-omni-comfy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/FastVideo/FastH3-Omni-Comfy](https://huggingface.co/FastVideo/FastH3-Omni-Comfy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T08:04:56.182Z  
+> **Harvest Timestamp**: 2026-11-17T19:19:32.555Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 719047 downloads | 201 likes
+- **Stars / Engagement**: 785809 downloads | 205 likes
 
 ---
 

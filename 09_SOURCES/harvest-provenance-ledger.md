@@ -10707,3 +10707,5 @@ Every entry in this ledger must capture:
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `3bfd7c01` | Multi-dimensional audit evidence | 2026-11-17T19:04:52.031Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-17T19:12:16.971Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `698c89f6` | Multi-dimensional audit evidence | 2026-11-17T19:12:32.187Z |
+| `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-11-17T19:19:33.141Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `16ae8c24` | Multi-dimensional audit evidence | 2026-11-17T19:19:50.709Z |

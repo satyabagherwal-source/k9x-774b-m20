@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "551d11fe",
+  "source_version": "16ae8c24",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T15:51:37.565Z",
+  "timestamp": "2026-11-17T19:19:50.887Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `551d11fe`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T15:51:37.565Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `16ae8c24`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T19:19:50.887Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `551d11fe`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `16ae8c24`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:51:36.408Z  
+> **Harvest Timestamp**: 2026-11-17T19:19:50.333Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1370,7 +1370,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     test_input_matrix,
   });
 
-  let result_drawing = Matrix.draw(
+  let result_matrix = Matrix.draw(
     [],
     test_input_matrix.length,
     test_input_matrix[0].length,
@@ -1400,24 +1400,23 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
 
+  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
+
   await visualizer.state({ declarations, test_input_matrix, input_instances });
 
   for (const input_instance of input_instances) {
-    const { output_instance_drawing } = await visualizer.output_instance_matrix(
-      {
-        test_input_matrix,
-        train_dataset,
-        instance: input_instance,
-      }
-    );
+    const { output_instance_matrix } = await visualizer.output_instance_matrix({
+      test_input_matrix,
+      train_dataset,
+      instance: input_instance,
+    });
 
-    input_instance.output_instance_matrix = output_instance_drawing.matrix;
-    input_instance.output_instance_epoch = output_instance_drawing.epoch;
+    input_instance.output_instance_matrix = output_instance_matrix;
 
-    result_drawing = Matrix.merge(result_drawing, output_instance_drawing);
+    result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
-  const result_matrix = Matrix.canvas(result_drawing.matrix, output_canvas);
+  result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
   milestone.comparison({ test_output_matrix, result_matrix });
 
@@ -1523,168 +1522,206 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `551d11fe` (2026-11-17)
-**Commit Message**: Draft NUC 114 List and Population Products
+### Incident Patch 1: `16ae8c24` (2026-11-17)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
-Category: Utility enhancement, drawn uniformly at random (index 2 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle, so the token non-regression gate is
-required for this category.
-
-Requested change: lists and class instance lists gain the read-only
-query product, the multiplicative sibling of NUC 68's sum.
-RECEIVER.product() multiplies the items and RECEIVER.product(selector)
-the values selector(item), left to right from 1, so an empty receiver
-gives 1. Values convert to numbers as sum and * convert them, an
-undefined value makes the product undefined, and for a list of numbers
-xs.product() is exactly xs.reduce((total, x) => total * x, 1). A
-selector that is not a function raises TypeError("product expects a
-function"). It follows NUC 61's shared query rules and stays live in
-declarations and class-level rules. At the accepted revision these calls
-raise TypeError("<receiver>.product is not a function"); user methods
-named product on instances keep their meaning.
-
-This allocation changes only the Draft and its two index rows.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Cl
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `README.md` (modified, +104/-0)
 ```diff
-@@ -128,6 +128,7 @@ Created: 31-Jul-2026
- | [105](nuc-0105.md) | List and Population Sorting by Key | Accepted |
- | [108](nuc-0108.md) | List and Population Partitions | Accepted |
- | [111](nuc-0111.md) | Reactive String Padding | Accepted |
-+| [114](nuc-0114.md) | List and Population Products | Draft |
+@@ -2276,6 +2276,110 @@ assert(totals, [[40, 15, 90], [25]])
+   its place on the other. See the
+   [root contract](nucleoid.spec.md#list-and-population-partitions).
  
- ### Reasoning enhancement
- 
-@@ -281,6 +282,7 @@ Created: 31-Jul-2026
- | [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
- | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Accepted |
-+| [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Draft |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0114.md` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+# NUC 114 -- List and Population Products
++## Operator section arguments
 +
-+```
-+NUC: 114
-+Title: List and Population Products
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 17-Nov-2026
++**Operator sections pass a comparison without naming a parameter**
++
++```nuc
++cells = [0, 3, 0, 7, 7]
++filled = cells.filter(!= 0)
++sevens = cells.count(== 7)
++assert([filled, sevens], [[3, 7, 7], 2])
++cells.push(7)
++assert([filled, sevens], [[3, 7, 7, 7], 3])
 +```
 +
-+## Abstract
++- [NUC 109](docs/nuc-0109.md) lets a call argument that begins with a
++  binary operator stand for the function that applies the operator to its
++  argument: `cells.filter(!= 0)` is `cells.filter(cell -> cell != 0)`, and
++  `cells.count(== 7)` counts the sevens.
++- The rest of the argument is read as if the item stood before the
++  operator, with the usual precedence, so `xs.map(* 2 + 1)` maps
++  `x -> x * 2 + 1`. Both declarations stay live like their lambdas: another
++  seven extends `filled` and raises `sevens`. See the
++  [root contract](nucleoid.spec.md#operator-section-arguments).
 +
-+- Lists and class instance lists gain the read-only query `product`.
-+  `RECEIVER.product()` returns the numeric product of the items and
-+  `RECEIVER.product(selector)` the product of `selector(item)`, multiplied
-+  left to right from `1`. An empty receiver gives `1`.
-+- It is the multiplicative sibling of [NUC 68](nuc-0068.md)'s `sum`. Each
-+  value is converted to a number as `sum` and `*` convert it: `true` counts
-+  `1`, `null` and `""` count `0`, and `"3"` counts `3`. An undefined value
-+  makes the product undefined, which a declaration stores as `null`, as it
-+  makes a sum undefined.
-+- For a list of numbers, `xs.product()` is exactly
-+  `xs.reduce((total, x) => total * x, 1)`: the same order and the same
-+  rounding.
-+- The selector is called once for every item, in order, with only the item,
-+  as `sum` calls it. A supplied selector that is not a function raises
-+  `TypeError("product expects a function")`, as `sum` raises
-+  `TypeError("sum expects a function")`.
-+- `product` follows [NUC 61](nuc-0061.md)'s shared query rules, as `sum`
-+  does. It accepts every receiver the list queries accept, reads the
-+  receiver before its arguments, never writes it, and stays live in
-+  declarations and class-level rules like `map` and `reduce`.
-+- At the accepted revision, these calls raise
-+  `TypeError("<receiver>.product is not a function")`. No syntax, keyword,
-+  error type or public Rust API is added. User methods named `product`, such
-+  as `calculator.product(2, 3, 4)` in accepted cases, are called on
-+  instances, which the list queries never reach, so they keep their meaning.
++## Python string method aliases
 +
-+## Motivation
++**Python string methods classify files and list them**
 +
-+- World models multiply as often as they add: the chance that independent
-+  events all happen, growth compounded over periods, a chain of conversion
-+  or scaling factors, the number of combinations of independent choices,
-+  and the volume of a box from its sides. Each is a product over a list or
-+  over a class's instances, and it has to stay true while the model
-+  changes.
-+- The accepted spelling is the accumulator `reduce`:
-+  `chance = Event.reduce((total, event) => total * event.chance, 1)` is 20
-+  lexer tokens where `chance = Event.product(event -> event.chance)` is 12,
-+  and `volume = sides.reduce((total, side) => total * side, 1)` is 18 where
-+  `volume = sides.product()` is 7.
-+- The accumulator restates a running name, `*` and the initial `1` every
-+  time, and it is easy to get subtly wrong. Without the initial `1`, an
-+  empty list multiplies to undefined and `[true]` to `true`; an initial `0`
-+  copied from a sum makes every product `0`.
-+- Python's `math.prod`, NumPy's `prod`, Rust's `Iterator::product`,
-+  Haskell's and Scala's `product`, R's `prod` and the spreadsheet function
-+  `PRODUCT` give the same operation a name.
-+- [NUC 84](nuc-0084.md) set `product` aside because accepted cases use it as
-+  a user method name. That method is called on an instance, which the list
-+  queries never reach, and on a class name `Calculator.product(2, 3)` raises
-+  `TypeError("Calculator.product is not a function")` at the accepted
-+  revision, so the name is free for lists and populations.
++```nuc
++class File(name):
++    this.name = name
++$File.table = $File.name.endswith(".csv")
++report = File("report.csv")
++notes = File("notes.txt")
++tables = ", ".join(File.filter(file -> file.table).map(file -> file.name))
++assert([report.table, notes.table, tables], [true, false, "report.csv"])
++notes.name = "notes.csv"
++assert(tables, "report.csv, notes.csv")
++```
 +
-+## Rationale
++- [NUC 110](docs/nuc-0110.md) adds Python's names for three string methods:
++  `name.endswith(".csv")` is `name.endsWith(".csv")`,
++  `name.startswith("draft_")` is `name.startsWith("draft_")`, and
++  `", ".join(names)`, with the separator as the receiver, is
++  `names.join(", ")`.
++- `join` takes a list or a class's instances, so `", ".join(File)` joins
++  the files as `File.join(", ")` does. The class-level rule and the list
++  stay live: renaming the notes to a CSV file makes it a table and adds it
++  to `tables`. See the
++  [root contract](nucleoid.spec.md#python-string-method-aliases).
 +
-+- Pending: the proposer completes this section.
++## Reactive string padding
 +
-+## Specification
++**Padding keeps a price list aligned as it changes**
 +
-+- Pending: the proposer completes this section.
++```nuc
++item = "tea"
++price = "4"
++line = item.padEnd(8, ".") + price.padStart(3)
++assert(line, "tea.....  4")
++item = "honey"
++price = "12"
++assert(line, "honey... 12")
++```
 +
-+## Errors
++- [NUC 111](docs/nuc-0111.md) adds JavaScript's `padStart` and `padEnd` to
++  strings: `price.padStart(3)` puts spaces before the price until it holds
++  three characters, and `item.padEnd(8, ".")` puts dots after the item until
++  it holds eight. A fill of several characters is cut to the gap, and text
++  that already holds the length is returned as it is.
++- `line` stays live like its `repeat` spelling,
++  `item + ".".repeat(8 - item.length)`, so a new item and price realign it.
++  See the [root contract](nucleoid.spec.md#reactive-string-padding).
 +
-+- Pending: the proposer completes this section.
++## Node names of reasoning selections
 +
-+## Reference Implementation
++**Nodes names the facts a heater rests on and what insulation moves**
 +
-+- Pending: the proposer completes this section.
++```nuc
++outside = 4
++target = 21
++insulation = 0.8
++loss = (target - outside) * insulation
++heater = loss * 2
++causes = heater |> why |> stated |> nodes
++moved = insulation |> affects |> nodes
++assert(causes, ["target", "outside", "insulation"])
++assert(moved, ["loss", "heater"])
++solar = 5
++heater = loss * 2 - solar
++assert(causes, ["solar", "target", "outside", "insulation"])
++```
 +
-+## Copyright
++- [NUC 112](docs/nuc-0112.md) adds the final reasoning stage `|> nodes`,
++  which names the nodes of a selection's steps in their order.
++  `heater |> why |> stated |> nodes` names the facts the heater rests on,
++  and `insulation |> affects |> nodes` what a change of the insulation
++  reaches.
++- Both lists are the names that
++  `(heater |> why |> stated).map(step => step.node)` and
++  `(insulation |> affects).map(step => step.node)` give, and they stay live
++  the same way: once the heater also accounts for the solar gain, `solar`
++  joins the facts it rests on. See the
++  [root contract](nucleoid.spec.md#node-names-of-reasoning-selections).
 +
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+ ## Reactive list flattening
+ 
+ **Flat turns nested lists into one live list**
 ```
 
----
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +33/-16)
+```diff
+@@ -754,19 +754,36 @@
+ {"id":"spec-0754","description":"Nucleoid maps and counts each side of a partition","code":"class Shape(name, area):\n    this.name = name\n    this.area = area\nparts = Shape.partition(shape -> shape.area >= 10)\nnames = parts.map(side -> side.map(shape -> shape.name))\nsizes = parts.map(side -> side.length)\nShape(\"square\", 16)\nShape(\"dot\", 1)\nbar = Shape(\"bar\", 12)\nassert([names, sizes], [[[\"square\", \"bar\"], [\"dot\"]], [2, 1]])\nbar.area = 4\nassert(names, [[\"square\"], [\"dot\", \"bar\"]])\nShape(\"ring\", 30)\nsizes","return":"[2,2]"}
+ {"id":"spec-0755","description":"Nucleoid partitions items by the truthiness of the predicate result","code":"answers = [\"yes\", \"\", 0, 7, false, \"no\"]\ngiven = answers.partition(answer -> answer)\nassert(given, [[\"yes\", 7, \"no\"], [\"\", 0, false]])\nanswers.push([], \"\", true)\nanswers.shift()\nassert(given, [[7, \"no\", [], true], [\"\", 0, false, \"\"]])\ngiven[1].length","return":"4"}
+ {"id":"spec-0756","description":"Nucleoid rolls back failed partition updates","code":"parcels = [{code: \"b2\", kg: 4}, {code: \"A7\", kg: 9}]\nweights = parcels.partition(parcel -> parcel.code.toUpperCase() < \"B\").map(side -> side.map(parcel -> parcel.kg))\nfailure = \"\"\ntry:\n    parcels.push({code: 7, kg: 1})\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.toUpperCase is not a function\"))\nassert([parcels.length, weights], [2, [[9], [4]]])\nparcels.push({code: \"a1\", kg: 2})\nassert(weights, [[9, 2], [4]])\ntry:\n    parcels[0].code = \"a0\"\n    assert(weights, [[4, 9, 2], []])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nweights","return":"[[9,2],[4]]"}
+-{"id":"spec-0757","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0758","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0759","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0760","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0761","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0762","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0763","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN], false)\nassert(\"e
+```
 
-### Incident Patch 2: `1612d6cd` (2026-11-17)
-**Commit Message**: NUC 113 Implicit Receivers in Method Bodies
+**File**: `dataset/nucleoid.synth.73.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-73-0001","description":"An operator section passes the function that applies its operator to each item","code":"readings = [12, 31, 7, 45, 18]\nreadings.filter(> 20)","return":"[31,45]"}
++{"id":"synth-73-0002","description":"A section reads the rest of its argument with the usual precedence, as if the item stood before the operator","code":"values = [3, 8, 1, 9]\n[values.map(* 2 + 1), values.count(% 2 == 0), values.map(> 4 ? \"big\" : \"small\")]","return":"[[7,17,3,19],1,[\"small\",\"big\",\"small\",\"big\"]]"}
++{"id":"synth-73-0003","description":"Nullish and logical sections fill missing values and empty names with defaults","code":"scores = [7, null, 3]\nnames = [\"ada\", \"\"]\n[scores.map(?? 0), names.map(|| \"anonymous\")]","return":"[[7,0,3],[\"ada\",\"anonymous\"]]"}
++{"id":"synth-73-0004","description":"A standing section follows later writes of the names its operand reads and of its receiver","code":"limit = 20\nreadings = [12, 31, 7]\nover = readings.filter(> limit)\nlimit = 10\nreadings.push(45)\nover","return":"[12,31,45]"}
++{"id":"synth-73-0005","description":"Arithmetic sections give keys: * -1 sorts in descending order and % 10 picks by the last digit","code":"nums = [13, 42, 7, 29]\n[nums.sortBy(* -1), nums.maxBy(% 10), nums.minBy(% 10)]","return":"[[42,29,13,7],29,42]"}
++{"id":"synth-73-0006","description":"Partition with a comparison section splits the items it keeps from the items it drops","code":"xs = [3, 8, 1, 9]\nxs.partition(> 4)","return":"[[8,9],[3,1]]"}
++{"id":"synth-73-0007","description":"A section is an ordinary function argument of user functions and constructors","code":"def keep(values, test) => values.filter(test)\nclass Gate(test):\n    this.test = test\ngate = Gate(>= 50)\n[keep([20, 90, 50], gate.test), keep([1, 2, 3], != 2)]","return":"[[90,50],[1,3]]"}
++{"id":"synth-73-0008","description":"A class-level rule's section reads each instance's own properties","code":"class Sensor(readings, limit):\n    this.readings = readings\n    this.limit = limit\n$Sensor.alarms = $Sensor.readings.count(> $Sensor.limit)\nnorth = Sensor([12, 31, 7], 20)\nnorth.limit = 10\nnorth.alarms","return":"2"}
++{"id":"synth-73-0009","description":"A section that fails for a new item rolls back the update that brought the item","code":"counts = [3, 5]\nfilled = counts.map(?? spare())\nfailure = \"\"\ntry:\n    counts.push(null)\ncatch error:\n    failure = error\n[failure, counts.length, filled]","return":"[\"ReferenceError: spare is not defined\",2,[3,5]]"}
++{"id":"synth-73-0010","description":"Sections nest: the rest of a section may call a function with a section of its own","code":"xs = [3, 8, 1, 9]\nys = [5, 6, 7]\nxs.filter(> ys.count(>= 6))","return":"[3,8,9]"}
++{"id":"synth-73-0011","description":"A section explains as function(), as an anonymous lambda does","code":"xs = [3, 8]\nbig = xs.filter(> 4)\n(why big)[0].rule","return":"\"big = xs.filter(function())\""}
++{"id":"synth-73-0012","description":"Power and strict-equality sections compare and raise each item","code":"xs = [1, 2, 3]\n[xs.map(** 2), xs.filter(=== 2), xs.some(!== 1)]","return":"[[1,4,9],[2],true]"}
+```
 
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Syntax enhancement): the frozen candidate meets
-every hard criterion and passes every policy check, including the
-required token non-regression gate, which measures no savings here
-because the candidate adds no document case. The cycle found no stale
-Draft, drew Syntax enhancement uniformly from the five eligible
-categories, allocated NUC 113 in e1506250, and completed it with fresh
-baselines, candidate, proposer, Rust improvement pass and evaluator.
+**File**: `dataset/nucleoid.synth.74.jsonl` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++{"id":"synth-74-0001","description":"endswith tests a suffix exactly as endsWith does, so file names sort into kinds","code":"files = [\"report.csv\", \"notes.txt\", \"data.csv\"]\nfiles.filter(file -> file.endswith(\".csv\"))","return":"[\"report.csv\",\"data.csv\"]"}
++{"id":"synth-74-0002","description":"startswith tests a prefix exactly as startsWith does, and the match is case-sensitive","code":"names = [\"Ada\", \"alan\", \"Alice\"]\n[names.filter(name -> name.startswith(\"A\")), \"alan\".startswith(\"A\")]","return":"[[\"Ada\",\"Alice\"],false]"}
++{"id":"synth-74-0003","description":"A string joins a list with itself as the separator, exactly as the list's join with that separator","code":"names = [\"ada\", \"bo\", \"cy\"]\n[\", \".join(names), names.join(\", \")]","return":"[\"ada, bo, cy\",\"ada, bo, cy\"]"}
++{"id":"synth-74-0004","description":"join takes a class population, so a string can join the names of every instance","code":"class Tag(name):\n    this.name = name\nTag(\"red\")\nTag(\"blue\")\n\" | \".join(Tag.map(tag -> tag.name))","return":"\"red | blue\""}
++{"id":"synth-74-0005","description":"A standing join with the separator as the receiver follows later pushes to its list","code":"names = [\"ada\"]\nlabel = \", \".join(names)\nnames.push(\"bo\")\nlabel","return":"\"ada, bo\""}
++{"id":"synth-74-0006","description":"A separator held in a variable keeps the join live when the separator changes","code":"parts = [\"2026\", \"11\", \"16\"]\nsep = \"-\"\nday = sep.join(parts)\nsep = \"/\"\nday","return":"\"2026/11/16\""}
++{"id":"synth-74-0007","description":"A class-level rule with endswith follows each instance's own name","code":"class File(name):\n    this.name = name\n$File.table = $File.name.endswith(\".csv\")\nnotes = File(\"notes.txt\")\nnotes.name = \"notes.csv\"\nnotes.table","return":"true"}
++{"id":"synth-74-0008","description":"Like startsWith, startswith ignores a position argument, unlike Python","code":"[\"abc\".startswith(\"b\", 1), \"abc\".startsWith(\"b\", 1)]","return":"[false,false]"}
++{"id":"synth-74-0009","description":"join writes items that are not strings in their string form, where Python raises","code":"\"-\".join([\"a\", 1, null, true])","return":"\"a-1-null-true\""}
++{"id":"synth-74-0010","description":"A string argument to join keeps raising the accepted TypeError; join does not iterate characters","code":"result = \"\"\ntry:\n    result = \"-\".join(\"abc\")\ncatch error:\n    result = error\nresult","return":"\"TypeError: -.join is not a function\""}
++{"id":"synth-74-0011","description":"A failed update through an alias rolls back, so the rule keeps its value","code":"class File(name):\n    this.name = name\n$File.table = $File.name.endswith(\".csv\")\nreport = File(\"report.csv\")\nfailure = \"\"\ntry:\n    report.name = 7\ncatch error:\n    failure = error\n[report.name, report.table, failure]","return":"[\"report.csv\",true,\"TypeError: number.endswith is not a function\"]"}
+```
 
-In the code of a class body, a . that begins an operand and is directly
-followed by a name reads that property of the instance, this: def area()
-=> .w * .h is def area() => this.w * this.h, and return .total in an
-indented method body is return this.total. It covers the methods a class
-declares with def or function in every parameter form, Python-style self
-methods included, def init and def __init__ constructors and the class
-body's own statements, in subclasses too, with every suffix and inside
-template interpolations. A read builds the written-out this.NAME, so
-values, dependencies, live updates, rendering
+**File**: `dataset/nucleoid.synth.75.jsonl` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++{"id":"synth-75-0001","description":"padStart zero-pads identifiers to a fixed width, and an identifier that already holds the width keeps all of it","code":"ids = [\"7\", \"42\", \"123\", \"1234\"]\nids.map(id -> id.padStart(3, \"0\"))","return":"[\"007\",\"042\",\"123\",\"1234\"]"}
++{"id":"synth-75-0002","description":"padEnd aligns labels in a column, padding with one space when no fill is given","code":"items = [\"tea\", \"honey\", \"jam\"]\nitems.map(item -> item.padEnd(6) + \"|\")","return":"[\"tea   |\",\"honey |\",\"jam   |\"]"}
++{"id":"synth-75-0003","description":"A clock reading pads its hours and minutes to two digits each","code":"h = 9\nm = 5\nString(h).padStart(2, \"0\") + \":\" + String(m).padStart(2, \"0\")","return":"\"09:05\""}
++{"id":"synth-75-0004","description":"A fill of several characters is repeated and cut to the missing count, keeping its start","code":"[\"5\".padStart(4, \"ab\"), \"abc\".padEnd(6, \"123456\"), \"abc\".padStart(10, \"123\")]","return":"[\"aba5\",\"abc123\",\"1231231abc\"]"}
++{"id":"synth-75-0005","description":"An empty fill, or text that already holds the length, gives the text unchanged","code":"[\"abc\".padStart(6, \"\"), \"abc\".padEnd(2, \"0\"), \"\".padStart(3, \"\")]","return":"[\"abc\",\"abc\",\"\"]"}
++{"id":"synth-75-0006","description":"A padded declaration follows later writes of its receiver, its length and its fill","code":"label = \"7\"\nwidth = 3\nfill = \"0\"\nshown = label.padStart(width, fill)\nlabel = \"42\"\nwidth = 5\nfill = \"*\"\nshown","return":"\"***42\""}
++{"id":"synth-75-0007","description":"A class-level rule pads the number of each instance on its own","code":"class Ticket(id):\n    this.id = id\n$Ticket.code = \"T-\" + String($Ticket.id).padStart(4, \"0\")\nfirst = Ticket(7)\nsecond = Ticket(42)\nfirst.id = 123\n[first.code, second.code]","return":"[\"T-0123\",\"T-0042\"]"}
++{"id":"synth-75-0008","description":"The length converts as the count of repeat does: fractions truncate, numeric strings and true convert, and negatives or NaN pad nothing","code":"[\"5\".padStart(2.9, \"0\"), \"5\".padStart(\"3\", \"0\"), \"5\".padStart(true, \"0\"), \"5\".padStart(-4, \"0\"), \"5\".padStart(0 / 0, \"0\")]","return":"[\"05\",\"005\",\"5\",\"5\",\"5\"]"}
++{"id":"synth-75-0009","description":"The keyword undefined is null and fills with its text, while a missing property fills with spaces","code":"o = {}\n[\"5\".padStart(4, undefined), \"5\".padStart(4, o.missing), \"5\".padStart(4, null)]","return":"[\"nul5\",\"   5\",\"nul5\"]"}
++{"id":"synth-75-0010","description":"Lengths count characters, so text and fills outside ASCII pad one character at a time","code":"[\"日\".padStart(3, \"本\"), \"é\".padEnd(3, \"·\"), \"x\".padEnd(4, \"日本\")]","return":"[\"本本日\",\"é··\",\"x日本日\"]"}
++{"id":"synth-75-0011","description":"A result too large to allocate raises a TypeError, and the failed write is rolled back","code":"width = 3\nshown = \"7\".padStart(width, \"0\")\nfailure = \"\"\ntry:\n    width = 1 / 0\ncatch error:\n    failure = error\n[failure, width, shown]","return":"[\"TypeError: Padded string is too large\",3,\"007\"]"}
++{"id":"synth-75-0012","description":"Padding stays a string method: a null receiver gives undefined and a number keeps its TypeError","code":"n = null\nresult = \"\"\ntry:\n    result = (5).padStart(3, \"0\")\ncatch error:\n    result = error\n[n.padStart(3), result]","return":"[null,\"TypeError: number.padStart is not a function\"]"}
++{"id":"synth-75-0013","description":"A report line pads its label with dots and its price with spaces, and follows both","code":"item = \"tea\"\nprice = \"4\"\nline = item.padEnd(8, \".\") + price.padStart(3)\nitem = \"honey\"\nprice = \"12\"\nline","return":"\"honey... 12\""}
+```
+
+**File**: `dataset/nucleoid.synth.76.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-76-0001","description":"Nodes names every step of an explanation, in the explanation's order","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> nodes","return":"[\"total\",\"subtotal\",\"shipping\",\"price\",\"qty\"]"}
++{"id":"synth-76-0002","description":"Nodes after stated names the facts that a conclusion rests on","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> stated |> nodes","return":"[\"seed\"]"}
++{"id":"synth-76-0003","description":"Nodes after derived names the conclusions on the way to a value","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> derived |> nodes","return":"[\"result\",\"middle\"]"}
++{"id":"synth-76-0004","description":"Nodes after affects names what a change of one fact reaches","code":"rate = 0.2\nprice = 10\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nprice |> affects |> nodes","return":"[\"subtotal\",\"tax\",\"total\"]"}
++{"id":"synth-76-0005","description":"Nodes on the model names every node in model order and leaves out a declaration that holds reasoning","code":"a = 1\nb = a + 2\nnames = b |> why |> nodes\nmodel |> nodes","return":"[\"a\",\"b\"]"}
++{"id":"synth-76-0006","description":"A prefix stage composes with nodes","code":"a = 1\nb = a + 2\nc = b * 2\nwhy c |> nodes","return":"[\"c\",\"b\",\"a\"]"}
++{"id":"synth-76-0007","description":"A reference alone names its own node","code":"a = 1\nb = a + 2\nb |> nodes","return":"[\"b\"]"}
++{"id":"synth-76-0008","description":"Nodes after depth names a conclusion and what it reads directly","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> depth(1) |> nodes","return":"[\"total\",\"subtotal\",\"shipping\"]"}
++{"id":"synth-76-0009","description":"Nodes after path names the steps by which one value reaches another","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> path(price) |> nodes","return":"[\"total\",\"subtotal\",\"price\"]"}
++{"id":"synth-76-0010","description":"Nodes after intersect names the causes two explanations share","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntax |> why |> intersect(shipping |> why) |> nodes","return":"[\"quantity\"]"}
++{"id":"synth-76-0011","description":"A standing declaration of node names follows a rewiring of the graph","code":"a = 1\nb = a + 2\nc = b * 2\nnames = c |> why |> nodes\nx = 5\nb = x + 1\nnames","return":"[\"c\",\"b\",\"x\"]"}
++{"id":"synth-76-0012","description":"A class-level rule names the nodes behind each instance's own value","code":"rate = 2\nclass Machine(load, hours):\n    this.load = load\n    this.hours = hours\n$Machine.wear = $Machine.load * $Machine.hours * rate\n$Machine.inputs = $Machine.wear |> why |> nodes\npress = Machine(5, 10)\npress.inputs","return":"[\"press.wear\",\"press.load\",\"press.hours\",\"rate\"]"}
+```
 
 **File**: `dataset/nucleoid.synth.77.jsonl` (added, +12/-0)
 ```diff
@@ -1703,7 +1740,7 @@ values, dependencies, live updates, rendering
 +{"id":"synth-77-0012","description":"A subclass method reads the properties its parent declares","code":"class Shape(this.w, this.h)\nclass Prism(this.d) extends Shape:\n    def volume() => .w * .h * .d\np = Prism(4)\np.w = 2\np.h = 3\nassert(p.volume(), 24)\np.volume()","return":"24"}
 ```
 
-**File**: `docs/README.md` (modified, +24/-0)
+**File**: `docs/README.md` (modified, +201/-4)
 ```diff
 @@ -1398,6 +1398,28 @@ order.label
  - Because `is` is a name and `not` a keyword, `o.p = (1 is .a)` keeps its error while `o.p = (1 is not .a)` reads `o.a`, as `(1 is not o.a)`. Without grouping, `o.p = 1 is not .a` is the three statements `o.p = 1`, `is` and `not .a`, and keeps its error.
@@ -1734,324 +1771,403 @@ values, dependencies, live updates, rendering
  ---
  
  ## 6. Class-Level Rules
-@@ -4514,6 +4536,8 @@ class Name:
- class Name:
-     def __init__(self, param):         Python's constructor: exactly def init(param): (NUC 107)
-     def method(self, a) => a           a leading self or this receiver: exactly def method(a) => a
-+class Name(this.w, this.h):
-+    def area() => .w * .h              .w reads this.w in the code of a class body (NUC 113)
+@@ -2257,6 +2279,29 @@ names
+ - Selectors stay live and roll back like the lambda they abbreviate. They render as written, so `why` explains `dearest = Item.max(.price)`; anonymous lambdas keep rendering as `function()`.
+ - Anything else that starts with `.` keeps its error: `f(.a + 1)`, `x = .a`, `[.a]` and `assert: .a, 1` still raise `SyntaxError("Unexpected '.'")`. A selector names at most 127 properties. See the authoritative [property selector arguments](../nucleoid.spec.md#property-selector-arguments) section.
  
- instance = Name(param=expression)      label binding without caller assignment
- instance = Name((param=expression))    explicit positional assignment argument
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -67,7 +67,7 @@ Created: 31-Jul-2026
- | [102](nuc-0102.md) | Implicit Receiver Properties | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
- | [104](nuc-0104.md) | Any and All Class References | Accepted |
- | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
--| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
-+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
- 
- ### Runtime features
- 
-@@ -280,7 +280,7 @@ Created: 31-Jul-2026
- | [110](nuc-0110.md) | Python String Method Aliases | Standards Track | Language compatibility | Accepted |
- | [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
- | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
--| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
-+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Accepted |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0113.md` (modified, +1037/-32)
-```diff
-@@ -4,66 +4,1071 @@
- NUC: 113
- Title: Implicit Receivers in Method Bodies
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Syntax enhancement
- Created: 17-Nov-2026
-+Requires: 79, 93, 102, 107
- ```
- 
- ## Abstract
- 
--- Inside the body of a method that a class declares, a `.` that begins an
--  operand and is followed by a property name reads that property of the
--  instance the method runs on, its receiver `this`. So
--  `def area() => .w * .h` is `def area() => this.w * this.h`, and
--  `return .total - .paid` in a method's indented body is
--  `return this.total - this.paid`.
-+- In the code of a class body, a `.` that begins an operand and is directly
-+  followed by a property name reads that property of the instance the code
-+  runs on, its receiver `this`. So `def area() => .w * .h` is
-+  `def area() => this.w * this.h`, and `return .total - .paid` in a
-+  method's indented body is `return this.total - this.paid`.
- - It completes [NUC 102](nuc-0102.md)'s implicit receivers, which read the
--  assigned object inside the value of a property assignment, for the code
--  of a class that is not such a value: the bodies of its methods and
--  constructors, written with `def` directly in a class's indented body or
--  as the class header's own indented body, with expression or indented
--  bodies and with Python-style `self` parameters ([NUC 107](nuc-0107.md)).
--- Every accepted reading keeps its meaning. A whole argument `.name` stays a
--  [NUC 79](nuc-0079.md) property selector, a property assignment inside a
--  method keeps NUC 102's receiver, a statement that starts with `.` keeps
--  its error, a lambda or function nested in a method keeps its accepted
--  error, since `this` is not defined there, and outside classes
--  `def f() => .a` keeps its accepted `SyntaxError("Unexpected '.'")`.
--- Only programs that were syntax errors at the accepted revision change.
-+  assigned object inside the value of a property assignment, for the rest
-+  of a class's code: the methods it declares with `def` or `function` in
-+  every parameter form, the Python-style `self` methods of
-+  [NUC 107](nuc-0107.md) included, its `def init` and `def __init__`
-+  constructors and the statements of its own body, which make up its
-+  constructor, in subclasses too, with expression and indented bodies and
-+  every statement, expression and template interpolation in them.
-+- A read builds `this.NAME`, the tree of the member access written out, so
-+  values, dependencies, live updates, rendering, `why`, `affects`, rollback
-+  and errors are those of the written-out spelling.
-+- Every accepted reading keeps its meaning:
-+  - A property assignment keeps NUC 102's receiver, and the innermost one
-+    decides, so `other.p = .q` in a method reads `other.q`.
-+  - A whole argument `.name` stays a [NUC 79](nuc-0079.md) selector, and a
-+    dot that begins a call argument, a statement or an assignment target
-+    keeps its accepted reading or error, as do `is` values and a dot after a
-+    name.
-+  - Lambdas, arrows, `function` expressions, operator sections, nested
-+    declarations and the elements and conditions of comprehensions keep
-+    their accepted errors, since `this` is not defined in them.
-+  - Functions outside classes, object functions and class-level rules are
-+    unchanged, so `def f() => .a` keeps `SyntaxError("Unexpected '.'")`.
-+- Reads happen only in NUC 102's final parse, after every accepted parse
-+  has failed, so only inputs that were syntax errors at the accepted
-+  revision change. The probes of the juxtaposed `while` and `suppose`
-+  headers of [NUC 93](nuc-0093.md) read the instance too, so such a header
-+  splits as its written-out spelling does.
-+- No token, keyword, syntax-tree node, error type or message, option or
-+  public item is added, and no version changes. The authoritative contract
-+  is [Implicit receivers in method bodies](../nucleoid.spec.md#implicit-receivers-in-method-bodies).
- 
- ## Motivation
- 
- - Methods read the properties of their own instance more than anything
--  else: in the executable documents, 27 lines that give a method's value
--  read them through `this.`, as in `return this.count` and
--  `def combine left right => this.base + left + right`.
-+  else. In the four executable documents, 53 lines that give a method's
-+  value, an arrow body or a `return` value in a class body, read the
-+  instance, 59 times in all: 28 lines through `this.`, as in
-+  `return this.count` and `def combine left right => this.base + left + right`,
-+  and 25 through `self.`, as in `def free(self) => self.capacity - self.level`.
-+  - The count runs over the 1,151 cases of the four documents, duplicates
-+    included. A line is in a class body when the nearest line above it
-+    that begins, after its indentation, with `class ` is indented less
-+    than it and than every nonblank line between them. Its value is what
-+    follows the first `=>` or `->` of a line that begi
-```
-
-**File**: `docs/nucleoid.g4` (modified, +27/-1)
-```diff
-@@ -733,6 +733,24 @@ atVariable
-  * - It builds Expr::Member over a copy of the receiver path, the tree of
-  *   'receiver DOT property'. Postfix suffixes continue it as one chain, as
-  *   after '(' receiver ')' DOT property.
-+ * Instance-read contract (NUC 113):
-+ * - In the same final parse, the code of a classBody has the receiver THIS
-+ *   wherever no assignment value gives it another: its methodDecls in every
-+ *   parameter form, INIT and PYTHON_INIT included, and its constructor
-+ *   statements, in subclasses too. A receiverRead there builds
-+ *   Expr::Member over Expr::This, the tree of 'THIS DOT property'.
-+ * - An assignment to a member path gives its value the receiver above, or
-+ *   none for a computed or versioned target; an assignment to a name, a
-+ *   label argument and a destructuring declaration keep THIS for their
-+ *   values.
-+ * - The bodies of lambdaExpression, arrowBody, FUNCTION parameters block,
-+ *   sections, nested function declarations and the element and condition
-+ *   of a comprehension have no THIS receiver, so their reads keep the
-+ *   accepted error; a comprehension's source and a quantified condition
-+ *   keep THIS. A classBody inside such a body has THIS again.
-+ * - The NUC 93 probes of whileStmt and supposeStmt headers read THIS
-+ *   receivers but no assignment receivers, as the accepted probes read the
-+ *   written-out 'THIS DOT property'.
-  */
- receiverRead
-     : DOT property                      // Expr::Member over the receiver path
-@@ -1082,7 +1100,8 @@ fragment REGEX_CHAR
-  * (DOT, then a name or keyword, after a token in operand position or at the
-  * start) or a template, one final parse reads receiverRead, with 'is'
-  * comparisons when the source holds 'is' or a template and with
-- * comprehensions when it holds 'for' or a template. When it fails too, its
-+ * comprehensions when it holds 'for' or a template, and with the THIS
-+ * receivers of the instance-read contract. When it fails too, its
-  * error replaces the accepted one only when it lies further into the source.
-  * Passes run and succeed or fail exactly as without the EVERY rule of the
-  * spelled-class contract. When the kept pass read an EVERY spelledClass
-@@ -1141,6 +1160,8 @@ fragment REGEX_CHAR
-  * $C is w                  -> $C.w = true, also spelled every C is w,
-  *                             any C is w and all C is w.
-  * o.p = .a + .b            -> o.p = o.a + o.b, in the final parse.
-+ * def m() => .a + .b       -> def m() => this.a + this.b, in a classBody's
-+ *                             final parse.
-  * new X(...)               -> X(...).
-  * for xs:                  -> iteration with the item name "it".
-  * catch without a name     -> the binding "error".
-@@ -1186,6 +1207,11 @@ fragment REGEX_CHAR
-  * src\lang\ast\parser.rs, receivers set in parser\expression.rs and
-  * parser\statement.rs, reads in parser\primary.rs and parser\postfix.rs, and
-  * the operand-position rule in src\lang\ast\lexer\token.rs.
-+ * Instance receivers: parser\receiver.rs, set for class bodies in
-+ * parser\class.rs, kept for variables in parser\destructuring.rs, left out
-+ * of nested functions in parser\primary.rs, parser\function.rs,
-+ * parser\section.rs and parser\comprehension.rs, and carried into the
-+ * accepted probe in parser\statement.rs.
-  * Membership tests: relationalOperator in parser\precedence.rs, the
-  * expressionInput context in parser.rs and their evaluation in
-  * src\lang\ast\operator.rs.
-```
-
-**File**: `nucleoid.spec.md` (modified, +168/-0)
-```diff
-@@ -3675,6 +3675,174 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid rolls back failed receiver assignments` specify the executable
-   behavior. `tests/implicit_receivers.rs` executes the rest.
- 
-+## Implicit receivers in method bodies
++### Operator section arguments
 +
-+- [NUC 113](docs/nuc-0113.md) lets the code of a class read the properties
-+  of its own instance with a leading dot: in a class body,
-+  `def area() => .w * .h` is `def area() => this.w * this.h`, and
-+  `return .total - .paid` is `return this.total - this.paid`. No token,
-+  keyword, syntax tree node, error type or message is added.
-+- **Where.** The receiver is `this` in the code of a class body: the methods
-+  it declares with `def` or `function` in every parameter form, including
-+  the `self` parameters of [Python-style self parameters](#python-style-self-parameters),
-+  its `def init` and `def __init__` constructors, and the statements of its
-+  own indented or same-line body, which make up its constructor. A class
-+  that names its parent with `extends` or a colon reads as every class does.
-+  Expression and indented bodies read in every statement and expression
-+  they hold, template interpolations included.
-+- **Reads.** A `.` that begins an operand, after a token in operand position
-+  as [Implicit receiver properties](#implicit-receiver-properties) defines
-+  it, and is directly followed by a name reads that property of `this`. The
-+  operand continues with every suffix that member access takes, so
-+  `.items[0]`, `.area()`, `.a.b` and `.w@first` read `this.items[0]`,
-+  `this.area()`, `this.a.b` and `this.w@first`, and a keyword after the dot
-+  reads its canonical spelling, as after any `.`.
-+- **The innermost receiver.** A property assignment keeps the receiver of
-+  [Implicit receiver properties](#implicit-receiver-properties): in a
-+  method, `other.p = .q` reads `other.q` and `this.w = .h` reads `this.h`,
-+  and its value keeps every rule of that section, so `this.p = (x = .a)`
-+  keeps its error. The values of assignments to names, such as `x = .w`,
-+  `x += .w` and `x := .w`, of label arguments such as `P(n = .w)` and of
-+  destructuring declarations such as `a, b = .pair` read `this`, since no
-+  target names another receiver. A computed, indexed or versioned target,
-+  such as `xs[0].p`, `xs[0]` or `o.p@first`, gives its value no receiver,
-+  so its dots keep their errors.
-+- **Nested functions.** `this` is not defined in the functions that a
-+  method's code holds, so their dots keep their accepted errors: the bodies
-+  of lambdas, arrows, `function` expressions, operator sections and nested
-+  `def` and `function` declarations, and the elements and conditions of
-+  comprehensions. So `def twice() => [1, 2].map(i -> i * .w)` keeps
-+  `SyntaxError("Unexpected '.'")`, where `i * this.w` raises
-+  `ReferenceError("this is not defined")` when it runs. The source of a
-+  comprehension and the condition of a quantifier are evaluated in the
-+  method, so they read: `[x * 2 for x in .xs]` reads `this.xs`. A property
-+  value keeps its receiver inside its functions, as
-+  [Implicit receiver properties](#implicit-receiver-properties) specifies,
-+  and a class declared in a function reads its own instance.
-+- **Kept readings.** These dots keep their accepted readings and errors:
-+  - the first token of a call argument: a whole argument `.name` is a
-+    selector of [Property selector arguments](#property-selector-arguments),
-+    so `[this].map(.w)` passes `v -> v.w` and `Inner(.w)` passes a
-+    selector to a constructor, while `f(.w + 1)` keeps its error and
-+    `f(1 + .w)` reads. The two arguments of an `assert:` statement follow
-+    the same rule;
-+  - every dot in the value of an `is` assignment;
-+  - a dot that begins a statement or the target of an assignment, as in
-+    `.count += 1`, `.items.push(x)` and `(.w = 1)`, including the first
-+    statement of a same-line suite, as in `if c: .w` and
-+    `suppose this.w = 5: .w * 2`;
-+  - a dot after a token that is not in operand position, so `while .n > 0:`
-+    keeps its accepted error while `while 0 < .n:` reads, and `x .a` stays
-+    member access;
-+  - every dot outside a class body: functions declared outside a class, so
-+    `def f() => .a` keeps its error, object functions such as
-+    `o.f = function() { return .w }`, which read `o`, and class-level rules
-+    such as `$Rect.area = .w * .h`.
-+- **The written-out path.** A read builds `this.NAME`, the tree of the
-+  member access written out, so values, dependencies, the live updates of
-+  declarations that call a method, class-level rules, rendering, `why`,
-+  `affects`, `suppose`, rollback and run-time errors are those of the
-+  written-out spelling. The probes that keep the juxtaposed `while` and
-+  `suppose` headers of [Is assignments](#is-assignments) read the instance
-+  too, so `while 1 + .n is a: b` in a method runs as the separate
-+  statements of `while 1 + this.n is a: b`.
-+- **Parse passes.** T
++```
++prices = [12, 30, 8, 45]
++limit = 10
++picked = prices.filter(> limit)
++doubled = picked.map(* 2)
++cheap = prices.count(<= limit)
++assert(picked, [12, 30, 45])
++assert([doubled, cheap], [[24, 60, 90], 1])
++limit = 20
++assert([doubled, cheap], [[60, 90], 2])
++stock = [4, null, 7]
++stock.map(?? 0)
++```
++
++- This is the complete `Nucleoid writes one-parameter functions as operator sections` program in `tests/reference.md`, without its title and expected-return metadata; it returns `[4,0,7]`.
++- [NUC 109](nuc-0109.md) lets a call argument that begins with a binary operator stand for the one-parameter function that applies the operator to its argument: `prices.filter(> limit)` is `prices.filter(price -> price > limit)`. A section is a whole argument of a parenthesized argument list, from the operator to the `,` or `)` that ends it, in any call, method call, constructor call, `new` call or `super(...)`.
++- The operators are `==`, `!=`, `===`, `!==`, `<`, `<=`, `>`, `>=`, `*`, `%`, `**`, `&&`, `||` and `??`. `+` and `-` stay signs, so `xs.map(- 1)` passes `-1`; `!`, `/` and the words `is`, `in`, `not`, `and` and `or` do not begin a section.
++- The rest of the argument is read with the usual precedence as if the parameter stood before the operator: `* 2 + 1` is `v -> v * 2 + 1` and `% 2 == 0` is `v -> v % 2 == 0`. The parameter has no name, so the rest cannot read or shadow it, and its names are read on each call, as in the lambda's body.
++- The parser builds the lambda's tree, so sections stay live, explain, render as `function()` and roll back exactly as the lambda does. Grouping parentheses, list items, object values, named arguments, subscripts and pipeline stage arguments keep their accepted errors, and `xs.filter(> 4 && < 9)` raises `SyntaxError
 ```
 
-**File**: `src/lang/ast/parser/class.rs` (modified, +1/-1)
+---
+
+### Incident Patch 2: `409f439a` (2026-11-17)
+**Commit Message**: Simplify ARC matrix composition
+
+Return plain matrices instead of epoch-based drawings. Reject negative positions, grow canvases right or down, and update visualization and documentation.
+
+**File**: `.claude/agents/arc-debug.agent.md` (modified, +14/-13)
 ```diff
-@@ -146,7 +146,7 @@ impl Parser {
+@@ -116,11 +116,13 @@ between that code and the log. At the time of writing, `start()` writes
+ 8. `visualizer.state` (Nucleoid): test `output_value`.
+ 9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, drawn by
+    `Matrix.draw` at `output_value.x` / `output_value.y` on the test input's
+-   canvas: `output_instance_matrix`, and `output_instance_epoch`, the column
+-   and row of position (0, 0) in it. Positions count from that epoch, the test
+-   input's top-left cell, so they can be negative. Logs written before the
+-   epoch have no `output_instance_epoch`; their epoch is `{ x: 0, y: 0 }`.
+-10. `Matrix.merge` of the test output drawings, lined up at their epochs, then
++   canvas: `output_instance_matrix`. Positions count from the test input's
++   top-left cell, and `Matrix.draw` rejects a negative one, which fails the
++   run. Older logs may also hold `output_instance_epoch`, the column and row
++   of position (0, 0) in a drawing that could grow left or up; a nonzero one
++   means that drawing did.
++10. `Matrix.merge` of the drawn matrices onto a zero canvas of the test input's
++    size, lined up at their top-left cells, then
+     `Matrix.canvas(..., output_canvas)`: `result_matrix`.
+ 11. `Matrix.difference(result_matrix, test_output_matrix)`: `difference`;
+     `0` is an exact match.
+@@ -198,14 +200,13 @@ Run every check that applies and record each result:
+   unturned.
+   Report those separately from the extracted instances' disagreements, which
+   alone show the world model mispredicting its own training data.
+-- **Test composition.** Every test `output_value` has integer `x` and `y`; a
+-  negative one lies left of or above the test input. Every drawn
+-  `output_instance_matrix` keeps the test input's shape with the epoch
+-  `{ x: 0, y: 0 }`; a larger one means the instance reached past an edge and
+-  `Matrix.draw` grew the grid that way, and a nonzero `output_instance_epoch`
+-  means it grew left or up. Recompute the drawings, merge and canvas and
+-  compare the result with `result_matrix`, noting cells that a later instance
+-  overwrote.
++- **Test composition.** Every test `output_value` has non-negative integer `x`
++  and `y`; a negative one lies left of or above the test input, and
++  `Matrix.draw` rejects it. Every drawn `output_instance_matrix` keeps the test
++  input's shape; a larger one means the instance reached past the right or
++  bottom edge and `Matrix.draw` grew the grid that way. Recompute the drawn
++  matrices, merge and canvas and compare the result with `result_matrix`,
++  noting cells that a later instance overwrote.
+ - **Scoring (scoring-only).** Compare the shapes of `result_matrix` and
+   `test_output_matrix`. Recompute the difference and compare it with the
+   logged `difference`. Count the mismatched cells and give their coordinates.
+```
+
+**File**: `arc/README.md` (modified, +36/-56)
+```diff
+@@ -198,9 +198,6 @@ instance name. In the visualization, each test object's synthesis shows its
+ `2.12.1`, rather than continuing the synthesis count, and an `Output state`
+ panel right after the `Output crop`: the object's row of the
+ `Visualization · State` table, before its `Placed output`.
+-A `Placed output` that grew left of or above the test input's top-left cell
+-adds its epoch, the column and row of position (0, 0) in the drawn grid, as in
+-`Placed output · <instance> · epoch x=1 y=0`.
+ The visualization's output-crop header also shows the object's output
+ orientation as an arrow emoji and its degrees, such as
+ `2.13.1 Output crop · <instance> · ➡️ 90°`, and every input- and
+@@ -2779,29 +2776,20 @@ For identified instances, the LLM represents instances in `nuc` lang, this is pa
+ For each input instance in test, the LLM generates output instance since it has all information needed from **knowledge packets**.
  
-     fn class_body(&mut self, declaration: &mut ClassDecl) -> Result<()> {
-         let outer = std::mem::replace(&mut self.in_class, true);
--        let result = self.class_contents(declaration);
-+        let result = self.with_instance(|parser| parser.class_contents(declaration));
-         self.in_class = outer;
-         result
+ Finally, `Matrix.draw` draws each output crop at its output position on the
+-test input's canvas before `Matrix.merge` combines the drawings. Positions count
+-from the epoch, position (0, 0), which is the test input's top-left cell, so an
+-object left of or above the test input has a negative position. A drawing grows
+-left, up, right, or down as needed to retain the entire placed crop instead of
+-rejecting an undersized reference, and its epoch records where position (0, 0)
+-landed. Merging lines the drawings up at their epochs and covers every cell any
+-of them covers. Zero is transparent; later nonzero cells win on overlap, as
+-before. An erased output object uses `[[0]]` with an explicit output position.
+-The run log keeps each test instance's drawn matrix as `output_instance_matrix`
+-and its epoch as `output_instance_epoch`.
+-`Matrix.canvas` then frames the merged drawing's matrix with the inferred
++test input's canvas before `Matrix.merge` combines the drawn matrices.
++Positions are zero-based columns and rows from the test input's top-left cell,
++and `Matrix.draw` rejects a negative one, so the run fails explicitly. The
++canvas grows right or down as needed to retain the entire placed crop instead
++of rejecting an undersized reference. Merging lines the matrices up at their
++top-left cells and keeps the largest height and width across its inputs. Zero
++is transparent; later nonzero cells win on overlap, as before. An erased output
++object uses `[[0]]` with an explicit output position. The run log keeps each
++test instance's drawn matrix as `output_instance_matrix`.
++`Matrix.canvas` then frames the merged matrix with the inferred
+ `output_canvas`: `EXACT` keeps the composed canvas, which starts at the test
+-input's dimensions and grows in every direction a drawing needed, and `FIT`
+-crops it to its nonzero bounding box with `Matrix.crop`. Any other value fails
+-explicitly.
+-
+-A drawing is `{ matrix, epoch }`: a matrix together with its epoch, the
+-zero-based column `x` and row `y` of the matrix cell at position (0, 0).
+-Positions left of or above the epoch are negative. A matrix by itself is a
+-drawing whose epoch is its top-left cell, `{ x: 0, y: 0 }`, so `Matrix.locate`,
+-`Matrix.crop`, `Matrix.move`, and `Matrix.merge` accept either, while
+-`Matrix.draw`, `Matrix.move`, and `Matrix.merge` return drawings. A drawing
+-whose epoch is not a pair of integers is rejected.
++input's dimensions and grows right or down where a drawn matrix needed, and
++`FIT` crops it to its nonzero bounding box with `Matrix.crop`. Any other value
++fails explicitly.
+ 
+ `Matrix.crop(matrix)` returns a new matrix containing the smallest rectangle
+ around all nonzero cells. All-zero borders are removed from all four sides:
+@@ -2813,27 +2801,23 @@ position metadata. Use `Matrix.locate` to retain the original position with
+ the crop.
+ 
+ `Matrix.locate(matrix)` returns `{ matrix, x, y, width, height }`, pairing the
+-same tight crop with the position of its top-left cell and its size: `x` is the
+-column and `y` is the row, both counted from the epoch, `width` is the crop's
+-column count and `height` is its row count. For a plain matrix, whose epoch is
+-its top-left cell, the position is the zero-based column and row in that
+-matrix; in a drawing it can be negative. Empty and all-zero matrices return
++same tight crop with its zero-based top-left position in the original matrix
++and its size: `x` is the column, `y` is the row, `width` is the crop's column
++count and `height` is its row count. Empty and all-zero matrices return
+ `{ matrix: [], x: 0, y: 0, width: 0, height: 0 }`. It uses the same validation
+ as `Matrix.crop` and does not modify the input. For a located result,
+ `Matrix.draw(result.matrix, rows, cols, result.x, result.y)` restores the crop
+-to its position on a canvas that covers at least the supplied dimensions from
+-the epoch, and so does `Matrix.pad` when the position is not negative.
+-
+-`Matrix.draw(matrix, rows, cols, x, y)` returns the drawing of `matrix` with
+-its top-left cell at position (`x`, `y`)
+```
+
+**File**: `arc/src/app.ts` (modified, +11/-14)
+```diff
+@@ -65,7 +65,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+     test_input_matrix,
+   });
+ 
+-  let result_drawing = Matrix.draw(
++  let result_matrix = Matrix.draw(
+     [],
+     test_input_matrix.length,
+     test_input_matrix[0].length,
+@@ -100,21 +100,18 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+   await visualizer.state({ declarations, test_input_matrix, input_instances });
+ 
+   for (const input_instance of input_instances) {
+-    const { output_instance_drawing } = await visualizer.output_instance_matrix(
+-      {
+-        test_input_matrix,
+-        train_dataset,
+-        instance: input_instance,
+-      }
+-    );
+-
+-    input_instance.output_instance_matrix = output_instance_drawing.matrix;
+-    input_instance.output_instance_epoch = output_instance_drawing.epoch;
+-
+-    result_drawing = Matrix.merge(result_drawing, output_instance_drawing);
++    const { output_instance_matrix } = await visualizer.output_instance_matrix({
++      test_input_matrix,
++      train_dataset,
++      instance: input_instance,
++    });
++
++    input_instance.output_instance_matrix = output_instance_matrix;
++
++    result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
+   }
+ 
+-  const result_matrix = Matrix.canvas(result_drawing.matrix, output_canvas);
++  result_matrix = Matrix.canvas(result_matrix, output_canvas);
+ 
+   milestone.comparison({ test_output_matrix, result_matrix });
+ 
+```
+
+**File**: `arc/src/lib/Matrix.ts` (modified, +43/-70)
+```diff
+@@ -2,23 +2,7 @@ export function crop(matrix) {
+   return locate(matrix).matrix;
+ }
+ 
+-// A drawing pairs a matrix with its epoch, the column and row of the cell at
+-// position (0, 0), so positions left of or above the epoch are negative. A
+-// matrix by itself is a drawing whose epoch is its top-left cell.
+-function drawing(value) {
+-  if (!Array.isArray(value?.matrix)) {
+-    return { matrix: value, epoch: { x: 0, y: 0 } };
+-  }
+-  if (!Number.isInteger(value.epoch?.x) || !Number.isInteger(value.epoch?.y)) {
+-    throw new Error(
+-      `Drawing epoch ${JSON.stringify(value.epoch)} must be integers`
+-    );
+-  }
+-  return value;
+-}
+-
+-export function locate(value) {
+-  const { matrix, epoch } = drawing(value);
++export function locate(matrix) {
+   const rows: number = matrix.length;
+   const cols: number = matrix[0]?.length ?? 0;
+   let top: number = rows;
+@@ -46,8 +30,8 @@ export function locate(value) {
+     matrix: matrix
+       .slice(top, bottom + 1)
+       .map((row) => row.slice(left, right + 1)),
+-    x: left - epoch.x,
+-    y: top - epoch.y,
++    x: left,
++    y: top,
+     width: right - left + 1,
+     height: bottom - top + 1,
+   };
+@@ -85,43 +69,40 @@ export function silhouette(matrix) {
+ }
+ 
+ // Draws the nonzero cells of each placement, a matrix whose top-left cell sits
+-// at position (x, y), on a canvas that covers the frame and every placement,
+-// so a later nonzero cell wins on overlap. The epoch of the drawing it returns
+-// locates position (0, 0) on that canvas.
+-function compose(frame, placements, action: string) {
+-  let { left, top, right, bottom } = frame;
++// at column x and row y, on a canvas of at least rows by cols cells that grows
++// right or down to cover every placement, so a later nonzero cell wins on
++// overlap.
++function compose(rows: number, cols: number, placements, action: string) {
++  let bottom: number = rows;
++  let right: number = cols;
+   for (const { matrix, x, y } of placements) {
+-    const cols: number = matrix[0]?.length ?? 0;
++    const width: number = matrix[0]?.length ?? 0;
+     for (const row of matrix) {
+-      if (row.length !== cols) {
++      if (row.length !== width) {
+         throw new Error(`Matrix must be rectangular for ${action}`);
+       }
      }
+-    left = Math.min(left, x);
+-    top = Math.min(top, y);
+-    right = Math.max(right, x + cols);
++    right = Math.max(right, x + width);
+     bottom = Math.max(bottom, y + matrix.length);
+   }
+ 
+-  const result = Array.from({ length: bottom - top }, () =>
+-    Array(right - left).fill(0)
+-  );
++  const result = Array.from({ length: bottom }, () => Array(right).fill(0));
+   for (const { matrix, x, y } of placements) {
+     for (let i: number = 0; i < matrix.length; i++) {
+       for (let j: number = 0; j < matrix[i].length; j++) {
+         if (matrix[i][j] !== 0) {
+-          result[y - top + i][x - left + j] = matrix[i][j];
++          result[y + i][x + j] = matrix[i][j];
+         }
+       }
+     }
+   }
+ 
+-  return { matrix: result, epoch: { x: 0 - left, y: 0 - top } };
++  return result;
+ }
+ 
+-// Draws the matrix with its top-left cell at position (x, y) on a canvas that
+-// covers rows by cols cells from the epoch and grows in any direction to keep
+-// the whole matrix, so x and y may be negative.
++// Draws the matrix with its top-left cell at column x and row y on a canvas of
++// at least rows by cols cells, which grows right or down to keep the whole
++// matrix.
+ export function draw(matrix, rows: number, cols: number, x: number, y: number) {
+   if (![rows, cols].every((size) => Number.isInteger(size) && size >= 0)) {
+     throw new Error("Drawing dimensions must be non-negative integers");
+@@ -131,8 +112,12 @@ export function draw(matrix, rows: number, cols: number, x: number, y: number) {
+       `Drawing position ${JSON.stringify({ x, y })} must be integers`
+     );
+   }
+-  const frame = { left: 0, top: 0, right: cols, bottom: rows };
+-  return compose(frame, [{ matrix, x, y }], "drawing");
++  if (x < 0 || y < 0) {
++    throw new Error(
++      `Drawing position ${JSON.stringify({ x, y })} must not be negative`
++    );
++  }
++  return compose(rows, cols, [{ matrix, x, y }], "drawing");
+ }
+ 
+ export function pad(
+@@ -148,8 +133,7 @@ export function pad(
+   if (left < 0 || top < 0) {
+     throw new Error("Padding offsets must be non-negative");
+   }
+-  const frame = { left: 0, top: 0, right: cols, bottom: rows };
+-  return compose(frame, [{ matrix, x: left, y: top }], "padding").matrix;
++  return compose(rows, cols, [{ matrix, x: left, y: top }], "padding");
+ }
+ 
+ // Turns the matrix clockwise by a multiple of 90 degrees, the direction in
+@@ -188,42 +172,31 @@ export function rotate(matrix, degrees: number) {
+ }
+ 
+ // Moves the nonzero cells together so that their bounding box starts at
+-// position (x, y), the position locate reports, which may be negative. The
+-// drawing covers the cells of the matrix or drawing it moves and grows in any
+-// direction when the moved cells need more room.
+-exp
 ```
 
-**File**: `src/lang/ast/parser/comprehension.rs` (modified, +26/-1)
+**File**: `arc/src/lib/milestone.ts` (modified, +9/-14)
 ```diff
-@@ -29,6 +29,31 @@ impl Parser {
-         self.lists == Lists::Comprehensions && self.check(&Token::Keyword(Keyword::For))
-     }
+@@ -6,14 +6,6 @@ function oriented(title: string, orientation: unknown): string {
+   return direction ? `${title} · ${direction}` : title;
+ }
  
-+    pub(super) fn list_head(&mut self) -> Result<Expr> {
-+        if self.holds_instance() && self.list_holds_for() {
-+            return self.without_instance(|parser| parser.within(true, Self::item));
-+        }
-+        self.within(true, Self::item)
-+    }
-+
-+    fn list_holds_for(&self) -> bool {
-+        let mut depth = 0usize;
-+        for spanned in self.tokens.iter().skip(self.position) {
-+            match spanned.token {
-+                Token::LeftParen | Token::LeftBracket | Token::LeftBrace => depth += 1,
-+                Token::RightParen | Token::RightBracket | Token::RightBrace => {
-+                    let Some(outer) = depth.checked_sub(1) else {
-+                        return false;
-+                    };
-+                    depth = outer;
-+                }
-+                Token::Keyword(Keyword::For) if depth == 0 => return true,
-+                _ => {}
-+            }
-+        }
-+        false
-+    }
-+
-     pub(super) fn comprehension(&mut self, start: usize, element: Expr) -> Result<Expr> {
-         if let Some(variable) = self.at_variable_since(start) {
-             return self.reject_at_variable(variable);
-@@ -47,7 +72,7 @@ impl Parser {
-         })?;
-         let source = if self.eat_keyword(Keyword::If) {
-             let items = self.leave_items();
--            let condition = self.within(true, Self::expression);
-+            let condition = self.without_instance(|parser| parser.within(true, Self::expression));
-             self.items = items;
-             method_call(source, "filter", lambda(parameter.clone(), condition?))
-         } else {
+-// Adds a drawing's epoch, the column and row of position (0, 0) in its grid,
+-// when the drawing grew left of or above that position.
+-function epoched(title: string, epoch): string {
+-  return epoch && (epoch.x !== 0 || epoch.y !== 0)
+-    ? `${title} · epoch x=${epoch.x} y=${epoch.y}`
+-    : title;
+-}
+-
+ export function start({ version, puzzle_id, train, test_input_matrix }) {
+   terminal.header({ version, puzzle_id });
+   terminal.puzzle({ train, testInput: test_input_matrix });
+@@ -241,12 +233,15 @@ export function output_composed({
+   );
+ }
+ 
+-export function output_placed({ instance_name, output_instance_drawing }) {
+-  const { matrix, epoch } = output_instance_drawing;
+-  terminal.grid(epoched(`Placed output · ${instance_name}`, epoch), matrix, {
+-    key: "placed_output",
+-    loop: true,
+-  });
++export function output_placed({
++  instance_name,
++  output_instance_placed_matrix,
++}) {
++  terminal.grid(
++    `Placed output · ${instance_name}`,
++    output_instance_placed_matrix,
++    { key: "placed_output", loop: true }
++  );
+ }
+ 
+ export function comparison({ test_output_matrix, result_matrix }) {
+```
+
+**File**: `arc/src/visualizer.ts` (modified, +3/-3)
+```diff
+@@ -183,17 +183,17 @@ export async function output_instance_matrix({
+ 
+   milestone.output_composed(instance);
+ 
+-  const output_instance_drawing = Matrix.draw(
++  const output_instance_placed_matrix = Matrix.draw(
+     Matrix.crop(output_instance_matrix),
+     test_input_matrix.length,
+     test_input_matrix[0].length,
+     x,
+     y
+   );
+ 
+-  milestone.output_placed({ ...instance, output_instance_drawing });
++  milestone.output_placed({ ...instance, output_instance_placed_matrix });
+ 
+-  return { output_instance_drawing };
++  return { output_instance_matrix: output_instance_placed_matrix };
+ }
+ 
+ export async function state({
 ```
 
 #### Recent Merged Pull Requests:
@@ -2080,22 +2196,55 @@ values, dependencies, live updates, rendering
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 114 List and Population Products
+## X. Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `551d11fe`: Draft NUC 114 List and Population Products. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `16ae8c24`: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [114](nuc-0114.md) | List and Population Products | Draft |
-| [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Draft |
+## Operator section arguments
+
+**Operator sections pass a comparison without naming a parameter**
+
+```nuc
+cells = [0, 3, 0, 7, 7]
+filled = cells.filter(!= 0)
+sevens = cells.count(== 7)
+assert([filled, sevens], [[3, 7, 7], 2])
+cells.push(7)
+assert([filled, sevens], [[3, 7, 7, 7], 3])
+```
+
+- [NUC 109](docs/nuc-0109.md) lets a call argument that begins with a
+  binary operator stand for the function that applies the operator to its
+  argument: `cells.filter(!= 0)` is `cells.filter(cell -> cell != 0)`, and
+  `cells.count(== 7)` counts the sevens.
+- The rest of the argument is read as if the item stood before the
+  operator, with the usual precedence, so `xs.map(* 2 + 1)` maps
+  `x -> x * 2 + 1`. Both declarations stay live like their lambdas: another
+  seven extends `filled` and raises `sevens`. See the
+  [root contract](nucleoid.spec.md#operator-section-arguments).
+
+## Python string method aliases
+
+**Python string methods classify files and list them**
+
+```nuc
+class File(name):
+    this.name = name
+$File.table = $File.name.endswith(".csv")
+report = File("report.csv")
+notes = File("notes.txt")
+tables = ", ".join(File.filter(file -> file.table).map(file -> file.name))
+assert([report.tab
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2105,7 +2254,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `551d11fe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `16ae8c24` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
