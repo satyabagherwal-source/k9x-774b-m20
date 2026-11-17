@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T02:16:54.646Z",
+  "last_updated": "2026-11-17T02:24:55.063Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4797,14 +4797,14 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-3VOS",
+      "id": "CD-KP83",
       "directive_title": "splash screen staying visible after warm start on Android 12+",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-3VOS-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-KP83-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-16",
+      "date_staged": "2026-11-17",
       "domain_letter": "H"
     },
     {
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-AFSK",
+      "id": "CD-KQHF",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-AFSK-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-KQHF-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-AFBC",
+      "id": "CD-KPVL",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-AFBC-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-KPVL-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -21336,6 +21336,33 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-50634B-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-8EB793",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8EB793-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-AD8D98",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AD8D98-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-AEC725",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AEC725-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-17"
     }
   ]

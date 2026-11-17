@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T02:16:54.859Z",
+  "last_updated": "2026-11-17T02:24:55.318Z",
   "total_verified_learnings": 8828,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-AFSK-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KQHF-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "50f130c153874524d7520fb0af32720211e8848aad9d4a751a19b06d2dc0a68b",
+      "content_hash": "e0563a8786475bd110e2f6bff48f9e10207b2825693d0f8cf7c7e7031fc1a459",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:16:54.646Z"
+      "persisted_at": "2026-11-17T02:24:55.063Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8bf4428270c1aa9da2ea3a08f18e5d5f30858313d0853debf3e3db95c6e6c029",
+      "content_hash": "6f84776d9df6a20aae287523dca4248b2fdd647192b6f2187619671473c58bd5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:16:54.753Z"
+      "persisted_at": "2026-11-17T02:24:55.189Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6b46888ed0d00da7790a59722e28cbd490db48aa3d5a481c847b547330427cf",
+      "content_hash": "1cef665269a12dee45afc3a7d8ddb1f22bd736a87f091b9a29786ff000903b16",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T02:16:54.859Z"
+      "persisted_at": "2026-11-17T02:24:55.318Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218053,13 +218053,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-AFBC-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KPVL-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "74b2827014e5923cdd50b98335ce6612620006a9847455d8296f1643f6d14968",
+      "content_hash": "9952461cf4f1af96e200e8ef0010264b3a9209a38b8a531e945670106e9b7182",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:16:54.024Z"
+      "persisted_at": "2026-11-17T02:24:54.273Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218069,9 +218069,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "197117c746206297d60a0d2c83bf44c2b83b45556dbf7580086b42ed080aea40",
+      "content_hash": "0f97f5997482fac1a4ca5555b881e0451164af549aed84a0ca205ce380bb9a81",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:16:54.131Z"
+      "persisted_at": "2026-11-17T02:24:54.426Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218081,9 +218081,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e6b810daea8b70a38136f418ce81e7dbb3fa8b7eae5eb3fb45f05c1d6f0e370",
+      "content_hash": "31a497968b61edab7b94c36635ceeed557e9f5051373de308b7dec0820bb14b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T02:16:54.238Z"
+      "persisted_at": "2026-11-17T02:24:54.557Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -226879,13 +226879,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3VOS-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KP83-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "4245ca11717c8542161280d9327f2942b826802228ea4d10046b7469bf1d09c1",
+      "content_hash": "0983def224c9ed8ec5555065042f2d1c1106526a91fb9eafa9112c4235692b43",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:55:51.341Z"
+      "persisted_at": "2026-11-17T02:24:53.428Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226895,9 +226895,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "b2a1d54c993edbe5073d5d82de189451255eb65e947ed7c06b735e3fb25dcb23",
+      "content_hash": "2efca1973dc6fecf4528069a08ef94ce9c70160a646a71844122d617477d3d35",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:55:51.455Z"
+      "persisted_at": "2026-11-17T02:24:53.696Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226907,9 +226907,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "1bbbdf3cd8b8ba249164644e0b5517ebdae230dec555f112e86f5eea5109ff8f",
+      "content_hash": "e4f656810a0ca6f3dde51584b8ab0516ca74a6b263319a8741254a52234701c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:55:51.578Z"
+      "persisted_at": "2026-11-17T02:24:53.872Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
