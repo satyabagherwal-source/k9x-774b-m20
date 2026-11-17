@@ -10611,3 +10611,7 @@
 | `CYCLE-20261117-GZFE` | `2026-11-17T16:21:48.506Z` | `orcarouter/OrcaCyber-Nano-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md` | Yes (`33d70abd...`) |
 | `CYCLE-20261117-H1OY` | `2026-11-17T16:21:51.442Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8998` | Yes (`639b87b8...`) |
 | `CYCLE-20261117-H877` | `2026-11-17T16:21:59.875Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8999` | Yes (`accba9fc...`) |
+| `CYCLE-20261117-SK2B` | `2026-11-17T16:30:48.467Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md` | Yes (`5f19b2b2...`) |
+| `CYCLE-20261117-SM7G` | `2026-11-17T16:30:51.244Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9000` | Yes (`f08ce536...`) |
+| `CYCLE-20261117-SPN2` | `2026-11-17T16:30:55.694Z` | `i18next/react-i18next` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9001` | Yes (`877f3bf2...`) |
+| `CYCLE-20261117-SX5T` | `2026-11-17T16:31:05.441Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9002` | Yes (`ac4a63a0...`) |

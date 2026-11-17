@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T16:22:04.459Z",
-  "total_verified_learnings": 8905,
+  "last_updated": "2026-11-17T16:31:09.750Z",
+  "total_verified_learnings": 8906,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20345,
+  "total_items": 20355,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114169,10 +114169,10 @@
       "relative_path": "08_VERIFICATION/milvus-io-milvus-verification-protocol-empirical-defect-shield-for-milvus-io-mil.md",
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io/milvus",
       "repository": "milvus-io/milvus",
-      "source_version": "9f1054c2",
-      "content_hash": "fbf24202d663c2282bd64b5eb535f2f29fac40550a12dd56ee5b8a22e74d5c28",
+      "source_version": "f266503a",
+      "content_hash": "b8afb9efcb618bd55e1584e45ef621c41df97f39d81dd6082473c077d1747909",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T13:38:33.460Z"
+      "persisted_at": "2026-11-17T16:31:05.810Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
@@ -221400,14 +221400,19 @@
       "slug": "i18next-react-i18next",
       "platform": "github",
       "source_url": "https://github.com/i18next/react-i18next",
-      "source_version": "f97f5f82",
-      "content_hash": "91da2d06f39d26cb0da376f7b2352827d44e5a37bd5601de090f96ccd0888d1e",
+      "source_version": "96a8573c",
+      "content_hash": "877f3bf2b025a07153ee38b6b32872e5dc42f4a9b5c6ef1eaeec89b1fbe69330",
       "dossier_path": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
       "promoted_rules": [
         {
           "number": 8424,
           "title": "docs(README): copyable one-prompt setup for coding agents",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9001,
+          "title": "re-render for a bindI18nStore event between render and subscribe",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -221416,7 +221421,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:10:30.450Z",
+      "verified_at": "2026-11-17T16:30:55.557Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221458,10 +221463,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-i18next-react-i18next-technical-construction-intelligence-i18next-react-i18next-.md",
       "title": "Technical Construction Intelligence: i18next/react-i18next Core Invariants",
       "repository": "i18next/react-i18next",
-      "source_version": "f97f5f82",
-      "content_hash": "0ace05fc707c3e07576f4181d53cd1d9d787bf6bd5a14bba87345f043c5dab5a",
+      "source_version": "96a8573c",
+      "content_hash": "2c411554cd45df74dfba6ebf0957f626fac462b4b36645f84c0de8a713025c6f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T03:10:30.955Z"
+      "persisted_at": "2026-11-17T16:30:55.958Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next",
@@ -221470,10 +221475,10 @@
       "relative_path": "08_VERIFICATION/i18next-react-i18next-verification-protocol-empirical-defect-shield-for-i18next-.md",
       "title": "Verification Protocol: Empirical Defect Shield for i18next/react-i18next",
       "repository": "i18next/react-i18next",
-      "source_version": "f97f5f82",
-      "content_hash": "94de20d08bdb4c1b53731ac13dafd78631b3e8c8d4a7b5774c1481842a5396e9",
+      "source_version": "96a8573c",
+      "content_hash": "54f01edec740a3bc00c4f099cae2c118c2d13e0dda12d5bf9229a5978286fe63",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:10:31.081Z"
+      "persisted_at": "2026-11-17T16:30:56.074Z"
     },
     "learn-github-siderolabs-talos": {
       "learning_id": "learn-github-siderolabs-talos",
@@ -221950,9 +221955,9 @@
       "title": "Technical Construction Intelligence: i18next-react-i18next-learnings Core Invariants",
       "repository": "i18next-react-i18next-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f7cf3266f160fe74c613a614608353623d0da3ec2771ad062787ebf0c215ac6",
+      "content_hash": "0d603197d957ad0cbdd58aefc64dc0f52d8f6ac12d298834e4277b5507845c00",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T03:16:47.039Z"
+      "persisted_at": "2026-11-17T16:31:09.639Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-i18next-react-i18next-learning",
@@ -221962,9 +221967,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for i18next-react-i18next-learnings",
       "repository": "i18next-react-i18next-learnings",
       "source_version": "HEAD",
-      "content_hash": "51f4c027f4fbb02ddfad6c56a0fa4585ceba77b6636288ade29d8bfe1f68c6ef",
+      "content_hash": "e239d3d71b360dbcd69b140a046d07ef96ef488651dc736c197630d95b24f065",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:16:47.185Z"
+      "persisted_at": "2026-11-17T16:31:09.750Z"
     },
     "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants",
@@ -239161,8 +239166,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "9f1054c2",
-      "content_hash": "3c6ea005e2ab721b8da4303fea0c680522d51a77f3d3e33c96c5bd94d1ad7dd7",
+      "source_version": "f266503a",
+      "content_hash": "ac4a63a0790cea296481eab66498636c57b4eec4cc207f79de4e2680a7e21d66",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -239175,6 +239180,11 @@
           "number": 8741,
           "title": "fix flaky TestBuildLatencyExcludesAdmissionWait",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9002,
+          "title": "propagate candidates and null rejection to element predicates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239182,7 +239192,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T13:38:32.911Z",
+      "verified_at": "2026-11-17T16:31:05.274Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250550,14 +250560,19 @@
       "slug": "medialab-xan",
       "platform": "github",
       "source_url": "https://github.com/medialab/xan",
-      "source_version": "738ba7af",
-      "content_hash": "8b29a3da1c224a6a60e213db7bcb154f5b27430bb0212e7b663698373c262f68",
+      "source_version": "d0482266",
+      "content_hash": "f08ce5368c987f4f93dc7b4e75641c119ccb6338655645fdc40c6ccf352b016e",
       "dossier_path": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/medialab-xan-learnings.md",
       "promoted_rules": [
         {
           "number": 8683,
           "title": "Starting to move things around",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9000,
+          "title": "Improving performance of xan from -f=parquet",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -250566,7 +250581,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T01:45:11.843Z",
+      "verified_at": "2026-11-17T16:30:51.109Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250608,10 +250623,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-technical-construction-intelligence-medialab-xan-core-invariants.md",
       "title": "Technical Construction Intelligence: medialab/xan Core Invariants",
       "repository": "medialab/xan",
-      "source_version": "738ba7af",
-      "content_hash": "22b9836460e27aaa2c30c001f6bfc196d8bb588dba1558d4b32a6bf2a4e1f290",
+      "source_version": "d0482266",
+      "content_hash": "30b6eef371ef51dbf8ec61041f34e36008635b0baea43852d224a6aba533f965",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T01:45:12.262Z"
+      "persisted_at": "2026-11-17T16:30:51.507Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-medialab-xan": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-medialab-xan",
@@ -250620,10 +250635,10 @@
       "relative_path": "08_VERIFICATION/medialab-xan-verification-protocol-empirical-defect-shield-for-medialab-xan.md",
       "title": "Verification Protocol: Empirical Defect Shield for medialab/xan",
       "repository": "medialab/xan",
-      "source_version": "738ba7af",
-      "content_hash": "79a152de4404eb641637571cbef51a203e7dbe2b6a37bac606812b53add302bf",
+      "source_version": "d0482266",
+      "content_hash": "99dff4ef7713cbd3afd2f59b5ecb087b0e4405a31b9ebff2826ab21531dba7df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T01:45:12.366Z"
+      "persisted_at": "2026-11-17T16:30:51.623Z"
     },
     "learn-github-rickclephas-kmp-nativecoroutines": {
       "learning_id": "learn-github-rickclephas-kmp-nativecoroutines",
@@ -250742,9 +250757,9 @@
       "title": "Technical Construction Intelligence: medialab-xan-learnings Core Invariants",
       "repository": "medialab-xan-learnings",
       "source_version": "HEAD",
-      "content_hash": "6cc6d982ffdc3467a258c66b6958020ac3743d65283f8003a3bc5fe548b7c95c",
+      "content_hash": "3f428c960c3a1b6b4d3536669892c3fd2fb24c447f7cee4e0422afa3214cb630",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T01:45:25.575Z"
+      "persisted_at": "2026-11-17T16:31:08.849Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-medialab-xan-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-medialab-xan-learnings",
@@ -250754,9 +250769,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for medialab-xan-learnings",
       "repository": "medialab-xan-learnings",
       "source_version": "HEAD",
-      "content_hash": "1598bff54c3b9750899635cae9905bcca47b1910818b2795cb5c9d2450f47583",
+      "content_hash": "842f17ee40fcf7580463521963c0b111b703435bdc384d349a6e466b528eefe9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T01:45:25.679Z"
+      "persisted_at": "2026-11-17T16:31:08.962Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants",
@@ -272714,6 +272729,147 @@
       "content_hash": "cd897f2dc43517b03a1575a702a7af4270884b3555a46b51104b329e9c131a00",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T16:22:04.213Z"
+    },
+    "learn-huggingface-recursivesi-flint": {
+      "learning_id": "learn-huggingface-recursivesi-flint",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "RecursiveSI/flint",
+      "repository": "RecursiveSI/flint",
+      "slug": "hf-recursivesi-flint",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/RecursiveSI/flint",
+      "source_version": "hf-recursivesi-flint",
+      "content_hash": "5f19b2b231ba7f7d057c6b187d0c07513ebc1f455fde2751382be49ed1ca8919",
+      "dossier_path": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T16:30:48.302Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-recursivesi-flint-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-recursivesi-flint-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-recursivesi-flint-research-knowledge-intelligence-recursivesi-flint-core-inva.md",
+      "title": "Research & Knowledge Intelligence: RecursiveSI/flint Core Invariants",
+      "repository": "RecursiveSI/flint",
+      "source_version": "hf-recursivesi-flint",
+      "content_hash": "147d87ce387c29f536bf7b49ed0ceef9f18d34cee64629a54aa253f0c9982e7b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:30:48.624Z"
+    },
+    "rule-9000": {
+      "learning_id": "rule-9000",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9000,
+      "title": "Improving performance of xan from -f=parquet",
+      "source_url": "https://github.com/medialab/xan",
+      "source_version": "d0482266",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:30:51.109Z"
+    },
+    "candidate_directive-improving-performance-of-xan-from-f-parquet": {
+      "item_id": "candidate_directive-improving-performance-of-xan-from-f-parquet",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SZPG-improving-performance-of-xan-from-f-parquet.md",
+      "title": "Improving performance of xan from -f=parquet",
+      "repository": "medialab-xan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5fbb8d31c56c90d8ae76c5eba6c685f1070cf23caabc3cf0797a3127e3ed4fd1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T16:31:08.745Z"
+    },
+    "rule-9001": {
+      "learning_id": "rule-9001",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9001,
+      "title": "re-render for a bindI18nStore event between render and subscribe",
+      "source_url": "https://github.com/i18next/react-i18next",
+      "source_version": "96a8573c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:30:55.557Z"
+    },
+    "candidate_directive-re-render-for-a-bindi18nstore-event-between-render-and-subscribe": {
+      "item_id": "candidate_directive-re-render-for-a-bindi18nstore-event-between-render-and-subscribe",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T0BL-re-render-for-a-bindi18nstore-event-between-render-and-subscribe.md",
+      "title": "re-render for a bindI18nStore event between render and subscribe",
+      "repository": "i18next-react-i18next-learnings",
+      "source_version": "HEAD",
+      "content_hash": "40cb70ff42098cefad87ab6d9f2d3af2af6e495ed79e44b5461743a7c06d4761",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T16:31:09.538Z"
+    },
+    "rule-9002": {
+      "learning_id": "rule-9002",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9002,
+      "title": "propagate candidates and null rejection to element predicates",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "f266503a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:31:05.274Z"
+    },
+    "candidate_directive-propagate-candidates-and-null-rejection-to-element-predicates": {
+      "item_id": "candidate_directive-propagate-candidates-and-null-rejection-to-element-predicates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SXA6-propagate-candidates-and-null-rejection-to-element-predicates.md",
+      "title": "propagate candidates and null rejection to element predicates",
+      "repository": "milvus-io/milvus",
+      "source_version": "f266503a",
+      "content_hash": "a32ab9b631e9ee7333e81c36d605faffc2ad3181bcf1a88b79bdf2ba214e6ec6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T16:31:05.603Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-milvus-io-milvus-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-milvus-io-milvus-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-milvus-io-milvus-quality-verification-intelligence-milvus-io-milvus-core-invaria.md",
+      "title": "Quality & Verification Intelligence: milvus-io/milvus Core Invariants",
+      "repository": "milvus-io/milvus",
+      "source_version": "f266503a",
+      "content_hash": "cfa1c6b2772d953bfb055c57e6d459592f98a5208be702895ab50ca54b2ed360",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T16:31:05.698Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-recursivesi-flint-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-recursivesi-flint-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-recursivesi-flint-learnings-research-knowledge-intelligence-hf-recursivesi-fl.md",
+      "title": "Research & Knowledge Intelligence: hf-recursivesi-flint-learnings Core Invariants",
+      "repository": "hf-recursivesi-flint-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2605cdad1d4a38239328622a2e249aed1064b609298becc53d0e0eb851c2f2c5",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:31:09.222Z"
     }
   },
   "ai-builder-brain": {

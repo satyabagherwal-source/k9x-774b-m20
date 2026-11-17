@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-DGIW",
-    "timestamp": "2026-11-15T05:31:52.424Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "6a34b8686faf0e45dd4f28c7438fe437ed027905ae2288f0fb5163ee006a3f65",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-JQKC",
-    "timestamp": "2026-11-15T05:36:45.372Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-    "contentHash": "defb48f51daa34ac53a8f9bbd9732e2be18161ccf7b32a709f0ec3e9af75fbb7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-DN3P",
-    "timestamp": "2026-11-15T06:00:00.565Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-    "contentHash": "c29e5332152c812877c2858cdef54cef60ef65410a59fcbf5940f5ea8ec963e7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-DUJZ",
-    "timestamp": "2026-11-15T06:00:10.223Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "6ba19f9d258d52f4765810cdcc38c0b62090940f16a7f55d4aeb0051bf477be7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-DVY2",
     "timestamp": "2026-11-15T06:00:12.026Z",
     "repository": "projectdiscovery/nuclei",
@@ -7490,6 +7430,66 @@
     "repository": "envoyproxy/envoy",
     "learningId": "learn-github-envoyproxy-envoy",
     "contentHash": "accba9fc5ac566076bae0967dc11236820c9a7c876d6fc2496a4316376aba384",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-SK2B",
+    "timestamp": "2026-11-17T16:30:48.467Z",
+    "repository": "RecursiveSI/flint",
+    "learningId": "learn-huggingface-recursivesi-flint",
+    "contentHash": "5f19b2b231ba7f7d057c6b187d0c07513ebc1f455fde2751382be49ed1ca8919",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-SM7G",
+    "timestamp": "2026-11-17T16:30:51.244Z",
+    "repository": "medialab/xan",
+    "learningId": "learn-github-medialab-xan",
+    "contentHash": "f08ce5368c987f4f93dc7b4e75641c119ccb6338655645fdc40c6ccf352b016e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-SPN2",
+    "timestamp": "2026-11-17T16:30:55.694Z",
+    "repository": "i18next/react-i18next",
+    "learningId": "learn-github-i18next-react-i18next",
+    "contentHash": "877f3bf2b025a07153ee38b6b32872e5dc42f4a9b5c6ef1eaeec89b1fbe69330",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-SX5T",
+    "timestamp": "2026-11-17T16:31:05.441Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "ac4a63a0790cea296481eab66498636c57b4eec4cc207f79de4e2680a7e21d66",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

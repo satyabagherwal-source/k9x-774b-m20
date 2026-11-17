@@ -4103,10 +4103,10 @@
     "repository": "i18next/react-i18next",
     "platform": "github",
     "sourceUrl": "https://github.com/i18next/react-i18next",
-    "sourceVersion": "f97f5f82",
+    "sourceVersion": "96a8573c",
     "license": "MIT",
-    "contentHash": "91da2d06f39d26cb0da376f7b2352827d44e5a37bd5601de090f96ccd0888d1e",
-    "lastHarvestedAt": "2026-11-14T03:10:30.623Z",
+    "contentHash": "877f3bf2b025a07153ee38b6b32872e5dc42f4a9b5c6ef1eaeec89b1fbe69330",
+    "lastHarvestedAt": "2026-11-17T16:30:55.697Z",
     "learningId": "learn-github-i18next-react-i18next"
   },
   "clastix-kamaji": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "9f1054c2",
+    "sourceVersion": "f266503a",
     "license": "Apache-2.0",
-    "contentHash": "3c6ea005e2ab721b8da4303fea0c680522d51a77f3d3e33c96c5bd94d1ad7dd7",
-    "lastHarvestedAt": "2026-11-16T13:38:33.062Z",
+    "contentHash": "ac4a63a0790cea296481eab66498636c57b4eec4cc207f79de4e2680a7e21d66",
+    "lastHarvestedAt": "2026-11-17T16:31:05.444Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "738ba7af",
+    "sourceVersion": "d0482266",
     "license": "Unlicense",
-    "contentHash": "8b29a3da1c224a6a60e213db7bcb154f5b27430bb0212e7b663698373c262f68",
-    "lastHarvestedAt": "2026-11-16T01:45:11.990Z",
+    "contentHash": "f08ce5368c987f4f93dc7b4e75641c119ccb6338655645fdc40c6ccf352b016e",
+    "lastHarvestedAt": "2026-11-17T16:30:51.247Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {
@@ -10515,8 +10515,8 @@
     "sourceUrl": "https://huggingface.co/RecursiveSI/flint",
     "sourceVersion": "hf-recursivesi-flint",
     "license": "Open-Source",
-    "contentHash": "f3e7d189378d552319d6069006654ce36df08cced5ea568fe52a06123691bb69",
-    "lastHarvestedAt": "2026-11-13T04:42:59.009Z",
+    "contentHash": "5f19b2b231ba7f7d057c6b187d0c07513ebc1f455fde2751382be49ed1ca8919",
+    "lastHarvestedAt": "2026-11-17T16:30:48.470Z",
     "learningId": "learn-huggingface-recursivesi-flint"
   },
   "hf-qwen-qwen3-14b": {

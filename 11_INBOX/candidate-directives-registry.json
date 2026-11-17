@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T16:22:04.213Z",
+  "last_updated": "2026-11-17T16:31:09.538Z",
   "directives": [
     {
       "id": "CD-001",
@@ -24782,6 +24782,57 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
       "domain_letter": "K"
+    },
+    {
+      "id": "CD-SZPG",
+      "directive_title": "Improving performance of xan from -f=parquet",
+      "source_repo": "medialab-xan-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SZPG-improving-performance-of-xan-from-f-parquet.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-T0BL",
+      "directive_title": "re-render for a bindI18nStore event between render and subscribe",
+      "source_repo": "i18next-react-i18next-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-T0BL-re-render-for-a-bindi18nstore-event-between-render-and-subscribe.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-SXA6",
+      "directive_title": "propagate candidates and null rejection to element predicates",
+      "source_repo": "milvus-io/milvus",
+      "source_commit": "f266503a",
+      "staged_file": "11_INBOX/candidate-directives/CD-SXA6-propagate-candidates-and-null-rejection-to-element-predicates.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-4146DB",
+      "directive_title": "Improving performance of xan from -f=parquet",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "medialab-xan",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4146DB-improving-performance-of-xan-from-f-parq.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-25867D",
+      "directive_title": "re-render for a bindI18nStore event between render and subscribe",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "i18next-react-i18next",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-25867D-re-render-for-a-bindi18nstore-event-betw.md",
+      "staged_date": "2026-11-17"
     }
   ]
 }

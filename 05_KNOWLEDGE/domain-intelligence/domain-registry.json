@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T16:22:04.333Z",
-  "total_records": 1603,
+  "last_updated": "2026-11-17T16:31:09.639Z",
+  "total_records": 1606,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 673,
+      "total": 675,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -722,7 +722,9 @@
         "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core",
         "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-l",
         "domain_intelligence-research-knowledge-intelligence-orcarouter-orcacyber-nano-1-0-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-",
+        "domain_intelligence-research-knowledge-intelligence-recursivesi-flint-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-recursivesi-flint-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1575,7 +1577,7 @@
       ]
     },
     "K": {
-      "total": 69,
+      "total": 70,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1645,7 +1647,8 @@
         "DOM-K-8B2A4B0A",
         "DOM-K-93409B61",
         "DOM-K-D4FDB7F4",
-        "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-milvus-io-milvus-core-invariants"
       ]
     },
     "L": {
@@ -12299,8 +12302,8 @@
       "title": "Technical Construction Intelligence: i18next/react-i18next Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-i18next-react-i18next-technical-construction-intelligence-i18next-react-i18next-.md",
       "repository": "i18next/react-i18next",
-      "content_hash": "0ace05fc707c3e07576f4181d53cd1d9d787bf6bd5a14bba87345f043c5dab5a",
-      "created_at": "2026-11-14T03:10:30.955Z"
+      "content_hash": "2c411554cd45df74dfba6ebf0957f626fac462b4b36645f84c0de8a713025c6f",
+      "created_at": "2026-11-17T16:30:55.958Z"
     },
     "domain_intelligence-technical-construction-intelligence-siderolabs-talos-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-siderolabs-talos-core-invariants",
@@ -12421,8 +12424,8 @@
       "title": "Technical Construction Intelligence: i18next-react-i18next-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-i18next-react-i18next-learnings-technical-construction-intelligence-i18next-reac.md",
       "repository": "i18next-react-i18next-learnings",
-      "content_hash": "0f7cf3266f160fe74c613a614608353623d0da3ec2771ad062787ebf0c215ac6",
-      "created_at": "2026-11-14T03:16:47.039Z"
+      "content_hash": "0d603197d957ad0cbdd58aefc64dc0f52d8f6ac12d298834e4277b5507845c00",
+      "created_at": "2026-11-17T16:31:09.639Z"
     },
     "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants",
@@ -22597,8 +22600,8 @@
       "title": "Technical Construction Intelligence: medialab/xan Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-technical-construction-intelligence-medialab-xan-core-invariants.md",
       "repository": "medialab/xan",
-      "content_hash": "22b9836460e27aaa2c30c001f6bfc196d8bb588dba1558d4b32a6bf2a4e1f290",
-      "created_at": "2026-11-16T01:45:12.262Z"
+      "content_hash": "30b6eef371ef51dbf8ec61041f34e36008635b0baea43852d224a6aba533f965",
+      "created_at": "2026-11-17T16:30:51.507Z"
     },
     "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants",
@@ -22615,8 +22618,8 @@
       "title": "Technical Construction Intelligence: medialab-xan-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-learnings-technical-construction-intelligence-medialab-xan-learning.md",
       "repository": "medialab-xan-learnings",
-      "content_hash": "6cc6d982ffdc3467a258c66b6958020ac3743d65283f8003a3bc5fe548b7c95c",
-      "created_at": "2026-11-16T01:45:25.575Z"
+      "content_hash": "3f428c960c3a1b6b4d3536669892c3fd2fb24c447f7cee4e0422afa3214cb630",
+      "created_at": "2026-11-17T16:31:08.849Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants",
@@ -27567,6 +27570,33 @@
       "repository": "hf-orcarouter-orcacyber-nano-1.0-learnings",
       "content_hash": "06932dbbd022f31337ff72401b36b188f9e961153af84415e0feeefc77a73051",
       "created_at": "2026-11-17T16:22:03.846Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-recursivesi-flint-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-recursivesi-flint-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: RecursiveSI/flint Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-recursivesi-flint-research-knowledge-intelligence-recursivesi-flint-core-inva.md",
+      "repository": "RecursiveSI/flint",
+      "content_hash": "147d87ce387c29f536bf7b49ed0ceef9f18d34cee64629a54aa253f0c9982e7b",
+      "created_at": "2026-11-17T16:30:48.624Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-milvus-io-milvus-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-milvus-io-milvus-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: milvus-io/milvus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-milvus-io-milvus-quality-verification-intelligence-milvus-io-milvus-core-invaria.md",
+      "repository": "milvus-io/milvus",
+      "content_hash": "cfa1c6b2772d953bfb055c57e6d459592f98a5208be702895ab50ca54b2ed360",
+      "created_at": "2026-11-17T16:31:05.698Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-recursivesi-flint-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-recursivesi-flint-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-recursivesi-flint-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-recursivesi-flint-learnings-research-knowledge-intelligence-hf-recursivesi-fl.md",
+      "repository": "hf-recursivesi-flint-learnings",
+      "content_hash": "2605cdad1d4a38239328622a2e249aed1064b609298becc53d0e0eb851c2f2c5",
+      "created_at": "2026-11-17T16:31:09.222Z"
     }
   }
 }

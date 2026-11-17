@@ -10644,3 +10644,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-17T16:21:48.510Z |
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `e8fbc3b9` | Multi-dimensional audit evidence | 2026-11-17T16:21:51.446Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `f96b2a28` | Multi-dimensional audit evidence | 2026-11-17T16:21:59.879Z |
+| `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-11-17T16:30:48.470Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `d0482266` | Multi-dimensional audit evidence | 2026-11-17T16:30:51.247Z |
+| `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `96a8573c` | Multi-dimensional audit evidence | 2026-11-17T16:30:55.697Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `f266503a` | Multi-dimensional audit evidence | 2026-11-17T16:31:05.444Z |

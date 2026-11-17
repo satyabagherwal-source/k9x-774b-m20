@@ -4,22 +4,22 @@
 {
   "source_repository": "medialab/xan",
   "source_url": "https://github.com/medialab/xan",
-  "source_version": "738ba7af",
+  "source_version": "d0482266",
   "license": "Unlicense",
-  "timestamp": "2026-11-16T01:45:12.160Z",
+  "timestamp": "2026-11-17T16:30:51.409Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-medialab-xan",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [medialab/xan](https://github.com/medialab/xan) (Revision: `738ba7af`).  
-> **License**: Unlicense | **Timestamp**: `2026-11-16T01:45:12.160Z`  
+> **Provenance**: Harvested from [medialab/xan](https://github.com/medialab/xan) (Revision: `d0482266`).  
+> **License**: Unlicense | **Timestamp**: `2026-11-17T16:30:51.409Z`  
 > **Learning ID**: `learn-github-medialab-xan`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `medialab/xan` (Commit: `738ba7af`)
+- **Target Repository**: `medialab/xan` (Commit: `d0482266`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T01:45:11.137Z  
+> **Harvest Timestamp**: 2026-11-17T16:30:50.485Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4554 stars
+- **Stars / Engagement**: 4557 stars
 
 ---
 
@@ -1958,11 +1958,11 @@ impl Args {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1230** (2026-11-07): **xan explode empty check is morally wrong when using -e**
+- **Issue #1231** (2026-11-17): **xan explode should not flatmap by default and validate that output is either empty or a list**
   *Symptoms*: 
 
-- **Issue #1225** (2026-11-06): **xan search replace does not respect left etc.**
-  *Symptoms*: See if it's actually possible to check if replacement was done without comparing cell before and after.  This can be dealt with by using `replace_all_with`
+- **Issue #1230** (2026-11-07): **xan explode empty check is morally wrong when using -e**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1979,166 +1979,129 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `738ba7af` (2026-11-15)
-**Commit Message**: Starting to move things around
+### Incident Patch 1: `d0482266` (2026-11-17)
+**Commit Message**: Improving performance of xan from -f=parquet
+Related to #1235
 
-**File**: `src/moonblade/scrape.rs` (modified, +8/-6)
+**File**: `src/cmd/from.rs` (modified, +8/-8)
 ```diff
-@@ -776,18 +776,19 @@ fn concretize_scraper(
-         .map(ConcreteScraper)
- }
+@@ -19,6 +19,7 @@ use crate::config::{Config, Delimiter};
+ use crate::json::{GetPathOwned, JSONTabularizer, fill_record_from_tape_value};
+ use crate::moonblade::Path as JSONPath;
+ use crate::select::SelectedColumns;
++use crate::serialize::AmortizedSerializer;
+ use crate::utils::{self, ChunksIteratorExt};
  
--// #[derive(Debug, Clone)]
--// pub enum ScrapingRunMode {
--//     Singular,
--//     PluralWithSelector(Selector),
--//     Plural,
--// }
-+#[derive(Debug, Clone)]
-+pub enum ScrapingRunMode {
-+    Singular,
-+    PluralWithSelector(Selector),
-+    Plural(ConcreteSelectionExpr),
-+}
+ #[derive(Debug, Clone, Copy, Deserialize)]
+@@ -787,7 +788,7 @@ impl Args {
  
- #[derive(Debug, Clone)]
- pub struct ScrapingProgram {
-     scraper: ConcreteScraper,
-     headers_index: HeadersIndex,
-     capacity: usize,
-+    run_mode: ScrapingRunMode,
- }
+         let reader = reader.into_inner();
  
- impl ScrapingProgram {
-@@ -807,6 +808,7 @@ impl ScrapingProgram {
-             headers_index,
-             scraper: concrete_scraper,
-             capacity,
-+            run_mode: ScrapingRunMode::Singular,
-         })
-     }
+-        let mut output_record = ByteRecord::new();
++        let mut serializer = AmortizedSerializer::new();
+         let row_group_opt: Option<Box<dyn RowGroupReader>>;
  
-```
-
-**File**: `src/moonblade/types/amortized_serializer.rs` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+use std::io::Write;
-+
-+use super::DynamicValue;
-+
-+#[derive(Default)]
-+pub struct AmortizedSerializer {
-+    scratch: Vec<u8>,
-+    int_buffer: itoa::Buffer,
-+    float_buffer: zmij::Buffer,
-+}
-+
-+impl AmortizedSerializer {
-+    pub fn new() -> Self {
-+        Self::default()
-+    }
-+
-+    pub fn serialize<'s, 'v>(&'s mut self, value: &'v DynamicValue) -> &'s [u8]
-+    where
-+        'v: 's,
-+    {
-+        match value {
-+            DynamicValue::List(_) | DynamicValue::Map(_) => {
-+                self.scratch.clear();
-+                serde_json::to_writer(&mut self.scratch, value).unwrap();
-+                &self.scratch
-+            }
-+            DynamicValue::String(string) => string.as_bytes(),
-+            DynamicValue::Bytes(bytes) => bytes,
-+            DynamicValue::Integer(i) => self.int_buffer.format(*i).as_bytes(),
-+            DynamicValue::Float(f) => self.float_buffer.format(*f).as_bytes(),
-+            DynamicValue::Boolean(v) => {
-+                if *v {
-+                    b"true"
-+                } else {
-+                    b"false"
+         let iter = if let Some(row_group_index) = self.flag_row_group_index {
+@@ -798,15 +799,14 @@ impl Args {
+         };
+ 
+         for result in iter {
+-            output_record.clear();
+-
+             let row = result?;
+ 
+-            for (_, field) in row.get_column_iter() {
+-                crate::parquet::push_parquet_field(&mut output_record, field)?;
+-            }
+-
+-            wtr.write_byte_record(&output_record)?;
++            wtr.write_fields(|w| {
++                for (_, field) in row.get_column_iter() {
++                    w.write_field(serializer.serialize_parquet_field(field))?;
 +                }
-+            }
-+            DynamicValue::Zoned(zoned) => {
-+                self.scratch.clear();
-+                write!(&mut self.scratch, "{zoned}").unwrap();
-+                &self.scratch
-+            }
-+            DynamicValue::DateTime(datetime) => {
-+                self.scratch.clear();
-+                write!(&mut self.scratch, "{datetime}").unwrap();
-+                &self.scratch
-+            }
-+            DynamicValue::Date(date) => {
-+                self.scratch.clear();
-+                write!(&mut self.scratch, "{date}").unwrap();
-+                &self.scratch
-+            }
-+            DynamicValue::Time(time) => {
-+                self.scratch.clear();
-+                write!(&mut self.scratch, "{time}").unwrap();
-+                &self.scratch
-+            }
-+            DynamicValue::Span(span) => {
-+                self.scratch.clear();
-+                write!(&mut self.scratch, "{span}").unwrap();
-+                &self.scratch
-+            }
-+            DynamicValue::Regex(pattern) => pattern.as_str().as_bytes(),
-+            DynamicValue::None => b"",
-+        }
-+    }
-+}
++                Ok(())
++            })?;
+         }
+ 
+         Ok(wtr.flush()?)
 ```
 
-**File**: `src/moonblade/types/dynamic_value.rs` (modified, +0/-65)
+**File**: `src/parquet.rs` (modified, +0/-29)
 ```diff
-@@ -1,7 +1,6 @@
- use std::borrow::Cow;
- use std::cmp::Ordering;
- use std::fmt;
--use std::io::Write;
- use std::sync::Arc;
+@@ -3,7 +3,6 @@ use std::fs::File;
+ use parquet::basic::{ConvertedType, LogicalType, TimeUnit, Type};
+ use parquet::errors::Result as ParquetResult;
+ use parquet::file::reader::{FileReader, SerializedFileReader};
+-use parquet::record::Field;
+ use parquet::schema::types::{ColumnDescriptor, Type as SchemaType};
+ use simd_csv::{ByteRecord, StringRecord};
  
- use bstr::{BString, ByteSlice};
-@@ -926,70 +925,6 @@ impl PartialOrd for DynamicValue {
+@@ -75,34 +74,6 @@ impl ParquetReader {
      }
  }
  
--#[derive(Default)]
--pub struct AmortizedSerializer {
--    scratch: Vec<u8>,
--    int_buffer: itoa::Buffer,
--    float_buffer: zmij::Buffer,
+-pub fn push_parquet_field(record: &mut ByteRecord, field: &Field) -> Result<(), String> {
+-    match field {
+-        Field::Null => record.push_field(b""),
+-        Field::Bool(b) => record.push_field(if *b { b"true" } else { b"false" }),
+-        Field::Str(string) => record.push_field(string.as_bytes()),
+-        Field::Bytes(bytes) => record.push_field(bytes.data()),
+-        Field::UByte(f) => record.fmt_field(f),
+-        Field::UShort(f) => record.fmt_field(f),
+-        Field::UInt(f) => record.fmt_field(f),
+-        Field::ULong(f) => record.fmt_field(f),
+-        Field::Byte(f) => record.fmt_field(f),
+-        Field::Short(f) => record.fmt_field(f),
+-        Field::Int(f) => record.fmt_field(f),
+-        Field::Long(f) => record.fmt_field(f),
+-        Field::Float(f) => record.fmt_field(f),
+-        Field::Float16(f) => record.fmt_field(f),
+-        Field::Double(f) => record.fmt_field(f),
+-        Field::TimestampMicros(f) => record.fmt_field(f),
+-        Field::TimestampMillis(f) => record.fmt_field(f),
+-        Field::ListInternal(_) | Field::MapInternal(_) => record.write_field(|view| {
+-            serde_json::to_writer(view, &field.to_json_value()).unwrap();
+-        }),
+-        _ => Err("unsupported parquet value type!")?,
+-    };
+-
+-    Ok(())
 -}
 -
--impl AmortizedSerializer {
--    pub fn new() -> Self {
--        Self::default()
--    }
--
--    pub fn serialize<'s, 'v>(&'s mut self, value: &'v DynamicValue) -> &'s [u8]
--    where
--        'v: 's,
--    {
--        match value {
--            DynamicValue::List(_) | DynamicValue::Map(_) => {
--                self.scratch.clear();
--                serde_json::to_writer(&mut self.scratch, value).unwrap();
--                &self.scratch
--            }
--            DynamicValue::String(string) => string.as_bytes(),
--            DynamicValue::Bytes(bytes) => bytes,
--            DynamicValue::Integer(i) => self.int_buffer.format(*i).as_bytes(),
--            DynamicValue::Float(f) => self.float_buffer.format(*f).as_bytes(),
--            DynamicValue::Boolean(v) => {
--                if *v {
--                    b"true"
--                } else {
--                    b"false"
--                }
--            }
+ fn human_readable_column_type(column: &ColumnDescriptor) -> &'static str {
+     if let Some(logical_type) = column.logical_type_ref() {
+         if !matches!(logical_type, LogicalType::Unknown) {
+```
+
+**File**: `src/serialize.rs` (modified, +50/-23)
+```diff
+@@ -1,5 +1,8 @@
++use std::fmt::Display;
+ use std::io::Write;
+ 
++use parquet::record::Field;
++
+ use crate::moonblade::DynamicValue;
+ 
+ #[derive(Default)]
+@@ -14,6 +17,13 @@ impl AmortizedSerializer {
+         Self::default()
+     }
+ 
++    #[inline]
++    fn fmt<V: Display>(&mut self, value: V) -> &[u8] {
++        self.scratch.clear();
++        write!(&mut self.scratch, "{value}").unwrap();
++        &self.scratch
++    }
++
+     pub fn serialize_value<'s, 'v>(&'s mut self, value: &'v DynamicValue) -> &'s [u8]
+     where
+         'v: 's,
+@@ -35,33 +45,50 @@ impl AmortizedSerializer {
+                     b"false"
+                 }
+             }
 -            DynamicValue::Zoned(zoned) => {
 -                self.scratch.clear();
 -                write!(&mut self.scratch, "{zoned}").unwrap();
@@ -2158,107 +2121,181 @@ Observed empirical fixes and code patches:
 -                self.scratch.clear();
 -                write!(&mut self.scratch, "{time}").unwrap();
 -                &self.scratch
--            }
++            DynamicValue::Zoned(zoned) => self.fmt(zoned),
++            DynamicValue::DateTime(datetime) => self.fmt(datetime),
++            DynamicValue::Date(date) => self.fmt(date),
++            DynamicValue::Time(time) => self.fmt(time),
++            DynamicValue::Span(span) => self.fmt(span),
++            DynamicValue::Regex(pattern) => pattern.as_str().as_bytes(),
++            DynamicValue::None => b"",
++        }
++    }
++
++    pub fn serialize_parquet_field<'s, 'v>(&'s mut self, field: &'v Field) -> &'s [u8]
++    where
++        'v: 's,
++    {
++        match field {
++            Field::Null => b"",
++            Field::Bool(b) => {
++                if *b {
++                    b"true"
++                } else {
++                    b"false"
++                }
+             }
 -            DynamicValue::Span(span) => {
--                self.scratch.clear();
++            Field::Str(string) => string.as_bytes(),
++            Field::Bytes(bytes) => bytes.data(),
++            Field::UByte(i) => self.int_buffer.format(*i).as_bytes(),
++            Field::UShort(i) => self.int_buffer.format(*i).as_bytes(),
++            Field::UInt(i) => self.int_buffer.format(*i).as_bytes(),
++            Field::ULong(i) => self.int_buffer.format(*i).as_bytes(),
++            Field::Byte(i) => self.int_buffer.format(*i).as_bytes(),
++            Field::Short(i) => self.int_buffer.format(*i).as_bytes(),
++            Field::Int(i) => self.int_buffer.format(*i).as_bytes(),
++            Field::Long(i) => self.int_buffer.format(*i).as_bytes(),
++            Field::Float(f) => self.float_buffer.format(*f).as_bytes(),
++            Field::Float16(f) => self.fmt(f),
++            Field::Double(f) => self.float_buffer.format(*f).as_bytes(),
++            Field::TimestampMicros(f) => self.fmt(f),
++            Field::TimestampMillis(f) => self.fmt(f),
++            Field::ListInternal(_) | Field::MapInternal(_) => {
+                 self.scratch.clear();
 -                write!(&mut self.scratch, "{span}").unwrap();
--                &self.scratch
--            }
++                serde_json::to_writer(&mut self.scratch, &field.to_json_value()).unwrap();
+                 &self.scratch
+             }
 -            DynamicValue::Regex(pattern) => pattern.as_str().as_bytes(),
 -            DynamicValue::None => b"",
--        }
--    }
--}
--
- #[cfg(test)]
- mod tests {
-     use super::*;
++            _ => panic!("unsupported parquet value type!"),
+         }
+     }
+ }
 ```
 
-**File**: `src/moonblade/types/mod.rs` (modified, +3/-1)
+---
+
+### Incident Patch 2: `f96a8cdf` (2026-11-17)
+**Commit Message**: Hoisting AmortizedSerializer to root of crate
+
+**File**: `src/cmd/explode.rs` (modified, +3/-2)
 ```diff
-@@ -1,16 +1,18 @@
-+mod amortized_serializer;
+@@ -8,9 +8,10 @@ use crate::CliError;
+ use crate::CliResult;
+ use crate::config::{Config, Delimiter};
+ use crate::select::SelectedColumns;
++use crate::serialize::AmortizedSerializer;
+ use crate::utils;
+ 
+-use crate::moonblade::{AmortizedSerializer, Program};
++use crate::moonblade::Program;
+ 
+ fn singularize(name: &[u8]) -> Vec<u8> {
+     let mut vec = name.to_vec();
+@@ -136,7 +137,7 @@ impl Exploder {
+                             callback(cell)?;
+                         } else {
+                             for item in list {
+-                                callback(serializer.serialize(&item))?;
++                                callback(serializer.serialize_value(&item))?;
+                             }
+                         }
+                     }
+```
+
+**File**: `src/cmd/scrape.rs` (modified, +3/-4)
+```diff
+@@ -19,10 +19,9 @@ use simd_csv::ByteRecord;
+ use url::Url;
+ 
+ use crate::config::{Config, Delimiter};
+-use crate::moonblade::{
+-    AmortizedSerializer, DynamicValue, ScrapedRecords, ScrapingProgram, ScrapingRunMode,
+-};
++use crate::moonblade::{DynamicValue, ScrapedRecords, ScrapingProgram, ScrapingRunMode};
+ use crate::select::{SelectedColumns, Selection};
++use crate::serialize::AmortizedSerializer;
+ use crate::urls::should_follow_href;
+ use crate::utils;
+ use crate::{CliError, CliResult};
+@@ -1206,7 +1205,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                     }
+ 
+                     for value in scraped_record {
+-                        w.write_field(serializer.serialize(value))?;
++                        w.write_field(serializer.serialize_value(value))?;
+                     }
+ 
+                     Ok(())
+```
+
+**File**: `src/main.rs` (modified, +1/-0)
+```diff
+@@ -22,6 +22,7 @@ mod processing;
+ mod read;
+ mod scales;
+ mod select;
++mod serialize;
+ mod temporal;
+ mod tui;
+ mod urls;
+```
+
+**File**: `src/moonblade/mod.rs` (modified, +1/-1)
+```diff
+@@ -20,4 +20,4 @@ pub use self::interpreter::{GlobalVariables, Program};
+ pub use self::parser::{ParseError, Path, Step};
+ pub use self::scrape::{ScrapedRecords, ScrapingProgram, ScrapingRunMode};
+ pub use self::select::SelectionProgram;
+-pub use self::types::{AmortizedSerializer, DynamicNumber, DynamicValue};
++pub use self::types::{DynamicNumber, DynamicValue};
+```
+
+**File**: `src/moonblade/types/mod.rs` (modified, +0/-2)
+```diff
+@@ -1,11 +1,9 @@
+-mod amortized_serializer;
  mod arguments;
  mod bound_arguments;
  mod dynamic_number;
  mod dynamic_value;
  mod headers;
  
-+pub use amortized_serializer::AmortizedSerializer;
+-pub use amortized_serializer::AmortizedSerializer;
  pub use arguments::{Argument, Arity, FunctionArguments};
  pub use bound_arguments::{
      BOUND_ARGUMENTS_CAPACITY, BoundArgument, BoundArguments, BoundContainer, BoundStringLike,
-     LambdaArguments,
- };
- pub use dynamic_number::DynamicNumber;
--pub use dynamic_value::{AmortizedSerializer, DynamicValue};
-+pub use dynamic_value::DynamicValue;
- pub use headers::{ColumIndexationBy, HeadersIndex};
- 
- use super::error::SpecifiedEvaluationError;
 ```
 
----
-
-### Incident Patch 2: `a34d05ff` (2026-11-15)
-**Commit Message**: ScrapingProgram::paddin_len
-
-**File**: `src/cmd/scrape.rs` (modified, +1/-1)
+**File**: `src/serialize.rs` (renamed, +2/-2)
 ```diff
-@@ -318,7 +318,7 @@ struct CustomScraper {
+@@ -1,6 +1,6 @@
+ use std::io::Write;
  
- impl CustomScraper {
-     fn padding_len(&self) -> usize {
--        self.program.capacity
-+        self.program.padding_len()
+-use super::DynamicValue;
++use crate::moonblade::DynamicValue;
+ 
+ #[derive(Default)]
+ pub struct AmortizedSerializer {
+@@ -14,7 +14,7 @@ impl AmortizedSerializer {
+         Self::default()
      }
  
-     fn is_plural(&self) -> bool {
-```
-
-**File**: `src/moonblade/scrape.rs` (modified, +12/-1)
-```diff
-@@ -776,11 +776,18 @@ fn concretize_scraper(
-         .map(ConcreteScraper)
- }
- 
-+// #[derive(Debug, Clone)]
-+// pub enum ScrapingRunMode {
-+//     Singular,
-+//     PluralWithSelector(Selector),
-+//     Plural,
-+// }
-+
- #[derive(Debug, Clone)]
- pub struct ScrapingProgram {
-     scraper: ConcreteScraper,
-     headers_index: HeadersIndex,
--    pub capacity: usize,
-+    capacity: usize,
- }
- 
- impl ScrapingProgram {
-@@ -807,6 +814,10 @@ impl ScrapingProgram {
-         self.scraper.names()
-     }
- 
-+    pub fn padding_len(&self) -> usize {
-+        self.capacity
-+    }
-+
-     pub fn run_singular(
-         &self,
-         index: usize,
+-    pub fn serialize<'s, 'v>(&'s mut self, value: &'v DynamicValue) -> &'s [u8]
++    pub fn serialize_value<'s, 'v>(&'s mut self, value: &'v DynamicValue) -> &'s [u8]
+     where
+         'v: 's,
+     {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1239** (2026-11-16): Added --combinations flag to xan explode (@clothilde-ml)
 - **PR #1224** (closed): Add a plain aligned table preset to xan view (@mvanhorn)
 - **PR #1223** (2026-11-04): Xml highlight (Issue #1215) (@clothilde-ml)
 - **PR #1222** (closed): Add a plain theme to xan view (@mvanhorn)
 - **PR #1221** (2026-11-03): Fix fractional_days panic on identical points in time (@solesby)
 - **PR #1204** (2026-10-19): Corrected bug #1190 : hist option -m "sum" now obey given scale (@clothilde-ml)
-- **PR #1203** (closed): Fixing xan cat rows -I header intersection (@paoValle)
 
 ---
 
@@ -2278,43 +2315,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Starting to move things around
+## X. Improving performance of xan from -f=parquet
 
 **RULE**:
-When implementing operations in `src/moonblade/scrape.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmd/from.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `738ba7af`: Starting to move things around. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0482266`: Improving performance of xan from -f=parquet. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/moonblade/scrape.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/from.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[derive(Debug, Clone)]
-pub enum ScrapingRunMode {
-    Singular,
-    PluralWithSelector(Selector),
-    Plural(ConcreteSelectionExpr),
-}
-    run_mode: ScrapingRunMode,
-            run_mode: ScrapingRunMode::Singular,
+use crate::serialize::AmortizedSerializer;
+        let mut serializer = AmortizedSerializer::new();
+            wtr.write_fields(|w| {
+                for (_, field) in row.get_column_iter() {
+                    w.write_field(serializer.serialize_parquet_field(field))?;
+                }
+                Ok(())
+            })?;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// #[derive(Debug, Clone)]
-// pub enum ScrapingRunMode {
-//     Singular,
-//     PluralWithSelector(Selector),
-//     Plural,
-// }
+        let mut output_record = ByteRecord::new();
+            output_record.clear();
+
+            for (_, field) in row.get_column_iter() {
+                crate::parquet::push_parquet_field(&mut output_record, field)?;
+            }
+
+            wtr.write_byte_record(&output_record)?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `738ba7af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0482266` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

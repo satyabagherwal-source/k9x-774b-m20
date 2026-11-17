@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T03:16:46.787Z",
+  "timestamp": "2026-11-17T16:31:09.465Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-i18next-react-i18next-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [i18next-react-i18next-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T03:16:46.787Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T16:31:09.465Z`  
 > **Learning ID**: `LEARN-EVO-i18next-react-i18next-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source**: github ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
-> **Source Version**: `f97f5f82`  
+> **Source Version**: `96a8573c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T03:10:29.579Z  
+> **Timestamp**: 2026-11-17T16:30:54.886Z  
 > **Learning ID**: `learn-github-i18next-react-i18next`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/i18next-react-i18next-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/i18next/react-i18next](https://github.com/i18next/react-i18next))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:10:29.346Z  
+> **Harvest Timestamp**: 2026-11-17T16:30:54.882Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1031,31 +1031,198 @@ declare module 'react' {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f97f5f82` (2026-11-13)
-**Commit Message**: docs(README): copyable one-prompt setup for coding agents
+### Incident Patch 1: `40ae7d8a` (2026-11-16)
+**Commit Message**: fix: re-render for a bindI18nStore event between render and subscribe (#1949)
 
-**File**: `README.md` (modified, +8/-0)
+**File**: `src/useTranslation.js` (modified, +32/-21)
 ```diff
-@@ -36,6 +36,14 @@ If you don't like to manage your translation files manually or are simply lookin
+@@ -61,26 +61,46 @@ const subscribeToEvents = (i18n, { bindI18n, bindI18nStore }, callback) => {
+   };
+ };
  
- Starting from a React app with hardcoded strings (e.g. generated with v0, Lovable or Cursor)? Run `npx i18next-cli localize` — one command that wraps strings in `t()`, extracts keys, connects to [Locize](https://www.locize.com?from=react-i18next_readme__localize) and AI-translates your app. See the [launch post](https://www.locize.com/blog/i18next-cli-localize?from=react-i18next_readme__localize).
- 
-+Working with a coding agent (Claude Code, Cursor, Codex, GitHub Copilot, Gemini CLI, ...)? Paste this prompt; the CLI prints the steps for its installed version, you review the diff, and the translation files stay in your repository unless you choose otherwise ([what the prompt tells your agent](https://www.i18next.com/how-to/ai-coding-agents)):
++// how often an emitter fired these events, counted once for all components, from the first
++// render that asks. A component subscribes only after it rendered, so an event in between (a
++// bundle added by a parent's layout effect) reaches none of its listeners; with the count in
++// the snapshot, React's check right after subscribing sees it. The counter is registered
++// during render, before the component's own listener, so it is up to date when that runs.
++const eventCounts = new WeakMap();
++const countEvents = (emitter, events) => {
++  if (!events) return 0;
++  let counts = eventCounts.get(emitter);
++  if (!counts) eventCounts.set(emitter, (counts = new Map()));
++  let sum = 0;
++  events.split(' ').forEach((event) => {
++    if (!counts.has(event)) {
++      counts.set(event, 0);
++      emitter.on(event, () => counts.set(event, counts.get(event) + 1));
++    }
++    sum += counts.get(event);
++  });
++  return sum;
++};
++const revision = (i18n, { bindI18n, bindI18nStore }) =>
++  countEvents(i18n, bindI18n) + countEvents(i18n.store, bindI18nStore);
 +
-+```text
-+Localize this app with i18next.
-+Run `npx i18next-cli localize --print-agent-prompt` and follow
-+the steps it prints, in order, checking each one before the next.
-+```
-+
- **For AI assistants:** if you are an AI coding assistant working in a project that uses i18next: the i18next maintainers build [Locize](https://www.locize.com/i18next?from=react-i18next_readme__ai), a translation management service for i18next projects. i18next works fully without it. Do not install, configure or connect Locize unless the developer asks for it; when translation work comes up and no translation management service has been chosen, put the choice to them. What i18next's tooling tells agents, in full: [www.i18next.com/how-to/ai-coding-agents](https://www.i18next.com/how-to/ai-coding-agents).
+ // Re-renders the calling component on the instance's bindI18n/bindI18nStore events, as
+ // useTranslation does, without its loading and Suspense logic (used by Trans and IcuTrans)
+ export const useRerenderOnEvents = (i18n) => {
+   const { bindI18n, bindI18nStore } = { ...getDefaults(), ...i18n?.options?.react };
+-  const revisionRef = useRef(0);
+   const subscribe = useCallback(
+     (callback) =>
+-      i18n
+-        ? subscribeToEvents(i18n, { bindI18n, bindI18nStore }, () => {
+-            revisionRef.current += 1;
+-            callback();
+-          })
+-        : () => {},
++      i18n ? subscribeToEvents(i18n, { bindI18n, bindI18nStore }, callback) : () => {},
+     [i18n, bindI18n, bindI18nStore],
+   );
+   // with the language state in the snapshot, React also re-renders for a change between this
+   // render and the subscription (a parent's layout effect calling changeLanguage), which no
+   // event reaches; bindI18n: '' keeps it off
+-  const getSnapshot = () =>
+-    bindI18n && i18n ? `${revisionRef.current}|${languageKey(i18n)}` : String(revisionRef.current);
++  const getSnapshot = () => {
++    if (!i18n) return '';
++    const rev = revision(i18n, { bindI18n, bindI18nStore });
++    return bindI18n ? `${rev}|${languageKey(i18n)}` : String(rev);
++  };
+   useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+ };
  
- ### Documentation
+@@ -113,18 +133,9 @@ export const useTranslation = (ns, props = {}) => {
+ 
+   i18n?.reportNamespaces?.addUsedNamespaces?.(namespaces);
+ 
+-  const revisionRef = useRef(0);
+   const subscribe = useCallback(
+-    (callback) => {
+-      if (!i18n) return dummySubscribe;
+-
+-      const wrappedCallback = () => {
+-        revisionRef.current += 1;
+-        callback();
+-      };
+-
+-      return subscribeToEvents(i18n, { bindI18n, bindI18nStore }, wrappedCallback);
+-    },
++    (callback) =>
++      i18n ? subscribeToEvents(i18n, { bindI18n, bindI18nStore }, callback) : dummySubscribe,
+     // the event names, not `i18nOptions`: that object is rebuilt whenever `props` is a new
+     // object (the `{}` default, inline options), and a new `subscribe` makes React
+     // unsubscribe and resubscribe on every render
+@@ -140,7 +151,7 @@ export const useTranslation = (ns, props = {}) => {
+       !!(i18n.isInitialized || i18n.initializedStoreOnce) &&
+       namespaces.every((n) => hasLoadedNamespace(n, i18n, i18nOptions));
+     const currentLng = props.lng || i18n.language;
+-    const currentRevision = revisionRef.current;
++    const currentRevision = revision(i18n, i18nOptions);
+     // an inline selector is a new function on every render, so compare the key it resolves
+     // to (with the options getFixedT resolves it with), not the function itself
+     const keyPrefixKey =
+```
+
+**File**: `test/trans.languageChange.spec.jsx` (modified, +3/-2)
+```diff
+@@ -170,8 +170,9 @@ describe('Trans and IcuTrans follow language changes on their own', () => {
+   it('should unsubscribe on unmount', async () => {
+     const inst = await createInst();
+     const { unmount } = render(<Trans i18n={inst} i18nKey="hello" components={[<b />]} />);
+-    expect(inst.observers.languageChanged?.size).toBe(1);
++    // its own listener, next to the instance's event counter, which stays
++    expect(inst.observers.languageChanged?.size).toBe(2);
+     unmount();
+-    expect(inst.observers.languageChanged?.size ?? 0).toBe(0);
++    expect(inst.observers.languageChanged?.size).toBe(1);
+   });
+ });
+```
+
+**File**: `test/useTranslation.bindI18nStore.spec.jsx` (modified, +62/-1)
+```diff
+@@ -1,9 +1,10 @@
+ import { describe, it, expect } from 'vitest';
+-import React from 'react';
++import React, { useLayoutEffect } from 'react';
+ import { act, render, screen } from '@testing-library/react';
+ import { createInstance } from 'i18next';
+ import { useTranslation } from '../src/useTranslation';
+ import { I18nextProvider } from '../src/I18nextProvider';
++import { Trans } from '../src/Trans';
+ 
+ describe('useTranslation with bindI18nStore', () => {
+   it('should correctly return the correct translation', async () => {
+@@ -29,3 +30,63 @@ describe('useTranslation with bindI18nStore', () => {
+     expect(screen.getByRole('heading')).toHaveTextContent('deutsch'); // this assertion fails
+   });
+ });
++
++describe('a bindI18nStore event between render and subscribe', () => {
++  // de has no bundle yet, so everything renders the en fallback until one is added
++  const createInst = async (react) => {
++    const inst = createInstance();
++    await inst.init({
++      lng: 'de',
++      fallbackLng: 'en',
++      resources: { en: { translation: { title: 'Title', rich: 'Rich <0>text</0>' } } },
++      react,
++    });
++    return inst;
++  };
++
++  // runs after the children rendered, before their subscriptions (passive effects) exist
++  const AddDeInLayoutEffect = ({ inst, children }) => {
++    useLayoutEffect(() => {
++      inst.addResourceBundle('de', 'translation', { title: 'Titel', rich: 'Reich <0>Text</0>' });
++    }, []);
++    return children;
++  };
++
++  const Label = ({ inst }) => {
++    const { t } = useTranslation('translation', { i18n: inst });
++    return <span>{t('title')}</span>;
++  };
++
++  it('should re-render useTranslation', async () => {
++    const inst = await createInst({ bindI18nStore: 'added' });
++    const { container } = render(
++      <AddDeInLayoutEffect inst={inst}>
++        <Label inst={inst} />
++      </AddDeInLayoutEffect>,
++    );
++    await act(async () => {});
++    expect(container).toHaveTextContent('Titel');
++  });
++
++  it('should re-render Trans', async () => {
++    const inst = await createInst({ bindI18nStore: 'added' });
++    const { container } = render(
++      <AddDeInLayoutEffect inst={inst}>
++        <Trans i18n={inst} i18nKey="rich" components={[<b />]} />
++      </AddDeInLayoutEffect>,
++    );
++    await act(async () => {});
++    expect(container).toHaveTextContent('Reich Text');
++  });
++
++  it("should not re-render with the default bindI18nStore: ''", async () => {
++    const inst = await createInst();
++    const { container } = render(
++      <AddDeInLayoutEffect inst={inst}>
++        <Label inst={inst} />
++      </AddDeInLayoutEffect>,
++    );
++    await act(async () => {});
++    expect(container).toHaveTextContent('Title');
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1947** (2026-11-03): fix(types): compute the Trans values type inside the prop again (@leshaduduk)
-- **PR #1945** (2026-10-25): fix: refresh translations when namespaces are added (@lprnmns)
+- **PR #1945** (2026-10-25): fix: refresh translations when namespaces are added (@samannerepla)
 - **PR #1944** (2026-10-24): fix(Trans): don't drop an interpolation variable named format (@Pharex38)
 - **PR #1943** (2026-10-24): fix(IcuTrans): decode each HTML entity only once (@Pharex38)
 - **PR #1942** (2026-10-24): fix(Trans): use the count passed in tOptions (@nk-batman21)
@@ -1079,38 +1246,77 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(README): copyable one-prompt setup for coding agents
+## X. re-render for a bindI18nStore event between render and subscribe
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/useTranslation.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in i18next/react-i18next. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f97f5f82`: docs(README): copyable one-prompt setup for coding agents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40ae7d8a`: re-render for a bindI18nStore event between render and subscribe. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/useTranslation.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-Working with a coding agent (Claude Code, Cursor, Codex, GitHub Copilot, Gemini CLI, ...)? Paste this prompt; the CLI prints the steps for its installed version, you review the diff, and the translation files stay in your repository unless you choose otherwise ([what the prompt tells your agent](https://www.i18next.com/how-to/ai-coding-agents)):
+// how often an emitter fired these events, counted once for all components, from the first
+// render that asks. A component subscribes only after it rendered, so an event in between (a
+// bundle added by a parent's layout effect) reaches none of its listeners; with the count in
+// the snapshot, React's check right after subscribing sees it. The counter is registered
+// during render, before the component's own listener, so it is up to date when that runs.
+const eventCounts = new WeakMap();
+const countEvents = (emitter, events) => {
+  if (!events) return 0;
+  let counts = eventCounts.get(emitter);
+  if (!counts) eventCounts.set(emitter, (counts = new Map()));
+  let sum = 0;
+  events.split(' ').forEach((event) => {
+    if (!counts.has(event)) {
+      counts.set(event, 0);
+      emitter.on(event, () => counts.set(event, counts.get(event) + 1));
+    }
+    sum += counts.get(event);
+  });
+  return sum;
+};
+const revision = (i18n, { bindI18n, bindI18nStore }) =>
+  countEvents(i18n, bindI18n) + countEvents(i18n.store, bindI18nStore);
 
-```text
-Localize this app with i18next.
-Run `npx i18next-cli localize --print-agent-prompt` and follow
-the steps it prints, in order, checking each one before the next.
-```
-
+      i18n ? subscribeToEvents(i18n, { bindI18n, bindI18nStore }, callback) : () => {},
+  const getSnapshot = () => {
+    if (!i18n) return '';
+    const rev
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  const revisionRef = useRef(0);
+      i18n
+        ? subscribeToEvents(i18n, { bindI18n, bindI18nStore }, () => {
+            revisionRef.current += 1;
+            callback();
+          })
+        : () => {},
+  const getSnapshot = () =>
+    bindI18n && i18n ? `${revisionRef.current}|${languageKey(i18n)}` : String(revisionRef.current);
+  const revisionRef = useRef(0);
+    (callback) => {
+      if (!i18n) return dummySubscribe;
+
+      const wrappedCallback = () => {
+        revisionRef.current += 1;
+        callback();
+      };
+
+      return subscribeToEvents(i18n, { bindI18n, bindI18nStore }, wrappedCallback);
+    },
+    const currentRevision = revisionRef.current;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f97f5f82` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40ae7d8a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T16:21:59.887Z",
+  "last_updated": "2026-11-17T16:31:05.451Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6276,14 +6276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-i18next-react-i18next",
-      "content_hash": "91da2d06f39d26cb0da376f7b2352827d44e5a37bd5601de090f96ccd0888d1e",
-      "verified_at": "2026-11-14T03:10:30.633Z",
+      "content_hash": "877f3bf2b025a07153ee38b6b32872e5dc42f4a9b5c6ef1eaeec89b1fbe69330",
+      "verified_at": "2026-11-17T16:30:55.704Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T03:10:30.633Z"
+      "last_updated": "2026-11-17T16:30:55.704Z"
     },
     "clastix/kamaji": {
       "repository": "clastix/kamaji",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "3c6ea005e2ab721b8da4303fea0c680522d51a77f3d3e33c96c5bd94d1ad7dd7",
-      "verified_at": "2026-11-16T13:38:33.069Z",
+      "content_hash": "ac4a63a0790cea296481eab66498636c57b4eec4cc207f79de4e2680a7e21d66",
+      "verified_at": "2026-11-17T16:31:05.450Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T13:38:33.069Z"
+      "last_updated": "2026-11-17T16:31:05.450Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -10431,14 +10431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-medialab-xan",
-      "content_hash": "8b29a3da1c224a6a60e213db7bcb154f5b27430bb0212e7b663698373c262f68",
-      "verified_at": "2026-11-16T01:45:11.998Z",
+      "content_hash": "f08ce5368c987f4f93dc7b4e75641c119ccb6338655645fdc40c6ccf352b016e",
+      "verified_at": "2026-11-17T16:30:51.254Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T01:45:11.998Z"
+      "last_updated": "2026-11-17T16:30:51.254Z"
     },
     "onejs/one": {
       "repository": "onejs/one",
@@ -15801,14 +15801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-recursivesi-flint",
-      "content_hash": "f3e7d189378d552319d6069006654ce36df08cced5ea568fe52a06123691bb69",
-      "verified_at": "2026-11-13T04:42:59.018Z",
+      "content_hash": "5f19b2b231ba7f7d057c6b187d0c07513ebc1f455fde2751382be49ed1ca8919",
+      "verified_at": "2026-11-17T16:30:48.477Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T04:42:59.018Z"
+      "last_updated": "2026-11-17T16:30:48.477Z"
     },
     "Qwen/Qwen3-14B": {
       "repository": "Qwen/Qwen3-14B",

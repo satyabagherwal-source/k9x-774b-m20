@@ -4,22 +4,22 @@
 {
   "source_repository": "milvus-io/milvus",
   "source_url": "https://github.com/milvus-io/milvus",
-  "source_version": "9f1054c2",
+  "source_version": "f266503a",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T13:38:33.227Z",
+  "timestamp": "2026-11-17T16:31:05.603Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-milvus-io-milvus",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `9f1054c2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T13:38:33.227Z`  
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `f266503a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T16:31:05.603Z`  
 > **Learning ID**: `learn-github-milvus-io-milvus`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `milvus-io/milvus` (Commit: `9f1054c2`)
+- **Target Repository**: `milvus-io/milvus` (Commit: `f266503a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T13:38:32.204Z  
+> **Harvest Timestamp**: 2026-11-17T16:31:04.650Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46674 stars
+- **Stars / Engagement**: 46677 stars
 
 ---
 
@@ -1360,14 +1360,17 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55561** (2026-11-16): **fix: [cp3.0]Retry coordinator RPCs promptly after ServerID changes**
-  *Symptoms*: Cherry-pick from master (PR still open)  pr: #55553 issue: #55552  Backport coordinator retry recovery to 3.0: after a retryable ServerID mismatch, try a successfully acquired connection immediately when its ServerID differs. Preserve fresh acquisition after backoff when discovery remains stale or lookup/dial fails, including recovery during the wait with only one attempt left.  This is a preemptive backport of master PR #55553 at commit 5283826e54dcdfe5678d35c85af0ed1e63d4af42. The original PR is still open; this backport must be updated if it changes.  Verification: - [x] All 6 changed files match the original PR: 700 additions, 9 deletions. - [x] Added/deleted lines match per file, including duplicate counts. - [x] Applied without conflicts; no conflict markers; `git diff --check` passes. - [ ] make static-check (skipped by cherry-pick workflow)  Tests were not rerun locally on 3.0; target-branch validation is left to CI. This patch does not wake an existing backoff or change its maximum. The historical 14.120-second recovery delay is not a measured saving from this change. 
+- **Issue #55643** (2026-11-17): **feat: [cp3.0] support per-request source storage for bulk import**
+  *Symptoms*: Cherry-pick from master pr: #55357  ### What this PR does / why we need it:  Ordinary bulk imports can read JSON, JSONL, CSV, Parquet and NumPy files from a per-request S3-compatible source (for example `files: [["exports/data.parquet"]]` with `storage.endpoint`, `storage.bucket` and source credentials), while segment, index and intermediate writes keep using the cluster's configured storage. The object no longer has to be copied into the cluster bucket first.  - Parse and validate a self-contained `storage.*` contract. Reject incomplete, unknown, duplicate or incorrectly cased options and absolute/URI file paths. Preserve literal bucket-relative keys and never fall back to destination storage after a source failure. - Resolve a separate reader client for Import V2 and V3, including V3's Parquet/NumPy metadata-only counting path. Do not inherit destination credentials, IAM settings or root paths, and do not probe or create source buckets during client initialization. - Reject combinations with backup, L0 and snapshot imports, and reject external-source imports on a replicating cluster. The existing broadcast/ACK flow is retained. - Share general import-source validation across the request, ACK and worker entry points, with separate snapshot-specific checks and one source-key validator. - Redact all `storage.*` values in request-option logging, including case variants, and remove them from the retained job record on Completed/Failed transitions.  ### Special notes for your rev
   **Post-Mortem & Fix Analysis**:
   > [ci-v2-notice] Notice: ci-v2 system is enabled for this PR (3.0 branch).  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build-ut-cov  // for ci-v2/build-ut-cov (build + unit tests) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e tests) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp (Tencent distributed woodpecker-service boundary) - /ci-rerun-gosdk  // for ci-v2/go-sdk (Go SDK E2E tests) - /ci-rerun-gosdk-std  // for ci-v2/go-sdk-std (Go SDK E2E, standalone) - /ci-rerun-gosdk-dist-wp // for ci-v2/go-sdk-dist-wp (distributed + Woodpecker service)  If you have any questions or requests, please contact @zhikunyao. 
-  > [INFO] PR Label Summary by Default [FAILED] PR #55553 not merged - Title: fix: Retry coordinator RPCs promptly after ServerID changes - Status: OPEN - Link: https://github.com/milvus-io/milvus/pull/55553   [WARNING] Milestone not set - PR: #55561 - Title: fix: [cp3.0]Retry coordinator RPCs promptly after ServerID changes Please set a milestone for better release tracking  You can set milestone by commenting:   /set-milestone <milestone-name> Example:   /set-milestone 2.5.0  Use /refresh-label to update related check and label manually
+  > [INFO] PR Label Summary by Default [SUCCESS] PR #55357 merged to master - Title: feat: support per-request source storage for bulk import - Link: https://github.com/milvus-io/milvus/pull/55357   [WARNING] Milestone not set - PR: #55643 - Title: feat: [cp3.0] support per-request source storage for bulk import Please set a milestone for better release tracking  You can set milestone by commenting:   /set-milestone <milestone-name> Example:   /set-milestone 2.5.0  Use /refresh-label to update related check and label manually
 
-- **Issue #55560** (2026-11-16): **enhance: [cp3.0]revoke session leases before a forced stop exit**
-  *Symptoms*: Cherry-pick from master  pr: #54556  When graceful stop times out, revoke the session leases this process keeps alive before forced exit so a standby coordinator can take over without waiting for lease expiry. Backports merged master PR #54556 to 3.0 without code changes or conflict resolution.  Verification: - [x] All 3 changed files match the original PR: 77 additions, 0 deletions. - [x] Added/deleted lines match per file, including duplicate counts. - [x] No conflict markers; `git diff --check` passes. - [ ] make static-check (skipped by cherry-pick workflow)  Runtime tests were not run locally; validation is left to CI. 
+- **Issue #55631** (2026-11-17): **fix: [cp3.0] preserve IAM credential caches across storage clients**
+  *Symptoms*: issue: #55601 pr: #55630  Backport the legacy C++ and Go credential-cache protections from #55630 to 3.0 and pin the matching storage repair.  Dependency: https://github.com/milvus-io/milvus-storage/pull/804, pinned at 0f997e0f82571082b0bbbe921987331dfa6f7fbc. This commit is fetchable from the existing upstream repository URL. Keep this PR draft until the storage backport is reviewed/merged; refresh the pin to the final merge commit if needed.  The backport validates complete tuples and real expiration before publication, preserves usable old credentials during failed refreshes, rejects expired fallback, and retains configured identity and native Azure Bearer/CAE/TLS behavior. It preserves 3.0's existing provider selection without introducing main-only providers. The internal Aliyun compatibility source includes its upstream license and provenance and adds no module replacement.  Local verification on the actual 3.0 tree: - Full `go test -race -tags dynamic,test -gcflags='all=-N -l' -count=1 ./objectstorage/...` from pkg passes, with final source hashes unchanged after execution. - Legacy provider tests: 41/41 focused tests, including prior tests and new failure/expiry/recovery regressions. - Real TLS loopback Aliyun tests and real Azure Go SDK/transport tests cover atomic snapshots, selected token-file identity, expiration during refresh, rejection before HTTP, recovery, CAE and SharedKey compatibility. - Legacy Azure/GCP translation units compile against the repaired storag
+  **Post-Mortem & Fix Analysis**:
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please ask for approval from **xiaofan-luan** after the PR has been reviewed.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/milvus-io/milvus/blob/3.0/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["xiaofan-luan"]} -->
+  > [INFO] PR Label Summary by Default [FAILED] PR #55630 not merged - Title: fix: preserve IAM credential caches across storage clients - Status: OPEN - Link: https://github.com/milvus-io/milvus/pull/55630   [WARNING] Milestone not set - PR: #55631 - Title: fix: [cp3.0] preserve IAM credential caches across storage clients Please set a milestone for better release tracking  You can set milestone by commenting:   /set-milestone <milestone-name> Example:   /set-milestone 2.5.0  Use /refresh-label to update related check and label manually
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1384,392 +1387,887 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86534551` (2026-11-15)
-**Commit Message**: test: fix flaky TestBuildLatencyExcludesAdmissionWait (#55314)
+### Incident Patch 1: `663f0d57` (2026-11-17)
+**Commit Message**: enhance: propagate candidates and null rejection to element predicates (#55529)
+
+issue: #55516
+
+Addresses follow-up cases **01, 02, 03, 08 and 09**.
+
+MATCH and full-mode `element_filter` pass inherited parent candidates to
+element predicates before evaluation. Explicit parent offsets retain
+input-position masking, repeated/non-monotonic rows, complete element
+ranges, empty-array rules and parent validity.
+
+Automatic sparse MATCH evaluation is limited to supported raw-data
+predicates with at most **5% of both parent rows and elements**
+selected. Indexed and unsupported trees stay sequential. Offset
+evaluation advances all sequential leaf cursors exactly once, including
+short-circuited leaves, so later dense batches resume correctly.
+Empty-only candidates use constant quantifier results without predicate
+Eval or an explicit prefetch wait. Each batch reuses one row-offset
+snapshot and reserves its exact element count.
+
+`EvalCtx` can own a bitmap or borrow a view; AND/OR saves and restores
+ownership, including on exceptions. Full-mode element filtering borrows
+batch slices and builds only an element selection, without an unused
+validity bitmap. Expansion reads packed 64-bit words, coal
+
+**File**: `internal/core/src/common/ElementFilterIterator.cpp` (modified, +2/-1)
+```diff
+@@ -109,10 +109,11 @@ ElementFilterIterator::FetchAndFilterBatch() {
+                "ElementFilterIterator: evaluation result size mismatch");
+ 
+     TargetBitmapView bitsetview(col_vec->GetRawData(), col_vec_size);
++    TargetBitmapView validview(col_vec->GetValidRawData(), col_vec_size);
+ 
+     // Step 4: Filter elements based on evaluation results and cache them
+     for (size_t i = 0; i < element_ids_buffer_.size(); ++i) {
+-        if (bitsetview[i]) {
++        if (bitsetview[i] && validview[i]) {
+             // Element passes filter, cache it
+             filtered_buffer_.emplace_back(element_ids_buffer_[i],
+                                           distances_buffer_[i]);
+```
+
+**File**: `internal/core/src/common/StructElementOffsets.cpp` (modified, +73/-0)
+```diff
+@@ -18,6 +18,7 @@
+ 
+ #include <assert.h>
+ #include <algorithm>
++#include <bit>
+ #include <cstddef>
+ #include <cstring>
+ #include <limits>
+@@ -188,6 +189,38 @@ ElementBitsetAnyReduce(const Starts& starts,
+     }
+ }
+ 
++// Scan the packed row bitmap by 64-bit words and merge adjacent selected
++// rows. Each run becomes one bulk bit-range fill (packed words plus masked
++// boundary words), so excluded rows never rewrite the zero-initialized output.
++template <typename Starts>
++TargetBitmap
++ExpandRowSelection(const TargetBitmapView& rows,
++                   int64_t row_start,
++                   const Starts& starts) {
++    const auto first_element = starts[row_start];
++    TargetBitmap result(starts[row_start + rows.size()] - first_element, false);
++    // Match ElementBitsetAnyReduce's packed-word traversal. Consume each
++    // input word once, even for heavily interleaved selections.
++    using word_t = TargetBitmapView::policy_type::data_type;
++    constexpr size_t kWordBits = 8 * sizeof(word_t);
++    for (size_t position = 0; position < rows.size(); position += kWordBits) {
++        const auto count = std::min(kWordBits, rows.size() - position);
++        word_t word = rows.read(position, count);
++        while (word != 0) {
++            const size_t first_bit = std::countr_zero(word);
++            const size_t last_bit =
++                first_bit + std::countr_one(word >> first_bit);
++            const auto first =
++                starts[row_start + position + first_bit] - first_element;
++            const auto last =
++                starts[row_start + position + last_bit] - first_element;
++            result.set(first, last - first, true);
++            word = last_bit == kWordBits ? 0 : word & (~word_t(0) << last_bit);
++        }
++    }
++    return result;
++}
++
+ }  // namespace
+ 
+ std::pair<int32_t, int32_t>
+@@ -246,6 +279,14 @@ StructElementOffsetsSealed::CopyRowElementStarts(int64_t row_start,
+                 sizeof(int32_t) * (row_count + 1));
+ }
+ 
++TargetBitmap
++IStructElementOffsets::RowBitsetToElementBitset(const TargetBitmapView& rows,
++                                                int64_t row_start) const {
++    FixedVector<int32_t> starts(rows.size() + 1);
++    CopyRowElementStarts(row_start, rows.size(), starts.data());
++    return ExpandRowSelection(rows, 0, starts);
++}
++
+ std::pair<TargetBitmap, TargetBitmap>
+ StructElementOffsetsSealed::RowBitsetToElementBitset(
+     const TargetBitmapView& row_bitset,
+@@ -279,6 +320,20 @@ StructElementOffsetsSealed::RowBitsetToElementBitset(
+     return {std::move(element_bitset), std::move(valid_element_bitset)};
+ }
+ 
++TargetBitmap
++StructElementOffsetsSealed::RowBitsetToElementBitset(
++    const TargetBitmapView& row_bitset, int64_t row_start) const {
++    int64_t row_count = row_bitset.size();
++    AssertInfo(row_start >= 0 && row_start + row_count <= GetRowCount(),
++               "row range out of bounds: row_start={}, row_count={}, "
++               "total_rows={}",
++               row_start,
++               row_count,
++               GetRowCount());
++
++    return ExpandRowSelection(row_bitset, row_start, row_to_element_start_);
++}
++
+ FixedVector<int32_t>
+ StructElementOffsetsSealed::RowBitsetToElementOffsets(
+     const TargetBitmapView& row_bitset, int64_t row_start) const {
+@@ -717,6 +772,24 @@ StructElementOffsetsGrowing::RowBitsetToElementBitset(
+     return {std::move(element_bitset), std::move(valid_element_bitset)};
+ }
+ 
++TargetBitmap
++StructElementOffsetsGrowing::RowBitsetToElementBitset(
++    const TargetBitmapView& row_bitset, int64_t row_start) const {
++    const int64_t committed =
++        committed_row_count_.load(std::memory_order_acquire);
++
++    int64_t row_count = row_bitset.size();
++    AssertInfo(row_start >= 0 && row_start + row_count <= committed,
++               "row range out of bounds: row_start={}, row_count={}, "
++               "committed_rows={}",
++               row_start,
++               row_count,
++               committed);
++
++    ChunkedReader starts(starts_chunks_);
++    return ExpandRowSelection(row_bitset, row_start, starts);
++}
++
+ FixedVector<int32_t>
+ StructElementOffsetsGrowing::RowBitsetToElementOffsets(
+     const TargetBitmapView& row_bitset, int64_t row_start) const {
+```
+
+**File**: `internal/core/src/common/StructElementOffsets.h` (modified, +13/-0)
+```diff
+@@ -128,6 +128,11 @@ class IStructElementOffsets {
+                              const TargetBitmapView& valid_row_bitset,
+                              int64_t row_start) const = 0;
+ 
++    // Expand a normalized row selection without allocating a validity bitmap.
++    virtual TargetBitmap
++    RowBitsetToElementBitset(const TargetBitmapView& row_bitset,
++                             int64_t row_start) const;
++
+     // Convert row-level bitset to element offsets
+     // Returns element IDs for all rows where row_bitset[row_id] is true
+     virtual FixedVector<int32_t>
+@@ -257,6 +262,10 @@ class StructElementOffsetsSealed : public IStructElementOffsets {
+                              const TargetBitmapView& valid_row_bitset,
+                              int64_t row_start) const override;
+ 
++    TargetBitmap
++    RowBitsetToElementBitset(const TargetBitmapView& row_bitset,
++                             int64_t row_start) const override;
++
+     FixedVector<int32_t>
+     RowBitsetToElementOffsets(const TargetBitmapView& row_bitset,
+                               int64_t row_start) const override;
+@@ -359,6 +368,10 @@ class StructElementOffsetsGrowing : public IStructElementOffsets {
+                              const TargetBitmapView& valid_row_bitset,
+                              int64_t row_start) const override;
+ 
++    TargetBitmap
++    RowBitsetToElementBitset(const TargetBitmapView& row_bitset,
++                             int64_t row_start) const override;
++
+     FixedVector<int32_t>
+     RowBitsetToElementOffsets(const TargetBitmapView& row_bitset,
+                               int64_t row_start) const override;
+```
+
+**File**: `internal/core/src/common/StructElementOffsetsTest.cpp` (modified, +54/-0)
+```diff
+@@ -1587,3 +1587,57 @@ TEST_F(StructElementOffsetsTest, GrowingConcurrentWriters) {
+         ASSERT_EQ(end, expected[row + 1]) << "row " << row;
+     }
+ }
++
++TEST_F(StructElementOffsetsTest, SelectionOnlyExpansionMatchesPairedAPI) {
++    const int rows = StructElementOffsetsGrowing::kEntriesPerChunk + 140;
++    std::vector<int32_t> starts{0}, lengths;
++    for (int i = 0; i < rows; ++i) {
++        lengths.push_back(i % 5 == 0 ? 0 : (i % 3 == 0 ? 129 : i % 7));
++        starts.push_back(starts.back() + lengths.back());
++    }
++    StructElementOffsetsSealed sealed(starts);
++    StructElementOffsetsGrowing growing;
++    growing.Insert(0, lengths.data(), lengths.size());
++    for (IStructElementOffsets* offsets :
++         {static_cast<IStructElementOffsets*>(&sealed),
++          static_cast<IStructElementOffsets*>(&growing)}) {
++        for (auto [start, count] : std::vector<std::pair<int, int>>{
++                 {0, 0},
++                 {0, rows},
++                 {7, 67},
++                 {63, 130},
++                 {StructElementOffsetsGrowing::kEntriesPerChunk - 2, 71},
++                 {rows, 0}}) {
++            for (int pattern = 0; pattern < 5; ++pattern) {
++                SCOPED_TRACE(::testing::Message()
++                             << "start=" << start << ", count=" << count
++                             << ", pattern=" << pattern);
++                TargetBitmap backing(count + 13, false);
++                auto selection = backing.view(7, count);
++                for (int i = 0; i < count; ++i) {
++                    selection[i] = pattern == 1 ||
++                                   (pattern == 2 && i % 67 == 0) ||
++                                   (pattern == 3 && i % 129 < 68) ||
++                                   (pattern == 4 && i % 2 == 0);
++                }
++                TargetBitmap validity(count, false);
++                auto [expected, unused] = offsets->RowBitsetToElementBitset(
++                    selection, validity.view(), start);
++                auto actual =
++                    offsets->RowBitsetToElementBitset(selection, start);
++                EXPECT_TRUE(actual == expected);
++                // Independent scalar oracle: each element inherits exactly
++                // its parent selection, without using packed range operations.
++                ASSERT_EQ(actual.size(), starts[start + count] - starts[start]);
++                for (int row = 0; row < count; ++row) {
++                    for (int element = starts[start + row];
++                         element < starts[start + row + 1];
++                         ++element) {
++                        EXPECT_EQ(bool(actual[element - starts[start]]),
++                                  bool(selection[row]));
++                    }
++                }
++            }
++        }
++    }
++}
+```
+
+**File**: `internal/core/src/exec/expression/BinaryRangeExpr.h` (modified, +10/-3)
+```diff
+@@ -66,7 +66,7 @@ struct BinaryRangeElementFunc {
+                const T* src,
+                size_t n,
+                TargetBitmapView res,
+-               const TargetBitmap& bitmap_input,
++               const TargetBitmapView& bitmap_input,
+                size_t start_cursor,
+                const int32_t* offsets = nullptr) {
+         if constexpr (filter_type == FilterType::random ||
+@@ -165,7 +165,7 @@ struct BinaryRangeElementFuncForJson {
+                size_t n,
+                TargetBitmapView res,
+                TargetBitmapView valid_res,
+-               const TargetBitmap& bitmap_input,
++               const TargetBitmapView& bitmap_input,
+                size_t start_cursor,
+                const int32_t* offsets = nullptr) {
+         bool has_bitmap_input = !bitmap_input.empty();
+@@ -205,7 +205,7 @@ struct BinaryRangeElementFuncForArray {
+                size_t n,
+                TargetBitmapView res,
+                TargetBitmapView valid_res,
+-               const TargetBitmap& bitmap_input,
++               const TargetBitmapView& bitmap_input,
+                size_t start_cursor,
+                const int32_t* offsets = nullptr) {
+         bool has_bitmap_input = !bitmap_input.empty();
+@@ -301,6 +301,13 @@ class PhyBinaryRangeFilterExpr : public SegmentExpr {
+         return true;
+     }
+ 
++    bool
++    CanUseOffsetsForSequentialBatch() override {
++        EnsureExecPathDetermined();
++        return expr_->column_.element_level_ &&
++               exec_path_ == ExprExecPath::RawData && SupportOffsetInput();
++    }
++
+     void
+     DetermineExecPath() override;
+ 
+```
+
+**File**: `internal/core/src/exec/expression/CompareExpr.h` (modified, +1/-1)
+```diff
+@@ -96,7 +96,7 @@ struct CompareElementFunc {
+                const U* right,
+                size_t size,
+                TargetBitmapView res,
+-               const TargetBitmap& bitmap_input,
++               const TargetBitmapView& bitmap_input,
+                size_t start_cursor,
+                const int32_t* offsets = nullptr) {
+         // This is the original code, kept here for the documentation purposes
+```
+
+**File**: `internal/core/src/exec/expression/ConjunctExpr.cpp` (modified, +7/-4)
+```diff
+@@ -95,7 +95,7 @@ PhyConjunctFilterExpr::Eval(EvalCtx& context, VectorPtr& result) {
+         "PhyConjunctFilterExpr::Eval", tracer::GetRootSpan(), true);
+     span.SetAttribute("is_and", is_and_);
+ 
+-    TargetBitmap inherited_bitmap;
++    EvalCtx::BitmapInput inherited_bitmap;
+     bool has_result = false;
+     auto restore_bitmap =
+         folly::makeGuard([&context, &inherited_bitmap, &has_result] {
+@@ -221,11 +221,14 @@ PhyConjunctFilterExpr::Eval(EvalCtx& context, VectorPtr& result) {
+         auto active_rows = BuildActiveBitmap(all_flat_result);
+         // Local results outside the parent's candidates are unspecified and
+         // must neither reactivate rows nor prevent a batch-level early exit.
+-        if (!inherited_bitmap.empty()) {
+-            active_rows.inplace_and(inherited_bitmap, active_rows.size());
++        const auto inherited_view = inherited_bitmap.view();
++        if (!inherited_view.empty()) {
++            active_rows.inplace_and(inherited_view, active_rows.size());
+         }
+         if (active_rows.none()) {
+-            SkipFollowingExprs(i + 1);
++            if (!has_input_offset) {
++                SkipFollowingExprs(i + 1);
++            }
+             return;
+         }
+         context.set_bitmap_input(std::move(active_rows));
+```
+
+**File**: `internal/core/src/exec/expression/ConjunctExpr.h` (modified, +8/-0)
+```diff
+@@ -73,6 +73,14 @@ class PhyConjunctFilterExpr : public Expr {
+         }
+     }
+ 
++    bool
++    CanUseOffsetsForSequentialBatch() override {
++        return std::all_of(
++            inputs_.begin(), inputs_.end(), [](const auto& input) {
++                return input->CanUseOffsetsForSequentialBatch();
++            });
++    }
++
+     bool
+     SupportOffsetInput() override {
+         for (auto& input : inputs_) {
+```
+
+---
+
+### Incident Patch 2: `45e9c711` (2026-11-17)
+**Commit Message**: fix: forward Lance external table snapshot IDs (#55497)
+
+issue: #53352
+
+Lance external collections silently ignored `external_spec.snapshot_id`
+because the shared property injection path only handled Iceberg and
+Paimon. Include `lance-table` so its requested version reaches
+milvus-storage as `reader.exttable.snapshot_id`.
+
+Extend the existing native snapshot tests for Lance string/number IDs,
+JSON field order, C ABI conversion, invalid negative IDs, and the
+omitted-version default. Extend the existing Lance E2E to create v1 with
+100,000 rows, overwrite it with a one-row v2, and select v1 before
+refreshing and querying the collection.
+
+Validation:
+- Six focused native tests: three failed before the fix; all six passed
+after it. These test bodies were compiled from `test_external_take.cpp`
+in a standalone runner with the freshly compiled `util.cpp`.
+- Real MinIO/Lance native read check: with v2 present, the old code
+selected v2 and returned one row despite requesting v1; the fix returned
+all three v1 fixture rows with exact ID/value checks. Omitting the
+version still returned v2. Native checks used the existing local storage
+build `95215819`.
+- Go E2E package compiled with `-tags dyn
+
+**File**: `internal/core/src/storage/loon_ffi/util.cpp` (modified, +3/-3)
+```diff
+@@ -1035,8 +1035,7 @@ InjectExternalSpecProperties(
+     }
+ 
+     // Format-layer: emit per-format properties derived from spec.format.
+-    // Iceberg and Paimon use reader.exttable.snapshot_id. Future formats
+-    // (Lance version, Iceberg branch, etc.) land here.
++    // Lance, Iceberg, and Paimon use reader.exttable.snapshot_id.
+     if (external_spec.empty()) {
+         return arrow::Status::OK();
+     }
+@@ -1048,7 +1047,8 @@ InjectExternalSpecProperties(
+         if (doc.find_field("format").get_string().get(format_view) ==
+             simdjson::SUCCESS) {
+             std::string format{format_view};
+-            if (format == "iceberg-table" || format == "paimon-table") {
++            if (format == "lance-table" || format == "iceberg-table" ||
++                format == "paimon-table") {
+                 // JSON fields may appear before or after "format".
+                 auto snapshot_field = doc.find_field_unordered("snapshot_id");
+                 int64_t snapshot_id = 0;
+```
+
+**File**: `internal/core/unittest/test_external_take.cpp` (modified, +26/-14)
+```diff
+@@ -4227,20 +4227,24 @@ TEST(InjectExtfsAllowlist, AnonymousLayer0SkippedWithStalePreseed) {
+     EXPECT_EQ(std::get<std::string>(props.at("extfs.42.anonymous")), "true");
+ }
+ 
+-TEST(InjectExtfsAllowlist, IcebergSnapshotID) {
++TEST(InjectExtfsAllowlist, TableSnapshotID) {
+     for (
+         const std::string spec : {
+             R"({"format":"iceberg-table","snapshot_id":"5320540205222981137"})",
+             R"({"format":"iceberg-table","snapshot_id":5320540205222981137})",
+             R"({"snapshot_id":"5320540205222981137","format":"iceberg-table"})",
+             R"({"snapshot_id":5320540205222981137,"format":"iceberg-table"})",
++            R"({"format":"lance-table","snapshot_id":"5320540205222981137"})",
++            R"({"format":"lance-table","snapshot_id":5320540205222981137})",
++            R"({"snapshot_id":"5320540205222981137","format":"lance-table"})",
++            R"({"snapshot_id":5320540205222981137,"format":"lance-table"})",
+         }) {
+         SCOPED_TRACE(spec);
+         milvus_storage::api::Properties props;
+         ::InjectExternalSpecProperties(
+             props, 42, "s3://s3.amazonaws.com/bucket/key", spec);
+ 
+-        // Read the same typed property as IcebergFormat::explore so a stale
++        // Read the same typed property as the format's explore() so a stale
+         // property key cannot silently fall back to the latest snapshot.
+         const auto snapshot_id = milvus_storage::api::GetValue<int64_t>(
+             std::make_shared<const milvus_storage::api::Properties>(props),
+@@ -4250,13 +4254,17 @@ TEST(InjectExtfsAllowlist, IcebergSnapshotID) {
+     }
+ }
+ 
+-TEST(InjectExtfsAllowlist, IcebergSnapshotIDCAbiRoundTrip) {
++TEST(InjectExtfsAllowlist, TableSnapshotIDCAbiRoundTrip) {
+     for (
+         const std::string spec : {
+             R"({"format":"iceberg-table","snapshot_id":"5320540205222981137"})",
+             R"({"format":"iceberg-table","snapshot_id":5320540205222981137})",
+             R"({"snapshot_id":"5320540205222981137","format":"iceberg-table"})",
+             R"({"snapshot_id":5320540205222981137,"format":"iceberg-table"})",
++            R"({"format":"lance-table","snapshot_id":"5320540205222981137"})",
++            R"({"format":"lance-table","snapshot_id":5320540205222981137})",
++            R"({"snapshot_id":"5320540205222981137","format":"lance-table"})",
++            R"({"snapshot_id":5320540205222981137,"format":"lance-table"})",
+         }) {
+         SCOPED_TRACE(spec);
+         LoonProperties properties{};
+@@ -4288,12 +4296,16 @@ TEST(InjectExtfsAllowlist, IcebergSnapshotIDCAbiRoundTrip) {
+     }
+ }
+ 
+-TEST(InjectExtfsAllowlist, InvalidIcebergSnapshotIDIsRejected) {
++TEST(InjectExtfsAllowlist, InvalidTableSnapshotIDIsRejected) {
+     for (const std::string spec : {
+              R"({"format":"iceberg-table","snapshot_id":-2})",
+              R"({"format":"iceberg-table","snapshot_id":"-2"})",
+              R"({"snapshot_id":-2,"format":"iceberg-table"})",
+              R"({"snapshot_id":"-2","format":"iceberg-table"})",
++             R"({"format":"lance-table","snapshot_id":-2})",
++             R"({"format":"lance-table","snapshot_id":"-2"})",
++             R"({"snapshot_id":-2,"format":"lance-table"})",
++             R"({"snapshot_id":"-2","format":"lance-table"})",
+          }) {
+         SCOPED_TRACE(spec);
+         milvus_storage::api::Properties props;
+@@ -4366,17 +4378,17 @@ TEST(InjectExtfsAllowlist, PaimonSnapshotIDSurvivesCABIConversion) {
+     loon_properties_free(&props);
+ }
+ 
+-TEST(InjectExtfsAllowlist, PaimonSnapshotIDOptional) {
+-    // Without snapshot_id the property must stay absent so the paimon
+-    // planner falls back to the latest snapshot.
+-    milvus_storage::api::Properties props;
+-    const int64_t coll_id = 42;
+-    std::string spec = R"({"format":"paimon-table"})";
+-
+-    ::InjectExternalSpecProperties(
+-        props, coll_id, "s3://s3.amazonaws.com/bucket/key", spec);
++TEST(InjectExtfsAllowlist, TableSnapshotIDOptional) {
++    // Without snapshot_id the format must keep its latest-snapshot default.
++    for (const std::string spec :
++         {R"({"format":"paimon-table"})", R"({"format":"lance-table"})"}) {
++        SCOPED_TRACE(spec);
++        milvus_storage::api::Properties props;
++        ::InjectExternalSpecProperties(
++            props, 42, "s3://s3.amazonaws.com/bucket/key", spec);
+ 
+-    EXPECT_EQ(props.count(PROPERTY_READER_EXTTABLE_SNAPSHOT_ID), 0u);
++        EXPECT_EQ(props.count(PROPERTY_READER_EXTTABLE_SNAPSHOT_ID), 0u);
++    }
+ }
+ 
+ TEST(InjectExtfsAllowlist, PaimonScanModeIsInjected) {
+```
+
+**File**: `tests/go_client/testcases/external_table_refresh_test.go` (modified, +13/-3)
+```diff
+@@ -3,6 +3,7 @@ package testcases
+ import (
+ 	"bytes"
+ 	"context"
++	"encoding/json"
+ 	"fmt"
+ 	"net"
+ 	"net/url"
+@@ -2115,8 +2116,8 @@ func mapToEnvSlice(m map[string]string) []string {
+ }
+ 
+ // TestExternalCollectionLanceFormat tests external collections with lance-table format:
+-//  1. Generate Lance dataset on MinIO using Python
+-//  2. Create external collection with lance-table format
++//  1. Generate two Lance dataset versions with different rows on MinIO
++//  2. Create external collection with lance-table format pinned to the old version
+ //  3. Refresh and wait for completion
+ //  4. Create index and load collection
+ //  5. Query count(*) and verify row count
+@@ -2156,13 +2157,22 @@ func TestExternalCollectionLanceFormat(t *testing.T) {
+ 			fmt.Sprintf("%s/%s/", minioCfg.rootPath, extPath))
+ 	})
+ 
++	// Overwrite the fresh dataset to create v2 with only id=100000. Selecting
++	// v1 must still return the original 100000 rows, not the latest snapshot.
++	generateLanceDataOnMinIO(t, s3URI, externalDataSchemaBasic, 1, totalRows)
++	var spec map[string]any
++	require.NoError(t, json.Unmarshal([]byte(extTestSpec(minioCfg, "lance-table")), &spec))
++	spec["snapshot_id"] = "1"
++	specJSON, err := json.Marshal(spec)
++	require.NoError(t, err)
++
+ 	// ---------------------------------------------------------------
+ 	// Step 2: Create external collection with lance-table format
+ 	// ---------------------------------------------------------------
+ 	schema := entity.NewSchema().
+ 		WithName(collName).
+ 		WithExternalSource(extTestURI(minioCfg, extPath)).
+-		WithExternalSpec(extTestSpec(minioCfg, "lance-table")).
++		WithExternalSpec(string(specJSON)).
+ 		WithField(
+ 			entity.NewField().
+ 				WithName("id").
+```
+
+---
+
+### Incident Patch 3: `f266503a` (2026-11-17)
+**Commit Message**: test: disable background config refresh in test builds (#55546)
 
 ## Problem
 
-`TestBuildLatencyExcludesAdmissionWait`
-(`internal/datanode/index/task_test.go`) intermittently fails in CI. It
-was observed failing in `milvus-build-ut-ciloop-pipeline-for-tcus/4060`
-(UT-GO) with:
+`paramtable.Init()` starts background config refreshers: every 5 s they
+re-read `milvus.yaml` and `hook.yaml` and poll the etcd config source.
+Go unit tests run with `-tags dynamic,test` and almost all of them call
+`paramtable.Init()` (directly, in `TestMain`, or lazily through
+`paramtable.Get()`), so these goroutines run alongside every unit test.
 
-```
-=== FAIL: internal/datanode/index TestIndexBuildTask/TestBuildLatencyExcludesAdmissionWait (unknown)
-signal: segmentation fault (core dumped)
-```
+Unit tests do not need them: they change configuration with `Save` /
+`Reset` / `Remove`, which take effect immediately and fire config
+events. Tests that do exercise refreshing already build their own
+`BaseTable` with an explicit `Interval`.
 
-The test patched the globally-hot `time.Now` with
-`mockey.Mock(time.Now)`. mockey rewrites the target function's machine
-code non-atomically, so concurrent `time.Now` callers (e.g. the
-config-refresh goroutine started by `paramtable.Init` in `TestMain`)
-race with the patch. Under `-race` this surfaces as a data race; without
-`-race` it segfaults.
+But the refreshers make test processes nondeterministic. Within one week
+they were the concurrent goroutine behind four flaky tests:
 
-## Root cause
+| PR | Test | How the refresher broke it |
+| --- | --- | --- |
+| #55262 | `TestGetCollectionProperties` | its allocations landed in a
+process-wide `testing.AllocsPerRun` measurement |
+| #55477 | `TestCheckAndSetDataDoesNotCopyWholeDataArray` | each tick
+allocates over 1 MiB, which landed in a process-wide
+`MemStats.TotalAlloc` measurement |
+| #55314 | `TestBuildLatencyExcludesAdmissionWait` 
 
-`mockey.Mock(time.Now)` in `TestBuildLatencyExcludesAdmissionWait` races
-with background goroutines that call `time.Now` concurrently. Reproduced
-locally with `-race -gcflags="all=-N -l"`:
-
-- `-test.run 'TestIndexBuildTask/TestBuildLatencyExcludesAdmissionWait'
--test.count=300` → repeated `WARNING: DATA RACE` between goroutine 214
-(test goroutine at `task_test.go:231` `mockey.Mock(time.Now)`) and
-goroutine
-
-**File**: `internal/datanode/index/task_index.go` (modified, +8/-6)
+**File**: `internal/querynodev2/server_test.go` (modified, +18/-71)
 ```diff
-@@ -61,6 +61,7 @@ type indexBuildTask struct {
- 	prepareDur     time.Duration // Preparation and input loading, excluding waits between stages.
- 	manager        *TaskManager
+@@ -19,8 +19,6 @@ package querynodev2
+ import (
+ 	"context"
+ 	"fmt"
+-	"os"
+-	"strings"
+ 	"sync/atomic"
+ 	"testing"
+ 	"time"
+@@ -31,7 +29,6 @@ import (
+ 	"github.com/stretchr/testify/mock"
+ 	"github.com/stretchr/testify/suite"
+ 	clientv3 "go.etcd.io/etcd/client/v3"
+-	"gopkg.in/yaml.v3"
  
-+	now           func() time.Time // Injectable clock; defaults to time.Now, tests override it.
- 	pluginContext *indexcgopb.StoragePluginContext
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
+@@ -171,14 +168,18 @@ func (suite *QueryNodeSuite) TestInit_QueryHook() {
+ 	suite.node.queryHook = mockHook
+ 	suite.node.handleQueryHookEvent()
+ 
+-	configPath := "../../configs/milvus.yaml"
+-	origConfig, err := os.ReadFile(configPath)
+-	suite.Require().NoError(err)
++	// Drive the create, update and delete cases through Save and Remove. Their
++	// runtime config events reach the same hook callbacks synchronously,
++	// without rewriting configs/milvus.yaml (which other test packages read) or
++	// relying on the background file refresh, which test builds do not run.
++	pt := paramtable.Get()
++	tuningKey := pt.AutoIndexConfig.AutoIndexTuningConfig.KeyPrefix + "1238"
++	searchKey := pt.AutoIndexConfig.AutoIndexSearchConfig.Key
+ 	suite.T().Cleanup(func() {
+-		os.WriteFile(configPath, origConfig, 0o600) //nolint:gosec // configPath is a hardcoded test path
++		pt.Reset(tuningKey)
++		pt.Reset(searchKey)
+ 	})
+ 
+-	yamlWriter := newYamlConfigWriter(configPath)
+ 	var x1, x2, x3 int32
+ 	suite.Equal(atomic.LoadInt32(&x1), int32(0))
+ 	suite.Equal(atomic.LoadInt32(&x2), int32(0))
+@@ -189,42 +190,37 @@ func (suite *QueryNodeSuite) TestInit_QueryHook() {
+ 	}).Return(nil)
+ 
+ 	// create tuning conf
+-	yamlWriter.set("autoIndex.params.tuning.1238", "xxxx")
+-	yamlWriter.writeConfig()
++	pt.Save(tuningKey, "xxxx")
+ 	suite.Eventually(func() bool {
+ 		return atomic.LoadInt32(&x1) == int32(6)
+-	}, 20*time.Second, time.Second)
++	}, 20*time.Second, 10*time.Millisecond)
+ 
+ 	mockHook.EXPECT().Init(mock.Anything).Run(func(params string) {
+ 		atomic.StoreInt32(&x2, 5)
+ 	}).Return(nil)
+-	yamlWriter.set("autoIndex.params.search", "aaaa")
+-	yamlWriter.writeConfig()
++	pt.Save(searchKey, "aaaa")
+ 	suite.Eventually(func() bool {
+ 		return atomic.LoadInt32(&x2) == int32(5)
+-	}, 20*time.Second, time.Second)
+-	yamlWriter.set("autoIndex.params.search", "")
+-	yamlWriter.writeConfig()
++	}, 20*time.Second, 10*time.Millisecond)
++	pt.Save(searchKey, "")
+ 
+ 	atomic.StoreInt32(&x1, 0)
+ 	suite.Equal(atomic.LoadInt32(&x1), int32(0))
+ 	// update tuning conf
+-	yamlWriter.set("autoIndex.params.tuning.1238", "yyyy")
+-	yamlWriter.writeConfig()
++	pt.Save(tuningKey, "yyyy")
+ 	suite.Eventually(func() bool {
+ 		return atomic.LoadInt32(&x1) == int32(6)
+-	}, 20*time.Second, time.Second)
++	}, 20*time.Second, 10*time.Millisecond)
+ 
+ 	mockHook.EXPECT().DeleteTuningConfig(mock.Anything).Run(func(params string) {
+ 		atomic.StoreInt32(&x3, 7)
+ 	}).Return(nil)
+ 
+ 	// delete tuning conf
+-	yamlWriter.set("autoIndex.params.tuning", "")
+-	yamlWriter.writeConfig()
++	pt.Remove(tuningKey)
+ 	suite.Eventually(func() bool {
+ 		return atomic.LoadInt32(&x3) == int32(7)
+-	}, 20*time.Second, time.Second)
++	}, 20*time.Second, 10*time.Millisecond)
  }
  
-@@ -79,6 +80,7 @@ func NewIndexBuildTask(ctx context.Context,
- 		req:           req,
- 		tr:            timerecord.NewTimeRecorder(fmt.Sprintf("IndexBuildID: %d, ClusterID: %s", req.GetBuildID(), req.GetClusterID())),
- 		manager:       manager,
-+		now:           time.Now,
- 		pluginContext: pluginContext,
- 	}
- 
-@@ -163,7 +165,7 @@ func (it *indexBuildTask) IsVectorIndex() bool {
+ func (suite *QueryNodeSuite) TestStop() {
+@@ -512,52 +508,3 @@ func TestRegisterSegcoreConfigWatcher(t *testing.T) {
+ func TestQueryNode(t *testing.T) {
+ 	suite.Run(t, new(QueryNodeSuite))
  }
- 
- func (it *indexBuildTask) PreExecute(ctx context.Context) error {
--	started := time.Now()
-+	started := it.now()
- 	it.queueDur = it.tr.RecordSpan()
- 	mlog.Info(ctx, "Begin to prepare indexBuildTask", mlog.FieldBuildID(it.req.GetBuildID()),
- 		mlog.Int64("Collection", it.req.GetCollectionID()), mlog.Int64("SegmentID", it.req.GetSegmentID()))
-@@ -237,7 +239,7 @@ func (it *indexBuildTask) PreExecute(ctx context.Context) error {
- 		mlog.Int32("currentIndexVersion", it.req.GetCurrentIndexVersion()),
- 		mlog.Int32("currentScalarIndexVersion", it.req.GetCurrentScalarIndexVersion()),
- 	)
--	it.prepareDur = time.Since(started)
-+	it.prepareDur = it.now().Sub(started)
- 	return nil
- }
- 
-@@ -261,7 +263,7 @@ func redactBuildIndexParamsForLog(params *indexcgopb.BuildIndexInfo) *indexcgopb
- }
- 
- func (it *indexBuildTask) LoadData(ctx context.Context) error {
--	started := time.Now()
-+	started := it.now()
- 	if it.index == nil {
- 		if err := it.createBuilder(ctx); err != nil {
- 			return err
-@@ -270,7 +272,7 @@ func (it *indexBuildTask) LoadData(ctx context.Context) error {
- 	if err := it.index.LoadData(); err != nil {
- 		return err
- 	}
--	it.prepareDur += time.Since(started)
-+	it.prepareDur += it.now().Sub(started)
- 	it.tr.RecordSpan()
- 	return nil
- }
-@@ -404,11 +406,11 @@ func (it *indexBuildTask) Execute(ctx context.Context) error {
- 	if it.index == nil {
- 		return merr.WrapErrServiceInternalMsg("index input has not been prepared")
- 	}
--	started := time.Now()
-+	started := it.now()
- 	if err := it.index.Build(); err != nil {
- 		return err
- 	}
--	buildIndexLatency := it.prepareDur + time.Since(started)
-+	buildIndexLatency := it.prepareDur + it.now().Sub(started)
- 	metrics.DataNodeKnowhereBuildIndexLatency.WithLabelValues(strconv.FormatInt(paramtable.GetNodeID(), 10)).Observe(buildIndexLatency.Seconds())
- 	it.tr.RecordSpan()
- 	return nil
+-
+-// yamlConfigWriter is a minimal viper replacement for test config manipulation.
+-type yamlConfigWriter struct {
+-	path string
+-	data map[string]interface{}
+-}
+-
+-func newYamlConfigWriter(path string) *yamlConfigWriter {
+-	w := &yamlConfigWriter{path: path}
+-	raw, err := os.ReadFile(path)
+-	if err != nil {
+-		panic(err)
+-	}
+-	w.data = make(map[string]interface{})
+-	if err := yaml.Unmarshal(raw, &w.data); err != nil {
+-		panic(err)
+-	}
+-	return w
+-}
+-
+-func (w *yamlConfigWriter) set(key string, value interface{}) {
+-	parts := strings.Split(key, ".")
+-	m := w.data
+-	for _, p := range parts[:len(parts)-1] {
+-		child, ok := m[p]
+-		if !ok {
+-			child = make(map[string]interface{})
+-			m[p] = child
+-		}
+-		if cm, ok := child.(map[string]interface{}); ok {
+-			m = cm
+-		} else {
+-			nm := make(map[string]interface{})
+-			m[p] = nm
+-			m = nm
+-		}
+-	}
+-	m[parts[len(parts)-1]] = value
+-}
+-
+-func (w *yamlConfigWriter) writeConfig() {
+-	out, err := yaml.Marshal(w.data)
+-	if err != nil {
+-		panic(err)
+-	}
+-	if err := os.WriteFile(w.path, out, 0o600); err != nil {
+-		panic(err)
+-	}
+-}
 ```
 
-**File**: `internal/datanode/index/task_test.go` (modified, +2/-3)
+**File**: `pkg/util/paramtable/base_table.go` (modified, +1/-1)
 ```diff
-@@ -228,10 +228,9 @@ func (suite *IndexBuildTaskSuite) TestBuildLatencyExcludesAdmissionWait() {
+@@ -128,7 +128,7 @@ func NewBaseTable(opts ...Option) *BaseTable {
+ 	defaultConfig := &baseTableConfig{
+ 		configDir:       initConfPath(),
+ 		yamlFiles:       defaultYaml,
+-		refreshInterval: 5 * time.Second,
++		refreshInterval: defaultRefreshInterval,
+ 		skipRemote:      false,
+ 		skipEnv:         false,
  	}
- 	before := readMetric()
- 	var elapsed atomic.Int64
--	clock := mockey.Mock(time.Now).To(func() time.Time {
-+	task.now = func() time.Time {
- 		return time.Unix(1000, elapsed.Load())
--	}).Build()
--	defer clock.UnPatch()
-+	}
- 	prepare := mockey.Mock(getCurrentIndexVersion).To(func(version int32) int32 {
- 		elapsed.Add(int64(2 * time.Second))
- 		return version
 ```
 
----
-
-### Incident Patch 2: `e07890ac` (2026-11-16)
-**Commit Message**: fix: restrict default collection lookup fallback to missing keys (#55261)
-
-## Summary
-
-Fix RootCoord default-database collection lookup so legacy metadata is
-used only when the modern default-database key is explicitly absent.
-
-## Root Cause
-
-`loadCollectionFromDb` converted every `Load` error and tombstone into
-`ErrCollectionNotFound`. `loadCollectionFromDefaultDb` then treated
-every non-nil error as evidence that the modern key was absent and read
-the legacy `NonDBID` key.
-
-As a result, a valid legacy collection could be returned after a logical
-deletion or a storage I/O failure.
-
-## Changes
-
-- Preserve typed storage errors and classify untyped load errors as
-`ErrIoFailed`.
-- Fall back to the legacy `NonDBID` key only for `ErrIoKeyNotFound`.
-- Keep tombstones as `ErrCollectionNotFound`.
-- Preserve `ErrCollectionNotFound` when both the default and legacy keys
-are absent.
-- Add regression coverage for tombstones, I/O errors, explicit key
-absence, and both keys being absent.
-
-## Testing
-
-Passed:
-
-- Focused `GetCollectionByID` regression tests with `-tags dynamic,test
--gcflags="all=-N -l"`.
-- Catalog-focused RootCoord metastore tests.
-- `go build ./internal/metastore/kv/rootcoord`
-- 
-
-**File**: `internal/metastore/kv/rootcoord/kv_catalog.go` (modified, +18/-3)
+**File**: `pkg/util/paramtable/refresh_interval.go` (added, +27/-0)
 ```diff
-@@ -267,7 +267,11 @@ func (kc *Catalog) loadCollectionFromDb(ctx context.Context, dbID int64, collect
- 	collKey := BuildCollectionKey(dbID, collectionID)
- 	collVal, err := kc.Txn.Load(ctx, collKey)
- 	if err != nil {
--		return nil, merr.WrapErrCollectionNotFound(collectionID, err.Error())
-+		// Return the storage error as is. The default-database compatibility
-+		// fallback must distinguish a missing key from a tombstone or an I/O
-+		// failure, and callers must still see a cancellation or a timeout as
-+		// such.
-+		return nil, err
- 	}
- 
- 	// Legacy SuffixSnapshot deletion with ts!=0 overwrote the plain key with a
-@@ -283,9 +287,13 @@ func (kc *Catalog) loadCollectionFromDb(ctx context.Context, dbID int64, collect
- }
- 
- func (kc *Catalog) loadCollectionFromDefaultDb(ctx context.Context, collectionID typeutil.UniqueID, ts typeutil.Timestamp) (*pb.CollectionInfo, error) {
--	if info, err := kc.loadCollectionFromDb(ctx, util.DefaultDBID, collectionID, ts); err == nil {
-+	info, err := kc.loadCollectionFromDb(ctx, util.DefaultDBID, collectionID, ts)
-+	if err == nil {
- 		return info, nil
- 	}
-+	if !errors.Is(err, merr.ErrIoKeyNotFound) {
-+		return nil, err
-+	}
- 	// get collection from older version.
- 	return kc.loadCollectionFromDb(ctx, util.NonDBID, collectionID, ts)
- }
-@@ -294,12 +302,19 @@ func (kc *Catalog) loadCollection(ctx context.Context, dbID int64, collectionID
- 	if isDefaultDB(dbID) {
- 		info, err := kc.loadCollectionFromDefaultDb(ctx, collectionID, ts)
- 		if err != nil {
-+			if errors.Is(err, merr.ErrIoKeyNotFound) {
-+				return nil, merr.WrapErrCollectionNotFound(collectionID)
-+			}
- 			return nil, err
- 		}
- 		kc.fixDefaultDBIDConsistency(ctx, info, ts)
- 		return info, nil
- 	}
--	return kc.loadCollectionFromDb(ctx, dbID, collectionID, ts)
-+	info, err := kc.loadCollectionFromDb(ctx, dbID, collectionID, ts)
-+	if errors.Is(err, merr.ErrIoKeyNotFound) {
-+		return nil, merr.WrapErrCollectionNotFound(collectionID)
-+	}
-+	return info, err
- }
- 
- func partitionVersionAfter210(collMeta *pb.CollectionInfo) bool {
-```
-
-**File**: `internal/metastore/kv/rootcoord/kv_catalog_test.go` (modified, +2/-1)
-```diff
-@@ -414,9 +414,10 @@ func TestCatalog_GetCollectionByID(t *testing.T) {
- 	ss := mocks.NewTxnKV(t)
- 	c := NewCatalog(ss)
- 
--	ss.EXPECT().Load(mock.Anything, mock.Anything).Return("", errors.New("load error")).Twice()
-+	ss.EXPECT().Load(mock.Anything, mock.Anything).Return("", errors.New("load error")).Once()
- 	coll, err := c.GetCollectionByID(ctx, 0, 1, 1)
- 	assert.Error(t, err)
-+	assert.False(t, merr.ErrCollectionNotFound.Is(err))
- 	assert.Nil(t, coll)
- 
- 	ss.EXPECT().Load(mock.Anything, mock.Anything).RunAndReturn(func(ctx context.Context, key string) (string, error) {
-```
-
-**File**: `internal/metastore/kv/rootcoord/kv_catalog_tombstone_test.go` (modified, +86/-2)
-```diff
-@@ -72,8 +72,10 @@ func TestCatalog_ListCollections_SkipsTombstone(t *testing.T) {
- func TestCatalog_GetCollectionByID_TombstoneIsNotFound(t *testing.T) {
- 	ctx := context.Background()
- 	kv := mocks.NewTxnKV(t)
--	// Both default-db attempt and legacy-path attempt return the tombstone.
--	kv.EXPECT().Load(mock.Anything, mock.Anything).Return(tombstone(), nil)
-+	defaultKey := BuildCollectionKey(util.DefaultDBID, 99999)
-+	// A tombstone is a logical deletion, not evidence that the modern key is
-+	// absent. The legacy key must not be read.
-+	kv.EXPECT().Load(mock.Anything, defaultKey).Return(tombstone(), nil).Once()
- 
- 	kc := NewCatalog(kv)
- 	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 99999)
-@@ -82,6 +84,88 @@ func TestCatalog_GetCollectionByID_TombstoneIsNotFound(t *testing.T) {
- 	assert.Nil(t, got)
- }
- 
-+func TestCatalog_GetCollectionByID_DefaultLoadErrorDoesNotFallback(t *testing.T) {
-+	ctx := context.Background()
-+	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
-+	kv := mocks.NewTxnKV(t)
-+	kv.EXPECT().Load(mock.Anything, defaultKey).
-+		Return("", merr.WrapErrIoFailed(defaultKey, context.DeadlineExceeded)).Once()
+@@ -0,0 +1,27 @@
++// Licensed to the LF AI & Data foundation under one
++// or more contributor license agreements. See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership. The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License. You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+	kc := NewCatalog(kv)
-+	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
-+	assert.Error(t, err)
-+	assert.True(t, merr.ErrIoFailed.Is(err))
-+	assert.False(t, merr.ErrCollectionNotFound.Is(err))
-+	assert.Nil(t, got)
++//go:build !test
++
++package paramtable
++
++import "time"
++
++// defaultRefreshInterval is how often a BaseTable re-reads its file and etcd
++// sources when the Interval option does not set one. paramtable.Init passes
++// MILVUS_CONFIG_REFRESH_INTERVAL as that option for the table it builds.
++// Test builds use refresh_interval_testonly.go instead.
++const defaultRefreshInterval = 5 * time.Second
+```
+
+**File**: `pkg/util/paramtable/refresh_interval_test.go` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++// Licensed to the LF AI & Data foundation under one
++// or more contributor license agreements. See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership. The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License. You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//go:build test
++
++package paramtable
++
++import (
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++)
++
++func TestNewBaseTable_TestBuildDoesNotRefreshByDefault(t *testing.T) {
++	mainTable := NewBaseTable(SkipRemote(true))
++	t.Cleanup(mainTable.mgr.Close)
++	require.Zero(t, mainTable.config.refreshInterval,
++		"test builds must not refresh configuration in the background by default")
++
++	hook := NewBaseTableFromYamlOnly(hookYamlFile)
++	t.Cleanup(hook.mgr.Close)
++	require.Zero(t, hook.config.refreshInterval,
++		"the hook table must follow the same default")
++
++	refreshing := NewBaseTable(SkipRemote(true), Interval(time.Hour))
++	t.Cleanup(refreshing.mgr.Close)
++	require.Equal(t, time.Hour, refreshing.config.refreshInterval,
++		"an explicit Interval must still enable refreshing")
 +}
-+
-+func TestCatalog_GetCollectionByID_DefaultLoadContextErrorIsPreserved(t *testing.T) {
-+	ctx := context.Background()
-+	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
-+	for _, loadErr := range []error{context.DeadlineExceeded, context.Canceled} {
-+		kv := mocks.NewTxnKV(t)
-+		// The KV layer returns the context error unwrapped. It must reach the
-+		// caller unchanged and must not trigger the legacy fallback.
-+		kv.EXPECT().Load(mock.Anything, defaultKey).Return("", loadErr).Once()
-+
-+		kc := NewCatalog(kv)
-+		got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
-+		assert.ErrorIs(t, err, loadErr)
-+		assert.True(t, merr.IsCanceledOrTimeout(err))
-+		assert.False(t, merr.ErrCollectionNotFound.Is(err))
-+		assert.Nil(t, got)
-+	}
-+}
-+
-+func TestCatalog_GetCollectionByID_DefaultKeyNotFoundFallsBackToLegacy(t *testing.T) {
-+	ctx := context.Background()
-+	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
-+	legacyKey := BuildCollectionKey(util.NonDBID, 42)
-+	legacy := &pb.CollectionInfo{
-+		ID:    42,
-+		DbId:  util.DefaultDBID,
-+		State: pb.CollectionState_CollectionCreated,
-+		Schema: &schemapb.CollectionSchema{
-+			Name:   "legacy-collection",
-+			Fields: []*schemapb.FieldSchema{{FieldID: 1, Name: "field"}},
-+		},
-+		PartitionIDs:               []int64{43},
-+		PartitionNames:             []string{"_default"},
-+		PartitionCreatedTimestamps: []uint64{1},
-+	}
-+	legacyValue, err := proto.Marshal(legacy)
-+	require.NoError(t, err)
-+
-+	kv := mocks.NewTxnKV(t)
-+	kv.EXPECT().Load(mock.Anything, defaultKey).
-+		Return("", merr.WrapErrIoKeyNotFound(defaultKey)).Once()
-+	kv.EXPECT().Load(mock.Anything, legacyKey).
-+		Return(string(legacyValue), nil).Once()
-+
-+	kc := NewCatalog(kv)
-+	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
-+	require.NoError(t, err)
-+	require.NotNil(t, got)
-+	assert.Equal(t, "legacy-collection", got.Name)
-+}
-+
-+func TestCatalog_GetCollectionByID_DefaultAndLegacyKeysNotFound(t *testing.T) {
-+	ctx := context.Background()
-+	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
-+	legacyKey := BuildCollectionKey(util.NonDBID, 42)
-+	kv := mocks.NewTxnKV(t)
-+	kv.EXPECT().Load(mock.Anything, defaultKey).
-+		Return("", merr.WrapErrIoKeyNotFound(defaultKey)).Once()
-+	kv.EXPECT().Load(mock.Anything, legacyKey).
-+		Return("", merr.WrapErrIoKeyNotFound(legacyKey)).Once()
-+
-+	kc := NewCatalog(kv)
-+	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
-+	assert.Error(t, err)
-+	assert.True(t, merr.ErrCollectionNotFound.Is(err))
-+	assert.Nil(t, got)
-+}
-+
- func TestCatalog_GetCollectionByName_SkipsTombstone(t *testing.T) {
- 	ctx := context.Background()
- 	kv := mocks.NewTxnKV(t)
 ```
 
----
-
-### Incident Patch 3: `4d2a35e4` (2026-11-16)
-**Commit Message**: test: fix chaos cleanup hook for pytest 8 (#55501)
-
-When `TestChaosApply` fails after creating a Chaos Mesh Schedule, its
-legacy `teardown` method is ignored by pytest 8.3.4. The Schedule
-remains installed and can keep disrupting the instance while subsequent
-checks run.
-
-Rename the hook to `teardown_method` so pytest executes the existing
-cleanup on both success and failure. Preserve the Schedule visibility
-assertion and existing deletion behavior.
-
-Validation:
-- Replayed the source cleanup method under pytest 8.3.4: the original
-hook left both tracked resources undeleted after an intentional
-assertion failure.
-- With the supported hook, cleanup ran in four local scenarios:
-assertion failure, partial-creation state, failure before configuration,
-and normal completion. The original test outcomes were preserved.
-Kubernetes deletion was replaced with a recorder for this isolated
-lifecycle check.
-- Ruff 0.15.11 check and format check, Python compilation, and `git diff
---check` passed. The repository's configured license-header scope covers
-`internal/**/*.go`; this Python-only change is outside that scope.
-- Full Kubernetes chaos E2E was not rerun.
-
-Signed-off-by: zhuwenxing <[REDACTED
-
-**File**: `tests/python_client/chaos/test_chaos_apply.py` (modified, +1/-1)
+**File**: `pkg/util/paramtable/refresh_interval_testonly.go` (added, +37/-0)
 ```diff
-@@ -131,7 +131,7 @@ def reconnect(self):
-         if connections.has_connection("default") is False:
-             raise Exception("no connections")
- 
--    def teardown(self):
-+    def teardown_method(self):
-         for chaos_config in getattr(self, "chaos_configs", [getattr(self, "chaos_config", {})]):
-             if not chaos_config:
-                 continue
+@@ -0,0 +1,37 @@
++// Licensed to the LF AI & Data foundation under one
++// or more contributor license agreements. See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership. The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License. You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++//go:build test
++
++package paramtable
++
++import "time"
++
++// defaultRefreshInterval is zero in test builds, so a BaseTable does not
++// refresh its sources in the background unless asked to.
++//
++// Unit tests should change configuration through Save, Reset or Remove,
++// which take effect immediately and fire the same config events. A
++// background refresher only adds goroutines that re-read milvus.yaml and
++// hook.yaml and poll etcd every few seconds: their allocations land in
++// process-wide measurements such as testing.AllocsPerRun and
++// runtime.MemStats, and their calls race with mockey patches of functions
++// they use, such as time.Now and proto.Unmarshal.
++//
++// Tests that exercise refreshing pass the Interval option.
++// MILVUS_CONFIG_REFRESH_INTERVAL only applies to the table paramtable.Init
++// builds; the integration cluster sets it for the Milvus processes it starts.
++const defaultRefreshInterval time.Duration = 0
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55561** (2026-11-16): fix: [cp3.0]Retry coordinator RPCs promptly after ServerID changes (@bigsheeper)
-- **PR #55560** (2026-11-16): enhance: [cp3.0]revoke session leases before a forced stop exit (@bigsheeper)
-- **PR #55559** (2026-11-16): test: stabilize Base64 vector allocation budget (@chyezh)
-- **PR #55553** (2026-11-16): fix: Retry coordinator RPCs promptly after ServerID changes (@bigsheeper)
-- **PR #55550** (2026-11-16): test: wait for the index before iterating in search_iterator_using_mul_db (@xiaofan-luan)
-- **PR #55548** (2026-11-15): test: fix nil viewFeedback panic in TestQueryViewReleaseRuntimeShutdown (@xiaofan-luan)
+- **PR #55643** (2026-11-17): feat: [cp3.0] support per-request source storage for bulk import (@xaxys)
+- **PR #55631** (closed): fix: [cp3.0] preserve IAM credential caches across storage clients (@xiaofan-luan)
+- **PR #55630** (closed): fix: preserve IAM credential caches across storage clients (@xiaofan-luan)
+- **PR #55619** (2026-11-17): fix: keep GPU support disabled by default for Cardinal builds (@marcelo-cjl)
+- **PR #55617** (2026-11-17): test: copy TEXT values before reading the next batch in the flush test (@xiaofan-luan)
+- **PR #55612** (2026-11-16): fix: [GoSDK] add Timestamptz column write helper (@xiaofan-luan)
 
 ---
 
@@ -1789,43 +2287,32 @@ Signed-off-by: zhuwenxing <[REDACTED
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: fix flaky TestBuildLatencyExcludesAdmissionWait
+## X. enhance: propagate candidates and null rejection to element predicates
 
 **RULE**:
-When implementing operations in `internal/datanode/index/task_index.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/core/src/common/ElementFilterIterator.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86534551`: test: fix flaky TestBuildLatencyExcludesAdmissionWait. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `663f0d57`: enhance: propagate candidates and null rejection to element predicates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/datanode/index/task_index.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/src/common/ElementFilterIterator.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	now           func() time.Time // Injectable clock; defaults to time.Now, tests override it.
-		now:           time.Now,
-	started := it.now()
-	it.prepareDur = it.now().Sub(started)
-	started := it.now()
-	it.prepareDur += it.now().Sub(started)
-	started := it.now()
-	buildIndexLatency := it.prepareDur + it.now().Sub(started)
+    TargetBitmapView validview(col_vec->GetValidRawData(), col_vec_size);
+        if (bitsetview[i] && validview[i]) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	started := time.Now()
-	it.prepareDur = time.Since(started)
-	started := time.Now()
-	it.prepareDur += time.Since(started)
-	started := time.Now()
-	buildIndexLatency := it.prepareDur + time.Since(started)
+        if (bitsetview[i]) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86534551` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `663f0d57` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
