@@ -10438,3 +10438,4 @@ Every entry in this ledger must capture:
 | `learn-github-openkruise-kruise` | `https://github.com/openkruise/kruise` | `df1edb99` | Multi-dimensional audit evidence | 2026-11-17T02:02:18.467Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `c4888cbb` | Multi-dimensional audit evidence | 2026-11-17T02:02:22.967Z |
 | `learn-dom-d-bfbe4a28` | `project://clementtsang-bottom` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md` | 2026-11-17T02:02:52.550Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `7d8af245` | Multi-dimensional audit evidence | 2026-11-17T02:16:50.196Z |

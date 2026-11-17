@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T02:02:22.983Z",
-  "total_cycles_completed": 9990,
-  "total_learnings_persisted": 9990,
-  "total_rules_promoted": 9573,
+  "last_updated": "2026-11-17T02:16:50.201Z",
+  "total_cycles_completed": 9991,
+  "total_learnings_persisted": 9991,
+  "total_rules_promoted": 9574,
   "history": [
-    {
-      "timestamp": "2026-11-16T00:27:49.892Z",
-      "repository": "alexpasmantier/television",
-      "learningId": "learn-github-alexpasmantier-television",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T00:28:02.255Z",
       "repository": "rqlite/rqlite",
@@ -1403,6 +1396,13 @@
       "repository": "SeekStorm/SeekStorm",
       "learningId": "learn-github-seekstorm-seekstorm",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T02:16:50.201Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

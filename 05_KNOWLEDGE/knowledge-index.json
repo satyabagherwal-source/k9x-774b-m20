@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T02:02:54.141Z",
+  "last_updated": "2026-11-17T02:16:54.859Z",
   "total_verified_learnings": 8828,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19591,
+  "total_items": 19594,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-1FAL-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AFSK-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2700ab761c67be56653aed3d5f725fef7dde98274319afa7b773e0f7f205f3e5",
+      "content_hash": "50f130c153874524d7520fb0af32720211e8848aad9d4a751a19b06d2dc0a68b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T01:41:54.480Z"
+      "persisted_at": "2026-11-17T02:16:54.646Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fe1740bd2d73d71ecaa437479e2140a3497adf767eb7c86cc3a1797de18db7b7",
+      "content_hash": "8bf4428270c1aa9da2ea3a08f18e5d5f30858313d0853debf3e3db95c6e6c029",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T01:41:54.587Z"
+      "persisted_at": "2026-11-17T02:16:54.753Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "81fc14c5df6857a39d19b952399fe03c74eae8dfa2d4cb717aee8be7fbefa478",
+      "content_hash": "e6b46888ed0d00da7790a59722e28cbd490db48aa3d5a481c847b547330427cf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T01:41:54.692Z"
+      "persisted_at": "2026-11-17T02:16:54.859Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218053,13 +218053,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-457T-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AFBC-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7cbb81a15a6db0d2986d8d7608173b6e7b965e35aa9147d6e499ec2a09e8be7",
+      "content_hash": "74b2827014e5923cdd50b98335ce6612620006a9847455d8296f1643f6d14968",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T01:16:01.771Z"
+      "persisted_at": "2026-11-17T02:16:54.024Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218069,9 +218069,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "51b3c3088638d23102679e8cea61f476118579c9fe11809f90a407c641aab841",
+      "content_hash": "197117c746206297d60a0d2c83bf44c2b83b45556dbf7580086b42ed080aea40",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T01:16:01.965Z"
+      "persisted_at": "2026-11-17T02:16:54.131Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218081,9 +218081,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee358c2c04604eba69cab8e2b6cff475b6b342decdad74b815bc452642f031d7",
+      "content_hash": "9e6b810daea8b70a38136f418ce81e7dbb3fa8b7eae5eb3fb45f05c1d6f0e370",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T01:16:02.148Z"
+      "persisted_at": "2026-11-17T02:16:54.238Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -225979,17 +225979,23 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "226652fd",
-      "content_hash": "303f6140b1a862f02b585a81beb5b0c1be90014f0c90fcc6c32cfec1392e9acd",
+      "source_version": "7d8af245",
+      "content_hash": "37ddf0e1c7f8c8bb675959bfa37c98c88124d75ef9c421c2d30c5546ca1dd462",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 8836,
+          "title": "sync, render improve, oac update",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T07:53:31.352Z",
+      "verified_at": "2026-11-17T02:16:50.046Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226017,10 +226023,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "repository": "beclab/Olares",
-      "source_version": "226652fd",
-      "content_hash": "27ec26b9e4faa2c3bb743355fddc901e46e65799c2babb14de3983d603aa6da6",
+      "source_version": "7d8af245",
+      "content_hash": "7beda1936be6b880d61d2612e8899f6dc8be85ee096d4145e81169de5c57aa58",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T07:53:31.820Z"
+      "persisted_at": "2026-11-17T02:16:50.458Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares",
@@ -226029,10 +226035,10 @@
       "relative_path": "08_VERIFICATION/beclab-olares-verification-protocol-empirical-defect-shield-for-beclab-olares.md",
       "title": "Verification Protocol: Empirical Defect Shield for beclab/Olares",
       "repository": "beclab/Olares",
-      "source_version": "226652fd",
-      "content_hash": "b7f1cee807a835f23120ccf8c122bd5f77c686ccc40f06abb4396409834f64bd",
+      "source_version": "7d8af245",
+      "content_hash": "e029d2b4bb61409b36c0761a6fdd234f47f36851f0d0b60fa4e3f98b33776970",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T07:53:31.919Z"
+      "persisted_at": "2026-11-17T02:16:50.562Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
@@ -226066,9 +226072,9 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee2fed3214682bf9c0fe16f65341421f1596e0a368d02dd029c2a43e91315111",
+      "content_hash": "5ed3298260f712b33da1f5c0699957f733c59a650387ad61b008a06c1f1f03be",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T07:54:02.497Z"
+      "persisted_at": "2026-11-17T02:16:53.614Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings",
@@ -226078,9 +226084,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "f35355fee21348fb824dc3b22d801ad37bb1ab3d6f073994e8b78a53f8cd9e6a",
+      "content_hash": "d7b56de35dbe3e7a45db7d29707559fbae84f49f9e3e393a2841f17ca45578fb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T07:54:02.611Z"
+      "persisted_at": "2026-11-17T02:16:53.729Z"
     },
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
@@ -261322,6 +261328,44 @@
       "content_hash": "6d03793ace5ea147c9ad9996481526d7676708860e4a5b0e4153da90858ab7f9",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T02:02:54.141Z"
+    },
+    "rule-8836": {
+      "learning_id": "rule-8836",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8836,
+      "title": "sync, render improve, oac update",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "7d8af245",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T02:16:50.046Z"
+    },
+    "candidate_directive-sync-render-improve-oac-update": {
+      "item_id": "candidate_directive-sync-render-improve-oac-update",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ACHB-sync-render-improve-oac-update.md",
+      "title": "sync, render improve, oac update",
+      "repository": "beclab/Olares",
+      "source_version": "7d8af245",
+      "content_hash": "684ba4ae277321b2f1bb4cdd360a2ded42b967d24de8118a6c0f6680a1034b14",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T02:16:50.352Z"
+    },
+    "candidate_directive-market-sync-render-improve-oac-update": {
+      "item_id": "candidate_directive-market-sync-render-improve-oac-update",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AEWH-market-sync-render-improve-oac-update.md",
+      "title": "market: sync, render improve, oac update",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4885916030e0846fed1fcb3da719b462391ebc52ad56998d24d990c788b66841",
+      "domain_letter": "C",
+      "persisted_at": "2026-11-17T02:16:53.489Z"
     }
   },
   "ai-builder-brain": {

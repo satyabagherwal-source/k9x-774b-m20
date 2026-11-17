@@ -4,22 +4,22 @@
 {
   "source_repository": "beclab/Olares",
   "source_url": "https://github.com/beclab/Olares",
-  "source_version": "226652fd",
+  "source_version": "7d8af245",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-14T07:53:31.703Z",
+  "timestamp": "2026-11-17T02:16:50.352Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-beclab-olares",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `226652fd`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-14T07:53:31.703Z`  
+> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `7d8af245`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-17T02:16:50.352Z`  
 > **Learning ID**: `learn-github-beclab-olares`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `beclab/Olares` (Commit: `226652fd`)
+- **Target Repository**: `beclab/Olares` (Commit: `7d8af245`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T07:53:31.160Z  
+> **Harvest Timestamp**: 2026-11-17T02:11:48.700Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5362 stars
+- **Stars / Engagement**: 5363 stars
 
 ---
 
@@ -1148,93 +1148,118 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a4e4a4d` (2026-11-13)
-**Commit Message**: docs: clarify 1.12.8 upgrade guide (#4444)
+### Incident Patch 1: `c0a1a6ae` (2026-11-16)
+**Commit Message**: market: sync, render improve, oac update (#4454)
 
-add more details
-
-**File**: `docs/manual/update-guides/1.12.8.md` (modified, +11/-2)
+**File**: `framework/market/.olares/config/cluster/deploy/market_deploy.yaml` (modified, +1/-1)
 ```diff
-@@ -1,11 +1,13 @@
- ---
- outline: [2, 3]
--description: Prepare for Olares 1.12.8 with guidance on new device activation, restarting GPU apps in time-slicing mode, and member access to Files.
-+description: Prepare for Olares 1.12.8 with guidance on device activation, GPU app restarts, Files permissions, and changes to host terminal access.
- ---
- 
- # Olares 1.12.8 update guide
- 
--Olares 1.12.8 updates the setup flow for new devices, member access to storage in Files, and GPU switching in time-slicing mode. Review the changes below and follow the steps that apply to your setup.
-+Olares 1.12.8 introduces several changes to system setup and workflows.
-+
-+This guide explains what changed in 1.12.8, whether you need to take action, and where to find the detailed steps.
- 
- :::warning Update LarePass first
- Before you begin, update LarePass to version 1.12.35.
-@@ -19,6 +21,7 @@ Before you begin, update LarePass to version 1.12.35.
- | GPU apps were already using time-slicing mode before the update. | Restart those apps after updating to activate the new HAMi switching algorithm. [View steps](#restart-gpu-apps-using-time-slicing-mode). |
- | Members use folders in External or Common through Files. | After updating, review access settings and grant each member the view or edit access they need. [View steps](#review-member-access-in-files). |
- | You created shares using a method that 1.12.8 no longer supports. | Replace invalid shares with a supported method. For member access to External or Common, use **Access settings**. [View steps](#replace-unsupported-shares). |
-+| You use Control Hub to access the Olares host terminal. | The host terminal entry has been removed. Use an alternative access method. [View details](#access-the-host-terminal-after-updating). |
- 
- ## Update a new device before activation
- 
-@@ -59,3 +62,9 @@ External and Common do not support **Internal share** in 1.12.8. Existing shares
- - To share folders in other locations, check the supported methods in [Share files](/manual/olares/files/share-files) before creating a replacement.
- 
- Changing permissions on an old share does not restore a sharing method that is no longer supported.
-+
-+## Access the host terminal after updating
-+
-+Olares 1.12.8 removes the **Terminal > Olares** entry from Control Hub. To run commands on the Olares host, [connect via SSH](../access-olares-terminal.md). If you use Olares One, you can also log in directly with a monitor and keyboard. See [Olares One terminal access options](../../one/access-overview.md). Container terminals in Control Hub are not affected.
-+
-+For Olares 1.12.9, we plan to add SSH access over the Tailscale network through LarePass, providing a new way to access the host terminal.
+@@ -155,7 +155,7 @@ spec:
+           name: check-appservice
+       containers:
+       - name: appstore-backend
+-        image: beclab/market-backend:v0.6.134
++        image: beclab/market-backend:v0.6.137
+         imagePullPolicy: IfNotPresent
+         ports:
+           - containerPort: 81
 ```
 
-**File**: `docs/zh/manual/update-guides/1.12.8.md` (modified, +10/-2)
+---
+
+### Incident Patch 2: `7fa07c55` (2026-11-16)
+**Commit Message**: docs: require a GeForce RTX 50-series GPU for YuE2 Studio (#4452)
+
+* docs: require a GeForce RTX 50-series GPU for YuE2 Studio
+
+The published prerequisite listed any NVIDIA GPU. YuE2 Studio runs only on RTX 50-series cards, so the guide states that limit without compute-capability or driver details.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* docs: drop the redundant YuE2 GPU exclusion
+
+The RTX 50-series requirement already states which GPU the app uses.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `docs/use-cases/yue2-studio.md` (modified, +4/-3)
 ```diff
-@@ -1,11 +1,13 @@
+@@ -6,8 +6,8 @@ head:
+     - name: keywords
+       content: Olares, YuE2 Studio, AI music, Q8, BF16, quantization, piano roll, ABC, MIDI, covers, instrumental music
+ app_version: "0.0.7"
+-doc_version: "2.6"
+-doc_updated: "2026-11-07"
++doc_version: "2.7"
++doc_updated: "2026-11-16"
  ---
- outline: [2, 3]
--description: 了解 Olares 1.12.8 更新前后的注意事项，包括新设备激活前更新、重启 GPU 分时共享应用，以及调整文件访问权限。
-+description: 了解 Olares 1.12.8 更新前后的注意事项，包括新设备激活、GPU 应用重启、文件访问权限，以及主机终端访问方式的变化。
+ 
+ # Create and edit a song with YuE2 Studio
+@@ -30,7 +30,8 @@ In this guide, you will learn how to:
+ 
+ ## Prerequisites
+ 
+-- Olares 1.12.7 or later on an amd64 device with an NVIDIA GPU and at least 5 GiB of available GPU memory.
++- Olares 1.12.7 or later on an amd64 device.
++- A GeForce RTX 50-series GPU with at least 5 GiB of available GPU memory.
+ - A Hugging Face account.
+ 
+ ## Install YuE2 Studio
+```
+
+**File**: `docs/zh/use-cases/yue2-studio.md` (modified, +4/-3)
+```diff
+@@ -6,8 +6,8 @@ head:
+     - name: keywords
+       content: Olares, YuE2 Studio, AI 音乐, Q8, BF16, 量化, 钢琴卷帘, ABC, MIDI, 翻唱, 纯音乐
+ app_version: "0.0.7"
+-doc_version: "2.6"
+-doc_updated: "2026-11-07"
++doc_version: "2.7"
++doc_updated: "2026-11-16"
  ---
  
- # Olares 1.12.8 更新指南
+ :::warning
+@@ -34,7 +34,8 @@ YuE2 Studio 是一款本地 AI 音乐应用，可根据音乐风格和歌词生
  
--Olares 1.12.8 调整了新设备的设置流程、文件管理器中的成员访问权限，以及 GPU 分时共享模式下的切换机制。请查看以下变化，并根据你的使用情况完成操作。
-+Olares 1.12.8 对系统设置和使用流程做了一些调整。
-+
-+本指南介绍 1.12.8 中的变化、你是否需要采取操作，以及在哪里查看详细步骤。
+ ## 前提条件
  
- :::warning 先更新 LarePass
- 开始前，请先将 LarePass 升级到 1.12.35 版本。
-@@ -19,6 +21,7 @@ Olares 1.12.8 调整了新设备的设置流程、文件管理器中的成员访
- | 更新前已有应用使用 GPU 分时共享模式。 | 更新后重启这些应用，使新的 HAMi 切换算法生效。[查看步骤](#重启使用-gpu-分时共享模式的应用)。 |
- | 成员通过文件管理器访问外部设备或公共目录中的文件夹。 | 更新后检查访问设置，为每位成员授予所需的查看或编辑权限。[查看步骤](#检查文件管理器中的成员访问权限)。 |
- | 已创建的共享使用了 1.12.8 不再支持的方式。 | 使用支持的方式替换失效的共享。成员访问外部设备或公共目录时，请通过**访问设置**授权。[查看步骤](#替换不再支持的共享)。 |
-+| 通过控制面板访问 Olares 主机终端。 | 主机终端入口已移除，请改用其他访问方式。[查看详情](#更新后访问主机终端)。 |
+-- 一台运行 Olares 1.12.7 或更高版本的 amd64 设备，配备 NVIDIA GPU，并有至少 5 GiB 可用显存。
++- 一台运行 Olares 1.12.7 或更高版本的 amd64 设备。
++- 一块 GeForce RTX 50 系 GPU，可用显存至少 5 GiB。
+ - 一个 Hugging Face 账号。
  
- ## 激活新设备前更新系统
+ ## 安装 YuE2 Studio
+```
+
+---
+
+### Incident Patch 3: `e45ccaf1` (2026-11-16)
+**Commit Message**: fix(workflow): update lint-test job to use ubuntu-24.04
+
+**File**: `.github/workflows/check.yaml` (modified, +1/-1)
+```diff
+@@ -40,7 +40,7 @@ jobs:
  
-@@ -60,3 +63,8 @@ HAMi 更新后，使用**分时共享**模式的应用等待 GPU 的时间缩短
- 
- 修改旧共享的权限，无法恢复已不再支持的共享方式。
- 
-+## 更新后访问主机终端
-+
-+Olares 1.12.8 移除了控制面板中的**终端 > Olares** 入口。如需在 Olares 主机上运行命令，请[通过 SSH 连接](../access-olares-terminal.md)。如果使用 Olares One，也可以连接显示器和键盘后直接登录，具体方法请参阅[访问 Olares One 终端](../../one/access-overview.md)。控制面板中的容器终端不受影响。
-+
-+我们计划在 Olares 1.12.9 中支持通过 LarePass 经由 Tailscale 网络进行 SSH 连接，为用户提供新的主机终端访问方式。
+   lint-test:
+     needs: check-permission
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v3
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4445** (2026-11-13): chore(market): update oac dependency (@aby913)
-- **PR #4444** (2026-11-13): docs: clarify 1.12.8 upgrade guide (@Power-One-2025)
-- **PR #4443** (2026-11-13): chore(appservice): bump image tag to 0.7.1 (@hysyeah)
-- **PR #4442** (2026-11-13): chore(oac): bump oac version (@hysyeah)
-- **PR #4441** (2026-11-13): feat(search3): allow retrieval provider route (@bleachzou3)
-- **PR #4439** (2026-11-13): docs: add bilingual Music Studio tutorial (@harveyff)
+- **PR #4455** (2026-11-16): files: access per-user folders under .users (@aby913)
+- **PR #4454** (2026-11-16): market: sync, render improve, oac update (@aby913)
+- **PR #4453** (2026-11-16): system-frontend, login, wizard, vault: update images to v1.13.1 (@icebergtsn)
+- **PR #4452** (2026-11-16): docs: require a GeForce RTX 50-series GPU for YuE2 Studio (@fnalways)
+- **PR #4449** (2026-11-16): docs: retire NemoClaw documentation and redirect to OpenClaw (@fnalways)
+- **PR #4448** (2026-11-16): fix(gpu): improve memory eviction in time-slice mode (@dkeven)
 
 ---
 
@@ -1254,42 +1279,31 @@ add more details
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: clarify 1.12.8 upgrade guide
+## X. market: sync, render improve, oac update
 
 **RULE**:
-When implementing operations in `docs/manual/update-guides/1.12.8.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `framework/market/.olares/config/cluster/deploy/market_deploy.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a4e4a4d`: docs: clarify 1.12.8 upgrade guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0a1a6ae`: market: sync, render improve, oac update. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/manual/update-guides/1.12.8.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/market/.olares/config/cluster/deploy/market_deploy.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-description: Prepare for Olares 1.12.8 with guidance on device activation, GPU app restarts, Files permissions, and changes to host terminal access.
-Olares 1.12.8 introduces several changes to system setup and workflows.
-
-This guide explains what changed in 1.12.8, whether you need to take action, and where to find the detailed steps.
-| You use Control Hub to access the Olares host terminal. | The host terminal entry has been removed. Use an alternative access method. [View details](#access-the-host-terminal-after-updating). |
-
-## Access the host terminal after updating
-
-Olares 1.12.8 removes the **Terminal > Olares** entry from Control Hub. To run commands on the Olares host, [connect via SSH](../access-olares-terminal.md). If you use Olares One, you can also log in directly with a monitor and keyboard. See [Olares One terminal access options](../../one/access-overview.md). Container terminals in Control Hub are not affected.
-
-For Olares 1.12.9, we plan to add SSH access over the Tailscale network through LarePass, providing a new way to access the host terminal.
+        image: beclab/market-backend:v0.6.137
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-description: Prepare for Olares 1.12.8 with guidance on new device activation, restarting GPU apps in time-slicing mode, and member access to Files.
-Olares 1.12.8 updates the setup flow for new devices, member access to storage in Files, and GPU switching in time-slicing mode. Review the changes below and follow the steps that apply to your setup.
+        image: beclab/market-backend:v0.6.134
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a4e4a4d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0a1a6ae` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

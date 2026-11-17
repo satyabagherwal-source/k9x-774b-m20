@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T02:02:26.007Z",
-    "lastVerified": "2026-11-17T02:02:26.007Z",
+    "lastChecked": "2026-11-17T02:16:53.182Z",
+    "lastVerified": "2026-11-17T02:16:53.183Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,8 +370,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-17T01:34:03.316Z",
-    "lastVerified": "2026-11-17T01:34:03.316Z",
+    "lastChecked": "2026-11-17T02:11:49.279Z",
+    "lastVerified": "2026-11-17T02:11:49.279Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -648,12 +648,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nolabs-ai-nono": {
-    "name": "nolabs-ai/nono",
+    "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T20:02:40.707Z",
-    "lastVerified": "2026-11-16T20:02:40.707Z",
+    "lastChecked": "2026-11-17T02:11:44.268Z",
+    "lastVerified": "2026-11-17T02:11:44.268Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -662,7 +662,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "015103ec"
   },
   "vectifyai-pageindex": {
     "name": "VectifyAI/PageIndex",
@@ -3320,22 +3321,21 @@
     "lastVerified": "2026-11-14T02:06:13.024Z"
   },
   "beclab-olares": {
-    "name": "Olares",
+    "name": "beclab/Olares",
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T19:45:29.552Z",
-    "lastVerified": "2026-11-15T19:45:29.552Z",
+    "lastChecked": "2026-11-17T02:11:48.700Z",
+    "lastVerified": "2026-11-17T02:11:48.700Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
-    "contentHash": "303f6140b1a862f02b585a81beb5b0c1be90014f0c90fcc6c32cfec1392e9acd",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "37ddf0e1c7f8c8bb675959bfa37c98c88124d75ef9c421c2d30c5546ca1dd462",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "226652fd"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
@@ -3424,9 +3424,9 @@
   "orf-gping": {
     "name": "gping",
     "officialUrl": "https://github.com/orf/gping",
-    "lastChecked": "2026-11-15T07:32:15.282Z",
+    "lastChecked": "2026-11-17T02:11:34.255Z",
     "revisionIdentifier": "fad1ee3c",
-    "lastVerified": "2026-11-15T07:32:15.282Z"
+    "lastVerified": "2026-11-17T02:11:34.255Z"
   },
   "hf-psrben-visionhope": {
     "name": "PSRben/VisionHOPE",
@@ -4153,9 +4153,9 @@
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
     "officialUrl": "https://github.com/supervc-stack/VectorChord",
-    "lastChecked": "2026-11-15T17:52:47.579Z",
+    "lastChecked": "2026-11-17T02:11:46.795Z",
     "revisionIdentifier": "0768657e",
-    "lastVerified": "2026-11-15T17:52:47.579Z"
+    "lastVerified": "2026-11-17T02:11:46.795Z"
   },
   "fujiapple852-trippy": {
     "name": "fujiapple852/trippy",
@@ -12182,9 +12182,9 @@
   "rdfjs-namespace": {
     "name": "namespace",
     "officialUrl": "https://github.com/rdfjs/namespace",
-    "lastChecked": "2026-11-12T09:19:05.968Z",
+    "lastChecked": "2026-11-17T02:11:36.780Z",
     "revisionIdentifier": "b7efbf00",
-    "lastVerified": "2026-11-12T09:19:05.968Z"
+    "lastVerified": "2026-11-17T02:11:36.780Z"
   },
   "iziz-libphonenumber-ios": {
     "name": "libPhoneNumber-iOS",
@@ -12634,8 +12634,8 @@
     "officialUrl": "https://github.com/exyte/Chat",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-13T12:42:29.549Z",
-    "lastVerified": "2026-11-13T12:42:29.549Z",
+    "lastChecked": "2026-11-17T02:11:39.275Z",
+    "lastVerified": "2026-11-17T02:11:39.275Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-exyte-chat",

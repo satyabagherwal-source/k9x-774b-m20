@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "226652fd",
+    "sourceVersion": "7d8af245",
     "license": "AGPL-3.0",
-    "contentHash": "303f6140b1a862f02b585a81beb5b0c1be90014f0c90fcc6c32cfec1392e9acd",
-    "lastHarvestedAt": "2026-11-14T07:53:31.518Z",
+    "contentHash": "37ddf0e1c7f8c8bb675959bfa37c98c88124d75ef9c421c2d30c5546ca1dd462",
+    "lastHarvestedAt": "2026-11-17T02:16:50.196Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
