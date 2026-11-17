@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T14:50:08.903Z",
-    "lastVerified": "2026-11-17T14:50:08.903Z",
+    "lastChecked": "2026-11-17T14:58:11.318Z",
+    "lastVerified": "2026-11-17T14:58:11.318Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -252,22 +252,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T14:22:55.668Z",
-    "lastVerified": "2026-11-17T14:22:55.668Z",
+    "lastChecked": "2026-11-17T14:58:07.336Z",
+    "lastVerified": "2026-11-17T14:58:07.336Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "6e580b3c63515018b52a9be2bde514e883ef39d69d05c91d33628e2fd758343a",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "cc1b52540a2b37380326851cca5b41421b896c440e12a7ac93db45e23fa06691",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "171fb44a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -753,9 +752,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-17T07:55:47.397Z",
+    "lastChecked": "2026-11-17T14:57:56.919Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-17T07:55:47.397Z"
+    "lastVerified": "2026-11-17T14:57:56.919Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant/qdrant",
@@ -2885,9 +2884,9 @@
   "boardgameio-boardgame.io": {
     "name": "boardgame.io",
     "officialUrl": "https://github.com/boardgameio/boardgame.io",
-    "lastChecked": "2026-11-14T00:08:01.653Z",
+    "lastChecked": "2026-11-17T14:57:51.776Z",
     "revisionIdentifier": "47adef2b",
-    "lastVerified": "2026-11-14T00:08:01.653Z"
+    "lastVerified": "2026-11-17T14:57:51.776Z"
   },
   "permify-permify": {
     "name": "Permify/permify",
@@ -6886,9 +6885,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-11-15T23:37:41.875Z",
+    "lastChecked": "2026-11-17T14:57:46.702Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-11-15T23:37:41.875Z"
+    "lastVerified": "2026-11-17T14:57:46.702Z"
   },
   "hf-google-gemma-4-26b-a4b-it": {
     "name": "google/gemma-4-26B-A4B-it",
@@ -7040,9 +7039,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-11-16T08:01:18.415Z",
+    "lastChecked": "2026-11-17T14:57:54.252Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-11-16T08:01:18.415Z"
+    "lastVerified": "2026-11-17T14:57:54.252Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -7953,14 +7952,14 @@
     "officialUrl": "https://github.com/ClickHouse/ClickHouse",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-16T06:17:43.921Z",
-    "lastVerified": "2026-11-16T06:17:43.921Z",
+    "lastChecked": "2026-11-17T14:58:06.855Z",
+    "lastVerified": "2026-11-17T14:58:06.855Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "34a258544d68889bd694c2bd340ff8410585765960a75ad65b6e29a9bc0eacbd",
+    "contentHash": "06e2bd229839c159eac737450a1883888cd21599196d488de2a126c0daf6146c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13404,12 +13403,12 @@
     "officialUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T02:05:34.652Z",
-    "lastVerified": "2026-11-13T02:05:34.652Z",
+    "lastChecked": "2026-11-17T14:57:49.843Z",
+    "lastVerified": "2026-11-17T14:57:49.843Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-    "contentHash": "b9b4d6c977ca81cbbf4519c90d29323cda8077af673cc84fc1526f7879371be5",
+    "contentHash": "a1b5e63d1151086beb003f4fe97e61290645a548f6010f09f5fad59948e831ad",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

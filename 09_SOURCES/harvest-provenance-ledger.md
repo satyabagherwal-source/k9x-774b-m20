@@ -10607,3 +10607,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-17T14:49:49.627Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `248ad5da` | Multi-dimensional audit evidence | 2026-11-17T14:50:01.850Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `8a5afae5` | Multi-dimensional audit evidence | 2026-11-17T14:50:05.862Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-17T14:57:50.435Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `67804652` | Multi-dimensional audit evidence | 2026-11-17T14:58:07.750Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `101f64d3` | Multi-dimensional audit evidence | 2026-11-17T14:58:08.264Z |
+| `learn-dom-h-1449f81d` | `project://dathere-qsv` | `101f64d3` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-17T14:58:38.464Z |

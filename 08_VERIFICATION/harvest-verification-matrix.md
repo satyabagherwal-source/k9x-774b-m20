@@ -10574,3 +10574,7 @@
 | `CYCLE-20261117-6P12` | `2026-11-17T14:49:49.622Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md` | Yes (`b594e481...`) |
 | `CYCLE-20261117-6YGM` | `2026-11-17T14:50:01.846Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8978` | Yes (`484a02b3...`) |
 | `CYCLE-20261117-71K3` | `2026-11-17T14:50:05.859Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8979` | Yes (`e7fdabdf...`) |
+| `CYCLE-20261117-H00V` | `2026-11-17T14:57:50.431Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md` | Yes (`a1b5e63d...`) |
+| `CYCLE-20261117-HDDV` | `2026-11-17T14:58:07.747Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8980` | Yes (`06e2bd22...`) |
+| `CYCLE-20261117-HDS5` | `2026-11-17T14:58:08.261Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8981` | Yes (`cc1b5254...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T14:58:38.464Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-1449F81D` [Domain H] | Yes (`0ef7ce5a...`) |

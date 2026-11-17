@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T14:50:10.304Z",
+  "last_updated": "2026-11-17T14:58:38.956Z",
   "directives": [
     {
       "id": "CD-001",
@@ -24299,6 +24299,46 @@
       "source_repo": "duckdb-duckdb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-028423-internal-error-in-batched-copy-with-row-.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-HGOV",
+      "directive_title": "Empirical Invariant Guard in resolveFunction.cpp",
+      "source_repo": "clickhouse-clickhouse-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HGOV-empirical-invariant-guard-in-resolvefunction-cpp.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-I1GH",
+      "directive_title": "build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-I1GH-build-deps-bump-anthropics-claude-code-action-from-1-0-275-to-1-0-276.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-269432",
+      "directive_title": "Forensic Learning Record (Deep Inspection): nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-269432-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-CDD794",
+      "directive_title": "Empirical Invariant Guard in resolveFunction.cpp",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clickhouse-clickhouse",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CDD794-empirical-invariant-guard-in-resolvefunc.md",
       "staged_date": "2026-11-17"
     }
   ]

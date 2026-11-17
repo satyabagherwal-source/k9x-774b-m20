@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T14:50:10.427Z",
-  "total_records": 1569,
+  "last_updated": "2026-11-17T14:58:39.077Z",
+  "total_records": 1572,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 651,
+      "total": 653,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -700,7 +700,9 @@
         "domain_intelligence-research-knowledge-intelligence-comfy-org-moss-image-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-moss-image-learnings-core-invariant",
         "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv",
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b"
       ]
     },
     "E": {
@@ -1045,7 +1047,7 @@
       ]
     },
     "H": {
-      "total": 379,
+      "total": 380,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1425,7 +1427,8 @@
         "domain_intelligence-technical-construction-intelligence-nitrojs-nitro-core-invariants",
         "domain_intelligence-technical-construction-intelligence-unjs-nitro-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-meta-docusaurus-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-facebook-docusaurus-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-facebook-docusaurus-learnings-core-invariant",
+        "DOM-H-1449F81D"
       ]
     },
     "I": {
@@ -7570,8 +7573,8 @@
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "repository": "ClickHouse/ClickHouse",
-      "content_hash": "a3d7b0f738025bff29be4ed3dbbf3f00c1a3c2cac48c8ca5e1987dd69555f5cc",
-      "created_at": "2026-11-16T06:17:45.020Z"
+      "content_hash": "50403466e5b6bc42182e18e20e0d2e7dff4d00cfa1f9013b0397727307ccc2f5",
+      "created_at": "2026-11-17T14:58:08.046Z"
     },
     "DOM-D-303E5CE5": {
       "record_id": "DOM-D-303E5CE5",
@@ -11626,8 +11629,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "0ed3667d8375f7c25c594ca0cd27b169ae01358e3f2c25a21c3300286beec144",
-      "created_at": "2026-11-16T23:14:56.515Z"
+      "content_hash": "7cb9b48aac69e80ad8689d75ba9a37306ef695920d9b6b33fd05998804d3828c",
+      "created_at": "2026-11-17T14:58:08.562Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -11695,8 +11698,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "e5ad199a00dbf25f05093fd21d9e90f8fcbab7b202f0b1d02b097b3fb108329c",
-      "created_at": "2026-11-16T23:15:01.611Z"
+      "content_hash": "a629b94b6e8d388c4cd432bf898dcc9c505c396e6c9f220e0446d5800a070574",
+      "created_at": "2026-11-17T14:58:39.077Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -17811,8 +17814,8 @@
       "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-learnings-technical-construction-intelligence-clickhouse-c.md",
       "repository": "clickhouse-clickhouse-learnings",
-      "content_hash": "f02e193150c4b708f0787f152ff9db47c8ef091f656397997c86e988673c2c04",
-      "created_at": "2026-11-16T06:17:48.776Z"
+      "content_hash": "9e1149df65d1de011c37979def2254f578fc3bf9c5801686d6bad25bf312f8d0",
+      "created_at": "2026-11-17T14:58:12.152Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-",
@@ -27194,6 +27197,66 @@
       "repository": "hf-comfy-org-z-image-turbo-learnings",
       "content_hash": "036c42f68b9e04c1bfcff288ecbe458afa72e1b0f072dffe1962b3231d531f10",
       "created_at": "2026-11-17T14:50:09.196Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4-research-knowledge-intell.md",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "content_hash": "05500cc46473ac42593170fba6f4fc538205fb406c07f77e490f735bb54decf6",
+      "created_at": "2026-11-17T14:57:50.594Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4-learnings-research-knowle.md",
+      "repository": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings",
+      "content_hash": "bfd0e8f3edef960fe7153b832d120f2bfad567675c1aece8f80bf603467eef80",
+      "created_at": "2026-11-17T14:58:11.601Z"
+    },
+    "DOM-H-1449F81D": {
+      "record_id": "DOM-H-1449F81D",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276",
+      "content": "When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "0ef7ce5ac1ea93125001f516f4b99b94e4f27ff55e691bc2561e9371dbd0b836",
+      "summary": "Prevents defects observed in production commit `101f64d3`: build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276. Unvalida -> When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state ",
+      "provenance": {
+        "source_uri": "project://dathere-qsv/dathere-qsv-learnings.md",
+        "source_version": "101f64d3",
+        "observed_at": "2026-11-17T14:58:07.341Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dathere-qsv)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of dathere-qsv"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T14:58:38.446Z"
     }
   }
 }

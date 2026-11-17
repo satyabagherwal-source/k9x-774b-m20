@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "171fb44a",
+    "sourceVersion": "101f64d3",
     "license": "NOASSERTION",
-    "contentHash": "6e580b3c63515018b52a9be2bde514e883ef39d69d05c91d33628e2fd758343a",
-    "lastHarvestedAt": "2026-11-16T23:14:56.192Z",
+    "contentHash": "cc1b52540a2b37380326851cca5b41421b896c440e12a7ac93db45e23fa06691",
+    "lastHarvestedAt": "2026-11-17T14:58:08.264Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "fdc4389b",
+    "sourceVersion": "67804652",
     "license": "Apache-2.0",
-    "contentHash": "34a258544d68889bd694c2bd340ff8410585765960a75ad65b6e29a9bc0eacbd",
-    "lastHarvestedAt": "2026-11-16T06:17:44.734Z",
+    "contentHash": "06e2bd229839c159eac737450a1883888cd21599196d488de2a126c0daf6146c",
+    "lastHarvestedAt": "2026-11-17T14:58:07.750Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -8275,8 +8275,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "b9b4d6c977ca81cbbf4519c90d29323cda8077af673cc84fc1526f7879371be5",
-    "lastHarvestedAt": "2026-11-13T02:10:35.845Z",
+    "contentHash": "a1b5e63d1151086beb003f4fe97e61290645a548f6010f09f5fad59948e831ad",
+    "lastHarvestedAt": "2026-11-17T14:57:50.435Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4"
   },
   "sventiigi-whatsnewkit": {

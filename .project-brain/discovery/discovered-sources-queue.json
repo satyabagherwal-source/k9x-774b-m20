@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T14:50:10.137Z",
+  "updated_at": "2026-11-17T14:58:38.712Z",
   "stats": {
-    "total_discovered": 4998,
-    "approved_pending_harvest": 4710,
+    "total_discovered": 4999,
+    "approved_pending_harvest": 4711,
     "harvested_count": 0,
     "rejected_count": 288,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4699,
+      "COMMUNITY_AND_EXPERT": 4700,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -107961,6 +107961,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
         "fileName": "duckdb-duckdb-learnings.md"
+      }
+    },
+    "SRC-70A0293C2CFD": {
+      "id": "SRC-70A0293C2CFD",
+      "url": "https://github.com/anthropics/claude-code-action/compare/4d75e5f390ee76b2e09c1980ecc99ff3a2e088c8...f3b070c88125d33dbae5653df5f143101d4ea9dc",
+      "title": "https://github.com/anthropics/claude-code-action/compare/4d75e5f390ee76b2e09c1980ecc99ff3a2e088c8...f3b070c88125d33dbae5653df5f143101d4ea9dc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T14:58:38.712Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

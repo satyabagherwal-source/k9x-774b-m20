@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T14:50:05.867Z",
-  "total_cycles_completed": 10131,
-  "total_learnings_persisted": 10131,
-  "total_rules_promoted": 9718,
+  "last_updated": "2026-11-17T14:58:08.269Z",
+  "total_cycles_completed": 10134,
+  "total_learnings_persisted": 10134,
+  "total_rules_promoted": 9720,
   "history": [
-    {
-      "timestamp": "2026-11-16T21:28:25.361Z",
-      "repository": "zeromicro/go-zero",
-      "learningId": "learn-github-zeromicro-go-zero",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T21:40:01.028Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T21:55:24.461Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T21:55:35.858Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T14:50:05.867Z",
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:57:50.440Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:58:07.755Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:58:08.269Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

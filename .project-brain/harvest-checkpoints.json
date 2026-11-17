@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T14:50:05.870Z",
+  "last_updated": "2026-11-17T14:58:08.272Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "6e580b3c63515018b52a9be2bde514e883ef39d69d05c91d33628e2fd758343a",
-      "verified_at": "2026-11-16T23:14:56.211Z",
+      "content_hash": "cc1b52540a2b37380326851cca5b41421b896c440e12a7ac93db45e23fa06691",
+      "verified_at": "2026-11-17T14:58:08.272Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:14:56.211Z"
+      "last_updated": "2026-11-17T14:58:08.272Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "34a258544d68889bd694c2bd340ff8410585765960a75ad65b6e29a9bc0eacbd",
-      "verified_at": "2026-11-16T06:17:44.742Z",
+      "content_hash": "06e2bd229839c159eac737450a1883888cd21599196d488de2a126c0daf6146c",
+      "verified_at": "2026-11-17T14:58:07.758Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T06:17:44.742Z"
+      "last_updated": "2026-11-17T14:58:07.758Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -12441,14 +12441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-      "content_hash": "b9b4d6c977ca81cbbf4519c90d29323cda8077af673cc84fc1526f7879371be5",
-      "verified_at": "2026-11-13T02:10:35.855Z",
+      "content_hash": "a1b5e63d1151086beb003f4fe97e61290645a548f6010f09f5fad59948e831ad",
+      "verified_at": "2026-11-17T14:57:50.443Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T02:10:35.855Z"
+      "last_updated": "2026-11-17T14:57:50.443Z"
     },
     "SvenTiigi/WhatsNewKit": {
       "repository": "SvenTiigi/WhatsNewKit",

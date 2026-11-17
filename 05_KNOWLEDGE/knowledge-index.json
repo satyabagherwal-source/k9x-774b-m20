@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T14:50:10.564Z",
-  "total_verified_learnings": 8891,
+  "last_updated": "2026-11-17T14:58:39.225Z",
+  "total_verified_learnings": 8892,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20234,
+  "total_items": 20240,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112117,10 +112117,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "171fb44a",
-      "content_hash": "98b87c3d012f4f9a5afc4378a8c5a5dbc3a26976ea1e3c621bd764d4bf9716dd",
+      "source_version": "101f64d3",
+      "content_hash": "1175e1609c45ab217a399115bbd0cfa42223e8e039ab3c69235e980563dcb8f3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:14:56.638Z"
+      "persisted_at": "2026-11-17T14:58:08.682Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112154,9 +112154,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "26c642075be5815a2caf888622ae7da85336907c7f512369ee6a78e31a64b3b7",
+      "content_hash": "04f816e4682e549306b1e1a785bd96fc8f5de71b0b4cc08f36302a1ad3640629",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:15:01.731Z"
+      "persisted_at": "2026-11-17T14:58:39.225Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -112633,10 +112633,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "fdc4389b",
-      "content_hash": "a3d7b0f738025bff29be4ed3dbbf3f00c1a3c2cac48c8ca5e1987dd69555f5cc",
+      "source_version": "67804652",
+      "content_hash": "50403466e5b6bc42182e18e20e0d2e7dff4d00cfa1f9013b0397727307ccc2f5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T06:17:45.020Z"
+      "persisted_at": "2026-11-17T14:58:08.046Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse",
@@ -112645,10 +112645,10 @@
       "relative_path": "08_VERIFICATION/clickhouse-clickhouse-verification-protocol-empirical-defect-shield-for-clickhou.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClickHouse/ClickHouse",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "fdc4389b",
-      "content_hash": "f5f6627ec342a126402f092945ae9a2710412341a66f74a89300b901084f0245",
+      "source_version": "67804652",
+      "content_hash": "e26cce21cc41ebbb92b19c6c397def451eb39b24caec4116963b660def607908",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T06:17:45.133Z"
+      "persisted_at": "2026-11-17T14:58:08.168Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
@@ -219988,10 +219988,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "171fb44a",
-      "content_hash": "0ed3667d8375f7c25c594ca0cd27b169ae01358e3f2c25a21c3300286beec144",
+      "source_version": "101f64d3",
+      "content_hash": "7cb9b48aac69e80ad8689d75ba9a37306ef695920d9b6b33fd05998804d3828c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T23:14:56.515Z"
+      "persisted_at": "2026-11-17T14:58:08.562Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -220061,9 +220061,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "e5ad199a00dbf25f05093fd21d9e90f8fcbab7b202f0b1d02b097b3fb108329c",
+      "content_hash": "a629b94b6e8d388c4cd432bf898dcc9c505c396e6c9f220e0446d5800a070574",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T23:15:01.611Z"
+      "persisted_at": "2026-11-17T14:58:39.077Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -236520,8 +236520,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "fdc4389b",
-      "content_hash": "34a258544d68889bd694c2bd340ff8410585765960a75ad65b6e29a9bc0eacbd",
+      "source_version": "67804652",
+      "content_hash": "06e2bd229839c159eac737450a1883888cd21599196d488de2a126c0daf6146c",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -236534,6 +236534,11 @@
           "number": 8722,
           "title": "Empirical Invariant Guard in build_profile_hook.py",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8980,
+          "title": "Empirical Invariant Guard in resolveFunction.cpp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236541,7 +236546,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T06:17:44.585Z",
+      "verified_at": "2026-11-17T14:58:07.582Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236635,9 +236640,9 @@
       "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
       "repository": "clickhouse-clickhouse-learnings",
       "source_version": "HEAD",
-      "content_hash": "f02e193150c4b708f0787f152ff9db47c8ef091f656397997c86e988673c2c04",
+      "content_hash": "9e1149df65d1de011c37979def2254f578fc3bf9c5801686d6bad25bf312f8d0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T06:17:48.776Z"
+      "persisted_at": "2026-11-17T14:58:12.152Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning",
@@ -236647,9 +236652,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clickhouse-clickhouse-learnings",
       "repository": "clickhouse-clickhouse-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d2e83fd7f52b123657d9393cd411fcdcee4d1a03a1bcfc2cd56e7b4554842b1",
+      "content_hash": "1f32c432ff492fcbc4e8571963141bb506fa1d2730a7d7746604941db1849d24",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T06:17:48.883Z"
+      "persisted_at": "2026-11-17T14:58:12.282Z"
     },
     "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf": {
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
@@ -271037,6 +271042,95 @@
       "content_hash": "836fd0cd1f3cfda278e6482630b9bc5361f8e98af07d56a5a6dde59015464f5e",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T14:50:09.604Z"
+    },
+    "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4": {
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "slug": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "content_hash": "a1b5e63d1151086beb003f4fe97e61290645a548f6010f09f5fad59948e831ad",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T14:57:50.287Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4-research-knowledge-intell.md",
+      "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4 Core Invariants",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "content_hash": "05500cc46473ac42593170fba6f4fc538205fb406c07f77e490f735bb54decf6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T14:57:50.594Z"
+    },
+    "rule-8980": {
+      "learning_id": "rule-8980",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8980,
+      "title": "Empirical Invariant Guard in resolveFunction.cpp",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "67804652",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T14:58:07.582Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-resolvefunction-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-resolvefunction-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HGOV-empirical-invariant-guard-in-resolvefunction-cpp.md",
+      "title": "Empirical Invariant Guard in resolveFunction.cpp",
+      "repository": "clickhouse-clickhouse-learnings",
+      "source_version": "HEAD",
+      "content_hash": "08b51cb26d43d3d4755a2ccda375c94fd854c1f0f6cf8c257f1c6c44ed7730a7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T14:58:12.034Z"
+    },
+    "candidate_directive-build-deps-bump-anthropics-claude-code-action-from-1-0-275-to-1-0-276": {
+      "item_id": "candidate_directive-build-deps-bump-anthropics-claude-code-action-from-1-0-275-to-1-0-276",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I1GH-build-deps-bump-anthropics-claude-code-action-from-1-0-275-to-1-0-276.md",
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a23c89c0db3dd5cdfaaf296e586b802f152d1510698bca2b0dc53e6d333c946a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T14:58:38.956Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4-learnings-research-knowle.md",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings Core Invariants",
+      "repository": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bfd0e8f3edef960fe7153b832d120f2bfad567675c1aece8f80bf603467eef80",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T14:58:11.601Z"
     }
   },
   "ai-builder-brain": {

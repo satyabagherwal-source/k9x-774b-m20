@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-17T14:02:19.601Z",
+  "updated_at": "2026-11-17T14:58:38.462Z",
   "statistics": {
-    "total_nodes": 318,
+    "total_nodes": 319,
     "total_edges": 156,
     "domain_distribution": {
       "D": 229,
       "M": 1,
-      "H": 39,
+      "H": 40,
       "J": 12,
       "K": 17,
       "L": 4,
@@ -7122,6 +7122,28 @@
       ],
       "created_at": "2026-11-17T14:02:19.601Z",
       "updated_at": "2026-11-17T14:02:19.601Z"
+    },
+    "DOM-H-1449F81D": {
+      "id": "DOM-H-1449F81D",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276",
+      "summary": "Prevents defects observed in production commit `101f64d3`: build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276. Unvalida -> When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state ",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://dathere-qsv/dathere-qsv-learnings.md",
+        "source_version": "101f64d3",
+        "observed_at": "2026-11-17T14:58:07.341Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dathere-qsv)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-17T14:58:38.462Z",
+      "updated_at": "2026-11-17T14:58:38.462Z"
     }
   },
   "edges": [

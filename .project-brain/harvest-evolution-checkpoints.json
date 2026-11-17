@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T14:50:10.683Z",
+  "last_updated": "2026-11-17T14:58:39.351Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -748,9 +748,9 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-16T23:15:00.709Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-17T14:58:38.464Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "dragonflyoss-dragonfly-learnings.md": {
       "processed_at": "2026-11-12T03:30:59.262Z",
@@ -993,7 +993,7 @@
       "staged_for_review": 1
     },
     "clickhouse-clickhouse-learnings.md": {
-      "processed_at": "2026-11-16T06:17:48.384Z",
+      "processed_at": "2026-11-17T14:58:11.746Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1433,7 +1433,7 @@
       "staged_for_review": 0
     },
     "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md": {
-      "processed_at": "2026-11-13T02:10:54.321Z",
+      "processed_at": "2026-11-17T14:58:11.438Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3323,7 +3323,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1590,
-  "total_canonical_promoted": 321,
-  "total_staged_for_review": 1253
+  "total_dossiers_evaluated": 1593,
+  "total_canonical_promoted": 322,
+  "total_staged_for_review": 1255
 }

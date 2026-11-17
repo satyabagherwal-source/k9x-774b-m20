@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "171fb44a",
+  "source_version": "101f64d3",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-16T23:14:56.398Z",
+  "timestamp": "2026-11-17T14:58:08.449Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `171fb44a`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-16T23:14:56.398Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `101f64d3`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T14:58:08.449Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `171fb44a`)
+- **Target Repository**: `dathere/qsv` (Commit: `101f64d3`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T23:14:55.780Z  
+> **Harvest Timestamp**: 2026-11-17T14:58:07.336Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3825 stars
+- **Stars / Engagement**: 3826 stars
 
 ---
 
@@ -2212,178 +2212,57 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `171fb44a` (2026-11-16)
-**Commit Message**: docs(synthesize): warn that synthetic output is not anonymized (#5064)
+### Incident Patch 1: `101f64d3` (2026-11-17)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276 (#5065)
 
-* docs(synthesize): warn that synthetic output is not anonymized
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.275 to 1.0.276.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/4d75e5f390ee76b2e09c1980ecc99ff3a2e088c8...f3b070c88125d33dbae5653df5f143101d4ea9dc)
 
-The help presented verbatim reproduction as a fidelity feature and said
-nothing about privacy. Output can copy real values and value combinations
-from the source, rare ones included:
+---
+updated-dependencies:
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.276
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-- every value of a column fully enumerated by `frequency`, and with
-  --freq-limit 0 any column that is not all-unique
-- enumerated structured-faker columns (names, emails, addresses) unless
-  --consistent-fakes is set
-- whole real `joint` relationship tuples, up to --joint-cardinality-cap,
-  even when a member column is far above --freq-limit
-- outliers at the edge of numeric/date ranges (dates exactly)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Each claim was confirmed by running synthesize on probe CSVs. The README
-command-table entry carries a one-line warning, which also flows into the
-generated Table of Contents and the qsv-synthesize MCP skill description.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(changelog): cite #5064 for the synthesize privacy note [skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(synthesize): note --consistent-fakes stops at 100,000 distinct 
-
-**File**: `.claude/skills/CHANGELOG.md` (modified, +5/-0)
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
 ```diff
-@@ -5,6 +5,11 @@ All notable changes to the qsv Agent Skills (MCP Server) project will be documen
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
- and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+@@ -34,7 +34,7 @@ jobs:
  
-+## [Unreleased]
-+
-+### Changed
-+- **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values, rare ones included. The skill description was regenerated from the README command table.
-+
- ## [29.0.0] - 2026-11-15
- Companion release to qsv 29.0.0, "The Trust the numbers Release". The MCP server tracks the qsv binary version per the policy adopted in 20.0.0, and `minimum_qsv_version` is raised to 29.0.0 because the regenerated skills describe options and behavior that only the new binary has: `qsv-validate --sarif`, and `qsv-sqlp --format avro` converting the types Avro can't write. The skill count stays at **57**. Update your qsv binary first.
- 
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@4d75e5f390ee76b2e09c1980ecc99ff3a2e088c8 # v1.0.275
++        uses: anthropics/claude-code-action@f3b070c88125d33dbae5653df5f143101d4ea9dc # v1.0.276
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
 ```
 
-**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +1/-1)
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "qsv-synthesize",
-   "version": "29.0.0",
--  "description": "Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic fake-rs fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`.",
-+  "description": "Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic fake-rs fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, rare ones included.",
-   "category": "generation",
-   "command": {
-     "subcommand": "synthesize",
-```
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
+@@ -34,7 +34,7 @@ jobs:
  
- ### Changed
-+- `synthesize`: the help now warns that synthetic output is not anonymized. It can copy real values and value combinations from the source, rare ones included: fully enumerated columns, enumerated structured-faker columns without `--consistent-fakes`, `joint` relationship tuples, and outliers at the edge of numeric/date ranges. ([#5064](https://github.com/dathere/qsv/pull/5064))
- - `sqlp`: the `--try-parsedates` help now warns that Polars reads slash, dash and dot dates as day-first, so `01/05/2024` becomes `2024-05-01`, and that `CAST(col AS DATE)` does the same. For month-first (US) dates, leave `--try-parsedates` off and use `STRPTIME(col, '%m/%d/%Y')` ([#5062](https://github.com/dathere/qsv/pull/5062)).
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@4d75e5f390ee76b2e09c1980ecc99ff3a2e088c8 # v1.0.275
++        uses: anthropics/claude-code-action@f3b070c88125d33dbae5653df5f143101d4ea9dc # v1.0.276
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
  
- ## [29.0.0] - 2026-11-15 🛡️ The "Trust the numbers" Release ✅
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -96,7 +96,7 @@
- | [split](docs/help/split.md)<br>📇🏎️ | Split one CSV file into many CSV files. It can split by number of rows, number of chunks or file size. Uses multithreading to go faster if an index is present when splitting by rows or chunks. |
- | [sqlp](docs/help/sqlp.md)✨<br>📇🗄️🐻‍❄️🚀🪄 | <a name="sqlp_deeplink"></a>Run [Polars](https://pola.rs) SQL (a PostgreSQL dialect) queries against several CSVs, Parquet, JSONL and Arrow files - converting queries to blazing-fast Polars [LazyFrame](https://docs.pola.rs/user-guide/lazy/) expressions, processing larger than memory CSV files. Query results can be saved in CSV, JSON, JSONL, Parquet, Apache Arrow IPC and Apache Avro formats. |
- | [stats](docs/help/stats.md)<br>📇🤯🏎️👆🪄 | <a name="stats_deeplink"></a>Compute up to 48 [summary statistics](docs/STATS_DEFINITIONS.md) & make GUARANTEED data type inferences (Null, String, Float, Integer, Date, DateTime, Boolean) for each column in a CSV ([Example](https://github.com/dathere/qsv/blob/master/docs/stats/NYC_311_SR_2010-2020-sample-1M.stats.csv)).<br>Uses multithreading to go faster if an index is present. With an index, can compile "streaming" stats on a 1M row sample of NYC's 311 data in [less than 0.25 seconds vs 2.24 seconds without one](https://qsv.dathere.com/benchmarks). |
--| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. |
-+| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, rare ones included. |
- | [table](docs/help/table.md)<br>🤯 | Align output of a CSV using [elastic tabstops](https://github.com/BurntSushi/tabwriter) for viewing; or to create an "aligned TSV" file or Fixed Width Format file. To interactively view a CSV, use the `lens` command. |
- | [template](docs/help/template.md)<br>📇🚀🔣📚⛩️ ![CKAN](docs/images/ckan.png) | Renders a template using CSV data with the [MiniJinja](https://docs.rs/minijinja/latest/minijinja/) template engine ([Example](https://github.com/dathere/qsv/blob/4645ec07b5befe3b0c0e49bf0f547315d0d7514b/src/cmd/template.rs#L18-L44)). |
- | [to](docs/help/to.md)✨<br>🗄️🐻‍❄️🚀 | Convert CSV files to [Parquet](https://parquet.apache.org), [PostgreSQL](https://www.postgresql.org), [SQLite](https://www.sqlite.org/index.html), Excel (XLSX), [LibreOffice Calc](https://www.libreoffice.org/discover/calc/) (ODS) and [Data Package](https://datahub.io/docs/data-packages/tabular). |
-```
-
-**File**: `docs/help/TableOfContents.md` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@
- | [split](split.md)<br>[📇](#legend "uses an index when available.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.") | Split one CSV file into many CSV files. It can split by number of rows, number of chunks or file size. Uses multithreading to go faster if an index is present when splitting by rows or chunks. |
- | [sqlp](sqlp.md)<br>[📇](#legend "uses an index when available.")[🗄️](#legend "Extended input support.")[🐻‍❄️](#legend "command powered/accelerated by  vectorized query engine.")[🚀](#legend "multithreaded even without an index.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".") | Run [Polars](https://pola.rs) SQL (a PostgreSQL dialect) queries against several CSVs, Parquet, JSONL and Arrow files - converting queries to blazing-fast Polars [LazyFrame](https://docs.pola.rs/user-guide/lazy/) expressions, processing larger than memory CSV files. Query results can be saved in CSV, JSON, JSONL, Parquet, Apache Arrow IPC and Apache Avro formats. |
- | [stats](stats.md)<br>[📇](#legend "uses an index when available.")[🤯](#legend "loads entire CSV into memory, though `dedup`, `stats` & `transpose` have \"streaming\" modes as well.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.")[👆](#legend "has powerful column selector support. See `select` for syntax.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".") | Compute up to 48 [summary statistics](../STATS_DEFINITIONS.md) & make GUARANTEED data type inferences (Null, String, Float, Integer, Date, DateTime, Boolean) for each column in a CSV ([Example](https://github.com/dathere/qsv/blob/master/docs/stats/NYC_311_SR_2010-2020-sample-1M.stats.csv)). Uses multithreading to go faster if an index is present. With an index, can compile "streaming" stats on a 1M row sample of NYC's 311 data in [less than 0.25 seconds vs 2.24 seconds without one](https://qsv.dathere.com/benchmarks). |
--| [synthesize](synthesize.md)<br>[📇](#legend "uses an index when available.")[🎲](#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](#legend "command uses Natural Language Processing or Generative AI.") | Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. |
-+| [synthesize](synthesize.md)<br>[📇](#legend "uses an index when available.")[🎲](#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](#legend "command uses Natural Language Processing or Generative AI.") | Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, rare ones included. |
- | [table](table.md)<br>[🤯](#legend "loads entire CSV into memory, though `dedup`, `stats` & `transpose` have \"streaming\" modes as well.") | Align output of a CSV using [elastic tabstops](https://github.com/BurntSushi/tabwriter) for viewing; or to create an "aligned TSV" file or Fixed Width Format file. To interactively view a CSV, use the `lens` command. |
- | [template](template.md)<br>[📇](#legend "uses an index when available.")[🚀](#legend "multithreaded even without an index.")[🔣](#legend "requires UTF-8 encoded input.")[📚](#legend "has lookup table support, enabling runtime \"lookups\" against local or remote reference CSVs.")[⛩️](#legend "uses MiniJinja template engin
-```
-
-**File**: `docs/help/synthesize.md` (modified, +21/-1)
-```diff
-@@ -1,6 +1,6 @@
- # synthesize
- 
--> Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`.
-+> Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quartile-bucketed numeric/date generation, null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, rare ones included.
- 
- **[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/synthesize/mod.rs](https://github.com/dathere/qsv/blob/master/src/cmd/synthesize/mod.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[🎲](TableOfContents.md#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](TableOfContents.md#legend "command uses Natural Language Processing or Generative AI.")
- 
-@@ -65,6 +65,26 @@ by `describegpt` or hand-authored. Columns not named by any relationship are
- still generated independently. Pass --no-relationships to disable relationship
- modeling entirely.
- 
-+Privacy note: synthetic output is not anonymized. It can contain real values
-+and real value combinations copied from <input>, including values that occur
-+only once:  
-+
-+* A column fully enumerated by `frequency` (cardinality within
-+the --freq-limit) is sampled from its real values, so any of them, rare
-+ones included, can be emitted verbatim. Setting the --freq-limit to 0
-+removes that cap, so any column that is not all-unique can be reproduced
-+from its real values.
-+* With a Data Dictionary, enumerated name, email, address and other
-+structured-faker columns still emit their real values unless you set
-+the --consistent-fakes option. That option only covers columns with up
-+to 100,000 distinct values; larger enumerated columns stay real.
-+* A `joint` relationship emits whole real value-tuples (e.g. a rare
-+city/zip/age combination), up to the --joint-cardinality-cap.
-+* Numeric and date ranges span the real min and max, so a lone outlier
-+can reappear at or near its real value. Dates can land on it exactly.
-+
-+Review the output before sharing it, or training on it, as de-identified data.
-+
- With --seed, output is fully reproducible.
- 
- 
-```
-
-**File**: `src/cmd/synthesize/mod.rs` (modified, +20/-0)
-```diff
-@@ -53,6 +53,26 @@ by `describegpt` or hand-authored. Columns not named by any relationship are
- still generated independently. Pass --no-relationships to disable relationship
- modeling entirely.
- 
-+Privacy note: synthetic output is not anonymized. It can contain real values
-+and real value combinations copied from <input>, including values that occur
-+only once:
-+
-+  * A column fully enumerated by `frequency` (cardinality within
-+    the --freq-limit) is sampled from its real values, so any of them, rare
-+    ones included, can be emitted verbatim. Setting the --freq-limit to 0
-+    removes that cap, so any column that is not all-unique can be reproduced
-+    from its real values.
-+  * With a Data Dictionary, enumerated name, email, address and other
-+    structured-faker columns still emit their real values unless you set
-+    the --consistent-fakes option. That option only covers columns with up
-+    to 100,000 distinct values; larger enumerated columns stay real.
-+  * A `joint` relationship emits whole real value-tuples (e.g. a rare
-+    city/zip/age combination), up to the --joint-cardinality-cap.
-+  * Numeric and date ranges span the real min and max, so a lone outlier
-+    can reappear at or near its real value. Dates can land on it exactly.
-+
-+Review the output before sharing it, or training on it, as de-identified data.
-+
- With --seed, output is fully reproducible.
- 
- Examples:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5065** (2026-11-17): build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276 (@dependabot[bot])
 - **PR #5064** (2026-11-16): docs(synthesize): warn that synthetic output is not anonymized (@jqnatividad)
 - **PR #5063** (2026-11-16): build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275 (@dependabot[bot])
 - **PR #5062** (2026-11-16): docs(sqlp): warn that date inference and CAST read dates day-first (@jqnatividad)
 - **PR #5061** (2026-11-15): bench: use the long-view chart as the wiki hero image (@jqnatividad)
 - **PR #5060** (2026-11-15): bench: regenerate Benchmarks Data Schematic for the 29.0.0 run (@jqnatividad)
-- **PR #5058** (2026-11-15): fix(ci): enable trim_prefix_suffix on the Polars-pinned nightly (@jqnatividad)
 
 ---
 
@@ -2403,35 +2282,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(synthesize): warn that synthetic output is not anonymized
+## X. build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276
 
 **RULE**:
-When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `171fb44a`: docs(synthesize): warn that synthetic output is not anonymized. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `101f64d3`: build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [Unreleased]
-
-### Changed
-- **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values, rare ones included. The skill description was regenerated from the README command table.
-
+        uses: anthropics/claude-code-action@f3b070c88125d33dbae5653df5f143101d4ea9dc # v1.0.276
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        uses: anthropics/claude-code-action@4d75e5f390ee76b2e09c1980ecc99ff3a2e088c8 # v1.0.275
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `171fb44a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `101f64d3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -4,22 +4,22 @@
 {
   "source_repository": "ClickHouse/ClickHouse",
   "source_url": "https://github.com/ClickHouse/ClickHouse",
-  "source_version": "fdc4389b",
+  "source_version": "67804652",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T06:17:44.908Z",
+  "timestamp": "2026-11-17T14:58:07.931Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clickhouse-clickhouse",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `fdc4389b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T06:17:44.908Z`  
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `67804652`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T14:58:07.931Z`  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ClickHouse/ClickHouse` (Commit: `fdc4389b`)
+- **Target Repository**: `ClickHouse/ClickHouse` (Commit: `67804652`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T06:17:43.921Z  
+> **Harvest Timestamp**: 2026-11-17T14:58:06.855Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50950 stars
+- **Stars / Engagement**: 50971 stars
 
 ---
 
@@ -1328,11 +1328,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #131292** (2026-11-13): **DataLakeCatalog OneLake: tables with `abfs://` locations fail with `Unsupported storage type: abfs://`**
-  *Symptoms*: **Describe what's wrong**  Reading tables of a `DataLakeCatalog` database with `catalog_type = 'onelake'` fails when the catalog reports the table location with the `abfs://` scheme:  ``` Code: 48. DB::Exception: Unsupported storage type: abfs://. (NOT_IMPLEMENTED) 5. src/Databases/DataLake/ICatalog.cpp: DataLake::parseStorageTypeFromString(String const&) 6. src/Databases/DataLake/DatabaseDataLake.cpp: DB::DatabaseDataLake::buildTableEngineArgs(...) 7. src/Databases/DataLake/DatabaseDataLake.cpp: DB::DatabaseDataLake::tryGetTableImpl(...) 8. src/Databases/DataLake/DatabaseDataLake.cpp: DB::DatabaseDataLake::tryGetTable(...) ```  Since 2026-11-13 (between 02:18 and 06:54 UTC) the OneLake Iceberg REST catalog (`https://onelake.table.fabric.microsoft.com/iceberg`) returns `abfs://` locations for Delta tables that Fabric exposes as Iceberg, for example:  ``` "location": "abfs://<workspace>@onelake.dfs.fabric.microsoft.com/<lakehouse>/Tables/dbo/<table>" "metadata-location": "abfs://<workspace>@onelake.dfs.fabric.microsoft.com/<lakehouse>/Tables/dbo/<table>/metadata/v3.metadata.json" ```  Before, the same tables had `abfss://` locations, and they read fine. `tryParseStorageTypeFromString` (`src/Databases/DataLake/ICatalog.cpp`) maps only `abfss` (Azure Blob File System Secure) to `Azure`; `abfs` is the same Azure Data Lake Storage Gen2 scheme without the TLS requirement in the Hadoop ABFS driver, and nothing in `src` accepts it. Every such table in a OneLake database is now unread
+- **Issue #132004** (2026-11-17): **`CREATE TEMPORARY VIEW` is allowed with `readonly = 1` while `CREATE TEMPORARY TABLE` is refused**
+  *Symptoms*: **Describe the bug**  With `readonly = 1`, `CREATE TEMPORARY TABLE` is refused, but `CREATE TEMPORARY VIEW` is accepted. The two are session-local objects of the same kind, and the documentation of `readonly` lists temporary tables as needing `readonly = 2`.  **How to reproduce**  ```sql -- as an administrator CREATE USER u IDENTIFIED WITH no_password; GRANT CREATE TEMPORARY TABLE, CREATE TEMPORARY VIEW ON *.* TO u;  -- as u, in one session, with readonly = 1 SET readonly = 1; CREATE TEMPORARY TABLE tt (x UInt8);         -- Code: 164. Cannot execute query in readonly mode. (READONLY) CREATE TEMPORARY VIEW tv AS SELECT 1 AS x;   -- succeeds SELECT * FROM tv;                            -- 1 ```  **Observed** (26.11.1.1, master build)  The temporary view is created in read-only mode.  **Expected**  Either both are refused under `readonly = 1`, or the documentation says temporary views are allowed. The first seems intended.  **Where**  `ContextAccess::checkAccessImplHelper` (`src/Access/ContextAccess.cpp`) builds `not_readonly_1_flags = AccessType::CREATE_TEMPORARY_TABLE` only. `InterpreterCreateQuery::getRequiredAccess` asks for `CREATE_TEMPORARY_VIEW` for a temporary view, and that access type is in neither `not_readonly_flags` nor `not_readonly_1_flags`.  The effect is limited to the session's own scratch objects; I am reporting it as an inconsistency, not as a security problem.   <!-- ch-version-info:start --> ### Version info - Resolved by: #132016 - Merged into: `26.11.1.25
 
-- **Issue #131194** (2026-11-13): **Negative values of `Seconds` settings bypass settings constraints**
-  *Symptoms*: **Describe the bug**  A setting of type `Seconds` (e.g. `max_execution_time`) accepts a negative value, and a `MAX` settings constraint does not stop it. A negative timeout then means "no limit", so a user restricted by a constraint can run past the limit set by the administrator.  There is also a float→integer overflow in the seconds→microseconds conversion: a value just below `2^63` microseconds passes the range check and is stored as a large negative value, which bypasses the constraint the same way.  **How to reproduce**  Verified on master (26.11, release build). Profile with `max_execution_time = 5` and a constraint `<max_execution_time><max>60</max></max_execution_time>` (or the equivalent `CREATE SETTINGS PROFILE ... SETTINGS max_execution_time = 5 MAX 60`):  ```sql SET max_execution_time = 100;                 -- Code: 452 SETTING_CONSTRAINT_VIOLATION, as expected SET max_execution_time = -1;                  -- accepted SET max_execution_time = 9223372036854.775;   -- accepted, getSetting('max_execution_time') = -9223372036854.775 ```  A query that takes ~8 s is killed at 5 s without the `SET`, but completes after either of the two accepted `SET`s.  **Root cause**  - `float64AsSecondsToTimespan` in `src/Core/SettingsFields.cpp` does not reject negative values. - Its overflow check `d * 1000000 > std::numeric_limits<Int64>::max()` compares with `Int64::max()` converted to `Float64`, i.e. `2^63`, so a product equal to `2^63` passes and `static_cast<Int64>` overflows (
+- **Issue #131875** (2026-11-17): **`SYSTEM SYNC DATABASE REPLICA` does not check its privilege on local execution**
+  *Symptoms*: **Describe the bug**  `SYSTEM SYNC DATABASE REPLICA db` (the local form, without `ON CLUSTER`) runs for a user who has no grants at all.  The privilege exists (`M(SYSTEM_SYNC_DATABASE_REPLICA, "SYNC DATABASE REPLICA", DATABASE, SYSTEM)` in `src/Access/Common/AccessType.h`), and the `ON CLUSTER` form requires it through `getRequiredAccessForDDLOnCluster`. The local handler, `InterpreterSystemQuery::syncReplicatedDatabase`, never calls `checkAccess`. Its sibling `syncReplica` does (`checkAccess(AccessType::SYSTEM_SYNC_REPLICA, table_id)`).  This is the same kind of problem as #112439 (`SYSTEM SYNC TRANSACTION LOG`), fixed by #112441. That issue lists `syncReplicatedDatabase` among the handlers that already check access, but it does not. A review comment on #120661 pointed this out, and that pull request added the check and a test (`05258_system_local_access_checks`), but it was closed without being merged, so `master` still has no check.  **How to reproduce**  ```sql -- as an administrator CREATE DATABASE r ENGINE = Replicated('/clickhouse/databases/r', '{shard}', '{replica}'); CREATE TABLE r.t (x UInt8) ENGINE = ReplicatedMergeTree ORDER BY x; CREATE DATABASE a; CREATE USER u IDENTIFIED WITH no_password;   -- no grants  -- as u SYSTEM SYNC REPLICA r.t;                      -- ACCESS_DENIED (expected) SYSTEM SYNC DATABASE REPLICA r;               -- succeeds SYSTEM SYNC DATABASE REPLICA a;               -- BAD_ARGUMENTS: ... intended to work only with Replicated engine SYSTEM S
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1349,313 +1349,750 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `21700ab7` (2026-11-16)
-**Commit Message**: Merge pull request #131830 from groeneai/groeneai/build-profile-hook-skip-failed-build
+### Incident Patch 1: `42a270d5` (2026-11-17)
+**Commit Message**: Merge pull request #119183 from nihalzp/fix-nullable-tuple-set-semantics
 
-CI: do not collect the build profile of a failed build
+Fix exceptions and wrong results of `IN` when the keys and the set have different types
 
-**File**: `ci/jobs/scripts/job_hooks/build_profile_hook.py` (modified, +6/-3)
+**File**: `src/Analyzer/Resolve/resolveFunction.cpp` (modified, +68/-46)
 ```diff
-@@ -257,6 +257,11 @@ def check():
-     if not _should_profile(build_type, is_pr=is_pr):
-         print(f"Build profile telemetry not collected for [{build_type}]")
-         return
-+    # Post hooks also run after a failed build, which leaves no complete profile.
-+    job_result = Result.from_fs(Info().job_name)
-+    if not job_result.is_success():
-+        print(f"Build [{build_type}] did not succeed, build profile not collected")
-+        return
-     print("Prepare build profile data")
-     profiles_dir = Path("./ci/tmp") / "profiles_source"
-     profiles_dir.mkdir(parents=True, exist_ok=True)
-@@ -285,9 +290,7 @@ def check():
-                         profile_fd.write(ps_fd.read())
-         _verify_trace_extraction(build_dir, profile_data_file)
-         _verify_final_binary_coverage(build_dir, build_size_file, binary_symbol_file)
--        check_start_time = Utils.timestamp_to_str(
--            Result.from_fs(Info().job_name).start_time
--        )
-+        check_start_time = Utils.timestamp_to_str(job_result.start_time)
-         queries = LogClusterBuildProfileQueries(user=BUILD_PROFILE_USER)
- 
-         def insert_profile_data(build_name, start_time, file):
-```
-
----
-
-### Incident Patch 2: `e221bba8` (2026-11-16)
-**Commit Message**: Merge pull request #131636 from groeneai/fix-hello-settings-skip-invalid-values
-
-Skip a setting value from the server's Hello that this version rejects instead of failing the connection
-
-**File**: `src/Client/Connection.cpp` (modified, +2/-1)
-```diff
-@@ -735,7 +735,8 @@ void Connection::receiveHello()
-         if (server_revision >= DBMS_MIN_REVISION_WITH_SERVER_SETTINGS)
-         {
-             Settings settings;
--            settings.read(*in);
-+            /// A server of another version may send values that this version rejects.
-+            settings.read(*in, /* skip_invalid_values= */ true);
-             settings_from_server = settings.changes();
-         }
- 
-```
-
-**File**: `src/Core/BaseSettings.cpp` (modified, +10/-0)
-```diff
-@@ -1,4 +1,5 @@
- #include <Core/BaseSettings.h>
-+#include <Formats/ParseError.h>
- #include <IO/ReadHelpers.h>
- #include <IO/WriteHelpers.h>
- #include <Common/FieldVisitorToString.h>
-@@ -146,6 +147,15 @@ void BaseSettingsHelpers::warningSettingNotFound(std::string_view name)
+@@ -1212,6 +1212,52 @@ static void validateInColumnsCountMatch(const QueryTreeNodePtr & in_first_argume
      }
  }
  
-+bool BaseSettingsHelpers::skipInvalidSettingValue(std::string_view name, const Exception & e)
++/// Returns whether the `rewrite_in_to_join` rewrite of `x IN (subquery)` into
++/// `EXISTS (SELECT 1 FROM (subquery) WHERE x = <row> LIMIT 1)` keeps the semantics of regular `IN`: the
++/// same result or the same error. The left operand has the type `left_type`, and the subquery has the
++/// columns `subquery_columns`. The caller guarantees that `left_type` is not null and that
++/// `validateInColumnsCountMatch` accepted both sides.
++///
++/// Regular `IN` rejects a left operand with dynamic structure before it builds the set. With
++/// `transform_null_in = 0`, which the rewrite requires, it returns NULL for a NULL left operand, while
++/// `NOT EXISTS` returns 1.
++///
++/// For any other operand, the set has one key per subquery column. `FunctionIn` compares the whole left
++/// operand with the only column of a subquery, even when the operand is a tuple. Otherwise it compares
++/// each element of the left tuple with its own column. `Set::execute` converts each key to the type of
++/// its column, and a value that the column cannot hold is not a member. For example,
++/// `(t, 1) IN (SELECT toFloat64(1767225600), 1)` returns 0 for
++/// `t = fromUnixTimestamp64Nano(1767225600000000001, 'UTC')` because `Float64` cannot hold the nanosecond,
++/// while `equals` compares in a common supertype and matches. The conversion also parses text as a number,
++/// where `equals` finds no common type. A key of a `Bool` column is converted even when it has the column's
++/// type, which turns every byte other than 0 into `true`, while `equals` compares the bytes. The set holds
++/// NULL as a value of a `Variant` key and NULL fields as values of a tuple key, while `equals` returns NULL
++/// for them. And the set compares floating-point values by their bits, also inside `Array` and `Map`: a NaN
++/// is a member of a set that holds it, and `-0.0` is not a member of a set of `0.0`, while `equals` compares
++/// the numbers. So the rewrite keeps the semantics only when every key has the type of its column, is
++/// neither a tuple nor a `Variant`, holds no floating-point type, and its column is not `Bool`. A `Nullable`
++/// element of the left tuple is fine, unlike a `Nullable` left operand: the set never matches a NULL element,
++/// neither does `equals`, and `IN` of a plain tuple returns 0 rather than NULL.
++static bool existsRewriteKeepsInSemantics(const DataTypePtr & left_type, const NamesAndTypes & subquery_columns)
 +{
-+    if (e.code() != ErrorCodes::BAD_ARGUMENTS && !isParseError(e.code()))
++    if (left_type->hasDynamicStructure() || isNullableOrLowCardinalityNullable(left_type))
 +        return false;
 +
-+    LOG_WARNING(getLogger("Settings"), "Cannot parse the value of setting `{}`, skipping it: {}", name, e.message());
++    /// `validateInColumnsCountMatch` made a left operand without dynamic structure a tuple as wide as a
++    /// subquery with several columns.
++    const DataTypes key_types = subquery_columns.size() == 1 ? DataTypes{left_type} : getInKeyColumnTypes(left_type);
++    chassert(key_types.size() == subquery_columns.size());
++    for (size_t i = 0; i < key_types.size(); ++i)
++    {
++        const auto key_type_without_nullable = removeNullable(key_types[i]);
++        const DataTypePtr & column_type = subquery_columns[i].type;
++        if (isTuple(key_type_without_nullable) || isVariant(key_type_without_nullable) || !key_types[i]->equals(*column_type)
++            || hasTypeThatCanContainFloat(column_type) || isBool(removeNullable(removeLowCardinality(column_type))))
++            return false;
++    }
 +    return true;
 +}
 +
- void BaseSettingsHelpers::flushWarnings()
- {
-     unknown_settings.clear();
-```
-
-**File**: `src/Core/BaseSettings.h` (modified, +19/-3)
-```diff
-@@ -61,6 +61,8 @@ struct BaseSettingsHelpers
-     [[noreturn]] static void throwValuelessSettingIsNotBool(std::string_view name);
-     [[noreturn]] static void throwValuelessSettingHasValue(std::string_view name);
-     static void warningSettingNotFound(std::string_view name);
-+    /// Returns true (and logs a warning) if `e` is `BAD_ARGUMENTS` or a parse error (`isParseError`); other errors are not skipped.
-+    static bool skipInvalidSettingValue(std::string_view name, const Exception & e);
-     static void flushWarnings();
+ /// Builds and resolves `IF(isNull(element), NULL, has(array, element))`
+ QueryTreeNodePtr QueryAnalyzer::makeNullSafeHas(
+     QueryTreeNodePtr array_arg,    // [1,2,number]
+@@ -1226,16 +1272,16 @@ QueryTreeNodePtr QueryAnalyzer::makeNullSafeHas(
+     has_fn->getArguments().getNodes().push_back(element_arg);
  
-     /// The value as it is echoed in the "while setting '<name>' to value <value>" context of a rejected value.
-@@ -324,7 +326,8 @@ class BaseSettings : public TTraits::Data
-     void write(WriteBuffer & out) const;
- 
-     /// Read settings written by `write`.
--    void read(ReadBuffer & in);
-+    /// With `skip_invalid_values`, a non-important setting whose value is rejected keeps its default instead of failing the read.
-+    void read(ReadBuffer & in, bool skip_invalid_values = false);
- 
-     /// Write only changed settings in binary format.
-     /// Used for serialization of object storage settings (`S3Settings`, `DataLakeStorageSettings`),
-@@ -836,7 +839,7 @@ void BaseSettings<TTraits>::readBinary(ReadBuffer & in)
- }
- 
- template <typename TTraits>
--void BaseSettings<TTraits>::read(ReadBuffer & in)
-+void BaseSettings<TTraits>::read(ReadBuffer & in, bool skip_invalid_values)
- {
-     resetToDefault();
-     const auto & accessor = Traits::Accessor::instance();
-@@ -871,7 +874,20 @@ void BaseSettings<TTraits>::read(ReadBuffer & in)
-                 accessor.setValue(*this, index, static_cast<Field>(temp));
-             }
-             else
--                accessor.setValueString(*this, index, BaseSettingsHelpers::readString(in));
-+            {
-+                String value = BaseSettingsHelpers::readString(in);
-+                try
-+                {
-+                    accessor.setValueString(*this, index, value);
-+                }
-+                catch (const Exception & e)
-+                {
-+                    if (!skip_invalid_values || is_important || !BaseSettingsHelpers::skipInvalidSettingValue(name, e))
-+                        throw;
-+                    /// A failed parse may have assigned the field already.
-+                    accessor.resetValueToDefault(*this, index);
-+                }
-+            }
-         }
-         else if (is_important)
+     QueryTreeNodePtr in_result = has_fn;
+-    /// `has` treats tuple values with equal `NULL` elements as a match, while `IN`
+-    /// with `transform_null_in = 0` skips such tuple values. Guard tuple LHS
+-    /// elements to preserve `IN` semantics in the row-wise rewrite.
+-    if (const auto * tuple_type = typeid_cast<const DataTypeTuple *>(removeNullable(element_arg->getResultType()).get());
+-        tuple_type && !tuple_type->getElements().empty())
++    /// `IN` compares the columns of a multi-column key separately, and with `transform_null_in = 0` a NULL
++    /// element never matches, while `has` compares the tuples as values, where equal NULL elements match.
++    /// Guard the elements to preserve the `IN` semantics; a single key needs no guard, its NULL fields are
++    /// values.
++    if (const size_t key_column_count = getInKeyColumnTypes(element_arg->getResultType()).size(); key_column_count > 1)
+     {
+         auto and_fn = std::make_shared<FunctionNode>("and");
+         and_fn->getArguments().getNodes() =
          {
+-            makeTupleHasNoNullElementsPredicate(element_arg, tuple_type->getElements().size()),
++            makeTupleHasNoNullElemen
 ```
 
-**File**: `src/Core/Settings.cpp` (modified, +2/-2)
+**File**: `src/Analyzer/SetUtils.cpp` (modified, +33/-43)
 ```diff
-@@ -12803,9 +12803,9 @@ void Settings::write(WriteBuffer & out) const
-     impl->write(out);
- }
+@@ -18,6 +18,8 @@
  
--void Settings::read(ReadBuffer & in)
-+void Settings::read(ReadBuffer & in, bool skip_invalid_values)
+ #include <Common/assert_cast.h>
+ 
++#include <algorithm>
++
+ namespace DB
  {
--    impl->read(in);
-+    impl->read(in, skip_invalid_values);
+ 
+@@ -204,7 +206,8 @@ ColumnsWithTypeAndName createBlockFromCollection(
+ 
+         /// For `Nullable(Tuple(...))` we process tuple members element-by-element:
+         /// - to correctly skip unknown enum literals when `validate_enum_literals_in_operators = 0`
+-        /// - to implement `transform_null_in = 0` semantics for NULLs inside tuple elements (skip such tuple values)
++        /// - to skip members with a NULL field that the key's non-nullable field cannot hold; a NULL field
++        ///   that the key can hold is part of the key value in either `transform_null_in` mode, as in `Set`
+         const auto * lhs_nullable = typeid_cast<const DataTypeNullable *>(lhs_type.get());
+         const auto * lhs_tuple = lhs_nullable ? typeid_cast<const DataTypeTuple *>(lhs_nullable->getNestedType().get()) : nullptr;
+ 
+@@ -255,19 +258,14 @@ ColumnsWithTypeAndName createBlockFromCollection(
+                         lhs_tuple_element_types[i],
+                         params.forbid_unknown_enum_values);
+ 
++                    /// `convertColumnToTypeCheckEnum` reports a value that the field cannot hold,
++                    /// including a NULL in a non-nullable field, as not representable.
+                     if (!converted)
+                     {
+                         skip_tuple_value = true;
+                         break;
+                     }
+ 
+-                    bool need_insert_null = params.transform_null_in && lhs_tuple_element_types[i]->isNullable();
+-                    if ((*converted)->isNullAt(0) && !need_insert_null)
+-                    {
+-                        skip_tuple_value = true;
+-                        break;
+-                    }
+-
+                     converted_elements.push_back(std::move(*converted));
+                 }
+ 
+@@ -643,35 +641,41 @@ bool columnCollectionHasTuple(const ColumnPtr & rhs_column, const DataTypePtr &
+ 
  }
  
- void Settings::writeEmpty(WriteBuffer & out)
-```
-
-**File**: `src/Core/Settings.h` (modified, +1/-1)
-```diff
-@@ -207,7 +207,7 @@ struct Settings
-     [[nodiscard]] FlatStringMap changedToFlatMap(bool show_secrets) const;
- 
-     void write(WriteBuffer & out) const;
--    void read(ReadBuffer & in);
-+    void read(ReadBuffer & in, bool skip_invalid_values = false);
-     /// Equivalent to Settings().write(out) but faster.
-     static void writeEmpty(WriteBuffer & out);
- 
-```
-
-**File**: `src/Core/tests/gtest_settings.cpp` (modified, +60/-0)
-```diff
-@@ -16,6 +16,7 @@
- 
- #include <functional>
- #include <limits>
-+#include <tuple>
- #include <vector>
- 
- namespace DB::ErrorCodes
-@@ -26,6 +27,8 @@ namespace DB::ErrorCodes
-     extern const int BAD_ARGUMENTS;
-     extern const int CANNOT_CONVERT_TYPE;
-     extern const int ARGUMENT_OUT_OF_BOUND;
-+    extern const int CANNOT_PARSE_BOOL;
-+    extern const int UNKNOWN_LOAD_BALANCING;
- }
- 
- namespace
-@@ -324,6 +327,63 @@ GTEST_TEST(Settings, SecondsOnTheWireRejectNegativeAndOverflowingValues)
-     ASSERT_EQ(settings.get("max_execution_time"), Field(Float64(60)));
- }
- 
-+GTEST_TEST(Settings, SkipInvalidValuesKeepsTheDefaultsAndReadsTheRest)
++DataTypes getInKeyColumnTypes(const DataTypePtr & lhs_type)
 +{
-+    /// The settings a server of an older version sends in `Hello` may hold values this version rejects.
-+    using Entry = std::tuple<std::string_view, BaseSettingsHelpers::Flags, std::string_view>;
-+    auto wire = [](std::initializer_list<Entry> entries)
-+    {
-+        WriteBufferFromOwnString out;
-+        for (const auto & [name, flags, value] : entries)
-+        {
-+            BaseSettingsHelpers::writeString(name, out);
-+            BaseSettingsHelpers::writeFlags(flags, out);
-+            BaseSettingsHelpers::writeString(value, out);
-+        }
-+        BaseSettingsHelpers::writeString("", out); /// end of settings
-+        return out.str();
-+    };
-+
-+    auto read_error_code = [](const String & bytes, bool skip_invalid_values)
-+    {
-+        ReadBufferFromString in(bytes);
-+        Settings settings;
-+        try
-+        {
-+            settings.read(in, skip_invalid_values);
-+        }
-+        catch (const Exception & e)
-+        {
-+            return e.code();
-+        }
-+        return 0;
-+    };
-+
-+    const String bytes = wire({
-+        {"max_execution_time", {}, "-1"},
-+        {"max_block_size", {}, "0"}, /// `NonZeroUInt64` assigns the value before it rejects it.
-+        {"log_queries", {}, "maybe"},
-+        {"max_threads", {}, "4"},
-+    });
-+    ReadBufferFromString in(bytes);
-+    Settings settings;
-+    settings.read(in, /* skip_invalid_values= */ true);
-+    const SettingsChanges changes = settings.changes();
-+    ASSERT_EQ(changes.size(), 1u);
-+    ASSERT_EQ(changes[0].name, "max_threads");
-+    ASSERT_EQ(changes[0].value, Field(UInt64(4)));
-+    ASSERT_FALSE(settings.isChanged("max_execution_time"));
-+    ASSERT_FALSE(settings.isChanged("max_block_size"));
-+    ASSERT_EQ(settings.get("max_block_size"), Settings().get("max_block_size"));
-+    ASSERT_FALSE(settings.isChanged("log_queries"));
-+
-+    /// The default read stays strict; an important setting and other error codes are not skipped.
-+    ASSERT_EQ(read_error_code(bytes, false), ErrorCodes::BAD_ARGUMENTS);
-+    ASSERT_EQ(read_error_code(wire({{"log_queries", {}, "maybe"}}), false), ErrorCodes::CANNOT_PARSE_BOOL);
-+    ASSERT_EQ(read_error_code(wire({{"max_execution_time", BaseSettingsHelpers::Flags::IMPORTANT, "-1"}}), true), ErrorCodes::BAD_ARGUMENTS);
-+    ASSERT_EQ(read_error_code(wire({{"load_balancing", {}, "nonsense"}}), true), ErrorCodes::UNKNOWN_LOAD_BALANCING);
++    if (const auto * tuple_type = typeid_cast<const DataTypeTuple *>(lhs_type.get()); tuple_type && tuple_type->getElements().size() > 1)
++        return tuple_type->getElements();
++    return {lhs_type};
 +}
 +
- GTEST_TEST(SettingsCompatibility, MarkChangedByCompatibilityAsUnchangedKeepsTheValues)
++bool nullableTupleKeyCanHoldAllNullTuple(const DataTypeTuple & key_tuple_type, size_t rhs_tuple_size)
++{
++    const auto & elements = key_tuple_type.getElements();
++    return elements.size() == rhs_tuple_size
++        && std::ranges::all_of(elements, [](const auto & element) { return canContainNull(*element); });
++}
++
+ /// Format: lhs IN rhs
+ /// Explanation of the setting: `transform_null_in`. First of all, it is only applicable if the lhs is nullable.
+ /// Then if lhs is nullable and `transform_null_in` is true, then NULLs from rhs are inserted into the result set as well.
+-/// Whereas, if `transform_null_in` is false, we pretend NULLs are not present in rhs at all (at level 1 or at level 2 for Tuple).
++/// Whereas, if `transform_null_in` is false, we pretend NULLs are not present in rhs at all: a NULL member,
++/// or a NULL element of a member of a multi-column key (a plain `Tuple` lhs with several elements is
++/// unpacked into one key column per element). A NULL field of a `Nullable(Tuple)` or single-element tuple
++/// key is part of the key value.
+ /// If `transform_null_in` is false, then `SELECT NULL IN (NULL, 1)` returns NULL, otherwise it returns true.
+ 
+ ColumnsWithTypeAndName getSetElementsForConstantValue(
+     const DataTypePtr & lhs_expression_type, const ColumnPtr & rhs_column, const DataTypePtr & rhs_type, GetSetElementParams params)
  {
-     /// The client passes such a Settings object to `Connection::sendQuery`: the values that
+-    DataTypes lhs_unpacked_types = {lhs_expression_type};
++    /// A `Nullable(Tuple(...))` stays a single value and is handled in the createBlockFromCollection() fast
++    /// path.
++    DataTypes lhs_unpacked_types = getInKeyColumnTypes(lhs_expression_type);
+ 
+-    /// Unpack `Tuple(...)` into tuple elements.
+-    /// For `Nullable(Tuple(...))` we keep it as a single value and handle it in createBlockFromCollection() fast-path.
+-    bool lhs_is_tuple = false;
+     const auto * lhs_nullable_type = typeid_cast<const DataTypeNullable *>(lhs_expression_type.get());
+     const auto * lhs_tuple_type
+         = typeid_cast<const DataTypeTuple *>(lhs_nullable_type ? lhs_nullable_type->getNestedType().get() : lhs_expression_type.get());
+-
+-    if (lhs_tuple_type)
+-    {
+-        lhs_is_tuple = true;
+-
+-        /// Do not unpack empty tuple or single element tuple.
+-        /// Do not unpack `Nullable(Tuple(...))` because in the end we build a single `Nullable(Tuple(...))` column anyway.
+-        if (!lhs_nullable_type && lhs_tuple_type->getElements().size() > 1)
+-            lhs_unpacked_types = lhs_tuple_type->getElements();
+-    }
+-
+-    bool lhs_is_nullable = (lhs_nullable_type != nullptr);
++    const bool lhs_is_tuple = lhs_tuple_type != nullptr;
++    const bool lhs_is_nullable = lhs_nullable_type != nullptr;
+ 
+     for (auto & lhs_element_
 ```
 
-**File**: `tests/integration/test_backward_compatibility/test.py` (modified, +14/-0)
+**File**: `src/Analyzer/SetUtils.h` (modified, +18/-2)
 ```diff
-@@ -41,3 +41,17 @@ def test_backward_compatability1(start_cluster):
-     node1.query("SYSTEM SYNC REPLICA t", timeout=10)
+@@ -2,23 +2,39 @@
  
-     assert node1.query("SELECT count() FROM t") == "1\n"
+ #include <Core/ColumnsWithTypeAndName.h>
+ #include <Columns/IColumn_fwd.h>
++#include <DataTypes/IDataType_fwd.h>
+ 
+ #include <memory>
+ 
+ namespace DB
+ {
+ 
+-class IDataType;
+-using DataTypePtr = std::shared_ptr<const IDataType>;
+ class Set;
+ using SetPtr = std::shared_ptr<Set>;
++class DataTypeTuple;
+ 
+ struct GetSetElementParams
+ {
+     bool transform_null_in = true;
+     bool forbid_unknown_enum_values = false;
+ };
+ 
++/// The key columns that `IN` compares separately for a left operand of this type. A plain `Tuple` with more
++/// than one element is unpacked into one key column per element, so a NULL element of a member never matches
++/// with `transform_null_in = 0`. Anything else is one key whose NULL fields are ordinary values: an empty or
++/// single-element tuple, and a `Nullable(Tuple(...))`, because the set is built as a single
++/// `Nullable(Tuple(...))` column anyway.
++DataTypes getInKeyColumnTypes(const DataTypePtr & lhs_type);
 +
++/// Whether a `Nullable(Tuple(...))` key with the tuple type `key_tuple_type` can hold the tuple value of an explicit
++/// all-NULL right-hand tuple of `rhs_tuple_size` elements: the sizes match and every element can hold NULL (see
++/// `canContainNull`). For example, `Nullable(Tuple(Nullable(UInt8), Nullable(UInt8)))` and
++/// `Nullable(Tuple(LowCardinality(Nullable(String)), Variant(UInt8, String)))` can hold `(NULL, NULL)`, and
++/// `Nullable(Tuple(UInt8, Nullable(UInt8)))` cannot. Every form of `IN` then reads such a right-hand tuple both as
++/// top-level NULL members and as that tuple value, in either `transform_null_in` mode, because the key is a single key
++/// column whose NULL fields are values (see `getInKeyColumnTypes`).
++bool nullableTupleKeyCanHoldAllNullTuple(const DataTypeTuple & key_tuple_type, size_t rhs_tuple_size);
 +
-+def test_new_client_and_initiator_with_negative_seconds_in_old_server_profile(start_cluster):
-+    node1.query("DROP USER IF EXISTS u_negative_seconds")
-+    node1.query("CREATE USER u_negative_seconds IDENTIFIED WITH no_password SETTINGS max_execution_time = -1")
-+    node1.query("GRANT SELECT ON system.one TO u_negative_seconds")
-+    try:
-+        # `node1.query*` runs the tested client against the old server; the client warns about the value it skips.
-+        out, err = node1.query_and_get_answer_with_error("SELECT 1", user="u_negative_seconds")
-+        assert out == "1\n"
-+        assert "Cannot parse the value of setting `max_execution_time`, skipping it" in err
-+        assert node2.query("SELECT count() FROM remote('node1', system.one, 'u_negative_seconds', '')") == "1\n"
-+    finally:
-+        node1.query("DROP USER IF EXISTS u_negative_seconds")
+ /** Get set elements for constant part of IN subquery.
+   * Throws exception if parameters are not valid for IN function.
+   *
+```
+
+**File**: `src/Core/DecimalFunctions.h` (modified, +18/-0)
+```diff
+@@ -1,10 +1,12 @@
+ #pragma once
+ 
+ #include <Core/Types.h>
++#include <Core/AccurateComparison.h>
+ #include <Common/Exception.h>
+ #include <Common/intExp.h>
+ #include <base/arithmeticOverflow.h>
+ 
++#include <cmath>
+ #include <limits>
+ #include <type_traits>
+ 
+@@ -436,6 +438,22 @@ bool tryConvertTo(const DecimalType & decimal, UInt32 scale, To & result)
+     return convertToImpl<To, DecimalType, bool>(decimal, scale, result);
+ }
+ 
++/// Whether the conversion of `decimal` to the floating-point type `To` is exact: rounding the converted value
++/// back to the nearest tick of `scale` restores `decimal`. All decimals within the resolution of `To` convert
++/// to the same value, and this holds for exactly one of them. The ticks are restored by rounding rather than
++/// by the truncation of `convertToDecimal`: the nearest double to `0.29` lies below it, so truncating its
++/// product with the multiplier would restore `0.28` and reject a conversion that `To` represents as well as
++/// it can.
++template <is_floating_point To, typename DecimalType>
++bool convertsToFloatExactly(const DecimalType & decimal, UInt32 scale)
++{
++    using NativeType = typename DecimalType::NativeType;
++    const Float64 multiplier = static_cast<Float64>(scaleMultiplier<NativeType>(scale));
++    const Float64 restored_ticks = std::round(static_cast<Float64>(convertTo<To>(decimal, scale)) * multiplier);
++    NativeType restored{};
++    return accurate::convertNumeric(restored_ticks, restored) && restored == decimal.value;
++}
++
+ /// Converts a decimal to another decimal.
+ template <is_decimal To, typename DecimalType>
+ To convertTo(UInt32 to_scale, const DecimalType & decimal, UInt32 scale)
+```
+
+**File**: `src/DataTypes/NullableUtils.cpp` (modified, +48/-32)
+```diff
+@@ -62,53 +62,69 @@ DataTypePtr makeExtractedSubcolumnsNullableOrLowCardinalityNullableSafe(const Da
+     return makeNullableOrLowCardinalityNullableSafe(type);
+ }
+ 
+-ColumnPtr extractNestedColumnsAndNullMap(ColumnRawPtrs & key_columns, ConstNullMapPtr & null_map)
++ColumnPtr mergeNullMaps(ColumnPtr lhs, const ColumnPtr & rhs)
+ {
+-    ColumnPtr null_map_holder;
++    if (!lhs)
++        return rhs;
++    if (!rhs)
++        return lhs;
+ 
+-    auto addNullMap = [&](const ColumnNullable * column_nullable)
+-    {
+-        if (!null_map_holder)
+-        {
+-            /// First nullable column: just take its null map as the base
+-            null_map_holder = column_nullable->getNullMapColumnPtr();
+-        }
+-        else
+-        {
+-            /// Subsequent nullable columns: OR their null maps into the accumulated one
+-            MutableColumnPtr mutable_null_map_holder = IColumn::mutate(std::move(null_map_holder));
++    if (lhs->size() != rhs->size())
++        throw Exception(ErrorCodes::LOGICAL_ERROR, "Cannot merge null maps with different sizes: {} and {}", lhs->size(), rhs->size());
+ 
+-            PaddedPODArray<UInt8> & mutable_null_map = assert_cast<ColumnUInt8 &>(*mutable_null_map_holder).getData();
+-            const PaddedPODArray<UInt8> & other_null_map = column_nullable->getNullMapData();
++    MutableColumnPtr result = IColumn::mutate(std::move(lhs));
++    auto & result_null_map = assert_cast<ColumnUInt8 &>(*result).getData();
++    const auto & rhs_null_map = assert_cast<const ColumnUInt8 &>(*rhs).getData();
+ 
+-            for (size_t i = 0, size = mutable_null_map.size(); i < size; ++i)
+-                mutable_null_map[i] |= other_null_map[i];
++    for (size_t i = 0, size = result_null_map.size(); i < size; ++i)
++        result_null_map[i] |= rhs_null_map[i];
+ 
+-            null_map_holder = std::move(mutable_null_map_holder);
+-        }
+-    };
++    return result;
++}
+ 
++ColumnPtr getOuterNullMap(const IColumn & column)
++{
++    if (const auto * column_nullable = checkAndGetColumn<ColumnNullable>(&column))
++        return column_nullable->getNullMapColumnPtr();
++    if (const auto * column_dynamic = checkAndGetColumn<ColumnDynamic>(&column))
++        return column_dynamic->getVariantColumn().createNullMap();
++    if (const auto * column_variant = checkAndGetColumn<ColumnVariant>(&column))
++        return column_variant->createNullMap();
++    if (const auto * column_low_cardinality = checkAndGetColumn<ColumnLowCardinality>(&column);
++        column_low_cardinality && column_low_cardinality->nestedIsNullable())
++    {
++        const size_t null_index = column_low_cardinality->getDictionary().getNullValueIndex();
++        auto null_map = ColumnUInt8::create(column_low_cardinality->size());
++        auto & null_map_data = null_map->getData();
++        for (size_t row = 0; row < null_map_data.size(); ++row)
++            null_map_data[row] = column_low_cardinality->getIndexAt(row) == null_index;
++        return null_map;
++    }
++    return nullptr;
++}
++
++ColumnPtr extractNestedColumnsAndNullMap(ColumnRawPtrs & key_columns, ConstNullMapPtr & null_map)
++{
++    ColumnPtr null_map_holder;
+     for (auto & column : key_columns)
+     {
+-        if (const auto * column_nullable = checkAndGetColumn<ColumnNullable>(&*column))
++        if (const auto * column_nullable = checkAndGetColumn<ColumnNullable>(column))
+         {
+-            /// Top-level Nullable(...) always contributes to the combined null map
+-            addNullMap(column_nullable);
+-
+-            /** Only the top-level null map says whether the key of a row is NULL. The null maps of the
+-              * elements of a `Nullable(Tuple(Nullable(T), ...))` used to be folded in as well, which
+-              * made a row whose tuple merely *contains* a NULL a NULL key: the hash-family joins
+-              * dropped it, while the merge algorithms - which compare the nested tuples - kept it, so
+-              * the result of a join depended on `join_algorithm`, and `IN` never matched such a row.
+-              * The NULLs of the elements are part of the key and are compared as any other value,
+-              * exactly as they are for a `Tuple(Nullable(T), ...)` that is not wrapped in `Nullable`.
++            null_map_holder = mergeNullMaps(std::move(null_map_holder), column_nullable->getNullMapColumnPtr());
++
++            /** Only the top-level null map says whether the key of a row is NULL. Folding in the null
++              * maps of the elements of a `Nullable(Tuple(Nullable(T), ...))` would make a row whose tuple
++              * merely *contains* a NULL a NULL key: the hash-family joins would drop it, while the merge
++              * algorithms - which compare the nested tuples - keep it, so the result of a join would depend
++              * on `join_algorithm`, and `IN` would never match such a row. The NULLs of the elements are
++              * part of the key and are compared as any other value, exactly as they are for a
++              * `Tuple(Null
+```
+
+**File**: `src/DataTypes/NullableUtils.h` (modified, +13/-3)
+```diff
+@@ -8,9 +8,19 @@
+ namespace DB
+ {
+ 
+-/** Replace Nullable key_columns to corresponding nested columns.
+-  * In 'null_map' return a map of positions where at least one column was NULL.
+-  * @returns ownership column of null_map.
++/// Combine two `ColumnUInt8` null maps of equal size. A null pointer represents a map with no NULLs.
++/// Reuse the first column when it is exclusively owned, or share the other column when one map is absent.
++ColumnPtr mergeNullMaps(ColumnPtr lhs, const ColumnPtr & rhs);
++
++/// The outer null map of a column that can hold NULLs (`ColumnUInt8`, 1 = the value is NULL), or a null
++/// pointer for a column that cannot. A NULL inside a value, such as a NULL field of a tuple, is not an outer
++/// NULL. `Variant` and `Dynamic` encode NULLs with the `NULL` discriminator, and `LowCardinality` with the
++/// index of the NULL in its dictionary, rather than a separate null map, so theirs is reconstructed.
++ColumnPtr getOuterNullMap(const IColumn & column);
++
++/** Replace `Nullable` key columns with their nested columns and combine their outer null maps.
++  * A NULL field inside a non-null tuple is part of the key value and does not make the key NULL.
++  * Set `null_map` to the combined map and return the column that owns it.
+   */
+ ColumnPtr extractNestedColumnsAndNullMap(ColumnRawPtrs & key_columns, ConstNullMapPtr & null_map);
+ 
+```
+
+**File**: `src/Functions/CastOverloadResolver.cpp` (modified, +53/-0)
+```diff
+@@ -10,6 +10,7 @@
+ #include <DataTypes/DataTypeString.h>
+ #include <DataTypes/DataTypeTuple.h>
+ #include <Columns/ColumnString.h>
++#include <Common/UnorderedMapWithMemoryTracking.h>
+ #include <Core/Settings.h>
+ #include <Interpreters/parseColumnsListForTableFunction.h>
+ #include <Interpreters/Context.h>
+@@ -25,6 +26,7 @@ namespace Setting
+ namespace ErrorCodes
+ {
+     extern const int ILLEGAL_TYPE_OF_ARGUMENT;
++    extern const int TYPE_MISMATCH;
+ }
+ 
+ /// accurateCastOrNull wraps the result in Nullable to represent conversion failures.
+@@ -65,6 +67,57 @@ bool canBeAccurateCastOrNullTarget(const DataTypePtr & type)
+     return findUnsupportedTypeForAccurateCastOrNull(type) == nullptr;
+ }
+ 
++std::optional<VectorWithMemoryTracking<std::optional<size_t>>> tryGetTupleCastElementPositions(
++    const DataTypeTuple & from, const DataTypeTuple & to)
++{
++    VectorWithMemoryTracking<std::optional<size_t>> positions;
++    positions.reserve(to.getElements().size());
++
++    if (from.hasExplicitNames() && to.hasExplicitNames())
++    {
++        const auto & from_names = from.getElementNames();
++        const auto & to_names = to.getElementNames();
++        UnorderedMapWithMemoryTracking<String, size_t> from_positions;
++        from_positions.reserve(from_names.size());
++        for (size_t i = 0; i < from_names.size(); ++i)
++            from_positions.emplace(from_names[i], i);
++
++        bool has_common_name = false;
++        for (const auto & name : to_names)
++        {
++            auto it = from_positions.find(name);
++            if (it == from_positions.end())
++                positions.emplace_back();
++            else
++            {
++                positions.emplace_back(it->second);
++                has_common_name = true;
++            }
++        }
++
++        if (has_common_name)
++            return positions;
++        positions.clear();
++    }
++
++    if (from.getElements().size() != to.getElements().size())
++        return std::nullopt;
++
++    for (size_t i = 0; i < to.getElements().size(); ++i)
++        positions.emplace_back(i);
++    return positions;
++}
++
++VectorWithMemoryTracking<std::optional<size_t>> getTupleCastElementPositions(const DataTypeTuple & from, const DataTypeTuple & to)
++{
++    auto positions = tryGetTupleCastElementPositions(from, to);
++    if (!positions)
++        throw Exception(ErrorCodes::TYPE_MISMATCH, "CAST AS Tuple can only be performed between tuple types "
++                        "with the same number of elements or from String.\nLeft type: {}, right type: {}",
++                        from.getName(), to.getName());
++    return std::move(*positions);
++}
++
+ static void validateNestedTypesForAccurateCastOrNull(const DataTypePtr & type)
+ {
+     if (auto unsupported = findUnsupportedTypeForAccurateCastOrNull(type))
+```
+
+**File**: `src/Functions/CastOverloadResolver.h` (modified, +17/-0)
+```diff
+@@ -4,11 +4,13 @@
+ #include <optional>
+ #include <Interpreters/Context_fwd.h>
+ #include <Core/ColumnWithTypeAndName.h>
++#include <Common/VectorWithMemoryTracking.h>
+ 
+ 
+ namespace DB
+ {
+ 
++class DataTypeTuple;
+ class IFunctionOverloadResolver;
+ using FunctionOverloadResolverPtr = std::shared_ptr<IFunctionOverloadResolver>;
+ 
+@@ -35,6 +37,21 @@ FunctionBasePtr createInternalCast(ColumnWithTypeAndName from, DataTypePtr to, C
+ /// when it can carry a NULL of its own, as Dynamic and Variant do.
+ bool canBeAccurateCastOrNullTarget(const DataTypePtr & type);
+ 
++/// Map each destination tuple element to its source position, or no position for a defaulted field. For named
++/// tuples with at least one element name in common, elements are matched by name: source elements without a
++/// counterpart are dropped, and target elements without a counterpart are filled by default values (schema
++/// evolution: adding, dropping and renaming elements of a `Tuple` or a `Nested` column with `ALTER`). For
++/// named tuples with disjoint sets of element names, matching by name cannot be meant, because it would fill
++/// the whole result by default values and lose all the data, so elements are matched by position, as for
++/// unnamed tuples (e.g. the result of function `tuple` with `enable_named_columns_in_function_tuple` inserted
++/// into a column whose tuple elements are named differently).
++VectorWithMemoryTracking<std::optional<size_t>> getTupleCastElementPositions(const DataTypeTuple & from, const DataTypeTuple & to);
++
++/// The same mapping, or no mapping when the tuples are matched by position and have different numbers of
++/// elements, where `getTupleCastElementPositions` throws `TYPE_MISMATCH` because `CAST` cannot convert them.
++std::optional<VectorWithMemoryTracking<std::optional<size_t>>> tryGetTupleCastElementPositions(
++    const DataTypeTuple & from, const DataTypeTuple & to);
++
+ FunctionOverloadResolverPtr createCastOverloadResolver(ContextPtr context, CastType cast_type, std::optional<CastDiagnostic> diagnostic);
+ 
+ }
 ```
 
 ---
 
-### Incident Patch 3: `06227801` (2026-11-16)
-**Commit Message**: Merge pull request #131873 from groeneai/fix-resource-soak-msan
+### Incident Patch 2: `d5024cf1` (2026-11-17)
+**Commit Message**: Merge pull request #132118 from groeneai/fix-broken-local-disk-skip-130044
 
-Fix flaky resource soak tests on MemorySanitizer builds
+Skip broken disks when looking for a table's files on every disk
 
-**File**: `tests/integration/helpers/resource_soak.py` (modified, +4/-2)
+**File**: `src/Databases/DatabaseOnDisk.cpp` (modified, +1/-1)
 ```diff
-@@ -104,6 +104,7 @@ def __init__(self, node, metrics: Iterable[str] = ()):
-         self.pid = node.get_process_pid("clickhouse")
-         assert self.pid is not None, "cannot find the server process"
-         self.asan = node.is_built_with_sanitizer("address")
-+        self.msan = node.is_built_with_sanitizer("memory")
-         self.tsan = node.is_built_with_sanitizer("thread")
-         self.samples: List[Sample] = []
+@@ -446,7 +446,7 @@ void DatabaseOnDisk::dropTable(ContextPtr local_context, const String & table_na
  
-@@ -198,8 +199,9 @@ def assert_bounded(
-         )
-         # Resident memory also covers allocations that `MemoryTracking` does not see, such as those of the Rust Delta kernel. Only anonymous memory is compared: file-backed pages are those of the binary and of the files it reads, which the server faults in on first use (for example the debug info when it symbolizes a stack trace) and the kernel can evict, so they are not held by the server.
-         # The resident memory of a ThreadSanitizer build includes its shadow memory, which it discards all at once when its thread slots run out of epochs and then refills, at points unrelated to the iterations.
--        if self.tsan:
--            logging.info("anonymous resident memory: not compared on a ThreadSanitizer build")
-+        # On a MemorySanitizer build, a freed small allocation keeps its shadow and origin memory resident, twice its own size, even after the allocator returns its pages to the system, so a transient peak of allocations, such as a merge of a system log table with many columns, raises the resident memory long after it ends.
-+        if self.tsan or self.msan:
-+            logging.info("anonymous resident memory: not compared on a %s build", "ThreadSanitizer" if self.tsan else "MemorySanitizer")
-         else:
-             assert_not_growing(
-                 "anonymous resident memory without caches",
+     for (const auto & [disk_name, disk] : getContext()->getDisksMap())
+     {
+-        if (disk->isReadOnly() || !disk->existsDirectory(table_data_path_relative))
++        if (disk->isBroken() || disk->isReadOnly() || !disk->existsDirectory(table_data_path_relative))
+             continue;
+ 
+         LOG_INFO(log, "Removing data directory from disk {} with path {} for dropped table {} ", disk_name, table_data_path_relative, table_name);
+```
+
+**File**: `src/Interpreters/DatabaseCatalog.cpp` (modified, +1/-1)
+```diff
+@@ -1921,7 +1921,7 @@ void DatabaseCatalog::dropTableFinally(const TableMarkedAsDropped & table)
+     ///   or it is better to bypass it e.g. to avoid interactions with a remote storage
+     auto is_disk_eligible_for_search = [](DiskPtr disk, std::shared_ptr<MergeTreeData> storage)
+     {
+-        bool is_disk_eligible = !disk->isReadOnly();
++        bool is_disk_eligible = !disk->isBroken() && !disk->isReadOnly();
+ 
+         /// Disk is not actually used by MergeTree table
+         if (is_disk_eligible && storage && !storage->getStoragePolicy()->tryGetVolumeIndexByDiskName(disk->getName()).has_value())
+```
+
+**File**: `src/Storages/Freeze.cpp` (modified, +2/-2)
+```diff
+@@ -147,7 +147,7 @@ BlockIO Unfreezer::systemUnfreeze(const String & backup_name)
+     auto disks_map = local_context->getDisksMap();
+     for (auto & [_, disk] : disks_map)
+     {
+-        if (disk->isReadOnly() || disk->isWriteOnce())
++        if (disk->isBroken() || disk->isReadOnly() || disk->isWriteOnce())
+             continue;
+ 
+         for (const auto & store_path : store_paths)
+@@ -211,7 +211,7 @@ PartitionCommandsResultInfo Unfreezer::unfreezePartitionsFromTableDirectory(Merg
+ 
+     for (const auto & disk : disks)
+     {
+-        if (!disk->existsDirectory(table_directory))
++        if (disk->isBroken() || !disk->existsDirectory(table_directory))
+             continue;
+ 
+         for (auto it = disk->iterateDirectory(table_directory); it->isValid(); it->next())
+```
+
+**File**: `src/Storages/MergeTree/MergeTreeData.cpp` (modified, +2/-2)
+```diff
+@@ -12229,7 +12229,7 @@ DetachedPartsInfo MergeTreeData::getDetachedParts() const
+         /// While it is possible to have detached parts on readonly/write-once disks
+         /// (if they were produced on another machine, where it wasn't readonly)
+         /// to avoid wasting resources for slow disks, avoid trying to enumerate them.
+-        if (disk->isReadOnly() || disk->isWriteOnce())
++        if (disk->isBroken() || disk->isReadOnly() || disk->isWriteOnce())
+             continue;
+ 
+         String detached_path = fs::path(relative_data_path) / DETACHED_DIR_NAME;
+@@ -14047,7 +14047,7 @@ DiskPtr MergeTreeData::tryGetDiskForDetachedPart(const String & part_name) const
+     const auto disks = getStoragePolicy()->getDisks();
+ 
+     for (const DiskPtr & disk : disks)
+-        if (disk->existsDirectory(fs::path(relative_data_path) / DETACHED_DIR_NAME / part_name))
++        if (!disk->isBroken() && disk->existsDirectory(fs::path(relative_data_path) / DETACHED_DIR_NAME / part_name))
+             return disk;
+ 
+     return nullptr;
+```
+
+**File**: `tests/integration/test_disk_checker/test.py` (modified, +87/-0)
+```diff
+@@ -204,3 +204,90 @@ def test_server_starts_with_unusable_local_disk_path(started_cluster):
+ 
+     assert node.query("SELECT is_broken FROM system.disks WHERE name = 'unusable'") == "1\n"
+     assert node.contains_in_log("Skip access check for disk unusable (disk is broken)")
++
++
++def test_broken_local_disk_is_skipped(started_cluster):
++    """Operations that look for a table's files on every disk must skip a broken disk."""
++    node = cluster.instances["test_disk_checker_unusable_path"]
++
++    node.exec_in_container(
++        [
++            "bash",
++            "-c",
++            "ln -sfn loop_b /var/lib/clickhouse/loop_a && ln -sfn loop_a /var/lib/clickhouse/loop_b",
++        ]
++    )
++    node.exec_in_container(
++        [
++            "bash",
++            "-c",
++            """cat > /etc/clickhouse-server/config.d/looped_disk.xml << 'EOF'
++<clickhouse>
++    <enable_system_unfreeze>true</enable_system_unfreeze>
++    <storage_configuration>
++        <disks>
++            <looped>
++                <type>local</type>
++                <path>/var/lib/clickhouse/loop_a/disk/</path>
++            </looped>
++            <spare>
++                <type>local</type>
++                <path>/var/lib/clickhouse/spare_disk/</path>
++            </spare>
++        </disks>
++        <policies>
++            <with_looped>
++                <volumes>
++                    <main><disk>default</disk></main>
++                    <broken><disk>looped</disk></broken>
++                    <last><disk>spare</disk></last>
++                </volumes>
++                <move_factor>0</move_factor>
++            </with_looped>
++        </policies>
++    </storage_configuration>
++</clickhouse>
++EOF""",
++        ]
++    )
++
++    node.restart_clickhouse()
++    assert node.query("SELECT is_broken FROM system.disks WHERE name = 'looped'") == "1\n"
++
++    node.query("CREATE TABLE t (x UInt8) ENGINE = MergeTree ORDER BY x")
++    t_uuid = node.query("SELECT uuid FROM system.tables WHERE database = 'default' AND name = 't'").strip()
++    t_spare = f"/var/lib/clickhouse/spare_disk/store/{t_uuid[:3]}/{t_uuid}"
++    node.exec_in_container(["bash", "-c", f"mkdir -p {t_spare}/sentinel"])
++    node.query("DROP TABLE t SYNC", settings={"max_execution_time": 30})
++    assert node.exec_in_container(["bash", "-c", f"[ -e {t_spare} ] && echo present || echo absent"]) == "absent\n"
++
++    node.query(
++        "CREATE DATABASE ordinary_db ENGINE = Ordinary",
++        settings={"allow_deprecated_database_ordinary": 1},
++    )
++    node.query("CREATE TABLE ordinary_db.t (x UInt8) ENGINE = MergeTree ORDER BY x")
++    ordinary_spare = "/var/lib/clickhouse/spare_disk/data/ordinary_db/t"
++    node.exec_in_container(["bash", "-c", f"mkdir -p {ordinary_spare}/sentinel"])
++    node.query("DROP TABLE ordinary_db.t")
++    assert node.exec_in_container(["bash", "-c", f"[ -e {ordinary_spare} ] && echo present || echo absent"]) == "absent\n"
++    node.query("DROP DATABASE ordinary_db")
++
++    node.query(
++        "CREATE TABLE t2 (x UInt8) ENGINE = MergeTree ORDER BY x SETTINGS storage_policy = 'with_looped'"
++    )
++    node.query("INSERT INTO t2 VALUES (1)")
++    part = node.query("SELECT name FROM system.parts WHERE table = 't2' AND active").strip()
++    node.query(f"ALTER TABLE t2 MOVE PART '{part}' TO DISK 'spare'")
++    node.query(f"ALTER TABLE t2 DETACH PART '{part}'")
++    assert node.query("SELECT count() FROM system.detached_parts WHERE table = 't2'") == "1\n"
++    node.query(f"ALTER TABLE t2 ATTACH PART '{part}'")
++    assert node.query("SELECT count() FROM t2") == "1\n"
++
++    frozen = node.query("SELECT name FROM system.parts WHERE table = 't2' AND active").strip()
++    node.query("ALTER TABLE t2 FREEZE WITH NAME 'looped_backup'")
++    node.query("ALTER TABLE t2 FREEZE WITH NAME 'looped_backup_2'")
++    assert frozen in node.query(
++        "ALTER TABLE t2 UNFREEZE WITH NAME 'looped_backup'", settings={"alter_partition_verbose_result": 1}
++    )
++    assert frozen in node.query("SYSTEM UNFREEZE WITH NAME 'looped_backup_2'")
++    node.query("DROP TABLE t2 SYNC", settings={"max_execution_time": 30})
+```
+
+---
+
+### Incident Patch 3: `ab23bdd4` (2026-11-17)
+**Commit Message**: Merge pull request #132058 from groeneai/fix-scheduler-resourcetest-odr
+
+Fix ODR violation between the two ResourceTest fixtures of the scheduler unit tests
+
+**File**: `src/Common/Scheduler/Nodes/tests/gtest_time_shared_scheduler.cpp` (modified, +5/-0)
+```diff
+@@ -14,6 +14,9 @@
+ 
+ using namespace DB;
+ 
++namespace
++{
++
+ struct ResourceTest : public ResourceTestBase
+ {
+     TimeSharedScheduler scheduler;
+@@ -40,6 +43,8 @@ struct ResourceTest : public ResourceTestBase
+     }
+ };
+ 
++}
++
+ struct ResourceHolder
+ {
+     ResourceTest & t;
+```
+
+**File**: `src/Common/Scheduler/Nodes/tests/gtest_workload_resource_manager.cpp` (modified, +5/-0)
+```diff
+@@ -219,6 +219,9 @@ class WorkloadEntityTestStorage : public WorkloadEntityStorageBase
+     }
+ };
+ 
++namespace
++{
++
+ struct ResourceTest : ResourceTestManager<WorkloadResourceManager>
+ {
+     WorkloadEntityTestStorage storage;
+@@ -343,6 +346,8 @@ struct ResourceTest : ResourceTestManager<WorkloadResourceManager>
+     }
+ };
+ 
++}
++
+ using TestGuard = ResourceTest::Guard;
+ 
+ TEST(SchedulerWorkloadResourceManager, Smoke)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #131891** (2026-11-16): Fix clang-tidy on master: mark `ParserTransactionControl::getDocumentation` `[[nodiscard]]` (@murphy-4o)
-- **PR #131888** (2026-11-16): Run the polymorphic_parts_l Buffer insert on 20 parts (@groeneai)
-- **PR #131886** (2026-11-16): Bound the parallel probes in `05768_statistics_probe_parallel_index_load` by loaded primary indexes, not cache misses (@groeneai)
-- **PR #131884** (2026-11-16): Backport #131366 to 26.10: Check the scale in `writeDecimalFractional` in release builds (@robot-ch-test-poll4)
-- **PR #131882** (2026-11-16): Backport #131366 to 26.9: Check the scale in `writeDecimalFractional` in release builds (@robot-ch-test-poll4)
-- **PR #131881** (2026-11-16): Backport #131366 to 26.8: Check the scale in `writeDecimalFractional` in release builds (@robot-ch-test-poll4)
+- **PR #132370** (2026-11-17): Cherry pick #131893 to 26.3: Check the `SYSTEM SYNC DATABASE REPLICA` grant on local execution (@robot-ch-test-poll4)
+- **PR #132329** (2026-11-17): Backport #126385 to 26.10: Estimate range conditions from all parts of `tdigest` statistics (@robot-clickhouse-ci-1)
+- **PR #132304** (2026-11-17): Backport #129818 to 26.9: Merge tables report rows and sizes only of the tables the user can see (@robot-clickhouse)
+- **PR #132303** (2026-11-17): Backport #129818 to 26.8: Merge tables report rows and sizes only of the tables the user can see (@robot-clickhouse)
+- **PR #132302** (2026-11-17): Backport #129818 to 26.3: Merge tables report rows and sizes only of the tables the user can see (@robot-clickhouse)
+- **PR #132298** (2026-11-17): Backport #132195 to 26.10: Read `system.query_log` in default-size blocks in `05620_read_in_order_virtual_row_fixed_key` (@robot-ch-test-poll2)
 
 ---
 
@@ -1675,38 +2112,51 @@ Fix flaky resource soak tests on MemorySanitizer builds
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in build_profile_hook.py
+## X. Empirical Invariant Guard in resolveFunction.cpp
 
 **RULE**:
-When implementing operations in `ci/jobs/scripts/job_hooks/build_profile_hook.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Analyzer/Resolve/resolveFunction.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `21700ab7`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42a270d5`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/jobs/scripts/job_hooks/build_profile_hook.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Analyzer/Resolve/resolveFunction.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    # Post hooks also run after a failed build, which leaves no complete profile.
-    job_result = Result.from_fs(Info().job_name)
-    if not job_result.is_success():
-        print(f"Build [{build_type}] did not succeed, build profile not collected")
-        return
-        check_start_time = Utils.timestamp_to_str(job_result.start_time)
+/// Returns whether the `rewrite_in_to_join` rewrite of `x IN (subquery)` into
+/// `EXISTS (SELECT 1 FROM (subquery) WHERE x = <row> LIMIT 1)` keeps the semantics of regular `IN`: the
+/// same result or the same error. The left operand has the type `left_type`, and the subquery has the
+/// columns `subquery_columns`. The caller guarantees that `left_type` is not null and that
+/// `validateInColumnsCountMatch` accepted both sides.
+///
+/// Regular `IN` rejects a left operand with dynamic structure before it builds the set. With
+/// `transform_null_in = 0`, which the rewrite requires, it returns NULL for a NULL left operand, while
+/// `NOT EXISTS` returns 1.
+///
+/// For any other operand, the set has one key per subquery column. `FunctionIn` compares the whole left
+/// operand with the only column of a subquery, even when the operand is a tuple. Otherwise it compares
+/// each element of the left tuple with its own column. `Set::execute` converts each key to the type of
+/// its column, and a value that the column cannot hold is not a member. For example,
+/// `(t, 1) IN (SELECT toFloat64(1767225600), 1)` returns 0 for
+/// `t = fromUnixTimestamp64Nano(1767225600000000001, 'UTC')` because
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        check_start_time = Utils.timestamp_to_str(
-            Result.from_fs(Info().job_name).start_time
-        )
+    /// `has` treats tuple values with equal `NULL` elements as a match, while `IN`
+    /// with `transform_null_in = 0` skips such tuple values. Guard tuple LHS
+    /// elements to preserve `IN` semantics in the row-wise rewrite.
+    if (const auto * tuple_type = typeid_cast<const DataTypeTuple *>(removeNullable(element_arg->getResultType()).get());
+        tuple_type && !tuple_type->getElements().empty())
+            makeTupleHasNoNullElementsPredicate(element_arg, tuple_type->getElements().size()),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `21700ab7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42a270d5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

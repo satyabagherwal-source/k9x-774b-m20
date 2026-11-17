@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-C479",
-    "timestamp": "2026-11-15T00:50:53.637Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "ad36621f639ff8582037b48c61847609aeeb271a7250fe78d3a1c8604b7edaf6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-S4ES",
-    "timestamp": "2026-11-15T01:03:20.404Z",
-    "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
-    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-    "contentHash": "c390b87d0dd7669dd9dd56c1504dec0a5f8f6da94f30cb31cbbf2ec45ed31859",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-SAIB",
-    "timestamp": "2026-11-15T01:03:28.307Z",
-    "repository": "JetBrains/kotlinconf-app",
-    "learningId": "learn-github-jetbrains-kotlinconf-app",
-    "contentHash": "adfff6c81a219d2c9ef32134bb5c1fa9ea32e0d4e4f98c056d83bc0a928f822f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-SFL8",
     "timestamp": "2026-11-15T01:03:34.892Z",
     "repository": "Mintplex-Labs/anything-llm",
@@ -7490,6 +7445,51 @@
     "repository": "duckdb/duckdb",
     "learningId": "learn-github-duckdb-duckdb",
     "contentHash": "e7fdabdffaff474e5f53e0d65ceedd62d63beb2176930273fe6fa76085bbc2ae",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-H00V",
+    "timestamp": "2026-11-17T14:57:50.431Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+    "contentHash": "a1b5e63d1151086beb003f4fe97e61290645a548f6010f09f5fad59948e831ad",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-HDDV",
+    "timestamp": "2026-11-17T14:58:07.747Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "06e2bd229839c159eac737450a1883888cd21599196d488de2a126c0daf6146c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-HDS5",
+    "timestamp": "2026-11-17T14:58:08.261Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "cc1b52540a2b37380326851cca5b41421b896c440e12a7ac93db45e23fa06691",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
