@@ -11295,8 +11295,8 @@
     "sourceUrl": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
     "sourceVersion": "hf-ccore-qwen3.5-4b-3d-coder",
     "license": "Open-Source",
-    "contentHash": "7e448dacfaa5b0d4aca30a731199bc3927b01db69f25e4ff6bd72abc175135c9",
-    "lastHarvestedAt": "2026-11-13T08:35:53.793Z",
+    "contentHash": "4d92418a6659616a684ea1bc01873f4960e3f0863382c7b28b81baaac2d36f5b",
+    "lastHarvestedAt": "2026-11-17T19:37:04.595Z",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder"
   },
   "agilerl-agilerl": {

@@ -10680,3 +10680,4 @@
 | `CYCLE-20261117-3N2I` | `2026-11-17T19:27:23.274Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9037` | Yes (`262f7018...`) |
 | `CYCLE-20261117-3SRR` | `2026-11-17T19:27:30.663Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9038` | Yes (`462f2d59...`) |
 | `CYCLE-20261117-3WVB` | `2026-11-17T19:27:35.975Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9039` | Yes (`6b9858ea...`) |
+| `CYCLE-20261117-G3M7` | `2026-11-17T19:37:04.591Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md` | Yes (`4d92418a...`) |

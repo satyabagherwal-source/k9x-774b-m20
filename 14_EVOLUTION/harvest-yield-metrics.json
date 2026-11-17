@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T19:27:35.984Z",
-  "total_cycles_completed": 10234,
-  "total_learnings_persisted": 10234,
+  "last_updated": "2026-11-17T19:37:04.601Z",
+  "total_cycles_completed": 10235,
+  "total_learnings_persisted": 10235,
   "total_rules_promoted": 9785,
   "history": [
-    {
-      "timestamp": "2026-11-17T05:58:12.432Z",
-      "repository": "krakend/krakend-ce",
-      "learningId": "learn-github-krakend-krakend-ce",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T05:58:15.081Z",
       "repository": "tailscale/tailscale",
@@ -1403,6 +1396,13 @@
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:37:04.601Z",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

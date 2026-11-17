@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T19:27:40.967Z",
-  "total_verified_learnings": 8932,
+  "last_updated": "2026-11-17T19:37:09.044Z",
+  "total_verified_learnings": 8933,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20537,
+  "total_items": 20540,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e98180e5ba07be0babdb3e59aafd54cad74d196c79f28970c36cc0e817a5dcae",
+      "content_hash": "e50759b5496ddb90a94eb2b83d31ec9d3d738673dbba73a9da659a34095bdd02",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:19:55.228Z"
+      "persisted_at": "2026-11-17T19:37:08.345Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc07e03689b69b66e5293eeb59252b6bd86fb894970551cdc18d927c7ce94ce2",
+      "content_hash": "a59e58f46dfbbf67ff55186a7c331425e7b5efa53a7be28fbc7999df7a5f0ae7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:19:55.324Z"
+      "persisted_at": "2026-11-17T19:37:08.453Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -227195,13 +227195,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-859E-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-G6VG-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "e7a6a042b1f6930dec9c848e3b892c1a54c5946faed620f319438f96eebc3532",
+      "content_hash": "445fc81ca6cc270e759df679a43e8f94f8dc5a4d9ed2077ee1c470015f418a04",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T14:22:57.698Z"
+      "persisted_at": "2026-11-17T19:37:08.812Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -227211,9 +227211,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c6dadd303c6916eca2bf0df304329ddffeca75e17bb9326d140b72c1e4111939",
+      "content_hash": "dd5f3b4a67a9d689bf1bc9f01a887e8cef6ed891a6ae21b990c22e890d9841e2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T14:22:57.824Z"
+      "persisted_at": "2026-11-17T19:37:08.926Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -227223,9 +227223,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "2b3ff6afb7f244bf1b49eeb8a3590be5f292468fa7f01b88b632255a2a605eb6",
+      "content_hash": "a550292b4464eec3d58ae495552ecd34695622900d8ab009821d6ad7cd81c385",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T14:22:57.960Z"
+      "persisted_at": "2026-11-17T19:37:09.044Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -251514,9 +251514,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "272d41457ea88da18e5d3ed31309e0d3450ec563d1b5b45c9057761bf03f3d98",
+      "content_hash": "123b108173f2e7eb2fb6f2d2038a2a3a94ff861f3dc86f9677facd4bb37b0a38",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:19:55.118Z"
+      "persisted_at": "2026-11-17T19:37:08.224Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -274091,13 +274091,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-U16R-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-G6BQ-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "da2f5fe8ce8cdf2c124c9a5fbc19dc1cb42bb005423444d706a88984294db36d",
+      "content_hash": "3171c59e196f7925da8753b1e97cd266bc3ce6a645b2cfb4bd711711c160199d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:19:55.016Z"
+      "persisted_at": "2026-11-17T19:37:08.104Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -275718,6 +275718,57 @@
       "content_hash": "daaa5f5f8ec2e8d84eaa2897d6eb65829ece4b943c9a404caa6088dec90a3cfc",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T19:27:40.107Z"
+    },
+    "learn-huggingface-ccore-qwen3-5-4b-3d-coder": {
+      "learning_id": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ccore/Qwen3.5-4B-3D-Coder",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "slug": "hf-ccore-qwen3.5-4b-3d-coder",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+      "content_hash": "4d92418a6659616a684ea1bc01873f4960e3f0863382c7b28b81baaac2d36f5b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T19:37:04.428Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-3d-coder-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-3d-coder-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-3d-coder-research-knowledge-intelligence-ccore-qwen3-5-4b-3d.md",
+      "title": "Research & Knowledge Intelligence: ccore/Qwen3.5-4B-3D-Coder Core Invariants",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "source_version": "hf-ccore-qwen3.5-4b-3d-coder",
+      "content_hash": "045af4f24e1a4d3efb9df9cdc42f7b3dcb7dce97b667e5ba057998a24b4f1393",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T19:37:04.783Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-3d-coder-learnings-research-knowledge-intelligence-hf-ccore-.md",
+      "title": "Research & Knowledge Intelligence: hf-ccore-qwen3.5-4b-3d-coder-learnings Core Invariants",
+      "repository": "hf-ccore-qwen3.5-4b-3d-coder-learnings",
+      "source_version": "HEAD",
+      "content_hash": "59a4b1e9d1f5743c9e46ab2f58d64a15c55ebaa8ca1b09352ec2c3174814b2df",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T19:37:07.728Z"
     }
   },
   "ai-builder-brain": {

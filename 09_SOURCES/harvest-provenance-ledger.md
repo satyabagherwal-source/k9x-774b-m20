@@ -10713,3 +10713,4 @@ Every entry in this ledger must capture:
 | `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `ea81bd89` | Multi-dimensional audit evidence | 2026-11-17T19:27:23.278Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `582fb8e9` | Multi-dimensional audit evidence | 2026-11-17T19:27:30.668Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `16af7297` | Multi-dimensional audit evidence | 2026-11-17T19:27:35.979Z |
+| `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-17T19:37:04.595Z |

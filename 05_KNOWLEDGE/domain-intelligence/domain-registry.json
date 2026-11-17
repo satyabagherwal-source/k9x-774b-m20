@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T19:27:40.816Z",
-  "total_records": 1665,
+  "last_updated": "2026-11-17T19:37:08.926Z",
+  "total_records": 1667,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 715,
+      "total": 717,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -764,7 +764,9 @@
         "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-fastvideo-fasth3-omni-comfy-learnings-core-in",
         "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-2-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-2-learnings-core-invarian"
+        "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-2-learnings-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-3d-coder-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva"
       ]
     },
     "E": {
@@ -14456,8 +14458,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "c6dadd303c6916eca2bf0df304329ddffeca75e17bb9326d140b72c1e4111939",
-      "created_at": "2026-11-17T14:22:57.824Z"
+      "content_hash": "dd5f3b4a67a9d689bf1bc9f01a887e8cef6ed891a6ae21b990c22e890d9841e2",
+      "created_at": "2026-11-17T19:37:08.926Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -22836,8 +22838,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "272d41457ea88da18e5d3ed31309e0d3450ec563d1b5b45c9057761bf03f3d98",
-      "created_at": "2026-11-17T19:19:55.118Z"
+      "content_hash": "123b108173f2e7eb2fb6f2d2038a2a3a94ff861f3dc86f9677facd4bb37b0a38",
+      "created_at": "2026-11-17T19:37:08.224Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -28245,6 +28247,24 @@
       "repository": "hf-baidu-unlimited-ocr-2-learnings",
       "content_hash": "daaa5f5f8ec2e8d84eaa2897d6eb65829ece4b943c9a404caa6088dec90a3cfc",
       "created_at": "2026-11-17T19:27:40.107Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-3d-coder-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-3d-coder-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ccore/Qwen3.5-4B-3D-Coder Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-3d-coder-research-knowledge-intelligence-ccore-qwen3-5-4b-3d.md",
+      "repository": "ccore/Qwen3.5-4B-3D-Coder",
+      "content_hash": "045af4f24e1a4d3efb9df9cdc42f7b3dcb7dce97b667e5ba057998a24b4f1393",
+      "created_at": "2026-11-17T19:37:04.783Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ccore-qwen3-5-4b-3d-coder-learnings-core-inva",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ccore-qwen3.5-4b-3d-coder-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-3d-coder-learnings-research-knowledge-intelligence-hf-ccore-.md",
+      "repository": "hf-ccore-qwen3.5-4b-3d-coder-learnings",
+      "content_hash": "59a4b1e9d1f5743c9e46ab2f58d64a15c55ebaa8ca1b09352ec2c3174814b2df",
+      "created_at": "2026-11-17T19:37:07.728Z"
     }
   }
 }
