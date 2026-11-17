@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T07:40:14.233Z",
-  "total_cycles_completed": 10058,
-  "total_learnings_persisted": 10058,
-  "total_rules_promoted": 9645,
+  "last_updated": "2026-11-17T07:59:55.563Z",
+  "total_cycles_completed": 10062,
+  "total_learnings_persisted": 10062,
+  "total_rules_promoted": 9649,
   "history": [
-    {
-      "timestamp": "2026-11-16T12:48:17.099Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T12:48:21.921Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T12:53:09.556Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T13:22:49.852Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T13:22:54.309Z",
       "repository": "scrapy/scrapy",
@@ -1403,6 +1375,34 @@
       "repository": "appwrite/appwrite",
       "learningId": "learn-github-appwrite-appwrite",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:55:43.737Z",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:55:47.319Z",
+      "repository": "laurent22/joplin",
+      "learningId": "learn-github-laurent22-joplin",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:55:59.359Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:59:55.563Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

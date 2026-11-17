@@ -10514,3 +10514,7 @@ Every entry in this ledger must capture:
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `afdb6e7a` | Multi-dimensional audit evidence | 2026-11-17T07:28:15.834Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `b32ff8a1` | Multi-dimensional audit evidence | 2026-11-17T07:28:20.961Z |
 | `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `8e1e6556` | Multi-dimensional audit evidence | 2026-11-17T07:40:14.229Z |
+| `learn-huggingface-qwen-qwen3-embedding-0-6b` | `https://huggingface.co/Qwen/Qwen3-Embedding-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-17T07:55:43.732Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `68b1f922` | Multi-dimensional audit evidence | 2026-11-17T07:55:47.304Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `e2fb0b74` | Multi-dimensional audit evidence | 2026-11-17T07:55:59.355Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `03edb03b` | Multi-dimensional audit evidence | 2026-11-17T07:59:55.558Z |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T07:40:20.736Z",
-  "total_verified_learnings": 8865,
+  "last_updated": "2026-11-17T08:00:00.676Z",
+  "total_verified_learnings": 8867,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19932,
+  "total_items": 19951,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114601,10 +114601,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-technical-construction-intelligence-laurent22-joplin-core-invar.md",
       "title": "Technical Construction Intelligence: laurent22/joplin Core Invariants",
       "repository": "laurent22/joplin",
-      "source_version": "7aeed5a4",
-      "content_hash": "ae9f2080c94994c26d09f545e55988e37b17c98e1ffe6ce4376876df17438273",
+      "source_version": "68b1f922",
+      "content_hash": "117f1fe782255841c8e843137d10101dc774367d9bf9a4b4168f30f5b0aa9e68",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:34:51.829Z"
+      "persisted_at": "2026-11-17T07:55:47.599Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin",
@@ -114613,10 +114613,10 @@
       "relative_path": "08_VERIFICATION/laurent22-joplin-verification-protocol-empirical-defect-shield-for-laurent22-jop.md",
       "title": "Verification Protocol: Empirical Defect Shield for laurent22/joplin",
       "repository": "laurent22/joplin",
-      "source_version": "7aeed5a4",
-      "content_hash": "1323967b3f30a7a45a01391633062a16a6d24fa2a44f28888723cddc31ba4e74",
+      "source_version": "68b1f922",
+      "content_hash": "e95777faf219c72d2322c9fa8c049eee7058bd9cbb736ccafbd1c72451273a2a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:34:51.947Z"
+      "persisted_at": "2026-11-17T07:55:47.703Z"
     },
     "candidate_directive-test-a-lost-virtualtime-wakeup-and-drive_on_threads-advancing-over-busy-worker": {
       "item_id": "candidate_directive-test-a-lost-virtualtime-wakeup-and-drive_on_threads-advancing-over-busy-worker",
@@ -114710,9 +114710,9 @@
       "title": "Technical Construction Intelligence: laurent22-joplin-learnings Core Invariants",
       "repository": "laurent22-joplin-learnings",
       "source_version": "HEAD",
-      "content_hash": "1038b0721ebbcd4e88e2ef02f3fa29906ece957c40fd764cabda879ae7eac4ff",
+      "content_hash": "c1e952c858cd98763b938d620949c2a298f874ecf809e52c54ee983a85860e4e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:35:48.664Z"
+      "persisted_at": "2026-11-17T08:00:00.564Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin-learnings",
@@ -114722,9 +114722,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for laurent22-joplin-learnings",
       "repository": "laurent22-joplin-learnings",
       "source_version": "HEAD",
-      "content_hash": "c6919ed0728ed0c1d8f3bc1e1d4348999f65a6a2819b3777d788657605b995a3",
+      "content_hash": "d8df4bf5cae751ca443cfe12785a3328623705f3465bbba4d1e0c2c2e0ac7b63",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:35:48.804Z"
+      "persisted_at": "2026-11-17T08:00:00.676Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian": {
       "item_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian",
@@ -212970,8 +212970,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "552c0412",
-      "content_hash": "39bf0f408236c78e4cfc371b25a77c7e1857cbbe2b2ce48bbc5413169344920b",
+      "source_version": "03edb03b",
+      "content_hash": "f24812578b0e6aeb56ad93dd2a19e563394a903ede54fcf628655e2cacdb062a",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -212984,6 +212984,21 @@
           "number": 8545,
           "title": "Empirical Invariant Guard in CHANGELOG.md",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 8907,
+          "title": "Zero-Length Hardware Transfer Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8908,
+          "title": "Physical Memory Access & DMA Safe Boundary Assertion",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8909,
+          "title": "Bitfield Register Truncation & Transfer Splitting Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212991,7 +213006,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T17:52:40.514Z",
+      "verified_at": "2026-11-17T07:59:55.347Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213045,10 +213060,10 @@
       "relative_path": "08_VERIFICATION/embassy-rs-embassy-verification-protocol-empirical-defect-shield-for-embassy-rs-.md",
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs/embassy",
       "repository": "embassy-rs/embassy",
-      "source_version": "552c0412",
-      "content_hash": "daa8ab8967caf1deb2734c4150dc3f63e6a72f2b3e93b7b51812de5e7b47c397",
+      "source_version": "03edb03b",
+      "content_hash": "6914f182624c8b071b57b6c0190cb7fb55b56474b8c9de7c3c37ebbe4842987b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:52:40.962Z"
+      "persisted_at": "2026-11-17T07:59:56.307Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
@@ -213454,9 +213469,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs-embassy-learnings",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "540a70fdecd5dadec35fd0d3c349a6b8a4c7dc61db26482784ad11511cc7d6e6",
+      "content_hash": "52947010fd7c86cd2f7507599aef05e75e3352a3e1b121fe6d1934f73eb94e49",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:52:50.484Z"
+      "persisted_at": "2026-11-17T07:59:59.796Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l",
@@ -249134,14 +249149,19 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "78342a49",
-      "content_hash": "43dce82425fd62e91df28eceb72776f20308a56807b1e6a6e152bb8eeca4531b",
+      "source_version": "e2fb0b74",
+      "content_hash": "e7042acc1a7711d949272b0ccbde2d98eb7df0a30b180947113ed07a9d98b164",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
         {
           "number": 8672,
           "title": "Refine Codex Javadoc rules",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8906,
+          "title": "StackOverflowError when parsing long PostgreSQL and openGauss IN lists",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -249150,7 +249170,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T00:17:43.746Z",
+      "verified_at": "2026-11-17T07:55:59.183Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249204,10 +249224,10 @@
       "relative_path": "08_VERIFICATION/apache-shardingsphere-verification-protocol-empirical-defect-shield-for-apache-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/shardingsphere",
       "repository": "apache/shardingsphere",
-      "source_version": "78342a49",
-      "content_hash": "f4b4659ea70a18305f57d68c008173b8cedfafc520e62359ee55408d482925c3",
+      "source_version": "e2fb0b74",
+      "content_hash": "298a49c8b76e435e6f7b7069058d97fe8d8ac5a27bcc71a56cf60629861a0ec9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:17:44.226Z"
+      "persisted_at": "2026-11-17T07:55:59.763Z"
     },
     "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection": {
       "item_id": "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection",
@@ -266502,6 +266522,272 @@
       "content_hash": "8035e84778d8e58e298758fb7ee81d52ad7089297934453742f28408314ded74",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T07:40:19.496Z"
+    },
+    "learn-huggingface-qwen-qwen3-embedding-0-6b": {
+      "learning_id": "learn-huggingface-qwen-qwen3-embedding-0-6b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Qwen/Qwen3-Embedding-0.6B",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "slug": "hf-qwen-qwen3-embedding-0.6b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
+      "source_version": "hf-qwen-qwen3-embedding-0.6b",
+      "content_hash": "7a13aacdd3b7d03446dcb66b88728e210f2414530d8db92ca566a8bdcacccbad",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T07:55:43.569Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-embedding-0-6b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-embedding-0-6b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-embedding-0-6b-research-knowledge-intelligence-qwen-qwen3-embeddin.md",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3-Embedding-0.6B Core Invariants",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "source_version": "hf-qwen-qwen3-embedding-0.6b",
+      "content_hash": "c43186d01d451fa960c98bc3e0e9556f1424b7d6a5f1cbc2caf645b4085b818d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T07:55:43.895Z"
+    },
+    "learn-github-laurent22-joplin": {
+      "learning_id": "learn-github-laurent22-joplin",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "laurent22/joplin",
+      "repository": "laurent22/joplin",
+      "slug": "laurent22-joplin",
+      "platform": "github",
+      "source_url": "https://github.com/laurent22/joplin",
+      "source_version": "68b1f922",
+      "content_hash": "40dd56d96f8998769f331935cff58def95ff427aa2596ad66221922c5ed73360",
+      "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T07:55:47.150Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-update-security-threat-model": {
+      "item_id": "candidate_directive-update-security-threat-model",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E8Q1-update-security-threat-model.md",
+      "title": "Update security threat model",
+      "repository": "laurent22/joplin",
+      "source_version": "68b1f922",
+      "content_hash": "1db6b92301370277ff58d2e6cbe73e2ea99c6c73454c099a0aff7228e4a409c8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:55:47.498Z"
+    },
+    "rule-8906": {
+      "learning_id": "rule-8906",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8906,
+      "title": "StackOverflowError when parsing long PostgreSQL and openGauss IN lists",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "e2fb0b74",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T07:55:59.183Z"
+    },
+    "candidate_directive-stackoverflowerror-when-parsing-long-postgresql-and-opengauss-in-lists": {
+      "item_id": "candidate_directive-stackoverflowerror-when-parsing-long-postgresql-and-opengauss-in-lists",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EHZX-stackoverflowerror-when-parsing-long-postgresql-and-opengauss-in-lists.md",
+      "title": "StackOverflowError when parsing long PostgreSQL and openGauss IN lists",
+      "repository": "apache/shardingsphere",
+      "source_version": "e2fb0b74",
+      "content_hash": "78dc889373f8916ce8f18b10c5826669ce4edc97cb4b96f3f735c9a8aabdc5c3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:55:59.523Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-shardingsphere-technical-construction-intelligence-apache-shardingsphere-.md",
+      "title": "Technical Construction Intelligence: apache/shardingsphere Core Invariants",
+      "repository": "apache/shardingsphere",
+      "source_version": "e2fb0b74",
+      "content_hash": "51795728f3e7082b80df58e433127577d7a43100dbcdb6436af16c5a84b4ec64",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:55:59.621Z"
+    },
+    "rule-8907": {
+      "learning_id": "rule-8907",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8907,
+      "title": "Zero-Length Hardware Transfer Invariant",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "03edb03b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T07:59:55.347Z"
+    },
+    "rule-8908": {
+      "learning_id": "rule-8908",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8908,
+      "title": "Physical Memory Access & DMA Safe Boundary Assertion",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "03edb03b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T07:59:55.347Z"
+    },
+    "rule-8909": {
+      "learning_id": "rule-8909",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8909,
+      "title": "Bitfield Register Truncation & Transfer Splitting Invariant",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "03edb03b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T07:59:55.347Z"
+    },
+    "candidate_directive-zero-length-hardware-transfer-invariant": {
+      "item_id": "candidate_directive-zero-length-hardware-transfer-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JMZH-zero-length-hardware-transfer-invariant.md",
+      "title": "Zero-Length Hardware Transfer Invariant",
+      "repository": "embassy-rs-embassy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d0a314bc6be03fe59bb480878deda5869ef54c8a646f1e9fcd0058a16cbcebf4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:59:59.263Z"
+    },
+    "candidate_directive-physical-memory-access-dma-safe-boundary-assertion": {
+      "item_id": "candidate_directive-physical-memory-access-dma-safe-boundary-assertion",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JMZH-physical-memory-access-dma-safe-boundary-assertion.md",
+      "title": "Physical Memory Access & DMA Safe Boundary Assertion",
+      "repository": "embassy-rs-embassy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cba241d3d464aab16e6bb55fdb3e7a2b9eeaadce4e25adb23c029f55cd5d89cc",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T07:59:59.368Z"
+    },
+    "candidate_directive-bitfield-register-truncation-transfer-splitting-invariant": {
+      "item_id": "candidate_directive-bitfield-register-truncation-transfer-splitting-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JMZI-bitfield-register-truncation-transfer-splitting-invariant.md",
+      "title": "Bitfield Register Truncation & Transfer Splitting Invariant",
+      "repository": "embassy-rs-embassy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aef7b53ff9f6411d4ad0c323a45d05f58fab5e6fa6aa987b312a17dde8ca2482",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:59:59.473Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-embassy-rs-embassy-technical-construction-intelligence-embassy-rs-embassy-core-i.md",
+      "title": "Technical Construction Intelligence: embassy-rs/embassy Core Invariants",
+      "repository": "embassy-rs/embassy",
+      "source_version": "03edb03b",
+      "content_hash": "c90ff4674b00f74d2a15ffb7b24ff9693da07efa7af9c9bccdc86784cc8ff5ff",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:59:56.099Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-embassy-rs-embassy": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-embassy-rs-embassy",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-embassy-rs-embassy-adr-subsystem-boundary-modular-decoupling-in-embassy-rs-embas.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in embassy-rs/embassy",
+      "repository": "embassy-rs/embassy",
+      "source_version": "03edb03b",
+      "content_hash": "e346ab6c2185a496960e13723b20bc7e91e2aa352981960b32a18ba884d0a80f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:59:56.208Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-embassy-rs-embassy-learnings-technical-construction-intelligence-embassy-rs-emba.md",
+      "title": "Technical Construction Intelligence: embassy-rs-embassy-learnings Core Invariants",
+      "repository": "embassy-rs-embassy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "16a61e548781f969116395a83d55fcc56ffc597b1ca52cf0db22ec08c7e7d1de",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:59:59.580Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-embassy-rs-embassy-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-embassy-rs-embassy-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-embassy-rs-embassy-learnings-adr-subsystem-boundary-modular-decoupling-in-embass.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in embassy-rs-embassy-learnings",
+      "repository": "embassy-rs-embassy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e55e3de541d7fdf737dab6379be24c2050a1c666f8f71b5a8c58a1ff8b46538a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:59:59.692Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-embedding-0-6b-learnings-core-inva": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-embedding-0-6b-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-embedding-0-6b-learnings-research-knowledge-intelligence-hf-qwen-q.md",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-embedding-0.6b-learnings Core Invariants",
+      "repository": "hf-qwen-qwen3-embedding-0.6b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6e5b6294aa1a53f4e78934c7c8f30ddbbba2ff96f75186cdf049209df1fe41eb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T08:00:00.078Z"
+    },
+    "candidate_directive-doc-update-security-threat-model": {
+      "item_id": "candidate_directive-doc-update-security-threat-model",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JNWO-doc-update-security-threat-model.md",
+      "title": "Doc: Update security threat model",
+      "repository": "laurent22-joplin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4915730603f6b3c5393a0e8513f25ee4b8d3e9f1ea74d2f9fd316e9fd2398ac6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:00:00.456Z"
     }
   },
   "ai-builder-brain": {

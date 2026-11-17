@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-EINA",
-    "timestamp": "2026-11-14T17:24:51.814Z",
-    "repository": "callstack/agent-device",
-    "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "6c83fe52f31a89d5da10e3027928a771904ccf987413e3da1450d2a04f6bc4b1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-EOKU",
-    "timestamp": "2026-11-14T17:24:59.502Z",
-    "repository": "apache/pinot",
-    "learningId": "learn-github-apache-pinot",
-    "contentHash": "c0e309c3bad79191411b62dc1985922f4a8bdd90e44bc2d9312d082c45d05dac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-XTE9",
-    "timestamp": "2026-11-14T17:39:52.209Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-    "contentHash": "4110c666b5c220b4bc9f6c02f26475bf71ed0ca04bbbaed355d283da9c87b070",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-XVUG",
-    "timestamp": "2026-11-14T17:39:55.384Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "84151206900a16dd4e1aa02b2a5cf3bb1230660df89499a00f993dbcd9db405b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-Y6VJ",
     "timestamp": "2026-11-14T17:40:09.679Z",
     "repository": "yugabyte/yugabyte-db",
@@ -7492,6 +7432,66 @@
     "contentHash": "3c10f5fcf7d8a649cc2ad8e4de9fb007f305f0513484135004ab4a8670ef3be2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-E5TC",
+    "timestamp": "2026-11-17T07:55:43.728Z",
+    "repository": "Qwen/Qwen3-Embedding-0.6B",
+    "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
+    "contentHash": "7a13aacdd3b7d03446dcb66b88728e210f2414530d8db92ca566a8bdcacccbad",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-E8KK",
+    "timestamp": "2026-11-17T07:55:47.300Z",
+    "repository": "laurent22/joplin",
+    "learningId": "learn-github-laurent22-joplin",
+    "contentHash": "40dd56d96f8998769f331935cff58def95ff427aa2596ad66221922c5ed73360",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-EHVC",
+    "timestamp": "2026-11-17T07:55:59.352Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "e7042acc1a7711d949272b0ccbde2d98eb7df0a30b180947113ed07a9d98b164",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-JK4J",
+    "timestamp": "2026-11-17T07:59:55.555Z",
+    "repository": "embassy-rs/embassy",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "f24812578b0e6aeb56ad93dd2a19e563394a903ede54fcf628655e2cacdb062a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

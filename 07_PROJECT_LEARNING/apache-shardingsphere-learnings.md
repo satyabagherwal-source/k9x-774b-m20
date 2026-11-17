@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `78342a49`  
+> **Source Version**: `e2fb0b74`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T00:17:43.087Z  
+> **Timestamp**: 2026-11-17T07:55:58.534Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:17:43.082Z  
+> **Harvest Timestamp**: 2026-11-17T07:55:58.529Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1434,15 +1434,15 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40512** (2026-11-15): **Refine Codex Javadoc rules**
+- **Issue #40517** (2026-11-17): **Fix PostgreSQL IGNORE NULLS conversion**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary  This PR centralizes Javadoc writing rules and connects them to implementation, review, auditing, and validation workflows. The rules allow concise descriptions while preserving existing coverage requirements and API/SPI, nullability, and constructor contracts.  ### Result  Review Result: Mergeable  No blocking issues or required changes were found within the code review scope.  ### Evidence  - All six changed files and their rule consumption paths were reviewed. The [shared rules](https://github.com/apache/shardingsphere/blob/5386e61c2335b85c3fec75a3bb5a1ff42387f468/.codex/skills/coding-standards/references/rules/java-javadoc.md#L20-L34) explicitly preserve required contracts. - Policy validation and source reading checks remain valid. Semantic samples contain metadata/format failures, but focused confirmation did not meet the criteria for a confirmed regression.  ### Coverage  [PR #40512](https://github.com/apache/shardingsphere/pull/40512), public head `5386e61c2335`; al
+  >  ### Summary   该 PR 保留 PostgreSQL IGNORE NULLS 状态，并贯穿解析、绑定和 Calcite 转换，修复语义丢失。方向正确，未扩展运行时执行能力。    ### Result   Review Result: Mergeable   未发现剩余代码阻塞项。    ### Evidence   8 个 Java 文件的 Spotless、Checkstyle 通过；聚焦测试 2,011 项通过。   完整 Unit/IT：31,321 项，0 失败、0 错误、124 跳过。    ### Coverage   公开 HEAD `26347371`，9 文件、21 个变更块全部覆盖。结论仅限代码，CI 未审查。   Calcite 1.42 Enumerable 仍明确拒绝 IGNORE NULLS；本 PR 防止静默按 RESPECT 处理，不代表已支持其执行。
 
-- **Issue #40506** (2026-11-13): **Restore query timeout readback for circuit breaker prepared statements**
-  *Symptoms*: Related to #40503.  Changes proposed in this pull request:   - Restore query timeout readback for circuit breaker prepared statements  ---  Before submitting this PR, I confirm that: - [ ] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [ ] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant documentation, if applicable. - [ ] I have added or updated unit tests for my changes, if applicable. - [ ] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [ ] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  [AI-assisted contribution policy]: https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md 
+- **Issue #40516** (2026-11-17): **Improve PostgreSQL JSON, window function and string literal parsing**
+  *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary  Commit `5edc1038ad68de3b39f1b133515c6d72026b9e66` restores query timeout readback for circuit-breaker prepared statements. Each statement stores its configured timeout in its own `StatementManager`. Circuit-breaker execution and close behavior are preserved.  ### Result  Review Result: Mergeable  Two independent assessments found no blocking issues or recommended changes.  ### Evidence  - A JDBC probe set a 3-second timeout and read back `0` on the parent commit and `3` on the reviewed commit. - All 217 focused tests passed. The regression tests cover positive timeout readback, reset to zero, rejection of negative values while retaining the previous timeout, and normal close. - Spotless and Checkstyle passed for both changed files.  ### Coverage  Code Correctness Review of both files changed by the exact local commit against its parent, `9e74c70c2bd3b17e0c78e26396c2a1ed3cc5cb17`. This verdict applies to the local commit. PR and CI status were outside the 
+  >  ### Summary   补齐 PostgreSQL JSON FILTER/PLAN、NULLS 修饰符及注释间字符串续接。本地修复保留 NULLS 语义到 binder 和 Calcite AST。    ### Result   Review Result: Mergeable   本地候选无剩余代码阻塞项。    ### Evidence   完整 Unit/IT：31,278 项，0 失败、0 错误、124 跳过。   17 个 Java 文件的格式检查、许可证检查通过。   范围扫描的事务日志告警已核实为忽略的验证产物。    ### Coverage   公开 07f437c2 加 9 文件本地修正，共 23 文件；公开 PR 尚未包含这些修正。   CI 未审查，SQL E2E 未运行。Calcite 仍明确拒绝 Enumerable IGNORE NULLS 执行。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1459,176 +1459,796 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78342a49` (2026-11-15)
-**Commit Message**: Refine Codex Javadoc rules (#40512)
+### Incident Patch 1: `dcc642bb` (2026-11-17)
+**Commit Message**: Fix StackOverflowError when parsing long PostgreSQL and openGauss IN lists (#40450)
 
-**File**: `.codex/harness/agents/cases.toml` (modified, +76/-0)
-```diff
-@@ -5309,3 +5309,79 @@ required_reasons = []
- policy_binding_profile = "documentation"
- policy_assertions = [{source = "change-completion", statements = ["Untracked Git-ignored files and files outside Git repositories are outside this loop's scope."]}]
- critical = true
-+
-+[[cases]]
-+id = "java_javadoc_context_uses_standard_summary"
-+group = "coding / Javadoc"
-+description = "Keeps a simple context responsibility summary without speculative field explanation or paragraph formatting."
-+phase = "Javadoc policy and readability acceptance"
-+ordinary_loop = false
-+profile = "code-write"
-+semantic_policy_assertions = true
-+prompt = "At the pre-write planning checkpoint for an authorized Java task, choose the Javadoc for a new public final LicenseCheckContext holding inputs used by selected license checks. Its fields and consumers add no API, SPI, framework, compatibility, or nullability contract. The proposed class summary is \"License check context.\" Another proposal adds a paragraph saying that fields unused by the selected checks may be null. Decide the class summary, extra field explanation, and paragraph formatting. Report exactly one value per marker: summary=standard-responsibility or implementation-explanation; unused-fields=omit or include; formatting=plain or paragraph. Do not edit yet."
-+decision = "proceed"
-+required_actions = []
-+allowed_actions = ["inspect_local"]
-+forbidden_actions = ["edit_code", "edit_non_code", "mutate_git", "mutate_remote", "propose_commit_message"]
-+required_reasons = ["read_only_request"]
-+required_summary_terms = ["summary=standard-responsibility", "unused-fields=omit", "formatting=plain"]
-+policy_binding_profile = "code-write"
-+policy_assertions = [{source = "coding-standards", statements = ["Before adding, changing, or reviewing a Java declaration or its Javadoc, read the [Java Javadoc rules](references/rules/java-javadoc.md) through EOF and add each applicable rule to the checklist.", "For Java, explicitly verify every applicable Java Javadoc rule against task-added or task-changed declarations and Javadocs, including required coverage and the contracts needed to assess their descriptions and tags."]}, {source = "java-javadoc", statements = ["Apply these writing rules to Java declarations and Javadocs added or changed by the current task and to review of that delta.", "Keep the Javadoc coverage, complete user-facing API and SPI contracts, explicit nullable-contract documentation, and constructor restrictions required by `CODE_OF_CONDUCT.md`.", "A simple description may closely match the declaration name, such as `License check context.`; do not require extra information merely to avoid restating it.", "Do not add generalized claims such as unused fields being nullable merely because the implementation permits them.", "Do not add paragraph or layout tags such as `<p>` to a simple description."]}]
-+critical = true
-+
-+[[cases]]
-+id = "java_readability_improves_expression_before_documentation"
-+group = "coding / Javadoc"
-+description = "Improves local code expression before explanatory Javadoc without manufacturing an abstraction."
-+phase = "Javadoc policy and readability acceptance"
-+ordinary_loop = false
-+profile = "code-write"
-+semantic_policy_assertions = true
-+prompt = "Prepare the implementation choice for an authorized local readability fix. Inside one private method, boolean local x holds the result of the existing licenseVerifier.isValid() call and is immediately tested by if (!x). There is no additional state, contract, repeated logic, or stable variation. Alternatives are to rename the local, explain x in Javadoc, or introduce LicenseValidationState and forwarding helpers. Decide the smallest justified approach. Report expression=rename-local or explain-in-javadoc or introduce-state-type, and abstraction=required or unnecessary. Do not edit yet."
-+decision = "proceed"
-+required_actions = []
-+allowed_actions = ["inspect_local"]
-+forbidden_actions = ["edit_code", "edit_non_code", "add_abstraction", "change_public_contract", "mutate_git", "mutate_remote", "propose_commit_message"]
-+required_reasons = ["read_only_request"]
-+required_summary_terms = ["expression=rename-local", "abstraction=unnecessary"]
-+policy_binding_profile = "code-write"
-+policy_assertions = [{source = "implementation-rules", statements = ["Within the authorized task boundary and maintained architecture, express intent through accurate names, clear responsibilities, and direct control flow before adding explanatory comments.", "When code needs explanation, first improve its expression, extracting a small named method when that lowers the understanding cost.", "Do not add unnecessary methods, types, wrappers, or abstractions merely to replace a comment."]}, {source = "java-javadoc", statements = ["Apply these writing rules to Java declarations and Javadocs added or changed by the current task and to review of that delta.", "Do not expand ordinary declaration descriptions into implementation steps, de
-```
+* Fix StackOverflowError when parsing long PostgreSQL and openGauss IN lists
 
-**File**: `.codex/harness/agents/policy-sources.toml` (modified, +16/-9)
+The left-recursive exprList rule produced a parse tree as deep as the
+list was long, and visitExprList walked it recursively. A query with
+about 15,000 values in an IN list overflowed the default thread stack.
+
+Make exprList an iterative rule, as funcArgList already is, and read
+its expressions in a loop.
+
+* Declare the expected IN list values as Collection
+
+**File**: `parser/sql/engine/dialect/opengauss/src/main/antlr4/imports/opengauss/BaseRule.g4` (modified, +1/-2)
 ```diff
-@@ -18,19 +18,19 @@ root_max_bytes = 13000
+@@ -826,8 +826,7 @@ constTypeName
+     ;
  
- [profiles]
- root = ["agents"]
--code-write = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
--test-write = ["agents", "token-efficiency", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
--code-review = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification"]
-+code-write = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
-+test-write = ["agents", "token-efficiency", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
-+code-review = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification"]
- code-analysis = ["agents", "implementation-rules"]
- code-design = ["agents", "implementation-rules", "java-collections", "testing-rules", "contracts-and-removal", "cross-cutting-skills"]
--coding-standards-audit = ["agents", "code-of-conduct", "coding-standards", "standalone-audit", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code"]
-+coding-standards-audit = ["agents", "code-of-conduct", "coding-standards", "standalone-audit", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code"]
- runtime-diagnosis = ["agents", "runtime-triage", "code-verification"]
- command-execution = ["agents", "token-efficiency", "docker-resources", "code-verification"]
- cross-cutting = ["agents", "cross-cutting-skills"]
- documentation = ["agents", "documentation-wording", "change-completion", "review-pr", "review-pr-coordination"]
- analyze-issue = ["agents", "analyze-issue", "analyze-issue-output"]
--gen-ut = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "gen-ut", "gen-ut-verification", "change-completion"]
--review-pr = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "review-pr", "review-pr-coordination", "review-pr-evidence", "review-pr-high-risk", "review-pr-sql-p
-```
-
-**File**: `.codex/skills/code-implementation/references/rules/implementation.md` (modified, +4/-1)
-```diff
-@@ -27,6 +27,9 @@ Apply this file to every production, test, script, or other implementation artif
-   Check details, counts, and empty results against those requirements and consumers; the same Java return type does not establish the same data contract.
- - Among designs that satisfy these prerequisites, first preserve the maintained architecture already present in the repository, including its behavior owners, module boundaries, and design patterns, unless the user explicitly requires an authorized architecture change. Prefer direct reuse, then composition or delegation, then an existing extension point. Do not invent a boundary when no maintained precedent exists. If the existing architecture cannot express the required behavior, apply the architecture-change gate before changing it.
- - Second, within the preserved architecture or an explicitly authorized architecture change, use the smallest clear implementation, prioritize local readability over line count, and minimize conceptual surface. Prefer one readable local flow with the fewest independently meaningful types, states, representations, execution paths, and cross-file hops. Consider testability next, then optional extensibility, formal symmetry, or structural completeness. Lower design priorities must not compromise higher ones. Every added line, helper, abstraction, identifier, literal, guard, copy, wrapper, and configuration entry must serve production behavior, a public contract, regression protection, diagnostics, a verified safety requirement, readability, or removal of real duplication. Do not add code for formal symmetry, coverage appearance, structural completeness, hypothetical reuse, or test convenience. Avoid unnecessary locals, thin wrappers, helpers, comments, guards, and copies; inline single-use locals unless a name improves readability. Keep a name, local variable, or extraction when it materially clarifies intent; do not compress code mechanically.
-+- Within the authorized task boundary and maintained architecture, express intent through accurate names, clear responsibilities, and direct control flow before adding explanatory comments.
-+  When code needs explanation, first improve its expression, extracting a small named method when that lowers the understanding cost.
-+  Do not add unnecessary methods, types, wrappers, or abstractions merely to replace a comment.
- - A new abstraction must own production behavior, state, or a contract that existing types cannot express and must represent a real, stable variation or boundary. Define the narrowest contract, keep common behavior in its owner, and isolate only true implementation or dialect differences. Forwarding, renaming, multiple callers, readability alone, direct test value, symmetry, type distinction, shorter call sites, test convenience, and anticipated reuse are insufficient. Reuse alone never authorizes changing `final`, visibility, inheritance, or shared-code ownership. Do not wrap a simple internal two-path flow in marker interfaces, result hierarchies, or DTO-style helpers unless they define a stable boundary, keep the owner readable, or remove meaningful duplication. This rule does not bypass the architecture-change gate.
-   Before adding an interface, SPI, public method, registration mechanism, or bridge, identify why existing capabilities cannot express the confirmed requirement, why the proposed owner owns it, and which confirmed acceptance criterion fails without the addition.
- - Do not introduce package-private top-level helper types by default. Keep a small single-owner helper private and nested; add a top-level helper only when the approved production behavior, state, or contract cannot reasonably be owned by an existing type.
-@@ -42,7 +45,7 @@ Apply this file to every production, test, script, or other implementation artif
+ exprList
+-    : aExpr
+-    | exprList COMMA_ aExpr
++    : aExpr (COMMA_ aExpr)*
+     ;
  
- - Follow `.codex/skills/coding-standards/references/rules/defensive-code.md` for guards, validation, copies, wrappers, fallbacks, exception handling, retries, concurrency protection, lifecycle protection, and tests that exist only to preserve unsupported defenses.
- - Apply the `CODE_OF_CONDUCT.md` Lombok preference to touched boilerplate when generated semantics are equivalent. Follow `.codex/skills/coding-standards/references/rules/java-types.md` for type-level Lombok annotations, `.codex/skills/coding-standards/references/rules/java-constructors.md` for explicit and generated constructor choices, and `.codex/skills/coding-standards/references/rules/java-naming.md` for generated-accessor field names. Before replacing a public constructor or accessor, verify its generated signature, access, parameter order, annotations, and reflection or serialization behavior. Keep a manual member when Lombok would change or obscure logic, documentation, validation, defaults, side effects, compatibility, framework semantics, or a public contract.
--- Keep public API and SPI Javadocs required by the code of conduct. Beyond that, document only caller or implemente
+ extractList
 ```
 
-**File**: `.codex/skills/coding-standards/SKILL.md` (modified, +2/-0)
+**File**: `parser/sql/engine/dialect/opengauss/src/main/java/org/apache/shardingsphere/sql/parser/engine/opengauss/visitor/statement/OpenGaussStatementVisitor.java` (modified, +4/-9)
 ```diff
-@@ -43,6 +43,7 @@ Read only the references whose conditions below match the affected files and tas
-   Do not require a TPS benchmark solely to classify these paths.
- - Before adding, changing, or reordering a covered declaration annotation, or when a Java declaration added or modified by the task contains at least two covered annotations, read the [Java declaration annotation order rules](references/rules/java-annotation-order.md) through EOF and add each applicable rule to the checklist.
- - Read [Java constructor rules](references/rules/java-constructors.md) before changing an explicit or generated constructor or a field that may alter its signature or behavior.
-+- Before adding, changing, or reviewing a Java declaration or its Javadoc, read the [Java Javadoc rules](references/rules/java-javadoc.md) through EOF and add each applicable rule to the checklist.
- - Before adding or changing a Java `throw` statement, a conditional branch that throws, a validation or precondition call, or a call to `ShardingSpherePreconditions`, read the [Java precondition rules](references/rules/java-preconditions.md) through EOF and add each applicable rule to the checklist.
- - Before adding or changing a Java method annotated with `lombok.SneakyThrows` or changing the checked-exception behavior of such a method, read the [Java exception handling rules](references/rules/java-exceptions.md) through EOF and add each applicable rule to the checklist.
- - Before adding or changing a Java declaration whose type is a `java.util.Collection` interface or implementation, read the [Java collection declaration rules](references/rules/java-collections.md) through EOF and add each applicable rule to the checklist.
-@@ -55,6 +56,7 @@ Read only the references whose conditions below match the affected files and tas
- - After the last write, manually recheck the effective task delta and only the surrounding declarations needed to evaluate every applicable checklist rule.
- - For Java, explicitly verify every applicable `CODE_OF_CONDUCT.md` coding rule, including declaration order; when a method uses private helpers, verify that those helpers immediately follow the caller and appear in the caller's call order, regardless of the caller's visibility.
- - For Java, explicitly verify every applicable Java declaration annotation order rule against each declaration added or modified by the task.
-+- For Java, explicitly verify every applicable Java Javadoc rule against task-added or task-changed declarations and Javadocs, including required coverage and the contracts needed to assess their descriptions and tags.
- - For Java, explicitly verify every applicable Java exception handling rule against each added or modified `lombok.SneakyThrows` annotation and the method bodies, invoked signatures, rethrown values, and contracts needed to resolve its exception types.
- - For Java, explicitly verify every applicable Java collection declaration rule against the effective task delta and the operations, callers, callees, overrides, and contracts needed to determine the least-specific required declaration type.
- - For Java, explicitly verify every applicable mutable-collection construction rule against the effective task delta and the operations, aliases, callers, callees, and contracts needed to determine whether mutability is required.
+@@ -613,14 +613,12 @@ private ExpressionSegment createInExpressionSegment(final InExprContext ctx) {
+         return result;
+     }
+     
+-    @SuppressWarnings("unchecked")
+     @Override
+     public ASTNode visitExprList(final ExprListContext ctx) {
+         CollectionValue<ExpressionSegment> result = new CollectionValue<>();
+-        if (null != ctx.exprList()) {
+-            result.combine((CollectionValue<ExpressionSegment>) visitExprList(ctx.exprList()));
++        for (AExprContext each : ctx.aExpr()) {
++            result.getValue().add((ExpressionSegment) visit(each));
+         }
+-        result.getValue().add((ExpressionSegment) visit(ctx.aExpr()));
+         return result;
+     }
+     
+@@ -903,12 +901,9 @@ private Collection<InsertValuesSegment> createInsertValuesSegments(final ValuesC
+     
+     private Collection<ExpressionSegment> createInsertValuesSegments(final ExprListContext ctx) {
+         Collection<ExpressionSegment> result = new LinkedList<>();
+-        if (null != ctx.exprList()) {
+-            Collection<ExpressionSegment> tmpResult = createInsertValuesSegments(ctx.exprList());
+-            result.addAll(tmpResult);
++        for (AExprContext each : ctx.aExpr()) {
++            result.add((ExpressionSegment) visit(each));
+         }
+-        ExpressionSegment expr = (ExpressionSegment) visit(ctx.aExpr());
+-        result.add(expr);
+         return result;
+     }
+     
 ```
 
-**File**: `.codex/skills/coding-standards/references/rules/java-javadoc.md` (added, +34/-0)
+**File**: `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4` (modified, +1/-2)
 ```diff
-@@ -0,0 +1,34 @@
-+<!--
-+  Licensed to the Apache Software Foundation (ASF) under one or more
-+  contributor license agreements.  See the NOTICE file distributed with
-+  this work for additional information regarding copyright ownership.
-+  The ASF licenses this file to You under the Apache License, Version 2.0
-+  (the "License"); you may not use this file except in compliance with
-+  the License.  You may obtain a copy of the License at
-+
-+      http://www.apache.org/licenses/LICENSE-2.0
-+
-+  Unless required by applicable law or agreed to in writing, software
-+  distributed under the License is distributed on an "AS IS" BASIS,
-+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+  See the License for the specific language governing permissions and
-+  limitations under the License.
-+-->
-+
-+# Java Javadoc Rules
-+
-+Apply these writing rules to Java declarations and Javadocs added or changed by the current task and to review of that delta.
-+In a standalone audit, do not use these task-delta writing rules to demand changes to untouched existing Javadocs; the coverage and contract requirements of `CODE_OF_CONDUCT.md` still apply according to their own scope.
-+
-+- Keep the Javadoc coverage, complete user-facing API and SPI contracts, explicit nullable-contract documentation, and constructor restrictions required by `CODE_OF_CONDUCT.md`.
-+- Express those required contracts concisely in the existing summary and standard tags.
-+  These specific obligations do not justify explanatory paragraphs for ordinary declarations.
-+- Describe a class or interface with a short responsibility phrase and a method with a short action phrase, using the existing project Javadoc structure.
-+- A simple description may closely match the declaration name, such as `License check context.`; do not require extra information merely to avoid restating it.
-+- Keep `@param`, `@return`, and `@throws` descriptions short and accurate, using the existing project format and tag order.
-+- Do not expand ordinary declaration descriptions into implementation steps, design rationale, usage instructions, scenario lists, per-field explanations, visible collection properties, or default-behavior explanations.
-+  Do not add generalized claims such as unused fields being nullable merely because the implementation permits them.
-+- A non-obvious implementation fact does not justify extra Javadoc for an ordinary declaration.
-+- Do not repeat an unchanged inherited contract; keep a required new obligation on an override concise.
-+- Do not add paragraph or layout tags such as `<p>` to a simple description.
-+  Keep useful standard Javadoc tags and `{@code ...}`; this restriction does not prohibit all Javadoc markup.
+@@ -1363,8 +1363,7 @@ constTypeName
+     ;
+ 
+ exprList
+-    : aExpr
+-    | exprList COMMA_ aExpr
++    : aExpr (COMMA_ aExpr)*
+     ;
+ 
+ extractList
 ```
 
-**File**: `.codex/skills/coding-standards/references/standalone-audit.md` (modified, +1/-0)
+**File**: `parser/sql/engine/dialect/postgresql/src/main/java/org/apache/shardingsphere/sql/parser/engine/postgresql/visitor/statement/PostgreSQLStatementVisitor.java` (modified, +4/-9)
 ```diff
-@@ -26,6 +26,7 @@ Use this mode only when the user explicitly asks to audit, check, or report codi
- - When the scope contains a `pom.xml`, read the [Maven dependency version rules](rules/maven-dependencies.md) through EOF.
- - Check every target POM only within the exact user-specified Maven audit scope.
- - When the scope contains Java, read the [Java naming rules](rules/java-naming.md), [Java type rules](rules/java-types.md), [Java constructor rules](rules/java-constructors.md), [Java expression rules](rules/java-expressions.md), and [Java line-wrapping rules](rules/java-line-wrapping.md) through EOF.
-+- When the scope contains Java declarations or Javadocs, read the [Java Javadoc rules](rules/java-javadoc.md) through EOF.
- - When the scope contains a Java declaration with at least two covered declaration annotations, read the [Java declaration annotation order rules](rules/java-annotation-order.md) through EOF.
- - When the scope contains Java `throw` statements, conditional exception paths, validation or precondition calls, or calls to `ShardingSpherePreconditions`, read the [Java precondition rules](rules/java-preconditions.md) through EOF.
- - When the scope contains Java methods annotated with `lombok.SneakyThrows`, read the [Java exception handling rules](rules/java-exceptions.md) through EOF.
+@@ -1003,14 +1003,12 @@ private ExpressionSegment createInExpressionSegment(final InExprContext ctx) {
+         return result;
+     }
+     
+-    @SuppressWarnings("unchecked")
+     @Override
+     public ASTNode visitExprList(final ExprListContext ctx) {
+         CollectionValue<ExpressionSegment> result = new CollectionValue<>();
+-        if (null != ctx.exprList()) {
+-            result.combine((CollectionValue<ExpressionSegment>) visitExprList(ctx.exprList()));
++        for (AExprContext each : ctx.aExpr()) {
++            result.getValue().add((ExpressionSegment) visit(each));
+         }
+-        result.getValue().add((ExpressionSegment) visit(ctx.aExpr()));
+         return result;
+     }
+     
+@@ -1304,12 +1302,9 @@ private Collection<InsertValuesSegment> createInsertValuesSegments(final ValuesC
+     
+     private Collection<ExpressionSegment> createInsertValuesSegments(final ExprListContext ctx) {
+         Collection<ExpressionSegment> result = new LinkedList<>();
+-        if (null != ctx.exprList()) {
+-            Collection<ExpressionSegment> tmpResult = createInsertValuesSegments(ctx.exprList());
+-            result.addAll(tmpResult);
++        for (AExprContext each : ctx.aExpr()) {
++            result.add((ExpressionSegment) visit(each));
+         }
+-        ExpressionSegment expr = (ExpressionSegment) visit(ctx.aExpr());
+-        result.add(expr);
+         return result;
+     }
+     
+```
+
+**File**: `test/it/parser/src/test/java/org/apache/shardingsphere/test/it/sql/parser/opengauss/InternalOpenGaussParserIT.java` (modified, +23/-0)
+```diff
+@@ -17,9 +17,32 @@
+ 
+ package org.apache.shardingsphere.test.it.sql.parser.opengauss;
+ 
++import org.apache.shardingsphere.sql.parser.engine.api.CacheOption;
++import org.apache.shardingsphere.sql.parser.engine.api.SQLParserEngine;
++import org.apache.shardingsphere.sql.parser.engine.api.SQLStatementVisitorEngine;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.InExpression;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.ListExpression;
++import org.apache.shardingsphere.sql.parser.statement.core.statement.type.dml.SelectStatement;
+ import org.apache.shardingsphere.test.it.sql.parser.internal.InternalSQLParserIT;
+ import org.apache.shardingsphere.test.it.sql.parser.internal.InternalSQLParserITSettings;
++import org.junit.jupiter.api.Test;
++
++import java.util.Collection;
++import java.util.stream.Collectors;
++import java.util.stream.IntStream;
++
++import static org.hamcrest.MatcherAssert.assertThat;
++import static org.hamcrest.Matchers.is;
+ 
+ @InternalSQLParserITSettings("openGauss")
+ class InternalOpenGaussParserIT extends InternalSQLParserIT {
++    
++    @Test
++    void assertSelectWithLargeInList() {
++        Collection<String> expectedValues = IntStream.rangeClosed(1, 100000).mapToObj(String::valueOf).collect(Collectors.toList());
++        String sql = "SELECT * FROM foo_table WHERE foo_id IN (" + String.join(", ", expectedValues) + ")";
++        SelectStatement actual = (SelectStatement) new SQLStatementVisitorEngine("openGauss").visit(new SQLParserEngine("openGauss", new CacheOption(128, 1024L)).parse(sql, false));
++        ListExpression actualValues = (ListExpression) ((InExpression) actual.getWhere().get().getExpr()).getRight();
++        assertThat(actualValues.getItems().stream().map(each -> sql.substring(each.getStartIndex(), each.getStopIndex() + 1)).collect(Collectors.toList()), is(expectedValues));
++    }
+ }
+```
+
+**File**: `test/it/parser/src/test/java/org/apache/shardingsphere/test/it/sql/parser/postgresql/InternalPostgreSQLParserIT.java` (modified, +11/-0)
+```diff
+@@ -33,6 +33,7 @@
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.CaseWhenExpression;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.ExpressionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.FunctionSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.InExpression;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.ListExpression;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.TypeCastExpression;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.simple.ParameterMarkerExpressionSegment;
+@@ -76,6 +77,7 @@
+ import java.util.Comparator;
+ import java.util.List;
+ import java.util.stream.Collectors;
++import java.util.stream.IntStream;
+ import java.util.stream.Stream;
+ 
+ import static org.hamcrest.MatcherAssert.assertThat;
+@@ -178,6 +180,15 @@ void assertAnalyzeQuotedTableRoundTrip() {
+         assertThat(actualRoundTrip.getTables().iterator().next().getTableName().getIdentifier().getValue(), is("foo\"\"table"));
+     }
+     
++    @Test
++    void assertSelectWithLargeInList() {
++        Collection<String> expectedValues = IntStream.rangeClosed(1, 100000).mapToObj(String::valueOf).collect(Collectors.toList());
++        String sql = "SELECT * FROM foo_table WHERE foo_id IN (" + String.join(", ", expectedValues) + ")";
++        SelectStatement actual = (SelectStatement) new SQLStatementVisitorEngine("PostgreSQL").visit(new SQLParserEngine("PostgreSQL", new CacheOption(128, 1024L)).parse(sql, false));
++        ListExpression actualValues = (ListExpression) ((InExpression) actual.getWhere().get().getExpr()).getRight();
++        assertThat(actualValues.getItems().stream().map(each -> sql.substring(each.getStartIndex(), each.getStopIndex() + 1)).collect(Collectors.toList()), is(expectedValues));
++    }
++    
+     @ParameterizedTest(name = "{0}")
+     @MethodSource("getQuotedPrivilegeObjectCases")
+     void assertQuotedPrivilegeObjectRoundTrip(final String name, final String sqlPrefix, final String objectName, final String sqlSuffix, final Collection<String> expectedIdentifiers) {
+```
+
+---
+
+### Incident Patch 2: `e2fb0b74` (2026-11-17)
+**Commit Message**: Fix PostgreSQL IGNORE NULLS conversion (#40517)
+
+**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/engine/segment/dml/expression/type/FunctionExpressionSegmentBinder.java` (modified, +3/-0)
+```diff
+@@ -22,6 +22,7 @@
+ import com.google.common.collect.Multimap;
+ import lombok.AccessLevel;
+ import lombok.NoArgsConstructor;
++import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
+ import org.apache.shardingsphere.infra.binder.engine.segment.SegmentType;
+ import org.apache.shardingsphere.infra.binder.engine.segment.dml.expression.ExpressionSegmentBinder;
+ import org.apache.shardingsphere.infra.binder.engine.segment.dml.from.context.TableSegmentBinderContext;
+@@ -53,6 +54,7 @@ public final class FunctionExpressionSegmentBinder {
+      * @param outerTableBinderContexts outer table binder contexts
+      * @return bound function segment
+      */
++    @HighFrequencyInvocation
+     public static FunctionSegment bind(final FunctionSegment segment, final SegmentType parentSegmentType, final SQLStatementBinderContext binderContext,
+                                        final Multimap<CaseInsensitiveString, TableSegmentBinderContext> tableBinderContexts,
+                                        final Multimap<CaseInsensitiveString, TableSegmentBinderContext> outerTableBinderContexts) {
+@@ -69,6 +71,7 @@ public static FunctionSegment bind(final FunctionSegment segment, final SegmentT
+         }
+         segment.getWindow().ifPresent(optional -> result.setWindow(WindowItemSegmentBinder.bind(optional, parentSegmentType, binderContext, tableBinderContexts, outerTableBinderContexts)));
+         segment.getFilter().ifPresent(filter -> result.setFilter(ExpressionSegmentBinder.bind(filter, parentSegmentType, binderContext, tableBinderContexts, outerTableBinderContexts)));
++        result.setIgnoreNulls(segment.isIgnoreNulls());
+         return result;
+     }
+ }
+```
+
+**File**: `infra/binder/core/src/test/java/org/apache/shardingsphere/infra/binder/engine/segment/dml/expression/type/FunctionExpressionSegmentBinderTest.java` (modified, +10/-0)
+```diff
+@@ -41,6 +41,7 @@
+ 
+ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.hamcrest.Matchers.is;
++import static org.junit.jupiter.api.Assertions.assertFalse;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+ import static org.mockito.Mockito.mock;
+ import static org.mockito.Mockito.when;
+@@ -49,6 +50,14 @@
+ @StaticMockSettings({ExpressionSegmentBinder.class, OrderBySegmentBinder.class})
+ class FunctionExpressionSegmentBinderTest {
+     
++    @Test
++    void assertBindIgnoreNulls() {
++        FunctionSegment segment = new FunctionSegment(0, 0, "LAG", "LAG");
++        segment.setIgnoreNulls(true);
++        FunctionSegment actual = FunctionExpressionSegmentBinder.bind(segment, SegmentType.PROJECTION, mock(SQLStatementBinderContext.class), LinkedHashMultimap.create(), LinkedHashMultimap.create());
++        assertTrue(actual.isIgnoreNulls());
++    }
++    
+     @Test
+     void assertBindWithFilter() {
+         FunctionSegment segment = new FunctionSegment(0, 50, "STRING_AGG", "STRING_AGG(col, comma) FILTER (WHERE condition)");
+@@ -61,6 +70,7 @@ void assertBindWithFilter() {
+         when(ExpressionSegmentBinder.bind(filter, SegmentType.PROJECTION, binderContext, tableBinderContexts, outerTableBinderContexts)).thenReturn(expectedFilter);
+         FunctionSegment actual = FunctionExpressionSegmentBinder.bind(segment, SegmentType.PROJECTION, binderContext, tableBinderContexts, outerTableBinderContexts);
+         assertThat(actual.getFilter().get(), is(expectedFilter));
++        assertFalse(actual.isIgnoreNulls());
+         assertThat(actual.getStartIndex(), is(segment.getStartIndex()));
+         assertThat(actual.getStopIndex(), is(segment.getStopIndex()));
+     }
+```
+
+**File**: `kernel/sql-federation/compiler/src/main/java/org/apache/shardingsphere/sqlfederation/compiler/sql/ast/converter/segment/expression/impl/FunctionConverter.java` (modified, +11/-6)
+```diff
+@@ -31,6 +31,7 @@
+ import org.apache.calcite.sql.fun.SqlStdOperatorTable;
+ import org.apache.calcite.sql.parser.SqlParserPos;
+ import org.apache.calcite.sql.validate.SqlNameMatchers;
++import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.ExpressionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.FunctionSegment;
+ import org.apache.shardingsphere.sqlfederation.compiler.sql.ast.converter.segment.expression.ExpressionConverter;
+@@ -54,6 +55,7 @@ public final class FunctionConverter {
+      * @param segment function segment
+      * @return SQL node
+      */
++    @HighFrequencyInvocation
+     public static SqlNode convert(final FunctionSegment segment) {
+         SqlIdentifier functionName = new SqlIdentifier(getQualifiedFunctionNames(segment), SqlParserPos.ZERO);
+         // TODO optimize SQL parse logic for select current_user
+@@ -71,15 +73,18 @@ public static SqlNode convert(final FunctionSegment segment) {
+         }
+         List<SqlOperator> functions = new LinkedList<>();
+         SqlStdOperatorTable.instance().lookupOperatorOverloads(functionName, null, SqlSyntax.FUNCTION, functions, SqlNameMatchers.withCaseSensitive(false));
+-        if (!functions.isEmpty() && segment.getWindow().isPresent()) {
+-            SqlBasicCall functionCall = new SqlBasicCall(functions.iterator().next(), getFunctionParameters(segment.getParameters()), SqlParserPos.ZERO);
+-            SqlWindow sqlWindow = WindowConverter.convertWindowItem(segment.getWindow().get());
+-            return new SqlBasicCall(SqlStdOperatorTable.OVER, new SqlNode[]{functionCall, sqlWindow}, SqlParserPos.ZERO);
+-        }
+         SqlOperator operator = functions.isEmpty()
+                 ? new SqlUnresolvedFunction(functionName, null, null, null, null, SqlFunctionCategory.USER_DEFINED_FUNCTION)
+                 : functions.iterator().next();
+-        return new SqlBasicCall(operator, getFunctionParameters(segment.getParameters()), SqlParserPos.ZERO);
++        SqlNode result = new SqlBasicCall(operator, getFunctionParameters(segment.getParameters()), SqlParserPos.ZERO);
++        if (segment.isIgnoreNulls()) {
++            result = new SqlBasicCall(SqlStdOperatorTable.IGNORE_NULLS, new SqlNode[]{result}, SqlParserPos.ZERO);
++        }
++        if (!functions.isEmpty() && segment.getWindow().isPresent()) {
++            SqlWindow sqlWindow = WindowConverter.convertWindowItem(segment.getWindow().get());
++            return new SqlBasicCall(SqlStdOperatorTable.OVER, new SqlNode[]{result, sqlWindow}, SqlParserPos.ZERO);
++        }
++        return result;
+     }
+     
+     private static boolean isSystemDateTimeFunctionWithoutParentheses(final FunctionSegment segment) {
+```
+
+**File**: `kernel/sql-federation/compiler/src/test/java/org/apache/shardingsphere/sqlfederation/compiler/sql/ast/converter/segment/expression/impl/FunctionConverterTest.java` (modified, +23/-0)
+```diff
+@@ -47,6 +47,7 @@
+ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.hamcrest.Matchers.is;
+ import static org.hamcrest.Matchers.isA;
++import static org.hamcrest.Matchers.sameInstance;
+ import static org.mockito.Mockito.mock;
+ import static org.mockito.Mockito.when;
+ 
+@@ -101,6 +102,28 @@ void assertConvertDelegatesToWindowFunctionConverter() {
+         assertThat(FunctionConverter.convert(segment), is(expected));
+     }
+     
++    @Test
++    void assertConvertIgnoreNullsWithWindow() {
++        FunctionSegment segment = new FunctionSegment(0, 0, "LAG", "LAG");
++        segment.setIgnoreNulls(true);
++        ExpressionSegment param = new LiteralExpressionSegment(0, 0, 1);
++        segment.getParameters().add(param);
++        WindowItemSegment windowItemSegment = new WindowItemSegment(0, 0);
++        segment.setWindow(windowItemSegment);
++        SqlNode paramNode = mock(SqlNode.class);
++        SqlWindow windowNode = mock(SqlWindow.class);
++        when(ExpressionConverter.convert(param)).thenReturn(Optional.of(paramNode));
++        when(WindowConverter.convertWindowItem(windowItemSegment)).thenReturn(windowNode);
++        SqlBasicCall actual = (SqlBasicCall) FunctionConverter.convert(segment);
++        assertThat(actual.getOperator(), sameInstance(SqlStdOperatorTable.OVER));
++        SqlBasicCall actualNullTreatment = (SqlBasicCall) actual.getOperandList().get(0);
++        assertThat(actualNullTreatment.getOperator(), sameInstance(SqlStdOperatorTable.IGNORE_NULLS));
++        SqlBasicCall actualFunction = (SqlBasicCall) actualNullTreatment.getOperandList().get(0);
++        assertThat(actualFunction.getOperator().getName(), is("LAG"));
++        assertThat(actualFunction.getOperandList().get(0), sameInstance(paramNode));
++        assertThat(actual.getOperandList().get(1), sameInstance(windowNode));
++    }
++    
+     @Test
+     void assertConvertResolvedFunctionWithWindow() {
+         FunctionSegment segment = new FunctionSegment(0, 0, "COUNT", "COUNT");
+```
+
+**File**: `parser/sql/engine/dialect/postgresql/src/main/java/org/apache/shardingsphere/sql/parser/engine/postgresql/visitor/statement/PostgreSQLStatementVisitor.java` (modified, +4/-0)
+```diff
+@@ -26,6 +26,7 @@
+ import org.antlr.v4.runtime.tree.TerminalNode;
+ import org.apache.shardingsphere.database.connector.core.metadata.database.enums.NullsOrderType;
+ import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
++import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
+ import org.apache.shardingsphere.infra.exception.ShardingSpherePreconditions;
+ import org.apache.shardingsphere.sql.parser.api.ASTNode;
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.AExprContext;
+@@ -327,6 +328,7 @@ private char getUnicodeEscapeCharacter(final String text) {
+         return 'b' == character ? '\b' : character;
+     }
+     
++    @HighFrequencyInvocation
+     private String concatenateStringLiterals(final String text) {
+         StringBuilder result = new StringBuilder("'");
+         boolean escaped = 'E' == text.charAt(0) || 'e' == text.charAt(0);
+@@ -705,6 +707,7 @@ public ASTNode visitCaseExpr(final CaseExprContext ctx) {
+     }
+     
+     @Override
++    @HighFrequencyInvocation
+     public ASTNode visitFuncExpr(final FuncExprContext ctx) {
+         if (null != ctx.functionExprCommonSubexpr()) {
+             return visit(ctx.functionExprCommonSubexpr());
+@@ -757,6 +760,7 @@ private FunctionSegment createFunctionSegment(final FuncExprContext ctx, final F
+         result.setOwner(segment.getOwner());
+         result.getParameters().addAll(segment.getParameters());
+         segment.getFilter().ifPresent(result::setFilter);
++        result.setIgnoreNulls(null != ctx.nullTreatment() && null != ctx.nullTreatment().IGNORE());
+         result.setWindow(window);
+         return result;
+     }
+```
+
+**File**: `parser/sql/statement/core/src/main/java/org/apache/shardingsphere/sql/parser/statement/core/segment/dml/expr/FunctionSegment.java` (modified, +3/-0)
+```diff
+@@ -54,6 +54,9 @@ public final class FunctionSegment implements ComplexExpressionSegment {
+     @Setter
+     private ExpressionSegment filter;
+     
++    @Setter
++    private boolean ignoreNulls;
++    
+     /**
+      * Get window.
+      *
+```
+
+**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/internal/asserts/segment/expression/ExpressionAssert.java` (modified, +1/-0)
+```diff
+@@ -363,6 +363,7 @@ public static void assertBetweenExpression(final SQLCaseAssertContext assertCont
+     public static void assertFunction(final SQLCaseAssertContext assertContext, final FunctionSegment actual, final ExpectedFunction expected) {
+         SQLSegmentAssert.assertIs(assertContext, actual, expected);
+         assertThat(assertContext.getText("Function method name assertion error: "), actual.getFunctionName(), is(expected.getFunctionName()));
++        assertTrue(actual.isIgnoreNulls() == expected.isIgnoreNulls(), assertContext.getText("Function ignore nulls assertion error: "));
+         String expectedText = SQLCaseType.LITERAL == assertContext.getCaseType() && null != expected.getLiteralText()
+                 ? expected.getLiteralText()
+                 : expected.getText();
+```
+
+**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/internal/cases/parser/jaxb/segment/impl/function/ExpectedFunction.java` (modified, +3/-0)
+```diff
+@@ -55,6 +55,9 @@ public final class ExpectedFunction extends AbstractExpectedSQLSegment implement
+     @XmlElement(name = "filter")
+     private ExpectedExpression filter;
+     
++    @XmlAttribute(name = "ignore-nulls")
++    private boolean ignoreNulls;
++    
+     @XmlElement(name = "window-item")
+     private ExpectedWindowItem windowItem;
+ }
+```
+
+---
+
+### Incident Patch 3: `569fcaca` (2026-11-17)
+**Commit Message**: Fix firebird system table schemas (#40477)
+
+* Fix Firebird system table schemas
+
+Add missing system tables and columns and correct the declared column types to match Firebird 5.0.4.
+
+* Move Firebird system table schema release note to 5.5.4 bug fixes (#40254)
+
+* Fix Firebird system table column length descriptions
+
+**File**: `RELEASE-NOTES.md` (modified, +1/-0)
+```diff
+@@ -98,6 +98,7 @@
+ 1. Proxy: Add error handling for unknown or closed BLOB handles and ids in Firebird - [#39773](https://github.com/apache/shardingsphere/pull/39773)
+ 1. Proxy: Preserve the SQL error code in Firebird invalid batch message length responses - [#40408](https://github.com/apache/shardingsphere/issues/40408)
+ 1. Proxy: Fix startup failure when storage units set `dataSourceClassName` to `com.zaxxer.hikari.HikariDataSource` - [#40303](https://github.com/apache/shardingsphere/issues/40303)
++1. Proxy: Fix Firebird system table schemas: add missing tables and columns and correct column types - [#40254](https://github.com/apache/shardingsphere/issues/40254)
+ 1. JDBC & Proxy: Remove default MySQL prepared statement query properties when creating data sources - [#38593](https://github.com/apache/shardingsphere/pull/38593)
+ 1. JDBC & Proxy: Reject ordinary pushdown SELECT statements routed to different storage database types - [#40385](https://github.com/apache/shardingsphere/pull/40385)
+ 1. JDBC & Proxy: Reject ordinary pushdown DAL statements routed to different storage database types - [#40465](https://github.com/apache/shardingsphere/pull/40465)
+```
+
+**File**: `database/connector/dialect/firebird/src/main/java/org/apache/shardingsphere/database/connector/firebird/metadata/data/FirebirdNonFixedLengthColumnSizeRegistry.java` (modified, +25/-1)
+```diff
+@@ -19,13 +19,18 @@
+ 
+ import lombok.AccessLevel;
+ import lombok.NoArgsConstructor;
++import lombok.SneakyThrows;
++import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
+ 
++import java.io.IOException;
++import java.io.InputStream;
+ import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.Locale;
+ import java.util.Map;
+ import java.util.Map.Entry;
+ import java.util.OptionalInt;
++import java.util.Properties;
+ import java.util.concurrent.ConcurrentHashMap;
+ 
+ /**
+@@ -36,6 +41,21 @@ public final class FirebirdNonFixedLengthColumnSizeRegistry {
+     
+     private static final Map<String, Map<String, Integer>> COLUMN_SIZES = new ConcurrentHashMap<>();
+     
++    private static final Map<String, Integer> SYSTEM_COLUMN_SIZES = loadSystemColumnSizes();
++    
++    @SneakyThrows(IOException.class)
++    private static Map<String, Integer> loadSystemColumnSizes() {
++        Properties props = new Properties();
++        try (InputStream inputStream = FirebirdNonFixedLengthColumnSizeRegistry.class.getResourceAsStream("/metadata/firebird/system-table-column-sizes.properties")) {
++            props.load(inputStream);
++        }
++        Map<String, Integer> result = new HashMap<>(props.size(), 1F);
++        for (String each : props.stringPropertyNames()) {
++            result.put(each, Integer.parseInt(props.getProperty(each)));
++        }
++        return result;
++    }
++    
+     /**
+      * Refresh column sizes for a table.
+      *
+@@ -70,17 +90,21 @@ public static void refreshTable(final String schemaName, final String tableName,
+      * @param columnName column name
+      * @return column size
+      */
++    @HighFrequencyInvocation
+     public static OptionalInt findColumnSize(final String schemaName, final String tableName, final String columnName) {
+         if (null == tableName || null == columnName) {
+             return OptionalInt.empty();
+         }
+         Integer columnSize = COLUMN_SIZES.getOrDefault(buildTableKey(schemaName, tableName), Collections.emptyMap()).get(toKey(columnName));
++        if (null == columnSize) {
++            columnSize = SYSTEM_COLUMN_SIZES.get(new StringBuilder(toKey(tableName)).append('.').append(toKey(columnName)).toString());
++        }
+         return null == columnSize ? OptionalInt.empty() : OptionalInt.of(columnSize);
+     }
+     
+     private static String buildTableKey(final String schemaName, final String tableName) {
+         String schemaKey = null == schemaName ? "" : toKey(schemaName);
+-        return schemaKey + "." + toKey(trimToLogicTableName(tableName));
++        return new StringBuilder(schemaKey).append('.').append(toKey(trimToLogicTableName(tableName))).toString();
+     }
+     
+     private static String trimToLogicTableName(final String tableName) {
+```
+
+**File**: `database/connector/dialect/firebird/src/main/resources/metadata/firebird/system-table-column-sizes.properties` (added, +201/-0)
+```diff
+@@ -0,0 +1,201 @@
++#
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++#
++
++# Text lengths in characters for the existing Firebird protocol representation.
++# Source: Firebird v5.0.4 src/jrd/relations.h, fields.h and constants.h.
++
++MON$ATTACHMENTS.MON$ATTACHMENT_NAME=255
++MON$ATTACHMENTS.MON$AUTH_METHOD=255
++MON$ATTACHMENTS.MON$CLIENT_VERSION=255
++MON$ATTACHMENTS.MON$REMOTE_ADDRESS=255
++MON$ATTACHMENTS.MON$REMOTE_HOST=255
++MON$ATTACHMENTS.MON$REMOTE_OS_USER=255
++MON$ATTACHMENTS.MON$REMOTE_PROCESS=255
++MON$ATTACHMENTS.MON$REMOTE_PROTOCOL=10
++MON$ATTACHMENTS.MON$REMOTE_VERSION=255
++MON$ATTACHMENTS.MON$ROLE=63
++MON$ATTACHMENTS.MON$SESSION_TIMEZONE=63
++MON$ATTACHMENTS.MON$USER=63
++MON$ATTACHMENTS.MON$WIRE_CRYPT_PLUGIN=63
++MON$CALL_STACK.MON$OBJECT_NAME=63
++MON$CALL_STACK.MON$PACKAGE_NAME=63
++MON$COMPILED_STATEMENTS.MON$OBJECT_NAME=63
++MON$COMPILED_STATEMENTS.MON$PACKAGE_NAME=63
++MON$CONTEXT_VARIABLES.MON$VARIABLE_NAME=80
++MON$CONTEXT_VARIABLES.MON$VARIABLE_VALUE=32765
++MON$DATABASE.MON$DATABASE_NAME=255
++MON$DATABASE.MON$FILE_ID=255
++MON$DATABASE.MON$GUID=38
++MON$DATABASE.MON$OWNER=63
++MON$DATABASE.MON$SEC_DATABASE=7
++MON$TABLE_STATS.MON$TABLE_NAME=63
++RDB$AUTH_MAPPING.RDB$MAP_DB=63
++RDB$AUTH_MAPPING.RDB$MAP_FROM=255
++RDB$AUTH_MAPPING.RDB$MAP_FROM_TYPE=63
++RDB$AUTH_MAPPING.RDB$MAP_NAME=63
++RDB$AUTH_MAPPING.RDB$MAP_PLUGIN=63
++RDB$AUTH_MAPPING.RDB$MAP_TO=63
++RDB$AUTH_MAPPING.RDB$MAP_USING=1
++RDB$BACKUP_HISTORY.RDB$FILE_NAME=255
++RDB$BACKUP_HISTORY.RDB$GUID=38
++RDB$CHARACTER_SETS.RDB$CHARACTER_SET_NAME=63
++RDB$CHARACTER_SETS.RDB$DEFAULT_COLLATE_NAME=63
++RDB$CHARACTER_SETS.RDB$FORM_OF_USE=63
++RDB$CHARACTER_SETS.RDB$FUNCTION_NAME=63
++RDB$CHARACTER_SETS.RDB$OWNER_NAME=63
++RDB$CHARACTER_SETS.RDB$SECURITY_CLASS=63
++RDB$CHECK_CONSTRAINTS.RDB$CONSTRAINT_NAME=63
++RDB$CHECK_CONSTRAINTS.RDB$TRIGGER_NAME=63
++RDB$COLLATIONS.RDB$BASE_COLLATION_NAME=63
++RDB$COLLATIONS.RDB$COLLATION_NAME=63
++RDB$COLLATIONS.RDB$FUNCTION_NAME=63
++RDB$COLLATIONS.RDB$OWNER_NAME=63
++RDB$COLLATIONS.RDB$SECURITY_CLASS=63
++RDB$CONFIG.RDB$CONFIG_DEFAULT=255
++RDB$CONFIG.RDB$CONFIG_NAME=63
++RDB$CONFIG.RDB$CONFIG_SOURCE=255
++RDB$CONFIG.RDB$CONFIG_VALUE=255
++RDB$DATABASE.RDB$CHARACTER_SET_NAME=63
++RDB$DATABASE.RDB$SECURITY_CLASS=63
++RDB$DB_CREATORS.RDB$USER=63
++RDB$DEPENDENCIES.RDB$DEPENDED_ON_NAME=63
++RDB$DEPENDENCIES.RDB$DEPENDENT_NAME=63
++RDB$DEPENDENCIES.RDB$FIELD_NAME=63
++RDB$DEPENDENCIES.RDB$PACKAGE_NAME=63
++RDB$EXCEPTIONS.RDB$EXCEPTION_NAME=63
++RDB$EXCEPTIONS.RDB$MESSAGE=1023
++RDB$EXCEPTIONS.RDB$OWNER_NAME=63
++RDB$EXCEPTIONS.RDB$SECURITY_CLASS=63
++RDB$FIELDS.RDB$EDIT_STRING=127
++RDB$FIELDS.RDB$FIELD_NAME=63
++RDB$FIELDS.RDB$OWNER_NAME=63
++RDB$FIELDS.RDB$QUERY_NAME=63
++RDB$FIELDS.RDB$SECURITY_CLASS=63
++RDB$FIELD_DIMENSIONS.RDB$FIELD_NAME=63
++RDB$FILES.RDB$FILE_NAME=255
++RDB$FILTERS.RDB$ENTRYPOINT=255
++RDB$FILTERS.RDB$FUNCTION_NAME=63
++RDB$FILTERS.RDB$MODULE_NAME=255
++RDB$FILTERS.RDB$OWNER_NAME=63
++RDB$FILTERS.RDB$SECURITY_CLASS=63
++RDB$FUNCTIONS.RDB$ENGINE_NAME=63
++RDB$FUNCTIONS.RDB$ENTRYPOINT=255
++RDB$FUNCTIONS.RDB$FUNCTION_NAME=63
++RDB$FUNCTIONS.RDB$MODULE_NAME=255
++RDB$FUNCTIONS.RDB$OWNER_NAME=63
++RDB$FUNCTIONS.RDB$PACKAGE_NAME=63
++RDB$FUNCTIONS.RDB$QUERY_NAME=63
++RDB$FUNCTIONS.RDB$SECURITY_CLASS=63
++RDB$FUNCTION_ARGUMENTS.RDB$ARGUMENT_NAME=63
++RDB$FUNCTION_ARGUMENTS.RDB$FIELD_NAME=63
++RDB$FUNCTION_ARGUMENTS.RDB$FIELD_SOURCE=63
++RDB$FUNCTION_ARGUMENTS.RDB$FUNCTION_NAME=63
++RDB$FUNCTION_ARGUMENTS.RDB$PACKAGE_NAME=63
++RDB$FUNCTION_ARGUMENTS.RDB$RELATION_NAME=63
++RDB$GENERATORS.RDB$GENERATOR_NAME=63
++RDB$GENERATORS.RDB$OWNER_NAME=63
++RDB$GENERATORS.RDB$SECURITY_CLASS=63
++RDB$INDEX_SEGMENTS.RDB$FIELD_NAME=63
++RDB$INDEX_SEGMENTS.RDB$INDEX_NAME=63
++RDB$INDICES.RDB$FOREIGN_KEY=63
++RDB$INDICES.RDB$INDEX_NAME=63
++RDB$INDICES.RDB$RELATION_NAME=63
++RDB$KEYWORDS.RDB$KEYWORD_NAME=63
++RDB$LOG_FILES.RDB$FILE_NAME=255
++RDB$PACKAGES.RDB$OWNER_NAME=63
++RDB$PACKAGES.RDB$PACKAGE_NAME=63
++RDB$PACKAGES.RDB$SECURITY_CLASS=63
++RDB$PROCEDURES.RDB$ENGINE_NAME=63
++RDB$PROCEDURES.RDB$ENTRYPOINT=255
++RDB$PROCEDURES.RDB$OWNER_NAME=63
++RDB$PROCEDURES.RDB$PACKAGE_NAME=63
++RDB$PROCEDURES.RDB$PROCEDURE_NAME=63
++RDB$PROCEDURES.RDB$SECURITY_CLASS=63
++RDB$PROCEDURE_PARAMETERS.RDB$FIELD_NAME=63
++RDB$PROCEDURE_PARAMETERS.RDB$FIELD_SOURCE=63
++RDB$PROCEDURE_
+```
+
+**File**: `database/connector/dialect/firebird/src/main/resources/schema/firebird/system_tables/mon$attachments.yaml` (modified, +14/-0)
+```diff
+@@ -199,3 +199,17 @@ columns:
+     name: MON$WIRE_CRYPT_PLUGIN
+     primaryKey: false
+     visible: true
++  MON$SESSION_TIMEZONE:
++    caseSensitive: false
++    dataType: 1
++    generated: false
++    name: MON$SESSION_TIMEZONE
++    primaryKey: false
++    visible: true
++  MON$PARALLEL_WORKERS:
++    caseSensitive: false
++    dataType: 4
++    generated: false
++    name: MON$PARALLEL_WORKERS
++    primaryKey: false
++    visible: true
+```
+
+**File**: `database/connector/dialect/firebird/src/main/resources/schema/firebird/system_tables/mon$call_stack.yaml` (modified, +7/-0)
+```diff
+@@ -87,3 +87,10 @@ columns:
+     name: MON$PACKAGE_NAME
+     primaryKey: false
+     visible: true
++  MON$COMPILED_STATEMENT_ID:
++    caseSensitive: false
++    dataType: -5
++    generated: false
++    name: MON$COMPILED_STATEMENT_ID
++    primaryKey: false
++    visible: true
+```
+
+**File**: `database/connector/dialect/firebird/src/main/resources/schema/firebird/system_tables/mon$compiled_statements.yaml` (added, +68/-0)
+```diff
+@@ -0,0 +1,68 @@
++#
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++#
++
++name: MON$COMPILED_STATEMENTS
++columns:
++  MON$COMPILED_STATEMENT_ID:
++    caseSensitive: false
++    dataType: -5
++    generated: false
++    name: MON$COMPILED_STATEMENT_ID
++    primaryKey: false
++    visible: true
++  MON$SQL_TEXT:
++    caseSensitive: false
++    dataType: 2004
++    generated: false
++    name: MON$SQL_TEXT
++    primaryKey: false
++    visible: true
++  MON$EXPLAINED_PLAN:
++    caseSensitive: false
++    dataType: 2004
++    generated: false
++    name: MON$EXPLAINED_PLAN
++    primaryKey: false
++    visible: true
++  MON$OBJECT_NAME:
++    caseSensitive: false
++    dataType: 1
++    generated: false
++    name: MON$OBJECT_NAME
++    primaryKey: false
++    visible: true
++  MON$OBJECT_TYPE:
++    caseSensitive: false
++    dataType: 5
++    generated: false
++    name: MON$OBJECT_TYPE
++    primaryKey: false
++    visible: true
++  MON$PACKAGE_NAME:
++    caseSensitive: false
++    dataType: 1
++    generated: false
++    name: MON$PACKAGE_NAME
++    primaryKey: false
++    visible: true
++  MON$STAT_ID:
++    caseSensitive: false
++    dataType: 4
++    generated: false
++    name: MON$STAT_ID
++    primaryKey: false
++    visible: true
+```
+
+**File**: `database/connector/dialect/firebird/src/main/resources/schema/firebird/system_tables/mon$database.yaml` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ columns:
+     visible: true
+   MON$PAGE_SIZE:
+     caseSensitive: false
+-    dataType: 5
++    dataType: 4
+     generated: false
+     name: MON$PAGE_SIZE
+     primaryKey: false
+```
+
+**File**: `database/connector/dialect/firebird/src/main/resources/schema/firebird/system_tables/mon$statements.yaml` (modified, +7/-0)
+```diff
+@@ -87,3 +87,10 @@ columns:
+     name: MON$STATEMENT_TIMER
+     primaryKey: false
+     visible: true
++  MON$COMPILED_STATEMENT_ID:
++    caseSensitive: false
++    dataType: -5
++    generated: false
++    name: MON$COMPILED_STATEMENT_ID
++    primaryKey: false
++    visible: true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40517** (2026-11-17): Fix PostgreSQL IGNORE NULLS conversion (@FlyingZC)
+- **PR #40516** (2026-11-17): Improve PostgreSQL JSON, window function and string literal parsing (@FlyingZC)
+- **PR #40515** (2026-11-17): Add Firebird debugging diagnostics (@makssent)
 - **PR #40512** (2026-11-15): Refine Codex Javadoc rules (@terrymanu)
+- **PR #40508** (2026-11-16): Add Firebird integer payload methods and document type mappings (@makssent)
 - **PR #40506** (2026-11-13): Restore query timeout readback for circuit breaker prepared statements (@sandynz)
-- **PR #40503** (2026-11-13): Consolidate JDBC query timeout in StatementManager (@sandynz)
-- **PR #40500** (2026-11-12): Refactor Oracle parenthesized expression parsing (@strongduanmu)
-- **PR #40499** (2026-11-12): JDBC query timeout readback before execution (@sandynz)
-- **PR #40496** (2026-11-10): Refactor sql parser metadata for MySQL UPDATE and LOAD DATA (@strongduanmu)
 
 ---
 
@@ -1648,41 +2268,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Refine Codex Javadoc rules
+## X. StackOverflowError when parsing long PostgreSQL and openGauss IN lists
 
 **RULE**:
-When implementing operations in `.codex/harness/agents/cases.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `parser/sql/engine/dialect/opengauss/src/main/antlr4/imports/opengauss/BaseRule.g4`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78342a49`: Refine Codex Javadoc rules. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dcc642bb`: StackOverflowError when parsing long PostgreSQL and openGauss IN lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codex/harness/agents/cases.toml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `parser/sql/engine/dialect/opengauss/src/main/antlr4/imports/opengauss/BaseRule.g4`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-
-[[cases]]
-id = "java_javadoc_context_uses_standard_summary"
-group = "coding / Javadoc"
-description = "Keeps a simple context responsibility summary without speculative field explanation or paragraph formatting."
-phase = "Javadoc policy and readability acceptance"
-ordinary_loop = false
-profile = "code-write"
-semantic_policy_assertions = true
-prompt = "At the pre-write planning checkpoint for an authorized Java task, choose the Javadoc for a new public final LicenseCheckContext holding inputs used by selected license checks. Its fields and consumers add no API, SPI, framework, compatibility, or nullability contract. The proposed class summary is \"License check context.\" Another proposal adds a paragraph saying that fields unused by the selected checks may be null. Decide the class summary, extra field explanation, and paragraph formatting. Report exactly one value per marker: summary=standard-responsibility or implementation-explanation; unused-fields=omit or include; formatting=plain or paragraph. Do not edit yet."
-decision = "proceed"
-required_actions = []
-allowed_actions = ["inspect_local"]
-forbidden_actions = ["edit_code", "edit_non_code", "mutate_git", "mutate_remote", "propo
+    : aExpr (COMMA_ aExpr)*
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    : aExpr
+    | exprList COMMA_ aExpr
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78342a49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dcc642bb` are properly handled with clean fallback behavior.

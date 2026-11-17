@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "78342a49",
+    "sourceVersion": "e2fb0b74",
     "license": "Apache-2.0",
-    "contentHash": "43dce82425fd62e91df28eceb72776f20308a56807b1e6a6e152bb8eeca4531b",
-    "lastHarvestedAt": "2026-11-16T00:17:43.880Z",
+    "contentHash": "e7042acc1a7711d949272b0ccbde2d98eb7df0a30b180947113ed07a9d98b164",
+    "lastHarvestedAt": "2026-11-17T07:55:59.355Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "552c0412",
+    "sourceVersion": "03edb03b",
     "license": "Apache-2.0",
-    "contentHash": "39bf0f408236c78e4cfc371b25a77c7e1857cbbe2b2ce48bbc5413169344920b",
-    "lastHarvestedAt": "2026-11-15T17:52:40.636Z",
+    "contentHash": "f24812578b0e6aeb56ad93dd2a19e563394a903ede54fcf628655e2cacdb062a",
+    "lastHarvestedAt": "2026-11-17T07:59:55.558Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -10313,10 +10313,10 @@
     "repository": "laurent22/joplin",
     "platform": "github",
     "sourceUrl": "https://github.com/laurent22/joplin",
-    "sourceVersion": "7aeed5a4",
+    "sourceVersion": "68b1f922",
     "license": "NOASSERTION",
-    "contentHash": "9f09f4d8c8bb56ead76b1336a8b8505b907c3fae9a75c96e7bb5e7ec27941628",
-    "lastHarvestedAt": "2026-11-13T18:34:51.498Z",
+    "contentHash": "40dd56d96f8998769f331935cff58def95ff427aa2596ad66221922c5ed73360",
+    "lastHarvestedAt": "2026-11-17T07:55:47.304Z",
     "learningId": "learn-github-laurent22-joplin"
   },
   "appwrite-appwrite": {
@@ -11865,8 +11865,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
     "sourceVersion": "hf-qwen-qwen3-embedding-0.6b",
     "license": "Open-Source",
-    "contentHash": "f9e404b624c1e28ff982810c75613f23bc7330abcf148eb9ba5ed041627fb528",
-    "lastHarvestedAt": "2026-11-12T21:19:24.399Z",
+    "contentHash": "7a13aacdd3b7d03446dcb66b88728e210f2414530d8db92ca566a8bdcacccbad",
+    "lastHarvestedAt": "2026-11-17T07:55:43.732Z",
     "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b"
   },
   "feder-cr-jobs_applier_ai_agent_aihawk": {

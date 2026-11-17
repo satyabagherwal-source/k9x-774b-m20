@@ -10481,3 +10481,7 @@
 | `CYCLE-20261117-EUAE` | `2026-11-17T07:28:15.830Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8903` | Yes (`1401fba9...`) |
 | `CYCLE-20261117-EY8T` | `2026-11-17T07:28:20.957Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8904` | Yes (`f64ed31c...`) |
 | `CYCLE-20261117-U8LU` | `2026-11-17T07:40:14.226Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8905` | Yes (`3c10f5fc...`) |
+| `CYCLE-20261117-E5TC` | `2026-11-17T07:55:43.728Z` | `Qwen/Qwen3-Embedding-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md` | Yes (`7a13aacd...`) |
+| `CYCLE-20261117-E8KK` | `2026-11-17T07:55:47.300Z` | `laurent22/joplin` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/laurent22-joplin-learnings.md` | Yes (`40dd56d9...`) |
+| `CYCLE-20261117-EHVC` | `2026-11-17T07:55:59.352Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8906` | Yes (`e7042acc...`) |
+| `CYCLE-20261117-JK4J` | `2026-11-17T07:59:55.555Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8907, Rule 8908, Rule 8909` | Yes (`f2481257...`) |

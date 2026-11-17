@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T07:28:25.520Z",
+  "updated_at": "2026-11-17T08:00:00.298Z",
   "stats": {
-    "total_discovered": 4875,
-    "approved_pending_harvest": 4591,
+    "total_discovered": 4877,
+    "approved_pending_harvest": 4593,
     "harvested_count": 0,
     "rejected_count": 284,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4595,
+      "COMMUNITY_AND_EXPERT": 4597,
       "OFFICIAL_DOCUMENTATION": 150,
       "STANDARDS_AND_SPECIFICATIONS": 101,
       "ENGINEERING_BLOGS": 3,
@@ -105283,6 +105283,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
         "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-714397363CE5": {
+      "id": "SRC-714397363CE5",
+      "url": "https://chromium.googlesource.com/chromium/s",
+      "title": "https://chromium.googlesource.com/chromium/s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T08:00:00.265Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-85C5EDADD6BE": {
+      "id": "SRC-85C5EDADD6BE",
+      "url": "https://chromium.googlesource.com/chromium/src.git/+/master/docs/security/faq.md",
+      "title": "https://chromium.googlesource.com/chromium/src.git/+/master/docs/security/faq.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T08:00:00.298Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
       }
     }
   }

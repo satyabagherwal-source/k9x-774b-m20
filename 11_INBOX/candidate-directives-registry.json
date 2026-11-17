@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T07:40:20.539Z",
+  "last_updated": "2026-11-17T08:00:00.456Z",
   "directives": [
     {
       "id": "CD-001",
@@ -22813,6 +22813,72 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3C1051-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-E8Q1",
+      "directive_title": "Update security threat model",
+      "source_repo": "laurent22/joplin",
+      "source_commit": "68b1f922",
+      "staged_file": "11_INBOX/candidate-directives/CD-E8Q1-update-security-threat-model.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-EHZX",
+      "directive_title": "StackOverflowError when parsing long PostgreSQL and openGauss IN lists",
+      "source_repo": "apache/shardingsphere",
+      "source_commit": "e2fb0b74",
+      "staged_file": "11_INBOX/candidate-directives/CD-EHZX-stackoverflowerror-when-parsing-long-postgresql-and-opengauss-in-lists.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-JMZH",
+      "directive_title": "Physical Memory Access & DMA Safe Boundary Assertion",
+      "source_repo": "embassy-rs-embassy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JMZH-physical-memory-access-dma-safe-boundary-assertion.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-JK99",
+      "directive_title": "Physical Memory Access & DMA Safe Boundary Assertion",
+      "source_repo": "embassy-rs/embassy",
+      "source_commit": "03edb03b",
+      "staged_file": "11_INBOX/candidate-directives/CD-JK99-physical-memory-access-dma-safe-boundary-assertion.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-JMZI",
+      "directive_title": "Bitfield Register Truncation & Transfer Splitting Invariant",
+      "source_repo": "embassy-rs-embassy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JMZI-bitfield-register-truncation-transfer-splitting-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-JNWO",
+      "directive_title": "Doc: Update security threat model",
+      "source_repo": "laurent22-joplin-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JNWO-doc-update-security-threat-model.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
     }
   ]
 }

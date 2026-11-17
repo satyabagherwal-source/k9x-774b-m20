@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T07:40:20.633Z",
-  "total_records": 1479,
+  "last_updated": "2026-11-17T08:00:00.564Z",
+  "total_records": 1484,
   "domains": {
     "A": {
       "total": 9,
@@ -45,7 +45,7 @@
       ]
     },
     "D": {
-      "total": 622,
+      "total": 624,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -668,7 +668,9 @@
         "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-gguf-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-1-7b-gguf-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-facebook-sam-3d-body-dinov3-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam-3d-body-dinov3-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam-3d-body-dinov3-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-embedding-0-6b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-embedding-0-6b-learnings-core-inva"
       ]
     },
     "E": {
@@ -1004,7 +1006,7 @@
       ]
     },
     "H": {
-      "total": 342,
+      "total": 345,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1347,7 +1349,10 @@
         "domain_intelligence-technical-construction-intelligence-react-react-native-learnings-core-invariants",
         "DOM-H-F8265FBB",
         "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8836,8 +8841,8 @@
       "title": "Technical Construction Intelligence: laurent22/joplin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-technical-construction-intelligence-laurent22-joplin-core-invar.md",
       "repository": "laurent22/joplin",
-      "content_hash": "ae9f2080c94994c26d09f545e55988e37b17c98e1ffe6ce4376876df17438273",
-      "created_at": "2026-11-13T18:34:51.829Z"
+      "content_hash": "117f1fe782255841c8e843137d10101dc774367d9bf9a4b4168f30f5b0aa9e68",
+      "created_at": "2026-11-17T07:55:47.599Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants",
@@ -8914,8 +8919,8 @@
       "title": "Technical Construction Intelligence: laurent22-joplin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-learnings-technical-construction-intelligence-laurent22-joplin-.md",
       "repository": "laurent22-joplin-learnings",
-      "content_hash": "1038b0721ebbcd4e88e2ef02f3fa29906ece957c40fd764cabda879ae7eac4ff",
-      "created_at": "2026-11-13T18:35:48.664Z"
+      "content_hash": "c1e952c858cd98763b938d620949c2a298f874ecf809e52c54ee983a85860e4e",
+      "created_at": "2026-11-17T08:00:00.564Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian",
@@ -25716,6 +25721,51 @@
       "repository": "appwrite-appwrite-learnings",
       "content_hash": "8035e84778d8e58e298758fb7ee81d52ad7089297934453742f28408314ded74",
       "created_at": "2026-11-17T07:40:19.496Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-embedding-0-6b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-embedding-0-6b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3-Embedding-0.6B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-embedding-0-6b-research-knowledge-intelligence-qwen-qwen3-embeddin.md",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "content_hash": "c43186d01d451fa960c98bc3e0e9556f1424b7d6a5f1cbc2caf645b4085b818d",
+      "created_at": "2026-11-17T07:55:43.895Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: apache/shardingsphere Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-shardingsphere-technical-construction-intelligence-apache-shardingsphere-.md",
+      "repository": "apache/shardingsphere",
+      "content_hash": "51795728f3e7082b80df58e433127577d7a43100dbcdb6436af16c5a84b4ec64",
+      "created_at": "2026-11-17T07:55:59.621Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: embassy-rs/embassy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-embassy-rs-embassy-technical-construction-intelligence-embassy-rs-embassy-core-i.md",
+      "repository": "embassy-rs/embassy",
+      "content_hash": "c90ff4674b00f74d2a15ffb7b24ff9693da07efa7af9c9bccdc86784cc8ff5ff",
+      "created_at": "2026-11-17T07:59:56.099Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: embassy-rs-embassy-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-embassy-rs-embassy-learnings-technical-construction-intelligence-embassy-rs-emba.md",
+      "repository": "embassy-rs-embassy-learnings",
+      "content_hash": "16a61e548781f969116395a83d55fcc56ffc597b1ca52cf0db22ec08c7e7d1de",
+      "created_at": "2026-11-17T07:59:59.580Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-embedding-0-6b-learnings-core-inva": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-embedding-0-6b-learnings-core-inva",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-embedding-0.6b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-embedding-0-6b-learnings-research-knowledge-intelligence-hf-qwen-q.md",
+      "repository": "hf-qwen-qwen3-embedding-0.6b-learnings",
+      "content_hash": "6e5b6294aa1a53f4e78934c7c8f30ddbbba2ff96f75186cdf049209df1fe41eb",
+      "created_at": "2026-11-17T08:00:00.078Z"
     }
   }
 }

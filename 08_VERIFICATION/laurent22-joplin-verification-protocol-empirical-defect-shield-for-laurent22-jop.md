@@ -4,22 +4,22 @@
 {
   "source_repository": "laurent22/joplin",
   "source_url": "https://github.com/laurent22/joplin",
-  "source_version": "7aeed5a4",
+  "source_version": "68b1f922",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-13T18:34:51.719Z",
+  "timestamp": "2026-11-17T07:55:47.497Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-laurent22-joplin",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [laurent22/joplin](https://github.com/laurent22/joplin) (Revision: `7aeed5a4`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-13T18:34:51.719Z`  
+> **Provenance**: Harvested from [laurent22/joplin](https://github.com/laurent22/joplin) (Revision: `68b1f922`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T07:55:47.497Z`  
 > **Learning ID**: `learn-github-laurent22-joplin`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `laurent22/joplin` (Commit: `7aeed5a4`)
+- **Target Repository**: `laurent22/joplin` (Commit: `68b1f922`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:34:50.857Z  
+> **Harvest Timestamp**: 2026-11-17T07:55:46.921Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 57165 stars
+- **Stars / Engagement**: 57216 stars
 
 ---
 
@@ -941,11 +941,14 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17090** (2026-11-12): **Desktop: Fix creating accessible PDFs when OCR text contains non-Latin characters**
-  *Symptoms*: Creating an accessible document failed with "WinAnsi cannot encode…" whenever the OCR text had a character outside Windows-1252. That could be a single misrecognised character like "ı", or any Cyrillic, Greek or CJK document. The cause was the invisible text layer, which used pdf-lib's standard Helvetica font.  The text layer now uses a small embedded "glyphless" font, the same approach as Tesseract's own PDF output. Characters are encoded as UTF-16, and a ToUnicode map lets them be extracted again. The text is drawn in invisible render mode instead of with zero opacity. The font program is a ~870-byte TrueType file, stored as base64. Its glyph has a real outline and the font has a non-zero descent, because without them macOS Preview can't compute the text bounds and makes the text unselectable. Each word is also sized and stretched to fit its OCR bounding box, so selection lines up with the words in the image.  **Steps to reproduce the original bug**  The trick is that OCR uses the UI language and stores its result with the attachment. That's why the same PDF worked on your Mac: it was OCR'd in your language and produced only Windows-1252 characters. A Cyrillic document is the most reliable way to trigger it:  1.  Run a build without this fix, for example 3.7.21 or `dev` before this change. 2.  Make a test PDF: in TextEdit, type something like "Привет, мир. Это тестовый документ." in a large font, then choose File > Export as PDF. 3.  In Settings > General:     - 
+- **Issue #17119** (2026-11-16): **Desktop: Fixes #17089: Keep indentation and code block blank lines in Paste as Markdown**
+  *Symptoms*: Fixes #17089  ### Problem  **Edit → Paste as Markdown** calls `HtmlToMd.parse()` with `collapseMultipleBlankLines: true`. Turndown then ran this on the whole Markdown output:  ```js output = output.replace(/(\n\s*){3,}/g, '\n\n') ```  This has two side effects:  1. `\s*` also matches the spaces and tabs at the start of the next non-blank line, so that line loses its indentation. This breaks indentation-sensitive content, e.g. Python code, or a paragraph nested in a list item. 2. It also runs inside fenced code blocks, where blank lines are part of the code.  For example, pasting this `<pre><code>`:  ```python def f():     x = 1       return x ```  gave:  ```python def f():     x = 1  return x ```  ### Solution  The regex is replaced with a small line-based function, `collapseMultipleBlankLines()`, in `packages/turndown/src/turndown.js`:  - Each run of two or more blank lines (empty or whitespace-only) is still replaced with a single empty line. This is the same result the regex gave for blank lines. - Non-blank lines are never changed, so they keep their indentation. - While inside a fenced code block, lines are copied as they are. The block opens with a line that starts (after optional indentation, e.g. inside a list item) with three or more backticks or tildes. It closes with a fence of the same character that is at least as long and has nothing after it. This also handles the longer fence Turndown uses when the code itself contains a fence.  The option is only enabled by P
 
-- **Issue #17088** (2026-11-11): **Tools: Resolves #16659: Publish sub-packages from CI using npm trusted publishing**
-  *Symptoms*: Ref #16659  Sub-package publishing has been broken for two reasons: npm revoked classic tokens, and lerna 3 can no longer build its package graph because of the yarn `patch:` protocol. As a result, 3.7.2 and 3.7.3 were never published.  - Replaces lerna with `packages/tools/releaseSubPackages.ts`:   - `version` bumps all public packages by patch and updates the ranges between them.   - `publish` runs `npm publish` per package, in dependency order, skipping versions already on the registry. - Keeps two lerna behaviours that plain `npm publish` would lose:   - It passes `--workspaces=false`. Without it, npm applies the root `.gitignore` to each package and drops `packages/lib/vendor/`.   - It temporarily copies the root `LICENSE` into packages that don't have one. - Sets `repository` in all public packages to the Joplin repo, which npm provenance requires. - Adds the `publish-sub-packages.yml` workflow, triggered by `sub-packages-v*` tags and using OIDC trusted publishing. Trusted publishers are already configured on npmjs.com for all 13 packages. - `yarn publishAll` now bumps the versions, commits with the lockfile, and pushes the tag. CI then does the publishing.  The tarball contents were checked against the last published versions with `npm publish --dry-run`. 
+- **Issue #17111** (2026-11-14): **Desktop, Mobile: Fixes #17110: Do not crash on invalid folder icon**
+  *Symptoms*: Parse the `icon` field of a notebook with a `try/catch` in `Folder.unserializeIcon()`. When the value is not valid JSON, return `null`, the same as for an empty field. All places that render notebook icons already show the default icon for `null`, on both apps, so nothing crashes while the notebook list renders.  Fixes #17110.  Details and crash reports are in the issue.  **How to test:** run the Folder suite in `packages/lib`:      yarn jest models/Folder  Unit tests were added for invalid, empty and valid icon values. Locally all 50 tests of the suite pass (dev branch, Linux). 
+  **Post-Mortem & Fix Analysis**:
+  > All contributors have signed the CLA  ✍️ ✅<br/><sub>Posted by the ****CLA Assistant Lite bot****.</sub>
+  > I have read the CLA Document and I hereby sign the CLA
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -962,111 +965,431 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dfe4a242` (2026-11-07)
-**Commit Message**: Server: Security: Check the token on the account confirmation page when confirm_email=0
+### Incident Patch 1: `68b1f922` (2026-11-16)
+**Commit Message**: Doc: Update security threat model
 
-With confirm_email=0 (used by the redirect after a Stripe checkout), GET users/:id/confirm did not check the token at all. Anyone could use it to find out whether a user ID exists (302 to the login page instead of 404), to see the email address of an account that has not set its password yet, and to add an "Email confirmed" notification to any account. It was used on 2026-11-07 to check which of the attacker's user IDs were real.
-
-Setting the password was not affected, since the POST handler checks the token. The post-checkout redirect always carries a valid account confirmation token, so it keeps working.
-
-**File**: `packages/server/src/routes/index/users.test.ts` (modified, +3/-0)
+**File**: `SECURITY.md` (modified, +6/-0)
 ```diff
-@@ -222,6 +222,9 @@ describe('index/users', () => {
- 		// "confirm_email" is set to 0.
- 		user1 = await models().user().load(user1.id);
- 		expect(user1.email_confirmed).toBe(0);
+@@ -51,6 +51,12 @@ See also [Physically-local attacks](https://chromium.googlesource.com/chromium/s
+ 
+ No, but you should use disk encryption. See also [Physically-local attacks](https://chromium.googlesource.com/chromium/src.git/+/master/docs/security/faq.md#why-arent-physically_local-attacks-in-chromes-threat-model)
+ 
++### Can a share recipient modify, delete or move notes in a shared notebook?
 +
-+		// The token is still required
-+		await expectHttpError(() => execRequest('', 'GET', path, null, { query: { token: 'invalid', confirm_email: '0' } }), ErrorForbidden.httpCode);
- 	});
++Yes, this is intended. A notebook is only shared with someone after the owner has invited them by email and they have accepted the invitation, so share participants are considered trusted with the content of that notebook. They can edit or delete any note in it, or move a note out of it.
++
++Reports that rely on a share participant acting on the content of the shared notebook are therefore not considered vulnerabilities.
++
+ ## Bounty
  
- 	test('should allow user to verify their email', async () => {
-```
-
-**File**: `packages/server/src/routes/index/users.ts` (modified, +6/-1)
-```diff
-@@ -166,7 +166,12 @@ router.get('users/:id/confirm', async (path: SubPath, ctx: AppContext, error: Er
- 		}
- 	};
- 
--	if (ctx.query.confirm_email !== '0') await models.user().processEmailConfirmation(userId, token, beforeChangingEmailHandler);
-+	if (ctx.query.confirm_email !== '0') {
-+		await models.user().processEmailConfirmation(userId, token, beforeChangingEmailHandler);
-+	} else {
-+		// Otherwise this page would reveal whether an account exists, and the email of an account without a password
-+		await models.token().checkToken(userId, token, TokenPurpose.AccountConfirmation);
-+	}
- 
- 	const user = await models.user().load(userId);
- 	if (!user) throw new ErrorNotFound(`No such user: ${userId}`);
+ We **do not** offer a bounty for discovering vulnerabilities, please do not ask.
 ```
 
 ---
 
-### Incident Patch 2: `fbf73e5f` (2026-11-07)
-**Commit Message**: Server: Security: Do not reveal the owner's user ID on public share API
+### Incident Patch 2: `40727589` (2026-11-16)
+**Commit Message**: Merge branch 'server-security-fixes' into dev
 
-GET api/shares/:id is public so that published notes work without logging in, but it returned the owner's full user ID. Published links are indexed by search engines, so anyone could collect user IDs this way and then target the account endpoints with them. This was used in the probing attacks of 2026-10-24 and 2026-11-07: 25 of the 28 user IDs the attacker had owned published shares.
-
-The owner ID is now only returned to the share's owner. No client uses this end point.
-
-**File**: `packages/server/src/routes/api/shares.test.ts` (modified, +4/-0)
+**File**: `packages/server/src/app.ts` (modified, +9/-5)
 ```diff
-@@ -87,6 +87,10 @@ describe('shares', () => {
- 		const result = await getApi<Share>('', `shares/${share.id}`);
- 		expect(result.id).toBe(share.id);
- 		expect(result.type).toBe(ShareType.PublishedFolder);
-+		expect(result.owner_id).toBeUndefined();
-+
-+		const ownerResult = await getApi<Share>(session.id, `shares/${share.id}`);
-+		expect(ownerResult.owner_id).toBe(share.owner_id);
- 	});
+@@ -39,6 +39,8 @@ interface Argv {
+ import * as nodeSqlite from 'sqlite3';
+ import { shimInit } from '@joplin/lib/shim-init-node';
+ import { isSameSite } from './utils/urlUtils';
++import { errorMessageForLog, isUnexpectedError, unexpectedErrorMessage } from './utils/errors';
++import { uuidgen } from '@joplin/lib/uuid';
+ const cors = require('@koa/cors');
+ shimInit({ nodeSqlite });
  
- 	test('should not reveal whether an email has an account', async () => {
+@@ -174,11 +176,13 @@ async function main() {
+ 			await next();
+ 		} catch (error) {
+ 			ctx.status = error.httpCode || 500;
++			const errorId = uuidgen();
++			const publicMessage = isUnexpectedError(error) ? unexpectedErrorMessage(errorId) : error.message;
+ 
+ 			if (ctx.status >= 500) {
+-				appLogger().error(`Middleware error on ${ctx.path}:`, error);
++				appLogger().error(`Middleware error on ${ctx.path}: Error ID ${errorId}:`, error);
+ 			} else {
+-				appLogger().info(`Middleware error on ${ctx.path}:`, error);
++				appLogger().info(`Middleware error on ${ctx.path}: ${errorMessageForLog(String(error.message))}`);
+ 			}
+ 
+ 			const responseFormat = routeResponseFormat(ctx);
+@@ -193,15 +197,15 @@ async function main() {
+ 						title: 'Error',
+ 						path: 'index/error',
+ 						showFooter: true,
+-						content: { error },
++						content: { error: { message: publicMessage } },
+ 					});
+ 				} catch (anotherError) {
+ 					ctx.response.set('Content-Type', 'application/json');
+-					ctx.body = JSON.stringify({ error: `${error.message} (Check the server log for more information)` });
++					ctx.body = JSON.stringify({ error: `${publicMessage} (Check the server log for more information)` });
+ 				}
+ 			} else {
+ 				ctx.response.set('Content-Type', 'application/json');
+-				ctx.body = JSON.stringify({ error: error.message });
++				ctx.body = JSON.stringify({ error: publicMessage });
+ 			}
+ 		}
+ 	});
 ```
 
-**File**: `packages/server/src/routes/api/shares.ts` (modified, +4/-1)
+**File**: `packages/server/src/middleware/routeHandler.ts` (modified, +11/-9)
 ```diff
-@@ -132,7 +132,10 @@ router.get('api/shares/:id', async (path: SubPath, ctx: AppContext) => {
- 	if (share && (share.type === ShareType.Note || share.type === ShareType.PublishedFolder)) {
- 		// No authentication is necessary - anyone who knows the share ID is allowed
- 		// to access the file. It is essentially public.
--		return shareModel.toApiOutput(share);
-+		const output = await shareModel.toApiOutput(share) as Share;
-+		// Published links are indexed by search engines, and the owner's ID would let anyone target their account
-+		if (ctx.joplin.owner?.id !== share.owner_id) delete output.owner_id;
-+		return output;
+@@ -7,10 +7,10 @@ import { createCsrfTag } from '../utils/csrf';
+ import { getImpersonatorAdminSessionId } from '../routes/admin/utils/users/impersonate';
+ import { onRequestComplete, onRequestStart } from '../utils/metrics';
+ import { uuidgen } from '@joplin/lib/uuid';
+-import { ApiError, ErrorTooManyRequests } from '../utils/errors';
++import { ApiError, errorMessageForLog, ErrorTooManyRequests, isUnexpectedError, unexpectedErrorMessage } from '../utils/errors';
+ import { formatBytesSimple } from '../utils/bytes';
+ 
+-const logRequestInfo = (ctx: AppContext, requestStartTime: number, error: Error | string | null) => {
++const logRequestInfo = (ctx: AppContext, requestStartTime: number, requestId: string, error: Error | string | null) => {
+ 	try {
+ 		const owner = ctx.joplin.owner;
+ 		// Technically this is not the total request duration because there are
+@@ -28,13 +28,14 @@ const logRequestInfo = (ctx: AppContext, requestStartTime: number, error: Error
+ 		// If it's a successful request or a user error (error code < 500) we display the
+ 		// information on a single line.
+ 		const line = getLinePrefix();
+-		if (error && typeof error === 'string') line.push(error);
++		if (error && typeof error === 'string') line.push(errorMessageForLog(error));
+ 		line.push(`${ctx.request.method} ${ctx.path} (${ctx.response.status}) (${requestDuration}ms)`);
+ 		ctx.joplin.appLogger().info(line.join(': '));
+ 
+ 		// If we have an error object (should be a server error), we log the full stack trace.
+ 		if (error && typeof error !== 'string' && error.message) {
+ 			const line = getLinePrefix();
++			line.push(`Error ID ${requestId}`);
+ 			ctx.joplin.appLogger().error(`${line.join(': ')}:`, error);
+ 		}
+ 	} catch (logFunctionError) {
+@@ -73,7 +74,7 @@ export default async function(ctx: AppContext) {
+ 			ctx.response.body = [undefined, null].includes(responseObject) ? '' : responseObject;
+ 		}
+ 
+-		logRequestInfo(ctx, requestStartTime, null);
++		logRequestInfo(ctx, requestStartTime, requestId, null);
+ 	} catch (e) {
+ 		const error = e as ApiError;
+ 
+@@ -83,12 +84,13 @@ export default async function(ctx: AppContext) {
+ 		ctx.response.status = error.httpCode ? error.httpCode : 500;
+ 
+ 		if (error.httpCode >= 400 && error.httpCode < 500) {
+-			logRequestInfo(ctx, requestStartTime, error.message);
++			logRequestInfo(ctx, requestStartTime, requestId, error.message);
+ 		} else {
+-			logRequestInfo(ctx, requestStartTime, error);
++			logRequestInfo(ctx, requestStartTime, requestId, error);
+ 		}
+ 
+ 		const responseFormat = routeResponseFormat(ctx);
++		const publicMessage = isUnexpectedError(error) ? unexpectedErrorMessage(requestId) : error.message;
+ 
+ 		if ((error as ErrorTooManyRequests).retryAfterMs) ctx.response.set('Retry-After', Math.ceil((error as ErrorTooManyRequests).retryAfterMs / 1000).toString());
+ 
+@@ -101,7 +103,7 @@ export default async function(ctx: AppContext) {
+ 				path: 'index/error',
+ 				showFooter: true,
+ 				content: {
+-					error,
++					error: { message: publicMessage },
+ 					stack: config().showErrorStackTraces ? error.stack : '',
+ 					owner: ctx.joplin.owner,
+ 				},
+@@ -110,9 +112,9 @@ export default async function(ctx: AppContext) {
+ 			ctx.response.body = await ctx.joplin.services.mustache.renderView(view);
+ 		} else { // JSON
+ 			ctx.response.set('Content-Type', 'application/json');
+-			const r: { error: string; stack?: string; code?: string } = { error: error.message };
++			const r: { error: string; stack?: string; code?: string } = { error: publicMessage };
+ 			if (ctx.joplin.env === Env.Dev && error.stack) r.stack = error.stack;
+-			if (error.code) r.code = error.code;
++			if (error.code && !isUnexpectedError(error)) r.code = error.code;
+ 			ctx.response.body = r;
+ 		}
+ 	} finally {
+```
+
+**File**: `packages/server/src/models/ChangeModel/ChangeModel.ts` (modified, +9/-2)
+```diff
+@@ -6,7 +6,7 @@ import { Config } from '../../utils/types';
+ import ChangeModelOld from './ChangeModel.old';
+ import ChangeModelNew from './ChangeModel.new';
+ import BaseModel, { LoadOptions } from '../BaseModel';
+-import { ErrorResyncRequired } from '../../utils/errors';
++import { ErrorBadRequest, ErrorResyncRequired } from '../../utils/errors';
+ import Logger from '@joplin/utils/Logger';
+ 
+ export { defaultChangeTtl } from './BaseChangeModel';
+@@ -48,11 +48,18 @@ export function defaultDeltaPagination(): ChangePagination {
+ 	};
+ }
+ 
++const deltaMaxLimit = 1000;
++
+ export function requestDeltaPagination(query: ChangePagination | null): ChangePagination {
+ 	if (!query) return defaultDeltaPagination();
+ 
+ 	const output: ChangePagination = {};
+-	if ('limit' in query) output.limit = query.limit;
++	if ('limit' in query) {
++		// It comes from the query string, so it is a string at runtime
++		const limit = Number(query.limit);
++		if (!Number.isInteger(limit) || limit < 1 || limit > deltaMaxLimit) throw new ErrorBadRequest(`Limit must be an integer from 1 to ${deltaMaxLimit}`);
++		output.limit = limit;
++	}
+ 	if ('cursor' in query) output.cursor = query.cursor;
+ 	return output;
+ }
+```
+
+**File**: `packages/server/src/models/RecoveryCodeModel.ts` (modified, +3/-1)
+```diff
+@@ -6,7 +6,7 @@ import { ErrorForbidden } from '../utils/errors';
+ import { isValidMFACode } from '../utils/crypto';
+ import recoveryCodesAccessedTemplate from '../views/emails/recoveryCodesAccessedTemplate';
+ import { forgotPasswordUrl } from '../utils/urlUtils';
+-import { formatDateOnServer } from '../utils/time';
++import { formatDateOnServer, Hour } from '../utils/time';
+ import { DbConnection } from '../db';
+ import { NewModelFactoryHandler } from './factory';
+ import { Services } from '../services/types';
+@@ -148,6 +148,8 @@ export default class RecoveryCodeModel extends BaseModel<RecoveryCode> {
+ 			recipient_name: user.full_name,
+ 			recipient_id: userId,
+ 			sender_id: EmailSender.NoReply,
++			// Viewing the codes can be repeated at will, so this limits the alert to one per hour
++			key: `recoveryCodesAccessed::${Math.floor(Date.now() / Hour)}`,
+ 		});
+ 
+ 		return recoveryCodeAccess;
+```
+
+**File**: `packages/server/src/routes/api/batch_items.test.ts` (modified, +35/-1)
+```diff
+@@ -1,6 +1,10 @@
+ import { beforeAllDb, afterAllTests, beforeEachDb, createUserAndSession, models, createItem } from '../../utils/testing/testUtils';
+-import { deleteApi } from '../../utils/testing/apiUtils';
++import { deleteApi, getApiC } from '../../utils/testing/apiUtils';
+ import { makeNoteSerializedBody } from '../../utils/testing/serializedItems';
++import ItemModel from '../../models/ItemModel';
++
++const unexpectedError = () => new Error('select * from "users" where "password" = \'secret\'');
++const unexpectedErrorMessage = /^Internal server error \(error ID: [\w-]+\)$/;
+ 
+ 
+ const batchDeleteItems = (sessionId: string, jopId: string[]) => {
+@@ -63,4 +67,34 @@ describe('api/batch_items', () => {
+ 			},
+ 		});
+ 	});
++
++	test('should not return the details of unexpected errors', async () => {
++		const { session } = await createUserAndSession(1, true);
++		const noteId = '00000000000000000000000000000001';
++		await createItem(session.id, `root:/${noteId}.md:`, makeNoteSerializedBody({ id: noteId }));
++		jest.spyOn(ItemModel.prototype, 'checkIfAllowed').mockRejectedValueOnce(unexpectedError());
++
++		try {
++			const response = await batchDeleteItems(session.id, [noteId, '12345678901234567890123456789012']) as { items: Record<string, { error: object }> };
++			expect(response.items[`${noteId}.md`].error).toEqual({ message: expect.stringMatching(unexpectedErrorMessage) });
++			expect(response.items['12345678901234567890123456789012.md'].error).toEqual({ httpCode: 404, message: 'Not found: 12345678901234567890123456789012.md' });
++		} finally {
++			jest.restoreAllMocks();
++		}
++	});
++
++	test('should not return the message of an unexpected error thrown by a route', async () => {
++		const { session } = await createUserAndSession(1, true);
++		jest.spyOn(ItemModel.prototype, 'loadByName').mockRejectedValueOnce(unexpectedError());
++
++		try {
++			const context = await getApiC(session.id, 'items/root:/test.md:');
++			expect(context.response.status).toBe(500);
++			const body = context.response.body as { error: string; code?: string };
++			expect(body.error).toMatch(unexpectedErrorMessage);
++			expect(body.code).toBeUndefined();
++		} finally {
++			jest.restoreAllMocks();
++		}
++	});
+ });
+```
+
+**File**: `packages/server/src/routes/api/events.ts` (modified, +2/-1)
+```diff
+@@ -1,4 +1,5 @@
+ import { ErrorNotFound } from '../../utils/errors';
++import { hasOwnProperty } from '@joplin/utils/object';
+ import { bodyFields } from '../../utils/requestUtils';
+ import Router from '../../utils/Router';
+ import { RouteType } from '../../utils/types';
+@@ -19,7 +20,7 @@ const router = new Router(RouteType.Api);
+ 
+ router.post('api/events', async (_path: SubPath, ctx: AppContext) => {
+ 	const event = await bodyFields<Event>(ctx.req);
+-	if (!supportedEvents[event.name]) throw new ErrorNotFound(`Unknown event name: ${event.name}`);
++	if (typeof event.name !== 'string' || !hasOwnProperty(supportedEvents, event.name)) throw new ErrorNotFound('Unknown event name');
+ 	await supportedEvents[event.name](ctx);
+ });
+ 
+```
+
+**File**: `packages/server/src/routes/api/items.test.ts` (modified, +14/-0)
+```diff
+@@ -507,4 +507,18 @@ describe('api/items', () => {
+ 		expect(await models().item().loadByJopId(user1.id, '00000000000000000000000000000003')).toBeTruthy();
+ 	});
+ 
++	test.each(['x', '0', '1001', '1.5'])('should refuse an invalid delta limit: %s', async (limit) => {
++		const { session } = await createUserAndSession(1, true);
++		await expectHttpError(async () => getApi(session.id, 'items/root/delta', { query: { limit } }), ErrorBadRequest.httpCode);
++	});
++
++	test('should accept a valid delta limit', async () => {
++		const { session } = await createUserAndSession(1, true);
++		await createNote(session.id, { id: '00000000000000000000000000000001' });
++		await createNote(session.id, { id: '00000000000000000000000000000002' });
++		const result = await getApi<{ items: unknown[]; has_more: boolean }>(session.id, 'items/root/delta', { query: { limit: '1' } });
++		expect(result.items.length).toBe(1);
++		expect(result.has_more).toBe(true);
++	});
++
+ });
+```
+
+**File**: `packages/server/src/routes/api/items.ts` (modified, +14/-6)
+```diff
+@@ -5,17 +5,27 @@ import Router from '../../utils/Router';
+ import { RouteType } from '../../utils/types';
+ import { AppContext } from '../../utils/types';
+ import * as fs from 'fs-extra';
+-import { ErrorBadRequest, ErrorForbidden, ErrorMethodNotAllowed, ErrorNotFound, ErrorPayloadTooLarge, errorToPlainObject } from '../../utils/errors';
++import { ErrorBadRequest, ErrorForbidden, ErrorMethodNotAllowed, ErrorNotFound, ErrorPayloadTooLarge, errorToApiOutput, isUnexpectedError } from '../../utils/errors';
+ import ItemModel, { ItemSaveOption, SaveFromRawContentItem } from '../../models/ItemModel';
+ import { requestPagination } from '../../models/utils/pagination';
+ import { AclAction } from '../../models/BaseModel';
+ import { safeRemove } from '../../utils/fileUtils';
+ import { formatBytes, MB } from '../../utils/bytes';
+ import { requestDeltaPagination } from '../../models/ChangeModel/ChangeModel';
+ import { hasOwnProperty } from '@joplin/utils/object';
++import Logger from '@joplin/utils/Logger';
++import { uuidgen } from '@joplin/lib/uuid';
++
++const logger = Logger.create('api/items');
+ 
+ const router = new Router(RouteType.Api);
+ 
++const itemErrorToApiOutput = (itemName: string, error: unknown) => {
++	const errorId = uuidgen();
++	if (isUnexpectedError(error)) logger.error(`Could not process item ${itemName}: Error ID ${errorId}:`, error);
++	return errorToApiOutput(error, errorId);
++};
++
+ const batchMaxSize = 1 * MB;
+ 
+ export async function putItemContents(path: SubPath, ctx: AppContext, isBatch: boolean) {
+@@ -81,7 +91,7 @@ export async function putItemContents(path: SubPath, ctx: AppContext, isBatch: b
+ 	const output = await ctx.joplin.models.item().saveFromRawContent(ctx.joplin.owner, items, saveOptions);
+ 	for (const [name] of Object.entries(output)) {
+ 		if (output[name].item) output[name].item = (await ctx.joplin.models.item().toApiOutput(output[name].item)) as Item;
+-		if (output[name].error) output[name].error = errorToPlainObject(output[name].error);
++		if (output[name].error) output[name].error = itemErrorToApiOutput(name, output[name].error);
  	}
  
- 	throw new ErrorNotFound();
+ 	return output;
+@@ -125,7 +135,7 @@ export async function delItems(path: SubPath, ctx: AppContext, isBatch: boolean)
+ 				batchResponse[item.name] = {};
+ 			} catch (error) {
+ 				batchResponse[item.name] = {
+-					error: errorToPlainObject(error),
++					error: itemErrorToApiOutput(item.name, error),
+ 				};
+ 			}
+ 		}
+@@ -134,9 +144,7 @@ export async function delItems(path: SubPath, ctx: AppContext, isBatch: boolean)
+ 			const wasLoaded: boolean = hasOwnProperty(batchResponse, item);
+ 			if (!wasLoaded) {
+ 				batchResponse[item] = {
+-					error: errorToPlainObject(
+-						new ErrorNotFound(`Not found: ${item}`),
+-					),
++					error: itemErrorToApiOutput(item, new ErrorNotFound(`Not found: ${item}`)),
+ 				};
+ 			}
+ 		}
 ```
 
 ---
 
-### Incident Patch 3: `7130435d` (2026-11-12)
-**Commit Message**: Chore: Fix web build (#17076)
+### Incident Patch 3: `926f9bf2` (2026-11-12)
+**Commit Message**: Server: Security: Send at most one alert per hour when the recovery codes are viewed
 
-**File**: `packages/app-mobile/web/webpack.config.ts` (modified, +3/-0)
+**File**: `packages/server/src/models/RecoveryCodeModel.ts` (modified, +3/-1)
 ```diff
-@@ -85,6 +85,9 @@ const buildSharedConfig = (hotReload: boolean): webpack.Configuration => {
- 				// Force react-native-paper to use the correct icon library
- 				'react-native-vector-icons/MaterialCommunityIcons': throwOnLoadLibraryMock,
- 				'@expo/vector-icons/MaterialCommunityIcons': throwOnLoadLibraryMock,
-+				// expo-font is optionally used by react-native-vector-icons, but doesn't load correctly on web
-+				// (tries to import `node:async_hooks`):
-+				'expo-font': throwOnLoadLibraryMock,
+@@ -6,7 +6,7 @@ import { ErrorForbidden } from '../utils/errors';
+ import { isValidMFACode } from '../utils/crypto';
+ import recoveryCodesAccessedTemplate from '../views/emails/recoveryCodesAccessedTemplate';
+ import { forgotPasswordUrl } from '../utils/urlUtils';
+-import { formatDateOnServer } from '../utils/time';
++import { formatDateOnServer, Hour } from '../utils/time';
+ import { DbConnection } from '../db';
+ import { NewModelFactoryHandler } from './factory';
+ import { Services } from '../services/types';
+@@ -148,6 +148,8 @@ export default class RecoveryCodeModel extends BaseModel<RecoveryCode> {
+ 			recipient_name: user.full_name,
+ 			recipient_id: userId,
+ 			sender_id: EmailSender.NoReply,
++			// Viewing the codes can be repeated at will, so this limits the alert to one per hour
++			key: `recoveryCodesAccessed::${Math.floor(Date.now() / Hour)}`,
+ 		});
  
- 				// Workaround for applying serviceworker types to a single file.
- 				// See https://joshuatz.com/posts/2021/strongly-typed-service-workers/.
+ 		return recoveryCodeAccess;
+```
+
+**File**: `packages/server/src/routes/index/recovery_codes.test.ts` (modified, +3/-3)
+```diff
+@@ -155,7 +155,7 @@ describe('index/recovery_codes', () => {
+ 		expect(!!emails.find(e => e.subject === '[Joplin Server] Your multi-factor authentication recovery codes were viewed')).toBe(false);
+ 	});
+ 
+-	test('should send a email to user when the recovery codes are accessed, but the first time', async () => {
++	test('should send a email to user when the recovery codes are accessed, but the first time, at most once per hour', async () => {
+ 		const { session, user } = await createUserAndSession(1, undefined, { email: 'user@localhost' });
+ 		await models().user().enableMFA(user.id, 'asdf', session.id);
+ 
+@@ -175,13 +175,13 @@ describe('index/recovery_codes', () => {
+ 		// first time doesn't send an email
+ 		await accessRecoveryCodes();
+ 
+-		// second time upwards should receive and email alert
++		// second time upwards should receive an email alert, but only one per hour
+ 		await accessRecoveryCodes();
+ 		await accessRecoveryCodes();
+ 		await accessRecoveryCodes();
+ 
+ 		const emails = await models().email().all();
+ 
+-		expect(emails.filter(e => e.subject === '[Joplin Server] Your multi-factor authentication recovery codes were viewed').length).toBe(3);
++		expect(emails.filter(e => e.subject === '[Joplin Server] Your multi-factor authentication recovery codes were viewed').length).toBe(1);
+ 	});
+ });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17098** (2026-11-12): chore(deps): update dependency react-tooltip to v6.0.8 (@renovate[bot])
-- **PR #17097** (2026-11-12): Tools: Publish the CLI app from CI using npm trusted publishing (@laurent22)
-- **PR #17094** (2026-11-12): Tools: Cache default plugin builds (@laurent22)
-- **PR #17093** (2026-11-12): Tools: Hoist shared dependencies to speed up installs (@laurent22)
-- **PR #17092** (2026-11-12): chore(deps): update dependency ubuntu to v24 (@renovate[bot])
-- **PR #17090** (2026-11-12): Desktop: Fix creating accessible PDFs when OCR text contains non-Latin characters (@laurent22)
+- **PR #17119** (closed): Desktop: Fixes #17089: Keep indentation and code block blank lines in Paste as Markdown (@SahinurDEV)
+- **PR #17117** (closed): Android: Resolves #14254: Support client certificates (mutual TLS) for synchronisation (@kasati111)
+- **PR #17116** (closed): Desktop: Fixes #16834: Keep a note in the notebook it was moved to when the editor saves (@arshil42)
+- **PR #17115** (closed): Desktop: Fixes #17105: Allow printing a conflict note (@arshil42)
+- **PR #17111** (closed): Desktop, Mobile: Fixes #17110: Do not crash on invalid folder icon (@catch-26)
+- **PR #17109** (closed): Desktop, Mobile: Fixes #17110: Do not crash on invalid folder icon (@catch-26)
 
 ---
 
@@ -1086,33 +1409,36 @@ The owner ID is now only returned to the share's owner. No client uses this end 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Server: Security: Check the token on the account confirmation page when confirm_
+## X. Doc: Update security threat model
 
 **RULE**:
-When implementing operations in `packages/server/src/routes/index/users.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dfe4a242`: Server: Security: Check the token on the account confirmation page when confirm_email=0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68b1f922`: Doc: Update security threat model. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/server/src/routes/index/users.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
+### Can a share recipient modify, delete or move notes in a shared notebook?
 
-		// The token is still required
-		await expectHttpError(() => execRequest('', 'GET', path, null, { query: { token: 'invalid', confirm_email: '0' } }), ErrorForbidden.httpCode);
+Yes, this is intended. A notebook is only shared with someone after the owner has invited them by email and they have accepted the invitation, so share participants are considered trusted with the content of that notebook. They can edit or delete any note in it, or move a note out of it.
+
+Reports that rely on a share participant acting on the content of the shared notebook are therefore not considered vulnerabilities.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dfe4a242` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68b1f922` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
