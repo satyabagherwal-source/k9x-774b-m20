@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T12:46:17.254Z",
-  "total_records": 1549,
+  "last_updated": "2026-11-17T13:05:59.409Z",
+  "total_records": 1551,
   "domains": {
     "A": {
       "total": 11,
@@ -1034,7 +1034,7 @@
       ]
     },
     "H": {
-      "total": 373,
+      "total": 375,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1408,7 +1408,9 @@
         "domain_intelligence-technical-construction-intelligence-diggerhq-digger-core-invariants",
         "domain_intelligence-technical-construction-intelligence-diggerhq-digger-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-fastify-fastify-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant"
       ]
     },
     "I": {
@@ -10451,8 +10453,8 @@
       "title": "Architecture Intelligence: streetwriters/notesnook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-streetwriters-notesnook-architecture-intelligence-streetwriters-notesnook-core-i.md",
       "repository": "streetwriters/notesnook",
-      "content_hash": "47781562f7599a41de15fded2ca7ddbff0df8622bf63fb19bc16ce72cd6c4c96",
-      "created_at": "2026-11-13T21:36:38.015Z"
+      "content_hash": "7c5c5f257873c3b9f98c1ecfc94a19d98191d7614b781344c1e7e95b971124d4",
+      "created_at": "2026-11-17T13:05:48.908Z"
     },
     "DOM-D-B0D103E9": {
       "record_id": "DOM-D-B0D103E9",
@@ -10511,8 +10513,8 @@
       "title": "Architecture Intelligence: streetwriters-notesnook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-streetwriters-notesnook-learnings-architecture-intelligence-streetwriters-notesn.md",
       "repository": "streetwriters-notesnook-learnings",
-      "content_hash": "144ada95f57b1e2f8d18aeda28dae4f7b171a992a80e0bef640d8739fdfc28a0",
-      "created_at": "2026-11-13T21:37:18.387Z"
+      "content_hash": "3fe89271e0df3c6396020906b31d120eab75d852c35668db6e1628ef345d67f2",
+      "created_at": "2026-11-17T13:05:58.027Z"
     },
     "domain_intelligence-architecture-intelligence-ntex-rs-ntex-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ntex-rs-ntex-core-invariants",
@@ -17959,8 +17961,8 @@
       "title": "Architecture Intelligence: DNSControl/dnscontrol Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dnscontrol-dnscontrol-architecture-intelligence-dnscontrol-dnscontrol-core-invar.md",
       "repository": "DNSControl/dnscontrol",
-      "content_hash": "645e1c36c245e86c2e7c155da2786456daf3d05f52ab409483cb1e45e69a1aca",
-      "created_at": "2026-11-14T23:43:13.974Z"
+      "content_hash": "5844c53a83ac68d32cb7f884993b25ffdcae5846555438d3bcaeaa4de7b87c96",
+      "created_at": "2026-11-17T13:05:50.516Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized",
@@ -17977,8 +17979,8 @@
       "title": "Architecture Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dnscontrol-dnscontrol-learnings-architecture-intelligence-dnscontrol-dnscontrol-.md",
       "repository": "dnscontrol-dnscontrol-learnings",
-      "content_hash": "5901574a3b932c67070eed34c3eb9810402e203107b629282699fc0e130ba4a6",
-      "created_at": "2026-11-14T23:43:17.766Z"
+      "content_hash": "8a406ec63e46faec298141b3ca4f6c8234f58a53df374dcb1c7518c0e78b10cf",
+      "created_at": "2026-11-17T13:05:58.761Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-core-invaria",
@@ -26961,6 +26963,24 @@
       "repository": "fastify-fastify-learnings",
       "content_hash": "52b41156fc1ec7e7a6176904c3711691b2f1fad792e24611dc3a28c870cd9376",
       "created_at": "2026-11-17T12:46:16.055Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: StarTrail-org/LEANN Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-startrail-org-leann-technical-construction-intelligence-startrail-org-leann-core.md",
+      "repository": "StarTrail-org/LEANN",
+      "content_hash": "6747720a3c178fb0c79286eb076ad122589644ac0750f2f05f3dc430161ae152",
+      "created_at": "2026-11-17T13:05:54.589Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: startrail-org-leann-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-startrail-org-leann-learnings-technical-construction-intelligence-startrail-org-.md",
+      "repository": "startrail-org-leann-learnings",
+      "content_hash": "5980dc2c0b8782e1471c5fbcd61368f89cf54a9f3e4b0445269c84a78bd57e69",
+      "created_at": "2026-11-17T13:05:59.409Z"
     }
   }
 }

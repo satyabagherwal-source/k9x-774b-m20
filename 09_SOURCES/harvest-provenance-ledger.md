@@ -10586,3 +10586,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-84284456` | `project://hf-internlm-sage-s2.1-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md` | 2026-11-17T12:26:13.627Z |
 | `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `36a67047` | Multi-dimensional audit evidence | 2026-11-17T12:41:40.140Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e1506250` | Multi-dimensional audit evidence | 2026-11-17T12:46:12.371Z |
+| `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `8bb25559` | Multi-dimensional audit evidence | 2026-11-17T13:05:48.605Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `0087e705` | Multi-dimensional audit evidence | 2026-11-17T13:05:50.212Z |
+| `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `2ec581fc` | Multi-dimensional audit evidence | 2026-11-17T13:05:54.254Z |

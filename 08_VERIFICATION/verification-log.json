@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-MV3H",
-    "timestamp": "2026-11-14T22:39:16.973Z",
-    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-    "contentHash": "2e97dd05b3bd047bbfd26cb82822e277d74f0ebd98b44aebb4a40b88d3a21173",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-MW49",
-    "timestamp": "2026-11-14T22:39:18.297Z",
-    "repository": "sharkdp/fd",
-    "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "01e530f1940384cd16f88127835ec3263c8acded75f6d2ebb7a88d7c6f3d2b53",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-N0BG",
-    "timestamp": "2026-11-14T22:39:23.740Z",
-    "repository": "mikepenz/AboutLibraries",
-    "learningId": "learn-github-mikepenz-aboutlibraries",
-    "contentHash": "9b6cf103461b78f4aaad447926ad555e0bcb59c4123340a01fdb9e39b0add687",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-N8D9",
     "timestamp": "2026-11-14T22:39:34.173Z",
     "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -7492,6 +7447,51 @@
     "contentHash": "c5a693b4e972a1c73ccb481c5f8c866c21e7d0850ad6ac26c7c4ae4a3d16b430",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-GXFD",
+    "timestamp": "2026-11-17T13:05:48.601Z",
+    "repository": "streetwriters/notesnook",
+    "learningId": "learn-github-streetwriters-notesnook",
+    "contentHash": "add312a6ead69a8d9ef464f557349796ba249d3a4ebf3eab03d417656490bdc0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-GYO0",
+    "timestamp": "2026-11-17T13:05:50.208Z",
+    "repository": "DNSControl/dnscontrol",
+    "learningId": "learn-github-dnscontrol-dnscontrol",
+    "contentHash": "bf12c2d2577a3b15085dda9b313f01c65381d3acad979605d2e8cce74b3a97dc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-H1SA",
+    "timestamp": "2026-11-17T13:05:54.250Z",
+    "repository": "StarTrail-org/LEANN",
+    "learningId": "learn-github-startrail-org-leann",
+    "contentHash": "d301b28d02eb315478cbaeb2b34233068de8eac3c296ddc9cc980a48f83f7d40",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

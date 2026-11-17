@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T12:46:12.380Z",
+  "last_updated": "2026-11-17T13:05:54.280Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4386,14 +4386,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-streetwriters-notesnook",
-      "content_hash": "ed56db56a85d8d657ea52446947fca770484b1d4cee3e042edbb7b97c779746d",
-      "verified_at": "2026-11-13T21:36:37.687Z",
+      "content_hash": "add312a6ead69a8d9ef464f557349796ba249d3a4ebf3eab03d417656490bdc0",
+      "verified_at": "2026-11-17T13:05:48.613Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:36:37.687Z"
+      "last_updated": "2026-11-17T13:05:48.613Z"
     },
     "kgateway-dev/kgateway": {
       "repository": "kgateway-dev/kgateway",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "1e46b633a08d744fa6e6ae9cc5ef6d2d5a9a53d57eea6efc297336fe199fba92",
-      "verified_at": "2026-11-16T05:29:04.274Z",
+      "content_hash": "bf12c2d2577a3b15085dda9b313f01c65381d3acad979605d2e8cce74b3a97dc",
+      "verified_at": "2026-11-17T13:05:50.219Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T05:29:04.274Z"
+      "last_updated": "2026-11-17T13:05:50.219Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -8631,14 +8631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-startrail-org-leann",
-      "content_hash": "f90812cd3b81ae953120da3a65382113c6d77a1ffafec75d60cdb07520e29b56",
-      "verified_at": "2026-10-31T03:02:48.475Z",
+      "content_hash": "d301b28d02eb315478cbaeb2b34233068de8eac3c296ddc9cc980a48f83f7d40",
+      "verified_at": "2026-11-17T13:05:54.279Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T03:02:48.475Z"
+      "last_updated": "2026-11-17T13:05:54.279Z"
     },
     "adonisjs/core": {
       "repository": "adonisjs/core",

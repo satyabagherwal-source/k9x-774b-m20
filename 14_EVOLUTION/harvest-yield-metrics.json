@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T12:46:12.377Z",
-  "total_cycles_completed": 10111,
-  "total_learnings_persisted": 10111,
-  "total_rules_promoted": 9705,
+  "last_updated": "2026-11-17T13:05:54.275Z",
+  "total_cycles_completed": 10114,
+  "total_learnings_persisted": 10114,
+  "total_rules_promoted": 9707,
   "history": [
-    {
-      "timestamp": "2026-11-16T18:46:44.025Z",
-      "repository": "fb55/htmlparser2",
-      "learningId": "learn-github-fb55-htmlparser2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:46:52.838Z",
-      "repository": "openziti/zrok",
-      "learningId": "learn-github-openziti-zrok",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:46:54.715Z",
-      "repository": "alibaba/zvec",
-      "learningId": "learn-github-alibaba-zvec",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T18:55:43.569Z",
       "repository": "inikulin/parse5",
@@ -1403,6 +1382,27 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T13:05:48.610Z",
+      "repository": "streetwriters/notesnook",
+      "learningId": "learn-github-streetwriters-notesnook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T13:05:50.217Z",
+      "repository": "DNSControl/dnscontrol",
+      "learningId": "learn-github-dnscontrol-dnscontrol",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T13:05:54.275Z",
+      "repository": "StarTrail-org/LEANN",
+      "learningId": "learn-github-startrail-org-leann",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

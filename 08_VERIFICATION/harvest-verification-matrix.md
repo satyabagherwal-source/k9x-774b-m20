@@ -10553,3 +10553,6 @@
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T12:26:13.627Z` | `hf-internlm-sage-s2.1-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-84284456` [Domain D] | Yes (`1395e3de...`) |
 | `CYCLE-20261117-LVS8` | `2026-11-17T12:41:40.136Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8965` | Yes (`15c6145e...`) |
 | `CYCLE-20261117-RPU7` | `2026-11-17T12:46:12.367Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8966` | Yes (`c5a693b4...`) |
+| `CYCLE-20261117-GXFD` | `2026-11-17T13:05:48.601Z` | `streetwriters/notesnook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8967` | Yes (`add312a6...`) |
+| `CYCLE-20261117-GYO0` | `2026-11-17T13:05:50.208Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8968` | Yes (`bf12c2d2...`) |
+| `CYCLE-20261117-H1SA` | `2026-11-17T13:05:54.250Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/startrail-org-leann-learnings.md` | Yes (`d301b28d...`) |

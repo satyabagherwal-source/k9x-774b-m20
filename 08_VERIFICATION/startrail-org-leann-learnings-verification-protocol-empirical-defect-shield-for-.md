@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:10.926Z",
+  "timestamp": "2026-11-17T13:05:59.186Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-startrail-org-leann-learnings",
+  "learning_id": "LEARN-EVO-startrail-org-leann-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [startrail-org-leann-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:10.926Z`  
-> **Learning ID**: `LEARN-REEXTRACT-startrail-org-leann-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T13:05:59.186Z`  
+> **Learning ID**: `LEARN-EVO-startrail-org-leann-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source**: github ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
-> **Source Version**: `07796bd7`  
+> **Source Version**: `2ec581fc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T03:02:47.820Z  
+> **Timestamp**: 2026-11-17T13:05:53.818Z  
 > **Learning ID**: `learn-github-startrail-org-leann`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/startrail-org-leann-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarTrail-org/LEANN](https://github.com/StarTrail-org/LEANN))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T03:02:47.611Z  
+> **Harvest Timestamp**: 2026-11-17T13:05:53.811Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: [MLsys2026 Best Paper]: https://arxiv.org/abs/2506.08276. RAG on Everything with LEANN. Enjoy 97% storage savings while running a fast, accurate, and 100% private RAG application on your personal device.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 13723 stars
+- **Stars / Engagement**: 13802 stars
 
 ---
 
@@ -491,11 +491,53 @@ from leann.interface import LeannBackendSearcherInterface
 
 from .chat import get_llm
 from .embedding_server_manager import EmbeddingServerManager
+from .index_offsets import load_offset_map
 from .interface import LeannBackendFactoryInterface
 from .metadata_filter import MetadataFilterEngine
 from .registry import BACKEND_REGISTRY, autodiscover_backends
 
 logger = logging.getLogger(__name__)
+
+_EMBEDDINGS_PICKLE_GLOBALS = {
+    ("numpy", "dtype"),
+    ("numpy", "ndarray"),
+    ("numpy.core.multiarray", "_reconstruct"),
+    ("numpy.core.multiarray", "scalar"),
+    ("numpy.core.numeric", "_frombuffer"),
+    ("numpy._core.multiarray", "_reconstruct"),
+    ("numpy._core.multiarray", "scalar"),
+    ("numpy._core.numeric", "_frombuffer"),
+}
+
+
+class _EmbeddingsUnpickler(pickle.Unpickler):
+    def find_class(self, module: str, name: str):
+        if (module, name) in _EMBEDDINGS_PICKLE_GLOBALS:
+            return super().find_class(module, name)
+        raise pickle.UnpicklingError(
+            f"Global object {module}.{name} is not allowed in an embeddings file"
+        )
+
+    def persistent_load(self, pid):
+        raise pickle.UnpicklingError("Persistent references are not allowed in an embeddings file")
+
+
+def _load_embeddings_pickle(path: str) -> tuple[Any, np.ndarray]:
+    with open(path, "rb") as handle:
+        data = _EmbeddingsUnpickler(handle).load()
+
+    if not isinstance(data, tuple) or len(data) != 2:
+        raise ValueError(
+            f"Invalid embeddings file format. Expected tuple with 2 elements, got {type(data)}"
+        )
+
+    ids, embeddings = data
+    if not isinstance(embeddings, np.ndarray):
+        raise ValueError(f"Expected embeddings to be numpy array, got {type(embeddings)}")
+    if embeddings.dtype.kind in {"O", "V"}:
+        raise ValueError("Embeddings must use a numeric dtype")
+    return ids, embeddings
+
 
 # Passage ID schemes recorded in <index>.meta.json["passage_id_scheme"].
 # - "sequential": today's default; IDs are str(insertion_index) (api.py:add_text).
@@ -688,38 +730,7 @@ class PassageManager:
             # Build candidate lists and pick first existing; otherwise keep last candidate for error message
             idx_default = f"{index_name_base}.passages.idx" if index_name_base else None
             idx_candidates = _resolve_candidates(
-                index_file, "index_path_relative", idx_default, source
-            )
-            pas_default = f"{index_name_base}.passages.jsonl" if index_name_base else None
-            pas_candidates = _resolve_candidates(passage_file, "path_relative", pas_default, source)
-
-            def _pick_existing(cands: list[Path]) -> str:
-                for c in cands:
-                    if c.exists():
-                        return str(c.resolve())
-                # Fallback to last candidate (best guess) even if not exists; will error below
-                return str(cands[-1].resolve()) if cands else ""
-
-            index_file = _pick_existing(idx_candidates)
-            passage_file = _pick_existing(pas_candidates)
-
-            if not Path(index_file).exists():
-                raise FileNotFoundError(f"Passage index file not found: {index_file}")
-
-            with open(index_file, "rb") as f:
-                offset_map: dict[str, int] = pickle.load(f)
-                self.offset_maps[passage_file] = offset_map
-                self.passage_files[passage_file] = passage_file
-                self._total_count += len(offset_map)
-
-    def get_passage(self, passage_id: str) -> dict[str, Any]:
-        # Fast path: check each shard map (there are typically few shards).
-        # This avoids building a massive combined dict while keeping lookups
-        # bounded by the number of shards.
-        for passage_file, offset_map in self.offset_maps.items():
-            try:
-                offset = offset_map[passage_id]
-                with o
+                index_file, "index_path_relat
 ```
 
 ### Core Architecture Module: `packages/leann-core/src/leann/chat.py`
@@ -1066,7 +1077,7 @@ def estimate_token_count(text: str) -> int:
         import tiktoken
 
         encoder = tiktoken.get_encoding("cl100k_base")
-        return len(encoder.encode(text))
+        return len(encoder.encode(text, disallowed_special=()))
     except ImportError:
         # Fallback: Conservative character-based estimation
         # Assume worst case for code: 1.2 tokens per character
@@ -1128,7 +1139,7 @@ def validate_chunk_token_limits(chunks: list[str], max_tokens: int = 512) -> tup
                 import tiktoken
 
                 encoder = tiktoken.get_encoding("cl100k_base")
-                tokens = encoder.encode(chunk)
+                tokens = encoder.encode(chunk, disallowed_special=())
                 if len(tokens) > max_tokens:
                     truncated_tokens = tokens[:max_tokens]
                     truncated_chunk = encoder.decode(truncated_tokens)
@@ -1284,7 +1295,7 @@ def create_ast_chunks(
                 "file_name": doc.metadata.get("file_name", ""),
                 "source": doc.metadata.get("source", ""),
                 "creation_date": doc.metadata.get("creation_date", ""),
-                "last_modified_date": doc.metadata.get("last_modi
+                "la
 ```
 
 ### Core Architecture Module: `packages/leann-core/src/leann/cli.py`
@@ -1310,6 +1321,7 @@ from tqdm import tqdm
 
 from .api import Fts5BM25Index, LeannBuilder, LeannChat, LeannSearcher
 from .embedding_server_manager import EmbeddingServerManager
+from .index_offsets import load_offset_map
 from .interactive_utils import create_cli_session
 from .registry import DEFAULT_INDEX_SCAN_DEPTH, iter_index_meta_files, register_project_directory
 from .settings import (
@@ -1567,8 +1579,6 @@ Examples:
         # Global verbosity options
         verbosity_group = parser.add_mutually_exclusive_group()
         verbosity_group.add_argument(
-            "-v",
-            "--verbose",
             
 ```
 
@@ -1917,6 +1927,8 @@ import time
 from pathlib import Path
 from typing import Any, Optional
 
+import psutil
+
 from .settings import encode_provider_options
 
 # Lightweight, self-contained server manager with no cross-process inspection
@@ -2024,13 +2036,8 @@ def _check_port(port: int) -> bool:
 
 def _pid_is_alive(pid: int) -> bool:
     """Best-effort liveness check for a process id."""
-    if pid <= 0:
-        return False
-    try:
-        os.kill(pid, 0)
-        return True
-    except OSError:
-        return False
+    # Not os.kill(pid, 0): on Windows signal 0 is CTRL_C_EVENT, not an existence check.
+    return pid > 0 and psutil.pid_exists(pid)
 
 
 # Note: All cross-process scanning helpers removed for simplicity
@@ -2135,6 +2142,7 @@ class EmbeddingServerManager:
         self._server_config: Optional[dict] = None
         self._daemon_mode = False
         self._registry_path: Optional[Path] = None
+        self._daemon_log_path: Optional[Path] = None
         self._atexit_registered = False
         # Also register a weakref finalizer to ensure cleanup when manager is GC'ed
         try:
@@ -2205,9 +2213,7 @@ class EmbeddingServerManager:
                 **kwargs,
             )
 
-        # Always pick a fresh available port
-        try:
-            actual_port = _get_avai
+        # Always pick a
 ```
 
 
@@ -2237,90 +2243,679 @@ class EmbeddingServerManager:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `07796bd7` (2026-10-28)
-**Commit Message**: fix(release): wait for main CI before publishing
+### Incident Patch 1: `60597ba5` (2026-11-17)
+**Commit Message**: fix: harden index artifact deserialization (#455)
 
-**File**: `.github/workflows/release-manual.yml` (modified, +38/-25)
+* fix: restrict passage offset map deserialization
+
+* fix: harden remaining deserialization paths
+
+* fix: repair the three test breaks the hardening introduced
+
+Every build job on this PR failed. Three separate causes:
+
+- test_metadata_filtering mocks `builtins.open` and `pickle.load` to construct
+  a PassageManager without touching disk. Hardening moved offset loading to
+  `Path(path).open` and a custom Unpickler, so neither mock applied any more:
+  the real filesystem was hit, and `Path("")` normalizes to ".", so a missing
+  index raised IsADirectoryError where callers expect FileNotFoundError. The
+  tests now mock `leann.api.load_offset_map`, the seam that replaced
+  `pickle.load`, and `load_offset_map` uses builtin `open` so the empty-path
+  behaviour matches what it replaced.
+
+- test_flashlib_ivf_security imported `leann_backend_flashlib_ivf`
+  unconditionally. That backend needs CUDA/FlashLib and is not installed in
+  CI, so both new tests errored on import rather than skipping, as the
+  neighbouring torch guard already does.
+
+Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Aakash Suresh <[REDACTE
+
+**File**: `docs/CHANGELOG.md` (modified, +8/-0)
 ```diff
-@@ -24,31 +24,44 @@ jobs:
-           set -euo pipefail
+@@ -89,6 +89,14 @@ fixes). Newest entries at the bottom.
+ - `create_text_chunks(max_tokens_per_chunk=...)` now only shrinks `chunk_size`; it previously replaced it, growing 256-token chunks to ~1700 for unknown models.
+ - Existing indexes are unchanged; rebuild with `--force` to re-chunk with the new sizes.
  
-           MAIN_SHA=$(gh api repos/${GITHUB_REPOSITORY}/commits/main --jq '.sha')
--          RUN_ID=$(gh api repos/${GITHUB_REPOSITORY}/actions/workflows/build-and-publish.yml/runs \
--            --method GET \
--            --field branch=main \
--            --field head_sha="${MAIN_SHA}" \
--            --field per_page=1 \
--            --jq '.workflow_runs[0].id')
--
--          if [ -z "${RUN_ID}" ] || [ "${RUN_ID}" = "null" ]; then
--            echo "❌ No CI run found for main @ ${MAIN_SHA}"
--            exit 1
--          fi
--
--          STATUS=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.status')
--          CONCLUSION=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.conclusion')
--          URL=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.html_url')
--
--          echo "CI run: ${URL}"
--          if [ "${STATUS}" != "completed" ] || [ "${CONCLUSION}" != "success" ]; then
--            echo "❌ CI not successful for main @ ${MAIN_SHA}"
--            echo "Status: ${STATUS}"
--            echo "Conclusion: ${CONCLUSION}"
--            exit 1
--          fi
--
--          echo "✅ CI succeeded for main @ ${MAIN_SHA}"
-+          DEADLINE=$(( $(date +%s) + 14400 ))
-+          RUN_ID=""
++## 2026-10-22: Harden passage offset loading
 +
-+          while (( $(date +%s) < DEADLINE )); do
-+            RUN_ID=$(gh api repos/${GITHUB_REPOSITORY}/actions/workflows/build-and-publish.yml/runs \
-+              --method GET \
-+              --field branch=main \
-+              --field head_sha="${MAIN_SHA}" \
-+              --field per_page=1 \
-+              --jq '.workflow_runs[0].id // empty')
++- Restricted passage offset-map unpickling to the primitive dictionary shape LEANN writes.
++- Rejected crafted `.passages.idx` files before a searcher or incremental update can continue.
++- Added regression coverage for the searcher entry point, primitive compatibility, and malformed input.
++- Restricted sync snapshots and embeddings pickles to their expected object graphs.
++- Loaded FlashLib IVF state dictionaries with PyTorch's safe weights-only loader.
 +
-+            if [ -z "${RUN_ID}" ]; then
-+              echo "Waiting for a CI run for main @ ${MAIN_SHA}"
-+              sleep 15
-+              continue
-+            fi
-+
-+            STATUS=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.status')
-+            CONCLUSION=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.conclusion')
-+            URL=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.html_url')
-+
-+            if [ "${STATUS}" = "completed" ]; then
-+              echo "CI run: ${URL}"
-+              if [ "${CONCLUSION}" != "success" ]; then
-+                echo "❌ CI not successful for main @ ${MAIN_SHA}"
-+                echo "Conclusion: ${CONCLUSION}"
-+                exit 1
-+              fi
-+              echo "✅ CI succeeded for main @ ${MAIN_SHA}"
-+              exit 0
-+            fi
-+
-+            echo "Waiting for CI run ${RUN_ID} for main @ ${MAIN_SHA}: ${STATUS}"
-+            sleep 30
-+          done
-+
-+          echo "❌ CI did not finish successfully within four hours for main @ ${MAIN_SHA}"
-+          exit 1
+ ## 2026-10-23: Refuse to load a custom encoder as a vanilla BertModel
  
-   update-version:
-     name: Update Version
+ - `jinaai/jina-embeddings-v2-base-code` (and any encoder that declares its
+```
+
+**File**: `packages/leann-backend-flashlib-ivf/leann_backend_flashlib_ivf/flashlib_ivf_backend.py` (modified, +1/-1)
+```diff
+@@ -111,7 +111,7 @@ def _load_index(path: Path, device: str = "cuda"):
+     import torch
+ 
+     IvfFlatIndex, _, _ = _import_flashlib()
+-    state = torch.load(str(path), map_location=device, weights_only=False)
++    state = torch.load(str(path), map_location=device, weights_only=True)
+     kwargs: dict[str, Any] = {f: state[f].to(device) for f in _TENSOR_FIELDS}
+     for f in _SCALAR_FIELDS:
+         kwargs[f] = state[f]
+```
+
+**File**: `packages/leann-core/src/leann/api.py` (modified, +48/-21)
+```diff
+@@ -23,12 +23,54 @@
+ 
+ from .chat import get_llm
+ from .embedding_server_manager import EmbeddingServerManager
++from .index_offsets import load_offset_map
+ from .interface import LeannBackendFactoryInterface
+ from .metadata_filter import MetadataFilterEngine
+ from .registry import BACKEND_REGISTRY, autodiscover_backends
+ 
+ logger = logging.getLogger(__name__)
+ 
++_EMBEDDINGS_PICKLE_GLOBALS = {
++    ("numpy", "dtype"),
++    ("numpy", "ndarray"),
++    ("numpy.core.multiarray", "_reconstruct"),
++    ("numpy.core.multiarray", "scalar"),
++    ("numpy.core.numeric", "_frombuffer"),
++    ("numpy._core.multiarray", "_reconstruct"),
++    ("numpy._core.multiarray", "scalar"),
++    ("numpy._core.numeric", "_frombuffer"),
++}
++
++
++class _EmbeddingsUnpickler(pickle.Unpickler):
++    def find_class(self, module: str, name: str):
++        if (module, name) in _EMBEDDINGS_PICKLE_GLOBALS:
++            return super().find_class(module, name)
++        raise pickle.UnpicklingError(
++            f"Global object {module}.{name} is not allowed in an embeddings file"
++        )
++
++    def persistent_load(self, pid):
++        raise pickle.UnpicklingError("Persistent references are not allowed in an embeddings file")
++
++
++def _load_embeddings_pickle(path: str) -> tuple[Any, np.ndarray]:
++    with open(path, "rb") as handle:
++        data = _EmbeddingsUnpickler(handle).load()
++
++    if not isinstance(data, tuple) or len(data) != 2:
++        raise ValueError(
++            f"Invalid embeddings file format. Expected tuple with 2 elements, got {type(data)}"
++        )
++
++    ids, embeddings = data
++    if not isinstance(embeddings, np.ndarray):
++        raise ValueError(f"Expected embeddings to be numpy array, got {type(embeddings)}")
++    if embeddings.dtype.kind in {"O", "V"}:
++        raise ValueError("Embeddings must use a numeric dtype")
++    return ids, embeddings
++
++
+ # Passage ID schemes recorded in <index>.meta.json["passage_id_scheme"].
+ # - "sequential": today's default; IDs are str(insertion_index) (api.py:add_text).
+ # - "content-hash": planned in #329; IDs are sha256(text)[:16], stable across
+@@ -238,11 +280,10 @@ def _pick_existing(cands: list[Path]) -> str:
+             if not Path(index_file).exists():
+                 raise FileNotFoundError(f"Passage index file not found: {index_file}")
+ 
+-            with open(index_file, "rb") as f:
+-                offset_map: dict[str, int] = pickle.load(f)
+-                self.offset_maps[passage_file] = offset_map
+-                self.passage_files[passage_file] = passage_file
+-                self._total_count += len(offset_map)
++            offset_map = load_offset_map(index_file)
++            self.offset_maps[passage_file] = offset_map
++            self.passage_files[passage_file] = passage_file
++            self._total_count += len(offset_map)
+ 
+     def get_passage(self, passage_id: str) -> dict[str, Any]:
+         # Fast path: check each shard map (there are typically few shards).
+@@ -849,20 +890,7 @@ def build_index_from_embeddings(self, index_path: str, embeddings_file: str):
+             index_path: Path where the index will be saved
+             embeddings_file: Path to pickle file containing (ids, embeddings) tuple
+         """
+-        # Load pre-computed embeddings
+-        with open(embeddings_file, "rb") as f:
+-            data = pickle.load(f)
+-
+-        if not isinstance(data, tuple) or len(data) != 2:
+-            raise ValueError(
+-                f"Invalid embeddings file format. Expected tuple with 2 elements, got {type(data)}"
+-            )
+-
+-        ids, embeddings = data
+-
+-        if not isinstance(embeddings, np.ndarray):
+-            raise ValueError(f"Expected embeddings to be numpy array, got {type(embeddings)}")
+-
++        ids, embeddings = _load_embeddings_pickle(embeddings_file)
+         self.build_index_from_arrays(index_path, ids, embeddings)
+ 
+     @staticmethod
+@@ -920,8 +948,7 @@ def update_index(self, index_path: str, remove_passage_ids: Optional[list[str]]
+                 f"Index was built with backend '{backend_name}', cannot update with '{self.backend_name}'."
+             )
+ 
+-        with open(offset_file, "rb") as f:
+-            offset_map: dict[str, int] = pickle.load(f)
++        offset_map = load_offset_map(offset_file)
+         existing_ids = set(offset_map.keys())
+ 
+         # IVF: optional delete (for reindex / file-change: remove then re-insert)
+```
+
+**File**: `packages/leann-core/src/leann/cli.py` (modified, +3/-4)
+```diff
+@@ -19,6 +19,7 @@
+ 
+ from .api import Fts5BM25Index, LeannBuilder, LeannChat, LeannSearcher
+ from .embedding_server_manager import EmbeddingServerManager
++from .index_offsets import load_offset_map
+ from .interactive_utils import create_cli_session
+ from .registry import DEFAULT_INDEX_SCAN_DEPTH, iter_index_meta_files, register_project_directory
+ from .settings import (
+@@ -2260,8 +2261,7 @@ def _incremental_ivf_remove_only(
+         offset_file = index_dir / "documents.leann.passages.idx"
+         live_ids: set[str] | None = None
+         if offset_file.exists():
+-            with open(offset_file, "rb") as f:
+-                live_ids = set(pickle.load(f).keys())
++            live_ids = set(load_offset_map(offset_file))
+         chunk_ids_by_file = self._load_chunk_ids_by_file(passages_file, live_ids=live_ids)
+         roots = self._load_sync_roots(index_dir)
+         ids_to_remove: list[str] = []
+@@ -2307,8 +2307,7 @@ def _incremental_ivf_update(
+         offset_file = index_dir / "documents.leann.passages.idx"
+         live_ids: set[str] | None = None
+         if offset_file.exists():
+-            with open(offset_file, "rb") as f:
+-                live_ids = set(pickle.load(f).keys())
++            live_ids = set(load_offset_map(offset_file))
+         chunk_ids_by_file = (
+             self._load_chunk_ids_by_file(passages_file, live_ids=live_ids)
+             if passages_file.exists()
+```
+
+**File**: `packages/leann-core/src/leann/index_offsets.py` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++import pickle
++from pathlib import Path
++
++
++class _OffsetMapUnpickler(pickle.Unpickler):
++    """Deserialize only the primitive container used by legacy offset maps."""
++
++    def find_class(self, module: str, name: str):
++        raise pickle.UnpicklingError(
++            f"Global object {module}.{name} is not allowed in a passage offset map"
++        )
++
++    def persistent_load(self, pid):
++        raise pickle.UnpicklingError(
++            "Persistent references are not allowed in a passage offset map"
++        )
++
++
++def load_offset_map(path: str | Path) -> dict[str, int]:
++    # Builtin open, not Path.open: Path("") normalizes to ".", which would turn the
++    # FileNotFoundError callers rely on for a missing index into IsADirectoryError.
++    with open(path, "rb") as handle:
++        data = _OffsetMapUnpickler(handle).load()
++
++    if not isinstance(data, dict):
++        raise pickle.UnpicklingError("Passage offset map must be a dictionary")
++
++    offsets: dict[str, int] = {}
++    for key, offset in data.items():
++        if isinstance(key, bool) or not isinstance(key, (str, int)):
++            raise pickle.UnpicklingError("Passage offset map keys must be strings or integers")
++        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
++            raise pickle.UnpicklingError("Passage offset map values must be non-negative integers")
++        normalized_key = str(key)
++        if normalized_key in offsets:
++            raise pickle.UnpicklingError("Passage offset map contains duplicate passage IDs")
++        offsets[normalized_key] = offset
++    return offsets
+```
+
+**File**: `packages/leann-core/src/leann/sync.py` (modified, +21/-1)
+```diff
+@@ -175,6 +175,23 @@ def compare_with(self, other: "MerkleTree"):
+         return added, removed, modified
+ 
+ 
++class _SnapshotUnpickler(pickle.Unpickler):
++    _ALLOWED = {
++        ("leann.sync", "MerkleTree"),
++        ("leann.sync", "MerkleTreeNode"),
++    }
++
++    def find_class(self, module: str, name: str):
++        if (module, name) in self._ALLOWED:
++            return super().find_class(module, name)
++        raise pickle.UnpicklingError(
++            f"Global object {module}.{name} is not allowed in a sync snapshot"
++        )
++
++    def persistent_load(self, pid):
++        raise pickle.UnpicklingError("Persistent references are not allowed in a sync snapshot")
++
++
+ class FileSynchronizer:
+     def __init__(
+         self,
+@@ -298,7 +315,10 @@ def save_snapshot(self):
+     def load_snapshot(self):
+         try:
+             with open(self.snapshot_path, "rb") as f:
+-                self.tree = pickle.load(f)
++                tree = _SnapshotUnpickler(f).load()
++            if not isinstance(tree, MerkleTree):
++                raise pickle.UnpicklingError("Sync snapshot must contain a MerkleTree")
++            self.tree = tree
+         except FileNotFoundError:
+             self.tree = None
+         except (
+```
+
+**File**: `tests/test_flashlib_ivf_security.py` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++import pickle
++from pathlib import Path
++
++import pytest
++
++torch = pytest.importorskip("torch")
++pytest.importorskip("leann_backend_flashlib_ivf")
++
++
++class _MarkerPayload:
++    def __init__(self, marker: Path):
++        self.marker = marker
++
++    def __reduce__(self):
++        return Path.write_text, (self.marker, "executed")
++
++
++def test_flashlib_index_load_rejects_pickled_callable(tmp_path: Path, monkeypatch) -> None:
++    from leann_backend_flashlib_ivf import flashlib_ivf_backend
++
++    marker = tmp_path / "executed"
++    archive = tmp_path / "crafted.flashlib_ivf.pt"
++    torch.save(_MarkerPayload(marker), archive)
++    monkeypatch.setattr(flashlib_ivf_backend, "_import_flashlib", lambda: (dict, None, None))
++
++    with pytest.raises(pickle.UnpicklingError):
++        flashlib_ivf_backend._load_index(archive, device="cpu")
++
++    assert not marker.exists()
++
++
++def test_flashlib_index_load_accepts_state_dict(tmp_path: Path, monkeypatch) -> None:
++    from leann_backend_flashlib_ivf import flashlib_ivf_backend
++
++    class StubIndex:
++        def __init__(self, **kwargs):
++            self.__dict__.update(kwargs)
++
++    state = {field: torch.zeros(1) for field in flashlib_ivf_backend._TENSOR_FIELDS}
++    state.update(dict.fromkeys(flashlib_ivf_backend._SCALAR_FIELDS, 1))
++    archive = tmp_path / "valid.flashlib_ivf.pt"
++    torch.save(state, archive)
++    monkeypatch.setattr(flashlib_ivf_backend, "_import_flashlib", lambda: (StubIndex, None, None))
++
++    index = flashlib_ivf_backend._load_index(archive, device="cpu")
++
++    assert isinstance(index, StubIndex)
++    assert index.nlist == 1
+```
+
+**File**: `tests/test_metadata_filtering.py` (modified, +3/-3)
+```diff
+@@ -312,7 +312,7 @@ def test_search_result_filtering(self):
+         """Test filtering SearchResult objects."""
+         # Create a real PassageManager instance just for the filtering method
+         # We'll mock the file operations
+-        with patch("builtins.open"), patch("json.loads"), patch("pickle.load"):
++        with patch("builtins.open"), patch("json.loads"), patch("leann.api.load_offset_map"):
+             pm = PassageManager([{"type": "jsonl", "path": "test.jsonl"}])
+ 
+             filters = {"chapter": {"<=": 5}}
+@@ -324,15 +324,15 @@ def test_search_result_filtering(self):
+ 
+     def test_filter_search_results_no_filters(self):
+         """Test that None filters return all results."""
+-        with patch("builtins.open"), patch("json.loads"), patch("pickle.load"):
++        with patch("builtins.open"), patch("json.loads"), patch("leann.api.load_offset_map"):
+             pm = PassageManager([{"type": "jsonl", "path": "test.jsonl"}])
+ 
+             result = pm.filter_search_results(self.search_results, None)
+             assert len(result) == len(self.search_results)
+ 
+     def test_filter_maintains_search_result_type(self):
+         """Test that filtering returns SearchResult objects."""
+-        with patch("builtins.open"), patch("json.loads"), patch("pickle.load"):
++        with patch("builtins.open"), patch("json.loads"), patch("leann.api.load_offset_map"):
+             pm = PassageManager([{"type": "jsonl", "path": "test.jsonl"}])
+ 
+             filters = {"character": {"==": "Alice"}}
+```
+
+---
+
+### Incident Patch 2: `e0e6b24e` (2026-11-17)
+**Commit Message**: fix(hnsw): honor graph_degree, complexity and num_threads build options (#450)
+
+`leann build --graph-degree/--complexity/--num-threads` and the RAG
+apps pass graph_degree, complexity and num_threads to LeannBuilder, but
+HNSWBuilder only read M and efConstruction, so on the default backend
+the options did nothing: --graph-degree 8 still produced an M=32 graph.
+
+HNSWBuilder now maps graph_degree to M and complexity to
+efConstruction (explicit M/efConstruction still win), and builds the
+graph with num_threads OpenMP threads, restoring the previous setting
+afterwards. Without num_threads it uses every core on Linux: leann pins
+OpenMP to one thread there so that recompute searches don't hang
+(#208), but graph construction makes no ZMQ calls, and the pin made
+builds single-threaded whenever no CPU embedding had raised torch's
+shared thread count first (GPU embedding, build_index_from_arrays).
+
+The CLI no longer sends its own defaults (32/64/1) when the flags are
+omitted, so each backend keeps its defaults: HNSW stays at M=32 /
+efConstruction=200, DiskANN at 32/64 as before, and DiskANN builds get
+its default of 8 threads instead of the CLI's 1.
+
+**File**: `README.md` (modified, +3/-2)
+```diff
+@@ -1158,8 +1158,9 @@ leann build INDEX_NAME --docs DIRECTORY|FILE [DIRECTORY|FILE ...] [OPTIONS]
+ Options:
+   --backend {hnsw,diskann}     Backend to use (default: hnsw)
+   --embedding-model MODEL      Embedding model (default: facebook/contriever)
+-  --graph-degree N             Graph degree (default: 32)
+-  --complexity N               Build complexity (default: 64)
++  --graph-degree N             Graph degree (default: backend's own; HNSW M=32, DiskANN 32)
++  --complexity N               Build complexity (default: backend's own; HNSW efConstruction=200, DiskANN 64)
++  --num-threads N              Build threads (default: backend's own; HNSW all cores on Linux, DiskANN 8)
+   --force                      Force rebuild existing index
+   --compact / --no-compact     Use compact storage (default: true). Must be `no-compact` for `no-recompute` build.
+   --recompute / --no-recompute Enable recomputation (default: true)
+```
+
+**File**: `packages/leann-backend-hnsw/leann_backend_hnsw/hnsw_backend.py` (modified, +20/-3)
+```diff
+@@ -1,5 +1,6 @@
+ import logging
+ import os
++import platform
+ import shutil
+ import time
+ from pathlib import Path
+@@ -51,8 +52,18 @@ def __init__(self, **kwargs):
+         self.build_params = kwargs.copy()
+         self.is_compact = self.build_params.setdefault("is_compact", True)
+         self.is_recompute = self.build_params.setdefault("is_recompute", True)
+-        self.M = self.build_params.setdefault("M", 32)
+-        self.efConstruction = self.build_params.setdefault("efConstruction", 200)
++        # graph_degree/complexity are the backend-neutral names that `leann build` and the
++        # apps pass; FAISS's own M/efConstruction take precedence when given explicitly.
++        self.M = self.build_params.setdefault("M", self.build_params.get("graph_degree", 32))
++        self.efConstruction = self.build_params.setdefault(
++            "efConstruction", self.build_params.get("complexity", 200)
++        )
++        # Graph construction makes no ZMQ calls, so on Linux it uses every core by default
++        # even though leann pins OpenMP to one thread there for recompute searches (#208).
++        # Elsewhere the process-wide OpenMP setting applies unless num_threads is given.
++        self.num_threads = self.build_params.get("num_threads") or (
++            os.cpu_count() if platform.system() == "Linux" else None
++        )
+         self.distance_metric = self.build_params.setdefault("distance_metric", "mips")
+         self.dimensions = self.build_params.get("dimensions")
+         if not self.is_recompute and self.is_compact:
+@@ -86,7 +97,13 @@ def build(self, data: np.ndarray, ids: list[str], index_path: str, **kwargs):
+         if self.distance_metric.lower() == "cosine":
+             data = normalize_l2(data)
+ 
+-        index.add(data.shape[0], faiss.swig_ptr(data))
++        omp_threads = faiss.omp_get_max_threads()
++        if self.num_threads:
++            faiss.omp_set_num_threads(int(self.num_threads))
++        try:
++            index.add(data.shape[0], faiss.swig_ptr(data))
++        finally:
++            faiss.omp_set_num_threads(omp_threads)
+         index_file = index_dir / f"{index_prefix}.index"
+         faiss.write_index(index, str(index_file))
+ 
+```
+
+**File**: `packages/leann-core/src/leann/cli.py` (modified, +29/-12)
+```diff
+@@ -400,12 +400,23 @@ def add_embedding_args(target_parser: argparse.ArgumentParser) -> None:
+             help="Force full rebuild of existing index (without this, build does incremental update: add new files only)",
+         )
+         build_parser.add_argument(
+-            "--graph-degree", type=int, default=32, help="Graph degree (default: 32)"
++            "--graph-degree",
++            type=int,
++            default=None,
++            help="Graph degree (default: backend's own; HNSW M=32, DiskANN 32)",
+         )
+         build_parser.add_argument(
+-            "--complexity", type=int, default=64, help="Build complexity (default: 64)"
++            "--complexity",
++            type=int,
++            default=None,
++            help="Build complexity (default: backend's own; HNSW efConstruction=200, DiskANN 64)",
++        )
++        build_parser.add_argument(
++            "--num-threads",
++            type=int,
++            default=None,
++            help="Build threads (default: backend's own; HNSW all cores on Linux, DiskANN 8)",
+         )
+-        build_parser.add_argument("--num-threads", type=int, default=1)
+         build_parser.add_argument(
+             "--compact",
+             action=argparse.BooleanOptionalAction,
+@@ -2032,9 +2043,9 @@ def _build_config_from_args(
+             "ast_chunk_size": int(args.ast_chunk_size),
+             "ast_chunk_overlap": int(args.ast_chunk_overlap),
+             "ast_fallback_traditional": bool(args.ast_fallback_traditional),
+-            "graph_degree": int(args.graph_degree),
+-            "complexity": int(args.complexity),
+-            "num_threads": int(args.num_threads),
++            "graph_degree": args.graph_degree,
++            "complexity": args.complexity,
++            "num_threads": args.num_threads,
+             "compact": bool(args.compact),
+             "recompute": bool(args.recompute),
+         }
+@@ -2186,6 +2197,16 @@ def _existing_index_id_scheme(self, index_path: str) -> Optional[str]:
+         except Exception:
+             return None
+ 
++    @staticmethod
++    def _backend_build_options(args) -> dict[str, Any]:
++        """--graph-degree/--complexity/--num-threads when given; otherwise each backend keeps
++        its own default."""
++        return {
++            key: value
++            for key in ("graph_degree", "complexity", "num_threads")
++            if (value := getattr(args, key)) is not None
++        }
++
+     def _make_incremental_builder(self, args) -> "LeannBuilder":
+         # For incremental updates, the existing index's scheme wins. Otherwise
+         # IDs would mix schemes within one index, which breaks lookups.
+@@ -2201,11 +2222,9 @@ def _make_incremental_builder(self, args) -> "LeannBuilder":
+             embedding_model=args.embedding_model,
+             embedding_mode=args.embedding_mode,
+             embedding_options=self._build_embedding_options(args) or None,
+-            graph_degree=args.graph_degree,
+-            complexity=args.complexity,
++            **self._backend_build_options(args),
+             is_compact=args.compact,
+             is_recompute=args.recompute,
+-            num_threads=args.num_threads,
+             passage_id_scheme=scheme,
+         )
+ 
+@@ -2803,11 +2822,9 @@ def _normalize_model_name(name: str) -> str:
+             embedding_model=args.embedding_model,
+             embedding_mode=args.embedding_mode,
+             embedding_options=self._build_embedding_options(args) or None,
+-            graph_degree=args.graph_degree,
+-            complexity=args.complexity,
++            **self._backend_build_options(args),
+             is_compact=args.compact,
+             is_recompute=args.recompute,
+-            num_threads=args.num_threads,
+             passage_id_scheme=getattr(args, "id_scheme", "sequential"),
+         )
+ 
+```
+
+**File**: `tests/test_hnsw_build_params.py` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++"""`leann build --graph-degree/--complexity/--num-threads` must reach the HNSW builder too."""
++
++import os
++import platform
++
++import numpy as np
++import pytest
++from leann.cli import LeannCLI
++
++
++def _build_and_read_params(tmp_path, **build_kwargs) -> tuple[int, int]:
++    """Build a small HNSW index and return the (M, efConstruction) stored in it."""
++    pytest.importorskip("leann_backend_hnsw")
++    from leann_backend_hnsw import faiss
++    from leann_backend_hnsw.hnsw_backend import HNSWBuilder
++
++    data = np.random.default_rng(0).standard_normal((64, 8)).astype(np.float32)
++    builder = HNSWBuilder(is_recompute=False, is_compact=False, **build_kwargs)
++    builder.build(data, [str(i) for i in range(len(data))], str(tmp_path / "params.leann"))
++    index = faiss.read_index(str(tmp_path / "params.index"))
++    # FAISS gives level 0 of an HNSW graph 2*M neighbor slots.
++    return index.hnsw.nb_neighbors(0) // 2, index.hnsw.efConstruction
++
++
++@pytest.mark.parametrize(
++    ("build_kwargs", "expected"),
++    [
++        ({}, (32, 200)),
++        ({"graph_degree": 8, "complexity": 16}, (8, 16)),
++        ({"graph_degree": 8, "complexity": 16, "M": 12, "efConstruction": 40}, (12, 40)),
++    ],
++)
++def test_hnsw_builder_honors_graph_build_options(tmp_path, build_kwargs, expected):
++    assert _build_and_read_params(tmp_path, **build_kwargs) == expected
++
++
++@pytest.mark.parametrize(
++    ("build_kwargs", "expected"),
++    [({"num_threads": 3}, 3), ({}, os.cpu_count() if platform.system() == "Linux" else None)],
++)
++def test_hnsw_builder_builds_with_num_threads(tmp_path, monkeypatch, build_kwargs, expected):
++    pytest.importorskip("leann_backend_hnsw")
++    from leann_backend_hnsw import faiss
++
++    class RecordingIndex(faiss.IndexHNSWFlat):
++        def add(self, n, x):
++            threads.append(faiss.omp_get_max_threads())
++            return super().add(n, x)
++
++    threads: list[int] = []
++    monkeypatch.setattr(faiss, "IndexHNSWFlat", RecordingIndex)
++    original_threads = faiss.omp_get_max_threads()
++    _build_and_read_params(tmp_path, **build_kwargs)
++
++    assert threads == [expected or original_threads]
++    assert faiss.omp_get_max_threads() == original_threads
++
++
++def test_build_cli_forwards_backend_options_only_when_given():
++    parser = LeannCLI().create_parser()
++
++    defaults = parser.parse_args(["build", "idx", "--docs", "."])
++    assert LeannCLI._backend_build_options(defaults) == {}
++
++    flags = ["--graph-degree", "8", "--complexity", "16", "--num-threads", "4"]
++    explicit = parser.parse_args(["build", "idx", "--docs", ".", *flags])
++    assert LeannCLI._backend_build_options(explicit) == {
++        "graph_degree": 8,
++        "complexity": 16,
++        "num_threads": 4,
++    }
+```
+
+---
+
+### Incident Patch 3: `8610c835` (2026-11-17)
+**Commit Message**: fix(deps): exclude tree-sitter 0.26.0 (#453)
+
+* fix(deps): exclude tree-sitter 0.26.0
+
+py-tree-sitter 0.26.0 has a Point refcount bug that segfaults AST
+chunking on large files. The fix is on upstream master, not released;
+!= keeps a fixed 0.26.1 installable.
+
+* test: stop pinning release versions in install tests
+
+The v0.3.9 release bumped the leann-core and backend lower bounds, and these
+tests still expected >=0.1.0, so they failed on main. Check the package and
+that a bound exists, so the next release bump doesn't break them.
+
+---------
+
+Co-authored-by: Aakash Suresh <[REDACTED_EMAIL]>
+
+**File**: `pyproject.toml` (modified, +1/-1)
+```diff
+@@ -51,7 +51,7 @@ dependencies = [
+     "gitignore-parser>=0.1.12",
+     # AST-aware code chunking dependencies
+     "astchunk>=0.1.0",
+-    "tree-sitter>=0.20.0",
++    "tree-sitter>=0.20.0,!=0.26.0",
+     "tree-sitter-python>=0.20.0",
+     "tree-sitter-java>=0.20.0",
+     "tree-sitter-c-sharp>=0.20.0",
+```
+
+**File**: `uv.lock` (modified, +1/-1)
+```diff
+@@ -2252,7 +2252,7 @@ requires-dist = [
+     { name = "tqdm" },
+     { name = "transformers", marker = "python_full_version < '3.10'", specifier = "<4.46" },
+     { name = "transformers", marker = "python_full_version >= '3.10'", specifier = ">=4.53.1,<4.58" },
+-    { name = "tree-sitter", specifier = ">=0.20.0" },
++    { name = "tree-sitter", specifier = ">=0.20.0,!=0.26.0" },
+     { name = "tree-sitter-c-sharp", specifier = ">=0.20.0" },
+     { name = "tree-sitter-java", specifier = ">=0.20.0" },
+     { name = "tree-sitter-python", specifier = ">=0.20.0" },
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #447** (2026-10-26): fix(release): publish all backends and test loopback binding (@andylizf)
-- **PR #446** (2026-10-26): fix: compare numeric metadata strings by value (@jackiectl2)
-- **PR #445** (2026-10-26): fix(core): refuse to load a custom encoder as a vanilla BertModel (@ASuresh0524)
-- **PR #444** (2026-10-24): fix(chunking): keep first line of AST chunks that contains '|' (@ShryukGrandhi)
-- **PR #442** (2026-10-24): fix(core): drop the build template from query embeddings on the fallback path (@serhiizghama)
-- **PR #441** (2026-10-24): docs(search): restore ZMQ thread-safety warning (@andylizf)
+- **PR #465** (2026-11-17): fix(readers): stop WeChatHistoryReader stripping message text at the first colon (@rtmalikian)
+- **PR #463** (2026-11-17): fix(apps): stop forced OCR from silently indexing nothing (@ASuresh0524)
+- **PR #462** (closed): feat: add UberLLM LLM provider (@PSA-Team-source)
+- **PR #461** (2026-11-17): fix: count literal special-token spellings in chunk text (@jackiectl2)
+- **PR #460** (2026-11-17): test: read document RAG output as UTF-8 (@burntcookiedough)
+- **PR #459** (2026-11-17): fix(core): stop embedding daemons holding the caller's stdio (@ska2704)
 
 ---
 
@@ -2340,83 +2935,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): wait for main CI before publishing
+## X. harden index artifact deserialization
 
 **RULE**:
-When implementing operations in `.github/workflows/release-manual.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarTrail-org/LEANN. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `07796bd7`: release): wait for main CI before publishing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `60597ba5`: harden index artifact deserialization. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-manual.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-          DEADLINE=$(( $(date +%s) + 14400 ))
-          RUN_ID=""
+## 2026-10-22: Harden passage offset loading
 
-          while (( $(date +%s) < DEADLINE )); do
-            RUN_ID=$(gh api repos/${GITHUB_REPOSITORY}/actions/workflows/build-and-publish.yml/runs \
-              --method GET \
-              --field branch=main \
-              --field head_sha="${MAIN_SHA}" \
-              --field per_page=1 \
-              --jq '.workflow_runs[0].id // empty')
+- Restricted passage offset-map unpickling to the primitive dictionary shape LEANN writes.
+- Rejected crafted `.passages.idx` files before a searcher or incremental update can continue.
+- Added regression coverage for the searcher entry point, primitive compatibility, and malformed input.
+- Restricted sync snapshots and embeddings pickles to their expected object graphs.
+- Loaded FlashLib IVF state dictionaries with PyTorch's safe weights-only loader.
 
-            if [ -z "${RUN_ID}" ]; then
-              echo "Waiting for a CI run for main @ ${MAIN_SHA}"
-              sleep 15
-              continue
-            fi
-
-            STATUS=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.status')
-            CONCLUSION=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.conclusion')
-            URL=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.html_url')
-
-            if [ "${STATUS}" = "completed" ]; then
-              echo "CI run: ${URL}"
-              if [ "${CONCLUSION}" != "success" ]; then
-                echo "❌ CI not successful for main @ ${MAIN_SHA}"
-                echo "Conclusion: ${CONCLUSION}"
-                exit 1
-              fi
-              echo "✅ CI su
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-          RUN_ID=$(gh api repos/${GITHUB_REPOSITORY}/actions/workflows/build-and-publish.yml/runs \
-            --method GET \
-            --field branch=main \
-            --field head_sha="${MAIN_SHA}" \
-            --field per_page=1 \
-            --jq '.workflow_runs[0].id')
-
-          if [ -z "${RUN_ID}" ] || [ "${RUN_ID}" = "null" ]; then
-            echo "❌ No CI run found for main @ ${MAIN_SHA}"
-            exit 1
-          fi
-
-          STATUS=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.status')
-          CONCLUSION=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.conclusion')
-          URL=$(gh api repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID} --jq '.html_url')
-
-          echo "CI run: ${URL}"
-          if [ "${STATUS}" != "completed" ] || [ "${CONCLUSION}" != "success" ]; then
-            echo "❌ CI not successful for main @ ${MAIN_SHA}"
-            echo "Status: ${STATUS}"
-            echo "Conclusion: ${CONCLUSION}"
-            exit 1
-          fi
-
-          echo "✅ CI succeeded for main @ ${MAIN_SHA}"
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `07796bd7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `60597ba5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

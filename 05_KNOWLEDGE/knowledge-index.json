@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T12:46:17.504Z",
-  "total_verified_learnings": 8884,
+  "last_updated": "2026-11-17T13:05:59.538Z",
+  "total_verified_learnings": 8885,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20166,
+  "total_items": 20177,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216516,14 +216516,19 @@
       "slug": "streetwriters-notesnook",
       "platform": "github",
       "source_url": "https://github.com/streetwriters/notesnook",
-      "source_version": "a2ac794b",
-      "content_hash": "ed56db56a85d8d657ea52446947fca770484b1d4cee3e042edbb7b97c779746d",
+      "source_version": "8bb25559",
+      "content_hash": "add312a6ead69a8d9ef464f557349796ba249d3a4ebf3eab03d417656490bdc0",
       "dossier_path": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
       "promoted_rules": [
         {
           "number": 8388,
           "title": "Empirical Invariant Guard in use-app-events.tsx",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8967,
+          "title": "fix locked note history does not save note title",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -216532,7 +216537,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:36:37.512Z",
+      "verified_at": "2026-11-17T13:05:48.431Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216574,10 +216579,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-streetwriters-notesnook-architecture-intelligence-streetwriters-notesnook-core-i.md",
       "title": "Architecture Intelligence: streetwriters/notesnook Core Invariants",
       "repository": "streetwriters/notesnook",
-      "source_version": "a2ac794b",
-      "content_hash": "47781562f7599a41de15fded2ca7ddbff0df8622bf63fb19bc16ce72cd6c4c96",
+      "source_version": "8bb25559",
+      "content_hash": "7c5c5f257873c3b9f98c1ecfc94a19d98191d7614b781344c1e7e95b971124d4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:36:38.015Z"
+      "persisted_at": "2026-11-17T13:05:48.908Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-streetwriters-notesnook": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-streetwriters-notesnook",
@@ -216586,10 +216591,10 @@
       "relative_path": "08_VERIFICATION/streetwriters-notesnook-verification-protocol-empirical-defect-shield-for-street.md",
       "title": "Verification Protocol: Empirical Defect Shield for streetwriters/notesnook",
       "repository": "streetwriters/notesnook",
-      "source_version": "a2ac794b",
-      "content_hash": "5c3449a07734cc17ac3ffe23954eae0d67380a05473ebbf7b378ba8c691363dd",
+      "source_version": "8bb25559",
+      "content_hash": "3c882d41dc58e595299eafc3ae1a4464932637e5ff522e6f4c1a801362984c90",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:36:38.145Z"
+      "persisted_at": "2026-11-17T13:05:49.045Z"
     },
     "learn-github-microsoft-agent-governance-toolkit": {
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
@@ -216680,9 +216685,9 @@
       "title": "Architecture Intelligence: streetwriters-notesnook-learnings Core Invariants",
       "repository": "streetwriters-notesnook-learnings",
       "source_version": "HEAD",
-      "content_hash": "144ada95f57b1e2f8d18aeda28dae4f7b171a992a80e0bef640d8739fdfc28a0",
+      "content_hash": "3fe89271e0df3c6396020906b31d120eab75d852c35668db6e1628ef345d67f2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:37:18.387Z"
+      "persisted_at": "2026-11-17T13:05:58.027Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-streetwriters-notesnook-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-streetwriters-notesnook-learni",
@@ -216692,9 +216697,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for streetwriters-notesnook-learnings",
       "repository": "streetwriters-notesnook-learnings",
       "source_version": "HEAD",
-      "content_hash": "d6d5f5063b6ba1825360690df811771516e41d76f50e9bbf0d27d4ae0b148bae",
+      "content_hash": "25dcc53f0c3eaf17cbf07b760f0e4fc44dd9af5231a3ad5b5b033a085bdabb1c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:37:18.512Z"
+      "persisted_at": "2026-11-17T13:05:58.159Z"
     },
     "learn-github-ntex-rs-ntex": {
       "learning_id": "learn-github-ntex-rs-ntex",
@@ -237240,14 +237245,19 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "845815ae",
-      "content_hash": "1e46b633a08d744fa6e6ae9cc5ef6d2d5a9a53d57eea6efc297336fe199fba92",
+      "source_version": "0087e705",
+      "content_hash": "bf12c2d2577a3b15085dda9b313f01c65381d3acad979605d2e8cce74b3a97dc",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
         {
           "number": 8551,
           "title": "move CAA and OPENPGPKEY checks to their makers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8968,
+          "title": "print-ir and --ir should round-trip",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -237256,7 +237266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T05:29:04.085Z",
+      "verified_at": "2026-11-17T13:05:50.046Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237298,10 +237308,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dnscontrol-dnscontrol-architecture-intelligence-dnscontrol-dnscontrol-core-invar.md",
       "title": "Architecture Intelligence: DNSControl/dnscontrol Core Invariants",
       "repository": "DNSControl/dnscontrol",
-      "source_version": "5da338d6",
-      "content_hash": "645e1c36c245e86c2e7c155da2786456daf3d05f52ab409483cb1e45e69a1aca",
+      "source_version": "0087e705",
+      "content_hash": "5844c53a83ac68d32cb7f884993b25ffdcae5846555438d3bcaeaa4de7b87c96",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T23:43:13.974Z"
+      "persisted_at": "2026-11-17T13:05:50.516Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol",
@@ -237310,10 +237320,10 @@
       "relative_path": "08_VERIFICATION/dnscontrol-dnscontrol-verification-protocol-empirical-defect-shield-for-dnscontr.md",
       "title": "Verification Protocol: Empirical Defect Shield for DNSControl/dnscontrol",
       "repository": "DNSControl/dnscontrol",
-      "source_version": "845815ae",
-      "content_hash": "3a13a81b12d4830738f9718fac02f6151343e8f1adeca213b1d32644314beca9",
+      "source_version": "0087e705",
+      "content_hash": "f7ee82b19b098445d68cd6733e0f0d97b1de3fc3780221972dbd8f1421b01eb6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:29:04.667Z"
+      "persisted_at": "2026-11-17T13:05:50.646Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized",
@@ -237347,9 +237357,9 @@
       "title": "Architecture Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
       "repository": "dnscontrol-dnscontrol-learnings",
       "source_version": "HEAD",
-      "content_hash": "5901574a3b932c67070eed34c3eb9810402e203107b629282699fc0e130ba4a6",
+      "content_hash": "8a406ec63e46faec298141b3ca4f6c8234f58a53df374dcb1c7518c0e78b10cf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T23:43:17.766Z"
+      "persisted_at": "2026-11-17T13:05:58.761Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol-learning",
@@ -237359,9 +237369,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dnscontrol-dnscontrol-learnings",
       "repository": "dnscontrol-dnscontrol-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c438441c25526cb297327ef73ef17774aece14ee8d077f4ac98229f4c09cc7f",
+      "content_hash": "cfe0189813cf7c7b97bf7dcd336b6e7b3ebca50f71afa03d3be1ac1a8d9200b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T05:29:13.427Z"
+      "persisted_at": "2026-11-17T13:05:58.891Z"
     },
     "learn-huggingface-autotrust-jev-35b": {
       "learning_id": "learn-huggingface-autotrust-jev-35b",
@@ -270021,6 +270031,157 @@
       "content_hash": "a1236acd10d2026a5558b5bbf06bc25828c8a72dceb9c8a9d4ba339578c820d8",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T12:46:16.176Z"
+    },
+    "rule-8967": {
+      "learning_id": "rule-8967",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8967,
+      "title": "fix locked note history does not save note title",
+      "source_url": "https://github.com/streetwriters/notesnook",
+      "source_version": "8bb25559",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T13:05:48.431Z"
+    },
+    "candidate_directive-fix-locked-note-history-does-not-save-note-title": {
+      "item_id": "candidate_directive-fix-locked-note-history-does-not-save-note-title",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GXKE-fix-locked-note-history-does-not-save-note-title.md",
+      "title": "fix locked note history does not save note title",
+      "repository": "streetwriters/notesnook",
+      "source_version": "8bb25559",
+      "content_hash": "f3c06c6c1f7640ae90f4372e1724a1f8382b1eb000beba80e6a96b96bad315ab",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T13:05:48.783Z"
+    },
+    "rule-8968": {
+      "learning_id": "rule-8968",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8968,
+      "title": "print-ir and --ir should round-trip",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "0087e705",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T13:05:50.046Z"
+    },
+    "candidate_directive-print-ir-and-ir-should-round-trip": {
+      "item_id": "candidate_directive-print-ir-and-ir-should-round-trip",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H568-print-ir-and-ir-should-round-trip.md",
+      "title": "print-ir and --ir should round-trip",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "source_version": "HEAD",
+      "content_hash": "131f968ff1d8afbd0c6cf91ae11eedc9a64de5e2c89b5a03eb3a77707f5e6792",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T13:05:58.640Z"
+    },
+    "learn-github-startrail-org-leann": {
+      "learning_id": "learn-github-startrail-org-leann",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "StarTrail-org/LEANN",
+      "repository": "StarTrail-org/LEANN",
+      "slug": "startrail-org-leann",
+      "platform": "github",
+      "source_url": "https://github.com/StarTrail-org/LEANN",
+      "source_version": "2ec581fc",
+      "content_hash": "d301b28d02eb315478cbaeb2b34233068de8eac3c296ddc9cc980a48f83f7d40",
+      "dossier_path": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T13:05:54.063Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-harden-index-artifact-deserialization": {
+      "item_id": "candidate_directive-harden-index-artifact-deserialization",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H5O8-harden-index-artifact-deserialization.md",
+      "title": "harden index artifact deserialization",
+      "repository": "startrail-org-leann-learnings",
+      "source_version": "HEAD",
+      "content_hash": "656ab14943a05ad424ba7a982ad9d24a31fe1c9f4f07dcdfa6d86e6052c3a731",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T13:05:59.291Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-startrail-org-leann-technical-construction-intelligence-startrail-org-leann-core.md",
+      "title": "Technical Construction Intelligence: StarTrail-org/LEANN Core Invariants",
+      "repository": "StarTrail-org/LEANN",
+      "source_version": "2ec581fc",
+      "content_hash": "6747720a3c178fb0c79286eb076ad122589644ac0750f2f05f3dc430161ae152",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T13:05:54.589Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-startrail-org-leann": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-startrail-org-leann",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/startrail-org-leann-verification-protocol-empirical-defect-shield-for-startrail-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for StarTrail-org/LEANN",
+      "repository": "StarTrail-org/LEANN",
+      "source_version": "2ec581fc",
+      "content_hash": "9923a1bab836f284dc4c6401823dbac42643cacd43256cc52229e705763f8310",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T13:05:54.716Z"
+    },
+    "candidate_directive-mobile-fix-locked-note-history-does-not-save-note-title": {
+      "item_id": "candidate_directive-mobile-fix-locked-note-history-does-not-save-note-title",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H4LV-mobile-fix-locked-note-history-does-not-save-note-title.md",
+      "title": "mobile: fix locked note history does not save note title",
+      "repository": "streetwriters-notesnook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f3d5d11b80c332349240e07866a42e156e487fb8704b555fa6e359b573371a5e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T13:05:57.908Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-startrail-org-leann-learnings-technical-construction-intelligence-startrail-org-.md",
+      "title": "Technical Construction Intelligence: startrail-org-leann-learnings Core Invariants",
+      "repository": "startrail-org-leann-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5980dc2c0b8782e1471c5fbcd61368f89cf54a9f3e4b0445269c84a78bd57e69",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T13:05:59.409Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-startrail-org-leann-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-startrail-org-leann-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/startrail-org-leann-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for startrail-org-leann-learnings",
+      "repository": "startrail-org-leann-learnings",
+      "source_version": "HEAD",
+      "content_hash": "274c06be32b62b8783c1f0842f0fc7e8b949dc76f3040584c6db0cdc3d1913b7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T13:05:59.538Z"
     }
   },
   "ai-builder-brain": {

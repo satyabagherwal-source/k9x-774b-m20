@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T05:29:13.080Z",
+  "timestamp": "2026-11-17T13:05:58.539Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dnscontrol-dnscontrol-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dnscontrol-dnscontrol-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T05:29:13.080Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T13:05:58.539Z`  
 > **Learning ID**: `LEARN-EVO-dnscontrol-dnscontrol-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `845815ae`  
+> **Source Version**: `0087e705`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T05:29:03.854Z  
+> **Timestamp**: 2026-11-17T13:05:49.297Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T05:29:03.849Z  
+> **Harvest Timestamp**: 2026-11-17T13:05:49.291Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4009 stars
+- **Stars / Engagement**: 4008 stars
 
 ---
 
@@ -678,11 +678,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5089** (2026-11-15): **refactor(normalize): run ValidateAndNormalizeConfig in ordered phases**
-  *Symptoms*: Follows #5088 (merged). Fourth step in splitting `pkg/normalize` into separate normalize, transform and validate phases. Unlike #5088, this one changes behavior.  ## New shape  `ValidateAndNormalizeConfig` is now about 45 lines and runs five phases in order:  1. **Apply:** `flattenSPFs`, `applyImportTransforms`, `applyRecordTransforms`. 2. **Normalize:** `normalizeNameservers`, `normalizeRecords` (default TTL, populate FQDN). This runs after apply so that records added in phase 1 are normalized too; previously they never were, and only came out right because they were copies of normalized records. 3. **Check records:** `checkRecords` runs every `checkrec_` check on every record, including those added in phase 1. 4. **Check zones:** `checkZone` runs the `checkzone_` checks, in the same order as before. 5. **Audit:** `auditRecords` asks each provider.  New files: `normalize_nameservers.go`, `normalize_records.go`, `checkrec_metadata.go`, `checkzone_fqdn.go` (each with a test) and `audit.go`.  ## Behavior changes  - **Generated records get the per-record checks.** Records added by SPF splitting, IMPORT_TRANSFORM and the A record `transform` metadata were previously only covered by the zone checks and the supported-types check. The visible consequence: importing a subdomain into its parent now fails validation, where it used to pass.   ```js   D("internal.example.com", …, A("www", "192.0.2.1"));   D("example.com", …, IMPORT_TRANSFORM(table, "internal.example.com", 300));   ```   
+- **Issue #5094** (2026-11-17): **fix(spflib): parse SPF mechanism names case-insensitively**
+  *Symptoms*: RFC 7208 says SPF mechanism names are case-insensitive, and the parser already lowercases `ip4:`, `a` and `mx` for that reason. The `all`, `include:`, `redirect=`, `exists:` and `ptr` checks still compared against the original text, so a record like `v=spf1 ip4:192.0.2.1 -ALL` was handled wrongly:  - `-ALL` was not seen as the end of the record. It fell into the `a` prefix branch, so `Lookups()` returned 1 instead of 0 and any terms after it were still parsed. - `Include:` and `Redirect=` failed with "unsupported SPF part", and `PTR` and `EXISTS:` were rejected the same way.  Those checks now use the lowercased name. The domain of an `include:` or `redirect=` keeps its original case.  I added `TestParseCaseInsensitiveMechanisms`. It fails on master and passes now, as do the rest of `pkg/spflib` and `pkg/normalize`. `go vet` and `gofmt` are clean. 
 
-- **Issue #5088** (2026-11-15): **refactor(normalize): split validate.go into one file per concern**
-  *Symptoms*: Third step in splitting `pkg/normalize` into separate normalize, transform and validate phases (follows #5086 and #5087). This one is a mechanical file split; the order of operations in `ValidateAndNormalizeConfig` is unchanged.  ## Layout  `validate.go` (831 lines) becomes `normalize.go` (`ValidateAndNormalizeConfig`, `Warning`, `processSplitHorizonDomains`) plus one file per concern:  | Prefix | Meaning | Files | |---|---|---| | `apply_` | passes that generate records | `apply_import_transform.go`, `apply_ip_transform.go`, `apply_spf_flatten.go` (was `flatten.go`) | | `checkrec_` | per-record checks | `checkrec_label.go`, `checkrec_target.go`, `checkrec_soa.go`, `checkrec_tlsa_smimea.go`, `checkrec_supported_types.go` | | `checkzone_` | zone-wide checks | `checkzone_cname.go`, `checkzone_duplicates.go`, `checkzone_ttl.go`, `checkzone_soa.go`, `checkzone_r53_weighted.go`, `checkzone_autodnssec.go`, `checkzone_provider_caps.go` | | | shared helpers | `identity.go` |  `validate_test.go` is split the same way, so each file's tests sit next to it. The shared `checkError` test helper is in `helpers_test.go`.  ## The one logic change  The TLSA/SMIMEA range checks were inline in `ValidateAndNormalizeConfig`. They are now `checkTLSASMIMEA` in `checkrec_tlsa_smimea.go`, called from the same place, with the same error messages. A redundant second `rec.AsTLSA()` call is dropped, and there is a new table test.  ## Other edits  - `documentation/advanced-features/unittests.md` pointed at 
+- **Issue #5093** (2026-11-16): **chore: upgrade dependencies**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -699,781 +699,703 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `845815ae` (2026-11-15)
-**Commit Message**: refactor(normalize): run ValidateAndNormalizeConfig in ordered phases (#5089)
+### Incident Patch 1: `62af2f0e` (2026-11-16)
+**Commit Message**: fix: print-ir and --ir should round-trip (#5085)
 
-Follows #5088 (merged). Fourth step in splitting `pkg/normalize` into
-separate normalize, transform and validate phases. Unlike #5088, this
-one changes behavior.
+# Issue
 
-## New shape
+`dnscontrol print-ir --out filename` followed by `dnscontrol preview
+--ir filename` should round-trip. It doesn't: `rdata` is ignored when
+the IR is read.
 
-`ValidateAndNormalizeConfig` is now about 45 lines and runs five phases
-in order:
+Fixes #4854. Supersedes #4859 (same approach, redone on current `main`;
+RFC 8427 is not used).
 
-1. **Apply:** `flattenSPFs`, `applyImportTransforms`,
-`applyRecordTransforms`.
-2. **Normalize:** `normalizeNameservers`, `normalizeRecords` (default
-TTL, populate FQDN). This runs after apply so that records added in
-phase 1 are normalized too; previously they never were, and only came
-out right because they were copies of normalized records.
-3. **Check records:** `checkRecords` runs every `checkrec_` check on
-every record, including those added in phase 1.
-4. **Check zones:** `checkZone` runs the `checkzone_` checks, in the
-same order as before.
-5. **Audit:** `auditRecords` asks each provider.
+# Resolution
 
-New files: `normalize_nameservers.go`, `normalize_records.go`,
-`checkrec_metadata.go`, `checkzone_fqdn.go` (each with a test) and
-`audit.go`.
+Each record's `rdata` is now a **string in zonefile format** (the output
+of `RDATA.String()`) and is parsed on read by `dnsv2.NewData()` (via
+`myNewData`).
 
-## Behavior changes
-
-- **Generated records get the per-record checks.** Records added by SPF
-splitting, IMPORT_TRAN
-
-**File**: `documentation/language-reference/domain-modifiers/IMPORT_TRANSFORM.md` (modified, +29/-0)
 ```diff
-@@ -91,3 +91,32 @@ Only one of `newBase` and `newBase` may be specified. If both are non-null the b
- * An IP address.  Change the IP address of the A record to this IP address. If there are multiple A records at this label, only one A record is generated.
- * A list of IP addresses. Not supported.
- * For CNAMEs, the `.internal` is appended to the end of the target. (same as `NEW_BASE`)
-+
-+## Parents importing their children
-+
-+I can't imagine a case where a parent would want to import a child zone. That said, if you do,
-+you'll get an error.
-+
-+For example, this config:
-+
-+```javascript
-+D("internal.example.com", …, A("www", "192.0.2.1"));
-+D("example.com", …, IMPORT_TRANSFORM(table, "internal.example.com", 300));
-+```
-+
-+will get this error:
-+
-+```
-+ERROR: The name "www.internal.example.com.example.com." is an error (repeats the domain). …
-+```
-+
-+The record it produces really is `www.internal.example.com.example.com`, so the check is doing its job.
-+
-+The error can be silenced with `DISABLE_REPEATED_DOMAIN_CHECK` on the source record.
-+
-+For example:
-+
-+```javascript
-+D("internal.example.com", …, A("www", "192.0.2.1", DISABLE_REPEATED_DOMAIN_CHECK));
-+D("example.com", …, IMPORT_TRANSFORM(table, "internal.example.com", 300));
-+```
+-"rdata": { "Preference": 10, "Mx": "mx.example.com." },
++"rdata": "10 mx.example.com.",
 ```
 
-**File**: `pkg/normalize/audit.go` (added, +30/-0)
+* Hostnames in `rdata` must be FQDNs with the trailing dot. There is no
+origin when reading an IR file.
+* A missing `rdata`, an old-style object, or an unparsable string is an
+error that names the record and type.
+
+# Breaking / behavior changes
+
+* **IR format:** `rdata` changes from a JSON object to a string.
+Anything reading structured fields out of `print-ir` output (e.g. with
+`jq`) must be updated.
+* **SOA mailbox:** a mailbox containing a dot now gets a trailing dot
+(`admin.foo.com` / `[REDACTED_EMAIL]` -> `admin.foo.com.`). BIND previously
+wrote it without the dot, which a nameserver reads as relative to
+
+**File**: `commands/provider_syntax_test.go` (modified, +26/-0)
 ```diff
-@@ -0,0 +1,30 @@
-+package normalize
-+
-+import (
-+	"fmt"
-+
-+	"github.com/DNSControl/dnscontrol/v5/models"
-+	"github.com/DNSControl/dnscontrol/v5/pkg/providers"
-+)
-+
-+// auditRecords asks each of a domain's DNS providers whether there are any
-+// records it can't handle.
-+func auditRecords(domain *models.DomainConfig) (errs []error) {
-+	for _, provider := range domain.DNSProviderInstances {
-+		if provider.ProviderType == "-" {
-+			// "-" indicates that we don't yet know who the provider type
-+			// is.  This is probably due to the fact that `dnscontrol
-+			// check` doesn't read creds.json, which is where the TYPE is
-+			// set.  We will skip this test in this instance.  Later if
-+			// `dnscontrol preview` or `push` is used, the full check will
-+			// be performed.
-+			continue
-+		}
-+		if es := providers.AuditRecords(provider.ProviderType, domain.Records); len(es) != 0 {
-+			for _, e := range es {
-+				errs = append(errs, fmt.Errorf("%s rejects domain %s: %w", provider.ProviderType, domain.Name, e))
-+			}
-+		}
+@@ -302,6 +302,32 @@ func TestProviderSyntaxIRLoading(t *testing.T) {
+ 	require.Equal(t, "both", roundTrip.Domains[0].DNSProviderInstances[0].Name)
+ }
+ 
++func TestIRLoadingRecords(t *testing.T) {
++	// "print-ir --out file" followed by "--ir file" must preserve the records.
++	cfg := loadSyntaxConfig(t, `D("example.com", REGISTRAR("both"), SERVICE("both"),
++		A("@", "192.0.2.1"),
++		MX("@", 10, "mx"),
++		TXT("@", "has \"quotes\" and spaces"),
++		CAA("@", "issue", "letsencrypt.org"),
++		SRV("_sip._tcp", 10, 20, 5060, "sip.example.com."),
++		HTTPS("@", 1, ".", "alpn=h3,h2 port=443"),
++		CF_SINGLE_REDIRECT("name", 301, 'http.host eq "example.com"', 'concat("https://example.net", http.request.uri.path)'),
++	);`)
++	want, err := json.Marshal(cfg)
++	require.NoError(t, err)
++	irPath := filepath.Join(t.TempDir(), "dnsconfig.json")
++	require.NoError(t, os.WriteFile(irPath, want, 0o600))
++	roundTrip, err := GetDNSConfig(GetDNSConfigArgs{JSONFile: irPath})
++	require.NoError(t, err)
++	got, err := json.Marshal(roundTrip)
++	require.NoError(t, err)
++	require.JSONEq(t, string(want), string(got))
++	require.Len(t, roundTrip.Domains[0].Records, len(cfg.Domains[0].Records))
++	for _, rec := range roundTrip.Domains[0].Records {
++		require.NotNil(t, rec.GetRDATA(), rec.Type)
 +	}
-+	return errs
 +}
++
+ func TestServiceSyntaxDomainMetadata(t *testing.T) {
+ 	for _, initializer := range syntaxInitializers {
+ 		t.Run(initializer.name, func(t *testing.T) {
 ```
 
-**File**: `pkg/normalize/checkrec_metadata.go` (added, +15/-0)
+**File**: `commands/types/dnscontrol.d.ts` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,15 @@
-+package normalize
+@@ -857,6 +857,8 @@ declare function CSYNC(name: string, serial: number, flags: number, types: strin
+  *
+  * A domain name without a `!` is assigned a tag that is the empty string. For example, `example.com` and `example.com!` are equivalent. However, we strongly recommend against using the empty tag, as it risks creating confusion.  In other words, if you have `domain.tld` and `domain.tld!external` you now require humans to remember that `domain.tld` is the external one.  I mean... the internal one.  You may have noticed this mistake, but will your coworkers?  Will you in six months? You get the idea.
+  *
++ * A tag may contain only letters, digits, hyphens (`-`), underscores (`_`), and dots (`.`), and may not start with a dot. For example, `example.com!inside` and `example.com!v1.2` are valid; `example.com!in/side` and `example.com!.hidden` are rejected.
++ *
+  * DNSControl command line flag `--domains` matches the full name (with the "!").  If you define domains `example.com!john`, `example.com!paul`, and `example.com!george` then:
+  *
+  * - `--domains=example.com` will not match any of the three.
+```
+
+**File**: `documentation/advanced-features/unittests.md` (modified, +4/-0)
+```diff
+@@ -22,6 +22,10 @@ dnscontrol print-ir --out foo.json --pretty
+ **NOTE**: The `--pretty` flag is optional.
+ {% endhint %}
+ 
++{% hint style="info" %}
++**NOTE**: Each record's `rdata` is a string in zonefile format (for example, `"10 mx.example.com."` for an MX record), not a JSON object.
++{% endhint %}
 +
-+import (
-+	"errors"
+ Here is a sample test written in `bash` using the [jq](https://stedolan.github.io/jq/) command.  This fails if the number of MX records in the `stackex.com` domain is not exactly 5:
+ 
+ ```bash
+```
+
+**File**: `documentation/commands/preview-push.md` (modified, +20/-0)
+```diff
+@@ -70,9 +70,29 @@ OPTIONS:
+ * `--cmode value`
+  * Concurrency mode. See below.
+ 
++* `--ir name`
++ * Read the intermediate representation (IR) from the JSON file `name` and do not process `dnsconfig.js`. The file is typically generated by `dnscontrol print-ir --out name`. See below.
 +
-+	"github.com/DNSControl/dnscontrol/v5/models"
-+)
+ * `--report name`
+  * Write a machine-parseable report of corrections to the file named `name`. If no name is specified, no report is generated. See [JSON Reports](../advanced-features/json-reports.md)
+ 
++## IR files
 +
-+// checkObsoleteMetadata rejects metadata that is no longer supported.
-+func checkObsoleteMetadata(rec *models.RecordConfig) error {
-+	if _, ok := rec.Metadata["ignore_name_disable_safety_check"]; ok {
-+		return errors.New("IGNORE_NAME_DISABLE_SAFETY_CHECK no longer supported. Please use DISABLE_IGNORE_SAFETY_CHECK for the entire domain")
++The output of `dnscontrol print-ir --out file.json` can be read by `preview`/`push` using `--ir file.json`.
++
++{% hint style="warning" %}
++**WARNING**: The IR format is not a stable interface. It will change between releases without notice. It is safer to generate an IR file using `print-ir` and modify it than to generate one from scratch.
++{% endhint %}
++
++Each record's fields are stored in `rdata` as a string in zonefile format, exactly as they would appear to the right of the record type in a zonefile:
++
++```json
++{ "name": "@", "ttl": 300, "type": "MX", "typenum": 15, "rdata": "10 mx.example.com." }
++```
++
++* Hostnames in `rdata` must be FQDNs with the trailing dot (`mx.example.com.`, not `mx` nor `mx.example.com`).
++* TXT strings should be quoted (`"rdata": "\"v=spf1 -all\""`).
++
+ ## cmode
+ 
+ The `preview`/`push` commands begin with a data-gathering phase that collects current configuration from providers and zones. This collection can be done sequentially or concurrently. Concurrently is significantly faster. However since concurrent mode is newer, not all providers have been tested and certified as being compatible with this mode. Therefore the `--cmode` flag can be used to control concurrency.
+```
+
+**File**: `models/makers.go` (modified, +4/-1)
+```diff
+@@ -270,7 +270,10 @@ func MakeNAPTR(origin string, _ map[string]string, isEnabled nrc.Flags, args ...
+ 	}
+ 	// The NAPTR replacement is a domain name; an empty replacement is canonically
+ 	// the root, ".". Normalize so it renders consistently in zone files.
+-	replacement := mustbe.RawString(args[5])
++	replacement, err := mustbe.TargetHostSRV(origin, isEnabled, args[5])
++	if err != nil {
++		return nil, err
 +	}
+ 	if replacement == "" {
+ 		replacement = "."
+ 	}
+```
+
+**File**: `models/record.go` (modified, +45/-3)
+```diff
+@@ -69,22 +69,64 @@ type RecordConfig struct {
+ 	UnknownTypeName string `json:"unknown_type_name,omitempty"`
+ }
+ 
+-// MarshalJSON marshals RecordConfig.
++// MarshalJSON marshals RecordConfig. .rdata is written as a string in
++// zonefile (presentation) format, i.e. the output of RDATA.String(). This is
++// what UnmarshalJSON parses to restore the field.
+ func (rc *RecordConfig) MarshalJSON() ([]byte, error) {
+ 	recj := &struct {
+ 		RecordConfig
+-		RDATA dnsv2.RDATA `json:"rdata,omitempty"`
++		RDATA *string `json:"rdata,omitempty"`
+ 	}{
+ 		RecordConfig: *rc,
+ 	}
+-	recj.RDATA = rc.GetRDATA()
++	if rd := rc.GetRDATA(); rd != nil {
++		s := rd.String()
++		recj.RDATA = &s
++	}
+ 	j, err := json.Marshal(*recj)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 	return j, nil
+ }
+ 
++// UnmarshalJSON unmarshals RecordConfig. The "rdata" field is a string in
++// zonefile (presentation) format, as generated by MarshalJSON. It is parsed
++// the same way NewRecordConfigParse parses its input, with one exception:
++// there is no origin, therefore hostnames must be FQDNs (with the trailing dot).
++func (rc *RecordConfig) UnmarshalJSON(data []byte) error {
++	type recordConfigAlias RecordConfig // Avoid infinite recursion.
++	recj := &struct {
++		*recordConfigAlias
++		RDATA *string `json:"rdata"`
++	}{
++		recordConfigAlias: (*recordConfigAlias)(rc),
++	}
++	if err := json.Unmarshal(data, recj); err != nil {
++		return err
++	}
++
++	if rc.TypeNum == 0 {
++		rc.TypeNum = dnsv2.StringToType[rc.Type]
++	}
++	if rc.TypeNum == 0 {
++		return fmt.Errorf("record %q has no usable typenum or type (type=%q)", rc.Name, rc.Type)
++	}
++	if rc.Type == "" {
++		rc.Type = dnsv2.TypeToString[rc.TypeNum]
++	}
++
++	if recj.RDATA == nil {
++		return fmt.Errorf("record %q (type %s) has no rdata", rc.Name, rc.Type)
++	}
++	rd, err := myNewData(rc.TypeNum, *recj.RDATA, "")
++	if err != nil {
++		return fmt.Errorf("record %q (type %s): %w", rc.Name, rc.Type, err)
++	}
++	rc.SetRDATA(rd)
 +	return nil
 +}
++
+ // FixPosition takes the string representation of a position in a file that
+ // comes from dnsconfig.js's initial execution, and reduces it down to just the
+ // line/position we display to the user. The input is not well-defined, thus if
 ```
 
-**File**: `pkg/normalize/checkrec_metadata_test.go` (added, +20/-0)
+**File**: `models/record_astype.go` (modified, +12/-0)
 ```diff
-@@ -0,0 +1,20 @@
-+package normalize
-+
-+import (
-+	"testing"
-+
-+	dnsv2 "codeberg.org/miekg/dns"
-+	"github.com/DNSControl/dnscontrol/v5/models"
-+)
-+
-+func TestCheckObsoleteMetadata(t *testing.T) {
-+	dc := models.MustNewDomainConfig("example.com")
-+	rec := dc.MustNewRecordConfig("www", 0, dnsv2.TypeA, "192.0.2.1")
-+	if err := checkObsoleteMetadata(rec); err != nil {
-+		t.Errorf("unexpected error: %v", err)
-+	}
-+	rec.Metadata["ignore_name_disable_safety_check"] = "true"
-+	if err := checkObsoleteMetadata(rec); err == nil {
-+		t.Error("expected an error for ignore_name_disable_safety_check, got none")
-+	}
-+}
-```
-
-**File**: `pkg/normalize/checkrec_supported_types.go` (modified, +2/-2)
-```diff
-@@ -9,8 +9,8 @@ import (
- 	"github.com/DNSControl/dnscontrol/v5/pkg/providers"
- )
+@@ -227,6 +227,10 @@ func (rc *RecordConfig) AsMIKROTIKFWD() privatetypesrdata.MIKROTIKFWD {
+ 	return rc.GetRDATA().(privatetypesrdata.MIKROTIKFWD)
+ }
  
--// validateSupportedRecordTypes checks catalog recognition and provider support
--// for original types before transformations and resulting types afterwards.
-+// validateSupportedRecordTypes checks that the record's type is in the catalog
-+// and is supported by every provider in pTypes.
- func validateSupportedRecordTypes(rec *models.RecordConfig, domain string, pTypes []string) error {
- 	if _, known := privatetypes.LookupRecordType(rec.Type); !known {
- 		return fmt.Errorf("unknown record type %s in domain %s", rec.Type, domain)
-```
-
-**File**: `pkg/normalize/checkzone_fqdn.go` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+package normalize
-+
-+import (
-+	"fmt"
-+	"strings"
-+
-+	"github.com/DNSControl/dnscontrol/v5/models"
-+)
-+
-+// checkFQDNs checks that every record's FQDN is in the domain.
-+func checkFQDNs(d *models.DomainConfig) (errs []error) {
-+	for _, r := range d.Records {
-+		if r.NameFQDN == "" || !strings.HasSuffix(r.NameFQDN, d.Name) {
-+			errs = append(errs, fmt.Errorf("record named '%s' does not have correct FQDN for domain '%s'. FQDN: %s", r.Name, d.Name, r.NameFQDN))
-+		}
-+	}
-+	return errs
++func (rc *RecordConfig) AsMIKROTIKNXDOMAIN() privatetypesrdata.MIKROTIKNXDOMAIN {
++	return rc.GetRDATA().(privatetypesrdata.MIKROTIKNXDOMAIN)
 +}
-```
-
-**File**: `pkg/normalize/checkzone_fqdn_test.go` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+package normalize
 +
-+import (
-+	"testing"
-+
-+	dnsv2 "codeberg.org/miekg/dns"
-+	"github.com/DNSControl/dnscontrol/v5/models"
-+)
-+
-+func TestCheckFQDNs(t *testing.T) {
-+	dc := models.MustNewDomainConfig("example.com")
-+	dc.AddRecordConfig(dc.MustNewRecordConfig("www", 0, dnsv2.TypeA, "192.0.2.1"))
-+	dc.AddRecordConfig(dc.MustNewRecordConfig("@", 0, dnsv2.TypeA, "192.0.2.2"))
-+	if errs := checkFQDNs(dc); len(errs) != 0 {
-+		t.Errorf("unexpected errors: %v", errs)
-+	}
-+
-+	dc.Records[0].NameFQDN = "www.example.net"
-+	dc.Records[1].NameFQDN = ""
-+	if errs := checkFQDNs(dc); len(errs) != 2 {
-+		t.Errorf("expected 2 errors, got %d: %v", len(errs), errs)
-+	}
-+}
-```
-
-**File**: `pkg/normalize/checkzone_provider_caps.go` (modified, +1/-10)
-```diff
-@@ -8,16 +8,7 @@ import (
- )
+ func (rc *RecordConfig) AsMINFO() dnsrdatav2.MINFO {
+ 	return rc.GetRDATA().(dnsrdatav2.MINFO)
+ }
+@@ -243,6 +247,14 @@ func (rc *RecordConfig) AsNAPTR() dnsrdatav2.NAPTR {
+ 	return rc.GetRDATA().(dnsrdatav2.NAPTR)
+ }
  
- func checkProviderCapabilities(dc *models.DomainConfig) error {
--	var pTypes []string
--	for _, provider := range dc.DNSProviderInstances {
--		pTypes = append(pTypes, provider.ProviderType)
--	}
--	for _, rec := range dc.Records {
--		if err := validateSupportedRecordTypes(rec, dc.Name, pTypes); err != nil {
--			return err
--		}
--	}
--
-+	// Record types are checked per record, by validateSupportedRecordTypes.
- 	// AUTODNSSEC is not a record type, so SupportedTypes does not cover it.
- 	if dc.AutoDNSSEC == "" {
- 		return nil
++func (rc *RecordConfig) AsNETLIFY() privatetypesrdata.NETLIFY {
++	return rc.GetRDATA().(privatetypesrdata.NETLIFY)
++}
++
++func (rc *RecordConfig) AsNETLIFYV6() privatetypesrdata.NETLIFYV6 {
++	return rc.GetRDATA().(privatetypesrdata.NETLIFYV6)
++}
++
+ func (rc *RecordConfig) AsNID() dnsrdatav2.NID {
+ 	return rc.GetRDATA().(dnsrdatav2.NID)
+ }
+```
+
+**File**: `models/record_factory.go` (modified, +2/-2)
+```diff
+@@ -120,8 +120,8 @@ func myNewData(typeNum uint16, contents string, origin string) (dnsv2.RDATA, err
+ 		return nil, fmt.Errorf("NewData(%d, %q, %q) failed: %w", typeNum, contents, origin+".", err)
+ 	}
+ 	// We do not need to call normalizeRDATA here because every caller to
+-	// myNewData eventually passes the result to newRecordConfigHelper,
+-	// which calls SetRDATA, which calls normalizeRDATA.
++	// myNewData eventually passes the result to SetRDATA (directly, or via
++	// newRecordConfigHelper), which calls normalizeRDATA.
+ 	return rd2, nil
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `2239ae6e` (2026-11-15)
-**Commit Message**: refactor(normalize): split validate.go into one file per concern (#5088)
+### Incident Patch 2: `0087e705` (2026-11-17)
+**Commit Message**: fix(spflib): parse SPF mechanism names case-insensitively (#5094)
 
-Third step in splitting `pkg/normalize` into separate normalize,
-transform and validate phases (follows #5086 and #5087). This one is a
-mechanical file split; the order of operations in
-`ValidateAndNormalizeConfig` is unchanged.
+RFC 7208 says SPF mechanism names are case-insensitive, and the parser
+already lowercases `ip4:`, `a` and `mx` for that reason. The `all`,
+`include:`, `redirect=`, `exists:` and `ptr` checks still compared
+against the original text, so a record like `v=spf1 ip4:192.0.2.1 -ALL`
+was handled wrongly:
 
-## Layout
+- `-ALL` was not seen as the end of the record. It fell into the `a`
+prefix branch, so `Lookups()` returned 1 instead of 0 and any terms
+after it were still parsed.
+- `Include:` and `Redirect=` failed with "unsupported SPF part", and
+`PTR` and `EXISTS:` were rejected the same way.
 
-`validate.go` (831 lines) becomes `normalize.go`
-(`ValidateAndNormalizeConfig`, `Warning`, `processSplitHorizonDomains`)
-plus one file per concern:
+Those checks now use the lowercased name. The domain of an `include:` or
+`redirect=` keeps its original case.
 
-| Prefix | Meaning | Files |
-|---|---|---|
-| `apply_` | passes that generate records | `apply_import_transform.go`,
-`apply_ip_transform.go`, `apply_spf_flatten.go` (was `flatten.go`) |
-| `checkrec_` | per-record checks | `checkrec_label.go`,
-`checkrec_target.go`, `checkrec_soa.go`, `checkrec_tlsa_smimea.go`,
-`checkrec_supported_types.go` |
-| `checkzone_` | zone-wide checks | `checkzone_cname.go`,
-`checkzone_duplicates.go`, `checkzone_ttl.go`, `checkzone_soa.go`,
-`checkzone_r53_weighted.go`, `checkzone_autodnssec.go`,
-`checkzone_provider_caps.go` |
-| | shared helpers | `identity.go` |
+I added `TestParseCaseInsensitiveMechanisms`. It fails on master and
+passes now, as do the rest of `pkg/spflib` and `pkg/normalize`. `go vet`
+and `gofmt` are clean.
 
-`validate_test.go` is split the same way, so each file's tests sit next
-to it. The shared `checkError` test helper is in `helpers_test.go`.
-
-## 
-
-**File**: `REFACTORING_PROJECTS.md` (modified, +12/-2)
+**File**: `pkg/spflib/parse.go` (modified, +6/-6)
 ```diff
-@@ -35,8 +35,6 @@ of being some in LabelFromDnsconfigjs() and other places.
- 
- * There are multiple ways that code strips the trailing dot from a domain name.  Benchmark a few and standardize on the fastest. In pkg/nameutil. Possibly have one that is extra fast but panics if there is no "." at the end.
- 
--* pkg/normalize/validate.go has half of the Transform code, the other half is in pkg/transform.  An easy thing would be to move the part of pkg/normalize/validate.go and validate_test.go into pkg/normalize/transform{,_test}.go.  The more difficult thing would be to move all or most of the code to pkg/transform.
--
- * models/record.go FixPostion has an easy TODO.
- 
- * models/t_txt.go has an some easy FIXMEs.
-@@ -58,6 +56,18 @@ something that is both a Reg and a DSP.
- the trailing dot when called in D(REV(foo)) but not in PTR(REV(foo)) (zone context vs. record context).  Then
- downstream code could be simplified.
- 
-+* NAMESERVER(), NAMESERVER_TTL() are confusing and should be reworked.
-+I wonder if it would be less confusing to have a feature called PARENT_NS() that takes
-+a single or list of nameservers and a TTL.
-+  * PARENT_NS() doesn't exist in a zone?  No changes shoud be done at the parent.
-+  * PARENT_NS() exists? Check the parent zone and make correction.
-+    * If the zone is a domain:
-+      * If there is a REGISTRAR() use it to fix things.  Else print a warning.
-+    * If the zone's parent is also in this config, inject NS records into it?  Warn if dups?
-+Or maybe a better design is:
-+  * REGISTRAR() should also take delegation info.
-+        REGISTRAR("foo", DELEGATE( "ns2", "ns2": { ip: "1.2.3.4", "ttl": "5m"} ))
+@@ -62,29 +62,29 @@ func parse(text string, dnsres Resolver, chain []string) (*SPFRecord, error) {
+ 		}
+ 		lcpart := strings.ToLower(part) // We have seen "Ip4" instead of "ip4".  Let's be gracious and allow it.
+ 		rec.Parts = append(rec.Parts, p)
+-		if part == "all" {
++		if lcpart == "all" {
+ 			// all. nothing else matters.
+ 			break
+ 		} else if strings.HasPrefix(lcpart, "a") || strings.HasPrefix(lcpart, "mx") {
+ 			p.IsLookup = true
+ 		} else if strings.HasPrefix(lcpart, "ip4:") || strings.HasPrefix(lcpart, "ip6:") {
+ 			// ip address, 0 lookups
+ 			continue
+-		} else if strings.HasPrefix(part, "include:") || strings.HasPrefix(part, "redirect=") {
++		} else if strings.HasPrefix(lcpart, "include:") || strings.HasPrefix(lcpart, "redirect=") {
+ 			// redirect is only partially implemented. redirect is a
+ 			// complex and IMHO ambiguously defined feature.  We only
+ 			// implement the most simple edge case: when it is the last item
+ 			// in the string.  In that situation, it is the equivalent of
+ 			// include:.
+-			if strings.HasPrefix(part, "redirect=") {
++			if strings.HasPrefix(lcpart, "redirect=") {
+ 				// pi + 2: because pi starts at 0 when it iterates starting on parts[1],
+ 				// and because len(parts) is one bigger than the highest index.
+ 				if (pi + 2) != len(parts) {
+ 					return nil, fmt.Errorf("%s must be last item", part)
+ 				}
+-				p.IncludeDomain = strings.TrimPrefix(part, "redirect=")
++				p.IncludeDomain = part[len("redirect="):]
+ 			} else {
+-				p.IncludeDomain = strings.TrimPrefix(part, "include:")
++				p.IncludeDomain = part[len("include:"):]
+ 			}
+ 			p.IsLookup = true
+ 			if dnsres != nil {
+@@ -100,7 +100,7 @@ func parse(text string, dnsres Resolver, chain []string) (*SPFRecord, error) {
+ 					return nil, fmt.Errorf("in included SPF: %w", err)
+ 				}
+ 			}
+-		} else if strings.HasPrefix(part, "exists:") || part == "ptr" || strings.HasPrefix(part, "ptr:") {
++		} else if strings.HasPrefix(lcpart, "exists:") || lcpart == "ptr" || strings.HasPrefix(lcpart, "ptr:") {
+ 			p.IsLookup = true
+ 		} else {
+ 			return nil, fmt.Errorf("unsupported SPF part %s", part)
+```
+
+**File**: `pkg/spflib/parse_test.go` (modified, +38/-0)
+```diff
+@@ -276,3 +276,41 @@ func TestParseRedirectLast(t *testing.T) {
+ 	}
+ 	t.Log(rec.Print())
+ }
 +
- ## Actual new features:
- 
- * Handle "unknown types". dnsv2 has a way to managing unknown types. Investigate it and replace the half-written version (see rc.UnknownTypeName)
++func TestParseCaseInsensitiveMechanisms(t *testing.T) {
++	// Mechanism names are case-insensitive (RFC 7208 section 4.6.1).
++	tests := []struct {
++		input   string
++		wantErr bool
++		lookups int
++		parts   int
++		domain  string
++	}{
++		{"v=spf1 ip4:192.0.2.1 -ALL", false, 0, 2, ""},
++		{"v=spf1 ip4:192.0.2.1 -All mx", false, 0, 2, ""},
++		{"v=spf1 PTR -all", false, 1, 2, ""},
++		{"v=spf1 EXISTS:example.com -all", false, 1, 2, ""},
++		{"v=spf1 Include:Example.COM -all", false, 1, 2, "Example.COM"},
++		{"v=spf1 REDIRECT=Example.COM", false, 1, 1, "Example.COM"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.input, func(t *testing.T) {
++			rec, err := Parse(tt.input, nil)
++			if (err != nil) != tt.wantErr {
++				t.Fatalf("Parse(%q) error = %v, wantErr %v", tt.input, err, tt.wantErr)
++			}
++			if err != nil {
++				return
++			}
++			if got := rec.Lookups(); got != tt.lookups {
++				t.Errorf("Parse(%q) lookups = %d, want %d", tt.input, got, tt.lookups)
++			}
++			if got := len(rec.Parts); got != tt.parts {
++				t.Errorf("Parse(%q) parts = %d, want %d", tt.input, got, tt.parts)
++			}
++			if got := rec.Parts[0].IncludeDomain; got != tt.domain {
++				t.Errorf("Parse(%q) include domain = %q, want %q", tt.input, got, tt.domain)
++			}
++		})
++	}
++}
 ```
 
-**File**: `documentation/advanced-features/unittests.md` (modified, +1/-1)
+---
+
+### Incident Patch 3: `d252461b` (2026-11-16)
+**Commit Message**: fix(dnsconfig): reject domain names and tags that escape the zone directory (#5091)
+
+The BIND provider used the D() name verbatim when building the zone file
+path, so a name containing ".." elements could create a .zone file (and
+its parent directories) outside the configured directory.
+(GHSA-rrxr-r9rr-crr4)
+
+Other providers may have similar issues where the API would be confused
+by such names.
+
+* BIND: build the zone file path in one place (zoneFilePath) and reject
+any generated filename that is not local to the zone directory. Names
+containing a slash (RFC 2317 zones) still work.
+* DNSConfig.PostProcess: reject domain names with an empty label (a
+leading dot or consecutive dots), so "dnscontrol check" catches them for
+all providers.
+* DNSConfig.PostProcess: restrict tags ("example.com!tag") to letters,
+digits, hyphens, underscores, and dots, with no leading dot.
+
+---------
+
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `documentation/language-reference/top-level-functions/D.md` (modified, +2/-0)
 ```diff
-@@ -6,7 +6,7 @@
+@@ -115,6 +115,8 @@ D_EXTEND("example.com!inside",
  
- ## Built-in Tests
+ A domain name without a `!` is assigned a tag that is the empty string. For example, `example.com` and `example.com!` are equivalent. However, we strongly recommend against using the empty tag, as it risks creating confusion.  In other words, if you have `domain.tld` and `domain.tld!external` you now require humans to remember that `domain.tld` is the external one.  I mean... the internal one.  You may have noticed this mistake, but will your coworkers?  Will you in six months? You get the idea.
  
--DNSControl performs a number of tests during the validation stage. You can find them in `pkg/normalize/validate.go`.
-+DNSControl performs a number of tests during the validation stage. You can find them in `pkg/normalize/` (the `checkrec_*.go` files check individual records; the `checkzone_*.go` files check whole zones).
++A tag may contain only letters, digits, hyphens (`-`), underscores (`_`), and dots (`.`), and may not start with a dot. For example, `example.com!inside` and `example.com!v1.2` are valid; `example.com!in/side` and `example.com!.hidden` are rejected.
++
+ DNSControl command line flag `--domains` matches the full name (with the "!").  If you define domains `example.com!john`, `example.com!paul`, and `example.com!george` then:
  
- ## External tests
- 
+ - `--domains=example.com` will not match any of the three.
 ```
 
-**File**: `models/rdata.go` (modified, +4/-1)
+**File**: `documentation/provider/bind.md` (modified, +2/-0)
 ```diff
-@@ -69,8 +69,11 @@ func (rc *RecordConfig) validateRDATA() {
- /*
+@@ -31,6 +31,8 @@ Example:
  
- TODO():
-+Problem: Validation code for some rtypes are scattered in pkg/normalize. It would be better
-+if each RDATA could validate itself, thus packaing everything related to an RDATA in one place.
+ As of v4.2.0 `dnscontrol push` will create subdirectories along the path to the filename. This includes both the portion of the path created by the `directory` setting and the `filenameformat` setting. For security reasons, the automatic creation of subdirectories is disabled if `dnscontrol` is running as root. (Running DNSControl as root is not recommended in general.)
  
--Add this interface. Update pkg/normalize/validate.go to call the interface (if it exists for the RDATA).  The type-specific code currently
-+Proposed solution:
-+Add this interface. Update pkg/normalize/ to call the interface (if it exists for the RDATA).  The type-specific code currently
- in pkg/normalize/validate.go files such as t_ds.go, t_sshfp.go, t_tlsa.go, t_txt.go (all in `models/`).
- The functions rejectifTargetEqualsLabel and rejectifInvalidR53Weight providers/route53/auditrecords.go will move to models/t_r53alias.go
++Zone files are always written within `directory`. A domain name that contains a slash (for example, the RFC 2317 zone `0/26.2.0.192.in-addr.arpa`) is stored in a subdirectory of `directory`. A domain name or tag that would place the zone file outside of `directory` is rejected. For example these zones would be rejected: `../../example.com`, `exam/../ple.com`, `example.com~tag/../owned`.
++
+ ## Meta configuration
  
+ This provider accepts some optional metadata in the `SERVICE()` call.
 ```
 
-**File**: `pkg/mustbe/README.md` (modified, +1/-1)
+**File**: `models/dns.go` (modified, +16/-0)
 ```diff
-@@ -7,4 +7,4 @@
- - Any hostnames must be extended to their FQDN, including a trailing dot (if required).
- - If a field is case insensitive, we convert it to lowercase (hostnames) or uppercase (base64 or similar) so that future comparisons can simply use `==`.
+@@ -4,6 +4,8 @@ import (
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
++	"regexp"
++	"slices"
+ 	"strings"
+ )
  
--In short, by the time any data makes it to into the struct, it must be valid. No later validation is done.  (That's not entirely true. `pkg/normalize/validate` still does some validation/normalization but once all DNS record types have a `Make*()` function, we'll be removing validation steps from `pkg/normalize/validate`.  That is, in the future, `pkg/normalize/validate` will do per-zone validation only, all per-record validations will be done in the `Make*()` functions.
-+In short, by the time any data makes it to into the struct, it must be valid. No later validation is done.  (That's not entirely true. `pkg/normalize/` still does some validation/normalization but once all DNS record types have a `Make*()` function, we'll be removing validation steps from `pkg/normalize/validate`.  That is, in the future, `pkg/normalize/` will do per-zone validation only, all per-record validations will be done in the `Make*()` functions.
+@@ -105,6 +107,9 @@ type Correction struct {
+ 	Msg string
+ }
+ 
++// validTagRe matches the tags permitted in "example.com!tag". The empty tag is permitted.
++var validTagRe = regexp.MustCompile(`^([A-Za-z0-9_-][A-Za-z0-9_.-]*)?$`)
++
+ // PostProcess performs and post-processing required after running dnsconfig.js and loading the result.
+ func (config *DNSConfig) PostProcess() error {
+ 	for _, domain := range config.Domains {
+@@ -114,6 +119,17 @@ func (config *DNSConfig) PostProcess() error {
+ 		if strings.HasSuffix(domain.Name, ".") {
+ 			return fmt.Errorf("domain name %q must not end with a dot", domain.Name)
+ 		}
++		// A domain name with an empty label (a leading dot or consecutive
++		// dots, as in "../example.com") is not a valid DNS name.  Providers
++		// use the name to build filenames and URLs, so reject it here.
++		if slices.Contains(strings.Split(domain.Name, "."), "") {
++			return fmt.Errorf("domain name %q must not contain an empty label", domain.Name)
++		}
++		// The tag (the "tag" in "example.com!tag") is used by providers to
++		// build filenames, so restrict it to a conservative character set.
++		if !validTagRe.MatchString(domain.Tag) {
++			return fmt.Errorf("domain %q: tag %q may only contain letters, digits, hyphens, underscores, and dots, and must not start with a dot", domain.Name, domain.Tag)
++		}
+ 		// dnsconfig.js creates records only via the record constructors
+ 		// (A(), TXT(), ...), which arrive as .RawRecords and are imported
+ 		// by ImportRawRecords().  RecordConfig.rdata is unexported, so a
 ```
 
-**File**: `pkg/normalize/apply_import_transform.go` (added, +153/-0)
+**File**: `pkg/js/domain_names_test.go` (added, +48/-0)
 ```diff
-@@ -0,0 +1,153 @@
-+package normalize
+@@ -0,0 +1,48 @@
++package js
 +
 +import (
 +	"fmt"
-+	"slices"
-+	"strings"
-+
-+	"github.com/DNSControl/dnscontrol/v5/models"
-+	"github.com/DNSControl/dnscontrol/v5/pkg/nameutil"
-+	"github.com/DNSControl/dnscontrol/v5/pkg/nrc"
-+	"github.com/DNSControl/dnscontrol/v5/pkg/transform"
++	"testing"
 +)
 +
-+// applyImportTransforms processes every IMPORT_TRANSFORM in the config, then
-+// deletes the IMPORT_TRANSFORM pseudo-records.
-+func applyImportTransforms(config *models.DNSConfig) (errs []error) {
-+	for _, domain := range config.Domains {
-+		for _, rec := range domain.Records {
-+			if rec.Type == "IMPORT_TRANSFORM" {
-+				rd := rec.AsIMPORTTRANSFORM()
-+				transformTable := rd.TransformTable
-+				ttl := uint32(rd.TTL)
-+				suffixstrip := rd.SuffixStrip
-+				targetDomain := rd.TargetDomain
-+				table, err := transform.DecodeTransformTable(transformTable)
-+				if err != nil {
-+					errs = append(errs, err)
-+					continue
-+				}
-+				c := config.FindDomain(targetDomain)
-+				if c == nil {
-+					err = fmt.Errorf("IMPORT_TRANSFORM mentions non-existent domain %q", targetDomain)
-+					errs = append(errs, err)
-+					continue
-+				}
-+				err = importTransform(c, domain, table, ttl, suffixstrip)
-+				if err != nil {
-+					errs = append(errs, err)
-+				}
++// TestDomainNameValidation verifies that invalid domain names and tags
++// are rejected as soon as dnsconfig.js is processed. (GHSA-rrxr-r9rr-crr4)
++func TestDomainNameValidation(t *testing.T) {
++	tests := []struct {
++		name    string
++		wantErr bool
++	}{
++		{"example.com", false},
++		{"example.com!inside", false},
++		{"example.com!in_side-2", false},
++		{"example.com!", false},
++		{"0/26.2.0.192.in-addr.arpa", false},
++		{"рф.com", false},
++		{"bücher.example", false},
++		{"例え.jp", false},
++		{"münchen.de!inside", false},
++		{"xn--p1ai.com", false},
++		{"example.com.", true},
++		{"../../outside/deep/owned", true},
++		{"..", true},
++		{".example.com", true},
++		{"example..com", true},
++		{"example.com!../../owned", true},
++		{"example.com!a/b", true},
++		{"example.com!v1.2", false},
++		{"example.com!a..b", false},
++		{"example.com!.", true},
++		{"example.com!..", true},
++		{"example.com!.hidden", true},
++		{"example.com!a!b", true},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			script := fmt.Sprintf(`D(%q, NewRegistrar("none"), A("@", "1.2.3.4"));`, tt.name)
++			_, err := ExecuteJavascriptString([]byte(script), true, nil)
++			if (err != nil) != tt.wantErr {
++				t.Errorf("D(%q) error = %v, wantErr %v", tt.name, err, tt.wantErr)
 +			}
-+		}
-+	}
-+	// Clean up:
-+	for _, domain := range config.Domains {
-+		deleteImportTransformRecords(domain)
-+	}
-+	return errs
-+}
-+
-+// import_transform imports the records of one zone into another, modifying records along the way.
-+func importTransform(srcDomain, dstDomain *models.DomainConfig,
-+	transforms []transform.IPConversion, ttl uint32, suffixstrip string,
-+) error {
-+	// Read srcDomain.Records, transform, and append to dstDomain.Records:
-+	// 1. Skip any that aren't A or CNAMEs.
-+	// 2. Append destDomainname to the end of the label.
-+	// 3. For CNAMEs, append destDomainname to the end of the target.
-+	// 4. For As, change the target as described the transforms.
-+
-+	for _, rec := range srcDomain.Records {
-+		// If this record is marked to be skipped, skip it.
-+		if rec.Metadata["import_transform_skip"] != "" {
-+			continue
-+		}
-+		// If the dstDomain already has a record with this type+label, skip it.
-+		if dstDomain.Records.HasRecordTypeName(rec.Type, rec.GetLabelFQDN()) {
-+			continue
-+		}
-+		switch rec.Type {
-+		case "A":
-+			addr := rec.AsA().Addr
-+			trs, err := transform.IPToList(addr, transforms)
-+			if err != nil {
-+				return fmt.Errorf("import_transform: TransformIP(%v, %v) returned err=%w", addr, transforms, err)
-+			}
-+			for _, tr := range trs {
-+				r := newRec(rec, ttl)
-+				l, err := transformLabel(r.GetLabelFQDN(), suffixstrip)
-+				if err != nil {
-+					return err
-+				}
-+				r.SetLabel(l, dstDomain.Name)
-+
-+				rd, err := models.MakeA(dstDomain.Name, rec.Metadata, nrc.Flags{}, tr.String())
-+				if err != nil {
-+					return err
-+				}
-+				r.SetRDATA(rd)
-+
-+				dstDomain.Records = append(dstDomain.Records, r)
-+			}
-+		case "CNAME":
-+			r := newRec(rec, ttl)
-+			l, err := transformLabel(r.GetLabelFQDN(), suffixstrip)
-+			if err != nil {
-+				return err
-+			}
-+			r.SetLabel(l, dstDomain.Name)
-+
-+			rd, err := models.MakeCNAME(dstDomain.Name, rec.Metadata, nrc.Flags{}, transformCNAME(r.AsCNAME().Target, srcDomain.Name, dstDomain.Name, suffixstrip))
-+			if err != nil {
-+				return err
-+			}
-+			r.SetRDATA(rd)
-+
-+			dstDomain.Records = append(dstDomain.Records, r)
-+		default:
-+			// Anything else is ignored.
-+			continue
-+		}
-+	}
-+	return nil
-+}
-+
-+func newRec(rec *models.RecordConfig, ttl uint32) *models.RecordConfig {
-+	rec2, _ := rec.Copy()
-+	if ttl != 0 {
-+		rec2.TTL = ttl
-+	}
-+	return rec2
-+}
-+
-+func transformCNAME(target, oldDomain, newDomain, suffixstrip string) string {
-+	// Canonicalize the target.  Add the newDomain minus the suffixstrip.
-+	//  foo -> foo.oldDomain.newDomain
-+	//  foo. -> foo.newDomain
-+	nd := strings.TrimPrefix(newDomain, suffixstrip+".")
-+	if strings.HasSuffix(target, ".") {
-+		return target + nd + "."
-+	}
-+	return nameutil.ToFqdnWithDot(target, oldDomain) + nd + "."
-+}
-+
-+func transformLabel(label, suffixstrip string) (string, error) {
-+	if suffixstrip == "" {
-+		return label, nil
-+	}
-+	suffixstrip = "." + suffixstrip
-+	if !strings.HasSuffix(label, suffixstrip) {
-+		return "", fmt.Errorf("label %q does not end with %q", label, suffixstrip)
-+	}
-+	return label[:len(label)-len(suffixstrip)], nil
-+}
-+
-+// deleteImportTransformRecords deletes any IMPORT_TRANSFORM records from a domain.
-+func deleteImportTransformRecords(domain *models.DomainConfig) {
-+	for i, rec := range slices.Backward(domain.Records) {
-+
-+		if rec.Type == "IMPORT_TRANSFORM" {
-+			domain.Records = append(domain.Records[:i], domain.Records[i+1:]...)
-+		}
++		})
 +	}
 +}
 ```
 
-**File**: `pkg/normalize/apply_import_transform_test.go` (added, +178/-0)
+**File**: `providers/bind/bindProvider.go` (modified, +30/-28)
 ```diff
-@@ -0,0 +1,178 @@
-+package normalize
-+
-+import (
-+	"strings"
-+	"testing"
-+
-+	dnsv2 "codeberg.org/miekg/dns"
-+	"github.com/DNSControl/dnscontrol/v5/models"
-+	"github.com/DNSControl/dnscontrol/v5/pkg/privatetypes"
-+)
-+
-+func TestImportTransform(t *testing.T) {
-+	const transformDouble = "0.0.0.0~1.1.1.1~~9.0.0.0,10.0.0.0"
-+	const transformSingle = "0.0.0.0~1.1.1.1~~8.0.0.0"
-+
-+	dcSrc := models.MustNewDomainConfig("stackexchange.com")
-+	dcSrc.AddRecordConfig(dcSrc.MustNewRecordConfig("*", 0, dnsv2.TypeA, "0.0.2.2"))
-+	dcSrc.AddRecordConfig(dcSrc.MustNewRecordConfig("www", 0, dnsv2.TypeA, "0.0.1.1"))
-+
-+	dcDst := models.MustNewDomainConfig("internal")
-+	d1 := dcDst.MustNewRecordConfig("*.stackexchange.com", 0, dnsv2.TypeA, "0.0.3.3")
-+	d1.Metadata = map[string]string{"transform_table": transformSingle}
-+	dcDst.AddRecordConfig(d1)
-+
-+	d2 := dcSrc.MustNewRecordConfig("@", 0, privatetypes.TypeIMPORTTRANSFORM, transformDouble, 299, "com.internal", "internal")
-+	d2.Metadata["transform_table"] = transformDouble
-+	dcDst.AddRecordConfig(d2)
-+
-+	cfg := &models.DNSConfig{}
-+	cfg.Domains = append(cfg.Domains, dcSrc, dcDst)
-+	err := cfg.PostProcess()
+@@ -167,25 +167,13 @@ func (c *bindProvider) ListZones() ([]string, error) {
+ 
+ // GetZoneRecords gets the records of a zone and returns them in RecordConfig format.
+ func (c *bindProvider) GetZoneRecords(dc *models.DomainConfig) (models.Records, error) {
+-	domain := dc.Name
+-
+-	var zonefile string
+-
+ 	if _, err := os.Stat(c.directory); os.IsNotExist(err) {
+ 		printer.Printf("\nWARNING: BIND directory %q does not exist! (will create)\n", c.directory)
+ 	}
+-	zonefile = filepath.Join(c.directory,
+-		makeFileName(
+-			c.filenameformat,
+-			domaintags.DomainNameVarieties{
+-				Tag:         dc.Tag,
+-				NameRaw:     dc.NameRaw,
+-				NameASCII:   domain,
+-				NameUnicode: dc.NameUnicode,
+-				UniqueName:  dc.UniqueName,
+-			},
+-		),
+-	)
++	zonefile, err := c.zoneFilePath(dc)
 +	if err != nil {
-+		t.Fatal(err)
++		return nil, err
 +	}
-+
-+	if errs := ValidateAndNormalizeConfig(cfg); len(errs) != 0 {
-+		for _, err := range errs {
-+			t.Error(err)
-+		}
-+		t.FailNow()
+ 	//fmt.Printf("DEBUG: Reading zonefile %q\n", zonefile)
+ 	//fmt.Printf("DEBUG: Meta %+v\n", meta)
+ 	//fmt.Printf("DEBUG: Domain Names %+v\n", ff)
+@@ -301,18 +289,10 @@ func (c *bindProvider) GetZoneRecordsCorrections(dc *models.DomainConfig, foundR
+ 		comments = append(comments, "Automatic DNSSEC signing requested")
+ 	}
+ 
+-	zonefile = filepath.Join(c.directory,
+-		makeFileName(
+-			c.filenameformat,
+-			domaintags.DomainNameVarieties{
+-				Tag:         dc.Tag,
+-				NameRaw:     dc.NameRaw,
+-				NameASCII:   dc.Name,
+-				NameUnicode: dc.NameUnicode,
+-				UniqueName:  dc.UniqueName,
+-			},
+-		),
+-	)
++	zonefile, err = c.zoneFilePath(dc)
++	if err != nil {
++		return nil, 0, err
 +	}
-+	d := cfg.FindDomain("internal")
-+	if len(d.Records) != 3 {
-+		for _, r := range d.Records {
-+			t.Error(r)
-+		}
-+		t.Fatalf("Expected 3 records in internal, but got %d", len(d.Records))
+ 
+ 	// We know there are changes. Update the SOA record's serial number,
+ 	// basing it on the serial already published in the existing zone.
+@@ -347,6 +327,28 @@ func (c *bindProvider) GetZoneRecordsCorrections(dc *models.DomainConfig, foundR
+ 	return corrections, actualChangeCount, nil
+ }
+ 
++// zoneFilePath returns the path of the zonefile for dc. It rejects any
++// domain name that would place the file outside of c.directory (for
++// example, a name containing ".." elements).  Names that contain a slash
++// (RFC2317 zones such as "0/26.2.0.192.in-addr.arpa") are permitted as
++// long as the result stays within c.directory.
++func (c *bindProvider) zoneFilePath(dc *models.DomainConfig) (string, error) {
++	name := makeFileName(
++		c.filenameformat,
++		domaintags.DomainNameVarieties{
++			Tag:         dc.Tag,
++			NameRaw:     dc.NameRaw,
++			NameASCII:   dc.Name,
++			NameUnicode: dc.NameUnicode,
++			UniqueName:  dc.UniqueName,
++		},
++	)
++	if !filepath.IsLocal(filepath.FromSlash(name)) {
++		return "", fmt.Errorf("BIND zone %q generates filename %q which is outside of directory %q", dc.Name, name, c.directory)
 +	}
++	return filepath.Join(c.directory, name), nil
 +}
 +
-+// An IMPORT_TRANSFORM that names a domain that is not in the config must be
-+// reported as an error. It must not crash.
-+func TestImportTransformMissingDomain(t *testing.T) {
-+	const transformSingle = "0.0.0.0~1.1.1.1~~8.0.0.0"
-+
-+	dc := models.MustNewDomainConfig("internal")
-+	dc.AddRecordConfig(dc.MustNewRecordConfig("www", 0, dnsv2.TypeA, "0.0.3.3"))
-+	dc.AddRecordConfig(dc.MustNewRecordConfig("@", 0, privatetypes.TypeIMPORTTRANSFORM, transformSingle, 299, "com.internal", "missing.example"))
-+
-+	cfg := &models.DNSConfig{}
-+	cfg.Domains = append(cfg.Domains, dc)
-+	if err := cfg.PostProcess(); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	var errs []error
-+	func() {
-+		defer func() {
-+			if r := recover(); r != nil {
-+				t.Fatalf("ValidateAndNormalizeConfig panicked: %v", r)
-+			}
-+		}()
-+		errs = ValidateAndNormalizeConfig(cfg)
-+	}()
-+
-+	for _, err := range errs {
-+		if strings.Contains(err.Error(), `IMPORT_TRANSFORM mentions non-existent domain "missing.example"`) {
-+			return
-+		}
-+	}
-+	t.Errorf("expected an error about the non-existent domain, got %v", errs)
-+}
-+
-+func Test_transform_cname(t *testing.T) {
-+	tests := []struct {
-+		experiment string
-+		expected   string
-+	}{
-+		{"@", "old.com.new.com."},
-+		{"foo", "foo.old.com.new.com."},
-+		{"foo.bar", "foo.bar.old.com.new.com."},
-+		{"foo.bar.", "foo.bar.new.com."},
-+		{"chat.stackexchange.com.", "chat.stackexchange.com.new.com."},
-+	}
-+
-+	for _, test := range tests {
-+		actual := transformCNAME(test.experiment, "old.com", "new.com", "")
-+		if test.expected != actual {
-+			t.Errorf("%v: expected (%v) got (%v)\n", test.experiment, test.expected, actual)
-+		}
-+	}
-+}
-+
-+func Test_transform_cname_strip(t *testing.T) {
-+	tests := []struct {
-+		p        []string
-+		expected string
-+	}{
-+		{
-+			[]string{"ai.meta.stackexchange.com.", "stackexchange.com", "com.internal", "com"},
-+			"ai.meta.stackexchange.com.internal.",
-+		},
-+		{
-+			[]string{"askubuntu.com.", "askubuntu.com", "com.internal", "com"},
-+			"askubuntu.com.internal.",
-+		},
-+		{
-+			[]string{"blogoverflow.com.", "stackoverflow.com", "com.internal", "com"},
-+			"blogoverflow.com.internal.",
-+		},
-+		{
-+			[]string{"careers.stackoverflow.com.", "stackoverflow.com", "com.internal", "com"},
-+			"careers.stackoverflow.com.internal.",
-+		},
-+		{
-+			[]string{"chat.stackexchange.com.", "askubuntu.com", "com.internal", "com"},
-+			"chat.stackexchange.com.internal.",
-+		},
-+		{
-+			[]string{"chat.stackexchange.com.", "stackoverflow.com", "com.internal", "com"},
-+			"chat.stackexchange.com.internal.",
-+		},
-+		{
-+			[]string{"chat.stackexchange.com.", "superuser.com", "com.internal", "com"},
-+			"chat.stackexchange.com.internal.",
-+		},
-+		{
-+			[]string{"sstatic.net.", "sstatic.net", "net.internal", "net"},
-+			"sstatic.net.internal.",
-+		},
-+		{
-+			[]string{"stackapps.com.", "stackapps.com", "com.internal", "com"},
-+			"stackapps.com.internal.",
-+		},
-+		{
-+			[]string{"stackexchange.com.", "stackexchange.com", "com.internal", "com"},
-+			"stackexchange.com.internal.",
-+		},
-+		{
-+			[]string{"stackoverflow.com.", "stackoverflow.com", "com.internal", "com"},
-+			"stackoverflow.com.internal.",
-+		},
-+		{
-+			[]string{"superuser.com.", "superuser.com", "com.internal", "com"},
-+			"superuser.com.internal.",
-+		},
-+		{
-+			[]string{"teststackoverflow.com.", "teststackoverflow.com", "com.internal", "com"},
-+			"teststackoverflow.com.internal.",
-+		},
-+		{
-+			[]string{"webapps.stackexchange.com.", "stackexchange.com",
+ // preprocessFilename pre-processes a filename we're about to os.Create()
+ // * On Windows systems, it translates the separator.
+ // * It attempts to mkdir the directories leading up to the filename.
 ```
 
-**File**: `pkg/normalize/apply_ip_transform.go` (added, +46/-0)
+**File**: `providers/bind/zonefilepath_test.go` (added, +66/-0)
 ```diff
-@@ -0,0 +1,46 @@
-+package normalize
+@@ -0,0 +1,66 @@
++package bind
 +
 +import (
-+	"github.com/DNSControl/dnscontrol/v5/models"
-+	"github.com/DNSControl/dnscontrol/v5/pkg/transform"
-+)
-+
-+func applyRecordTransforms(domain *models.DomainConfig) error {
-+	for _, rec := range domain.Records {
-+		if rec.Type != "A" {
-+			continue
-+		}
-+		tt, ok := rec.Metadata["transform"]
-+		if !ok {
-+			continue
-+		}
-+		table, err := transform.DecodeTransformTable(tt)
-+		if err != nil {
-+			return err
-+		}
-+		ip := rec.GetTargetIP()
-+		newIPs, err := transform.IPToList(rec.GetTargetIP(), table)
-+		if err != nil {
-+			return err
-+		}
-+		for i, newIP := range newIPs {
-+			if i == 0 && newIP.Compare(ip) != 0 {
-+				// replace target of first record if different
-+				if err := rec.SetTargetIP(newIP); err != nil {
-+					return err
-+				}
-+			} else if i > 0 {
-+				// any additional ips need identical records with the alternate ip added to the domain
-+				cpy, err := rec.Copy()
-+				if err != nil {
-+					return err
-+				}
-+				if err := cpy.SetTargetIP(newIP); err != nil {
-+					return err
-+				}
-+				domain.Records = append(domain.Records, cpy)
-+			}
-+		}
-+	}
-+	return nil
-+}
-```
-
-**File**: `pkg/normalize/apply_ip_transform_test.go` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+package normalize
-+
-+import (
++	"os"
++	"path/filepath"
 +	"testing"
 +
-+	dnsv2 "codeberg.org/miekg/dns"
 +	"github.com/DNSControl/dnscontrol/v5/models"
 +)
 +
-+func TestTransforms(t *testing.T) {
++func Test_zoneFilePath(t *testing.T) {
 +	tests := []struct {
-+		givenIP         string
-+		expectedRecords []string
++		name    string
++		format  string
++		domain  string
++		want    string
++		wantErr bool
 +	}{
-+		{"0.0.5.5", []string{"2.0.5.5"}},
-+		{"3.0.5.5", []string{"5.5.5.5"}},
-+		{"7.0.5.5", []string{"9.9.9.9", "10.10.10.10"}},
++		{"simple", "%c.zone", "example.com", "zones/example.com.zone", false},
++		{"rfc2317", "%c.zone", "0/26.2.0.192.in-addr.arpa", "zones/0/26.2.0.192.in-addr.arpa.zone", false},
++		{"dotdot", "%c.zone", "../../outside/deep/owned", "", true},
++		{"dotdot only", "%c", "..", "", true},
++		{"dotdot inner", "%c.zone", "a/../../owned", "", true},
++		{"absolute", "%c.zone", "/etc/owned", "", true},
++		{"raw verb", "%r.zone", "../owned", "", true},
++		{"legacy verb", "%D.zone", "../owned", "", true},
++		{"prefix keeps it local", "db_%D", "../owned", "zones/db_../owned", false},
 +	}
-+	const transform = "0.0.0.0~1.0.0.0~2.0.0.0~;   3.0.0.0~4.0.0.0~~5.5.5.5; 7.0.0.0~8.0.0.0~~9.9.9.9,10.10.10.10"
-+	for i, test := range tests {
-+		dc := models.MustNewDomainConfig("example.tld")
-+		rc1 := dc.MustNewRecordConfig("f", 0, dnsv2.TypeA, test.givenIP)
-+		rc1.Metadata = map[string]string{"transform": transform}
-+		dc.AddRecordConfig(rc1)
-+
-+		err := applyRecordTransforms(dc)
-+		if err != nil {
-+			t.Errorf("error on test %d: %s", i, err)
-+			continue
-+		}
-+		if len(dc.Records) != len(test.expectedRecords) {
-+			t.Errorf("test %d: expect %d records but found %d", i, len(test.expectedRecords), len(dc.Records))
-+			continue
-+		}
-+		for r, rec := range dc.Records {
-+			got := rec.AsA().Addr.String()
-+			if got != test.expectedRecords[r] {
-+				t.Errorf("test %d at index %d: records don't match. Expect %s but found %s.", i, r, test.expectedRecords[r], got)
-+				continue
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			c := &bindProvider{directory: "zones", filenameformat: tt.format}
++			dc := &models.DomainConfig{
++				Name:        tt.domain,
++				NameRaw:     tt.domain,
++				NameUnicode: tt.domain,
++				UniqueName:  tt.domain,
 +			}
-+		}
++			got, err := c.zoneFilePath(dc)
++			if (err != nil) != tt.wantErr {
++				t.Fatalf("zoneFilePath() error = %v, wantErr %v", err, tt.wantErr)
++			}
++			if got != filepath.FromSlash(tt.want) {
++				t.Errorf("zoneFilePath() = %q, want %q", got, tt.want)
++			}
++		})
++	}
++}
++
++// Test_traversalWritesNothing verifies that a zone name containing ".."
++// is rejected before anything is read or written. (GHSA-rrxr-r9rr-crr4)
++func Test_traversalWritesNothing(t *testing.T) {
++	top := t.TempDir()
++	c := &bindProvider{directory: filepath.Join(top, "zones"), filenameformat: "%c.zone"}
++	name := "../outside/deep/owned"
++	dc := &models.DomainConfig{Name: name, NameRaw: name, NameUnicode: name, UniqueName: name}
++
++	if _, err := c.GetZoneRecords(dc); err == nil {
++		t.Error("GetZoneRecords() expected error, got nil")
++	}
++	if _, _, err := c.GetZoneRecordsCorrections(dc, nil); err == nil {
++		t.Error("GetZoneRecordsCorrections() expected error, got nil")
++	}
++	if _, err := os.Stat(filepath.Join(top, "outside")); !os.IsNotExist(err) {
++		t.Errorf("directory outside of the zones dir was created (err=%v)", err)
 +	}
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5094** (2026-11-17): fix(spflib): parse SPF mechanism names case-insensitively (@Kernel-Hunter)
+- **PR #5093** (2026-11-16): chore: upgrade dependencies (@TomOnTime)
+- **PR #5092** (2026-11-16): chore: update dependencies (@TomOnTime)
+- **PR #5091** (2026-11-16): fix(dnsconfig): reject domain names and tags that escape the zone directory (@TomOnTime)
+- **PR #5090** (2026-11-16): refactor(normalize): remove no-op record normalization (@TomOnTime)
 - **PR #5089** (2026-11-15): refactor(normalize): run ValidateAndNormalizeConfig in ordered phases (@TomOnTime)
-- **PR #5088** (2026-11-15): refactor(normalize): split validate.go into one file per concern (@TomOnTime)
-- **PR #5087** (2026-11-15): refactor(normalize): move PTR magic and arpa label stripping to import (@TomOnTime)
-- **PR #5086** (2026-11-14): refactor(normalize): move CAA and OPENPGPKEY checks to their makers (@TomOnTime)
-- **PR #5083** (2026-11-12): docs: clarify macOS sha check (@TomOnTime)
-- **PR #5081** (2026-11-11): build(deps): bump actions/download-artifact from 4.3.0 to 8.0.2 (@dependabot[bot])
 
 ---
 
@@ -1493,49 +1415,46 @@ to it. The shared `checkError` test helper is in `helpers_test.go`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. normalize): run ValidateAndNormalizeConfig in ordered phases
+## X. print-ir and --ir should round-trip
 
 **RULE**:
-When implementing operations in `documentation/language-reference/domain-modifiers/IMPORT_TRANSFORM.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `commands/provider_syntax_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `845815ae`: normalize): run ValidateAndNormalizeConfig in ordered phases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `62af2f0e`: print-ir and --ir should round-trip. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/language-reference/domain-modifiers/IMPORT_TRANSFORM.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `commands/provider_syntax_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+func TestIRLoadingRecords(t *testing.T) {
+	// "print-ir --out file" followed by "--ir file" must preserve the records.
+	cfg := loadSyntaxConfig(t, `D("example.com", REGISTRAR("both"), SERVICE("both"),
+		A("@", "192.0.2.1"),
+		MX("@", 10, "mx"),
+		TXT("@", "has \"quotes\" and spaces"),
+		CAA("@", "issue", "letsencrypt.org"),
+		SRV("_sip._tcp", 10, 20, 5060, "sip.example.com."),
+		HTTPS("@", 1, ".", "alpn=h3,h2 port=443"),
+		CF_SINGLE_REDIRECT("name", 301, 'http.host eq "example.com"', 'concat("https://example.net", http.request.uri.path)'),
+	);`)
+	want, err := json.Marshal(cfg)
+	require.NoError(t, err)
+	irPath := filepath.Join(t.TempDir(), "dnsconfig.json")
+	require.NoError(t, os.WriteFile(irPath, want, 0o600))
+	roundTrip, err := GetDNSConfig(GetDNSConfigArgs{JSONFile: irPath})
+	require.NoError(t, err)
+	got, err := json.Marshal(roundTrip)
+	require.NoError(t, err)
+	require.JSONEq(t, string(want), string(got))
+	require.Len(t, roundTrip.Domains[0].Records, len(cfg.Domains[0].Records))
+	for _, rec := range roundTrip.Domains[0].Records {
+		require.NotNil(t, rec.GetRDATA(), rec.Type)
+	}
+}
 
-## Parents importing their children
-
-I can't imagine a case where a parent would want to import a child zone. That said, if you do,
-you'll get an error.
-
-For example, this config:
-
-```javascript
-D("internal.example.com", …, A("www", "192.0.2.1"));
-D("example.com", …, IMPORT_TRANSFORM(table, "internal.example.com", 300));
-```
-
-will get this error:
-
-```
-ERROR: The name "www.internal.example.com.example.com." is an error (repeats the domain). …
-```
-
-The record it produces really is `www.internal.example.com.example.com`, so the check is doing its job.
-
-The error can be silenced with `DISABLE_REPEATED_DOMAIN_CHECK` on the source record.
-
-For example:
-
-```javascript
-D("internal.example.com", …, A("www", "192.0.2.1", DISABLE_REPEATED_DOMAIN_CHECK));
-D("example.com", …, IMPORT_TRANSFORM(table, "internal.example.com", 300));
-```
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1545,7 +1464,7 @@ D("example.com", …, IMPORT_TRANSFORM(table, "internal.example.com", 300));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `845815ae` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `62af2f0e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

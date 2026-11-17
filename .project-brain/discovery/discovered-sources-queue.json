@@ -2,20 +2,20 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T12:46:15.743Z",
+  "updated_at": "2026-11-17T13:05:59.123Z",
   "stats": {
-    "total_discovered": 4975,
-    "approved_pending_harvest": 4688,
+    "total_discovered": 4989,
+    "approved_pending_harvest": 4702,
     "harvested_count": 0,
     "rejected_count": 287,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4680,
+      "COMMUNITY_AND_EXPERT": 4690,
       "OFFICIAL_DOCUMENTATION": 162,
-      "STANDARDS_AND_SPECIFICATIONS": 103,
+      "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 20,
       "LEGAL_AND_REGULATORY": 2,
-      "RESEARCH_AND_ACADEMIA": 5
+      "RESEARCH_AND_ACADEMIA": 6
     }
   },
   "sources": {
@@ -107462,6 +107462,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fastify-fastify-learnings.md",
         "fileName": "fastify-fastify-learnings.md"
+      }
+    },
+    "SRC-69B1A7557B94": {
+      "id": "SRC-69B1A7557B94",
+      "url": "https://8490e420.notesnook-app.pages.dev/",
+      "title": "https://8490e420.notesnook-app.pages.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:57.593Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-AB9615E91C00": {
+      "id": "SRC-AB9615E91C00",
+      "url": "https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201680996",
+      "title": "https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201680996",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:57.625Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-2D634754C355": {
+      "id": "SRC-2D634754C355",
+      "url": "https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201690556",
+      "title": "https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201690556",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:57.656Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-8A3770988CCB": {
+      "id": "SRC-8A3770988CCB",
+      "url": "https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201695998",
+      "title": "https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201695998",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:57.687Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-14103C6C39FE": {
+      "id": "SRC-14103C6C39FE",
+      "url": "https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201228171",
+      "title": "https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201228171",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:57.718Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-04D89A35136F": {
+      "id": "SRC-04D89A35136F",
+      "url": "https://example.net/",
+      "title": "https://example.net/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:58.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-60FA266A0787": {
+      "id": "SRC-60FA266A0787",
+      "url": "https://stedolan.github.io/jq",
+      "title": "https://stedolan.github.io/jq",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:58.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-360834BB40C5": {
+      "id": "SRC-360834BB40C5",
+      "url": "https://www.rfc-editor.org/rfc/rfc7208",
+      "title": "IETF RFC 7208",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:58.405Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-29FE7666B77B": {
+      "id": "SRC-29FE7666B77B",
+      "url": "https://www.rfc-editor.org/rfc/rfc8427",
+      "title": "IETF RFC 8427",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:58.435Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-D72FFC896E9D": {
+      "id": "SRC-D72FFC896E9D",
+      "url": "https://www.rfc-editor.org/rfc/rfc2317",
+      "title": "IETF RFC 2317",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:58.468Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-5563FD3CC676": {
+      "id": "SRC-5563FD3CC676",
+      "url": "https://github.com/StarTrail-org/LEANN",
+      "title": "https://github.com/StarTrail-org/LEANN",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:59.030Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
+        "fileName": "startrail-org-leann-learnings.md"
+      }
+    },
+    "SRC-B447CDD8F0C7": {
+      "id": "SRC-B447CDD8F0C7",
+      "url": "https://arxiv.org/abs/2506.08276",
+      "title": "https://arxiv.org/abs/2506.08276",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "RESEARCH_AND_ACADEMIA",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.95,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:59.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
+        "fileName": "startrail-org-leann-learnings.md"
+      }
+    },
+    "SRC-B4859EE67501": {
+      "id": "SRC-B4859EE67501",
+      "url": "https://ollama.com/library",
+      "title": "https://ollama.com/library",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:59.091Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
+        "fileName": "startrail-org-leann-learnings.md"
+      }
+    },
+    "SRC-B7E19C6320EE": {
+      "id": "SRC-B7E19C6320EE",
+      "url": "https://ollama.com/library/%7Bbase_model",
+      "title": "https://ollama.com/library/%7Bbase_model",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T13:05:59.123Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
+        "fileName": "startrail-org-leann-learnings.md"
       }
     }
   }

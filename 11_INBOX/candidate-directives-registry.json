@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T12:46:17.138Z",
+  "last_updated": "2026-11-17T13:05:59.291Z",
   "directives": [
     {
       "id": "CD-001",
@@ -23913,6 +23913,68 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C21113-engine-detect-uv-run-script-shebangs.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-GXKE",
+      "directive_title": "fix locked note history does not save note title",
+      "source_repo": "streetwriters/notesnook",
+      "source_commit": "8bb25559",
+      "staged_file": "11_INBOX/candidate-directives/CD-GXKE-fix-locked-note-history-does-not-save-note-title.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-H568",
+      "directive_title": "print-ir and --ir should round-trip",
+      "source_repo": "dnscontrol-dnscontrol-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-H568-print-ir-and-ir-should-round-trip.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-H5O8",
+      "directive_title": "harden index artifact deserialization",
+      "source_repo": "startrail-org-leann-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-H5O8-harden-index-artifact-deserialization.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-H4LV",
+      "directive_title": "mobile: fix locked note history does not save note title",
+      "source_repo": "streetwriters-notesnook-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-H4LV-mobile-fix-locked-note-history-does-not-save-note-title.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-E15EF3",
+      "directive_title": "print-ir and --ir should round-trip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dnscontrol-dnscontrol",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E15EF3-print-ir-and-ir-should-round-trip.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-E2D3E5",
+      "directive_title": "harden index artifact deserialization",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "startrail-org-leann",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E2D3E5-harden-index-artifact-deserialization.md",
       "staged_date": "2026-11-17"
     }
   ]
