@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-BQZB",
-    "timestamp": "2026-11-15T00:50:36.503Z",
-    "repository": "cachix/devenv",
-    "learningId": "learn-github-cachix-devenv",
-    "contentHash": "933ecc1df7e405bc441ce9c063729039acabe9e20f9fe05eaa649047781a1db1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-BUB4",
-    "timestamp": "2026-11-15T00:50:40.816Z",
-    "repository": "necolas/react-native-web",
-    "learningId": "learn-github-necolas-react-native-web",
-    "contentHash": "cd96f6396100241f458d1addf5168a927da1f2eb441cf6d8521ec9e98e6711b1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-C0UY",
-    "timestamp": "2026-11-15T00:50:49.306Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "9f450dc26c42a5ba948ff110e4bfd3d20dab920d1b2e32b56755dd86f1b8ad50",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-C479",
     "timestamp": "2026-11-15T00:50:53.637Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7445,51 @@
     "repository": "dragonflydb/dragonfly",
     "learningId": "learn-github-dragonflydb-dragonfly",
     "contentHash": "d220e3d8c5aa9c48413e9c682aa9a78d570ef564dfe96a186c38673dd26ac979",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-6P12",
+    "timestamp": "2026-11-17T14:49:49.622Z",
+    "repository": "Comfy-Org/Z-Image-Turbo",
+    "learningId": "learn-huggingface-comfy-org-z_image_turbo",
+    "contentHash": "b594e48199a477b9cd3e5606d16a12fa243218e33010b0e5c45bbd89e55d6ac4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-6YGM",
+    "timestamp": "2026-11-17T14:50:01.846Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "484a02b33cc83183114f611cf109fe7dfc8eebae3c2aefdbde24565df10f6a8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-71K3",
+    "timestamp": "2026-11-17T14:50:05.859Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "e7fdabdffaff474e5f53e0d65ceedd62d63beb2176930273fe6fa76085bbc2ae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -10571,3 +10571,6 @@
 | `CYCLE-20261117-LWPZ` | `2026-11-17T14:33:39.815Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md` | Yes (`619ab415...`) |
 | `CYCLE-20261117-VTMJ` | `2026-11-17T14:41:22.363Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | Yes (`a8cc960b...`) |
 | `CYCLE-20261117-VWTQ` | `2026-11-17T14:41:26.510Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8977` | Yes (`d220e3d8...`) |
+| `CYCLE-20261117-6P12` | `2026-11-17T14:49:49.622Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md` | Yes (`b594e481...`) |
+| `CYCLE-20261117-6YGM` | `2026-11-17T14:50:01.846Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8978` | Yes (`484a02b3...`) |
+| `CYCLE-20261117-71K3` | `2026-11-17T14:50:05.859Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8979` | Yes (`e7fdabdf...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T14:41:26.523Z",
+  "last_updated": "2026-11-17T14:50:05.870Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "c5a4d9b250dff7d7ddc4de56fefffc09abbfedbd3f6aece5e80351bb55fc8030",
-      "verified_at": "2026-11-16T20:02:41.814Z",
+      "content_hash": "484a02b33cc83183114f611cf109fe7dfc8eebae3c2aefdbde24565df10f6a8a",
+      "verified_at": "2026-11-17T14:50:01.857Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T20:02:41.814Z"
+      "last_updated": "2026-11-17T14:50:01.857Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "9beabd2c33d5528d54005efbb3d2d7a1ea053765953c346a3c0c175fe3be55bf",
-      "verified_at": "2026-11-14T21:50:43.561Z",
+      "content_hash": "e7fdabdffaff474e5f53e0d65ceedd62d63beb2176930273fe6fa76085bbc2ae",
+      "verified_at": "2026-11-17T14:50:05.870Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T21:50:43.561Z"
+      "last_updated": "2026-11-17T14:50:05.870Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -15845,15 +15845,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-comfy-org-z-image-turbo",
-      "content_hash": "3187fcd13f36923015371e58fc84035a378b3f9531e4fee16abc82aa2fb44d47",
-      "verified_at": "2026-11-13T05:23:31.356Z",
+      "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
+      "content_hash": "b594e48199a477b9cd3e5606d16a12fa243218e33010b0e5c45bbd89e55d6ac4",
+      "verified_at": "2026-11-17T14:49:49.634Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T05:23:31.356Z"
+      "last_updated": "2026-11-17T14:49:49.634Z"
     },
     "unsloth/flint-GGUF": {
       "repository": "unsloth/flint-GGUF",

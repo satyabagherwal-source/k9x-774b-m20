@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `b678afa9`  
+> **Source Version**: `8a5afae5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T21:50:42.895Z  
+> **Timestamp**: 2026-11-17T14:50:04.965Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T21:50:42.890Z  
+> **Harvest Timestamp**: 2026-11-17T14:50:04.959Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43072 stars
+- **Stars / Engagement**: 43126 stars
 
 ---
 
@@ -207,13 +207,20 @@ FINISH_BENCHMARK(ConcurrentCommits32Threads10ms)
 ```
 #include "core_functions/aggregate/algebraic_functions.hpp"
 #include "core_functions/aggregate/sum_helpers.hpp"
+#include "duckdb/common/bignum.hpp"
+#include "duckdb/common/types/decimal_helper.hpp"
+#include "duckdb/common/types/string_heap.hpp"
+#include "duckdb/common/types/decimal.hpp"
 #include "duckdb/common/types/hugeint.hpp"
 #include "duckdb/common/types/time.hpp"
+#include "duckdb/common/vector/struct_vector.hpp"
 #include "duckdb/common/exception.hpp"
 #include "duckdb/common/likely.hpp"
 #include "duckdb/function/function_set.hpp"
 #include "duckdb/planner/expression.hpp"
 #include "duckdb/planner/expression/bound_aggregate_expression.hpp"
+
+#include <cmath>
 
 namespace duckdb {
 
@@ -262,19 +269,21 @@ struct KahanAvgState {
 };
 
 struct AverageDecimalBindData : public FunctionData {
-	explicit AverageDecimalBindData(double scale) : scale(scale) {
+	AverageDecimalBindData(double scale, uint32_t decimal_scale) : scale(scale), decimal_scale(decimal_scale) {
 	}
 
+	//! 10^decimal_scale, the divisor of the unscaled sum
 	double scale;
+	uint32_t decimal_scale;
 
 public:
 	unique_ptr<FunctionData> Copy() const override {
-		return make_uniq<AverageDecimalBindData>(scale);
+		return make_uniq<AverageDecimalBindData>(scale, decimal_scale);
 	};
 
 	bool Equals(const FunctionData &other_p) const override {
 		auto &other = other_p.Cast<AverageDecimalBindData>();
-		return scale == other.scale;
+		return scale == other.scale && decimal_scale == other.decimal_scale;
 	}
 };
 
@@ -480,18 +489,7 @@ struct TimestampNSAverageOperation : public DiscreteAverageOperation {
 	static void RepeatedCombine(const STATE &source, STATE &target, AggregateInputData &input, idx_t count) {
 		if (source.count == INFINITE_COUNT) {
 			if (count > 0) {
-				AddInfinities(target, source.value.lower);
-			}
-		} else if (target.count != INFINITE_COUNT) {
-			DiscreteAverageOperation::RepeatedCombine<STATE, OP>(source, target, input, count);
-			if (target.count == INFINITE_COUNT) {
-				throw OutOfRangeException("Overflow in repeated aggregate state combine");
-			}
-		}
-	}
-
-	template <class INPUT_TYPE, class STATE, class OP>
-	static void Operation(STATE &state, const INPUT_TYPE &input, AggregateUnaryInput 
+				AddInfinities(target, sou
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/algebraic/corr.cpp`
@@ -882,6 +880,7 @@ struct ApproxTopKOperation {
 ### Core Architecture Module: `extension/core_functions/aggregate/holistic/approximate_quantile.cpp`
 ```
 #include "duckdb/common/operator/add.hpp"
+#include "duckdb/common/types/decimal.hpp"
 #include "duckdb/common/vector/flat_vector.hpp"
 #include "duckdb/common/vector/vector_iterator.hpp"
 #include "duckdb/common/vector/list_vector.hpp"
@@ -1152,7 +1151,7 @@ AggregateStateLayout ApproxQuantileGetStateType(AggregateLayoutInput &input) {
 
 //! The shape of the exported state: STRUCT(count, min, max, centroids LIST(STRUCT(mean, weight)))
 using APPROX_QUANTILE_EXPORT_TYPE =
-    VectorStructType<uint64_t, double, double, Vecto
+    Vecto
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/holistic/lttb.cpp`
@@ -2007,14 +2006,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28826** (2026-11-13): **UPDATE ... RETURNING on an indexed table drops rows when the local append crosses a row-group boundary**
-  *Symptoms*: ### What happens?  On a table with an index (PRIMARY KEY, UNIQUE, or a plain CREATE INDEX), UPDATE ... RETURNING can return fewer rows than it updated. The table is updated correctly but RETURNING result is missing rows.  With RETURNING, every column is bound into the UPDATE, so an indexed column counts as updated and the UPDATE runs as delete + insert. In PhysicalUpdate::Sink, that path calls table.LocalAppend(mock_chunk) and then appends the same mock_chunk to return_collection. When the transaction-local append fills a row group partway through a chunk, RowGroupCollection::Append calls chunk.Slice(append_count, remaining) on the caller's chunk. So return_collection only receives the rows that went into the new row group, and the rows that filled the previous row group are lost.  It looks thread-dependent because with 1 thread and full 2048-row vectors, chunks usually line up with the 122880-row boundary. With more threads, a short chunk can be processed early and shift the alignment. It reproduces deterministically on 1 thread if the first chunk is short (see repro).  INSERT ... RETURNING is not affected.  ### To Reproduce  ```python import duckdb con = duckdb.connect() con.execute("SET threads = 1") con.execute("CREATE TABLE t (id INTEGER PRIMARY KEY, v INTEGER)") con.execute("INSERT INTO t SELECT i, 0 FROM range(300000) r(i)") # first chunk has 1600 rows, so the 122880-row local row-group boundary falls mid-chunk n = len(con.execute("UPDATE t SET v = 1 WHERE id >= 448 RE
+- **Issue #28960** (2026-11-17): **Fix: mark unshredded VARIANT stats as NOT_SHREDDED**
+  *Symptoms*: Statistics of unshredded VARIANT data were not marked as unshredded for row groups that could not be shredded (at checkpoint and after reloading the database) and for VARIANT constants. When merged with shredded statistics, these values were ignored, so the shredded min/max was wrong, leading to wrong filter results and crashes e.g. with the perfect hash aggregate.    Repro: Small last row group is not shredded (below `variant_minimum_shredding_size`):  ```sql CREATE TABLE t AS SELECT {'b': 100}::VARIANT AS v FROM range(122880); INSERT INTO t VALUES ({'b': 1}::VARIANT); CHECKPOINT; SELECT v.b::INTEGER AS b FROM t GROUP BY b ORDER BY b; ```  VARIANT constant merged with a shredded column: ```sql SET variant_minimum_shredding_size = 0; CREATE TABLE t AS SELECT i, {'b': 100}::VARIANT AS v FROM range(10) r(i); CHECKPOINT; SELECT (CASE WHEN i = 0 THEN {'b': 1}::VARIANT ELSE v END).b::INTEGER AS b FROM t GROUP BY b ORDER BY b; ``` Both fail with  ``` Data Corruption Error: Perfect hash aggregate: aggregate group 18446744073709551518 exceeded total groups 4. ```   
 
-- **Issue #28810** (2026-11-13): **Let compressed materialization use registered casts**
-  *Symptoms*: Compressed materialization now resolves its casts through the database's `CastFunctionSet`, like every other cast. User-registered casts apply here too.  - `CreateStatsAwareCast` uses `AddCastToType`. `PropagateCastStatistics` and `ValuePreservingCastFits` use the registered cast set. If a registered cast cannot propagate statistics, the integral compression falls back to the dedicated compress functions. - `CMUtils::MarkCast` no longer asserts a default cast. - SQL export drops the compressed materialization cast and exports its child, so it no longer rejects a non-default one. - Compression assumes casts are correct for in-range values. An incorrect registered cast can produce wrong results here, as it can anywhere else.  This replaces the built-in-only casts that duckdb/duckdb#28757 kept for compressed materialization (`CreateDefaultStatsAwareCast`). 
-  **Post-Mortem & Fix Analysis**:
-  > CC @kryonix 
-  > Thanks. Both points come from the same underlying issue. Compressed materialization adds casts the query never asked for. Using registered casts there exposes cast-free queries to whatever a user-registered cast does, so this is not "as anywhere else", as the description claims. The endpoint round trip and the statistics callback do not show that a cast preserves values or order, as your 0..100 example shows.  I see three options:  1. Keep CM on built-in casts only, i.e. the base's fresh built-in `CastFunctionSet` from #28757, and close this PR. CM is an internal rewrite, so the user's casts arguably should not apply to it. 2. Use a registered cast only if it declares itself value- and order-preserving (an explicit flag on the cast function) and has a statistics callback. Otherwise use the built-in cast. The probe would also have to run only after these eligibility checks and treat any exception as "not usable", not only `ConversionException`. That is your second point. 3. Keep the cur
+- **Issue #28952** (2026-11-17): **Resolve-types callback: allow setting argument types in the C API V2**
+  *Symptoms*: Adds `duckdb_v2_scalar_function_resolve_types_set_arg_type(info, arg_idx, arg_type, err)`, so a scalar function's resolve-types callback can ask the engine to cast an argument instead of registering extra overloads.  - Sets the argument type of the bound function; the existing `CastToFunctionArguments` step inserts the cast after the callback returns, so the bind callback sees the cast type. - Errors with `INPUT_INVALID` for an out-of-range index or an incomplete type (e.g. `ANY`). - Unstable API, scalar functions only (aggregates have no resolve-types callback yet). - Test: `V2 scalar: resolve types sets an argument type and the engine casts to it`.  Needed by json (legacy `path` argument cast to BIGINT) and spatial. Fixes duckdblabs/duckdb-internal#12045.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2031,469 +2027,229 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b678afa9` (2026-11-13)
-**Commit Message**: Build Per-Column Runtime Filters For Multi-Key Hash Joins (#28726)
+### Incident Patch 1: `069eb90c` (2026-11-17)
+**Commit Message**: Fix INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE (#28904)
 
-When a hash join matches on more than one key, the probe side sends
-almost every row up to the join, even when only a few of them can match.
-TPC-DS q93 is a good example. It joins `store_sales` to `store_returns`
-on both `ss_item_sk` and `ss_ticket_number`, and at SF10 its
-`store_sales` scan passes all 28.8 million rows to the join, even though
-only a small share of those tickets were ever returned.
+A batched `COPY ... TO` given `ROW_GROUP_SIZE_BYTES` without
+`ROW_GROUP_SIZE` fails:
 
-Single-key joins already avoid this with bloom and prefix-range runtime
-filters, which the scan checks before rows reach the join. Joins on
-several keys only get min/max filters. The hash table hashes all of the
-key columns together, so a bloom filter over those hashes can't be
-checked against any single column. A min/max range on a key like
-`ss_ticket_number` covers nearly all of its values, so it rejects very
-little.
-
-This PR builds a bloom or prefix-range filter for each key column on its
-own, choosing between them the way a single-key join does today. Each
-key column also keeps its min/max filter, and we skip a prefix-range
-filter whose build keys fill at least half of its range, since the scan
-would likely pause i
-
-**File**: `.github/regression/micro.csv` (modified, +4/-0)
-```diff
-@@ -66,3 +66,7 @@ benchmark/micro/json/lateral_json_each.benchmark
- benchmark/micro/pushdown/rowid_in_list.benchmark
- benchmark/micro/list/unnest_repeated_long_string.benchmark
- benchmark/micro/string/substring_grapheme_negative_offset.benchmark
-+benchmark/micro/pushdown/multi_key_join_filter.benchmark
-+benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark
-+benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark
-+benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark
+```sql
+SET threads=2;
+CREATE TABLE t AS FROM range(1000000);
+COPY t TO 'out.csv' (ROW_GROUP_SIZE_BYTES '256KB');
+-- INTERNAL Error: Attempting to get the index of an optional_idx that is not set
 ```
 
-**File**: `benchmark/micro/pushdown/multi_key_join_filter.benchmark` (added, +26/-0)
+`CorrectSizeForBatch` calls `batch_size.GetIndex()` without checking
+that a row target is set. It is
+reached for the leftover batch of a non-final repartition, so the error
+depends on timing: the
+query above failed on every run at 2 threads here (tested on Linux
+x86_64; Apple ARM64).
+
+With no row target, the byte target now decides, through
+`CopyFunctionBatchAnalyzer::IsAcceptable()`,
+as it does elsewhere. The new test
+(`test/sql/copy/csv/batched_write/batch_csv_row_group_size_bytes.test`)
+fails before the fix and
+passes after.
+
+## Demonstration
+
+OSX using a fresh install of v2.0:
+
+```bash
+(base) 13:01:00 (dtmcdonald@when):~$ md5 /Users/dtmcdonald/.duckdb/cli/latest/duckdb
+MD5 (/Users/dtmcdonald/.duckdb/cli/latest/duckdb) = b2fdfbcc753c7ad59e812516b4bb0c8a
+(base) 13:01:03 (dtmcdonald@when):~$ /Users/dtmcdonald
+
+**File**: `src/execution/operator/persistent/physical_batch_copy_to_file.cpp` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,26 @@
-+# name: benchmark/micro/pushdown/multi_key_join_filter.benchmark
-+# description: Two-key join where only one key column is selective
-+# group: [pushdown]
-+
-+name MultiKeyJoinFilter
-+group micro
-+subgroup pushdown
-+
-+load
-+CREATE TABLE fact AS
-+  SELECT (i % 300000)::INTEGER AS item,
-+         (i // 12)::BIGINT AS ticket,
-+         (i % 997)::INTEGER AS payload
-+  FROM range(24000000) t(i);
-+CREATE TABLE dim AS
-+  SELECT item, ticket
-+  FROM fact
-+  WHERE hash(ticket * 31 + item) % 50 = 0;
-+
-+run
-+SELECT count(*), sum(f.payload)
-+FROM fact f
-+JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
-+
-+result II
-+480569	239672695
+@@ -422,6 +422,10 @@ void PhysicalBatchCopyToFile::AddRawBatchData(ClientContext &context, GlobalSink
+ 
+ static bool CorrectSizeForBatch(const ColumnDataCollection &batch, const optional_idx &batch_size,
+                                 const optional_idx &batch_size_bytes) {
++	if (!batch_size.IsValid()) {
++		// no row target (only ROW_GROUP_SIZE_BYTES): the byte target alone decides
++		return CopyFunctionBatchAnalyzer(batch, batch_size, batch_size_bytes).IsAcceptable();
++	}
+ 	if (batch_size.GetIndex() == 0) {
+ 		// a batch size of 0 indicates we are happy with any batch size
+ 		return true;
 ```
 
-**File**: `benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+# name: benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark
-+# description: Two-key join whose small build side holds every value of both key columns
-+# group: [pushdown]
-+
-+name MultiKeyJoinFilterCovered
-+group micro
-+subgroup pushdown
-+
-+load
-+CREATE TABLE fact AS
-+  SELECT ((i % 1000) * 1000003)::BIGINT AS a,
-+         (((i // 1000) % 1000) * 1000003)::BIGINT AS b,
-+         (i % 997)::INTEGER AS payload
-+  FROM range(24000000) t(i);
-+CREATE TABLE dim AS
-+  SELECT a, b
-+  FROM (SELECT DISTINCT a, b FROM fact)
-+  WHERE hash(a + b) % 2 = 0;
-+
-+run
-+SELECT count(*), sum(f.payload)
-+FROM fact f
-+JOIN dim d ON f.a = d.a AND f.b = d.b;
-+
-+result II
-+12278352	6112566278
-```
-
-**File**: `benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+# name: benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark
-+# description: A half-full key filter rejects every probe value while another key covers its domain
-+# group: [pushdown]
-+
-+name MultiKeyJoinFilterHoles
-+group micro
-+subgroup pushdown
-+
-+load
-+CREATE TABLE probe AS
-+SELECT (2 * (i % 500) + 1)::INTEGER a, ((i // 500) % 1000)::INTEGER b
-+FROM range(24000000) t(i);
-+CREATE TABLE build AS
-+SELECT (2 * a)::INTEGER a, (b + (a % 5) * 200)::INTEGER b
-+FROM range(500) t(a), range(200) u(b);
-+
-+run
-+SELECT count(*) FROM probe p JOIN build b ON p.a = b.a AND p.b = b.b;
-+
-+result I
-+0
-```
-
-**File**: `benchmark/micro/pushdown/multi_key_join_filter_mid.benchmark` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+# name: benchmark/micro/pushdown/multi_key_join_filter_mid.benchmark
-+# description: Two-key join with a build side of 8% of the probe side
-+# group: [pushdown]
-+
-+name MultiKeyJoinFilterMid
-+group micro
-+subgroup pushdown
-+
-+load
-+CREATE TABLE fact AS
-+  SELECT (i % 300000)::INTEGER AS item,
-+         ((i // 12) * 1000003)::BIGINT AS ticket,
-+         (i % 997)::INTEGER AS payload
-+  FROM range(24000000) t(i);
-+CREATE TABLE dim AS
-+  SELECT item, ticket
-+  FROM fact
-+  WHERE hash(ticket * 31 + item) % 12 = 0;
-+
-+run
-+SELECT count(*), sum(f.payload)
-+FROM fact f
-+JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
-+
-+result II
-+1999936	995253336
-```
-
-**File**: `benchmark/micro/pushdown/multi_key_join_filter_sparse.benchmark` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+# name: benchmark/micro/pushdown/multi_key_join_filter_sparse.benchmark
-+# description: Two-key join where the selective key column gets a bloom filter
-+# group: [pushdown]
-+
-+name MultiKeyJoinFilterSparse
-+group micro
-+subgroup pushdown
-+
-+load
-+CREATE TABLE fact AS
-+  SELECT (i % 300000)::INTEGER AS item,
-+         ((i // 12) * 1000003)::BIGINT AS ticket,
-+         (i % 997)::INTEGER AS payload
-+  FROM range(24000000) t(i);
-+CREATE TABLE dim AS
-+  SELECT item, ticket
-+  FROM fact
-+  WHERE hash(ticket * 31 + item) % 50 = 0;
-+
-+run
-+SELECT count(*), sum(f.payload)
-+FROM fact f
-+JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
-+
-+result II
-+479664	238830267
-```
-
-**File**: `benchmark/micro/pushdown/multi_key_join_filter_unselective.benchmark` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+# name: benchmark/micro/pushdown/multi_key_join_filter_unselective.benchmark
-+# description: Two-key join with a build side of 17% of the probe side
-+# group: [pushdown]
-+
-+name MultiKeyJoinFilterUnselective
-+group micro
-+subgroup pushdown
-+
-+load
-+CREATE TABLE fact AS
-+  SELECT (i % 300000)::INTEGER AS item,
-+         ((i // 12) * 1000003)::BIGINT AS ticket,
-+         (i % 997)::INTEGER AS payload
-+  FROM range(24000000) t(i);
-+CREATE TABLE dim AS
-+  SELECT item, ticket
-+  FROM fact
-+  WHERE hash(ticket * 31 + item) % 6 = 0;
-+
-+run
-+SELECT count(*), sum(f.payload)
-+FROM fact f
-+JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
-+
-+result II
-+3999604	1991681839
-```
-
-**File**: `benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark` (added, +29/-0)
+**File**: `test/sql/copy/csv/batched_write/batch_csv_row_group_size_bytes.test` (added, +29/-0)
 ```diff
 @@ -0,0 +1,29 @@
-+# name: benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark
-+# description: Eight wide key domains retain useful Bloom filters under a shared memory cap
-+# group: [pushdown]
++# name: test/sql/copy/csv/batched_write/batch_csv_row_group_size_bytes.test
++# description: Batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE has no row target to compare against
++# group: [batched_write]
 +
-+name MultiKeyJoinFilterWide
-+group micro
-+subgroup pushdown
++# two threads keep a merged tail batch pending across repartitions, which is what consults the row target
++statement ok
++SET threads=2
 +
-+load
-+CREATE TABLE probe AS
-+SELECT i,
-+       (hash(i) % 67108864)::BIGINT * 1000003 a,
-+       (hash(i + 1000003) % 67108864)::BIGINT * 1000003 b,
-+       (hash(i + 2000006) % 67108864)::BIGINT * 1000003 c,
-+       (hash(i + 3000009) % 67108864)::BIGINT * 1000003 d,
-+       (hash(i + 4000012) % 67108864)::BIGINT * 1000003 e,
-+       (hash(i + 5000015) % 67108864)::BIGINT * 1000003 f,
-+       (hash(i + 6000018) % 67108864)::BIGINT * 1000003 g,
-+       (hash(i + 7000021) % 67108864)::BIGINT * 1000003 h
-+FROM range(2000000) t(i);
-+CREATE TABLE build AS FROM probe WHERE i % 100 = 0;
++statement ok
++CREATE TABLE integers AS FROM range(1000000) t(i)
 +
-+run
-+SELECT count(*) FROM probe p JOIN build b
-+ON p.a = b.a AND p.b = b.b AND p.c = b.c AND p.d = b.d
-+AND p.e = b.e AND p.f = b.f AND p.g = b.g AND p.h = b.h;
++statement ok
++COPY integers TO '{TEST_DIR}/batched_bytes_only.csv' (ROW_GROUP_SIZE_BYTES '256KB')
 +
-+result I
-+20000
++statement ok
++CREATE TABLE integers_copied AS FROM '{TEST_DIR}/batched_bytes_only.csv'
++
++query II
++SELECT COUNT(*), SUM(i) FROM integers_copied
++----
++1000000	499999500000
++
++# the batched copy keeps insertion order
++query I
++SELECT * FROM integers_copied LIMIT 3 OFFSET 500000
++----
++500000
++500001
++500002
 ```
 
 ---
 
-### Incident Patch 2: `afdc4212` (2026-11-13)
-**Commit Message**: Fix VARIANT type normalization for function metadata (#28681)
+### Incident Patch 2: `18161521` (2026-11-17)
+**Commit Message**: Shrink partitioned_full_outer_hash_join test to avoid CI timeouts (#28944)
 
-Currently we lose documentation when a parameter is documented as
-`VARIANT`:
+`test/sql/copy/partitioned/partitioned_full_outer_hash_join.test` joins
+two 2M-row tables and regularly hits the 300s per-test timeout in `Linux
+Config (Execution)` (`force_external`), including on unrelated PRs. It
+needed a retry even in a passing run.
 
- ```sql
-   SELECT description, examples, categories
-   FROM duckdb_functions()
-   WHERE function_name = 'variant_contains';
+Reduces the tables to 500k rows each (expected counts updated to
+750000/500000/500000). The early `partitioned_write_flush_threshold`
+that the test relies on is unchanged. I could not measure the new
+runtime or confirm the original deadlock still reproduces at this size
+locally, so CI on this PR is the check.
 
-┌─────────────┬───────────┬────────────┐
-│ description │ examples  │ categories │
-│   varchar   │ varchar[] │ varchar[]  │
-├─────────────┼───────────┼────────────┤
-│ NULL        │ []        │ []         │
-└─────────────┴───────────┴────────────┘
- ```
-
-We now normalize the `VARIANT` type so equality matches and we get the
-documentation:
-
- ```sql
-
-┌────────────────────────────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────┬────────────┐
-│ description │ examples │ categories │
-│ varchar │ varchar[] │ varchar[] │
-
-├────────────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┼────────────┤
-│ Returns whether the needle is contained in the haystack, recursively c
-│ ['variant_contains({\'a\': {\'b\': 42}}::VARIANT, {\'b\':
-42}::VARIANT) │ [variant] │
-│ hecking nested arrays 
-
-**File**: `extension/json/json_functions/json_create.cpp` (modified, +2/-0)
+**File**: `test/sql/copy/partitioned/partitioned_full_outer_hash_join.test` (modified, +3/-3)
 ```diff
-@@ -1629,6 +1629,8 @@ void JSONFunctions::RegisterJSONCreateCastFunctions(ExtensionLoader &loader) {
- 		case LogicalTypeId::ARRAY:
- 			source_type = LogicalType::ARRAY(LogicalType::ANY, optional_idx());
- 			break;
-+		case LogicalTypeId::VARIANT:
-+			continue;
- 		case LogicalTypeId::VARCHAR:
- 			// We skip this one here as it's handled in json_functions.cpp
- 			continue;
+@@ -12,10 +12,10 @@ statement ok
+ SET partitioned_write_flush_threshold=4096;
+ 
+ statement ok
+-CREATE TABLE a AS SELECT i AS k, i % 1000 AS v FROM range(2000000) t(i);
++CREATE TABLE a AS SELECT i AS k, i % 1000 AS v FROM range(500000) t(i);
+ 
+ statement ok
+-CREATE TABLE b AS SELECT i * 2 AS k, i % 7 AS w FROM range(2000000) t(i);
++CREATE TABLE b AS SELECT i * 2 AS k, i % 7 AS w FROM range(500000) t(i);
+ 
+ statement ok
+ COPY (
+@@ -27,4 +27,4 @@ query III
+ SELECT count(*), count(ak), count(bk)
+ FROM read_parquet('{TEST_DIR}/partitioned_full_outer_hash_join/**/*.parquet')
+ ----
+-3000000	2000000	2000000
++750000	500000	500000
 ```
 
-**File**: `extension/json/json_functions/json_transform.cpp` (modified, +2/-0)
+---
+
+### Incident Patch 3: `8e057bab` (2026-11-17)
+**Commit Message**: Fix CI (#28914)
+
+Disclaimer: this PR is analyzed and completed by opus-5.5
+
+Follow-up to https://github.com/duckdb/duckdb/pull/28791, which added
+`test/optimizer/pushdown/join_filter_pushdown_right_anti.test`. The test
+fails in the **Vector Sizes** CI job, which builds with
+`STANDARD_VECTOR_SIZE=2`. That job is skipped in the merge queue, so the
+failure only showed up after merge. It now fails on `main` and on every
+open PR.
+
+The two `EXPLAIN ANALYZE` checks at the end of the test expect the scan
+of `big` to emit exactly 40 rows: the 40 rows with `k = 42`.
+The join filter on `big` is `optional: k IN PRF(k)`. Like the other
+optional runtime filters, it tracks its own selectivity over a window of
+6 vectors and pauses itself when at least 50% of the rows pass.
+- With 2048-row vectors the filter stays active and the scan emits
+exactly 40 rows.
+- With 2-row vectors the window is only 12 rows, so the filter pauses.
+The row next to each matching row (`k = 45`) gets through, and the scan
+emits 80 rows.
+
+The query results are correct either way. Only the exact row count in
+the plan changes.
+
+**File**: `.github/patches/extensions/quack/0004-exclude-geography-from-all-types-test.patch` (added, +13/-0)
 ```diff
-@@ -1328,6 +1328,8 @@ void JSONFunctions::RegisterJSONTransformCastFunctions(ExtensionLoader &loader)
- 		case LogicalTypeId::ARRAY:
- 			target_type = LogicalType::ARRAY(LogicalType::ANY, optional_idx());
- 			break;
-+		case LogicalTypeId::VARIANT:
-+			continue;
- 		case LogicalTypeId::VARCHAR:
- 			// We skip this one here as it's handled in json_functions.cpp
- 			continue;
+@@ -0,0 +1,13 @@
++diff --git a/test/sql/rpc.test b/test/sql/rpc.test
++index 68433cc..da84c05 100644
++--- a/test/sql/rpc.test
+++++ b/test/sql/rpc.test
++@@ -83,7 +83,7 @@ select max(range) from quack_query({server}, 'from range(100000)')
++ 99999
++ 
++ statement ok
++-from quack_query({server}, 'from test_all_types()')
+++from quack_query({server}, 'select * exclude (geography) from test_all_types()')
++ 
++ 
++ statement ok
 ```
 
-**File**: `src/common/types.cpp` (modified, +24/-22)
+**File**: `test/optimizer/pushdown/join_filter_pushdown_right_anti.test` (modified, +4/-3)
 ```diff
-@@ -213,11 +213,32 @@ const LogicalTypeInfo *LogicalType::TryGetBuiltinTypeInfo(LogicalTypeId id) noex
- 	return builtins->infos[static_cast<uint8_t>(id)];
- }
+@@ -350,7 +350,8 @@ statement ok
+ RESET disabled_optimizers;
  
-+static unique_ptr<LogicalTypeInfo> CreateVariantTypeInfo() {
-+	child_list_t<LogicalType> children;
-+	//! keys
-+	children.emplace_back("keys", LogicalType::LIST(LogicalTypeId::VARCHAR));
-+	//! children
-+	children.emplace_back("children",
-+	                      LogicalType::LIST(LogicalType::STRUCT(
-+	                          {{"keys_index", LogicalType::UINTEGER}, {"values_index", LogicalType::UINTEGER}})));
-+	//! values
-+	children.emplace_back("values", LogicalType::LIST(LogicalType::STRUCT(
-+	                                    {{"type_id", LogicalType::UTINYINT}, {"byte_offset", LogicalType::UINTEGER}})));
-+	//! data
-+	children.emplace_back("data", LogicalType::BLOB);
-+
-+	return make_uniq<StructTypeInfo>(std::move(children));
-+}
-+
- const LogicalTypeInfo &LogicalType::GetBuiltinTypeInfo(LogicalTypeId id) {
- 	auto info = TryGetBuiltinTypeInfo(id);
- 	if (!info) {
- 		throw InternalException("Invalid LogicalType %d", static_cast<uint8_t>(id));
- 	}
-+	if (id == LogicalTypeId::VARIANT) {
-+		static const auto variant_type = CreateImmortal(LogicalTypeId::VARIANT, CreateVariantTypeInfo());
-+		return variant_type.GetTypeInfo();
-+	}
- 	return *info;
- }
+ # the probe side is an aggregate over a scan in a pipeline of its own: that scan waits for the filter of the
+-# RIGHT ANTI join like it does for a RIGHT SEMI join, also if the build side turns out to be empty
++# RIGHT ANTI join like it does for a RIGHT SEMI join, also if the build side turns out to be empty.
++# 40 rows match, but the optional filter can pause itself on small vectors and let some non-matching rows through
+ statement ok
+ CREATE TABLE keys(k BIGINT);
  
-@@ -228,10 +249,9 @@ LogicalType::LogicalType(LogicalTypeId id) : type_info_(GetBuiltinTypeInfo(id))
- }
+@@ -365,12 +366,12 @@ SET threads={threads};
+ query II
+ EXPLAIN (ANALYZE, FORMAT JSON) SELECT b.k FROM keys b ANTI JOIN (SELECT k, sum(v) AS v FROM big GROUP BY k) p ON p.k = b.k;
+ ----
+-analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_ANTI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": 40,.*
++analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_ANTI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": [0-9]{2,3},.*
  
- const LogicalTypeInfo &LogicalType::AdoptNewTypeInfo(LogicalTypeId id, unique_ptr<LogicalTypeInfo> type_info) {
--	// validates the id - and ensures the builtin infos exist before any type does
--	auto &builtin_type_info = GetBuiltinTypeInfo(id);
-+	// Only resolve built-in info when none was supplied, to avoid recursive initialization.
- 	if (!type_info) {
--		return builtin_type_info;
-+		return GetBuiltinTypeInfo(id);
- 	}
- 	if (!TryGetPhysicalType(id, *type_info, type_info->physical_type)) {
- 		throw InternalException("Invalid LogicalType %d", static_cast<uint8_t>(id));
-@@ -2066,26 +2086,8 @@ const string &TemplateType::GetName(const LogicalType &type) {
- // Variant Type
- //===--------------------------------------------------------------------===//
+ query II
+ EXPLAIN (ANALYZE, FORMAT JSON) SELECT b.k FROM keys b SEMI JOIN (SELECT k, sum(v) AS v FROM big GROUP BY k) p ON p.k = b.k;
+ ----
+-analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_SEMI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": 40,.*
++analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_SEMI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": [0-9]{2,3},.*
  
--static unique_ptr<LogicalTypeInfo> CreateVariantTypeInfo() {
--	child_list_t<LogicalType> children;
--	//! keys
--	children.emplace_back("keys", LogicalType::LIST(LogicalTypeId::VARCHAR));
--	//! children
--	children.emplace_back("children",
--	                      LogicalType::LIST(LogicalType::STRUCT(
--	                          {{"keys_index", LogicalType::UINTEGER}, {"values_index", LogicalType::UINTEGER}})));
--	//! values
--	children.emplace_back("values", LogicalType::LIST(LogicalType::STRUCT(
--	                                    {{"type_id", LogicalType::UTINYINT}, {"byte_offset", LogicalType::UINTEGER}})));
--	//! data
--	children.emplace_back("data", LogicalType::BLOB);
--
--	return make_uniq<StructTypeInfo>(std::move(children));
--}
--
- LogicalType LogicalType::VARIANT() {
--	static const auto variant_type = CreateImmortal(LogicalTypeId::VARIANT, CreateVariantTypeInfo());
--	return variant_type;
-+	return LogicalType(LogicalTypeId::VARIANT);
- }
- 
- //===--------------------------------------------------------------------===//
+ query I
+ SELECT b.k FROM keys b ANTI JOIN (SELECT k, sum(v) AS v FROM big GROUP BY k) p ON p.k = b.k ORDER BY ALL;
 ```
 
-**File**: `test/common/test_logical_type_immutable.cpp` (modified, +16/-0)
+**File**: `test/sql/join/hash_join/perfect_hash_join_memory.test` (modified, +3/-1)
 ```diff
-@@ -91,6 +91,22 @@ TEST_CASE("Test that types without parameters share one type info", "[logical_ty
- 	REQUIRE(LogicalType::DECIMAL(18, 3) == LogicalType::DECIMAL(18, 3));
- }
+@@ -2,9 +2,11 @@
+ # description: Cost direct lookup before spilling and reserve optional dictionary output separately
+ # group: [hash_join]
  
-+TEST_CASE("VARIANT has canonical metadata when constructed from its id", "[logical_type_immutable]") {
-+	const auto canonical = LogicalType::VARIANT();
-+	LogicalType from_id(LogicalTypeId::VARIANT);
-+	REQUIRE(from_id == canonical);
-+	REQUIRE(from_id.IsComplete());
-+	REQUIRE(&from_id.GetTypeInfo() == &canonical.GetTypeInfo());
+-# The fixed memory budgets below assume default-sized vectors.
++# The fixed memory budgets below assume default-sized vectors and 64-bit memory usage.
+ require vector_size 2048
+ 
++require 64bit
 +
-+	LogicalType without_info(LogicalTypeId::VARIANT, nullptr);
-+	REQUIRE(&without_info.GetTypeInfo() == &canonical.GetTypeInfo());
-+
-+	auto explicit_info = canonical.GetTypeInfo().Copy();
-+	explicit_info->alias = "MY_VARIANT";
-+	LogicalType aliased(LogicalTypeId::VARIANT, std::move(explicit_info));
-+	REQUIRE(aliased == canonical.WithAlias("MY_VARIANT"));
-+}
-+
- TEST_CASE("Test that a moved-from type keeps its id", "[logical_type_immutable]") {
- 	auto list = LogicalType::LIST(LogicalType::VARCHAR);
- 	auto moved = std::move(list);
-```
-
-**File**: `test/sql/table_function/duckdb_functions_variant.test` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+# name: test/sql/table_function/duckdb_functions_variant.test
-+# description: Typed VARIANT function parameters retain their documentation
-+# group: [table_function]
-+
-+# Check the single-description branch, including examples and categories.
-+query TTTT
-+SELECT parameters, description, examples[1], categories
-+FROM duckdb_functions() WHERE function_name = 'variant_contains';
-+----
-+[variant_haystack, variant_needle]	Returns whether the needle is contained in the haystack, recursively checking nested arrays and objects.	variant_contains({'a': {'b': 42}}::VARIANT, {'b': 42}::VARIANT)	[variant]
-+
-+# Multiple descriptions must still distinguish the second argument's type.
-+query TTT rowsort
-+SELECT parameter_types, parameters, description
-+FROM duckdb_functions() WHERE function_name = 'variant_extract';
-+----
-+[VARIANT, UINTEGER]	[input_variant, index]	Returns the entry at `index` from the `input_variant` if it's an ARRAY.
-+[VARIANT, VARCHAR]	[input_variant, field]	Returns the `field` from the `input_variant` if it's an OBJECT.
-```
-
-**File**: `test/sql/types/variant/variant_json_cast_registration.test` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+# name: test/sql/types/variant/variant_json_cast_registration.test
-+# description: Loading JSON preserves the core casts to and from VARIANT
-+# group: [variant]
-+
-+require json
-+
-+query T
-+SELECT ('{"a":[1,null]}'::JSON::VARIANT::JSON)::VARCHAR;
-+----
-+{"a":[1,null]}
+ require skip_reload
+ 
+ load {TEST_DIR}/perfect_hash_join_memory.db
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28810** (2026-11-13): Let compressed materialization use registered casts (@Robinho-MR)
-- **PR #28804** (2026-11-13): Add TIMSTAMPTZ_NS VARIANT to unshredded parquet varient encoder (@ThijsDreef)
-- **PR #28801** (2026-11-13): Remove obsolete Member-label workflow (@smvv)
-- **PR #28800** (closed): Add an escape_mode option to the CSV reader: 'quote' stops the escape from escaping the delimiter and newlines (@pdet)
-- **PR #28798** (2026-11-13): Keep the struct column qualifier in index expressions when the table shares the column's name (@h4nsmuller)
-- **PR #28787** (2026-11-13): Support MAP generic settings and migrate profiling_renderer_settings (@Robinho-MR)
+- **PR #28960** (closed): Fix: mark unshredded VARIANT stats as NOT_SHREDDED (@gropaul)
+- **PR #28952** (closed): Resolve-types callback: allow setting argument types in the C API V2 (@Robinho-MR)
+- **PR #28948** (2026-11-17): Skip Windows extension builds on PRs that do not change extensions (@Robinho-MR)
+- **PR #28946** (2026-11-17): Ignore stalled ORDER_BY progress in test_transaction_local_parallelism (@Robinho-MR)
+- **PR #28945** (2026-11-17): Shrink hash_join_dict_surviving_computed_build test to avoid CI timeouts (@Robinho-MR)
+- **PR #28944** (2026-11-17): Shrink partitioned_full_outer_hash_join test to avoid CI timeouts (@Robinho-MR)
 
 ---
 
@@ -2513,24 +2269,24 @@ documentation:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build Per-Column Runtime Filters For Multi-Key Hash Joins
+## X. INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE
 
 **RULE**:
-When implementing operations in `.github/regression/micro.csv`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/execution/operator/persistent/physical_batch_copy_to_file.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b678afa9`: Build Per-Column Runtime Filters For Multi-Key Hash Joins. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `069eb90c`: INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/regression/micro.csv`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/execution/operator/persistent/physical_batch_copy_to_file.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-benchmark/micro/pushdown/multi_key_join_filter.benchmark
-benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark
-benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark
-benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark
+	if (!batch_size.IsValid()) {
+		// no row target (only ROW_GROUP_SIZE_BYTES): the byte target alone decides
+		return CopyFunctionBatchAnalyzer(batch, batch_size, batch_size_bytes).IsAcceptable();
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2540,4 +2296,4 @@ benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b678afa9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `069eb90c` are properly handled with clean fallback behavior.

@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "015103ec",
+    "sourceVersion": "248ad5da",
     "license": "Apache-2.0",
-    "contentHash": "c5a4d9b250dff7d7ddc4de56fefffc09abbfedbd3f6aece5e80351bb55fc8030",
-    "lastHarvestedAt": "2026-11-16T20:02:41.803Z",
+    "contentHash": "484a02b33cc83183114f611cf109fe7dfc8eebae3c2aefdbde24565df10f6a8a",
+    "lastHarvestedAt": "2026-11-17T14:50:01.850Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "b678afa9",
+    "sourceVersion": "8a5afae5",
     "license": "MIT",
-    "contentHash": "9beabd2c33d5528d54005efbb3d2d7a1ea053765953c346a3c0c175fe3be55bf",
-    "lastHarvestedAt": "2026-11-14T21:50:43.554Z",
+    "contentHash": "e7fdabdffaff474e5f53e0d65ceedd62d63beb2176930273fe6fa76085bbc2ae",
+    "lastHarvestedAt": "2026-11-17T14:50:05.862Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -7005,8 +7005,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/z_image_turbo",
     "sourceVersion": "hf-comfy-org-z_image_turbo",
     "license": "Open-Source",
-    "contentHash": "4b00b8fbfb0f41e60343b24ab4accdf5922f7b1735139f89fecea1a9d7cf42c7",
-    "lastHarvestedAt": "2026-11-13T01:57:18.016Z",
+    "contentHash": "b594e48199a477b9cd3e5606d16a12fa243218e33010b0e5c45bbd89e55d6ac4",
+    "lastHarvestedAt": "2026-11-17T14:49:49.627Z",
     "learningId": "learn-huggingface-comfy-org-z_image_turbo"
   },
   "jhspetersson-fselect": {

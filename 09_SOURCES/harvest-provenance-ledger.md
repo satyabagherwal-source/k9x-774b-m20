@@ -10604,3 +10604,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-17T14:33:39.819Z |
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-17T14:41:22.367Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `17d2a726` | Multi-dimensional audit evidence | 2026-11-17T14:41:26.514Z |
+| `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-17T14:49:49.627Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `248ad5da` | Multi-dimensional audit evidence | 2026-11-17T14:50:01.850Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `8a5afae5` | Multi-dimensional audit evidence | 2026-11-17T14:50:05.862Z |

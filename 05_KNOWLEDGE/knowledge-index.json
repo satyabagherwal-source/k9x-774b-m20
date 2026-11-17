@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T14:41:31.486Z",
-  "total_verified_learnings": 8890,
+  "last_updated": "2026-11-17T14:50:10.564Z",
+  "total_verified_learnings": 8891,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20226,
+  "total_items": 20234,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112429,10 +112429,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "repository": "duckdb/duckdb",
-      "source_version": "b678afa9",
-      "content_hash": "2915e6746ff91704e8e53ae7a8b19be61601003281d26410669313f9186c8140",
+      "source_version": "8a5afae5",
+      "content_hash": "54dd0c018e04df657776b8727544740dce245aee52344906f2417edcf6d34ae4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T21:50:43.774Z"
+      "persisted_at": "2026-11-17T14:50:06.149Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb",
@@ -112441,10 +112441,10 @@
       "relative_path": "08_VERIFICATION/duckdb-duckdb-verification-protocol-empirical-defect-shield-for-duckdb-duckdb.md",
       "title": "Verification Protocol: Empirical Defect Shield for duckdb/duckdb",
       "repository": "duckdb/duckdb",
-      "source_version": "b678afa9",
-      "content_hash": "cbc6472203888cb8cfeb0a02ce076585bc54332b45e7c3735233dc549d8dc633",
+      "source_version": "8a5afae5",
+      "content_hash": "7ca384ce89999b4a3800c60cd7d83d8828e796be261bc92f2df4b867c8d5ebee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:50:43.854Z"
+      "persisted_at": "2026-11-17T14:50:06.269Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants",
@@ -113749,10 +113749,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "repository": "nolabs-ai/nono",
-      "source_version": "015103ec",
-      "content_hash": "748ad531c8cff19b578efe079494955688edfa15eabab1933005fd01db0b9ac4",
+      "source_version": "248ad5da",
+      "content_hash": "830621a9bc7375380aec7e0a027c8736eb66c223b563eae3f7df9d2107b9b948",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T20:02:42.188Z"
+      "persisted_at": "2026-11-17T14:50:02.161Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono",
@@ -113761,10 +113761,10 @@
       "relative_path": "12_DECISIONS/ADR-nolabs-ai-nono-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "015103ec",
-      "content_hash": "456613b3f708905de3f2040ba6811e1bcf7010773503b4820ac75e14ef5f6a69",
+      "source_version": "248ad5da",
+      "content_hash": "dd48af51a6f6b3ab5221f66f109f17973633ff43d9dcc11a1c9259f23d624d5d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T20:02:42.338Z"
+      "persisted_at": "2026-11-17T14:50:02.288Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono",
@@ -113773,10 +113773,10 @@
       "relative_path": "08_VERIFICATION/nolabs-ai-nono-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono.md",
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "015103ec",
-      "content_hash": "25c4f3b0c71e436d20ac63a3ca6dc4f85d10ad1583a25a889e88bdfe937bb433",
+      "source_version": "248ad5da",
+      "content_hash": "6812e3f5adda969daa03cff20c45ed816d10f95005e3086561624c50cae6bcca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T20:02:42.475Z"
+      "persisted_at": "2026-11-17T14:50:02.401Z"
     },
     "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner": {
       "item_id": "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner",
@@ -113834,9 +113834,9 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "41b8645136f638a75de6479a88c65ab7390875c485388657c60ee447722f1f98",
+      "content_hash": "2993ca8ae88813bcf36e0360c3b6fcecab464733269a8088c30994c0761aba79",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T20:02:46.860Z"
+      "persisted_at": "2026-11-17T14:50:09.721Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings",
@@ -113846,9 +113846,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "29915de80f462db468ec072807a3124b0c13fa0ed46400954823771ebad0688e",
+      "content_hash": "09f8284f2a5d0c8fa966072cfd7efe2e0f0886b09bee244d2b2c5c1b0c3e7928",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T20:02:47.013Z"
+      "persisted_at": "2026-11-17T14:50:09.848Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings",
@@ -113858,9 +113858,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "4f18192c1ce0529a16b85987230aaef83bffe83e700efd1acf711e07075f19bd",
+      "content_hash": "cd06f4d037745f07cc412f68184b634d8f66be5dd2d653e6e05ecbb16440cabe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T20:02:47.153Z"
+      "persisted_at": "2026-11-17T14:50:09.965Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "item_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -236384,14 +236384,19 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "b678afa9",
-      "content_hash": "9beabd2c33d5528d54005efbb3d2d7a1ea053765953c346a3c0c175fe3be55bf",
+      "source_version": "8a5afae5",
+      "content_hash": "e7fdabdffaff474e5f53e0d65ceedd62d63beb2176930273fe6fa76085bbc2ae",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
         {
           "number": 8543,
           "title": "Build Per-Column Runtime Filters For Multi-Key Hash Joins",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8979,
+          "title": "INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -236400,7 +236405,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T21:50:43.425Z",
+      "verified_at": "2026-11-17T14:50:05.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236491,9 +236496,9 @@
       "title": "Architecture Intelligence: duckdb-duckdb-learnings Core Invariants",
       "repository": "duckdb-duckdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "d92954930cb20b27d6c96b955dfbb23440d12f4ab2fb9a8c10b409c2750d3b02",
+      "content_hash": "a2d99df08b493566d2750947adf2945b7e50030a0c803965a01cc5c548333369",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T21:51:09.759Z"
+      "persisted_at": "2026-11-17T14:50:10.427Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb-learnings",
@@ -236503,9 +236508,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for duckdb-duckdb-learnings",
       "repository": "duckdb-duckdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a9c4ea34b409516fa67a4e879a8ca54bef6dede460e33a2ada5277b4d9b9a9b",
+      "content_hash": "252f6e81874472338dad542edf9b3cb8372a78ba5df9de65f50ec60583e8a2a8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:51:09.851Z"
+      "persisted_at": "2026-11-17T14:50:10.564Z"
     },
     "learn-github-clickhouse-clickhouse": {
       "learning_id": "learn-github-clickhouse-clickhouse",
@@ -237592,8 +237597,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "015103ec",
-      "content_hash": "c5a4d9b250dff7d7ddc4de56fefffc09abbfedbd3f6aece5e80351bb55fc8030",
+      "source_version": "248ad5da",
+      "content_hash": "484a02b33cc83183114f611cf109fe7dfc8eebae3c2aefdbde24565df10f6a8a",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -237606,6 +237611,11 @@
           "number": 8784,
           "title": "docs(neps): add NEP-0011 for macOS Endpoint Security gate",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8978,
+          "title": "fix flaky tests in socket auth, capture and fd churn",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237613,7 +237623,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T20:02:41.607Z",
+      "verified_at": "2026-11-17T14:50:01.688Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270912,6 +270922,121 @@
       "content_hash": "b27bf5dd047580460545fc75e8c89dd2b682b1ce1319b017db85e817c6e38585",
       "domain_letter": "J",
       "persisted_at": "2026-11-17T14:41:30.595Z"
+    },
+    "learn-huggingface-comfy-org-z_image_turbo": {
+      "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/Z-Image-Turbo",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "slug": "hf-comfy-org-z_image_turbo",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "content_hash": "b594e48199a477b9cd3e5606d16a12fa243218e33010b0e5c45bbd89e55d6ac4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T14:49:49.456Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z_image_turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
+      "title": "Research & Knowledge Intelligence: Comfy-Org/Z-Image-Turbo Core Invariants",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "content_hash": "fd54232dc50b7b94c0b496b99256c93c6178f0baa8df010c08e1923342be3188",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T14:49:49.792Z"
+    },
+    "rule-8978": {
+      "learning_id": "rule-8978",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8978,
+      "title": "fix flaky tests in socket auth, capture and fd churn",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "248ad5da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T14:50:01.688Z"
+    },
+    "candidate_directive-fix-flaky-tests-in-socket-auth-capture-and-fd-churn": {
+      "item_id": "candidate_directive-fix-flaky-tests-in-socket-auth-capture-and-fd-churn",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6YLY-fix-flaky-tests-in-socket-auth-capture-and-fd-churn.md",
+      "title": "fix flaky tests in socket auth, capture and fd churn",
+      "repository": "nolabs-ai/nono",
+      "source_version": "248ad5da",
+      "content_hash": "45b84084c1e182455134e4d8b6975b798d9d6caf4b33eb5836791698c251bf00",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T14:50:02.042Z"
+    },
+    "rule-8979": {
+      "learning_id": "rule-8979",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8979,
+      "title": "INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "8a5afae5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T14:50:05.696Z"
+    },
+    "candidate_directive-internal-error-in-batched-copy-with-row_group_size_bytes-but-no-row_group_size": {
+      "item_id": "candidate_directive-internal-error-in-batched-copy-with-row_group_size_bytes-but-no-row_group_size",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-74ZI-internal-error-in-batched-copy-with-row_group_size_bytes-but-no-row_group_size.md",
+      "title": "INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE",
+      "repository": "duckdb-duckdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "48fd83c51ca7e1754d1e461d8ea41e1aa2771c9014b7a056b5b3c3b7ad3de3cc",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T14:50:10.304Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-learnings-research-knowledge-intelligence-hf-comfy-or.md",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-z-image-turbo-learnings Core Invariants",
+      "repository": "hf-comfy-org-z-image-turbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "036c42f68b9e04c1bfcff288ecbe458afa72e1b0f072dffe1962b3231d531f10",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T14:50:09.196Z"
+    },
+    "candidate_directive-test-fix-flaky-tests-in-socket-auth-capture-and-fd-churn": {
+      "item_id": "candidate_directive-test-fix-flaky-tests-in-socket-auth-capture-and-fd-churn",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-74G1-test-fix-flaky-tests-in-socket-auth-capture-and-fd-churn.md",
+      "title": "test: fix flaky tests in socket auth, capture and fd churn",
+      "repository": "nolabs-ai-nono-learnings",
+      "source_version": "HEAD",
+      "content_hash": "836fd0cd1f3cfda278e6482630b9bc5361f8e98af07d56a5a6dde59015464f5e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T14:50:09.604Z"
     }
   },
   "ai-builder-brain": {

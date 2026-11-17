@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T14:33:42.988Z",
+  "updated_at": "2026-11-17T14:50:10.137Z",
   "stats": {
-    "total_discovered": 4996,
-    "approved_pending_harvest": 4708,
+    "total_discovered": 4998,
+    "approved_pending_harvest": 4710,
     "harvested_count": 0,
     "rejected_count": 288,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4697,
+      "COMMUNITY_AND_EXPERT": 4699,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -107917,6 +107917,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
         "fileName": "yvgude-lean-ctx-learnings.md"
+      }
+    },
+    "SRC-9D116B1B0C12": {
+      "id": "SRC-9D116B1B0C12",
+      "url": "https://google.com/",
+      "title": "https://google.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T14:50:09.416Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-3BAE0A37AF6B": {
+      "id": "SRC-3BAE0A37AF6B",
+      "url": "https://github.com/duckdb/duckdb/pull/28791",
+      "title": "https://github.com/duckdb/duckdb/pull/28791",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T14:50:10.137Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
+        "fileName": "duckdb-duckdb-learnings.md"
       }
     }
   }

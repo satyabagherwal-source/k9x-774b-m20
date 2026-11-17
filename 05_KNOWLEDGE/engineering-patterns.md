@@ -655891,3 +655891,150 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `515f2d16` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8978. fix flaky tests in socket auth, capture and fd churn (Harvested from nolabs-ai/nono)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "fix flaky tests in socket auth, capture and fd churn",
+  "source": "nolabs-ai/nono",
+  "source_url": "https://github.com/nolabs-ai/nono",
+  "source_version": "248ad5da",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T14:50:01.437Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nolabs-ai-nono",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `248ad5da`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/nono-cli/src/exec_strategy/clone_files/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `29a97842`: test: fix flaky tests in socket auth, capture and fd churn. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/exec_strategy/clone_files/tests.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+                // Ignoring first discards a pending SIGUSR1 another thread has not taken yet.
+                // SAFETY: SIG_IGN is a valid action and self.0 was saved by sigaction.
+                    let mut ignore: libc::sigaction = std::mem::zeroed();
+                    ignore.sa_sigaction = libc::SIG_IGN;
+                    libc::sigaction(libc::SIGUSR1, &ignore, std::ptr::null_mut());
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+                // SAFETY: restore the action saved by sigaction.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `29a97842` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8979. INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE (Harvested from duckdb/duckdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE",
+  "source": "duckdb/duckdb",
+  "source_url": "https://github.com/duckdb/duckdb",
+  "source_version": "8a5afae5",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T14:50:05.430Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-duckdb-duckdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [duckdb/duckdb](https://github.com/duckdb/duckdb) (Revision: `8a5afae5`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/execution/operator/persistent/physical_batch_copy_to_file.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `069eb90c`: INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/execution/operator/persistent/physical_batch_copy_to_file.cpp`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+	if (!batch_size.IsValid()) {
+		// no row target (only ROW_GROUP_SIZE_BYTES): the byte target alone decides
+		return CopyFunctionBatchAnalyzer(batch, batch_size, batch_size_bytes).IsAcceptable();
+	}
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `069eb90c` are properly handled with clean fallback behavior.

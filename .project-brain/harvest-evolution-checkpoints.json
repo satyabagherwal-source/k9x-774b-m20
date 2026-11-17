@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T14:41:31.625Z",
+  "last_updated": "2026-11-17T14:50:10.683Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -543,7 +543,7 @@
       "staged_for_review": 1
     },
     "nolabs-ai-nono-learnings.md": {
-      "processed_at": "2026-11-16T20:02:46.396Z",
+      "processed_at": "2026-11-17T14:50:09.331Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1428,8 +1428,8 @@
       "staged_for_review": 1
     },
     "hf-comfy-org-z-image-turbo-learnings.md": {
-      "processed_at": "2026-11-13T05:23:59.453Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T14:50:09.027Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md": {
@@ -2773,7 +2773,7 @@
       "staged_for_review": 1
     },
     "duckdb-duckdb-learnings.md": {
-      "processed_at": "2026-11-14T21:51:09.492Z",
+      "processed_at": "2026-11-17T14:50:10.092Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3323,7 +3323,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1587,
+  "total_dossiers_evaluated": 1590,
   "total_canonical_promoted": 321,
-  "total_staged_for_review": 1251
+  "total_staged_for_review": 1253
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T14:41:31.486Z",
-  "total_records": 1567,
+  "last_updated": "2026-11-17T14:50:10.427Z",
+  "total_records": 1569,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 649,
+      "total": 651,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -698,7 +698,9 @@
         "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-autogluon-chronos-2-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-comfy-org-moss-image-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-moss-image-learnings-core-invariant"
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-moss-image-learnings-core-invariant",
+        "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari"
       ]
     },
     "E": {
@@ -7463,8 +7465,8 @@
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "repository": "duckdb/duckdb",
-      "content_hash": "2915e6746ff91704e8e53ae7a8b19be61601003281d26410669313f9186c8140",
-      "created_at": "2026-11-14T21:50:43.774Z"
+      "content_hash": "54dd0c018e04df657776b8727544740dce245aee52344906f2417edcf6d34ae4",
+      "created_at": "2026-11-17T14:50:06.149Z"
     },
     "DOM-D-A827EB1D": {
       "record_id": "DOM-D-A827EB1D",
@@ -8318,8 +8320,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "748ad531c8cff19b578efe079494955688edfa15eabab1933005fd01db0b9ac4",
-      "created_at": "2026-11-16T20:02:42.188Z"
+      "content_hash": "830621a9bc7375380aec7e0a027c8736eb66c223b563eae3f7df9d2107b9b948",
+      "created_at": "2026-11-17T14:50:02.161Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -8387,8 +8389,8 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-learnings-architecture-intelligence-nolabs-ai-nono-learnings-core.md",
       "repository": "nolabs-ai-nono-learnings",
-      "content_hash": "41b8645136f638a75de6479a88c65ab7390875c485388657c60ee447722f1f98",
-      "created_at": "2026-11-16T20:02:46.860Z"
+      "content_hash": "2993ca8ae88813bcf36e0360c3b6fcecab464733269a8088c30994c0761aba79",
+      "created_at": "2026-11-17T14:50:09.721Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -17740,8 +17742,8 @@
       "title": "Architecture Intelligence: duckdb-duckdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-learnings-architecture-intelligence-duckdb-duckdb-learnings-core-i.md",
       "repository": "duckdb-duckdb-learnings",
-      "content_hash": "d92954930cb20b27d6c96b955dfbb23440d12f4ab2fb9a8c10b409c2750d3b02",
-      "created_at": "2026-11-14T21:51:09.759Z"
+      "content_hash": "a2d99df08b493566d2750947adf2945b7e50030a0c803965a01cc5c548333369",
+      "created_at": "2026-11-17T14:50:10.427Z"
     },
     "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants",
@@ -27174,6 +27176,24 @@
       "repository": "dragonflydb-dragonfly-learnings",
       "content_hash": "b27bf5dd047580460545fc75e8c89dd2b682b1ce1319b017db85e817c6e38585",
       "created_at": "2026-11-17T14:41:30.595Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Comfy-Org/Z-Image-Turbo Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z_image_turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "content_hash": "fd54232dc50b7b94c0b496b99256c93c6178f0baa8df010c08e1923342be3188",
+      "created_at": "2026-11-17T14:49:49.792Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-z-image-turbo-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-learnings-research-knowledge-intelligence-hf-comfy-or.md",
+      "repository": "hf-comfy-org-z-image-turbo-learnings",
+      "content_hash": "036c42f68b9e04c1bfcff288ecbe458afa72e1b0f072dffe1962b3231d531f10",
+      "created_at": "2026-11-17T14:50:09.196Z"
     }
   }
 }
