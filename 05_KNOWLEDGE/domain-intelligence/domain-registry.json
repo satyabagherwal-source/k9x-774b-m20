@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T04:14:01.534Z",
-  "total_records": 1440,
+  "last_updated": "2026-11-17T04:31:34.832Z",
+  "total_records": 1442,
   "domains": {
     "A": {
       "total": 9,
@@ -983,7 +983,7 @@
       ]
     },
     "H": {
-      "total": 331,
+      "total": 333,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1315,7 +1315,9 @@
         "domain_intelligence-technical-construction-intelligence-webpack-webpack-core-invariants",
         "domain_intelligence-technical-construction-intelligence-electron-electron-core-invariants",
         "domain_intelligence-technical-construction-intelligence-webpack-webpack-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-electron-electron-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-electron-electron-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rollup-rollup-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rollup-rollup-learnings-core-invariants"
       ]
     },
     "I": {
@@ -10831,8 +10833,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "0f97f5997482fac1a4ca5555b881e0451164af549aed84a0ca205ce380bb9a81",
-      "created_at": "2026-11-17T02:24:54.426Z"
+      "content_hash": "740c9f2ee320e68682e86dfdb56a2b5ddec10c019482d4341924d2ffc1089fba",
+      "created_at": "2026-11-17T04:31:34.832Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -13902,8 +13904,8 @@
       "title": "Technical Construction Intelligence: typedb/typedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-technical-construction-intelligence-typedb-typedb-core-invariants.md",
       "repository": "typedb/typedb",
-      "content_hash": "d1e5ef6c4a3f9b6bc6a46009e04d9b716f347c3e9ffc6bd6c4d902cac8ec593f",
-      "created_at": "2026-11-14T08:10:41.533Z"
+      "content_hash": "1043dd44d4e12c10349ee7cf6beacd2c86190356afdee0e6f54ce04ffac24036",
+      "created_at": "2026-11-17T04:31:30.094Z"
     },
     "DOM-D-6D95F34C": {
       "record_id": "DOM-D-6D95F34C",
@@ -13962,8 +13964,8 @@
       "title": "Technical Construction Intelligence: typedb-typedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-learnings-technical-construction-intelligence-typedb-typedb-learni.md",
       "repository": "typedb-typedb-learnings",
-      "content_hash": "7a7a15195ce6350cec0888dbe5ac2f1284c271742ec58fed277f9a45a026bf36",
-      "created_at": "2026-11-14T08:11:06.045Z"
+      "content_hash": "db77a3bebe25158fbf0bc6480301a775a79b5ba87e8485ea41c52604b00a5212",
+      "created_at": "2026-11-17T04:31:34.312Z"
     },
     "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-core-invariants",
@@ -25235,6 +25237,24 @@
       "repository": "electron-electron-learnings",
       "content_hash": "796dc78d54e045b23eecab38ebeeb9af8a240217a379e11d159ae35443a4f4ae",
       "created_at": "2026-11-17T04:14:01.534Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rollup-rollup-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rollup-rollup-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rollup/rollup Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rollup-rollup-technical-construction-intelligence-rollup-rollup-core-invariants.md",
+      "repository": "rollup/rollup",
+      "content_hash": "e142aa9c7f4660146e6b2af353a8055ee3fbc17b0ab8049b8302cfbd2aba1f1c",
+      "created_at": "2026-11-17T04:31:20.700Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rollup-rollup-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rollup-rollup-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rollup-rollup-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rollup-rollup-learnings-technical-construction-intelligence-rollup-rollup-learni.md",
+      "repository": "rollup-rollup-learnings",
+      "content_hash": "2b7dede96e220c4fa0dd0e5a6ada4311d7b26193c143679ac4d91b2c49349133",
+      "created_at": "2026-11-17T04:31:33.395Z"
     }
   }
 }

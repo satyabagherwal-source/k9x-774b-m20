@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T04:14:01.669Z",
-  "total_verified_learnings": 8842,
+  "last_updated": "2026-11-17T04:31:34.951Z",
+  "total_verified_learnings": 8843,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19753,
+  "total_items": 19762,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218058,13 +218058,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-KPVL-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3MEY-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "9952461cf4f1af96e200e8ef0010264b3a9209a38b8a531e945670106e9b7182",
+      "content_hash": "a4becc8295115701558a9aeb3c573b78964b259aee8ca483767ccbc3a050aa00",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:24:54.273Z"
+      "persisted_at": "2026-11-17T04:31:34.715Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218074,9 +218074,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f97f5997482fac1a4ca5555b881e0451164af549aed84a0ca205ce380bb9a81",
+      "content_hash": "740c9f2ee320e68682e86dfdb56a2b5ddec10c019482d4341924d2ffc1089fba",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:24:54.426Z"
+      "persisted_at": "2026-11-17T04:31:34.832Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218086,9 +218086,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "31a497968b61edab7b94c36635ceeed557e9f5051373de308b7dec0820bb14b1",
+      "content_hash": "a86a7b7fdc410af63a9c6d7b7da99d58c54998d450ddfcd2a61b04bf6ef16c48",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T02:24:54.557Z"
+      "persisted_at": "2026-11-17T04:31:34.951Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -226201,11 +226201,16 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "43f63ec0",
-      "content_hash": "a3e5fcac56e0368773727705f8cea83f4230791a7d93374e2b9a99d69e67b49d",
+      "source_version": "fb7c1cce",
+      "content_hash": "23f6d4abfb272e14f679f8f7cd1a639711dca060cac048e747f1d643a6bce41e",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
+        {
+          "number": 8032,
+          "title": "Prepare release 3.15.0",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8470,
           "title": "Update error messages & a missed warning on usages of try blocks in write stages",
@@ -226217,7 +226222,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T08:10:41.225Z",
+      "verified_at": "2026-11-17T04:31:29.637Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226259,10 +226264,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-technical-construction-intelligence-typedb-typedb-core-invariants.md",
       "title": "Technical Construction Intelligence: typedb/typedb Core Invariants",
       "repository": "typedb/typedb",
-      "source_version": "43f63ec0",
-      "content_hash": "d1e5ef6c4a3f9b6bc6a46009e04d9b716f347c3e9ffc6bd6c4d902cac8ec593f",
+      "source_version": "fb7c1cce",
+      "content_hash": "1043dd44d4e12c10349ee7cf6beacd2c86190356afdee0e6f54ce04ffac24036",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T08:10:41.533Z"
+      "persisted_at": "2026-11-17T04:31:30.094Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb",
@@ -226271,10 +226276,10 @@
       "relative_path": "08_VERIFICATION/typedb-typedb-verification-protocol-empirical-defect-shield-for-typedb-typedb.md",
       "title": "Verification Protocol: Empirical Defect Shield for typedb/typedb",
       "repository": "typedb/typedb",
-      "source_version": "43f63ec0",
-      "content_hash": "b57338b1fbc9e4e2e8023c0acd05199972961b3726953bf5eb46b7bcfa517e0e",
+      "source_version": "fb7c1cce",
+      "content_hash": "cd1e29160b57bdd49e02783ebc9eb86bb5f6cb24e19018cc5afb1db2cc26493c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T08:10:41.603Z"
+      "persisted_at": "2026-11-17T04:31:30.212Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn",
@@ -226308,9 +226313,9 @@
       "title": "Technical Construction Intelligence: typedb-typedb-learnings Core Invariants",
       "repository": "typedb-typedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "7a7a15195ce6350cec0888dbe5ac2f1284c271742ec58fed277f9a45a026bf36",
+      "content_hash": "db77a3bebe25158fbf0bc6480301a775a79b5ba87e8485ea41c52604b00a5212",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T08:11:06.045Z"
+      "persisted_at": "2026-11-17T04:31:34.312Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb-learnings",
@@ -226320,9 +226325,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for typedb-typedb-learnings",
       "repository": "typedb-typedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c188fe3b5ce2da63b7d66bdcc459435470b52f9c6e92e8316e98c9b2972617c",
+      "content_hash": "985bba8601586258335092e3202040f1d0e2756d005e8f0318b24a32ba477d66",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T08:11:06.127Z"
+      "persisted_at": "2026-11-17T04:31:34.431Z"
     },
     "learn-github-wix-react-native-ui-lib": {
       "learning_id": "learn-github-wix-react-native-ui-lib",
@@ -263721,6 +263726,139 @@
       "content_hash": "796dc78d54e045b23eecab38ebeeb9af8a240217a379e11d159ae35443a4f4ae",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T04:14:01.534Z"
+    },
+    "learn-github-rollup-rollup": {
+      "learning_id": "learn-github-rollup-rollup",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "rollup/rollup",
+      "repository": "rollup/rollup",
+      "slug": "rollup-rollup",
+      "platform": "github",
+      "source_url": "https://github.com/rollup/rollup",
+      "source_version": "2cf3a91b",
+      "content_hash": "5e4deee2ceb8967bb2bb9fb9cfd942833f0dd827fe1c28b770d44f53fec1ca24",
+      "dossier_path": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8869,
+          "title": "system format updates for destructuring and for-loop assignments",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T04:31:20.248Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8869": {
+      "learning_id": "rule-8869",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8869,
+      "title": "system format updates for destructuring and for-loop assignments",
+      "source_url": "https://github.com/rollup/rollup",
+      "source_version": "2cf3a91b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T04:31:20.248Z"
+    },
+    "candidate_directive-system-format-updates-for-destructuring-and-for-loop-assignments": {
+      "item_id": "candidate_directive-system-format-updates-for-destructuring-and-for-loop-assignments",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3LB2-system-format-updates-for-destructuring-and-for-loop-assignments.md",
+      "title": "system format updates for destructuring and for-loop assignments",
+      "repository": "rollup-rollup-learnings",
+      "source_version": "HEAD",
+      "content_hash": "72e7f3da575f06cbcebc289c11359a2cdc6052b86e8c4030c099d1095444d511",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:31:33.279Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rollup-rollup-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rollup-rollup-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rollup-rollup-technical-construction-intelligence-rollup-rollup-core-invariants.md",
+      "title": "Technical Construction Intelligence: rollup/rollup Core Invariants",
+      "repository": "rollup/rollup",
+      "source_version": "2cf3a91b",
+      "content_hash": "e142aa9c7f4660146e6b2af353a8055ee3fbc17b0ab8049b8302cfbd2aba1f1c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:31:20.700Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rollup-rollup": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rollup-rollup",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rollup-rollup-verification-protocol-empirical-defect-shield-for-rollup-rollup.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rollup/rollup",
+      "repository": "rollup/rollup",
+      "source_version": "2cf3a91b",
+      "content_hash": "b06d307d32648c4137fe197dc628e04cb1c176c3db6051ef1e2c7c56bef6799a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T04:31:20.816Z"
+    },
+    "rule-8032": {
+      "learning_id": "rule-8032",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8032,
+      "title": "Prepare release 3.15.0",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "fb7c1cce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T04:31:29.637Z"
+    },
+    "candidate_directive-prepare-release-3-15-0": {
+      "item_id": "candidate_directive-prepare-release-3-15-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3M0H-prepare-release-3-15-0.md",
+      "title": "Prepare release 3.15.0",
+      "repository": "typedb-typedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a63ebac2b72c810dfb70847384725e12321dd44954e070f530e46fc908f05bc2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:31:34.196Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rollup-rollup-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rollup-rollup-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rollup-rollup-learnings-technical-construction-intelligence-rollup-rollup-learni.md",
+      "title": "Technical Construction Intelligence: rollup-rollup-learnings Core Invariants",
+      "repository": "rollup-rollup-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2b7dede96e220c4fa0dd0e5a6ada4311d7b26193c143679ac4d91b2c49349133",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T04:31:33.395Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rollup-rollup-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rollup-rollup-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rollup-rollup-learnings-verification-protocol-empirical-defect-shield-for-rollup.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rollup-rollup-learnings",
+      "repository": "rollup-rollup-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cf4694cab4e2fb88a11e7612f13b877b3180deb2437005fab0857febb4c24fcc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T04:31:33.516Z"
     }
   },
   "ai-builder-brain": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-BOYC",
-    "timestamp": "2026-11-14T13:38:43.092Z",
-    "repository": "react/metro",
-    "learningId": "learn-github-react-metro",
-    "contentHash": "821ddd92d116f5ce214a716281d0c6b037ee78ced949f330acff2ab82ef6642b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-BRNM",
-    "timestamp": "2026-11-14T13:38:46.594Z",
-    "repository": "google/vit-base-patch16-224",
-    "learningId": "learn-huggingface-google-vit-base-patch16-224",
-    "contentHash": "db15ee4d8901500b51b44dd27dc67a430dad11c86856c9ec168c742535d3e022",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-BW7K",
     "timestamp": "2026-11-14T13:38:52.496Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7460,36 @@
     "repository": "electron/electron",
     "learningId": "learn-github-electron-electron",
     "contentHash": "f1d9f1fd930105489bfea33e157a716c8dab03ca5227a659e13b4ba79a52c0bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-3BDO",
+    "timestamp": "2026-11-17T04:31:20.412Z",
+    "repository": "rollup/rollup",
+    "learningId": "learn-github-rollup-rollup",
+    "contentHash": "5e4deee2ceb8967bb2bb9fb9cfd942833f0dd827fe1c28b770d44f53fec1ca24",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-3IMA",
+    "timestamp": "2026-11-17T04:31:29.794Z",
+    "repository": "typedb/typedb",
+    "learningId": "learn-github-typedb-typedb",
+    "contentHash": "23f6d4abfb272e14f679f8f7cd1a639711dca060cac048e747f1d643a6bce41e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

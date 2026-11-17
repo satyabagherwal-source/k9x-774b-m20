@@ -4,45 +4,31 @@
 {
   "source_repository": "rollup/rollup",
   "source_url": "https://github.com/rollup/rollup",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "2cf3a91b",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-17T04:31:20.582Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-rollup-rollup",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rollup/rollup](https://github.com/rollup/rollup) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [rollup/rollup](https://github.com/rollup/rollup) (Revision: `2cf3a91b`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T04:31:20.582Z`  
+> **Learning ID**: `learn-github-rollup-rollup`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `rollup/rollup` (Commit: `historical`)
+- **Target Repository**: `rollup/rollup` (Commit: `2cf3a91b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rollup-rollup-learnings.md`  
-> **Source**: github ([https://github.com/rollup/rollup](https://github.com/rollup/rollup))  
-> **Source Version**: `41ee3267`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T12:57:57.729Z  
-> **Learning ID**: `learn-github-rollup-rollup`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): rollup/rollup
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rollup-rollup-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rollup/rollup](https://github.com/rollup/rollup))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T12:57:56.176Z  
+> **Harvest Timestamp**: 2026-11-17T04:31:19.436Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Next-generation ES module bundler
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 26302 stars
+- **Stars / Engagement**: 26308 stars
 
 ---
 
@@ -328,14 +314,11 @@ impl AstConverter<'_> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6652** (2026-11-09): **Reject Windows drive-relative output file names**
-  *Symptoms*: <!--   ⚡️ katchow! We ❤️ Pull Requests!    If you remove or skip this template, you'll make the 🐼 sad and the mighty god   of GitHub will appear and pile-drive the close button from a great height   while making animal noises.    Pull Request Requirements:   * Please include tests to illustrate the problem this PR resolves.   * Please lint your changes by running `npm run lint` before creating a PR.   * Please update the documentation in `/docs` where necessary    Please place an x (no spaces - [x]) in all [ ] that apply.   Remove the ones that do not apply as long as there remains one checkbox   in each section. -->  This PR contains:  - [x] bugfix - [ ] feature - [ ] refactor - [ ] documentation - [ ] other  Are tests included?  - [x] yes (_bugfixes and features will not be merged without tests_) - [ ] no  Breaking Changes?  - [ ] yes (_breaking changes will not be merged unless absolutely necessary_) - [x] no  List any relevant issue numbers:  None.  ### Description  The output directory containment check rejects `..` segments and absolute names such as `/x`, `C:/x` and `C:\x`, but it accepts Windows drive-relative names like `C:../../x` or `D:x`. On Windows these are resolved against the current directory of the given drive, so they can write outside `output.dir`.  The gap is reachable through the same inputs as other output file names:  - object-form input aliases, e.g. `input: { 'C:../../x': 'main.js' }`, which flow into the default `[name].js` pattern - manual chunk n
+- **Issue #6667** (2026-11-16): **Migrate Renovate config**
+  *Symptoms*: The Renovate config in this repository needs migrating. Typically this is because one or more configuration options you are using have been renamed.    You don't need to merge this PR right away, because Renovate will continue to migrate these fields internally each time it runs. But later some of these fields may be fully deprecated and the migrations removed. So it's a good idea to merge this migration PR soon.       🔕 **Ignore**: Close this PR and you won't be reminded about config migration again, but one day your current config may no longer be valid.  ❓ Got questions? Does something look wrong to you? Please don't hesitate to [request help here](https://redirect.github.com/renovatebot/renovate/discussions).   ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/rollup/rollup).
 
-- **Issue #6648** (2026-11-08): **Fix invalid output for exported destructuring declarations with defaults**
-  *Symptoms*: Exported destructuring declarations could produce invalid output in non-ES formats. The bug is broader than the reported default case: any exported variable in a destructuring pattern was rendered invalidly because Identifier.render used the base qualified name in binding positions.  The fix renders binding identifiers with the plain name and uses a live getter for reassigned pattern variables, so exports stay live.  Fixes #6646  Trleo
-  **Post-Mortem & Fix Analysis**:
-  > @trleo is attempting to deploy a commit to the **rollup-js** Team on [Vercel](https://vercel.com).  A member of the Team first needs to [authorize it](https://vercel.com/git/authorize?team=rollup-js&slug=rollup-js&teamId=team_cdFV5jImY32UB9C9rzQ0JCXL&type=github&job=%7B%22headInfo%22%3A%7B%22sha%22%3A%223ab93aabc3b67a0a6507ec7ba757e8aad60eac2d%22%7D%2C%22id%22%3A%22QmZNG8rC7gyZ4imP4QQbyX4AeRAYwruxM5XJMhaKGTrKaG%22%2C%22org%22%3A%22rollup%22%2C%22prId%22%3A6648%2C%22repo%22%3A%22rollup%22%7D).  
-  > ### Thank you for your contribution! ❤️  You can try out this pull request locally by installing Rollup via  ```bash npm install trleo/rollup#fix/rollup-6646-destructuring-default-export ```  Notice: To build the native dependencies, you need [Rustup](https://www.rust-lang.org/tools/install) installed; the required nightly toolchain is then picked up automatically from `rust-toolchain.toml`.
+- **Issue #6666** (2026-11-16): **Document base URL caveats for emitted file URLs**
+  *Symptoms*: <!--   ⚡️ katchow! We ❤️ Pull Requests!    If you remove or skip this template, you'll make the 🐼 sad and the mighty god   of GitHub will appear and pile-drive the close button from a great height   while making animal noises.    Pull Request Requirements:   * Please include tests to illustrate the problem this PR resolves.   * Please lint your changes by running `npm run lint` before creating a PR.   * Please update the documentation in `/docs` where necessary    Please place an x (no spaces - [x]) in all [ ] that apply.   Remove the ones that do not apply as long as there remains one checkbox   in each section. -->  This PR contains:  - [x] documentation  Are tests included?  - [x] no  Breaking Changes?  - [x] no  List any relevant issue numbers:  ### Description  For `iife`, `umd` and CommonJS output in browsers, `import.meta.url` and emitted file URLs are derived from the currently executing script, falling back to `document.baseURI`. Since browsers resolve a script element's `src` against the document base URL that is active when the attribute is read, an injected `<base>` element is enough to rebind those URLs to another origin — and if such a URL is used to load a script, that script runs in the embedding page.  This was reproduced and we concluded that the root cause is the base injection, not the generated code: `<base>` deliberately changes resolution for every relative URL on the page, no API exposes a classic script's load-time URL, and document-order heuristics 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -352,69 +335,95 @@ impl AstConverter<'_> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6be8a51a` (2026-11-08)
-**Commit Message**: Fix invalid output for exported destructuring declarations with defaults (#6648)
+### Incident Patch 1: `1e4ce9e5` (2026-11-12)
+**Commit Message**: Fix system format updates for destructuring and for-loop assignments (#6651)
 
-* Fix invalid output for exported destructuring declarations with defaults
+* 4.68.1
 
-* Fix invalid output for exported destructuring declarations with defaults
+* Fix system format updates for destructuring and for-loop assignments
 
-* Fix invalid output for exported destructuring declarations with defaults
+A destructuring assignment that starts a statement was rendered as an
+illegal function statement. for-of and for-in heads never published
+their exported bindings.
 
-* Add test for exported destructuring declarations with defaults (#6646)
+* Address review: handle var loop declarations, simplify spacing and scope check
 
-* Simplify exported destructuring binding rendering
+var in a for-in/of head is hoisted, so the export is updated from the body.
+Ancestor scopes reserve that read because the head is a declaration, not a reference.
 
-The chunk-level export resolution already keeps variables declared in destructuring patterns on plain local names, so the dedicated binding-name API and the render branch were dead code. Remove them, extend the tests to cover update/for-of and reassigned rest bindings, and pin the CJS export shape with a form snapshot.
+* Fix exported var declarations in loop heads and bodies
 
----------
+A var declaration used as a for-of/for-in body was rendered like a loop head,
+so system exports were skipped and CommonJS emitted `var exports.name`.
+For-of/for-in heads that render as `exports.name` drop the illegal `var`
+and initializer, and for-loop initializers no longer insert an extra semicolon.
 
-Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
-Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
+* Reserve hoisted variable names instead of mutating the lookup cache
 
-**File**: `src/Chunk.ts` (modified, +17/-2)
+Writing for-in/of head bindings into accessedOutsideVariables also changed findVariable results, so code after a loop head could resolve an identifier to the exported binding instead of a shadowing 
+
+**File**: `src/Chunk.ts` (modified, +29/-2)
 ```diff
-@@ -2,6 +2,7 @@ import MagicString, { Bundle as MagicStringBundle, type SourceMap } from 'magic-
- import { relative } from '../browser/src/path';
- import ExportDefaultDeclaration from './ast/nodes/ExportDefaultDeclaration';
- import FunctionDeclaration from './ast/nodes/FunctionDeclaration';
-+import Identifier from './ast/nodes/Identifier';
+@@ -5,6 +5,8 @@ import FunctionDeclaration from './ast/nodes/FunctionDeclaration';
+ import Identifier from './ast/nodes/Identifier';
  import type ImportExpression from './ast/nodes/ImportExpression';
  import { formatsMaybeAccessDocumentCurrentScript } from './ast/nodes/MetaProperty';
++import VariableDeclaration from './ast/nodes/VariableDeclaration';
++import VariableDeclarator from './ast/nodes/VariableDeclarator';
  import type ChildScope from './ast/scopes/ChildScope';
-@@ -975,7 +976,10 @@ export default class Chunk {
- 				hoisted,
- 				local,
- 				needsLiveBinding:
--					variable.isReassigned && this.exportNamesByVariable.get(variable)!.length > 1
-+					(variable.isReassigned && this.exportNamesByVariable.get(variable)!.length > 1) ||
-+					// Pattern bindings are plain locals; a trailing assignment
-+					// would lose later reassignments.
-+					(variable.isTargetOfAssignment && isDeclaredInDestructuringPattern(variable))
+ import ExportDefaultVariable from './ast/variables/ExportDefaultVariable';
+ import type ExternalVariable from './ast/variables/ExternalVariable';
+@@ -979,7 +981,7 @@ export default class Chunk {
+ 					(variable.isReassigned && this.exportNamesByVariable.get(variable)!.length > 1) ||
+ 					// Pattern bindings are plain locals; a trailing assignment
+ 					// would lose later reassignments.
+-					(variable.isTargetOfAssignment && isDeclaredInDestructuringPattern(variable))
++					(variable.isTargetOfAssignment && cannotBeRenderedAsExportsMember(variable))
  			});
  		}
  		return exports;
-@@ -1511,7 +1515,8 @@ export default class Chunk {
- 				format !== 'es' &&
+@@ -1516,7 +1518,7 @@ export default class Chunk {
  				format !== 'system' &&
  				exportVariable.isReassigned &&
--				!exportVariable.isId
-+				!exportVariable.isId &&
-+				!isDeclaredInDestructuringPattern(exportVariable)
+ 				!exportVariable.isId &&
+-				!isDeclaredInDestructuringPattern(exportVariable)
++				!cannotBeRenderedAsExportsMember(exportVariable)
  			) {
  				exportVariable.setRenderNames('exports', unescapeExportName(exportName));
  			} else if (exportVariable instanceof SyntheticNamedExportVariable) {
-@@ -1631,6 +1636,16 @@ function getChunkNameFromModule(module: Module): string {
+@@ -1636,6 +1638,13 @@ function getChunkNameFromModule(module: Module): string {
  	return getPredefinedChunkNameFromModule(module) ?? getAliasName(module.id);
  }
  
-+function isDeclaredInDestructuringPattern(variable: Variable): boolean {
++function cannotBeRenderedAsExportsMember(variable: Variable): boolean {
++	return (
++		isDeclaredInDestructuringPattern(variable) ||
++		isDeclaredInMultiDeclaratorSingleStatement(variable)
++	);
++}
++
+ function isDeclaredInDestructuringPattern(variable: Variable): boolean {
+ 	return (
+ 		variable instanceof LocalVariable &&
+@@ -1646,6 +1655,24 @@ function isDeclaredInDestructuringPattern(variable: Variable): boolean {
+ 	);
+ }
+ 
++function isDeclaredInMultiDeclaratorSingleStatement(variable: Variable): boolean {
 +	return (
 +		variable instanceof LocalVariable &&
-+		variable.declarations.some(
-+			declaration =>
-+				declaration instanceof Identifier && declaration.isDeclarationInDestructuringPattern()
-+		)
++		(variable.declarations as Identifier[]).some(declaration => {
++			const declarator = declaration.parent;
++			if (!(declarator instanceof VariableDeclarator) || declarator.id !== declaration) {
++				return false;
++			}
++			const declarationNode = declarator.parent;
++			return (
++				declarationNode instanceof VariableDeclaration &&
++				declarationNode.declarations.length > 1 &&
++				declarationNode.isInSingleStatementPosition()
++			);
++		})
 +	);
 +}
 +
@@ -423,161 +432,840 @@ Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
  		module.chunkNames.find(({ isUserDefined }) => isUserDefined)?.name ?? module.chunkNames[0]?.name
 ```
 
-**File**: `src/ast/nodes/Identifier.ts` (modified, +13/-0)
+**File**: `src/ast/nodes/AssignmentExpression.ts` (modified, +14/-1)
 ```diff
-@@ -16,6 +16,7 @@ import * as NodeType from './NodeType';
- import { Flag, isFlagSet, setFlag } from './shared/BitFlags';
- import { type ExpressionEntity } from './shared/Expression';
- import IdentifierBase from './shared/IdentifierBase';
-+import type { Node } from './shared/Node';
- import { ObjectMember } from './shared/ObjectMember';
- import type { DeclarationPatternNode } from './shared/Pattern';
- import type { VariableKind } from './shared/VariableKinds';
-@@ -149,6 +150,18 @@ export default class Identifier extends IdentifierBase implements DeclarationPat
- 		this.variable!.initReached = true;
+@@ -162,7 +162,7 @@ export default class AssignmentExpression extends NodeBase {
+ 						systemPatternExports,
+ 						start,
+ 						end,
+-						renderedSurroundingElement === NodeType.ExpressionStatement,
++						systemExportIifeStartsStatement(parent, renderedSurroundingElement, start),
+ 						code,
+ 						options
+ 					);
+@@ -187,3 +187,16 @@ export default class AssignmentExpression extends NodeBase {
+ 		this.scope.context.requestTreeshakingPass();
+ 	}
+ }
++
++// `function () {}()` is a function declaration at the first token of a statement.
++// `({ name } = obj)` already starts at `(`, so the inserted function stays an expression.
++function systemExportIifeStartsStatement(
++	parent: { start?: number; type?: string },
++	renderedSurroundingElement: string | undefined,
++	expressionStart: number
++): boolean {
++	return (
++		renderedSurroundingElement === NodeType.ExpressionStatement ||
++		(parent.type === NodeType.ExpressionStatement && parent.start === expressionStart)
++	);
++}
+```
+
+**File**: `src/ast/nodes/ForInStatement.ts` (modified, +4/-0)
+```diff
+@@ -1,5 +1,6 @@
+ import type MagicString from 'magic-string';
+ import { NO_SEMICOLON, type RenderOptions } from '../../utils/renderHelpers';
++import { renderSystemExportForLoop } from '../../utils/systemJsRendering';
+ import type { HasEffectsContext, InclusionContext } from '../ExecutionContext';
+ import BlockScope from '../scopes/BlockScope';
+ import type ChildScope from '../scopes/ChildScope';
+@@ -61,6 +62,9 @@ export default class ForInStatement extends StatementBase {
+ 			code.prependLeft(this.right.start, ' ');
+ 		}
+ 		this.body.render(code, options);
++		if (options.format === 'system') {
++			renderSystemExportForLoop(this.left, this.body, code, options);
++		}
  	}
  
-+	isDeclarationInDestructuringPattern(): boolean {
-+		let parent: Node | { type?: string } = this.parent;
-+		while (
-+			parent.type === NodeType.Property ||
-+			parent.type === NodeType.AssignmentPattern ||
-+			parent.type === NodeType.RestElement
-+		) {
-+			parent = (parent as Node).parent;
+ 	applyDeoptimizations() {
+```
+
+**File**: `src/ast/nodes/ForOfStatement.ts` (modified, +4/-0)
+```diff
+@@ -1,5 +1,6 @@
+ import type MagicString from 'magic-string';
+ import { NO_SEMICOLON, type RenderOptions } from '../../utils/renderHelpers';
++import { renderSystemExportForLoop } from '../../utils/systemJsRendering';
+ import type { InclusionContext } from '../ExecutionContext';
+ import BlockScope from '../scopes/BlockScope';
+ import type ChildScope from '../scopes/ChildScope';
+@@ -70,6 +71,9 @@ export default class ForOfStatement extends StatementBase {
+ 			code.prependLeft(this.right.start, ' ');
+ 		}
+ 		this.body.render(code, options);
++		if (options.format === 'system') {
++			renderSystemExportForLoop(this.left, this.body, code, options);
 +		}
-+		return parent.type === NodeType.ObjectPattern || parent.type === NodeType.ArrayPattern;
-+	}
-+
- 	render(
- 		code: MagicString,
- 		{ snippets: { getPropertyAccess }, useOriginalName }: RenderOptions,
+ 	}
+ 
+ 	applyDeoptimizations() {
 ```
 
-**File**: `test/form/samples/export-destructuring-with-default/_config.js` (added, +5/-0)
+**File**: `src/ast/nodes/IfStatement.ts` (modified, +10/-1)
 ```diff
-@@ -0,0 +1,5 @@
+@@ -5,6 +5,7 @@ import { type HasEffectsContext, type InclusionContext } from '../ExecutionConte
+ import TrackingScope from '../scopes/TrackingScope';
+ import { EMPTY_PATH, SHARED_RECURSION_TRACKER } from '../utils/PathTracker';
+ import { tryCastLiteralValueToBoolean } from '../utils/tryCastLiteralValueToBoolean';
++import type Variable from '../variables/Variable';
+ import BlockStatement from './BlockStatement';
+ import type Identifier from './Identifier';
+ import * as NodeType from './NodeType';
+@@ -177,7 +178,7 @@ export default class IfStatement extends StatementBase implements DeoptimizableE
+ 			...new Set(
+ 				hoistedDeclarations.map(identifier => {
+ 					const variable = identifier.variable!;
+-					return variable.included ? variable.getName(getPropertyAccess) : '';
++					return this.shouldHoistVariable(variable) ? variable.getName(getPropertyAccess) : '';
+ 				})
+ 			)
+ 		]
+@@ -193,6 +194,14 @@ export default class IfStatement extends StatementBase implements DeoptimizableE
+ 		}
+ 	}
+ 
++	private shouldHoistVariable(variable: Variable): boolean {
++		return (
++			variable.included &&
++			variable.renderBaseName === null &&
++			variable.getHoistedVariable()?.renderBaseName == null
++		);
++	}
++
+ 	private shouldKeepAlternateBranch() {
+ 		let currentParent = this.parent;
+ 		do {
+```
+
+**File**: `src/ast/nodes/LabeledStatement.ts` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@ export default class LabeledStatement extends StatementBase {
+ 		if (!this.included) this.includeNode(context);
+ 		const { brokenFlow, includedLabels } = context;
+ 		context.includedLabels = new Set<string>();
+-		this.body.include(context, includeChildrenRecursively);
++		this.body.include(context, includeChildrenRecursively, { asSingleStatement: true });
+ 		if (includeChildrenRecursively || context.includedLabels.has(this.label.name)) {
+ 			this.label.include(context, includeChildrenRecursively);
+ 			context.includedLabels.delete(this.label.name);
+```
+
+**File**: `src/ast/nodes/VariableDeclaration.ts` (modified, +208/-13)
+```diff
+@@ -1,6 +1,6 @@
+ import type MagicString from 'magic-string';
+ import { BLANK } from '../../utils/blank';
+-import { isReassignedExportsMember } from '../../utils/reassignedExportsMember';
++import { isDeclaredWithoutBinding } from '../../utils/reassignedExportsMember';
+ import {
+ 	findFirstOccurrenceOutsideComment,
+ 	findNonWhiteSpace,
+@@ -36,6 +36,18 @@ export default class VariableDeclaration extends NodeBase {
+ 	declare kind: VariableDeclarationKind;
+ 	declare type: NodeType.tVariableDeclaration;
+ 
++	addExportedVariables(
++		variables: readonly Variable[],
++		exportNamesByVariable: ReadonlyMap<Variable, readonly string[]>
++	): void {
++		// Only `var` is hoisted to the surrounding scope, so only those bindings can
++		// be the exported ones. `let` and `const` in a loop head are new bindings.
++		if (this.kind !== 'var') return;
++		for (const declarator of this.declarations) {
++			declarator.id.addExportedVariables(variables, exportNamesByVariable);
++		}
++	}
++
+ 	deoptimizePath(): void {
+ 		for (const declarator of this.declarations) {
+ 			declarator.deoptimizePath(EMPTY_PATH);
+@@ -88,6 +100,14 @@ export default class VariableDeclaration extends NodeBase {
+ 		options: RenderOptions,
+ 		nodeRenderOptions: NodeRenderOptions = BLANK
+ 	): void {
++		// A `var` declaration can be the body of a for-in/of loop. Only the
++		// left-hand side is a loop head. Rewriting that head as a statement
++		// inserts a semicolon and turns `for (var name of ...)` into invalid code.
++		// Exported `var` bindings are updated from the loop body instead.
++		if (this.isForInOfHead()) {
++			this.renderForInOfHead(code, options);
++			return;
++		}
+ 		if (this.areAllDeclarationsIncludedAndNotExported(options.exportNamesByVariable)) {
+ 			for (const declarator of this.declarations) {
+ 				declarator.render(code, options);
+@@ -98,8 +118,52 @@ export default class VariableDeclaration extends NodeBase {
+ 			) {
+ 				code.appendLeft(this.end, ';');
+ 			}
++		} else if (this.isInSingleStatementPosition()) {
++			this.renderSingleStatementDeclaration(
++				code,
++				options,
++				nodeRenderOptions.isNoStatement === true
++			);
+ 		} else {
+-			this.renderReplacedDeclarations(code, options);
++			this.renderReplacedDeclarations(code, options, nodeRenderOptions.isNoStatement === true);
++		}
++	}
++
++	private isForInOfHead(): boolean {
++		const parent = this.parent;
++		return (
++			(parent.type === NodeType.ForOfStatement || parent.type === NodeType.ForInStatement) &&
++			(parent as { left?: unknown }).left === this
++		);
++	}
++
++	isInSingleStatementPosition(): boolean {
++		const { type } = this.parent;
++		return !(
++			type === NodeType.Program ||
++			type === NodeType.BlockStatement ||
++			type === NodeType.StaticBlock ||
++			type === NodeType.SwitchCase ||
++			type === NodeType.ExportNamedDeclaration
++		);
++	}
++
++	private renderForInOfHead(code: MagicString, options: RenderOptions): void {
++		const declarator = this.declarations[0];
++		if (
++			declarator.id instanceof Identifier &&
++			isDeclaredWithoutBinding(declarator.id.variable!, options.exportNamesByVariable)
++		) {
++			// `for (var name of xs)` declares `name`, but a reassigned export is
++			// rendered as `exports.name`, and a catch parameter shadowing one must
++			// stay an assignment. Keeping `var`, or synthesizing `= void 0` because
++			// the declarator has no initializer, is a syntax error.
++			code.remove(this.start, declarator.id.start);
++			declarator.id.render(code, options);
++			return;
++		}
++		for (const eachDeclarator of this.declarations) {
++			eachDeclarator.render(code, options);
+ 		}
+ 	}
+ 
+@@ -110,14 +174,21 @@ export default class VariableDeclaration extends NodeBase {
+ 		actualContentEnd: number,
+ 		renderedContentEnd: number,
+ 		systemPatternExports: readonly Variable[],
+-		options: RenderOptions
++		options: RenderOptions,
++		omitTrailingSemicolon: boolean
+ 	): void {
+ 		if (code.original.charCodeAt(this.end - 1) === 59 /*";"*/) {
+ 			code.remove(this.end - 1, this.end);
+ 		}
+-		separatorString += ';';
++		// A for-loop initializer is not a statement. The separator after it
++		// belongs to the for statement, so another semicolon makes the head invalid.
++		if (!omitTrailingSemicolon) {
++			separatorString += ';';
++		}
+ 		if (lastSeparatorPos === null) {
+-			code.appendLeft(renderedContentEnd, separatorString);
++			if (separatorString) {
++				code.appendLeft(renderedContentEnd, separatorString);
++			}
+ 		} else {
+ 			if (
+ 				code.original.charCodeAt(actualContentEnd - 1) === 10 /*"\n"*/ &&
+@@ -144,7 +215,11 @@ export default class VariableDeclaration extends NodeBase {
+ 		}
+ 	}
+ 
+-	private renderReplacedDeclarations(code: MagicString, options: RenderOptions): void {
++	private renderReplacedDeclarations(
++		code: MagicString,
++		options: RenderOptions,
++		omitTrailingSemicolon: boolean
++	): void {
+ 		const separatedNodes = getCommaSeparatedNodesWithBoundaries(
+ 			this.declarations,
+ 			code,
+@@ -166,6 +241,7 @@ export default class VariableDeclaration extends NodeBase {
+ 		
+```
+
+**File**: `src/ast/scopes/BlockScope.ts` (modified, +4/-4)
+```diff
+@@ -24,13 +24,13 @@ export default class BlockScope extends ChildScope {
+ 			const existingVariable =
+ 				this.hoistedVariables?.get(name) || (this.variables.get(name) as LocalVariable | undefined);
+ 			if (existingVariable) {
+-				if (
+-					existingVariable.kind === 'var' ||
+-					(kind === 'var' && existingVariable.kind === 'parameter')
+-				) {
++				if (existingVariable.kind === 'var') {
+ 					existingVariable.addDeclaration(identifier, init);
+ 					return existingVariable;
+ 				}
++				if (existingVariable.kind === 'parameter') {
++					return this.parent.addDeclaration(identifier, context, init, destructuredInitPath, kind);
++				}
+ 				return context.error(logRedeclarationError(name), identifier.start);
+ 			}
+ 			const declaredVariable = this.parent.addDeclaration(
+```
+
+---
+
+### Incident Patch 2: `e88601af` (2026-11-16)
+**Commit Message**: Rebuild with the latest content when a watched file changes in quick succession (#6637)
+
+* Rebuild with the latest content when a watched file changes in quick succession
+
+* Do not replay changes without stats and hold empty-file changes
+
+* Keep replays while a file is re-registered
+
+* Match chokidar's path format when checking for unwatched files
+
+---------
+
+Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
+
+**File**: `build-plugins/chokidar-change-throttle-replacement.ts` (added, +149/-0)
+```diff
+@@ -0,0 +1,149 @@
++import type { RollupReplaceOptions } from '@rollup/plugin-replace';
++import { readFile } from 'node:fs/promises';
++import { exit } from 'node:process';
++
++// chokidar 3 throttles file change notifications and silently discards the
++// ones inside a throttle window, so when a file is written twice in quick
++// succession, the second write is never reported and the watcher keeps the
++// stale build. This affects two throttles:
++// - the per-file 5ms throttle of the raw fs.watch listener, see
++//   https://github.com/paulmillr/chokidar/blob/3.6.0/lib/nodefs-handler.js#L361
++// - the per-file 50ms throttle of "change" events, see
++//   https://github.com/paulmillr/chokidar/blob/3.6.0/index.js#L615-L618
++// The replacements follow chokidar 6, where this is fixed upstream
++// (https://github.com/paulmillr/chokidar/issues/1455): the raw listener is not
++// throttled, and the newest "change" with different stats inside the 50ms
++// window is replayed when the window closes, unless the file was unlinked or is
++// no longer watched. A "change" that sees an empty file is held for up to 10ms
++// so that a truncate-then-write is reported once with its data.
++
++const INDEX = 'node_modules/chokidar/index.js';
++const NODEFS_HANDLER = 'node_modules/chokidar/lib/nodefs-handler.js';
++
++const THROTTLE_SIGNATURE = '_throttle(actionType, path, timeout) {';
++const THROTTLE_SIGNATURE_WITH_RELEASE = '_throttle(actionType, path, timeout, onRelease) {';
++
++const THROTTLE_CLEAR = `  const clear = () => {
++    const item = action.get(path);
++    const count = item ? item.count : 0;
++    action.delete(path);
++    clearTimeout(timeoutObject);
++    if (item) clearTimeout(item.timeoutObject);
++    return count;
++  };`;
++const THROTTLE_CLEAR_WITH_RELEASE = `  const clear = (invokeRelease = true) => {
++    const item = action.get(path);
++    const count = item ? item.count : 0;
++    action.delete(path);
++    clearTimeout(timeoutObject);
++    if (item) clearTimeout(item.timeoutObject);
++    if (invokeRelease && onRelease) onRelease(count);
++    return count;
++  };`;
++
++const BEFORE_AWAIT_WRITE_FINISH = `  const awf = opts.awaitWriteFinish;
++  let pw;`;
++const CANCEL_CHANGE_REPLAY_ON_UNLINK = `  if (event === EV_UNLINK) {
++    const changeThrottler = this._throttled.has(EV_CHANGE) && this._throttled.get(EV_CHANGE).get(path);
++    if (changeThrottler) changeThrottler.clear(false);
++    if (this._pendingChanges) this._pendingChanges.delete(path);
++  }
++
++${BEFORE_AWAIT_WRITE_FINISH}`;
++
++const DISCARDING_CHANGE_THROTTLE = `  if (event === EV_CHANGE) {
++    const isThrottled = !this._throttle(EV_CHANGE, path, 50);
++    if (isThrottled) return this;
++  }`;
++const REPLAYING_CHANGE_THROTTLE = `  if (event === EV_CHANGE) {
++    if (!this._pendingChanges) this._pendingChanges = new Map();
++    const fullPath = opts.cwd ? sysPath.join(opts.cwd, path) : path;
++    // unwatch() marks the path as ignored synchronously and add() clears the
++    // mark synchronously, so a file that is unwatched and re-added, which
++    // Rollup does on every change on Linux, is still considered watched while
++    // the asynchronous re-registration is in progress. Both store paths with
++    // forward slashes, also on Windows.
++    const isUnwatched = () =>
++      this._ignoredPaths.has(normalizePathToUnix(sysPath.resolve(fullPath)));
++    const isEmptyFile = (stats) => Boolean(stats && stats.isFile() && stats.size === 0);
++    const throttler = this._throttle(EV_CHANGE, path, 50, (suppressedCount) => {
++      const pending = this._pendingChanges.get(path);
++      this._pendingChanges.delete(path);
++      if (suppressedCount === 0 || !pending || !pending.replay || isUnwatched()) return;
++      void this._emit(EV_CHANGE, fullPath, ...pending.args.slice(2));
++    });
++    if (!throttler) {
++      const pending = this._pendingChanges.get(path);
++      const previousStats = pending && pending.args[2];
++      const stats = args[2];
++      // Only changes with stats are replayed. fsevents reports changes without
++      // stats, so its duplicate notifications cannot be told apart from new
++      // writes and are discarded as before.
++      if (
++        previousStats && stats &&
++        (previousStats.size !== stats.size ||
++          previousStats.mtimeMs !== stats.mtimeMs ||
++          previousStats.ino !== stats.ino)
++      ) {
++        pending.args = args;
++        pending.replay = true;
++        // The data of a held truncate-then-write landed: publish it now.
++        if (pending.held && !isEmptyFile(stats)) pending.held.release();
++      }
++      return this;
++    }
++    const pending = { args, replay: false, held: undefined };
++    this._pendingChanges.set(path, pending);
++    if (isEmptyFile(args[2])) {
++      // A change that sees an empty file is usually the truncation of a write
++      // that is still in progress. Hold it briefly so the data is reported in
++      // the same change.
++      const release = () => {
++        clearTimeout(pending.h
+```
+
+**File**: `rollup.config.ts` (modified, +2/-0)
+```diff
+@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
+ import type { Plugin, RollupOptions, WarningHandlerWithDefault } from 'rollup';
+ import addCliEntry from './build-plugins/add-cli-entry';
+ import { moduleAliases } from './build-plugins/aliases';
++import { chokidarChangeThrottleReplacement } from './build-plugins/chokidar-change-throttle-replacement';
+ import { chokidarReaddirThrottleReplacement } from './build-plugins/chokidar-readdir-throttle-replacement';
+ import cleanBeforeWrite from './build-plugins/clean-before-write';
+ import { copyBrowserTypes, copyNodeTypes } from './build-plugins/copy-types';
+@@ -42,6 +43,7 @@ const treeshake = {
+ const nodePlugins: readonly Plugin[] = [
+ 	replace(fsEventsReplacement),
+ 	replace(chokidarReaddirThrottleReplacement),
++	replace(chokidarChangeThrottleReplacement),
+ 	alias(moduleAliases),
+ 	nodeResolve({ preferBuiltins: true }),
+ 	json(),
+```
+
+**File**: `test/watch/index.js` (modified, +112/-0)
+```diff
+@@ -3497,6 +3497,118 @@ describe('rollup.watch', function () {
+ 		]);
+ 	});
+ 
++	describe('quick successive changes', () => {
++		// The bundled chokidar used to silently discard changes to a file within
++		// a few milliseconds of the previous change, so rollup kept the stale
++		// build, see https://github.com/paulmillr/chokidar/issues/1455. These
++		// tests can fail with the Node.js fs.watch backend, which Linux and
++		// Windows use; on macOS, fsevents reports changes in delayed batches.
++		const watchBasic = async () => {
++			await copy(path.join(SAMPLES_DIR, 'basic'), INPUT_DIR);
++			watcher = rollup.watch({
++				input: ENTRY_FILE,
++				output: {
++					file: BUNDLE_FILE,
++					format: 'cjs',
++					exports: 'auto'
++				}
++			});
++			await withTimeout(waitForWatcherEvent(watcher, 'END'), 10_000, () => {
++				throw new Error('The initial build did not finish.');
++			});
++			assert.strictEqual(run(BUNDLE_FILE), 42);
++		};
++
++		const waitForBundleResult = async (expected, message) => {
++			const deadline = Date.now() + 5000;
++			while (readBundleResult() !== expected) {
++				if (Date.now() > deadline) {
++					throw new Error(`${message} The bundle returns ${readBundleResult()}.`);
++				}
++				await wait(50);
++			}
++		};
++
++		const waitUntilChangesAreReported = async () => {
++			const deadline = Date.now() + 5000;
++			// File watchers may drop changes that happen before they are fully
++			// initialized, hence the file is changed again until a rebuild picks it up.
++			while (readBundleResult() !== 43) {
++				if (Date.now() > deadline) {
++					throw new Error('The change did not trigger a rebuild.');
++				}
++				await writeFile(ENTRY_FILE, 'export default 43;');
++				await wait(300);
++			}
++		};
++
++		it('rebuilds with the latest content when a file is changed twice in quick succession', async () => {
++			await watchBasic();
++			await waitUntilChangesAreReported();
++			await writeFile(ENTRY_FILE, 'export default 44;');
++			await wait(10);
++			await writeFile(ENTRY_FILE, 'export default 45;');
++			await waitForBundleResult(45, 'The second change was not rebuilt.');
++		});
++
++		it('rebuilds when a file is fixed right after a failed build', async () => {
++			await watchBasic();
++			await waitUntilChangesAreReported();
++			let isErrorReported = false;
++			watcher.on('event', event => {
++				if (event.code === 'ERROR' && !isErrorReported) {
++					isErrorReported = true;
++					writeFileSync(ENTRY_FILE, 'export default 44;');
++				}
++			});
++			await writeFile(ENTRY_FILE, 'export default {;');
++			await waitForBundleResult(44, 'The fix after the failed build was not rebuilt.');
++			assert.ok(isErrorReported, 'The invalid code did not fail the build.');
++		});
++
++		it('does not report a change after a quickly changed file is deleted', async () => {
++			const watchedId = path.join(INPUT_DIR, 'dep');
++			await writeFile(watchedId, 'initial');
++			const watchedEvents = [];
++			await copy(path.join(SAMPLES_DIR, 'basic'), INPUT_DIR);
++			watcher = rollup.watch({
++				input: ENTRY_FILE,
++				output: {
++					file: BUNDLE_FILE,
++					format: 'cjs',
++					exports: 'auto'
++				},
++				plugins: {
++					buildStart() {
++						this.addWatchFile(watchedId);
++					}
++				}
++			});
++			watcher.on('change', (id, { event }) => {
++				if (id === watchedId) {
++					watchedEvents.push(event);
++				}
++			});
++			await withTimeout(waitForWatcherEvent(watcher, 'END'), 10_000, () => {
++				throw new Error('The initial build did not finish.');
++			});
++			await waitUntilChangesAreReported();
++			await writeFile(watchedId, 'first');
++			await wait(10);
++			await writeFile(watchedId, 'second');
++			await wait(10);
++			await unlink(watchedId);
++			await wait(300);
++			// File watchers may report the changes and the deletion as a single
++			// deletion, but the throttled change must not be reported again.
++			assert.strictEqual(watchedEvents.at(-1), 'delete', `Reported events: ${watchedEvents}`);
++			assert.ok(
++				watchedEvents.filter(event => event === 'update').length <= 1,
++				`Reported events: ${watchedEvents}`
++			);
++		});
++	});
++
+ 	describe('addWatchFile', () => {
+ 		it('supports adding additional watch files in plugin hooks', async () => {
+ 			const buildEndFile = path.resolve(path.join(INPUT_DIR, 'buildEnd'));
+```
+
+---
+
+### Incident Patch 3: `01b5c2b8` (2026-11-15)
+**Commit Message**: Fix resolution info for dynamic imports resolved by plugins (#6665)
+
+* Include hook-resolved dynamic imports in dynamicallyImportedIdResolutions
+
+The getter looked up module.resolvedIds by the specifier, which is only
+filled when no resolveDynamicImport hook resolves the import, so dynamic
+imports resolved by plugins were missing although they were part of
+dynamicallyImportedIds. Dynamic imports now keep their resolution.
+
+* Set resolvedBy for dynamic imports resolved by plugins
+
+Static imports report the plugin whose resolveId hook resolved them, but
+resolutions from resolveDynamicImport always reported "rollup". This
+became visible now that these resolutions are part of
+dynamicallyImportedIdResolutions.
+
+---------
+
+Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
+
+**File**: `src/Module.ts` (modified, +7/-5)
+```diff
+@@ -157,8 +157,8 @@ export interface AstContext {
+ 
+ export interface DynamicImport {
+ 	argument: string | AstNode;
+-	id: string | null;
+ 	node: ImportExpression;
++	resolution: ResolvedId | null;
+ }
+ 
+ const MISSING_EXPORT_SHIM_DESCRIPTION: ExportDescription = {
+@@ -329,13 +329,15 @@ export default class Module {
+ 			code: null,
+ 			get dynamicallyImportedIdResolutions() {
+ 				return dynamicImports
+-					.map(({ argument }) => typeof argument === 'string' && module.resolvedIds[argument])
+-					.filter(Boolean) as ResolvedId[];
++					.map(({ resolution }) => resolution)
++					.filter((resolution): resolution is ResolvedId => resolution !== null);
+ 			},
+ 			get dynamicallyImportedIds() {
+ 				// We cannot use this.dynamicDependencies because this is needed before
+ 				// dynamicDependencies are populated
+-				return dynamicImports.map(({ id }) => id).filter((id): id is string => id != null);
++				return dynamicImports
++					.map(({ resolution }) => resolution?.id)
++					.filter((id): id is string => id != null);
+ 			},
+ 			get dynamicImporters() {
+ 				return dynamicImporters.sort();
+@@ -1099,7 +1101,7 @@ export default class Module {
+ 		) {
+ 			argument = (argument as LiteralStringNode).value!;
+ 		}
+-		this.dynamicImports.push({ argument, id: null, node });
++		this.dynamicImports.push({ argument, node, resolution: null });
+ 	}
+ 
+ 	private assertUniqueExportName(name: string, nodeStart: number) {
+```
+
+**File**: `src/ModuleLoader.ts` (modified, +12/-5)
+```diff
+@@ -41,7 +41,7 @@ import {
+ import { isAbsolute, isRelative, resolve } from './utils/path';
+ import type { PluginDriver } from './utils/PluginDriver';
+ import relativeId from './utils/relativeId';
+-import { resolveId } from './utils/resolveId';
++import { resolveId, withDefaultResolvedBy } from './utils/resolveId';
+ import stripBom from './utils/stripBom';
+ import transform from './utils/transform';
+ import { URL_LOAD } from './utils/urls';
+@@ -606,7 +606,7 @@ export class ModuleLoader {
+ 				dynamicImport.node.shouldIncludeDynamicAttributes = true;
+ 			} else {
+ 				dynamicImport.node.shouldIncludeDynamicAttributes = !!resolvedId.external;
+-				dynamicImport.id = resolvedId.id;
++				dynamicImport.resolution = resolvedId;
+ 			}
+ 			return [dynamicImport, resolvedId] as const;
+ 		});
+@@ -760,11 +760,13 @@ export class ModuleLoader {
+ 		importer: string,
+ 		attributes: Record<string, string>
+ 	): Promise<ResolvedId | string | null> {
+-		const resolution = await this.pluginDriver.hookFirst('resolveDynamicImport', [
++		const pluginResult = await this.pluginDriver.hookFirstAndGetPlugin('resolveDynamicImport', [
+ 			specifier,
+ 			importer,
+ 			{ attributes, importerAttributes: module.info.attributes }
+ 		]);
++		const resolution = pluginResult && pluginResult[0];
++		const resolvedBy = resolution ? pluginResult[1].name : undefined;
+ 		if (typeof specifier !== 'string') {
+ 			if (typeof resolution === 'string') {
+ 				return resolution;
+@@ -773,7 +775,7 @@ export class ModuleLoader {
+ 				return null;
+ 			}
+ 			return this.getResolvedIdWithDefaults(
+-				resolution as NormalizedResolveIdWithoutDefaults,
++				withDefaultResolvedBy(resolution as NormalizedResolveIdWithoutDefaults, resolvedBy),
+ 				attributes
+ 			);
+ 		}
+@@ -807,9 +809,14 @@ export class ModuleLoader {
+ 				attributes
+ 			));
+ 		}
++		const normalizedResolution = this.getNormalizedResolvedIdWithoutDefaults(
++			resolution,
++			importer,
++			specifier
++		);
+ 		return this.handleInvalidResolvedId(
+ 			this.getResolvedIdWithDefaults(
+-				this.getNormalizedResolvedIdWithoutDefaults(resolution, importer, specifier),
++				normalizedResolution && withDefaultResolvedBy(normalizedResolution, resolvedBy),
+ 				attributes
+ 			),
+ 			specifier,
+```
+
+**File**: `src/utils/resolveId.ts` (modified, +13/-11)
+```diff
+@@ -31,19 +31,12 @@ export async function resolveId(
+ 
+ 	if (pluginResult != null) {
+ 		const [resolveIdResult, plugin] = pluginResult;
+-		if (typeof resolveIdResult === 'object' && !resolveIdResult.resolvedBy) {
+-			return {
+-				...resolveIdResult,
+-				resolvedBy: plugin.name
+-			};
+-		}
+ 		if (typeof resolveIdResult === 'string') {
+-			return {
+-				id: resolveIdResult,
+-				resolvedBy: plugin.name
+-			};
++			return { id: resolveIdResult, resolvedBy: plugin.name };
+ 		}
+-		return resolveIdResult;
++		return typeof resolveIdResult === 'object'
++			? withDefaultResolvedBy(resolveIdResult, plugin.name)
++			: resolveIdResult;
+ 	}
+ 
+ 	// external modules (non-entry modules that start with neither '.' or '/')
+@@ -93,3 +86,12 @@ async function findFile(
+ 		// suppress
+ 	}
+ }
++
++export function withDefaultResolvedBy<T extends { resolvedBy?: string | null }>(
++	resolution: T,
++	pluginName: string | undefined
++): T {
++	return resolution.resolvedBy || !pluginName
++		? resolution
++		: { ...resolution, resolvedBy: pluginName };
++}
+```
+
+**File**: `test/function/samples/dynamically-imported-id-resolutions-from-hook/_config.js` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++const assert = require('node:assert/strict');
++const path = require('node:path');
++
++const ID_MAIN = path.join(__dirname, 'main.js');
++const ID_STRING = path.join(__dirname, 'string.js');
++const ID_EXPRESSION = path.join(__dirname, 'expression.js');
++
 +module.exports = defineTest({
 +	description:
-+		'renders exported destructuring declarations as plain bindings and keeps reassigned exports live',
-+	options: { output: { format: 'cjs' } }
++		'lists dynamic imports resolved by the resolveDynamicImport hook in dynamicallyImportedIdResolutions',
++	options: {
++		plugins: [
++			{
++				name: 'test',
++				resolveDynamicImport(specifier) {
++					if (specifier === './string.js') {
++						return { id: ID_STRING, meta: { test: 'string' } };
++					}
++					if (typeof specifier !== 'string') {
++						return { id: ID_EXPRESSION, meta: { test: 'expression' } };
++					}
++				},
++				buildEnd() {
++					assert.deepEqual(
++						this.getModuleInfo(ID_MAIN).dynamicallyImportedIdResolutions.map(({ id, meta }) => ({
++							id,
++							meta
++						})),
++						[
++							{ id: ID_STRING, meta: { test: 'string' } },
++							{ id: ID_EXPRESSION, meta: { test: 'expression' } }
++						]
++					);
++				}
++			}
++		]
++	}
 +});
 ```
 
-**File**: `test/form/samples/export-destructuring-with-default/_expected.js` (added, +16/-0)
+**File**: `test/function/samples/dynamically-imported-id-resolutions-from-hook/expression.js` (added, +1/-0)
 ```diff
-@@ -0,0 +1,16 @@
-+'use strict';
-+
-+const { value = 1 } = {};
-+let { reassigned } = { reassigned: 2 };
-+
-+function reassign() {
-+	reassigned += 1;
-+}
-+
-+exports.reassign = reassign;
-+Object.defineProperty(exports, "reassigned", {
-+	configurable: true,
-+	enumerable: true,
-+	get: function () { return reassigned; }
-+});
-+exports.value = value;
+@@ -0,0 +1 @@
++export default 'expression';
 ```
 
-**File**: `test/form/samples/export-destructuring-with-default/main.js` (added, +6/-0)
+**File**: `test/function/samples/dynamically-imported-id-resolutions-from-hook/main.js` (added, +2/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+export const { value = 1 } = {};
-+export let { reassigned } = { reassigned: 2 };
-+
-+export function reassign() {
-+	reassigned += 1;
-+}
+@@ -0,0 +1,2 @@
++export const loadString = () => import('./string.js');
++export const loadExpression = name => import(name);
 ```
 
-**File**: `test/function/samples/export-destructuring-with-default/_config.js` (added, +29/-0)
+**File**: `test/function/samples/dynamically-imported-id-resolutions-from-hook/string.js` (added, +1/-0)
 ```diff
-@@ -0,0 +1,29 @@
-+const assert = require('node:assert');
+@@ -0,0 +1 @@
++export default 'string';
+```
+
+**File**: `test/function/samples/resolve-dynamic-import-resolved-by/_config.js` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++const assert = require('node:assert/strict');
++const path = require('node:path');
++
++const ID_MAIN = path.join(__dirname, 'main.js');
 +
 +module.exports = defineTest({
-+	description:
-+		'exported destructuring declarations with default values produce valid output and stay live',
-+	exports(exports) {
-+		assert.equal(exports.retries, 3);
-+		assert.equal(exports.timeout, 1000);
-+		assert.equal(exports.first, 1);
-+		assert.equal(exports.renamedValue, 2);
-+		assert.equal(exports.deep, 3);
-+		assert.equal(exports.plain, 4);
-+		assert.equal(exports.computed, 5);
-+		assert.deepEqual(exports.rest, [6, 7, 8]);
-+		assert.equal(exports.reassigned, 5);
-+		exports.bumpReassigned();
-+		assert.equal(exports.reassigned, 6);
-+		exports.setReassigned(7);
-+		assert.equal(exports.reassigned, 7);
-+		assert.equal(exports.counter, 0);
-+		exports.incrementCounter();
-+		assert.equal(exports.counter, 1);
-+		assert.equal(exports.looped, 0);
-+		exports.loop();
-+		assert.equal(exports.looped, 2);
-+		exports.resetRest();
-+		assert.deepEqual(exports.rest, []);
++	description: 'sets resolvedBy to the plugin that resolved a dynamic import',
++	options: {
++		plugins: [
++			{
++				name: 'test',
++				resolveDynamicImport(specifier) {
++					switch (specifier) {
++						case './object.js': {
++							return { id: path.join(__dirname, 'object.js') };
++						}
++						case './string.js': {
++							return path.join(__dirname, 'string.js');
++						}
++						case './excluded.js': {
++							return false;
++						}
++						case './custom.js': {
++							return { id: path.join(__dirname, 'custom.js'), resolvedBy: 'custom' };
++						}
++					}
++					if (typeof specifier !== 'string') {
++						return { id: path.join(__dirname, 'expression.js') };
++					}
++				},
++				buildEnd() {
++					assert.deepEqual(
++						this.getModuleInfo(ID_MAIN).dynamicallyImportedIdResolutions.map(
++							({ resolvedBy }) => resolvedBy
++						),
++						['test', 'test', 'rollup', 'custom', 'test', 'rollup']
++					);
++				}
++			}
++		]
 +	}
 +});
-```
-
-**File**: `test/function/samples/export-destructuring-with-default/main.js` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+const key = 'computed';
-+
-+export const { retries = 3, timeout = 1000 } = {};
-+export const [first = 1] = [];
-+export const { renamed: renamedValue = 2 } = {};
-+export const {
-+	nested: { deep = 3 }
-+} = { nested: {} };
-+export const { plain } = { plain: 4 };
-+export const { [key]: computed = 5 } = {};
-+export let [...rest] = [6, 7, 8];
-+export let { reassigned } = { reassigned: 5 };
-+export let { counter = 0 } = {};
-+export let { looped = 0 } = {};
-+
-+export function bumpReassigned() {
-+	reassigned += 1;
-+}
-+
-+export function setReassigned(value) {
-+	({ reassigned } = { reassigned: value });
-+}
-+
-+export function incrementCounter() {
-+	counter++;
-+}
-+
-+export function loop() {
-+	for (looped of [1, 2]) {
-+		// reassign through a for-of target
-+	}
-+}
-+
-+export function resetRest() {
-+	rest = [];
-+}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6652** (2026-11-09): Reject Windows drive-relative output file names (@lukastaegert)
-- **PR #6648** (2026-11-08): Fix invalid output for exported destructuring declarations with defaults (@trleo)
-- **PR #6645** (2026-11-08): Preserve namespace property references in delete expressions (@mayankdhingra02)
-- **PR #6644** (2026-11-08): Defer namespace bindings initialized later in a cycle (@mayankdhingra02)
-- **PR #6643** (2026-11-08): docs: update the ES modules sentence in the introduction (@vigohan95)
-- **PR #6639** (2026-11-08): List --interop modes in CLI help instead of --no-interop (@ZainnQureshii)
+- **PR #6667** (2026-11-16): Migrate Renovate config (@renovate[bot])
+- **PR #6666** (2026-11-16): Document base URL caveats for emitted file URLs (@lukastaegert)
+- **PR #6665** (2026-11-15): Fix resolution info for dynamic imports resolved by plugins (@TrickyPi)
+- **PR #6663** (2026-11-13): Lock file maintenance (@renovate[bot])
+- **PR #6662** (2026-11-13): Update minor/patch updates (@renovate[bot])
+- **PR #6661** (2026-11-16): Deoptimize arguments that known globals expose via their return value (@waw666waw666)
 
 ---
 
@@ -597,13 +1285,13 @@ Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. invalid output for exported destructuring declarations with defaults (#6648)
+## X. system format updates for destructuring and for-loop assignments
 
 **RULE**:
 When implementing operations in `src/Chunk.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rollup/rollup. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6be8a51a`: invalid output for exported destructuring declarations with defaults (#6648). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e4ce9e5`: system format updates for destructuring and for-loop assignments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Chunk.ts`.
@@ -611,20 +1299,32 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import Identifier from './ast/nodes/Identifier';
-					(variable.isReassigned && this.exportNamesByVariable.get(variable)!.length > 1) ||
-					// Pattern bindings are plain locals; a trailing assignment
-					// would lose later reassignments.
-					(variable.isTargetOfAssignment && isDeclaredInDestructuringPattern(variable))
-				!exportVariable.isId &&
-				!isDeclaredInDestructuringPattern(exportVariable)
-function isDeclaredInDestructuringPattern(variable: Variable): boolean {
+import VariableDeclaration from './ast/nodes/VariableDeclaration';
+import VariableDeclarator from './ast/nodes/VariableDeclarator';
+					(variable.isTargetOfAssignment && cannotBeRenderedAsExportsMember(variable))
+				!cannotBeRenderedAsExportsMember(exportVariable)
+function cannotBeRenderedAsExportsMember(variable: Variable): boolean {
+	return (
+		isDeclaredInDestructuringPattern(variable) ||
+		isDeclaredInMultiDeclaratorSingleStatement(variable)
+	);
+}
+
+function isDeclaredInMultiDeclaratorSingleStatement(variable: Variable): boolean {
 	return (
 		variable instanceof LocalVariable &&
-		variable.declarations.some(
-			declaration =>
-				declaration instanceof Identifier && declaration.isDeclarationInDestructuringPattern()
-		)
+		(variable.declarations as Identifier[]).some(declaration => {
+			const declarator = declaration.parent;
+			if (!(declarator instanceof VariableDeclarator) || declarator.id !== declaration) {
+				return false;
+			}
+			const declarationNode = declarator.parent;
+			return (
+				declarationNode instanceof VariableDeclaration &&
+				declarationNode.declarations.length > 1 &&
+				declarationNode.isInSingleStatementPosition()
+			);
+		})
 	);
 }
 
@@ -632,13 +1332,13 @@ function isDeclaredInDestructuringPattern(variable: Variable): boolean {
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// Anti-pattern to NEVER write (induced failure mode):
-					variable.isReassigned && this.exportNamesByVariable.get(variable)!.length > 1
-				!exportVariable.isId
+// Induced defect failure mode:
+					(variable.isTargetOfAssignment && isDeclaredInDestructuringPattern(variable))
+				!isDeclaredInDestructuringPattern(exportVariable)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6be8a51a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e4ce9e5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

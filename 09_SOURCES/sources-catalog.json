@@ -1903,10 +1903,10 @@
     "repository": "rollup/rollup",
     "platform": "github",
     "sourceUrl": "https://github.com/rollup/rollup",
-    "sourceVersion": "41ee3267",
+    "sourceVersion": "2cf3a91b",
     "license": "NOASSERTION",
-    "contentHash": "5e8eb1101fba84d45ad7abef4d5bf4621606b530b8da2f48e00511487f2e9b0e",
-    "lastHarvestedAt": "2026-11-12T12:58:05.542Z",
+    "contentHash": "5e4deee2ceb8967bb2bb9fb9cfd942833f0dd827fe1c28b770d44f53fec1ca24",
+    "lastHarvestedAt": "2026-11-17T04:31:20.415Z",
     "learningId": "learn-github-rollup-rollup"
   },
   "rmax-scrapy-redis": {
@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "43f63ec0",
+    "sourceVersion": "fb7c1cce",
     "license": "MPL-2.0",
-    "contentHash": "a3e5fcac56e0368773727705f8cea83f4230791a7d93374e2b9a99d69e67b49d",
-    "lastHarvestedAt": "2026-11-14T08:10:41.334Z",
+    "contentHash": "23f6d4abfb272e14f679f8f7cd1a639711dca060cac048e747f1d643a6bce41e",
+    "lastHarvestedAt": "2026-11-17T04:31:29.798Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {

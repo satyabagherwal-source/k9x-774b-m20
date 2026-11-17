@@ -10475,3 +10475,5 @@ Every entry in this ledger must capture:
 | `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `82b8a937` | Multi-dimensional audit evidence | 2026-11-17T04:13:24.617Z |
 | `learn-github-electron-electron` | `https://github.com/electron/electron` | `8c1db351` | Multi-dimensional audit evidence | 2026-11-17T04:13:25.526Z |
 | `learn-dom-d-2b088993` | `project://fujiapple852-trippy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fujiapple852-trippy-learnings.md` | 2026-11-17T04:13:59.662Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `2cf3a91b` | Multi-dimensional audit evidence | 2026-11-17T04:31:20.415Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `fb7c1cce` | Multi-dimensional audit evidence | 2026-11-17T04:31:29.798Z |

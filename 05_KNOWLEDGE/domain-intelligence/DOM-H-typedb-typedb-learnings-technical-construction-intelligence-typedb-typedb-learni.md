@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T08:11:05.891Z",
+  "timestamp": "2026-11-17T04:31:34.101Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-typedb-typedb-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [typedb-typedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T08:11:05.891Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T04:31:34.101Z`  
 > **Learning ID**: `LEARN-EVO-typedb-typedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), E (Creative Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), E (Creative Intelligence)
 - **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `43f63ec0`  
+> **Source Version**: `fb7c1cce`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T08:10:40.704Z  
+> **Timestamp**: 2026-11-17T04:31:29.192Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T08:05:36.337Z  
+> **Harvest Timestamp**: 2026-11-17T04:31:29.187Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: TypeDB: Built for systems, not records
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4513 stars
+- **Stars / Engagement**: 4516 stars
 
 ---
 
@@ -1855,11 +1855,11 @@ impl UserOperator for LocalUserOperator {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8071** (2026-11-16): **Prepare release 3.15.0**
+  *Symptoms*: ## Product change and motivation Bump version & prepare release notes 
+
 - **Issue #8067** (2026-11-13): **Prepare for release 3.15.0-rc1**
   *Symptoms*: 
-
-- **Issue #8066** (2026-11-13): **Update error messages & a missed warning on usages of try blocks in write stages**
-  *Symptoms*: ## Implementation Warn on try in delete; Update errors to push users to if 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1876,11 +1876,283 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `43f63ec0` (2026-11-13)
-**Commit Message**: Update error messages & a missed warning on usages of try blocks in write stages (#8066)
+### Incident Patch 1: `fb7c1cce` (2026-11-16)
+**Commit Message**: Prepare release 3.15.0 (#8071)
+
+## Product change and motivation
+Bump version & prepare release notes
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -6158,7 +6158,7 @@ dependencies = [
+ [[package]]
+ name = "typedb-protocol"
+ version = "0.0.0"
+-source = "git+https://github.com/typedb/typedb-protocol?tag=3.15.0-rc0#b84ca107f9d6d8f22d88a6d9975b6ee94c5ac7fa"
++source = "git+https://github.com/typedb/typedb-protocol?tag=3.15.0#9cafb3315ce97ca936fa2e97e768ed74618817b3"
+ dependencies = [
+  "prost",
+  "tonic",
+@@ -6220,7 +6220,7 @@ checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
+ [[package]]
+ name = "typeql"
+ version = "0.0.0"
+-source = "git+https://github.com/typedb/typeql?tag=3.15.0-rc0#c41d01cc167dcc864b9c1e907feafc52d39cda17"
++source = "git+https://github.com/typedb/typeql?tag=3.15.0#7de03ede9d849a793603d9d4406a6268a01ddd67"
+ dependencies = [
+  "chrono",
+  "itertools 0.14.0",
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -582,13 +582,13 @@
+ 			default-features = false
+ 			features = []
+ 			git = "https://github.com/typedb/typedb-protocol"
+-			tag = "3.15.0-rc0"
++			tag = "3.15.0"
+ 
+ 		[workspace.dependencies.typeql]
+ 			default-features = false
+ 			features = []
+ 			git = "https://github.com/typedb/typeql"
+-			tag = "3.15.0-rc0"
++			tag = "3.15.0"
+ 
+ 		[workspace.dependencies.unicase]
+ 			default-features = false
+```
+
+**File**: `MODULE.bazel` (modified, +6/-6)
+```diff
+@@ -113,8 +113,8 @@ workspace_refs(
+ #        "typeql+": "d07e949229b2551d59127d3bc3300cd38bdf33ff",
+     },
+     workspace_tag_dict = {
+-        "typedb_protocol+": "3.15.0-rc0",
+-        "typeql+": "3.15.0-rc0",
++        "typedb_protocol+": "3.15.0",
++        "typeql+": "3.15.0",
+     },
+ )
+ 
+@@ -125,13 +125,13 @@ native_artifact_files.artifact(
+     group_name = "typedb-console-{platform}",
+     artifact_name = "typedb-console-{platform}-{version}.{ext}",
+     archive_strip_prefix = "typedb-console-{platform}-{version}",
+-    tag = "3.15.0-rc3",
++    tag = "3.15.0",
+ )
+ native_artifact_files.artifact(
+     name = "typedb_loader_artifact",
+     group_name = "typedb-loader-{platform}",
+     artifact_name = "typedb-loader-{platform}-{version}.{ext}",
+-    tag = "3.15.0-rc3",
++    tag = "3.15.0",
+ )
+ use_repo(
+     native_artifact_files,
+@@ -179,14 +179,14 @@ bazel_dep(name = "typeql", version = "0.0.0")
+ git_override(
+     module_name = "typeql",
+     remote = "https://github.com/typedb/typeql",
+-    tag = "3.15.0-rc0",
++    tag = "3.15.0",
+ )
+ 
+ bazel_dep(name = "typedb_protocol", version = "0.0.0")
+ git_override(
+     module_name = "typedb_protocol",
+     remote = "https://github.com/typedb/typedb-protocol",
+-    tag = "3.15.0-rc0",
++    tag = "3.15.0",
+ )
+ 
+ bazel_dep(name = "typedb_behaviour", version = "0.0.0")
+```
+
+**File**: `MODULE.bazel.lock` (modified, +36/-36)
+```diff
+@@ -8431,7 +8431,7 @@
+     "@@typedb_dependencies+//distribution/artifact:rules.bzl%native_artifact_files": {
+       "general": {
+         "bzlTransitiveDigest": "Kb5QWQrUc0s27j+2UawgVDIuZeaZUkqrRVUHDu0Ao8s=",
+-        "usagesDigest": "pr1ZFc1JCaOXlXAgwheSrLGi1nXzwgiUKOrvI6yZI8I=",
++        "usagesDigest": "+UkqLtnPTIvjgsBx2m1r1kI5fvgcYQHvm2mqBcCOf64=",
+         "recordedFileInputs": {},
+         "recordedDirentsInputs": {},
+         "envVariables": {},
+@@ -8440,111 +8440,111 @@
+             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
+             "attributes": {
+               "urls": [
+-                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0-rc3/typedb-console-linux-arm64-3.15.0-rc3.tar.gz"
++                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0/typedb-console-linux-arm64-3.15.0.tar.gz"
+               ],
+-              "downloaded_file_path": "typedb-console-linux-arm64-3.15.0-rc3.tar.gz"
++              "downloaded_file_path": "typedb-console-linux-arm64-3.15.0.tar.gz"
+             }
+           },
+           "typedb_console_artifact_linux-arm64-extracted": {
+             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+             "attributes": {
+               "urls": [
+-                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0-rc3/typedb-console-linux-arm64-3.15.0-rc3.tar.gz"
++                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0/typedb-console-linux-arm64-3.15.0.tar.gz"
+               ],
+-              "strip_prefix": "typedb-console-linux-arm64-3.15.0-rc3",
++              "strip_prefix": "typedb-console-linux-arm64-3.15.0",
+               "build_file_content": "\nfilegroup(\n    name = \"all_files\",\n    srcs = glob([\"**/*\"]),\n    visibility = [\"//visibility:public\"],\n)\n                        "
+             }
+           },
+           "typedb_console_artifact_linux-x86_64": {
+             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
+             "attributes": {
+               "urls": [
+-                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0-rc3/typedb-console-linux-x86_64-3.15.0-rc3.tar.gz"
++                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0/typedb-console-linux-x86_64-3.15.0.tar.gz"
+               ],
+-              "downloaded_file_path": "typedb-console-linux-x86_64-3.15.0-rc3.tar.gz"
++              "downloaded_file_path": "typedb-console-linux-x86_64-3.15.0.tar.gz"
+             }
+           },
+           "typedb_console_artifact_linux-x86_64-extracted": {
+             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+             "attributes": {
+               "urls": [
+-                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0-rc3/typedb-console-linux-x86_64-3.15.0-rc3.tar.gz"
++                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0/typedb-console-linux-x86_64-3.15.0.tar.gz"
+               ],
+-              "strip_prefix": "typedb-console-linux-x86_64-3.15.0-rc3",
++              "strip_prefix": "typedb-console-linux-x86_64-3.15.0",
+               "build_file_content": "\nfilegroup(\n    name = \"all_files\",\n    srcs = glob([\"**/*\"]),\n    visibility = [\"//visibility:public\"],\n)\n                        "
+             }
+           },
+           "typedb_console_artifact_mac-arm64": {
+             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
+             "attributes": {
+               "urls": [
+-                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0-rc3/typedb-console-mac-arm64-3.15.0-rc3.zip"
++                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0/typedb-console-mac-arm64-3.15.0.zip"
+               ],
+-              "downloaded_file_path": "typedb-console-mac-arm64-3.15.0-rc3.zip"
++              "downloaded_file_path": "typedb-console-mac-arm64-3.15.0.zip"
+             }
+           },
+           "typedb_console_artifact_mac-arm64-extracted": {
+             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+             "attributes": {
+               "urls": [
+-                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0-rc3/typedb-console-mac-arm64-3.15.0-rc3.zip"
++                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0/typedb-console-mac-arm64-3.15.0.zip"
+               ],
+-              "strip_prefix": "typedb-console
+```
+
+**File**: `RELEASE_NOTES_LATEST.md` (modified, +118/-5)
+```diff
+@@ -1,16 +1,97 @@
+ **Download from TypeDB Package Repository:**
+ 
+-[Distributions for 3.15.0-rc1](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.15.0-rc1)
++[Distributions for 3.15.0](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.15.0)
+ 
+ **Pull the Docker image:**
+ 
+-```docker pull typedb/typedb:3.15.0-rc1```
++```docker pull typedb/typedb:3.15.0```
+ 
+ 
+ ## New Features
++- **Implement optimized database import**
++  
++  We introduce the possibility of **parallelized, read-free database imports**, when specific conditions are met. In test we achieve up to 100k relations/sec consistently up to billions of loaded relations.
++  
++  This path utilizes an updated typedb-protocol (backwards compatible). Old import files/old servers fall back to the existing, slower import path. This protocol is designed for an upcoming data loader that reads from specifically shaped tables or CSV files, and for importing TypeDB exports rapidly.
++  
++  We combine existing guarantees that are implicit and not explicitly marked, with additional constraints.
++  
++  _Existing implicit requirements_:
++  - Entity or relation import messages _never re-uses global or type-label scoped IDs_ (therefore, every entity and relation is _complete and listed with all its components, exactly once_)
++  - All attributes mentioned as owned in other entity or relation import messages are listed as _separate Attribute messages_
++  - All references are correct (eg. any concept IDs refer to concepts that have their own import messages; attribute values that are referenced are imported)
++  
++  _Additional, optional guarantees, required for the optimized path_:
++  1) When the data is imported in order of attributes, entities, then relations => This enables **parallelism** on import, since import items can never collide.
++    a) Exception: hashed attributes _can_ collide when allocating a hash value, so we add a rarely used retry for isolation conflicts
++    b) Exception: `plays` cardinality bounds. Expect slowdowns/failures when plays cardinality is set (future work: relax plays cardinality and revalidate once at the end)
++  
++  2) When guaranteed links to relation players by 'type-local ids' (which are u64), we can directly create the edges between the relation and the player without any reads into the importer mapping table. We skip creating the mapping table, mapping IDs, and existence checks when this is guaranteed and the AER order is guaranteed.
++  
++  3) When guaranteed that attribute ownerships link to attributes by value, rather than ID that has to be remapped, and that the AER order is guaranteed, we can skip recording new IDs for attributes whose ID is derivable from the value (in effect, any attribute that is not hashed). This skips the mapping table creation, mapping IDs, and attribute existence checks.
++  
++  4) When attribute messages are guaranteed to be unique, we also never read on `put` of the attribute - it's a straight write without read.
++  
++  In combination, we can freely **parallelize** and **avoid almost all reads during import**, skipping both mapping tables and reads on the write and commit path in transactions. **This is only as "safe" as the import data - dangling references will lead to a corrupt TypeDB dataset!**
++  
++  Two read operations are not yet skippable:
++  
++  - Unavoidable read into main storage: creating >16 byte string, struct, and vector values. These will always require a hash probe to avoid collisions). Loaded first when the dataset is smallest. Unavoidable in our architecture!
++  - Unavoidable read into importer storage: Mapping a string, struct, and vector attribute ownership to the new database's IID space.
++  
++  In addition, we have one thing that we can skip with additional implementation work:
++  - Relations playing roles in other relations validate at commit time by reading disk, and to regenerate the index.
++  
++  
++  
++- **Type-inference & optional dereference safety improvements**
++  Large refactors to type-inference & optional dereference checks for better stability.
++  
++  - **Stricter optional dereference rules**
++
++    Previously, referencing an optional variable in a match-stage would simply discard the row. With this change, any reference must to an optional variable must explicitly address the optionality.
++    * Within a match pattern, the variable must be tested using the newly introduced `isset` constraint ( e.g. `isset $x;`- this fails the row if the variable is empty.
++    * A reference to an optional variable in an expression may be marked with `?` to  short-circuit the expression and assign the empty value to the result. ( e.g.  `let $y = $x?  + 1;`) . Note the assigned variable must then be optional.
++    * When fetching the attributes of an optional variable, it may be marked with `?` to return an empty value for that field. e.g. `fetch { "opt": $opt?.* }`
++  
++    * **Note:**  These are n
+```
+
+**File**: `VERSION` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-3.15.0-rc1
+\ No newline at end of file
++3.15.0
+\ No newline at end of file
+```
+
+---
+
+### Incident Patch 2: `0a759167` (2026-11-16)
+**Commit Message**: Assign positions to selected variables of unsatisfiable conjunctions (#8064)
+
+## Product change and motivation
+
+A conjunction that type inference proves unsatisfiable used to panic the
+server when followed by further query stages, because we compiled away
+the unsatisfiable variables in that clause entirely.
+
+The planner now registers an output position for every selected variable
+when lowering the Unsatisfiable check. No rows are ever produced when
+executed, so the positions used.
+
+Test written up in https://github.com/typedb/typedb-behaviour/pull/463
+
+Fixes https://github.com/typedb/typedb/issues/8021
 
 ## Implementation
-Warn on try in delete; Update errors to push users to if
+
+A conjunction was lowered to a single Unsatisfiable check that produces
+no variables, so its selected variables were never assigned a row
+position. Later stages referring to them (reduce with a variable,
+groupby, require, fetch) panicked or failed to compile, e.g. `match $t
+label plan; $t sub release-plan; reduce $n = count($t);` panicked at
+compiler/executable/reduce.rs.
+
+Now, we always assign variables positions before lowering to an
+unsatisfiable check.
 
 **File**: `MODULE.bazel` (modified, +1/-1)
 ```diff
@@ -1888,156 +2160,44 @@ Warn on try in delete; Update errors to push users to if
  git_override(
      module_name = "typedb_behaviour",
      remote = "https://github.com/typedb/typedb-behaviour",
--    commit = "1ecfdfd9c6bffc47be65050da9039362208ce225",
-+    commit = "20f8e6359a646fc668437ae80446b8cee4c33adf",
+-    commit = "20f8e6359a646fc668437ae80446b8cee4c33adf",
++    commit = "a07218a2e764386c5ca786f635990e9c1fcb1d26",
  )
  
  http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
 ```
 
-**File**: `compiler/executable/mod.rs` (modified, +0/-6)
+**File**: `compiler/executable/match_/planner/plan.rs` (modified, +12/-1)
 ```diff
-@@ -168,11 +168,5 @@ typedb_error! {
-             "Compound expressions are not supported in these statements yet.",
-             source_span: Option<Span>,
-         ),
--        OptionalVariableUsedOutsideTry(
--            14,
--            "A write stage uses the optional variable '{variable}' outside a 'try' block.",
--            variable: String,
--            source_span: Option<Span>,
--        ),
-     }
- }
-```
-
-**File**: `ir/lib.rs` (modified, +2/-2)
-```diff
-@@ -385,9 +385,9 @@ typedb_error! {
-             offset: String,
-             source_span: Option<Span>,
-         ),
--        DeprecatedOptionalVariableUsedOutsideTry(
-+        DeprecatedOptionalVariableUsedOutsideIf(
-             252,
--            "A write stage uses the optional variable '{variable}' outside a 'try' block.",
-+            "A write stage uses the optional variable '{variable}' outside an 'if' block.",
-             variable: String,
-             source_span: Option<Span>,
-         ),
-```
-
-**File**: `ir/pipeline/block.rs` (modified, +1/-1)
-```diff
-@@ -319,7 +319,7 @@ fn transition__recheck_root_optional_dereference_if_write_stage(
-         if let Some((id, constraint)) = find_unsafe_dereference_in_constraints(conjunction).next() {
-             let variable = context.get_variable_name_or_unnamed(id).to_owned();
-             let source_span = constraint.source_span();
--            return Err(Box::new(RepresentationError::DeprecatedOptionalVariableUsedOutsideTry {
-+            return Err(Box::new(RepresentationError::DeprecatedOptionalVariableUsedOutsideIf {
-                 variable,
-                 source_span,
-             }));
-```
-
-**File**: `ir/translation/writes.rs` (modified, +3/-0)
-```diff
-@@ -312,6 +312,9 @@ fn add_deletables(
-                 deleted_concepts_recursive.insert(translated_variable);
-             }
-             DeletableKind::Optional { deletables } => {
-+                error::optional_usage_error!(RepresentationError::IllegalTryInWriteStage {
-+                    source_span: deletable.span
-+                });
-                 debug_assert!(
-                     deletables
-                         .iter()
-```
-
----
-
-### Incident Patch 2: `d3e0e85b` (2026-11-13)
-**Commit Message**: Prepare for release 3.15.0-rc1 (#8067)
-
-**File**: `RELEASE_NOTES_LATEST.md` (modified, +17/-97)
-```diff
-@@ -1,122 +1,42 @@
- **Download from TypeDB Package Repository:**
+@@ -1592,7 +1592,18 @@ impl ConjunctionPlan<'_> {
  
--[Distributions for 3.15.0-rc0](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.15.0-rc0)
-+[Distributions for 3.15.0-rc1](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.15.0-rc1)
+             PlannerVertex::Constraint(constraint) => self.lower_constraint_check(conjunction_builder, constraint),
  
- **Pull the Docker image:**
+-            PlannerVertex::Unsatisfiable(_) => conjunction_builder.push_check(CheckInstruction::Unsatisfiable),
++            PlannerVertex::Unsatisfiable(_) => {
++                // The conjunction yields no rows, but every selected variable must still own a row position
++                // for later stages to compile with
++                for &variable in self.graph.variable_index.keys() {
++                    if conjunction_builder.selected_variables.contains(&variable)
++                        && !conjunction_builder.position_mapping().contains_key(&variable)
++                    {
++                        conjunction_builder.register_output(variable);
++                    }
++                }
++                conjunction_builder.push_check(CheckInstruction::Unsatisfiable)
++            }
  
--```docker pull typedb/typedb:3.15.0-rc0```
-+```docker pull typedb/typedb:3.15.0-rc1```
- 
- 
- ## New Features
--- **Implement optimized database import**
--  
--  We introduce the possibility of **parallelized, read-free database imports**, when specific conditions are met. In test we achieve up to 100k relations/sec consistently up to billions of loaded relations.
--  
--  This path utilizes an updated typedb-protocol (backwards compatible). Old import files/old servers fall back to the existing, slower import path. This protocol is designed for an upcoming data loader that reads from specifically shaped tables or CSV files, and for importing TypeDB exports rapidly.
--  
--  We combine existing guarantees that are implicit and not explicitly marked, with additional constraints.
--  
--  _Existing implicit requirements_:
--  - Entity or relation import messages _never re-uses global or type-label scoped IDs_ (therefore, every entity and relation is _complete and listed with all its components, exactly once_)
--  - All attributes mentioned as owned in other entity or relation import messages are listed as _separate Attribute messages_
--  - All references are correct (eg. any concept IDs refer to concepts that have their own import messages; attribute values that are referenced are imported)
--  
--  _Additional, optional guarantees, required for the optimized path_:
--  1) When the data is imported in order of attributes, entities, then relations => This enables **parallelism** on import, since import items can never collide.
--    a) Exception: hashed attributes _can_ collide when allocating a hash value, so we add a rarely used retry for isolation conflicts
--    b) Exception: `plays` cardinality bounds. Expect slowdowns/failures when plays cardinality is set (future work: relax plays cardinality and revalidate once at the end)
--  
--  2) When guaranteed links to relation players by 'type-local ids' (which are u64), we can directly create the edges between the relation and the player without any reads into the importer mapping table. We skip creating the mapping table, mapping IDs, and existence checks when this is guaranteed and the AER order is guaranteed.
--  
--  3) When guaranteed that attribute ownerships link to attributes by value, rather than ID that has to be remapped, and that the AER order is guaranteed, we can skip recording new IDs for attributes whose ID is derivable from the value (in effect, any attribute that is not hashed). This skips the mapping table creation, mapping IDs, and attribute existence checks.
--  
--  4) When attribute messages are guaranteed to be unique, we also never read on `put` of the attribute - it's a straight write without read.
--  
--  In combination, we can freely **parallelize** and **avoid almost all reads during import**, skipping both mapping tables and reads on the write and commit path in transactions. **This is only as "safe" as the import data - dangling references will lead to a corrupt TypeDB dataset!**
--  
--  Two read operations are not yet skippable:
--  
--  - Unavoidable read into main storage: creating >16 byte string, struct, and vector values. These will always require a hash probe to avoid collisions). Loaded first when the dataset is smallest. Unavoidable in our architecture!
--  - Unavoidable read into importer storage: Mapping a string, struct, and vector attribute ownership to the new database's IID space.
--  
--  In addition, we have one thing that we can skip with additional implementation work:
--  - Relations playing roles in other relations validate at commit time by reading disk, and to regenerate the index.
--  
--  
--  
--- **Type-inference & optional dereference safety improvements**
--  Large refactors to type-inference & optional dereference checks for better stability.
--  
--  **Stricter optional dereference rules**
--  Previously, referencing an optional variable in a match-stage would simply discard the row. With this change, any reference must to an optional variable must explicitly address the optionality.
--  * Within a match pattern, the variable must be tested using the newly introduced `isset` constraint ( e.g. `isset $x;`- this fails the row if the variable is empty.
--  * A reference to an optional variable in an expression may be marked with `?` to  short-circuit the expression and assign the empty value to the result. ( e.g.  `let $y = $x?  + 1;`) . Note the assigned variable must then be optional.
--  * When fetching the attributes of an optional variable, it may be marked with `?` to return an empty value for that field. e.g. `fetch { "opt": $opt?.* }`
--  
--  **Note:**  These are not 
-```
-
-**File**: `VERSION` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--3.15.0-rc0
-\ No newline at end of file
-+3.15.0-rc1
-\ No newline at end of file
+             PlannerVertex::Expression(_) => {
+                 unreachable!("Would require multiple assignments to the same variable and be flagged")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8071** (2026-11-16): Prepare release 3.15.0 (@krishnangovindraj)
 - **PR #8067** (2026-11-13): Prepare for release 3.15.0-rc1 (@genovoselov)
 - **PR #8066** (2026-11-13): Update error messages & a missed warning on usages of try blocks in write stages (@krishnangovindraj)
+- **PR #8064** (2026-11-16): Assign positions to selected variables of unsatisfiable conjunctions (@flyingsilverfin)
 - **PR #8060** (2026-11-12): Fix TypeQL & protocol references in Cargo (@krishnangovindraj)
 - **PR #8059** (2026-11-13): Limit database import commits by estimated write size (@genovoselov)
-- **PR #8057** (2026-11-11): Sync cargo files to use latest typeql 3.15.0-rc0 (@krishnangovindraj)
-- **PR #8056** (2026-11-12): Verify length of WAL records (@dmitrii-ubskii)
 
 ---
 
@@ -2057,31 +2217,33 @@ Warn on try in delete; Update errors to push users to if
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update error messages & a missed warning on usages of try blocks in write stages
+## X. Prepare release 3.15.0
 
 **RULE**:
-When implementing operations in `MODULE.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `43f63ec0`: Update error messages & a missed warning on usages of try blocks in write stages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fb7c1cce`: Prepare release 3.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `MODULE.bazel`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    commit = "20f8e6359a646fc668437ae80446b8cee4c33adf",
+source = "git+https://github.com/typedb/typedb-protocol?tag=3.15.0#9cafb3315ce97ca936fa2e97e768ed74618817b3"
+source = "git+https://github.com/typedb/typeql?tag=3.15.0#7de03ede9d849a793603d9d4406a6268a01ddd67"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    commit = "1ecfdfd9c6bffc47be65050da9039362208ce225",
+source = "git+https://github.com/typedb/typedb-protocol?tag=3.15.0-rc0#b84ca107f9d6d8f22d88a6d9975b6ee94c5ac7fa"
+source = "git+https://github.com/typedb/typeql?tag=3.15.0-rc0#c41d01cc167dcc864b9c1e907feafc52d39cda17"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `43f63ec0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fb7c1cce` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
