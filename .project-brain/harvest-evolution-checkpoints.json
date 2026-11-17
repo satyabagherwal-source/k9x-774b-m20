@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T14:22:58.079Z",
+  "last_updated": "2026-11-17T14:33:44.903Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -1128,7 +1128,7 @@
       "staged_for_review": 1
     },
     "yvgude-lean-ctx-learnings.md": {
-      "processed_at": "2026-11-15T22:58:49.569Z",
+      "processed_at": "2026-11-17T14:33:42.922Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1413,8 +1413,8 @@
       "staged_for_review": 1
     },
     "hf-autogluon-chronos-2-learnings.md": {
-      "processed_at": "2026-11-13T01:31:37.280Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T14:33:43.791Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-comfy-org-moss-image-learnings.md": {
@@ -2253,7 +2253,7 @@
       "staged_for_review": 0
     },
     "openreplay-openreplay-learnings.md": {
-      "processed_at": "2026-11-13T23:02:23.577Z",
+      "processed_at": "2026-11-17T14:33:44.185Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3323,7 +3323,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1581,
+  "total_dossiers_evaluated": 1584,
   "total_canonical_promoted": 321,
-  "total_staged_for_review": 1247
+  "total_staged_for_review": 1249
 }

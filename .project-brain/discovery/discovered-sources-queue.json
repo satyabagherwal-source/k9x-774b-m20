@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T14:22:56.185Z",
+  "updated_at": "2026-11-17T14:33:42.988Z",
   "stats": {
-    "total_discovered": 4995,
+    "total_discovered": 4996,
     "approved_pending_harvest": 4708,
     "harvested_count": 0,
-    "rejected_count": 287,
+    "rejected_count": 288,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4696,
+      "COMMUNITY_AND_EXPERT": 4697,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -107902,6 +107902,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
         "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-C8BFEE8AAE81": {
+      "id": "SRC-C8BFEE8AAE81",
+      "url": "https://h/cb?token=Letmein%3F&x=1",
+      "title": "https://h/cb?token=Letmein%3F&x=1",
+      "status": "REJECTED_ANONYMOUS_OR_MISSING_PUBLISHER",
+      "rejection_reasons": [
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T14:33:42.987Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
+        "fileName": "yvgude-lean-ctx-learnings.md"
       }
     }
   }

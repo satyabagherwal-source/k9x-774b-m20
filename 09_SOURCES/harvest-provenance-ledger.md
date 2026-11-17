@@ -10597,3 +10597,8 @@ Every entry in this ledger must capture:
 | `learn-dom-d-8e8b1bed` | `project://vespa-engine-vespa` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md` | 2026-11-17T14:02:19.603Z |
 | `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-17T14:15:11.812Z |
 | `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `4c4ec4aa` | Multi-dimensional audit evidence | 2026-11-17T14:22:51.982Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `9701b374` | Multi-dimensional audit evidence | 2026-11-17T14:33:23.855Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `9a554a54` | Multi-dimensional audit evidence | 2026-11-17T14:33:25.947Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `2012f95b` | Multi-dimensional audit evidence | 2026-11-17T14:33:28.582Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `fd2bfe48` | Multi-dimensional audit evidence | 2026-11-17T14:33:33.089Z |
+| `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-17T14:33:39.819Z |

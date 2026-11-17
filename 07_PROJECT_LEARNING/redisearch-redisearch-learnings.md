@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `9a5df815`  
+> **Source Version**: `fd2bfe48`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T05:29:08.636Z  
+> **Timestamp**: 2026-11-17T14:33:31.966Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T05:29:08.632Z  
+> **Harvest Timestamp**: 2026-11-17T14:33:31.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6245 stars
+- **Stars / Engagement**: 6246 stars
 
 ---
 
@@ -37,1564 +37,1785 @@
 - Entry configurations inspected via direct stream: pyproject.toml, README.md, Dockerfile.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `deps/rmutil/alloc.c`
+### Core Architecture Module: `.amp/plugins/rust-port/core/checks.ts`
 ```
 /*
- * Copyright Redis Ltd. 2016 - present
- * Licensed under your choice of the Redis Source Available License 2.0 (RSALv2) or
- * the Server Side Public License v1 (SSPLv1).
+ * Copyright (c) 2006-Present, Redis Ltd.
+ * All rights reserved.
+ *
+ * Licensed under your choice of the Redis Source Available License 2.0
+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+ * GNU Affero General Public License v3 (AGPLv3).
  */
 
-#include "alloc.h"
+/**
+ * Running a stage's checks: each command in its own process group, its output in a log, and a
+ * problem when it exits non-zero or its profile judge rejects its log.
+ */
+import { execa } from 'execa';
+import { readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { stripVTControlCharacters } from 'node:util';
+import type { Judge, Vcs } from './ports.ts';
 
-#include <string.h>
-#include <stdlib.h>
+export const ENV = { GIT_EDITOR: 'true', GIT_TERMINAL_PROMPT: '0', NO_COLOR: '1' };
 
+export interface Check {
+  kind: string;
+  command: string;
+}
+
+export interface CheckResult extends Check {
+  exitCode: number | null;
+  /** Milliseconds since the epoch. */
+  started: number;
+  ms: number;
+  log: string;
+  /** Why the check failed: its exit code, or what its log shows. */
+  problem?: string;
+}
+
+/** Where checks and trials run: the checkout, a directory for their logs, and the claim's signal and environment. */
+export interface CheckEnv {
+  root: string;
+  dir: string;
+  vcs: Vcs;
+  signal: AbortSignal;
+  vars: Record<string, string>;
+  judges: Record<string, Judge>;
+  debug: (message: string) => void;
+}
+
+export const readLog = async (path: string) =>
+  stripVTControlCharacters(await readFile(path, 'utf8').catch(() => ''));
+
+/**
+ * Runs checks one at a time, because builds share the cargo lock, and stops at the first failure,
+ * which already rejects the candidate. Each result carries its `problem`, if it has one.
+ */
+export async function runChecks(run: CheckEnv, checks: Check[]): Promise<CheckResult[]> {
+  const results: CheckResult[] = [];
+  for (const [index, check] of checks.entries()) {
+    const log = join(run.dir, `check-${index}-${check.kind}.log`);
+    const started = Date.now();
+    const exitCode = run.signal.aborted ? null : await execute(run, check.command, log);
+    const result: CheckResult = { ...check, exitCode, started, ms: Date.now() - started, log };
+    result.problem =
+      exitCode === null
+        ? 'timed out'
+        : exitCode !== 0
+          ? `exited ${exitCode}`
+          : await run.judges[check.kind]?.({
+              check: result,
+              log: await readLog(log),
+              root: run.root,
+            });
+    run.debug(`check \`${check.command}\` ${result.problem ?? 'passed'} in ${result.ms}ms: ${log}`);
+    results.push(result);
+    if (result.problem) break;
+  }
+  return results;
+}
+
+async function execute(run: CheckEnv, command: string, log: string) {
+  // Both streams append to one log, so their output interleaves as it happened.
+  await writeFile(log, '');
+  // A process group of its own, so aborting also kills the redis-servers and compilers it starts.
+  const child = execa('bash', ['-o', 'pipefail', '-c', command], {
+    cwd: run.root,
+    env: { ...ENV, ...run.vars },
+    detached: true,
+    reject: false,
+    stdin: 'ignore',
+    stdout: { file: log, append: true },
+    stderr: { file: log, append: true },
+  });
+  const kill = () => {
+    try {
+      process.kill(-child.pid!, 'SIGKILL');
+    } catch {}
+  };
+  run.signal.addEventListener('abort', kill, { once: true });
+  // An abort before the listener existed would otherwise leave the check running.
+  if (run.signal.aborted) kill();
+  const { exitCode } = await child;
+  run.signal.removeEventListener('abort', kill);
+  return run.signal.aborted ? null : (exitCode ?? null);
+}
+
+/**
+ * Whether checks' logs show the test `name` ran: a line naming it, module path included, that
+ * does not report it ignored or skipped. Another check may still skip it, say under Miri.
+ */
+export function testRan(logs: string, name: string): boolean {
+  const named = new RegExp(`(?<!\\w)${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?!\\w)`);
+  return logs
+    .split('\n')
+    .some((line) => named.test(line) && !/\b(ignored|skip(ped)?)\b/i.test(line));
+}
+
+```
+
+### Core Architecture Module: `.amp/plugins/rust-port/core/confirm.ts`
+```
 /*
- * Re-patching RedisModule_Alloc and friends to the original malloc functions
+ * Copyright (c) 2006-Present, Redis Ltd.
+ * All rights reserved.
  *
- * This function shold be called if you are working with malloc-patched code
- * ouside of redis, usually for unit tests. Call it once when entering your unit
- * tests' main().
- *
- * Since including "alloc.h" while defining REDIS_MODULE_TARGET
- * replaces all malloc functions in redis with the RM_Alloc family of functions,
- * when running that code outside of redis, your app will crash. This function
- * patches the RM_Alloc functions back to the original mallocs. */
-
-void RMUTil_InitAlloc() {
-  RedisModule_Alloc = malloc;
-  RedisModule_Realloc = realloc;
-  RedisModule_Calloc = calloc;
-  RedisModule_Free = free;
-  RedisModule_Strdup = strdup;
-}
-
-```
-
-### Core Architecture Module: `deps/rmutil/alloc.h`
-```
-/*
- * Copyright Redis Ltd. 2016 - present
- * Licensed under your choice of the Redis Source Available License 2.0 (RSALv2) or
- * the Server Side Public License v1 (SSPLv1).
+ * Licensed under your choice of the Redis Source Available License 2.0
+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+ * GNU Affero General Public License v3 (AGPLv3).
  */
 
-#ifndef __RMUTIL_ALLOC__
-#define __RMUTIL_ALLOC__
-
-/* Automatic Redis Module Allocation functions monkey-patching.
- *
- * Including this file while REDIS_MODULE_TARGET is defined, will explicitly
- * override malloc, calloc, realloc & free with RedisModule_Alloc,
- * RedisModule_Callc, etc implementations, that allow Redis better control and
- * reporting over allocations per module.
- *
- * You should include this file in all c files AS THE LAST INCLUDED FILE
- *
- * This only has effect when when compiling with the macro REDIS_MODULE_TARGET
- * defined. The idea is that for unit tests it will not be defined, but for the
- * module build target it will be.
- *
+/**
+ * Confirming reviewer proposals by trying them: a proposal blocks only when its failing test
+ * fails, its deletion keeps every test passing, or it cites a repository rule.
  */
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { readLog, runChecks, type Check, type CheckResult, type CheckEnv } from './checks.ts';
+import { parseDiff } from './diff.ts';
+import { hash, type NewFinding, type Repro } from './job.ts';
+import type { Profile, Stage } from './ports.ts';
+import { resolveLocation, checkRefs } from './refs.ts';
+import { runnerList, type Proposal, type Review } from './review.ts';
 
-#ifdef REDIS_MODULE_TARGET /* Set this when compiling your code as a module */
+/** Deletions tried per assessment; each runs the stage's test checks. */
+const MAX_DELETIONS = 3;
 
-#include "redismodule.h"
-#include "rmalloc.h"
+type Rules = Pick<
+  Profile,
+  'classify' | 'stripTests' | 'disabledTestPattern' | 'testRunners' | 'isTestCommand'
+>;
 
-#else
+/** The finding a checked proposal becomes; `verdict` says what the plugin confirmed. */
+export function toFinding(
+  r: Review,
+  p: Proposal,
+  o: {
+    stage: Stage;
+    candidate: string;
+    blocking: boolean;
+    verdict: string;
+    proof?: string;
+    repro?: Repro;
+    link?: string;
+  },
+): NewFinding {
+  return {
+    // Identical findings from several reviewers share a key, so they merge into one.
+    key: `review:${hash(o.stage, o.candidate, p.location, p.scenario, p.correction)}`,
+    source: 'review',
+    stage: o.stage,
+    revision: o.candidate,
+    blocking: o.blocking,
+    title: `${r.label} · ${p.location}`,
+    body: [`Problem: ${p.scenario}`, `Fix: ${p.correction}`, `Evidence: ${o.verdict}`, o.proof]
+      .filter(Boolean)
+      .join('\n'),
+    repro: o.repro,
+    links: o.link ? [o.link] : [],
+  };
+}
 
-#endif // REDIS_MODULE_TARGET
+/** What trying a reviewer's patch showed, and what the plugin ran, for the worker to reuse. */
+interface Trial {
+  confirmed: boolean;
+  outcome: string;
+  proof?: string;
+}
 
-// This function shold be called if you are working with malloc-patched code
-// ouside of redis, usually for unit tests.
-// Call it once when entering your unit tests' main().
+/** Applies a patch, runs `checks` with it, and takes it out again; a string if it does not apply. */
+async function withPatch(
+  run: CheckEnv,
+  patch: string,
+  checks: Check[],
+): Promise<CheckResult[] | string> {
+  const text = patch.endsWith('\n') ? patch : `${patch}\n`;
+  if (!(await run.vcs.applyPatch(text))) return 'its patch does not apply';
+  try {
+    return await runChecks(run, checks);
+  } finally {
+    if (!(await run.vcs.applyPatch(text, { reverse: true })))
+      throw new Error('A reviewer patch could not be taken out again');
+  }
+}
 
-void RMUTil_InitAlloc();
+/** Runs a reproduction's command, with its test patched in unless the candidate already has it. */
+export async function runReproduction(run: CheckEnv, repro: Repro, kind: string) {
+  const check = [{ kind, command: repro.command }];
+  // Present only verbatim: a weakened test of the same name must not stand in for it.
+  const added = parseDiff(repro.patch).find((f) => f.path === repro.path)?.added ?? [];
+  const text = await readFile(join(run.root, repro.path), 'utf8').catch(() => undefined);
+  const present = text !== undefined && added.length > 0 && added.every((l) => text.includes(l));
+  return present
+    ? (await runChecks(run, check))[0]
+    : withPatch(run, repro.patch, check).then((r) => (typeof r === 'string' ? r : r[0]));
+}
 
-#endif // __RMUTIL_ALLOC__
-
-```
-
-### Core Architecture Module: `deps/rmutil/args.c`
-```
-/*
- * Copyright Redis Ltd. 2016 - present
- * Licensed under your choice of the Redis Source Available License 2.0 (RSALv2) or
- * the Server Side Public License v1 (SSPLv1).
+/**
+ * Confirms a finding by its failing test: one test runner whose command passes without the test
+ * and fails with it, naming it. Anything else may be the patch failing to compile or an unrelated
+ * test.
  */
-
-#include "args.h"
-#include "redismodule.h"
-#include <float.h>
-#include <math.h>
-#include <string.h>
-#include <assert.h>
-
-int AC_Equals(ArgsCursor *first_, ArgsCursor *second_) {
-  if (AC_NumRemaining(first_) != AC_NumRemaining(second_)) {
-    return 0;
-  }
-  ArgsCursor first = *first_, second = *second_;
-  while (!AC_IsAtEnd(&first)) {
-    size_t f_len, s_len;
-    const char *f_cur = AC_GetStringNC(&first, &f_len), *s_cur = AC_GetStringNC(&second, &s_len);
-    if (f_len != s_len || strcmp(f_cur, s_cur)) {
-      return 0;
-    }
-  }
-  return 1;
+async function confirmReproduction(
+  run: CheckEnv,
+  rules: Rules,
+  repro: Repro,
+  n: number,
+): Promise<Trial> {
+  const files = parseDiff(repro.patch).map((f) => f.path);
+  if (!files.includes(repro.path) || files.some((f) => rules.classify(f) !== 'test'))
+    return {
+      confirmed: false,
+      outcome: `its patch must add ${repro.path} and touch only test sources`,
+    };
+  if (!rules.isTestCommand(repro.command))
+    return { confirmed: false, outcome: `its command must be one of ${runnerList(rules)}` };
+  const [before] = await runChecks(run, [{ kind: `repro-${n}-before`, command: repro.command }]);
+  if (before.exitCode !== 0)
+    return { confirmed: false, outcome: `its command fails without the test (${before.log})` };
+  const after = await runReproduction(run, repro, `repro-${n}`);
+  if (typeof after === 'string') return { confirmed: false, outcome: after };
+  if (after.exitCode === null) return { confirmed: false, outcome: 'its command timed out' };
+  if (after.exitCode === 0) return { confirmed: false, outcome: 'its test passes' };
+  if (!(await readLog(after.log)).includes(repro.test))
+    return {
+      confirmed: false,
+      outcome: `its command fails, but its log never names ${repro.test}`,
+    };
+  return {
+    confirmed: true,
+    outcome: `reproduced: \`${repro.command}\` exits ${after.exitCode} (${after.log})`,
+    proof: `Reproduction (${repro.command}):\n${repro.patch}`,
+  };
 }
 
-int AC_Advance(ArgsCursor *ac) {
-  return AC_AdvanceBy(ac, 1);
+/**
+ * Whether a deletion removes or disables tests, which proves nothing: a test file, an added line
+ * that switches a test off, or a line of a source that appears only inside its tests. `read`
+ * gives the candidate's text of a file.
+ */
+export async function deletesTests(
+  rules: Pick<Rules, 'classify' | 'stripTests' | 'disabledTestPattern'>,
+  patch: string,
+  read: (path: string) => Promise<string>,
+) {
+  for (const f of parseDiff(patch)) {
+    if (
+      rules.classify(f.path) === 'test' ||
+      f.added.some((line) => rules.disabledTestPattern.test(line))
+    )
+      return true;
+    const text = await read(f.path).catch(() => '');
+    const production = rules.stripTests?.(f.path, text);
+    if (production === undefined) continue;
+    if (f.removed.some((line) => line.trim() && text.includes(line) && !production.includes(line)))
+      return true;
+  }
+  return false;
 }
 
-int AC_AdvanceBy(ArgsCursor *ac, size_t by) {
-  if (ac->offset + by > ac->argc) {
-    return AC_ERR_NOARG;
-  } else {
-    ac->offset += by;
-  }
-  return AC_OK;
+/** Confirms that code is not needed: every test check passes without it. */
+async function confirmDeletion(
+  run: CheckEnv,
+  rules: Rules,
+  patch: string,
+  tests: Check[],
+  n: number,
+): Promise<Trial> {
+  const net = parseDiff(patch).reduce((sum, f) => sum + f.removed.length - f.added.length, 0);
+  const read = (path: string) => readFile(join(run.root, path), 'utf8');
+  if (net <= 0 || (await deletesTests(rules, patch, read)))
+    return { confirmed: false, outcome: 'its patch must remove more than it adds, outside tests' };
+  const results = await withPatch(
+    run,
+    patch,
+    tests.map((c) => ({ ...c, kind: `${c.kind}-deletion-${n}` })),
+  );
+  if (typeof results === 'string') return { confirmed: false, outcome: results };
+  const failed = results.find((r) => r.problem);
+  if (failed) return { confirmed: false, outcome: `\`${failed.command}\` fails without it` };
+  return {
+    confirmed: true,
+    outcome: `every test check passes without it (−${net} lines)`,
+    proof: `Deletion:\n${patch}`,
+  };
 }
 
-int AC_AdvanceIfMatch(ArgsCursor *ac, const char *s) {
-  const char *cur;
-  if (AC_IsAtEnd(ac)) {
-    return 0;
-  }
-
-  int rv = AC_GetString(ac, &cur, NULL, AC_F_NOADVANCE);
-  assert(rv == AC_OK);
-  rv = !strcasecmp(s, cur);
-  if (rv) {
-    AC_Advance(ac);
-  }
-  return rv;
-}
-
-#define MAYBE_ADVANCE()            \
-  if (!(flags & AC_F_NOADVANCE)) { \
-    AC_Advance(ac);                \
-  }
-
-static int tryReadAsDouble(ArgsCursor *ac, long long *ll, int flags) {
-  double dTmp = 0.0;
-  if (AC_GetDouble(ac, &dTmp, flags | AC_F_NOADVANCE) != AC_OK) {
-    return AC_ERR_PARSE;
-  }
-  // Casting a double outside [LLONG_MIN, 2^63) to long long is UB, and the
-  // RString conversion accepts literal "inf" — reject NaN and handle the
-  // range before any cast. (double)LLONG_MAX rounds up to exactly 2^63,
-  // making it the correct exclusive bound.
-  if (isnan(dTmp)) {
-    return AC_ERR_PARSE;
-  }
-  if (flags & AC_F_COALESCE) {
-    // Coalescing coerces: saturate out-of-range values (inf included)
-    if (dTmp >= (double)LLONG_MAX) {
-      *ll = LLONG_MAX;
-    } else if (dTmp < (double)LLONG_MIN) {
-      *ll = LLONG_MIN;
-    } else {
-      *ll = dTmp;
-    }
-    return AC_OK;
-  }
-
-  // Non-coalescing: out-of-range values cannot survive the integral round-trip
-  if (!(dTmp >= (double)LLONG_MIN && dTmp < (double)LLONG_MAX)) {
-    return AC_ERR_PARSE;
-  }
-  if ((double)(long long)dTmp != dTmp) {
-    return AC_ERR_PARSE;
-  } else {
-    *ll = dTmp;
-    return AC_OK;
-  }
-}
-
-int AC_GetLongLong(ArgsCursor *ac, long long *ll, int flags) {
-  long long tmpll = 0;
-  if (ac->offset == ac->argc) {
-    return AC_ERR_NOARG;
-  }
-
-  int hasErr = 0;
-  // Try to parse the number as a normal integer first. If that fails, try
-  // to parse it as a double. This will work if the number is in the format of
-  // 3.00, OR if the number is in the format of 3.14 *AND* AC_F_COALESCE is set.
-  // Here and in AC_GetDouble: RSTRING cursors carry user command argv and use
-  // the strict RedisModule conversions; the char* branches keep C-library
-  // leniency and only ever see internally generated canonical tokens.
-  if (ac->type == AC_TYPE_RSTRING) {
-    if (RedisModule_StringToLongLong(AC_CURRENT(ac), &tmpll) == REDISMODULE_ERR) {
-      hasErr = 1;
-    }
-  } else {
-    char *endptr = AC_CURRENT(ac);
-    tmpll = strtoll(AC_CURRENT(ac), &endptr, 10);
-    if (*endptr != '\0' || tmpll == LLONG_MIN || tmpll == LLONG_MAX) {
-      hasErr = 1;
-    }
-  }
-
-  if (hasErr && tryReadAsDouble(ac, &tmpll, flags) != AC_OK) {
-    return AC_ERR_PARSE;
-  }
-
-  if ((flags & AC_F_GE0) && tmpll < 0) {
-    return AC_ERR_ELIMIT;
-  }
-  // Do validation
-  if ((flags & AC_F_GE1) && tmpll < 1) {
-    return AC_ERR_ELIMIT;
-  }
-  MAYBE_ADVANCE();
-  *ll = tmpll;
-  return AC_OK;
-}
-
-#define GEN_AC_FUNC(name, T, minVal, maxVal, isUnsigned)      \
-  int name(ArgsCursor *ac, T *p, int flags) {                 \
-    if (isUnsigned) {                                         \
-      flags |= AC_F_GE0;                                      \
-    }                                                         \
-    long long ll;                                             \
-    int rv = AC_GetLongLong(ac, &ll, flags | AC_F_NOADVANCE); \
-    if (rv) {                                                 \
-      return rv;                                              \
-    }                                                         \
-    if (ll > maxVal || ll < minVal) {                         \
-      return AC_ERR_ELIMIT;                                   \
-    }                                                         \
-    *p = ll;                                                  \
-    MAYBE_ADVANCE();                                          \
-    return AC_OK;                                             \
-  }
-
-GEN_AC_FUNC(AC_GetUnsignedLongLong, unsigned long long, 0, LLONG_MAX, 1)
-GEN_AC_FUNC(AC_GetUnsigned, unsigned, 0, UINT_MAX, 1)
-GEN_AC_FUNC(AC_GetInt, int, INT_MIN, INT_MAX, 0)
-GEN_AC_FUNC(AC_GetU8, uint8_t, 0, UINT8_MAX, 1)
-GEN_AC_FUNC(AC_GetU16, uint16_t, 0, UINT16_MAX, 1)
-GEN_AC_FUNC(AC_GetU32, uint32_t, 0, UINT32_MAX, 1)
-GEN_AC_FUNC(AC_GetU64, uint64_t, 0, UINT64_MAX, 1)
-GEN_AC_FUNC(AC_GetSize, size_t, 0, SIZE_MAX, 1)
-
-int AC_GetDouble(ArgsCursor *ac, double *d, int flags) {
-  double tmpd = 0;
-  if (ac->type == AC_TYPE_RSTRING) {
-    if (RedisModule_StringToDouble(ac->objs[ac->offset], &tmpd) != REDISMODULE_OK) {
-      return AC_ERR_PARSE;
-    }
-  } else {
-    char *endptr = AC_CURRENT(ac);
-    tmpd = strtod(AC_CURRENT(ac), &endptr);
-    if (*endptr != '\0' || tmpd == HUGE_VAL || tmpd == -HUGE_VAL) {
-      return AC_ERR_PARSE;
-    }
-  }
-  if ((flags & AC_F_GE0) && tmpd < 0.0) {
-    return AC_ERR_ELIMIT;
-  }
-  if ((flags & AC_F_GE1) && tmpd < 1.0) {
-    return AC_ERR_ELIMIT;
-  }
-  MAYBE_ADVANCE();
-  *d = tmpd;
-  return AC_OK;
-}
-
-int AC_GetRString(ArgsCursor *ac, RedisModuleString **s, int flags) {
-  assert(ac->type == AC_TYPE_RSTRING);
-  if (ac->offset == ac->argc) {
-    return AC_ERR_NOARG;
-  }
-  *s = AC_CURRENT(ac);
-  MAYBE_ADVANCE();
-  return AC_OK;
-}
-
-int AC_GetString(ArgsCursor *ac, const char **s, size_t *n, int flags) {
-  if (ac->offset == ac->argc) {
-    return AC_ERR_NOARG;
-  }
-  if (ac->type == AC_TYPE_RSTRING) {
-    *s = RedisModule_StringPtrLen(AC_CURRENT(ac), n);
-  } else {
-    *s = AC_CURRENT(ac);
-    if (n) {
-      if (ac->type == AC_TYPE_SDS) {
-        *n = sdslen((const sds)*s);
-      } else {
-        *n = strlen(*s);
-      }
-    }
-  }
-  MAYBE_ADVANCE();
-  return AC_OK;
-}
-
-const char *AC_GetStringNC(ArgsCursor *ac, size_t *len) {
-  const char *s = NULL;
-  if (AC_GetString(ac, &s, len, 0) != AC_OK) {
-    return NULL;
-  }
-  return s;
-}
-
-int AC_GetVarArgs(ArgsCursor *ac, ArgsCursor *dst) {
-  unsigned nargs;
-  int rv = AC_GetUnsigned(ac, &nargs, 0);
-  if (rv != AC_OK) {
-    return rv;
-  }
-  return AC_GetSlice(ac, dst, nargs);
-}
-
-int AC_GetSlice(ArgsCursor *ac, ArgsCursor *dst, size_t n) {
-  if (n > AC_NumRemaining(ac)) {
-    return AC_ERR_NOARG;
-  }
-
-  dst->objs = ac->objs + ac->offset;
-  dst->argc = n;
-  dst->offset = 0;
-  dst->type = ac->type;
-  AC_AdvanceBy(ac, n);
-  return 0;
-}
-
-static int parseSingleSpec(ArgsCursor *ac, ACArgSpec *spec) {
-  switch (spec->type) {
-    case AC_ARGTYPE_BOOLFLAG:
-      *(int *)spec->target = 1;
-      return AC_OK;
-    case AC_ARGTYPE_BITFLAG:
-      *(uint32_t *)(spec->target) |= spec->slicelen;
-      return AC_OK;
-    case AC_ARGTYPE_UNFLAG:
-      *(uint32_t *)spec->target &= ~spec->slicelen;
-      return AC_OK;
-    case AC_ARGTYPE_DOUBLE:
-      return AC_GetDouble(ac, spec->target, spec->intflags);
-    case AC_ARGTYPE_INT:
-      return AC_GetInt(ac, spec->target, spec->intflags);
-    case AC_ARGTYPE_LLONG:
-      return AC_GetLongLong(ac, spec->target, spec->intflags);
-    case AC_ARGTYPE_ULLONG:
-      return AC_GetUnsignedLongLong(ac, spec->target, spec->intflags);
-    case AC_ARGTYPE_UINT:
-      return AC_GetUnsigned(ac, spec->target, spec->intflags);
-    case AC_ARGTYPE_STRING:
-      return AC_GetString(ac, spec->target, spec->len, 0);
-    case AC_ARGTYPE_RSTRING:
-      return AC_GetRString(ac, spec->target, 0);
-    case AC_ARGTYPE_SUBARGS:
-      return AC_GetVarArgs(ac, spec->target);
-    case AC_ARGTYPE_SUBARGS_N:
-      return AC_GetSlice(ac, spec->target, spec->slicelen);
-    default:
-      fprintf(stderr, "Unknown type");
-      abort();
-  }
-}
-
-int AC_ParseArgSpec(ArgsCursor *ac, ACArgSpec *specs, ACArgSpec **errSpec) {
-  const char *s = NULL;
-  size_t n;
-  int rv;
-
-  if (errSpec) {
-    *errSpec = NULL;
-  }
-
-  while (!AC_IsAtEnd(ac)) {
-    if ((rv = AC_GetString(ac, &s, &n, AC_F_NOADVANCE) != AC_OK)) {
-      return rv;
-    }
-    ACArgSpec *cur = specs;
-
-    for (; cur->name != NULL; cur++) {
-      if (n != strlen(cur->name)) {
+/**
+ * Turns proposals into findings. Those whose references do not hold are dropped; the rest block
+ * only if their test fails, their deletion keeps the tests passing, or they cite a rule. Proposals
+ * resolving to one line are one finding, and a confirmed one replaces a suggestion there.
+ */
+export async function confirmProposals(
+  run: CheckEnv,
+  rules: Rules,
+  reviews: Review[],
+  o: { stage: Stage; candidate: string; tests: Check[]; link: (thread: string) => string },
+): Promise<NewFinding[]> {
+  const findings: NewFinding[] = [];
+  const kept = new Map<string, number>();
+  let n = 0;
+  let deletions = 0;
+  for (const r of reviews)
+    for (const p of r.proposals) {
+      const problems = !(typeof p.location === 'string' && p.location && p.scenario)
+        ? ['it has no location or scenario']
+        : p.refs.length
+          ? await checkRefs(run.root, p.refs)
+          : ['it cites nothing'];
+      if (problems.length) {
+        run.debug(`${r.label}: dropped ${p.location}: ${problems.join('; ')}`);
         continue;
       }
-      if (!strncasecmp(cur->name, s, n)) {
-        break;
-      }
+      const id = await resolveLocation(run.root, p.location);
+      const earlier = kept.get(id);
+      if (earlier !== undefined && findings[earlier].blocking) continue;
+      let result: Trial | undefined;
+      if (p.repro) result = await confirmReproduction(run, rules, p.repro, ++n);
+      else if (p.deletion && deletions++ < MAX_DELETIONS)
+        result = await confirmDeletion(run, rules, p.deletion.patch, o.tests, ++n);
+      const rule = p.refs.find((ref) => rules.classify(ref.path) === 'rule');
+      const blocking = !!result?.confirmed || !!rule;
+      const verdict = result?.confirmed
+        ? result.outcome
+        : rule
+          ? `breaks the rule at ${rule.path}${rule.line ? `:${rule.line}` : ''}`
+          : `unconfirmed${result ? `, ${result.outcome}` : ''}`;
+      const finding = toFinding(r, p, {
+        ...{ stage: o.stage, candidate: o.candidate, blocking, verdict },
+        proof: result?.confirmed ? result.proof : undefined,
+        repro: result?.confirmed ? p.repro : undefined,
+        link: r.thread && o.link(r.thread),
+      });
+      if (earlier === undefined) kept.set(id, findings.push(finding) - 1);
+      else if (blocking) findings[earlier] = finding;
     }
-
-    if (cur->name == NULL) {
-      return AC_ERR_ENOENT;
-    }
-
-    AC_Advance(ac);
-    if ((rv = parseSingleSpec(ac, cur)) != AC_OK) {
-      if (errSpec) {
-        *errSpec = cur;
-      }
-      return rv;
-    }
-  }
-  return AC_OK;
+  return findings;
 }
 
 ```
 
-### Core Architecture Module: `deps/rmutil/args.h`
+### Core Architecture Module: `.amp/plugins/rust-port/core/diff.ts`
 ```
 /*
- * Copyright Redis Ltd. 2016 - present
- * Licensed under your choice of the Redis Source Available License 2.0 (RSALv2) or
- * the Server Side Public License v1 (SSPLv1).
- */
-
-#ifndef RMUTIL_ARGS_H
-#define RMUTIL_ARGS_H
-
-#include <stdlib.h>
-#include <limits.h>
-#include <stdint.h>
-#include <string.h>
-#include "hiredis/sds.h"
-#include "redismodule.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-typedef enum {
-  AC_TYPE_UNINIT = 0,  // Comment for formatting
-  AC_TYPE_RSTRING,
-  AC_TYPE_CHAR,
-  AC_TYPE_SDS
-} ACType;
-
-#define AC_IsInitialized(ac) ((ac)->type != AC_TYPE_UNINIT)
-
-/**
- * The cursor model simply reads through the current argument list, advancing
- * the 'offset' position as required. No tricky declarative syntax, and allows
- * for finer grained error handling.
- */
-typedef struct {
-  void **objs;
-  int type;
-  size_t argc;
-  size_t offset;
-} ArgsCursor;
-
-static inline void ArgsCursor_InitCString(ArgsCursor *cursor, const char **argv, int argc) {
-  cursor->objs = (void **)argv;
-  cursor->type = AC_TYPE_CHAR;
-  cursor->offset = 0;
-  cursor->argc = argc;
-}
-
-static inline void ArgsCursor_InitSDS(ArgsCursor *cursor, const sds *argv, int argc) {
-  cursor->objs = (void **)argv;
-  cursor->type = AC_TYPE_SDS;
-  cursor->offset = 0;
-  cursor->argc = argc;
-}
-
-static inline void ArgsCursor_InitRString(ArgsCursor *cursor, RedisModuleString **argv, int argc) {
-  cursor->objs = (void **)argv;
-  cursor->type = AC_TYPE_RSTRING;
-  cursor->offset = 0;
-  cursor->argc = argc;
-}
-
-typedef enum {
-  AC_OK = 0,      // Not an error
-  AC_ERR_PARSE,   // Couldn't parse as integer or other type
-  AC_ERR_NOARG,   // Missing required argument
-  AC_ERR_ELIMIT,  // Exceeded limitations of this type (i.e. bad value, but parsed OK)
-  AC_ERR_ENOENT   // Argument name not found in list
-} ACStatus;
-
-// These flags can be AND'd with the original type
-#define AC_F_GE1 0x100        // Must be >= 1 (no zero or negative)
-#define AC_F_GE0 0x200        // Must be >= 0 (no negative)
-#define AC_F_NOADVANCE 0x400  // Don't advance cursor position
-#define AC_F_COALESCE 0x800   // Coalesce non-integral input
-
-// These functions return AC_OK or an error code on error. Note that the
-// output value is not guaranteed to remain untouched in the case of an error
-int AC_GetString(ArgsCursor *ac, const char **s, size_t *n, int flags);
-int AC_GetRString(ArgsCursor *ac, RedisModuleString **s, int flags);
-int AC_GetLongLong(ArgsCursor *ac, long long *ll, int flags);
-int AC_GetUnsignedLongLong(ArgsCursor *ac, unsigned long long *ull, int flags);
-int AC_GetUnsigned(ArgsCursor *ac, unsigned *u, int flags);
-int AC_GetInt(ArgsCursor *ac, int *i, int flags);
-int AC_GetDouble(ArgsCursor *ac, double *d, int flags);
-int AC_GetU8(ArgsCursor *ac, uint8_t *u, int flags);
-int AC_GetU16(ArgsCursor *ac, uint16_t *u, int flags);
-int AC_GetU32(ArgsCursor *ac, uint32_t *u, int flags);
-int AC_GetU64(ArgsCursor *ac, uint64_t *u, int flags);
-int AC_GetSize(ArgsCursor *ac, size_t *sz, int flags);
-
-// Returns 1 if the cursors are at an equal state (same number of args left, same args), 0 otherwise.
-// Comparison is case sensitive and done directly on the strings. This function is not suitable for comparing numbers.
-// (e.g. "1" != "01")
-int AC_Equals(ArgsCursor *first, ArgsCursor *second);
-
-// Gets the string (and optionally the length). If the string does not exist,
-// it returns NULL. Used when caller is sure the arg exists
-const char *AC_GetStringNC(ArgsCursor *ac, size_t *len);
-
-int AC_Advance(ArgsCursor *ac);
-int AC_AdvanceBy(ArgsCursor *ac, size_t by);
-
-// Advances the cursor if the next argument matches the given string. This
-// will swallow it up.
-int AC_AdvanceIfMatch(ArgsCursor *ac, const char *arg);
-
-/**
- * Read the argument list in the format of
- * <NUM_OF_ARGS> <ARG[1]> <ARG[2]> .. <ARG[NUM_OF_ARGS]>
- * The output is stored in dest which contains a sub-array of argv/argc
- */
-int AC_GetVarArgs(ArgsCursor *ac, ArgsCursor *dest);
-
-/**
- * Consume the next <n> arguments and place them in <dest>
- */
-int AC_GetSlice(ArgsCursor *ac, ArgsCursor *dest, size_t n);
-
-typedef enum {
-  AC_ARGTYPE_STRING,
-  AC_ARGTYPE_RSTRING,
-  AC_ARGTYPE_LLONG,
-  AC_ARGTYPE_ULLONG,
-  AC_ARGTYPE_UINT,
-  AC_ARGTYPE_U32 = AC_ARGTYPE_UINT,
-  AC_ARGTYPE_INT,
-  AC_ARGTYPE_DOUBLE,
-  /**
-   * This means the name is a flag and does not accept any additional arguments.
-   * In this case, the target value is assumed to be an int, and is set to
-   * nonzero
-   */
-  AC_ARGTYPE_BOOLFLAG,
-
-  /**
-   * Uses AC_GetVarArgs, gets a sub-arg list
-   */
-  AC_ARGTYPE_SUBARGS,
-
-  /**
-   * Use AC_GetSlice. Set slicelen in the spec to the expected count.
-   */
-  AC_ARGTYPE_SUBARGS_N,
-
-  /**
-   * Accepts U32 target. Use 'slicelen' as the field to indicate which bit should
-   * be set.
-   */
-  AC_ARGTYPE_BITFLAG,
-
-  /**
-   * Like bitflag, except the value is _removed_ from the target. Accepts U32 target
-   */
-  AC_ARGTYPE_UNFLAG,
-} ACArgType;
-
-/**
- * Helper macro to define bitflag argtype
- */
-#define AC_MKBITFLAG(name_, target_, bit_) \
-  .name = name_, .target = target_, .type = AC_ARGTYPE_BITFLAG, .slicelen = bit_
-
-#define AC_MKUNFLAG(name_, target_, bit_) \
-  .name = name_, .target = target_, .type = AC_ARGTYPE_UNFLAG, .slicelen = bit_
-
-typedef struct {
-  const char *name;  // Name of the argument
-  void *target;      // [out] Target pointer, e.g. `int*`, `RedisModuleString**`
-  size_t *len;       // [out] Target length pointer. Valid only for strings
-  ACArgType type;    // Type of argument
-  int intflags;      // AC_F_COALESCE, etc.
-  size_t slicelen;   // When using slice length, set this to the expected slice count
-} ACArgSpec;
-
-/**
- * Utilizes the argument cursor to traverse a list of known argument specs. This
- * function will return:
- * - AC_OK if the argument parsed successfully
- * - AC_ERR_ENOENT if an argument not mentioned in `specs` is encountered.
- * - Any other error is assumed to be a parser error, in which the argument exists
- *   but did not meet constraints of the type
+ * Copyright (c) 2006-Present, Redis Ltd.
+ * All rights reserved.
  *
- * Note that ENOENT is not a 'hard' error. It simply means that the argument
- * was not provided within the list. This may be intentional if, for example,
- * it requires complex processing.
+ * Licensed under your choice of the Redis Source Available License 2.0
+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+ * GNU Affero General Public License v3 (AGPLv3).
  */
-int AC_ParseArgSpec(ArgsCursor *ac, ACArgSpec *specs, ACArgSpec **errSpec);
 
-static inline const char *AC_Strerror(int code) {
-  switch (code) {
-    case AC_OK:
-      return "SUCCESS";
-    case AC_ERR_ELIMIT:
-      return "Value is outside acceptable bounds";
-    case AC_ERR_NOARG:
-      return "Expected an argument, but none provided";
-    case AC_ERR_PARSE:
-      return "Could not convert argument to expected type";
-    case AC_ERR_ENOENT:
-      return "Unknown argument";
-    default:
-      return "(AC: You should not be seeing this message. This is a bug)";
-  }
+/**
+ * What a change is: the files of a diff, the lines each adds and removes, and the measures the
+ * gates take of them.
+ */
+import { hash } from './job.ts';
+import type { Profile } from './ports.ts';
+
+const GIT_FILE = 'diff --git ';
+
+export interface FileChange {
+  path: string;
+  added: string[];
+  removed: string[];
+  /** The file before and after, where the caller read them. */
+  texts?: [before: string | undefined, after: string | undefined];
 }
 
-#define AC_CURRENT(ac) ((ac)->objs[(ac)->offset])
-#define AC_Clear(ac)  // NOOP
-#define AC_IsAtEnd(ac) ((ac)->offset >= (ac)->argc)
-#define AC_NumRemaining(ac) ((ac)->argc - (ac)->offset)
-#define AC_NumArgs(ac) (ac)->argc
-
-/* Return the N'th argument as a C string, for any cursor type. `len` is
- * optional. (A blind `objs[N]` cast is only valid for C-string/sds cursors —
- * an RString cursor's objs are RedisModuleString pointers.) */
-static inline const char *AC_StringArg(const ArgsCursor *ac, size_t n, size_t *len) {
-  if (ac->type == AC_TYPE_RSTRING) {
-    return RedisModule_StringPtrLen((RedisModuleString *)ac->objs[n], len);
+/**
+ * The files a unified diff changes, with the lines it adds and removes in each. A file starts at
+ * its `---`/`+++` pair; hunk line counts are ignored, because a model's are often wrong. Where the
+ * diff has `diff --git` lines, a file starts at its own, so one without hunks, binary or empty,
+ * still counts, and a `---`/`+++` pair is a header only before the file's first hunk, so hunk
+ * content that looks like one is not one.
+ */
+export function parseDiff(diff: string): FileChange[] {
+  const files: FileChange[] = [];
+  const lines = diff.split('\n');
+  const fromGit = lines.some((line) => line.startsWith(GIT_FILE));
+  const clean = (path: string) => path.replace(/^[ab]\//, '');
+  let file: FileChange | undefined;
+  let inHeader = false;
+  const start = (path: string) => {
+    file = { path: clean(path), added: [], removed: [] };
+    files.push(file);
+  };
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (fromGit && line.startsWith(GIT_FILE)) {
+      // Both sides name the same path, `a/<path> b/<path>`, unless the file was renamed, when a
+      // `rename to` or `+++` line below names it.
+      const sides = line.slice(GIT_FILE.length);
+      start(sides.slice(0, (sides.length - 1) / 2));
+      inHeader = true;
+    } else if (fromGit && inHeader && line.startsWith('rename to ')) {
+      file!.path = line.slice('rename to '.length);
+    } else if (
+      (!fromGit || inHeader) &&
+      line.startsWith('--- ') &&
+      lines[i + 1]?.startsWith('+++ ')
+    ) {
+      const [from, to] = [line, lines[++i]].map((l) => l.slice(4).split('\t')[0].trim());
+      const path = to === '/dev/null' ? from : to;
+      if (fromGit) file!.path = clean(path);
+      else start(path);
+    } else if (line.startsWith('@@')) inHeader = false;
+    else if (file && !inHeader && line[0] === '+') file.added.push(line.slice(1));
+    else if (file && !inHeader && line[0] === '-') file.removed.push(line.slice(1));
   }
-  const char *s = (const char *)ac->objs[n];
-  if (len) {
-    *len = ac->type == AC_TYPE_SDS ? sdslen((sds)s) : strlen(s);
-  }
-  return s;
+  return files;
 }
-#ifdef __cplusplus
+
+/** Equal for the same change rebased: line numbers and blob IDs aside, whitespace kept. */
+export const patchId = (diff: string) =>
+  hash(diff.split('\n').filter((line) => !/^(index |@@)/.test(line)));
+
+/** Lines added and removed per file, as reviewers skim a change. */
+export const diffStat = (files: FileChange[]) =>
+  files.map((f) => `${f.path} | +${f.added.length} -${f.removed.length}`).join('\n');
+
+export interface Size {
+  /** Lines added, Markdown and `.gitignore` aside as the PR size label counts. */
+  lines: number;
+  /**
+   * Lines of code added minus deleted, tests and generated files aside: the growth floor. In a
+   * file whose texts are known and whose language holds tests in sources, only production lines
+   * count.
+   */
+  code: number;
+  files: number;
 }
 
-#include <vector>
-#include <tuple>
-#include <type_traits>
-#include <array>
-class ArgsCursorCXX : public ArgsCursor {
- public:
-  template <typename... T>
-  ArgsCursorCXX(T... args) {
-    typedef typename std::tuple_element<0, std::tuple<T...>>::type FirstType;
-    typedef const typename std::remove_pointer<FirstType>::type *ConstPointerType;
-    typedef typename std::conditional<std::is_pointer<FirstType>::value, ConstPointerType,
-                                      FirstType>::type RealType;
-    std::array<const void *, sizeof...(args)> stackarr = {{args...}};
-    arr.assign(stackarr.begin(), stackarr.end());
-    RealType *arrptr = (RealType *)(&arr[0]);
-    init(&arrptr[0], arr.size());
+export function measureSize(
+  files: FileChange[],
+  profile: Pick<Profile, 'classify' | 'stripTests'>,
+): Size {
+  const size = { lines: 0, code: 0, files: 0 };
+  const lines = (text: string) => text.split('\n').filter((line) => line.trim()).length;
+  for (const { path, added, removed, texts } of files) {
+    if (path.endsWith('.md') || path.endsWith('.gitignore')) continue;
+    size.lines += added.length;
+    size.files++;
+    const kind = profile.classify(path);
+    if (kind === 'test' || kind === 'generated') continue;
+    const [before, after] = (texts ?? []).map((t) => profile.stripTests?.(path, t ?? ''));
+    size.code +=
+      texts && before !== undefined && after !== undefined
+        ? lines(after) - lines(before)
+        : added.length - removed.length;
   }
+  return size;
+}
 
-  void append(void *p) {
-    arr.push_back(p);
-    objs = (void **)&arr[0];
-    argc = arr.size();
-  }
+/**
+ * Pushback by lines added, which grows with them; nothing up to 250. The classes end where the PR
+ * size label's do, and XL blocks. Deletions do not count: the classes counter bloat.
+ */
+export function sizeClass(lines: number): { label: string; note: string } | undefined {
+  if (lines <= 250) return;
+  if (lines <= 500)
+    return {
+      label: 'M',
+      note: 'Every line costs a reviewer attention; before claiming again, delete what the port does not need.',
+    };
+  if (lines <= 1000)
+    return {
+      label: 'L',
+      note: 'Reviewers will push back on a stage this big. Stop adding: cut first, and question every file the stage touches.',
+    };
+  return {
+    label: 'XL',
+    note: 'Too large to review: the stage cannot be admitted until it adds at most 1000 lines.',
+  };
+}
 
- private:
-  std::vector<const void *> arr;
-  void init(const char **s, size_t n) {
-    ArgsCursor_InitCString(this, s, n);
-  }
-  void init(RedisModuleString **s, size_t n) {
-    ArgsCursor_InitRString(this, s, n);
-  }
+/** Files changed only in blank lines; other whitespace may matter, in a string or in Python. */
+export function blankOnlyFiles(files: FileChange[]): string[] {
+  return files
+    .filter((f) => {
+      const lines = [...f.added, ...f.removed];
+      return lines.length && lines.every((line) => !line.trim());
+    })
+    .map((f) => f.path);
+}
+
+/** The files that lie outside every one of `paths`, each a file or a directory. */
+export function filesOutside(files: string[], paths: string[]): string[] {
+  const dirs = paths.map((p) => p.replace(/\/*$/, '/'));
+  return files.filter((f) => !paths.includes(f) && !dirs.some((d) => f.startsWith(d)));
+}
+
+```
+
+### Core Architecture Module: `.amp/plugins/rust-port/core/engine.ts`
+```
+/*
+ * Copyright (c) 2006-Present, Redis Ltd.
+ * All rights reserved.
+ *
+ * Licensed under your choice of the Redis Source Available License 2.0
+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+ * GNU Affero General Public License v3 (AGPLv3).
+ */
+
+/**
+ * The engine runs one job: a module ported as stacked PRs, one per stage of the profile.
+ *
+ * The worker drives it through the operations: it records a plan, then claims each stage with a
+ * committed revision. A claim passes the gates, which cost nothing, then pays for an assessment
+ * (checks, then reviewers) unless passing evidence for the same revision exists. A stage nothing
+ * holds back is admitted: its PR is published, and the worker that started on it hands the job to
+ * a fresh worker for the next stage. Everything left to do is a finding; forge feedback becomes
+ * findings at the start of every turn. After each turn the engine decides whether the worker
+ * continues on its own. Once every stage is admitted and nothing is outstanding, a retrospective
+ * finishes the job.
+ *
+ * The sections below follow that story: operations, turns, claiming, publishing and handing on,
+ * feedback, and the messages the worker reads.
+ */
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { readLog, runChecks, testRan, type CheckEnv, type CheckResult } from './checks.ts';
+import { confirmProposals, runReproduction } from './confirm.ts';
+import { diffStat, parseDiff, patchId, sizeClass, type Size } from './diff.ts';
+import { checkClaim } from './gates.ts';
+import {
+  addFindings,
+  blocksAdmission,
+  budget,
+  closeFinding,
+  done,
+  formatFindings,
+  hash,
+  isAdmitted,
+  newState,
+  outstanding,
+  passed,
+  previousStage,
+  progressMark,
+  replaceFindings,
+  repliesDue,
+  RETRO,
+  reviewedEvidence,
+  runReport,
+  stopReason,
+  takeNewFindings,
+  TARGETS,
+  validateRetro,
+  type Evidence,
+  type NewFinding,
+  type Retro,
+  type State,
+} from './job.ts';
+import { citedTests, describePlan, pullRequest, validatePlan, type Plan } from './plan.ts';
+import type { Forge, Host, Profile, Stage, Vcs } from './ports.ts';
+import { checkRefs } from './refs.ts';
+import { reviewStage, type Review } from './review.ts';
+import { stateFile } from './state-file.ts';
+
+/** How long one assessment's checks and reviewers may take. */
+const ASSESSMENT_MINUTES = 90;
+
+const REF_SCHEMA = {
+  type: 'object',
+  properties: { path: { type: 'string' }, line: { type: 'number' }, test: { type: 'string' } },
 };
-#endif
-#endif
+const EVIDENCE_SCHEMA = {
+  type: 'array',
+  items: { ...REF_SCHEMA, properties: { ...REF_SCHEMA.properties, finding: { type: 'string' } } },
+};
+const RETRO_SCHEMA = Object.fromEntries(
+  Object.entries(RETRO).map(([list, fields]) => [
+    list,
+    {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          ...Object.fromEntries(
+            fields.map((f) => [
+              f,
+              f === 'target' ? { type: 'string', enum: TARGETS } : { type: 'string' },
+            ]),
+          ),
+          evidence: EVIDENCE_SCHEMA,
+        },
+        required: [...fields, 'evidence'],
+      },
+    },
+  ]),
+);
 
+/** Something the worker can do, which the host offers as a tool named by {@link Host.toolName}. */
+export interface Operation {
+  name: string;
+  description: string;
+  schema: { type: 'object'; properties: Record<string, object>; required?: string[] };
+  run(input: Record<string, unknown>, thread: string, signal: AbortSignal): Promise<string>;
+}
+
+export interface EngineOptions<X> {
+  /** The checkout the job works in. */
+  root: string;
+  /** Where the job's state, run logs and debug log live. */
+  dir: string;
+  profile: Profile<X>;
+  host: Host;
+  vcs: Vcs;
+  forge: (repository: string) => Forge;
+  /** The documents the worker follows, in order. */
+  policy: string[];
+  log: (message: string) => void;
+  /** Called with the job's summary whenever its state is saved. */
+  saved?: (summary: string) => void;
+  /** Aborts every assessment, as when the host unloads the plugin. */
+  disposed: AbortSignal;
+}
+
+export function engine<X extends object>(o: EngineOptions<X>) {
+  const { root, profile, host, vcs } = o;
+  const stages = profile.stages.map((s) => s.name);
+  const { toolName: tool } = host;
+  const prefix = `[${profile.name}]`;
+  const quoted = o.policy.map((p) => `\`${p}\``);
+  const policy =
+    quoted.length > 1 ? `${quoted.slice(0, -1).join(', ')} and ${quoted.at(-1)}` : quoted[0];
+  const follow = `Follow ${policy}`;
+  // The job's stage order is the profile's: every plan is recorded in it, and a state written
+  // before that rule is brought into it when loaded.
+  const inStageOrder = (plan: Plan<X>) => {
+    plan.stages = Object.fromEntries(stages.map((s) => [s, plan.stages[s]]));
+  };
+  const { debug, load, loadQuietly, save, enqueue, withOwnedJob } = stateFile<X>({
+    ...{ dir: o.dir, name: profile.name, log: o.log },
+    prepare: (state) => inStageOrder(state.job.plan),
+    saved: (state) => o.saved?.(summary(state)),
+  });
+
+  // ## The worker's operations
+  //
+  // Every operation but `plan` acts on the job the calling thread owns, in the queue.
+
+  const operations: Operation[] = [
+    {
+      name: 'plan',
+      description: `Record or amend the plan ${policy} describe. Amending invalidates every admission and keeps the budget.`,
+      schema: { type: 'object', properties: { plan: { type: 'object' } }, required: ['plan'] },
+      run: (input, thread) =>
+        enqueue(tool('plan'), async () => {
+          const plan = input.plan as Plan<X>;
+          const errors = validatePlan(plan, profile);
+          if (!errors.length) {
+            inStageOrder(plan);
+            const branches = stages.map((s) => `${plan.branchPrefix}-${s}`);
+            const forge = o.forge(plan.repository);
+            errors.push(...(await forge.checkRemote({ remote: plan.remote, branches })));
+            const base = await vcs.fetchBranch(plan.remote, plan.baseBranch);
+            errors.push(...((await profile.checkPlan?.(plan, { root, vcs, base })) ?? []));
+          }
+          if (errors.length) throw new Error(errors.join('\n'));
+          const state = (await load()) ?? newState(thread, plan);
+          if (state.job.owner !== thread) throw new Error('Another thread owns the job');
+          const where = (p: Plan) => [p.repository, p.remote, p.baseBranch, p.branchPrefix];
+          if (
+            Object.keys(state.job.prs).length &&
+            hash(where(state.job.plan)) !== hash(where(plan))
+          )
+            throw new Error(
+              'The stage PRs are open: repository, remote, baseBranch and branchPrefix are fixed',
+            );
+          state.job.plan = plan;
+          state.job.planHash = hash(plan);
+          await save(state);
+          return `${follow}. ${summary(state)}`;
+        }),
+    },
+    {
+      name: 'claim',
+      description: `Claim that a committed, checked-out revision completes a stage. Blocks while checks and ${profile.reviewers.length} reviewers run, opens or updates the stage PR on admission, and returns new findings.`,
+      schema: {
+        type: 'object',
+        properties: {
+          stage: { type: 'string', enum: stages },
+          revision: {
+            type: 'string',
+            description: 'The checked-out commit; the tree must be clean',
+          },
+        },
+        required: ['stage', 'revision'],
+      },
+      run: ({ stage, revision }, thread, signal) =>
+        withOwnedJob(`${tool('claim')} ${stage} ${revision}`, thread, (state) =>
+          claim(state, String(stage), String(revision), signal),
+        ),
+    },
+    {
+      name: 'blocked',
+      description:
+        'Report a blocker only a human can resolve, such as missing access or a plan that cannot work. Stops automatic continuation; your next claim clears it.',
+      schema: { type: 'object', properties: { reason: { type: 'string' } }, required: ['reason'] },
+      run: (input, thread) =>
+        withOwnedJob(tool('blocked'), thread, async (state) => {
+          state.job.blocked = String(input.reason);
+          return 'Reported. Summarize where the work stands and end your turn.';
+        }),
+    },
+    {
+      name: 'close',
+      description:
+        'Close a reviewer finding or review comment: fixed, or no-change with the reason it does not apply, citing the files, lines or tests that show it. Failed checks and CI close themselves.',
+      schema: {
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+          resolution: { type: 'string', enum: ['fixed', 'no-change'] },
+          reason: {
+            type: 'string',
+            description:
+              'Required for no-change and review threads, where it is the reply: one plain line of at most 280 characters.',
+          },
+          evidence: { type: 'array', items: { ...REF_SCHEMA, required: ['path'] } },
+        },
+        required: ['id', 'resolution', 'evidence'],
+      },
+      run: (input, thread) =>
+        withOwnedJob(`${tool('close')} ${input.id} ${input.resolution}`, thread, async (state) => {
+          const { id, resolution, reason, evidence } = input as any;
+          const problems = await checkRefs(root, evidence);
+          if (problems.length)
+            throw new Error(`The evidence does not hold:\n- ${problems.join('\n- ')}`);
+          const finding = closeFinding(state, id, resolution, reason, evidence);
+          // The admitted candidate does not contain the fix, so the stage must be claimed again.
+          if (resolution === 'fixed') delete state.job.admitted[finding.stage];
+          // A no-change answer goes out now; a fix is answered when it is published.
+          if (resolution === 'no-change') await postReplies(state);
+          return `Closed ${id}. ${outstanding(state).length} outstanding.`;
+        }),
+    },
+    {
+      name: 'retro',
+      description: `Once every stage is admitted, nothing is outstanding and CI is green, record the postm
 ```
 
-### Core Architecture Module: `deps/rmutil/cmdparse.c`
+### Core Architecture Module: `.amp/plugins/rust-port/core/gates.ts`
 ```
 /*
- * Copyright Redis Ltd. 2016 - present
- * Licensed under your choice of the Redis Source Available License 2.0 (RSALv2) or
- * the Server Side Public License v1 (SSPLv1).
- */
-
-#include "cmdparse.h"
-#include "alloc.h"
-
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <limits.h>
-#include <errno.h>
-#include <ctype.h>
-#include <inttypes.h>
-#include <math.h>
-#include <stdarg.h>
-
-#define __ignore__(X) \
-    do { \
-        int rc = (X); \
-        if (rc == -1) \
-            ; \
-    } while(0)
-
-int CmdString_CaseEquals(CmdString *str, const char *other) {
-  if (!str || !other) return 0;
-  size_t l = strlen(other);
-  if (l != str->len) return 0;
-
-  return !strncasecmp(str->str, other, l);
-}
-
-#define pad(depth)                                   \
-  {                                                  \
-    for (int pd = 0; pd < depth; pd++) putchar(' '); \
-  }
-
-void CmdArg_Print(CmdArg *n, int depth) {
-  pad(depth);
-  switch (n->type) {
-    case CmdArg_Integer:
-      printf("%" PRId64, n->i);
-      break;
-    case CmdArg_Double:
-      printf("%f", n->d);
-      break;
-    case CmdArg_String:
-      printf("\"%.*s\"", (int)n->s.len, n->s.str);
-      break;
-    case CmdArg_Array:
-      printf("[");
-      for (int i = 0; i < n->a.len; i++) {
-        CmdArg_Print(n->a.args[i], 0);
-        if (i < n->a.len - 1) printf(",");
-      }
-      printf("]");
-      break;
-    case CmdArg_Object:
-      printf("{\n");
-      for (int i = 0; i < n->a.len; i++) {
-        pad(depth + 2);
-        printf("%s: =>", n->obj.entries[i].k);
-        CmdArg_Print(n->obj.entries[i].v, depth + 2);
-        printf("\n");
-      }
-      pad(depth);
-      printf("}\n");
-      break;
-    case CmdArg_Flag:
-      printf(n->b ? "TRUE" : "FALSE");
-      break;
-    case CmdArg_NullPtr:
-      printf("NULL");
-      break;
-  }
-}
-static inline CmdArg *NewCmdArg(CmdArgType t) {
-  CmdArg *ret = malloc(sizeof(CmdArg));
-
-  ret->type = t;
-  return ret;
-}
-
-static CmdArg *NewCmdString(const char *s, size_t len) {
-  CmdArg *ret = NewCmdArg(CmdArg_String);
-  ret->s = (CmdString){.str = strdup(s), .len = len};
-  return ret;
-}
-
-static CmdArg *NewCmdInteger(long long i) {
-  CmdArg *ret = NewCmdArg(CmdArg_Integer);
-  ret->i = i;
-  return ret;
-}
-
-static CmdArg *NewCmdDouble(double d) {
-  CmdArg *ret = NewCmdArg(CmdArg_Double);
-  ret->d = d;
-  return ret;
-}
-
-static CmdArg *NewCmdFlag(int val) {
-  CmdArg *ret = NewCmdArg(CmdArg_Flag);
-  ret->b = val;
-  return ret;
-}
-
-static CmdArg *NewCmdArray(size_t cap) {
-  CmdArg *ret = NewCmdArg(CmdArg_Array);
-  ret->a.cap = cap;
-  ret->a.len = 0;
-  ret->a.args = rm_calloc(cap, sizeof(CmdArg *));
-
-  return ret;
-}
-
-static CmdArg *NewCmdObject(size_t cap) {
-  CmdArg *ret = NewCmdArg(CmdArg_Object);
-  ret->obj = (CmdObject){
-      .entries = rm_calloc(cap, sizeof(CmdKeyValue)),
-      .cap = cap,
-      .len = 0,
-  };
-
-  return ret;
-}
-
-/* return 1 if a flag with a given name exists in parent and is set to true */
-int CmdArg_GetFlag(CmdArg *parent, const char *flag) {
-  CmdArg *f = CmdArg_FirstOf(parent, flag);
-  if (f && f->type == CmdArg_Flag) {
-    return f->b;
-  }
-  return 0;
-}
-
-void CmdArg_Free(CmdArg *arg) {
-  switch (arg->type) {
-    case CmdArg_String:
-      free(arg->s.str);
-      break;
-    case CmdArg_Object:
-      for (size_t i = 0; i < arg->obj.len; i++) {
-        CmdArg_Free(arg->obj.entries[i].v);
-      }
-      free(arg->obj.entries);
-      break;
-    case CmdArg_Array:
-      for (size_t i = 0; i < arg->a.len; i++) {
-        CmdArg_Free(arg->a.args[i]);
-      }
-      free(arg->a.args);
-      break;
-    default:
-      break;
-  }
-  free(arg);
-}
-
-static int CmdObj_Set(CmdObject *obj, const char *key, CmdArg *val, int unique) {
-
-  // if we enforce uniqueness, fail on duplicate records
-  if (unique) {
-    for (size_t i = 0; i < obj->len; i++) {
-      if (!strcasecmp(key, obj->entries[i].k)) {
-        return CMDPARSE_ERR;
-      }
-    }
-  }
-
-  if (obj->len + 1 > obj->cap) {
-    obj->cap += obj->cap ? obj->cap : 2;
-    obj->entries = realloc(obj->entries, obj->cap * sizeof(CmdKeyValue));
-  }
-  obj->entries[obj->len++] = (CmdKeyValue){.k = key, .v = val};
-  return CMDPARSE_OK;
-}
-
-static int CmdArray_Append(CmdArray *arr, CmdArg *val) {
-
-  if (arr->len == arr->cap) {
-    arr->cap += arr->cap ? arr->cap : 2;
-    arr->args = realloc(arr->args, arr->cap * sizeof(CmdArg *));
-  }
-
-  arr->args[arr->len++] = val;
-  return CMDPARSE_OK;
-}
-
-static CmdSchemaElement *newSchemaElement(CmdSchemaElementType type) {
-  CmdSchemaElement *ret = rm_calloc(1, sizeof(*ret));
-  ret->type = type;
-  ret->validator = NULL;
-  ret->validatorCtx = NULL;
-  return ret;
-}
-
-static CmdSchemaNode *NewSchemaNode(CmdSchemaNodeType type, const char *name,
-                                    CmdSchemaElement *element, CmdSchemaFlags flags,
-                                    const char *help) {
-  CmdSchemaNode *ret = rm_malloc(sizeof(*ret));
-  *ret = (CmdSchemaNode){
-      .val = element,
-      .flags = flags,
-      .type = type,
-      .name = name,
-      .edges = NULL,
-      .size = 0,
-      .help = help,
-  };
-
-  return ret;
-}
-
-static int cmdSchema_addChild(CmdSchemaNode *parent, CmdSchemaNode *child) {
-  // make sure we are not adding anything after a variadic vector
-  if (parent->size > 0 && parent->edges[parent->size - 1]->val &&
-      parent->edges[parent->size - 1]->val->type == CmdSchemaElement_Variadic) {
-    return CMDPARSE_ERR;
-  }
-  parent->size++;
-  parent->edges = realloc(parent->edges, parent->size * sizeof(CmdSchemaNode *));
-  parent->edges[parent->size - 1] = child;
-  return CMDPARSE_OK;
-}
-
-int cmdSchema_genericAdd(CmdSchemaNode *s, CmdSchemaNodeType type, const char *param,
-                         CmdSchemaElement *elem, CmdSchemaFlags flags, const char *help) {
-  if (s->type != CmdSchemaNode_Schema) {
-    return CMDPARSE_ERR;
-  }
-
-  return cmdSchema_addChild(s, NewSchemaNode(type, param, elem, flags, help));
-}
-
-int CmdSchema_AddNamed(CmdSchemaNode *s, const char *param, CmdSchemaElement *elem,
-                       CmdSchemaFlags flags) {
-
-  return cmdSchema_genericAdd(s, CmdSchemaNode_NamedArg, param, elem, flags, NULL);
-}
-
-int CmdSchema_AddPostional(CmdSchemaNode *s, const char *param, CmdSchemaElement *elem,
-                           CmdSchemaFlags flags) {
-
-  return cmdSchema_genericAdd(s, CmdSchemaNode_PositionalArg, param, elem, flags, NULL);
-}
-
-int CmdSchema_AddNamedWithHelp(CmdSchemaNode *s, const char *param, CmdSchemaElement *elem,
-                               CmdSchemaFlags flags, const char *help) {
-
-  return cmdSchema_genericAdd(s, CmdSchemaNode_NamedArg, param, elem, flags, help);
-}
-
-int CmdSchema_AddPostionalWithHelp(CmdSchemaNode *s, const char *param, CmdSchemaElement *elem,
-                                   CmdSchemaFlags flags, const char *help) {
-
-  return cmdSchema_genericAdd(s, CmdSchemaNode_PositionalArg, param, elem, flags, help);
-}
-
-CmdSchemaElement *CmdSchema_Validate(CmdSchemaElement *e, CmdArgValidatorFunc f, void *privdata) {
-  e->validator = f;
-  e->validatorCtx = privdata;
-  return e;
-}
-
-CmdSchemaElement *CmdSchema_NewTuple(const char *fmt, const char **names) {
-  CmdSchemaElement *ret = newSchemaElement(CmdSchemaElement_Tuple);
-  ret->tup.fmt = fmt;
-  ret->tup.names = names;
-  return ret;
-}
-
-CmdSchemaElement *CmdSchema_NewArg(const char type) {
-  CmdSchemaElement *ret = newSchemaElement(CmdSchemaElement_Arg);
-  ret->arg.type = type;
-
-  return ret;
-}
-
-CmdSchemaElement *CmdSchema_NewArgAnnotated(const char type, const char *name) {
-  CmdSchemaElement *ret = CmdSchema_NewArg(type);
-  ret->arg.name = name;
-  return ret;
-}
-
-CmdSchemaElement *CmdSchema_NewVector(const char type) {
-  CmdSchemaElement *ret = newSchemaElement(CmdSchemaElement_Vector);
-  ret->vec.type = type;
-  return ret;
-}
-
-CmdSchemaElement *CmdSchema_NewVariadicVector(const char *fmt) {
-  CmdSchemaElement *ret = newSchemaElement(CmdSchemaElement_Variadic);
-  ret->var.fmt = fmt;
-  return ret;
-}
-
-CmdSchemaElement *CmdSchema_NewOption(int num, const char **opts) {
-  CmdSchemaElement *ret = newSchemaElement(CmdSchemaElement_Option);
-  ret->opt.num = num;
-  ret->opt.opts = opts;
-  return ret;
-}
-// CmdSchemaElement *CmdSchema_NewOption(int num, ...) {}
-// CmdSchemaElement *NewFlag(int deflt);
-// CmdSchemaElement *CmdSchema_NewVariadicVector(const char **fmt);
-
-CmdSchemaNode *NewSchema(const char *name, const char *help) {
-  CmdSchemaNode *ret = NewSchemaNode(CmdSchemaNode_Schema, name, NULL, 0, help);
-  return ret;
-}
-
-int CmdSchema_AddFlag(CmdSchemaNode *parent, const char *name) {
-  CmdSchemaNode *ret = NewSchemaNode(
-      CmdSchemaNode_Flag, name, newSchemaElement(CmdSchemaElement_Flag), CmdSchema_Optional, NULL);
-  cmdSchema_addChild(parent, ret);
-  return CMDPARSE_OK;
-}
-
-int CmdSchema_AddFlagWithHelp(CmdSchemaNode *parent, const char *name, const char *help) {
-  CmdSchemaNode *ret = NewSchemaNode(
-      CmdSchemaNode_Flag, name, newSchemaElement(CmdSchemaElement_Flag), CmdSchema_Optional, help);
-  cmdSchema_addChild(parent, ret);
-  return CMDPARSE_OK;
-}
-
-CmdSchemaNode *CmdSchema_AddSubSchema(CmdSchemaNode *parent, const char *param, int flags,
-                                      const char *help) {
-  CmdSchemaNode *ret = NewSchemaNode(CmdSchemaNode_Schema, param, NULL, flags, help);
-
-  parent->size++;
-  parent->edges = realloc(parent->edges, parent->size * sizeof(CmdSchemaNode *));
-  parent->edges[parent->size - 1] = ret;
-  return ret;
-}
-
-const char *typeString(char t) {
-  switch (t) {
-    case 's':
-      return "string";
-    case 'l':
-      return "integer";
-    case 'd':
-      return "double";
-    default:
-      return "INVALID TYPE";
-  }
-}
-
-void CmdSchemaElement_Print(const char *name, CmdSchemaElement *e) {
-  switch (e->type) {
-    case CmdSchemaElement_Arg:
-      printf("{%s:%s}", e->arg.name ? e->arg.name : name, typeString(e->arg.type));
-      break;
-    case CmdSchemaElement_Tuple: {
-      for (int i = 0; i < strlen(e->tup.fmt); i++) {
-        printf("{%s:%s} ", e->tup.names ? e->tup.names[i] : "arg", typeString(e->tup.fmt[i]));
-      }
-    
-```
-
-### Core Architecture Module: `deps/rmutil/cmdparse.h`
-```
-/*
- * Copyright Redis Ltd. 2016 - present
- * Licensed under your choice of the Redis Source Available License 2.0 (RSALv2) or
- * the Server Side Public License v1 (SSPLv1).
- */
-
-#ifndef RMUTIL_CMDPARSE_
-#define RMUTIL_CMDPARSE_
-
-#include "redismodule.h"
-
-#include <stdlib.h>
-
-#define CMDPARSE_OK 0
-#define CMDPARSE_ERR 1
-
-typedef enum {
-  CmdArg_Integer,
-  CmdArg_Double,
-  CmdArg_String,
-  CmdArg_Array,
-  CmdArg_Object,
-  CmdArg_Flag,
-  // this is a special type returned from type checks when the arg is null, and not really used
-  CmdArg_NullPtr,
-
-} CmdArgType;
-
-struct CmdArg;
-
-typedef struct {
-  char *str;
-  size_t len;
-} CmdString;
-
-#define CMD_STRING(s) ((CmdString){.str = s, .len = strlen(s)})
-int CmdString_CaseEquals(CmdString *str, const char *other);
-
-typedef struct {
-  const char *k;
-  struct CmdArg *v;
-} CmdKeyValue;
-
-typedef struct {
-  size_t len;
-  size_t cap;
-  CmdKeyValue *entries;
-} CmdObject;
-
-typedef struct {
-  size_t len;
-  size_t cap;
-  struct CmdArg **args;
-} CmdArray;
-
-// Variant value union
-typedef struct CmdArg {
-  union {
-    // numeric value
-    double d;
-    int64_t i;
-
-    // boolean flag
-    int b;
-    // string value
-    CmdString s;
-
-    // array value
-    CmdArray a;
-
-    CmdObject obj;
-  };
-  CmdArgType type;
-} CmdArg;
-
-void CmdArg_Free(CmdArg *arg);
-
-/* General signature for a command validator func. You can inject your own */
-typedef int (*CmdArgValidatorFunc)(CmdArg *arg, void *ctx);
-
-/*************************************************************************************************************************
+ * Copyright (c) 2006-Present, Redis Ltd.
+ * All rights reserved.
  *
- *  Command Schema Definition Objects
- *************************************************************************************************************************/
+ * Licensed under your choice of the Redis Source Available License 2.0
+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+ * GNU Affero General Public License v3 (AGPLv3).
+ */
 
-/* Single typed argument in a schema. Can have the following type chars:
+/** What rejects a claim before anything runs, so a rejection costs no assessment. */
+import {
+  blankOnlyFiles,
+  measureSize,
+  filesOutside,
+  parseDiff,
+  sizeClass,
+  type Size,
+} from './diff.ts';
+import { reviewedEvidence, type State } from './job.ts';
+import { citedTests } from './plan.ts';
+import type { Profile, Stage, Vcs } from './ports.ts';
+import { checkRefs } from './refs.ts';
+
+/**
+ * A house rule, as far as a pattern can catch it. Each is a ratchet: a file may not have more
+ * violations at the candidate than at the base, so existing code is never blamed and nothing new
+ * slips in.
+ */
+export interface Rule {
+  applies(path: string): boolean;
+  count(text: string): number;
+  message: string;
+}
+
+/** What `path` breaks of `rules` that it did not already break at `before`. */
+export function ruleViolations(
+  rules: Rule[],
+  path: string,
+  before: string | undefined,
+  after: string,
+) {
+  return rules
+    .filter((r) => r.applies(path) && r.count(after) > (before === undefined ? 0 : r.count(before)))
+    .map((r) => `${path} ${r.message}`);
+}
+
+/**
+ * Why the candidate cannot be the stage, and its size: everything that rejects a claim before
+ * anything runs, so a rejection costs no assessment.
+ */
+export async function checkClaim<X extends object>(o: {
+  root: string;
+  vcs: Vcs;
+  profile: Profile<X>;
+  state: State<X>;
+  stage: Stage;
+  base: string;
+  candidate: string;
+}): Promise<{ problems: string[]; size: Size }> {
+  const { root, vcs, profile, state, stage, base, candidate } = o;
+  const { plan } = state.job;
+  const generated = (path: string) => profile.classify(path) === 'generated';
+  const files = parseDiff(await vcs.diff(base, candidate));
+  const { paths } = plan.stages[stage];
+  // Without rename detection a moved file names both its paths, so neither escapes the scope.
+  const stray = filesOutside(
+    files.map((f) => f.path).filter((f) => !generated(f)),
+    paths,
+  );
+  if (stray.length)
+    return {
+      problems: [`it changes ${stray.join(', ')}, outside ${paths.join(', ')}; revert or amend`],
+      size: { lines: 0, code: 0, files: 0 },
+    };
+  for (const f of files)
+    f.texts = [await vcs.readFileAt(base, f.path), await vcs.readFileAt(candidate, f.path)];
+  const size = measureSize(files, profile);
+  const problems = blankOnlyFiles(files.filter((f) => !generated(f.path))).map(
+    (path) => `${path} changes only blank lines; restore it`,
+  );
+  const tooBig = sizeClass(size.lines);
+  if (tooBig?.label === 'XL') problems.push(`it adds ${size.lines} lines: ${tooBig.note}`);
+  // Once reviewed, a stage's code may not grow: a fix pays for itself in deleted code.
+  const floor = Math.min(...reviewedEvidence(state, stage).map((e) => e.size.code));
+  if (size.code > floor)
+    problems.push(
+      `it adds ${size.code} net lines of code (tests aside), its reviewed version ${floor}: ` +
+        'a fix must delete as much code as it adds',
+    );
+  for (const { path, texts } of files) {
+    const [before, after] = texts!;
+    if (after !== undefined) problems.push(...ruleViolations(profile.rules, path, before, after));
+  }
+  const tests = citedTests(plan, stage).map((t) => ({ path: t.path, test: t.name }));
+  problems.push(
+    ...(await checkRefs(root, tests)),
+    ...(await missingFixes(vcs, state, stage, candidate)),
+  );
+  problems.push(
+    ...((await profile.checkClaim?.({ root, vcs, plan, stage, base, candidate, files })) ?? []),
+  );
+  return { problems, size };
+}
+
+/**
+ * The stage's findings closed as fixed whose fix the candidate lacks: it changes none of the files
+ * the fix cites since the revision the finding was raised on.
+ */
+async function missingFixes(vcs: Vcs, state: State, stage: Stage, candidate: string) {
+  const problems = [];
+  for (const f of Object.values(state.findings)) {
+    if (f.stage !== stage || f.closed?.resolution !== 'fixed') continue;
+    const paths = (f.closed.evidence ?? []).map((r) => r.path);
+    // A revision this checkout never had cannot be compared, and is not held against it.
+    const changed = await vcs.diff(f.revision, candidate, { paths }).catch(() => '?');
+    if (!changed)
+      problems.push(
+        `${f.id} was closed as fixed, but nothing it cites changed since ${f.revision.slice(0, 10)}`,
+      );
+  }
+  return problems;
+}
+
+```
+
+### Core Architecture Module: `.amp/plugins/rust-port/core/git.ts`
+```
+/*
+ * Copyright (c) 2006-Present, Redis Ltd.
+ * All rights reserved.
  *
- *  - s: will be parsed as a string
- *  - l: Will be parsed as a long integer
- *  - d: Will be parsed as a double
+ * Licensed under your choice of the Redis Source Available License 2.0
+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+ * GNU Affero General Public License v3 (AGPLv3).
  */
-typedef struct {
-  char type;
-  const char *name;
-} CmdSchemaArg;
 
-/* dummy struct for flags - they don't need anything */
-typedef struct {
-} CmdSchemaFlag;
+/** The {@link Vcs} on a git checkout. */
+import { execa } from 'execa';
+import { ENV } from './checks.ts';
+import type { Vcs } from './ports.ts';
 
-/* Command schema option - represents a multiple choice, mutually exclusive options */
-typedef struct {
-  /* The number of options */
-  int num;
-  /* The option strings */
-  const char **opts;
-} CmdSchemaOption;
+export async function git(cwd: string, args: string[], input = ''): Promise<string> {
+  return (await execa('git', args, { cwd, env: ENV, input })).stdout;
+}
 
-/* Schema tuple - a fixed length array with known types */
-typedef struct {
-  /* Format string, containing s, l or d. The length of the tuple is the length of the format string
-   */
-  const char *fmt;
-  /* Element names - for help prints only */
-  const char **names;
-} CmdSchemaTuple;
-
-/* Schema vector - multiple elements (known only at run time by the first argument) with a single
- * type,  either l, s or d */
-typedef struct {
-  char type;
-} CmdSchemaVector;
-
-typedef struct {
-  const char *fmt;
-} CmdSchemaVariadic;
-
-/* Command schema element types */
-typedef enum {
-  CmdSchemaElement_Arg,
-  CmdSchemaElement_Tuple,
-  CmdSchemaElement_Vector,
-  CmdSchemaElement_Flag,
-  CmdSchemaElement_Option,
-  CmdSchemaElement_Variadic,
-} CmdSchemaElementType;
-
-/* A single element in a command schema. */
-typedef struct {
-  union {
-    CmdSchemaArg arg;
-    CmdSchemaTuple tup;
-    CmdSchemaVector vec;
-    CmdSchemaFlag flag;
-    CmdSchemaOption opt;
-    CmdSchemaVariadic var;
+export function gitVcs(root: string): Vcs {
+  const sh = (args: string[], input?: string) => git(root, args, input);
+  const dirty = async () => !!(await sh(['status', '--porcelain']));
+  return {
+    async currentRevision() {
+      if (await dirty()) throw new Error('The working tree is dirty');
+      return sh(['rev-parse', 'HEAD']);
+    },
+    resolveRevision: (revision) => sh(['rev-parse', '--verify', `${revision}^{commit}`]),
+    async fetchBranch(remote, branch) {
+      await sh(['fetch', remote, branch]);
+      return sh(['rev-parse', 'FETCH_HEAD']);
+    },
+    mergeBase: (a, b) => sh(['merge-base', a, b]),
+    diff: (from, to, o) =>
+      sh([
+        ...['diff', '--no-ext-diff', o?.renames ? '--find-renames' : '--no-renames', from, to],
+        ...(o?.paths ? ['--', ...o.paths] : []),
+      ]),
+    readFileAt: (revision, path) => sh(['show', `${revision}:${path}`]).catch(() => undefined),
+    listFiles: async (revision) =>
+      (await sh(['ls-tree', '-r', '--name-only', revision])).split('\n').filter(Boolean),
+    // Hunk line counts written by a model are often off; --recount ignores them.
+    applyPatch: (patch, o) =>
+      sh(['apply', '--recount', ...(o?.reverse ? ['-R'] : [])], patch).then(
+        () => true,
+        () => false,
+      ),
+    async discardChanges() {
+      if (!(await dirty())) return false;
+      await sh(['restore', '--source=HEAD', '--staged', '--worktree', '--', '.']);
+      await sh(['clean', '-fd']);
+      return true;
+    },
   };
-  CmdSchemaElementType type;
-  CmdArgValidatorFunc validator;
-  void *validatorCtx;
-} CmdSchemaElement;
+}
 
-/* Command schema node flags */
-typedef enum {
-  /* Required argument */
-  CmdSchema_Required = 0x01,
-  /* Optional argument */
-  CmdSchema_Optional = 0x02,
-  /* Repeating argument - my have more than one instance per schema */
-  CmdSchema_Repeating = 0x04,
-} CmdSchemaFlags;
+```
 
-/* Schema node type.  */
-typedef enum {
-  /* A schema or sub-schema object. This is the root of the command schema */
-  CmdSchemaNode_Schema,
-  /* A position argument - it can only be parsed once, at a specific position */
-  CmdSchemaNode_PositionalArg,
-  /* A named argument. It can appear anywhere, after the last positional argument */
-  CmdSchemaNode_NamedArg,
-  /* A flag - an argument that may or may not appear, setting a boolean value to 0 or 1 */
-  CmdSchemaNode_Flag,
-} CmdSchemaNodeType;
+### Core Architecture Module: `.amp/plugins/rust-port/core/github.ts`
+```
+/*
+ * Copyright (c) 2006-Present, Redis Ltd.
+ * All rights reserved.
+ *
+ * Licensed under your choice of the Redis Source Available License 2.0
+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+ * GNU Affero General Public License v3 (AGPLv3).
+ */
 
-/* Schema nodes. Each node contains an element (apart from schema nodes). The node has its name
- * and flags, and the element defines how to parse the element this node contains */
-typedef struct CmdSchemaNode {
-  /* The value element conatined in this node. NULL for schema/sub-schema nodes */
-  CmdSchemaElement *val;
-  /* Flags - required / optional and repeatable */
-  CmdSchemaFlags flags;
-  /* The node type */
-  CmdSchemaNodeType type;
-  /* The node name. Even positional nodes have names so we can refer to them */
-  const char *name;
-  /* Optional help string to extract documentation */
-  const char *help;
-  /* If this is a schema node, it may have edge nodes - other nodes that may be traversed from it.
+/** The {@link Forge} on GitHub: stage PRs pushed from the checkout, their review threads and CI. */
+import { Octokit } from '@octokit/rest';
+import { hash, type NewFinding, type FindingSource } from './job.ts';
+import type { Forge, Stage } from './ports.ts';
+import { git } from './git.ts';
+
+// STALE is a check GitHub gave up on: it never passed.
+const FAILED = [
+  'FAILURE',
+  'ERROR',
+  'TIMED_OUT',
+  'CANCELLED',
+  'ACTION_REQUIRED',
+  'STARTUP_FAILURE',
+  'STALE',
+];
+
+/** The start of a GitHub remote URL, before the repository: HTTPS, SSH or scp-style. */
+const REMOTE =
+  /^(https:\/\/([^@/]+@)?github\.com\/|ssh:\/\/([^@/]+@)?github\.com\/|[^@/:]+@github\.com:)/i;
+
+const FEEDBACK = `query($owner: String!, $name: String!, $number: Int!, $after: String) {
+  repository(owner: $owner, name: $name) { pullRequest(number: $number) {
+    state headRefOid url
+    reviewThreads(first: 100, after: $after) { pageInfo { hasNextPage endCursor }
+      nodes { id isResolved path line
+      root: comments(first: 1) { nodes { databaseId } }
+      comments(last: 20) { nodes { databaseId author { login } body url } } } }
+    reviews(last: 50) { nodes { databaseId author { login __typename } body url
+      comments { totalCount } } }
+    comments(last: 50) { nodes { databaseId author { login __typename } body url } }
+    commits(last: 1) { nodes { commit { statusCheckRollup { contexts(first: 100) { nodes {
+      ... on CheckRun { name conclusion detailsUrl }
+      ... on StatusContext { context state targetUrl } } } } } } }
+  } }
+}`;
+
+const RESOLVE = `mutation($id: ID!) {
+  resolveReviewThread(input: { threadId: $id }) { clientMutationId }
+}`;
+
+/** How the repository's CI reports: the check whose verdict decides, and checks that never block. */
+export interface CI {
+  gate: string;
+  advisory: RegExp;
+}
+
+/** Bots wrap their comments in HTML comments and collapsed sections the worker never needs. */
+function trimComment(body: string, max = 1500): string {
+  const text = body
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<details>[\s\S]*?<\/details>/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  return text.length > max ? `${text.slice(0, max)}… (full text at the link)` : text;
+}
+
+/** Amp configures git's credential helper in Orbs, so this needs nothing beyond git itself. */
+async function githubToken(cwd: string): Promise<string> {
+  const env = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN;
+  if (env) return env;
+  const fill = await git(cwd, ['credential', 'fill'], 'protocol=https\nhost=github.com\n\n');
+  const password = fill.match(/^password=(.*)$/m)?.[1];
+  if (!password) throw new Error('git has no credentials for github.com');
+  return password;
+}
+
+/**
+ * The review comments and the CI verdict of a stage PR, from the {@link FEEDBACK} query; nothing
+ * once it merged. `posted` are the comments the plugin wrote; `head` is the revision it published.
+ */
+export function readFeedback(
+  ci: CI,
+  data: any,
+  stage: Stage,
+  number: number,
+  posted: number[] = [],
+  head?: string,
+): { findings: NewFinding[]; pending: boolean } {
+  const pr = data.repository.pullRequest;
+  // The plugin posts with the operator's token, so only the IDs it recorded tell its replies apart.
+  const ours = (comment: { databaseId: number }) => posted.includes(comment.databaseId);
+  const finding = (
+    source: FindingSource,
+    key: string,
+    title: string,
+    body: string,
+    url: string,
+  ): NewFinding => ({
+    ...{ source, key, title, body, stage, revision: pr.headRefOid },
+    ...{ blocking: true, links: [url] },
+  });
+  // A PR closed unmerged, or one whose head moved past what the job published, no longer carries
+  // the assessed candidate, so its CI says nothing about it. Its comments are still heard.
+  const failed = (title: string, body: string) => finding('ci', `ci:${stage}`, title, body, pr.url);
+  const stale =
+    pr.state === 'CLOSED'
+      ? failed(`PR #${number} was closed without merging`, 'Reopen it or publish the stage again.')
+      : head && pr.headRefOid !== head
+        ? failed(
+            `PR #${number} head is ${pr.headRefOid.slice(0, 10)}, not the published ${head.slice(0, 10)}`,
+            'Something else pushed to its branch; claim the stage again.',
+          )
+        : undefined;
+
+  const findings: NewFinding[] = [];
+  const keys = new Set<string>();
+  for (const t of pr.reviewThreads.nodes) {
+    const thread = t.comments.nodes;
+    const last = thread.at(-1);
+    if (t.isResolved || !last || ours(last)) continue;
+    const body = thread.map((c: any) => `${c.author?.login}: ${trimComment(c.body)}`).join('\n');
+    // Keyed by content, not ID: a stacked PR repeats its ancestors' comments, on other lines. Two
+    // threads on one PR with the same text are still two.
+    let key = `comment:${hash(
+      t.path,
+      thread.filter((c: any) => !ours(c)).map((c: any) => c.body),
+    )}`;
+    if (keys.has(key)) key = `${key}:${t.id}`;
+    keys.add(key);
+    findings.push({
+      ...finding(
+        'comment',
+        key,
+        `review comment on PR #${number} · ${t.path}:${t.line}`,
+        body,
+        last.url,
+      ),
+      // GitHub takes replies only to a thread's first comment.
+      replies: [{ pr: number, comment: t.root.nodes[0].databaseId, thread: t.id }],
+    });
+  }
+  // People are always heard. Bots are heard in review threads only: their review bodies summarize
+  // those threads, and their conversation comments are reports CI already covers. The body is part
+  // of the key, so an edited comment is a new finding.
+  const human = (c: any) => c.body.trim() && !ours(c) && c.author?.__typename !== 'Bot';
+  for (const [kind, nodes] of [
+    ['review', pr.reviews.nodes],
+    ['comment', pr.comments.nodes],
+  ] as const)
+    for (const c of nodes.filter(human))
+      findings.push(
+        finding(
+          'comment',
+          `${kind}:${c.databaseId}:${hash(c.body)}`,
+          `${kind} by ${c.author?.login} on PR #${number}`,
+          trimComment(c.body),
+          c.url,
+        ),
+      );
+
+  if (stale) return { findings: [...findings, stale], pending: false };
+
+  // The gate reports after the slowest check, so until then a failed check is reported at once
+  // under the gate; once it reports, only an explicit success passes.
+  const runs = (pr.commits.nodes[0]?.commit.statusCheckRollup?.contexts.nodes ?? []).map(
+    (c: any) => ({
+      name: c.name ?? c.context,
+      result: c.conclusion ?? c.state,
+      url: c.detailsUrl ?? c.targetUrl,
+    }),
+  );
+  const gate = runs.find((r: any) => r.name === ci.gate);
+  const pending = !gate || gate.result == null || ['PENDING', 'EXPECTED'].includes(gate.result);
+  const failures = runs.filter(
+    (r: any) => r !== gate && FAILED.includes(r.result) && !ci.advisory.test(r.name),
+  );
+  const failing = pending ? failures.length > 0 : gate.result !== 'SUCCESS';
+  const list =
+    failures.map((r: any) => `- ${r.name}: ${r.url}`).join('\n') || 'No failed check is listed.';
+  if (failing)
+    findings.push(
+      finding(
+        'ci',
+        `ci:${stage}`,
+        `CI ${ci.gate} failed on PR #${number}`,
+        `${list}\nRead the run log to find which stage the fix belongs in.`,
+        gate?.url ?? failures[0]?.url ?? pr.url,
+      ),
+    );
+  return { findings, pending };
+}
+
+/** The stage PRs of `repository` on GitHub, pushed from the checkout at `root`. */
+export function github(o: { root: string; repository: string; ci: CI }): Forge {
+  const { root, repository, ci } = o;
+  const [owner, repo] = repository.split('/');
+  // Made on first use, so inspecting a plan needs no credentials.
+  let client: Promise<Octokit> | undefined;
+  const api = () => (client ??= githubToken(root).then((auth) => new Octokit({ auth })));
+  const sh = (args: string[]) => git(root, args);
+
+  return {
+    async checkRemote({ remote, branches }) {
+      const problems: string[] = [];
+      const url = await sh(['remote', 'get-url', remote]).catch(() => '');
+      const path = url.replace(REMOTE, '');
+      if (
+        path === url ||
+        !new RegExp(`^${repository.replace(/\./g, '\\.')}(\\.git)?/?$`, 'i').test(path)
+      )
+        problems.push(`remote ${remote} is not github.com/${repository}, where the PRs open`);
+      for (const branch of branches)
+        await sh(['check-ref-format', '--branch', branch]).catch(() =>
+          problems.push(`${branch} is not a valid branch name`),
+        );
+      return problems;
+    },
+
+    async fetchFeedback({ stage, number, posted, head }) {
+      const octokit = await api();
+      const query = (after?: string) =>
+        octokit.graphql<any>(FEEDBACK, { owner, name: repo, number, after });
+      const data = await query();
+      // Only review threads are paged in full: they are where unresolved feedback lives.
+      const threads = data.repository.pullRequest.reviewThreads;
+      for (let page = threads; page.pageInfo.hasNextPage; ) {
+        page = (await query(page.pageInfo.endCursor)).repository.pullRequest.reviewThreads;
+        threads.nodes.push(...page.nodes);
+      }
+      return readFeedback(ci, data, stage, number, posted, head);
+    },
+
+    /** An existing PR keeps its base: GitHub refuses to change it within a stack. */
+    async publish(o) {
+      const octokit = await api();
+      const fetched = o.existing
+        ? (await octokit.rest.pulls.get({ owner, repo, pull_number: o.existing.number })).data
+        : undefined;
+      // A merged or closed PR cannot carry a new candidate: a new one replaces it. A merged one
+      // still takes a new description for the candidate it merged, such as the retrospective.
+      const current =
+        fetched?.state === 'open' || (fetched?.merged && o.existing!.head === o.candidat
+```
+
+### Core Architecture Module: `.amp/plugins/rust-port/core/job.ts`
+```
+/*
+ * Copyright (c) 2006-Present, Redis Ltd.
+ * All rights reserved.
+ *
+ * Licensed under your choice of the Redis Source Available License 2.0
+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+ * GNU Affero General Public License v3 (AGPLv3).
+ */
+
+/**
+ * The job and everything it remembers: the plan, the evidence of each assessment, and the
+ * findings, which are everything left to do. Functions here only read and change that state.
+ */
+import { createHash } from 'node:crypto';
+import type { CheckResult } from './checks.ts';
+import type { Size } from './diff.ts';
+import type { Plan } from './plan.ts';
+import type { PR, Stage } from './ports.ts';
+
+/** Assessments a job may run before an operator grants more. */
+export const BUDGET = 30;
+
+export const TARGETS = ['plugin', 'policy', 'skills', 'checks', 'reviewers'] as const;
+/** Each retro list and the text fields its items need, besides their evidence. */
+export const RETRO = {
+  mistakes: ['what', 'cost', 'prevention'],
+  cuts: ['what', 'lines'],
+  improvements: ['problem', 'proposal', 'target'],
+} as const;
+
+export interface State<X = {}> {
+  job: Job<X>;
+  evidence: Record<string, Evidence>;
+  findings: Record<string, Finding>;
+}
+
+export interface Job<X = {}> {
+  owner: string;
+  /** Worker threads that owned the job before {@link Job.owner}: one per stage handed on. */
+  former?: string[];
+  plan: Plan<X>;
+  /** Evidence and admissions hold only under the plan they were gathered under. */
+  planHash: string;
+  started: string;
+  admitted: Partial<Record<Stage, { candidate: string; base: string; plan: string }>>;
+  prs: Partial<Record<Stage, PR>>;
+  /** Assessments run; grants extend {@link BUDGET}. */
+  used: number;
+  grants: { amount: number; at: string; by: string }[];
+  /** Number of the last finding created, and of the last one shown to the worker. */
+  created: number;
+  delivered: number;
+  /** IDs of the comments the plugin posted, which feedback collection leaves out. */
+  posted: number[];
+  /** A blocker the worker reported; its next claim clears it. */
+  blocked?: string;
+  /** {@link progressMark} at the last automatic continuation. */
+  continued?: string;
+  retro?: Retro;
+}
+
+/** What one assessment of a candidate showed, bound to its stage, base and plan. */
+export interface Evidence {
+  stage: Stage;
+  candidate: string;
+  base: string;
+  plan: string;
+  /** {@link patchId} of the stage's diff: equal for the same change rebased. */
+  patch: string;
+  checks: CheckResult[];
+  /** Empty when a check failed, because then the reviewers do not run. */
+  reviewers: { reviewer: string; thread?: string }[];
+  size: Size;
+}
+
+/** A file in the workspace, a line of it, or a test it names, as evidence the plugin checks. */
+export interface FileRef {
+  path: string;
+  line?: number;
+  test?: string;
+}
+export type Ref = FileRef | { finding: string };
+
+/** A failing test as a patch adding it to `path`, and the command that runs it. */
+export interface Repro {
+  path: string;
+  test: string;
+  patch: string;
+  command: string;
+}
+
+/**
+ * Who closes a finding: the worker closes reviewer findings and review comments; failed checks and
+ * CI close themselves once they pass.
+ */
+export type FindingSource = 'review' | 'comment' | 'check' | 'ci';
+
+export interface Finding {
+  readonly id: string;
+  /** Identity of what was reported; exact duplicates share it. */
+  readonly key: string;
+  readonly source: FindingSource;
+  readonly stage: Stage;
+  /** The revision it was raised against. */
+  readonly revision: string;
+  readonly blocking: boolean;
+  readonly title: string;
+  readonly body: string;
+  /** The failing test that reproduced it, which every later claim re-runs. */
+  readonly repro?: Repro;
+  links: string[];
+  /** The forge comments to answer and threads to resolve; each is dropped once done. */
+  replies?: { pr: number; comment?: number; thread?: string }[];
+  /** The PRs a reply was posted on. */
+  answered?: number[];
+  closed?: {
+    /** `superseded`: the same failure was reported again on a newer revision. */
+    resolution: 'fixed' | 'no-change' | 'passed' | 'superseded';
+    reason?: string;
+    evidence?: FileRef[];
+  };
+}
+export type NewFinding = Omit<Finding, 'id'>;
+
+/** A postmortem about the next iteration: what went wrong, what to cut, what to change. */
+export interface Retro {
+  mistakes: { what: string; cost: string; prevention: string; evidence: Ref[] }[];
+  cuts: { what: string; lines: string; evidence: Ref[] }[];
+  improvements: {
+    problem: string;
+    proposal: string;
+    target: (typeof TARGETS)[number];
+    evidence: Ref[];
+  }[];
+}
+
+/** A short digest of `parts`, independent of the order of keys in any object among them. */
+export function hash(...parts: unknown[]): string {
+  const sorted = (_: string, value: unknown) =>
+    value && typeof value === 'object' && !Array.isArray(value)
+      ? Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)))
+      : value;
+  return createHash('sha256').update(JSON.stringify(parts, sorted)).digest('hex').slice(0, 16);
+}
+
+export function newState<X extends object>(owner: string, plan: Plan<X>): State<X> {
+  const job: Job<X> = {
+    ...{ owner, plan, planHash: hash(plan), started: new Date().toISOString() },
+    ...{ admitted: {}, prs: {}, used: 0, grants: [], created: 0, delivered: 0, posted: [] },
+  };
+  return { job, evidence: {}, findings: {} };
+}
+
+export const budget = (job: Job) => job.grants.reduce((sum, g) => sum + g.amount, BUDGET);
+
+/** Why the job may not go on without a human, if it may not. */
+export function stopReason(job: Job): string | undefined {
+  if (job.blocked) return `blocked: ${job.blocked}`;
+  if (job.used >= budget(job)) return `the assessment budget (${budget(job)}) is used up`;
+}
+
+/** Changes whenever a turn moved the job: an assessment, a finding raised or closed, an admission. */
+export function progressMark(state: State): string {
+  const closed = Object.values(state.findings).filter((f) => f.closed).length;
+  const { used, created, admitted, retro, planHash } = state.job;
+  return hash(used, created, closed, admitted, !!retro, planHash);
+}
+
+/** The plan's stages, in the profile's order, which the engine keeps them in. */
+export const stageOrder = (job: Job): Stage[] => Object.keys(job.plan.stages);
+
+export const previousStage = (job: Job, stage: Stage): Stage | undefined =>
+  stageOrder(job)[stageOrder(job).indexOf(stage) - 1];
+
+/** A stage stays admitted while the plan and the admitted stage it was built on are unchanged. */
+export function isAdmitted(job: Job, stage: Stage): boolean {
+  const admission = job.admitted[stage];
+  const prev = previousStage(job, stage);
+  if (admission?.plan !== job.planHash) return false;
+  return !prev || (isAdmitted(job, prev) && admission.base === job.admitted[prev]!.candidate);
+}
+
+export const passed = (evidence: Evidence) => evidence.checks.every((c) => !c.problem);
+
+/** The stage's reviewed evidence under the current plan, oldest first. */
+export const reviewedEvidence = (state: State, stage: Stage) =>
+  Object.values(state.evidence).filter(
+    (e) => e.stage === stage && e.plan === state.job.planHash && e.reviewers.length,
+  );
+
+/**
+ * The replies due on review threads: a no-change answer at once, a fix once its stage's PR moved
+ * past the revision the finding was raised on, quoting the head that carries it.
+ */
+export function repliesDue(state: State): { finding: Finding; reply: string }[] {
+  return Object.values(state.findings).flatMap((finding) => {
+    const { closed, replies, stage, revision } = finding;
+    if (!closed || !replies?.length) return [];
+    if (closed.resolution !== 'fixed') return [{ finding, reply: closed.reason! }];
+    const head = state.job.prs[stage]?.head;
+    return head && head !== revision
+      ? [{ finding, reply: `Fixed in ${head.slice(0, 10)}: ${closed.reason}` }]
+      : [];
+  });
+}
+
+export function outstanding(state: State): Finding[] {
+  const stages = stageOrder(state.job);
+  return Object.values(state.findings)
+    .filter((f) => !f.closed)
+    .sort((a, b) => stages.indexOf(a.stage) - stages.indexOf(b.stage) || seq(a) - seq(b));
+}
+
+/** CI runs only after publication, so its findings cannot hold back the admission that publishes. */
+export const blocksAdmission = (f: Finding, stage: Stage) =>
+  f.stage === stage && f.blocking && f.source !== 'ci';
+
+/** Every stage admitted, nothing outstanding and every reply posted: the retrospective is next. */
+export function done(state: State): boolean {
+  return (
+    stageOrder(state.job).every((s) => isAdmitted(state.job, s)) &&
+    !outstanding(state).length &&
+    !Object.values(state.findings).some((f) => f.closed && f.replies?.length)
+  );
+}
+
+const seq = (f: Finding) => Number(f.id.slice(1));
+
+function insert(state: State, finding: NewFinding) {
+  const id = `F${++state.job.created}`;
+  state.findings[id] = { id, ...finding };
+}
+
+/**
+ * Adds findings whose key is new. A duplicate merges into the existing finding: an open one gains
+ * its links, and either gains its replies, so a comment on two stacked PRs is answered on both.
+ */
+export function addFindings(state: State, findings: NewFinding[]): void {
+  for (const finding of findings) {
+    const existing = Object.values(state.findings).find((f) => f.key === finding.key);
+    if (!existing) {
+      insert(state, finding);
+      continue;
+    }
+    // The same comment again on a PR it was answered on is new feedback, such as a regression.
+    const again = finding.replies?.find(
+      (r) => existing.closed && existing.answered?.includes(r.pr),
+    );
+    if (again) {
+      const key = `${finding.key}:${again.thread ?? again.comment}`;
+      if (!Object.values(state.findings).some((f) => f.key === key))
+        insert(state, { ...finding, key });
+      continue;
+    }
+    if (!existing.closed) existing.links = [...new Set([...existing.links, ...finding.links])];
+    for (const reply of finding.replies ?? [])
+      if (!existing.replies
+```
+
+### Core Architecture Module: `.amp/plugins/rust-port/core/plan.ts`
+```
+/*
+ * Copyright (c) 2006-Present, Redis Ltd.
+ * All rights reserved.
+ *
+ * Licensed under your choice of the Redis Source Available License 2.0
+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+ * GNU Affero General Public License v3 (AGPLv3).
+ */
+
+/**
+ * The plan the worker records: what the port must keep, what it may change, and the stages, with
+ * the prose reviewers and PRs show of it.
+ */
+import type { Check } from './checks.ts';
+import type { Profile, Stage } from './ports.ts';
+
+/** A test named as evidence: `name` is defined in the file at `path` from `stage` on. */
+export interface Test {
+  path: string;
+  name: string;
+  stage: Stage;
+}
+
+/** Where the new code behaves differently from the old; each language names one side. */
+export interface Divergence {
+  behavior: string;
+  why: string;
+  test: Test;
+  [side: string]: unknown;
+}
+
+export type Plan<X = {}> = X & {
+  repository: string;
+  remote: string;
+  baseBranch: string;
+  /** Stage branches are `<branchPrefix>-<stage>`. */
+  branchPrefix: string;
+  /** Behavior callers rely on, and the tests that pin it. */
+  contract: { behavior: string; tests: Test[] }[];
+  /** For a human to accept on the PRs. */
+  divergences: Divergence[];
+  structure: string;
+  interfaces: string;
+  stages: Record<
+    Stage,
+    { deliverable: string; paths: string[]; checks: Check[]; title: string; body: string }
+  >;
+};
+
+type Languages = Profile['languages'];
+
+const blank = (text: unknown) => typeof text !== 'string' || !text.trim();
+const sides = (languages: Languages) => [languages.from, languages.to].map((l) => l.toLowerCase());
+
+/** The tests the plan cites up to `stage`: a stage's candidate must contain them and run them. */
+export function citedTests(plan: Plan, stage: Stage): Test[] {
+  const stages = Object.keys(plan.stages);
+  return [...plan.contract.flatMap((c) => c.tests), ...plan.divergences.map((d) => d.test)].filter(
+    (t) => stages.indexOf(t.stage) <= stages.indexOf(stage),
+  );
+}
+
+function testErrors(t: Test | undefined, what: string, stages: readonly Stage[]): string[] {
+  return blank(t?.path) || blank(t?.name) || !stages.includes(t?.stage ?? '')
+    ? [`${what} needs a test: { path, name, stage }, stage one of ${stages.join(', ')}`]
+    : [];
+}
+
+/** What is malformed in the parts of a plan every project has. */
+export function validatePlan(plan: Plan, profile: Pick<Profile, 'stages' | 'languages'>): string[] {
+  const stages = profile.stages.map((s) => s.name);
+  const errors = (['remote', 'baseBranch', 'branchPrefix', 'structure', 'interfaces'] as const)
+    .filter((field) => blank(plan?.[field]))
+    .map((field) => `${field} is required`);
+  if (!/^[\w.-]+\/[\w.-]+$/.test(plan?.repository)) errors.push('repository must be owner/name');
+  if (!plan.contract?.length) errors.push('contract needs at least one item');
+  for (const [i, c] of (plan.contract ?? []).entries()) {
+    if (blank(c?.behavior)) errors.push(`contract[${i}] needs a behavior`);
+    if (!c?.tests?.length) errors.push(`contract[${i}] needs the tests that pin it`);
+    for (const t of c?.tests ?? []) errors.push(...testErrors(t, `contract[${i}]`, stages));
+  }
+  if (!Array.isArray(plan.divergences)) errors.push('divergences is required, even if empty');
+  const [from, to] = sides(profile.languages);
+  for (const [i, d] of (plan.divergences ?? []).entries()) {
+    if ([d?.behavior, d?.[from], d?.[to], d?.why].some(blank))
+      errors.push(`divergences[${i}] needs behavior, ${from}, ${to} and why`);
+    errors.push(...testErrors(d?.test, `divergences[${i}]`, stages));
+  }
+  for (const { name, checks } of profile.stages) {
+    const s = plan.stages?.[name];
+    if (blank(s?.deliverable)) errors.push(`${name} needs a deliverable`);
+    if (!s?.paths?.length || s.paths.some(blank))
+      errors.push(`${name} needs the paths it may change`);
+    if (blank(s?.title) || blank(s?.body)) errors.push(`${name} needs a PR title and body`);
+    // A check passes only if every command in it does.
+    for (const c of s?.checks ?? [])
+      if (/\|\||;|(^|[^&])&(?!&)/.test(c?.command ?? ''))
+        errors.push(`${name} ${c.kind} check chains commands with something other than \`&&\``);
+    for (const [kind, runs] of Object.entries(checks)) {
+      const command = s?.checks?.find((c) => c.kind === kind)?.command ?? '';
+      if (blank(command) || runs.some((r) => !command.includes(r)))
+        errors.push(
+          `${name} needs a ${kind} check${runs.map((r) => ` running \`${r}\``).join(' and')}`,
+        );
+    }
+  }
+  return errors;
+}
+
+const testName = (t: Test) => `\`${t.path}::${t.name}\``;
+
+export function describeDivergences(plan: Plan, languages: Languages): string {
+  const { from, to } = languages;
+  if (!plan.divergences.length) return `None: the ${to} behaves like the ${from} everywhere.`;
+  const [f, t] = sides(languages);
+  return plan.divergences
+    .map(
+      (d) =>
+        `- **${d.behavior}.** ${from}: ${d[f]} ${to}: ${d[t]} Why: ${d.why} Test: ${testName(d.test)}`,
+    )
+    .join('\n');
+}
+
+/**
+ * The stage's PR. Every PR lists the divergences, so whoever reviews it can reject one, then, folded
+ * away, the plan it was admitted under, so an amendment that widens a stage or weakens its checks
+ * shows, and the `record` of the run.
+ */
+export function pullRequest<X extends object>(
+  plan: Plan<X>,
+  profile: Profile<X>,
+  stage: Stage,
+  record: string,
+) {
+  const { title, body } = plan.stages[stage];
+  return {
+    title,
+    body: `${body}
+
+#### Behavior changes from ${profile.languages.from}
+
+${describeDivergences(plan, profile.languages)}
+
+<details><summary>How this port ran</summary>
+
+${describePlan(plan, profile, false)}
+
+${record}
+</details>
+`,
+  };
+}
+
+/** The plan as reviewers read it; a PR shows the divergences on their own. */
+export function describePlan<X extends object>(
+  plan: Plan<X>,
+  profile: Profile<X>,
+  withDivergences = true,
+): string {
+  const stages = profile.stages.map(({ name }) => {
+    const { paths, checks } = plan.stages[name];
+    return `- \`${name}\` may change ${paths.map((p) => `\`${p}\``).join(', ')} and must pass ${checks.map((c) => `\`${c.command}\``).join(', ')}.`;
+  });
+  const contract = plan.contract.map(
+    (c) => `- ${c.behavior} Tests: ${c.tests.map(testName).join(', ')}`,
+  );
+  const extra = profile.describePlan?.(plan);
+  return `### Contract
+
+${contract.join('\n')}
+${withDivergences ? `\n### Divergences from ${profile.languages.from}\n\n${describeDivergences(plan, profile.languages)}\n` : ''}
+### Stages
+
+${stages.join('\n')}
+${extra ? `\n${extra}\n` : ''}
+### Structure, dependencies and handoffs
+
+${plan.structure}
+
+### Interfaces later stages rely on
+
+${plan.interfaces}`;
+}
+
+```
+
+### Core Architecture Module: `.amp/plugins/rust-port/core/ports.ts`
+```
+/*
+ * Copyright (c) 2006-Present, Redis Ltd.
+ * All rights reserved.
+ *
+ * Licensed under your choice of the Redis Source Available License 2.0
+ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+ * GNU Affero General Public License v3 (AGPLv3).
+ */
+
+/** Everything outside the workflow: the agent host, the forge, the VCS and the project. */
+import type { CheckResult } from './checks.ts';
+import type { FileChange } from './diff.ts';
+import type { Rule } from './gates.ts';
+import type { NewFinding } from './job.ts';
+import type { Plan } from './plan.ts';
+import type { Reviewer } from './review.ts';
+
+export type Stage = string;
+
+/** Where the worker and its reviewers run as threads. */
+export interface Host {
+  threadUrl(thread: string): string;
+  /** The name the worker calls an operation by. */
+  toolName(operation: string): string;
+  /** A thread under `parent`: a read-only reviewer when given `role`, a worker otherwise. */
+  startThread(o: { parent: string; labels: string[]; role?: string }): Promise<string>;
+  sendMessage(thread: string, message: string): Promise<void>;
+  /** Sends `message` and waits for the reply; aborting `signal` cancels the thread's turn. */
+  ask(
+    thread: string,
+    message: string,
+    o: { signal: AbortSignal; timeoutMs: number },
+  ): Promise<string>;
+}
+
+export interface PR {
+  number: number;
+  url: string;
+  head: string;
+}
+
+/** Where the stage PRs open, for one repository. */
+export interface Forge {
+  /** What keeps the stage PRs from opening from `remote` on `branches`. */
+  checkRemote(o: { remote: string; branches: string[] }): Promise<string[]>;
+  /** Pushes `candidate` to `branch` and opens the PR from it into `base`, or updates `existing`. */
+  publish(o: {
+    remote: string;
+    branch: string;
+    base: string;
+    candidate: string;
+    title: string;
+    body: string;
+    existing?: PR;
+  }): Promise<PR>;
+  /**
+   * The review comments and the CI verdict of a stage PR. `posted` are the comments the plugin
+   * wrote; `head` is the revision it published.
    */
-  struct CmdSchemaNode **edges;
-  /* The number of edges */
-  int size;
-} CmdSchemaNode;
-
-/* Create a new named schema with a given help message (can be left NULL) */
-CmdSchemaNode *NewSchema(const char *name, const char *help);
-
-void CmdSchemaNode_Free(CmdSchemaNode *n);
-
-/* Add a named parameter to a schema or sub-schema, with a given name, and an element which can be a
- * value, tuple, vector or option. Flags can indicate unique/repeating, or optional arg */
-int CmdSchema_AddNamed(CmdSchemaNode *s, const char *param, CmdSchemaElement *elem,
-                       CmdSchemaFlags flags);
-
-/* Add a positional parameter to a schema or sub-schema, with a given name, and an element which can
- * be a value, tuple, vector or option. Flags can indicate unique/repeating, or optional arg. A
- * positional argument has a name so it can referenced when accessing the parsed document */
-int CmdSchema_AddPostional(CmdSchemaNode *s, const char *param, CmdSchemaElement *elem,
-                           CmdSchemaFlags flags);
-
-/* Add named with a help message */
-int CmdSchema_AddNamedWithHelp(CmdSchemaNode *s, const char *param, CmdSchemaElement *elem,
-                               CmdSchemaFlags flags, const char *help);
-/* Add a positional with a help message */
-int CmdSchema_AddPostionalWithHelp(CmdSchemaNode *s, const char *param, CmdSchemaElement *elem,
-                                   CmdSchemaFlags flags, const char *help);
-
-/* Create a new tuple schema element to be added as a named/positional. The format string can be
- * composed of the letters d (double), l (long) or s (string). The expected length of the tuple is
- * the length of the format string */
-CmdSchemaElement *CmdSchema_NewTuple(const char *fmt, const char **names);
-
-/* Wrap a schema element with a validator func. Only one validator per element allowed */
-CmdSchemaElement *CmdSchema_Validate(CmdSchemaElement *e, CmdArgValidatorFunc f, void *privdata);
-
-/* Create a new single argument (string, long or double) to be added as a named or positional. The
- * type char can be d (double), l (long) or s (string) */
-CmdSchemaElement *CmdSchema_NewArg(const char type);
-
-/* Samve as CmdSchema_NewArg, but with a name annotation for help messages */
-CmdSchemaElement *CmdSchema_NewArgAnnotated(const char type, const char *name);
-
-/* Create a new vector to be added as a named or positional argument. A vector is a list of values
- * of the same type that starts with a length specifier (i.e. 3 foo bar baz) */
-CmdSchemaElement *CmdSchema_NewVector(const char type);
-
-/* Add a variadic vector. This can only be added at the end of the command */
-CmdSchemaElement *CmdSchema_NewVariadicVector(const char *fmt);
-
-/* Create a new option between mutually exclusive string values, to be added as a named/positional
- */
-CmdSchemaElement *CmdSchema_NewOption(int num, const char **opts);
-
-/* Add a flag - which is a boolean optional value. If the flag exists in the arguments, the value is
- * set to 1, else to 0 */
-int CmdSchema_AddFlag(CmdSchemaNode *parent, const char *name);
-
-/* Add a flag with a help message */
-int CmdSchema_AddFlagWithHelp(CmdSchemaNode *parent, const char *name, const char *help);
-
-/* Add a sub schema - that is a complex schema with arguments that can reside under another command
- */
-CmdSchemaNode *CmdSchema_AddSubSchema(CmdSchemaNode *parent, const char *param, int flags,
-                                      const char *help);
-void CmdSchema_Print(CmdSchemaNode *n);
-void CmdArg_Print(CmdArg *n, int depth);
-
-/* Parse a list of arguments using a command schema. If a parsing error occurs, CMDPARSE_ERR is
- * returned and an error string is put into err. Note that it is a newly allocated string that needs
- * to be freed. If strict is 1, we make sure that all arguments have been consumed. Strict set to 0
- * means we can do partial parsing */
-int CmdParser_ParseCmd(CmdSchemaNode *schema, CmdArg **arg, CmdString *argv, int argc, char **err,
-                       int strict);
-
-/* Parse a list of redis module arguments using a command schema. If a parsing error occurs,
- * CMDPARSE_ERR is returned and an error string is put into err. Note that err is a newly allocated
- * string that needs to be freed. If strict is 1, we make sure that all arguments have been
- * consumed. Strict set to 0 means we can do partial parsing */
-int CmdParser_ParseRedisModuleCmd(CmdSchemaNode *schema, CmdArg **cmd, RedisModuleString **argv,
-                                  int argc, char **err, int strict);
-
-/* Convert a variadic list of strings to an array of command strings. Does not do extra
- * reallocations, so only the array itself needs to be freed */
-CmdString *CmdParser_NewArgListV(size_t size, ...);
-
-/* Convert an array of C NULL terminated strings to an arg list. Does not do extra
- * reallocations, so only the array itself needs to be freed */
-CmdString *CmdParser_NewArgListC(const char **args, size_t size);
-
-typedef struct {
-  CmdArg *arg;
-  const char *key;
-  size_t pos;
-} CmdArgIterator;
-
-/* Return the number of children for arrays and objects, 0 for all others */
-size_t CmdArg_NumChildren(CmdArg
-```
-
-### Core Architecture Module: `deps/rmutil/heap.c`
-```
-/*
- * Copyright Redis Ltd. 2016 - present
- * Licensed under your choice of the Redis Source Available License 2.0 (RSALv2) or
- * the Server Side Public License v1 (SSPLv1).
- */
-
-#include "heap.h"
-
-/* Byte-wise swap two items of size SIZE. */
-#define SWAP(a, b, size)                  \
-  do {                                    \
-    register size_t __size = (size);      \
-    register char *__a = (a), *__b = (b); \
-    do {                                  \
-      char __tmp = *__a;                  \
-      *__a++ = *__b;                      \
-      *__b++ = __tmp;                     \
-    } while (--__size > 0);               \
-  } while (0)
-
-char *__vector_GetPtr(Vector *v, size_t pos) {
-  return v->data + (pos * v->elemSize);
+  fetchFeedback(o: {
+    stage: Stage;
+    number: number;
+    posted: number[];
+    head: string;
+  }): Promise<{ findings: NewFinding[]; pending: boolean }>;
+  /** Replies to a review thread's first comment; the reply's ID. */
+  replyToComment(pr: number, comment: number, body: string): Promise<number>;
+  resolveThread(thread: string): Promise<void>;
 }
 
-void __sift_up(Vector *v, size_t first, size_t last, int (*cmp)(void *, void *)) {
-  size_t len = last - first;
-  if (len > 1) {
-    len = (len - 2) / 2;
-    size_t ptr = first + len;
-    if (cmp(__vector_GetPtr(v, ptr), __vector_GetPtr(v, --last)) < 0) {
-      char t[v->elemSize];
-      memcpy(t, __vector_GetPtr(v, last), v->elemSize);
-      do {
-        memcpy(__vector_GetPtr(v, last), __vector_GetPtr(v, ptr), v->elemSize);
-        last = ptr;
-        if (len == 0) break;
-        len = (len - 1) / 2;
-        ptr = first + len;
-      } while (cmp(__vector_GetPtr(v, ptr), t) < 0);
-      memcpy(__vector_GetPtr(v, last), t, v->elemSize);
-    }
-  }
+/** The checkout the job works in. */
+export interface Vcs {
+  /** The checked-out revision; throws if the tree is dirty. */
+  currentRevision(): Promise<string>;
+  resolveRevision(revision: string): Promise<string>;
+  /** Fetches `branch` from `remote`; the fetched revision. */
+  fetchBranch(remote: string, branch: string): Promise<string>;
+  mergeBase(a: string, b: string): Promise<string>;
+  /**
+   * The unified diff between two revisions, limited to `paths` if given. Renames show as a delete
+   * and an add, so every path a change touches is named, unless `renames` asks for them as such.
+   */
+  diff(from: string, to: string, o?: { paths?: string[]; renames?: boolean }): Promise<string>;
+  readFileAt(revision: string, path: string): Promise<string | undefined>;
+  listFiles(revision: string): Promise<string[]>;
+  applyPatch(patch: string, o?: { reverse: true }): Promise<boolean>;
+  /** Puts back what the checks changed or created, ignored files aside; whether anything had. */
+  discardChanges(): Promise<boolean>;
 }
 
-void __sift_down(Vector *v, size_t first, size_t last, int (*cmp)(void *, void *), size_t start) {
-  // left-child of __start is at 2 * __start + 1
-  // right-child of __start is at 2 * __start + 2
-  size_t len = last - first;
-  size_t child = start - first;
+/** Judges a check that exited 0 from its log, or the files it wrote under `root`. */
+export type Judge = (o: {
+  check: CheckResult;
+  log: string;
+  root: string;
+}) => Promise<string | undefined> | string | undefined;
 
-  if (len < 2 || (len - 2) / 2 < child) return;
-
-  child = 2 * child + 1;
-
-  if ((child + 1) < len &&
-      cmp(__vector_GetPtr(v, first + child), __vector_GetPtr(v, first + child + 1)) < 0) {
-    // right-child exists and is greater than left-child
-    ++child;
-  }
-
-  // check if we are in heap-order
-  if (cmp(__vector_GetPtr(v, first + child), __vector_GetPtr(v, start)) < 0)
-    // we are, __start is larger than it's largest child
-    return;
-
-  char top[v->elemSize];
-  memcpy(top, __vector_GetPtr(v, start), v->elemSize);
-  do {
-    // we are not in heap-order, swap the parent with it's largest child
-    memcpy(__vector_GetPtr(v, start), __vector_GetPtr(v, first + child), v->elemSize);
-    start = first + child;
-
-    if ((len - 2) / 2 < child) break;
-
-    // recompute the child based off of the updated parent
-    child = 2 * child + 1;
-
-    if ((child + 1) < len &&
-        cmp(__vector_GetPtr(v, first + child), __vector_GetPtr(v, first + child + 1)) < 0) {
-      // right-child exists and is greater than left-child
-      ++child;
-    }
-
-    // check if we are in heap-order
-  } while (cmp(__vector_GetPtr(v, first + child), top) >= 0);
-  memcpy(__vector_GetPtr(v, start), top, v->elemSize);
-}
-
-void Make_Heap(Vector *v, size_t first, size_t last, int (*cmp)(void *, void *)) {
-  if (last - first > 1) {
-    // start from the first parent, there is no need to consider children
-    for (int start = (last - first - 2) / 2; start >= 0; --start) {
-      __sift_down(v, first, last, cmp, first + start);
-    }
-  }
-}
-
-inline void Heap_Push(Vector *v, size_t first, size_t last, int (*cmp)(void *, void *)) {
-  __sift_up(v, first, last, cmp);
-}
-
-inline void Heap_Pop(Vector *v, size_t first, size_t last, int (*cmp)(void *, void *)) {
-  if (last - first > 1) {
-    SWAP(__vector_GetPtr(v, first), __vector_GetPtr(v, --last), v->elemSize);
-    __sift_down(v, first, last, cmp, first);
-  }
-}
-
-```
-
-### Core Architecture Module: `deps/rmutil/heap.h`
-```
-/*
- * Copyright Redis Ltd. 2016 - present
- * Licensed under your choice of the Redis Source Available License 2.0 (RSALv2) or
- * the Server Side Public License v1 (SSPLv1).
- */
-
-#ifndef __HEAP_H__
-#define __HEAP_H__
-
-#include "vector.h"
-
-
-/* Make heap from range
- * Rearranges the elements in the range [first,last) in such a way that they form a heap.
- * A heap is a way to organize the elements of a range that allows for fast retrieval of the element with the highest
- * value at any moment (with pop_heap), even repeatedly, while allowing for fast insertion of new elements (with
- * push_heap).
- * The element with the highest value is always pointed by first. The order of the other elements depends on the
- * particular implementation, but it is consistent throughout all heap-related functions of this header.
- * The elements are compared using cmp.
- */
-void Make_Heap(Vector *v, size_t first, size_t last, int (*cmp)(void *, void *));
-
-
-/* Push element into heap range
- * Given a heap in the range [first,last-1), this function extends the range considered a heap to [first,last) by
- * placing the value in (last-1) into its corresponding location within it.
- * A range can be organized into a heap by calling make_heap. After that, its heap properties are preserved if elements
- * are added and removed from it using push_heap and pop_heap, respectively.
- */
-void Heap_Push(Vector *v, size_t first, size_t last, int (*cmp)(void *, void *));
-
-
-/* Pop element from heap range
- * Rearranges the elements in the heap range [first,last) in such a way that the part considered a heap is shortened
- * by one: The element with the highest value is moved to (last-1).
- * While the element with the highest value is moved from first to (last-1) (which now is out of the heap), the other
- * elements are reorganized in such a way that the range [first,last-1) preserves the properties of a heap.
- * A range can be organized into a heap by calling make_heap. After that, its heap properties are preserved if elements
- * are added and removed from it using push_heap and pop_heap, respectively.
- */
-void Heap_Pop(Vector *v, size_t first, size_t last, int (*cmp)(void *, void *));
-
-#endif //__HEAP_H__
-
-```
-
-### Core Architecture Module: `deps/rmutil/logging.h`
-```
-/*
- * Copyright Redis Ltd. 2016 - present
- * Licensed under your choice of the Redis Source Available License 2.0 (RSALv2) or
- * the Server Side Public License v1 (SSPLv1).
- */
-
-#ifndef __RMUTIL_LOGGING_H__
-#define __RMUTIL_LOGGING_H__
-
-/* Convenience macros for redis logging */
-
-#define RM_LOG_DEBUG(ctx, ...) RedisModule_Log(ctx, "debug", __VA_ARGS__)
-#define RM_LOG_VERBOSE(ctx, ...) RedisModule_Log(ctx, "verbose", __VA_ARGS__)
-#define RM_LOG_NOTICE(ctx, ...) RedisModule_Log(ctx, "notice", __VA_ARGS__)
-#define RM_LOG_WARNING(ctx, ...) RedisModule_Log(ctx, "warning", __VA_ARGS__)
-
-#endif
-```
-
-### Core Architecture Module: `deps/rmutil/priority_queue.c`
-```
-/*
- * Copyright Redis Ltd. 2016 - present
- * Licensed under your choice of the Redis Source Available License 2.0 (RSALv2) or
- * the Server Side Public License v1 (SSPLv1).
- */
-
-#include "priority_queue.h"
-#include "heap.h"
-
-#include "rmalloc.h"
-
-PriorityQueue *__newPriorityQueueSize(size_t elemSize, size_t cap, int (*cmp)(void *, void *)) {
-  PriorityQueue *pq = rm_malloc(sizeof(PriorityQueue));
-  pq->v = __newVectorSize(elemSize, cap);
-  pq->cmp = cmp;
-  return pq;
-}
-
-inline size_t Priority_Queue_Size(PriorityQueue *pq) {
-  return Vector_Size(pq->v);
-}
-
-inline int Priority_Queue_Top(PriorityQueue *pq, void *ptr) {
-  return Vector_Get(pq->v, 0, ptr);
-}
-
-inline size_t __priority_Queue_PushPtr(PriorityQueue *pq, void *elem) {
-  size_t top = __vector_PushPtr(pq->v, elem);
-  Heap_Push(pq->v, 0, top, pq->cmp);
-  return top;
-}
-
-inline void Priority_Queue_Pop(PriorityQueue *pq) {
-  if (pq->v->top == 0) {
-    return;
-  }
-  Heap_Pop(pq->v, 0, pq->v->top, pq->cmp);
-  pq->v->top--;
-}
-
-void Priority_Queue_Free(PriorityQueue *pq) {
-  Vector_Free(pq->v);
-  rm_free(pq);
+/** What a project brings: its stages, layout, rules, runners, judges, reviewers and hooks. */
+export interface Profile<X = {}> {
+  /** Names the job in labels, messages and its state directory. */
+  name: string;
+  /** In order; each kind of check a stage's plan must have, and what it must run. */
+  stages: { name: Stage; checks: Record<string, string[]> }[];
+  /** The language ported from and to; the divergence fields are their lowercase names. */
+  languages: { from: string; to: string };
+  classify(path: string): 'build' | 'rule' | 'generated' | 'test' | 'source';
+  /** The text outside the tests a source file holds, where its language puts tests there. */
+  stripTests?(path: string, text: string): string | undefined;
+  /** An added line that switches a test off. */
+  disabledTestPattern: RegExp;
+  rules: Rule[];
+  /** The files of the {@link classify} `rule`, as reviewers read them. */
+  ruleFiles: string;
+  /** What a reproduction may run: a `*` stands for a word. */
+  testRunners: string[];
+  /** Whether a reproduction command only runs tests with one of {@link testRunners}. */
+  isTestCommand(command: string): boolean;
+  judges: Record<string, Judge>;
+  reviewers: Reviewer[];
+  /** What the plan gets wrong about the repository at `base`, once it is well formed. */
+  checkPlan?(plan: Plan<X>, o: { root: string; vcs: Vcs; base: string }): Promise<string[]>;
+  /** What else rejects a claim before anything runs. */
+  checkClaim?(o: {
+    root: string;
+    vcs: Vcs;
+    plan: Plan<X>;
+    stage: Stage;
+    base: string;
+    candidate: string;
+    files: FileChange[];
+  }): Promise<string[]>;
+  /** Sections of the plan the core does not know, as reviewers and PRs read them. */
+  describePlan?(plan: Plan<X>): string;
 }
 
 ```
@@ -1626,373 +1847,528 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb9b9bd9` (2026-11-15)
-**Commit Message**: Remove dead build and QA scripts (#12335)
+### Incident Patch 1: `5d6202da` (2026-11-16)
+**Commit Message**: MOD-21270: Fix crash when an index with an alias is loaded more than once (#12333)
 
-These files have no remaining callers on master:
+* Fix crash when an index with an alias is loaded more than once
 
-- build/{hiredis,libuv}/Makefile{,.defs}: include deps/readies, which was
-  removed in #6506; the CMake build uses the sibling *.cmake files.
-- tests/qa/: the legacy QA runner depends on paella (from readies) and
-  nothing invokes it.
-- sbin/circleci-pack-logs: CircleCI leftover.
-- sbin/code_style.py: points at a srcutil/ path that no longer exists.
-- tests/pytests/rmtest.config: RLTest does not read it.
+IndexSpec_RdbLoad's alias loop passed an uninitialized QueryError to
+IndexAlias_Add. When the alias is already registered - every load after
+the first of the same index's aux data, or _FT._RESTOREIFNX for an index
+the shard already has - QueryError_SetError ran on stack garbage, and the
+Rust implementation freed the garbage message pointers.
 
-Supersedes the deletion half of #6661.
+Initialize the QueryError locals on the RDB load paths with
+QueryError_Default() and clear them after use, including the same
+pattern in IndexSpec_LegacyRdbLoad.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* Unregister aliases when a legacy index fails to load
+
+IndexSpec_LegacyRdbLoad registers a spec's aliases before it looks up the
+upgrade definition and creates the schema rule. When either step failed, it
+released the spec with the aliases still pointing at it, so a later lookup of
+the alias used freed memory. Both paths now go through
+IndexSpec_RdbLoadDiscard.
+
+Adds legacy-loader tests for the alias loop and both failure paths. On the
+previous code the missing-definition case leaves 
+
+**File**: `src/spec.c` (modified, +10/-5)
+```diff
+@@ -3506,7 +3506,9 @@ IndexSpec *IndexSpec_RdbLoad(RedisModuleIO *rdb, int encver, bool useSst, QueryE
+ 
+   narr = LoadUnsigned_IOError(rdb, goto cleanup);
+   for (size_t ii = 0; ii < narr; ++ii) {
+-    QueryError _status;
++    // Aux data replayed from several source shards loads the same index repeatedly, and each
++    // repeat finds its aliases already registered, so this error path is routine.
++    QueryError _status = QueryError_Default();
+     char *s = LoadStringBuffer_IOError(rdb, NULL, goto cleanup);
+     HiddenString* alias = NewHiddenString(s, strlen(s), false);
+     int rc = IndexAlias_Add(alias, spec_ref, 0, &_status);
+@@ -3515,6 +3517,7 @@ IndexSpec *IndexSpec_RdbLoad(RedisModuleIO *rdb, int encver, bool useSst, QueryE
+     if (rc != REDISMODULE_OK) {
+       RedisModule_Log(RSDummyContext, "notice", "Loading existing alias failed");
+     }
++    QueryError_ClearError(&_status);
+   }
+ 
+   // NOTE: duplicate detection (a specDict_g read) and the non-SST on-disk index
+@@ -3746,14 +3749,15 @@ void *IndexSpec_LegacyRdbLoad(RedisModuleIO *rdb, int encver) {
+   if (encver >= INDEX_MIN_ALIAS_VERSION) {
+     size_t narr = RedisModule_LoadUnsigned(rdb);
+     for (size_t ii = 0; ii < narr; ++ii) {
+-      QueryError status;
++      QueryError status = QueryError_Default();
+       size_t dummy;
+       char *s = RedisModule_LoadStringBuffer(rdb, &dummy);
+       HiddenString* alias = NewHiddenString(s, strlen(s), false);
+       int rc = IndexAlias_Add(alias, spec_ref, 0, &status);
+       HiddenString_Free(alias, false);
+       RedisModule_Free(s);
+       RS_ASSERT(rc == REDISMODULE_OK);
++      QueryError_ClearError(&status);
+     }
+   }
+ 
+@@ -3762,11 +3766,11 @@ void *IndexSpec_LegacyRdbLoad(RedisModuleIO *rdb, int encver) {
+   if (!rule_args) {
+     RedisModule_LogIOError(rdb, "warning",
+                            "Could not find upgrade definition for legacy index '%s'", formattedIndexName);
+-    StrongRef_Release(spec_ref);
++    IndexSpec_RdbLoadDiscard(spec_ref);
+     return NULL;
+   }
+ 
+-  QueryError status;
++  QueryError status = QueryError_Default();
+   sp->rule = SchemaRule_Create(rule_args, spec_ref, &status);
+ 
+   dictDelete(legacySpecRules, sp->specName);
+@@ -3775,7 +3779,8 @@ void *IndexSpec_LegacyRdbLoad(RedisModuleIO *rdb, int encver) {
+   if (!sp->rule) {
+     RedisModule_LogIOError(rdb, "warning", "Failed creating rule for legacy index '%s', error='%s'",
+                            formattedIndexName, QueryError_GetDisplayableError(&status, RSGlobalConfig.hideUserDataFromLog));
+-    StrongRef_Release(spec_ref);
++    QueryError_ClearError(&status);
++    IndexSpec_RdbLoadDiscard(spec_ref);
+     return NULL;
+   }
+   if (isSpecJson(sp)) {
+```
+
+**File**: `tests/cpptests/test_cpp_rdb.cpp` (modified, +168/-16)
+```diff
+@@ -21,6 +21,7 @@ extern "C" {
+ #include <array>
+ #include <cstdint>  // For SIZE_MAX, UINT32_MAX
+ #include <iterator>  // For std::size
++#include <string>
+ #include <vector>
+ 
+ extern "C" {
+@@ -340,17 +341,35 @@ TEST_F(RdbMockTest, testIndexSpecRdbLoadRejectsNumericStorageFlag) {
+   }
+ }
+ 
+-TEST_F(RdbMockTest, testLegacyIndexSpecRdbLoadRejectsNumericStorageFlag) {
+-  const auto originalGetKeyName = RedisModule_GetKeyNameFromIO;
+-  const bool originalLoading = g_isLoading;
++// Sets up the globals IndexSpec_LegacyRdbLoad requires, as an RDB load does, and restores them.
++class LegacyLoadScope {
++ public:
++  LegacyLoadScope() {
++    RedisModule_GetKeyNameFromIO = [](RedisModuleIO *) -> const RedisModuleString * {
++      return nullptr;
++    };
++    g_isLoading = true;
++    legacySpecRules = dictCreate(&dictTypeHeapHiddenStrings, nullptr);
++    legacySpecDict = dictCreate(&dictTypeHeapHiddenStrings, nullptr);
++  }
++  ~LegacyLoadScope() {
++    dictRelease(legacySpecRules);
++    dictRelease(legacySpecDict);
++    legacySpecRules = originalRules;
++    legacySpecDict = originalSpecs;
++    g_isLoading = originalLoading;
++    RedisModule_GetKeyNameFromIO = originalGetKeyName;
++  }
++
++ private:
++  decltype(RedisModule_GetKeyNameFromIO) originalGetKeyName = RedisModule_GetKeyNameFromIO;
++  bool originalLoading = g_isLoading;
+   dict *originalRules = legacySpecRules;
+   dict *originalSpecs = legacySpecDict;
+-  RedisModule_GetKeyNameFromIO = [](RedisModuleIO *) -> const RedisModuleString * {
+-    return nullptr;
+-  };
+-  g_isLoading = true;
+-  legacySpecRules = dictCreate(&dictTypeHeapHiddenStrings, nullptr);
+-  legacySpecDict = dictCreate(&dictTypeHeapHiddenStrings, nullptr);
++};
++
++TEST_F(RdbMockTest, testLegacyIndexSpecRdbLoadRejectsNumericStorageFlag) {
++  LegacyLoadScope legacyLoad;
+ 
+   for (int encver = LEGACY_INDEX_MIN_VERSION; encver <= LEGACY_INDEX_MAX_VERSION; ++encver) {
+     for (bool numericStorage : {false, true}) {
+@@ -369,13 +388,6 @@ TEST_F(RdbMockTest, testLegacyIndexSpecRdbLoadRejectsNumericStorageFlag) {
+       EXPECT_EQ(RMCK_IsIOError(io.get()), 0);
+     }
+   }
+-
+-  dictRelease(legacySpecRules);
+-  dictRelease(legacySpecDict);
+-  legacySpecRules = originalRules;
+-  legacySpecDict = originalSpecs;
+-  g_isLoading = originalLoading;
+-  RedisModule_GetKeyNameFromIO = originalGetKeyName;
+ }
+ 
+ // Parses `args` into a spec, saves it and loads it back with `encver`, then
+@@ -608,6 +620,146 @@ TEST_F(RdbMockTest, testFailedDiskOpenUnpublishesSpec) {
+     ExpectFailedLoadUnpublishes();
+ }
+ 
++// Leaves stack slots that, read as an uninitialized QueryError, carry an OK code and non-null
++// message pointers — the state in which QueryError_SetError frees garbage.
++// Leaves stack memory that an uninitialized QueryError in a later frame reads as an OK code with
++// non-null messages, so setting an error on it frees garbage instead of passing by chance.
++static void __attribute__((noinline)) dirtyStackForUninitializedQueryError() {
++  volatile uint64_t slots[8192];
++  for (size_t i = 0; i < std::size(slots); i++) {
++    slots[i] = 0xdeadbe00;
++  }
++}
++
++TEST_F(RdbMockTest, testDuplicateIndexRdbLoadWithRegisteredAlias) {
++  const char *args[] = {"ON", "HASH", "SCHEMA", "title", "TEXT"};
++  QueryError err = QueryError_Default();
++  HiddenString *alias = NewHiddenString("dup_alias", strlen("dup_alias"), false);
++  std::unique_ptr<HiddenString, void (*)(HiddenString *)> aliasGuard(
++      alias, [](HiddenString *a) { HiddenString_Free(a, false); });
++  StrongRef spec_ref = IndexSpec_ParseC(NULL, "dup_alias_idx", args, std::size(args), &err);
++  ASSERT_FALSE(QueryError_HasError(&err)) << QueryError_GetUserError(&err);
++  IndexSpec *spec = (IndexSpec *)StrongRef_Get(spec_ref);
++  Spec_AddToDict(spec_ref.rm);
++  std::unique_ptr<IndexSpec, void (*)(IndexSpec *)> specGuard(
++      spec, [](IndexSpec *s) { Indexes_RemoveSpecFromGlobals(s->own_ref, false); });
++
++  ASSERT_EQ(REDISMODULE_OK, IndexAlias_Add(alias, spec_ref, 0, &err));
++
++  RedisModuleIO *io = RMCK_CreateRdbIO();
++  std::unique_ptr<RedisModuleIO, std::function<void(RedisModuleIO *)>> ioPtr(
++      io, [](RedisModuleIO *io) { RMCK_FreeRdbIO(io); });
++  const size_t nCopies = 3;
++  RMCK_SaveUnsigned(io, nCopies);
++  for (size_t i = 0; i < nCopies; i++) {
++    IndexSpec_RdbSave(io, spec, 0);
++  }
++  io->read_pos = 0;
++
++  dirtyStackForUninitializedQueryError();
++  ASSERT_EQ(REDISMODULE_OK, Indexes_RdbLoad(io, INDEX_CURRENT_VERSION, REDISMODULE_AUX_BEFORE_RDB));
++  EXPECT_EQ(0, RMCK_IsIOError(io));
++
++  // The registered spec and its alias are untouched by the discarded duplicates.
++  EXPECT_EQ(1, Indexes_Count());
++  EXPECT_EQ(spec_ref.rm, Indexes_LoadIndexSpecUnsafe("dup_alias_idx").rm);
++  EXPECT_EQ(spec_ref.rm, IndexAlias_Get(alias).rm);
++  ASSERT_EQ(1, array_len(spec->aliases));
++
++  ASSERT_EQ(REDISMODULE_OK, IndexAlias_Del(alias, spec_ref, 0, &err));
++  EXPECT_EQ(NULL, IndexAlias_Get(alias).rm);
++  ASSERT_FALSE(QueryError_HasError(&err)) << QueryError_GetUse
+```
+
+---
+
+### Incident Patch 2: `fd2bfe48` (2026-11-17)
+**Commit Message**: MOD-19333 fix(numeric): size the retry window from the observed hit rate (#11560)
+
+fix(numeric): size the retry window from the observed hit rate
+
+Port of the C optimizer fix in https://github.com/RediSearch/RediSearch/pull/10511
+(MOD-14945) to NumericScoreSource::expand_window.
+
+The retry window was sized as estimate_limit(num_docs, child_estimate,
+missing) * success_ratio. estimate_limit divides the missing-result count
+by the child's selectivity to get a document count; multiplying by the
+observed hit rate cancels that division, leaving a window sized to the
+number of missing results rather than the documents needed to collect
+them. Retries then made little progress before the iteration cap fell
+back to reading everything.
+
+Feed the estimator the observed selectivity instead, success_ratio *
+num_docs, as the C reader now does. A zero estimate yields an unbounded
+window, as C's zero limit does, rather than a one-document one.
+
+child_estimate was read only by that formula, so it is dropped from the
+source and from NumericScoreSource::filtered.
+
+Results are unaffected: windows stay disjoint and the heap accumulates
+across them. Unit tests pin the retry window's size at the observed
+
+**File**: `src/redisearch_rs/numeric_score_source/src/reducer.rs` (modified, +0/-1)
+```diff
+@@ -102,7 +102,6 @@ where
+                 ascending,
+                 DEFAULT_RANGE_BATCH_SIZE,
+                 num_docs,
+-                child_estimate,
+             );
+             (source, Some(child))
+         }
+```
+
+**File**: `src/redisearch_rs/numeric_score_source/src/source.rs` (modified, +63/-38)
+```diff
+@@ -162,11 +162,6 @@ struct NumericScan<'index> {
+     /// Total documents in the index, the selectivity denominator that sizes
+     /// each retry window's estimated limit.
+     num_docs: usize,
+-    /// Filter child's selectivity estimate, used to size the next window.
+-    child_estimate: usize,
+-    /// Limit of the window currently being consumed, the denominator of the
+-    /// success ratio.
+-    last_limit_estimate: usize,
+     /// Heap count at the start of the current window, the baseline for counting
+     /// hits collected from it.
+     heap_old_size: usize,
+@@ -205,35 +200,25 @@ impl<'index> NumericScoreSource<'index> {
+             RangeWindow::UNBOUNDED,
+             range_batch_size,
+             0,
+-            0,
+             false,
+         )
+     }
+ 
+     /// Build a filtered source with the expand-and-retry path enabled.
+     ///
+     /// `window` is the initial slice of the value-ordered stream to read.
+-    /// `num_docs` is the total document count and `child_estimate` the filter
+-    /// child's selectivity estimate; both size the retry windows.
++    /// `num_docs` is the total document count, which with each window's
++    /// observed hit rate sizes the retry windows.
+     pub fn filtered(
+         tree: impl Into<NumericTreeRef<'index>>,
+         mut filter: NumericFilter,
+         window: RangeWindow,
+         ascending: bool,
+         range_batch_size: usize,
+         num_docs: usize,
+-        child_estimate: usize,
+     ) -> Self {
+         filter.ascending = ascending;
+-        Self::build(
+-            tree,
+-            filter,
+-            window,
+-            range_batch_size,
+-            num_docs,
+-            child_estimate,
+-            true,
+-        )
++        Self::build(tree, filter, window, range_batch_size, num_docs, true)
+     }
+ 
+     fn build(
+@@ -242,21 +227,18 @@ impl<'index> NumericScoreSource<'index> {
+         window: RangeWindow,
+         range_batch_size: usize,
+         num_docs: usize,
+-        child_estimate: usize,
+         retry_enabled: bool,
+     ) -> Self {
+         let mut ranges = NumericRangeIterator::new(tree, &filter, window);
+         let num_estimated = ranges.total_docs_estimate();
+         Self {
+             scan: NumericScan {
+                 ranges,
+-                last_limit_estimate: window.limit,
+                 initial_window: window,
+                 range_batch_size: range_batch_size.max(1),
+                 num_estimated,
+                 retry_enabled,
+                 num_docs,
+-                child_estimate,
+                 heap_old_size: 0,
+                 num_iterations: 0,
+                 num_batches: 0,
+@@ -340,9 +322,7 @@ impl<'index, V: DocValidity, E: ExpirationChecker, T: TimeoutContext>
+             offset: 0,
+             limit: k,
+         };
+-        scan.last_limit_estimate = k;
+         scan.num_docs = scan.num_estimated;
+-        scan.child_estimate = scan.num_estimated;
+         scan.retry_enabled = true;
+         scan.ranges.refind(scan.initial_window);
+     }
+@@ -355,15 +335,11 @@ impl<'index, V: DocValidity, E: ExpirationChecker, T: TimeoutContext>
+ }
+ 
+ impl NumericScan<'_> {
+-    /// Hit ratio of the window just consumed: results collected from it over the
+-    /// window's limit. Returns `0.0` when the limit is `0`, guarding the
+-    /// division.
+-    fn success_ratio(&self, heap_count: usize) -> f64 {
+-        if self.last_limit_estimate == 0 {
+-            return 0.0;
+-        }
++    /// Hit ratio of the window just consumed: results collected from it over
++    /// its non-zero `limit`.
++    fn success_ratio(&self, heap_count: usize, limit: usize) -> f64 {
+         let collected = heap_count.saturating_sub(self.heap_old_size);
+-        collected as f64 / self.last_limit_estimate as f64
++        collected as f64 / limit as f64
+     }
+ 
+     /// Advance the window past the drained one, size the next, and re-resolve
+@@ -386,18 +362,19 @@ impl NumericScan<'_> {
+             return false;
+         }
+ 
++        let success_ratio = self.success_ratio(heap_count, window.limit);
+         window.offset += self.ranges.total_docs_estimate();
+-        let success_ratio = self.success_ratio(heap_count);
+ 
+         if success_ratio < MIN_SUCCESS_RATIO || self.num_iterations + 1 >= MAX_ITERATIONS {
+             // Hits are too sparse, or this is the last allowed retry: drop the
+             // window limit so the retry reads every remaining range.
+             window.limit = 0;
+         } else {
++            // Feed the estimator the observed selectivity, as C does. A zero
++            // estimate yields a zero, i.e. unbounded, window.
+             let results_missing = k.saturating_sub(heap_count);
+-            let estimate = estimate_limit(self.num_docs, self.child_estimate, results_missing);
+-            self.last_limit_estimate = ((estimate as f64) * success_ratio) as usize;
+-            window.limit = self.last_limit_estimate.max(1);
++            let observed_estimate = (success_ratio * self.num_docs as
+```
+
+**File**: `src/redisearch_rs/numeric_score_source/tests/integration/source.rs` (modified, +8/-17)
+```diff
+@@ -167,15 +167,13 @@ fn run_filtered(
+     ascending: bool,
+ ) -> Vec<(DocId, f64)> {
+     let tree = tree_from(pairs);
+-    let child_estimate = child_ids.len();
+     let source = NumericScoreSource::filtered(
+         &tree,
+         full_range(),
+         RangeWindow::UNBOUNDED,
+         ascending,
+         range_batch_size,
+         pairs.len(),
+-        child_estimate,
+     );
+     let mut it = new_numeric_top_k_filtered(
+         source,
+@@ -274,7 +272,7 @@ fn filtered_retry_expands_window_to_reach_low_scored_match() {
+         offset: 0,
+         limit: 1,
+     };
+-    let source = NumericScoreSource::filtered(&tree, full_range(), window, false, 1, 20, 1);
++    let source = NumericScoreSource::filtered(&tree, full_range(), window, false, 1, 20);
+     let mut it = new_numeric_top_k_filtered(
+         source,
+         IdList::<true>::new(vec![1u64]),
+@@ -316,7 +314,7 @@ fn filtered_retry_reaches_match_past_multivalue_inflated_ranges() {
+         offset: 0,
+         limit: 1,
+     };
+-    let source = NumericScoreSource::filtered(&tree, full_range(), window, false, 1, num_docs, 1);
++    let source = NumericScoreSource::filtered(&tree, full_range(), window, false, 1, num_docs);
+     let mut it = new_numeric_top_k_filtered(
+         source,
+         IdList::<true>::new(vec![match_id]),
+@@ -364,7 +362,7 @@ fn filtered_retry_keeps_high_match_across_windows() {
+         offset: 0,
+         limit: 1,
+     };
+-    let source = NumericScoreSource::filtered(&tree, full_range(), window, false, 1, 20, 2);
++    let source = NumericScoreSource::filtered(&tree, full_range(), window, false, 1, 20);
+     let mut it = new_numeric_top_k_filtered(
+         source,
+         IdList::<true>::new(vec![1u64, 20u64]),
+@@ -389,7 +387,7 @@ fn filtered_rewind_after_expansion_repeats_results() {
+         offset: 0,
+         limit: 1,
+     };
+-    let source = NumericScoreSource::filtered(&tree, full_range(), window, false, 1, 20, 2);
++    let source = NumericScoreSource::filtered(&tree, full_range(), window, false, 1, 20);
+     let mut it = new_numeric_top_k_filtered(
+         source,
+         IdList::<true>::new(child),
+@@ -435,16 +433,9 @@ fn filtered_excludes_deleted_docs() {
+     let tree = tree_from(&[(1, 1.0), (2, 2.0), (3, 3.0), (4, 100.0), (5, 5.0)]);
+     let deleted = DeletedDocs::from_iter([4]);
+     let child_ids = vec![2u64, 4u64];
+-    let source = NumericScoreSource::filtered(
+-        &tree,
+-        full_range(),
+-        RangeWindow::UNBOUNDED,
+-        false,
+-        1,
+-        5,
+-        child_ids.len(),
+-    )
+-    .with_validity(deleted);
++    let source =
++        NumericScoreSource::filtered(&tree, full_range(), RangeWindow::UNBOUNDED, false, 1, 5)
++            .with_validity(deleted);
+     let mut it = new_numeric_top_k_filtered(
+         source,
+         IdList::<true>::new(child_ids),
+@@ -1020,7 +1011,7 @@ fn metrics_count_window_expansions() {
+         offset: 0,
+         limit: 1,
+     };
+-    let source = NumericScoreSource::filtered(&tree, full_range(), window, false, 1, 20, 1);
++    let source = NumericScoreSource::filtered(&tree, full_range(), window, false, 1, 20);
+     let mut it = new_numeric_top_k_filtered(
+         source,
+         IdList::<true>::new(vec![1u64]),
+```
+
+**File**: `src/redisearch_rs/numeric_score_source_bencher/benches/numeric_top_k_optimizer.rs` (modified, +0/-1)
+```diff
+@@ -218,7 +218,6 @@ fn run_rust_filtered(
+         ASCENDING,
+         RANGE_BATCH_SIZE,
+         index.n,
+-        child_estimate,
+     );
+     // Fresh owned copies each call, mirroring the C side's per-run allocation.
+     let mut count = 0usize;
+```
+
+---
+
+### Incident Patch 3: `46783141` (2026-11-17)
+**Commit Message**: Fix tag filter escaping in two vector benchmark specs (#12373)
+
+memtier_benchmark consumes one level of backslash escaping in --command, so
+`{stat\.ME}` reached the server as `{stat.ME}`, which matches no documents
+under DIALECT 2. Both specs were timing an empty tag filter: the KNN query in
+vecsim-...-tag-filter and the SEARCH leg of the RRF query in
+hybrid-...-rrf-tag-range.
+
+Double the escape so memtier forwards `\.` and the filter matches `stat.ME`.
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `build/hiredis/Makefile` (removed, +0/-55)
+**File**: `tests/benchmarks/hybrid-arxiv-titles-384-angular-rrf-tag-range.yml` (modified, +1/-1)
 ```diff
-@@ -1,55 +0,0 @@
--
--ROOT=../..
--
--MK.cmake=1
--
--include $(ROOT)/deps/readies/mk/main
--
--#----------------------------------------------------------------------------------------------
--
--define HELPTEXT
--make build          # compile and link
--  DEBUG=1             # build for debugging
--  WHY=1               # explain CMake decisions (in /tmp/cmake-why)
--  FORCE=1             # Force CMake rerun (default)
--  CMAKE_ARGS=...      # extra arguments to CMake
--  SLOW=1              # do not parallelize build (for diagnostics)
--make clean         # remove build artifacts
--  ALL=1              # remove entire artifacts directory
--
--endef
--
--#----------------------------------------------------------------------------------------------
--
--SRCDIR=$(ROOT)/deps/hiredis
--
--BINDIR=$(BINROOT)/hiredis
--
--TARGET=$(BINDIR)/libhiredis.a
--
--#----------------------------------------------------------------------------------------------
--
--include $(MK)/defs
--
--define CMAKE_DEFS +=
--	DISABLE_TESTS=on
--	ENABLE_SSL=on
--	CMAKE_POSITION_INDEPENDENT_CODE=on
--endef
--
--#----------------------------------------------------------------------------------------------
--
--MK_CUSTOM_CLEAN=1
--
--include $(MK)/rules
--
--#----------------------------------------------------------------------------------------------
--
--clean:
--ifeq ($(ALL),1)
--	$(SHOW)rm -rf $(BINDIR)
--else
--	$(SHOW)$(MAKE) -C $(BINDIR) clean
--endif
--
--.PHONY: clean
+@@ -17,4 +17,4 @@ dbconfig:
+ clientconfig:
+   benchmark_type: "read-only"
+   tool: memtier_benchmark
+-  arguments: "--test-time 120 -c 32 -t 1 --hide-histogram --command 'FT.HYBRID idx SEARCH \"@labels:{stat\\.ME}\" YIELD_SCORE_AS search_score VSIM @vector $vec_param RANGE 2 RADIUS 1.5 YIELD_SCORE_AS vector_distance COMBINE RRF 4 CONSTANT 60 WINDOW 50 TIMEOUT 90000 LOAD 4 @__key @__score @search_score @vector_distance SORTBY 2 @__score DESC LIMIT 0 30 params 2 vec_param ????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????'"
++  arguments: "--test-time 120 -c 32 -t 1 --hide-histogram --command 'FT.HYBRID idx SEARCH \"@labels:{stat\\\\.ME}\" YIELD_SCORE_AS search_score VSIM @vector $vec_param RANGE 2 RADIUS 1.5 YIELD_SCORE_AS vector_distance COMBINE RRF 4 CONSTANT 60 WINDOW 50 TIMEOUT 90000 LOAD 4 @__key @__score @search_score @vector_distance SORTBY 2 @__score DESC LIMIT 0 30 params 2 vec_param ????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????'"
 ```
 
-**File**: `build/hiredis/Makefile.defs` (removed, +0/-2)
+**File**: `tests/benchmarks/vecsim-arxiv-titles-384-angular-filters-m16-ef-128-tag-filter.yml` (modified, +1/-1)
 ```diff
-@@ -1,2 +0,0 @@
--
--export HIREDIS=$(HIREDIS_BINDIR)/libhiredis.a $(HIREDIS_BINDIR)/libhiredis_ssl.a
-```
-
-**File**: `build/libuv/Makefile` (removed, +0/-56)
-```diff
-@@ -1,56 +0,0 @@
--
--ROOT=../..
--
--MK.cmake=1
--
--include $(ROOT)/deps/readies/mk/main
--
--#----------------------------------------------------------------------------------------------
--
--define HELPTEXT
--make build          # compile and link
--  DEBUG=1             # build for debugging
--  WHY=1               # explain CMake decisions (in /tmp/cmake-why)
--  FORCE=1             # Force CMake rerun (default)
--  CMAKE_ARGS=...      # extra arguments to CMake
--  SLOW=1              # do not parallelize build (for diagnostics)
--make clean         # remove build artifacts
--  ALL=1              # remove entire artifacts directory
--
--endef
--
--#----------------------------------------------------------------------------------------------
--
--SRCDIR=$(ROOT)/deps/libuv
--
--BINDIR=$(BINROOT)/libuv
--
--TARGET=$(BINDIR)/libuv_a.a
--
--#----------------------------------------------------------------------------------------------
--
--include $(MK)/defs
--
--define CMAKE_DEFS +=
--	DISABLE_TESTS=on
--	ENABLE_SSL=on
--	CMAKE_POSITION_INDEPENDENT_CODE=on
--  LIBUV_BUILD_SHARED=OFF
--endef
--
--#----------------------------------------------------------------------------------------------
--
--MK_CUSTOM_CLEAN=1
--
--include $(MK)/rules
--
--#----------------------------------------------------------------------------------------------
--
--clean:
--ifeq ($(ALL),1)
--	$(SHOW)rm -rf $(BINDIR)
--else
--	$(SHOW)$(MAKE) -C $(BINDIR) clean
--endif
--
--.PHONY: clean
-```
-
-**File**: `build/libuv/Makefile.defs` (removed, +0/-2)
-```diff
-@@ -1,2 +0,0 @@
--
--export LIBUV=$(LIBUV_BINDIR)/libuv_a.a
-```
-
-**File**: `sbin/circleci-pack-logs` (removed, +0/-33)
-```diff
-@@ -1,33 +0,0 @@
--#!/usr/bin/env bash
--
--PROGNAME="${BASH_SOURCE[0]}"
--HERE="$(cd "$(dirname "$PROGNAME")" &>/dev/null && pwd)"
--ROOT=$(cd $HERE/.. && pwd)
--
--if [[ -z $CIRCLECI ]]; then
--	echo "Not in CircleCI"
--	exit 1
--fi
--
--if [[ -n $CIRCLE_BRANCH ]]; then
--	CIRCLE_BRANCH_OR_TAG="$CIRCLE_BRANCH"
--else
--	CIRCLE_BRANCH_OR_TAG="$CIRCLE_TAG"
--fi
--
--TEST_LOGFILE_PREFIX=${CIRCLE_PROJECT_REPONAME}_${CIRCLE_BRANCH_OR_TAG}_${CIRCLE_JOB}
--
--mkdir -p $ROOT/logs
--
--if [[ -d $ROOT/tests/pytests/logs ]]; then
--	cd $ROOT/tests/pytests/logs
--	rm -f *.{aof,rdb}
--	TEST_LOGFILE=$ROOT/logs/${TEST_LOGFILE_PREFIX}_tests-pytests-logs.tgz
--	tar -czf $TEST_LOGFILE *.log* || true
--fi
--
--if [[ -d $ROOT/tests/logs ]]; then
--	cd $ROOT/tests/logs
--	TEST_LOGFILE=$ROOT/logs/${TEST_LOGFILE_PREFIX}_tests-unit-tests-logs.tgz
--	tar -czf $TEST_LOGFILE *.log* || true
--fi
-```
-
-**File**: `sbin/code_style.py` (removed, +0/-142)
-```diff
-@@ -1,142 +0,0 @@
--#!/usr/bin/env python
--# Copyright (c) 2006-Present, Redis Ltd.
--# All rights reserved.
--#
--# Licensed under your choice of the Redis Source Available License 2.0
--# (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
--# GNU Affero General Public License v3 (AGPLv3).
--
--import glob
--import os
--import os.path
--import sys
--import shutil
--from argparse import ArgumentParser
--from subprocess import Popen, PIPE
--
--RED = '\033[0;31m'
--GREEN = '\033[0;32m'
--NC = '\033[0m' # No Color
--CLANG_ARGS = ['-style=file', '-fallback-style=none']
--GIT_STATUS_PATTERNS = [
--    'src/*.[ch]',
--    'src/*.[ch]pp'
--]
--
--IGNPTRN = [
--        'src/aggregate/expr/lexer.c',
--        'src/dep/cndict/cndict_data.c',
--        'src/redismodule.h',
--        'src/aggregate/expr/parser.c',
--        'src/query_parser/parser.c',
--        'src/query_parser/lexer.c',
--        'src/dep/gtest'
--]
--
--IGNOREPATHS = []
--for f in IGNPTRN:
--    IGNOREPATHS += glob.glob(f)
--
--ap = ArgumentParser()
--ap.add_argument('-f', '--path',
--    help="Manual path or glob to format", metavar="FILE_OR_DIR")
--ap.add_argument('-n', '--dry-run',
--    help="Show which files would have been modified and exit",
--    action='store_true')
--ap.add_argument('--install',
--    help="Install this script as a Git hook", action='store_true')
--ap.add_argument('-v', '--verbose',
--    help="Print commands being executed", action='store_true')
--ap.add_argument('--clang-format-path', help='path to clang-format binary',
--    default='clang-format')
--
--options = ap.parse_args()
--
--if options.install:
--    # Copy this file as a git hook
--    if not os.path.exists('.git'):
--        raise Exception('Must be run from source directory (no .git directory found)')
--    script_target = '.git/hooks/pre-commit'
--    script_text = """
--#!/usr/bin/env bash
--./srcutil/code_style.py -n
--"""
--    with open(script_target, 'w') as f:
--        f.write(script_text)
--        f.close()
--    os.chmod(script_target, 0o755)
--    sys.exit(0)
--
--if options.path:
--    files = glob.glob(options.path)
--else:
--    po = Popen(['git', 'status', '--porcelain'] + GIT_STATUS_PATTERNS, stdout=PIPE)
--    output, _ = po.communicate()
--    po.wait()
--    lines = [line for line in output.decode("utf-8").split('\n') if line]
--    files = []
--    for line in lines:
--        # Check the two letter status
--        status = line[0:2].strip()
--        if status[0] == ' ':
--            continue
--        if status[0] in ('C', 'R'):
--            # [C]opy or [R]ename
--            # TODO: This can theoretically break if there are spaces in
--            # the filename. Needs to be tested.
--            src, delim, dst, = line[3:].split(' ')
--            files.append(dst)
--        elif status[0] in ('M', 'A'):
--            files.append(line[3:])
--
--
--has_error = False
--for f in files:
--    is_skip = False
--    if f in IGNOREPATHS:
--        print(f + ' [SKIP]')
--        continue
--    for p in IGNOREPATHS:
--        if f.startswith(p):
--            print(f + ' [SKIP]')
--            is_skip = True
--            break
--
--    if is_skip:
--        continue
--
--    cmd = ['clang-format'] + CLANG_ARGS + ['-output-replacements-xml', f]
--    if options.verbose:
--        print("Executing", cmd)
--    po = Popen(cmd, stdout=PIPE)
--    output, _ = po.communicate()
--    rv = po.wait()
--    if rv != 0:
--        print('Warning: Could not analyze {}'.format(f))
--    count = len([line for line in output.decode("utf-8").split('\n') if line])
--    has_changes = count > 3
--    if options.dry_run:
--        if has_changes:
--            print(RED + f + ' [FAIL]' + NC)
--            has_error = True
--        else:
--            print(GREEN + f + ' [OK]' + NC)
--    else:
--        if has_changes:
--            print('Reformatting ' + f)
--            cmd = ['clang-format'] + CLANG_ARGS + ['-i', f]
--            if options.verbose:
--                print("Executing", cmd)
--            po = Popen(cmd)
--            po.communicate()
--            if po.wait() != 0:
--                print("Warning: Couldn't reformat!")
--
--if has_error:
--    print(
--        'Some files were not properly formatted. Run this script ({}) to '
--        'format them'.format(__file__))
--    if os.environ.get('CODE_STYLE_IGNORE'):
--        print('Ignoring error because of CODE_STYLE_IGNORE in the environment')
--    else:
--        sys.exit(1)
-```
-
-**File**: `tests/pytests/rmtest.config` (removed, +0/-2)
-```diff
-@@ -1,2 +0,0 @@
--[server]
--module = ../redisearch.so
-```
-
-**File**: `tests/qa/RS_VERSIONS` (removed, +0/-11)
-```diff
-@@ -1,11 +0,0 @@
--6.0.8-32
--6.0.12-58
--6.0.20-101
--6.2.4-54
--6.2.8-53
--6.2.10-129
--6.2.12-82
--6.2.18-49
--6.4.0-48
--6.4.2-8
--100.0.0-2988
+@@ -18,4 +18,4 @@ dbconfig:
+ clientconfig:
+   benchmark_type: "read-only"
+   tool: memtier_benchmark
+-  arguments: "--test-time 120 -c 32 -t 1 --hide-histogram --command 'FT.SEARCH idx \"(@labels:{stat\\.ME})=>[KNN 25 @vector $vec_param EF_RUNTIME 64 AS vector_score]\" TIMEOUT 90000  RETURN 1 vector_score SORTBY vector_score DESC DIALECT 2 LIMIT 0 25 params 2 vec_param ????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????'"
++  arguments: "--test-time 120 -c 32 -t 1 --hide-histogram --command 'FT.SEARCH idx \"(@labels:{stat\\\\.ME})=>[KNN 25 @vector $vec_param EF_RUNTIME 64 AS vector_score]\" TIMEOUT 90000  RETURN 1 vector_score SORTBY vector_score DESC DIALECT 2 LIMIT 0 25 params 2 vec_param ????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????'"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12339** (2026-11-15): [8.2] Refactor FT.CREATE option parsing into a reusable function (@Itzikvaknin)
-- **PR #12338** (2026-11-15): Use shared CI retry-command action (@kei-nan)
-- **PR #12336** (2026-11-15): [MOD-20665] gc: remove the dead fork pipe glue; lock a spec for a closure's span (@GuyAv46)
-- **PR #12335** (2026-11-15): Remove dead build and QA scripts (@alonre24)
-- **PR #12326** (2026-11-12): [8.8-rse] [MOD-18996] Bump VecSim allocation transfer API (@GuyAv46)
-- **PR #12325** (2026-11-12): [MOD-20889] [Disk observability] Keep TEXT metadata aggregation in C (@dkyurtovv)
+- **PR #12375** (2026-11-17): [MOD-21323] Fix VecSim coverage metadata on compiler cache hits (@GuyAv46)
+- **PR #12373** (2026-11-17): Fix tag filter escaping in two vector benchmark specs (@JoanFM)
+- **PR #12360** (2026-11-16): [8.10-rse] MOD-21270: Fix crash when an index with an alias is loaded more than once (@redisearch-backport-pull-request[bot])
+- **PR #12359** (2026-11-17): Remove unused idf_ffi crate (@gdesmott)
+- **PR #12355** (2026-11-16): [MOD-18612] Fix invalid memory access in vector allocations (@GuyAv46)
+- **PR #12348** (2026-11-16): [MOD-19691] Fix global index error counters for multi-type fields (@lerman25)
 
 ---
 
@@ -2006,3 +2382,47 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. MOD-21270: Fix crash when an index with an alias is loaded more than once
+
+**RULE**:
+When implementing operations in `src/spec.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5d6202da`: MOD-21270: Fix crash when an index with an alias is loaded more than once. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/spec.c`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    // Aux data replayed from several source shards loads the same index repeatedly, and each
+    // repeat finds its aliases already registered, so this error path is routine.
+    QueryError _status = QueryError_Default();
+    QueryError_ClearError(&_status);
+      QueryError status = QueryError_Default();
+      QueryError_ClearError(&status);
+    IndexSpec_RdbLoadDiscard(spec_ref);
+  QueryError status = QueryError_Default();
+    QueryError_ClearError(&status);
+    IndexSpec_RdbLoadDiscard(spec_ref);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    QueryError _status;
+      QueryError status;
+    StrongRef_Release(spec_ref);
+  QueryError status;
+    StrongRef_Release(spec_ref);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5d6202da` are properly handled with clean fallback behavior.

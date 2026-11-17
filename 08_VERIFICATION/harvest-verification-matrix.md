@@ -10564,3 +10564,8 @@
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T14:02:19.603Z` | `vespa-engine-vespa` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8E8B1BED` [Domain D] | Yes (`2ce16cc2...`) |
 | `CYCLE-20261117-Y5S0` | `2026-11-17T14:15:11.808Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md` | Yes (`977b6dc8...`) |
 | `CYCLE-20261117-80UI` | `2026-11-17T14:22:51.978Z` | `meta/docusaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8972` | Yes (`1e36d934...`) |
+| `CYCLE-20261117-LKEI` | `2026-11-17T14:33:23.850Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8973` | Yes (`8a8db34c...`) |
+| `CYCLE-20261117-LM0N` | `2026-11-17T14:33:25.943Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8974` | Yes (`810b5c4b...`) |
+| `CYCLE-20261117-LO1U` | `2026-11-17T14:33:28.578Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8975` | Yes (`18e490d4...`) |
+| `CYCLE-20261117-LRJ1` | `2026-11-17T14:33:33.085Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8976` | Yes (`9c2a15e6...`) |
+| `CYCLE-20261117-LWPZ` | `2026-11-17T14:33:39.815Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md` | Yes (`619ab415...`) |

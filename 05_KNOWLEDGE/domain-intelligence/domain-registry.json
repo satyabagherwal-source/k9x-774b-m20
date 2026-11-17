@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T14:22:57.824Z",
-  "total_records": 1559,
+  "last_updated": "2026-11-17T14:33:44.559Z",
+  "total_records": 1563,
   "domains": {
     "A": {
       "total": 11,
@@ -21,7 +21,7 @@
       ]
     },
     "B": {
-      "total": 13,
+      "total": 14,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -35,7 +35,8 @@
         "domain_intelligence-product-intelligence-crate-ci-typos-core-invariants",
         "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants",
         "domain_intelligence-product-intelligence-ganymedenil-document-ai-core-invariants",
-        "DOM-B-6AFC12DD"
+        "DOM-B-6AFC12DD",
+        "domain_intelligence-product-intelligence-kcl-lang-kcl-core-invariants"
       ]
     },
     "C": {
@@ -47,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 645,
+      "total": 647,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -693,7 +694,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar",
         "DOM-D-8E8B1BED",
         "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-",
-        "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor"
+        "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor",
+        "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-autogluon-chronos-2-learnings-core-invariants"
       ]
     },
     "E": {
@@ -745,7 +748,7 @@
       ]
     },
     "G": {
-      "total": 287,
+      "total": 288,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1033,7 +1036,8 @@
         "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-citusdata-citus-core-invariants",
         "domain_intelligence-architecture-intelligence-meshery-meshery-core-invariants",
-        "domain_intelligence-architecture-intelligence-meshery-meshery-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-meshery-meshery-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-redisearch-redisearch-core-invariants"
       ]
     },
     "H": {
@@ -10977,8 +10981,8 @@
       "title": "Technical Construction Intelligence: openreplay/openreplay Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-openreplay-openreplay-technical-construction-intelligence-openreplay-openreplay-.md",
       "repository": "openreplay/openreplay",
-      "content_hash": "fde6c532299dce9a55c27737ae1b830a8f701af0f190a2b2ab231e1d12f102cf",
-      "created_at": "2026-11-13T23:01:39.870Z"
+      "content_hash": "6c56fc4c9189c856ebe1d7ebea34079af34197139dded86af88bcf78f841dff0",
+      "created_at": "2026-11-17T14:33:26.354Z"
     },
     "domain_intelligence-architecture-intelligence-crate-crate-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-crate-crate-core-invariants",
@@ -11055,8 +11059,8 @@
       "title": "Technical Construction Intelligence: openreplay-openreplay-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-openreplay-openreplay-learnings-technical-construction-intelligence-openreplay-o.md",
       "repository": "openreplay-openreplay-learnings",
-      "content_hash": "23a842166bd7979a1593c2221c502894ddcaad539e718f01bd0fae8e7a717d03",
-      "created_at": "2026-11-13T23:02:23.995Z"
+      "content_hash": "ad6734e8fa0ac7190af834140786bf7af51a7b3e7058922cbdf9be88debd517a",
+      "created_at": "2026-11-17T14:33:44.559Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants",
@@ -11339,8 +11343,8 @@
       "title": "Architecture Intelligence: yvgude/lean-ctx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yvgude-lean-ctx-architecture-intelligence-yvgude-lean-ctx-core-invariants.md",
       "repository": "yvgude/lean-ctx",
-      "content_hash": "ee2a4088463787c5c3edc365ecf592c8f6b7a57303698ed770039a0dcc6ba111",
-      "created_at": "2026-11-15T22:58:36.194Z"
+      "content_hash": "7e1ff52167a7cef80adc274b744f0f35ab7a97130b628f4de35dcc97f8f7f9ed",
+      "created_at": "2026-11-17T14:33:24.258Z"
     },
     "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-core-invaria",
@@ -11357,8 +11361,8 @@
       "title": "Architecture Intelligence: yvgude-lean-ctx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yvgude-lean-ctx-learnings-architecture-intelligence-yvgude-lean-ctx-learnings-co.md",
       "repository": "yvgude-lean-ctx-learnings",
-      "content_hash": "2fd84fe9fa8122d60c278b1ed9094c1a237b61b0defd8fedec0a38dd81e58b47",
-      "created_at": "2026-11-15T22:58:49.902Z"
+      "content_hash": "ffb988cde5ac4aa871795fc8dc0207896034f7cd043f8d9255db08923120685f",
+      "created_at": "2026-11-17T14:33:43.437Z"
     },
     "DOM-D-BCB68B52": {
       "record_id": "DOM-D-BCB68B52",
@@ -27094,6 +27098,42 @@
       "repository": "facebook-docusaurus-learnings",
       "content_hash": "af5ebcf1abf8c701efe13aa464ba5a682d4d1ef835ebdb67b18da441e6133091",
       "created_at": "2026-11-17T14:22:56.512Z"
+    },
+    "domain_intelligence-product-intelligence-kcl-lang-kcl-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-kcl-lang-kcl-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: kcl-lang/kcl Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-kcl-lang-kcl-product-intelligence-kcl-lang-kcl-core-invariants.md",
+      "repository": "kcl-lang/kcl",
+      "content_hash": "558408ea40fbdb60e819e385e5583c42262359c138bee31c0491caf21bce2855",
+      "created_at": "2026-11-17T14:33:28.978Z"
+    },
+    "domain_intelligence-architecture-intelligence-redisearch-redisearch-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-redisearch-redisearch-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
+      "repository": "RediSearch/RediSearch",
+      "content_hash": "089539ddaa3244805d810b2b4bed1c4d754501b8c85d0b2696a5d84827bd414c",
+      "created_at": "2026-11-17T14:33:33.481Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: autogluon/chronos-2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autogluon-chronos-2-research-knowledge-intelligence-autogluon-chronos-2-core-.md",
+      "repository": "autogluon/chronos-2",
+      "content_hash": "382bbf6895c8966799586d5d787021dc5e9d1f625900113334307cc1e6cacfb1",
+      "created_at": "2026-11-17T14:33:40.041Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autogluon-chronos-2-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-autogluon-chronos-2-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-autogluon-chronos-2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autogluon-chronos-2-learnings-research-knowledge-intelligence-hf-autogluon-ch.md",
+      "repository": "hf-autogluon-chronos-2-learnings",
+      "content_hash": "6d711ee43fb91c7caf127d421091d79f61413028814826d1113d6944f0d88bb4",
+      "created_at": "2026-11-17T14:33:44.000Z"
     }
   }
 }

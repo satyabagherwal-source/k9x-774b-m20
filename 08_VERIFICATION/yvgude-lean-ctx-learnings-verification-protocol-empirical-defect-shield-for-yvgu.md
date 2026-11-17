@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T22:58:49.692Z",
+  "timestamp": "2026-11-17T14:33:43.147Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-yvgude-lean-ctx-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [yvgude-lean-ctx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T22:58:49.692Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T14:33:43.147Z`  
 > **Learning ID**: `LEARN-EVO-yvgude-lean-ctx-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source**: github ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
-> **Source Version**: `5ae3dfff`  
+> **Source Version**: `9701b374`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T22:58:35.542Z  
+> **Timestamp**: 2026-11-17T14:33:22.652Z  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T22:58:35.536Z  
+> **Harvest Timestamp**: 2026-11-17T14:33:20.202Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3952 stars
+- **Stars / Engagement**: 3956 stars
 
 ---
 
@@ -2518,11 +2518,11 @@ impl HiveStore {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2256** (2026-11-16): **bug: pi-lean-ctx prints errors inside user prompt editor**
+  *Symptoms*: **lean-ctx version:** lean-ctx 3.12.2 (official, https://github.com/yvgude/lean-ctx)  **OS:** macOS  **AI tool:** Pi  **What happened:**  When reads fail extension prints a red error message inside user prompt editor:      [pi-lean-ctx] ctx_read bridge call failed, falling back to CLI: Error: ENOENT: no such file or directory, open ...  **What you expected:**  Failed tool calls should be in the transcript, don't touch the prompt editor.  **Steps to reproduce:** 1. Make a model generate a failing ctx_read call.  **Relevant output:** ```     [pi-lean-ctx] ctx_read bridge call failed, falling back to CLI: Error: ENOENT: no such file or directory, open ... ``` 
+
 - **Issue #2252** (2026-11-15): **bug: excessive memory consumption by the cockpit**
   *Symptoms*: **lean-ctx version:** Engine 3.12.5 according to MCP metadata; installed Cockpit runtime 3.12.3. CLI `--version` was not independently verified.  **OS:** Windows 11 Pro, build 26200, 32 GB RAM.  **AI tool:** Codex desktop with LeanCTX MCP.  **What happened:**  The separate `leanctx-cockpit.exe` process rapidly consumed tens of GiB of committed memory and exhausted Windows system commit.  Windows Resource Exhaustion Detector, Event ID 2004, identified Cockpit as the largest allocator during two separate incidents:  - Approximately **42 GiB within 91 seconds** of process creation. - Approximately **54 GiB** during another launch.  An unexpected system shutdown followed the latest incident. The logs confirm memory exhaustion and an unclean shutdown, but do not establish the exact shutdown mechanism.  These measurements are **process commit**, not RSS or Working Set.  The allocating function inside the proprietary Cockpit runtime remains unknown. Reviewing the public launcher revealed two relevant gaps: no child-process memory limit in the inspected Windows launch path, and discarded runtime stderr.  **What you expected:**  Cockpit should maintain bounded memory usage and remain responsive. Excessive allocation should trigger cancellation or controlled termination before exhausting system commit. Diagnostic logs should preserve the failing operation and exit reason while redacting credentials.  **Steps to reproduce:**  No deterministic minimal reproduction is available yet. The o
-
-- **Issue #2244** (2026-11-13): **bug: Multi repo search is not working**
-  *Symptoms*: **lean-ctx version:** (run `lean-ctx --version`)  3.12.3  **OS:** (macOS / Linux / Windows)  MacOS and Windows  **AI tool:** (Cursor / Claude Code / Copilot / Crush / other)  VSCode with Copilot harness  **What happened:**  ctx_multi_repo was working in 3.12.2, but in 3.12.3 it stopped working:  <img width="471" height="568" alt="image" src="https://github.com/user-attachments/assets/3ca05e06-bb75-492e-b913-b3e71d978ff6" />  If l call `ctx_multi_repo list_roots` I get (pending) on each folder. It did not resolve by just waiting (in case there is some background operation that needs to finish).  **What you expected:**  A ctx_multi_repo query and multiple roots to return results.   **Steps to reproduce:**  1. a VS Code code-worspace with multiple projects  2. a `.lean-ctx.toml `file with extra_roots and absolute paths that are valid based on the OS (MacOS/Windows)  3. `lean-ctx trust`  - to truest the workspace, specifically the extra roots 4. for each directory i call manually `lean-ctx index build` 5. for each repository we call ctx_multi_repo add_root - results in multi-repo status: ACTIVE and N number of roots 6. try to query across repos - which results in the error on the screenshot above 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2539,497 +2539,631 @@ impl HiveStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ae3dfff` (2026-11-15)
-**Commit Message**: Merge pull request #2253 from yvgude/release/3.12.6
+### Incident Patch 1: `866f1755` (2026-11-16)
+**Commit Message**: security: re-pin credential_redaction.rs scanner digest (#2255)
 
-chore(release): 3.12.6
+The history policy pins the scanner sources; the #2255 change to
+credential_redaction.rs moved its sha256. Re-pin it, update the
+baseline report's policy fingerprint and the report digest.
+history-policy-gate: 0 new findings; tests/security 179 passed.
 
-**File**: `CHANGELOG.md` (modified, +46/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `security/history-policy-v1.json` (modified, +2/-2)
 ```diff
-@@ -6,6 +6,52 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
- 
- ## [Unreleased]
- 
-+## [3.12.6] — 2026-11-15
-+
-+### Added
-+
-+- **Nine more Local Read kinds.** The local read surface now serves `overlays.list`,
-+  `overlays.removed`, `checkpoints.list`, `session.context`, `session.handoff`,
-+  `session.value`, `update.status`, `security.status` and `telemetry.status` as JSON documents
-+  (`GET /v1/local/...` and the matching `--json` CLI commands, e.g. `lean-ctx overlays list
-+  --json`, `lean-ctx session context --json --session <id>`). A local client reads them
-+  instead of parsing `ctx_control`, `ctx_checkpoint` or `update --status` text. Every body is a
-+  function of the stored data, with no generated timestamps or counters, and is released
-+  through the tool run of its tool. Project kinds need a project root; overlay removal only
-+  accepts files inside the project. The status documents carry versions, switches and counts
-+  only: no paths, digests, secrets or installation id.
-+
-+- **Shared parse cache across worktrees (#2247), opt-in.** With `[cache] derivations_enabled =
-+  true` or `LEAN_CTX_DERIVATION_CACHE=1`, index builds reuse BM25 chunks, the deep analysis
-+  behind graph and call-graph edges, and graph-scan signatures by exact content hash plus
-+  language, path selector and build identity. A fresh worktree then parses only the files it
-+  changed. Only pure parse results are shared: no project index, root, absolute path, retrieval
-+  result or permission decision. The store (`derivations_dir` /
-+  `LEAN_CTX_DERIVATION_CACHE_DIR`, default `<cache dir>/derivations`) must be a private
-+  directory of the current user. It refuses links and FIFOs, writes atomically, treats
-+  corruption as a miss, and evicts the oldest entries beyond `derivations_max_bytes`
-+  (default 512 MiB). Output after a parser panic is never stored. The setting is read once per
-+  process, so a running daemon picks up a change after a restart. Requested by @dkiaulakis.
-+
-+### Fixed
-+
-+- **A Windows Cockpit can no longer exhaust system memory (#2252).** On Windows, the Engine now
-+  starts `leanctx-cockpit.exe` in a job that caps its committed memory at 4 GiB and ends it
-+  when the Engine goes away. A Cockpit that reaches the cap fails its allocation and is
-+  restarted after the usual backoff, instead of committing tens of GiB until Windows runs out
-+  of virtual memory. `LEAN_CTX_COCKPIT_MEMORY_MB` sets another cap (at least 256; `0` turns it
-+  off); if the job cannot be set up, the Cockpit runs without a cap and the log says so. When
-+  a Cockpit exits, the log names its exit status, on Windows its peak memory against the cap,
-+  and the last whole lines of its stderr (at most 4 KiB), with the session tokens and
-+  credential-shaped text redacted. Before, stderr was discarded and a restart was logged only
-+  as "cockpit exited". Reported by @vik-borisov.
-+
-+- **`ctx_read` task mode no longer runs for hours on large files.** The MMR line ranking rebuilt
-+  both token sets for every candidate and selected pair, so one read on a large file could run
-+  for hours and a long-lived MCP server kept 150–550 % CPU. Token sets are now built once per
-+  line and each round costs linear time. Selection order, ties and scores are unchanged; a test
-+  checks the result against the previous implementation.
-+
- ## [3.12.5] — 2026-11-13
- 
- ### Added
-```
-
-**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +131/-96)
-```diff
-@@ -331,11 +331,11 @@
-    "size": 1033
-   },
-   {
--   "blob": "967aed0e3121be747a277739beebd7bec18c6077",
-+   "blob": "6b70ae57d067b78404c19d7f27ca7b9bcf85fc85",
-    "mode": "100644",
-    "path": "CHANGELOG.md",
--   "sha256": "bdf05b987261bd789401a12917323d9db56a6c6270097977fdf1d11eb9678ae7",
--   "size": 1286052
-+   "sha256": "d1aa5b5c925c9898f226ea0627885d2ebc0ea331b9177041ddf608fb4510777b",
-+   "size": 1289271
-   },
-   {
-    "blob": "77a7c7a520af8fc8b4df372eb5bd5fddcefbfecf",
-@@ -436,11 +436,11 @@
-    "size": 525
-   },
-   {
--   "blob": "ab4480118f0abbd4e85c3996c981a11b6753224e",
-+   "blob": "74c1dd3b279be11a6a37bd14a689b269055432b2",
-    "mode": "100644",
-    "path": "PUBLISH_MANIFEST.toml",
--   "sha256": "cb51978380c5fc9cbc5e9ac54ef56cb07f420a6e4e283b936241c28e834e3535",
--   "size": 313044
-+   "sha256": "933596972f528fbae7a0eb120df0957ab5cc544bd44b0f8708495a6ea8f238d6",
-+   "size": 313479
-   },
-   {
-    "blob": "b50ec9ee68e230777b65ff932e22735417a8e540",
-@@ -450,10 +450,10 @@
-    "size": 38306
-   },
-   {
--   "blob": "0a5db1fa66f77583638f4bf6bde44b3c2710b978",
-+   "blob": "d40c14a6ab07e0a4739ce045fba3d9b70bea5637",
-    "mode": "100644",
-    "path": "SBOM.cdx.json",
--   "sha256": "8dc3dd14b662c89777a5edd4abb9f56e9fb60708765f90836dded1d9f6fa109e",
-+   "sha256": "265e4ef4cfbc8e0d834c240ca4ce667957f5a1b898ba41ba97dd11a9f60a677d",
-    "size": 689556
-   },
-   {
-@@ -464,10 +464,10 @@
-    "size": 32425
-   },
-   {
--   "blob": "67f2bf8c0bb2957f9bc07294c494e79a1a10eddb",
-+   "blob": "b67247278b8e8ef29d153849cfeafb91c790c529",
-    "mode": "100644",
-    "path": "THIRD_PARTY_NOTICES",
--   "sha256": "58d3cb2c06ae4ab8c72371aa04e5ccc8f643989b2f25c4298b636b1be04d0e45",
-+   "sha256": "dbfcb518430bb1236ce66b4bfaee3a12a5e77531175c19d8247f1026d2f65e08",
-    "size": 331754
-   },
-   {
-@@ -513,10 +513,10 @@
-    "size": 593
-   },
-   {
--   "blob": "c926a3f56b957ceb994abaa2e0e0f193c65de420",
-+   "blob": "69a61a655d860714675aa9ca87fde8511b457797",
-    "mode": "100644",
-    "path": "aur/lean-ctx/PKGBUILD",
--   "sha256": "c65babff124b7a00abf5690df87ceb94d9a287890677972a20d3fa10323b85a8",
-+   "sha256": "f6c3b1a6f0755daad424192619ac16f811482f9adc83a5102e92a39b8376fb8e",
-    "size": 2096
-   },
-   {
-@@ -4006,18 +4006,18 @@
-    "size": 193663
-   },
-   {
--   "blob": "9db68450c504924f4caeedd2a88e1713f004a060",
-+   "blob": "00fd17348052b8c243a561c4b17d1c7359c45b93",
-    "mode": "100644",
-    "path": "legal/third-party-assets.toml",
--   "sha256": "425dd8b96788160bf4fc3a3a512dd05816fb4edb078c822cefeb92dfc5dc542d",
-+   "sha256": "eb4d0cfd3d81fad8de02741f6adbcc25872c1a4f2913561cf9d31e3649cfc536",
-    "size": 4279
-   },
-   {
--   "blob": "9457fa56d74f1d4090d8983715d6dc1344a872c6",
-+   "blob": "ab2e46dcb2aacf194f19a0455ca797ae4503cd7d",
-    "mode": "100644",
-    "path": "legal/third-party-notices-approval.toml",
--   "sha256": "6b3ebca2d0584bd4e9dc8aa64e9e1c5b45d8a905c2c4d702190a869e9630c9c8",
--   "size": 900
-+   "sha256": "dd18b6eb83fab6a17eb037f34d7cf42961bb4b3f681f6a82e389eef10118b940",
-+   "size": 874
-   },
-   {
-    "blob": "670fbcf808b965b53ce1309fc8d0c6d3b347c142",
-@@ -4041,10 +4041,10 @@
-    "size": 606
-   },
-   {
--   "blob": "0bbe0315e4f5c8fc22bc5c2510d8f630d842f551",
-+   "blob": "19e2502a38bd2e7680575d8370c7575977dab39f",
-    "mode": "100644",
-    "path": "packages/lean-ctx-bin/package.json",
--   "sha256": "dae7701e12521ec98589bd3327e2df8a65b0188c367e2981556cac06be5fedfc",
-+   "sha256": "67c3d23d9e0f781061f112fd56032bdb5257c649c8c9d9fdc25d2da025c8a1f0",
-    "size": 934
-   },
-   {
-@@ -4391,10 +4391,10 @@
-    "size": 25813
-   },
-   {
--   "blob": "049d39444b8c9bf15d1bbfc2c8c988f5591367cb",
-+   "blob": "def484fc96a11151c72587a986944add5c2ba2e9",
-    "mode": "100644",
-    "path": "packages/pi-lean-ctx/extensions/mcp-cache.ts",
--   "sha256": "20cddaf551dcab4a8797b39ef2b59d7f351855e46ca64fc89266842e79fc8dc7",
-+   "sha256": "c1b0b6e1f55a951c61827ab5903875f922c32811f7badb6b37e6c35917f9c585",
-    "size": 12725
-   },
-   {
-@@ -4419,17 +4419,17 @@
-    "size": 443
-   },
-   {
--   "blob": "bdc8301f3631a7d27136b542fefb54323e3ff9ac",
-+   "blob": "5039a2ae67d27ea46ea33259d5adbcf31b764182",
-    "mode": "100644",
-    "path": "packages/pi-lean-ctx/package-lock.json",
--   "sha256": "80be0b272b759c509fee6c44185755ceae9d23e4331b78867c5e4722475fb1d8",
-+   "sha256": "2f3d2808b17c364e7c3acbf09582f687328f46f427678be8c66d2755d0d3e03a",
-    "size": 147229
-   },
-   {
--   "blob": "0be348c6f4e1aec1d1ac3ce19cb5f62d2d24f535",
-+   "blob": "9a4a2ff79e345b1809b4ba0157599a0b73ce8dc9",
-    "mode": "100644",
-    "path": "packages/pi-lean-ctx/package.json",
--   "sha256": "02529f396d645044d120fc79758695ad26af1aca2ae94a53946c273982e0f168",
-+   "sha256": "93035b6e20a8093255358fe2f05181c877a6db56870f759202c1dbdcc661a04e",
-    "size": 1775
-   },
-   {
-@@ -4769,17 +4769,17 @@
-    "size": 5568
-   },
-   {
--   "blob": "20c466f1d4c928b698a3259dbae13c8055f43264",
-+   "blob": "057385f63d331ab9c25dc891d2f404165d37e804",
-    "mode": "100644",
-    "path": "rust/Cargo.lock",
--   "sha256": "4bbcd5c7a3c
-```
-
-**File**: `PUBLISH_MANIFEST.toml` (modified, +7/-0)
-```diff
-@@ -1854,6 +1854,7 @@ new_paths = [
-   "rust/crates/lean-ctx/src/cli/local_read/activity.rs",
-   "rust/crates/lean-ctx/src/cli/local_read/bus_presence.rs",
-   "rust/crates/lean-ctx/src/cli/local_read/capabilities.rs",
-+  "rust/crates/lean-ctx/src/cli/local_read/context_part.rs",
-   "rust/crates/lean-ctx/src/cli/local_read/daemon.rs",
-   "rust/crates/lean-ctx/src/cli/local_read/evidence.rs",
-   "rust/crates/lean-ctx/src/cli/local_read/kinds.rs",
-@@ -2882,6 +2883,12 @@ new_paths = [
-   "rust/crates/lean-ctx-server/src/tools/claims_gate.rs",
-   "rust/crates/lean-ctx-server/src/tools/ctx_agent_claims.rs",
-   "rust/src/core/unit_claims.rs",
-+  # Shared parse derivations across worktrees (GitHub #2247; own work, Apache-2.0).
-+  "rust/src/core/derivation_cache.rs",
-+  "rust/src/core/derivation_cache_tests.rs",
-+  # Test modules split out of cockpit.rs and config/sections.rs for the LOC gate (own work, Apache-2.0).
-+  "rust/src/core/intelligence_runtime/cockpit_tests.rs",
-+  "rust/src/core/config/sections_tests.rs",
- ]
- 
- # Public paths the export no longer carries: each one is a feature sunset with
-```
-
-**File**: `SBOM.cdx.json` (modified, +13/-13)
-```diff
-@@ -158,7 +158,7 @@
-       "version": "0.7.0"
-     },
-     {
--      "bom-ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.0",
-+      "bom-ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.1",
-       "description": "Tree-sitter based code structure for LeanCTX | OSS: signatures, deep AST queries, import resolution and the post-edit syntax gate.",
-       "externalReferences": [
-         {
-@@ -176,10 +176,10 @@
-         }
-       ],
-       "name": "lean-ctx-syntax",
--      "purl": "pkg:cargo/lean-ctx-syntax@0.1.0?download_url=file://crates/lean-ctx-syntax",
-+      "purl": "pkg:cargo/lean-ctx-syntax@0.1.1?download_url=file://crates/lean-ctx-syntax",
-       "scope": "required",
-       "type": "library",
--      "version": "0.1.0"
-+      "version": "0.1.1"
-     },
-     {
-       "bom-ref": "path+file://./rust/crates/lean-ctx-workgraph#0.3.0",
-@@ -16919,7 +16919,7 @@
-         "path+file://./rust/crates/lean-ctx-ocla#7.0.0",
-         "path+file://./rust/crates/lean-ctx-patterns#0.1.0",
-         "path+file://./rust/crates/lean-ctx-protocol#0.7.0",
--        "path+file://./rust/crates/lean-ctx-syntax#0.1.0",
-+        "path+file://./rust/crates/lean-ctx-syntax#0.1.1",
-         "path+file://./rust/crates/lean-ctx-workgraph#0.3.0",
-         "path+file://./rust/crates/leanctx-native-storage#0.1.1",
-         "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
-@@ -16977,7 +16977,7 @@
-         "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.5",
-         "registry+https://github.com/rust-lang/crates.io-index#zstd@0.14.3"
-       ],
--      "ref": "path+file://./rust#lean-ctx-engine@3.12.5"
-+      "ref": "path+file://./rust#lean-ctx-engine@3.12.6"
-     },
-     {
-       "dependsOn": [
-@@ -17089,7 +17089,7 @@
-         "registry+https://github.com/rust-lang/crates.io-index#tree-sitter-typescript@0.23.2",
-         "registry+https://github.com/rust-lang/crates.io-index#tree-sitter-zig@1.1.2"
-       ],
--      "ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.0"
-+      "ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.1"
-     },
-     {
-       "dependsOn": [
-@@ -20872,14 +20872,14 @@
-   ],
-   "metadata": {
-     "component": {
--      "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.5",
-+      "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.6",
-       "components": [
-         {
--          "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.5 bin-target-0",
-+          "bom-ref": "path+file://./rust#lean-ctx-engine@3.12.6 bin-target-0",
-           "name": "lean_ctx",
--          "purl": "pkg:cargo/lean-ctx-engine@3.12.5?download_url=file://.#src/lib.rs",
-+          "purl": "pkg:cargo/lean-ctx-engine@3.12.6?download_url=file://.#src/lib.rs",
-           "type": "library",
--          "version": "3.12.5"
-+          "version": "3.12.6"
-         }
-       ],
-       "description": "LeanCTX | OSS library: the open-source runtime for the Context Gateway for AI agents behind the lean-ctx CLI, MCP server and proxy integrations.",
-@@ -20899,10 +20899,10 @@
-         }
-       ],
-       "name": "lean-ctx-engine",
--      "purl": "pkg:cargo/lean-ctx-engine@3.12.5?download_url=file://.",
-+      "purl": "pkg:cargo/lean-ctx-engine@3.12.6?download_url=file://.",
-       "scope": "required",
-       "type": "library",
--      "version": "3.12.5"
-+      "version": "3.12.6"
-     },
-     "properties": [
-       {
-@@ -20911,7 +20911,7 @@
-       },
-       {
-         "name": "leanctx:cargo-lock-sha256",
--        "value": "4bbcd5c7a3cbd2692264f508ddf6eaa0e41000296e04cbdc0d16680cd5e197a7"
-+        "value": "3f36e6edaf70dd16aaa140a76fe27726f6308a93bd31614fe66382db70931a5b"
-       }
-     ],
-     "tools": [
-```
-
-**File**: `THIRD_PARTY_NOTICES` (modified, +5/-5)
-```diff
-@@ -2,16 +2,16 @@
- Schema: leanctx.third-party-notices/v1
- Status: GENERATED AND APPROVED
- Content-Digest-Scope: SHA-256 of this file with the Content-Digest value zeroed
--Content-Digest: sha256:08ccc74e65587ae7257accadbb006a0e2a84e8a38361708fb5367acac9f4f220
-+Content-Digest: sha256:7820ef5ed1f811b380510bd202a32045bd5e8b027930033f24cb6d2a13d110fb
- Source inventory: rust/Cargo.lock + cargo metadata --locked --offline --all-features + SBOM.cdx.json + legal/third-party-assets.toml + packages/pi-lean-ctx/package-lock.json
- Generation command: cargo metadata --locked --offline --all-features --manifest-path rust/Cargo.toml --format-version 1
- Approval contract: legal/third-party-notices-approval.toml binds approved_content_sha256 to this file's exact SHA-256
--Cargo.lock SHA-256: 4bbcd5c7a3cbd2692264f508ddf6eaa0e41000296e04cbdc0d16680cd5e197a7
-+Cargo.lock SHA-256: 3f36e6edaf70dd16aaa140a76fe27726f6308a93bd31614fe66382db70931a5b
- Cargo metadata inventory SHA-256: 0ec86e75785b11497500997a1c951d7ea4406d7559dd7d605dd0350a23cb179f
--SBOM.cdx.json SHA-256: 8dc3dd14b662c89777a5edd4abb9f56e9fb60708765f90836dded1d9f6fa109e
-+SBOM.cdx.json SHA-256: 265e4ef4cfbc8e0d834c240ca4ce667957f5a1b898ba41ba97dd11a9f60a677d
- SBOM components: 559
--Asset manifest SHA-256: 425dd8b96788160bf4fc3a3a512dd05816fb4edb078c822cefeb92dfc5dc542d
--npm package-lock.json SHA-256: 80be0b272b759c509fee6c44185755ceae9d23e4331b78867c5e4722475fb1d8
-+Asset manifest SHA-256: eb4d0cfd3d81fad8de02741f6adbcc25872c1a4f2913561cf9d31e3649cfc536
-+npm package-lock.json SHA-256: 2f3d2808b17c364e7c3acbf09582f687328f46f427678be8c66d2755d0d3e03a
- Bundled MCP SDK: @modelcontextprotocol/sdk 1.32.1 (sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==)
- Cargo graph packages: 624
- Third-party Cargo packages: 601
-```
-
-**File**: `aur/lean-ctx/PKGBUILD` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- # Maintainer: Yves Gugger <yves@pounce.ch>
- pkgname=lean-ctx
--pkgver=3.12.4
-+pkgver=3.12.5
- pkgrel=1
- pkgdesc="LeanCTX | OSS — open-source Context Gateway for AI Systems. Context selection, supported controls, and evidence through local integration paths."
- arch=('x86_64' 'aarch64')
-@@ -12,7 +12,7 @@ makedepends=('cargo' 'gcc')
- # resolver finds it — no manual install, no runtime download.
- depends=('gcc-libs' 'onnxruntime')
- source=("$pkgname-$pkgver.tar.gz::https://github.com/yvgude/lean-ctx/releases/download/v$pkgver/lean-ctx-$pkgver-source.tar.gz")
--sha256sums=('748dc85ade919090b297d5e23fd4bb4b3a99d967533e8f6ea8069f115014cbdb')
-+sha256sums=('2cb849ddbb2623e20033b69331807aa4dc359d49015e184cfc4e4e2060f09daf')
- 
- prepare() {
-   cd "$pkgname-$pkgver/rust"
-```
-
-**File**: `legal/third-party-assets.toml` (modified, +3/-3)
-```diff
-@@ -4,11 +4,11 @@ authority = "THIRD_PARTY_NOTICES"
- 
- [inputs]
- cargo_lock = "rust/Cargo.lock"
--cargo_lock_sha256 = "4bbcd5c7a3cbd2692264f508ddf6eaa0e41000296e04cbdc0d16680cd5e197a7"
-+cargo_lock_sha256 = "3f36e6edaf70dd16aaa140a76fe27726f6308a93bd31614fe66382db70931a5b"
- sbom = "SBOM.cdx.json"
--sbom_sha256 = "8dc3dd14b662c89777a5edd4abb9f56e9fb60708765f90836dded1d9f6fa109e"
-+sbom_sha256 = "265e4ef4cfbc8e0d834c240ca4ce667957f5a1b898ba41ba97dd11a9f60a677d"
- npm_lock = "packages/pi-lean-ctx/package-lock.json"
--npm_lock_sha256 = "80be0b272b759c509fee6c44185755ceae9d23e4331b78867c5e4722475fb1d8"
-+npm_lock_sha256 = "2f3d2808b17c364e7c3acbf09582f687328f46f427678be8c66d2755d0d3e03a"
- 
- [license_texts]
- mit = """
-```
-
-**File**: `legal/third-party-notices-approval.toml` (modified, +3/-3)
-```diff
-@@ -1,5 +1,5 @@
- schema = "leanctx.third-party-notices-approval/v1"
--approved_content_sha256 = "58d3cb2c06ae4ab8c72371aa04e5ccc8f643989b2f25c4298b636b1be04d0e45"
-+approved_content_sha256 = "dbfcb518430bb1236ce66b4bfaee3a12a5e77531175c19d8247f1026d2f65e08"
- approving_owner = "Yves Gugger"
--approval_evidence = "Copyright owner approval of the generated THIRD_PARTY_NOTICES (GENERATED AND APPROVED variant of scripts/generate-third-party-notices.py) for 3.12.5 after the Dependabot bumps hono 4.13.13 -> 4.13.18 and @hono/node-server 2.1.5 -> 2.1.8 in packages/pi-lean-ctx/package-lock.json (GitHub PRs #2246, #2243): pending variant 8dd23dcbb2e3fa04d61455b7731219d0d3acf5a7780ccf88ecf6825e538d334c, approved variant 58d3cb2c06ae4ab8c72371aa04e5ccc8f643989b2f25c4298b636b1be04d0e45; license texts and package inventory unchanged, only the npm lockfile and asset manifest input digests changed. Owner approval in the 3.12.5 release session on 2026-11-14 (answer \"Approve 58d3cb2c...\")."
--approved_at = "2026-11-14"
-+approval_evidence = "Copyright owner approval of the generated THIRD_PARTY_NOTICES (GENERATED AND APPROVED variant of scripts/generate-third-party-notices.py) for 3.12.6 after the version bump (engine 3.12.6, lean-ctx-syntax 0.1.1) and the offline workspace lockfile update: pending variant edadbf8f534dbbf0fbf4ce3fae080975115abf49bf2a0438f2bf3e4c35f88921, approved variant dbfcb518430bb1236ce66b4bfaee3a12a5e77531175c19d8247f1026d2f65e08; license texts and package inventory unchanged from 3.12.5, only the Cargo.lock, SBOM, asset manifest and npm lock input digests changed. Owner approval in the 3.12.6 release session on 2026-11-15 (answer \"Approve dbfcb518...\")."
-+approved_at = "2026-11-15"
+@@ -129,7 +129,7 @@
+     "tests/security/test_security_check_workflow.py": "2d0c9b9a6ceb61c97379290d549bbdcf7812ce17db9794b5d1b067e2202c2844",
+     "rust/crates/lean-ctx-proxy/src/anthropic.rs": "cfd755f17537a42ec421b3a0420c76dbe73060f90e2a3740401d5236dfdb2f12",
+     "rust/crates/lean-ctx-proxy/src/anthropic_tests.rs": "d7fde182afeeee749896ea84fe615360981fe3962a80e3a0d6d8ad13b3c3b5e0",
+-    "rust/crates/lean-ctx-protocol/src/credential_redaction.rs": "6e522741b965a4ab8bb858e4fb765f4f6ca7d5aa18dd14533490874341313cb1",
++    "rust/crates/lean-ctx-protocol/src/credential_redaction.rs": "4f90e1332d1bb5a43e7792f433ec295ff2ec3a2dea6127af49ca2fbc61fe599c",
+     "rust/crates/lean-ctx-protocol/src/context_checkpoint.rs": "698433cd958541d830f5dde38598625dc323d28d5724c072cb4532c322d8c102",
+     "rust/crates/lean-ctx-protocol/src/context_checkpoint/tests_core.rs": "2aa83f250907035c82ea5ae56078d0077d539a5799b51b4ab2139940ea7630d0",
+     "rust/src/core/execution_ledger/host/checkpoint_transfer/content.rs": "5ecda30a661986ded5651f0a33804f56b81c8c8687ed7e87b43c3784043d0031",
+@@ -138,6 +138,6 @@
+   "baseline": {
+     "commit": "b37ee3be11f2525cd785348d3e43ccdbb590fe94",
+     "report": "security/evidence/full-history-baseline-v1.json",
+-    "report_sha256": "8fb633fa2e1d6873973dc66494bf3bde32e9c7a79c633e79b78bb696432f3a02"
++    "report_sha256": "64a7705157ae8e2fba05620cc547e6f904bb1e6f81dcbe9ac61870c10e343b2d"
+   }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `1560e703` (2026-11-15)
-**Commit Message**: test(local-read): make the overlay tests portable to Windows
+### Incident Patch 2: `6200b20c` (2026-11-16)
+**Commit Message**: fix(hooks,redaction): quote write-guard, Copilot deny reason, nullable types (#2254, #2255)
 
-Two tests in cli/local_read/context_part.rs assumed Unix paths and failed on Windows CI; test-only change (private !366).
+- write-guard: governor and standard installs wrote `<binary> hook
+  write-guard` unquoted; PowerShell split a spaced install path
+  (Discord report, 3.12.5 Windows). Both now use hook_shell_command.
+  ensure_group_hook finds the hook for its timeout by command + args,
+  so Windows exec form keeps the timeout.
+- #2254: build_dual_deny_output adds top-level permissionDecisionReason;
+  Copilot CLI showed "No reason provided" without it. Claude payloads
+  keep the hookSpecificOutput-only shape.
+- #2255: `private var token: ProbeCorrelation? = null` was masked. New
+  credential_redaction::is_nullable_type_name / is_nullable_type_annotation
+  (protocol crate, used by core redaction too) accept `Name?` only on a
+  line anchored as a declaration. .env/YAML/URL/prose values ending in
+  `?` stay masked; the line scan runs only for type-shaped values.
+
+Tests: every_pre_tool_hook_quotes_a_spaced_binary; deny-output assert;
+nullable preserve + must-stay-masked cases in both redaction crates.
+Independent review: ACCEPT after two rounds.
+
+crate: lean-ctx-hooks, lean-ctx-protocol; monolith: core/redaction
+
+**File**: `CHANGELOG.md` (modified, +13/-0)
+```diff
+@@ -6,6 +6,19 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+ 
+ ## [Unreleased]
+ 
++### Fixed
++
++- **The write-guard hook runs from an install path with a space.** `lean-ctx init` wrote
++  `hook write-guard` with an unquoted binary, so PowerShell split paths such as
++  `…/Author Software/…/lean-ctx.exe` and every Write failed its PreToolUse hook. It is now
++  quoted like every other hook; `lean-ctx init` or `update` repairs existing settings.
++- **GitHub Copilot CLI shows why lean-ctx denied a tool call (#2254).** The deny output now
++  carries `permissionDecisionReason` beside the decision instead of "No reason provided".
++- **Nullable type annotations are no longer redacted (#2255).** `private var token: Session? =
++  null` (Kotlin, Swift) kept the type masked. A `Name?` value now stays visible only on a
++  line that starts by declaring it (`val`/`var`/`let`, or a `fun`/`func`/`init`/`constructor`
++  parameter list); `password: Welcome?` in `.env`, YAML, URLs or prose stays masked.
++
+ ## [3.12.6] — 2026-11-15
+ 
+ ### Added
+```
+
+**File**: `rust/crates/lean-ctx-hooks/src/hook_handlers/mod.rs` (modified, +3/-1)
+```diff
+@@ -384,8 +384,10 @@ fn build_dual_deny_output(msg: &str) -> String {
+         "reason": msg,
+         "permission": "deny",
+         "user_message": msg,
+-        // GitHub Copilot CLI dialect (top-level permissionDecision).
++        // GitHub Copilot CLI dialect: it reads the reason beside the decision
++        // and shows "No reason provided" without it (#2254).
+         "permissionDecision": "deny",
++        "permissionDecisionReason": msg,
+         // Claude Code / CodeBuddy dialect.
+         "hookSpecificOutput": {
+             "hookEventName": "PreToolUse",
+```
+
+**File**: `rust/crates/lean-ctx-hooks/src/hook_handlers/tests_command_rewrites.rs` (modified, +2/-0)
+```diff
+@@ -413,6 +413,8 @@ fn deny_output_is_claude_valid_for_claude_payloads_only() {
+         serde_json::from_str(&build_deny_output("x", &cursor)).expect("valid JSON");
+     assert_eq!(p["permission"], "deny");
+     assert_eq!(p["permissionDecision"], "deny");
++    // #2254: Copilot CLI reads the reason beside the decision.
++    assert_eq!(p["permissionDecisionReason"], "x");
+ }
+ 
+ #[test]
+```
+
+**File**: `rust/crates/lean-ctx-hooks/src/hooks/agents/claude_governor.rs` (modified, +26/-1)
+```diff
+@@ -318,7 +318,7 @@ fn apply_hooks(root: &mut serde_json::Value, binary: &str) {
+         ensure_command_hook(
+             arr,
+             super::governor_hosts::CLAUDE_WRITE_MATCHER,
+-            &format!("{binary} hook write-guard"),
++            &crate::hooks::hook_shell_command(binary, "write-guard"),
+         );
+     }
+     if let Some(arr) = event_array(hooks, "PostToolUse") {
+@@ -443,6 +443,31 @@ mod tests {
+         }
+     }
+ 
++    /// Discord report (3.12.5, Windows without Git Bash): write-guard was the
++    /// one governor hook written with an unquoted binary, so PowerShell split
++    /// `…/Author Software/…/lean-ctx.exe` at the space.
++    #[test]
++    fn every_pre_tool_hook_quotes_a_spaced_binary() {
++        let binary = "C:/Users/u/AppData/Local/Author Software/bin/lean-ctx.exe";
++        let mut root = serde_json::json!({});
++        apply_hooks(&mut root, binary);
++        let commands: Vec<String> = root["hooks"]["PreToolUse"]
++            .as_array()
++            .unwrap()
++            .iter()
++            .flat_map(|g| g["hooks"].as_array().unwrap().clone())
++            .map(|h| h["command"].as_str().unwrap().to_string())
++            .collect();
++        assert!(!commands.is_empty());
++        for command in commands {
++            // Exec form on Windows names the program alone; shell form quotes it.
++            assert!(
++                command == binary || command.starts_with(&format!("\"{binary}\" hook ")),
++                "unquoted spaced binary: {command}"
++            );
++        }
++    }
++
+     fn home_with_standard_setup() -> tempfile::TempDir {
+         let home = tempfile::tempdir().unwrap();
+         super::super::install_claude_hook_config(home.path());
+```
+
+**File**: `rust/crates/lean-ctx-hooks/src/hooks/agents/governor_hosts.rs` (modified, +9/-5)
+```diff
+@@ -228,11 +228,10 @@ pub(crate) const CODEX_WRITE_MATCHER: &str = "apply_patch|Edit|Write";
+ pub(crate) const CURSOR_WRITE_MATCHER: &str = "Write|Delete|Edit|StrReplace|MultiEdit|EditNotebook";
+ pub(crate) const GEMINI_WRITE_MATCHER: &str = "write_file|replace|edit";
+ 
++/// `hook write-guard` with the binary quoted when its path holds a space, as
++/// every other hook command: PowerShell splits `…/Author Software/…` otherwise.
+ pub(super) fn write_guard_command() -> String {
+-    format!(
+-        "{} hook write-guard",
+-        super::super::resolve_hook_command_binary()
+-    )
++    crate::hooks::hook_shell_command(&super::super::resolve_hook_command_binary(), "write-guard")
+ }
+ 
+ /// Claude-dialect: exactly one `hook write-guard` entry under `matcher` in
+@@ -281,12 +280,17 @@ pub(super) fn ensure_group_hook(
+     let Some(timeout) = timeout else {
+         return;
+     };
++    // Matched as written: on Windows a quoted binary becomes exec form
++    // (`command` the program, `args` the rest), so compare command and args.
++    let desired = crate::hooks::claude_command_hook(command);
+     let hook = arr
+         .iter_mut()
+         .filter(|g| g.get("matcher").and_then(|m| m.as_str()) == Some(matcher))
+         .filter_map(|g| g.get_mut("hooks").and_then(|h| h.as_array_mut()))
+         .flatten()
+-        .find(|h| h.get("command").and_then(|c| c.as_str()) == Some(command));
++        .find(|h| {
++            h.get("command") == desired.get("command") && h.get("args") == desired.get("args")
++        });
+     if let Some(obj) = hook.and_then(|h| h.as_object_mut()) {
+         obj.insert("timeout".to_string(), serde_json::json!(timeout));
+     }
+```
+
+**File**: `rust/crates/lean-ctx-protocol/src/credential_redaction.rs` (modified, +75/-3)
+```diff
+@@ -64,6 +64,10 @@ fn is_identifier_reference(value: &str) -> bool {
+     if value.contains(|character: char| character.is_ascii_digit()) {
+         return false;
+     }
++    is_dotted_identifier(value)
++}
++
++fn is_dotted_identifier(value: &str) -> bool {
+     value.split('.').all(|segment| {
+         let mut characters = segment.chars();
+         matches!(
+@@ -75,6 +79,45 @@ fn is_identifier_reference(value: &str) -> bool {
+     })
+ }
+ 
++/// #2255: whether `value` reads as a nullable type name (`Session?`,
++/// `java.time.Instant?`): an identifier chain ending in `?` whose last segment
++/// starts upper-case. Cheap; callers test it before scanning back for the line.
++#[must_use]
++pub fn is_nullable_type_name(value: &str) -> bool {
++    value.trim().strip_suffix('?').is_some_and(|name| {
++        !name.is_empty()
++            && is_dotted_identifier(name)
++            && name.rsplit('.').next().is_some_and(|last| {
++                last.starts_with(|character: char| character.is_ascii_uppercase())
++            })
++    })
++}
++
++/// #2255: whether `value` is a nullable type in a declaration
++/// (`private var token: ProbeCorrelation? = null`, `fun f(token: Session?)`).
++///
++/// `line_before_value` is the text from the line start up to the value. The
++/// value must be a type name ending in `?` (last segment starts upper-case),
++/// and the line must start by declaring it: `val`/`var`/`let` (after optional
++/// annotations and modifiers), or a `fun name(`/`func name(`/`init(`/
++/// `constructor(` parameter list. A `.env`, YAML, URL or prose line does not,
++/// so `password: Welcome?` stays a secret.
++#[must_use]
++pub fn is_nullable_type_annotation(line_before_value: &str, value: &str) -> bool {
++    if !is_nullable_type_name(value) {
++        return false;
++    }
++    // Anchored at the line start: modifier words like `static` or `open` are
++    // English too, so a modifier elsewhere in a line declares nothing.
++    let property = static_regex!(
++        r"^\s*(?:@\w+(?:\([^)]*\))?\s+)*(?:(?:private|public|internal|protected|override|open|final|static|weak|unowned|lateinit)\s+)*(?:val|var|let)\s+[A-Za-z_]\w*\s*:\s*$"
++    );
++    let parameter = static_regex!(
++        r"^\s*(?:@\w+(?:\([^)]*\))?\s+)*(?:(?:private|public|internal|protected|override|open|final|static|suspend|inline|operator|infix|mutating|convenience|required)\s+)*(?:func?\s+[\w.<>]+\s*|init\s*|constructor\s*)\((?:[^=()]*,)?\s*[A-Za-z_]\w*\s*:\s*$"
++    );
++    property.is_match(line_before_value) || parameter.is_match(line_before_value)
++}
++
+ fn is_placeholder_value(value: &str) -> bool {
+     let value = value
+         .trim()
+@@ -211,15 +254,27 @@ fn rules() -> Vec<Rule> {
+ pub fn redact_text(input: &str) -> String {
+     let mut output = input.to_owned();
+     for rule in rules() {
++        let text = output.as_str();
+         output = rule
+             .regex
+-            .replace_all(&output, |captures: &regex::Captures| {
++            .replace_all(text, |captures: &regex::Captures| {
+                 let whole = captures.get(0).map_or("", |value| value.as_str());
+                 if rule.guard_value
+                     && let Some(value) = captures.get(2)
+-                    && is_benign_secret_value(value.as_str())
+                 {
+-                    return whole.to_owned();
++                    if is_benign_secret_value(value.as_str()) {
++                        return whole.to_owned();
++                    }
++                    // The line scan runs only for type-shaped `?` values.
++                    if is_nullable_type_name(value.as_str()) {
++                        let line_start = text[..value.start()].rfind('\n').map_or(0, |at| at + 1);
++                        if is_nullable_type_annotation(
++                            &text[line_start..value.start()],
++                            value.as_str(),
++                        ) {
++                            return whole.to_owned();
++                        }
++                    }
+                 }
+                 match captures.get(1) {
+                     Some(prefix) => format!("{}[REDACTED:{}]", prefix.as_str(), rule.label),
+@@ -259,9 +314,26 @@ mod tests {
+             "api_key=${OPENAI_API_KEY}",
+             "token: process.env.API_TOKEN",
+             "password: undefined",
++            "private var token: ProbeCorrelation? = null",
+             "safe source text",
+         ] {
+             assert!(!contains_credential(value), "{value}");
+         }
++        // A `?` value outside a declaration is a password, not a type (#2255).
++        for value in [
++            "password: Sunshine?",
++            "DB_PASSWORD=Sunshine?",
++            "https://h/cb?token=Letmein?&x=1",
++            "  password: Welcome?",
++            "The static password: Summer2024?",
++            "- final password: Winter2025?",
++            "have fun (password: Hunter22?, x)",
++            "Calling init(admin, password: Summer2024?, x)",
++        ] {
++            assert!(contains_credent
+```
+
+**File**: `rust/src/core/redaction.rs` (modified, +17/-0)
+```diff
+@@ -871,6 +871,23 @@ fn redact_found(input: &str, excludes: &[regex::Regex]) -> (String, Vec<&'static
+                 && let Some(value) = caps.get(2)
+             {
+                 let quoted = is_quoted_at(&normalized, value.start());
++                // #2255: `private var token: Session? = null` declares a type.
++                // The line scan runs only for unquoted, type-shaped `?` values.
++                if !quoted
++                    && lean_ctx_protocol::credential_redaction::is_nullable_type_name(
++                        value.as_str(),
++                    )
++                {
++                    let line_start = normalized[..value.start()]
++                        .rfind('\n')
++                        .map_or(0, |at| at + 1);
++                    if lean_ctx_protocol::credential_redaction::is_nullable_type_annotation(
++                        &normalized[line_start..value.start()],
++                        value.as_str(),
++                    ) {
++                        continue;
++                    }
++                }
+                 match secret_value_span(value.as_str(), quoted) {
+                     None => continue,
+                     Some(span) if span.len() < value.len() => {
+```
+
+**File**: `rust/src/core/redaction/tests.rs` (modified, +16/-0)
+```diff
+@@ -135,9 +135,25 @@ fn keeps_type_annotations() {
+         "secret: () => void",
+         "password: string | undefined",
+         "credential: { value: string }",
++        // #2255: nullable types (Kotlin, Swift, C#) name a type, not a value.
++        "    private var token: ProbeCorrelation? = null",
++        "var token: Session?",
+     ] {
+         assert_eq!(redact_text(s), s, "must not redact type annotation: {s}");
+     }
++    // Outside a declaration a `?` value is a password, not a type (#2255).
++    for s in [
++        "password: Sunshine?",
++        "DB_PASSWORD=Sunshine?",
++        "https://h/cb?token=Letmein?&x=1",
++        "The static password: Summer2024?",
++        "have fun (password: Hunter22?, x)",
++    ] {
++        assert!(
++            redact_text(s).contains("[REDACTED"),
++            "must stay masked: {s}"
++        );
++    }
+ }
+ 
+ /// A primitive type after a sensitive-looking name is a declaration, not
+```
+
+---
+
+### Incident Patch 3: `992b9781` (2026-11-16)
+**Commit Message**: fix(pi): keep failed reads out of the prompt editor (#2256)
+
+ctx_read's bridge try also wrapped readFile/readSlice, so a missing
+file was logged as "bridge call failed, falling back to CLI: ENOENT"
+via console.error, which Pi draws inside its prompt editor, and then
+retried through the CLI.
+
+- New bridge-read.ts (Pi-free, vitest-testable): readViaBridge runs
+  only the bridge call; a failure falls back silently and is kept for
+  /lean-ctx ("Last read fallback").
+- Both ctx_read paths read the file after the bridge call, outside any
+  catch, so ENOENT becomes the tool's error in the transcript.
+- mcp-bridge: transport error, max-reconnect and "Reconnected" no
+  longer write to the console (lastError already carries them); the
+  schema-cache write failure is ignored (cache only).
+
+Test: bridge-read.test.ts — a failing bridge returns undefined,
+records the fallback, and does not call console.error.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Exported from the private source 7ef4dd67f4655d2b5bf39f06c2e6a239ae6767a8 (integration/3.12.3).
-
-**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +5/-5)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -19616,11 +19616,11 @@
-    "size": 9964
-   },
-   {
--   "blob": "4d027e2bb4b88140e4aef8987a2c0e6342ee5073",
-+   "blob": "20859875b867862e81a0e7316e7d79eb29ee379b",
-    "mode": "100644",
-    "path": "rust/crates/lean-ctx/src/cli/local_read/context_part.rs",
--   "sha256": "171f6f1ef380e97e5fd5c16c78fbbe621db3840d6a90e06cff18ff514dc69fc2",
--   "size": 49150
-+   "sha256": "f05e8818019b168b8d37490eb5fb8c2aa0e6873efb96edc48f5ec91c0cb0f0a3",
-+   "size": 49501
-   },
-   {
-    "blob": "b962fc1c953dcc809335e0c4013fe489aef03b40",
-@@ -37009,7 +37009,7 @@
-  ],
-  "manifest_sha256": "933596972f528fbae7a0eb120df0957ab5cc544bd44b0f8708495a6ea8f238d6",
-  "schema": 1,
-- "source_commit": "1254ce8209c7a27ae23c09d0287323e4e43118e2",
-+ "source_commit": "7ef4dd67f4655d2b5bf39f06c2e6a239ae6767a8",
-  "tool_sha256": "86ea08dc440cce975409b9f805c74bf5beb402284f3200800381def3714c8f3c",
-- "tree_sha256": "5d52c22e4b0dddb1ab9e74b5e454e0756666779c0a5bbf59d0246cb3199b72e5"
-+ "tree_sha256": "edb890fc4b87c9cbeaa5757460210e0387283d38b5a6816129a0c64451a5403b"
- }
+@@ -18,6 +18,10 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+   null` (Kotlin, Swift) kept the type masked. A `Name?` value now stays visible only on a
+   line that starts by declaring it (`val`/`var`/`let`, or a `fun`/`func`/`init`/`constructor`
+   parameter list); `password: Welcome?` in `.env`, YAML, URLs or prose stays masked.
++- **Pi: a failed read no longer prints into the prompt editor (#2256).** `ctx_read` on a missing
++  file printed "bridge call failed, falling back to CLI: ENOENT" into Pi's editor. The file
++  error now reaches the transcript as the tool's error, and bridge fallbacks, transport
++  errors and reconnects are no longer written to the console; `/lean-ctx` shows the last one.
+ 
+ ## [3.12.6] — 2026-11-15
+ 
 ```
 
-**File**: `rust/crates/lean-ctx/src/cli/local_read/context_part.rs` (modified, +9/-2)
+**File**: `PUBLISH_MANIFEST.toml` (modified, +3/-0)
 ```diff
-@@ -1063,7 +1063,8 @@ mod tests {
-     fn overlays_list_the_effective_control_per_file() {
-         let dir = tempfile::tempdir().unwrap();
-         let root = dir.path();
--        let abs = root.join("src/a.rs").to_string_lossy().into_owned();
-+        // Joined part by part: the listed path uses the platform separator.
-+        let abs = root.join("src").join("a.rs").to_string_lossy().into_owned();
-         let mut store = OverlayStore::new();
-         store.add(overlay(
-             &abs,
-@@ -1183,8 +1184,14 @@ mod tests {
-             file_of(root, "a.rs").unwrap_err().code,
-             Code::InvalidArgument
-         );
-+        // An absolute path outside the project (on Windows, `/elsewhere`
-+        // has no drive and is not absolute).
-+        let other = tempfile::tempdir().unwrap();
-+        let elsewhere = other.path().join("a.rs");
-         assert_eq!(
--            file_of(root, "/elsewhere/a.rs").unwrap_err().code,
-+            file_of(root, &elsewhere.to_string_lossy())
-+                .unwrap_err()
-+                .code,
-             Code::Forbidden
-         );
-         let up = format!("{}/../a.rs", root.display());
+@@ -2780,6 +2780,9 @@ new_paths = [
+   # #2208 download targets.
+   "packages/pi-lean-ctx/extensions/lens-read-bridge.ts",
+   "packages/pi-lean-ctx/test/lens-read-bridge.test.ts",
++  # #2256 pi ctx_read bridge fallback without console output: own code, Apache-2.0.
++  "packages/pi-lean-ctx/extensions/bridge-read.ts",
++  "packages/pi-lean-ctx/test/bridge-read.test.ts",
+   "rust/src/core/editor_registry/writers/install/muse.rs",
+   "rust/src/core/request_ledger.rs",
+   "rust/crates/lean-ctx-shell-policy/src/download_targets.rs",
+```
+
+**File**: `packages/pi-lean-ctx/extensions/bridge-read.ts` (added, +47/-0)
+```diff
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: Apache-2.0
++// Bridge-backed ctx_read without console output (#2256).
++//
++// Kept free of Pi imports so it is unit-testable on its own (importing Pi's
++// runtime drags in an undici that cannot load under vitest).
++//
++// Pi draws its prompt editor in the same terminal, so a `console.error` from a
++// tool call lands inside the editor. A failed bridge call is not the user's
++// business: the read falls back to the CLI, and the reason is kept for
++// `/lean-ctx` instead. Errors about the file itself (a missing path) are not
++// bridge failures; callers read the file outside this function so those reach
++// the transcript as the tool's error.
++
++export interface BridgeReader {
++  callTool(
++    name: string,
++    args: Record<string, unknown>,
++    signal?: AbortSignal,
++  ): Promise<{ content: Array<{ type: "text"; text: string }> }>;
++}
++
++let lastFallback: string | undefined;
++
++/**
++ * Run `ctx_read` through the MCP bridge. Returns the text, or `undefined` when
++ * there is no bridge or the call failed (the caller then uses the CLI).
++ */
++export async function readViaBridge(
++  bridge: BridgeReader | null,
++  args: Record<string, unknown> & { mode: string },
++  signal?: AbortSignal,
++): Promise<string | undefined> {
++  if (!bridge) return undefined;
++  try {
++    const result = await bridge.callTool("ctx_read", args, signal);
++    return result.content.map((block) => block.text).join("");
++  } catch (err) {
++    const reason = err instanceof Error ? err.message : String(err);
++    lastFallback = `ctx_read(${args.mode}) fell back to the CLI: ${reason}`;
++    return undefined;
++  }
++}
++
++/** The latest bridge fallback, for the `/lean-ctx` status. */
++export function lastReadFallback(): string | undefined {
++  return lastFallback;
++}
+```
+
+**File**: `packages/pi-lean-ctx/extensions/index.ts` (modified, +32/-33)
+```diff
+@@ -41,6 +41,7 @@ import { posixSafeEnv } from "./env.js";
+ import { classifySearchExit, innerTimeoutEnv, sanitizeExtraEnv } from "./exec-result.js";
+ import { withFooter } from "./footer.js";
+ import { notifyLensRead } from "./lens-read-bridge.js";
++import { lastReadFallback, readViaBridge } from "./bridge-read.js";
+ import { boundReadOutput, READ_OUTPUT_MAX_BYTES, READ_OUTPUT_MAX_LINES } from "./read-output.js";
+ 
+ const BRIDGE_STARTUP_TIMEOUT_MS = 10_000;
+@@ -604,17 +605,14 @@ export default async function (pi: ExtensionAPI) {
+         const mode = `lines:${startLine}-${endLine}`;
+         // Route line-range reads through the bridge too, so re-reading the same
+         // slice hits the session cache instead of re-spawning a CLI per call (#361).
+-        if (mcpBridge) {
+-          try {
+-            const bridged = await mcpBridge.callTool("ctx_read", { path: absolutePath, mode, ...(forceFresh ? { fresh: true } : {}) }, signal);
+-            const bridgedText = bridged.content.map((block) => block.text).join("");
+-            const originalSlice = await readSlice(absolutePath, startOffset, params.limit);
+-            const decorated = withFooter(bridgedText, { originalText: originalSlice.text, always: true, preferEstimate: true, suppressIfNoSaving: true });
+-            notifyLensRead(absolutePath, startOffset, params.limit);
+-            return boundedReadResult(decorated.text, { path: absolutePath, lines: originalSlice.lines, source: "lean-ctx-bridge", mode, compression: decorated.stats });
+-          } catch (err) {
+-            console.error(`[pi-lean-ctx] ctx_read(${mode}) bridge call failed, falling back to CLI: ${err}`);
+-          }
++        // The file is read outside the bridge call: a missing path is the
++        // tool's error for the transcript, not a bridge failure (#2256).
++        const bridgedText = await readViaBridge(mcpBridge, { path: absolutePath, mode, ...(forceFresh ? { fresh: true } : {}) }, signal);
++        if (bridgedText !== undefined) {
++          const originalSlice = await readSlice(absolutePath, startOffset, params.limit);
++          const decorated = withFooter(bridgedText, { originalText: originalSlice.text, always: true, preferEstimate: true, suppressIfNoSaving: true });
++          notifyLensRead(absolutePath, startOffset, params.limit);
++          return boundedReadResult(decorated.text, { path: absolutePath, lines: originalSlice.lines, source: "lean-ctx-bridge", mode, compression: decorated.stats });
+         }
+         const args = ["read", absolutePath, "-m", mode, ...(forceFresh ? ["--fresh"] : [])];
+         try {
+@@ -650,25 +648,20 @@ export default async function (pi: ExtensionAPI) {
+       // CEP session (counted by `lean-ctx gain`). The one-shot CLI path below
+       // spawns a fresh `lean-ctx read` per call and therefore cannot cache
+       // across calls — it is used when the bridge is unavailable or errors.
+-      if (mcpBridge) {
+-        try {
+-          const bridged = await mcpBridge.callTool(
+-            "ctx_read",
+-            { path: absolutePath, mode, ...(wantsFresh ? { fresh: true } : {}) },
+-            signal,
+-          );
+-          const bridgedText = bridged.content.map((block) => block.text).join("");
+-          const originalText = await readFile(absolutePath, "utf8");
+-          const decorated = withFooter(bridgedText, { originalText, always: true, preferEstimate: true, suppressIfNoSaving: true });
+-          notifyLensRead(absolutePath);
+-          return boundedReadResult(
+-            decorated.text,
+-            { path: absolutePath, source: "lean-ctx-bridge", mode, compression: decorated.stats },
+-            verbatimSource ? originalText : undefined,
+-          );
+-        } catch (err) {
+-          console.error(`[pi-lean-ctx] ctx_read bridge call failed, falling back to CLI: ${err}`);
+-        }
++      const bridgedText = await readViaBridge(
++        mcpBridge,
++        { path: absolutePath, mode, ...(wantsFresh ? { fresh: true } : {}) },
++        signal,
++      );
++      if (bridgedText !== undefined) {
++        const originalText = await readFile(absolutePath, "utf8");
++        const decorated = withFooter(bridgedText, { originalText, always: true, preferEstimate: true, suppressIfNoSaving: true });
++        notifyLensRead(absolutePath);
++        return boundedReadResult(
++          decorated.text,
++          { path: absolutePath, source: "lean-ctx-bridge", mode, compression: decorated.stats },
++          verbatimSource ? originalText : undefined,
++        );
+       }
+ 
+       const args = ["read", absolutePath, "-m", mode, ...(wantsFresh ? ["--fresh"] : [])];
+@@ -918,11 +911,13 @@ export default async function (pi: ExtensionAPI) {
+         localTools: localToolNames,
+       }, {
+         onSchemasDiscovered: (tools) => {
++          // Discovery can run during a tool call, so no console output here
++          // (#2256). The cache only speeds up the next start; a failed write
++          // means that start discovers the 
+```
+
+**File**: `packages/pi-lean-ctx/extensions/mcp-bridge.ts` (modified, +3/-6)
+```diff
+@@ -423,8 +423,9 @@ export class McpBridge {
+ 
+     transport.onerror = (err) => {
+       if (this.transport !== transport) return;
++      // Kept for `/lean-ctx`; console output would land in Pi's prompt
++      // editor while a session runs (#2256).
+       this.lastError = err.message;
+-      console.error(`[lean-ctx MCP bridge] Transport error: ${err.message}`);
+     };
+ 
+     this.transport = transport;
+@@ -445,10 +446,7 @@ export class McpBridge {
+     if (this.shuttingDown) return;
+     if (this.reconnectTimer) return;
+     if (this.reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+-      this.lastError = `Max reconnect attempts (${MAX_RECONNECT_ATTEMPTS}) reached.`;
+-      console.error(
+-        `[lean-ctx MCP bridge] Max reconnect attempts (${MAX_RECONNECT_ATTEMPTS}) reached. MCP tools unavailable.`,
+-      );
++      this.lastError = `Max reconnect attempts (${MAX_RECONNECT_ATTEMPTS}) reached. MCP tools unavailable.`;
+       return;
+     }
+ 
+@@ -473,7 +471,6 @@ export class McpBridge {
+         if (!this.isConnected()) {
+           throw new Error("lean-ctx MCP bridge failed to connect.");
+         }
+-        if (!this.shuttingDown) console.error("[lean-ctx MCP bridge] Reconnected successfully");
+       } catch (error) {
+         this.lastError = error instanceof Error ? error.message : String(error);
+         this.scheduleReconnect();
+```
+
+**File**: `packages/pi-lean-ctx/test/bridge-read.test.ts` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: Apache-2.0
++import { afterEach, describe, expect, it, vi } from "vitest";
++
++import { lastReadFallback, readViaBridge } from "../extensions/bridge-read.js";
++
++describe("readViaBridge", () => {
++  afterEach(() => {
++    vi.restoreAllMocks();
++  });
++
++  it("falls back without writing into Pi's prompt editor (#2256)", async () => {
++    const errors = vi.spyOn(console, "error");
++    const failing = {
++      callTool: async () => {
++        throw new Error("MCP transport closed");
++      },
++    };
++
++    const text = await readViaBridge(failing, { path: "/tmp/x.ts", mode: "full" });
++
++    expect(text).toBeUndefined();
++    expect(errors).not.toHaveBeenCalled();
++    expect(lastReadFallback()).toBe("ctx_read(full) fell back to the CLI: MCP transport closed");
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2257** (2026-11-16): fix: write-guard quoting, Copilot deny reason, nullable types, Pi read errors (#2254, #2255, #2256) (@yvgude)
 - **PR #2253** (2026-11-15): chore(release): 3.12.6 (@yvgude)
 - **PR #2251** (2026-11-14): Release 3.12.5 (@yvgude)
 - **PR #2249** (2026-11-14): Release 3.12.5 (@yvgude)
 - **PR #2246** (closed): chore(deps): bump hono from 4.13.13 to 4.13.18 in /packages/pi-lean-ctx (@dependabot[bot])
 - **PR #2245** (closed): Release 3.12.5 (@yvgude)
-- **PR #2243** (closed): chore(deps): bump @hono/node-server from 2.1.5 to 2.1.8 in /packages/pi-lean-ctx (@dependabot[bot])
 
 ---
 
@@ -3049,49 +3183,33 @@ Exported from the private source 7ef4dd67f4655d2b5bf39f06c2e6a239ae6767a8 (integ
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in CHANGELOG.md
+## X. security: re-pin credential_redaction.rs scanner digest
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `security/history-policy-v1.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ae3dfff`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `866f1755`: security: re-pin credential_redaction.rs scanner digest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `security/history-policy-v1.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [3.12.6] — 2026-11-15
-
-### Added
-
-- **Nine more Local Read kinds.** The local read surface now serves `overlays.list`,
-  `overlays.removed`, `checkpoints.list`, `session.context`, `session.handoff`,
-  `session.value`, `update.status`, `security.status` and `telemetry.status` as JSON documents
-  (`GET /v1/local/...` and the matching `--json` CLI commands, e.g. `lean-ctx overlays list
-  --json`, `lean-ctx session context --json --session <id>`). A local client reads them
-  instead of parsing `ctx_control`, `ctx_checkpoint` or `update --status` text. Every body is a
-  function of the stored data, with no generated timestamps or counters, and is released
-  through the tool run of its tool. Project kinds need a project root; overlay removal only
-  accepts files inside the project. The status documents carry versions, switches and counts
-  only: no paths, digests, secrets or installation id.
-
-- **Shared parse cache across worktrees (#2247), opt-in.** With `[cache] derivations_enabled =
-  true` or `LEAN_CTX_DERIVATION_CACHE=1`, index builds reuse BM25 chunks, the deep analysis
-  behind graph and call-graph edges, and graph-scan signatures by exact content hash plus
-  language, path sel
+    "rust/crates/lean-ctx-protocol/src/credential_redaction.rs": "4f90e1332d1bb5a43e7792f433ec295ff2ec3a2dea6127af49ca2fbc61fe599c",
+    "report_sha256": "64a7705157ae8e2fba05620cc547e6f904bb1e6f81dcbe9ac61870c10e343b2d"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    "rust/crates/lean-ctx-protocol/src/credential_redaction.rs": "6e522741b965a4ab8bb858e4fb765f4f6ca7d5aa18dd14533490874341313cb1",
+    "report_sha256": "8fb633fa2e1d6873973dc66494bf3bde32e9c7a79c633e79b78bb696432f3a02"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ae3dfff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `866f1755` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

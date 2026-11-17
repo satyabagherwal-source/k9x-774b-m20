@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T14:22:51.987Z",
-  "total_cycles_completed": 10121,
-  "total_learnings_persisted": 10121,
-  "total_rules_promoted": 9711,
+  "last_updated": "2026-11-17T14:33:39.825Z",
+  "total_cycles_completed": 10126,
+  "total_learnings_persisted": 10126,
+  "total_rules_promoted": 9715,
   "history": [
-    {
-      "timestamp": "2026-11-16T20:11:07.980Z",
-      "repository": "cheeriojs/dom-serializer",
-      "learningId": "learn-github-cheeriojs-dom-serializer",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T20:11:10.587Z",
-      "repository": "superhighfives/pika",
-      "learningId": "learn-github-superhighfives-pika",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T20:11:18.148Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T20:20:57.515Z",
-      "repository": "sharkdp/bat",
-      "learningId": "learn-github-sharkdp-bat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T20:21:03.885Z",
-      "repository": "flux-iac/tofu-controller",
-      "learningId": "learn-github-flux-iac-tofu-controller",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T20:21:07.598Z",
       "repository": "DefGuard/defguard",
@@ -1403,6 +1368,41 @@
       "repository": "meta/docusaurus",
       "learningId": "learn-github-meta-docusaurus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:33:23.861Z",
+      "repository": "yvgude/lean-ctx",
+      "learningId": "learn-github-yvgude-lean-ctx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:33:25.953Z",
+      "repository": "openreplay/openreplay",
+      "learningId": "learn-github-openreplay-openreplay",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:33:28.588Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:33:33.095Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:33:39.825Z",
+      "repository": "autogluon/chronos-2",
+      "learningId": "learn-huggingface-autogluon-chronos-2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

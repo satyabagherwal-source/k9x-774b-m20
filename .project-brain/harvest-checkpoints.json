@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T14:22:51.991Z",
+  "last_updated": "2026-11-17T14:33:39.830Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3231,14 +3231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autogluon-chronos-2",
-      "content_hash": "014f79f87b663583763bd98e6870126218c7fd2507754f048391ac036e64bc76",
-      "verified_at": "2026-11-13T01:31:18.050Z",
+      "content_hash": "619ab415cc212065470ef7cf2ad90d0664e2053df330b8f9441b80f836eb538b",
+      "verified_at": "2026-11-17T14:33:39.829Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T01:31:18.050Z"
+      "last_updated": "2026-11-17T14:33:39.829Z"
     },
     "deeplethe/solid-glass": {
       "repository": "deeplethe/solid-glass",
@@ -5106,14 +5106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openreplay-openreplay",
-      "content_hash": "07c1e4b8ee4c14da82eb666c74453a1a6c7886cfd0e887254e57be2d92c888ab",
-      "verified_at": "2026-11-13T23:01:39.547Z",
+      "content_hash": "810b5c4bd0a0a4d4ab75bea981da13372d87ede252ecd6d5138d07f8b701cebe",
+      "verified_at": "2026-11-17T14:33:25.957Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T23:01:39.547Z"
+      "last_updated": "2026-11-17T14:33:25.957Z"
     },
     "kumahq/kuma": {
       "repository": "kumahq/kuma",
@@ -8691,14 +8691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kcl-lang-kcl",
-      "content_hash": "100b4fed3dec6fc9dc1ad674a5096addb5cc33bcfefd3dafc192681a4e09c6a1",
-      "verified_at": "2026-11-15T01:46:46.740Z",
+      "content_hash": "18e490d486daf599c19bc5c2080174397b2c01e2f1105f5e50d16ae686930a2d",
+      "verified_at": "2026-11-17T14:33:28.592Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T01:46:46.740Z"
+      "last_updated": "2026-11-17T14:33:28.592Z"
     },
     "apache/incubator-pegasus": {
       "repository": "apache/incubator-pegasus",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "3d1d9cdc15047adb5c0db942fa63c1a3f7122c9d0c0223672d5b3d6419afdd71",
-      "verified_at": "2026-11-16T05:29:09.047Z",
+      "content_hash": "9c2a15e614205b9a86d4338b55335630142b1a1412fea1d9c56a66b82f940087",
+      "verified_at": "2026-11-17T14:33:33.099Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T05:29:09.047Z"
+      "last_updated": "2026-11-17T14:33:33.099Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "95b71da2e21c78c0969e58ed5a1364b3aad9db5553da0151d938acae07f7d5cc",
-      "verified_at": "2026-11-15T22:58:35.919Z",
+      "content_hash": "8a8db34cb5f8213a69f7b788679301533dffec084cd8037370defbc48219a008",
+      "verified_at": "2026-11-17T14:33:23.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T22:58:35.919Z"
+      "last_updated": "2026-11-17T14:33:23.865Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",

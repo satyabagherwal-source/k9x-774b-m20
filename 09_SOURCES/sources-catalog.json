@@ -2065,8 +2065,8 @@
     "sourceUrl": "https://huggingface.co/autogluon/chronos-2",
     "sourceVersion": "hf-autogluon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "014f79f87b663583763bd98e6870126218c7fd2507754f048391ac036e64bc76",
-    "lastHarvestedAt": "2026-11-13T01:31:18.043Z",
+    "contentHash": "619ab415cc212065470ef7cf2ad90d0664e2053df330b8f9441b80f836eb538b",
+    "lastHarvestedAt": "2026-11-17T14:33:39.819Z",
     "learningId": "learn-huggingface-autogluon-chronos-2"
   },
   "deeplethe-solid-glass": {
@@ -3323,10 +3323,10 @@
     "repository": "openreplay/openreplay",
     "platform": "github",
     "sourceUrl": "https://github.com/openreplay/openreplay",
-    "sourceVersion": "25119d9b",
+    "sourceVersion": "9a554a54",
     "license": "NOASSERTION",
-    "contentHash": "07c1e4b8ee4c14da82eb666c74453a1a6c7886cfd0e887254e57be2d92c888ab",
-    "lastHarvestedAt": "2026-11-13T23:01:39.537Z",
+    "contentHash": "810b5c4bd0a0a4d4ab75bea981da13372d87ede252ecd6d5138d07f8b701cebe",
+    "lastHarvestedAt": "2026-11-17T14:33:25.947Z",
     "learningId": "learn-github-openreplay-openreplay"
   },
   "kumahq-kuma": {
@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "f8a29788",
+    "sourceVersion": "2012f95b",
     "license": "Apache-2.0",
-    "contentHash": "100b4fed3dec6fc9dc1ad674a5096addb5cc33bcfefd3dafc192681a4e09c6a1",
-    "lastHarvestedAt": "2026-11-15T01:46:46.728Z",
+    "contentHash": "18e490d486daf599c19bc5c2080174397b2c01e2f1105f5e50d16ae686930a2d",
+    "lastHarvestedAt": "2026-11-17T14:33:28.582Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "9a5df815",
+    "sourceVersion": "fd2bfe48",
     "license": "NOASSERTION",
-    "contentHash": "3d1d9cdc15047adb5c0db942fa63c1a3f7122c9d0c0223672d5b3d6419afdd71",
-    "lastHarvestedAt": "2026-11-16T05:29:09.040Z",
+    "contentHash": "9c2a15e614205b9a86d4338b55335630142b1a1412fea1d9c56a66b82f940087",
+    "lastHarvestedAt": "2026-11-17T14:33:33.089Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "5ae3dfff",
+    "sourceVersion": "9701b374",
     "license": "Apache-2.0",
-    "contentHash": "95b71da2e21c78c0969e58ed5a1364b3aad9db5553da0151d938acae07f7d5cc",
-    "lastHarvestedAt": "2026-11-15T22:58:35.904Z",
+    "contentHash": "8a8db34cb5f8213a69f7b788679301533dffec084cd8037370defbc48219a008",
+    "lastHarvestedAt": "2026-11-17T14:33:23.855Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {
