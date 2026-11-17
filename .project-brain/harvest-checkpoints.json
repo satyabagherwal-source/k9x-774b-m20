@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T08:19:30.646Z",
+  "last_updated": "2026-11-17T08:31:11.539Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3426,14 +3426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-hook-form-react-hook-form",
-      "content_hash": "07646865b7ac5285dc55c2b56a91a12ee5acbbde8c072ddec797dc64f9eed00c",
-      "verified_at": "2026-11-13T19:01:28.364Z",
+      "content_hash": "a48b19b22cb1bc954e53d799739b7b05ab66d1d723a8562d661076bb47766c2c",
+      "verified_at": "2026-11-17T08:31:06.548Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:01:28.364Z"
+      "last_updated": "2026-11-17T08:31:06.548Z"
     },
     "higress-group/higress": {
       "repository": "higress-group/higress",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "b431e785e7fdee36a740becd5b3628c1e458a86948ed6863bcafb7a327aec1cf",
-      "verified_at": "2026-11-14T19:03:19.179Z",
+      "content_hash": "08f64fddef4e2d5deddfdc9a5a8bc545a1acd944836b38e1aa39973384ed754c",
+      "verified_at": "2026-11-17T08:31:11.538Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T19:03:19.179Z"
+      "last_updated": "2026-11-17T08:31:11.538Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "d527f549d0fca2456b6fc3e0d2c353789e9482f85d0afc93cc04aa22655ccbd7",
-      "verified_at": "2026-11-14T15:34:44.367Z",
+      "content_hash": "980bcf19564c75bd47e8bb7635c2c8f48b8a7b83b47c61e9fef8f377ff5b1f51",
+      "verified_at": "2026-11-17T08:31:09.592Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:34:44.367Z"
+      "last_updated": "2026-11-17T08:31:09.592Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",

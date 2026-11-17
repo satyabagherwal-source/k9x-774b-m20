@@ -2193,10 +2193,10 @@
     "repository": "react-hook-form/react-hook-form",
     "platform": "github",
     "sourceUrl": "https://github.com/react-hook-form/react-hook-form",
-    "sourceVersion": "77f6435d",
+    "sourceVersion": "66f4d72b",
     "license": "MIT",
-    "contentHash": "07646865b7ac5285dc55c2b56a91a12ee5acbbde8c072ddec797dc64f9eed00c",
-    "lastHarvestedAt": "2026-11-13T19:01:28.349Z",
+    "contentHash": "a48b19b22cb1bc954e53d799739b7b05ab66d1d723a8562d661076bb47766c2c",
+    "lastHarvestedAt": "2026-11-17T08:31:06.541Z",
     "learningId": "learn-github-react-hook-form-react-hook-form"
   },
   "higress-group-higress": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "239be7b2",
+    "sourceVersion": "00b73947",
     "license": "Apache-2.0",
-    "contentHash": "b431e785e7fdee36a740becd5b3628c1e458a86948ed6863bcafb7a327aec1cf",
-    "lastHarvestedAt": "2026-11-14T19:03:19.170Z",
+    "contentHash": "08f64fddef4e2d5deddfdc9a5a8bc545a1acd944836b38e1aa39973384ed754c",
+    "lastHarvestedAt": "2026-11-17T08:31:11.531Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "7d980299",
+    "sourceVersion": "d0c81b64",
     "license": "NOASSERTION",
-    "contentHash": "d527f549d0fca2456b6fc3e0d2c353789e9482f85d0afc93cc04aa22655ccbd7",
-    "lastHarvestedAt": "2026-11-14T15:34:44.360Z",
+    "contentHash": "980bcf19564c75bd47e8bb7635c2c8f48b8a7b83b47c61e9fef8f377ff5b1f51",
+    "lastHarvestedAt": "2026-11-17T08:31:09.581Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {

@@ -10496,3 +10496,8 @@
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:20:26.789Z` | `dkhamsing-open-source-ios-apps` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-6DA6494F` [Domain I] | Yes (`2a7f3c95...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:20:59.186Z` | `hashicorp-terraform` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-93409B61` [Domain K] | Yes (`d5dd2628...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:21:42.300Z` | `hashicorp-terraform` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-61F97060` [Domain H] | Yes (`fcb38a8a...`) |
+| `CYCLE-20261117-NNS9` | `2026-11-17T08:31:06.537Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8923, Rule 8924` | Yes (`a48b19b2...`) |
+| `CYCLE-20261117-NQ4P` | `2026-11-17T08:31:09.577Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8925, Rule 8926, Rule 8927` | Yes (`980bcf19...`) |
+| `CYCLE-20261117-NRMV` | `2026-11-17T08:31:11.527Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8928, Rule 8929, Rule 8930` | Yes (`08f64fdd...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:31:42.217Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E05381FB` [Domain H] | Yes (`a666d4ac...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:32:18.031Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-9BC71D98` [Domain H] | Yes (`d2ffff9b...`) |

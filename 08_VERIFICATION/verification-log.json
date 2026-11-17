@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-6NKC",
-    "timestamp": "2026-11-14T18:14:44.172Z",
-    "repository": "gkd-kit/gkd",
-    "learningId": "learn-github-gkd-kit-gkd",
-    "contentHash": "fe4dedebda76d32c9c7a369d03950382f6f16b6cf01398695da962350495bce0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-6TAE",
-    "timestamp": "2026-11-14T18:14:51.590Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "b87b3fc0f76798bfe7b4472188e9b702669de9d55ee12364ecd0147966a53229",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-LKGK",
-    "timestamp": "2026-11-14T18:26:19.988Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-liquidai-d1-3b",
-    "contentHash": "1b4f6565e67037ac6c56ae90bf85a8368170e29f33d88e17fe3a1a9c9f54e56d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-LMDR",
     "timestamp": "2026-11-14T18:26:22.479Z",
     "repository": "google/tcmalloc",
@@ -7492,6 +7447,51 @@
     "contentHash": "87d0001dfdf1d96e79bf751bba822a4610682fc0b3cdc542df96ea0afe632962",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-NNS9",
+    "timestamp": "2026-11-17T08:31:06.537Z",
+    "repository": "react-hook-form/react-hook-form",
+    "learningId": "learn-github-react-hook-form-react-hook-form",
+    "contentHash": "a48b19b22cb1bc954e53d799739b7b05ab66d1d723a8562d661076bb47766c2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-NQ4P",
+    "timestamp": "2026-11-17T08:31:09.577Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "980bcf19564c75bd47e8bb7635c2c8f48b8a7b83b47c61e9fef8f377ff5b1f51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-NRMV",
+    "timestamp": "2026-11-17T08:31:11.527Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "08f64fddef4e2d5deddfdc9a5a8bc545a1acd944836b38e1aa39973384ed754c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

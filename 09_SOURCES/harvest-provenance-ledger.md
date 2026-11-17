@@ -10529,3 +10529,8 @@ Every entry in this ledger must capture:
 | `learn-dom-i-6da6494f` | `project://dkhamsing-open-source-ios-apps` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md` | 2026-11-17T08:20:26.789Z |
 | `learn-dom-k-93409b61` | `project://hashicorp-terraform` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md` | 2026-11-17T08:20:59.186Z |
 | `learn-dom-h-61f97060` | `project://hashicorp-terraform` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md` | 2026-11-17T08:21:42.300Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `66f4d72b` | Multi-dimensional audit evidence | 2026-11-17T08:31:06.541Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `d0c81b64` | Multi-dimensional audit evidence | 2026-11-17T08:31:09.581Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `00b73947` | Multi-dimensional audit evidence | 2026-11-17T08:31:11.531Z |
+| `learn-dom-h-e05381fb` | `project://react-hook-form-react-hook-form` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md` | 2026-11-17T08:31:42.217Z |
+| `learn-dom-h-9bc71d98` | `project://react-hook-form-react-hook-form` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md` | 2026-11-17T08:32:18.031Z |

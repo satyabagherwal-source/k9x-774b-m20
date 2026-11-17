@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T08:21:42.860Z",
-  "total_records": 1496,
+  "last_updated": "2026-11-17T08:32:20.798Z",
+  "total_records": 1499,
   "domains": {
     "A": {
       "total": 9,
@@ -1008,7 +1008,7 @@
       ]
     },
     "H": {
-      "total": 349,
+      "total": 352,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1358,7 +1358,10 @@
         "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-apple-foundationdb-core-invariants",
-        "DOM-H-61F97060"
+        "DOM-H-61F97060",
+        "DOM-H-E05381FB",
+        "DOM-H-9BC71D98",
+        "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-learnings-co"
       ]
     },
     "I": {
@@ -9099,8 +9102,8 @@
       "title": "Technical Construction Intelligence: react-hook-form/react-hook-form Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-technical-construction-intelligence-react-hook-f.md",
       "repository": "react-hook-form/react-hook-form",
-      "content_hash": "608d13888f8a3bdcf7b6ac8c6becd4dcc6170b4ff6c0cd803017fb116563c1d6",
-      "created_at": "2026-11-13T19:01:28.604Z"
+      "content_hash": "b2a22af92824312b450dc14c513861b6de04bfa3090032b5bd6606aa3860f48b",
+      "created_at": "2026-11-17T08:31:06.944Z"
     },
     "DOM-D-D194A6F7": {
       "record_id": "DOM-D-D194A6F7",
@@ -15649,8 +15652,8 @@
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "repository": "arangodb/arangodb",
-      "content_hash": "780188410b62af287bcdad8c473ca0dfba235237d8e93a4347ce1c9337e7d503",
-      "created_at": "2026-11-14T15:34:44.559Z"
+      "content_hash": "d89a587b257e82691ff464627615f55fef2d24b674c9665308788862f8fd7836",
+      "created_at": "2026-11-17T08:31:10.131Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -15718,8 +15721,8 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-learnings-technical-construction-intelligence-arangodb-arangod.md",
       "repository": "arangodb-arangodb-learnings",
-      "content_hash": "7fcd0e42f38014c9dcde0c2db24f9d626d3885a5e94d3d5c15c5e7097d5df1dc",
-      "created_at": "2026-11-14T15:35:10.936Z"
+      "content_hash": "50d8190cdc4ea299db500d386818d1106bed728c65427d9a2a4c213078d5feda",
+      "created_at": "2026-11-17T08:32:20.798Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants",
@@ -16858,8 +16861,8 @@
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "repository": "aquasecurity/trivy",
-      "content_hash": "2896b412a5920f8e54e67cb5c867da411ce0738a79f35b64d6a47c86a3992b41",
-      "created_at": "2026-11-14T19:03:19.463Z"
+      "content_hash": "a5d8f42f0255e4ca58122a1e8fe0fed892478836ffe6f84f1045ea786354970a",
+      "created_at": "2026-11-17T08:31:12.053Z"
     },
     "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
@@ -16885,8 +16888,8 @@
       "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-learnings-technical-construction-intelligence-aquasecurity-tr.md",
       "repository": "aquasecurity-trivy-learnings",
-      "content_hash": "58443eae94500649d2dac8644ca4a5c15bc783fb43ecc211f796e1ea44726b1d",
-      "created_at": "2026-11-14T19:03:31.280Z"
+      "content_hash": "6f479ce81583f016819690eb6ef4c74a55d4f9b4d7c7b55d81d1ef92e94d01b9",
+      "created_at": "2026-11-17T08:32:19.722Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants",
@@ -26025,6 +26028,83 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-17T08:21:42.284Z"
+    },
+    "DOM-H-E05381FB": {
+      "record_id": "DOM-H-E05381FB",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Native Constraint Validation Failure on Disabled Multi-Ref Elements (BUG-RHF-14031)",
+      "content": "Multi-node DOM abstractions must never assume node index zero is interactive. Group anchors must be resolved via a predicate filtering for both API existence and operational readiness (`!node.disabled`).",
+      "content_hash": "a666d4ac52a42d4c91299815f548873f3086bd247bc95e7569ea67fa7fee8f36",
+      "summary": "`inputRef` was hardcoded to `refs ? refs[0] : ref`. The code assumed index `0` was always representative of the input group and capable of a -> Multi-node DOM abstractions must never assume node index zero is interactive. Group anchors must be resolved via a predicate filtering for b",
+      "provenance": {
+        "source_uri": "project://react-hook-form-react-hook-form/react-hook-form-react-hook-form-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:31:15.048Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-hook-form-react-hook-form)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit SHA `66f4d72b`, Issue/PR `#14031`, File: `src/logic/validateField.ts`, Unit Test: `src/__tests__/useForm/handleSubmit.test.tsx`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:31:42.199Z"
+    },
+    "DOM-H-9BC71D98": {
+      "record_id": "DOM-H-9BC71D98",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Structural Desynchronization of Nested Field Arrays via Root `setValue` (BUG-RHF-13621)",
+      "content": "Hierarchical state stores cannot use flat equality lookups for observer notification. When setting values on a parent node, notifications must traverse both downward (ancestor-to-descendant prefixes) and upward (leaf-to-root bubbles).",
+      "content_hash": "d2ffff9b48b40b28f173eed71dd124b9438257d26f7b6c38c7168d11f640c04b",
+      "summary": "Field array subscriptions were keyed only to exact field names (e.g., `myForm.userDetails`). When a parent field mutation occurred, `setValu -> Hierarchical state stores cannot use flat equality lookups for observer notification. When setting values on a parent node, notifications mu",
+      "provenance": {
+        "source_uri": "project://react-hook-form-react-hook-form/react-hook-form-react-hook-form-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:31:15.048Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-hook-form-react-hook-form)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Closed Bug Issue `#13621`, `src/useFieldArray.ts`, `src/logic/createFormControl.ts`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:32:18.014Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-learnings-co": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-learnings-co",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: react-hook-form-react-hook-form-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-learnings-technical-construction-intelligence-re.md",
+      "repository": "react-hook-form-react-hook-form-learnings",
+      "content_hash": "f1ed23530cb6f1409482edcf3a1a6c95d8460c4eae412e5b7619d2e73b6cccdd",
+      "created_at": "2026-11-17T08:32:18.557Z"
     }
   }
 }

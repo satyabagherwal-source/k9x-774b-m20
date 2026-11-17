@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T08:19:30.643Z",
-  "total_cycles_completed": 10068,
-  "total_learnings_persisted": 10068,
-  "total_rules_promoted": 9662,
+  "last_updated": "2026-11-17T08:31:11.536Z",
+  "total_cycles_completed": 10071,
+  "total_learnings_persisted": 10071,
+  "total_rules_promoted": 9670,
   "history": [
-    {
-      "timestamp": "2026-11-16T14:06:57.899Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T14:34:41.075Z",
-      "repository": "IFM/PAN2",
-      "learningId": "learn-huggingface-ifm-pan2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T14:34:58.476Z",
-      "repository": "VectifyAI/PageIndex",
-      "learningId": "learn-github-vectifyai-pageindex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T14:35:01.409Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1382,27 @@
       "repository": "dkhamsing/open-source-ios-apps",
       "learningId": "learn-github-dkhamsing-open-source-ios-apps",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T08:31:06.546Z",
+      "repository": "react-hook-form/react-hook-form",
+      "learningId": "learn-github-react-hook-form-react-hook-form",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T08:31:09.588Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T08:31:11.536Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

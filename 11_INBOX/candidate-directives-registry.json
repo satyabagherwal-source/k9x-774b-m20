@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T08:21:42.738Z",
+  "last_updated": "2026-11-17T08:32:20.656Z",
   "directives": [
     {
       "id": "CD-001",
@@ -23069,6 +23069,112 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8CFE86-monolithic-state-git-merge-conflict-casc.md",
       "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-P751",
+      "directive_title": "Referential Stability Invariant in Granular Dirty-Tracking Trees",
+      "source_repo": "react-hook-form-react-hook-form-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-P751-referential-stability-invariant-in-granular-dirty-tracking-trees.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-NNX3",
+      "directive_title": "Referential Stability Invariant in Granular Dirty-Tracking Trees",
+      "source_repo": "react-hook-form/react-hook-form",
+      "source_commit": "66f4d72b",
+      "staged_file": "11_INBOX/candidate-directives/CD-NNX3-referential-stability-invariant-in-granular-dirty-tracking-trees.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-P8R6",
+      "directive_title": "IEEE 754 Big-Endian / Little-Endian Union Casting Safety",
+      "source_repo": "arangodb-arangodb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-P8R6-ieee-754-big-endian-little-endian-union-casting-safety.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-NQA6",
+      "directive_title": "IEEE 754 Big-Endian / Little-Endian Union Casting Safety",
+      "source_repo": "arangodb/arangodb",
+      "source_commit": "d0c81b64",
+      "staged_file": "11_INBOX/candidate-directives/CD-NQA6-ieee-754-big-endian-little-endian-union-casting-safety.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-P7XD",
+      "directive_title": "Isolate Secret Match Signatures from Public Authenticated Tokens via Negative Lookaheads or Exclusion Blocks",
+      "source_repo": "aquasecurity-trivy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-P7XD-isolate-secret-match-signatures-from-public-authenticated-tokens-via-negative-lo.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-NRRO",
+      "directive_title": "Isolate Secret Match Signatures from Public Authenticated Tokens via Negative Lookaheads or Exclusion Blocks",
+      "source_repo": "aquasecurity/trivy",
+      "source_commit": "00b73947",
+      "staged_file": "11_INBOX/candidate-directives/CD-NRRO-isolate-secret-match-signatures-from-public-authenticated-tokens-via-negative-lo.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-P7XE",
+      "directive_title": "Maintain Bidirectional Wire Protocol Parity for All Ingestion Metadata across Client-Server Architecture",
+      "source_repo": "aquasecurity-trivy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-P7XE-maintain-bidirectional-wire-protocol-parity-for-all-ingestion-metadata-across-cl.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-E05A1F",
+      "directive_title": "Misconfiguration Check Aliases Lost Across Client-Server RPC Boundary (BUG-RPC-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aquasecurity-trivy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E05A1F-misconfiguration-check-aliases-lost-acro.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-0131FE",
+      "directive_title": "Stale Exact-Pin Configuration Drift in CI Vulnerability Scanners (BUG-CI-TRIVY-23679)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "arangodb-arangodb",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0131FE-stale-exact-pin-configuration-drift-in-c.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-P8R5",
+      "directive_title": "Incomplete Index Covered-Fields Declaration Hazard",
+      "source_repo": "arangodb-arangodb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-P8R5-incomplete-index-covered-fields-declaration-hazard.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
     }
   ]
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T08:21:43.128Z",
-  "total_verified_learnings": 8870,
+  "last_updated": "2026-11-17T08:32:20.967Z",
+  "total_verified_learnings": 8871,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19996,
+  "total_items": 20018,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -115069,22 +115069,22 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-technical-construction-intelligence-react-hook-f.md",
       "title": "Technical Construction Intelligence: react-hook-form/react-hook-form Core Invariants",
       "repository": "react-hook-form/react-hook-form",
-      "source_version": "77f6435d",
-      "content_hash": "608d13888f8a3bdcf7b6ac8c6becd4dcc6170b4ff6c0cd803017fb116563c1d6",
+      "source_version": "66f4d72b",
+      "content_hash": "b2a22af92824312b450dc14c513861b6de04bfa3090032b5bd6606aa3860f48b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T19:01:28.604Z"
+      "persisted_at": "2026-11-17T08:31:06.944Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-hook-form-react-hook-for": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-hook-form-react-hook-for",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/react-hook-form-react-hook-form-verification-protocol-empirical-defect-shield-fo.md",
-      "title": "Verification Protocol: Empirical Defect Shield for react-hook-form/react-hook-form",
-      "repository": "react-hook-form/react-hook-form",
-      "source_version": "77f6435d",
-      "content_hash": "92a7c33db58c24f45f63fd5c02dd97017ab9968270df62428e66fdb50215f47c",
+      "relative_path": "08_VERIFICATION/react-hook-form-react-hook-form-learnings-verification-protocol-empirical-defect.md",
+      "title": "Verification Protocol: Empirical Defect Shield for react-hook-form-react-hook-form-learnings",
+      "repository": "react-hook-form-react-hook-form-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ce931fadbeeb932d177f570868c797986ea3f03d0a21fe9482364c92eeef9e98",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:01:28.688Z"
+      "persisted_at": "2026-11-17T08:32:18.870Z"
     },
     "RULE-2": {
       "learning_id": "RULE-2",
@@ -230446,14 +230446,29 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "7d980299",
-      "content_hash": "d527f549d0fca2456b6fc3e0d2c353789e9482f85d0afc93cc04aa22655ccbd7",
+      "source_version": "d0c81b64",
+      "content_hash": "980bcf19564c75bd47e8bb7635c2c8f48b8a7b83b47c61e9fef8f377ff5b1f51",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
         {
           "number": 8500,
           "title": "flaky test testSampling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8925,
+          "title": "Incomplete Index Covered-Fields Declaration Hazard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8926,
+          "title": "Multi-Context Asio Threadpool Work Guard Lifecycle Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8927,
+          "title": "IEEE 754 Big-Endian / Little-Endian Union Casting Safety",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -230462,7 +230477,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T15:34:44.250Z",
+      "verified_at": "2026-11-17T08:31:09.401Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230504,10 +230519,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "repository": "arangodb/arangodb",
-      "source_version": "7d980299",
-      "content_hash": "780188410b62af287bcdad8c473ca0dfba235237d8e93a4347ce1c9337e7d503",
+      "source_version": "d0c81b64",
+      "content_hash": "d89a587b257e82691ff464627615f55fef2d24b674c9665308788862f8fd7836",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T15:34:44.559Z"
+      "persisted_at": "2026-11-17T08:31:10.131Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb",
@@ -230516,10 +230531,10 @@
       "relative_path": "08_VERIFICATION/arangodb-arangodb-verification-protocol-empirical-defect-shield-for-arangodb-ara.md",
       "title": "Verification Protocol: Empirical Defect Shield for arangodb/arangodb",
       "repository": "arangodb/arangodb",
-      "source_version": "7d980299",
-      "content_hash": "a1aba247ba3d5f816e550ceab8749dcc3362fddaa3276393645b585c959d055e",
+      "source_version": "d0c81b64",
+      "content_hash": "b66c0c97b6dd40b1852aded2b66b24a45d7d3b2b28a8795c608e85a4ed84e9ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:34:44.633Z"
+      "persisted_at": "2026-11-17T08:31:10.261Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -230565,9 +230580,9 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "7fcd0e42f38014c9dcde0c2db24f9d626d3885a5e94d3d5c15c5e7097d5df1dc",
+      "content_hash": "50d8190cdc4ea299db500d386818d1106bed728c65427d9a2a4c213078d5feda",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T15:35:10.936Z"
+      "persisted_at": "2026-11-17T08:32:20.798Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings",
@@ -230577,9 +230592,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for arangodb-arangodb-learnings",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "ea01ca8a89edabf68eaf132231cc70937cd3abc83e729fa44cc27a0d8e9ecbd9",
+      "content_hash": "816dc1dea36a278ebeaa4d9d4e02aedb4c5cdf1e599b23c93da0f48b3ba5c88e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T15:35:11.024Z"
+      "persisted_at": "2026-11-17T08:32:20.967Z"
     },
     "learn-huggingface-zai-org-glm-5-3": {
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
@@ -233772,14 +233787,29 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "239be7b2",
-      "content_hash": "b431e785e7fdee36a740becd5b3628c1e458a86948ed6863bcafb7a327aec1cf",
+      "source_version": "00b73947",
+      "content_hash": "08f64fddef4e2d5deddfdc9a5a8bc545a1acd944836b38e1aa39973384ed754c",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
         {
           "number": 8523,
           "title": "use TLS_1_2 as the default security policy for API Gateway domain name",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8928,
+          "title": "Guard Dynamic HCL/AST Value Expansions Against Partial Evaluation Panics",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8929,
+          "title": "Isolate Secret Match Signatures from Public Authenticated Tokens via Negative Lookaheads or Exclusion Blocks",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8930,
+          "title": "Maintain Bidirectional Wire Protocol Parity for All Ingestion Metadata across Client-Server Architecture",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -233788,7 +233818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T19:03:18.988Z",
+      "verified_at": "2026-11-17T08:31:11.369Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233830,10 +233860,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "repository": "aquasecurity/trivy",
-      "source_version": "239be7b2",
-      "content_hash": "2896b412a5920f8e54e67cb5c867da411ce0738a79f35b64d6a47c86a3992b41",
+      "source_version": "00b73947",
+      "content_hash": "a5d8f42f0255e4ca58122a1e8fe0fed892478836ffe6f84f1045ea786354970a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T19:03:19.463Z"
+      "persisted_at": "2026-11-17T08:31:12.053Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy",
@@ -233842,10 +233872,10 @@
       "relative_path": "08_VERIFICATION/aquasecurity-trivy-verification-protocol-empirical-defect-shield-for-aquasecurit.md",
       "title": "Verification Protocol: Empirical Defect Shield for aquasecurity/trivy",
       "repository": "aquasecurity/trivy",
-      "source_version": "239be7b2",
-      "content_hash": "ccbde5ebe3edabe020842da71284b93eab75fc11850a3d07e68455b7df766124",
+      "source_version": "00b73947",
+      "content_hash": "c64df93db540116c3d3490e1a8697f1ffd4748b1025bebb97736cc3a10b7456f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:03:19.566Z"
+      "persisted_at": "2026-11-17T08:31:12.290Z"
     },
     "rule-8524": {
       "learning_id": "rule-8524",
@@ -233941,9 +233971,9 @@
       "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
       "repository": "aquasecurity-trivy-learnings",
       "source_version": "HEAD",
-      "content_hash": "58443eae94500649d2dac8644ca4a5c15bc783fb43ecc211f796e1ea44726b1d",
+      "content_hash": "6f479ce81583f016819690eb6ef4c74a55d4f9b4d7c7b55d81d1ef92e94d01b9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T19:03:31.280Z"
+      "persisted_at": "2026-11-17T08:32:19.722Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy-learnings",
@@ -233953,9 +233983,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aquasecurity-trivy-learnings",
       "repository": "aquasecurity-trivy-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab9f8481ac5b0c556964acf1e39ef2589c9d8a624615411a49fb6734d2d65941",
+      "content_hash": "fcc5ac18dd039a440b2b3aedfb2d1f89441cfcde8105584dbf09b08d4a1a2ac9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:03:31.384Z"
+      "persisted_at": "2026-11-17T08:32:20.022Z"
     },
     "learn-huggingface-autotrust-gev-26b-decide-nvfp4": {
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
@@ -267467,6 +267497,312 @@
       "content_hash": "3d7d6b9e23447a8b36e1c9312c2cece4e1c7564afc554b6e5210ab3e732dd101",
       "domain_letter": "G",
       "persisted_at": "2026-11-17T08:21:43.009Z"
+    },
+    "learn-github-react-hook-form-react-hook-form": {
+      "learning_id": "learn-github-react-hook-form-react-hook-form",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "react-hook-form/react-hook-form",
+      "repository": "react-hook-form/react-hook-form",
+      "slug": "react-hook-form-react-hook-form",
+      "platform": "github",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "66f4d72b",
+      "content_hash": "a48b19b22cb1bc954e53d799739b7b05ab66d1d723a8562d661076bb47766c2c",
+      "dossier_path": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8923,
+          "title": "Grouped DOM Proxy Element Selection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8924,
+          "title": "Referential Stability Invariant in Granular Dirty-Tracking Trees",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T08:31:06.374Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8923": {
+      "learning_id": "rule-8923",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8923,
+      "title": "Grouped DOM Proxy Element Selection Invariant",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "66f4d72b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:31:06.374Z"
+    },
+    "rule-8924": {
+      "learning_id": "rule-8924",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8924,
+      "title": "Referential Stability Invariant in Granular Dirty-Tracking Trees",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "66f4d72b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:31:06.374Z"
+    },
+    "candidate_directive-grouped-dom-proxy-element-selection-invariant": {
+      "item_id": "candidate_directive-grouped-dom-proxy-element-selection-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P751-grouped-dom-proxy-element-selection-invariant.md",
+      "title": "Grouped DOM Proxy Element Selection Invariant",
+      "repository": "react-hook-form-react-hook-form-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b60fc625526016220b6b1576391bb4f915999edacc30705cbf7727fb9f019193",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:32:18.278Z"
+    },
+    "candidate_directive-referential-stability-invariant-in-granular-dirty-tracking-trees": {
+      "item_id": "candidate_directive-referential-stability-invariant-in-granular-dirty-tracking-trees",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P751-referential-stability-invariant-in-granular-dirty-tracking-trees.md",
+      "title": "Referential Stability Invariant in Granular Dirty-Tracking Trees",
+      "repository": "react-hook-form-react-hook-form-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a321a48150c4416d184eeee960ab5ec0bb30fe64b26102c06b6c011d240405ed",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T08:32:18.413Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-react-hook-form-react-hook-form": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-react-hook-form-react-hook-form",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-react-hook-form-react-hook-form-adr-subsystem-boundary-modular-decoupling-in-rea.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in react-hook-form/react-hook-form",
+      "repository": "react-hook-form/react-hook-form",
+      "source_version": "66f4d72b",
+      "content_hash": "e322946d9acee4ac41876a38ad4702d9fe76ec75bb620f529c16c71d09438e17",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:31:07.073Z"
+    },
+    "rule-8925": {
+      "learning_id": "rule-8925",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8925,
+      "title": "Incomplete Index Covered-Fields Declaration Hazard",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "d0c81b64",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:31:09.401Z"
+    },
+    "rule-8926": {
+      "learning_id": "rule-8926",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8926,
+      "title": "Multi-Context Asio Threadpool Work Guard Lifecycle Invariant",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "d0c81b64",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:31:09.401Z"
+    },
+    "rule-8927": {
+      "learning_id": "rule-8927",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8927,
+      "title": "IEEE 754 Big-Endian / Little-Endian Union Casting Safety",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "d0c81b64",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:31:09.401Z"
+    },
+    "candidate_directive-incomplete-index-covered-fields-declaration-hazard": {
+      "item_id": "candidate_directive-incomplete-index-covered-fields-declaration-hazard",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P8R5-incomplete-index-covered-fields-declaration-hazard.md",
+      "title": "Incomplete Index Covered-Fields Declaration Hazard",
+      "repository": "arangodb-arangodb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2a04f0c79b09735e5d797d394ed0612cabbebcfe9e4ccf190583ab3e2cbda856",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:32:20.371Z"
+    },
+    "candidate_directive-multi-context-asio-threadpool-work-guard-lifecycle-invariant": {
+      "item_id": "candidate_directive-multi-context-asio-threadpool-work-guard-lifecycle-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P8R6-multi-context-asio-threadpool-work-guard-lifecycle-invariant.md",
+      "title": "Multi-Context Asio Threadpool Work Guard Lifecycle Invariant",
+      "repository": "arangodb-arangodb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "37cb83271ee9c0777a1bc8f828dba9c213d8d899c42853bdd7bb957a03c9d425",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T08:32:20.514Z"
+    },
+    "candidate_directive-ieee-754-big-endian-little-endian-union-casting-safety": {
+      "item_id": "candidate_directive-ieee-754-big-endian-little-endian-union-casting-safety",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P8R6-ieee-754-big-endian-little-endian-union-casting-safety.md",
+      "title": "IEEE 754 Big-Endian / Little-Endian Union Casting Safety",
+      "repository": "arangodb-arangodb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d72226784cbfd507d781f1cf5c5d7a2c8d009994a4473925778366df0ce98a42",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:32:20.656Z"
+    },
+    "rule-8928": {
+      "learning_id": "rule-8928",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8928,
+      "title": "Guard Dynamic HCL/AST Value Expansions Against Partial Evaluation Panics",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "00b73947",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:31:11.369Z"
+    },
+    "rule-8929": {
+      "learning_id": "rule-8929",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8929,
+      "title": "Isolate Secret Match Signatures from Public Authenticated Tokens via Negative Lookaheads or Exclusion Blocks",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "00b73947",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:31:11.369Z"
+    },
+    "rule-8930": {
+      "learning_id": "rule-8930",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8930,
+      "title": "Maintain Bidirectional Wire Protocol Parity for All Ingestion Metadata across Client-Server Architecture",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "00b73947",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:31:11.369Z"
+    },
+    "candidate_directive-guard-dynamic-hcl-ast-value-expansions-against-partial-evaluation-panics": {
+      "item_id": "candidate_directive-guard-dynamic-hcl-ast-value-expansions-against-partial-evaluation-panics",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P7XD-guard-dynamic-hcl-ast-value-expansions-against-partial-evaluation-panics.md",
+      "title": "Guard Dynamic HCL/AST Value Expansions Against Partial Evaluation Panics",
+      "repository": "aquasecurity-trivy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d68e4ffb234d675390fc4e88ddfba22b9a8fac8b7656790cf7a76f5926c7336",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:32:19.298Z"
+    },
+    "candidate_directive-isolate-secret-match-signatures-from-public-authenticated-tokens-via-negative-lo": {
+      "item_id": "candidate_directive-isolate-secret-match-signatures-from-public-authenticated-tokens-via-negative-lo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P7XD-isolate-secret-match-signatures-from-public-authenticated-tokens-via-negative-lo.md",
+      "title": "Isolate Secret Match Signatures from Public Authenticated Tokens via Negative Lookaheads or Exclusion Blocks",
+      "repository": "aquasecurity-trivy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "77401bb5793c0dd387cf27eac137087643a4cdb58d0537fb4234e4f20baeec68",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-17T08:32:19.439Z"
+    },
+    "candidate_directive-maintain-bidirectional-wire-protocol-parity-for-all-ingestion-metadata-across-cl": {
+      "item_id": "candidate_directive-maintain-bidirectional-wire-protocol-parity-for-all-ingestion-metadata-across-cl",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P7XE-maintain-bidirectional-wire-protocol-parity-for-all-ingestion-metadata-across-cl.md",
+      "title": "Maintain Bidirectional Wire Protocol Parity for All Ingestion Metadata across Client-Server Architecture",
+      "repository": "aquasecurity-trivy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "342f89b2dea303ddaef47a56396f003b63585e9badb2bc9b8c5435bde8deffaf",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T08:32:19.581Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-aquasecurity-trivy": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-aquasecurity-trivy",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/aquasecurity-trivy-skill-operational-integration-playbook-for-aquasecurity-trivy.md",
+      "title": "Skill: Operational & Integration Playbook for aquasecurity/trivy",
+      "repository": "aquasecurity/trivy",
+      "source_version": "00b73947",
+      "content_hash": "8df58a7498efe8baddaf6a0533bdd47422ed785a826ac7bfd2438275b78d52a0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:31:12.178Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-learnings-co": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-learnings-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-learnings-technical-construction-intelligence-re.md",
+      "title": "Technical Construction Intelligence: react-hook-form-react-hook-form-learnings Core Invariants",
+      "repository": "react-hook-form-react-hook-form-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f1ed23530cb6f1409482edcf3a1a6c95d8460c4eae412e5b7619d2e73b6cccdd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:32:18.557Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-react-hook-form-react-hook-form-lea": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-react-hook-form-react-hook-form-lea",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-react-hook-form-react-hook-form-learnings-adr-subsystem-boundary-modular-decoupl.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in react-hook-form-react-hook-form-learnings",
+      "repository": "react-hook-form-react-hook-form-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e69659712e734fb461da8f1de2ef69c17495b8ff389088f94d8776ecbefaa041",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:32:18.722Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-aquasecurity-trivy-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-aquasecurity-trivy-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/aquasecurity-trivy-learnings-skill-operational-integration-playbook-for-aquasecu.md",
+      "title": "Skill: Operational & Integration Playbook for aquasecurity-trivy-learnings",
+      "repository": "aquasecurity-trivy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fb76e27ea30d5c29fb3a392096977353faa940ecd1c7031a20527e90ea111bf1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:32:19.887Z"
     }
   },
   "ai-builder-brain": {

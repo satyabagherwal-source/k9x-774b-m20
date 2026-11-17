@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T08:20:26.930Z",
+  "updated_at": "2026-11-17T08:32:19.089Z",
   "stats": {
-    "total_discovered": 4887,
-    "approved_pending_harvest": 4603,
+    "total_discovered": 4890,
+    "approved_pending_harvest": 4606,
     "harvested_count": 0,
     "rejected_count": 284,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4603,
+      "COMMUNITY_AND_EXPERT": 4606,
       "OFFICIAL_DOCUMENTATION": 153,
       "STANDARDS_AND_SPECIFICATIONS": 102,
       "ENGINEERING_BLOGS": 3,
@@ -105547,6 +105547,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
         "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-B4C0FF9A8265": {
+      "id": "SRC-B4C0FF9A8265",
+      "url": "https://github.com/react-hook-form/react-hook-form",
+      "title": "https://github.com/react-hook-form/react-hook-form",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T08:32:18.066Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-65D5D265E84D": {
+      "id": "SRC-65D5D265E84D",
+      "url": "https://s3.amazonaws.com/?AWSAccessKeyId=AKIA1111111111111111&Signature=xyz",
+      "title": "https://s3.amazonaws.com/?AWSAccessKeyId=AKIA1111111111111111&Signature=xyz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T08:32:19.057Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-1438A90A232C": {
+      "id": "SRC-1438A90A232C",
+      "url": "https://bucket.s3.amazonaws.com/obj?AWSAccessKeyId=AKIAIOSFODNN7EXAMPLE&Signature=abc%60",
+      "title": "https://bucket.s3.amazonaws.com/obj?AWSAccessKeyId=AKIAIOSFODNN7EXAMPLE&Signature=abc%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T08:32:19.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
       }
     }
   }

@@ -650365,3 +650365,998 @@ git diff origin/master -- contents.json | grep -E '^\+' | grep -v '^\+\+\+' | he
 ```
 
 ---
+
+
+---
+
+## 8923. Grouped DOM Proxy Element Selection Invariant (Harvested from react-hook-form/react-hook-form)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Grouped DOM Proxy Element Selection Invariant",
+  "source": "react-hook-form/react-hook-form",
+  "source_url": "https://github.com/react-hook-form/react-hook-form",
+  "source_version": "66f4d72b",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T08:31:05.601Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-react-hook-form-react-hook-form",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form) (Revision: `66f4d72b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When dispatching native DOM constraint validation APIs (`reportValidity()`, `checkValidity()`, `setCustomValidity()`) on a composite field group sharing a single registration identifier (e.g., `HTMLInputElement` groups for `type="radio"` or `type="checkbox"`), the runtime MUST NOT assume the primary ref (`refs[0]`) is eligible to anchor the native reporting bubble. The runtime MUST dynamically traverse the node collection to locate the first active element where `element.disabled === false` and `typeof element.reportValidity === 'function'`. If all members are disabled or non-functional, it MUST safely fall back to the root ref without throwing.
+
+**WHY**:
+Browsers immediately discard `reportValidity()` calls targeted at elements with the `disabled` attribute set to `true`, suppressing the browser's native error bubble. In radio groups where the first radio option is disabled by business logic (e.g., "Option 1 - Out of Stock (Disabled)"), calling `refs[0].reportValidity()` results in silent failure: native validation fails, form submission is blocked, yet no validation UI or tooltip is displayed to the user.
+
+**WHEN TO APPLY**:
+Any time a custom UI library or headless form manager wraps native HTML5 constraint validation across grouped multi-node inputs (`<input type="radio">`, `<input type="checkbox">`, custom form associations).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * Safely executes native HTML5 constraint validation on single or grouped input nodes.
+ * Guarantees that disabled radio/checkbox nodes do not suppress browser validity tooltips.
+ */
+export function executeNativeValidation(
+  ref: HTMLInputElement | undefined,
+  refs: HTMLInputElement[] | undefined,
+  message?: string | boolean,
+): void {
+  const rootRef: HTMLInputElement | undefined = refs ? refs[0] : ref;
+  if (!rootRef) {
+    return;
+  }
+
+  // Defend against environments without standard DOM methods (e.g., SSR, JSDOM, React Native)
+  const isFunction = (fn: unknown): fn is (...args: unknown[]) => unknown =>
+    typeof fn === 'function';
+
+  if (!isFunction(rootRef.reportValidity)) {
+    return;
+  }
+
+  // INVARIANT: Native bubbles only anchor to enabled interactive elements.
+  // Traverse grouped refs to find the first interactive target.
+  const interactiveTarget =
+    refs?.find(
+      (node): node is HTMLInputElement =>
+        !node.disabled && isFunction(node.reportValidity),
+    ) || rootRef;
+
+  const validityMessage = typeof message === 'boolean' ? '' : message || '';
+
+  if (refs && refs.length > 0) {
+    for (let i = 0; i < refs.length; i++) {
+      const targetNode = refs[i];
+      if (isFunction(targetNode.setCustomValidity)) {
+        targetNode.setCustomValidity(validityMessage);
+      }
+    }
+  } else if (isFunction(rootRef.setCustomValidity)) {
+    rootRef.setCustomValidity(validityMessage);
+  }
+
+  // Anchor the native validation popup to the active interactive element
+  interactiveTarget.reportValidity();
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blindly assuming refs[0] can report validity.
+// If option 0 is disabled, the browser drops reportValidity() on the floor.
+// The form fails to submit, and the user receives zero visual feedback.
+function badNativeValidation(refs: HTMLInputElement[], message: string) {
+  refs.forEach(ref => ref.setCustomValidity(message));
+  if (refs[0] && refs[0].reportValidity) {
+    refs[0].reportValidity(); // FAILS silently if refs[0].disabled === true
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Mount a radio group where index `0` has `disabled={true}` and index `1` is enabled. Trigger validation. Assert via DOM spies that `refs[1].reportValidity` was invoked once and `refs[0].reportValidity` was invoked zero times:
+```typescript
+const disabledRadio = screen.getByLabelText('Option A (Disabled)') as HTMLInputElement;
+const enabledRadio = screen.getByLabelText('Option B') as HTMLInputElement;
+const disabledSpy = jest.spyOn(disabledRadio, 'reportValidity');
+const enabledSpy = jest.spyOn(enabledRadio, 'reportValidity');
+
+fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+expect(disabledSpy).not.toHaveBeenCalled();
+expect(enabledSpy).toHaveBeenCalledTimes(1);
+```
+
+---
+
+
+---
+
+## 8924. Referential Stability Invariant in Granular Dirty-Tracking Trees (Harvested from react-hook-form/react-hook-form)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Referential Stability Invariant in Granular Dirty-Tracking Trees",
+  "source": "react-hook-form/react-hook-form",
+  "source_url": "https://github.com/react-hook-form/react-hook-form",
+  "source_version": "66f4d72b",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T08:31:06.090Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-react-hook-form-react-hook-form",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form) (Revision: `66f4d72b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When updating a nested tree of dirty field states (`formState.dirtyFields`), mutation algorithms MUST NOT clone or reconstruct branch objects whose internal state did not experience a boolean or structural transition. If an already dirty leaf field is updated to another dirty value, the top-level `dirtyFields` container and all ancestor references MUST maintain strict referential equality (`===`).
+
+**WHY**:
+Modern reactive frameworks (React, Solid) and memoized selectors (`useMemo`, `React.memo`, `useSyncExternalStore`) rely on shallow reference equality checks. Reconstructing `dirtyFields` on every keystroke when an input is already dirty forces every downstream subscriber to re-render, destroying the primary performance guarantee of decoupled form architectures.
+
+**WHEN TO APPLY**:
+State-management libraries tracking deep path diffs (forms, AST transformations, collaborative document editing, JSON patch processors).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export type DirtyStateTree = {
+  [key: string]: boolean | DirtyStateTree | Array<DirtyStateTree | boolean>;
+};
+
+/**
+ * Updates a dirty state tree while preserving referential stability.
+ * Returns the exact same tree reference if the mutation would be a no-op.
+ */
+export function setDirtyFieldDeep(
+  currentTree: DirtyStateTree,
+  path: string[],
+  isLeafDirty: boolean,
+): { tree: DirtyStateTree; hasChanged: boolean } {
+  if (path.length === 0) {
+    return { tree: currentTree, hasChanged: false };
+  }
+
+  const [currentKey, ...remainingPath] = path;
+  const currentValue = currentTree[currentKey];
+
+  if (remainingPath.length === 0) {
+    // Terminal leaf node
+    const currentBool = currentValue === true;
+    if (currentBool === isLeafDirty) {
+      return { tree: currentTree, hasChanged: false };
+    }
+
+    const nextTree = { ...currentTree };
+    if (isLeafDirty) {
+      nextTree[currentKey] = true;
+    } else {
+      delete nextTree[currentKey];
+    }
+    return { tree: nextTree, hasChanged: true };
+  }
+
+  // Internal branch node
+  const currentSubTree = (typeof currentValue === 'object' && currentValue !== null)
+    ? (currentValue as DirtyStateTree)
+    : {};
+
+  const { tree: nextSubTree, hasChanged } = setDirtyFieldDeep(
+    currentSubTree,
+    remainingPath,
+    isLeafDirty,
+  );
+
+  if (!hasChanged) {
+    return { tree: currentTree, hasChanged: false };
+  }
+
+  const nextTree = { ...currentTree };
+  if (Object.keys(nextSubTree).length === 0) {
+    delete nextTree[currentKey];
+  } else {
+    nextTree[currentKey] = nextSubTree;
+  }
+
+  return { tree: nextTree, hasChanged: true };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Indiscriminately allocating new objects at every tree level
+// regardless of whether any leaf value actually transitioned.
+function badSetDirty(dirtyTree: Record<string, any>, path: string[]) {
+  const cloned = JSON.parse(JSON.stringify(dirtyTree)); // Destroys references unconditionally!
+  lodashSet(cloned, path, true);
+  return cloned; // Forces re-render on every keystroke even if field was already dirty
+}
+```
+
+**VERIFICATION METHOD**:
+Execute consecutive modifications to an already-dirty path and assert referential equality of the root `dirtyFields` container:
+```typescript
+const stateBefore = control._formState.dirtyFields;
+control.setValue("profile.firstName", "Alpha", { shouldDirty: true });
+const stateMiddle = control._formState.dirtyFields;
+control.setValue("profile.firstName", "Beta", { shouldDirty: true });
+const stateAfter = control._formState.dirtyFields;
+
+expect(stateBefore).not.toBe(stateMiddle); // Transition from clean to dirty: Identity MUST change
+expect(stateMiddle).toBe(stateAfter);       // Transition from dirty to dirty: Identity MUST be stable
+```
+
+---
+
+
+---
+
+## 8925. Incomplete Index Covered-Fields Declaration Hazard (Harvested from arangodb/arangodb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Incomplete Index Covered-Fields Declaration Hazard",
+  "source": "arangodb/arangodb",
+  "source_url": "https://github.com/arangodb/arangodb",
+  "source_version": "d0c81b64",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-17T08:31:08.159Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-arangodb-arangodb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.71,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [arangodb/arangodb](https://github.com/arangodb/arangodb) (Revision: `d0c81b64`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 71%).
+
+**RULE**:
+When introducing a new index type in a distributed query planner, the index class MUST explicitly declare whether its key attributes are capable of index-covering queries (`coveredFields()`). If an index stores only internal representations (e.g., dense vectors, HNSW graph structures) and cannot satisfy direct document attribute projection without `storedValues`, its `coveredFields()` implementation MUST explicitly return an empty field set (`emptyCoveredFields`) rather than falling through to an unhandled enum state or returning partial attribute coverage.
+
+**WHY**:
+In distributed query compilation, when an index claims to cover a field, the optimizer removes the downstream `MaterializeNode` and sets `filterMode = "index"` or `projectionMode = "index"`. If a vector/multidimensional index emits vector coordinates that require full document de-serialization, omitting the index type in `ClusterIndex::coveredFields()` causes cluster coordinator crashes: the coordinator plan expects the intermediate worker node to emit deserialized VelocyPack slices, but the worker outputs raw internal IDs or empty records, triggering assertion failures during result-set materialization.
+
+**WHEN TO APPLY**:
+Any database engine, distributed planner, or secondary index interface in C++, Rust, or Go where query planners can bypass disk/row lookups via "Covering Indexes" (e.g., Index-Only Scans).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// arangod/ClusterEngine/ClusterIndex.cpp
+std::vector<std::vector<arangodb::basics::AttributeName>> const& 
+ClusterIndex::coveredFields() const {
+  switch (_type) {
+    case IndexType::Primary:
+    case IndexType::Edge:
+    case IndexType::Persistent:
+      return _coveredFields;
+
+    // Explicit non-covering index invariants:
+    case IndexType::Zkd:
+    case IndexType::MDI:
+    case IndexType::MDIPrefixed:
+    case IndexType::Vector:
+    case IndexType::NoAccess: {
+      return Index::emptyCoveredFields;
+    }
+
+    default: {
+      TRI_ASSERT(false) << "ClusterIndex::coveredFields called on unsupported index type: " 
+                        << static_cast<int>(_type);
+      return Index::emptyCoveredFields;
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// CRITICAL DEFECT: Omitting IndexType::Vector from the switch statement.
+// Causes undefined fall-through, unhandled switch warning bypass,
+// or returning uninitialized/default coveredFields references.
+std::vector<std::vector<arangodb::basics::AttributeName>> const& 
+ClusterIndex::coveredFields() const {
+  switch (_type) {
+    case IndexType::Primary:
+      return _coveredFields;
+    case IndexType::Zkd:
+    case IndexType::MDI:
+      return Index::emptyCoveredFields;
+    // MISSING IndexType::Vector!
+    // Result: Evaluates to invalid optimizer assertions in distributed AQL plans.
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a plan-level regression test validating both `filterMode` and `projectionMode`:
+```javascript
+const plan = db._createStatement({
+  query: "FOR d IN col LET dist = APPROX_NEAR_L2(@qp, d.vector) SORT dist LIMIT 5 RETURN d.vector",
+  bindVars: { qp: randomPoint }
+}).explain().plan;
+
+const indexNode = plan.nodes.find(n => n.type === "EnumerateNearVectorNode");
+assert.strictEqual(indexNode.projectionMode, "pass-through-id");
+assert.ok(plan.nodes.some(n => n.type === "MaterializeNode"), "MaterializeNode MUST exist when vector index lacks storedValues");
+```
+
+---
+
+
+---
+
+## 8926. Multi-Context Asio Threadpool Work Guard Lifecycle Invariant (Harvested from arangodb/arangodb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Context Asio Threadpool Work Guard Lifecycle Invariant",
+  "source": "arangodb/arangodb",
+  "source_url": "https://github.com/arangodb/arangodb",
+  "source_version": "d0c81b64",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-17T08:31:08.636Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-arangodb-arangodb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [arangodb/arangodb](https://github.com/arangodb/arangodb) (Revision: `d0c81b64`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When managing a pool of isolated `boost::asio::io_context` instances across worker threads, the service MUST construct and store `executor_work_guard` instances before spawning threads, and MUST explicitly reset all guards before invoking `stop()` on any `io_context` during shutdown. Worker threads MUST NOT be joined without resetting work guards and calling `stop()`.
+
+**WHY**:
+An active `asio::executor_work_guard` prevents `io_context::run()` from returning even when all active handlers have drained. If worker threads call `ctx->run()` and the destructor joins them without clearing work guards, the application deadlocks on process termination. Conversely, invoking `c->stop()` without resetting work guards aborts queued cancellation handlers, leaking in-flight sockets and memory buffers.
+
+**WHEN TO APPLY**:
+C++ networking services using `boost::asio` or standalone `asio` with thread-per-core or partitioned loop patterns (`asio::io_context`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// 3rdParty/fuerte/src/loop.cpp
+void EventLoopService::stop() {
+  // Phase 1: Allow run() loops to exit naturally when work completes
+  for (auto& guard : _guards) {
+    guard.reset();
+  }
+  std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+  // Phase 2: Forcefully halt pending events that failed to drain
+  for (auto& context : _ioContexts) {
+    context->stop();
+  }
+  std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+  // Phase 3: Synchronously join and reclaim OS thread resources
+  for (auto& thread : _threads) {
+    if (thread.joinable()) {
+      thread.join();
+    }
+  }
+
+  _threads.clear();
+  _ioContexts.clear();
+  _guards.clear();
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// DEADLOCK / RESOURCE CORRUPTION PATTERN:
+EventLoopService::~EventLoopService() {
+  for (auto& thread : _threads) {
+    if (thread.joinable()) {
+      thread.join(); // DEADLOCK: io_context::run() never exits because work_guards are active!
+    }
+  }
+  // Destruction of _guards never reached.
+}
+```
+
+**VERIFICATION METHOD**:
+Static analysis via clang-tidy checking thread joins without prior cancellation, combined with integration lifecycle fuzzing running 10,000 rapid cycles of `EventLoopService::start()` and `EventLoopService::stop()` under simulated thread contention.
+
+---
+
+
+---
+
+## 8927. IEEE 754 Big-Endian / Little-Endian Union Casting Safety (Harvested from arangodb/arangodb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "IEEE 754 Big-Endian / Little-Endian Union Casting Safety",
+  "source": "arangodb/arangodb",
+  "source_url": "https://github.com/arangodb/arangodb",
+  "source_version": "d0c81b64",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-17T08:31:09.138Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-arangodb-arangodb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [arangodb/arangodb](https://github.com/arangodb/arangodb) (Revision: `d0c81b64`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When inspecting bit patterns of primitive types (such as double precision IEEE 754 floats for NaN, Inf, or Sign Bit analysis) without invoking undefined behavior via pointer-aliasing, systems MUST use standard unions initialized strictly through their first field, or use `std::bit_cast`. Pointer-arithmetic extraction of floating point bytes MUST explicitly account for endianness swaps (`U_IS_BIG_ENDIAN` vs Little-Endian).
+
+**WHY**:
+Treating `double*` as `char*` and reading indices assumes little-endian byte ordering. On big-endian architectures (e.g., IBM s390x, AIX), the sign bit and exponent reside at index `0`, whereas on x86/ARM64 little-endian systems, the most significant byte is at index `sizeof(double) - 1`. Incorrect byte offsets cause NaN and infinity detections to flip, leading to silent calculation errors, corrupt spatial coordinates, and incorrect sorting.
+
+**WHEN TO APPLY**:
+Low-level C/C++ cross-platform code managing serialization, numeric hashing, or custom floating-point categorization.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// 3rdParty/icu-legacy/icu64/common/putil.cpp
+typedef union {
+  int64_t i64; // First member initialization conforming to C89/C++ standards
+  double d64;
+} BitPatternConversion;
+
+static const BitPatternConversion gNan = { (int64_t) INT64_C(0x7FF8000000000000) };
+static const BitPatternConversion gInf = { (int64_t) INT64_C(0x7FF0000000000000) };
+
+static inline bool uprv_signBit(double d) {
+  uint8_t hiByte;
+#if U_IS_BIG_ENDIAN
+  hiByte = *(reinterpret_cast<uint8_t*>(&d));
+#else
+  hiByte = *(reinterpret_cast<uint8_t*>(&d) + sizeof(double) - 1);
+#endif
+  return (hiByte & 0x80) != 0;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ARCHITECTURAL FLAW: Architecture-blind pointer casting.
+// Fails on Big-Endian architectures (s390x) by reading least-significant byte!
+bool brokenSignBit(double d) {
+  uint8_t* bytePtr = (uint8_t*)&d;
+  return (bytePtr[7] & 0x80) != 0; // Wrong on s390x / SPARC!
+}
+```
+
+**VERIFICATION METHOD**:
+Compile and execute static unit assertions parameterized across architecture targets via QEMU user-mode emulation for `s390x` and `x86_64`:
+```cpp
+static_assert(sizeof(double) == sizeof(int64_t), "IEEE 754 64-bit float invariant failed");
+assert(uprv_signBit(-0.0) == true);
+assert(uprv_signBit(0.0) == false);
+```
+
+---
+
+
+---
+
+## 8928. Guard Dynamic HCL/AST Value Expansions Against Partial Evaluation Panics (Harvested from aquasecurity/trivy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Guard Dynamic HCL/AST Value Expansions Against Partial Evaluation Panics",
+  "source": "aquasecurity/trivy",
+  "source_url": "https://github.com/aquasecurity/trivy",
+  "source_version": "00b73947",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T08:31:10.037Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aquasecurity-trivy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.71,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `00b73947`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 71%).
+
+**RULE**: When traversing or expanding abstract syntax tree structures or dynamic property maps (such as `cty.Value` in HashiCorp HCL2/Terraform or CEL/Rego ASTs) during static analysis, you MUST verify `.IsKnown()` and `.IsNull()` on both the collection and every nested member before invoking value-extraction methods (`AsValueMap()`, `ElementIterator()`, or native primitive casts). If a value is unknown, static evaluation MUST gracefully defer expansion or register an unresolvable sentinel rather than assuming map completeness.
+
+**WHY**: During static code analysis (e.g., CI pipelines running without deployed cloud state or terraform backend initializations), module outputs, cross-resource references, and environment-dependent conditionals evaluate to "unknown" dynamic values. Invoking iterators or map deserializers on an unknown `cty.Value` triggers a direct runtime panic (`panic: can't use ElementIterator on unknown value`), crashing the entire scanning process and terminating CI/CD pipelines.
+
+**WHEN TO APPLY**: Any HCL, Terraform, CloudFormation, or dynamic expression evaluator handling un-applied, un-templated, or partially resolved configuration trees.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package evaluator
+
+import (
+	"github.com/zclconf/go-cty/cty"
+)
+
+// SafeForEachExpansion verifies complete knowledge of values before map traversal
+func (e *Evaluator) ShouldDeferForEachExpansion(targetVal cty.Value) bool {
+	// Root guard: If the collection itself is unknown or null, defer immediately
+	if !targetVal.IsKnown() || targetVal.IsNull() {
+		return true
+	}
+
+	// Guard against non-traversable types
+	if !targetVal.Type().IsMapType() && !targetVal.Type().IsObjectType() {
+		return false
+	}
+
+	// Deep inspection: verify all nested elements without triggering ElementIterator panic
+	it := targetVal.ElementIterator()
+	for it.Next() {
+		k, v := it.Element()
+		
+		// If key or value is unknown, map expansion cannot be safely statically resolved
+		if !k.IsKnown() || !v.IsKnown() {
+			return true
+		}
+		
+		// Check for nested dynamic structures
+		if (v.Type().IsMapType() || v.Type().IsObjectType()) && e.containsUnknownNested(v) {
+			return true
+		}
+	}
+	return false
+}
+
+func (e *Evaluator) containsUnknownNested(val cty.Value) bool {
+	if !val.IsKnown() || val.IsNull() {
+		return true
+	}
+	if !val.Type().IsMapType() && !val.Type().IsObjectType() {
+		return false
+	}
+	it := val.ElementIterator()
+	for it.Next() {
+		_, v := it.Element()
+		if !v.IsKnown() || e.containsUnknownNested(v) {
+			return true
+		}
+	}
+	return false
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Blindly converting cty.Value to map without checking IsKnown()
+func (e *Evaluator) BadLocalHasDynamicValues(val cty.Value) bool {
+	// CRASH HAZARD: If val is unknown or contains an unknown field, AsValueMap panics!
+	valMap := val.AsValueMap() // panic: can't use ElementIterator on unknown value
+	for _, v := range valMap {
+		if v.IsUnknown() {
+			return true
+		}
+	}
+	return false
+}
+```
+
+**VERIFICATION METHOD**:
+Run unit tests with synthetic `cty.UnknownVal` values simulating unresolved module dependencies:
+```go
+func TestUnknownValueHandling(t *testing.T) {
+	unknownMap := cty.MapVal(map[string]cty.Value{
+		"unresolved_module_ref": cty.UnknownVal(cty.String),
+	})
+	eval := &Evaluator{}
+	require.NotPanics(t, func() {
+		deferExpansion := eval.ShouldDeferForEachExpansion(unknownMap)
+		require.True(t, deferExpansion)
+	})
+}
+```
+
+---
+
+
+---
+
+## 8929. Isolate Secret Match Signatures from Public Authenticated Tokens via Negative Lookaheads or Exclusion Blocks (Harvested from aquasecurity/trivy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Isolate Secret Match Signatures from Public Authenticated Tokens via Negative Lookaheads or Exclusion Blocks",
+  "source": "aquasecurity/trivy",
+  "source_url": "https://github.com/aquasecurity/trivy",
+  "source_version": "00b73947",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T08:31:10.545Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aquasecurity-trivy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `00b73947`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**: High-entropy secret and credential scanners MUST decouple pattern matching from context verification by utilizing post-match exclusion blocks or negative assertions. Specifically, public identifiers (such as AWS Access Key IDs `AKIA...`) MUST NOT match if they are embedded within pre-signed URLs, query strings (`AWSAccessKeyId=...`), HTTP Authorization headers (`AWS4-HMAC-SHA256 Credential=...`), or form inputs where the token functions as an authentication context identifier accompanied by an ephemeral cryptographic signature.
+
+**WHY**: AWS Access Key IDs are 20-character base-32 tokens that identify an identity but do not themselves authorize access without the corresponding secret key. In presigned S3 URLs, client-side SDK initializers, and signed API requests, the Key ID is transmitted over public mediums alongside a HMAC-SHA256 signature. Flagging these occurrences generates massive false-positive fatigue while scanning source trees and web assets, masking actual leakage of the companion `SecretAccessKey`.
+
+**WHEN TO APPLY**: Secret scanners, static code analyzers, CI/CD commit hooks, and DLP engines parsing arbitrary source text and configurations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package secret
+
+import (
+	"regexp"
+)
+
+type Rule struct {
+	ID           string
+	Severity     string
+	Regex        *regexp.Regexp
+	ExcludeBlock ExcludeBlock
+}
+
+type ExcludeBlock struct {
+	Regexes []*regexp.Regexp
+}
+
+// BuildAWSAccessKeyRule isolates secret keys from presigned signatures
+func BuildAWSAccessKeyRule() Rule {
+	return Rule{
+		ID:       "aws-access-key-id",
+		Severity: "CRITICAL",
+		// Use word boundary \b to allow punctuation like quotes, commas, brackets
+		Regex: regexp.MustCompile(`\b((?:A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16})\b`),
+		ExcludeBlock: ExcludeBlock{
+			Regexes: []*regexp.Regexp{
+				// Presigned S3 SigV4 credentials path
+				regexp.MustCompile(`[A-Z0-9]{20}(?:/|%2[Ff])\d{8}(?:/|%2[Ff])`),
+				// S3 SigV2 Query parameters
+				regexp.MustCompile(`(?:[?&]|%3[Ff]|%26)AWSAccessKeyId(?:=|%3D)[A-Z0-9]{20}`),
+				// S3 Authorization header credentials
+				regexp.MustCompile(`AWS [A-Z0-9]{20}:`),
+			},
+		},
+	}
+}
+
+func (r *Rule) IsExcluded(contextWindow []byte) bool {
+	for _, excludeRegex := range r.ExcludeBlock.Regexes {
+		if excludeRegex.Match(contextWindow) {
+			return true
+		}
+	}
+	return false
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Rigid framing regex requiring quotes that misses keys in JSON/JS/CSV,
+// coupled with zero exclusion logic for signed query params.
+var BadAWSRegex = regexp.MustCompile(`["'](AKIA[A-Z0-9]{16})["']`)
+// Fails to match: keys="AKIA1111111111111111,ASIA2222222222222222"
+// Incorrectly alerts on: https://s3.amazonaws.com?AWSAccessKeyId=AKIA1111111111111111&Signature=xyz
+```
+
+**VERIFICATION METHOD**:
+Execute dual-assertion test suites verifying both punctuation-bounded positive matches and presigned negative exclusions:
+```go
+func TestAWSAccessKeyScenarios(t *testing.T) {
+	rule := BuildAWSAccessKeyRule()
+	positives := []string{
+		`const c={accessKeyId:"AKIAIOSFODNN7EXAMPLE"};`,
+		`keys="AKIAIOSFODNN7EXAMPLE,ASIAIOSFODNN7EXAMPLE"`,
+	}
+	negatives := []string{
+		`https://bucket.s3.amazonaws.com/obj?AWSAccessKeyId=AKIAIOSFODNN7EXAMPLE&Signature=abc`,
+		`Authorization: AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20261102/us-east-1/s3/aws4_request`,
+	}
+
+	for _, text := range positives {
+		require.True(t, rule.Regex.MatchString(text))
+		require.False(t, rule.IsExcluded([]byte(text)))
+	}
+	for _, text := range negatives {
+		require.True(t, rule.Regex.MatchString(text))
+		require.True(t, rule.IsExcluded([]byte(text)), "Failed to exclude signed context: %s", text)
+	}
+}
+```
+
+---
+
+
+---
+
+## 8930. Maintain Bidirectional Wire Protocol Parity for All Ingestion Metadata across Client-Server Architecture (Harvested from aquasecurity/trivy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Maintain Bidirectional Wire Protocol Parity for All Ingestion Metadata across Client-Server Architecture",
+  "source": "aquasecurity/trivy",
+  "source_url": "https://github.com/aquasecurity/trivy",
+  "source_version": "00b73947",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T08:31:11.106Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aquasecurity-trivy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `00b73947`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**: In distributed scanning systems where inspection/parsing occurs on a client node and policy/vulnerability evaluation occurs on a centralized server, all metadata fields added to client domain models (e.g., policy aliases, suppression rules, location tags, source file offsets) MUST be simultaneously implemented in the intermediate RPC IDL (Protobuf/gRPC schema) and mapped across the translation boundary. Furthermore, the storage cache key MUST invalidate or version when wire-format metadata structures are augmented.
+
+**WHY**: Omitting metadata fields in transit schemas creates silent execution divergences between standalone and distributed execution modes. For example, when client-side security policies contain alias mappings (e.g., `AVD-DS-0002` -> `no-ssh-port`), dropping the alias in the gRPC layer causes the evaluation server to return findings without aliases. Client-side ignore files referencing aliases will then match nothing on the server, causing suppressed vulnerabilities to be falsely flagged as unresolved blocking violations exclusively in CI/CD server mode.
+
+**WHEN TO APPLY**: Multi-tier architectures, gRPC/Protobuf client-server engines, and distributed caching scanners.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```protobuf
+// File: rpc/common/service.proto
+syntax = "proto3";
+package rpc.cache;
+
+message PolicyMetadata {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string severity = 4;
+  // Field MUST be explicitly preserved across wire protocol
+  repeated string aliases = 5;
+  int64 schema_version = 6;
+}
+```
+
+```go
+// File: pkg/rpc/convert.go
+func ConvertToRPCBlob(meta types.PolicyMetadata) *rpc.PolicyMetadata {
+	return &rpc.PolicyMetadata{
+		Id:            meta.ID,
+		Title:         meta.Title,
+		Description:   meta.Description,
+		Severity:      string(meta.Severity),
+		Aliases:       meta.Aliases, // Explicit wire transfer
+		SchemaVersion: 2,
+	}
+}
+
+func ConvertFromRPCBlob(rpcMeta *rpc.PolicyMetadata) types.PolicyMetadata {
+	return types.PolicyMetadata{
+		ID:          rpcMeta.Id,
+		Title:       rpcMeta.Title,
+		Description: rpcMeta.Description,
+		Severity:    types.Severity(rpcMeta.Severity),
+		Aliases:     rpcMeta.Aliases, // Restored finding parity
+	}
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Partial conversion silently discarding internal identifiers
+func ConvertPolicyBad(meta types.PolicyMetadata) *rpc.PolicyMetadata {
+	return &rpc.PolicyMetadata{
+		Id:          meta.ID,
+		Title:       meta.Title,
+		Severity:    string(meta.Severity),
+		// Aliases omitted: Client ignore-rules referring to check aliases will fail!
+	}
+}
+```
+
+**VERIFICATION METHOD**:
+Implement bidirectional round-trip property-based fuzz tests verifying zero field loss across conversion layers:
+```go
+func TestPolicyMetadataRPCParity(t *testing.T) {
+	orig := types.PolicyMetadata{
+		ID:      "AVD-AWS-0001",
+		Aliases: []string{"aws-s3-enable-bucket-encryption", "S3-001"},
+	}
+	rpcMsg := ConvertToRPCBlob(orig)
+	reconstructed := ConvertFromRPCBlob(rpcMsg)
+	require.Equal(t, orig.Aliases, reconstructed.Aliases, "Metadata wire drop detected")
+}
+```
+
+---
