@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T21:22:30.981Z",
+  "last_updated": "2026-11-17T21:41:17.077Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -215,14 +215,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
-      "content_hash": "e01c71f711f9cd66fc0e62dce525301810eba9ad4b455daab82ebebb309971c7",
-      "verified_at": "2026-11-13T11:39:59.267Z",
+      "content_hash": "6e1945aae3517f8d761398f06c00577c9a68649a66b6879c82580e983e7877af",
+      "verified_at": "2026-11-17T21:40:59.693Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T11:39:59.267Z"
+      "last_updated": "2026-11-17T21:40:59.693Z"
     },
     "black-forest-labs/FLUX.1-dev": {
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "cc17dc76580146147fde6e27e5c45caf07a9d0d47662157da41ad5e796195e6d",
-      "verified_at": "2026-11-17T20:33:23.030Z",
+      "content_hash": "1c88aadc9610f33f6dbd4866e6f2ab8d6c62c08259fdea116b52fc72909b38de",
+      "verified_at": "2026-11-17T21:41:17.076Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:33:23.030Z"
+      "last_updated": "2026-11-17T21:41:17.076Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "54f1469449ceb0c3d47d42f5933ebb440e4c3f90b9590c9c02e029b04b0d102f",
-      "verified_at": "2026-11-17T00:24:03.288Z",
+      "content_hash": "243da6b64ca184fe7b1e4b2fac7b40c5b6e64aa60415a9a15c4fa48a59e5dc5a",
+      "verified_at": "2026-11-17T21:41:10.057Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T00:24:03.288Z"
+      "last_updated": "2026-11-17T21:41:10.057Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "a8dc1515a864b2f6484f79302e5d4c21fef28a5f537066b410fffad0be8cd34d",
-      "verified_at": "2026-11-16T13:38:19.490Z",
+      "content_hash": "950edeb95fe3455bf781b8acdd00b577c5d9e35ad1014d5b37e859d6093315ea",
+      "verified_at": "2026-11-17T21:41:02.855Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T13:38:19.490Z"
+      "last_updated": "2026-11-17T21:41:02.855Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",

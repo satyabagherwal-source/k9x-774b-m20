@@ -10720,3 +10720,7 @@
 | `CYCLE-20261117-7FR3` | `2026-11-17T21:22:18.879Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9068` | Yes (`6a4c057c...`) |
 | `CYCLE-20261117-7J1H` | `2026-11-17T21:22:23.141Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9069` | Yes (`141043b0...`) |
 | `CYCLE-20261117-7P2X` | `2026-11-17T21:22:30.969Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9070` | Yes (`1c6a789e...`) |
+| `CYCLE-20261117-VGKI` | `2026-11-17T21:40:59.682Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`6e1945aa...`) |
+| `CYCLE-20261117-VJ0B` | `2026-11-17T21:41:02.843Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9071` | Yes (`950edeb9...`) |
+| `CYCLE-20261117-VOKE` | `2026-11-17T21:41:10.046Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9072` | Yes (`243da6b6...`) |
+| `CYCLE-20261117-VTZD` | `2026-11-17T21:41:17.065Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9073` | Yes (`1c88aadc...`) |

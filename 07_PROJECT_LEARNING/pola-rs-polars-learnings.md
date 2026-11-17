@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `8c19cc28`  
+> **Source Version**: `dec76f87`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T13:38:18.603Z  
+> **Timestamp**: 2026-11-17T21:41:01.908Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T13:38:18.482Z  
+> **Harvest Timestamp**: 2026-11-17T21:41:01.903Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40350 stars
+- **Stars / Engagement**: 40367 stars
 
 ---
 
@@ -1697,11 +1697,11 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #30823** (2026-11-17): **`drop_nans()` in `group_by().agg()` drops null values whose underlying slot is NaN (regression since 1.35)**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame(     {"g": [1, 1, 2], "x": [float("nan"), 1.0, float("nan")], "y": [None, 2.0, None]} ).with_columns(s=pl.col("x") + pl.col("y")) print(df["s"].to_list()) print(df.select(pl.col("s").drop_nans())["s"].to_list()) print(df.group_by("g", maintain_order=True).agg(pl.col("s").drop_nans())) ```  ### Log output  ```shell total memory: 755.264 GiB (810958176256 bytes) async thread count: 32 blocking thread count: 512 keys/aggregates are not partitionable: running default HASH AGGREGATION [None, 3.0, None] [None, 3.0, None] shape: (2, 2) ┌─────┬───────────┐ │ g   ┆ s         │ │ --- ┆ ---       │ │ i64 ┆ list[f64] │ ╞═════╪═══════════╡ │ 1   ┆ [3.0]     │ │ 2   ┆ []        │ └─────┴───────────┘ ```  ### Issue description  Column `s` is `[null, 3.0, null]`: it has no NaN. `select(pl.col("s").drop_nans())` keeps both nulls, but inside `group_by(...).agg(...)` the same expression drops them, so group 1 gets `[3.0]` and group 2 gets `[]`. `pl.col("s").drop_nans().len().over("g")` is affected too: it gives `[1, 1, 0]` instead of `[2, 2, 1]`. The in-memory and the streaming engine give the same wrong result. Nulls that come straight from the constructor (`[1.0, None, 2.0]`) are kept; the nulls here come from `NaN + null`, so the va
+
 - **Issue #30784** (2026-11-15): **Streaming Parquet sinks continue consuming input after an upload failure**
   *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example (Using some of Polars' internal pytest fixtures)  ```python import io import re  import pytest import polars as pl   @pytest.mark.parametrize("partitioned", [False, True]) def test_sink_error_stops_input(s3, plmonkeypatch, partitioned):     for name, value in {         "POLARS_CLOUD_FOOTER_READ_SIZE": "512",         "POLARS_NUM_READERS_PRE_INIT": "1",         "POLARS_MAX_CONCURRENT_SCANS": "1",         "POLARS_MAX_OPEN_SINKS": "1",         "POLARS_INFLIGHT_SINK_MORSEL_LIMIT": "1",         "POLARS_UPLOAD_CHUNK_SIZE": "1024",     }.items():         plmonkeypatch.setenv(name, value)      data = io.BytesIO()     pl.DataFrame({"x": range(1024)}).write_parquet(         data, compression="uncompressed"     )     keys = [f"input/{i}.parquet" for i in range(32)]     for key in keys:         s3.client.put_object(             Bucket="bucket", Key=key, Body=data.getvalue()         )      def fail_upload(environ):         if environ["REQUEST_METHOD"] == "PUT":             return True         return None      s3.on_request = fail_upload     mark = len(s3.log)      source = pl.scan_parquet(         [f"s3://bucket/{key}" for key in keys],         storage_options=s3.storage_options,     )     target = (         pl.PartitionBy("s3://bucket/output/", max_rows_per_file=1024)         if
-
-- **Issue #30755** (2026-11-13): **SQL `DELETE` on an Iceberg catalog table fails where `UPDATE` works (partly matched files)**
-  *Symptoms*: ### Description  Found and written with AI, human verified.  SQL `DELETE` on an Iceberg table of an attached catalog fails in two cases where `UPDATE` and `MERGE` work. Both come from how `DELETE` rewrites the data files that only some of its rows match. It hands that rewrite to PyIceberg's `delete`, while `UPDATE` and `MERGE` rewrite files through the Polars sink.  1. The partition spec has two fields on one column, e.g. `bucket(2, id), bucket(3, id)`, or `day(ts), hour(ts)` after partition evolution. PyIceberg's writer refuses that spec: `ValueError: Cannot have redundant partitions`. Nothing is deleted. 2. The `DELETE` drops some files whole and rewrites others. The commit then holds two snapshots. Some REST catalogs refuse that (seen on Unity Catalog: "Adding multiple snapshots in a single update is not supported").  ### Reproducible example  ```python import tempfile  import polars as pl from pyiceberg.catalog.sql import SqlCatalog  d = tempfile.mkdtemp() catalog = SqlCatalog("lake", uri=f"sqlite:///{d}/catalog.db", warehouse=f"file://{d}") catalog.create_namespace("ns") ctx = pl.SQLContext().register_catalog("lake", catalog, default_namespace="ns", default=True)  ctx.execute("CREATE TABLE t (id BIGINT, s VARCHAR) PARTITION BY (bucket(2, id), bucket(3, id))") ctx.execute("INSERT INTO t VALUES (1, 'a'), (1, NULL), (2, 'b')") ctx.execute("UPDATE t SET s = 'u' WHERE s = 'a'")  # works ctx.execute("DELETE FROM t WHERE s IS NULL")  # fails ```  ``` ValueError: Cannot have red
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1718,923 +1718,244 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bfae656e` (2026-11-15)
-**Commit Message**: fix: Stop consuming input after streaming sink failures (#30757)
+### Incident Patch 1: `8579b224` (2026-11-17)
+**Commit Message**: fix: Keep nulls in `drop_nans` inside `group_by` and `over` (#30836)
 
-Co-authored-by: Matthew Bayer <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-stream/src/nodes/io_sinks/mod.rs` (modified, +1/-1)
+**File**: `crates/polars-expr/src/dispatch/groups_dispatch.rs` (modified, +2/-1)
 ```diff
-@@ -236,7 +236,7 @@ impl IOSinkNodeState {
-                     morsel_seq = morsel_seq.saturating_add(1);
- 
-                     if multi_phase_tx.send(morsel).await.is_err() {
--                        break;
-+                        return;
-                     }
-                 }
+@@ -480,7 +480,8 @@ pub fn drop_nans<'a>(
+         let values = ac.flat_naive();
+         let mut values = values.is_nan().unwrap();
+         values.rechunk_mut();
+-        values.downcast_as_array().values().clone()
++        // A null slot can hold a NaN value, so mask with the validity.
++        values.downcast_as_array().true_and_valid()
+     } else {
+         Bitmap::new_with_value(false, 1)
+     };
+```
+
+**File**: `crates/polars-stream/src/physical_plan/lower_group_by.rs` (modified, +21/-17)
+```diff
+@@ -874,29 +874,33 @@ fn try_lower_agg_input_expr(
+             function: function @ (IRFunctionExpr::DropNulls | IRFunctionExpr::DropNans),
+             options: _,
+         } => {
+-            let input = &inputs_ref[0];
+-            if !is_elementwise_rec_cached(input.node(), expr_arena, expr_cache) {
++            let input = inputs_ref[0].node();
++            if !is_elementwise_rec_cached(input, expr_arena, expr_cache) {
+                 return Ok(None);
              }
+ 
++            let predicate = if matches!(function, IRFunctionExpr::DropNulls) {
++                AExprBuilder::new_from_node(input).is_not_null(expr_arena)
++            } else {
++                let input_schema = input_stream.output_schema(phys_sm);
++                let dtype = expr_arena
++                    .get(input)
++                    .to_dtype(&ToFieldContext::new(expr_arena, input_schema))?;
++                // `drop_nans` only drops values of float columns.
++                if !dtype.is_float() {
++                    return Ok(Some((input_stream, input, true)));
++                }
++                // Keep nulls, for which `is_not_nan` is null.
++                let x = AExprBuilder::new_from_node(input);
++                let is_null = x.is_null(expr_arena);
++                x.is_not_nan(expr_arena).or(is_null, expr_arena)
++            };
++
+             let output_name = unique_column_name();
+             let predicate_name = unique_column_name();
+             let mut select_exprs = keys.to_vec();
+-            select_exprs.push(ExprIR::new(
+-                input.node(),
+-                OutputName::Alias(output_name.clone()),
+-            ));
+-            let predicate = AExprBuilder::function(
+-                vec![inputs_ref[0].clone()],
+-                if matches!(function, IRFunctionExpr::DropNulls) {
+-                    IRFunctionExpr::Boolean(IRBooleanFunction::IsNotNull)
+-                } else {
+-                    IRFunctionExpr::Boolean(IRBooleanFunction::IsNotNan)
+-                },
+-                expr_arena,
+-            )
+-            .expr_ir(predicate_name.clone());
+-            select_exprs.push(predicate);
++            select_exprs.push(ExprIR::new(input, OutputName::Alias(output_name.clone())));
++            select_exprs.push(predicate.expr_ir(predicate_name.clone()));
+ 
+             let mut stream = build_select_stream(
+                 input_stream,
 ```
 
-**File**: `py-polars/tests/unit/io/cloud/test_sink_error.py` (added, +67/-0)
+**File**: `py-polars/tests/unit/operations/test_group_by.py` (modified, +130/-0)
 ```diff
-@@ -0,0 +1,67 @@
-+from __future__ import annotations
-+
-+import io
-+import re
-+from typing import TYPE_CHECKING, Any
-+
-+import pytest
-+
-+import polars as pl
-+
-+if TYPE_CHECKING:
-+    from tests.conftest import PlMonkeyPatch
-+    from tests.unit.io.cloud.conftest import CountingS3
-+
-+
-+@pytest.mark.slow
-+@pytest.mark.parametrize("partitioned", [False, True])
-+def test_sink_error_stops_input(
-+    s3: CountingS3, plmonkeypatch: PlMonkeyPatch, partitioned: bool
-+) -> None:
-+    plmonkeypatch.setenv("POLARS_CLOUD_FOOTER_READ_SIZE", "512")
-+    plmonkeypatch.setenv("POLARS_NUM_READERS_PRE_INIT", "1")
-+    plmonkeypatch.setenv("POLARS_MAX_CONCURRENT_SCANS", "1")
-+    plmonkeypatch.setenv("POLARS_MAX_OPEN_SINKS", "1")
-+    plmonkeypatch.setenv("POLARS_INFLIGHT_SINK_MORSEL_LIMIT", "1")
-+    plmonkeypatch.setenv("POLARS_UPLOAD_CHUNK_SIZE", "1024")
-+
-+    data = io.BytesIO()
-+    pl.DataFrame({"x": range(1024)}).write_parquet(data, compression="uncompressed")
-+    keys = [f"input/{i}.parquet" for i in range(32)]
-+    for key in keys:
-+        s3.client.put_object(Bucket="bucket", Key=key, Body=data.getvalue())
-+
-+    def fail_upload(environ: dict[str, Any]) -> bool | None:
-+        if environ["REQUEST_METHOD"] == "PUT":
-+            return True
-+        return None
-+
-+    s3.on_request = fail_upload
-+    mark = len(s3.log)
-+    source = pl.scan_parquet(
-+        [f"s3://bucket/{key}" for key in keys], storage_options=s3.storage_options
-+    )
-+    target = (
-+        pl.PartitionBy("s3://bucket/output/", max_rows_per_file=1024)
-+        if partitioned
-+        else "s3://bucket/output.parquet"
-+    )
-+    with pytest.raises(
-+        (OSError, pl.exceptions.ComputeError), match="500 Internal Server Error"
-+    ):
-+        source.sink_parquet(
-+            target,
-+            compression="uncompressed",
-+            row_group_size=1024,
-+            storage_options={**s3.storage_options, "max_retries": 0},
-+            engine="streaming",
-+        )
-+
-+    read_keys = {
-+        key
-+        for method, key, byte_range in s3.since(mark)
-+        if method == "GET"
-+        and (match := re.fullmatch(r"bytes=(\d+)-(\d+)", byte_range))
-+        and int(match[2]) - int(match[1]) + 1 > len(data.getvalue()) // 2
-+    }
-+    assert 0 < len(read_keys) < len(keys)
-```
-
----
-
-### Incident Patch 2: `5b7bf4f1` (2026-11-16)
-**Commit Message**: fix: Keep deleted rows deleted in `delete_iceberg` and `sink_iceberg` overwrites (#30817)
-
-**File**: `py-polars/src/polars/io/iceberg/_delete.py` (added, +649/-0)
-```diff
-@@ -0,0 +1,649 @@
-+"""Copy-on-write deletes of Iceberg rows (`DELETE`, `delete_iceberg`, overwrites)."""
-+
-+from __future__ import annotations
-+
-+import contextlib
-+from typing import TYPE_CHECKING, Any, Literal
-+
-+if TYPE_CHECKING:
-+    from collections.abc import Collection
-+
-+    import pyiceberg.expressions
-+    import pyiceberg.table
-+    from pyiceberg.manifest import DataFile
-+    from pyiceberg.schema import Schema
-+    from pyiceberg.table import FileScanTask
-+
-+    from polars._typing import PolarsDataType, StorageOptionsDict
-+    from polars.expr import Expr
-+    from polars.io.iceberg._sink import _ReplaceFiles
-+    from polars.lazyframe import LazyFrame
-+
-+
-+def _delete_whole_files(
-+    table: pyiceberg.table.Table,
-+    delete_filter: pyiceberg.expressions.BooleanExpression,
-+    *,
-+    refused: str,
-+    unknown: str,
-+) -> bool:
-+    """
-+    Delete the rows of `table` matching `delete_filter` by dropping data files.
-+
-+    One commit, from metadata only, if every file with a matching row matches whole.
-+    Returns False, committing nothing, if a file needs a rewrite. On failure, the note
-+    `refused` if nothing was committed, else `unknown`.
-+    """
-+    import uuid
-+
-+    from pyiceberg.exceptions import (
-+        CommitFailedException,
-+        CommitStateUnknownException,
-+        ValidationException,
-+    )
-+    from pyiceberg.table import Table
-+
-+    from polars.io.iceberg._sink import (
-+        _SINK_UUID_PROPERTY,
-+        _AlreadyCommitted,
-+        _copy_table_state,
-+        _raise_if_spec_changed,
-+        _sink_transaction,
-+        _SinkCatalog,
-+    )
-+
-+    # as a sink's commit: a failed commit is checked for having landed before
-+    # PyIceberg retries it or deletes its manifests
-+    commit_uuid = str(uuid.uuid4())
-+    properties = {_SINK_UUID_PROPERTY: commit_uuid}
-+
-+    catalog = _SinkCatalog(table.catalog, commit_uuid, verbose=False)
-+    wrapped = Table(
-+        table.name(),
-+        table.metadata,
-+        table.metadata_location,
-+        table.io,
-+        catalog,  # type: ignore[arg-type]
-+        table.config,
-+    )
-+    spec_id = table.metadata.default_spec_id
-+    try:
-+        try:
-+            with _sink_transaction(wrapped, commit_uuid, spec_id) as tx:
-+                # files whose rows all match, from column statistics; not a `with`:
-+                # committed only if no file needs a rewrite
-+                delete = tx.update_snapshot(snapshot_properties=properties).delete()
-+                delete.delete_by_predicate(delete_filter)
-+                try:
-+                    rewrite = delete.rewrites_needed
-+                except Exception:
-+                    with contextlib.suppress(Exception):
-+                        delete._clean_all_uncommitted()
-+                    raise
-+                if rewrite:
-+                    # computing that wrote manifests the commit will not use
-+                    delete._clean_all_uncommitted()
-+                    return False
-+                delete.commit()
-+        except (_AlreadyCommitted, CommitStateUnknownException, ValidationException):
-+            raise
-+        except Exception as error:
-+            if isinstance(error, CommitFailedException):
-+                _raise_if_spec_changed(table, spec_id, error)
-+            # a failure after a commit request, not of it: did the commit land?
-+            _copy_table_state(catalog.landed_after(table, error), table)
-+            return True
-+    except _AlreadyCommitted as error:
-+        _copy_table_state(error.table, table)
-+        return True
-+    except CommitStateUnknownException as error:
-+        error.add_note(unknown)
-+        raise
-+    except Exception as error:
-+        error.add_note(refused)
-+        raise
-+    _copy_table_state(wrapped, table)
-+    return True
-+
-+
-+def _delete_rows(
-+    table: pyiceberg.table.Table,
-+    delete_filter: pyiceberg.expressions.BooleanExpression,
-+    predicate: Expr,
-+    storage_options: StorageOptionsDict | None,
-+    *,
-+    refused: str,
-+    unknown: str,
-+) -> None:
-+    """
-+    Delete the rows of `table` matching `delete_filter` (`predicate`) in one commit.
-+
-+    Data files whose rows all match are dropped. If a file matches only partly, the
-+    candidate files are read and those with a match replaced by files with the other
-+    rows (copy-on-write, as `UPDATE`). On failure, the note `refused` if nothing was
-+    committed, else `unknown`.
-+    """
-+    from pyiceberg.exceptions import CommitStateUnknownException
-+    from pyiceberg.expressions import AlwaysTrue
-+
-+    from polars.io.iceberg._sink import _ReplaceFiles
-+    from polars.io.iceberg.functions import _scan_iceberg_files
-+
-+    if _delete_whole_files(table, delete_filter, refused=refused, unknown=unknown):
-+        return
-+
-+    partial: list[FileScanTask] = []
-+    try:
-+        if delete_filter == AlwaysTrue():
-+            # every file goes, also one whose row count was not recorded
-+            removed = _live_data_fil
-```
-
-**File**: `py-polars/src/polars/io/iceberg/_sink.py` (modified, +273/-56)
-```diff
-@@ -107,6 +107,20 @@ class _ReplaceFiles:
-     isolation: Literal["delete", "update"] = "update"
- 
- 
-+class _HandBack:
-+    """In place of `replace_files`: the sink writes, and hands its files back here.
-+
-+    For files an outer commit adds (an overwrite's rewritten rows).
-+    """
-+
-+    files: list[_IcebergSinkedFile] | None = None
-+    sort_order_id: int | None = None
-+
-+    def __getstate__(self) -> tuple[()]:
-+        msg = "a sink that hands back its files cannot be serialized"
-+        raise TypeError(msg)
-+
-+
- def _create_namespace_if_not_exists(
-     catalog: pyiceberg.catalog.Catalog,
-     namespace: tuple[str, ...],
-@@ -423,15 +437,8 @@ def _added_conflicting_deletes(
-     return base_snapshot_id is not None
- 
- 
--def _stage_replace(
--    tx: Transaction,
--    replace: _ReplaceFiles,
--    sinked_files: list[_IcebergSinkedFile],
--    snapshot_properties: dict[str, str],
--    sort_order_id: int | None,
--) -> None:
--    """Stage one overwrite replacing the files of `replace` by the sinked files."""
--    from pyiceberg.table.snapshots import Operation
-+def _assert_replace_base(tx: Transaction, replace: _ReplaceFiles) -> None:
-+    """Stage the requirements of `replace`, before any schema update."""
-     from pyiceberg.table.update import AssertCurrentSchemaId, AssertDefaultSpecId
- 
-     tx._stage(
-@@ -441,19 +448,42 @@ def _stage_replace(
-             AssertDefaultSpecId(default_spec_id=replace.spec_id),  # type: ignore[call-arg]
-         ),
-     )
--    data_files = _data_files_for_commit(tx, sinked_files, sort_order_id)
-+
-+
-+def _stage_replace(
-+    tx: Transaction,
-+    replace: _ReplaceFiles,
-+    data_files: list[DataFile],
-+    snapshot_properties: dict[str, str],
-+) -> None:
-+    """Stage one snapshot replacing the files of `replace` by `data_files`."""
-+    from pyiceberg.table.snapshots import Operation
-+
-     with tx.update_snapshot(snapshot_properties=snapshot_properties).overwrite() as ow:
-         _set_isolation_operation(
-             ow,
-             Operation.DELETE if replace.isolation == "delete" else Operation.OVERWRITE,
-         )
-+        # labelled as Iceberg Java: a commit that only removes files is a delete
-+        only_removes = replace.data_files and not data_files
-+        if only_removes and ow._operation == Operation.OVERWRITE:
-+            ow._operation = Operation.DELETE
-         ow.delete_by_predicate(replace.conflict_filter)
-         for data_file in replace.data_files:
-             ow.delete_data_file(data_file)
-         for data_file in data_files:
-             ow.append_data_file(data_file)
- 
- 
-+def _check_overwrite_version(table: pyiceberg.table.Table) -> None:
-+    if table.format_version > 2:
-+        msg = (
-+            f"overwrite of an Iceberg v{table.format_version} table is not supported "
-+            f"yet: table '{'.'.join(table.name())}'"
-+        )
-+        raise NotImplementedError(msg)
-+
-+
- def _remove_files(io: FileIO, paths: list[str]) -> None:
-     """Remove files this sink wrote and will not commit; best effort."""
-     for path in paths:
-@@ -691,19 +721,28 @@ def _data_files_for_commit(
+@@ -2417,6 +2417,136 @@ def test_group_by_drop_nans(s: pl.Series) -> None:
      )
  
  
-+def _written_partitions(
-+    table_metadata: TableMetadata, sinked_files: list[_IcebergSinkedFile]
-+) -> set[Record]:
-+    """The partitions of the default spec that `sinked_files` are written to."""
-+    spec = table_metadata.spec()
-+    schema = table_metadata.schema()
-+    _check_dynamic_overwrite_spec(spec, schema)
-+    return {_partition_record(keys, spec, schema) for *_, keys in sinked_files}
-+
-+
- def _dynamic_overwrite_filter(
--    table_metadata: TableMetadata, data_files: list[DataFile]
-+    table_metadata: TableMetadata, partitions: set[Record]
- ) -> BooleanExpression:
--    """Match the rows of the partitions that `data_files` are written to."""
-+    """Match the rows of `partitions` (of the default spec)."""
-     from pyiceberg.expressions import AlwaysFalse, And, EqualTo, IsNull, Or, Reference
- 
-     spec = table_metadata.spec()
-     schema = table_metadata.schema()
--    _check_dynamic_overwrite_spec(spec, schema)
-     names = [schema.find_column_name(field.source_id) for field in spec.fields]
- 
-     partition_filters: list[BooleanExpression] = []
--    for partition in {data_file.partition for data_file in data_files}:
-+    for partition in partitions:
-         predicates: list[BooleanExpression] = []
-         for i, name in enumerate(names):
-             assert name is not None
-@@ -1271,7 +1310,7 @@ class IcebergSinkState:
-     partition_spec_id: int | None
-     commit_result_df: NoPickleOption[pl.DataFrame]
-     # Data files the commit replaces, instead of appending or overwriting.
--    replace_files: _ReplaceFiles | None = None
-+    replace_files: _ReplaceFiles | _HandBack | None = None
- 
-     @staticmethod
-     def new(
-@@ -1290,7 +1329,7 @@ def new(
-         compression_level: int | None = None,
-         row_group_size: int | None = None,
-         maintain_order: bool = True,
--        replace_files: _ReplaceFiles | None = None,
-+   
-```
-
-**File**: `py-polars/src/polars/io/iceberg/functions.py` (modified, +38/-1)
-```diff
-@@ -328,10 +328,16 @@ def _scan_iceberg_files(
- def delete_iceberg(
-     target: str | pyiceberg.table.Table,
-     predicate: Expr,
-+    *,
-+    storage_options: StorageOptionsDict | None = None,
- ) -> None:
-     """
-     Delete the rows matching a predicate from an Iceberg table.
- 
-+    Data files whose rows all match are dropped. The other rows of data files that
-+    match only partly are written to new files, which replace them in the same
-+    snapshot (copy-on-write). Rows removed by earlier delete files stay deleted.
-+
-     .. warning::
-         This functionality is currently considered **unstable**. It may be
-         changed at any point without it being considered a breaking change.
-@@ -343,13 +349,24 @@ def delete_iceberg(
-     predicate
-         Boolean expression selecting the rows to delete. Rows for which it
-         evaluates to null are kept, as with :meth:`DataFrame.remove`.
-+    storage_options
-+        Extra options for the storage backends supported by `pyiceberg`, used to
-+        read and write rewritten data files, as with :func:`scan_iceberg`.
-+
-+    Notes
-+    -----
-+    Not supported yet: Iceberg v3 tables, and rewriting a data file whose delete
-+    files cannot be applied, such as equality deletes or position deletes that
-+    cover several data files.
- 
-     Examples
-     --------
-     >>> pl.delete_iceberg(table, pl.col("id").is_in([1, 2, 3]))  # doctest: +SKIP
-     """
-     from pyiceberg.catalog import load_catalog
-+    from pyiceberg.expressions import AlwaysFalse
- 
-+    from polars.io.iceberg._delete import _delete_rows
-     from polars.io.iceberg._utils import predicate_to_pyiceberg_delete_filter
- 
-     issue_unstable_warning("`delete_iceberg` is considered unstable.")
-@@ -359,7 +376,27 @@ def delete_iceberg(
-     else:
-         table = target
- 
--    table.delete(predicate_to_pyiceberg_delete_filter(predicate, table))
-+    name = ".".join(table.name())
-+    if table.format_version > 2:
-+        msg = (
-+            f"delete from an Iceberg v{table.format_version} table is not supported "
-+            f"yet: table '{name}'"
++@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
++@pytest.mark.parametrize("dtype", [pl.Float16, pl.Float32, pl.Float64])
++@pytest.mark.parametrize("sorted_key", [False, True])
++def test_group_by_drop_nans_keeps_nan_payload_nulls_30823(
++    engine: EngineType, dtype: PolarsDataType, sorted_key: bool
++) -> None:
++    # `s` is [null, 3.0, NaN, NaN, null] and both nulls hold a NaN value.
++    lf = (
++        pl.DataFrame(
++            {
++                "g": [1, 1, 1, 2, 2],
++                "x": [float("nan"), 1.0, float("nan"), float("nan"), float("nan")],
++                "y": [None, 2.0, 0.0, 0.0, None],
++            },
++            schema_overrides={"x": dtype, "y": dtype},
 +        )
-+        raise NotImplementedError(msg)
-+    delete_filter = predicate_to_pyiceberg_delete_filter(predicate, table)
-+    if delete_filter == AlwaysFalse():
-+        return
-+    _delete_rows(
-+        table,
-+        delete_filter,
-+        predicate,
-+        storage_options,
-+        refused=f"no rows of Iceberg table '{name}' were deleted",
-+        unknown=(
-+            f"rows of Iceberg table '{name}' may have been deleted (commit state "
-+            "unknown)"
-+        ),
++        .with_columns(s=pl.col("x") + pl.col("y"))
++        .lazy()
 +    )
- 
- 
- def _catalog_table_wrap(
-```
-
-**File**: `py-polars/src/polars/lazyframe/frame.py` (modified, +15/-5)
-```diff
-@@ -3121,8 +3121,9 @@ def sink_iceberg(
-               :func:`polars.delete_iceberg`. Columns nested within a nullable
-               struct are not supported.
-             - A PyIceberg ``BooleanExpression`` or filter string, e.g.
--              ``"date = '2026-10-01'"``, is used as-is, with the semantics of
--              PyIceberg's ``Table.overwrite(overwrite_filter=...)``.
-+              ``"date = '2026-10-01'"``, deletes the rows for which it is true. A
-+              comparison with null is null, which keeps the row, as in SQL. NaN
-+              is equal to NaN and greater than any other number, as in Polars.
- 
-             .. warning::
-                 This functionality is considered **unstable**. It may be changed
-@@ -3132,7 +3133,9 @@ def sink_iceberg(
-             partitions that the incoming data is written to. Requires a table
-             whose partition spec uses only identity transforms, on source columns
-             that are not floating-point, nanosecond timestamps, or nested within a
--            nullable struct. If there is no incoming data, nothing is deleted.
-+            nullable struct. If there is no incoming data, nothing is deleted. Data
-+            files written under an earlier partition spec lose exactly the rows of
-+            those partitions.
- 
-             .. warning::
-                 This functionality is considered **unstable**. It may be changed
-@@ -3201,8 +3204,15 @@ def sink_iceberg(
- 
-         ``mode="overwrite"`` replaces all table data, unless ``overwrite_filter`` or
-         ``partition_overwrite`` is given. The delete and the append are committed
--        in a single transaction. Data files that only partially match the delete
--        filter are rewritten by PyIceberg during the commit.
-+        as one snapshot. Data files whose rows all match the delete filter are
-+        dropped. The other rows of data files that match only partly are written to
-+        new files during the commit (copy-on-write), and rows removed by earlier
-+        delete files stay deleted. Incremental scans
-+        (``scan_iceberg(from_snapshot_id_exclusive=...)``) read appended snapshots
-+        only, so they do not return the rows of an overwrite. Overwriting Iceberg v3
-+        tables, and rewriting a data file whose delete files cannot be applied (such
-+        as equality deletes or position deletes that cover several data files), is
-+        not supported yet.
-         ``schema_mode="overwrite"`` is not supported for
-         partitioned tables or tables with a sort order. Custom location providers
-         are not supported.
-```
-
-**File**: `py-polars/src/polars/sql/context.py` (modified, +13/-248)
-```diff
-@@ -43,7 +43,6 @@
-     from polars.expr import Expr
-     from polars.io.iceberg import IcebergCatalogConfig
-     from polars.io.iceberg._dataset import IcebergTableWrap
--    from polars.io.iceberg._sink import _ReplaceFiles
-     from polars.io.iceberg._time_travel import TableVersion
-     from polars.schema import Schema
- 
-@@ -1150,6 +1149,7 @@ def _truncate_catalog_table(
-     from pyiceberg.expressions import AlwaysTrue
- 
-     from polars.functions import lit
-+    from polars.io.iceberg._delete import _delete_rows
- 
-     identifier: tuple[str, ...] = tuple(stmt["identifier"])
-     name, full_name = stmt["name"], _display_name([stmt["catalog"], *identifier])
-@@ -1217,165 +1217,6 @@ def _check_not_metadata_table(stmt: dict[str, Any]) -> None:
-         raise InvalidOperationError(msg)
- 
- 
--def _delete_whole_files(
--    table: pyiceberg.table.Table,
--    delete_filter: pyiceberg.expressions.BooleanExpression,
--    *,
--    refused: str,
--    unknown: str,
--) -> bool:
--    """
--    Delete the rows of `table` matching `delete_filter` by dropping data files.
--
--    One commit, from metadata only, if every file with a matching row matches whole.
--    Returns False, committing nothing, if a file needs a rewrite. On failure, the note
--    `refused` if nothing was committed, else `unknown`.
--    """
--    import uuid
--
--    from pyiceberg.exceptions import (
--        CommitFailedException,
--        CommitStateUnknownException,
--        ValidationException,
--    )
--    from pyiceberg.table import Table
--
--    from polars.io.iceberg._sink import (
--        _SINK_UUID_PROPERTY,
--        _AlreadyCommitted,
--        _raise_if_spec_changed,
--        _sink_transaction,
--        _SinkCatalog,
--    )
--
--    # as a sink's commit: a failed commit is checked for having landed before
--    # PyIceberg retries it or deletes its manifests
--    commit_uuid = str(uuid.uuid4())
--    properties = {_SINK_UUID_PROPERTY: commit_uuid}
--
--    catalog = _SinkCatalog(table.catalog, commit_uuid, verbose=False)
--    wrapped = Table(
--        table.name(),
--        table.metadata,
--        table.metadata_location,
--        table.io,
--        catalog,  # type: ignore[arg-type]
--        table.config,
--    )
--    spec_id = table.metadata.default_spec_id
--    try:
--        try:
--            with _sink_transaction(wrapped, commit_uuid, spec_id) as tx:
--                # files whose rows all match, from column statistics; not a `with`:
--                # committed only if no file needs a rewrite
--                delete = tx.update_snapshot(snapshot_properties=properties).delete()
--                delete.delete_by_predicate(delete_filter)
--                try:
--                    rewrite = delete.rewrites_needed
--                except Exception:
--                    with contextlib.suppress(Exception):
--                        delete._clean_all_uncommitted()
--                    raise
--                if rewrite:
--                    # computing that wrote manifests the commit will not use
--                    delete._clean_all_uncommitted()
--                    return False
--                delete.commit()
--        except (_AlreadyCommitted, CommitStateUnknownException, ValidationException):
--            raise
--        except Exception as error:
--            if isinstance(error, CommitFailedException):
--                _raise_if_spec_changed(table, spec_id, error)
--            # a failure after a commit request, not of it: did the commit land?
--            catalog.landed_after(table, error)
--            return True
--    except _AlreadyCommitted:
--        return True
--    except CommitStateUnknownException as error:
--        error.add_note(unknown)
--        raise
--    except Exception as error:
--        error.add_note(refused)
--        raise
--    return True
--
--
--def _delete_rows(
--    table: pyiceberg.table.Table,
--    delete_filter: pyiceberg.expressions.BooleanExpression,
--    predicate: Expr,
--    storage_options: StorageOptionsDict | None,
--    *,
--    refused: str,
--    unknown: str,
--) -> None:
--    """
--    Delete the rows of `table` matching `delete_filter` (`predicate`) in one commit.
--
--    Data files whose rows all match are dropped. If a file matches only partly, the
--    candidate files are read and those with a match replaced by files with the other
--    rows (copy-on-write, as `UPDATE`). On failure, the note `refused` if nothing was
--    committed, else `unknown`.
--    """
--    from pyiceberg.exceptions import CommitStateUnknownException
--    from pyiceberg.expressions import AlwaysTrue
--
--    from polars.functions import collect_all
--    from polars.functions import len as count
--    from polars.io.iceberg._sink import _ReplaceFiles
--    from polars.io.iceberg.functions import _scan_iceberg_files
--
--    if _delete_whole_files(table, delete_filter, refused=refused, unknown=unknown):
--        return
--
--    whole, partial = [], []
--    try:
--        tasks = _candidate_tasks(table, delete_filter)
--        if delete_filter == AlwaysTrue():
-
-```
-
-**File**: `py-polars/tests/unit/io/test_iceberg.py` (modified, +313/-14)
-```diff
-@@ -988,16 +988,291 @@ def test_sink_iceberg_overwrite_filter(tmp_path: Path, overwrite_filter: Any) ->
-         _scan_sorted(tbl),
-         pl.DataFrame({"a": [2, 5, None], "s": ["y", "new", "z"]}),
-     )
--    # The delete and the append are committed together.
-+    # The delete and the append are one snapshot.
-     new_snapshots = tbl.metadata.snapshots[snapshot_count:]
--    assert [s.summary.operation.value for s in new_snapshots] == [  # type: ignore[union-attr]
--        "overwrite",
--        "append",
--    ]
--    assert len({s.sequence_number for s in new_snapshots}) == 2
-+    assert [s.summary.operation.value for s in new_snapshots] == ["overwrite"]  # type: ignore[union-attr]
-     assert tbl.metadata.snapshot_log[-1].snapshot_id == new_snapshots[-1].snapshot_id
- 
- 
-+def _one_file_table(tmp_path: Path) -> tuple[pyiceberg.table.Table, str]:
-+    """A table of one data file with rows k = 1, 2, 3, and its path."""
-+    tbl, _ = new_iceberg_table(
-+        tmp_path,
-+        schema=IcebergSchema(
-+            NestedField(1, "k", LongType()), NestedField(2, "v", StringType())
-+        ),
++    if sorted_key:
++        lf = lf.set_sorted("g")
++
++    out = (
++        lf.group_by("g", maintain_order=True)
++        .agg(
++            list=pl.col("s").drop_nans(),
++            first_list=(pl.col("x").first() + pl.col("y").first()).drop_nans(),
++            diff_list=(pl.col("y").diff() + float("nan")).drop_nans(),
++        )
++        .collect(engine=engine)
 +    )
-+    pl.LazyFrame({"k": [1, 2, 3], "v": ["a", "b", "c"]}).sink_iceberg(
-+        tbl, mode="append"
++    expected = pl.DataFrame(
++        {
++            "g": [1, 2],
++            "list": [[None, 3.0], [None]],
++            "first_list": [[None], []],
++            "diff_list": [[None, None], [None, None]],
++        },
++        schema_overrides={
++            c: pl.List(dtype) for c in ["list", "first_list", "diff_list"]
++        },
 +    )
-+    return tbl, next(iter(tbl.scan().plan_files())).file.file_path
++    assert_frame_equal(out, expected)
 +
-+
-+@pytest.mark.write_disk
-+def test_sink_iceberg_overwrite_filter_keeps_deleted_rows_30616(tmp_path: Path) -> None:
-+    tbl, path = _one_file_table(tmp_path)
-+    # bounds of the deleted row (k = 2) that the filter cannot match
-+    k = struct.pack("<q", 2)
-+    tbl = _add_position_deletes(tbl, {path: [1]}, row_bounds={1: (k, k)})
-+
-+    pl.LazyFrame({"k": [9], "v": ["z"]}).sink_iceberg(
-+        tbl, mode="overwrite", overwrite_filter=pl.col("k") == 1
++    # Only reductions, which the streaming engine lowers to a filter.
++    out = (
++        lf.group_by("g", maintain_order=True)
++        .agg(
++            len=pl.col("s").drop_nans().len(),
++            null_count=pl.col("s").drop_nans().null_count(),
++        )
++        .collect(engine=engine)
 +    )
++    expected = pl.DataFrame(
++        {"g": [1, 2], "len": [2, 1], "null_count": [1, 1]},
++        schema_overrides={
++            "len": pl.get_index_type(),
++            "null_count": pl.get_index_type(),
++        },
++    )
++    assert_frame_equal(out, expected)
 +
-+    # k = 2, deleted earlier, stays deleted in the rewritten file
-+    assert _scan_sorted(tbl).rows() == [(3, "c"), (9, "z")]
++    out = lf.select(
++        pl.col("s").drop_nans().len().over("g"),
++        list=pl.col("s").implode().list.eval(pl.element().drop_nans()),
++    ).collect(engine=engine)
++    expected = pl.DataFrame(
++        {"s": [2, 2, 2, 1, 1], "list": [[None, 3.0, None]] * 5},
++        schema_overrides={"s": pl.get_index_type(), "list": pl.List(dtype)},
++    )
++    assert_frame_equal(out, expected)
 +
 +
-+@pytest.mark.write_disk
-+@pytest.mark.parametrize("rows_per_file", [6, 2, 1])
++@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
++@pytest.mark.parametrize("maintain_order", [False, True])
 +@pytest.mark.parametrize(
-+    ("overwrite_filter", "deleted"),
-+    [
-+        ("a != 1", [3, 6]),
-+        ("a = 1 or b = 2", [1, 2, 4]),
-+        ("not (a = 1 and b = 5)", [3, 4, 6]),
-+        ("s not like 'ab%'", [2]),
-+        ("x > 1", [1, 6]),
-+        ("x < 1", [2, 3]),
-+        ("x not in (1.0, 2.0)", [1, 2, 3, 6]),
-+        ("f = 0.1", [1, 2, 5]),
-+    ],
++    "cols", [["f"], ["i", "s", "b", "n", "d", "l"], ["f", "i", "s", "b", "n", "d", "l"]]
 +)
-+def test_sink_iceberg_overwrite_filter_string_rows(
-+    tmp_path: Path, overwrite_filter: str, deleted: list[int], rows_per_file: int
++def test_group_by_drop_nans_reduction_30823(
++    engine: EngineType, maintain_order: bool, cols: list[str]
 +) -> None:
-+    tbl, _ = new_iceberg_table(
-+        tmp_path,
-+        schema=IcebergSchema(
-+            NestedField(1, "id", LongType()),
-+            NestedField(2, "a", LongType()),
-+            NestedField(3, "b", LongType()),
-+            NestedField(4, "x", DoubleType()),
-+            NestedField(5, "s", StringType()),
-+            NestedField(6, "f", FloatType()),
-+        ),
-+    )
-+    nan = float("nan")
++    # drop_nans keeps nulls, and it keeps everything in non-float columns.
 +    df = pl.DataFrame(
 +        {
-+            "id": [1, 2, 3, 4, 5, 6],
-+            "a": [1, 1, 7, None, None, 2],
-+            "b": [None, 5, 7, 2, None, None],
-+            "x": [nan, 0.2, 0.5, None, 1.0, nan],
-+            "s": ["abc", "x", None, "ab", None, None],
-+            "f": [0.1, 0.1, 0.3, None, 0.1, 2.5],
++            "g": [1, 1, 2],
++            "f": [None, 1.0, float("nan")],
++            "i": [None, 1, 2],
++            "s": [None, "a", "b"],
++            "b": [None, True, False],
++            "n": [None, None, None],
++            "d": [None, Decimal("1.0"), Decimal("2.0")],
++            "l": [None, [1.0], [float("nan")]],
 +        },
-+        schema_overrides={"f": pl.Float32},
++        schema_overrides={"d": pl.Decimal(10, 1)},
 +    )
-+    for part in df.iter_slices(rows_per_file):
-+        part.lazy().sink_iceberg(tbl, mode="append")
-+
-+    pl.LazyFrame(schema=df.schema).sink_iceberg(
-+        tbl, mode="overwrite", overwrite_filter=overwrite_filter
++    out = (
++        df.lazy()
++        .group_by("g", maintain_order=maintain_order)
++        .agg(
++            pl.col(cols).drop_nans().len().name.suffix("_len"),
++            pl.col(cols).drop_nans().null_count().name.suffix("_null_count"),
++            pl.col(cols).drop_nans().n_unique().name.suffix("_n_unique"),
++            pl.col(cols).drop_nans().first().name.suffix("_first"),
++        )
++        .collect(engine=engine)
++        .sort("g")
 +    )
-+
-+    # the rows for which the filter is true, NaN ordered above every number and a
-+    # float literal compared as float32, in every file layout
-+    assert _scan_sorted(tbl)["id"].to_list() == [
-+        i for i in range(1, 7) if i not in deleted
-+    ]
-+
-+
-+@pytest.mark.write_disk
-+@pytest.mark.parametrize(
-+    ("kwargs", "keys", "operations"),
-+    [
-+        ({}, ["a"], ["overwrite"]),
-+        ({"overwrite_filter": "p = 'a'"}, ["a"], ["overwrite"]),
-+        ({"partition_overwrite": "dynamic"}, ["a"], ["overwrite"]),
-+        ({}, [], ["delete"]),
-+        ({"partition_overwrite": "dynamic"}, [], []),
-+    ],
-+)
-+def test_sink_iceberg_overwrite_snapshots(
-+    tmp_path: Path, kwargs: dict[str, Any], keys: list[str], operations: list[str]
-+) -> None:
-+    tbl, _ = new_iceberg_table(
-+        tmp_path,
-+        schema=IcebergSchema(
-+            NestedField(1, "k", LongType()), NestedField(2, "p", StringType())
-+        ),
-+        partition_spec=PartitionSpec(PartitionField(2, 1000, IdentityTransform(), "p")),
++    # Group 2 of `f` is empty after drop_nans.
++    idx = pl.get_index_type()
++    expected = pl.DataFrame(
++        [pl.Series("g", [1, 2])]
++        + [pl.Series(f"{c}_len", [2, 0 if c == "f" else 1], idx) for c in cols]
++        + [
++            pl.Series(f"{c}_null_count", [2, 1] if c == "n" else [1, 0], idx)
++            for c in cols
++        ]
++        + [
++            pl.Series(f"{c}_n_unique", [1, 1] if c == "n" else [2, int(c != "f")], idx)
++            for c in cols
++        ]
++        + [
++            df[c].gather([0, 2]).alias(f"{c}_first")
++            if c != "f"
++            else pl.Series("f_first", [None, None], pl.Float64)
++            for c in cols
++        ]
 +    )
-+    pl.LazyFrame({"k": [1, 2], "p": ["a", "b"]}).sink_iceberg(tbl, mode="append")
-+    snapshot_count = len(tbl.metadata.snapshots)
-+
-+    pl.LazyFrame(
-+        {"k": [9] * len(keys), "p": keys}, schema={"k": pl.Int64, "p": pl.String}
-+    ).sink_iceberg(tbl, mode="overwrite", **kwargs)
-+
-+    # one snapshot, labelled by what it does
-+    tbl.refresh()
-+    new_snapshots = tbl.metadata.snapshots[snapshot_count:]
-+    assert [s.summary.operat
-```
-
-**File**: `py-polars/tests/unit/io/test_iceberg_delete.py` (modified, +20/-7)
-```diff
-@@ -1,5 +1,6 @@
- from __future__ import annotations
- 
-+import struct
- from datetime import date
- from typing import TYPE_CHECKING
- 
-@@ -81,7 +82,7 @@ def new_table(
- 
- 
- def read(table: pyiceberg.table.Table) -> pl.DataFrame:
--    table.refresh()
-+    # not refreshed: `delete_iceberg` updates the caller's table
-     return pl.scan_iceberg(table).sort("id").collect()
- 
- 
-@@ -122,12 +123,7 @@ def read(table: pyiceberg.table.Table) -> pl.DataFrame:
-         (pl.col("x") == 1) & (pl.col("s") == "apple"),
-         (pl.col("x") > 1) & (pl.col("y") == 2) & pl.col("d").is_not_null(),
-         pl.lit(True),
--        pytest.param(
--            pl.lit(False),
--            marks=pytest.mark.filterwarnings(
--                "ignore:Delete operation did not match any records"
--            ),
--        ),
-+        pl.lit(False),
-     ],
- )
- def test_delete_iceberg(tmp_path: Path, predicate: pl.Expr) -> None:
-@@ -136,6 +132,23 @@ def test_delete_iceberg(tmp_path: Path, predicate: pl.Expr) -> None:
-     assert_frame_equal(read(table), DATA.remove(predicate))
- 
- 
-+@pytest.mark.write_disk
-+def test_delete_iceberg_keeps_deleted_rows_30616(tmp_path: Path) -> None:
-+    from tests.unit.io.test_iceberg import _add_position_deletes
-+
-+    table = new_table(tmp_path)
-+    path = next(iter(table.scan().plan_files())).file.file_path
-+    # bounds of the deleted row (id = 3) that the predicate cannot match
-+    id_ = struct.pack("<q", 3)
-+    _add_position_deletes(table, {path: [3]}, row_bounds={1: (id_, id_)})
-+    table.refresh()
-+
-+    pl.delete_iceberg(table, pl.col("id") == 0)
-+
-+    # id 3, deleted earlier, stays deleted in the rewritten file
-+    assert_frame_equal(read(table), DATA.filter(~pl.col("id").is_in([0, 3])))
++    assert_frame_equal(out, expected)
 +
 +
- @pytest.mark.write_disk
+ @pytest.mark.slow
  @pytest.mark.parametrize(
-     "predicate",
-```
-
-**File**: `py-polars/tests/unit/sql/test_catalogs.py` (modified, +1/-1)
-```diff
-@@ -4031,7 +4031,7 @@ def test_truncate_catalog_table_without_record_count(
-     snapshots = lake.load_table(("tpch", "legacy")).metadata.snapshots
-     assert [s.summary.operation for s in snapshots] == [
-         Operation.APPEND,
--        Operation.OVERWRITE,
-+        Operation.DELETE,
-     ]
- 
- 
+     ("expr", "check_order", "returns_scalar", "length_preserving", "is_window"),
 ```
 
 ---
 
-### Incident Patch 3: `812ee9c9` (2026-11-16)
-**Commit Message**: fix: Infer one struct field per repeated JSON object key (#30724)
+### Incident Patch 2: `b8a17622` (2026-11-17)
+**Commit Message**: fix: Lower the default OOC dirty page limit to 0.8 of total memory (#30838)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-json/src/json/infer_schema.rs` (modified, +14/-9)
+**File**: `crates/polars-config/src/lib.rs` (modified, +1/-1)
 ```diff
-@@ -30,15 +30,20 @@ pub fn infer(json: &BorrowedValue) -> PolarsResult<ArrowDataType> {
- }
+@@ -107,7 +107,7 @@ const OOC_LOG_METRICS: &str = "POLARS_OOC_LOG_METRICS";
+ const DEFAULT_OOC_LOG_METRICS: bool = false;
  
- fn infer_object(inner: &Object) -> PolarsResult<ArrowDataType> {
--    let fields = inner
--        .iter()
--        .map(|(key, value)| infer(value).map(|dt| (key, dt)))
--        .map(|maybe_dt| {
--            let (key, dt) = maybe_dt?;
--            Ok(Field::new(key.as_ref().into(), dt, true))
--        })
--        .collect::<PolarsResult<Vec<_>>>()?;
--    Ok(ArrowDataType::Struct(fields))
-+    // simd-json keeps repeated keys, and which of their values a reader sees is unspecified
-+    // (#29476). Keep one field per key, inferred from its first value.
-+    let mut fields = PlIndexMap::<&str, ArrowDataType>::with_capacity(inner.len());
-+    for (key, value) in inner.iter() {
-+        if let Entry::Vacant(v) = fields.entry(key.as_ref()) {
-+            v.insert(infer(value)?);
-+        }
-+    }
-+    Ok(ArrowDataType::Struct(
-+        fields
-+            .into_iter()
-+            .map(|(key, dt)| Field::new(key.into(), dt, true))
-+            .collect(),
-+    ))
- }
+ const OOC_DIRTY_LIMIT_FRACTION: &str = "POLARS_OOC_DIRTY_LIMIT_FRACTION";
+-const DEFAULT_OOC_DIRTY_LIMIT_FRACTION: f64 = 0.9;
++const DEFAULT_OOC_DIRTY_LIMIT_FRACTION: f64 = 0.8;
  
- fn infer_array(values: &[BorrowedValue]) -> PolarsResult<ArrowDataType> {
-```
-
-**File**: `py-polars/tests/unit/io/test_json.py` (modified, +20/-0)
-```diff
-@@ -1080,3 +1080,23 @@ def test_read_ndjson_small_integers_16167() -> None:
- 
-     with pytest.raises(ComputeError, match="cannot parse '-1'"):
-         pl.read_ndjson(io.BytesIO(b'{"a": -1}\n'), schema={"a": pl.UInt8})
-+
-+
-+@pytest.mark.parametrize(
-+    ("row", "schema"),
-+    [
-+        ('{"s": {"b": 1, "b": 2}}', {"s": pl.Struct({"b": pl.Int64})}),
-+        (
-+            '{"s": {"b": {"c": 1}, "b": 2}}',
-+            {"s": pl.Struct({"b": pl.Struct({"c": pl.Int64})})},
-+        ),
-+        ('{"s": {"b": 1, "b": [2]}}', {"s": pl.Struct({"b": pl.Int64})}),
-+        ('{"a": 2.5, "a": 1}', {"a": pl.Float64}),
-+        ('{"a": "x", "a": 1}', {"a": pl.String}),
-+    ],
-+)
-+def test_json_repeated_key_infers_first_value(row: str, schema: Any) -> None:
-+    # Which value of a repeated key is read is unspecified (#29476).
-+    assert pl.read_json(io.StringIO(f"[{row}]")).schema == schema
-+    assert pl.scan_ndjson(io.BytesIO(f"{row}\n".encode())).collect_schema() == schema
-+    assert pl.Series([row]).str.json_decode().dtype == pl.Struct(schema)
+ const OOMKILL_THRESHOLD_FRACTION: &str = "POLARS_OOMKILL_THRESHOLD_FRACTION";
+ const DEFAULT_OOMKILL_THRESHOLD_FRACTION: f64 = f64::INFINITY;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30819** (2026-11-16): feat: Support SELECT alias reuse, information_schema.columns and TO_TIMESTAMP on numbers in SQL (@ritchie46)
-- **PR #30817** (2026-11-16): fix: Keep deleted rows deleted in `delete_iceberg` and `sink_iceberg` overwrites (@kdn36)
-- **PR #30815** (2026-11-16): feat: Quoted file paths in FROM and DESCRIBE (@kdn36)
-- **PR #30814** (2026-11-16): fix: Export dictionary columns in expression plugins (@ritchie46)
-- **PR #30813** (2026-11-16): perf: Reduce runs of consecutive rows of one group as slices in streaming group-by (@ritchie46)
-- **PR #30812** (2026-11-16): perf: Skip the hot table for runs of equal dictionary codes in streaming group-by (@ritchie46)
+- **PR #30859** (2026-11-17): ci: Ignore unmaintained advisories for chrono, chrono-tz and humantime (@dancsi)
+- **PR #30856** (2026-11-17): feat: Support CALL rewrite_data_files (compaction) on Iceberg catalog tables in SQL (@kdn36)
+- **PR #30854** (closed): fix: Re-resolve a reused scan when its local files change (@nameexhaustion)
+- **PR #30845** (2026-11-17): feat: Support escape string literals in SQL (@ritchie46)
+- **PR #30844** (2026-11-17): feat: Support JSON operators after a JSON cast in SQL (@ritchie46)
+- **PR #30840** (2026-11-17): feat: Support query parameters in SQL (@ritchie46)
 
 ---
 
@@ -2654,28 +1975,29 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Stop consuming input after streaming sink failures
+## X. Keep nulls in `drop_nans` inside `group_by` and `over`
 
 **RULE**:
-When implementing operations in `crates/polars-stream/src/nodes/io_sinks/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-expr/src/dispatch/groups_dispatch.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bfae656e`: Stop consuming input after streaming sink failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8579b224`: Keep nulls in `drop_nans` inside `group_by` and `over`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-stream/src/nodes/io_sinks/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-expr/src/dispatch/groups_dispatch.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        return;
+        // A null slot can hold a NaN value, so mask with the validity.
+        values.downcast_as_array().true_and_valid()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                        break;
+        values.downcast_as_array().values().clone()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bfae656e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8579b224` are properly handled with clean fallback behavior.

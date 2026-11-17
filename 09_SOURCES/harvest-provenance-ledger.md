@@ -10753,3 +10753,7 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `7f396534` | Multi-dimensional audit evidence | 2026-11-17T21:22:18.883Z |
 | `learn-github-react-metro` | `https://github.com/react/metro` | `de511d56` | Multi-dimensional audit evidence | 2026-11-17T21:22:23.144Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `4d102b34` | Multi-dimensional audit evidence | 2026-11-17T21:22:30.973Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-17T21:40:59.686Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `dec76f87` | Multi-dimensional audit evidence | 2026-11-17T21:41:02.847Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `febd2b97` | Multi-dimensional audit evidence | 2026-11-17T21:41:10.050Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `62b0d320` | Multi-dimensional audit evidence | 2026-11-17T21:41:17.069Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T21:22:35.528Z",
-  "total_records": 1691,
+  "last_updated": "2026-11-17T21:41:21.544Z",
+  "total_records": 1695,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 733,
+      "total": 735,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -782,7 +782,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
         "DOM-D-6018CADD",
         "domain_intelligence-research-knowledge-intelligence-baai-bge-small-en-v1-5-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria"
+        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-27b-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1660,7 +1662,7 @@
       ]
     },
     "K": {
-      "total": 72,
+      "total": 74,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1733,7 +1735,9 @@
         "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants",
         "domain_intelligence-quality-verification-intelligence-milvus-io-milvus-core-invariants",
         "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants"
       ]
     },
     "L": {
@@ -14770,8 +14774,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "8c423e1fe7efa2e10c746fa5882682039f4e9f3e51647d9fd45b301ef502a8df",
-      "created_at": "2026-11-17T20:33:23.317Z"
+      "content_hash": "e982db34b0fe50ea3ab65f1087d6e4c063f4ec00bfcf11421fb9b85ecc541a87",
+      "created_at": "2026-11-17T21:41:17.372Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16573,8 +16577,8 @@
       "title": "Architecture Intelligence: pola-rs/polars Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-architecture-intelligence-pola-rs-polars-core-invariants.md",
       "repository": "pola-rs/polars",
-      "content_hash": "1a0d98297755461f18d6e81ba7cd4b66ad1a5ed4992e3b7d355c292147c1c01c",
-      "created_at": "2026-11-16T13:38:19.765Z"
+      "content_hash": "dd307c464c7ecd168a7b1c788d45bb7436be79fd527ae395ef077fdd1e587ade",
+      "created_at": "2026-11-17T21:41:03.155Z"
     },
     "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -16591,8 +16595,8 @@
       "title": "Architecture Intelligence: pola-rs-polars-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-learnings-architecture-intelligence-pola-rs-polars-learnings-core.md",
       "repository": "pola-rs-polars-learnings",
-      "content_hash": "6e73ccf3699a97bf07210afa248722311b8808eb72247c83b938144d66857b5c",
-      "created_at": "2026-11-16T13:38:37.575Z"
+      "content_hash": "ea6d8f8fada56249f258caa7717409d05ed5130e7a97d3ff9b55a97898b49aa9",
+      "created_at": "2026-11-17T21:41:20.621Z"
     },
     "DOM-D-A6170DB1": {
       "record_id": "DOM-D-A6170DB1",
@@ -28538,6 +28542,42 @@
       "repository": "hf-baai-bge-small-en-v1.5-learnings",
       "content_hash": "3937b933d2291b02156e5b9cd5648929b9753fffee70836e41d4114949f98a3d",
       "created_at": "2026-11-17T21:22:34.977Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3.8-27B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-27b-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invari.md",
+      "repository": "Qwen/Qwen3.8-27B",
+      "content_hash": "8cf85efadf4830636f547242ad436c29b321acd33038c4ee302f7e51694e6e11",
+      "created_at": "2026-11-17T21:40:59.856Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: nats-io/nats.go Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-nats-io-nats-go-quality-verification-intelligence-nats-io-nats-go-core-invariant.md",
+      "repository": "nats-io/nats.go",
+      "content_hash": "16a1be7519706f16ff39b211068c910f2c3fb8795dee9f36f06bc2a0b478d164",
+      "created_at": "2026-11-17T21:41:10.354Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-27b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-27b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-27b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-27b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-8-27.md",
+      "repository": "hf-qwen-qwen3.8-27b-learnings",
+      "content_hash": "a0ac12d1149a172fc5581c71e4f71811de90e85d6805a36436871a07cebc9180",
+      "created_at": "2026-11-17T21:41:21.049Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: nats-io-nats.go-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-nats-io-nats-go-learnings-quality-verification-intelligence-nats-io-nats-go-lear.md",
+      "repository": "nats-io-nats.go-learnings",
+      "content_hash": "96d4b49f7562f346d690f584a02de6b8ebadc1e3d4d0b6cf837cb8a14dffd4cf",
+      "created_at": "2026-11-17T21:41:21.544Z"
     }
   }
 }

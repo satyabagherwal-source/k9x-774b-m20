@@ -205,8 +205,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "e01c71f711f9cd66fc0e62dce525301810eba9ad4b455daab82ebebb309971c7",
-    "lastHarvestedAt": "2026-11-13T11:39:59.257Z",
+    "contentHash": "6e1945aae3517f8d761398f06c00577c9a68649a66b6879c82580e983e7877af",
+    "lastHarvestedAt": "2026-11-17T21:40:59.686Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b"
   },
   "hf-black-forest-labs-flux.1-dev": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "5523d642",
+    "sourceVersion": "62b0d320",
     "license": "Apache-2.0",
-    "contentHash": "cc17dc76580146147fde6e27e5c45caf07a9d0d47662157da41ad5e796195e6d",
-    "lastHarvestedAt": "2026-11-17T20:33:23.023Z",
+    "contentHash": "1c88aadc9610f33f6dbd4866e6f2ab8d6c62c08259fdea116b52fc72909b38de",
+    "lastHarvestedAt": "2026-11-17T21:41:17.069Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "1b180714",
+    "sourceVersion": "febd2b97",
     "license": "Apache-2.0",
-    "contentHash": "54f1469449ceb0c3d47d42f5933ebb440e4c3f90b9590c9c02e029b04b0d102f",
-    "lastHarvestedAt": "2026-11-17T00:24:03.280Z",
+    "contentHash": "243da6b64ca184fe7b1e4b2fac7b40c5b6e64aa60415a9a15c4fa48a59e5dc5a",
+    "lastHarvestedAt": "2026-11-17T21:41:10.050Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "8c19cc28",
+    "sourceVersion": "dec76f87",
     "license": "MIT",
-    "contentHash": "a8dc1515a864b2f6484f79302e5d4c21fef28a5f537066b410fffad0be8cd34d",
-    "lastHarvestedAt": "2026-11-16T13:38:19.482Z",
+    "contentHash": "950edeb95fe3455bf781b8acdd00b577c5d9e35ad1014d5b37e859d6093315ea",
+    "lastHarvestedAt": "2026-11-17T21:41:02.847Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {

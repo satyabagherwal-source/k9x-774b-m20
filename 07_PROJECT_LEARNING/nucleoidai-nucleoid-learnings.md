@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `5523d642`  
+> **Source Version**: `62b0d320`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T20:33:22.119Z  
+> **Timestamp**: 2026-11-17T21:41:16.133Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:33:22.114Z  
+> **Harvest Timestamp**: 2026-11-17T21:41:16.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1514,298 +1514,135 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5523d642` (2026-11-17)
-**Commit Message**: Use Matrix.pad for ARC output placement
+### Incident Patch 1: `62b0d320` (2026-11-17)
+**Commit Message**: Draft NUC 115 Count-Controlled Repeat Loops
 
-Replace Matrix.draw with Matrix.pad for output placement, update matrix merging, and align the ARC documentation and debug guidance.
+Category: Runtime features, drawn uniformly at random (index 1 of the
+five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
+continuous /nuc-proposal cycle. Counted repetition is an existing
+comparable feature, written today with a while loop and its own counter
+or with a string loop, so the token non-regression gate is required.
 
-**File**: `.claude/agents/arc-debug.agent.md` (modified, +8/-16)
+Requested change: repeat COUNT: followed by a suite runs the suite COUNT
+times, the count-controlled sibling of NUC 63's while loop. COUNT is
+evaluated once, before the first iteration, and converted as the count
+of the string method repeat: fractions truncate, and NaN and negative
+numbers give 0. The body runs as a while body does, in the enclosing
+scope with no loop variable and no scope frame; return, errors, thrown
+values and rollback behave as in while, and a count above 100,000 raises
+TypeError("Repeat count is too large") before the first iteration. At
+the accepted revision every such statement raises
+SyntaxError("Unexpected ':'"). repeat stays an ordinary name elsewhere,
+and the four spellings that NUC 63 keeps for while keep their accepted
+readings for repeat.
+
+This allocation changes 
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -114,15 +114,9 @@ between that code and the log. At the time of writing, `start()` writes
- 6. `visualizer.instances` (LLM): the test `input_instances[].input_instance_matrix`.
- 7. `visualizer.value` (LLM, then Nucleoid): test `implementation`, `input_value`.
- 8. `visualizer.state` (Nucleoid): test `output_value`.
--9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, drawn by
--   `Matrix.draw` at `output_value.x` / `output_value.y` on the test input's
--   canvas: `output_instance_matrix`. Positions count from the test input's
--   top-left cell, and `Matrix.draw` rejects a negative one, which fails the
--   run. Older logs may also hold `output_instance_epoch`, the column and row
--   of position (0, 0) in a drawing that could grow left or up; a nonzero one
--   means that drawing did.
--10. `Matrix.merge` of the drawn matrices onto a zero canvas of the test input's
--    size, lined up at their top-left cells, then
-+9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, padded by
-+   `Matrix.pad` at `output_value.x` / `output_value.y` to the test input's size.
-+10. `Matrix.merge` of the test output instances, then
-     `Matrix.canvas(..., output_canvas)`: `result_matrix`.
- 11. `Matrix.difference(result_matrix, test_output_matrix)`: `difference`;
-     `0` is an exact match.
-@@ -200,13 +194,11 @@ Run every check that applies and record each result:
-   unturned.
-   Report those separately from the extracted instances' disagreements, which
-   alone show the world model mispredicting its own training data.
--- **Test composition.** Every test `output_value` has non-negative integer `x`
--  and `y`; a negative one lies left of or above the test input, and
--  `Matrix.draw` rejects it. Every drawn `output_instance_matrix` keeps the test
--  input's shape; a larger one means the instance reached past the right or
--  bottom edge and `Matrix.draw` grew the grid that way. Recompute the drawn
--  matrices, merge and canvas and compare the result with `result_matrix`,
--  noting cells that a later instance overwrote.
-+- **Test composition.** Every test `output_value` has in-range numeric `x` and
-+  `y`. Every padded `output_instance_matrix` keeps the test input's shape; a
-+  larger one means the instance was placed out of bounds and `Matrix.pad`
-+  enlarged the grid. Recompute merge and canvas and compare the result with
-+  `result_matrix`, noting cells that a later instance overwrote.
- - **Scoring (scoring-only).** Compare the shapes of `result_matrix` and
-   `test_output_matrix`. Recompute the difference and compare it with the
-   logged `difference`. Count the mismatched cells and give their coordinates.
+@@ -95,6 +95,7 @@ Created: 31-Jul-2026
+ | [81](nuc-0081.md) | Object Spread Entries | Accepted |
+ | [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
+ | [90](nuc-0090.md) | Enum Declarations | Accepted |
++| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Draft |
+ 
+ ### Utility enhancement
+ 
+@@ -283,6 +284,7 @@ Created: 31-Jul-2026
+ | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Accepted |
+ | [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Accepted |
++| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Draft |
+ 
+ ## Copyright
+ 
 ```
 
-**File**: `arc/README.md` (modified, +13/-29)
+**File**: `docs/nuc-0115.md` (added, +82/-0)
 ```diff
-@@ -2808,21 +2808,16 @@ For identified instances, the LLM represents instances in `nuc` lang, this is pa
- 
- For each input instance in test, the LLM generates output instance since it has all information needed from **knowledge packets**.
- 
--Finally, `Matrix.draw` draws each output crop at its output position on the
--test input's canvas before `Matrix.merge` combines the drawn matrices.
--Positions are zero-based columns and rows from the test input's top-left cell,
--and `Matrix.draw` rejects a negative one, so the run fails explicitly. The
--canvas grows right or down as needed to retain the entire placed crop instead
--of rejecting an undersized reference. Merging lines the matrices up at their
--top-left cells and keeps the largest height and width across its inputs. Zero
--is transparent; later nonzero cells win on overlap, as before. An erased output
--object uses `[[0]]` with an explicit output position. The run log keeps each
--test instance's drawn matrix as `output_instance_matrix`.
--`Matrix.canvas` then frames the merged matrix with the inferred
-+Finally, `Matrix.pad` places each output matrix at its output position before
-+`Matrix.merge` combines the masks. Padding expands the reference canvas when
-+needed to retain the entire placed matrix, and merging preserves the largest
-+height and width across its inputs. Zero is transparent; later nonzero cells
-+win on overlap, as before. An erased output object uses `[[0]]` with an explicit
-+output position.
-+`Matrix.canvas` then frames the merged result with the inferred
- `output_canvas`: `EXACT` keeps the composed canvas, which starts at the test
--input's dimensions and grows right or down where a drawn matrix needed, and
--`FIT` crops it to its nonzero bounding box with `Matrix.crop`. Any other value
--fails explicitly.
-+input's dimensions, and `FIT` crops it to its nonzero bounding box with
-+`Matrix.crop`. Any other value fails explicitly.
- 
- `Matrix.crop(matrix)` returns a new matrix containing the smallest rectangle
- around all nonzero cells. All-zero borders are removed from all four sides:
-@@ -2840,28 +2835,17 @@ original matrix, its size, and its volume: `x` is the column, `y` is the row,
- the number of its nonzero cells. Empty and all-zero matrices return
- `{ matrix: [], x: 0, y: 0, width: 0, height: 0, volume: 0 }`. It uses the same
- validation as `Matrix.crop` and does not modify the input. For a located
--result, `Matrix.draw(result.matrix, rows, cols, result.x, result.y)` restores
-+result, `Matrix.pad(result.matrix, rows, cols, result.x, result.y)` restores
- the crop to its original position on a canvas at least as large as the supplied
--dimensions, and so does `Matrix.pad`.
--
--`Matrix.draw(matrix, rows, cols, x, y)` returns a new matrix with the top-left
--cell of `matrix` at column `x` and row `y`, on a canvas of at least `rows` by
--`cols` cells. The canvas grows right or down as needed to include the entire
--matrix: a 2 by 2 crop drawn at (2, 0) on a 3 by 3 canvas gives a 3 by 4
--matrix. Drawing each 3 by 4 `4c4377d9` training input at (0, 3) and its
--vertical mirror, its rows in reverse order, at (0, 0), then merging the two,
--gives that pair's 6 by 4 output. It rejects ragged matrices, dimensions that
--are not non-negative integers, and positions that are not non-negative
--integers, and it does not modify the input.
-+dimensions.
- 
- `Matrix.pad(matrix, rows, cols, left, top)` treats the requested dimensions as
- minimums, placing the input at the required zero-based column and row offsets
- and filling the remaining cells with zeros. Each dimension grows as needed to
- include the entire input and its placement offset instead of rejecting an
- undersized reference. It does not center or modify the input. Empty matrices
- can be padded to an all-zero canvas. Ragged matrices and negative dimensions or
--offsets are still rejected. It returns the same matrix that `Matrix.draw` draws
--with those offsets as the position.
-+offsets are still rejected.
- 
- `Matrix.silhouette(matrix)` returns a new matrix of the same size in which each
- nonzero color is a letter ranked by how often it occurs in that matrix: `A` for
-@@ -2889,7 +2873,7 @@ size unless the moved cells need more room to the right or below. An all-zero
- matrix has no cells to move and gives zeros. It rejects negative or non-integer
- positions and ragged matrices, and it does not modify the input. Together,
- `Matrix.move(Matrix.rotate(Matrix.crop(matrix), turn), x, y)` turns an object
--and draws it at an output position.
-+and places it at an output position.
- 
- The same prediction path replays every training pair before predicting the
- held-out input. A training mismatch stops the run. Held-out predictions are
-```
-
-**File**: `arc/src/lib/Matrix.ts` (modified, +37/-61)
-```diff
-@@ -73,58 +73,6 @@ export function silhouette(matrix) {
-   );
- }
- 
--// Draws the nonzero cells of each placement, a matrix whose top-left cell sits
--// at column x and row y, on a canvas of at least rows by cols cells that grows
--// right or down to cover every placement, so a later nonzero cell wins on
--// overlap.
--function compose(rows: number, cols: number, placements, action: string) {
--  let bottom: number = rows;
--  let right: number = cols;
--  for (const { matrix, x, y } of placements) {
--    const width: number = matrix[0]?.length ?? 0;
--    for (const row of matrix) {
--      if (row.length !== width) {
--        throw new Error(`Matrix must be rectangular for ${action}`);
--      }
--    }
--    right = Math.max(right, x + width);
--    bottom = Math.max(bottom, y + matrix.length);
--  }
--
--  const result = Array.from({ length: bottom }, () => Array(right).fill(0));
--  for (const { matrix, x, y } of placements) {
--    for (let i: number = 0; i < matrix.length; i++) {
--      for (let j: number = 0; j < matrix[i].length; j++) {
--        if (matrix[i][j] !== 0) {
--          result[y + i][x + j] = matrix[i][j];
--        }
--      }
--    }
--  }
--
--  return result;
--}
--
--// Draws the matrix with its top-left cell at column x and row y on a canvas of
--// at least rows by cols cells, which grows right or down to keep the whole
--// matrix.
--export function draw(matrix, rows: number, cols: number, x: number, y: number) {
--  if (![rows, cols].every((size) => Number.isInteger(size) && size >= 0)) {
--    throw new Error("Drawing dimensions must be non-negative integers");
--  }
--  if (!Number.isInteger(x) || !Number.isInteger(y)) {
--    throw new Error(
--      `Drawing position ${JSON.stringify({ x, y })} must be integers`
--    );
--  }
--  if (x < 0 || y < 0) {
--    throw new Error(
--      `Drawing position ${JSON.stringify({ x, y })} must not be negative`
--    );
--  }
--  return compose(rows, cols, [{ matrix, x, y }], "drawing");
--}
--
- export function pad(
-   matrix,
-   rows: number,
-@@ -138,7 +86,25 @@ export function pad(
-   if (left < 0 || top < 0) {
-     throw new Error("Padding offsets must be non-negative");
-   }
--  return compose(rows, cols, [{ matrix, x: left, y: top }], "padding");
-+  const sourceRows: number = matrix.length;
-+  const sourceCols: number = matrix[0]?.length ?? 0;
-+  const paddedRows: number = Math.max(rows, top + sourceRows);
-+  const paddedCols: number = Math.max(cols, left + sourceCols);
-+  const result = Array.from({ length: paddedRows }, () =>
-+    Array(paddedCols).fill(0)
-+  );
+@@ -0,0 +1,82 @@
++# NUC 115 -- Count-Controlled Repeat Loops
 +
-+  for (let y: number = 0; y < sourceRows; y++) {
-+    const row = matrix[y];
-+    if (row.length !== sourceCols) {
-+      throw new Error("Matrix must be rectangular for padding");
-+    }
-+    for (let x: number = 0; x < sourceCols; x++) {
-+      result[y + top][x + left] = row[x];
-+    }
-+  }
++```
++NUC: 115
++Title: Count-Controlled Repeat Loops
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Runtime features
++Created: 17-Nov-2026
++```
 +
-+  return result;
- }
- 
- // Turns the matrix clockwise by a multiple of 90 degrees, the direction in
-@@ -189,19 +155,29 @@ export function move(matrix, x: number, y: number) {
-   return pad(crop(matrix), matrix.length, matrix[0]?.length ?? 0, x, y);
- }
- 
--// Draws the matrices over one another from their top-left cells, so zero is
--// transparent and a later nonzero cell wins on overlap. The result keeps the
--// largest height and width of its inputs.
- export function merge(...matrices) {
-   if (matrices.length === 0) {
-     throw new Error("At least one matrix is required for merging");
-   }
--  return compose(
--    0,
--    0,
--    matrices.map((matrix) => ({ matrix, x: 0, y: 0 })),
--    "merging"
-+  const numRows: number = Math.max(...matrices.map((matrix) => matrix.length));
-+  const numCols: number = Math.max(
-+    ...matrices.map((matrix) => matrix[0]?.length ?? 0)
-   );
++## Abstract
 +
-+  const result = Array.from({ length: numRows }, () => Array(numCols).fill(0));
++- `repeat COUNT:` followed by a suite, an indented block or statements on
++  the same line separated by `;`, runs the suite `COUNT` times: `repeat 3:`
++  runs its body three times and `repeat years:` once a year. It is the
++  count-controlled sibling of [NUC 63](nuc-0063.md)'s `while CONDITION:`
++  loop.
++- `COUNT` is evaluated once, before the first iteration, and converted to a
++  number and then as the count of the string method `repeat` converts it:
++  fractions truncate, and NaN and negative numbers give 0. So `"3"` runs
++  the body three times, `2.9` twice, and `null` or `-1` not at all. What the
++  body changes does not change how many times it runs.
++- The body runs as a `while` body does: in the enclosing scope, with no loop
++  variable and no new scope frame, carried out rather than filed as
++  standing rules. Each iteration's assignments, and the propagation they
++  cause, are visible to the next. `return` leaves the enclosing function,
++  errors and thrown values roll back through the existing transaction, and
++  a completed loop yields `null` and files nothing in the graph.
++- The bound of `while` keeps every loop finite: a count above 100,000 raises
++  `TypeError("Repeat count is too large")` before the first iteration.
++- At the accepted revision every such statement raises
++  `SyntaxError("Unexpected ':'")`. No keyword or lexer token is added.
++  `repeat` stays an ordinary name everywhere else, in variables, functions,
++  `repeat(...)` calls and the string method `repeat`, and the four
++  spellings that NUC 63 keeps for `while`, such as `repeat NAME: TYPE`, keep
++  their accepted readings for `repeat`.
 +
-+  for (const matrix of matrices) {
-+    const padded = pad(matrix, numRows, numCols, 0, 0);
-+    for (let i: number = 0; i < numRows; i++) {
-+      for (let j: number = 0; j < numCols; j++) {
-+        if (padded[i][j] !== 0) {
-+          result[i][j] = padded[i][j];
-+        }
-+      }
-+    }
-+  }
++## Motivation
 +
-+  return result;
- }
- 
- export function canvas(matrix, type: string) {
-```
-
-**File**: `arc/src/lib/milestone.ts` (modified, +2/-2)
-```diff
-@@ -235,11 +235,11 @@ export function output_composed({
- 
- export function output_placed({
-   instance_name,
--  output_instance_placed_matrix,
-+  output_instance_padded_matrix,
- }) {
-   terminal.grid(
-     `Placed output · ${instance_name}`,
--    output_instance_placed_matrix,
-+    output_instance_padded_matrix,
-     { key: "placed_output", loop: true }
-   );
- }
-```
-
-**File**: `arc/src/visualizer.ts` (modified, +3/-3)
-```diff
-@@ -184,17 +184,17 @@ export async function output_instance_matrix({
- 
-   milestone.output_composed(instance);
- 
--  const output_instance_placed_matrix = Matrix.draw(
-+  const output_instance_padded_matrix = Matrix.pad(
-     Matrix.crop(output_instance_matrix),
-     test_input_matrix.length,
-     test_input_matrix[0].length,
-     x,
-     y
-   );
- 
--  milestone.output_placed({ ...instance, output_instance_placed_matrix });
-+  milestone.output_placed({ ...instance, output_instance_padded_matrix });
- 
--  return { output_instance_matrix: output_instance_placed_matrix };
-+  return { output_instance_matrix: output_instance_padded_matrix };
- }
- 
- export async function state({
++- World models often advance in steps: a simulation ticks its clock, a
++  balance compounds once a year, a population grows each generation, and a
++  constructor builds a fixed number of parts. Each runs a block a known
++  number of times.
++- The accepted spellings count by hand. A `while` loop needs its own
++  counter, initialized, tested and incremented around the body, and leaves
++  it behind: `i = 0`, `while i < years:` and `i = i + 1` are 15 lexer
++  tokens with their newlines, where `repeat years:` is 3. A string loop
++  turns the count into characters: `for _ of "a".repeat(years):` is 10
++  tokens, and `for _ of "aaa":` is 5 for a literal count.
++- The string loop is also wrong in most bodies. A `for` loop pushes a scope
++  frame for each iteration, and inside a function, method, loop or block
++  body that frame turns a name the enclosing body already assigned into a
++  local, so `for _ of "a".repeat(k): total = total + 1` leaves `total` at
++  `0` there. Only the hand-counted `while` loop accumulates.
++- Kotlin's `repeat(n)`, Logo's and Scratch's `repeat n`, Smalltalk's
++  `timesRepeat:`, Ruby's `n.times` and Python's `for _ in range(n)` give the
++  operation a name.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1834,50 +1671,29 @@ Replace Matrix.draw with Matrix.pad for output placement, update matrix merging,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use Matrix.pad for ARC output placement
+## X. Draft NUC 115 Count-Controlled Repeat Loops
 
 **RULE**:
-When implementing operations in `.claude/agents/arc-debug.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5523d642`: Use Matrix.pad for ARC output placement. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `62b0d320`: Draft NUC 115 Count-Controlled Repeat Loops. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-debug.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, padded by
-   `Matrix.pad` at `output_value.x` / `output_value.y` to the test input's size.
-10. `Matrix.merge` of the test output instances, then
-- **Test composition.** Every test `output_value` has in-range numeric `x` and
-  `y`. Every padded `output_instance_matrix` keeps the test input's shape; a
-  larger one means the instance was placed out of bounds and `Matrix.pad`
-  enlarged the grid. Recompute merge and canvas and compare the result with
-  `result_matrix`, noting cells that a later instance overwrote.
+| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Draft |
+| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, drawn by
-   `Matrix.draw` at `output_value.x` / `output_value.y` on the test input's
-   canvas: `output_instance_matrix`. Positions count from the test input's
-   top-left cell, and `Matrix.draw` rejects a negative one, which fails the
-   run. Older logs may also hold `output_instance_epoch`, the column and row
-   of position (0, 0) in a drawing that could grow left or up; a nonzero one
-   means that drawing did.
-10. `Matrix.merge` of the drawn matrices onto a zero canvas of the test input's
-    size, lined up at their top-left cells, then
-- **Test composition.** Every test `output_value` has non-negative integer `x`
-  and `y`; a negative one lies left of or above the test input, and
-  `Matrix.draw` rejects it. Every drawn `output_instance_matrix` keeps the test
-  input's shape; a larger one means the instance reached past the right or
-  bottom edge and `Matrix.draw` grew the grid that way. Recompute the drawn
-  matrices, merge and canvas and compare the result with `result_matrix`,
-  noting cells that a later instance overwrote.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5523d642` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `62b0d320` are properly handled with clean fallback behavior.

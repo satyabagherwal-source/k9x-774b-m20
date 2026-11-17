@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T21:22:35.656Z",
-  "total_verified_learnings": 8942,
+  "last_updated": "2026-11-17T21:41:21.678Z",
+  "total_verified_learnings": 8943,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20643,
+  "total_items": 20654,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -228140,8 +228140,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "5523d642",
-      "content_hash": "cc17dc76580146147fde6e27e5c45caf07a9d0d47662157da41ad5e796195e6d",
+      "source_version": "62b0d320",
+      "content_hash": "1c88aadc9610f33f6dbd4866e6f2ab8d6c62c08259fdea116b52fc72909b38de",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -228224,6 +228224,11 @@
           "number": 9061,
           "title": "Use Matrix.pad for ARC output placement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9073,
+          "title": "Draft NUC 115 Count-Controlled Repeat Loops",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228231,7 +228236,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:33:22.859Z",
+      "verified_at": "2026-11-17T21:41:16.892Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228273,10 +228278,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "5523d642",
-      "content_hash": "8c423e1fe7efa2e10c746fa5882682039f4e9f3e51647d9fd45b301ef502a8df",
+      "source_version": "62b0d320",
+      "content_hash": "e982db34b0fe50ea3ab65f1087d6e4c063f4ec00bfcf11421fb9b85ecc541a87",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T20:33:23.317Z"
+      "persisted_at": "2026-11-17T21:41:17.372Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -228285,10 +228290,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "5523d642",
-      "content_hash": "a139fddf437acd7e155a6291a760e179fd321b974c63b1217eebbc781c33197d",
+      "source_version": "62b0d320",
+      "content_hash": "d78de3bad2338ab7534e5076a70fa6322fd3035f738ea911527015f75875562a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:33:23.445Z"
+      "persisted_at": "2026-11-17T21:41:17.508Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -232749,8 +232754,8 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "8c19cc28",
-      "content_hash": "a8dc1515a864b2f6484f79302e5d4c21fef28a5f537066b410fffad0be8cd34d",
+      "source_version": "dec76f87",
+      "content_hash": "950edeb95fe3455bf781b8acdd00b577c5d9e35ad1014d5b37e859d6093315ea",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
@@ -232763,6 +232768,11 @@
           "number": 8738,
           "title": "Stop consuming input after streaming sink failures",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9071,
+          "title": "Keep nulls in `drop_nans` inside `group_by` and `over`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232770,7 +232780,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T13:38:19.321Z",
+      "verified_at": "2026-11-17T21:41:02.664Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232812,10 +232822,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-architecture-intelligence-pola-rs-polars-core-invariants.md",
       "title": "Architecture Intelligence: pola-rs/polars Core Invariants",
       "repository": "pola-rs/polars",
-      "source_version": "8c19cc28",
-      "content_hash": "1a0d98297755461f18d6e81ba7cd4b66ad1a5ed4992e3b7d355c292147c1c01c",
+      "source_version": "dec76f87",
+      "content_hash": "dd307c464c7ecd168a7b1c788d45bb7436be79fd527ae395ef077fdd1e587ade",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T13:38:19.765Z"
+      "persisted_at": "2026-11-17T21:41:03.155Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pola-rs-polars": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pola-rs-polars",
@@ -232824,10 +232834,10 @@
       "relative_path": "08_VERIFICATION/pola-rs-polars-verification-protocol-empirical-defect-shield-for-pola-rs-polars.md",
       "title": "Verification Protocol: Empirical Defect Shield for pola-rs/polars",
       "repository": "pola-rs/polars",
-      "source_version": "8c19cc28",
-      "content_hash": "5374b7aea44c2ec2afcbf56d4db7dbf7ae4f622305c251989028599365ea2354",
+      "source_version": "dec76f87",
+      "content_hash": "d63739cafd72c8dbb7a5366b8607ffe42c12cd9494d2da43b0d18ba4b66bdb7d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T13:38:19.880Z"
+      "persisted_at": "2026-11-17T21:41:03.299Z"
     },
     "learn-github-yugabyte-yugabyte-db": {
       "learning_id": "learn-github-yugabyte-yugabyte-db",
@@ -232942,9 +232952,9 @@
       "title": "Architecture Intelligence: pola-rs-polars-learnings Core Invariants",
       "repository": "pola-rs-polars-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e73ccf3699a97bf07210afa248722311b8808eb72247c83b938144d66857b5c",
+      "content_hash": "ea6d8f8fada56249f258caa7717409d05ed5130e7a97d3ff9b55a97898b49aa9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T13:38:37.575Z"
+      "persisted_at": "2026-11-17T21:41:20.621Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pola-rs-polars-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pola-rs-polars-learnings",
@@ -232954,9 +232964,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pola-rs-polars-learnings",
       "repository": "pola-rs-polars-learnings",
       "source_version": "HEAD",
-      "content_hash": "884075bd14b52f6372b0e279edc1f3f90c443b31d2b33290d861ec9f203e0032",
+      "content_hash": "eb61fbc164414482b39adcf5d6c030034880f53e0336b358df7fb47c088418d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T13:38:37.691Z"
+      "persisted_at": "2026-11-17T21:41:20.752Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-canberkkkkkk-ema-lightning-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-canberkkkkkk-ema-lightning-learnings-core-inv",
@@ -246404,8 +246414,8 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "1b180714",
-      "content_hash": "54f1469449ceb0c3d47d42f5933ebb440e4c3f90b9590c9c02e029b04b0d102f",
+      "source_version": "febd2b97",
+      "content_hash": "243da6b64ca184fe7b1e4b2fac7b40c5b6e64aa60415a9a15c4fa48a59e5dc5a",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
@@ -246418,6 +246428,11 @@
           "number": 8823,
           "title": "[FIXED] Report TLS verification failures during reconnect",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9072,
+          "title": "[FIXED] Cap StreamState NumDeleted at MaxInt when decoding",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -246425,7 +246440,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T00:24:03.111Z",
+      "verified_at": "2026-11-17T21:41:09.876Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246479,10 +246494,10 @@
       "relative_path": "08_VERIFICATION/nats-io-nats-go-verification-protocol-empirical-defect-shield-for-nats-io-nats-g.md",
       "title": "Verification Protocol: Empirical Defect Shield for nats-io/nats.go",
       "repository": "nats-io/nats.go",
-      "source_version": "1b180714",
-      "content_hash": "8eb3be4e2d540cd7c86aca6be62f2c11ddef5e9627fe09616995fe384dc12b8d",
+      "source_version": "febd2b97",
+      "content_hash": "aa9f39308080aa66c8a1b36170efa94c7c4fb86d08ae764791cc62ed961e062a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:24:03.676Z"
+      "persisted_at": "2026-11-17T21:41:10.489Z"
     },
     "rule-8635": {
       "learning_id": "rule-8635",
@@ -246542,9 +246557,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nats-io-nats.go-learnings",
       "repository": "nats-io-nats.go-learnings",
       "source_version": "HEAD",
-      "content_hash": "64c2f59f3274ada2afe3b2e3cb3b768ed65b467475c8331af4d3d2fdc532db07",
+      "content_hash": "7796b9718f957aafa12f1b013588d787072a792ff3c363e9b967ae751f70dec0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:27:05.648Z"
+      "persisted_at": "2026-11-17T21:41:21.678Z"
     },
     "candidate_directive-security-drop-hardcoded-cloudflare-credentials-from-sync_status-py": {
       "item_id": "candidate_directive-security-drop-hardcoded-cloudflare-credentials-from-sync_status-py",
@@ -277358,6 +277373,159 @@
       "content_hash": "3937b933d2291b02156e5b9cd5648929b9753fffee70836e41d4114949f98a3d",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T21:22:34.977Z"
+    },
+    "learn-huggingface-qwen-qwen3-8-27b": {
+      "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Qwen/Qwen3.8-27B",
+      "repository": "Qwen/Qwen3.8-27B",
+      "slug": "hf-qwen-qwen3.8-27b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
+      "content_hash": "6e1945aae3517f8d761398f06c00577c9a68649a66b6879c82580e983e7877af",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T21:40:59.482Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-27b-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invari.md",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3.8-27B Core Invariants",
+      "repository": "Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
+      "content_hash": "8cf85efadf4830636f547242ad436c29b321acd33038c4ee302f7e51694e6e11",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T21:40:59.856Z"
+    },
+    "rule-9071": {
+      "learning_id": "rule-9071",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9071,
+      "title": "Keep nulls in `drop_nans` inside `group_by` and `over`",
+      "source_url": "https://github.com/pola-rs/polars",
+      "source_version": "dec76f87",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T21:41:02.664Z"
+    },
+    "candidate_directive-keep-nulls-in-drop_nans-inside-group_by-and-over": {
+      "item_id": "candidate_directive-keep-nulls-in-drop_nans-inside-group_by-and-over",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VWMP-keep-nulls-in-drop_nans-inside-group_by-and-over.md",
+      "title": "Keep nulls in `drop_nans` inside `group_by` and `over`",
+      "repository": "pola-rs-polars-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f3ebfd9357022e3a3bb2095ea4c1a5a4b18bc19b9d94b05bd2d791539825ae02",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T21:41:20.500Z"
+    },
+    "rule-9072": {
+      "learning_id": "rule-9072",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9072,
+      "title": "[FIXED] Cap StreamState NumDeleted at MaxInt when decoding",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "febd2b97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T21:41:09.876Z"
+    },
+    "candidate_directive-fixed-cap-streamstate-numdeleted-at-maxint-when-decoding": {
+      "item_id": "candidate_directive-fixed-cap-streamstate-numdeleted-at-maxint-when-decoding",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VXCC-fixed-cap-streamstate-numdeleted-at-maxint-when-decoding.md",
+      "title": "[FIXED] Cap StreamState NumDeleted at MaxInt when decoding",
+      "repository": "nats-io-nats.go-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7d0094cf763893a4790b8c34cc4a4fb0a5774f53de3fc1c34f57e12935348a6b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T21:41:21.423Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-nats-io-nats-go-quality-verification-intelligence-nats-io-nats-go-core-invariant.md",
+      "title": "Quality & Verification Intelligence: nats-io/nats.go Core Invariants",
+      "repository": "nats-io/nats.go",
+      "source_version": "febd2b97",
+      "content_hash": "16a1be7519706f16ff39b211068c910f2c3fb8795dee9f36f06bc2a0b478d164",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T21:41:10.354Z"
+    },
+    "rule-9073": {
+      "learning_id": "rule-9073",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9073,
+      "title": "Draft NUC 115 Count-Controlled Repeat Loops",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "62b0d320",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T21:41:16.892Z"
+    },
+    "candidate_directive-draft-nuc-115-count-controlled-repeat-loops": {
+      "item_id": "candidate_directive-draft-nuc-115-count-controlled-repeat-loops",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VU4C-draft-nuc-115-count-controlled-repeat-loops.md",
+      "title": "Draft NUC 115 Count-Controlled Repeat Loops",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "62b0d320",
+      "content_hash": "9d4130f22b322fa434e40a5131a4aff8933bd183b2f0c8af2b10bff8587cc09e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T21:41:17.245Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-27b-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-27b-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-27b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-8-27.md",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-27b-learnings Core Invariants",
+      "repository": "hf-qwen-qwen3.8-27b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a0ac12d1149a172fc5581c71e4f71811de90e85d6805a36436871a07cebc9180",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T21:41:21.049Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-nats-io-nats-go-learnings-quality-verification-intelligence-nats-io-nats-go-lear.md",
+      "title": "Quality & Verification Intelligence: nats-io-nats.go-learnings Core Invariants",
+      "repository": "nats-io-nats.go-learnings",
+      "source_version": "HEAD",
+      "content_hash": "96d4b49f7562f346d690f584a02de6b8ebadc1e3d4d0b6cf837cb8a14dffd4cf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T21:41:21.544Z"
     }
   },
   "ai-builder-brain": {
