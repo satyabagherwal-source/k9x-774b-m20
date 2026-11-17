@@ -10663,3 +10663,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-17T16:54:41.815Z |
 | `learn-github-margelo-react-native-vision-camera` | `https://github.com/margelo/react-native-vision-camera` | `087977a6` | Multi-dimensional audit evidence | 2026-11-17T16:54:50.226Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f0eb96d2` | Multi-dimensional audit evidence | 2026-11-17T16:54:55.873Z |
+| `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-17T17:02:24.427Z |
+| `learn-github-aws-amplify-amplify-js` | `https://github.com/aws-amplify/amplify-js` | `9e01896b` | Multi-dimensional audit evidence | 2026-11-17T17:02:32.361Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `aaa21d53` | Multi-dimensional audit evidence | 2026-11-17T17:02:38.476Z |

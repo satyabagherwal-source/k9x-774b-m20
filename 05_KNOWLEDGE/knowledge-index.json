@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T16:55:00.263Z",
-  "total_verified_learnings": 8912,
+  "last_updated": "2026-11-17T17:02:43.082Z",
+  "total_verified_learnings": 8913,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20397,
+  "total_items": 20403,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -223003,14 +223003,19 @@
       "slug": "aws-amplify-amplify-js",
       "platform": "github",
       "source_url": "https://github.com/aws-amplify/amplify-js",
-      "source_version": "6a065b17",
-      "content_hash": "06630e46362c4e8c45d5d3fd2358c945277380674206480f853f2afab3c18fbe",
+      "source_version": "9e01896b",
+      "content_hash": "d4285a5484733f883970f085a335c33073e8dfd321cc081a67fc9ac8f325ebe5",
       "dossier_path": "07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
       "promoted_rules": [
         {
           "number": 8438,
           "title": "disable Pinpoint-backed E2E tests",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9013,
+          "title": "register OAuth token waiters before reading the deadline",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -223019,7 +223024,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T04:14:37.486Z",
+      "verified_at": "2026-11-17T17:02:32.197Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223061,10 +223066,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-amplify-amplify-js-technical-construction-intelligence-aws-amplify-amplify-j.md",
       "title": "Technical Construction Intelligence: aws-amplify/amplify-js Core Invariants",
       "repository": "aws-amplify/amplify-js",
-      "source_version": "6a065b17",
-      "content_hash": "f521a02ce6d40275e8aa94479116e8cb36d5b430e9df57911409e8ffb1cc882e",
+      "source_version": "9e01896b",
+      "content_hash": "2465a71966a8e23779f264f3f5e0207e97b4c921566df1cec99185414330844b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T04:14:37.964Z"
+      "persisted_at": "2026-11-17T17:02:32.639Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-amplify-amplify-js": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-amplify-amplify-js",
@@ -223073,10 +223078,10 @@
       "relative_path": "08_VERIFICATION/aws-amplify-amplify-js-verification-protocol-empirical-defect-shield-for-aws-amp.md",
       "title": "Verification Protocol: Empirical Defect Shield for aws-amplify/amplify-js",
       "repository": "aws-amplify/amplify-js",
-      "source_version": "6a065b17",
-      "content_hash": "03780873156bbc299efd19992b29e88574020cb4a825632170c42b8be844a402",
+      "source_version": "9e01896b",
+      "content_hash": "66d44c8e1266da2b14f024f43eebff61caabb73b2d29c30511aa1b969a9a657f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T04:14:38.080Z"
+      "persisted_at": "2026-11-17T17:02:32.761Z"
     },
     "domain_intelligence-product-intelligence-domcyrus-rustnet-learnings-core-invariants": {
       "item_id": "domain_intelligence-product-intelligence-domcyrus-rustnet-learnings-core-invariants",
@@ -223134,9 +223139,9 @@
       "title": "Technical Construction Intelligence: aws-amplify-amplify-js-learnings Core Invariants",
       "repository": "aws-amplify-amplify-js-learnings",
       "source_version": "HEAD",
-      "content_hash": "23597a12bdb502a3b7f5c0d98a126124f7be327a9b645d4fee3d3e7825b952ed",
+      "content_hash": "51a7ef3be45e6360fe6d3889db928a2828f6610e8b19ceff2016ca04fefe3fc8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T04:15:53.955Z"
+      "persisted_at": "2026-11-17T17:02:42.276Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-amplify-amplify-js-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-amplify-amplify-js-learnin",
@@ -223146,9 +223151,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aws-amplify-amplify-js-learnings",
       "repository": "aws-amplify-amplify-js-learnings",
       "source_version": "HEAD",
-      "content_hash": "6faecc50a1c0e6455d7d5285dab32720ec3528d2b6a96e6bb01c3cdc7bcc6261",
+      "content_hash": "9e6805ae3c1eac21886bdf961f4030c1253e0c98cf63f783825ef9ef5321310e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T04:15:54.086Z"
+      "persisted_at": "2026-11-17T17:02:42.392Z"
     },
     "learn-github-berty-berty": {
       "learning_id": "learn-github-berty-berty",
@@ -228818,8 +228823,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "2e591454",
-      "content_hash": "dece0dd9a83801700cc6c8a1d6d86fd2f840f7acd949cfab294f79da9b5b0fee",
+      "source_version": "aaa21d53",
+      "content_hash": "af0f74cdd3c0aba6e0c002f7da77dc5bdcbd8f655330694bb1fb3abe6f0dce94",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -228852,6 +228857,11 @@
           "number": 8962,
           "title": "serialize counter creation so concurrent first hits are not dropped",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9014,
+          "title": "Empirical Invariant Guard in SECURITY_CONTEXT.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228859,7 +228869,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T12:09:32.572Z",
+      "verified_at": "2026-11-17T17:02:38.320Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228901,10 +228911,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "2e591454",
-      "content_hash": "b1f6c068c0c36d3bc0ca8eb9d13fa454c65686f142f1348543608aba970ca017",
+      "source_version": "aaa21d53",
+      "content_hash": "299d77f28d7be3179ffd0c7e22ca3ebf7cc3243653a737289e2609ffbb227a57",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T12:09:33.172Z"
+      "persisted_at": "2026-11-17T17:02:38.750Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -228913,10 +228923,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "2e591454",
-      "content_hash": "d770eb68ebfcdcef199b1fad03f10314afcd21fa88e0331f47d8737e666fb250",
+      "source_version": "aaa21d53",
+      "content_hash": "f3e487dd35bf496931c9f3fb8265447dff2616a8568391c6a660cdf884d37a49",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T12:09:33.340Z"
+      "persisted_at": "2026-11-17T17:02:38.868Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -241394,9 +241404,9 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f9765f3c64f0a9548926c8dd323c9df1bd6ad309f3dcec8cdd4525cf9cd9d2f",
+      "content_hash": "d9f052be60d3b09699604ccab683f4b8d2aa0d1c00a8cf1319edf2988008fc8d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T12:09:38.522Z"
+      "persisted_at": "2026-11-17T17:02:42.966Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni",
@@ -241406,9 +241416,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery-nuclei-learnings",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "f98076bf3be28d687581b31e7ae0547cacda0ee752631b0828f92648015b3279",
+      "content_hash": "8c756adfdf2ce153255c40eafe9b4ca22ac56b8db99346ca98fa090c6749cb16",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T12:09:38.691Z"
+      "persisted_at": "2026-11-17T17:02:43.082Z"
     },
     "learn-huggingface-liquidai-lfm3-omni-2b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
@@ -271094,13 +271104,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z_image_turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
       "title": "Research & Knowledge Intelligence: Comfy-Org/Z-Image-Turbo Core Invariants",
       "repository": "Comfy-Org/Z-Image-Turbo",
-      "source_version": "hf-comfy-org-z_image_turbo",
-      "content_hash": "fd54232dc50b7b94c0b496b99256c93c6178f0baa8df010c08e1923342be3188",
+      "source_version": "hf-comfy-org-z-image-turbo",
+      "content_hash": "680b33d51bfc9f5542b224fbc319dac6088b57c3c6c86604508e9310b95a9e41",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T14:49:49.792Z"
+      "persisted_at": "2026-11-17T17:02:24.585Z"
     },
     "rule-8978": {
       "learning_id": "rule-8978",
@@ -271162,9 +271172,9 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-z-image-turbo-learnings Core Invariants",
       "repository": "hf-comfy-org-z-image-turbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "036c42f68b9e04c1bfcff288ecbe458afa72e1b0f072dffe1962b3231d531f10",
+      "content_hash": "7c3385e46431f4fa5318e2a83a4a535576322fb8b09718cfab64cd5d33518940",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T14:50:09.196Z"
+      "persisted_at": "2026-11-17T17:02:41.798Z"
     },
     "candidate_directive-test-fix-flaky-tests-in-socket-auth-capture-and-fd-churn": {
       "item_id": "candidate_directive-test-fix-flaky-tests-in-socket-auth-capture-and-fd-churn",
@@ -273536,6 +273546,97 @@
       "content_hash": "dfb1c32e25ddab4788339894059edd9709f7e1c5ed2a9e88dd5ca5c0082c955f",
       "domain_letter": "B",
       "persisted_at": "2026-11-17T16:55:00.051Z"
+    },
+    "learn-huggingface-comfy-org-z-image-turbo": {
+      "learning_id": "learn-huggingface-comfy-org-z-image-turbo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/Z-Image-Turbo",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "slug": "hf-comfy-org-z-image-turbo",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
+      "source_version": "hf-comfy-org-z-image-turbo",
+      "content_hash": "240ee92228278b5df32c0057675371894fd7ac409e8ec99166de907d6ed82e1d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T17:02:24.250Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9013": {
+      "learning_id": "rule-9013",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9013,
+      "title": "register OAuth token waiters before reading the deadline",
+      "source_url": "https://github.com/aws-amplify/amplify-js",
+      "source_version": "9e01896b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T17:02:32.197Z"
+    },
+    "candidate_directive-register-oauth-token-waiters-before-reading-the-deadline": {
+      "item_id": "candidate_directive-register-oauth-token-waiters-before-reading-the-deadline",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XD8P-register-oauth-token-waiters-before-reading-the-deadline.md",
+      "title": "register OAuth token waiters before reading the deadline",
+      "repository": "aws-amplify/amplify-js",
+      "source_version": "9e01896b",
+      "content_hash": "1273c67e5df2afcd88d3f3742470254e917e001a58dad3481d5254c9ca20511d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T17:02:32.522Z"
+    },
+    "rule-9014": {
+      "learning_id": "rule-9014",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9014,
+      "title": "Empirical Invariant Guard in SECURITY_CONTEXT.md",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "aaa21d53",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T17:02:38.320Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-security_context-md": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-security_context-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XL7O-empirical-invariant-guard-in-security_context-md.md",
+      "title": "Empirical Invariant Guard in SECURITY_CONTEXT.md",
+      "repository": "projectdiscovery-nuclei-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aee32befa4de42a7b419ba0742062e4a2fdac972a01161d2ad2187824bba7aee",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T17:02:42.854Z"
+    },
+    "candidate_directive-auth-register-oauth-token-waiters-before-reading-the-deadline": {
+      "item_id": "candidate_directive-auth-register-oauth-token-waiters-before-reading-the-deadline",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XKOI-auth-register-oauth-token-waiters-before-reading-the-deadline.md",
+      "title": "auth): register OAuth token waiters before reading the deadline",
+      "repository": "aws-amplify-amplify-js-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a5ca64e75dca647097f7595d521838a688c205ce92bbf637696060bb96661b2c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T17:02:42.163Z"
     }
   },
   "ai-builder-brain": {

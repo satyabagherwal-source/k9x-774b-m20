@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T16:54:55.877Z",
-  "total_cycles_completed": 10185,
-  "total_learnings_persisted": 10185,
-  "total_rules_promoted": 9753,
+  "last_updated": "2026-11-17T17:02:38.480Z",
+  "total_cycles_completed": 10188,
+  "total_learnings_persisted": 10188,
+  "total_rules_promoted": 9755,
   "history": [
-    {
-      "timestamp": "2026-11-17T02:02:08.459Z",
-      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-      "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T02:02:12.403Z",
-      "repository": "ClementTsang/bottom",
-      "learningId": "learn-github-clementtsang-bottom",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T02:02:16.572Z",
-      "repository": "KeyboardKit/KeyboardKit",
-      "learningId": "learn-github-keyboardkit-keyboardkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T02:02:18.472Z",
       "repository": "openkruise/kruise",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T16:54:55.877Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:02:24.432Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:02:32.366Z",
+      "repository": "aws-amplify/amplify-js",
+      "learningId": "learn-github-aws-amplify-amplify-js",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:02:38.480Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

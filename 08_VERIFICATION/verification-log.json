@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-0RYN",
-    "timestamp": "2026-11-15T07:41:58.799Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "198f9ed6cadb6f0184664283e264914e64f99530af8dadf4943aea24e6cbe101",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-X82M",
-    "timestamp": "2026-11-15T08:07:12.670Z",
-    "repository": "tuist/tuist",
-    "learningId": "learn-github-tuist-tuist",
-    "contentHash": "033b8230391ce14bfbe416ea0e21a0a6fc183ca78daa658e1dd12db28c14f2e4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-ZOG5",
-    "timestamp": "2026-11-15T08:09:07.205Z",
-    "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
-    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-    "contentHash": "401365fa57ac10107acc302aecbc17b274002e337e4fe427ab77f8c64544ab89",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-035P",
     "timestamp": "2026-11-15T08:09:26.270Z",
     "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -7490,6 +7445,51 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "e31a3d15adbd12e6ea2508c5687abe9c9b093ae04055224db5e50d0e962aaec7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-X6ZS",
+    "timestamp": "2026-11-17T17:02:24.424Z",
+    "repository": "Comfy-Org/Z-Image-Turbo",
+    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+    "contentHash": "240ee92228278b5df32c0057675371894fd7ac409e8ec99166de907d6ed82e1d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-XD45",
+    "timestamp": "2026-11-17T17:02:32.357Z",
+    "repository": "aws-amplify/amplify-js",
+    "learningId": "learn-github-aws-amplify-amplify-js",
+    "contentHash": "d4285a5484733f883970f085a335c33073e8dfd321cc081a67fc9ac8f325ebe5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-XHU0",
+    "timestamp": "2026-11-17T17:02:38.472Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "af0f74cdd3c0aba6e0c002f7da77dc5bdcbd8f655330694bb1fb3abe6f0dce94",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

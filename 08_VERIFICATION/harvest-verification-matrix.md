@@ -10630,3 +10630,6 @@
 | `CYCLE-20261117-NA1G` | `2026-11-17T16:54:41.812Z` | `Qwen/Qwen3-14B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md` | Yes (`927eaa62...`) |
 | `CYCLE-20261117-NGJ3` | `2026-11-17T16:54:50.223Z` | `margelo/react-native-vision-camera` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9011` | Yes (`8607ee64...`) |
 | `CYCLE-20261117-NKVY` | `2026-11-17T16:54:55.870Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9012` | Yes (`e31a3d15...`) |
+| `CYCLE-20261117-X6ZS` | `2026-11-17T17:02:24.424Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md` | Yes (`240ee922...`) |
+| `CYCLE-20261117-XD45` | `2026-11-17T17:02:32.357Z` | `aws-amplify/amplify-js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9013` | Yes (`d4285a54...`) |
+| `CYCLE-20261117-XHU0` | `2026-11-17T17:02:38.472Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9014` | Yes (`af0f74cd...`) |

@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "2e591454",
+    "sourceVersion": "aaa21d53",
     "license": "MIT",
-    "contentHash": "dece0dd9a83801700cc6c8a1d6d86fd2f840f7acd949cfab294f79da9b5b0fee",
-    "lastHarvestedAt": "2026-11-17T12:09:32.780Z",
+    "contentHash": "af0f74cdd3c0aba6e0c002f7da77dc5bdcbd8f655330694bb1fb3abe6f0dce94",
+    "lastHarvestedAt": "2026-11-17T17:02:38.476Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -4253,10 +4253,10 @@
     "repository": "aws-amplify/amplify-js",
     "platform": "github",
     "sourceUrl": "https://github.com/aws-amplify/amplify-js",
-    "sourceVersion": "6a065b17",
+    "sourceVersion": "9e01896b",
     "license": "Apache-2.0",
-    "contentHash": "06630e46362c4e8c45d5d3fd2358c945277380674206480f853f2afab3c18fbe",
-    "lastHarvestedAt": "2026-11-14T04:14:37.651Z",
+    "contentHash": "d4285a5484733f883970f085a335c33073e8dfd321cc081a67fc9ac8f325ebe5",
+    "lastHarvestedAt": "2026-11-17T17:02:32.361Z",
     "learningId": "learn-github-aws-amplify-amplify-js"
   },
   "go-eagle-eagle": {
@@ -10545,8 +10545,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
     "sourceVersion": "hf-comfy-org-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "3187fcd13f36923015371e58fc84035a378b3f9531e4fee16abc82aa2fb44d47",
-    "lastHarvestedAt": "2026-11-13T05:23:31.348Z",
+    "contentHash": "240ee92228278b5df32c0057675371894fd7ac409e8ec99166de907d6ed82e1d",
+    "lastHarvestedAt": "2026-11-17T17:02:24.427Z",
     "learningId": "learn-huggingface-comfy-org-z-image-turbo"
   },
   "hf-unsloth-flint-gguf": {
