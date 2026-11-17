@@ -275,8 +275,8 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3",
     "sourceVersion": "hf-moonshotai-kimi-k3",
     "license": "Open-Source",
-    "contentHash": "f38998a919c0e86e5117bc06c65a47ef4d467cad420d8440ba0bbea751ebe40a",
-    "lastHarvestedAt": "2026-11-13T12:32:30.381Z",
+    "contentHash": "ca7e92e6dbf8f52795ef5510f36ae72de3375ddc1302f5815ef2b2f7db69be43",
+    "lastHarvestedAt": "2026-11-17T22:56:48.548Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
@@ -12583,10 +12583,10 @@
     "repository": "jithin-sabu/purge-app",
     "platform": "github",
     "sourceUrl": "https://github.com/jithin-sabu/purge-app",
-    "sourceVersion": "8d64ee60",
+    "sourceVersion": "6e5c3d30",
     "license": "MIT",
-    "contentHash": "c33edf08e7879ac2c23b69fdbf58d709feaa85eeb433c6731e1f13473271d40f",
-    "lastHarvestedAt": "2026-11-14T15:34:30.266Z",
+    "contentHash": "b579907a376dba690802428bda98772f52ba09de6ee055214dbf18977bf1be5d",
+    "lastHarvestedAt": "2026-11-17T22:56:28.375Z",
     "learningId": "learn-github-jithin-sabu-purge-app"
   },
   "hf-conceptcountry-qwen-concept-27b": {

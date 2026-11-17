@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T22:40:08.305Z",
-  "total_records": 1707,
+  "last_updated": "2026-11-17T22:56:53.022Z",
+  "total_records": 1711,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 746,
+      "total": 748,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -795,7 +795,9 @@
         "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-dev-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i",
         "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-r1-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1154,7 +1156,7 @@
       ]
     },
     "H": {
-      "total": 400,
+      "total": 402,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1555,7 +1557,9 @@
         "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-core-invariants",
         "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-learnings-core-invari",
         "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria"
       ]
     },
     "I": {
@@ -8440,8 +8444,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "a41d0ca4fe60da871d7be2c91d6b79b4dd8064a2413946bc74cd57fb03c93ddb",
-      "created_at": "2026-11-17T18:56:29.040Z"
+      "content_hash": "5ae304b149b057f94c803ac456b5749536053c22e0f5e3d066912cfe7a692a96",
+      "created_at": "2026-11-17T22:56:53.022Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -28731,6 +28735,42 @@
       "repository": "hf-deepseek-ai-deepseek-r1-learnings",
       "content_hash": "235931a9cd6bd51e7d4baeddf2f8cd5bbfe38441855feb4515efdf059b8847f6",
       "created_at": "2026-11-17T22:40:07.800Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: jithin-sabu/purge-app Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jithin-sabu-purge-app-technical-construction-intelligence-jithin-sabu-purge-app-.md",
+      "repository": "jithin-sabu/purge-app",
+      "content_hash": "e42874d8f8925a395dc3e808c84ee05342f8d78bec28f578c0a3e2bac997133b",
+      "created_at": "2026-11-17T22:56:28.684Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: moonshotai/Kimi-K3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-research-knowledge-intelligence-moonshotai-kimi-k3-core-in.md",
+      "repository": "moonshotai/Kimi-K3",
+      "content_hash": "80f23e106eb020a769689d8bbae8f4eae5584162ba6081fcc0dc993286817856",
+      "created_at": "2026-11-17T22:56:48.720Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-moonshotai-kimi-k3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-learnings-research-knowledge-intelligence-hf-moonshotai-ki.md",
+      "repository": "hf-moonshotai-kimi-k3-learnings",
+      "content_hash": "751ad4ad1afef34a60987e4f42cd043941b78d3128c59227329cdf74d736b98e",
+      "created_at": "2026-11-17T22:56:51.675Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: jithin-sabu-purge-app-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jithin-sabu-purge-app-learnings-technical-construction-intelligence-jithin-sabu-.md",
+      "repository": "jithin-sabu-purge-app-learnings",
+      "content_hash": "ac8ebe82973eddc0ce0af431ec685bf4b81d5719bcea0fdbb7bc1852830b1839",
+      "created_at": "2026-11-17T22:56:52.310Z"
     }
   }
 }

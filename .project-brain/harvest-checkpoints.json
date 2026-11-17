@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T22:40:03.660Z",
+  "last_updated": "2026-11-17T22:56:48.556Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -305,14 +305,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonshotai-kimi-k3",
-      "content_hash": "f38998a919c0e86e5117bc06c65a47ef4d467cad420d8440ba0bbea751ebe40a",
-      "verified_at": "2026-11-13T12:32:30.391Z",
+      "content_hash": "ca7e92e6dbf8f52795ef5510f36ae72de3375ddc1302f5815ef2b2f7db69be43",
+      "verified_at": "2026-11-17T22:56:48.555Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:32:30.391Z"
+      "last_updated": "2026-11-17T22:56:48.555Z"
     },
     "stabilityai/stable-diffusion-xl-base-1.0": {
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -18936,14 +18936,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jithin-sabu-purge-app",
-      "content_hash": "c33edf08e7879ac2c23b69fdbf58d709feaa85eeb433c6731e1f13473271d40f",
-      "verified_at": "2026-11-14T15:34:30.273Z",
+      "content_hash": "b579907a376dba690802428bda98772f52ba09de6ee055214dbf18977bf1be5d",
+      "verified_at": "2026-11-17T22:56:28.383Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:34:30.273Z"
+      "last_updated": "2026-11-17T22:56:28.383Z"
     },
     "autotrust/AutoTrust-Decider-Pro-Vision-27B": {
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",

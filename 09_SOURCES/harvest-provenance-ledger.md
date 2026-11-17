@@ -10770,3 +10770,5 @@ Every entry in this ledger must capture:
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `01b9fd85` | Multi-dimensional audit evidence | 2026-11-17T22:39:51.256Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `497534cd` | Multi-dimensional audit evidence | 2026-11-17T22:40:00.200Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `b7d38137` | Multi-dimensional audit evidence | 2026-11-17T22:40:03.630Z |
+| `learn-github-jithin-sabu-purge-app` | `https://github.com/jithin-sabu/purge-app` | `6e5c3d30` | Multi-dimensional audit evidence | 2026-11-17T22:56:28.375Z |
+| `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-17T22:56:48.548Z |

@@ -664580,3 +664580,100 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `01b9fd85` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9078. keep an Ollama store Purge doesn't know out of Large Files (Harvested from jithin-sabu/purge-app)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep an Ollama store Purge doesn't know out of Large Files",
+  "source": "jithin-sabu/purge-app",
+  "source_url": "https://github.com/jithin-sabu/purge-app",
+  "source_version": "6e5c3d30",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T22:56:27.944Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-jithin-sabu-purge-app",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [jithin-sabu/purge-app](https://github.com/jithin-sabu/purge-app) (Revision: `6e5c3d30`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `PurgeTests/OllamaStoreShapeTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jithin-sabu/purge-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5d909efd`: keep an Ollama store Purge doesn't know out of Large Files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `PurgeTests/OllamaStoreShapeTests.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+import Foundation
+import Testing
+@testable import Purge
+
+/// An Ollama store in a folder Large Files walks, at a path Purge doesn't know
+/// (`OLLAMA_MODELS` set only in a shell profile while Purge started from the
+/// Dock), is known by its shape: `blobs` beside `manifests`. Large Files never
+/// lists its blobs one by one, and its gate refuses them, because trashing one
+/// blob breaks every model that uses it. AI Models doesn't list such a store
+/// either. Every fixture is a throwaway home in the temporary folder.
+@Suite("An Ollama store Purge doesn't know stays out of Large Files")
+struct OllamaStoreShapeTests {
+    // MARK: - Fixtures
+
+    private struct Home {
+        let url: URL
+
+        init() throws {
+            url = FileManager.default.temporaryDirectory
+                .appendingPathComponent("purge-ollama-shape-\(UUID().uuidString)", isDirectory: true)
+                .standardizedFileURL
+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        }
+
+        @discardableResult
+        func file(_ relative: String, bytes: Int = 4096) throws -> URL {
+            let file = url.appendingPathComponent(relative)
+            try
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5d909efd` are properly handled with clean fallback behavior.

@@ -10737,3 +10737,5 @@
 | `CYCLE-20261117-Z5JO` | `2026-11-17T22:39:51.252Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9077` | Yes (`a1ab1a81...`) |
 | `CYCLE-20261117-ZCG4` | `2026-11-17T22:40:00.196Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`472bc827...`) |
 | `CYCLE-20261117-ZF3E` | `2026-11-17T22:40:03.626Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md` | Yes (`f4aaf720...`) |
+| `CYCLE-20261117-KIXF` | `2026-11-17T22:56:28.371Z` | `jithin-sabu/purge-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9078` | Yes (`b579907a...`) |
+| `CYCLE-20261117-KYHS` | `2026-11-17T22:56:48.544Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`ca7e92e6...`) |

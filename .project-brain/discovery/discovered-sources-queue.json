@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T22:40:07.032Z",
+  "updated_at": "2026-11-17T22:56:51.995Z",
   "stats": {
-    "total_discovered": 5172,
-    "approved_pending_harvest": 4883,
+    "total_discovered": 5177,
+    "approved_pending_harvest": 4888,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4868,
+      "COMMUNITY_AND_EXPERT": 4873,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -111782,6 +111782,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
         "fileName": "google-tcmalloc-learnings.md"
+      }
+    },
+    "SRC-E09BF8A3FB5F": {
+      "id": "SRC-E09BF8A3FB5F",
+      "url": "https://github.com/jithin-sabu/purge-app/issues/318",
+      "title": "https://github.com/jithin-sabu/purge-app/issues/318",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:56:51.866Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-5751126DA508": {
+      "id": "SRC-5751126DA508",
+      "url": "https://github.com/jithin-sabu/purge-app/issues/395",
+      "title": "https://github.com/jithin-sabu/purge-app/issues/395",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:56:51.899Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-0896EBD2F52E": {
+      "id": "SRC-0896EBD2F52E",
+      "url": "https://github.com/jithin-sabu/purge-app/pull/396",
+      "title": "https://github.com/jithin-sabu/purge-app/pull/396",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:56:51.932Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-BA9C23DC8555": {
+      "id": "SRC-BA9C23DC8555",
+      "url": "https://github.com/jithin-sabu/purge-app/issues/362",
+      "title": "https://github.com/jithin-sabu/purge-app/issues/362",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:56:51.964Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-25EDA30E9EDC": {
+      "id": "SRC-25EDA30E9EDC",
+      "url": "https://github.com/jithin-sabu/purge-app/pull/363",
+      "title": "https://github.com/jithin-sabu/purge-app/pull/363",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:56:51.995Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
       }
     }
   }

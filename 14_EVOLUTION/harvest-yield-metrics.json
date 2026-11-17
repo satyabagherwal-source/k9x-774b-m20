@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T22:40:03.648Z",
-  "total_cycles_completed": 10289,
-  "total_learnings_persisted": 10289,
-  "total_rules_promoted": 9824,
+  "last_updated": "2026-11-17T22:56:48.553Z",
+  "total_cycles_completed": 10291,
+  "total_learnings_persisted": 10291,
+  "total_rules_promoted": 9825,
   "history": [
-    {
-      "timestamp": "2026-11-17T10:51:32.017Z",
-      "repository": "zulip/zulip",
-      "learningId": "learn-github-zulip-zulip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T10:51:39.831Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T11:09:41.420Z",
       "repository": "ntex-rs/ntex",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-17T22:40:03.648Z",
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T22:56:28.380Z",
+      "repository": "jithin-sabu/purge-app",
+      "learningId": "learn-github-jithin-sabu-purge-app",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T22:56:48.553Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
