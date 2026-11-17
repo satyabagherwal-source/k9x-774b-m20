@@ -10409,3 +10409,5 @@
 | `CYCLE-20261117-U8UF` | `2026-11-17T02:32:18.759Z` | `Viggle/Viggle-Remake` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | Yes (`4352be78...`) |
 | `CYCLE-20261117-U8XQ` | `2026-11-17T02:32:18.878Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8837` | Yes (`f9ca6a7c...`) |
 | `CYCLE-20261117-UCFR` | `2026-11-17T02:32:23.415Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8838` | Yes (`3b21acf5...`) |
+| `CYCLE-20261117-I9SS` | `2026-11-17T02:50:59.740Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8839, Rule 8840, Rule 8841` | Yes (`559ecc8d...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T02:51:31.188Z` | `gitoxidelabs-gitoxide` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-ABC3C562` [Domain J] | Yes (`ec4f0ca9...`) |

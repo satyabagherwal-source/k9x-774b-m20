@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T02:32:27.833Z",
-  "total_records": 1398,
+  "last_updated": "2026-11-17T02:51:33.094Z",
+  "total_records": 1401,
   "domains": {
     "A": {
       "total": 9,
@@ -965,7 +965,7 @@
       ]
     },
     "H": {
-      "total": 309,
+      "total": 311,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1275,7 +1275,9 @@
         "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-core-invariants",
         "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-learnings-core-invaria"
       ]
     },
     "I": {
@@ -1356,7 +1358,7 @@
       ]
     },
     "J": {
-      "total": 21,
+      "total": 22,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1378,7 +1380,8 @@
         "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings",
         "DOM-J-D8ADF367",
         "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-learnings-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-learnings-core-invariants",
+        "DOM-J-ABC3C562"
       ]
     },
     "K": {
@@ -7213,8 +7216,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "29d9159ec3458f33222815ad9ba0983532a12bd5f122d34d90956ecba027498e",
-      "created_at": "2026-11-17T01:41:55.072Z"
+      "content_hash": "a7478f9cb468127c511b2faaa78786b39ba7e790b16ebae6afc48066a9b9aa2d",
+      "created_at": "2026-11-17T02:51:32.436Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -22569,8 +22572,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ab41857b7af7f3c8c5bfe870cc1b4dd881a00ff162901f7a1471f4ee3edae693",
-      "created_at": "2026-11-17T01:41:55.556Z"
+      "content_hash": "2ef90b56b9b77a6f7aab3916eaa36d5417e4c9408e24a8be71dfb59c351b3c81",
+      "created_at": "2026-11-17T02:51:33.094Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -24666,6 +24669,58 @@
       "repository": "typewhisper-typewhisper-mac-learnings",
       "content_hash": "308fcb0de9608591beae9688e22d6cb6c1509c9b044bbd00f0c06952a25ae19e",
       "created_at": "2026-11-17T02:32:27.833Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: GitoxideLabs/gitoxide Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gitoxidelabs-gitoxide-technical-construction-intelligence-gitoxidelabs-gitoxide-.md",
+      "repository": "GitoxideLabs/gitoxide",
+      "content_hash": "0441eed9e7651c93cbde66a5eec32ca96e621767c5224826e8062f12a1f4c303",
+      "created_at": "2026-11-17T02:51:00.239Z"
+    },
+    "DOM-J-ABC3C562": {
+      "record_id": "DOM-J-ABC3C562",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "Kernel Ancestor Descriptor Starvation in Darwin FSEvents (BUG-GIX-NOTIFY-02)",
+      "content": "High-level OS filesystem monitoring flags frequently violate process sandboxing invariants. Prefer minimal native boundaries backed by periodic non-scanning sanity assertions.",
+      "content_hash": "ec4f0ca9b84eac1fc788dc2e9a362a17ae5f9cedb734f7c1a1f969e9c7d4ddd5",
+      "summary": "Reliance on native recursive ancestor watching (`WatchRoot`) instead of watching the minimal canonical root and performing explicit, periodi -> High-level OS filesystem monitoring flags frequently violate process sandboxing invariants. Prefer minimal native boundaries backed by perio",
+      "provenance": {
+        "source_uri": "project://gitoxidelabs-gitoxide/gitoxidelabs-gitoxide-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T02:51:03.093Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (gitoxidelabs-gitoxide)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `ad30af9d`, PR #3211 references."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T02:51:31.158Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gitoxidelabs-gitoxide-learnings-technical-construction-intelligence-gitoxidelabs.md",
+      "repository": "gitoxidelabs-gitoxide-learnings",
+      "content_hash": "2b827b302fefa55fd12bf3b0e91a501c3290feddfa61083aa822ca3e7b5163de",
+      "created_at": "2026-11-17T02:51:31.793Z"
     }
   }
 }

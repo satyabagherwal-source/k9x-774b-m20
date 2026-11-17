@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T02:32:28.026Z",
+  "last_updated": "2026-11-17T02:51:33.361Z",
   "total_verified_learnings": 8829,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19608,
+  "total_items": 19616,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "16503e5b315c5d3092cce6b8956051f47760cd631875cc99148916cd13a51942",
+      "content_hash": "9644a5a5d9273e3560868322182f71650544f58367258b5a3ad074af4289cdd7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T01:41:55.658Z"
+      "persisted_at": "2026-11-17T02:51:33.233Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "59b3998e472e54f5f9752ad5c2a669b4fe0b628cf2a235ead537ef8259254aad",
+      "content_hash": "c247e74cc4299dc65b0783c28e207ae907065c70a18b3d904030bab7594e9d1c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T01:41:55.748Z"
+      "persisted_at": "2026-11-17T02:51:33.361Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "29d9159ec3458f33222815ad9ba0983532a12bd5f122d34d90956ecba027498e",
+      "content_hash": "a7478f9cb468127c511b2faaa78786b39ba7e790b16ebae6afc48066a9b9aa2d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T01:41:55.072Z"
+      "persisted_at": "2026-11-17T02:51:32.436Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "29912a03b34e7122fe9f12ad36a7f8a3d1350b39835e753177e07d90e0be59be",
+      "content_hash": "83e03e918e8d0c7a0fa8a35a0365aa9072065b334d67fb59a784c88a82d8a573",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T01:41:55.176Z"
+      "persisted_at": "2026-11-17T02:51:32.576Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214876,13 +214876,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-1FO6-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-IYX9-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9641d6c47ae27f2a34c1257007d7961dac50e43d0281bf425d439786e638150c",
+      "content_hash": "33ad77d71da3f0647d3673062042c3e30936ea8621d3d80310cf9ce135881545",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T01:41:54.968Z"
+      "persisted_at": "2026-11-17T02:51:32.313Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -242226,14 +242226,29 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "154ffbc6",
-      "content_hash": "20381fcb29238b7d094e4b0e5f6232f9e4a588f427f07dbe9681ad68b677ac05",
+      "source_version": "ab7c5dc0",
+      "content_hash": "559ecc8d64813df2fb55dbabf7c2655dc5f5471a26e77352f565013f0aa72f8b",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
         {
           "number": 8596,
           "title": "reject extra tokens after implicit values",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8839,
+          "title": "Invariant Preservation Across Reference-Counted Container Conversions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8840,
+          "title": "Elimination of Ancestor Descriptors in Native Filesystem Watches",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8841,
+          "title": "Strict Semantic Error Classification over Opaque Propagation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -242242,7 +242257,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T08:48:55.154Z",
+      "verified_at": "2026-11-17T02:50:59.580Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242296,10 +242311,10 @@
       "relative_path": "08_VERIFICATION/gitoxidelabs-gitoxide-verification-protocol-empirical-defect-shield-for-gitoxide.md",
       "title": "Verification Protocol: Empirical Defect Shield for GitoxideLabs/gitoxide",
       "repository": "GitoxideLabs/gitoxide",
-      "source_version": "154ffbc6",
-      "content_hash": "3db474b2277d9e452b2d0f1b66a887fc28906d2ee737e38965a4c62e8ff8b3da",
+      "source_version": "ab7c5dc0",
+      "content_hash": "fb49ca344b5c125889daff5ef543d21f64c8a4db7aae96dbf5817a7f5c1e804a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T08:48:55.631Z"
+      "persisted_at": "2026-11-17T02:51:00.345Z"
     },
     "learn-github-melnixdev-seo-crawl-audit": {
       "learning_id": "learn-github-melnixdev-seo-crawl-audit",
@@ -242478,9 +242493,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gitoxidelabs-gitoxide-learnings",
       "repository": "gitoxidelabs-gitoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "7997468186731a86bc670c3853a0ad561d966d1acf949d1e4f40ec3422d1ceeb",
+      "content_hash": "970bcb028845262d1bd18389499582a1de000eb92d15251f7c8727a207d22a88",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T08:52:27.647Z"
+      "persisted_at": "2026-11-17T02:51:31.935Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv": {
       "item_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv",
@@ -250830,13 +250845,13 @@
       "item_id": "candidate_directive-engine-detect-uv-run-script-shebangs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-1G1O-engine-detect-uv-run-script-shebangs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-IZFI-engine-detect-uv-run-script-shebangs.md",
       "title": "engine): detect uv run script shebangs",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a8e652c5c03669b55a7ad05f56fbf5cacf7a141ba27d6d52e4aef5d4b149eecb",
+      "content_hash": "6f38885459b9e589925a177d7839a6e32f1cc047139824b3f3676ceae39688dd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T01:41:55.452Z"
+      "persisted_at": "2026-11-17T02:51:32.958Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -250846,9 +250861,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab41857b7af7f3c8c5bfe870cc1b4dd881a00ff162901f7a1471f4ee3edae693",
+      "content_hash": "2ef90b56b9b77a6f7aab3916eaa36d5417e4c9408e24a8be71dfb59c351b3c81",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T01:41:55.556Z"
+      "persisted_at": "2026-11-17T02:51:33.094Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -261564,6 +261579,108 @@
       "content_hash": "064682221878bbd1934012727c1f55a985e247b3d63b7ab2bdeaedb118e3056b",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T02:32:28.026Z"
+    },
+    "rule-8839": {
+      "learning_id": "rule-8839",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8839,
+      "title": "Invariant Preservation Across Reference-Counted Container Conversions",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "ab7c5dc0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T02:50:59.580Z"
+    },
+    "rule-8840": {
+      "learning_id": "rule-8840",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8840,
+      "title": "Elimination of Ancestor Descriptors in Native Filesystem Watches",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "ab7c5dc0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T02:50:59.580Z"
+    },
+    "rule-8841": {
+      "learning_id": "rule-8841",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8841,
+      "title": "Strict Semantic Error Classification over Opaque Propagation",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "ab7c5dc0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T02:50:59.580Z"
+    },
+    "candidate_directive-invariant-preservation-across-reference-counted-container-conversions": {
+      "item_id": "candidate_directive-invariant-preservation-across-reference-counted-container-conversions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IY80-invariant-preservation-across-reference-counted-container-conversions.md",
+      "title": "Invariant Preservation Across Reference-Counted Container Conversions",
+      "repository": "gitoxidelabs-gitoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e129182ea88d0d7be9c01500d097273c9c92027685a5b9bda512621d3245323c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T02:51:31.394Z"
+    },
+    "candidate_directive-elimination-of-ancestor-descriptors-in-native-filesystem-watches": {
+      "item_id": "candidate_directive-elimination-of-ancestor-descriptors-in-native-filesystem-watches",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IY81-elimination-of-ancestor-descriptors-in-native-filesystem-watches.md",
+      "title": "Elimination of Ancestor Descriptors in Native Filesystem Watches",
+      "repository": "gitoxidelabs-gitoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6e5001e408170ce2cd380073714d2f0807ae73077eedeafca6b0ce013e30211b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T02:51:31.519Z"
+    },
+    "candidate_directive-strict-semantic-error-classification-over-opaque-propagation": {
+      "item_id": "candidate_directive-strict-semantic-error-classification-over-opaque-propagation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IY82-strict-semantic-error-classification-over-opaque-propagation.md",
+      "title": "Strict Semantic Error Classification over Opaque Propagation",
+      "repository": "gitoxidelabs-gitoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0ac36c3693e8b2d284528710d0129adc01716aece2322ae5c096a51e7e5822eb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T02:51:31.657Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gitoxidelabs-gitoxide-technical-construction-intelligence-gitoxidelabs-gitoxide-.md",
+      "title": "Technical Construction Intelligence: GitoxideLabs/gitoxide Core Invariants",
+      "repository": "GitoxideLabs/gitoxide",
+      "source_version": "ab7c5dc0",
+      "content_hash": "0441eed9e7651c93cbde66a5eec32ca96e621767c5224826e8062f12a1f4c303",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T02:51:00.239Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gitoxidelabs-gitoxide-learnings-technical-construction-intelligence-gitoxidelabs.md",
+      "title": "Technical Construction Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
+      "repository": "gitoxidelabs-gitoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2b827b302fefa55fd12bf3b0e91a501c3290feddfa61083aa822ca3e7b5163de",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T02:51:31.793Z"
     }
   },
   "ai-builder-brain": {

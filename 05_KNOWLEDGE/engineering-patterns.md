@@ -642141,3 +642141,351 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `6c26a50e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8839. Invariant Preservation Across Reference-Counted Container Conversions (Harvested from GitoxideLabs/gitoxide)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Preservation Across Reference-Counted Container Conversions",
+  "source": "GitoxideLabs/gitoxide",
+  "source_url": "https://github.com/GitoxideLabs/gitoxide",
+  "source_version": "ab7c5dc0",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T02:50:58.317Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gitoxidelabs-gitoxide",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide) (Revision: `ab7c5dc0`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When transforming a resource handle or proxy object between concurrency boundaries (e.g., converting a thread-local `Rc`-backed handle to a multi-threaded `Arc`-backed handle via an `into_arc()` constructor), the constructor **MUST** exhaustively propagate and replicate all operational policies, caches, filters, and safety tokens from the source handle. It **MUST NOT** instantiate the new handle with default configuration values unless the type system explicitly drops the underlying capabilities.
+
+**WHY**:
+Resetting policies during container migration (such as dropping `ignore_replacements`, pack-unload prevention locks, or recursion depth caps) causes silent divergence in domain-level reads. An `Arc`-migrated handle querying an object graph will suddenly read raw commits instead of replaced commits, or drop mapped memory windows for deleted packs during concurrent GC cycles, causing panics or data corruption.
+
+**WHEN TO APPLY**:
+Apply in any high-concurrency Rust or C++ system using handle-based resource wrappers where thread-local contexts (`Rc`, single-threaded handles) are promoted to cross-thread contexts (`Arc`, thread pools).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Production Pattern from gix-odb/src/store_impls/dynamic/handle.rs
+impl super::Handle<std::rc::Rc<super::Store>> {
+    /// Convert an Rc-backed handle into an Arc-backed thread-safe handle
+    /// while preserving all operational policies and safety tokens.
+    pub fn into_arc(self) -> std::io::Result<super::Handle<std::sync::Arc<super::Store>>> {
+        let loose_compression = self.loose_compression;
+        let store = std::sync::Arc::new(super::Store::try_from(self.store_ref())?);
+        let mut cache = store.to_handle_arc();
+        
+        // EXPLICIT POLICY PROPAGATION (Zero default leakage)
+        cache.refresh = self.refresh;
+        cache.ignore_replacements = self.ignore_replacements;
+        cache.max_recursion_depth = self.max_recursion_depth;
+        cache.loose_compression = loose_compression;
+        
+        // Preserve memory stability tokens
+        if matches!(self.token.as_ref(), Some(Mode::KeepDeletedPacksAvailable)) {
+            cache.prevent_pack_unload();
+        }
+        
+        Ok(cache)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// CRITICAL BUG: Do not construct fresh handles without copying handle invariants
+impl super::Handle<std::rc::Rc<super::Store>> {
+    pub fn into_arc(self) -> std::io::Result<super::Handle<std::sync::Arc<super::Store>>> {
+        let store = std::sync::Arc::new(super::Store::try_from(self.store_ref())?);
+        // BUG: `to_handle_arc()` populates default policies.
+        // `ignore_replacements` resets to default `false`.
+        // `token` is dropped, allowing packs to be unmapped under active reads!
+        Ok(store.to_handle_arc())
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce handle policy parity tests on conversion:
+```rust
+#[test]
+fn handle_conversion_preserves_policy_invariants() {
+    let mut handle = odb_at("path").unwrap();
+    handle.prevent_pack_unload();
+    handle.ignore_replacements = true;
+    
+    let converted = handle.clone().into_arc().expect("conversion succeeds");
+    assert_eq!(converted.ignore_replacements, handle.ignore_replacements);
+    assert_eq!(converted.token.is_some(), handle.token.is_some());
+}
+```
+
+---
+
+
+---
+
+## 8840. Elimination of Ancestor Descriptors in Native Filesystem Watches (Harvested from GitoxideLabs/gitoxide)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Elimination of Ancestor Descriptors in Native Filesystem Watches",
+  "source": "GitoxideLabs/gitoxide",
+  "source_url": "https://github.com/GitoxideLabs/gitoxide",
+  "source_version": "ab7c5dc0",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T02:50:58.809Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gitoxidelabs-gitoxide",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide) (Revision: `ab7c5dc0`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Filesystem watchers monitoring deeply nested repositories **MUST NOT** register native kernel watches on ancestral directory paths above the verified canonical repository boundary (e.g., using macOS `kFSEventStreamCreateFlagWatchRoot` indiscriminately). Instead, watchers **MUST** resolve canonical physical roots, monitor only the reduced root paths, and validate root identity stability using periodic, non-scanning stat fences.
+
+**WHY**:
+Registering ancestor directory descriptors via OS-level APIs (such as Darwin's FSEvents `WatchRoot`) retains open file descriptors on all parent and sibling directories. In systems running concurrent repository workers, this leads to rapid file descriptor exhaustion (`EMFILE`), prevents clean unmounting of parent disks, and triggers duplicate cross-talk events when sibling directories are modified.
+
+**WHEN TO APPLY**:
+Filesystem event monitors, file watchers, language servers, and Git background workers across Linux (`inotify`), macOS (`FSEvents`), and Windows.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Production Pattern from gix-notify/src/backend/fsevents/mod.rs
+// Loop guard with non-scanning stat check and timeout handling:
+let mut checked = Instant::now();
+loop {
+    if options
+        .root_check_interval
+        .is_some_and(|interval| checked.elapsed() >= interval)
+    {
+        // Non-scanning O(1) inode/dev check on reduced roots
+        let _ = check_roots(&mut stream, &sender);
+        checked = Instant::now();
+    }
+    
+    let timeout = options
+        .root_check_interval
+        .map(|interval| interval.saturating_sub(checked.elapsed()));
+        
+    let command = match timeout {
+        Some(t) => receive.recv_timeout(t),
+        None => receive.recv().map_err(|_| mpsc::RecvTimeoutError::Disconnected),
+    };
+    
+    match command {
+        Ok(Command::Replace(watches, reply)) => {
+            // Explicit teardown of previous streams before recreation
+            drop(stream.take());
+            let replacement = Stream::new(&watches, sender.clone())?;
+            stream = Some(replacement);
+            let _ = reply.send(Ok(()));
+        }
+        Ok(Command::Synchronize { directory, generation, deadline, reply }) => {
+            // Delivery fence with pre- and post-validation of root identities
+            let result = check_roots(&mut stream, &sender).and_then(|()| {
+                let s = stream.as_ref().ok_or(SynchronizeError::CoverageLost)?;
+                let sync_res = s.synchronize_at(&directory, generation, deadline);
+                check_roots(&mut stream, &sender)?;
+                sync_res
+            });
+            let _ = reply.send(result);
+        }
+        Err(mpsc::RecvTimeoutError::Timeout) => {},
+        Err(mpsc::RecvTimeoutError::Disconnected) => break,
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Passing native recursive watch-root flags on raw input paths
+let flags = kFSEventStreamCreateFlagWatchRoot | kFSEventStreamCreateFlagFileEvents;
+// BUG: Locks ancestor directories up to `/`, duplicates events across workspaces,
+// leaks kernel descriptors, and leaks unmount locks on parent mount points.
+let stream = FSEventStreamCreate(kCFAllocatorDefault, callback, &ctx, paths, kFSEventStreamEventIdSinceNow, 0.1, flags);
+```
+
+**VERIFICATION METHOD**:
+Automated integration test verifying that replacing a parent folder or creating sibling directories does not trigger watch loss or retain locked directory handles:
+```rust
+#[test]
+fn identity_checks_cover_reduced_native_roots() -> gix_error::TestResult {
+    // Verify that nested logical watches reduce to single canonical directory
+    let stream = Stream::new(&[Watch { path: child, recursive: true }, Watch { path: alias, recursive: false }], sender)?;
+    assert_eq!(stream.roots.len(), 1, "nested logical watches MUST collapse into 1 native root");
+    Ok(())
+}
+```
+
+---
+
+
+---
+
+## 8841. Strict Semantic Error Classification over Opaque Propagation (Harvested from GitoxideLabs/gitoxide)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Strict Semantic Error Classification over Opaque Propagation",
+  "source": "GitoxideLabs/gitoxide",
+  "source_url": "https://github.com/GitoxideLabs/gitoxide",
+  "source_version": "ab7c5dc0",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T02:50:59.321Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gitoxidelabs-gitoxide",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide) (Revision: `ab7c5dc0`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Low-level I/O, parsing, and system-call errors **MUST NOT** be surfaced directly to callers as untyped errors or generic strings. System boundaries **MUST** classify raw failures into formal failure archetypes (`conflict`, `corruption`, `validation`, `allocation_limit`, `not_found`, `resource_exhausted`) while preserving the downcastable source cause chain.
+
+**WHY**:
+Without semantic classification, outer control loops cannot distinguish between:
+1. Malformed caller arguments (`validation` error: do not retry, fail fast).
+2. Transient filesystem race conditions (`conflict` error: reset caches, reload metadata, retry).
+3. On-disk corruption (`corruption` error: mark pack/ref corrupt, abort operation).
+4. Memory budget exhaustion (`allocation_limit` error: back off concurrency).
+Blind retries or misidentifying disk corruption as validation errors creates hard-to-diagnose operational failures.
+
+**WHEN TO APPLY**:
+All systems programming libraries handling I/O, binary decoding, OS IPC, and network transactions.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Production Pattern from gix-notify/src/backend/inotify/mounts.rs & fsevents/mounts.rs
+pub(super) fn snapshot(watches: &BTreeMap<PathBuf, bool>) -> Result<Snapshot> {
+    let mut data = Vec::new();
+    let read_result = std::fs::File::open("/proc/self/mountinfo")
+        .and_then(|file| file.take(MAX_BYTES + 1).read_to_end(&mut data))
+        .or_raise(|| message("could not read mount table for filesystem notification coverage"))?;
+
+    // Hard ceiling safety checks with semantic classification
+    if data.len() as u64 > MAX_BYTES {
+        return Err(allocation_limit("mount table exceeds the certification budget").raise());
+    }
+
+    from_bytes(&data, watches)
+        .or_raise(|| message("could not parse mount table for filesystem notification coverage"))
+}
+
+// Internal parser mapping:
+fn invalid(msg: &'static str) -> std::io::Error {
+    std::io::Error::new(std::io::ErrorKind::InvalidData, corruption(msg))
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Opaque I/O or String mapping losing error semantics
+fn parse_mount_data(data: &[u8]) -> Result<Snapshot, String> {
+    if data.len() > 65536 {
+        return Err("too big".into()); // Stringly typed: caller cannot handle programmatically
+    }
+    // Losing OS error code or remapping everything into std::io::ErrorKind::Other
+    parse(data).map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))
+}
+```
+
+**VERIFICATION METHOD**:
+Assertion tests verifying downcasting fidelity and semantic predicate correctness:
+```rust
+#[test]
+fn native_error_classification_preserves_root_cause() {
+    let err = is_local(Path::new("/invalid\0path")).unwrap_err();
+    assert!(err.is_validation(), "NUL byte in path must be classified as validation error");
+    assert!(err.downcast_any_ref::<std::ffi::NulError>().is_some(), "Inner NulError must be recoverable");
+}
+```
+
+---

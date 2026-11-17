@@ -10442,3 +10442,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-viggle-viggle-remake` | `https://huggingface.co/Viggle/Viggle-Remake` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-17T02:32:18.763Z |
 | `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `de00da5d` | Multi-dimensional audit evidence | 2026-11-17T02:32:18.881Z |
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `7e1680a4` | Multi-dimensional audit evidence | 2026-11-17T02:32:23.418Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `ab7c5dc0` | Multi-dimensional audit evidence | 2026-11-17T02:50:59.744Z |
+| `learn-dom-j-abc3c562` | `project://gitoxidelabs-gitoxide` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md` | 2026-11-17T02:51:31.188Z |
