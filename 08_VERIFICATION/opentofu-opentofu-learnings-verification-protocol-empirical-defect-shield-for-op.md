@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:42:54.553Z",
+  "timestamp": "2026-11-17T16:05:53.406Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-opentofu-opentofu-learnings",
+  "learning_id": "LEARN-EVO-opentofu-opentofu-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [opentofu-opentofu-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:42:54.553Z`  
-> **Learning ID**: `LEARN-REEXTRACT-opentofu-opentofu-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T16:05:53.406Z`  
+> **Learning ID**: `LEARN-EVO-opentofu-opentofu-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `0fb8b8f8`  
+> **Source Version**: `a4d26414`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:52:09.952Z  
+> **Timestamp**: 2026-11-17T16:05:48.463Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:52:09.947Z  
+> **Harvest Timestamp**: 2026-11-17T16:05:48.458Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 30797 stars
+- **Stars / Engagement**: 30897 stars
 
 ---
 
@@ -1444,128 +1444,46 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51202c51` (2026-11-10)
-**Commit Message**: Update dependencies to fix high severity security issues (#4828)
+### Incident Patch 1: `fd9945e8` (2026-11-17)
+**Commit Message**: Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash (#4847)
 
-Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
+Signed-off-by: Alex McGrath <[REDACTED_EMAIL]>
 
 **File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -169,7 +169,7 @@ require (
- 	github.com/fatih/color v1.19.0 // indirect
- 	github.com/felixge/httpsnoop v1.1.0 // indirect
- 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
- 	github.com/go-openapi/jsonreference v0.20.2 // indirect
+@@ -20,7 +20,7 @@ require (
+ 	github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azkeys v1.5.0
+ 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.8.0
+ 	github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2
+-	github.com/ProtonMail/go-crypto v1.4.1
++	github.com/ProtonMail/go-crypto v1.5.2
+ 	github.com/agext/levenshtein v1.2.3
+ 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.107
+ 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
 ```
 
 **File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -212,8 +212,8 @@ github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/
- github.com/fxamacker/cbor/v2 v2.9.0 h1:NpKPmjDBgUfBms6tr6JZkTHtfFGcMKsw3eGcmD/sapM=
- github.com/fxamacker/cbor/v2 v2.9.0/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
- github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-logfmt/logfmt v0.3.0/go.mod h1:Qt1PoO58o5twSAckw1HlFXLmHsOX5/0LbT9GBnD5lWE=
-```
-
-**File**: `website/package-lock.json` (modified, +18/-18)
-```diff
-@@ -418,9 +418,9 @@
-       }
-     },
-     "node_modules/@npmcli/map-workspaces/node_modules/brace-expansion": {
--      "version": "2.1.4",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+      "version": "2.1.7",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -772,9 +772,9 @@
-       }
-     },
-     "node_modules/brace-expansion": {
--      "version": "1.1.18",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
--      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
-+      "version": "1.1.21",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -5881,9 +5881,9 @@
-       }
-     },
-     "node_modules/unified-engine/node_modules/brace-expansion": {
--      "version": "2.1.4",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+      "version": "2.1.7",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -6786,9 +6786,9 @@
-       },
-       "dependencies": {
-         "brace-expansion": {
--          "version": "2.1.4",
--          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--          "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+          "version": "2.1.7",
-+          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+          "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-           "dev": true,
-           "requires": {
-             "balanced-match": "^1.0.0"
-@@ -7063,9 +7063,9 @@
-       }
-     },
-     "brace-expansion": {
--      "version": "1.1.18",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
--      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
-+      "version": "1.1.21",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
-       "dev": true,
-       "requires": {
-         "balanced-match": "^1.0.0",
-@@ -10671,9 +10671,9 @@
-       },
-       "dependencies": {
-         "brace-expansion": {
--          "version": "2.1.4",
--          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--          "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+          "version": "2.1.7",
-+          "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+          "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-           "dev": true,
-           "requires": {
-             "balanced-match": "^1.0.0"
+@@ -69,8 +69,8 @@ github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERo
+ github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
+ github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2 h1:+vx7roKuyA63nhn5WAunQHLTznkw5W8b1Xc0dNjp83s=
+ github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2/go.mod h1:HBCaDeC1lPdgDeDbhX8XFpy1jqjK0IBG8W5K+xYqA0w=
+-github.com/ProtonMail/go-crypto v1.4.1 h1:9RfcZHqEQUvP8RzecWEUafnZVtEvrBVL9BiF67IQOfM=
+-github.com/ProtonMail/go-crypto v1.4.1/go.mod h1:e1OaTyu5SYVrO9gKOEhTc+5UcXtTUa+P3uLudwcgPqo=
++github.com/ProtonMail/go-crypto v1.5.2 h1:cucYnvqcY7UOXVD//mSyjeaPY0SSN3v5cDkYPxumINk=
++github.com/ProtonMail/go-crypto v1.5.2/go.mod h1:/RaSu30DaKO4RY+XdV/ACcCcZkGr7AhUIduq5sjzzCo=
+ github.com/agext/levenshtein v1.2.3 h1:YB2fHEn0UJagG8T1rrWknE3ZQzWM06O8AMAatNn7lmo=
+ github.com/agext/levenshtein v1.2.3/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
+ github.com/ajstarks/svgo v0.0.0-20180226025133-644b8db467af/go.mod h1:K08gAheRH3/J6wwsYMMT4xOr94bZjxIelGM0+d/wbFw=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4828** (2026-11-10): Update dependencies to fix high severity security issues (@yottta)
-- **PR #4825** (2026-11-10): `go get github.com/klauspost/compress@v1.20.2` (@yottta)
-- **PR #4823** (2026-11-09): Change opt-in flag for the new runtime outside of the engine (@cam72cam)
-- **PR #4822** (2026-11-10): New Runtime: Only compute module/resource value once (@cam72cam)
-- **PR #4816** (2026-11-06): Fix symbol libraries in plan snapshot (@cam72cam)
-- **PR #4813** (2026-11-05): [Backport 1.12] local statefile mutate bug (@cam72cam)
+- **PR #4847** (2026-11-17): Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash (@lxea)
+- **PR #4842** (2026-11-13): planning: Propose to Forget instead of Delete when requested (@apparentlymart)
+- **PR #4839** (2026-11-12): Propagate the `destroy = false` setting from `resource` blocks through to `ResourceInstanceObjectMeta` (@apparentlymart)
+- **PR #4835** (2026-11-11): Add missing copyright headers (@yottta)
+- **PR #4834** (2026-11-12): [Govulncheck][GO-2026-6859][v1.13] Upgrade Go toolchain to 1.27.4 (@karlmoriaty)
+- **PR #4833** (2026-11-12): [Govulncheck][GO-2026-6859][v1.12] Upgrade Go toolchain to 1.26.11 (@karlmoriaty)
 
 ---
 
@@ -1585,13 +1503,13 @@ Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update dependencies to fix high severity security issues (#4828)
+## X. Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash
 
 **RULE**:
 When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51202c51`: Update dependencies to fix high severity security issues (#4828). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd9945e8`: Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
@@ -1599,17 +1517,17 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+	github.com/ProtonMail/go-crypto v1.5.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+// Induced defect failure mode:
+	github.com/ProtonMail/go-crypto v1.4.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51202c51` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd9945e8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

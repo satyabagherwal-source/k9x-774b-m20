@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T15:59:57.735Z",
+  "last_updated": "2026-11-17T16:05:49.708Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "cd8ee374022c7362d9cd7baddc2235c631aa861c1975dfb8830305f16952bf1d",
-      "verified_at": "2026-11-13T20:36:53.609Z",
+      "content_hash": "8eb736273935dcc64ce59a0e44af9c90e7cc6d39d664303befd7ff617251ca48",
+      "verified_at": "2026-11-17T16:05:49.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:36:53.609Z"
+      "last_updated": "2026-11-17T16:05:49.438Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "394a29614c90bd6a5154b8dfea0f96410fc214d481c98394bc82a59e3cb4c6ed",
-      "verified_at": "2026-11-16T11:45:16.841Z",
+      "content_hash": "015f62fc61113d1ec72a3ea7290a96a1e239931feab3e49a8e2d7ff9a586ab4b",
+      "verified_at": "2026-11-17T16:05:49.707Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T11:45:16.841Z"
+      "last_updated": "2026-11-17T16:05:49.707Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",
@@ -15621,14 +15621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-kromoss",
-      "content_hash": "dfa722cba28fc0f98492c2c70f51ee302d7e7debda7a652f6c7328901a87bdea",
-      "verified_at": "2026-11-13T03:55:59.588Z",
+      "content_hash": "b39c6d3474614cffb75b6596c8f49e38f4a8cc7806001f0e21f44b5b909756cb",
+      "verified_at": "2026-11-17T16:05:33.520Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T03:55:59.588Z"
+      "last_updated": "2026-11-17T16:05:33.520Z"
     },
     "HemmingwayAI/Hemmingway-1": {
       "repository": "HemmingwayAI/Hemmingway-1",

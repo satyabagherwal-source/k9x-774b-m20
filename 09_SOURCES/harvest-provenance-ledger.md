@@ -10634,3 +10634,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-17T15:59:40.445Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `eb498cf2` | Multi-dimensional audit evidence | 2026-11-17T15:59:55.287Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `2d4d05d7` | Multi-dimensional audit evidence | 2026-11-17T15:59:57.724Z |
+| `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-17T16:05:33.513Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `a4d26414` | Multi-dimensional audit evidence | 2026-11-17T16:05:49.430Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `d15a0866` | Multi-dimensional audit evidence | 2026-11-17T16:05:49.700Z |

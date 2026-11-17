@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T16:00:02.814Z",
+  "last_updated": "2026-11-17T16:05:54.146Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1632,14 +1632,14 @@
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base"
     },
     {
-      "id": "CD-SLVQ",
+      "id": "CD-WJ1C",
       "directive_title": "Empirical Invariant Guard in mod.rs",
-      "source_repo": "embassy-rs-embassy-learnings",
+      "source_repo": "meilisearch-meilisearch-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-SLVQ-empirical-invariant-guard-in-mod-rs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-WJ1C-empirical-invariant-guard-in-mod-rs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-13",
+      "date_staged": "2026-11-17",
       "domain_letter": "D"
     },
     {
@@ -24656,6 +24656,35 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
       "domain_letter": "D"
+    },
+    {
+      "id": "CD-WIJM",
+      "directive_title": "Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash",
+      "source_repo": "opentofu-opentofu-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WIJM-bump-go-crypto-to-1-5-2-to-fix-intermittent-tofu-init-crash.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-6492BA",
+      "directive_title": "Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "opentofu-opentofu",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6492BA-bump-go-crypto-to-1-5-2-to-fix-intermitt.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-4B6BA0",
+      "directive_title": "Empirical Invariant Guard in mod.rs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "meilisearch-meilisearch",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4B6BA0-empirical-invariant-guard-in-mod-rs.md",
+      "staged_date": "2026-11-17"
     }
   ]
 }

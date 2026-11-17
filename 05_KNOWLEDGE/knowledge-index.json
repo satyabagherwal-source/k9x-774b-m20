@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T16:00:03.151Z",
-  "total_verified_learnings": 8901,
+  "last_updated": "2026-11-17T16:05:54.382Z",
+  "total_verified_learnings": 8902,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20316,
+  "total_items": 20323,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113797,10 +113797,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "repository": "meilisearch/meilisearch",
-      "source_version": "cdd2e6a7",
-      "content_hash": "5d27303186aacbdc81f00da6c6503459724e12c7065770104fd551bb2edb5350",
+      "source_version": "d15a0866",
+      "content_hash": "f67d265f19ec9f27dd046bdfc71993086966ab2b5cf2225948518a28ca44a7be",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T11:45:17.115Z"
+      "persisted_at": "2026-11-17T16:05:50.029Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch",
@@ -113809,10 +113809,10 @@
       "relative_path": "08_VERIFICATION/meilisearch-meilisearch-verification-protocol-empirical-defect-shield-for-meilis.md",
       "title": "Verification Protocol: Empirical Defect Shield for meilisearch/meilisearch",
       "repository": "meilisearch/meilisearch",
-      "source_version": "cdd2e6a7",
-      "content_hash": "89c3d90637485c0a9aeb4e178942f83e433bbb8f67c0040ce59eb642f4711fb9",
+      "source_version": "d15a0866",
+      "content_hash": "46d11462be43c4d780315a54f73a54ebef6871ec58604c8dc347c1064a8c21a0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T11:45:17.227Z"
+      "persisted_at": "2026-11-17T16:05:50.163Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning",
@@ -113870,9 +113870,9 @@
       "title": "Technical Construction Intelligence: meilisearch-meilisearch-learnings Core Invariants",
       "repository": "meilisearch-meilisearch-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba5b6b0babd0cf98d3b16d18d82cfb2c0930e9bf6325df99b4133b7888bea692",
+      "content_hash": "291c68be3983294f0560e506c75272b3884b4e1c4235e603237cfec973e01779",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T11:45:21.272Z"
+      "persisted_at": "2026-11-17T16:05:54.260Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch-learni",
@@ -113882,9 +113882,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meilisearch-meilisearch-learnings",
       "repository": "meilisearch-meilisearch-learnings",
       "source_version": "HEAD",
-      "content_hash": "52a98b3a626b3bf643bff2dcf41d3a1caac8231877ceded34612f7aa00426078",
+      "content_hash": "0ae8f9809101a6ac7dfb7fc5f92d4fa9eb4d893fd83892899c45474ece539800",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T11:45:21.384Z"
+      "persisted_at": "2026-11-17T16:05:54.382Z"
     },
     "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant",
@@ -213048,13 +213048,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-mod-rs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SLVQ-empirical-invariant-guard-in-mod-rs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WJ1C-empirical-invariant-guard-in-mod-rs.md",
       "title": "Empirical Invariant Guard in mod.rs",
-      "repository": "embassy-rs-embassy-learnings",
+      "repository": "meilisearch-meilisearch-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf3a6ae8a57b33b4ec48b193f82f339605b31d18a3261ed22834a0995c615301",
+      "content_hash": "8d7d5ff6a8667337e89df1f19a2d797a559ad20656cf950604dbc0cfeafd993a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T19:40:07.239Z"
+      "persisted_at": "2026-11-17T16:05:54.146Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-core-invariants",
@@ -214819,14 +214819,19 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "7ca6e772",
-      "content_hash": "cd8ee374022c7362d9cd7baddc2235c631aa861c1975dfb8830305f16952bf1d",
+      "source_version": "a4d26414",
+      "content_hash": "8eb736273935dcc64ce59a0e44af9c90e7cc6d39d664303befd7ff617251ca48",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
         {
           "number": 8376,
           "title": "Propose to Forget instead of Delete when requested",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8995,
+          "title": "Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -214835,7 +214840,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:36:53.465Z",
+      "verified_at": "2026-11-17T16:05:49.241Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214877,10 +214882,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
       "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
       "repository": "opentofu/opentofu",
-      "source_version": "7ca6e772",
-      "content_hash": "3fdf940829925b8f120020799e92918df7da75244aa953afc5012a1b005d85f7",
+      "source_version": "a4d26414",
+      "content_hash": "18fe4648f27b64b02b25a80fb73d34a30d27968094bc53aa80c7c7f820bb691b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T20:36:53.858Z"
+      "persisted_at": "2026-11-17T16:05:49.753Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu",
@@ -214889,10 +214894,10 @@
       "relative_path": "08_VERIFICATION/opentofu-opentofu-verification-protocol-empirical-defect-shield-for-opentofu-ope.md",
       "title": "Verification Protocol: Empirical Defect Shield for opentofu/opentofu",
       "repository": "opentofu/opentofu",
-      "source_version": "7ca6e772",
-      "content_hash": "9d53f2b4dbf04d4ed3512119241ae5bdddc7418c8394b64d25632373fcc2a288",
+      "source_version": "a4d26414",
+      "content_hash": "29dd751da0de9cebdea8293f5cf301bcaef09b7cc3704e9efab37c69b0533f27",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T20:36:53.950Z"
+      "persisted_at": "2026-11-17T16:05:49.905Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
@@ -272271,6 +272276,107 @@
       "content_hash": "078146570cea047858378bb58325a2f0b186f1dfae936f18e0506a059d6ba375",
       "domain_letter": "G",
       "persisted_at": "2026-11-17T16:00:02.974Z"
+    },
+    "learn-huggingface-lodestones-kromoss": {
+      "learning_id": "learn-huggingface-lodestones-kromoss",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lodestones/Kromoss",
+      "repository": "lodestones/Kromoss",
+      "slug": "hf-lodestones-kromoss",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/lodestones/Kromoss",
+      "source_version": "hf-lodestones-kromoss",
+      "content_hash": "b39c6d3474614cffb75b6596c8f49e38f4a8cc7806001f0e21f44b5b909756cb",
+      "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T16:05:33.322Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-kromoss-research-knowledge-intelligence-lodestones-kromoss-core-in.md",
+      "title": "Research & Knowledge Intelligence: lodestones/Kromoss Core Invariants",
+      "repository": "lodestones/Kromoss",
+      "source_version": "hf-lodestones-kromoss",
+      "content_hash": "0912c9583420e36d457144aef25bf2fa3868ac3fb85c2b108000964911068cf3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:05:33.685Z"
+    },
+    "rule-8995": {
+      "learning_id": "rule-8995",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8995,
+      "title": "Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "a4d26414",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:05:49.241Z"
+    },
+    "candidate_directive-bump-go-crypto-to-1-5-2-to-fix-intermittent-tofu-init-crash": {
+      "item_id": "candidate_directive-bump-go-crypto-to-1-5-2-to-fix-intermittent-tofu-init-crash",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WIJM-bump-go-crypto-to-1-5-2-to-fix-intermittent-tofu-init-crash.md",
+      "title": "Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash",
+      "repository": "opentofu-opentofu-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3215e83ffcaf513f2eba05cc7ca6b9184ea66880c9d447bdbdb0f499fa5a659d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T16:05:53.507Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-lodestones-kromoss-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-lodestones-kromoss-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-kromoss-learnings-research-knowledge-intelligence-hf-lodestones-kr.md",
+      "title": "Research & Knowledge Intelligence: hf-lodestones-kromoss-learnings Core Invariants",
+      "repository": "hf-lodestones-kromoss-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d98e08b8739cc71a1cdf8de51d8b2bcbf3b48ea603e48b341077efa08d986d3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:05:53.102Z"
+    },
+    "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-learnings-architecture-intelligence-opentofu-opentofu-learning.md",
+      "title": "Architecture Intelligence: opentofu-opentofu-learnings Core Invariants",
+      "repository": "opentofu-opentofu-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c2fe342adf2ec88efcc5b1b746c02078dd5aefdf93f196e81d038811456bee35",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T16:05:53.625Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/opentofu-opentofu-learnings-verification-protocol-empirical-defect-shield-for-op.md",
+      "title": "Verification Protocol: Empirical Defect Shield for opentofu-opentofu-learnings",
+      "repository": "opentofu-opentofu-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ef47b1bcc4e9633236492f789a6afa50b839d7f79e8e387ff213f07385408a9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T16:05:53.747Z"
     }
   },
   "ai-builder-brain": {

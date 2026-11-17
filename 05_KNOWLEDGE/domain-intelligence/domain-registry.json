@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T16:00:02.974Z",
-  "total_records": 1595,
+  "last_updated": "2026-11-17T16:05:54.260Z",
+  "total_records": 1598,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 667,
+      "total": 669,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -716,7 +716,9 @@
         "domain_intelligence-research-knowledge-intelligence-lodestones-moss-image-sft-8-steps-dmd-core-invar",
         "domain_intelligence-research-knowledge-intelligence-hf-lodestones-moss-image-sft-8-steps-dmd-learnin",
         "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-1017-uncensored-fp",
-        "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-1017-uncensored"
+        "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-1017-uncensored",
+        "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-lodestones-kromoss-learnings-core-invariants"
       ]
     },
     "E": {
@@ -768,7 +770,7 @@
       ]
     },
     "G": {
-      "total": 291,
+      "total": 292,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1060,7 +1062,8 @@
         "domain_intelligence-architecture-intelligence-redisearch-redisearch-core-invariants",
         "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants",
         "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-learnings-core-invarian"
+        "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-learnings-core-invarian",
+        "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8355,8 +8358,8 @@
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "repository": "meilisearch/meilisearch",
-      "content_hash": "5d27303186aacbdc81f00da6c6503459724e12c7065770104fd551bb2edb5350",
-      "created_at": "2026-11-16T11:45:17.115Z"
+      "content_hash": "f67d265f19ec9f27dd046bdfc71993086966ab2b5cf2225948518a28ca44a7be",
+      "created_at": "2026-11-17T16:05:50.029Z"
     },
     "DOM-D-F5004225": {
       "record_id": "DOM-D-F5004225",
@@ -8424,8 +8427,8 @@
       "title": "Technical Construction Intelligence: meilisearch-meilisearch-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-learnings-technical-construction-intelligence-meilisearc.md",
       "repository": "meilisearch-meilisearch-learnings",
-      "content_hash": "ba5b6b0babd0cf98d3b16d18d82cfb2c0930e9bf6325df99b4133b7888bea692",
-      "created_at": "2026-11-16T11:45:21.272Z"
+      "content_hash": "291c68be3983294f0560e506c75272b3884b4e1c4235e603237cfec973e01779",
+      "created_at": "2026-11-17T16:05:54.260Z"
     },
     "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant",
@@ -9906,8 +9909,8 @@
       "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
       "repository": "opentofu/opentofu",
-      "content_hash": "3fdf940829925b8f120020799e92918df7da75244aa953afc5012a1b005d85f7",
-      "created_at": "2026-11-13T20:36:53.858Z"
+      "content_hash": "18fe4648f27b64b02b25a80fb73d34a30d27968094bc53aa80c7c7f820bb691b",
+      "created_at": "2026-11-17T16:05:49.753Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
@@ -27487,6 +27490,33 @@
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
       "content_hash": "078146570cea047858378bb58325a2f0b186f1dfae936f18e0506a059d6ba375",
       "created_at": "2026-11-17T16:00:02.974Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: lodestones/Kromoss Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-kromoss-research-knowledge-intelligence-lodestones-kromoss-core-in.md",
+      "repository": "lodestones/Kromoss",
+      "content_hash": "0912c9583420e36d457144aef25bf2fa3868ac3fb85c2b108000964911068cf3",
+      "created_at": "2026-11-17T16:05:33.685Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-lodestones-kromoss-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lodestones-kromoss-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-lodestones-kromoss-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-kromoss-learnings-research-knowledge-intelligence-hf-lodestones-kr.md",
+      "repository": "hf-lodestones-kromoss-learnings",
+      "content_hash": "2d98e08b8739cc71a1cdf8de51d8b2bcbf3b48ea603e48b341077efa08d986d3",
+      "created_at": "2026-11-17T16:05:53.102Z"
+    },
+    "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: opentofu-opentofu-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-learnings-architecture-intelligence-opentofu-opentofu-learning.md",
+      "repository": "opentofu-opentofu-learnings",
+      "content_hash": "c2fe342adf2ec88efcc5b1b746c02078dd5aefdf93f196e81d038811456bee35",
+      "created_at": "2026-11-17T16:05:53.625Z"
     }
   }
 }

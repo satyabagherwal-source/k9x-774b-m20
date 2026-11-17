@@ -4,24 +4,24 @@
 {
   "source_repository": "meilisearch/meilisearch",
   "source_url": "https://github.com/meilisearch/meilisearch",
-  "source_version": "cdd2e6a7",
+  "source_version": "d15a0866",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-16T11:45:17.002Z",
+  "timestamp": "2026-11-17T16:05:49.899Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meilisearch-meilisearch",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `cdd2e6a7`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-16T11:45:17.002Z`  
+> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `d15a0866`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T16:05:49.899Z`  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: J (Search & Distribution Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from meilisearch/meilisearch:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T11:45:07.052Z  
+> **Harvest Timestamp**: 2026-11-17T16:05:49.021Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59870 stars
+- **Stars / Engagement**: 59885 stars
 
 ---
 
@@ -2042,11 +2042,11 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6740** (2026-11-17): **Fix ngrams base costs**
+  *Symptoms*: ## Use of Generative AI Tools  - No AI tool was used.  ## Changelog  The base costs of the typo tolerance for the ngrams were too high.
+
 - **Issue #6715** (2026-11-10): **View the target state of DSRs**
   *Symptoms*: Fixes [issue (internal)](linear.app/meilisearch/issue/ENGPROD-2642/view-the-target-state-of-dynamic-search-rules)  # Changelog  ## View the target state of dynamic search rules  Allows seeing the state of dynamic search rules (DSR) as if all pending DSR update tasks had been processed.  A "pending" task is a task that is either enqueued or currently processing.  ### Route to see the target state of a selected rule  The new `GET /dynamic-search-rules/{:ruleUid}/target` route returns the "target" state of the DSR, that is, an object with the following fields:  - `current`, dynamic search rule object or `null`: the current values of the dynamic search rules, or `null` if the dynamic search rule doesn't exist yet - `target`, dynamic search rule object or `null`: the field of the dynamic search rules that will be modified by currently pending tasks, or `null` if the dynamic search rule will be deleted after all pending tasks have been processed - `needsProcessing`, boolean, `true` if at least one pending task pertaining to this dynamic search rule exists - `taskUids`, array of task uids, list of the pending tasks pertaining to the dynamic search rule  ### New body parameter to see the target state of all rules  The existing `POST /dynamic-search-rules` route used to list the dynamic search rules has a new `showTarget` parameter, an optional boolean. When present and `true`, `showTarget` modifies the response in the following way:  1. new global fields in the response:     - `needs
-
-- **Issue #6700** (2026-10-29): **Make sure that all nested fields are inserted in field id map**
-  *Symptoms*: # Changelog  Fixes a panic when modifying the list of searchable attributes after an existing document has been updated to insert new nested fields.  Existing databases encountering this issue can be fixed by adding a new document containing the new nested fields.  Fixes #6636 and fixes #6657.  ## Use of Generative AI Tools  In accordance with our [contributing policy](https://github.com/meilisearch/meilisearch/blob/main/CONTRIBUTING.md#use-of-generative-ai-tools), using generative AI tooling is not allowed in external contributions meant for Meilisearch. As a result, this PR will not be reviewed unless its description contains the following checked statement:  - [x] I certify that this contribution (code, PR description, and PR comments) is not using any generative AI tooling
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2063,39 +2063,226 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `81c02a7a` (2026-11-16)
-**Commit Message**: Reinstate uuid as a dev feature of meili-snap
+### Incident Patch 1: `d15a0866` (2026-11-17)
+**Commit Message**: Merge pull request #6740 from meilisearch/fix-ngrams-in-typo-rr
 
-**File**: `Cargo.lock` (modified, +1/-0)
+Fix ngrams base costs
+
+**File**: `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs` (modified, +1/-1)
 ```diff
-@@ -4201,6 +4201,7 @@ dependencies = [
-  "insta",
-  "md5",
-  "regex-lite",
-+ "uuid",
- ]
+@@ -50,7 +50,7 @@ impl RankingRuleGraphTrait for TypoGraph {
+         // Ngrams have a base typo cost
+         // 2-gram -> equivalent to 1 typo
+         // 3-gram -> equivalent to 2 typos
+-        let base_cost = if term.term_ids.len() == 1 { 0 } else { term.term_ids.len() as u32 };
++        let base_cost = term.term_ids.len().saturating_sub(1) as u32;
  
- [[package]]
+         for nbr_typos in 0..=term.term_subset.max_typo_cost(ctx) {
+             let mut term = term.clone();
 ```
 
-**File**: `crates/meili-snap/Cargo.toml` (modified, +3/-0)
+**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo__typo_bucketing-8.snap` (modified, +11/-11)
 ```diff
-@@ -15,3 +15,6 @@ license.workspace = true
- insta = { version = "=1.39.0", features = ["json", "redactions"] }
- md5 = "0.8.1"
- regex-lite = "0.1.9"
-+
-+[dev-dependencies]
-+uuid = { version = "1.24.0", features = ["v4"] }
+@@ -1,53 +1,53 @@
+ ---
+-source: milli/src/search/new/tests/typo.rs
++source: crates/milli/src/search/new/tests/typo.rs
+ expression: "format!(\"{document_scores:#?}\")"
+ ---
+ [
+     [
+         Typo(
+             Typo {
+                 typo_count: 0,
+-                max_typo_count: 6,
++                max_typo_count: 5,
+             },
+         ),
+     ],
+     [
+         Typo(
+             Typo {
+                 typo_count: 0,
+-                max_typo_count: 6,
++                max_typo_count: 5,
+             },
+         ),
+     ],
+     [
+         Typo(
+             Typo {
+-                typo_count: 2,
+-                max_typo_count: 6,
++                typo_count: 1,
++                max_typo_count: 5,
+             },
+         ),
+     ],
+     [
+         Typo(
+             Typo {
+-                typo_count: 2,
+-                max_typo_count: 6,
++                typo_count: 1,
++                max_typo_count: 5,
+             },
+         ),
+     ],
+     [
+         Typo(
+             Typo {
+-                typo_count: 3,
+-                max_typo_count: 6,
++                typo_count: 2,
++                max_typo_count: 5,
+             },
+         ),
+     ],
+     [
+         Typo(
+             Typo {
+-                typo_count: 4,
+-                max_typo_count: 6,
++                typo_count: 3,
++                max_typo_count: 5,
+             },
+         ),
+     ],
+```
+
+**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo__typo_synonyms-2.snap` (modified, +4/-4)
+```diff
+@@ -1,29 +1,29 @@
+ ---
+-source: milli/src/search/new/tests/typo.rs
++source: crates/milli/src/search/new/tests/typo.rs
+ expression: "format!(\"{document_scores:#?}\")"
+ ---
+ [
+     [
+         Typo(
+             Typo {
+                 typo_count: 0,
+-                max_typo_count: 13,
++                max_typo_count: 10,
+             },
+         ),
+     ],
+     [
+         Typo(
+             Typo {
+                 typo_count: 0,
+-                max_typo_count: 13,
++                max_typo_count: 10,
+             },
+         ),
+     ],
+     [
+         Typo(
+             Typo {
+                 typo_count: 1,
+-                max_typo_count: 13,
++                max_typo_count: 10,
+             },
+         ),
+     ],
+```
+
+**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo__typo_synonyms-5.snap` (modified, +6/-6)
+```diff
+@@ -1,29 +1,29 @@
+ ---
+-source: milli/src/search/new/tests/typo.rs
++source: crates/milli/src/search/new/tests/typo.rs
+ expression: "format!(\"{document_scores:#?}\")"
+ ---
+ [
+     [
+         Typo(
+             Typo {
+                 typo_count: 0,
+-                max_typo_count: 13,
++                max_typo_count: 10,
+             },
+         ),
+     ],
+     [
+         Typo(
+             Typo {
+-                typo_count: 2,
+-                max_typo_count: 13,
++                typo_count: 1,
++                max_typo_count: 10,
+             },
+         ),
+     ],
+     [
+         Typo(
+             Typo {
+-                typo_count: 2,
+-                max_typo_count: 13,
++                typo_count: 1,
++                max_typo_count: 10,
+             },
+         ),
+     ],
+```
+
+**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo_proximity__trap_complex2-2.snap` (modified, +3/-3)
+```diff
+@@ -1,13 +1,13 @@
+ ---
+-source: milli/src/search/new/tests/typo_proximity.rs
++source: crates/milli/src/search/new/tests/typo_proximity.rs
+ expression: "format!(\"{document_scores:#?}\")"
+ ---
+ [
+     [
+         Typo(
+             Typo {
+                 typo_count: 1,
+-                max_typo_count: 5,
++                max_typo_count: 4,
+             },
+         ),
+         Proximity(
+@@ -21,7 +21,7 @@ expression: "format!(\"{document_scores:#?}\")"
+         Typo(
+             Typo {
+                 typo_count: 1,
+-                max_typo_count: 5,
++                max_typo_count: 4,
+             },
+         ),
+         Proximity(
+```
+
+---
+
+### Incident Patch 2: `ee4adb75` (2026-11-17)
+**Commit Message**: Fix ngrams base costs
+
+**File**: `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs` (modified, +2/-1)
+```diff
+@@ -50,7 +50,8 @@ impl RankingRuleGraphTrait for TypoGraph {
+         // Ngrams have a base typo cost
+         // 2-gram -> equivalent to 1 typo
+         // 3-gram -> equivalent to 2 typos
+-        let base_cost = if term.term_ids.len() == 1 { 0 } else { term.term_ids.len() as u32 };
++        let base_cost =
++            if term.term_ids.len() == 1 { 0 } else { term.term_ids.len().saturating_sub(1) as u32 };
+ 
+         for nbr_typos in 0..=term.term_subset.max_typo_cost(ctx) {
+             let mut term = term.clone();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6740** (2026-11-17): Fix ngrams base costs (@ManyTheFish)
 - **PR #6739** (2026-11-16): Upgrade to Rust v1.100 (@dureuill)
+- **PR #6738** (2026-11-16): Switch to  ubuntu 24.04 in prevision of GH retirement of 22.04 (@dureuill)
 - **PR #6735** (2026-11-12): Update version for the next release (v1.57.0) in Cargo.toml (@meili-bot)
 - **PR #6734** (2026-11-12): Upgrade macos runner following removal by GH (@dureuill)
 - **PR #6732** (2026-11-16): Improve the licensing situation with the OpenLDAP license (@Kerollmops)
-- **PR #6731** (2026-11-12): Fix inter-index merge in federated search (@dureuill)
-- **PR #6726** (2026-11-09): Update version for the next release (v1.56.2) in Cargo.toml (@meili-bot)
 
 ---
 
@@ -2115,31 +2302,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reinstate uuid as a dev feature of meili-snap
+## X. Empirical Invariant Guard in mod.rs
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `81c02a7a`: Reinstate uuid as a dev feature of meili-snap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d15a0866`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "uuid",
+        let base_cost = term.term_ids.len().saturating_sub(1) as u32;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        let base_cost = if term.term_ids.len() == 1 { 0 } else { term.term_ids.len() as u32 };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `81c02a7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d15a0866` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

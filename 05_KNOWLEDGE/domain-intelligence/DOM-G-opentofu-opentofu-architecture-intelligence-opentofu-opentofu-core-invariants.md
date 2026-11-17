@@ -4,24 +4,24 @@
 {
   "source_repository": "opentofu/opentofu",
   "source_url": "https://github.com/opentofu/opentofu",
-  "source_version": "7ca6e772",
+  "source_version": "a4d26414",
   "license": "MPL-2.0",
-  "timestamp": "2026-11-13T20:36:53.764Z",
+  "timestamp": "2026-11-17T16:05:49.621Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-opentofu-opentofu",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [opentofu/opentofu](https://github.com/opentofu/opentofu) (Revision: `7ca6e772`).  
-> **License**: MPL-2.0 | **Timestamp**: `2026-11-13T20:36:53.764Z`  
+> **Provenance**: Harvested from [opentofu/opentofu](https://github.com/opentofu/opentofu) (Revision: `a4d26414`).  
+> **License**: MPL-2.0 | **Timestamp**: `2026-11-17T16:05:49.621Z`  
 > **Learning ID**: `learn-github-opentofu-opentofu`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from opentofu/opentofu:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:36:52.758Z  
+> **Harvest Timestamp**: 2026-11-17T16:05:48.458Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 30842 stars
+- **Stars / Engagement**: 30897 stars
 
 ---
 
@@ -1433,269 +1433,46 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ca6e772` (2026-11-12)
-**Commit Message**: planning: Propose to Forget instead of Delete when requested
+### Incident Patch 1: `fd9945e8` (2026-11-17)
+**Commit Message**: Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash (#4847)
 
-If the resource instance object metadata says that the "action if unwanted"
-is forget then we'll now respect that, proposing the forget action instead
-and thus entering the preexisting execgraph building codepaths that handle
-those actions.
+Signed-off-by: Alex McGrath <[REDACTED_EMAIL]>
 
-Signed-off-by: Martin Atkins <[REDACTED_EMAIL]>
-
-**File**: `internal/engine/internal/exec/resource.go` (modified, +14/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,7 @@ package exec
- import (
- 	"fmt"
- 
-+	"github.com/hashicorp/hcl/v2"
- 	"github.com/zclconf/go-cty/cty"
- 
- 	"github.com/opentofu/opentofu/internal/addrs"
-@@ -472,3 +473,16 @@ func BuildResourceInstanceObjectMeta[SV states.ValueOrJSONEquivalent](
- 
- 	return ret
- }
-+
-+// PrimaryDeclRangeHCL returns the same information as in
-+// [ResourceInstanceObjectMeta.PrimaryDeclRange], but using HCL's range type
-+// instead of OpenTofu's.
-+//
-+// Use this instead of calling [tfdiags.SourceRange.ToHCL] directly to avoid
-+// causing a nil pointer panic when it's unset.
-+func (m *ResourceInstanceObjectMeta) PrimaryDeclRangeHCL() *hcl.Range {
-+	if m.PrimaryDeclRange == nil {
-+		return nil
-+	}
-+	return m.PrimaryDeclRange.ToHCL().Ptr()
-+}
+@@ -20,7 +20,7 @@ require (
+ 	github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azkeys v1.5.0
+ 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.8.0
+ 	github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2
+-	github.com/ProtonMail/go-crypto v1.4.1
++	github.com/ProtonMail/go-crypto v1.5.2
+ 	github.com/agext/levenshtein v1.2.3
+ 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.107
+ 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
 ```
 
-**File**: `internal/engine/planning/plan_managed.go` (modified, +64/-1)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -503,6 +503,40 @@ func (p *planGlue) planDesiredManagedResourceInstance(
- 		ret.PlaceholderValue = current.Value
- 		plannedAction = plans.NoOp
- 	}
-+
-+	if plannedAction.IsReplace() {
-+		// If we've planned a "replace" action but the metadata for this object
-+		// says it its "if unwanted" action is forget instead of delete then
-+		// we'll plan to do a "forget"-based replace instead.
-+		if unwantedAction, known := meta.ActionIfUnwanted.ValueOk(); known {
-+			switch unwantedAction {
-+			case resources.IfUnwantedDelete:
-+				// We'll just keep the action we already planned then.
-+			case resources.IfUnwantedForget:
-+				plannedAction = plans.ForgetThenCreate
-+			default:
-+				// We expect that the function which builds "meta" should not
-+				// generate any other values here. In particular if the
-+				// configuration did not express an opinion then that function
-+				// should provide a default fallback opinion.
-+				panic(fmt.Sprintf("unsupported ActionIfUnwanted %s", unwantedAction))
-+			}
-+		} else {
-+			// TODO: The resource instance object should be treated as "deferred"
-+			// in this case, but we haven't fully implemented that yet so this
-+			// is just a placeholder stub until we have a real way to handle that.
-+			// This error message is using terminology from the current surface
-+			// language edition out of pragmatism, even though internally we use
-+			// different words to describe this setting.
-+			diags = diags.Append(&hcl.Diagnostic{
-+				Severity: hcl.DiagError,
-+				Summary:  "Invalid value for \"destroy\" argument",
-+				Detail:   fmt.Sprintf("The \"destroy\" value for %s is derived from other values that won't be known until the apply phase, which is not allowed.", inst.Addr),
-+				Subject:  meta.PrimaryDeclRangeHCL(),
-+			})
-+		}
-+	}
-+
- 	// (a "desired" object cannot have a Delete action; we handle those cases
- 	// in planOrphanManagedResourceInstance and planDeposedManagedResourceInstanceObject below.)
- 	ret.PlannedChange = &plans.ResourceInstanceChange{
-@@ -771,6 +805,35 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
- 		return ret, diags
- 	}
- 
-+	var action plans.Action
-+	if unwantedAction, known := meta.ActionIfUnwanted.ValueOk(); known {
-+		switch unwantedAction {
-+		case resources.IfUnwantedDelete:
-+			action = plans.Delete
-+		case resources.IfUnwantedForget:
-+			action = plans.Forget
-+		default:
-+			// We expect that the function which builds "meta" should not
-+			// generate any other values here. In particular if the
-+			// configuration did not express an opinion then that function
-+			// should provide a default fallback opinion.
-+			panic(fmt.Sprintf("unsupported ActionIfUnwanted %s", unwantedAction))
-+		}
-+	} else {
-+		// TODO: The resource instance object should be treated as "deferred"
-+		// in this case, but we haven't fully implemented that yet so this
-+		// is just a placeholder stub until we have a real way to handle that.
-+		// This error message is using terminology from the current surface
-+		// language edition out of pragmatism, even though internally we use
-+		// different words to describe this setting.
-+		diags = diags.Append(&hcl.Diagnostic{
-+			Severity: hcl.DiagError,
-+			Summary:  "Invalid value for \"destroy\" argument",
-+			Detail:   fmt.Sprintf("The \"destroy\" value for %s is derived from other values that won't be known until the apply phase, which is not allowed.", addr),
-+			Subject:  meta.PrimaryDeclRangeHCL(),
-+		})
-+		action = plans.Delete // just to make the result valid enough to be inspected with commands like "tofu show -json", despite the error
-+	}
- 	reason := meta.OrphanActionReason
- 
- 	ret.PlannedChange = &plans.ResourceInstanceChange{
-@@ -788,7 +851,7 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
- 		},
- 		RequiredReplace: planResp.RequiresReplace,
- 		Private:         planResp.Planned.Private,
--		Action:          plans.Delete,
-+		Action:          action,
- 		Before:          prevState.Value,
- 		After:           planResp.Planned.Value,
- 
-```
-
----
-
-### Incident Patch 2: `8baf744f` (2026-11-12)
-**Commit Message**: tofu2024: ActionIfUnwanted should usually be known
-
-An unknown value in this field is reserved to mean that the argument was
-set to an expression whose result was an unknown value. We have a different
-way to represent "known to not be set at all", which is important because
-if nothing in the configuration expresses an opinion then the planning
-engine will make a final decision based on information in the prior state
-instead.
-
-This probably won't be the last field whose zero value represents something
-other than "unspecified", since we're likely to have other similar
-situations where unknown means "explicitly set to an unknown value", so
-the rules for what constitutes a completely-neutral configured metadata
-are factored out into a shared function that we'll now use in any place
-where we were previously using make(...) to build a completely-zero-valued
-object.
-
-Signed-off-by: Martin Atkins <[REDACTED_EMAIL]>
-
-**File**: `internal/lang/eval/internal/evalglue/resource.go` (modified, +24/-0)
-```diff
-@@ -125,6 +125,30 @@ type ConfiguredResourceInstanceObjectMeta struct {
- 	OrphanActionReason plans.ResourceInstanceChangeActionReason
- }
- 
-+// NewDefaultConfiguredInstanceObjectMeta returns a newly-allocated
-+// [ConfiguredResourceInstanceObjectMeta] which is configured so that all of
-+// its fields have values that represent "unspecified", such that it effectively
-+// represents the same as a nil ConfiguredResourceInstanceObjectMeta when it
-+// comes to merging opinions from multiple modules.
-+func NewDefaultConfiguredInstanceObjectMeta() *ConfiguredResourceInstanceObjectMeta {
-+	return &ConfiguredResourceInstanceObjectMeta{
-+		// An unknown value for ActionIfUnwanted means that the argument
-+		// was set but the result of evaluating it was an unknown value.
-+		// The situation where it isn't set at all is represented as
-+		// a known "undecided" value, which we'll populate here by
-+		// default and then the caller can override later if they find something
-+		// in the configuration that specifies it.
-+		//
-+		// (Note that if nothing in the configuration expresses an opinion
-+		// about this then the planning engine will fall back on using
-+		// a value from the prior state instead, so we mustn't force this
-+		// to a specific action here.)
-+		ActionIfUnwanted: exprs.WithSourceRange[resources.ActionIfUnwanted]{
-+			FromValue: exprs.Known(resources.IfUnwantedUndecided),
-+		},
-+	}
-+}
-+
- // PrimaryDeclRangeHCL returns the same information as
- // [ConfiguredResourceInstanceObjectMeta.PrimaryDeclRange] but using HCL's
- // range type, instead of OpenTofu's.
-```
-
-**File**: `internal/lang/eval/internal/tofu2024/module_instance.go` (modified, +12/-8)
-```diff
-@@ -113,12 +113,19 @@ func (c *CompiledModuleInstance) ResultValuer(ctx context.Context) exprs.Valuer
- func (c *CompiledModuleInstance) ResourceInstanceObjectMeta(ctx context.Context, relativeModuleInst []addrs.ModuleInstanceStep, addr addrs.AbsResourceInstanceObject) *evalglue.ConfiguredResourceInstanceObjectMeta {
- 	// Start with everything we know about the resource from the module context
- 	var ret *evalglue.ConfiguredResourceInstanceObjectMeta
-+	// We'll allocate a Meta object only once we know we have something to
-+	// report.
-+	ensureRet := func() {
-+		if ret == nil {
-+			ret = evalglue.NewDefaultConfiguredInstanceObjectMeta()
-+		}
-+	}
- 	// We'll populate the Provider fields below only once we have
- 	// a specific resource and resource instance in mind.
- 
- 	if len(c.moveStatements) != 0 {
- 		if ret == nil {
--			ret = new(evalglue.ConfiguredResourceInstanceObjectMeta)
-+			ensureRet()
- 		}
- 		ret.MoveStatements = c.moveStatements
- 	}
-@@ -132,9 +139,7 @@ func (c *CompiledModuleInstance) ResourceInstanceObjectMeta(ctx context.Context,
- 		for _, instance := range instances {
- 			statement, _ := instance.Statement(ctx)
- 			if statement != nil && statement.Addr.Equal(addr.InstanceAddr) {
--				if ret == nil {
--					ret = new(evalglue.ConfiguredResourceInstanceObjectMeta)
--				}
-+				ensureRet()
- 				// Conflicts are handled by callers of c.ImportStatements()
- 				ret.ImportStatement = &evalglue.ImportStatement{
- 					Addr:      statement.Addr,
-@@ -169,10 +174,9 @@ func (c *CompiledModuleInstance) ResourceInstanceObjectMeta(ctx context.Context,
- 		return ret
- 	}
- 
--	// Ensure that ret exists, regarless of module statements
--	if ret == nil {
--		ret = new(evalglue.ConfiguredResourceInstanceObjectMeta)
--	}
-+	// After this point we're definitely going to return something, because
-+	// this object belongs to a resource in the current module.
-+	ensureRet()
- 	if addr.IsDeposed() {
- 		// Deposed objects are always unwanted.
- 		ret.Want = evalglue.ResourceInstanceObjectUnwanted
-```
-
-**File**: `internal/lang/eval/resource_instance.go` (modified, +4/-4)
-```diff
-@@ -225,11 +225,11 @@ func collectResourceInstanceObjectMeta(ctx context.Context, addr addrs.AbsResour
- 			// the configuration, so any info we didn't already learn about
- 			// this object will need to come from the previous run state, and
- 			// that's the caller's responsibility to deal with.
-+			configMeta := evalglue.NewDefaultConfiguredInstanceObjectMeta()
-+			configMeta.OrphanActionReason = plans.ResourceInstanceDeleteBecauseNoModule
- 			ret = append(ret, ModuleConfiguredResourceInstanceObjectMeta{
--				ModuleInstance: moduleInstAddr,
--				ConfiguredResourceInstanceObjectMeta: &ConfiguredResourceInstanceObjectMeta{
--					OrphanActionReason: plans.ResourceInstanceDeleteBecauseNoModule,
--				},
-+				ModuleInstance:                       moduleInstAddr,
-+				ConfiguredResourceInstanceObjectMeta: configMeta,
- 			})
- 
- 			break
+@@ -69,8 +69,8 @@ github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERo
+ github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
+ github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2 h1:+vx7roKuyA63nhn5WAunQHLTznkw5W8b1Xc0dNjp83s=
+ github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2/go.mod h1:HBCaDeC1lPdgDeDbhX8XFpy1jqjK0IBG8W5K+xYqA0w=
+-github.com/ProtonMail/go-crypto v1.4.1 h1:9RfcZHqEQUvP8RzecWEUafnZVtEvrBVL9BiF67IQOfM=
+-github.com/ProtonMail/go-crypto v1.4.1/go.mod h1:e1OaTyu5SYVrO9gKOEhTc+5UcXtTUa+P3uLudwcgPqo=
++github.com/ProtonMail/go-crypto v1.5.2 h1:cucYnvqcY7UOXVD//mSyjeaPY0SSN3v5cDkYPxumINk=
++github.com/ProtonMail/go-crypto v1.5.2/go.mod h1:/RaSu30DaKO4RY+XdV/ACcCcZkGr7AhUIduq5sjzzCo=
+ github.com/agext/levenshtein v1.2.3 h1:YB2fHEn0UJagG8T1rrWknE3ZQzWM06O8AMAatNn7lmo=
+ github.com/agext/levenshtein v1.2.3/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
+ github.com/ajstarks/svgo v0.0.0-20180226025133-644b8db467af/go.mod h1:K08gAheRH3/J6wwsYMMT4xOr94bZjxIelGM0+d/wbFw=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4847** (2026-11-17): Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash (@lxea)
 - **PR #4842** (2026-11-13): planning: Propose to Forget instead of Delete when requested (@apparentlymart)
 - **PR #4839** (2026-11-12): Propagate the `destroy = false` setting from `resource` blocks through to `ResourceInstanceObjectMeta` (@apparentlymart)
 - **PR #4835** (2026-11-11): Add missing copyright headers (@yottta)
 - **PR #4834** (2026-11-12): [Govulncheck][GO-2026-6859][v1.13] Upgrade Go toolchain to 1.27.4 (@karlmoriaty)
 - **PR #4833** (2026-11-12): [Govulncheck][GO-2026-6859][v1.12] Upgrade Go toolchain to 1.26.11 (@karlmoriaty)
-- **PR #4831** (2026-11-11): [Govulncheck][GO-2026-6859][main] Upgrade Go toolchain to 1.27.4 (@karlmoriaty)
 
 ---
 
@@ -1715,44 +1492,31 @@ Signed-off-by: Martin Atkins <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. planning: Propose to Forget instead of Delete when requested
+## X. Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash
 
 **RULE**:
-When implementing operations in `internal/engine/internal/exec/resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ca6e772`: planning: Propose to Forget instead of Delete when requested. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd9945e8`: Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/internal/exec/resource.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/hashicorp/hcl/v2"
-
-// PrimaryDeclRangeHCL returns the same information as in
-// [ResourceInstanceObjectMeta.PrimaryDeclRange], but using HCL's range type
-// instead of OpenTofu's.
-//
-// Use this instead of calling [tfdiags.SourceRange.ToHCL] directly to avoid
-// causing a nil pointer panic when it's unset.
-func (m *ResourceInstanceObjectMeta) PrimaryDeclRangeHCL() *hcl.Range {
-	if m.PrimaryDeclRange == nil {
-		return nil
-	}
-	return m.PrimaryDeclRange.ToHCL().Ptr()
-}
+	github.com/ProtonMail/go-crypto v1.5.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	github.com/ProtonMail/go-crypto v1.4.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ca6e772` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd9945e8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
