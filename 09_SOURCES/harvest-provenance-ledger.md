@@ -10736,3 +10736,6 @@ Every entry in this ledger must capture:
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `4122f44f` | Multi-dimensional audit evidence | 2026-11-17T20:25:26.815Z |
 | `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `ad576e32` | Multi-dimensional audit evidence | 2026-11-17T20:25:33.109Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `f16f3c56` | Multi-dimensional audit evidence | 2026-11-17T20:25:38.841Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-17T20:33:06.543Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `a5f06105` | Multi-dimensional audit evidence | 2026-11-17T20:33:09.211Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5523d642` | Multi-dimensional audit evidence | 2026-11-17T20:33:23.023Z |

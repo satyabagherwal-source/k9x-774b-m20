@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T20:25:38.846Z",
-  "total_cycles_completed": 10257,
-  "total_learnings_persisted": 10257,
-  "total_rules_promoted": 9805,
+  "last_updated": "2026-11-17T20:33:23.027Z",
+  "total_cycles_completed": 10260,
+  "total_learnings_persisted": 10260,
+  "total_rules_promoted": 9807,
   "history": [
-    {
-      "timestamp": "2026-11-17T07:40:14.233Z",
-      "repository": "appwrite/appwrite",
-      "learningId": "learn-github-appwrite-appwrite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T07:55:43.737Z",
-      "repository": "Qwen/Qwen3-Embedding-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T07:55:47.319Z",
-      "repository": "laurent22/joplin",
-      "learningId": "learn-github-laurent22-joplin",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T07:55:59.359Z",
       "repository": "apache/shardingsphere",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T20:25:38.846Z",
       "repository": "infiniflow/infinity",
       "learningId": "learn-github-infiniflow-infinity",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T20:33:06.548Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T20:33:09.216Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T20:33:23.027Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

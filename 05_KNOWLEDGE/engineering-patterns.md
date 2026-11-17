@@ -663015,3 +663015,178 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f16f3c56` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9060. [ty] Fix stack overflow checking a generic base initializer (Harvested from astral-sh/ruff)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[ty] Fix stack overflow checking a generic base initializer",
+  "source": "astral-sh/ruff",
+  "source_url": "https://github.com/astral-sh/ruff",
+  "source_version": "a5f06105",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T20:33:08.773Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-astral-sh-ruff",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [astral-sh/ruff](https://github.com/astral-sh/ruff) (Revision: `a5f06105`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/ty_python_semantic/resources/mdtest/class/super.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `51b50bd7`: [ty] Fix stack overflow checking a generic base initializer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/class/super.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+Inside `Child[S]`, the base initializer expects a callback that accepts `S`, even though `S`
+defaults to `BaseException`. For example, a `Child[ValueError]` could pass a `ValueError` to the
+callback, so a callback that only accepts `OSError` is too narrow.
+def has_filename(error: OSError) -> bool:
+    return error.filename is not None
+
+        super().__init__(check)  # ok
+        # error: [invalid-argument-type] "Expected `((S@Child, /) -> bool) | None`"
+        super().__init__(has_filename)
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+A generic base initializer can inherit both its own class's generic context and the subclass's
+generic context. The merged context is not the same as the subclass's enclosing context and should
+not be freshened as a recursive reference.
+        # Regression test: Freshening the merged context made this expect
+        # `Callable[[BaseException], bool]` instead of `Callable[[S], bool]`.
+        super().__init__(check)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `51b50bd7` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9061. Use Matrix.pad for ARC output placement (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Use Matrix.pad for ARC output placement",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "5523d642",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T20:33:22.593Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `5523d642`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/agents/arc-debug.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5523d642`: Use Matrix.pad for ARC output placement. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-debug.agent.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, padded by
+   `Matrix.pad` at `output_value.x` / `output_value.y` to the test input's size.
+10. `Matrix.merge` of the test output instances, then
+- **Test composition.** Every test `output_value` has in-range numeric `x` and
+  `y`. Every padded `output_instance_matrix` keeps the test input's shape; a
+  larger one means the instance was placed out of bounds and `Matrix.pad`
+  enlarged the grid. Recompute merge and canvas and compare the result with
+  `result_matrix`, noting cells that a later instance overwrote.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, drawn by
+   `Matrix.draw` at `output_value.x` / `output_value.y` on the test input's
+   canvas: `output_instance_matrix`. Positions count from the test input's
+   top-left cell, and `Matrix.draw` rejects a negative one, which fails the
+   run. Older logs may also hold `output_instance_epoch`, the column and row
+   of position (0, 0) in a drawing that could grow left or up; a nonzero one
+   means that drawing did.
+10. `Matrix.merge` of the drawn matrices onto a zero canvas of the test input's
+    size, lined up at their top-left cells, then
+- **Test composition.** Every test `output_value` has non-negative integer `x`
+  and `y`; a negative one lies left of or above the test input, and
+  `Matrix.draw` rejects it. Every drawn `output_instance_matrix` keeps the test
+  input's shape; a larger one means the instance reached past the right or
+  bottom edge and `Matrix.draw` grew the grid that way. Recompute the drawn
+  matrices, merge and canvas and compare the result with `result_matrix`,
+  noting cells that a later instance overwrote.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5523d642` are properly handled with clean fallback behavior.

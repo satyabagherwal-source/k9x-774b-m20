@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T12:46:16.507Z",
+  "timestamp": "2026-11-17T20:33:27.564Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T12:46:16.507Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T20:33:27.564Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `e1506250`  
+> **Source Version**: `5523d642`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T12:46:11.455Z  
+> **Timestamp**: 2026-11-17T20:33:22.119Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T12:41:08.308Z  
+> **Harvest Timestamp**: 2026-11-17T20:33:22.114Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1245,7 +1245,9 @@ export async function instances({ train_dataset }) {
 export async function value({ train_dataset, input_matrix, instance }) {
   milestone.constructing_instance({ instance_name: instance.instance_name });
 
-  const { x, y, width, height } = Matrix.locate(instance.input_instance_matrix);
+  const { x, y, width, height, volume } = Matrix.locate(
+    instance.input_instance_matrix
+  );
 
   const orientation = await object.orientation({ train_dataset, instance });
 
@@ -1257,6 +1259,7 @@ export async function value({ train_dataset, input_matrix, instance }) {
     width,
     height,
     orientation,
+    volume,
   });
 
   milestone.evaluating_rules({ instance_name: instance.instance_name });
@@ -1387,7 +1390,7 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     test_input_matrix,
   });
 
-  let result_drawing = Matrix.draw(
+  let result_matrix = Matrix.draw(
     [],
     test_input_matrix.length,
     test_input_matrix[0].length,
@@ -1417,24 +1420,23 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
 
+  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
+
   await visualizer.state({ declarations, test_input_matrix, input_instances });
 
   for (const input_instance of input_instances) {
-    const { output_instance_drawing } = await visualizer.output_instance_matrix(
-      {
-        test_input_matrix,
-        train_dataset,
-        instance: input_instance,
-      }
-    );
+    const { output_instance_matrix } = await visualizer.output_instance_matrix({
+      test_input_matrix,
+      train_dataset,
+      instance: input_instance,
+    });
 
-    input_instance.output_instance_matrix = output_instance_drawing.matrix;
-    input_instance.output_instance_epoch = output_instance_drawing.epoch;
+    input_instance.output_instance_matrix = output_instance_matrix;
 
-    result_drawing = Matrix.merge(result_drawing, output_instance_drawing);
+    result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
-  const result_matrix = Matrix.canvas(result_drawing.matrix, output_canvas);
+  result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
   milestone.comparison({ test_output_matrix, result_matrix });
 
@@ -1540,127 +1542,298 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1506250` (2026-11-17)
-**Commit Message**: Draft NUC 113 Implicit Receivers in Method Bodies
+### Incident Patch 1: `5523d642` (2026-11-17)
+**Commit Message**: Use Matrix.pad for ARC output placement
 
-Category: Syntax enhancement, drawn uniformly at random (index 0 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle, so the token non-regression gate is
-required for this category.
+Replace Matrix.draw with Matrix.pad for output placement, update matrix merging, and align the ARC documentation and debug guidance.
 
-Requested change: inside the bodies of a class's methods and
-constructors, a . that begins an operand and is followed by a property
-name reads that property of the receiver this, so def area() => .w * .h
-is def area() => this.w * this.h and return .total in a method's
-indented body is return this.total. It completes NUC 102's implicit
-receivers, which read the assigned object inside property values, for
-class code that is not such a value, including Python-style self
-methods. A whole argument .name stays a NUC 79 selector, property
-assignments keep NUC 102's receiver, statements starting with . keep
-their error, lambdas and functions nested in a method keep theirs, and
-def f() => .a outside classes keeps SyntaxError("Unexpected '.'"). Only
-programs that were syntax errors at the accepted revision change.
-
-This allocation changes only the Draft and its two index rows.
-
-Co-Authored-By: Claude Opus
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `.claude/agents/arc-debug.agent.md` (modified, +8/-16)
 ```diff
-@@ -67,6 +67,7 @@ Created: 31-Jul-2026
- | [102](nuc-0102.md) | Implicit Receiver Properties | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
- | [104](nuc-0104.md) | Any and All Class References | Accepted |
- | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
-+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
- 
- ### Runtime features
- 
-@@ -279,6 +280,7 @@ Created: 31-Jul-2026
- | [110](nuc-0110.md) | Python String Method Aliases | Standards Track | Language compatibility | Accepted |
- | [111](nuc-0111.md) | Reactive String Padding | Standards Track | Utility enhancement | Accepted |
- | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
-+| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
- 
- ## Copyright
- 
+@@ -114,15 +114,9 @@ between that code and the log. At the time of writing, `start()` writes
+ 6. `visualizer.instances` (LLM): the test `input_instances[].input_instance_matrix`.
+ 7. `visualizer.value` (LLM, then Nucleoid): test `implementation`, `input_value`.
+ 8. `visualizer.state` (Nucleoid): test `output_value`.
+-9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, drawn by
+-   `Matrix.draw` at `output_value.x` / `output_value.y` on the test input's
+-   canvas: `output_instance_matrix`. Positions count from the test input's
+-   top-left cell, and `Matrix.draw` rejects a negative one, which fails the
+-   run. Older logs may also hold `output_instance_epoch`, the column and row
+-   of position (0, 0) in a drawing that could grow left or up; a nonzero one
+-   means that drawing did.
+-10. `Matrix.merge` of the drawn matrices onto a zero canvas of the test input's
+-    size, lined up at their top-left cells, then
++9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, padded by
++   `Matrix.pad` at `output_value.x` / `output_value.y` to the test input's size.
++10. `Matrix.merge` of the test output instances, then
+     `Matrix.canvas(..., output_canvas)`: `result_matrix`.
+ 11. `Matrix.difference(result_matrix, test_output_matrix)`: `difference`;
+     `0` is an exact match.
+@@ -200,13 +194,11 @@ Run every check that applies and record each result:
+   unturned.
+   Report those separately from the extracted instances' disagreements, which
+   alone show the world model mispredicting its own training data.
+-- **Test composition.** Every test `output_value` has non-negative integer `x`
+-  and `y`; a negative one lies left of or above the test input, and
+-  `Matrix.draw` rejects it. Every drawn `output_instance_matrix` keeps the test
+-  input's shape; a larger one means the instance reached past the right or
+-  bottom edge and `Matrix.draw` grew the grid that way. Recompute the drawn
+-  matrices, merge and canvas and compare the result with `result_matrix`,
+-  noting cells that a later instance overwrote.
++- **Test composition.** Every test `output_value` has in-range numeric `x` and
++  `y`. Every padded `output_instance_matrix` keeps the test input's shape; a
++  larger one means the instance was placed out of bounds and `Matrix.pad`
++  enlarged the grid. Recompute merge and canvas and compare the result with
++  `result_matrix`, noting cells that a later instance overwrote.
+ - **Scoring (scoring-only).** Compare the shapes of `result_matrix` and
+   `test_output_matrix`. Recompute the difference and compare it with the
+   logged `difference`. Count the mismatched cells and give their coordinates.
 ```
 
-**File**: `docs/nuc-0113.md` (added, +73/-0)
+**File**: `arc/README.md` (modified, +13/-29)
 ```diff
-@@ -0,0 +1,73 @@
-+# NUC 113 -- Implicit Receivers in Method Bodies
+@@ -2808,21 +2808,16 @@ For identified instances, the LLM represents instances in `nuc` lang, this is pa
+ 
+ For each input instance in test, the LLM generates output instance since it has all information needed from **knowledge packets**.
+ 
+-Finally, `Matrix.draw` draws each output crop at its output position on the
+-test input's canvas before `Matrix.merge` combines the drawn matrices.
+-Positions are zero-based columns and rows from the test input's top-left cell,
+-and `Matrix.draw` rejects a negative one, so the run fails explicitly. The
+-canvas grows right or down as needed to retain the entire placed crop instead
+-of rejecting an undersized reference. Merging lines the matrices up at their
+-top-left cells and keeps the largest height and width across its inputs. Zero
+-is transparent; later nonzero cells win on overlap, as before. An erased output
+-object uses `[[0]]` with an explicit output position. The run log keeps each
+-test instance's drawn matrix as `output_instance_matrix`.
+-`Matrix.canvas` then frames the merged matrix with the inferred
++Finally, `Matrix.pad` places each output matrix at its output position before
++`Matrix.merge` combines the masks. Padding expands the reference canvas when
++needed to retain the entire placed matrix, and merging preserves the largest
++height and width across its inputs. Zero is transparent; later nonzero cells
++win on overlap, as before. An erased output object uses `[[0]]` with an explicit
++output position.
++`Matrix.canvas` then frames the merged result with the inferred
+ `output_canvas`: `EXACT` keeps the composed canvas, which starts at the test
+-input's dimensions and grows right or down where a drawn matrix needed, and
+-`FIT` crops it to its nonzero bounding box with `Matrix.crop`. Any other value
+-fails explicitly.
++input's dimensions, and `FIT` crops it to its nonzero bounding box with
++`Matrix.crop`. Any other value fails explicitly.
+ 
+ `Matrix.crop(matrix)` returns a new matrix containing the smallest rectangle
+ around all nonzero cells. All-zero borders are removed from all four sides:
+@@ -2840,28 +2835,17 @@ original matrix, its size, and its volume: `x` is the column, `y` is the row,
+ the number of its nonzero cells. Empty and all-zero matrices return
+ `{ matrix: [], x: 0, y: 0, width: 0, height: 0, volume: 0 }`. It uses the same
+ validation as `Matrix.crop` and does not modify the input. For a located
+-result, `Matrix.draw(result.matrix, rows, cols, result.x, result.y)` restores
++result, `Matrix.pad(result.matrix, rows, cols, result.x, result.y)` restores
+ the crop to its original position on a canvas at least as large as the supplied
+-dimensions, and so does `Matrix.pad`.
+-
+-`Matrix.draw(matrix, rows, cols, x, y)` returns a new matrix with the top-left
+-cell of `matrix` at column `x` and row `y`, on a canvas of at least `rows` by
+-`cols` cells. The canvas grows right or down as needed to include the entire
+-matrix: a 2 by 2 crop drawn at (2, 0) on a 3 by 3 canvas gives a 3 by 4
+-matrix. Drawing each 3 by 4 `4c4377d9` training input at (0, 3) and its
+-vertical mirror, its rows in reverse order, at (0, 0), then merging the two,
+-gives that pair's 6 by 4 output. It rejects ragged matrices, dimensions that
+-are not non-negative integers, and positions that are not non-negative
+-integers, and it does not modify the input.
++dimensions.
+ 
+ `Matrix.pad(matrix, rows, cols, left, top)` treats the requested dimensions as
+ minimums, placing the input at the required zero-based column and row offsets
+ and filling the remaining cells with zeros. Each dimension grows as needed to
+ include the entire input and its placement offset instead of rejecting an
+ undersized reference. It does not center or modify the input. Empty matrices
+ can be padded to an all-zero canvas. Ragged matrices and negative dimensions or
+-offsets are still rejected. It returns the same matrix that `Matrix.draw` draws
+-with those offsets as the position.
++offsets are still rejected.
+ 
+ `Matrix.silhouette(matrix)` returns a new matrix of the same size in which each
+ nonzero color is a letter ranked by how often it occurs in that matrix: `A` for
+@@ -2889,7 +2873,7 @@ size unless the moved cells need more room to the right or below. An all-zero
+ matrix has no cells to move and gives zeros. It rejects negative or non-integer
+ positions and ragged matrices, and it does not modify the input. Together,
+ `Matrix.move(Matrix.rotate(Matrix.crop(matrix), turn), x, y)` turns an object
+-and draws it at an output position.
++and places it at an output position.
+ 
+ The same prediction path replays every training pair before predicting the
+ held-out input. A training mismatch stops the run. Held-out predictions are
+```
+
+**File**: `arc/src/lib/Matrix.ts` (modified, +37/-61)
+```diff
+@@ -73,58 +73,6 @@ export function silhouette(matrix) {
+   );
+ }
+ 
+-// Draws the nonzero cells of each placement, a matrix whose top-left cell sits
+-// at column x and row y, on a canvas of at least rows by cols cells that grows
+-// right or down to cover every placement, so a later nonzero cell wins on
+-// overlap.
+-function compose(rows: number, cols: number, placements, action: string) {
+-  let bottom: number = rows;
+-  let right: number = cols;
+-  for (const { matrix, x, y } of placements) {
+-    const width: number = matrix[0]?.length ?? 0;
+-    for (const row of matrix) {
+-      if (row.length !== width) {
+-        throw new Error(`Matrix must be rectangular for ${action}`);
+-      }
+-    }
+-    right = Math.max(right, x + width);
+-    bottom = Math.max(bottom, y + matrix.length);
+-  }
+-
+-  const result = Array.from({ length: bottom }, () => Array(right).fill(0));
+-  for (const { matrix, x, y } of placements) {
+-    for (let i: number = 0; i < matrix.length; i++) {
+-      for (let j: number = 0; j < matrix[i].length; j++) {
+-        if (matrix[i][j] !== 0) {
+-          result[y + i][x + j] = matrix[i][j];
+-        }
+-      }
+-    }
+-  }
+-
+-  return result;
+-}
+-
+-// Draws the matrix with its top-left cell at column x and row y on a canvas of
+-// at least rows by cols cells, which grows right or down to keep the whole
+-// matrix.
+-export function draw(matrix, rows: number, cols: number, x: number, y: number) {
+-  if (![rows, cols].every((size) => Number.isInteger(size) && size >= 0)) {
+-    throw new Error("Drawing dimensions must be non-negative integers");
+-  }
+-  if (!Number.isInteger(x) || !Number.isInteger(y)) {
+-    throw new Error(
+-      `Drawing position ${JSON.stringify({ x, y })} must be integers`
+-    );
+-  }
+-  if (x < 0 || y < 0) {
+-    throw new Error(
+-      `Drawing position ${JSON.stringify({ x, y })} must not be negative`
+-    );
+-  }
+-  return compose(rows, cols, [{ matrix, x, y }], "drawing");
+-}
+-
+ export function pad(
+   matrix,
+   rows: number,
+@@ -138,7 +86,25 @@ export function pad(
+   if (left < 0 || top < 0) {
+     throw new Error("Padding offsets must be non-negative");
+   }
+-  return compose(rows, cols, [{ matrix, x: left, y: top }], "padding");
++  const sourceRows: number = matrix.length;
++  const sourceCols: number = matrix[0]?.length ?? 0;
++  const paddedRows: number = Math.max(rows, top + sourceRows);
++  const paddedCols: number = Math.max(cols, left + sourceCols);
++  const result = Array.from({ length: paddedRows }, () =>
++    Array(paddedCols).fill(0)
++  );
 +
-+```
-+NUC: 113
-+Title: Implicit Receivers in Method Bodies
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Syntax enhancement
-+Created: 17-Nov-2026
-+```
++  for (let y: number = 0; y < sourceRows; y++) {
++    const row = matrix[y];
++    if (row.length !== sourceCols) {
++      throw new Error("Matrix must be rectangular for padding");
++    }
++    for (let x: number = 0; x < sourceCols; x++) {
++      result[y + top][x + left] = row[x];
++    }
++  }
 +
-+## Abstract
++  return result;
+ }
+ 
+ // Turns the matrix clockwise by a multiple of 90 degrees, the direction in
+@@ -189,19 +155,29 @@ export function move(matrix, x: number, y: number) {
+   return pad(crop(matrix), matrix.length, matrix[0]?.length ?? 0, x, y);
+ }
+ 
+-// Draws the matrices over one another from their top-left cells, so zero is
+-// transparent and a later nonzero cell wins on overlap. The result keeps the
+-// largest height and width of its inputs.
+ export function merge(...matrices) {
+   if (matrices.length === 0) {
+     throw new Error("At least one matrix is required for merging");
+   }
+-  return compose(
+-    0,
+-    0,
+-    matrices.map((matrix) => ({ matrix, x: 0, y: 0 })),
+-    "merging"
++  const numRows: number = Math.max(...matrices.map((matrix) => matrix.length));
++  const numCols: number = Math.max(
++    ...matrices.map((matrix) => matrix[0]?.length ?? 0)
+   );
 +
-+- Inside the body of a method that a class declares, a `.` that begins an
-+  operand and is followed by a property name reads that property of the
-+  instance the method runs on, its receiver `this`. So
-+  `def area() => .w * .h` is `def area() => this.w * this.h`, and
-+  `return .total - .paid` in a method's indented body is
-+  `return this.total - this.paid`.
-+- It completes [NUC 102](nuc-0102.md)'s implicit receivers, which read the
-+  assigned object inside the value of a property assignment, for the code
-+  of a class that is not such a value: the bodies of its methods and
-+  constructors, written with `def` directly in a class's indented body or
-+  as the class header's own indented body, with expression or indented
-+  bodies and with Python-style `self` parameters ([NUC 107](nuc-0107.md)).
-+- Every accepted reading keeps its meaning. A whole argument `.name` stays a
-+  [NUC 79](nuc-0079.md) property selector, a property assignment inside a
-+  method keeps NUC 102's receiver, a statement that starts with `.` keeps
-+  its error, a lambda or function nested in a method keeps its accepted
-+  error, since `this` is not defined there, and outside classes
-+  `def f() => .a` keeps its accepted `SyntaxError("Unexpected '.'")`.
-+- Only programs that were syntax errors at the accepted revision change.
++  const result = Array.from({ length: numRows }, () => Array(numCols).fill(0));
 +
-+## Motivation
++  for (const matrix of matrices) {
++    const padded = pad(matrix, numRows, numCols, 0, 0);
++    for (let i: number = 0; i < numRows; i++) {
++      for (let j: number = 0; j < numCols; j++) {
++        if (padded[i][j] !== 0) {
++          result[i][j] = padded[i][j];
++        }
++      }
++    }
++  }
 +
-+- Methods read the properties of their own instance more than anything
-+  else: in the executable documents, 27 lines that give a method's value
-+  read them through `this.`, as in `return this.count` and
-+  `def combine left right => this.base + left + right`.
-+- NUC 102 gave class-level rules and property values the short receiver
-+  form, so `$Rect.area = .w * .h` and `this.area = .w * .h` read the
-+  receiver's properties, but a method that computes the same value still
-+  spells every read out: at the accepted revision `def area() => .w * .h`
-+  raises `SyntaxError("Unexpected '.'")` while the program is parsed.
-+- Each read saves one lexer token, `this.w` being three and `.w` two, so a
-+  world model's methods read as its rules already do.
-+- Prior art: Ruby's `@name`, CoffeeScript's `@name` and the implicit `this`
-+  of Kotlin, Swift and Java, which let a method name its own instance's
-+  members without spelling the receiver.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
++  return result;
+ }
+ 
+ export function canvas(matrix, type: string) {
+```
+
+**File**: `arc/src/lib/milestone.ts` (modified, +2/-2)
+```diff
+@@ -235,11 +235,11 @@ export function output_composed({
+ 
+ export function output_placed({
+   instance_name,
+-  output_instance_placed_matrix,
++  output_instance_padded_matrix,
+ }) {
+   terminal.grid(
+     `Placed output · ${instance_name}`,
+-    output_instance_placed_matrix,
++    output_instance_padded_matrix,
+     { key: "placed_output", loop: true }
+   );
+ }
+```
+
+**File**: `arc/src/visualizer.ts` (modified, +3/-3)
+```diff
+@@ -184,17 +184,17 @@ export async function output_instance_matrix({
+ 
+   milestone.output_composed(instance);
+ 
+-  const output_instance_placed_matrix = Matrix.draw(
++  const output_instance_padded_matrix = Matrix.pad(
+     Matrix.crop(output_instance_matrix),
+     test_input_matrix.length,
+     test_input_matrix[0].length,
+     x,
+     y
+   );
+ 
+-  milestone.output_placed({ ...instance, output_instance_placed_matrix });
++  milestone.output_placed({ ...instance, output_instance_padded_matrix });
+ 
+-  return { output_instance_matrix: output_instance_placed_matrix };
++  return { output_instance_matrix: output_instance_padded_matrix };
+ }
+ 
+ export async function state({
 ```
 
 #### Recent Merged Pull Requests:
@@ -1689,32 +1862,53 @@ Co-Authored-By: Claude Opus
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 113 Implicit Receivers in Method Bodies
+## X. Use Matrix.pad for ARC output placement
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-debug.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e1506250`: Draft NUC 113 Implicit Receivers in Method Bodies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5523d642`: Use Matrix.pad for ARC output placement. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-debug.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Draft |
-| [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Draft |
+9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, padded by
+   `Matrix.pad` at `output_value.x` / `output_value.y` to the test input's size.
+10. `Matrix.merge` of the test output instances, then
+- **Test composition.** Every test `output_value` has in-range numeric `x` and
+  `y`. Every padded `output_instance_matrix` keeps the test input's shape; a
+  larger one means the instance was placed out of bounds and `Matrix.pad`
+  enlarged the grid. Recompute merge and canvas and compare the result with
+  `result_matrix`, noting cells that a later instance overwrote.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+9. `visualizer.output_instance_matrix` (LLM): the instance's matrix, drawn by
+   `Matrix.draw` at `output_value.x` / `output_value.y` on the test input's
+   canvas: `output_instance_matrix`. Positions count from the test input's
+   top-left cell, and `Matrix.draw` rejects a negative one, which fails the
+   run. Older logs may also hold `output_instance_epoch`, the column and row
+   of position (0, 0) in a drawing that could grow left or up; a nonzero one
+   means that drawing did.
+10. `Matrix.merge` of the drawn matrices onto a zero canvas of the test input's
+    size, lined up at their top-left cells, then
+- **Test composition.** Every test `output_value` has non-negative integer `x`
+  and `y`; a negative one lies left of or above the test input, and
+  `Matrix.draw` rejects it. Every drawn `output_instance_matrix` keeps the test
+  input's shape; a larger one means the instance reached past the right or
+  bottom edge and `Matrix.draw` grew the grid that way. Recompute the drawn
+  matrices, merge and canvas and compare the result with `result_matrix`,
+  noting cells that a later instance overwrote.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1506250` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5523d642` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T20:25:43.366Z",
+  "last_updated": "2026-11-17T20:33:28.058Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T19:12:36.114Z",
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-17T19:19:54.173Z",
+      "processed_at": "2026-11-17T20:33:27.361Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1448,7 +1448,7 @@
       "staged_for_review": 1
     },
     "astral-sh-ruff-learnings.md": {
-      "processed_at": "2026-11-16T08:53:31.367Z",
+      "processed_at": "2026-11-17T20:33:26.216Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1723,8 +1723,8 @@
       "staged_for_review": 1
     },
     "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md": {
-      "processed_at": "2026-11-13T10:27:09.443Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T20:33:27.040Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-sentence-transformers-all-minilm-l6-v2-learnings.md": {
@@ -3358,7 +3358,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1704,
+  "total_dossiers_evaluated": 1707,
   "total_canonical_promoted": 324,
-  "total_staged_for_review": 1332
+  "total_staged_for_review": 1334
 }

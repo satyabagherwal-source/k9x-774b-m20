@@ -10703,3 +10703,6 @@
 | `CYCLE-20261117-6AZG` | `2026-11-17T20:25:26.812Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9057` | Yes (`adf62c1b...`) |
 | `CYCLE-20261117-6FUA` | `2026-11-17T20:25:33.106Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9058` | Yes (`5dd2d236...`) |
 | `CYCLE-20261117-6K9I` | `2026-11-17T20:25:38.838Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9059` | Yes (`d81733dc...`) |
+| `CYCLE-20261117-G5PN` | `2026-11-17T20:33:06.539Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`cb799b95...`) |
+| `CYCLE-20261117-G7RS` | `2026-11-17T20:33:09.208Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9060` | Yes (`eaa5e497...`) |
+| `CYCLE-20261117-GIFF` | `2026-11-17T20:33:23.019Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9061` | Yes (`cc17dc76...`) |

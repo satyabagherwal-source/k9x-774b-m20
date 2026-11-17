@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T20:25:38.849Z",
+  "last_updated": "2026-11-17T20:33:23.031Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "6968df8a19a40615d472a1290762e337d784addbddb02a73af313dd995b24cb2",
-      "verified_at": "2026-11-17T19:53:47.445Z",
+      "content_hash": "cc17dc76580146147fde6e27e5c45caf07a9d0d47662157da41ad5e796195e6d",
+      "verified_at": "2026-11-17T20:33:23.030Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:53:47.445Z"
+      "last_updated": "2026-11-17T20:33:23.030Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "ab015b7e3db43d7971505f9feba23558e04d83fcf8bb543ad723e99feb341eed",
-      "verified_at": "2026-11-16T08:53:28.255Z",
+      "content_hash": "eaa5e4975db478481a7bfc45f5db6f57703972ea7aab1664fb02af627b57f7f8",
+      "verified_at": "2026-11-17T20:33:09.218Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T08:53:28.255Z"
+      "last_updated": "2026-11-17T20:33:09.218Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",
@@ -17810,15 +17810,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
-      "content_hash": "f07ddcfaffe6826adac9bd400d2f80d49a11d1c205c1b1be15e47560c47ab25e",
-      "verified_at": "2026-11-16T23:03:35.924Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "content_hash": "cb799b9519474f3aa11190a1efdf16fa8beff215f76c9db39009a0fa8dffc0c7",
+      "verified_at": "2026-11-17T20:33:06.550Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:03:35.924Z"
+      "last_updated": "2026-11-17T20:33:06.550Z"
     },
     "agentlas-ai/Agentlas-OS": {
       "repository": "agentlas-ai/Agentlas-OS",
