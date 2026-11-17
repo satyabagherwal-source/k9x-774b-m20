@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-2B9Z",
-    "timestamp": "2026-11-15T02:35:14.711Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "03fb7e4650f98883b2dbb55b1cf9e1c8b6042d15ece8887382dfe3a94d24ba39",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-SI9B",
-    "timestamp": "2026-11-15T02:55:36.815Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "ed9071f2b691739e861016a53856d5f5d102419ce8e2ef88d02d7750de21b004",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-WR3U",
-    "timestamp": "2026-11-15T02:58:54.906Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "4263d69c8d9a9df20bf1903032c44fefb73de34740e56c7658af1bbe0da96ecc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-FFR4",
-    "timestamp": "2026-11-15T03:13:26.656Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "3dabd21aecf1f79d9631c5db4e7623f716302638da9b04f874f0edec4b4b3927",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-FLCJ",
-    "timestamp": "2026-11-15T03:13:33.907Z",
-    "repository": "tw93/Mole",
-    "learningId": "learn-github-tw93-mole",
-    "contentHash": "de78d2df30c991193d302e15d62f62602889421ef758e42cc5c86b59735afa66",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-FN5H",
     "timestamp": "2026-11-15T03:13:36.245Z",
     "repository": "argoproj/argo-workflows",
@@ -7492,6 +7417,81 @@
     "contentHash": "bb2d8aacbba155dfc0e235c02bc4934675faa191c416a054c05bfd519fa3843f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-3TIX",
+    "timestamp": "2026-11-17T15:43:34.713Z",
+    "repository": "reflection/Beam-1.0-501B-A23B",
+    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+    "contentHash": "01a56bef17d409c0393aaeaa3e5a344c01645ad8cf82be871355f9b14e1496b5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-3W1P",
+    "timestamp": "2026-11-17T15:43:37.981Z",
+    "repository": "dalance/procs",
+    "learningId": "learn-github-dalance-procs",
+    "contentHash": "1ad464a89124a54078e854c4d7f091abbd4d8af2991b9a6292c4ea68c9637e00",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-40J9",
+    "timestamp": "2026-11-17T15:43:43.797Z",
+    "repository": "software-mansion/react-native-reanimated",
+    "learningId": "learn-github-software-mansion-react-native-reanimated",
+    "contentHash": "523c66bf909c6be0c70ed6926e663ea99d5b369c79ef0be1d7d916071aaf2113",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-41YH",
+    "timestamp": "2026-11-17T15:43:45.641Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "6ab7bfe11063ac260aeddce35fe23a09c5af89d92e5e868de1e86f93bb2ceefb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-44GV",
+    "timestamp": "2026-11-17T15:43:48.895Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "8a3555644631603c742361cd7460e2fd1853076d79078e95f52f0b06766937e2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

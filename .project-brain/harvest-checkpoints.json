@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T15:35:17.444Z",
+  "last_updated": "2026-11-17T15:43:48.912Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "720f849a7818f7fc77852a9f377d75c773909e4cce38fc724b9b13e1938a3a9f",
-      "verified_at": "2026-11-17T06:19:39.278Z",
+      "content_hash": "8a3555644631603c742361cd7460e2fd1853076d79078e95f52f0b06766937e2",
+      "verified_at": "2026-11-17T15:43:48.911Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T06:19:39.278Z"
+      "last_updated": "2026-11-17T15:43:48.911Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -5826,14 +5826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-reanimated",
-      "content_hash": "e9fd7e5cae9cf1ea118411801e8608d60b068ef6c0393a44dde4af176a01af66",
-      "verified_at": "2026-11-14T01:48:38.671Z",
+      "content_hash": "523c66bf909c6be0c70ed6926e663ea99d5b369c79ef0be1d7d916071aaf2113",
+      "verified_at": "2026-11-17T15:43:43.812Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T01:48:38.671Z"
+      "last_updated": "2026-11-17T15:43:43.812Z"
     },
     "liftbridge-io/liftbridge": {
       "repository": "liftbridge-io/liftbridge",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "bec2b28b7bad4593d8528c38da3f20b13ab259155aacca9cf29b2212f5753a1f",
-      "verified_at": "2026-11-16T13:38:27.011Z",
+      "content_hash": "6ab7bfe11063ac260aeddce35fe23a09c5af89d92e5e868de1e86f93bb2ceefb",
+      "verified_at": "2026-11-17T15:43:45.656Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T13:38:27.011Z"
+      "last_updated": "2026-11-17T15:43:45.656Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -10011,14 +10011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dalance-procs",
-      "content_hash": "db5d357075705122b0ea98ff6f146d443770f56c33b263e5bae53f1e8f76b4cf",
-      "verified_at": "2026-11-09T23:45:25.477Z",
+      "content_hash": "1ad464a89124a54078e854c4d7f091abbd4d8af2991b9a6292c4ea68c9637e00",
+      "verified_at": "2026-11-17T15:43:37.996Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T23:45:25.477Z"
+      "last_updated": "2026-11-17T15:43:37.996Z"
     },
     "ionic-team/ionic-framework": {
       "repository": "ionic-team/ionic-framework",
@@ -13881,14 +13881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-      "content_hash": "e5ccac13b877a2199d55d318666affdaec7133e337efa12f2d63598b03ae92c4",
-      "verified_at": "2026-11-13T03:18:41.330Z",
+      "content_hash": "01a56bef17d409c0393aaeaa3e5a344c01645ad8cf82be871355f9b14e1496b5",
+      "verified_at": "2026-11-17T15:43:34.754Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T03:18:41.330Z"
+      "last_updated": "2026-11-17T15:43:34.754Z"
     },
     "webrecorder/pywb": {
       "repository": "webrecorder/pywb",

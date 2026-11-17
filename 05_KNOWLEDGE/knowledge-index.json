@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T15:35:22.290Z",
-  "total_verified_learnings": 8897,
+  "last_updated": "2026-11-17T15:43:54.927Z",
+  "total_verified_learnings": 8899,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20279,
+  "total_items": 20296,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112798,25 +112798,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "a33d49c4",
-      "content_hash": "98e6519181e4f49f1601cc2bb35c51d3f35aa2b7467e582dc02b0022682f3739",
+      "source_version": "3707bf02",
+      "content_hash": "a7da7b83f0425ff748f0884f2fba752f7a22743a8c74312fb220b1fea210c702",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T06:19:39.653Z"
+      "persisted_at": "2026-11-17T15:43:49.305Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "a33d49c4",
-      "content_hash": "92a41357a7f41ae5544e76253933387e2540ef3a195034236a71a4865ca32f4b",
+      "source_version": "3707bf02",
+      "content_hash": "21aa69e94525f0cd9fe2f154dbdbab23b250abf3c95b1003a98e5d2cad15b783",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:19:39.946Z"
+      "persisted_at": "2026-11-17T15:43:49.634Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -213907,8 +213907,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "caa6e120",
-      "content_hash": "bec2b28b7bad4593d8528c38da3f20b13ab259155aacca9cf29b2212f5753a1f",
+      "source_version": "ee945380",
+      "content_hash": "6ab7bfe11063ac260aeddce35fe23a09c5af89d92e5e868de1e86f93bb2ceefb",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -213921,6 +213921,11 @@
           "number": 8740,
           "title": "Stop marking release binaries as dirty",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8990,
+          "title": "util/test: don't panic in MakeTempFS when creating files fails",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213928,7 +213933,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T13:38:26.838Z",
+      "verified_at": "2026-11-17T15:43:45.434Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213970,10 +213975,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "repository": "open-policy-agent/opa",
-      "source_version": "caa6e120",
-      "content_hash": "5a691369b8c2637dee1d22bb013d20bbb3f3fcad824350c18c0486fd2da41446",
+      "source_version": "ee945380",
+      "content_hash": "177478aff1eedb4853b636a1b66efcd39016e5dcbe978eb031d036723489ae41",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T13:38:27.280Z"
+      "persisted_at": "2026-11-17T15:43:46.045Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa",
@@ -213982,10 +213987,10 @@
       "relative_path": "08_VERIFICATION/open-policy-agent-opa-verification-protocol-empirical-defect-shield-for-open-pol.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent/opa",
       "repository": "open-policy-agent/opa",
-      "source_version": "caa6e120",
-      "content_hash": "a0c93f1e6bca007043ccac5376955a81c6963f9e3c75fe3cc0e007bf7e935159",
+      "source_version": "ee945380",
+      "content_hash": "2b5247ac91d44ea98b687ef1a4003731f4e6c5cdfe3c094c2ad8495ea7d9ffcb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T13:38:27.391Z"
+      "persisted_at": "2026-11-17T15:43:46.233Z"
     },
     "learn-github-cilium-cilium": {
       "learning_id": "learn-github-cilium-cilium",
@@ -215456,13 +215461,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "a33d49c4",
-      "content_hash": "720f849a7818f7fc77852a9f377d75c773909e4cce38fc724b9b13e1938a3a9f",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "3707bf02",
+      "content_hash": "8a3555644631603c742361cd7460e2fd1853076d79078e95f52f0b06766937e2",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215495,7 +215500,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T06:19:39.069Z",
+      "verified_at": "2026-11-17T15:43:48.682Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215509,26 +215514,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "a33d49c4",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "3707bf02",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-17T06:19:39.069Z"
+      "verified_at": "2026-11-17T15:43:48.682Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-01ZC-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-44NR-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "aleo-labs-protocol-snarkos-learnings",
-      "source_version": "HEAD",
-      "content_hash": "a47520cef815a91687f6790517201e9d25cd61647023f31060226b230a61a519",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "3707bf02",
+      "content_hash": "34e787fe717cc325b77a417fa76b1db31a54e9a0125796d5eb1c9951485b90ce",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T06:20:46.734Z"
+      "persisted_at": "2026-11-17T15:43:49.149Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -220137,14 +220142,19 @@
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "1b66ac4d",
-      "content_hash": "e9fd7e5cae9cf1ea118411801e8608d60b068ef6c0393a44dde4af176a01af66",
+      "source_version": "d7d1bc3f",
+      "content_hash": "523c66bf909c6be0c70ed6926e663ea99d5b369c79ef0be1d7d916071aaf2113",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "promoted_rules": [
         {
           "number": 8416,
           "title": "fix dead links and accept empty banner slots in URL validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8989,
+          "title": "keep ancestor opacity and clipping during shared element tran",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -220153,7 +220163,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T01:48:38.539Z",
+      "verified_at": "2026-11-17T15:43:43.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220204,13 +220214,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-software-mansion-react-native-",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/software-mansion-react-native-screens-learnings-verification-protocol-empirical-.md",
-      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-screens-learnings",
-      "repository": "software-mansion-react-native-screens-learnings",
+      "relative_path": "08_VERIFICATION/software-mansion-react-native-reanimated-learnings-verification-protocol-empiric.md",
+      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-reanimated-learnings",
+      "repository": "software-mansion-react-native-reanimated-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc05babf3074108abfd21a2e428c2ef35216c32ffc3b8a6df01a7861600ec807",
+      "content_hash": "5769c79be3717bc3325ee51aa4098bce86e2f12bf92844f1fd0d01d6a20150b4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:58:07.686Z"
+      "persisted_at": "2026-11-17T15:43:54.927Z"
     },
     "learn-github-zeromicro-go-zero": {
       "learning_id": "learn-github-zeromicro-go-zero",
@@ -260890,13 +260900,13 @@
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/provablehq-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-speciali.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "a33d49c4",
-      "content_hash": "82d6f762b35fcf54449ce21dfe9117f8910607dcbbd4b5c571943774e482617e",
+      "source_version": "3707bf02",
+      "content_hash": "279d8d045f9159776c300d4b9faf56878a237f0abbfd925113de61599ded092a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T06:19:39.806Z"
+      "persisted_at": "2026-11-17T15:43:49.481Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -271717,6 +271727,252 @@
       "content_hash": "eb39b5851b61eea46f54d0bbb90b23ed2829758d5148266b7a00d136d7a9df29",
       "domain_letter": "A",
       "persisted_at": "2026-11-17T15:35:22.050Z"
+    },
+    "learn-huggingface-reflection-beam-1-0-501b-a23b": {
+      "learning_id": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "reflection/Beam-1.0-501B-A23B",
+      "repository": "reflection/Beam-1.0-501B-A23B",
+      "slug": "hf-reflection-beam-1.0-501b-a23b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "content_hash": "01a56bef17d409c0393aaeaa3e5a344c01645ad8cf82be871355f9b14e1496b5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T15:43:34.476Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-reflection-beam-1-0-501b-a23b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-reflection-beam-1-0-501b-a23b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reflection-beam-1-0-501b-a23b-research-knowledge-intelligence-reflection-beam.md",
+      "title": "Research & Knowledge Intelligence: reflection/Beam-1.0-501B-A23B Core Invariants",
+      "repository": "reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "content_hash": "dea73d914ed286181430628169b7b469f294bbc2bfbf461d2f7545ba018ba9f6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T15:43:34.984Z"
+    },
+    "learn-github-dalance-procs": {
+      "learning_id": "learn-github-dalance-procs",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "dalance/procs",
+      "repository": "dalance/procs",
+      "slug": "dalance-procs",
+      "platform": "github",
+      "source_url": "https://github.com/dalance/procs",
+      "source_version": "939caf9b",
+      "content_hash": "1ad464a89124a54078e854c4d7f091abbd4d8af2991b9a6292c4ea68c9637e00",
+      "dossier_path": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8988,
+          "title": "build(deps): bump errno from 0.3.14 to 0.3.15",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T15:43:37.768Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8988": {
+      "learning_id": "rule-8988",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8988,
+      "title": "build(deps): bump errno from 0.3.14 to 0.3.15",
+      "source_url": "https://github.com/dalance/procs",
+      "source_version": "939caf9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T15:43:37.768Z"
+    },
+    "candidate_directive-build-deps-bump-errno-from-0-3-14-to-0-3-15": {
+      "item_id": "candidate_directive-build-deps-bump-errno-from-0-3-14-to-0-3-15",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-47W1-build-deps-bump-errno-from-0-3-14-to-0-3-15.md",
+      "title": "build(deps): bump errno from 0.3.14 to 0.3.15",
+      "repository": "dalance-procs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7017ed2a31fcb995a3c8d8e6e43525f7ceca56e2b7c262cf06e19839ba83e742",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T15:43:53.330Z"
+    },
+    "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-architecture-intelligence-dalance-procs-core-invariants.md",
+      "title": "Architecture Intelligence: dalance/procs Core Invariants",
+      "repository": "dalance/procs",
+      "source_version": "939caf9b",
+      "content_hash": "e1e6ae0be9f73f4fe31f80eef08b87ee257bd7c640e946074a7e7ef139dc93e7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T15:43:38.387Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dalance-procs-verification-protocol-empirical-defect-shield-for-dalance-procs.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dalance/procs",
+      "repository": "dalance/procs",
+      "source_version": "939caf9b",
+      "content_hash": "fe0128501dc71eaba1af53c3ccc624122b38f4225c89cba5cfe3c01691f9f282",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T15:43:38.575Z"
+    },
+    "rule-8989": {
+      "learning_id": "rule-8989",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8989,
+      "title": "keep ancestor opacity and clipping during shared element tran",
+      "source_url": "https://github.com/software-mansion/react-native-reanimated",
+      "source_version": "d7d1bc3f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T15:43:43.584Z"
+    },
+    "candidate_directive-keep-ancestor-opacity-and-clipping-during-shared-element-tran": {
+      "item_id": "candidate_directive-keep-ancestor-opacity-and-clipping-during-shared-element-tran",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-40Q5-keep-ancestor-opacity-and-clipping-during-shared-element-tran.md",
+      "title": "keep ancestor opacity and clipping during shared element tran",
+      "repository": "software-mansion/react-native-reanimated",
+      "source_version": "d7d1bc3f",
+      "content_hash": "9a799d698b24aeafe1d4530787079cb73b5a4ffc0c496303f82436a340af5fc3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T15:43:44.052Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-technical-construction-intelligence-sof.md",
+      "title": "Technical Construction Intelligence: software-mansion/react-native-reanimated Core Invariants",
+      "repository": "software-mansion/react-native-reanimated",
+      "source_version": "d7d1bc3f",
+      "content_hash": "f098405a7f28560071d04eb856aedec4ac39edaeb97a471a9f4a52062240e161",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T15:43:44.212Z"
+    },
+    "rule-8990": {
+      "learning_id": "rule-8990",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8990,
+      "title": "util/test: don't panic in MakeTempFS when creating files fails",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "ee945380",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T15:43:45.434Z"
+    },
+    "candidate_directive-util-test-don-t-panic-in-maketempfs-when-creating-files-fails": {
+      "item_id": "candidate_directive-util-test-don-t-panic-in-maketempfs-when-creating-files-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-424U-util-test-don-t-panic-in-maketempfs-when-creating-files-fails.md",
+      "title": "util/test: don't panic in MakeTempFS when creating files fails",
+      "repository": "open-policy-agent/opa",
+      "source_version": "ee945380",
+      "content_hash": "0aeb43ecd17e731f1c92f5ba7787423ef7dde38b80c01fd18dff8ef0ef166233",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T15:43:45.872Z"
+    },
+    "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-learnings-architecture-intelligence-dalance-procs-learnings-core-i.md",
+      "title": "Architecture Intelligence: dalance-procs-learnings Core Invariants",
+      "repository": "dalance-procs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0e8a8878eb021344ef9cceddf7ffdafbe75c857b98611237f3d20b4d0114de88",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T15:43:53.493Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dalance-procs-learnings-verification-protocol-empirical-defect-shield-for-dalanc.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dalance-procs-learnings",
+      "repository": "dalance-procs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9d03e12b19ce52d7bc058804b79f756b0624e6ab1f58764668d62d6c77712a7a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T15:43:53.670Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reflection-beam-1-0-501b-a23b-learnings-research-knowledge-intelligence-hf-re.md",
+      "title": "Research & Knowledge Intelligence: hf-reflection-beam-1.0-501b-a23b-learnings Core Invariants",
+      "repository": "hf-reflection-beam-1.0-501b-a23b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6ead00606e161e349862d86c9f987251e4ff51dd8181e02129271c300da42426",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T15:43:54.062Z"
+    },
+    "candidate_directive-layoutanimations-keep-ancestor-opacity-and-clipping-during-shared-element-tran": {
+      "item_id": "candidate_directive-layoutanimations-keep-ancestor-opacity-and-clipping-during-shared-element-tran",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-48V0-layoutanimations-keep-ancestor-opacity-and-clipping-during-shared-element-tran.md",
+      "title": "LayoutAnimations): keep ancestor opacity and clipping during shared element tran",
+      "repository": "software-mansion-react-native-reanimated-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a88b3cf335e2e5ea1a3a9cd9c4874d5c40cc1af25f34334c8661bc02f75f7cca",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T15:43:54.593Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-lea": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-lea",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-learnings-technical-construction-intell.md",
+      "title": "Technical Construction Intelligence: software-mansion-react-native-reanimated-learnings Core Invariants",
+      "repository": "software-mansion-react-native-reanimated-learnings",
+      "source_version": "HEAD",
+      "content_hash": "38a9a57af1c7c5187c0faa64498c20946dd3b1f13b2305a58ed26b1d8bc28bee",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T15:43:54.750Z"
     }
   },
   "ai-builder-brain": {

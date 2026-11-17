@@ -10589,3 +10589,8 @@
 | `CYCLE-20261117-SSJN` | `2026-11-17T15:35:00.227Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md` | Yes (`907e7871...`) |
 | `CYCLE-20261117-T4HC` | `2026-11-17T15:35:15.696Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8987` | Yes (`0cf22914...`) |
 | `CYCLE-20261117-T5T3` | `2026-11-17T15:35:17.415Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`bb2d8aac...`) |
+| `CYCLE-20261117-3TIX` | `2026-11-17T15:43:34.713Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md` | Yes (`01a56bef...`) |
+| `CYCLE-20261117-3W1P` | `2026-11-17T15:43:37.981Z` | `dalance/procs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8988` | Yes (`1ad464a8...`) |
+| `CYCLE-20261117-40J9` | `2026-11-17T15:43:43.797Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8989` | Yes (`523c66bf...`) |
+| `CYCLE-20261117-41YH` | `2026-11-17T15:43:45.641Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8990` | Yes (`6ab7bfe1...`) |
+| `CYCLE-20261117-44GV` | `2026-11-17T15:43:48.895Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`8a355564...`) |

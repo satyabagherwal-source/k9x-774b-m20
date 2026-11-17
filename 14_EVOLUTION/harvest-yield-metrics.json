@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T15:35:17.440Z",
-  "total_cycles_completed": 10145,
-  "total_learnings_persisted": 10145,
-  "total_rules_promoted": 9726,
+  "last_updated": "2026-11-17T15:43:48.907Z",
+  "total_cycles_completed": 10150,
+  "total_learnings_persisted": 10150,
+  "total_rules_promoted": 9730,
   "history": [
-    {
-      "timestamp": "2026-11-16T22:47:37.890Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T22:55:47.222Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T23:03:35.920Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T23:03:38.624Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T23:03:44.035Z",
-      "repository": "sozercan/kaset",
-      "learningId": "learn-github-sozercan-kaset",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T23:03:47.279Z",
       "repository": "higress-group/higress",
@@ -1403,6 +1368,41 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:43:34.750Z",
+      "repository": "reflection/Beam-1.0-501B-A23B",
+      "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:43:37.992Z",
+      "repository": "dalance/procs",
+      "learningId": "learn-github-dalance-procs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:43:43.808Z",
+      "repository": "software-mansion/react-native-reanimated",
+      "learningId": "learn-github-software-mansion-react-native-reanimated",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:43:45.652Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:43:48.907Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

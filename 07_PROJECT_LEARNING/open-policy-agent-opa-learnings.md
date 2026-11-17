@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `caa6e120`  
+> **Source Version**: `ee945380`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T13:38:26.096Z  
+> **Timestamp**: 2026-11-17T15:43:44.531Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T13:38:26.092Z  
+> **Harvest Timestamp**: 2026-11-17T15:43:44.522Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12474 stars
+- **Stars / Engagement**: 12482 stars
 
 ---
 
@@ -967,229 +967,474 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dea4670c` (2026-11-13)
-**Commit Message**: build: Stop marking release binaries as dirty
+### Incident Patch 1: `cb47e885` (2026-11-17)
+**Commit Message**: util/test: don't panic in MakeTempFS when creating files fails (#9578)
 
-Release binaries since v1.13.0 report a build commit with a "-dirty"
-suffix. Go sets vcs.modified=true when "git status --porcelain" is not
-empty at build time, and the release job leaves an untracked file in
-the checkout: jdx/mise-action writes mise.toml to the repository root.
-(Between v1.13.0 and v1.16.x, this had another cause: mlugg/setup-zig
-put its Zig cache in .zig-cache in the workspace.)
+The deferred cleanup called the named result, which the error return had
+already set to nil, and the file handles it opened were never closed.
 
-Add mise.toml to .gitignore, so the release builds are clean again.
+Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
 
-To keep this from coming back with another file, check the working
-copy after the build:
-
-- pull-request.yaml: after each PR build. This catches the issue
-    early - today it only appears on the Windows build but in the
-    future who knows.
-- post-merge.yaml: after the edge release build - this prevents
-    regressions.
-- post-tag.yaml: read vcs.modified from every release binary before
-    it is uploaded, and fail if it is not false. Unlike the two checks
-    above, this one has no exceptions for regenerated Wasm files.
-
-Fixes #9552
-
-Signed-off-by: Nedim Srndic <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/post-merge.yaml` (modified, +5/-0)
+**File**: `v1/util/test/tempfs.go` (modified, +10/-12)
 ```diff
-@@ -127,6 +127,11 @@ jobs:
-         env:
-           GOARCH: arm64
+@@ -63,43 +63,41 @@ func WithTempFS(files map[string]string, f func(string)) {
+ // If the creation fails, cleanup is nil and the caller does not have to invoke it. If
+ // creation succeeds, the caller should invoke cleanup when they are done.
+ func MakeTempFS(root, prefix string, files map[string]string) (rootDir string, cleanup func(), err error) {
+-	if rootDir, err = os.MkdirTemp(root, prefix); err != nil {
++	dir, err := os.MkdirTemp(root, prefix)
++	if err != nil {
+ 		return "", nil, err
+ 	}
  
-+      - name: Check working copy is clean
-+        # Anything untracked or modified here ends up as "-dirty" in the
-+        # build commit of the binaries built above.
-+        run: ./build/check-working-copy.sh
-+
-       - name: Upload binaries
-         uses: actions/upload-artifact@v7.0.2
-         if: always()
+-	cleanup = func() {
+-		_ = os.RemoveAll(rootDir)
++	// Use locals rather than the named results: returning an error resets those,
++	// which would leave the deferred cleanup nil and pointed at the wrong dir.
++	remove := func() {
++		_ = os.RemoveAll(dir)
+ 	}
+ 
+ 	skipCleanup := false
+ 
+ 	// Cleanup unless flag is unset. It will be unset if we succeed.
+ 	defer func() {
+ 		if !skipCleanup {
+-			cleanup()
++			remove()
+ 		}
+ 	}()
+ 
+ 	for path, content := range files {
+ 		dirname, filename := filepath.Split(path)
+-		dirPath := filepath.Join(rootDir, dirname)
++		dirPath := filepath.Join(dir, dirname)
+ 		if err := os.MkdirAll(dirPath, 0777); err != nil {
+ 			return "", nil, err
+ 		}
+ 
+-		f, err := os.Create(filepath.Join(dirPath, filename))
+-		if err != nil {
+-			return "", nil, err
+-		}
+-
+-		if _, err := f.WriteString(content); err != nil {
++		if err := os.WriteFile(filepath.Join(dirPath, filename), []byte(content), 0666); err != nil {
+ 			return "", nil, err
+ 		}
+ 	}
+ 
+ 	skipCleanup = true
+ 
+-	return rootDir, cleanup, nil
++	return dir, remove, nil
+ }
+ 
+ // WithTestFS creates a temporary file system of `files` in memory
 ```
 
-**File**: `.github/workflows/post-tag.yaml` (modified, +15/-0)
+**File**: `v1/util/test/tempfs_test.go` (added, +53/-0)
 ```diff
-@@ -62,6 +62,21 @@ jobs:
-         env:
-           GOARCH: arm64
- 
-+      - name: Check binaries are not marked dirty
-+        run: |
-+          fail=0
-+          for bin in _release/*/opa_*; do
-+            case "$bin" in *.sha256) continue ;; esac
-+            if ! go version -m "$bin" | grep -q 'vcs.modified=false'; then
-+              echo "::error::$bin was built from a modified working tree"
-+              fail=1
-+            fi
-+          done
-+          if [ "$fail" -ne 0 ]; then
-+            git status --porcelain --untracked-files=all
-+            exit 1
-+          fi
+@@ -0,0 +1,53 @@
++package test
 +
-       - name: Upload binaries
-         uses: actions/upload-artifact@v7.0.2
-         if: always()
-```
-
-**File**: `.github/workflows/pull-request.yaml` (modified, +6/-0)
-```diff
-@@ -170,6 +170,12 @@ jobs:
-         GOARCH: ${{ matrix.arch }}
-       timeout-minutes: 30
- 
-+    - name: Check working copy is clean
-+      # A file left behind in the checkout (the windows build installs mise,
-+      # which writes mise.toml) would mark release binaries as built from a
-+      # dirty tree.
-+      run: ./build/check-working-copy.sh
++import (
++	"os"
++	"path/filepath"
++	"testing"
++)
 +
-     - name: Upload binaries - No Go tags
-       uses: actions/upload-artifact@v7.0.2
-       if: ${{ matrix.go_tags == '' }}
-```
-
-**File**: `.gitignore` (modified, +4/-0)
-```diff
-@@ -42,6 +42,10 @@ docs/website/data/versions
- # generated when building windows binary to add icon and product version
- resource.syso
- 
-+# written by jdx/mise-action in CI; an untracked file in the checkout makes
-+# Go stamp release binaries with vcs.modified=true ("-dirty")
-+mise.toml
++func TestMakeTempFS(t *testing.T) {
++	t.Run("creates files and cleanup removes them", func(t *testing.T) {
++		root := t.TempDir()
 +
- # generated when building proto codegen plugin (see Makefile generate-proto)
- build/tools/bin/
- 
++		dir, cleanup, err := MakeTempFS(root, "opa_test", map[string]string{"a/b.txt": "hello"})
++		if err != nil {
++			t.Fatal(err)
++		}
++
++		bs, err := os.ReadFile(filepath.Join(dir, "a", "b.txt"))
++		if err != nil {
++			t.Fatal(err)
++		}
++		if string(bs) != "hello" {
++			t.Fatalf("unexpected content %q", bs)
++		}
++
++		cleanup()
++
++		if _, err := os.Stat(dir); !os.IsNotExist(err) {
++			t.Fatalf("expected %v to be removed, got: %v", dir, err)
++		}
++	})
++
++	t.Run("failure removes the directory and returns no cleanup", func(t *testing.T) {
++		root := t.TempDir()
++
++		// "a" is a file in one entry and a directory in the other, so whichever is created second fails.
++		_, cleanup, err := MakeTempFS(root, "opa_test", map[string]string{"a": "1", "a/b": "2"})
++		if err == nil {
++			t.Fatal("expected error")
++		}
++		if cleanup != nil {
++			t.Fatal("expected nil cleanup on error")
++		}
++
++		entries, err := os.ReadDir(root)
++		if err != nil {
++			t.Fatal(err)
++		}
++		if len(entries) != 0 {
++			t.Fatalf("expected temp dir to be removed, found %v", entries)
++		}
++	})
++}
 ```
 
 ---
 
-### Incident Patch 2: `78f9b94a` (2026-11-13)
-**Commit Message**: topdown: fix ceil and floor of negative fractions above -1
+### Incident Patch 2: `5eaae667` (2026-11-16)
+**Commit Message**: server: Fix oversized request body status in v2-compatible mode (#9497)
 
-big.Float.Int truncates toward zero, so a negative fraction between -1
-and 0 became +0 and lost its sign. ceil(-0.5) returned 1 and floor(-0.5)
-returned 0. Use the accuracy reported by Int to decide the adjustment.
+### Why the changes in this PR are needed?
 
-Signed-off-by: Kurt Roekle <[REDACTED_EMAIL]>
+Currently, requests exceeding the configured body-size limit return HTTP
+400, even when v2-compatible mode is enabled.
 
-**File**: `v1/test/cases/testdata/v1/arithmetic/test-arithmetic-ceil-floor-negative.yaml` (added, +60/-0)
+This change makes the server return HTTP 413 (Content Too Large) in
+v2-compatible mode, while keeping the existing HTTP 400 behavior in
+default mode. The error response body remains unchanged.
+
+### Pointers and Further Information
+
+- Added a shared helper to handle the response status based on the
+compatibility mode.
+- Updated the relevant server handlers to use the correct status code.
+- Added regression tests at the server and runtime levels to cover both
+modes.
+- Updated the configuration docs to explain the behavior.
+
+**Validation:**
+- `make check` passed.
+- Added server and runtime regression tests covering HTTP 400
+  in default mode and HTTP 413 in v2-compatible mode.
+- Docker lint passed with 0 issues.
+
+Related issue: #9445
+
+---------
+
+Signed-off-by: darshpatel1052 <[REDACTED_EMAIL]>
+
+**File**: `docs/docs/configuration.md` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,60 @@
-+---
-+cases:
-+  # Integer-valued results beyond int64 are rendered with sprintf because the
-+  # golden-case loader parses expected numbers as float64.
-+  - note: "arithmetic/ceil of fractions and integers around zero"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
+@@ -1083,6 +1083,13 @@ The `server` configuration sets:
+   The gzip compression settings are used when the client sends `Accept-Encoding: gzip`
+ - buckets for `http_request_duration_seconds` histogram
+ 
++Requests that exceed a body-size limit return HTTP 400 by default. When v2
++compatibility is enabled (`--v2-compatible`), they return HTTP 413; the error
++response body is unchanged.
 +
-+        p := {
-+        	"neg_half": ceil(-0.5),
-+        	"neg_tenth": ceil(-0.1),
-+        	"neg_fraction": ceil(-1.5),
-+        	"pos_half": ceil(0.5),
-+        	"pos_fraction": ceil(1.5),
-+        	"neg_integer": ceil(-2),
-+        	"neg_integer_float": ceil(-2.0),
-+        	"zero": ceil(0),
-+        	"neg_beyond_int64": sprintf("%v", [ceil(-9223372036854775809)]),
-+        }
-+    want_result:
-+      - x:
-+          neg_half: 0
-+          neg_tenth: 0
-+          neg_fraction: -1
-+          pos_half: 1
-+          pos_fraction: 2
-+          neg_integer: -2
-+          neg_integer_float: -2
-+          zero: 0
-+          neg_beyond_int64: "-9223372036854775809"
-+  - note: "arithmetic/floor of fractions and integers around zero"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
++Go integrations constructing an authorizer directly can enable this behavior with
++the `authorizer.V2Compatible(true)` option to `authorizer.NewBasic`.
 +
-+        p := {
-+        	"neg_half": floor(-0.5),
-+        	"neg_seven_tenths": floor(-0.7),
-+        	"neg_fraction": floor(-1.5),
-+        	"pos_half": floor(0.5),
-+        	"pos_fraction": floor(1.5),
-+        	"neg_integer": floor(-2),
-+        	"neg_integer_float": floor(-2.0),
-+        	"zero": floor(0),
-+        	"neg_beyond_int64": sprintf("%v", [floor(-9223372036854775809)]),
-+        }
-+    want_result:
-+      - x:
-+          neg_half: -1
-+          neg_seven_tenths: -1
-+          neg_fraction: -2
-+          pos_half: 0
-+          pos_fraction: 1
-+          neg_integer: -2
-+          neg_integer_float: -2
-+          zero: 0
-+          neg_beyond_int64: "-9223372036854775809"
+ | Field                                                       | Type        | Required                                                                 | Description                                                                                                                                                                                                                          |
+ | ----------------------------------------------------------- | ----------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+ | `server.decoding.max_length`                                | `int`       | No, (default: 268435456)                                                 | Specifies the maximum allowed number of bytes to read from a request body.                                                                                                                                                           |
 ```
 
-**File**: `v1/topdown/arithmetic.go` (modified, +8/-14)
+**File**: `internal/server/bodylimit/decoding.go` (added, +72/-0)
 ```diff
-@@ -210,25 +210,19 @@ func arithRound(a *big.Float) *big.Float {
+@@ -0,0 +1,72 @@
++// Copyright 2026 The OPA Authors.  All rights reserved.
++// Use of this source code is governed by an Apache2
++// license that can be found in the LICENSE file.
++
++package bodylimit
++
++import (
++	"errors"
++	"net/http"
++	"strings"
++
++	"github.com/open-policy-agent/opa/v1/server/types"
++	"github.com/open-policy-agent/opa/v1/server/writer"
++	"github.com/open-policy-agent/opa/v1/util"
++	util_decoding "github.com/open-policy-agent/opa/v1/util/decoding"
++)
++
++// Handler provides hard limits on the size of the request body, for both
++// the raw body content, and also for the decompressed size when gzip
++// compression is used.
++//
++// The Content-Length restriction happens here in the handler, but the
++// decompressed size limit is enforced later, in `util.ReadMaybeCompressedBody`.
++// The handler passes the gzip size limits down to that function through the
++// request context whenever gzip encoding is present.
++func Handler(handler http.Handler, maxLength, gzipMaxLength int64, v2Compatible bool) http.Handler {
++	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		// Reject too-large requests before doing any further processing.
++		// Note(philipc): This does nothing in the case of "chunked"
++		// requests, since those should report a ContentLength of -1.
++		if r.ContentLength > maxLength {
++			err := &util.BodyTooLargeError{Limit: maxLength, Size: r.ContentLength}
++			writer.Error(w, ErrorStatus(v2Compatible, err), types.NewErrorV1(types.CodeInvalidParameter, "%v", err))
++			return
++		}
++		// For requests where full size is not known in advance (such as chunked
++		// requests), pass server.decoding.max_length down, using the request
++		// context.
++
++		// Note(philipc): Unknown request body size is signaled to the server
++		// handler by net/http setting the Request.ContentLength field to -1. We
++		// don't check for the `Transfer-Encoding: chunked` header explicitly,
++		// because net/http will strip it out from requests automatically.
++		// Ref: https://pkg.go.dev/net/http#Request
++		if r.ContentLength < 0 {
++			ctx := util_decoding.AddServerDecodingMaxLen(r.Context(), maxLength)
++			r = r.WithContext(ctx)
++		}
++		// Pass server.decoding.gzip.max_length down, using the request context.
++		if strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
++			ctx := util_decoding.AddServerDecodingGzipMaxLen(r.Context(), gzipMaxLength)
++			r = r.WithContext(ctx)
++		}
++
++		// Copied over from the net/http package; enforces max body read limits.
++		r2 := *r
++		r2.Body = http.MaxBytesReader(w, r.Body, maxLength)
++		handler.ServeHTTP(w, &r2)
++	})
++}
++
++// ErrorStatus returns the status for a request-body error.
++func ErrorStatus(v2Compatible bool, err error) int {
++	if v2Compatible {
++		_, bodyTooLarge := errors.AsType[*util.BodyTooLargeError](err)
++		_, maxBytes := errors.AsType[*http.MaxBytesError](err)
++		if bodyTooLarge || maxBytes {
++			return http.StatusRequestEntityTooLarge
++		}
++	}
++	return http.StatusBadRequest
++}
+```
+
+**File**: `server/authorizer/authorizer.go` (modified, +6/-0)
+```diff
+@@ -28,6 +28,12 @@ func Runtime(term *ast.Term) func(*Basic) {
+ 	return v1.Runtime(term)
  }
  
- func arithCeil(a *big.Float) *big.Float {
--	i, _ := a.Int(nil)
--	f := new(big.Float).SetInt(i)
--
--	if f.Signbit() || a.Cmp(f) == 0 {
--		return f
-+	i, acc := a.Int(nil)
-+	if acc == big.Below {
-+		i.Add(i, big.NewInt(1))
++// V2Compatible enables v2-compatible request-body error responses on the authorizer.
++// Oversized request bodies return HTTP 413 instead of HTTP 400.
++func V2Compatible(yes bool) func(*Basic) {
++	return v1.V2Compatible(yes)
++}
++
+ // Decision returns an argument that sets the path of the authorization decision
+ // to query.
+ func Decision(ref func() ast.Ref) func(*Basic) {
+```
+
+**File**: `server/handlers/handlers.go` (modified, +2/-0)
+```diff
+@@ -34,6 +34,8 @@ func CompressHandler(handler http.Handler, gzipMinLength int, gzipCompressionLev
+ // decompressed size limit is enforced later, in `util.ReadMaybeCompressedBody`.
+ // The handler passes the gzip size limits down to that function through the
+ // request context whenever gzip encoding is present.
++//
++// Deprecated: Configure request-body limits through the server decoding configuration instead.
+ func DecodingLimitsHandler(handler http.Handler, maxLength, gzipMaxLength int64) http.Handler {
+ 	return v1.DecodingLimitsHandler(handler, maxLength, gzipMaxLength)
+ }
+```
+
+**File**: `v1/runtime/request_body_status_test.go` (added, +47/-0)
+```diff
+@@ -0,0 +1,47 @@
++// Copyright 2026 The OPA Authors.  All rights reserved.
++// Use of this source code is governed by an Apache2
++// license that can be found in the LICENSE file.
++
++package runtime
++
++import (
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++)
++
++func TestRequestBodyLimitCompatibility(t *testing.T) {
++	for _, tc := range []struct {
++		name       string
++		v0, v1, v2 bool
++		status     int
++	}{
++		{"default", false, false, false, http.StatusBadRequest},
++		{"v0", true, false, false, http.StatusBadRequest},
++		{"v1", false, true, false, http.StatusBadRequest},
++		{"v2", false, false, true, http.StatusRequestEntityTooLarge},
++		{"v2 over v1", false, true, true, http.StatusRequestEntityTooLarge},
++		{"v0 over v2", true, false, true, http.StatusBadRequest},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			params := NewParams()
++			params.Addrs = &[]string{"localhost:0"}
++			params.V0Compatible, params.V1Compatible, params.V2Compatible = tc.v0, tc.v1, tc.v2
++			params.ConfigOverrides = []string{"server.decoding.max_length=16"}
++			rt, err := NewRuntime(t.Context(), params)
++			if err != nil {
++				t.Fatal(err)
++			}
++			srv, err := rt.buildServer(t.Context())
++			if err != nil {
++				t.Fatal(err)
++			}
++			recorder := httptest.NewRecorder()
++			srv.Handler.ServeHTTP(recorder, httptest.NewRequest(http.MethodPost, "/v1/data/test", strings.NewReader(strings.Repeat(" ", 17))))
++			if recorder.Code != tc.status {
++				t.Fatalf("got %d, want %d: %s", recorder.Code, tc.status, recorder.Body.String())
++			}
++		})
++	}
++}
+```
+
+**File**: `v1/server/authorizer/authorizer.go` (modified, +11/-1)
+```diff
+@@ -11,6 +11,7 @@ import (
+ 	"net/url"
+ 	"strings"
+ 
++	"github.com/open-policy-agent/opa/internal/server/bodylimit"
+ 	"github.com/open-policy-agent/opa/v1/ast"
+ 	"github.com/open-policy-agent/opa/v1/rego"
+ 	"github.com/open-policy-agent/opa/v1/server/identifier"
+@@ -28,6 +29,7 @@ type Basic struct {
+ 	compiler               func() *ast.Compiler
+ 	store                  storage.Store
+ 	runtime                *ast.Term
++	v2Compatible           bool
+ 	decision               func() ast.Ref
+ 	printHook              print.Hook
+ 	enablePrintStatements  bool
+@@ -43,6 +45,14 @@ func Runtime(term *ast.Term) func(*Basic) {
  	}
--
--	return new(big.Float).Add(f, big.NewFloat(1.0))
-+	return new(big.Float).SetInt(i)
  }
  
- func arithFloor(a *big.Float) *big.Float {
--	i, _ := a.Int(nil)
--	f := new(big.Float).SetInt(i)
--
--	if !f.Signbit() || a.Cmp(f) == 0 {
--		return f
-+	i, acc := a.Int(nil)
-+	if acc == big.Above {
-+		i.Sub(i, big.NewInt(1))
++// V2Compatible enables v2-compatible request-body error responses on the authorizer.
++// Oversized request bodies return HTTP 413 instead of HTTP 400.
++func V2Compatible(yes bool) func(*Basic) {
++	return func(b *Basic) {
++		b.v2Compatible = yes
++	}
++}
++
+ // Decision returns an argument that sets the path of the authorization decision
+ // to query.
+ func Decision(ref func() ast.Ref) func(*Basic) {
+@@ -109,7 +119,7 @@ func (b *Basic) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+ 	// conversions.
+ 	r, input, err := makeInput(r, b.urlPathExpectsBodyFunc)
+ 	if err != nil {
+-		writer.ErrorString(w, http.StatusBadRequest, types.CodeInvalidParameter, err)
++		writer.ErrorString(w, bodylimit.ErrorStatus(b.v2Compatible, err), types.CodeInvalidParameter, err)
+ 		return
  	}
--
--	return new(big.Float).Sub(f, big.NewFloat(1.0))
-+	return new(big.Float).SetInt(i)
- }
  
- func builtinMinus(_ BuiltinContext, operands []*ast.Term, iter func(*ast.Term) error) error {
+```
+
+**File**: `v1/server/compile_handler.go` (modified, +2/-1)
+```diff
+@@ -13,6 +13,7 @@ import (
+ 	"strings"
+ 
+ 	"github.com/open-policy-agent/opa/internal/compile"
++	"github.com/open-policy-agent/opa/internal/server/bodylimit"
+ 	"github.com/open-policy-agent/opa/v1/ast"
+ 	"github.com/open-policy-agent/opa/v1/metrics"
+ 	"github.com/open-policy-agent/opa/v1/rego"
+@@ -151,7 +152,7 @@ func (s *Server) v1CompileFilters(w http.ResponseWriter, r *http.Request) {
+ 	m.Timer(metrics.RegoQueryParse).Start()
+ 	req, err := readRequest(r, compileFiltersRequestFromMap)
+ 	if err != nil && !isEmptyBody(err) {
+-		writer.Error(w, http.StatusBadRequest, types.NewErrorV1(types.CodeInvalidParameter, "%v", err))
++		writer.Error(w, bodylimit.ErrorStatus(s.v2Compatible, err), types.NewErrorV1(types.CodeInvalidParameter, "%v", err))
+ 		return
+ 	}
+ 
+```
+
+**File**: `v1/server/handlers/decoding.go` (modified, +4/-38)
+```diff
+@@ -2,12 +2,8 @@ package handlers
+ 
+ import (
+ 	"net/http"
+-	"strings"
+ 
+-	"github.com/open-policy-agent/opa/v1/server/types"
+-	"github.com/open-policy-agent/opa/v1/server/writer"
+-	"github.com/open-policy-agent/opa/v1/util"
+-	util_decoding "github.com/open-policy-agent/opa/v1/util/decoding"
++	"github.com/open-policy-agent/opa/internal/server/bodylimit"
+ )
+ 
+ // This handler provides hard limits on the size of the request body, for both
+@@ -18,38 +14,8 @@ import (
+ // decompressed size limit is enforced later, in `util.ReadMaybeCompressedBody`.
+ // The handler passes the gzip size limits down to that function through the
+ // request context whenever gzip encoding is present.
++//
++// Deprecated: Configure request-body limits through the server decoding configuration instead.
+ func DecodingLimitsHandler(handler http.Handler, maxLength, gzipMaxLength int64) http.Handler {
+-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+-		// Reject too-large requests before doing any further processing.
+-		// Note(philipc): This does nothing in the case of "chunked"
+-		// requests, since those should report a ContentLength of -1.
+-		if r.ContentLength > maxLength {
+-			err := &util.BodyTooLargeError{Limit: maxLength, Size: r.ContentLength}
+-			writer.Error(w, http.StatusBadRequest, types.NewErrorV1(types.CodeInvalidParameter, "%v", err))
+-			return
+-		}
+-		// For requests where full size is not known in advance (such as chunked
+-		// requests), pass server.decoding.max_length down, using the request
+-		// context.
+-
+-		// Note(philipc): Unknown request body size is signaled to the server
+-		// handler by net/http setting the Request.ContentLength field to -1. We
+-		// don't check for the `Transfer-Encoding: chunked` header explicitly,
+-		// because net/http will strip it out from requests automatically.
+-		// Ref: https://pkg.go.dev/net/http#Request
+-		if r.ContentLength < 0 {
+-			ctx := util_decoding.AddServerDecodingMaxLen(r.Context(), maxLength)
+-			r = r.WithContext(ctx)
+-		}
+-		// Pass server.decoding.gzip.max_length down, using the request context.
+-		if strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
+-			ctx := util_decoding.AddServerDecodingGzipMaxLen(r.Context(), gzipMaxLength)
+-			r = r.WithContext(ctx)
+-		}
+-
+-		// Copied over from the net/http package; enforces max body read limits.
+-		r2 := *r
+-		r2.Body = http.MaxBytesReader(w, r.Body, maxLength)
+-		handler.ServeHTTP(w, &r2)
+-	})
++	return bodylimit.Handler(handler, maxLength, gzipMaxLength, false)
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9571** (2026-11-16): topdown: Remove stale comment re sync.Pool (@charlieegan3)
-- **PR #9568** (2026-11-16): Releng: Integrate v1.22.4 (@srenatus)
-- **PR #9563** (2026-11-16): topdown: fix ceil and floor of negative fractions above -1 (@kroekle)
-- **PR #9561** (2026-11-16): build: Stop marking release binaries as dirty (@srndic)
-- **PR #9558** (2026-11-13): ast: fix negative number location text (for issue #9531) (@devjoshi2005)
-- **PR #9557** (2026-11-13): build(deps): bump the dependencies group across 2 directories with 2 updates (@dependabot[bot])
+- **PR #9583** (2026-11-17): ast: Set scan opts when needed to reduce allocs (@charlieegan3)
+- **PR #9582** (2026-11-17): ast: Skip per-rule recursion check when graph sorts (@charlieegan3)
+- **PR #9580** (2026-11-17): ast: don't copy expressions before rewriting (@anderseknert)
+- **PR #9579** (2026-11-17): ast: give a function without a body the location of its whole statement (@srenatus)
+- **PR #9578** (2026-11-17): util/test: don't panic in MakeTempFS when creating files fails (@sspaink)
+- **PR #9576** (2026-11-17): plugins/logs: Copy JSON-shaped values natively for console logs (@sspaink)
 
 ---
 
@@ -1209,32 +1454,48 @@ Signed-off-by: Kurt Roekle <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: Stop marking release binaries as dirty
+## X. util/test: don't panic in MakeTempFS when creating files fails
 
 **RULE**:
-When implementing operations in `.github/workflows/post-merge.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `v1/util/test/tempfs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dea4670c`: build: Stop marking release binaries as dirty. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cb47e885`: util/test: don't panic in MakeTempFS when creating files fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/post-merge.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/util/test/tempfs.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - name: Check working copy is clean
-        # Anything untracked or modified here ends up as "-dirty" in the
-        # build commit of the binaries built above.
-        run: ./build/check-working-copy.sh
-
+	dir, err := os.MkdirTemp(root, prefix)
+	if err != nil {
+	// Use locals rather than the named results: returning an error resets those,
+	// which would leave the deferred cleanup nil and pointed at the wrong dir.
+	remove := func() {
+		_ = os.RemoveAll(dir)
+			remove()
+		dirPath := filepath.Join(dir, dirname)
+		if err := os.WriteFile(filepath.Join(dirPath, filename), []byte(content), 0666); err != nil {
+	return dir, remove, nil
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	if rootDir, err = os.MkdirTemp(root, prefix); err != nil {
+	cleanup = func() {
+		_ = os.RemoveAll(rootDir)
+			cleanup()
+		dirPath := filepath.Join(rootDir, dirname)
+		f, err := os.Create(filepath.Join(dirPath, filename))
+		if err != nil {
+			return "", nil, err
+		}
+
+		if _, err := f.WriteString(content); err != nil {
+	return rootDir, cleanup, nil
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dea4670c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cb47e885` are properly handled with clean fallback behavior.

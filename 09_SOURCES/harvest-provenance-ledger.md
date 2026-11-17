@@ -10622,3 +10622,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-17T15:35:00.231Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `e42d23c4` | Multi-dimensional audit evidence | 2026-11-17T15:35:15.700Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c0d30a17` | Multi-dimensional audit evidence | 2026-11-17T15:35:17.419Z |
+| `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-11-17T15:43:34.717Z |
+| `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `939caf9b` | Multi-dimensional audit evidence | 2026-11-17T15:43:37.986Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `d7d1bc3f` | Multi-dimensional audit evidence | 2026-11-17T15:43:43.801Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `ee945380` | Multi-dimensional audit evidence | 2026-11-17T15:43:45.645Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `3707bf02` | Multi-dimensional audit evidence | 2026-11-17T15:43:48.900Z |

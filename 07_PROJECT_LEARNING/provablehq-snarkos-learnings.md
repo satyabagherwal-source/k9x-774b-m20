@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `a33d49c4`  
+> **Source Version**: `3707bf02`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T03:26:19.613Z  
+> **Timestamp**: 2026-11-17T15:43:48.113Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:26:19.605Z  
+> **Harvest Timestamp**: 2026-11-17T15:43:48.105Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1988,513 +1988,243 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7a70c70` (2026-11-17)
-**Commit Message**: Remove the locktick profile and tokio_console flag checks from build.rs
+### Incident Patch 1: `3707bf02` (2026-11-17)
+**Commit Message**: Merge pull request #4692 from aleo-labs-protocol/ci/bump-snarkvm
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Bump snarkVM to aleo-labs-protocol/snarkVM@de20fd4ea
 
-**File**: `Cargo.lock` (modified, +1/-32)
+**File**: `Cargo.lock` (modified, +61/-61)
 ```diff
-@@ -4753,7 +4753,7 @@ dependencies = [
-  "ci_info",
-  "getopts",
-  "nias",
-- "toml 0.5.11",
-+ "toml",
- ]
+@@ -5864,7 +5864,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "anyhow",
+  "dotenvy",
+@@ -5886,7 +5886,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -5913,7 +5913,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms-cuda"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "blst",
+  "cc",
+@@ -5926,7 +5926,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "snarkvm-circuit-account",
+  "snarkvm-circuit-algorithms",
+@@ -5940,7 +5940,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-account"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "snarkvm-circuit-network",
+  "snarkvm-circuit-types",
+@@ -5950,7 +5950,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-algorithms"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "snarkvm-circuit-types",
+  "snarkvm-console-algorithms",
+@@ -5960,7 +5960,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-collections"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-types",
+@@ -5970,7 +5970,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -5990,12 +5990,12 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment-witness"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
  
  [[package]]
-@@ -5117,15 +5117,6 @@ dependencies = [
-  "serde_core",
- ]
- 
--[[package]]
--name = "serde_spanned"
--version = "1.1.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
--dependencies = [
-- "serde_core",
--]
--
+ name = "snarkvm-circuit-network"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-collections",
+@@ -6006,7 +6006,7 @@ dependencies = [
  [[package]]
- name = "serde_urlencoded"
- version = "0.7.1"
-@@ -5373,7 +5364,6 @@ dependencies = [
-  "snarkos-node-tcp",
-  "snarkvm",
-  "tikv-jemallocator",
-- "toml 1.1.6+spec-1.1.0",
-  "tracing",
- ]
- 
-@@ -7451,21 +7441,6 @@ dependencies = [
-  "serde",
- ]
- 
--[[package]]
--name = "toml"
--version = "1.1.6+spec-1.1.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
--dependencies = [
-- "indexmap 2.14.2",
-- "serde_core",
-- "serde_spanned",
-- "toml_datetime",
-- "toml_parser",
-- "toml_writer",
-- "winnow",
--]
--
- [[package]]
- name = "toml_datetime"
- version = "1.1.1+spec-1.1.0"
-@@ -7496,12 +7471,6 @@ dependencies = [
-  "winnow",
- ]
- 
--[[package]]
--name = "toml_writer"
--version = "1.1.2+spec-1.1.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
--
- [[package]]
- name = "tonic"
- version = "0.14.6"
+ name = "snarkvm-circuit-program"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a
 ```
 
-**File**: `Cargo.toml` (modified, +0/-11)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -382,19 +382,8 @@ version = "0.11.2"
- [build-dependencies.built]
- workspace = true
+@@ -49,7 +49,7 @@ default-features = false
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "d36b2f7439fa1c7c311e589fcc824ee2c464720d" #staging
++rev = "de20fd4ea81a87452c24826757c14f30e7f7c6b6" #staging
+ #version = "=4.12.0"
+ default-features = false
  
--[build-dependencies.toml]
--version = "1"
--
- [profile.release]
- lto = "thin"
--# uncomment the 2 lines below when building with the locktick feature or use the `release-locktick` profile
--# debug = "line-tables-only"
--# strip = "none"
--
--[profile.release-locktick]
--inherits = "release"
--debug = "line-tables-only"
--strip = "none"
- 
- [profile.dev]
- debug = "line-tables-only"
-```
-
-**File**: `build.rs` (modified, +1/-115)
-```diff
-@@ -13,116 +13,7 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--use std::{env, fs, path::Path, process};
--use toml::Value;
--
--fn check_locktick_profile() {
--    let locktick_enabled = env::var("CARGO_FEATURE_LOCKTICK").is_ok();
--    if locktick_enabled {
--        // First check the env variables that can override the TOML values.
--        let (mut valid_debug_override, mut valid_strip_override) = (false, false);
--
--        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_DEBUG") {
--            if val != "line-tables-only" {
--                eprintln!(
--                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_DEBUG may only be set to `line-tables-only`."
--                );
--                process::exit(1);
--            } else {
--                valid_debug_override = true;
--            }
--        }
--        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_STRIP") {
--            if val != "none" {
--                eprintln!(
--                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_STRIP may only be set to `none`."
--                );
--                process::exit(1);
--            } else {
--                valid_strip_override = true;
--            }
--        }
--
--        if valid_debug_override && valid_strip_override {
--            // Both overrides are compatible with locktick, no need to check the TOML.
--            return;
--        }
--
--        // If the relevant overrides were either invalid or not present, check the TOML.
--        let profile = env::var("PROFILE").unwrap_or_else(|_| "".to_string());
--        let manifest = Path::new(&env::var("CARGO_MANIFEST_DIR").unwrap()).join("Cargo.toml");
--        let contents = fs::read_to_string(&manifest).expect("failed to read Cargo.toml");
--        let doc: Value = toml::from_str(&contents).expect("invalid TOML in Cargo.toml");
--
--        let profile_table = doc.get("profile").and_then(|p| p.get(profile));
--        if let Some(Value::Table(profile_settings)) = profile_table {
--            if let Some(debug) = profile_settings.get("debug") {
--                match debug {
--                    Value::String(s) if s == "line-tables-only" => {
--                        println!("cargo:info=manifest has debuginfo=line-tables-only");
--                    }
--                    _ => {
--                        eprintln!(
--                            "🔴 When enabling the locktick feature, the profile must have debug set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
--                        );
--                        process::exit(1);
--                    }
--                }
--            } else {
--                eprintln!(
--                    "🔴 When enabling the locktick feature, the profile must have `debug` set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
--                );
--                process::exit(1);
--            }
--            if let Some(debug) = profile_settings.get("strip") {
--                match debug {
--                    Value::String(s) if s == "none" => {
--                        println!("cargo:info=manifest has strip=none");
--                    }
--                    _ => {
--                        eprintln!(
--                            "🔴 When enabling the locktick feature, the profile must have `strip` set to `none`. Uncomment the relevant lines in Cargo.toml."
--                        );
--                        process::exit(1);
--                    }
--                }
--            }
--        }
--    }
--}
--
--fn is_clippy() -> bool {
--    env::var("RUSTC_WORKSPACE_WRAPPER").is_ok_and(|var| var.contains("clippy"))
--}
--
--fn check_tokio_console_flags() {
--    // Don't run this check under clippy, otherwise it will cause issues with --all-features.
--    if is_clippy() {
--        return;
--    }
--
--    // Skip if the feature is not used.
--    let feature_enabled = env::var("CARGO_FEATURE_TOKIO_CONSOLE").is_ok();
--    if !feature_enabled {
--        return;
--    }
--
--    // Check for the presence of RUSTFLAGS.
--    let Ok(rustflags) = env::var("CARGO_ENCODED_RUSTFLAGS") else {
--        eprintln!(
--            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
--        );
--        process::exit(1);
--    };
--
--    // Check for the presence of `tokio_unstable` within RUSTFLAGS.
--    if !rustflags.contains("tokio_unstable") {
--        eprintln!(
--            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
--        );
--        process::exit(1);
--    }
--}
-+use std::{env, fs, path::Path};
- 
- // The build script.
- 
-@@ -150,11 +41,6 @@ fn emit_version_env() {
- }
- 
- fn main() {
--    // Check if locktick feature is correctly enabled.
--    check_locktick_profile();
--    // Check if the tokio_console feature is correctly enabled.
--    check_tokio_console_flags();
--
-     // Register the rele
 ```
 
 ---
 
-### Incident Patch 2: `18b3912a` (2026-11-17)
-**Commit Message**: Report unreadable and non-UTF-8 files instead of crashing
+### Incident Patch 2: `de282ddc` (2026-11-17)
+**Commit Message**: Bump snarkVM to aleo-labs-protocol/snarkVM@de20fd4ea
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `scripts/check_sources.py` (modified, +11/-2)
+**File**: `Cargo.lock` (modified, +61/-61)
 ```diff
-@@ -104,11 +104,20 @@ def main():
+@@ -5864,7 +5864,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "anyhow",
+  "dotenvy",
+@@ -5886,7 +5886,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -5913,7 +5913,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms-cuda"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "blst",
+  "cc",
+@@ -5926,7 +5926,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "snarkvm-circuit-account",
+  "snarkvm-circuit-algorithms",
+@@ -5940,7 +5940,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-account"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "snarkvm-circuit-network",
+  "snarkvm-circuit-types",
+@@ -5950,7 +5950,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-algorithms"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "snarkvm-circuit-types",
+  "snarkvm-console-algorithms",
+@@ -5960,7 +5960,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-collections"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-types",
+@@ -5970,7 +5970,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -5990,12 +5990,12 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment-witness"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
  
-     for path in rust_files(root):
-         name = path.relative_to(root)
--        contents = path.read_bytes()
-+        try:
-+            contents = path.read_bytes()
-+        except OSError as error:
-+            errors.append(f"{name}: cannot be read: {error}")
-+            continue
-         in_root_dot_dir = len(name.parts) > 1 and name.parts[0].startswith(".")
-         if not in_root_dot_dir and not contents.startswith(LICENSE_HEADER):
-             errors.append(f"{name}: the license header is missing or does not match .resources/license_header")
--        imbalance = lock_import_imbalance(contents.decode("utf-8"))
-+        try:
-+            text = contents.decode("utf-8")
-+        except UnicodeDecodeError as error:
-+            errors.append(f"{name}: is not valid UTF-8: {error}")
-+            continue
-+        imbalance = lock_import_imbalance(text)
-         if imbalance > 0:
-             errors.append(f"{name}: {imbalance} lock import(s) from parking_lot or tokio have no locktick counterpart")
-         elif imbalance < 0:
+ [[package]]
+ name = "snarkvm-circuit-network"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-collections",
+@@ -6006,7 +6006,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-program"
+ version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a
 ```
 
----
-
-### Incident Patch 3: `c81c424a` (2026-11-17)
-**Commit Message**: Merge pull request #4682 from aleo-labs-protocol/build/drop-feature-config-checks
-
-**File**: `Cargo.lock` (modified, +1/-32)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -4753,7 +4753,7 @@ dependencies = [
-  "ci_info",
-  "getopts",
-  "nias",
-- "toml 0.5.11",
-+ "toml",
- ]
+@@ -49,7 +49,7 @@ default-features = false
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "d36b2f7439fa1c7c311e589fcc824ee2c464720d" #staging
++rev = "de20fd4ea81a87452c24826757c14f30e7f7c6b6" #staging
+ #version = "=4.12.0"
+ default-features = false
  
- [[package]]
-@@ -5117,15 +5117,6 @@ dependencies = [
-  "serde_core",
- ]
- 
--[[package]]
--name = "serde_spanned"
--version = "1.1.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
--dependencies = [
-- "serde_core",
--]
--
- [[package]]
- name = "serde_urlencoded"
- version = "0.7.1"
-@@ -5373,7 +5364,6 @@ dependencies = [
-  "snarkos-node-tcp",
-  "snarkvm",
-  "tikv-jemallocator",
-- "toml 1.1.6+spec-1.1.0",
-  "tracing",
- ]
- 
-@@ -7451,21 +7441,6 @@ dependencies = [
-  "serde",
- ]
- 
--[[package]]
--name = "toml"
--version = "1.1.6+spec-1.1.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
--dependencies = [
-- "indexmap 2.14.2",
-- "serde_core",
-- "serde_spanned",
-- "toml_datetime",
-- "toml_parser",
-- "toml_writer",
-- "winnow",
--]
--
- [[package]]
- name = "toml_datetime"
- version = "1.1.1+spec-1.1.0"
-@@ -7496,12 +7471,6 @@ dependencies = [
-  "winnow",
- ]
- 
--[[package]]
--name = "toml_writer"
--version = "1.1.2+spec-1.1.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
--
- [[package]]
- name = "tonic"
- version = "0.14.6"
-```
-
-**File**: `Cargo.toml` (modified, +0/-11)
-```diff
-@@ -382,19 +382,8 @@ version = "0.11.2"
- [build-dependencies.built]
- workspace = true
- 
--[build-dependencies.toml]
--version = "1"
--
- [profile.release]
- lto = "thin"
--# uncomment the 2 lines below when building with the locktick feature or use the `release-locktick` profile
--# debug = "line-tables-only"
--# strip = "none"
--
--[profile.release-locktick]
--inherits = "release"
--debug = "line-tables-only"
--strip = "none"
- 
- [profile.dev]
- debug = "line-tables-only"
-```
-
-**File**: `build.rs` (modified, +1/-115)
-```diff
-@@ -13,116 +13,7 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--use std::{env, fs, path::Path, process};
--use toml::Value;
--
--fn check_locktick_profile() {
--    let locktick_enabled = env::var("CARGO_FEATURE_LOCKTICK").is_ok();
--    if locktick_enabled {
--        // First check the env variables that can override the TOML values.
--        let (mut valid_debug_override, mut valid_strip_override) = (false, false);
--
--        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_DEBUG") {
--            if val != "line-tables-only" {
--                eprintln!(
--                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_DEBUG may only be set to `line-tables-only`."
--                );
--                process::exit(1);
--            } else {
--                valid_debug_override = true;
--            }
--        }
--        if let Ok(val) = env::var("CARGO_PROFILE_RELEASE_STRIP") {
--            if val != "none" {
--                eprintln!(
--                    "🔴 When enabling the locktick feature, CARGO_PROFILE_RELEASE_STRIP may only be set to `none`."
--                );
--                process::exit(1);
--            } else {
--                valid_strip_override = true;
--            }
--        }
--
--        if valid_debug_override && valid_strip_override {
--            // Both overrides are compatible with locktick, no need to check the TOML.
--            return;
--        }
--
--        // If the relevant overrides were either invalid or not present, check the TOML.
--        let profile = env::var("PROFILE").unwrap_or_else(|_| "".to_string());
--        let manifest = Path::new(&env::var("CARGO_MANIFEST_DIR").unwrap()).join("Cargo.toml");
--        let contents = fs::read_to_string(&manifest).expect("failed to read Cargo.toml");
--        let doc: Value = toml::from_str(&contents).expect("invalid TOML in Cargo.toml");
--
--        let profile_table = doc.get("profile").and_then(|p| p.get(profile));
--        if let Some(Value::Table(profile_settings)) = profile_table {
--            if let Some(debug) = profile_settings.get("debug") {
--                match debug {
--                    Value::String(s) if s == "line-tables-only" => {
--                        println!("cargo:info=manifest has debuginfo=line-tables-only");
--                    }
--                    _ => {
--                        eprintln!(
--                            "🔴 When enabling the locktick feature, the profile must have debug set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
--                        );
--                        process::exit(1);
--                    }
--                }
--            } else {
--                eprintln!(
--                    "🔴 When enabling the locktick feature, the profile must have `debug` set to `line-tables-only`. Uncomment the relevant lines in Cargo.toml."
--                );
--                process::exit(1);
--            }
--            if let Some(debug) = profile_settings.get("strip") {
--                match debug {
--                    Value::String(s) if s == "none" => {
--                        println!("cargo:info=manifest has strip=none");
--                    }
--                    _ => {
--                        eprintln!(
--                            "🔴 When enabling the locktick feature, the profile must have `strip` set to `none`. Uncomment the relevant lines in Cargo.toml."
--                        );
--                        process::exit(1);
--                    }
--                }
--            }
--        }
--    }
--}
--
--fn is_clippy() -> bool {
--    env::var("RUSTC_WORKSPACE_WRAPPER").is_ok_and(|var| var.contains("clippy"))
--}
--
--fn check_tokio_console_flags() {
--    // Don't run this check under clippy, otherwise it will cause issues with --all-features.
--    if is_clippy() {
--        return;
--    }
--
--    // Skip if the feature is not used.
--    let feature_enabled = env::var("CARGO_FEATURE_TOKIO_CONSOLE").is_ok();
--    if !feature_enabled {
--        return;
--    }
--
--    // Check for the presence of RUSTFLAGS.
--    let Ok(rustflags) = env::var("CARGO_ENCODED_RUSTFLAGS") else {
--        eprintln!(
--            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
--        );
--        process::exit(1);
--    };
--
--    // Check for the presence of `tokio_unstable` within RUSTFLAGS.
--    if !rustflags.contains("tokio_unstable") {
--        eprintln!(
--            "🔴 When enabling the tokio_console feature, you must run with `RUSTFLAGS=\"--cfg tokio_unstable\"`."
--        );
--        process::exit(1);
--    }
--}
-+use std::{env, fs, path::Path};
- 
- // The build script.
- 
-@@ -150,11 +41,6 @@ fn emit_version_env() {
- }
- 
- fn main() {
--    // Check if locktick feature is correctly enabled.
--    check_locktick_profile();
--    // Check if the tokio_console feature is correctly enabled.
--    check_tokio_console_flags();
--
-     // Register the rele
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4692** (2026-11-17): Bump snarkVM to aleo-labs-protocol/snarkVM@de20fd4ea (@aleo-labs-merge-bot[bot])
+- **PR #4691** (2026-11-17): [Release] Mainnet v4.13.1 (@snarkworld)
+- **PR #4690** (2026-11-17): [Release] Testnet v4.13.1 (@snarkworld)
 - **PR #4689** (2026-11-17): Scan every top-level use statement for lock imports (@cbeck88-ai-dev)
 - **PR #4685** (closed): [Release] Use published snarkVM 4.13.0 crates for mainnet (@snarkworld)
 - **PR #4684** (2026-11-17): Run fleet CI for approved fork pull requests (@cbeck88)
-- **PR #4683** (2026-11-17): Merge mainnet into staging (@aleo-labs-merge-bot[bot])
-- **PR #4682** (2026-11-17): Remove the locktick profile and tokio_console flag checks from build.rs (@cbeck88-ai-dev)
-- **PR #4681** (2026-11-17): Move the license and locktick source scans from build.rs to CI (@cbeck88-ai-dev)
 
 ---
 
@@ -2514,13 +2244,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove the locktick profile and tokio_console flag checks from build.rs
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7a70c70`: Remove the locktick profile and tokio_console flag checks from build.rs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3707bf02`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2528,45 +2258,28 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "toml",
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "toml 0.5.11",
-[[package]]
-name = "serde_spanned"
-version = "1.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6662b5879511e06e8999a8a235d848113e942c9124f211511b16466ee2995f26"
-dependencies = [
- "serde_core",
-]
-
- "toml 1.1.6+spec-1.1.0",
-[[package]]
-name = "toml"
-version = "1.1.6+spec-1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "920602543f0911ab71da12c50d59701da54c196d1a2bf5cb4b75667f137a406a"
-dependencies = [
- "indexmap 2.14.2",
- "serde_core",
- "serde_spanned",
- "toml_datetime",
- "toml_parser",
- "toml_writer",
- "winnow",
-]
-
-[[package]]
-name = "toml_writer"
-version = "1.1.2+spec-1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d56353a2a665ad0f41a421187180aab746c8c325620617ad883a99a1cbe66d2"
-
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7a70c70` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3707bf02` are properly handled with clean fallback behavior.

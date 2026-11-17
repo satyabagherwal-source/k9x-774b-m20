@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T15:35:22.167Z",
-  "total_records": 1584,
+  "last_updated": "2026-11-17T15:43:54.750Z",
+  "total_records": 1590,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 661,
+      "total": 663,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -710,7 +710,9 @@
         "domain_intelligence-research-knowledge-intelligence-nvidia-deepseek-v4-1-flash-1017-nvfp4-core-invar",
         "domain_intelligence-research-knowledge-intelligence-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnin",
         "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-nvfp4-core",
-        "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-nvfp4-l"
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-nvfp4-l",
+        "domain_intelligence-research-knowledge-intelligence-reflection-beam-1-0-501b-a23b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-"
       ]
     },
     "E": {
@@ -762,7 +764,7 @@
       ]
     },
     "G": {
-      "total": 288,
+      "total": 290,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1051,11 +1053,13 @@
         "domain_intelligence-architecture-intelligence-citusdata-citus-core-invariants",
         "domain_intelligence-architecture-intelligence-meshery-meshery-core-invariants",
         "domain_intelligence-architecture-intelligence-meshery-meshery-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-redisearch-redisearch-core-invariants"
+        "domain_intelligence-architecture-intelligence-redisearch-redisearch-core-invariants",
+        "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants",
+        "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 382,
+      "total": 384,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1438,7 +1442,9 @@
         "domain_intelligence-technical-construction-intelligence-facebook-docusaurus-learnings-core-invariant",
         "DOM-H-1449F81D",
         "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-learnings-core-invar"
+        "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-learnings-core-invar",
+        "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor",
+        "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-lea"
       ]
     },
     "I": {
@@ -7688,10 +7694,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "98e6519181e4f49f1601cc2bb35c51d3f35aa2b7467e582dc02b0022682f3739",
-      "created_at": "2026-11-17T06:19:39.653Z"
+      "content_hash": "a7da7b83f0425ff748f0884f2fba752f7a22743a8c74312fb220b1fea210c702",
+      "created_at": "2026-11-17T15:43:49.305Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9616,8 +9622,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "repository": "open-policy-agent/opa",
-      "content_hash": "5a691369b8c2637dee1d22bb013d20bbb3f3fcad824350c18c0486fd2da41446",
-      "created_at": "2026-11-16T13:38:27.280Z"
+      "content_hash": "177478aff1eedb4853b636a1b66efcd39016e5dcbe978eb031d036723489ae41",
+      "created_at": "2026-11-17T15:43:46.045Z"
     },
     "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
@@ -27377,6 +27383,60 @@
       "repository": "tickernelz-opencode-mem-learnings",
       "content_hash": "525e336bc017c4c095ef506f06b82f9d0e63a022b2fad844ed209f8f8293f1d1",
       "created_at": "2026-11-17T15:35:21.242Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-reflection-beam-1-0-501b-a23b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-reflection-beam-1-0-501b-a23b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: reflection/Beam-1.0-501B-A23B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reflection-beam-1-0-501b-a23b-research-knowledge-intelligence-reflection-beam.md",
+      "repository": "reflection/Beam-1.0-501B-A23B",
+      "content_hash": "dea73d914ed286181430628169b7b469f294bbc2bfbf461d2f7545ba018ba9f6",
+      "created_at": "2026-11-17T15:43:34.984Z"
+    },
+    "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: dalance/procs Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-architecture-intelligence-dalance-procs-core-invariants.md",
+      "repository": "dalance/procs",
+      "content_hash": "e1e6ae0be9f73f4fe31f80eef08b87ee257bd7c640e946074a7e7ef139dc93e7",
+      "created_at": "2026-11-17T15:43:38.387Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: software-mansion/react-native-reanimated Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-technical-construction-intelligence-sof.md",
+      "repository": "software-mansion/react-native-reanimated",
+      "content_hash": "f098405a7f28560071d04eb856aedec4ac39edaeb97a471a9f4a52062240e161",
+      "created_at": "2026-11-17T15:43:44.212Z"
+    },
+    "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: dalance-procs-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-learnings-architecture-intelligence-dalance-procs-learnings-core-i.md",
+      "repository": "dalance-procs-learnings",
+      "content_hash": "0e8a8878eb021344ef9cceddf7ffdafbe75c857b98611237f3d20b4d0114de88",
+      "created_at": "2026-11-17T15:43:53.493Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-reflection-beam-1.0-501b-a23b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reflection-beam-1-0-501b-a23b-learnings-research-knowledge-intelligence-hf-re.md",
+      "repository": "hf-reflection-beam-1.0-501b-a23b-learnings",
+      "content_hash": "6ead00606e161e349862d86c9f987251e4ff51dd8181e02129271c300da42426",
+      "created_at": "2026-11-17T15:43:54.062Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-lea": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-lea",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: software-mansion-react-native-reanimated-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-learnings-technical-construction-intell.md",
+      "repository": "software-mansion-react-native-reanimated-learnings",
+      "content_hash": "38a9a57af1c7c5187c0faa64498c20946dd3b1f13b2305a58ed26b1d8bc28bee",
+      "created_at": "2026-11-17T15:43:54.750Z"
     }
   }
 }

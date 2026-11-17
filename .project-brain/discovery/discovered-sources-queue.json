@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T15:35:21.676Z",
+  "updated_at": "2026-11-17T15:43:54.374Z",
   "stats": {
-    "total_discovered": 5017,
-    "approved_pending_harvest": 4729,
+    "total_discovered": 5033,
+    "approved_pending_harvest": 4745,
     "harvested_count": 0,
     "rejected_count": 288,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4718,
+      "COMMUNITY_AND_EXPERT": 4734,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -108379,6 +108379,358 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-E1207B513720": {
+      "id": "SRC-E1207B513720",
+      "url": "https://github.com/dalance/procs",
+      "title": "https://github.com/dalance/procs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.501Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-0C6C13D0C2FE": {
+      "id": "SRC-0C6C13D0C2FE",
+      "url": "https://learn.microsoft.com/zh-cn/windows/win32/sysinfo/image-file-machine-constants",
+      "title": "https://learn.microsoft.com/zh-cn/windows/win32/sysinfo/image-file-machine-constants",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.546Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-5BA6C0209F6E": {
+      "id": "SRC-5BA6C0209F6E",
+      "url": "https://github.com/lambda-fairy/rust-errno",
+      "title": "https://github.com/lambda-fairy/rust-errno",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.588Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-258D5D37281E": {
+      "id": "SRC-258D5D37281E",
+      "url": "https://github.com/lambda-fairy/rust-errno/releases",
+      "title": "https://github.com/lambda-fairy/rust-errno/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.632Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-222C7FBE893B": {
+      "id": "SRC-222C7FBE893B",
+      "url": "https://redirect.github.com/lambda-fairy/rust-errno/pull/134",
+      "title": "https://redirect.github.com/lambda-fairy/rust-errno/pull/134",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.677Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-5887DA38E935": {
+      "id": "SRC-5887DA38E935",
+      "url": "https://redirect.github.com/lambda-fairy/rust-errno/pull/132",
+      "title": "https://redirect.github.com/lambda-fairy/rust-errno/pull/132",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.718Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-38E3A23EFD1B": {
+      "id": "SRC-38E3A23EFD1B",
+      "url": "https://redirect.github.com/lambda-fairy/rust-errno/pull/129",
+      "title": "https://redirect.github.com/lambda-fairy/rust-errno/pull/129",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.763Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-79FD24AAF538": {
+      "id": "SRC-79FD24AAF538",
+      "url": "https://redirect.github.com/lambda-fairy/rust-errno/pull/126",
+      "title": "https://redirect.github.com/lambda-fairy/rust-errno/pull/126",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.808Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-720B1FD2C03B": {
+      "id": "SRC-720B1FD2C03B",
+      "url": "https://github.com/lambda-fairy/rust-errno/blob/main/CHANGELOG.md",
+      "title": "https://github.com/lambda-fairy/rust-errno/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.850Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-FC432C0E0FBA": {
+      "id": "SRC-FC432C0E0FBA",
+      "url": "https://github.com/fancy-regex/fancy-regex",
+      "title": "https://github.com/fancy-regex/fancy-regex",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.895Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-CFA4FC8E6D1C": {
+      "id": "SRC-CFA4FC8E6D1C",
+      "url": "https://github.com/fancy-regex/fancy-regex/releases",
+      "title": "https://github.com/fancy-regex/fancy-regex/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.941Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-07CD240528D3": {
+      "id": "SRC-07CD240528D3",
+      "url": "https://redirect.github.com/fancy-regex/fancy-regex/issues/319",
+      "title": "https://redirect.github.com/fancy-regex/fancy-regex/issues/319",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:52.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-7768EBD6B5DE": {
+      "id": "SRC-7768EBD6B5DE",
+      "url": "https://redirect.github.com/fancy-regex/fancy-regex/issues/323",
+      "title": "https://redirect.github.com/fancy-regex/fancy-regex/issues/323",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:53.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-EBB4437C85CF": {
+      "id": "SRC-EBB4437C85CF",
+      "url": "https://github.com/lambda-fairy/rust-errno/commits/v0.3.15",
+      "title": "https://github.com/lambda-fairy/rust-errno/commits/v0.3.15",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:53.079Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-B17ED1D58E62": {
+      "id": "SRC-B17ED1D58E62",
+      "url": "https://github.com/user-attachments/assets/077f7f23-2409-47ba-b339-60b7968d7b23",
+      "title": "https://github.com/user-attachments/assets/077f7f23-2409-47ba-b339-60b7968d7b23",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:54.327Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-8CD2961D7C4F": {
+      "id": "SRC-8CD2961D7C4F",
+      "url": "https://github.com/user-attachments/assets/8b30bbe6-9e7b-4222-895a-7b8cecd1a34d",
+      "title": "https://github.com/user-attachments/assets/8b30bbe6-9e7b-4222-895a-7b8cecd1a34d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:43:54.374Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
       }
     }
   }

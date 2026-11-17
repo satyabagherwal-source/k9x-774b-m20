@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T15:35:22.399Z",
+  "last_updated": "2026-11-17T15:43:55.101Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -1488,8 +1488,8 @@
       "staged_for_review": 1
     },
     "hf-reflection-beam-1.0-501b-a23b-learnings.md": {
-      "processed_at": "2026-11-13T03:19:04.436Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T15:43:53.857Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md": {
@@ -2303,7 +2303,7 @@
       "staged_for_review": 0
     },
     "software-mansion-react-native-reanimated-learnings.md": {
-      "processed_at": "2026-11-14T01:49:13.209Z",
+      "processed_at": "2026-11-17T15:43:54.244Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3326,9 +3326,14 @@
       "processed_at": "2026-11-17T15:35:20.924Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "dalance-procs-learnings.md": {
+      "processed_at": "2026-11-17T15:43:52.476Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1605,
+  "total_dossiers_evaluated": 1608,
   "total_canonical_promoted": 322,
-  "total_staged_for_review": 1263
+  "total_staged_for_review": 1265
 }
