@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T13:22:58.357Z",
+  "timestamp": "2026-11-17T21:22:34.320Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-astral-sh-uv-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [astral-sh-uv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T13:22:58.357Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T21:22:34.320Z`  
 > **Learning ID**: `LEARN-EVO-astral-sh-uv-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from astral-sh-uv-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `82adf363`  
+> **Source Version**: `7f396534`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T13:22:48.764Z  
+> **Timestamp**: 2026-11-17T21:22:18.008Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T13:22:48.542Z  
+> **Harvest Timestamp**: 2026-11-17T21:22:18.002Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 92007 stars
+- **Stars / Engagement**: 92229 stars
 
 ---
 
@@ -1524,14 +1524,14 @@ mod types;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #23261** (2026-11-16): **Reject wheels with mismatched names**
+  *Symptoms*: When fetching a wheel from an index, reject it when its name does not match the the originally requested package name.  This doesn't eagerly fail, and allows another index to supply the necessary wheel (depending on normal index policy). This seemed like it had precedent.
+
 - **Issue #23222** (2026-11-12): **uv does not install requirement `eccodeslib` when `eccodes` is requested**
   *Symptoms*: ### Summary  Contrary to pip, uv does not install [`eccodeslib`](https://pypi.org/project/eccodeslib/) when requesting [`eccodes`](https://pypi.org/project/eccodes/). A workaround is to request/add `eccodeslib` explicitly. But why is this necessary?   ### Platform  Darwin 25.6.0 arm64  ### Version  uv 0.11.28 (ebf0f43d7 2026-07-07 aarch64-apple-darwin)  ### Python version  Python 3.11.15
   **Post-Mortem & Fix Analysis**:
   > Maybe related: https://github.com/ecmwf/eccodes-python/issues/150
   > eccodes does not depend on eccodeslib according to the metadata they publish on PyPI:   ```shell  curl -s https://pypi.org/pypi/eccodes/json |                   jq '.info.requires_dist' ```  shows  ``` [   "numpy",   "attrs",   "cffi",   "findlibs" ] ```  it's a bug with ecmwf packaging, and the referenced bug i think says so too.
-
-- **Issue #23213** (2026-11-13): **Be more consistent in musl interpreter discovery errors**
-  *Symptoms*: More the failure path for non-ASCII characters into the parsing itself, instead of failing in the subcommand.  This was split out from discovering the ld interpreter filename too, which adds new error paths.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1548,595 +1548,686 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `82adf363` (2026-11-16)
-**Commit Message**: Group HTTP request policies for package indexes (#22968)
+### Incident Patch 1: `7424870a` (2026-11-17)
+**Commit Message**: Preserve marker identity across equivalent platform expressions (#23185)
 
-Callers currently use separate `IndexLocations` methods for HTTP status
-handling and cache-control headers. Each method finds the index by URL
-and derives the requested setting from its definition. This refactor
-replaces those methods with a shared lookup that returns an
-`IndexRequestPolicy` borrowing from the matching index, if any.
+## Summary
 
-With proxy indexes, the lockfile keeps the original index URL, but uv
-sends requests to the proxy. The shared lookup gives proxy routing one
-place to select the proxy’s error-handling and caching settings for
-those requests. [Proxy index
-support](https://github.com/astral-sh/uv/pull/20790)
+uv compares environment markers by their internal tree identity. Today,
+we remove known impossible platform combinations when individual
+conjunctions are built. Grouping the same conditions differently can
+therefore produce different trees, causing `uv lock --locked` to reject
+a lockfile uv just wrote. For example, the Linux branch is impossible
+here because `os_name == 'nt'`:
 
-**File**: `crates/uv-client/src/registry_client.rs` (modified, +21/-9)
 ```diff
-@@ -393,14 +393,16 @@ impl RegistryClient {
-                     let _permit = download_concurrency.acquire().await;
-                     match index.format {
-                         IndexFormat::Simple => {
--                            let status_code_strategy =
--                                self.indexes.status_code_strategy_for(index.url);
-+                            let status_code_strategy = self
-+                                .indexes
-+                                .request_policy(index.url)
-+                                .status_code_strategy();
-                             match self
-                                 .simple_detail_single_index(
-                                     package_name,
-                                     index.url,
-                                     capabilities,
--                                    &status_code_strategy,
-+                                    status_code_strategy,
-                                 )
-                                 .await?
-                             {
-@@ -449,7 +451,7 @@ impl RegistryClient {
-                                         package_name,
-                                         index.url,
-                                         capabilities,
--                                        &status_code_strategy,
-+                                        status_code_strategy,
-                                     )
-                                     .await?
-                                 {
-@@ -564,7 +566,7 @@ impl RegistryClient {
-         package_name: &PackageName,
-         index: &IndexUrl,
-         capabilities: &IndexCapabilities,
--        status_code_strategy: &IndexStatusCodeStrategy,
-+        status_code_strategy: IndexStatusCodeStrategy<'_>,
-     ) -> Result<SimpleMetadataSearchOutcome, Error> {
-         // Format the URL for PyPI.
-         let mut url = index.url().clone();
-@@ -585,7 +587,10 @@ impl RegistryClient {
-         );
-         let cache_control = match self.connectivity {
-             Connectivity::Online
--                if let Some(header) = self.indexes.simple_api_cache_control_for(index) =>
-+                if let Some(header) = self
-+                    .indexes
-+                    .request_policy(index)
-+                    .simple_api_cache_control() =>
-             {
-                 CacheControl::Override(header)
-             }
-@@ -840,7 +845,10 @@ impl RegistryClient {
-         );
-         let cache_control = match self.connectivity {
-             Connectivity::Online
--                if let Some(header) = self.indexes.simple_api_cache_control_for(index) =>
-+                if let Some(header) = self
-+                    .indexes
-+                    .request_policy(index)
-+                    .simple_api_cache_control() =>
-             {
-                 CacheControl::Override(header)
-             }
-@@ -983,7 +991,10 @@ impl RegistryClient {
-         // TODO(konsti): Revisit cache freshness once variant metadata mutability is specified.
-         let cache_control = match self.connectivity {
-             Connectivity::Online
--                if let Some(header) = self.indexes.configured_files_cache_control_for(index) =>
-+                if let Some(header) = self
-+                    .indexes
-+                    .request_policy(index)
-+                    .configured_files_cache_control() =>
-             {
-                 CacheControl::Override(header)
-             }
-@@ -1453,7 +1464,8 @@ impl RegistryClient {
-         Ok(match self.connectivity {
-             Connectivity::Online
-                 if let Some(index) = effective_index
--                    && let Some(header) = self.indexes.artifact_cache_control_for(index) =>
-+                    && let Some(header) =
-+                        self.indexes.request_policy(index).artifact_cache_control() =>
-             {
-                 CacheControl::Override(header)
-             }
+-(python_full_version >= '3.13' and os_name == 'nt') or (os_name == 'nt' and sys_platform == 'linux')
++python_full_version >= '3.13' and os_name == 'nt'
 ```
 
-**File**: `crates/uv-distribution-types/src/index.rs` (modified, +47/-37)
+We now apply the known exclusions between `os_name`, `sys_platform`, and
+`platform_system` consistently after tree operations, so equivalent
+markers retain their identity when regrouped or reparsed. We also quote
+literals containing apostrophes correctly. The existing
+`platform_release` comparison limitation remains
+([#22259](https://github.com/astral-sh/uv/issues/22259)).
+
+This adds work and a process-lifetime cache for trees that mix platform
+keys; other trees skip canonicalization. The mixed-platform fixture now
+passes `uv lock --locked` and produces a 29% s
+
+**File**: `crates/uv-pep508/src/marker/algebra.rs` (modified, +21/-333)
 ```diff
-@@ -18,6 +18,50 @@ use crate::index_name::{IndexName, IndexNameError};
- use crate::origin::Origin;
- use crate::{IndexStatusCodeStrategy, IndexUrl, IndexUrlError, SerializableStatusCode};
+@@ -72,6 +72,7 @@ use crate::{
+ };
  
-+/// HTTP status and cache policies borrowed from a package index.
-+#[derive(Debug, Clone, Copy, Default)]
-+pub struct IndexRequestPolicy<'a> {
-+    index: Option<&'a Index>,
-+}
-+
-+impl<'a> IndexRequestPolicy<'a> {
-+    /// Return the status codes that let a search continue to the next index.
-+    pub fn status_code_strategy(&self) -> IndexStatusCodeStrategy<'a> {
-+        let Some(index) = self.index else {
-+            return IndexStatusCodeStrategy::Default;
-+        };
-+        match index.ignore_error_codes.as_deref() {
-+            Some(status_codes) => {
-+                IndexStatusCodeStrategy::IgnoreConfiguredErrorCodes { status_codes }
-+            }
-+            None => IndexStatusCodeStrategy::from_index_url(index.raw_url()),
-+        }
-+    }
-+
-+    /// Return whether this status code is explicitly ignored, excluding built-in defaults.
-+    pub fn ignores_error_code(&self, status_code: StatusCode) -> bool {
-+        self.status_code_strategy()
-+            .explicitly_ignores_error_code(status_code)
-+    }
-+
-+    /// Return the cache control header for Simple API requests.
-+    pub fn simple_api_cache_control(&self) -> Option<HeaderValue> {
-+        self.index?.cache_control.as_ref()?.api.clone()
-+    }
-+
-+    /// Return the cache control header for artifact downloads, including index-specific defaults.
-+    pub fn artifact_cache_control(&self) -> Option<HeaderValue> {
-+        let index = self.index?;
-+        self.configured_files_cache_control()
-+            .or_else(|| IndexCacheControl::artifact_cache_control(index.raw_url()))
-+    }
-+
-+    /// Return the file cache control header only when the user configured it.
-+    pub fn configured_files_cache_control(&self) -> Option<HeaderValue> {
-+        self.index?.cache_control.as_ref()?.files.clone()
-+    }
-+}
-+
- /// Cache control configuration for an index.
- #[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd, Default)]
- #[cfg_attr(feature = "schemars", derive(schemars::JsonSchema))]
-@@ -31,11 +75,6 @@ pub struct IndexCacheControl {
+ pub(super) mod isop;
++mod platform;
+ 
+ /// The global node interner.
+ pub(crate) static INTERNER: LazyLock<Interner> = LazyLock::new(Interner::default);
+@@ -104,8 +105,7 @@ struct InternerState {
+     /// Note that `OR` is implemented in terms of `AND`.
+     cache: FxHashMap<(NodeId, NodeId), NodeId>,
+ 
+-    /// The [`NodeId`] for the disjunction of known, mutually incompatible markers.
+-    exclusions: Option<NodeId>,
++    platform: platform::Cache,
  }
  
- impl IndexCacheControl {
--    /// Return the default Simple API cache control headers for the given index URL, if applicable.
--    fn simple_api_cache_control(_url: &SafeUrl) -> Option<HeaderValue> {
--        None
--    }
+ impl InternerShared {
+@@ -204,7 +204,8 @@ impl InternerGuard<'_> {
+                     var,
+                     children: children.into_boxed(),
+                 };
+-                let id = NodeId::new(self.shared.nodes.push(node), false);
++                let flags = platform::node_flags(&node);
++                let id = NodeId::new(self.shared.nodes.push(node), flags);
+                 entry.insert((hash, id));
+                 id
+             }
+@@ -461,14 +462,6 @@ impl InternerGuard<'_> {
+ 
+         let (x, y) = (self.shared.node(xi), self.shared.node(yi));
+ 
+-        // Determine whether the conjunction _could_ contain a conflict.
+-        //
+-        // As an optimization, we only have to perform this check at the top-level, since these
+-        // variables are given higher priority in the tree. In other words, if they're present, they
+-        // _must_ be at the top; and if they're not at the top, we know they aren't present in any
+-        // children.
+-        let conflicts = x.var.is_conflicting_variable() && y.var.is_conflicting_variable();
 -
-     /// Return the default files cache control headers for the given index URL, if applicable.
-     fn artifact_cache_control(url: &SafeUrl) -> Option<HeaderValue> {
-         let dominated_by_pytorch_or_nvidia = url.host_str().is_some_and(|host| {
-@@ -593,38 +632,9 @@ impl Index {
-         Ok(self)
+         // Perform Shannon Expansion of the higher order variable.
+         let (func, children) = match x.var.cmp(&y.var) {
+             // X is higher order than Y, apply Y to every child of X.
+@@ -491,18 +484,6 @@ impl InternerGuard<'_> {
+         // Create the output node.
+         let node = self.create_node(func, children);
+ 
+-        // If the node includes known incompatibilities, map it to `false`.
+-        let node = if conflicts {
+-            let exclusions = self.exclusions();
+-            if self.disjointness(node, exclusions.not()) {
+-                NodeId::FALSE
+-            } else {
+-                node
+-            }
+-        } else {
+-            node
+-        };
+-
+         // Memoize the result of this operation.
+         //
+         // ADDs often contain duplicated subgraphs in distinct branches due to the restricted
+@@ -512,50 +493,11 @@ impl InternerGuard<'_> {
+         node
      }
  
--    /// Return the [`IndexStatusCodeStrategy`] for this index.
--    pub(crate) fn status_code_strategy(&self) -> IndexStatusCodeStrategy {
--        if let Some(ignore_error_codes) = &self.ignore_error_codes {
--            IndexStatusCodeStrategy::from_ignored_error_codes(ignore_error_codes)
--        } else {
--            IndexStatusCodeStrategy::from_index_url(self.url.url())
+-    /// Returns `true` if there is no environment in which both marker trees can apply,
+-    /// i.e. their conjunction is always `false`.
+-    pub(crate) fn is_disjoint_nontrivial(&mut self, xi: NodeId, yi: NodeId) -> bool {
+-        debug_assert!(
+-            xi.is_disjoint_trivial(yi).is_none(),
+-            "`is_disjoint_nontrivial` requires non-trivial disjointness"
+-        );
+-
+-        let (x, y) = (self.shared.node(xi), self.shared.node(yi));
+-
+-        // Determine whether the conjunction _could_ contain a conflict.
+-        //
+-        // As an optimization, we only have to perform this check at the top-level, since these
+-        // variables are given higher priority in the tree. In other words, if they're present, they
+-        // _must_ be at the top; and if they're not at the top, we know they aren't present in any
+-        // children.
+-        if x.var.is_conflicting_variable() && y.var.is_conflicting_variable() {
+-            return self.and(xi, yi).is_false();
+-        }
+-
+-        // Perform Shannon Expansion of the higher order variable.
+-        match x.var.cmp(&y.var) {
+-            // X is higher order than Y, Y must be disjoint with every child of X.
+-            Ordering::Less => x
+-                .children
+-                .nodes()
+-                .all(|x| self.disjointness(x.negate(xi), yi)),
+-            // Y is higher order than X, X must be disjoint with every child of Y.
+-            Ordering::Greater => y
+-                .children
+-                .nodes()
+-                .all(|y| self.disjointness(y.negate(yi), xi)),
+-            // X and Y represent the same variable, their merged edges must be unsatisfiable.
+-            Ordering::Equal => x.children.is_disjoint(xi, &y.children, yi, self),
 -        }
 -    }
 -
--    /// Return whether the given status code is explicitly ignored for this index.
--    pub(crate) fn ignores_error_code(&self, status_code: StatusCode) -> bool {
--        self.ignore_error_codes.as_ref().is_some_and(|codes| {
--            codes
--                .iter()
--                .any(|ignored_status_code| **ignored_status_code == status_code)
--        })
--    }
--
--    /// Return the cache control header for file requests to this index, if any.
--    pub(crate) fn artifact_cache_control(&self) -> Option<HeaderValue> {
--        self.cache_control
--            .as_ref()
--            .and_then(|cache_control| cache_control.files.clone())
--            .or_else(|| IndexCacheControl::artifact_cache_control(self.url.url()))
--    }
--
--    /// Return the cache control header for API requests to this index, if any.
--    pub(crate) fn simple_api_cache_control(&self) -> Option<HeaderValue> {
--        self.cache_control
--            .as_ref()
--            .and_then(|cache_control| cache_control.api.clone())
--            .or_else(|| IndexCacheControl::simple_api_cache_control(self.url.url()))
-+    /// Borrow the HTTP request policy for this index.
-+    pub(crate) fn request_policy(&self) -> IndexRequestPolicy<'_> {
-+        IndexRequestPolicy { index: Some(self) }
-     }
+     /// Returns `true` if there is no environment in which both marker trees can apply,
+     /// i.e., their conjunction is always `false`.
+     fn disjointness(&mut self, xi: NodeId, yi: NodeId) -> bool {
+-        // NOTE(charlie): This is equivalent to `is_disjoint`, with the exception that it doesn't
+-        // perform the mutually-incompatible marker check. If it did, we'd create an infinite loop,
+-        // since `is_disjoint` calls `and` (when relevant variables are present) which then calls
+-        // `disjointness`.
++        // This tests the two diagrams over their full domains, including impossible
++        // platform combinations. Callers can supply the valid platform domain explicitly.
  
-     /// Return the package-specific cutoff for this index, falling back to its default cutoff.
+       
 ```
 
-**File**: `crates/uv-distribution-types/src/index_url.rs` (modified, +111/-162)
+**File**: `crates/uv-pep508/src/marker/algebra/platform.rs` (added, +265/-0)
 ```diff
-@@ -5,7 +5,6 @@ use std::path::Path;
- use std::str::FromStr;
- use std::sync::{Arc, LazyLock, RwLock};
- 
--use http::StatusCode;
- use itertools::Either;
- use rustc_hash::{FxHashMap, FxHashSet};
- use thiserror::Error;
-@@ -19,7 +18,7 @@ use uv_redacted::SafeUrl;
- use uv_redacted::policy::{SerializationPolicy, Stripped};
- use uv_warnings::warn_user;
- 
--use crate::{ExcludeNewerOverride, Index, IndexStatusCodeStrategy, Verbatim};
-+use crate::{ExcludeNewerOverride, Index, IndexRequestPolicy, Verbatim};
- 
- pub static PYPI_URL: LazyLock<SafeUrl> =
-     LazyLock::new(|| SafeUrl::parse("https://pypi.org/simple").unwrap());
-@@ -477,44 +476,18 @@ impl<'a> IndexLocations {
-         Either::Right(non_default.into_iter().chain(default))
-     }
- 
--    /// Return the configured index matching the given URL.
-+    /// Return the first configured index matching the given URL.
-     fn index_for_url(&self, url: &IndexUrl) -> Option<&Index> {
-         self.indexes
-             .iter()
-             .find(|index| is_same_index(index.url(), url))
-     }
- 
--    /// Return the [`IndexStatusCodeStrategy`] for an [`IndexUrl`].
--    pub fn status_code_strategy_for(&self, url: &IndexUrl) -> IndexStatusCodeStrategy {
--        self.index_for_url(url).map_or(
--            IndexStatusCodeStrategy::Default,
--            Index::status_code_strategy,
--        )
--    }
--
--    /// Return whether the given status code is explicitly ignored for an [`IndexUrl`].
--    pub fn ignores_error_code_for(&self, url: &IndexUrl, status_code: StatusCode) -> bool {
--        self.index_for_url(url)
--            .is_some_and(|index| index.ignores_error_code(status_code))
--    }
--
--    /// Return the Simple API cache control header for an [`IndexUrl`], if configured.
--    pub fn simple_api_cache_control_for(&self, url: &IndexUrl) -> Option<http::HeaderValue> {
-+    /// Return the HTTP request policy for an index, or the default for an unconfigured URL.
-+    pub fn request_policy(&self, url: &IndexUrl) -> IndexRequestPolicy<'_> {
-         self.index_for_url(url)
--            .and_then(Index::simple_api_cache_control)
--    }
--
--    /// Return the artifact cache control header for an [`IndexUrl`], if configured.
--    pub fn artifact_cache_control_for(&self, url: &IndexUrl) -> Option<http::HeaderValue> {
--        self.index_for_url(url)
--            .and_then(Index::artifact_cache_control)
--    }
--
--    /// Return the explicitly configured file cache control header for an [`IndexUrl`].
--    pub fn configured_files_cache_control_for(&self, url: &IndexUrl) -> Option<http::HeaderValue> {
--        self.index_for_url(url)
--            .and_then(|index| index.cache_control.as_ref())
--            .and_then(|cache_control| cache_control.files.clone())
-+            .map(Index::request_policy)
-+            .unwrap_or_default()
-     }
- 
-     /// Return the hash algorithm required for distributions resolved from a given index.
-@@ -634,12 +607,11 @@ impl IndexCapabilities {
- 
- #[cfg(test)]
- mod tests {
--    use std::collections::BTreeMap;
-     use std::error::Error;
- 
-     use super::*;
--    use crate::{IndexCacheControl, IndexFormat, IndexName};
--    use http::HeaderValue;
-+    use crate::{IndexCacheControl, IndexName, IndexStatusCodeDecision, IndexStatusCodeStrategy};
-+    use http::{HeaderValue, StatusCode};
- 
-     fn index_urls<'a>(indexes: impl IntoIterator<Item = &'a Index>) -> Vec<&'a str> {
-         indexes
-@@ -798,172 +770,149 @@ mod tests {
-     }
- 
-     #[test]
--    fn test_cache_control_lookup() {
--        use std::str::FromStr;
--
--        use crate::IndexFormat;
--        use crate::index_name::IndexName;
--
--        let indexes = vec![
--            Index {
--                name: Some(IndexName::from_str("index1").unwrap()),
--                url: IndexUrl::from_str("https://index1.example.com/simple").unwrap(),
--                cache_control: Some(crate::IndexCacheControl {
--                    api: Some(HeaderValue::from_static("max-age=300")),
--                    files: Some(HeaderValue::from_static("max-age=1800")),
--                }),
--                explicit: false,
--                default: false,
--                origin: None,
--                format: IndexFormat::Simple,
--                publish_url: None,
--                authenticate: uv_auth::AuthPolicy::default(),
--                ignore_error_codes: None,
--                hash_algorithm: None,
--                exclude_newer: None,
--                exclude_newer_package: BTreeMap::new(),
--            },
--            Index {
--                name: Some(IndexName::from_str("index2").unwrap()),
--                url: IndexUrl::from_str("https://index2.example.com/simple").unwrap(),
--                cache_control: None,
--                explicit: false,
--                default: false,
--                origin: None,
--                format: IndexFormat::Simple,
--                publish_url: None,
--                authenticate: uv_auth::AuthPolicy::default(),
--                ignore_error_codes: None,
--           
-```
-
-**File**: `crates/uv-distribution-types/src/status_code_strategy.rs` (modified, +53/-61)
-```diff
-@@ -3,22 +3,24 @@ use std::borrow::Cow;
- use std::ops::Deref;
- 
- use http::StatusCode;
--use rustc_hash::FxHashSet;
- use serde::{Deserialize, Deserializer, Serialize, Serializer};
- use uv_redacted::SafeUrl;
- 
- use crate::{IndexCapabilities, IndexUrl};
- 
- #[derive(Debug, Clone, Default, Eq, PartialEq)]
--pub enum IndexStatusCodeStrategy {
-+pub enum IndexStatusCodeStrategy<'a> {
-     #[default]
-     Default,
--    IgnoreErrorCodes {
--        status_codes: FxHashSet<StatusCode>,
-+    IgnoreBuiltinErrorCodes {
-+        status_codes: &'a [SerializableStatusCode],
-+    },
-+    IgnoreConfiguredErrorCodes {
-+        status_codes: &'a [SerializableStatusCode],
-     },
- }
- 
--impl IndexStatusCodeStrategy {
-+impl IndexStatusCodeStrategy<'_> {
-     /// Derive a strategy from an index URL. We special-case PyTorch. Otherwise,
-     /// we follow the default strategy.
-     pub(crate) fn from_index_url(url: &SafeUrl) -> Self {
-@@ -28,34 +30,33 @@ impl IndexStatusCodeStrategy {
-         {
-             // The PyTorch registry returns a 403 when a package is not found, so
-             // we ignore them when deciding whether to search other indexes.
--            Self::IgnoreErrorCodes {
--                status_codes: FxHashSet::from_iter([StatusCode::FORBIDDEN]),
-+            Self::IgnoreBuiltinErrorCodes {
-+                status_codes: &[SerializableStatusCode(StatusCode::FORBIDDEN)],
-             }
-         } else {
-             Self::Default
-         }
-     }
- 
--    /// Derive a strategy from a list of status codes to ignore.
--    pub(crate) fn from_ignored_error_codes(status_codes: &[SerializableStatusCode]) -> Self {
--        Self::IgnoreErrorCodes {
--            status_codes: status_codes
--                .iter()
--                .map(SerializableStatusCode::deref)
--                .copied()
--                .collect::<FxHashSet<_>>(),
-+    /// Derive a strategy for ignoring authentication error codes.
-+    pub fn ignore_authentication_error_codes() -> Self {
-+        Self::IgnoreBuiltinErrorCodes {
-+            status_codes: &[
-+                SerializableStatusCode(StatusCode::UNAUTHORIZED),
-+                SerializableStatusCode(StatusCode::FORBIDDEN),
-+                SerializableStatusCode(StatusCode::NETWORK_AUTHENTICATION_REQUIRED),
-+                SerializableStatusCode(StatusCode::PROXY_AUTHENTICATION_REQUIRED),
-+            ],
-         }
-     }
- 
--    /// Derive a strategy for ignoring authentication error codes.
--    pub fn ignore_authentication_error_codes() -> Self {
--        Self::IgnoreErrorCodes {
--            status_codes: FxHashSet::from_iter([
--                StatusCode::UNAUTHORIZED,
--                StatusCode::FORBIDDEN,
--                StatusCode::NETWORK_AUTHENTICATION_REQUIRED,
--                StatusCode::PROXY_AUTHENTICATION_REQUIRED,
--            ]),
-+    /// Return whether the status code is in the configured list of ignored codes.
-+    pub(crate) fn explicitly_ignores_error_code(&self, status_code: StatusCode) -> bool {
-+        match self {
-+            Self::Default | Self::IgnoreBuiltinErrorCodes { .. } => false,
-+            Self::IgnoreConfiguredErrorCodes { status_codes } => {
-+                status_codes.contains(&SerializableStatusCode(status_code))
-+            }
-         }
-     }
- 
-@@ -67,26 +68,28 @@ impl IndexStatusCodeStrategy {
-         index_url: &IndexUrl,
-         capabilities: &IndexCapabilities,
-     ) -> IndexStatusCodeDecision {
--        match self {
--            Self::Default => match status_code {
--                StatusCode::NOT_FOUND => IndexStatusCodeDecision::Ignore,
--                StatusCode::UNAUTHORIZED => {
--                    capabilities.set_unauthorized(index_url.clone());
--                    IndexStatusCodeDecision::Fail(status_code)
--                }
--                StatusCode::FORBIDDEN => {
--                    capabilities.set_forbidden(index_url.clone());
--                    IndexStatusCodeDecision::Fail(status_code)
--                }
--                _ => IndexStatusCodeDecision::Fail(status_code),
--            },
--            Self::IgnoreErrorCodes { status_codes } => {
--                if status_codes.contains(&status_code) {
--                    IndexStatusCodeDecision::Ignore
--                } else {
--                    Self::Default.handle_status_code(status_code, index_url, capabilities)
--                }
-+        let ignored = match self {
-+            Self::Default => false,
-+            Self::IgnoreBuiltinErrorCodes { status_codes }
-+            | Self::IgnoreConfiguredErrorCodes { status_codes } => {
-+                status_codes.contains(&SerializableStatusCode(status_code))
-             }
-+        };
-+        if ignored {
-+            return IndexStatusCodeDecision::Ignore;
+@@ -0,0 +1,265 @@
++//! Canonical marker trees over compatible platform assignments.
++//!
++//! The exclusion table describes combinations of marker values that cannot occur together.
++//! On those assignments, choose a consistent value so that markers that agree on every
++//! compatible platform share the same node ID.
++
++use std::cmp::Ordering;
++
++use arcstr::literal;
++use rustc_hash::FxHashMap;
++
++use super::{InternerGuard, Node, NodeId, Variable};
++use crate::MarkerValueString::{OsName, PlatformSystem, SysPlatform};
++use crate::marker::lowering::CanonicalMarkerValueString;
++use crate::{MarkerExpression, MarkerOperator};
++
++#[derive(Default)]
++pub(super) struct Cache {
++    /// The disjunction of known incompatible marker pairs.
++    exclusions: Option<NodeId>,
++    /// Canonical representatives of nodes that test multiple platform keys.
++    canonical: FxHashMap<NodeId, NodeId>,
++}
++
++// Bit zero in a NodeId is reserved for complemented edges.
++const PLATFORM_KEY: usize = 1 << 1;
++const MIXED_KEYS: usize = 1 << 2;
++
++fn is_platform_key(var: &Variable) -> bool {
++    matches!(
++        var,
++        Variable::String(
++            CanonicalMarkerValueString::OsName
++                | CanonicalMarkerValueString::SysPlatform
++                | CanonicalMarkerValueString::PlatformSystem
++        )
++    )
++}
++
++impl NodeId {
++    fn tests_platform_key(self) -> bool {
++        self.0 & PLATFORM_KEY != 0
++    }
++
++    fn mixes_platform_keys(self) -> bool {
++        self.0 & MIXED_KEYS != 0
++    }
++}
++
++/// The platform keys come first in decision order. A second key on the same path
++/// must therefore occur in an immediate child.
++pub(super) fn node_flags(node: &Node) -> usize {
++    if !is_platform_key(&node.var) {
++        return 0;
++    }
++    if node.children.nodes().any(NodeId::tests_platform_key) {
++        PLATFORM_KEY | MIXED_KEYS
++    } else {
++        PLATFORM_KEY
++    }
++}
++
++impl InternerGuard<'_> {
++    /// Returns `true` if there is no environment in which both marker trees can apply,
++    /// i.e. their conjunction is always `false`.
++    pub(in crate::marker) fn is_disjoint_nontrivial(&mut self, xi: NodeId, yi: NodeId) -> bool {
++        debug_assert!(
++            xi.is_disjoint_trivial(yi).is_none(),
++            "`is_disjoint_nontrivial` requires non-trivial disjointness"
++        );
++
++        // Both operands can name an incompatible pair only if both start with
++        // a key in the platform exclusion table.
++        if xi.tests_platform_key() && yi.tests_platform_key() {
++            let intersection = self.and_nontrivial(xi, yi);
++            return self.canonicalize(intersection).is_false();
 +        }
 +
-+        match status_code {
-+            StatusCode::NOT_FOUND => IndexStatusCodeDecision::Ignore,
-+            StatusCode::UNAUTHORIZED => {
-+                capabilities.set_unauthorized(index_url.clone());
-+                IndexStatusCodeDe
++        self.disjoint_edges(xi, yi)
++    }
++
++    /// Choose the same diagram for functions that agree on all compatible platform
++    /// assignments. The values on incompatible assignments are don't-cares.
++    #[inline]
++    pub(in crate::marker) fn canonicalize(&mut self, marker: NodeId) -> NodeId {
++        if marker.mixes_platform_keys() {
++            self.canonicalize_mixed_platforms(marker)
++        } else {
++            marker
++        }
++    }
++
++    #[inline(never)]
++    fn canonicalize_mixed_platforms(&mut self, marker: NodeId) -> NodeId {
++        if let Some(&result) = self.state.platform.canonical.get(&marker) {
++            return result;
++        }
++        let platforms = self.exclusions().not();
++        let result = self.platform_cofactor(marker, platforms, &mut FxHashMap::default());
++
++        // Children are also exposed as standalone marker trees. Complete their
++        // platform assignments without assuming the value of their parent.
++        let result = if result.mixes_platform_keys() {
++            let node = self.shared.node(result);
++            let children = node.children.map(result, |child| self.canonicalize(child));
++            self.create_node(node.var.clone(), children)
++        } else {
++            result
++        };
++        self.state.platform.canonical.insert(marker, result);
++        self.state
++            .platform
++            .canonical
++            .insert(marker.not(), result.not());
++        result
++    }
++
++    /// Extend a marker from the compatible platforms to the whole decision domain.
++    /// Each exclusion names a pair of nonempty strings. The first range of a platform
++    /// key therefore allows every assignment to the remaining keys that any other
++    /// range allows. Use its child as the default wherever another range cannot
++    /// distinguish its own child from that default on compatible platforms.
++    fn platform_cofactor(
++        &mut self,
++        value: NodeId,
++        domain: NodeId,
++        cache: &mut FxHashMap<(NodeId, NodeId), NodeId>,
++    ) -> NodeId {
++        if domain.is_true() || value.is_true() || value.is_false() {
++            return value;
++        }
++        // Each recursion visits a reachable domain. Excluded edges take the default branch below.
++        debug_assert!(!domain.is_false()
 ```
 
-**File**: `crates/uv-distribution/src/distribution_database.rs` (modified, +4/-2)
+**File**: `crates/uv-pep508/src/marker/lowering.rs` (modified, +0/-11)
 ```diff
-@@ -942,7 +942,8 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
-                 if let Some(header) = index.and_then(|index| {
-                     self.build_context
-                         .locations()
--                        .artifact_cache_control_for(index)
-+                        .request_policy(index)
-+                        .artifact_cache_control()
-                 }) =>
-             {
-                 CacheControl::Override(header)
-@@ -1070,7 +1071,8 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
-                 if let Some(header) = index.and_then(|index| {
-                     self.build_context
-                         .locations()
--                        .artifact_cache_control_for(index)
-+                        .request_policy(index)
-+                        .artifact_cache_control()
-                 }) =>
-             {
-                 CacheControl::Override(header)
+@@ -61,17 +61,6 @@ pub enum CanonicalMarkerValueString {
+     ImplementationName,
+ }
+ 
+-impl CanonicalMarkerValueString {
+-    /// Returns `true` if the marker is known to be involved in _at least_ one conflicting
+-    /// marker pair.
+-    ///
+-    /// For example, `sys_platform == 'win32'` and `platform_system == 'Darwin'` are known to
+-    /// never be true at the same time.
+-    pub(crate) fn is_conflicting(self) -> bool {
+-        self <= Self::PlatformSystem
+-    }
+-}
+-
+ impl From<MarkerValueString> for CanonicalMarkerValueString {
+     fn from(value: MarkerValueString) -> Self {
+         match value {
 ```
 
-**File**: `crates/uv-distribution/src/index/registry_wheel_index.rs` (modified, +3/-3)
+**File**: `crates/uv-pep508/src/marker/tree.rs` (modified, +97/-41)
 ```diff
-@@ -121,7 +121,7 @@ impl<'a> RegistryWheelIndex<'a> {
-         no_binary: bool,
-     ) -> Option<&CachedRegistryDist> {
-         let wheel = distribution.best_wheel();
--        let required = self
-+        let hash_policy = self
-             .hasher
-             .archive_policy_for_package(&wheel.filename.name, &wheel.filename.version);
-         self.matching(&wheel.filename.name, |entry| {
-@@ -148,15 +148,15 @@ impl<'a> RegistryWheelIndex<'a> {
-                     .map_or(&[][..], |source| source.file.hashes.as_slice());
-                 if source_hashes.is_empty()
-                     && !wheel.file.hashes.is_empty()
--                    && !required.requires_validation()
-+                    && !hash_policy.requires_validation()
-                 {
-                     return false;
-                 }
-                 source_hashes
-             } else {
-                 wheel.file.hashes.as_slice()
-             };
--            ArtifactHashPolicy::required(required).can_reuse(&entry.dist, index_hashes)
-+            ArtifactHashPolicy::required(hash_policy).can_reuse(&entry.dist, index_hashes)
-         })
-         .next()
-         .map(IndexEntry::dist)
-```
-
-**File**: `crates/uv-distribution/src/source/mod.rs` (modified, +4/-2)
-```diff
-@@ -965,7 +965,8 @@ impl<'a, T: BuildContext> SourceDistributionBuilder<'a, T> {
-                 if let Some(header) = index.and_then(|index| {
-                     self.build_context
-                         .locations()
--                        .artifact_cache_control_for(index)
-+                        .request_policy(index)
-+                        .artifact_cache_control()
-                 }) =>
-             {
-                 CacheControl::Override(header)
-@@ -2763,7 +2764,8 @@ impl<'a, T: BuildContext> SourceDistributionBuilder<'a, T> {
-                 if let Some(header) = index.and_then(|index| {
-                     self.build_context
-                         .locations()
--                        .artifact_cache_control_for(index)
-+                        .request_policy(index)
-+                        .artifact_cache_control()
-                 }) =>
-             {
-                 CacheControl::Override(header)
-```
-
-**File**: `crates/uv-resolver/src/resolver/provider.rs` (modified, +5/-1)
-```diff
-@@ -167,7 +167,11 @@ impl<'a, Context: BuildContext> DefaultResolverProvider<'a, Context> {
-     ) -> Result<MetadataUnavailable, uv_client::Error> {
-         if let uv_client::ErrorKind::WrappedReqwestError(_, http) = error.kind()
-             && let Some(status) = http.status()
--            && index.is_some_and(|index| self.index_locations.ignores_error_code_for(index, status))
-+            && index.is_some_and(|index| {
-+                self.index_locations
-+                    .request_policy(index)
-+                    .ignores_error_code(status)
-+            })
-         {
-             return Ok(MetadataUnavailable::Network(status));
+@@ -13,7 +13,7 @@ use version_ranges::Ranges;
+ use uv_normalize::{ExtraName, GroupName};
+ use uv_pep440::{Version, VersionParseError, VersionSpecifier};
+ 
+-use super::algebra::{Edges, INTERNER, NodeId, Variable};
++use super::algebra::{Edges, INTERNER, InternerGuard, NodeId, Variable};
+ use super::simplify;
+ #[cfg(test)]
+ use crate::Pep508ErrorSource;
+@@ -214,7 +214,7 @@ impl Display for MarkerValue {
+             Self::MarkerEnvString(marker_value_string) => marker_value_string.fmt(f),
+             Self::MarkerEnvList(marker_value_contains) => marker_value_contains.fmt(f),
+             Self::Extra => f.write_str("extra"),
+-            Self::QuotedString(value) => write!(f, "'{value}'"),
++            Self::QuotedString(value) => quoted(value).fmt(f),
          }
+     }
+ }
+@@ -631,6 +631,12 @@ impl MarkerExpression {
+     }
+ }
+ 
++/// PEP 508 string literals may contain the opposite quote character.
++fn quoted(value: &str) -> impl Display {
++    let quote = if value.contains('\'') { '"' } else { '\'' };
++    fmt::from_fn(move |f| write!(f, "{quote}{value}{quote}"))
++}
++
+ impl Display for MarkerExpression {
+     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+         match self {
+@@ -652,21 +658,29 @@ impl Display for MarkerExpression {
+                 operator,
+                 value,
+             } => {
++                let value = quoted(value);
+                 if matches!(
+                     operator,
+                     MarkerOperator::Contains | MarkerOperator::NotContains
+                 ) {
+-                    return write!(f, "'{value}' {} {key}", operator.invert());
++                    return write!(f, "{value} {} {key}", operator.invert());
+                 }
+ 
+-                write!(f, "{key} {operator} '{value}'")
++                write!(f, "{key} {operator} {value}")
+             }
+             Self::List { pair, operator } => {
+-                write!(f, "'{}' {} {}", pair.value(), operator, pair.key())
++                write!(f, "{} {operator} {}", quoted(&pair.value()), pair.key())
+             }
+-            Self::Extra { operator, name } => {
++            Self::Extra {
++                operator,
++                name: MarkerValueExtra::Extra(name),
++            } => {
+                 write!(f, "extra {operator} '{name}'")
+             }
++            Self::Extra {
++                operator,
++                name: MarkerValueExtra::Arbitrary(name),
++            } => write!(f, "extra {operator} {}", quoted(name)),
+         }
+     }
+ }
+@@ -762,6 +776,13 @@ impl FromStr for MarkerTree {
+ }
+ 
+ impl MarkerTree {
++    /// Finish a diagram operation by choosing a single representation on valid platforms.
++    fn from_operation(operation: impl FnOnce(&mut InternerGuard<'_>) -> NodeId) -> Self {
++        let mut interner = INTERNER.lock();
++        let value = operation(&mut interner);
++        Self(interner.canonicalize(value))
++    }
++
+     /// An empty marker that always evaluates to `true`.
+     pub const TRUE: Self = Self(NodeId::TRUE);
+ 
+@@ -806,7 +827,7 @@ impl MarkerTree {
+         if let Some(node) = self.0.and_trivial(tree.0) {
+             return Self(node);
+         }
+-        Self(INTERNER.lock().and_nontrivial(self.0, tree.0))
++        Self::from_operation(|interner| interner.and_nontrivial(self.0, tree.0))
+     }
+ 
+     /// Returns a new marker tree that combines this one with the given one via a disjunction.
+@@ -815,7 +836,7 @@ impl MarkerTree {
+         if let Some(node) = self.0.or_trivial(tree.0) {
+             return Self(node);
+         }
+-        Self(INTERNER.lock().or_nontrivial(self.0, tree.0))
++        Self::from_operation(|interner| interner.or_nontrivial(self.0, tree.0))
+     }
+ 
+     /// Returns a marker equivalent to the implication of this one and the given consequent.
+@@ -845,14 +866,10 @@ impl MarkerTree {
+ 
+     /// Returns whether this marker is unsatisfiable under known environment constraints.
+     ///
+-    /// Unlike [`MarkerTree::is_false`], this checks combinations such as `os_name == 'posix'`
+-    /// and `sys_platform == 'win32'` even when they occur in different decision branches.
+-    /// Relationships not modeled by the marker algebra can still produce false negatives.
++    /// Known platform exclusions are applied when building the tree. Relationships
++    /// outside those exclusions can still produce false negatives.
+     pub fn is_unreachable(self) -> bool {
+-        if self.is_true() || self.is_false() {
+-            return self.is_false();
+-        }
+-        INTERNER.lock().is_unreachable(self.0)
++        self.is_false()
+     }
+ 
+     /// Returns the contents of this marker tree, if it contains at least one expression.
+@@ -1248,11 +1265,7 @@ impl MarkerTree {
+     /// should reconstitute all relevant markers from the source data.)
+     #[must_use]
+     pub fn simplify_python_versions(self, lower: Bound<&Version>, upper: Bound<&Version>) -> Self {
+-        Self(
+-            INTERNER
+-                .lock()
+-                .simplify_py
 ```
 
 ---
 
-### Incident Patch 2: `cf9bace0` (2026-11-16)
-**Commit Message**: Update Rust crate libc to v0.2.190 (#23046)
+### Incident Patch 2: `7f396534` (2026-11-17)
+**Commit Message**: Require explicit marker tree deserialization (#23256)
 
-**File**: `Cargo.lock` (modified, +2/-2)
+Refactor marker deserialization so each field explicitly chooses the
+dependency-marker or environment-selector parser. Both entry points
+accept
+the same syntax. The split lets dependency specifiers gain wheel variant
+variables while environment selectors can reject them.
+
+This change is limited to a behavior-preserving refactor.
+
+**File**: `crates/uv-distribution-types/src/requirement.rs` (modified, +1/-0)
 ```diff
-@@ -2653,9 +2653,9 @@ dependencies = [
+@@ -55,6 +55,7 @@ pub struct Requirement {
+     #[serde(
+         skip_serializing_if = "marker::ser::is_empty",
+         serialize_with = "marker::ser::serialize",
++        deserialize_with = "MarkerTree::deserialize_dependency",
+         default
+     )]
+     pub marker: MarkerTree,
+```
+
+**File**: `crates/uv-distribution-types/src/requires_python.rs` (modified, +4/-1)
+```diff
+@@ -581,7 +581,10 @@ impl From<RequiresPythonRange> for Ranges<Version> {
+ /// a simplified marker, one must re-contextualize it by adding the
+ /// `requires-python` constraint back to the marker.
+ #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, PartialOrd, Ord, serde::Deserialize)]
+-pub struct SimplifiedMarkerTree(MarkerTree);
++#[serde(transparent)]
++pub struct SimplifiedMarkerTree(
++    #[serde(deserialize_with = "MarkerTree::deserialize_environment")] MarkerTree,
++);
  
- [[package]]
- name = "libc"
--version = "0.2.189"
-+version = "0.2.191"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
-+checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
+ impl SimplifiedMarkerTree {
+     /// Simplifies the given markers by assuming the given `requires-python`
+```
+
+**File**: `crates/uv-lock/src/lock/export/pylock_toml.rs` (modified, +19/-1)
+```diff
+@@ -260,7 +260,11 @@ pub struct PylockToml {
+     #[serde(deserialize_with = "deserialize_lock_version")]
+     lock_version: Version,
+     created_by: String,
+-    #[serde(skip_serializing)]
++    #[serde(
++        skip_serializing,
++        default,
++        deserialize_with = "deserialize_environments"
++    )]
+     environments: Option<Vec<MarkerTree>>,
+     #[serde(skip_serializing_if = "Option::is_none")]
+     pub requires_python: Option<RequiresPython>,
+@@ -275,6 +279,19 @@ pub struct PylockToml {
+     attestation_identities: Vec<PylockTomlAttestationIdentity>,
+ }
  
- [[package]]
- name = "libm"
++fn deserialize_environments<'de, D: serde::Deserializer<'de>>(
++    deserializer: D,
++) -> Result<Option<Vec<MarkerTree>>, D::Error> {
++    #[derive(Deserialize)]
++    #[serde(transparent)]
++    struct Environments(
++        #[serde(deserialize_with = "MarkerTree::deserialize_environment_list")] Vec<MarkerTree>,
++    );
++
++    Option::<Environments>::deserialize(deserializer)
++        .map(|environments| environments.map(|env| env.0))
++}
++
+ fn deserialize_lock_version<'de, D>(deserializer: D) -> Result<Version, D::Error>
+ where
+     D: serde::Deserializer<'de>,
+@@ -333,6 +350,7 @@ pub struct PylockTomlPackage {
+     #[serde(
+         skip_serializing_if = "uv_pep508::marker::ser::is_empty",
+         serialize_with = "uv_pep508::marker::ser::serialize",
++        deserialize_with = "MarkerTree::deserialize_environment",
+         default
+     )]
+     marker: MarkerTree,
+```
+
+**File**: `crates/uv-pep508/src/marker/tree.rs` (modified, +36/-24)
+```diff
+@@ -745,29 +745,6 @@ impl Default for MarkerTree {
+     }
+ }
+ 
+-impl<'de> Deserialize<'de> for MarkerTree {
+-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+-    where
+-        D: Deserializer<'de>,
+-    {
+-        struct Visitor;
+-
+-        impl de::Visitor<'_> for Visitor {
+-            type Value = MarkerTree;
+-
+-            fn expecting(&self, f: &mut Formatter) -> fmt::Result {
+-                f.write_str("a string")
+-            }
+-
+-            fn visit_str<E: de::Error>(self, v: &str) -> Result<Self::Value, E> {
+-                MarkerTree::from_str(v).map_err(de::Error::custom)
+-            }
+-        }
+-
+-        deserializer.deserialize_str(Visitor)
+-    }
+-}
+-
+ impl FromStr for MarkerTree {
+     type Err = Pep508Error;
+ 
+@@ -784,6 +761,39 @@ impl MarkerTree {
+         Self(interner.canonicalize(value))
+     }
+ 
++    /// Deserialize a dependency marker.
++    pub fn deserialize_dependency<'de, D: Deserializer<'de>>(
++        deserializer: D,
++    ) -> Result<Self, D::Error> {
++        Self::from_str(&String::deserialize(deserializer)?).map_err(de::Error::custom)
++    }
++
++    /// Parse an environment selector.
++    pub fn parse_environment(input: &str) -> Result<Self, Pep508Error> {
++        Self::from_str(input)
++    }
++
++    /// Deserialize an environment selector.
++    pub fn deserialize_environment<'de, D: Deserializer<'de>>(
++        deserializer: D,
++    ) -> Result<Self, D::Error> {
++        Self::parse_environment(&String::deserialize(deserializer)?).map_err(de::Error::custom)
++    }
++
++    /// Deserialize a list of environment selectors.
++    pub fn deserialize_environment_list<'de, D: Deserializer<'de>>(
++        deserializer: D,
++    ) -> Result<Vec<Self>, D::Error> {
++        #[derive(Deserialize)]
++        #[serde(transparent)]
++        struct EnvironmentMarker(
++            #[serde(deserialize_with = "MarkerTree::deserialize_environment")] MarkerTree,
++        );
++
++        Vec::<EnvironmentMarker>::deserialize(deserializer)
++            .map(|markers| markers.into_iter().map(|marker| marker.0).collect())
++    }
++
+     /// An empty marker that always evaluates to `true`.
+     pub const TRUE: Self = Self(NodeId::TRUE);
+ 
+@@ -4026,7 +4036,9 @@ mod test {
+         let serialized = serde_json::to_string(&MarkerTree::FALSE.contents())?;
+         assert_snapshot!(serialized, @r#""python_version < '0'""#);
+         assert_eq!(
+-            serde_json::from_str::<MarkerTree>(&serialized)?,
++            MarkerTree::deserialize_dependency(&mut serde_json::Deserializer::from_str(
++                &serialized,
++            ))?,
+             MarkerTree::FALSE,
+         );
+         Ok(())
+```
+
+**File**: `crates/uv-pypi-types/src/supported_environments.rs` (modified, +6/-12)
+```diff
+@@ -1,5 +1,4 @@
+-use std::str::FromStr;
+-
++use serde::de::value::SeqAccessDeserializer;
+ use serde::ser::SerializeSeq;
+ 
+ use uv_pep508::MarkerTree;
+@@ -78,22 +77,17 @@ impl<'de> serde::Deserialize<'de> for SupportedEnvironments {
+             where
+                 E: serde::de::Error,
+             {
+-                let marker = MarkerTree::from_str(value).map_err(serde::de::Error::custom)?;
++                let marker =
++                    MarkerTree::parse_environment(value).map_err(serde::de::Error::custom)?;
+                 Ok(SupportedEnvironments(vec![marker]))
+             }
+ 
+-            fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
++            fn visit_seq<A>(self, seq: A) -> Result<Self::Value, A::Error>
+             where
+                 A: serde::de::SeqAccess<'de>,
+             {
+-                let mut markers = Vec::new();
+-
+-                while let Some(elem) = seq.next_element::<String>()? {
+-                    let marker = MarkerTree::from_str(&elem).map_err(serde::de::Error::custom)?;
+-                    markers.push(marker);
+-                }
+-
+-                Ok(SupportedEnvironments(markers))
++                MarkerTree::deserialize_environment_list(SeqAccessDeserializer::new(seq))
++                    .map(SupportedEnvironments)
+             }
+         }
+ 
+```
+
+**File**: `crates/uv-test/src/packse/scenario.rs` (modified, +1/-1)
+```diff
+@@ -338,7 +338,7 @@ pub struct ResolverOptions {
+     pub python_platform: Option<TargetTriple>,
+ 
+     /// Required environments (platform markers).
+-    #[serde(default)]
++    #[serde(default, deserialize_with = "MarkerTree::deserialize_environment_list")]
+     pub required_environments: Vec<MarkerTree>,
+ }
+ 
+```
+
+**File**: `crates/uv-workspace/src/pyproject.rs` (modified, +1/-5)
+```diff
+@@ -1374,11 +1374,7 @@ impl<'de> Deserialize<'de> for Source {
+             package: Option<bool>,
+             index: Option<IndexName>,
+             workspace: Option<WorkspaceReference>,
+-            #[serde(
+-                skip_serializing_if = "uv_pep508::marker::ser::is_empty",
+-                serialize_with = "uv_pep508::marker::ser::serialize",
+-                default
+-            )]
++            #[serde(default, deserialize_with = "MarkerTree::deserialize_environment")]
+             marker: MarkerTree,
+             extra: Option<ExtraName>,
+             group: Option<GroupName>,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23237** (2026-11-13): Add BurntSushi to code quality review allowlist (@BurntSushi)
-- **PR #23236** (2026-11-13): Add an HTTP/2 keep-alive preview feature (@astral-automations-bot[bot])
-- **PR #23228** (2026-11-12): Avoid multipart uploads for release artifacts (@zanieb)
-- **PR #23225** (2026-11-12): Bump version to 0.13.8 (@konstin)
-- **PR #23213** (2026-11-13): Be more consistent in musl interpreter discovery errors (@konstin)
-- **PR #23211** (2026-11-11): Sync latest Python releases, CPython 3.16.0a2 (@astral-automations-bot[bot])
+- **PR #23281** (2026-11-17): Use GPT-6.2 for issue and PR automation (@woodruffw)
+- **PR #23276** (2026-11-17): Tweak proxy indexes docs (@zsol)
+- **PR #23273** (2026-11-17): Bump version to 0.13.9 (@konstin)
+- **PR #23264** (2026-11-16): Use Rust 1.98 stabilized APIs (@charliermarsh)
+- **PR #23263** (2026-11-16): Update Rust to 1.100 and MSRV to 1.98 (@charliermarsh)
+- **PR #23261** (2026-11-16): Reject wheels with mismatched names (@EliteTK)
 
 ---
 
@@ -2156,59 +2247,61 @@ support](https://github.com/astral-sh/uv/pull/20790)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Group HTTP request policies for package indexes
+## X. Preserve marker identity across equivalent platform expressions
 
 **RULE**:
-When implementing operations in `crates/uv-client/src/registry_client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/uv-pep508/src/marker/algebra.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `82adf363`: Group HTTP request policies for package indexes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7424870a`: Preserve marker identity across equivalent platform expressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-client/src/registry_client.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-pep508/src/marker/algebra.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                            let status_code_strategy = self
-                                .indexes
-                                .request_policy(index.url)
-                                .status_code_strategy();
-                                    status_code_strategy,
-                                        status_code_strategy,
-        status_code_strategy: IndexStatusCodeStrategy<'_>,
-                if let Some(header) = self
-                    .indexes
-                    .request_policy(index)
-                    .simple_api_cache_control() =>
-                if let Some(header) = self
-                    .indexes
-                    .request_policy(index)
-                    .simple_api_cache_control() =>
-                if let Some(header) = self
-                    .indexes
-                    .request_policy(index)
-                    .configured_files_cache_control() =>
-                    && let Some(header) =
-                        self.indexes.request_policy(index).artifact_cache_control() =>
+mod platform;
+    platform: platform::Cache,
+                let flags = platform::node_flags(&node);
+                let id = NodeId::new(self.shared.nodes.push(node), flags);
+        // This tests the two diagrams over their full domains, including impossible
+        // platform combinations. Callers can supply the valid platform domain explicitly.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                            let status_code_strategy =
-                                self.indexes.status_code_strategy_for(index.url);
-                                    &status_code_strategy,
-                                        &status_code_strategy,
-        status_code_strategy: &IndexStatusCodeStrategy,
-                if let Some(header) = self.indexes.simple_api_cache_control_for(index) =>
-                if let Some(header) = self.indexes.simple_api_cache_control_for(index) =>
-                if let Some(header) = self.indexes.configured_files_cache_control_for(index) =>
-                    && let Some(header) = self.indexes.artifact_cache_control_for(index) =>
+    /// The [`NodeId`] for the disjunction of known, mutually incompatible markers.
+    exclusions: Option<NodeId>,
+                let id = NodeId::new(self.shared.nodes.push(node), false);
+        // Determine whether the conjunction _could_ contain a conflict.
+        //
+        // As an optimization, we only have to perform this check at the top-level, since these
+        // variables are given higher priority in the tree. In other words, if they're present, they
+        // _must_ be at the top; and if they're not at the top, we know they aren't present in any
+        // children.
+        let conflicts = x.var.is_conflicting_variable() && y.var.is_conflicting_variable();
+
+        // If the node includes known incompatibilities, map it to `false`.
+        let node = if conflicts {
+            let exclusions = self.exclusions();
+            if self.disjointness(node, exclusions.not()) {
+                NodeId::FALSE
+            } else {
+                node
+            }
+        } else {
+            node
+        };
+
+    /// Returns `true` if there is no environment in which both marker trees can apply,
+    /// i.e. their conjunction is always `false`.
+    pub(crate) fn is_disjoin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `82adf363` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7424870a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

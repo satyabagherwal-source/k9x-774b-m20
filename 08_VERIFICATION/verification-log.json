@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-776P",
-    "timestamp": "2026-11-15T22:14:46.561Z",
-    "repository": "ConwayResearch/Underdog-Woof",
-    "learningId": "learn-huggingface-conwayresearch-underdog-woof",
-    "contentHash": "17c29779d963d6ea395847223ef8f0f9746186378bda9823f517836aba27c98e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-7A8V",
-    "timestamp": "2026-11-15T22:14:50.527Z",
-    "repository": "fabio-rovai/open-ontologies",
-    "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "3383144cd519e711126c2cc617322cb4431ea3f0bc0b0597a91059f07685a564",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-JV71",
-    "timestamp": "2026-11-15T22:24:37.549Z",
-    "repository": "Cactus-Compute/mirage",
-    "learningId": "learn-huggingface-cactus-compute-mirage",
-    "contentHash": "02eb66aba41c2fdd756da7f626c30bdca676b0383d23f56f52d78de2295b7c7b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-3BP6",
-    "timestamp": "2026-11-15T22:39:45.402Z",
-    "repository": "Dicklesworthstone/destructive_command_guard",
-    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "f73dae4cae87782c7f676bd3b5e010a88053c61aab5550590301505961e300c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-3JKT",
     "timestamp": "2026-11-15T22:39:55.613Z",
     "repository": "slatedb/slatedb",
@@ -7490,6 +7430,66 @@
     "repository": "Ontos-AI/knowhere",
     "learningId": "learn-github-ontos-ai-knowhere",
     "contentHash": "7c0e03d8c765f89a122603a53ab8c876b4fdfb03cf386c4574497ec306776793",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-7EH3",
+    "timestamp": "2026-11-17T21:22:17.223Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "29f461b676b480bd80f8d3249e908696d9c744a743be0f30f0b0af2382cd76f5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-7FR3",
+    "timestamp": "2026-11-17T21:22:18.879Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "6a4c057c64337d38331b381d1f091f0f71bcc4ca421f424bfafedc755f7aea3a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-7J1H",
+    "timestamp": "2026-11-17T21:22:23.141Z",
+    "repository": "react/metro",
+    "learningId": "learn-github-react-metro",
+    "contentHash": "141043b03ef1c2c3f5c6596804c2ef83e5db0ca3b9843a103a94632ee1a0a7e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-7P2X",
+    "timestamp": "2026-11-17T21:22:30.969Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "1c6a789ecf4d93adb8d0963c91aaad6afaa5e008e11199739d4fe443fb23f9f0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

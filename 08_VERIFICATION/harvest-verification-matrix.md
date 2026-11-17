@@ -10716,3 +10716,7 @@
 | `CYCLE-20261117-IVYK` | `2026-11-17T21:03:13.484Z` | `sigstore/cosign` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sigstore-cosign-learnings.md` | Yes (`64355267...`) |
 | `CYCLE-20261117-J4MJ` | `2026-11-17T21:03:24.715Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9067` | Yes (`7c0e03d8...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T21:03:53.544Z` | `sigstore-cosign` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6018CADD` [Domain D] | Yes (`4835554d...`) |
+| `CYCLE-20261117-7EH3` | `2026-11-17T21:22:17.223Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`29f461b6...`) |
+| `CYCLE-20261117-7FR3` | `2026-11-17T21:22:18.879Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9068` | Yes (`6a4c057c...`) |
+| `CYCLE-20261117-7J1H` | `2026-11-17T21:22:23.141Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9069` | Yes (`141043b0...`) |
+| `CYCLE-20261117-7P2X` | `2026-11-17T21:22:30.969Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9070` | Yes (`1c6a789e...`) |

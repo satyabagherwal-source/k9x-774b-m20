@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T21:03:24.724Z",
-  "total_cycles_completed": 10269,
-  "total_learnings_persisted": 10269,
-  "total_rules_promoted": 9813,
+  "last_updated": "2026-11-17T21:22:30.978Z",
+  "total_cycles_completed": 10273,
+  "total_learnings_persisted": 10273,
+  "total_rules_promoted": 9816,
   "history": [
-    {
-      "timestamp": "2026-11-17T08:31:09.588Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T08:31:11.536Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T08:42:32.143Z",
-      "repository": "dubzzz/fast-check",
-      "learningId": "learn-github-dubzzz-fast-check",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T08:43:37.736Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T08:56:28.563Z",
       "repository": "salvo-rs/salvo",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-17T21:03:24.724Z",
       "repository": "Ontos-AI/knowhere",
       "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T21:22:17.232Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T21:22:18.887Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T21:22:23.149Z",
+      "repository": "react/metro",
+      "learningId": "learn-github-react-metro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T21:22:30.978Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

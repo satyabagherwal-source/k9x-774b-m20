@@ -10749,3 +10749,7 @@ Every entry in this ledger must capture:
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `d93bbdba` | Multi-dimensional audit evidence | 2026-11-17T21:03:13.488Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `b9d146c8` | Multi-dimensional audit evidence | 2026-11-17T21:03:24.719Z |
 | `learn-dom-d-6018cadd` | `project://sigstore-cosign` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md` | 2026-11-17T21:03:53.544Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-17T21:22:17.227Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `7f396534` | Multi-dimensional audit evidence | 2026-11-17T21:22:18.883Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `de511d56` | Multi-dimensional audit evidence | 2026-11-17T21:22:23.144Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `4d102b34` | Multi-dimensional audit evidence | 2026-11-17T21:22:30.973Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T21:03:53.846Z",
-  "total_records": 1689,
+  "last_updated": "2026-11-17T21:22:35.528Z",
+  "total_records": 1691,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 731,
+      "total": 733,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -780,7 +780,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-minilm-l6-v2-learni",
         "domain_intelligence-research-knowledge-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
-        "DOM-D-6018CADD"
+        "DOM-D-6018CADD",
+        "domain_intelligence-research-knowledge-intelligence-baai-bge-small-en-v1-5-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria"
       ]
     },
     "E": {
@@ -7432,8 +7434,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "ad23444842199bf369d2b2312cf7685414764bd8834a320e108fa0d9364b5b3f",
-      "created_at": "2026-11-17T16:54:56.126Z"
+      "content_hash": "880663bb87703a2084a9e9b4c2af76017e4aaf91a26a25c16a62712c833dfed6",
+      "created_at": "2026-11-17T21:22:31.256Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -15305,8 +15307,8 @@
       "title": "Technical Construction Intelligence: react/metro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-metro-technical-construction-intelligence-react-metro-core-invariants.md",
       "repository": "react/metro",
-      "content_hash": "cbab03cddc3e3d17a1531eb331ffdac67fbb9cd7cf9a70609e5951194663f023",
-      "created_at": "2026-11-14T13:38:43.393Z"
+      "content_hash": "c5e3918c813dccfa204309d565c9dd22751e58ddc0e71f2507703782b2b03357",
+      "created_at": "2026-11-17T21:22:23.436Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-vit-base-patch16-224-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-vit-base-patch16-224-core-invariants",
@@ -15374,8 +15376,8 @@
       "title": "Technical Construction Intelligence: react-metro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-metro-learnings-technical-construction-intelligence-react-metro-learnings-.md",
       "repository": "react-metro-learnings",
-      "content_hash": "7e88e6345fa079e393e227ed61d3f2bfefca5aacc979159ae85bb74b58b38fa6",
-      "created_at": "2026-11-14T13:39:25.323Z"
+      "content_hash": "6a75d8973276d6aa4c7a29c6615ff058d0205362e18ec1b5848d57a29eda9e63",
+      "created_at": "2026-11-17T21:22:35.528Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-base-en-v1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-base-en-v1-5-core-invariants",
@@ -16466,8 +16468,8 @@
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "repository": "astral-sh/uv",
-      "content_hash": "4df6999fb96865f42512046307801df1e888dfcd6009813866b2ab6ef1d04b13",
-      "created_at": "2026-11-16T13:22:50.231Z"
+      "content_hash": "2dcd7840130366f97a5fc3c9c028b74f42582ebf8f42534ca360caa0125bf87b",
+      "created_at": "2026-11-17T21:22:19.211Z"
     },
     "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants",
@@ -16493,8 +16495,8 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-learnings-architecture-intelligence-astral-sh-uv-learnings-core-inv.md",
       "repository": "astral-sh-uv-learnings",
-      "content_hash": "292f9aafae8fa25754af268b66006cbbd64ef1545c5f9efe294945c07880a01e",
-      "created_at": "2026-11-16T13:22:58.619Z"
+      "content_hash": "4d23059b3beb7215aecc6b963713024cfbe9177f2cc92ba2ea571d5c36182bfd",
+      "created_at": "2026-11-17T21:22:34.555Z"
     },
     "DOM-D-CCF89F8A": {
       "record_id": "DOM-D-CCF89F8A",
@@ -28518,6 +28520,24 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-17T21:03:53.520Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-baai-bge-small-en-v1-5-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-small-en-v1-5-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: BAAI/bge-small-en-v1.5 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-small-en-v1-5-research-knowledge-intelligence-baai-bge-small-en-v1-5.md",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "content_hash": "60ee0047785fd6c334829c23de75d7913d3054c5298b0ad2a0f4b59a231d7f1b",
+      "created_at": "2026-11-17T21:22:17.396Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-baai-bge-small-en-v1.5-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-small-en-v1-5-learnings-research-knowledge-intelligence-hf-baai-bge-.md",
+      "repository": "hf-baai-bge-small-en-v1.5-learnings",
+      "content_hash": "3937b933d2291b02156e5b9cd5648929b9753fffee70836e41d4114949f98a3d",
+      "created_at": "2026-11-17T21:22:34.977Z"
     }
   }
 }

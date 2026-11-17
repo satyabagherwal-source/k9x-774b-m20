@@ -165,8 +165,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceVersion": "hf-baai-bge-small-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "0b32eff5b765c42e3520bca816c2cbe68d91375e4e064fc5d13fbad0c7ebbdbb",
-    "lastHarvestedAt": "2026-11-13T11:24:16.120Z",
+    "contentHash": "29f461b676b480bd80f8d3249e908696d9c744a743be0f30f0b0af2382cd76f5",
+    "lastHarvestedAt": "2026-11-17T21:22:17.227Z",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "f0eb96d2",
+    "sourceVersion": "4d102b34",
     "license": "Apache-2.0",
-    "contentHash": "e31a3d15adbd12e6ea2508c5687abe9c9b093ae04055224db5e50d0e962aaec7",
-    "lastHarvestedAt": "2026-11-17T16:54:55.873Z",
+    "contentHash": "1c6a789ecf4d93adb8d0963c91aaad6afaa5e008e11199739d4fe443fb23f9f0",
+    "lastHarvestedAt": "2026-11-17T21:22:30.973Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -5493,10 +5493,10 @@
     "repository": "react/metro",
     "platform": "github",
     "sourceUrl": "https://github.com/react/metro",
-    "sourceVersion": "059ef8d4",
+    "sourceVersion": "de511d56",
     "license": "MIT",
-    "contentHash": "821ddd92d116f5ce214a716281d0c6b037ee78ced949f330acff2ab82ef6642b",
-    "lastHarvestedAt": "2026-11-14T13:38:43.095Z",
+    "contentHash": "141043b03ef1c2c3f5c6596804c2ef83e5db0ca3b9843a103a94632ee1a0a7e3",
+    "lastHarvestedAt": "2026-11-17T21:22:23.144Z",
     "learningId": "learn-github-react-metro"
   },
   "checkmarx-kics": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "82adf363",
+    "sourceVersion": "7f396534",
     "license": "Apache-2.0",
-    "contentHash": "b3d76c426cd06712b30fab6b6563fb948d2fbdf4f62eac186f9a6c5d7ac8e9a1",
-    "lastHarvestedAt": "2026-11-16T13:22:49.844Z",
+    "contentHash": "6a4c057c64337d38331b381d1f091f0f71bcc4ca421f424bfafedc755f7aea3a",
+    "lastHarvestedAt": "2026-11-17T21:22:18.883Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

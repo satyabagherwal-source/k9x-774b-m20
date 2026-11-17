@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T21:03:24.727Z",
+  "last_updated": "2026-11-17T21:22:30.981Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -126,14 +126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-small-en-v1-5",
-      "content_hash": "0b32eff5b765c42e3520bca816c2cbe68d91375e4e064fc5d13fbad0c7ebbdbb",
-      "verified_at": "2026-11-13T11:24:16.129Z",
+      "content_hash": "29f461b676b480bd80f8d3249e908696d9c744a743be0f30f0b0af2382cd76f5",
+      "verified_at": "2026-11-17T21:22:17.235Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T11:24:16.129Z"
+      "last_updated": "2026-11-17T21:22:17.235Z"
     },
     "hasaneyldrm/exercises-dataset": {
       "repository": "hasaneyldrm/exercises-dataset",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "e31a3d15adbd12e6ea2508c5687abe9c9b093ae04055224db5e50d0e962aaec7",
-      "verified_at": "2026-11-17T16:54:55.880Z",
+      "content_hash": "1c6a789ecf4d93adb8d0963c91aaad6afaa5e008e11199739d4fe443fb23f9f0",
+      "verified_at": "2026-11-17T21:22:30.981Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:54:55.880Z"
+      "last_updated": "2026-11-17T21:22:30.981Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -8361,14 +8361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-metro",
-      "content_hash": "821ddd92d116f5ce214a716281d0c6b037ee78ced949f330acff2ab82ef6642b",
-      "verified_at": "2026-11-14T13:38:43.104Z",
+      "content_hash": "141043b03ef1c2c3f5c6596804c2ef83e5db0ca3b9843a103a94632ee1a0a7e3",
+      "verified_at": "2026-11-17T21:22:23.151Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T13:38:43.104Z"
+      "last_updated": "2026-11-17T21:22:23.151Z"
     },
     "Checkmarx/kics": {
       "repository": "Checkmarx/kics",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "b3d76c426cd06712b30fab6b6563fb948d2fbdf4f62eac186f9a6c5d7ac8e9a1",
-      "verified_at": "2026-11-16T13:22:49.856Z",
+      "content_hash": "6a4c057c64337d38331b381d1f091f0f71bcc4ca421f424bfafedc755f7aea3a",
+      "verified_at": "2026-11-17T21:22:18.890Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T13:22:49.856Z"
+      "last_updated": "2026-11-17T21:22:18.890Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",

@@ -4,22 +4,22 @@
 {
   "source_repository": "react/metro",
   "source_url": "https://github.com/react/metro",
-  "source_version": "059ef8d4",
+  "source_version": "de511d56",
   "license": "MIT",
-  "timestamp": "2026-11-14T13:38:43.295Z",
+  "timestamp": "2026-11-17T21:22:23.315Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-react-metro",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [react/metro](https://github.com/react/metro) (Revision: `059ef8d4`).  
-> **License**: MIT | **Timestamp**: `2026-11-14T13:38:43.295Z`  
+> **Provenance**: Harvested from [react/metro](https://github.com/react/metro) (Revision: `de511d56`).  
+> **License**: MIT | **Timestamp**: `2026-11-17T21:22:23.315Z`  
 > **Learning ID**: `learn-github-react-metro`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `react/metro` (Commit: `059ef8d4`)
+- **Target Repository**: `react/metro` (Commit: `de511d56`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T13:38:42.045Z  
+> **Harvest Timestamp**: 2026-11-17T21:22:22.262Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1535,242 +1535,83 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1461d81e` (2026-11-10)
-**Commit Message**: metro-file-map: Fix crash on a package subpath ending in "/.", such as "pkg/." (#2213)
+### Incident Patch 1: `8f49d368` (2026-11-16)
+**Commit Message**: Fix `resolver.blockList: []` hiding every file (#2227)
 
-Resolving "pkg/." or "pkg/lib/." failed with a raw "Unexpectedly
-escaped traversal" invariant from TreeFS. Node.js resolves them to the
-package's main and to lib/index.js.
+flattenBlockList joined no patterns into new RegExp(''), which matches
+every path, so an empty blockList array produced an empty file map.
+Return a pattern that never matches for an empty array.
 
-The fast path in RootPathUtils only falls back to path.relative when it
-finds a "./" fragment. A final "." or ".." segment has no separator
-after it, so paths like "node_modules/pkg/." were returned as they
-were, which is not a normal path. TreeFS skipped the "." segment but
-ended its traversal on the "pkg" node, and hit the invariant. A final
-".." got through the same way, so hierarchicalLookup("/project/foo/..")
-found foo/package.json.
-
-Make absoluteToNormal and relativeToNormal fall back to path.relative
-for a final "." segment, and for a final ".." after a normal segment. A
-final ".." in the leading "../" run keeps the fast path.
-joinNormalToRelative shares the fast path but treats a fallback as an
-error, so it skips the new check and keeps its current results.
-
-Part of #2166.
-
-**File**: `packages/metro-file-map/src/lib/RootPathUtils.js` (modified, +25/-2)
+**File**: `packages/metro/src/DeltaBundler/__tests__/resolver-test.js` (modified, +36/-0)
 ```diff
-@@ -123,6 +123,7 @@ export class RootPathUtils {
-         absolutePath,
-         endOfMatchingPrefix,
-         upIndirectionsToPrepend,
-+        true,
-       )?.collapsedPath ?? this.#slowAbsoluteToNormal(absolutePath)
-     );
-   }
-@@ -168,7 +169,7 @@ export class RootPathUtils {
- 
-   relativeToNormal(relativePath: string): string {
-     return (
--      this.#tryCollapseIndirectionsInSuffix(relativePath, 0, 0)
-+      this.#tryCollapseIndirectionsInSuffix(relativePath, 0, 0, true)
-         ?.collapsedPath ??
-       path.relative(this.#rootDir, path.join(this.#rootDir, relativePath))
-     );
-@@ -217,7 +218,12 @@ export class RootPathUtils {
-       : normalPath + path.sep;
-     const rawPath = left + relativePath;
-     if (normalPath === '..' || normalPath.endsWith(SEP_UP_FRAGMENT)) {
--      const collapsed = this.#tryCollapseIndirectionsInSuffix(rawPath, 0, 0);
-+      const collapsed = this.#tryCollapseIndirectionsInSuffix(
-+        rawPath,
-+        0,
-+        0,
-+        false,
-+      );
-       invariant(collapsed != null, 'Failed to collapse');
-       return {
-         collapsedSegments: collapsed.collapsedSegments,
-@@ -240,6 +246,7 @@ export class RootPathUtils {
-     fullPath: string, // A string ending with the relative path to process
-     startOfRelativePart: number, // Index of the start of part to process
-     implicitUpIndirections: number, // 0=root-relative, 1=dirname(root)-relative...
-+    bailOnTrailingIndirection: boolean, // Fall back on a final '.' or '..'
-   ): ?{collapsedPath: string, collapsedSegments: number} {
-     let totalUpIndirections = implicitUpIndirections;
-     let collapsedSegments = 0;
-@@ -250,6 +257,22 @@ export class RootPathUtils {
-     for (let pos = startOfRelativePart; ; pos += UP_FRAGMENT_SEP_LENGTH) {
-       const nextIndirection = fullPath.indexOf(CURRENT_FRAGMENT, pos);
-       if (nextIndirection === -1) {
-+        // The search above doesn't find a final '.' or '..' segment, as no
-+        // separator follows it. Fall back for those too, unless the '..' is
-+        // one of the leading indirections, e.g. for /project/root/foo/. or
-+        // /project/root/foo/..
-+        if (bailOnTrailingIndirection && fullPath.endsWith('.')) {
-+          const lastSegmentIdx = fullPath.lastIndexOf(path.sep) + 1;
-+          const lastSegmentLength = fullPath.length - lastSegmentIdx;
-+          if (
-+            lastSegmentLength === 1 ||
-+            (lastSegmentLength === 2 &&
-+              fullPath[lastSegmentIdx] === '.' &&
-+              lastSegmentIdx > pos)
-+          ) {
-+            return null;
-+          }
-+        }
-         // If we have any indirections, they may "collapse" if a subsequent
-         // segment re-enters a directory we had previously exited, e.g:
-         // /project/root/../root/foo should collapse to /project/root/foo' and
-```
-
-**File**: `packages/metro-file-map/src/lib/__tests__/RootPathUtils-test.js` (modified, +29/-0)
-```diff
-@@ -54,6 +54,11 @@ describe.each([['win32'], ['posix']])('RootPathUtils on %s', platform => {
-     p('/'),
-     p('/outside'),
-     p('/outside/'),
-+    p('/project/..'),
-+    p('/project/root/../..'),
-+    p('/project/root/a.'),
-+    p('/project/root/foo..'),
-+    p('/project/root/...'),
-   ])(`absoluteToNormal('%s') is correct and optimised`, absolutePath => {
-     const rootDir = p('/project/root');
-     pathUtils = new RootPathUtils(rootDir);
-@@ -80,6 +85,11 @@ describe.each([['win32'], ['posix']])('RootPathUtils on %s', platform => {
-       p('/project/root/../a./foo'),
-       p('/project/root/.././foo'),
-       p('/project/root/.././foo/'),
-+      p('/project/root/.'),
-+      p('/project/root/baz/.'),
-+      p('/project/root/baz/..'),
-+      p('/project/root/../root2/.'),
-+      p('/project/root/../root2/..'),
-     ])(`absoluteToNormal('%s') falls back to path.relative`, absolutePath => {
-       let expected = mockPathModule.relative(rootDir, absolutePath);
-       // Unlike path.relative, we expect to preserve trailing separators.
-@@ -136,6 +146,11 @@ describe.each([['win32'], ['posix']])('RootPathUtils on %s', platform => {
-             p('../../project/root'),
-             p('../../project/root/'),
-             p('../../..'),
-+            p('.'),
-+            p('foo/.'),
-+            p('foo/..'),
-+            p('../root/.'),
-+            p('../root/..'),
-             // On POSIX, `..` at the root re-enters the root
-             ...(platform === 'posix'
-               ? [p('../../../normal/path'), p('../../../normal/path/')]
-@@ -164,6 +179,20 @@ describe.each([['win32'], ['posix']])('RootPathUtils on %s', platform => {
-     );
-   });
- 
-+  test.each([
-+    [p('..'), p('foo/.'), p('../foo/.')],
-+    [p('..'), p('foo/..'), p('../foo/..')],
-+  ])(
-+    'joinNormalToRelative(%s, %s) keeps a final indirection, as %s',
-+    (normalPath, relativePath, expected) => {
-+      pathUtils = new RootPathUtils(p('/project/root'));
-+      expect(pathUtils.joinNormalToRelative(normalPath, relativePath)).toEqual({
-+        collapsedSegments: 0,
-+        normalPath: expected,
-+      });
-+    },
-+  );
-+
-   if (platform === 'win32') {
-     describe('cross-drive absolute paths (Windows)', () => {
-       test.each([['C:\\project\\root'], ['C:\\']])(
-```
-
-**File**: `packages/metro-file-map/src/lib/__tests__/TreeFS-test.js` (modified, +26/-0)
-```diff
-@@ -208,6 +208,8 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
-       [p('/project/foo'), p('/project/foo'), []],
-       [p('/project/foo/'), p('/project/foo'), []],
-       [p('/project/root/outside'), p('/outside'), [p('/project/root')]],
-+      [p('/project/foo/.'), p('/project/foo'), []],
-+      [p('/project/foo/..'), p('/project'), []],
-     ])(
-       'returns type: d for %s',
-       (givenPath, expectedRealPath, expectedSymlinks) => {
-@@ -622,6 +624,30 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
-     });
-   });
- 
-+  test('hierarchicalLookup from a path ending in "." finds its own directory', () => {
-+    expect(
-+      tfs.hierarchicalLookup(p('/project/node_modules/pkg/.'), 'package.json', {
-+        breakOnSegment: 'node_modules',
-+        subpathType: 'f',
-+      }),
-+    ).toEqual({
-+      absolutePath: p('/project/node_modules/pkg/package.json'),
-+      containerRelativePath: '',
-+    });
-+  });
-+
-+  test.each([p('sub/.'), p('sub/..')])(
-+    'hierarchicalLookup of a subpath ending in an indirection, %s',
-+    subpath => {
-+      expect(
-+        tfs.hierarchicalLookup(p('/project/foo/.bar'), subpath, {
-+          breakOnSegment: null,
-+          subpathType: 'd',
-+        }),
-+      ).toBeNull();
-+    },
-+  );
-+
-   describe('hierarchicalLookup', () => {
-     let tfs: TreeFSType;
- 
-```
-
-**File**: `packages/metro/src/DeltaBundler/__tests__/resolver-test.js` (modified, +24/-0)
-```diff
-@@ -559,6 +559,30 @@ function dep(name: string): TransformResultDependency {
-         });
+@@ -451,6 +451,42 @@ function dep(name: string): TransformResultDependency {
        });
+     });
  
-+      test.each([
-+        ['foo/.', 'lib/m.js'],
-+        ['foo/lib/.', 'lib/index.js'],
-+      ])(
-+        'resolves %s, a package subpath ending in "."',
-+        async (name, expected) => {
-+          setMockFileSystem({
-+            'index.js': '',
-+            node_modules: {
-+              foo: {
-+                'package.json': JSON.stringify({name: 'foo', main: 'lib/m.js'}),
-+                lib: {'m.js': '', 'index.js': ''},
-+              },
-+            },
-+          });
++    describe('blockList config param', () => {
++      test('hides files matching a pattern in a blockList array', async () => {
++        setMockFileSystem({
++          'index.js': '',
++          'a.js': '',
++          'blocked.js': '',
++        });
 +
-+          resolver = await createResolver();
-+          expect(resolver.resolve(p('/root/index.js'), dep(name))).toEqual({
-+            type: 'sourceFile',
-+            filePath: p('/root/node_modules/foo/' + expected),
-+          });
-+        },
-+      );
++        resolver = await createResolver({
++          resolver: {blockList: [/blocked\.js$/]},
++        });
 +
-       test('finds the appropriate node_modules folder', async () => {
++        expect(resolver.resolve(p('/root/index.js'), dep('./a'))).toEqual({
++          type: 'sourceFile',
++          filePath: p('/root/a.js'),
++        });
++        expect(() =>
++          resolver.resolve(p('/root/index.js'), dep('./blocked')),
++        ).toThrow(/Unable to resolve module \.\/blocked/);
++      });
++
++      test('does not hide any file with an empty blockList array', async () => {
++        setMockFileSystem({
++          'index.js': '',
++          'a.js': '',
++        });
++
++        resolver = await createResolver({resolver: {blockList: []}});
++
++        expect(resolver.resolve(p('/root/index.js'), dep('./a'))).toEqual({
++          type: 'sourceFile',
++          filePath: p('/root/a.js'),
++        });
++      });
++    });
++
+     describe('absolute paths', () => {
+       test('supports requiring absolute paths', async () => {
          setMockFileSystem({
-           node_modules: {
+```
+
+**File**: `packages/metro/src/node-haste/DependencyGraph/createFileMap.js` (modified, +5/-0)
+```diff
+@@ -22,6 +22,11 @@ const flattenBlockList = (regexes: ConfigT['resolver']['blockList']) => {
+   if (!Array.isArray(regexes)) {
+     return regexes;
+   }
++  // An empty list blocks nothing. Joining no patterns would give an empty
++  // RegExp, which matches every path.
++  if (regexes.length === 0) {
++    return /.^/;
++  }
+   return new RegExp(
+     regexes
+       .map((regex, index) => {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2225** (2026-11-13): Type the `verifyClient` callback in the `ws` library definition (@javache)
-- **PR #2224** (2026-11-13): Upgrade the Flow parser tooling to 0.340.0 (@gkz)
-- **PR #2222** (2026-11-12): Upgrade Flow to 0.340.0 (#2222) (@gkz)
-- **PR #2218** (closed): Pre-warm the 3 most recently used bundles on server start (@vzaidman)
-- **PR #2217** (2026-11-10): Prepare metro for the TypeScript definition of `Omit` (@SamChou19815)
-- **PR #2213** (2026-11-10): metro-file-map: Fix crash on a package subpath ending in `/.`, such as `pkg/.` (@kwy404)
+- **PR #2242** (2026-11-17): Add lazy_bundling benchmark for dev server heap and lazy chunk request time (@vzaidman)
+- **PR #2239** (2026-11-17): Share transform results between graphs (@robhogan)
+- **PR #2233** (closed): metro-file-map: Let plugins report what changed in a batch, on the change event (@robhogan)
+- **PR #2232** (closed): Resolver: Observe Haste names under unstable_incrementalResolution (@robhogan)
+- **PR #2231** (closed): Resolver: Collect file system observations per resolution under unstable_incrementalResolution (@robhogan)
+- **PR #2227** (2026-11-16): Fix `resolver.blockList: []` hiding every file (@0z5a)
 
 ---
 
@@ -1790,56 +1631,66 @@ Part of #2166.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. metro-file-map: Fix crash on a package subpath ending in "/.", such as "pkg/."
+## X. `resolver.blockList: []` hiding every file
 
 **RULE**:
-When implementing operations in `packages/metro-file-map/src/lib/RootPathUtils.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/metro/src/DeltaBundler/__tests__/resolver-test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1461d81e`: metro-file-map: Fix crash on a package subpath ending in "/.", such as "pkg/.". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8f49d368`: `resolver.blockList: []` hiding every file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-file-map/src/lib/RootPathUtils.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro/src/DeltaBundler/__tests__/resolver-test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-        true,
-      this.#tryCollapseIndirectionsInSuffix(relativePath, 0, 0, true)
-      const collapsed = this.#tryCollapseIndirectionsInSuffix(
-        rawPath,
-        0,
-        0,
-        false,
-      );
-    bailOnTrailingIndirection: boolean, // Fall back on a final '.' or '..'
-        // The search above doesn't find a final '.' or '..' segment, as no
-        // separator follows it. Fall back for those too, unless the '..' is
-        // one of the leading indirections, e.g. for /project/root/foo/. or
-        // /project/root/foo/..
-        if (bailOnTrailingIndirection && fullPath.endsWith('.')) {
-          const lastSegmentIdx = fullPath.lastIndexOf(path.sep) + 1;
-          const lastSegmentLength = fullPath.length - lastSegmentIdx;
-          if (
-            lastSegmentLength === 1 ||
-            (lastSegmentLength === 2 &&
-              fullPath[lastSegmentIdx] === '.' &&
-              lastSegmentIdx > pos)
-          ) {
-            return null;
-          }
-        }
+    describe('blockList config param', () => {
+      test('hides files matching a pattern in a blockList array', async () => {
+        setMockFileSystem({
+          'index.js': '',
+          'a.js': '',
+          'blocked.js': '',
+        });
+
+        resolver = await createResolver({
+          resolver: {blockList: [/blocked\.js$/]},
+        });
+
+        expect(resolver.resolve(p('/root/index.js'), dep('./a'))).toEqual({
+          type: 'sourceFile',
+          filePath: p('/root/a.js'),
+        });
+        expect(() =>
+          resolver.resolve(p('/root/index.js'), dep('./blocked')),
+        ).toThrow(/Unable to resolve module \.\/blocked/);
+      });
+
+      test('does not hide any file with an empty blockList array', async () => {
+        setMockFileSystem({
+          'index.js': '',
+          'a.js': '',
+        });
+
+        resolver = await createResolver({resolver: {blockList: []}});
+
+        expect(resolver.resolve(p('/root/index.js'), dep('./a'))).toEqual({
+          type: 'sourceFile',
+          filePath: p('/root/a.js'),
+        });
+      });
+    });
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-      this.#tryCollapseIndirectionsInSuffix(relativePath, 0, 0)
-      const collapsed = this.#tryCollapseIndirectionsInSuffix(rawPath, 0, 0);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1461d81e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8f49d368` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T21:03:53.983Z",
+  "last_updated": "2026-11-17T21:22:35.785Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T19:12:36.114Z",
@@ -93,7 +93,7 @@
       "staged_for_review": 1
     },
     "astral-sh-uv-learnings.md": {
-      "processed_at": "2026-11-16T13:22:58.013Z",
+      "processed_at": "2026-11-17T21:22:34.138Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1738,8 +1738,8 @@
       "staged_for_review": 0
     },
     "hf-baai-bge-small-en-v1.5-learnings.md": {
-      "processed_at": "2026-11-13T11:25:04.725Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T21:22:34.824Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "argoproj-argo-events-learnings.md": {
@@ -2598,7 +2598,7 @@
       "staged_for_review": 0
     },
     "react-metro-learnings.md": {
-      "processed_at": "2026-11-14T13:39:24.794Z",
+      "processed_at": "2026-11-17T21:22:35.120Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3358,7 +3358,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1713,
+  "total_dossiers_evaluated": 1716,
   "total_canonical_promoted": 325,
-  "total_staged_for_review": 1337
+  "total_staged_for_review": 1339
 }
