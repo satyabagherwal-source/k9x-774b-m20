@@ -10411,3 +10411,8 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `6b0edc20` | Multi-dimensional audit evidence | 2026-11-16T23:35:10.964Z |
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `69a4f721` | Multi-dimensional audit evidence | 2026-11-16T23:52:46.724Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `ffdee00a` | Multi-dimensional audit evidence | 2026-11-16T23:52:55.862Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `f6a9bbfc` | Multi-dimensional audit evidence | 2026-11-17T00:10:43.065Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `c311f7a7` | Multi-dimensional audit evidence | 2026-11-17T00:10:52.176Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `cfc3f365` | Multi-dimensional audit evidence | 2026-11-17T00:10:52.902Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `3c8cd08f` | Multi-dimensional audit evidence | 2026-11-17T00:10:56.539Z |
+| `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-17T00:11:21.145Z |

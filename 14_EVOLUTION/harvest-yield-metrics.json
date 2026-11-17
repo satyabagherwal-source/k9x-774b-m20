@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T23:52:55.866Z",
-  "total_cycles_completed": 9965,
-  "total_learnings_persisted": 9965,
-  "total_rules_promoted": 9557,
+  "last_updated": "2026-11-17T00:11:21.151Z",
+  "total_cycles_completed": 9970,
+  "total_learnings_persisted": 9970,
+  "total_rules_promoted": 9560,
   "history": [
-    {
-      "timestamp": "2026-11-15T21:27:31.581Z",
-      "repository": "Comfy-Org/MiniMax-H3-Image",
-      "learningId": "learn-huggingface-comfy-org-minimax-h3-image",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T21:27:34.084Z",
-      "repository": "Xudong-Huang/may",
-      "learningId": "learn-github-xudong-huang-may",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T21:41:40.902Z",
-      "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
-      "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T21:44:16.821Z",
-      "repository": "vercel-labs/agent-desktop",
-      "learningId": "learn-github-vercel-labs-agent-desktop",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T22:14:46.573Z",
-      "repository": "ConwayResearch/Underdog-Woof",
-      "learningId": "learn-huggingface-conwayresearch-underdog-woof",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T22:14:50.537Z",
       "repository": "fabio-rovai/open-ontologies",
@@ -1403,6 +1368,41 @@
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T00:10:43.070Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T00:10:52.181Z",
+      "repository": "authzed/spicedb",
+      "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T00:10:52.906Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T00:10:56.544Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T00:11:21.151Z",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

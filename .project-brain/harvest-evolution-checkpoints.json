@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-16T23:53:00.778Z",
+  "last_updated": "2026-11-17T00:11:25.614Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-16T22:34:20.943Z",
@@ -503,7 +503,7 @@
       "staged_for_review": 1
     },
     "zeronsh-zeron-learnings.md": {
-      "processed_at": "2026-11-15T04:19:28.306Z",
+      "processed_at": "2026-11-17T00:11:24.071Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -578,7 +578,7 @@
       "staged_for_review": 1
     },
     "authzed-spicedb-learnings.md": {
-      "processed_at": "2026-11-13T05:08:22.698Z",
+      "processed_at": "2026-11-17T00:11:24.903Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -893,7 +893,7 @@
       "staged_for_review": 1
     },
     "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md": {
-      "processed_at": "2026-11-12T06:56:30.418Z",
+      "processed_at": "2026-11-17T00:11:24.621Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3228,7 +3228,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1398,
+  "total_dossiers_evaluated": 1401,
   "total_canonical_promoted": 291,
-  "total_staged_for_review": 1095
+  "total_staged_for_review": 1098
 }

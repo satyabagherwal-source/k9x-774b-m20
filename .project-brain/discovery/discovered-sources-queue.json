@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-16T23:35:15.301Z",
+  "updated_at": "2026-11-17T00:11:25.089Z",
   "stats": {
-    "total_discovered": 4543,
-    "approved_pending_harvest": 4277,
+    "total_discovered": 4547,
+    "approved_pending_harvest": 4281,
     "harvested_count": 0,
     "rejected_count": 266,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4274,
+      "COMMUNITY_AND_EXPERT": 4278,
       "OFFICIAL_DOCUMENTATION": 144,
       "STANDARDS_AND_SPECIFICATIONS": 98,
       "ENGINEERING_BLOGS": 3,
@@ -98105,6 +98105,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
         "fileName": "wzh4869-appports-learnings.md"
+      }
+    },
+    "SRC-6C59F726DA1A": {
+      "id": "SRC-6C59F726DA1A",
+      "url": "https://app.codecov.io/gh/authzed/spicedb/pull/3499?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/authzed/spicedb/pull/3499?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:11:24.943Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-0C1AA287DE4D": {
+      "id": "SRC-0C1AA287DE4D",
+      "url": "https://github.com/authzed/spicedb/pull/3499",
+      "title": "https://github.com/authzed/spicedb/pull/3499",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:11:25.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-A060C5EBE148": {
+      "id": "SRC-A060C5EBE148",
+      "url": "https://github.com/authzed/spicedb/blob/main/internal/dispatch/remote/README.md",
+      "title": "https://github.com/authzed/spicedb/blob/main/internal/dispatch/remote/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:11:25.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-4CCB4FC1B5AB": {
+      "id": "SRC-4CCB4FC1B5AB",
+      "url": "https://github.com/authzed/spicedb/pull/3468",
+      "title": "https://github.com/authzed/spicedb/pull/3468",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:11:25.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
       }
     }
   }

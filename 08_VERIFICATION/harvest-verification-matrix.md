@@ -10378,3 +10378,8 @@
 | `CYCLE-20261116-IGDS` | `2026-11-16T23:35:10.960Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8818` | Yes (`8487f964...`) |
 | `CYCLE-20261116-530H` | `2026-11-16T23:52:46.721Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8819` | Yes (`a2a9bb3c...`) |
 | `CYCLE-20261116-5A2A` | `2026-11-16T23:52:55.858Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8820` | Yes (`086bdeec...`) |
+| `CYCLE-20261117-S5IT` | `2026-11-17T00:10:43.061Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`3056f5ab...`) |
+| `CYCLE-20261117-SCJW` | `2026-11-17T00:10:52.172Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8821` | Yes (`9d70ceef...`) |
+| `CYCLE-20261117-SD43` | `2026-11-17T00:10:52.899Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | Yes (`d965a71d...`) |
+| `CYCLE-20261117-SFX3` | `2026-11-17T00:10:56.535Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8822` | Yes (`2e7d28a8...`) |
+| `CYCLE-20261117-SYWL` | `2026-11-17T00:11:21.141Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md` | Yes (`56862244...`) |

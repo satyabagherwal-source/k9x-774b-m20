@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-16T23:53:00.683Z",
-  "total_verified_learnings": 8817,
+  "last_updated": "2026-11-17T00:11:25.505Z",
+  "total_verified_learnings": 8818,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19498,
+  "total_items": 19511,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112393,10 +112393,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "99b389db",
-      "content_hash": "13f95a1b3e18d98aa67a6a9c33f0ae4afa38e6e4dfe497e75c6b1ab15aaef9b6",
+      "source_version": "cfc3f365",
+      "content_hash": "743b038168b49f1e7df9602f347aad3731ac6e0aac6fba5ad1aed47de5d90cd9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T16:21:51.009Z"
+      "persisted_at": "2026-11-17T00:10:53.070Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -215429,26 +215429,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/vi/websocat",
-      "source_version": "097582e3",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "f6a9bbfc",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-15T12:31:18.554Z"
+      "verified_at": "2026-11-17T00:10:42.908Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JDPS-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-T1BE-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "vi-websocat-learnings",
+      "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "4f68275a66f8b22df2d68d41d9a2713a442035a618d37af2a25f8dc79297e5f5",
+      "content_hash": "44e00b374c21ed48f7718fa81288ee45fc065947e4ad3c04decf4ad1e4b4b762",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T12:36:22.966Z"
+      "persisted_at": "2026-11-17T00:11:24.269Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -220459,8 +220459,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "a2a3b8b8",
-      "content_hash": "73ef8d9c89c6fce0081ea8d524529674556ed6bafe78f67b462e9e9c309ae71c",
+      "source_version": "3c8cd08f",
+      "content_hash": "2e7d28a8e31e3cd40c916f70f8d770975829ebff293c9b71eb691430fe0280a1",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -220473,6 +220473,11 @@
           "number": 8625,
           "title": "keep the specific error code when a Rerank batch fails",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8822,
+          "title": "Empirical Invariant Guard in config.env.example",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220480,7 +220485,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T15:47:53.596Z",
+      "verified_at": "2026-11-17T00:10:56.380Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220522,10 +220527,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "a2a3b8b8",
-      "content_hash": "1293779c5775c810423869895cb4967e074dcaac696508ed31be048791512879",
+      "source_version": "3c8cd08f",
+      "content_hash": "0cb0a01b37a7977584f9ecad9a386bc30d619ae32062bd9d0c9708d46e87affe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T15:47:54.214Z"
+      "persisted_at": "2026-11-17T00:10:56.820Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox",
@@ -220534,10 +220539,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "a2a3b8b8",
-      "content_hash": "09dc84772c243aff533c23f67a0db6135a50fb13338c21c6fd0390c23fb65c4c",
+      "source_version": "3c8cd08f",
+      "content_hash": "e8d58a9029c00ab03f848e278e8d2eedf308f78f811ea516074e98167e67c088",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T15:47:54.377Z"
+      "persisted_at": "2026-11-17T00:10:56.935Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -221949,8 +221954,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "99b389db",
-      "content_hash": "b0a2da97fd33e7128ae5f045e3da35144d60960a67e08b60f8ad4ccb5332f9c9",
+      "source_version": "cfc3f365",
+      "content_hash": "d965a71dcfa986bce0ef69cab66986e52c3f019bae141492c6ade221660a2a75",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -221990,7 +221995,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T16:21:50.569Z",
+      "verified_at": "2026-11-17T00:10:52.746Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223509,8 +223514,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "558b84d7",
-      "content_hash": "4e709b2001e2f937e757485bd90fdad99763b024cc390709f641233926ebef57",
+      "source_version": "c311f7a7",
+      "content_hash": "9d70ceefd16bf89b2d50cddfb1b0cb4095ed72a79a5509bfd7620a454ee31636",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -223528,6 +223533,11 @@
           "number": 8449,
           "title": "Prefix-Boundary Query Index Termination Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8821,
+          "title": "add --grpc-max-conn-age-grace",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223535,7 +223545,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T05:07:01.565Z",
+      "verified_at": "2026-11-17T00:10:52.020Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223653,10 +223663,10 @@
       "relative_path": "08_VERIFICATION/authzed-spicedb-verification-protocol-empirical-defect-shield-for-authzed-spiced.md",
       "title": "Verification Protocol: Empirical Defect Shield for authzed/spicedb",
       "repository": "authzed/spicedb",
-      "source_version": "558b84d7",
-      "content_hash": "c85f0afe570b69c19cda5f29b5b0b8bedb26a27def8d1274840fbc6a5235ed1d",
+      "source_version": "c311f7a7",
+      "content_hash": "881fc49acab0bcdc74ba349038ba17d4c01e6b8fd48dd4e023745c6c95590bde",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T05:07:02.336Z"
+      "persisted_at": "2026-11-17T00:10:52.578Z"
     },
     "learn-github-restatedev-restate": {
       "learning_id": "learn-github-restatedev-restate",
@@ -239883,11 +239893,16 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "68e460af",
-      "content_hash": "066dc68059586ea40bc58f03292a91b6ddbdbe190e09fcd229fa5887f0f3b6e3",
+      "source_version": "f6a9bbfc",
+      "content_hash": "3056f5ab0baaa91e6bf5148f54e37d2b2f153017f10074f0dd090e2c72c5c019",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
+        {
+          "number": 8012,
+          "title": "Empirical Invariant Guard in Cargo.lock",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8575,
           "title": "a sent pick is cleared by what it holds, not by table identity",
@@ -239899,7 +239914,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T04:17:59.153Z",
+      "verified_at": "2026-11-17T00:10:42.908Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239953,10 +239968,10 @@
       "relative_path": "08_VERIFICATION/zeronsh-zeron-verification-protocol-empirical-defect-shield-for-zeronsh-zeron.md",
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh/zeron",
       "repository": "zeronsh/zeron",
-      "source_version": "68e460af",
-      "content_hash": "4def9166be0ec24ae66250c2509df772f12fd28d34a1aff03b7ea0175d8b1024",
+      "source_version": "f6a9bbfc",
+      "content_hash": "d36dc6a4753c0da6f8dcef32adffcf5db865e33a3fdc94d096f2ca230318070c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T04:17:59.851Z"
+      "persisted_at": "2026-11-17T00:10:43.486Z"
     },
     "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf": {
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
@@ -240104,9 +240119,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh-zeron-learnings",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "9366b9a9fdd6634a993c52f3ee8066ad2363a2f74ad7e092a2a8cd0f8ff56c27",
+      "content_hash": "8818672ec9e4e7c06c38f1f145598688b33d70855086601b4319cc4826bfb9fe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T04:19:28.830Z"
+      "persisted_at": "2026-11-17T00:11:24.502Z"
     },
     "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning": {
       "item_id": "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning",
@@ -259924,6 +259939,181 @@
       "content_hash": "3e240f1a27ba55ee6c3cc4d4994ec6e598575f8afb35f7ce66c7d5c7e0495ee8",
       "domain_letter": "G",
       "persisted_at": "2026-11-16T23:52:59.867Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-technical-construction-intelligence-zeronsh-zeron-core-invariants.md",
+      "title": "Technical Construction Intelligence: zeronsh/zeron Core Invariants",
+      "repository": "zeronsh/zeron",
+      "source_version": "f6a9bbfc",
+      "content_hash": "b59fdcffabe8c82e8e10b0c2a01263f18de93d5943b93c0a476737aedf512042",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T00:10:43.364Z"
+    },
+    "rule-8821": {
+      "learning_id": "rule-8821",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8821,
+      "title": "add --grpc-max-conn-age-grace",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "c311f7a7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T00:10:52.020Z"
+    },
+    "candidate_directive-add-grpc-max-conn-age-grace": {
+      "item_id": "candidate_directive-add-grpc-max-conn-age-grace",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SCOK-add-grpc-max-conn-age-grace.md",
+      "title": "add --grpc-max-conn-age-grace",
+      "repository": "authzed/spicedb",
+      "source_version": "c311f7a7",
+      "content_hash": "57843102061bcdbea810bd472f5fd9c0c3c7ded0b08ca6cb6eb52387e53ae833",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T00:10:52.341Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-authzed-spicedb-technical-construction-intelligence-authzed-spicedb-core-invaria.md",
+      "title": "Technical Construction Intelligence: authzed/spicedb Core Invariants",
+      "repository": "authzed/spicedb",
+      "source_version": "c311f7a7",
+      "content_hash": "b32cf2e63f3249273e7d04600b34d30ff083d0317a9d5c3f23f2239094edfa3f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T00:10:52.452Z"
+    },
+    "rule-8822": {
+      "learning_id": "rule-8822",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8822,
+      "title": "Empirical Invariant Guard in config.env.example",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "3c8cd08f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T00:10:56.380Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-config-env-example": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-config-env-example",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SG1T-empirical-invariant-guard-in-config-env-example.md",
+      "title": "Empirical Invariant Guard in config.env.example",
+      "repository": "lioensky/VCPToolBox",
+      "source_version": "3c8cd08f",
+      "content_hash": "f6ca0712986dda721c48b6f589ef4192c70f7802d60d62846072b25694cb2ce1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T00:10:56.708Z"
+    },
+    "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic": {
+      "learning_id": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "slug": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
+      "content_hash": "568622441e630b7d63b2a7f0a57df5dd7f184462df5895840c3c99e6524f06d1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T00:11:20.973Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-research-knowledge-in.md",
+      "title": "Research & Knowledge Intelligence: xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic Core Invariants",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
+      "content_hash": "e6637b04ede954e6a14953fa698ed7912d92d8fa41cd065f9052d833475dfe11",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T00:11:21.307Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-learnings-technical-construction-intelligence-zeronsh-zeron-learni.md",
+      "title": "Technical Construction Intelligence: zeronsh-zeron-learnings Core Invariants",
+      "repository": "zeronsh-zeron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cf1de35e0b3f768e6e76fe0207672f5743605718f33dcc9c18481285357b2abe",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T00:11:24.384Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-learnings-research-kn.md",
+      "title": "Research & Knowledge Intelligence: hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings Core Invariants",
+      "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fab0be49a6d0b899c9d1a508701ad9fac3dedae8fa8de9f62c4d901b5e644ae3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T00:11:24.771Z"
+    },
+    "candidate_directive-cmd-add-grpc-max-conn-age-grace": {
+      "item_id": "candidate_directive-cmd-add-grpc-max-conn-age-grace",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T238-cmd-add-grpc-max-conn-age-grace.md",
+      "title": "cmd): add --grpc-max-conn-age-grace",
+      "repository": "authzed-spicedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e0994bd875307508ee87dbef3049bc03f848933d2a839359566bb97165fb7fd2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T00:11:25.269Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-authzed-spicedb-learnings-technical-construction-intelligence-authzed-spicedb-le.md",
+      "title": "Technical Construction Intelligence: authzed-spicedb-learnings Core Invariants",
+      "repository": "authzed-spicedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b1610d9e4ce235e75743b4b22b1239901e3a036680f17e96cf51e4484c97fc72",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T00:11:25.385Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-authzed-spicedb-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-authzed-spicedb-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/authzed-spicedb-learnings-verification-protocol-empirical-defect-shield-for-auth.md",
+      "title": "Verification Protocol: Empirical Defect Shield for authzed-spicedb-learnings",
+      "repository": "authzed-spicedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ba716035eeb818657b28fb7c6d6bca14088278f8e84ecbda2e77ec43fa090c1b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T00:11:25.505Z"
     }
   },
   "ai-builder-brain": {

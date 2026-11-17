@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-16T23:53:00.579Z",
-  "total_records": 1364,
+  "last_updated": "2026-11-17T00:11:25.385Z",
+  "total_records": 1370,
   "domains": {
     "A": {
       "total": 9,
@@ -42,7 +42,7 @@
       ]
     },
     "D": {
-      "total": 598,
+      "total": 600,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -641,7 +641,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-divagr1925-qwen3-5-4b-qwenputer-learnings-cor",
         "domain_intelligence-research-knowledge-intelligence-facebook-dinov3-vitl16-pretrain-lvd1689m-core-in",
         "domain_intelligence-research-knowledge-intelligence-hf-facebook-dinov3-vitl16-pretrain-lvd1689m-lear",
-        "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear"
+        "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear",
+        "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-",
+        "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor"
       ]
     },
     "E": {
@@ -944,7 +946,7 @@
       ]
     },
     "H": {
-      "total": 302,
+      "total": 306,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1247,7 +1249,11 @@
         "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-core-invariants",
         "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7251,8 +7257,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "13f95a1b3e18d98aa67a6a9c33f0ae4afa38e6e4dfe497e75c6b1ab15aaef9b6",
-      "created_at": "2026-11-16T16:21:51.009Z"
+      "content_hash": "743b038168b49f1e7df9602f347aad3731ac6e0aac6fba5ad1aed47de5d90cd9",
+      "created_at": "2026-11-17T00:10:53.070Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -11622,8 +11628,8 @@
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "repository": "lioensky/VCPToolBox",
-      "content_hash": "1293779c5775c810423869895cb4967e074dcaac696508ed31be048791512879",
-      "created_at": "2026-11-15T15:47:54.214Z"
+      "content_hash": "0cb0a01b37a7977584f9ecad9a386bc30d619ae32062bd9d0c9708d46e87affe",
+      "created_at": "2026-11-17T00:10:56.820Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
@@ -24260,6 +24266,60 @@
       "repository": "kubeedge-kubeedge-learnings",
       "content_hash": "0a3db6803d546e8d7a0beba766f677516c280ab85df20421f4fec8c97d294b4a",
       "created_at": "2026-11-16T23:35:16.159Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zeronsh/zeron Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-technical-construction-intelligence-zeronsh-zeron-core-invariants.md",
+      "repository": "zeronsh/zeron",
+      "content_hash": "b59fdcffabe8c82e8e10b0c2a01263f18de93d5943b93c0a476737aedf512042",
+      "created_at": "2026-11-17T00:10:43.364Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: authzed/spicedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-authzed-spicedb-technical-construction-intelligence-authzed-spicedb-core-invaria.md",
+      "repository": "authzed/spicedb",
+      "content_hash": "b32cf2e63f3249273e7d04600b34d30ff083d0317a9d5c3f23f2239094edfa3f",
+      "created_at": "2026-11-17T00:10:52.452Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-research-knowledge-in.md",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "content_hash": "e6637b04ede954e6a14953fa698ed7912d92d8fa41cd065f9052d833475dfe11",
+      "created_at": "2026-11-17T00:11:21.307Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zeronsh-zeron-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-learnings-technical-construction-intelligence-zeronsh-zeron-learni.md",
+      "repository": "zeronsh-zeron-learnings",
+      "content_hash": "cf1de35e0b3f768e6e76fe0207672f5743605718f33dcc9c18481285357b2abe",
+      "created_at": "2026-11-17T00:11:24.384Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-learnings-research-kn.md",
+      "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings",
+      "content_hash": "fab0be49a6d0b899c9d1a508701ad9fac3dedae8fa8de9f62c4d901b5e644ae3",
+      "created_at": "2026-11-17T00:11:24.771Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: authzed-spicedb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-authzed-spicedb-learnings-technical-construction-intelligence-authzed-spicedb-le.md",
+      "repository": "authzed-spicedb-learnings",
+      "content_hash": "b1610d9e4ce235e75743b4b22b1239901e3a036680f17e96cf51e4484c97fc72",
+      "created_at": "2026-11-17T00:11:25.385Z"
     }
   }
 }

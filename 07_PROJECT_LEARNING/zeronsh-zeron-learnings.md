@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `68e460af`  
+> **Source Version**: `f6a9bbfc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T04:17:58.311Z  
+> **Timestamp**: 2026-11-17T00:10:42.466Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T04:17:58.194Z  
+> **Harvest Timestamp**: 2026-11-17T00:10:42.331Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3668 stars
+- **Stars / Engagement**: 3696 stars
 
 ---
 
@@ -1533,584 +1533,847 @@ class TranscriptState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6df5169d` (2026-11-14)
-**Commit Message**: fix(zgx): a sent pick is cleared by what it holds, not by table identity
+### Incident Patch 1: `f6a9bbfc` (2026-11-15)
+**Commit Message**: Merge pull request #1468 from zeronsh/zeron/main-catches-up-0.3.7
 
-After a send that carried a pick (model, effort, fast, options), the
-composer cleared the chat's pick only if `shared.picks:peek()[id]` was
-the very table read at send time. A state's snapshot read again needn't
-be the same table: after the composer metrics change it wasn't (no write
-to the picks in between; the effect's reads changed), and chat_actions
-"a pick goes with the message, and the session takes it then" failed
-with the pick left behind. Compare the drafted fields instead. (Main has
-the same identity check; it happens to hold there.)
+main catches up with the release line (Zeron 0.3.7)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `apps/zgx/ui/screens/chat/composer.luau` (modified, +15/-1)
+**File**: `Cargo.lock` (modified, +34/-34)
 ```diff
-@@ -118,6 +118,18 @@ local function equal(a: any, b: any): boolean
- 	end
- 	return a == b
- end
-+-- Whether two picks hold the same choices.
-+local function same_pick(a: { [string]: any }?, b: { [string]: any }?): boolean
-+	if a == nil or b == nil then
-+		return a == b
-+	end
-+	for k in DRAFTED do
-+		if not equal(a[k], b[k]) then
-+			return false
-+		end
-+	end
-+	return true
-+end
- -- The tray open behind the composer (its todos, tasks or queue), kept
- -- across a reload.
- local TRAY = ui.state("chat_tray", nil :: ("todos" | "tasks" | "queue")?)
-@@ -905,7 +917,9 @@ local function Composer(): Node
- 					-- Sent with it: the session has it now; no pick left.
- 					if req.model or req.effort or req.fast ~= nil or req.options then
- 						local all = table.clone(shared.picks:peek())
--						if all[id] == pick then
-+						-- (By what it holds, not which table: a state's snapshot
-+						-- read again needn't be the same table.)
-+						if same_pick(all[id], pick) then
- 							all[id] = nil
- 							shared.picks:set(all)
- 						end
+@@ -13347,7 +13347,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zatex"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "tiny-skia",
+  "ttf-parser",
+@@ -13598,7 +13598,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -13623,7 +13623,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-audio"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "base64 0.22.1",
+  "cpal 0.18.2",
+@@ -13635,7 +13635,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-cli"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -13651,7 +13651,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-client"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13682,7 +13682,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-doc"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "chrono",
+  "loro",
+@@ -13697,7 +13697,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-engine"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "alacritty_terminal",
+  "anyhow",
+@@ -13757,7 +13757,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-harness"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13791,7 +13791,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-launch"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "libc",
+  "tempfile",
+@@ -13800,14 +13800,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-markdown"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "pulldown-cmark",
+ ]
+ 
+ [[package]]
+ name = "zeron-mcp"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13829,7 +13829,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-mobile"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "async-trait",
+  "serde",
+@@ -13856,14 +13856,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-mobile-bindgen"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "uniffi",
+ ]
+ 
+ [[package]]
+ name = "zeron-notify"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "objc",
+  "sha2",
+@@ -13872,19 +13872,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-orb"
+-version = "0.3.6"
++version = "0.3.7"
+ 
+ [[package]]
+ name = "zeron-plugin-guard"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "serde_json",
+  "tempfile",
+ ]
+ 
+ [[package]]
+ name = "zeron-preview"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13914,11 +13914,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-preview-label"
+-version = "0.3.6"
++version = "0.3.7"
+ 
+ [[package]]
+ name = "zeron-proto"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "chrono",
+  "pulldown-cmark",
+@@ -13929,7 +13929,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-rpc"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13950,7 +13950,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-sync"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "base64 0.22.1",
+  "block2 0.6.2",
+@@ -13976,7 +13976,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-syntax"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "thiserror 2.0.20",
+  "tree-sitter",
+@@ -14011,14 +14011,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-term"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "alacritty_terminal",
+ ]
+ 
+ [[package]]
+ name = "zeron-term-link"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -14035,7 +14035,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-text"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "core-foundation 0.10.1",
+  "core-graphics 0.24.0",
+@@ -14052,7 +14052,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-theme"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -14067,7 +14067,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-ui"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "alacritty_terminal",
+  "anyhow",
+@@ -14150,7 +14150,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-update"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "futures",
+@@ -14167,11 +14167,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-veil"
+-version = "0.3.6"
++version = "0.3.7"
+ 
+ [[package]]
+ name = "zeron-visual"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "base64 0.22.1",
+  "gltf",
+@@ -14183,7 +14183,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-visual-gpu"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "image",
+  "pollster 0.4.0",
+@@ -14194,7 +14194,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "cpal 0.17.3",
+@@ -14213,7 +14213,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice-media"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "async-trait",
+  "semver",
+@@ -14
 ```
 
-**File**: `apps/zgx/ui/templates/zeron-v2/.base.json` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "ds/sidebar.luau": "f2abf7b60b5f4d00",
-   "ds/tokens.luau": "296d1ea72675de0c",
--  "screens/chat/composer.luau": "89464272b39b1464",
-+  "screens/chat/composer.luau": "9c0c79de53eae373",
-   "screens/chat/lane_tab.luau": "12c199c168515f49",
-   "screens/panel/init.luau": "3d5e0c712c4dda56",
-   "screens/shell/init.luau": "c7b26c3a1ccf9a32",
+@@ -38,7 +38,7 @@ members = [
+ ]
+ 
+ [workspace.package]
+-version = "0.3.6"
++version = "0.3.7"
+ edition = "2024"
+ license = "MIT"
+ publish = false
 ```
 
-**File**: `apps/zgx/ui/templates/zeron-v2/screens/chat/composer.luau` (modified, +15/-1)
+**File**: `apps/zgx/Cargo.lock` (modified, +12/-12)
 ```diff
-@@ -118,6 +118,18 @@ local function equal(a: any, b: any): boolean
- 	end
- 	return a == b
- end
-+-- Whether two picks hold the same choices.
-+local function same_pick(a: { [string]: any }?, b: { [string]: any }?): boolean
-+	if a == nil or b == nil then
-+		return a == b
-+	end
-+	for k in DRAFTED do
-+		if not equal(a[k], b[k]) then
-+			return false
-+		end
-+	end
-+	return true
-+end
- -- The tray open behind the composer (its todos, tasks or queue), kept
- -- across a reload.
- local TRAY = ui.state("chat_tray", nil :: ("todos" | "tasks" | "queue")?)
-@@ -914,7 +926,9 @@ local function Composer(): Node
- 					-- Sent with it: the session has it now; no pick left.
- 					if req.model or req.effort or req.fast ~= nil or req.options then
- 						local all = table.clone(shared.picks:peek())
--						if all[id] == pick then
-+						-- (By what it holds, not which table: a state's snapshot
-+						-- read again needn't be the same table.)
-+						if same_pick(all[id], pick) then
- 							all[id] = nil
- 							shared.picks:set(all)
- 						end
+@@ -7067,7 +7067,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zatex"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "ttf-parser",
+ ]
+@@ -7233,7 +7233,7 @@ checksum = "e13084392c5e4bc371903e2935a5eaeed24905a7511356b883835e18a78f6879"
+ 
+ [[package]]
+ name = "zeron-cli"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -7248,15 +7248,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-launch"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "libc",
+  "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+ name = "zeron-notify"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "objc",
+  "sha2",
+@@ -7265,18 +7265,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-plugin-guard"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "serde_json",
+ ]
+ 
+ [[package]]
+ name = "zeron-preview-label"
+-version = "0.3.6"
++version = "0.3.7"
+ 
+ [[package]]
+ name = "zeron-proto"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "chrono",
+  "pulldown-cmark 0.12.2",
+@@ -7287,7 +7287,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-theme"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -7301,7 +7301,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-update"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "futures",
+@@ -7318,7 +7318,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-visual"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "base64 0.22.1",
+  "gltf",
+@@ -7330,7 +7330,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-visual-gpu"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "pollster",
+  "tracing",
+@@ -7340,7 +7340,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "cpal",
 ```
 
 ---
 
-### Incident Patch 2: `3de4a47b` (2026-11-14)
-**Commit Message**: docs(zgx): composer doc follows the pin and the fixes; preview keeps settings
+### Incident Patch 2: `55a5c392` (2026-11-15)
+**Commit Message**: Zeron 0.3.7: Cloud chats switch accounts; a scroll away stays away
 
-docs/composer.md: the API comes from zeronsh/zgx main (zgx#2148), not
-the fork; long drafts are estimated, metrics follow width only while a
-line wraps, targets publish only bound changes, side chats publish
-through Dock.Dock, and a send eases the composer's size as it glides.
+0.3.6 plus:
+- A Cloud chat's model menu offers Cloud's accounts again, to switch the
+  provider account every Cloud machine uses (#1467).
+- The transcript no longer pulls you back to the end after you scroll away:
+  not during a send's glide, nor at a resize after a scroll (#1450).
 
-composer_transition_preview.luau wrote the persisted motion_reduce
-setting (and the theme) at load, changing a dev build's own settings.
-It no longer writes Reduce motion at load; its button still toggles it,
-and leaving the preview (a reload, the preview unmounted) puts back the
-setting and theme it found.
+Version 0.3.7.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `apps/zgx/docs/composer.md` (modified, +36/-14)
+**File**: `Cargo.lock` (modified, +34/-34)
 ```diff
-@@ -76,9 +76,11 @@ next decision and target geometry together in a batch.
+@@ -13347,7 +13347,7 @@ dependencies = [
  
- ## Text metrics
+ [[package]]
+ name = "zatex"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "tiny-skia",
+  "ttf-parser",
+@@ -13598,7 +13598,7 @@ dependencies = [
  
--`Metrics.use { value, width, editor, keep? }` returns a computed `result` and
--a read-only `sample` state, and creates no measurement nodes. Geometry follows
--the sample without subscribing to request/readiness-only changes. The visible
-+`Metrics.use { value, width, editor, keep?, estimate? }` returns a computed
-+`result` and a read-only `sample` state (the size alone: unwrapped width,
-+wrapped height, line height), and creates no measurement nodes. Geometry follows
-+the sample without subscribing to request/readiness-only changes: a new
-+revision of an equal size wakes no layout. The visible
- textarea supplies
- `Element:text_metrics(content_width)` (Rust: `EditorHandle::text_metrics`).
- It uses the editor's plain/rich shaping, spans, fonts and fallback, includes a
-@@ -98,8 +100,10 @@ next target geometry.
- | `sample.wrapped_height`, `sample.line_height` | Natural wrapped height at the requested width and base line height. |
- | `sample.width`, `sample.revision` | Width and request generation represented by the complete sample. |
+ [[package]]
+ name = "zeron"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -13623,7 +13623,7 @@ dependencies = [
  
--Requests follow draft, width, theme and settled editor metrics, including
--uncommitted IME. A width-only query publishes immediately when the mounted
-+Requests follow draft, theme and settled editor metrics, including
-+uncommitted IME. They follow width only while the widest line doesn't fit the
-+requested width: a draft that fits measures the same at any width it fits, so
-+a pane resized asks nothing of it. A width-only query publishes immediately when the mounted
- editor, draft, theme and native metric revision match the last acknowledged
- request. Mount generations distinguish editor replacement from fresh userdata
- wrappers. Other requests retain deferred publication, checking request and
-@@ -111,23 +115,37 @@ publish a fresh sample.
- With `keep`, the last complete sample survives reload but starts stale until
- revalidated against the mounted editor. Layout retains the last sample while
- waiting; before the first sample it uses its explicit geometry fallback.
--The persistence namespace is `editor_text_metrics`.
-+The persistence namespaces are `editor_text_metrics` and `editor_text_size`.
-+
-+`estimate(text, line_height)` stands in for the exact query where the caller
-+knows the answer can't change its layout. The composer passes
-+`Layout.estimate`: a draft with enough hard lines to fill the text box to its
-+cap at the last measured line height has a newline (forced open, its unwrapped
-+width unused) and is capped whatever it wraps to, so it is not measured again.
-+Finding that out looks for at most a dozen newlines. An estimate is used only
-+for the editor, theme and composer line-height token of the last exact
-+measure; a repeated equal estimate is the same request and publishes nothing.
+ [[package]]
+ name = "zeron-audio"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "base64 0.22.1",
+  "cpal 0.18.2",
+@@ -13635,7 +13635,7 @@ dependencies = [
  
- Framework metrics are exact. The first query per revision/width visits all
--hard lines using retained shaping caches; unchanged queries are constant-time.
--Full-document queries can be expensive for long drafts after edits. Focus,
-+hard lines twice, past the editor's 4,096-line span cache; unchanged queries
-+are constant-time. A full-document query after each edit cost a 5,000-line
-+draft about 10,000 script calls (its highlighting) and 47 ms a keystroke,
-+which is why long drafts are estimated. Focus,
- selection, scroll, caret blink and viewport size alone do not change the
- metric revision. The API is supplied by the immutable ZGX revision pinned in
--[`Cargo.toml`](../Cargo.toml), currently from `jsgrrchg/zgx`.
-+[`Cargo.toml`](../Cargo.toml), from `zeronsh/zgx` main (zgx#2148).
+ [[package]]
+ name = "zeron-cli"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -13651,7 +13651,7 @@ dependencies = [
  
- ## Geometry transitions and context changes
+ [[package]]
+ name = "zeron-client"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13682,7 +13682,7 @@ dependencies = [
  
- One controller keeps origin, destination and progress, with a 220 ms `out(3)`
- animation. Every view binding derives from the same presented snapshot. A changed
- destination cancels the previous animation and starts from the geometry
- currently presented. An unchanged visual destination retains progress, even
--if natural height above the cap or other metadata changes. Width-only changes
--publish without starting an animation when height and anchors already match.
-+if natural height above the cap or other metadata changes. The view publishes
-+a new target only when a field it binds or the motion reads changes
-+(`Layout.same_target`): the pill's and text's widths, which layout applies
-+itself, and the natural height past the cap don't, so resizing a pane runs no
-+motion, frame or binding.
- View bindings share a projection of the complete presented snapshot, so changes
- to width or measurement metadata alone do not wake unchanged controls/insets.
+ [[package]]
+ name = "zeron-doc"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "chrono",
+  "loro",
+@@ -13697,7 +13697,7 @@ dependencies = [
  
-@@ -166,13 +184,17 @@ A new chat stands near the page's middle, under the title bar. Its top is based
- on `rest`, so typing grows the composer downward without moving that top. If
- the presented box would overflow the page's foot, placement lifts it by the
- required amount. A session anchors at the bottom with the dock's 8-point 
+ [[package]]
+ name = "zeron-engine"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "alacritty_terminal",
+  "anyhow",
+@@ -13757,7 +13757,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-harness"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13791,7 +13791,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-launch"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "libc",
+  "tempfile",
+@@ -13800,14 +13800,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-markdown"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "pulldown-cmark",
+ ]
+ 
+ [[package]]
+ name = "zeron-mcp"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13829,7 +13829,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-mobile"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "async-trait",
+  "serde",
+@@ -13856,14 +13856,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-mobile-bindgen"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "uniffi",
+ ]
+ 
+ [[package]]
+ name = "zeron-notify"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "objc",
+  "sha2",
+@@ -13872,19 +13872,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-orb"
+-version = "0.3.6"
++version = "0.3.7"
+ 
+ [[package]]
+ name = "zeron-plugin-guard"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "serde_json",
+  "tempfile",
+ ]
+ 
+ [[package]]
+ name = "zeron-preview"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13914,11 +13914,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-preview-label"
+-version = "0.3.6"
++version = "0.3.7"
+ 
+ [[package]]
+ name = "zeron-proto"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "chrono",
+  "pulldown-cmark",
+@@ -13929,7 +13929,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-rpc"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -13950,7 +13950,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-sync"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "base64 0.22.1",
+  "block2 0.6.2",
+@@ -13976,7 +13976,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-syntax"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "thiserror 2.0.20",
+  "tree-sitter",
+@@ -14011,14 +14011,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-term"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "alacritty_terminal",
+ ]
+ 
+ [[package]]
+ name = "zeron-term-link"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -14035,7 +14035,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-text"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "core-foundation 0.10.1",
+  "core-graphics 0.24.0",
+@@ -14052,7 +14052,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-theme"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -14067,7 +14067,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-ui"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "alacritty_terminal",
+  "anyhow",
+@@ -14150,7 +14150,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-update"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "futures",
+@@ -14167,11 +14167,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-veil"
+-version = "0.3.6"
++version = "0.3.7"
+ 
+ [[package]]
+ name = "zeron-visual"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "base64 0.22.1",
+  "gltf",
+@@ -14183,7 +14183,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-visual-gpu"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "image",
+  "pollster 0.4.0",
+@@ -14194,7 +14194,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "cpal 0.17.3",
+@@ -14213,7 +14213,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice-media"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "async-trait",
+  "semver",
+@@ -14
 ```
 
-**File**: `apps/zgx/ui/composer_transition_preview.luau` (modified, +17/-3)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1,11 +1,14 @@
- -- Real composer for visual transition checks. All input is fixture-local;
- -- the development host's engine/account updates cannot replace this draft.
-+-- It leaves the build's own settings as it found them: Reduce motion is
-+-- persisted (`motion_reduce`), so it is only changed by its button here and
-+-- put back as the preview goes, as is the theme it shows in.
- local ds = require("@ds")
- local motion = require("@ds/motion")
- ds.setup()
--ui.theme.follow_system(false)
-+local reduce_was = motion.reduce:peek()
-+local theme_was = ui.theme.current:peek()
- ui.theme.current:set("zeron-dark")
--motion.reduce:set(false)
+@@ -38,7 +38,7 @@ members = [
+ ]
  
- local draft = ui.state("fixture_preview_draft", "short")
- local focus = ui.state("fixture_preview_focus", 0)
-@@ -22,7 +25,14 @@ local function set_draft(text: string)
- 	end)
- end
+ [workspace.package]
+-version = "0.3.6"
++version = "0.3.7"
+ edition = "2024"
+ license = "MIT"
+ publish = false
+```
+
+**File**: `apps/zgx/Cargo.lock` (modified, +12/-12)
+```diff
+@@ -7067,7 +7067,7 @@ dependencies = [
  
--return ui.column {
-+local Preview = ui.component(function(): Node
-+	ui.on_cleanup(function()
-+		if motion.reduce:peek() ~= reduce_was then
-+			motion.reduce:set(reduce_was)
-+		end
-+		ui.theme.current:set(theme_was)
-+	end)
-+	return ui.column {
- 	w_full = true, h_full = true, p = "$space.4", gap = "$space.4",
- 	bg = "$background",
- 	ui.row {
-@@ -34,6 +44,7 @@ return ui.column {
- 			cargo:set(if #cargo:peek() == 0 then { { id = "f", kind = "file", name = "notes.md" } } else {})
- 			focus:set(focus:peek() + 1)
- 		end },
-+		-- (scripts/composer_frames.py clicks these by place: keep the labels.)
- 		ds.Button { "Reduce motion", on_click = function() motion.reduce:set(not motion.reduce:peek()) end },
- 		ds.Button { "Wrap", on_click = function() set_draft(string.rep("W", 60)) end },
- 	},
-@@ -49,3 +60,6 @@ return ui.column {
- 		},
- 	},
- }
-+end)
-+
-+return Preview {}
-```
-
----
-
-### Incident Patch 3: `0f3118de` (2026-11-14)
-**Commit Message**: Browser: let a load error be dismissed to show what rendered
-
-A failure reported after the page's own document committed (WebView2
-calls a page with an HTTP error status, such as Google's 429 "unusual
-traffic" check, a failed navigation; WebKit's didFailNavigation) no longer
-covers the page with "Couldn't load this page". A real failure (one that
-never committed, or the page's process ending) still shows it, now with
-Dismiss beside Try again (Escape too), for that navigation only.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `apps/zgx/ui/locales/en.json` (modified, +2/-1)
-```diff
-@@ -3220,7 +3220,8 @@
-         "show": "Show in Finder",
-         "dismiss": "Dismiss {name}",
-         "saving": "Saving…"
--      }
-+      },
-+      "dismiss_error": "Dismiss"
-     },
-     "browser_api": {
-       "empty": "Enter a website or localhost address.",
-```
-
-**File**: `apps/zgx/ui/locales/zh-Hans.json` (modified, +2/-1)
-```diff
-@@ -3220,7 +3220,8 @@
-         "show": "在访达中显示",
-         "dismiss": "关闭 {name}",
-         "saving": "正在保存…"
--      }
-+      },
-+      "dismiss_error": "关闭"
-     },
-     "browser_api": {
-       "empty": "输入网站或 localhost 地址。",
-```
-
-**File**: `apps/zgx/ui/screens/panel/browser.luau` (modified, +64/-5)
-```diff
-@@ -433,6 +433,32 @@ Page = ui.component(function(props: Props): Node
- 	-- Annotation mode, as the bar's toggle shows it.
- 	local mode = ui.use_state(annotating:peek()[id] == true)
+ [[package]]
+ name = "zatex"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "ttf-parser",
+ ]
+@@ -7233,7 +7233,7 @@ checksum = "e13084392c5e4bc371903e2935a5eaeed24905a7511356b883835e18a78f6879"
  
-+	-- This navigation, as the page tells it: whether its own document came
-+	-- (committed: the page's content, not the host's error page), whether
-+	-- its process ended after, and whether its failure was dismissed. Each
-+	-- starts over with the next navigation (a reload, Try again).
-+	-- A failure after the page committed is no page missing: the page drew,
-+	-- and it's what to show (a 429 or 5xx page, Google's "unusual traffic"
-+	-- check: WebView2 calls a page with an error status a failed
-+	-- navigation; WebKit a load interrupted once the page was in).
-+	local committed = ui.use_state(false)
-+	local crashed = ui.use_state(false)
-+	local dismissed = ui.use_state(false)
-+	-- The page that didn't load, over where it would be (`trouble`).
-+	local function failed(): boolean
-+		if not has_page(web) or web.error == nil or dismissed:get() then
-+			return false
-+		end
-+		return crashed:get() or not committed:get()
-+	end
-+	local function dismiss(): boolean
-+		if not failed() then
-+			return false
-+		end
-+		dismissed:set(true)
-+		return true
-+	end
-+
- 	-- Made with an address and no page yet (a saved tab, a link opened):
- 	-- the page loads. (A reload finds the page where it was: nothing moves.)
- 	-- A new tab with a home page set opens on it (once: the start page is
-@@ -556,7 +582,7 @@ Page = ui.component(function(props: Props): Node
- 		end
- 	end
- 	local function start_annotating()
--		if not has_page(web) or web.error then
-+		if not has_page(web) or failed() then
- 			if mode:peek() then
- 				mode:set(false)
- 			end
-@@ -969,6 +995,11 @@ Page = ui.component(function(props: Props): Node
- 					return true
- 				end
- 				if e.key == "Escape" then
-+					-- (Nothing typed to take back: the failure over the page
-+					-- dismissed, as from anywhere else in the tab.)
-+					if address:peek() == last_url and dismiss() then
-+						return true
-+					end
- 					-- (Back to the page's address, as a browser's.)
- 					suggestions.quiet(last_url)
- 					address:set(last_url)
-@@ -1064,7 +1095,7 @@ Page = ui.component(function(props: Props): Node
- 			tooltip = ui.t("panel.browser.annotate_tooltip", { key = ui.shortcut_text(if shell_keys then shell_keys.combo("panel.annotate") else "cmd+shift+i") }):get(),
- 			tooltip_side = "bottom",
- 			disabled = function(): boolean
--				return not can_leave() or web.error ~= nil
-+				return not can_leave() or failed()
- 			end,
- 			on_change = function(on: boolean)
- 				if on then
-@@ -1533,7 +1564,21 @@ Page = ui.component(function(props: Props): Node
- 					on_state(value.state)
- 				end
- 			end,
-+			on_error = function(url: string, _why: string)
-+				-- (The page's process ended: no navigation's, and nothing left
-+				-- drawn, committed or not.)
-+				if url == "" then
-+					crashed:set(true)
-+				end
-+			end,
- 			on_navigate = function(e: any)
-+				if type(e) == "table" and e.kind == "started" then
-+					committed:set(false)
-+					crashed:set(false)
-+					dismissed:set(false)
-+				elseif type(e) == "table" and e.kind == "committed" then
-+					committed:set(true)
-+				end
- 				-- Another page: its picker is gone with the last, so the mode
- 				-- ends (the shipping app's; its marks come back by restore).
- 				if type(e) == "table" and e.kind == "committed" and annotating:peek()[id] then
-@@ -1572,9 +1617,7 @@ Page = ui.component(function(props: Props): Node
- 			or string.find(l, "internet connection", 1, true) ~= nil
- 			or string.find(l, "not connected", 1, true) ~= nil
- 	end
--	local trouble = ui.show(function(): boolean
--		return has_page(web) and web.error ~= nil
--	end, ui.column {
-+	local trouble = ui.show(failed, ui.column {
- 		absolute = true,
- 		left = 0,
- 		right = 0,
-@@ -1623,6 +1666,14 @@ Page = ui.component(function(props: Props): Node
- 						web:reload()
- 					end,
- 				},
-+				-- What the page drew anyway, under (Escape too): until the
-+				-- next navigation.
-+				secondary = {
-+					label = ui.t("panel.browser.dismiss_error") :: any,
-+					on_click = function()
-+						dismiss()
-+					end,
-+				},
- 			}
- 		end, { w_full = true, grow = 1, min_h = 0 }),
- 	})
-@@ -1634,6 +1685,14 @@ Page = ui.component(function(props: Props): Node
- 		w_full = true,
- 		grow = 1,
- 		min_h = 0,
-+		-- A bare Escape nothing in the tab took (the error's buttons, the
-+		-- bar's): the failure dismissed, the page under it shown.
-+		on_key = function(e: any): boolean?
-+			if e.key == "Escape" and not (e.shift or e.cmd or e.alt or e.ctrl) and dismiss() then
-+				return true
-+			end
-+			return nil
-+		end,
- 		bar,
- 		problem_line,
- 		find_bar,
-```
-
-**File**: `apps/zgx/ui/tests/browser_load_error.test.luau` (added, +175/-0)
-```diff
-@@ -0,0 +1,175 @@
-+-- The panel's browser tab when a load fails: a page that never came says
-+-- so over where it would be, with Try again and Dismiss (Escape too), the
-+-- page under it shown once dismissed, until the next navigation; a page
-+-- that came and drew (Google's "unusual traffic" check, a 429 WebView2
-+-- calls a failed navigation) shows as it is, no failure over it. On the
-+-- panel in ui/panel_fixture.luau, its page stood in for.
-+
-+local FIELD = 'role:combobox "Address"'
-+local FAILED = '"Couldn\'t load this page"'
-+local DISMISS = 'role:button "Dismiss"'
-+local RETRY = 'role:button "Try again"'
-+
-+local function eventually(app: any, ok: () -> boolean, ms: number?): boolean
-+	for _ = 1, math.ceil((ms or 5000) / 50) do
-+		if ok() then
-+			return true
-+		end
-+		app:wait('"never shown, only waited past"', { timeout_ms = 50 })
-+	end
-+	return ok()
-+end
-+
-+local function panel(): any
-+	local app = mount("panel_fixture.luau")
-+	app:resize(900, 640)
-+	app:frames(10)
-+	expect(app:error()).to_be_nil()
-+	expect(app:wait("#panel-empty", { timeout_ms = 15000 })).to_be(true)
-+	app:click("#panel-open-browser")
-+	expect(app:wait(FIELD, { timeout_ms = 15000 })).to_be(true)
-+	return app
-+end
-+
-+local function calls(app: any): string
-+	return app:state("test_web_calls") or ""
-+end
-+
-+-- To google.com/sorry, the page loaded (the field shows its address).
-+local URL = "https://www.google.com/sorry/index"
-+local function go(app: any): string
-+	app:click("#outside")
-+	app:frames(2)
-+	app:type(FIELD, URL)
-+	app:key("Enter")
-+	app:frames(10)
-+	expect(eventually(app, function(): boolean
-+		return app:tree(FIELD):find(`="{string.sub(URL, 1, 36)}`, 1, true) ~= nil
-+	end)).to_be(true)
-+	app:frames(5)
-+	return app:state("test_web_last_id")
-+end
-+
-+-- The page moving on, as the host tells it (`started`, `committed`).
-+local function navigate(app: any, kind: string)
-+	app:set_state("test_web_nav_kind", kind)
-+	app:command("test.web_navigate")
-+	app:frames(5)
-+end
-+
-+-- The load failing, as the host has it: the error on the page's state.
-+local function fail(app: any, id: string, why: string)
-+	app:set_state(`test_web_error_{id}`, why)
-+	app:frames(10)
-+end
-+
-+-- The page under the overlay is the fixture's stand-in (`page <url>`).
-+local function page_shown(app: any): boolean
-+	return app:has("#stub-web")
-+end
-+
-+test("browser load error: a page that never came shows the failure, Try again and Dismiss", function()
-+	local app = panel()
-+	local id = go(app)
-+	navigate(app, "started")
-+	fail(app, id, "A server with the specified hostname could not be found.")
-+	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
-+	expect(app:has(RETRY)).to_be(true)
-+	expect(app:has(DISMISS)).to_be(true)
-+	expect(app:tree('role:checkbox "Annotate"')).to_contain("disabled")
-+end)
-+
-+test("browser load error: Dismiss hides the failure and the page stays", function()
-+	local app = panel()
-+	local id = go(app)
-+	navigate(app, "started")
-+	fail(app, id, "The page could not be loaded.")
-+	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
-+	app:click(DISMISS)
-+	app:frames(10)
-+	expect(app:has(FAILED)).to_be(false)
-+	expect(app:has(RETRY)).to_be(false)
-+	expect(page_shown(app)).to_be(true)
-+	expect(app:has(`"page {URL}"`)).to_be(true)
-+	-- Only this navigation's: the next one's failure shows again.
-+	navigate(app, "started")
-+	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
-+end)
-+
-+test("browser load error: Escape dismisses", function()
-+	local app = panel()
-+	local id = go(app)
-+	navigate(app, "started")
-+	fail(app, id, "The page could not be loaded.")
-+	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
-+	-- (From the address field, nothing typed in it to take back.)
-+	app:click(FIELD)
-+	app:frames(2)
-+	app:key("Escape")
-+	app:frames(10)
-+	expect(app:has(FAILED)).to_be(false)
-+	expect(page_shown(app)).to_be(true)
-+end)
-+
-+test("browser load error: Escape from the failure's own buttons dismisses", function()
-+	local app = panel()
-+	local id = go(app)
-+	navigate(app, "started")
-+	fail(app, id, "The page could not be loaded.")
-+	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
-+	-- (Tab from the field: past the bar's ⋯ to Try again.)
-+	app:click(FIELD)
-+	app:frames(2)
-+	for _ = 1, 4 do
-+		if app:tree(RETRY):find("focused", 1, true) then
-+			break
-+		end
-+		app:key("Tab")
-+		app:frames(2)
-+	end
-+	expect(app:tree(RETRY)).to_contain("focused")
-+	app:key("Escape")
-+	app:frames(10)
-+	expect(app:has(FAILED)).to_be(false)
-+	expect(page_shown(app)).to_be(true)
-+	expect(calls(app)).never.to_contain("reload")
-+end)
-+
-+test("browser load error: Try again reloads the page", function()
-+	local app = panel()
-+	local id = go(app)
-+	navigate(app, "started")
-+	fail(app, id, "Could not connect to the server.")
-+	expect(app:wait(FAILED, { timeout_ms = 3000 })).to_be(true)
-+	app:click(RETRY)
-+	app:frames(5)
-+	expect(calls(app)).to_contain("reload")
-+end)
-+
-+test("browser load error: a page that came and drew, with an erro
+ [[package]]
+ name = "zeron-cli"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -7248,15 +7248,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-launch"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "libc",
+  "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+ name = "zeron-notify"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "objc",
+  "sha2",
+@@ -7265,18 +7265,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-plugin-guard"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "serde_json",
+ ]
+ 
+ [[package]]
+ name = "zeron-preview-label"
+-version = "0.3.6"
++version = "0.3.7"
+ 
+ [[package]]
+ name = "zeron-proto"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "chrono",
+  "pulldown-cmark 0.12.2",
+@@ -7287,7 +7287,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-theme"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -7301,7 +7301,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-update"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "futures",
+@@ -7318,7 +7318,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-visual"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "base64 0.22.1",
+  "gltf",
+@@ -7330,7 +7330,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-visual-gpu"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "pollster",
+  "tracing",
+@@ -7340,7 +7340,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "zeron-voice"
+-version = "0.3.6"
++version = "0.3.7"
+ dependencies = [
+  "anyhow",
+  "cpal",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1468** (2026-11-15): main catches up with the release line (Zeron 0.3.7) (@wingleeio)
+- **PR #1467** (2026-11-15): Composer: a Cloud chat's model menu offers Cloud's accounts (@wingleeio)
+- **PR #1459** (2026-11-15): Windows start: the engine up with the window, the interface laid down in parallel (@wingleeio)
 - **PR #1457** (2026-11-15): main catches up with the release line (Zeron 0.3.6) (@wingleeio)
 - **PR #1456** (2026-11-15): Providers: Cloud is a choice again, its accounts and API keys managed there (@wingleeio)
 - **PR #1455** (2026-11-15): Cloud: the updater and the pre-sleep tidy keep zeron-engine (@wingleeio)
-- **PR #1454** (2026-11-15): Cloud: keep zeron-engine, and put it back before each start (@wingleeio)
-- **PR #1453** (2026-11-15): Plugins: compose can replace a draft's words or write another chat's; draft_of reads any chat's (@wingleeio)
-- **PR #1452** (2026-11-15): Plugins: the draft is written for plugins only while one may read it (@wingleeio)
 
 ---
 
@@ -2130,42 +2393,92 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. zgx): a sent pick is cleared by what it holds, not by table identity
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `apps/zgx/ui/screens/chat/composer.luau`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6df5169d`: zgx): a sent pick is cleared by what it holds, not by table identity. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f6a9bbfc`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/ui/screens/chat/composer.luau`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
--- Whether two picks hold the same choices.
-local function same_pick(a: { [string]: any }?, b: { [string]: any }?): boolean
-	if a == nil or b == nil then
-		return a == b
-	end
-	for k in DRAFTED do
-		if not equal(a[k], b[k]) then
-			return false
-		end
-	end
-	return true
-end
-						-- (By what it holds, not which table: a state's snapshot
-						-- read again needn't be the same table.)
-						if same_pick(all[id], pick) then
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
+version = "0.3.7"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-						if all[id] == pick then
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
+version = "0.3.6"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6df5169d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f6a9bbfc` are properly handled with clean fallback behavior.

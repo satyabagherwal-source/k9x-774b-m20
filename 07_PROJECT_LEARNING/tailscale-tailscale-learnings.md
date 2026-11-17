@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `99b389db`  
+> **Source Version**: `cfc3f365`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T16:21:49.883Z  
+> **Timestamp**: 2026-11-17T00:10:52.534Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T16:21:49.878Z  
+> **Harvest Timestamp**: 2026-11-17T00:10:52.528Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39191 stars
+- **Stars / Engagement**: 39195 stars
 
 ---
 
@@ -800,13 +800,11 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #22379** (2026-11-16): **magicsock: peer home DERP stays stale after a delta: updateNodes fast path skips a full netmap that equals the unpatched peersByID snapshot**
+  *Symptoms*: ### What is the issue?  A peer's home DERP region can go stale in magicsock and stay stale until an unrelated netmap change, while the control plane and the client's own netmap hold the correct value. Packets for that peer are then sent to a DERP region the peer has left. If the two nodes have no other path (no direct UDP in either direction until a CallMeMaybe gets through), the peer is unreachable.  **Mechanism (v1.104.5, also present at v1.102.5 and on `main` at 59064619a):**  1. `Conn.UpdateNetmapDelta` applies `NodeMutationDERPHome` by calling `ep.setDERPHome` only. It does not update `c.peersByID`. The field comment says so: "per-field NodeMutation patches received in UpdateNetmapDelta are never applied to these snapshots" (`wgengine/magicsock/magicsock.go`, `peersByID`). 2. `Conn.updateNodes` has a fast path that returns early when every peer in the incoming full netmap `Equal`s its `peersByID` snapshot. 3. So: a full netmap (or upsert) records home = A in both the endpoint and the snapshot. A delta moves the endpoint to B; the snapshot still says A. The peer moves back to A, and that change reaches magicsock inside a full netmap rather than as a delta. The node equals the stale snapshot, the fast path skips it, and `ep.derpAddr` stays on B.  The change back to A arrives inside a full netmap whenever the `MapResponse` carrying the `DERPRegion` patch also carries any field in `mapResponseContainsNonPatchFields` (`Node`, `DERPMap`, `DNSConfig`, `Health`, `DisplayMessages
+
 - **Issue #22334** (2026-11-13): **ipn/ipnlocal: home DERP change writes the netmap cache without CacheNetworkMaps**
   *Symptoms*: ### What is the issue?  `onHomeDERPUpdateLocked` writes the self-only netmap cache without checking the `CacheNetworkMaps` node capability. The full netmap and peer delta paths both check it, and a full netmap deletes the cache when the capability is missing.  So on a node without the capability, each home DERP change recreates a cache with no peers. On the next start the node logs `loaded netmap from disk cache; 0 peers` and goes Running before control sends any peers. A tsnet app that sets an exit node by IP when the backend becomes Running gets `no node found in netmap with IP` on those starts.  ### Steps to reproduce  1. Run a tsnet node whose node lacks `CacheNetworkMaps`. 2. Restart it on the same state dir.  After a run that logs `updating netmap in disk cache`, the next start loads a cache with 0 peers. With the capability check added, the cache is never recreated.  ### Are there any recent changes that introduced the issue?  #19491 / #19818. The cache write they added came after the capability gate from #19117.  ### OS  _No response_  ### OS version  15.8.1 (arm64)  ### Tailscale version  main @ 1f6259a88 (tsnet, userspace)  ### Other software  _No response_  ### Bug report  _No response_ 
-
-- **Issue #22307** (2026-11-13): **eventbus: some subscribers use pointer types for events published by value and never run**
-  *Symptoms*: The `eventbus` routes events by exact `reflect.Type`, so a subscriber of `*T` never receives events published as `T`.  - `(*ipnlocal.LocalBackend).onClientVersion` subscribes to `*tailcfg.ClientVersion`, but `controlclient` publishes `tailcfg.ClientVersion`. `lastClientVersion` is never set, `health.SetLatestVersion` is never called, and update-available notifications are never sent to clients. - `(*logtail.Logger).onChangeDelta` subscribes to `*netmon.ChangeDelta`, but `netmon` publishes `netmon.ChangeDelta`. In `tailscaled`, which gives the logger both an `eventbus` and a `netmon.Monitor`, `awaitInternetUp` waits only on a signal this handler sets, so after an upload fails while the host has no IP addresses, log uploads never resume until shutdown. - `netmon.LinkChangeLogLimiter` subscribes to `*netmon.ChangeDelta`, so the portmapper log limiter in `magicsock` never resets its seen-message cache after a major link change.
-  **Post-Mortem & Fix Analysis**:
-  > Fixed by #22308 and #22322.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -823,191 +821,39 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99b389db` (2026-11-15)
-**Commit Message**: ipn/ipnlocal: don't abandon netmap delta batches on unknown peers
+### Incident Patch 1: `aac0e23d` (2026-11-14)
+**Commit Message**: cmd/tsconnect: stop including tailwind styles in tsconnect package CSS
 
-nodeBackend.UpdateNetmapDelta returned false on a per-field patch for a
-peer it didn't have, such as one filtered out by tailnet lock, dropping
-the batch's remaining patches. LocalBackend ignored the result and
-reported success, so controlclient never sent a full netmap, and its
-peer dedup then hid later updates for those peers. Skip such patches
-instead, and return false from LocalBackend if nodeBackend fails.
+pkg.css was publishing Tailwind CSS classes unnecessarily which could
+cause conflicts with downstream consumers (e.g., if the downstream uses
+Tailwind 4 as an example).
 
-Updates #22379
+Only publish xterm's styles as these are needed for the components used
+by the library.
 
-Change-Id: I142bd47a89568d0f6c457f0da08601f41609d8f7
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
+Updates https://github.com/tailscale/corp/issues/50293
 
-**File**: `ipn/ipnlocal/local.go` (modified, +6/-1)
+Signed-off-by: Mario Minardi <[REDACTED_EMAIL]>
+
+**File**: `cmd/tsconnect/src/pkg/pkg.css` (modified, +0/-4)
 ```diff
-@@ -2587,7 +2587,12 @@ func (b *LocalBackend) UpdateNetmapDelta(muts []netmap.NodeMutation) (handled bo
- 	muts = b.tkaFilterDeltaMutsLocked(muts)
- 	needsAuthReconfig := netmapDeltaNeedsAuthReconfig(cn, muts)
+@@ -2,7 +2,3 @@
+ /* SPDX-License-Identifier: BSD-3-Clause */
  
--	deltaRes, _ := cn.UpdateNetmapDelta(muts)
-+	deltaRes, ok := cn.UpdateNetmapDelta(muts)
-+	if !ok {
-+		// Returning false makes controlclient deliver a full netmap
-+		// instead.
-+		return false
-+	}
- 	b.notifyPeerUpdateLocked()
- 	b.checkCachedDNSLocked()
- 	if buildfeatures.HasDrive {
-```
-
-**File**: `ipn/ipnlocal/node_backend.go` (modified, +5/-2)
-```diff
-@@ -1158,8 +1158,11 @@ func (nb *nodeBackend) UpdateNetmapDelta(muts []netmap.NodeMutation) (res netmap
- 		if !ok {
- 			nv, ok := nb.peers[nid]
- 			if !ok {
--				// TODO(bradfitz): unexpected metric?
--				return res, false
-+				// The peer may have been filtered out by tailnet lock,
-+				// which control doesn't know about, so it keeps sending
-+				// patches for it. Skip it rather than abandoning the rest
-+				// of the batch.
-+				continue
- 			}
- 			n = nv.AsStruct()
- 			mak.Set(&mutableNodes, nv.ID(), n)
-```
-
-**File**: `ipn/ipnlocal/node_backend_test.go` (modified, +37/-0)
-```diff
-@@ -457,6 +457,43 @@ func TestNodeBackendDiscoChangedDelta(t *testing.T) {
- 	}
- }
- 
-+// Tests that a per-field patch for a peer missing from nodeBackend (such as
-+// one filtered out by tailnet lock) doesn't stop the rest of the batch from
-+// being applied.
-+func TestNodeBackendDeltaUnknownPeer(t *testing.T) {
-+	nb := newNodeBackend(t.Context(), tstest.WhileTestRunningLogger(t), eventbus.New())
-+	mkNode := func(id tailcfg.NodeID) tailcfg.NodeView {
-+		return (&tailcfg.Node{ID: id, Key: key.NewNode().Public(), HomeDERP: 1}).View()
-+	}
-+	nb.SetNetMap(&netmap.NetworkMap{Peers: []tailcfg.NodeView{mkNode(1), mkNode(3)}})
-+
-+	muts, ok := netmap.MutationsFromMapResponse(&tailcfg.MapResponse{
-+		PeersChangedPatch: []*tailcfg.PeerChange{
-+			{NodeID: 1, DERPRegion: 2},
-+			{NodeID: 2, DERPRegion: 2},
-+			{NodeID: 3, DERPRegion: 2},
-+		},
-+	}, time.Now())
-+	if !ok {
-+		t.Fatal("MutationsFromMapResponse failed")
-+	}
-+	if _, handled := nb.UpdateNetmapDelta(muts); !handled {
-+		t.Fatal("UpdateNetmapDelta not handled")
-+	}
-+	for _, id := range []tailcfg.NodeID{1, 3} {
-+		n, ok := nb.NodeByID(id)
-+		if !ok {
-+			t.Fatalf("peer %d missing", id)
-+		}
-+		if got := n.HomeDERP(); got != 2 {
-+			t.Errorf("peer %d HomeDERP = %d; want 2", id, got)
-+		}
-+	}
-+	if _, ok := nb.NodeByID(2); ok {
-+		t.Error("patch for unknown peer 2 added it")
-+	}
-+}
-+
- func TestNodeBackendRouteManagerExtras(t *testing.T) {
- 	nb := newNodeBackend(t.Context(), tstest.WhileTestRunningLogger(t), eventbus.New())
- 
-```
-
----
-
-### Incident Patch 2: `fe572693` (2026-11-15)
-**Commit Message**: ipn/ipnlocal: recompute suggested exit node on exit node DERP home deltas
-
-suggestExitNode groups candidates by DERP home region, but a HomeDERP
-patch on an exit node other than the current suggestion didn't trigger
-a recompute, so the suggestion could stay stale until the next full
-netmap.
-
-Updates #22379
-
-Change-Id: Ib0c1dd9bf41fe40eac77fca378015c97fba600d1
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-
-**File**: `ipn/ipnlocal/local.go` (modified, +4/-5)
-```diff
-@@ -2934,12 +2934,11 @@ func mutationsAreWorthyOfRecalculatingSuggestedExitNode(muts []netmap.NodeMutati
- 			continue
- 		}
- 
--		// Some exit node is being mutated.  We care about it if it's online
--		// or offline state has changed.  We *might* eventually care about it for other reasons
--		// but for the sake of finding a "better" suggested exit node, this is probably
--		// sufficient.
-+		// Some exit node is being mutated.  We care about it if its online
-+		// or offline state has changed, or its DERP home, which
-+		// [suggestExitNode] uses to group candidates by region.
- 		switch m.(type) {
--		case netmap.NodeMutationOnline:
-+		case netmap.NodeMutationOnline, netmap.NodeMutationDERPHome:
- 			return true
- 		}
- 	}
-```
-
-**File**: `ipn/ipnlocal/local_test.go` (modified, +32/-0)
-```diff
-@@ -6308,6 +6308,38 @@ func deterministicNodeForTest(t testing.TB, want views.Slice[tailcfg.StableNodeI
- 	}
- }
- 
-+func TestMutationsAreWorthyOfRecalculatingSuggestedExitNode(t *testing.T) {
-+	nb := newNodeBackend(t.Context(), tstest.WhileTestRunningLogger(t), eventbus.New())
-+	nb.SetNetMap(&netmap.NetworkMap{Peers: []tailcfg.NodeView{
-+		(&tailcfg.Node{ID: 1, StableID: "exit", AllowedIPs: tsaddr.ExitRoutes()}).View(),
-+		(&tailcfg.Node{ID: 2, StableID: "other"}).View(),
-+	}})
-+
-+	tests := []struct {
-+		name   string
-+		change tailcfg.PeerChange
-+		sid    tailcfg.StableNodeID
-+		want   bool
-+	}{
-+		{"exit-online", tailcfg.PeerChange{NodeID: 1, Online: new(true)}, "", true},
-+		{"exit-derp", tailcfg.PeerChange{NodeID: 1, DERPRegion: 2}, "", true},
-+		{"exit-lastseen", tailcfg.PeerChange{NodeID: 1, LastSeen: new(time.Now())}, "", false},
-+		{"other-derp", tailcfg.PeerChange{NodeID: 2, DERPRegion: 2}, "", false},
-+		{"suggested-lastseen", tailcfg.PeerChange{NodeID: 2, LastSeen: new(time.Now())}, "other", true},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			muts, ok := netmap.NodeMutationsFromPatch(&tt.change)
-+			if !ok {
-+				t.Fatal("NodeMutationsFromPatch failed")
-+			}
-+			if got := mutationsAreWorthyOfRecalculatingSuggestedExitNode(muts, nb, tt.sid); got != tt.want {
-+				t.Errorf("got %v; want %v", got, tt.want)
-+			}
-+		})
-+	}
-+}
-+
- func TestSuggestExitNode(t *testing.T) {
- 	t.Parallel()
- 
+ @import "xterm/css/xterm.css";
+-
+-@tailwind base;
+-@tailwind components;
+-@tailwind utilities;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22443** (2026-11-16): drive/driveimpl/compositedav: close idle connections of replaced children (@mmporong)
 - **PR #22432** (2026-11-16): go.mod: bump 5 modules (@tailscale-code-updater[bot])
+- **PR #22428** (2026-11-16): wgengine/magicsock: apply DERP home and endpoints deltas to peersByID (@bradfitz)
 - **PR #22427** (2026-11-15): net/memnet: implement CloseRead and CloseWrite (@emrelab)
 - **PR #22426** (2026-11-16): ipn/ipnlocal: recompute suggested exit node on exit node DERP home deltas (@bradfitz)
 - **PR #22425** (2026-11-16): ipn/ipnlocal: don't abandon netmap delta batches on unknown peers (@bradfitz)
-- **PR #22421** (2026-11-16): net/netns: honor ALL_PROXY when netns is disabled (@bradfitz)
-- **PR #22420** (2026-11-16): net/netmon: make static monitors work without netlink (@bradfitz)
 
 ---
 
@@ -1021,39 +867,3 @@ Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. ipn/ipnlocal: don't abandon netmap delta batches on unknown peers
-
-**RULE**:
-When implementing operations in `ipn/ipnlocal/local.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `99b389db`: ipn/ipnlocal: don't abandon netmap delta batches on unknown peers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/local.go`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-	deltaRes, ok := cn.UpdateNetmapDelta(muts)
-	if !ok {
-		// Returning false makes controlclient deliver a full netmap
-		// instead.
-		return false
-	}
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-	deltaRes, _ := cn.UpdateNetmapDelta(muts)
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99b389db` are properly handled with clean fallback behavior.

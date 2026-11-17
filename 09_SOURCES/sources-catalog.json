@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "558b84d7",
+    "sourceVersion": "c311f7a7",
     "license": "Apache-2.0",
-    "contentHash": "4e709b2001e2f937e757485bd90fdad99763b024cc390709f641233926ebef57",
-    "lastHarvestedAt": "2026-11-14T05:07:01.703Z",
+    "contentHash": "9d70ceefd16bf89b2d50cddfb1b0cb4095ed72a79a5509bfd7620a454ee31636",
+    "lastHarvestedAt": "2026-11-17T00:10:52.176Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "a2a3b8b8",
+    "sourceVersion": "3c8cd08f",
     "license": "NOASSERTION",
-    "contentHash": "73ef8d9c89c6fce0081ea8d524529674556ed6bafe78f67b462e9e9c309ae71c",
-    "lastHarvestedAt": "2026-11-15T15:47:53.826Z",
+    "contentHash": "2e7d28a8e31e3cd40c916f70f8d770975829ebff293c9b71eb691430fe0280a1",
+    "lastHarvestedAt": "2026-11-17T00:10:56.539Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "68e460af",
+    "sourceVersion": "f6a9bbfc",
     "license": "MIT",
-    "contentHash": "066dc68059586ea40bc58f03292a91b6ddbdbe190e09fcd229fa5887f0f3b6e3",
-    "lastHarvestedAt": "2026-11-15T04:17:59.344Z",
+    "contentHash": "3056f5ab0baaa91e6bf5148f54e37d2b2f153017f10074f0dd090e2c72c5c019",
+    "lastHarvestedAt": "2026-11-17T00:10:43.065Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "99b389db",
+    "sourceVersion": "cfc3f365",
     "license": "BSD-3-Clause",
-    "contentHash": "b0a2da97fd33e7128ae5f045e3da35144d60960a67e08b60f8ad4ccb5332f9c9",
-    "lastHarvestedAt": "2026-11-16T16:21:50.725Z",
+    "contentHash": "d965a71dcfa986bce0ef69cab66986e52c3f019bae141492c6ade221660a2a75",
+    "lastHarvestedAt": "2026-11-17T00:10:52.902Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -12115,8 +12115,8 @@
     "sourceUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
     "sourceVersion": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
     "license": "Open-Source",
-    "contentHash": "77a8eaccb0819c2934c53c701be3ee9ab2516c73b87f67d6346f19cd8b949421",
-    "lastHarvestedAt": "2026-11-12T06:56:00.792Z",
+    "contentHash": "568622441e630b7d63b2a7f0a57df5dd7f184462df5895840c3c99e6524f06d1",
+    "lastHarvestedAt": "2026-11-17T00:11:21.145Z",
     "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic"
   },
   "hf-prunaai-p-h3-image": {

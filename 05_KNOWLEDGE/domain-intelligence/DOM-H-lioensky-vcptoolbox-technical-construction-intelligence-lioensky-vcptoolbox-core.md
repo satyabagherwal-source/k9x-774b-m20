@@ -4,24 +4,24 @@
 {
   "source_repository": "lioensky/VCPToolBox",
   "source_url": "https://github.com/lioensky/VCPToolBox",
-  "source_version": "a2a3b8b8",
+  "source_version": "3c8cd08f",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-15T15:47:54.028Z",
+  "timestamp": "2026-11-17T00:10:56.705Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lioensky-vcptoolbox",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `a2a3b8b8`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-15T15:47:54.028Z`  
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `3c8cd08f`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T00:10:56.705Z`  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lioensky/VCPToolBox:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T15:47:52.546Z  
+> **Harvest Timestamp**: 2026-11-17T00:10:55.678Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,11 +1799,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #602** (2026-11-15): **fix(Plugin): 插件子进程自动继承父进程 Node 运行时以防止原生模块 ABI 冲突**
-  *Symptoms*: ### 解决的问题 在多 Node.js 版本共存或使用 NVM/系统预装 Node 的环境下（例如系统全局预装老版本 Node，而 VCP 主服务使用 NVM/更高版本 Node 启动）： 虽然 `ecosystem.config.js` 显式指定了解释器避免了 PM2 启动主服务时的 ABI 错位，但在 `PluginManager` 中使用 `spawn(command, args, { shell: true })` 启动独立进程插件（如 `ToolCallRecordQuery` 等）时，系统 shell 会从默认 PATH 中解析 `node` 命令，导致以系统老版本 Node 启动插件。  这会导致依赖原生 C++ 二进制扩展（如 `better-sqlite3`）的插件抛出 ABI 不匹配崩溃： ```text The module better_sqlite3.node was compiled against a different Node.js version using NODE_MODULE_VERSION 127. This version of Node.js requires NODE_MODULE_VERSION 93. ```  ### 改进方案 在 `Plugin.js` 的 `executeStaticPlugin` 与 `executePlugin` 构造子进程环境变量时，将当前父进程正在运行的解释器所在目录 (`path.dirname(process.execPath)`) 优先注入到 `PATH` 的最前端：  ```javascript // 无论系统默认 PATH 是什么，子进程优先继承运行当前 VCP 主服务的同一个 Node.js 运行时 const currentNodeBinDir = path.dirname(process.execPath); envForProcess.PATH = `${currentNodeBinDir}${path.delimiter}${envForProcess.PATH || process.env.PATH || ""}`; ```  ### 优势 1. **零侵入**：插件清单无需硬编码绝对路径，继续保留自然的 `"command": "node xxx.js"`。 2. **跨平台自适应**：使用 `path.delimiter` 兼容 Windows/Linux/macOS；未来主服务切换至任何 Node 版本，所有插件子进程均会自动继承并对齐 ABI，彻底杜绝此类崩溃。
+- **Issue #605** (2026-11-16): **fix(UserAuth): 增加 code.bin 缺失即时自愈生成机制并从版本控制中移除**
+  *Symptoms*: ### 变更背景与原因 1. **跨分支追踪状态不对称问题**：    - `code.bin` 属于每小时自动轮换的运行时动态授权缓存，`.gitignore` 中早已声明忽略该文件。    - 但此前版本库中仍然追踪了该二进制文件。当开发者在本地分支切换或与上游同步时，因追踪状态差异，容易导致 Git 认为该文件需要清理而将其物理删除，进而导致依赖管理员权限的工具（如 `LinuxShellExecutor`、`PowerShellExecutor`）调用时报 `Plugin requires admin authentication, but auth code could not be obtained. Execution denied.`。 2. **缺乏即时自愈机制**：    - 原有机制仅在服务完全冷启动或整点 Cron 触发时生成 `code.bin`。若服务经历热重载（Hot-reload）或文件因异常丢失，会导致长达近 1 小时的文件真空期。  ### 详细变更 1. **版本控制治理**：从 Git 索引中彻底移除 `Plugin/UserAuth/code.bin`，真正与 `.gitignore` 保持一致，消除分支切换与合并时的幽灵清理。 2. **模块能力导出**：重构 `Plugin/UserAuth/auth.js`，支持直接导出 `generateRealAuthCode`、`encodeToBrackets` 与 `generateAndSaveAuthCode`，同时严格保留 CLI 脚本入口（供原有 static 插件 Cron 流程调用）。 3. **即时自愈（JIT Self-healing）**：    - 在 `modules/captchaDecoder.js` 的 `getAuthCode` 中增加存在性检查：若 `code.bin` 不存在，优先调用 `generateAndSaveAuthCode` 毫秒级补齐落盘，完全避免鉴权失败。    - 在 `Plugin.js` 的 `initializeStaticPlugins` 与 `_getDecryptedAuthCode` 中增加物理文件缺失自愈感知，确保热重载与工具执行前物理文件与内存占位符高度同步。  ### 验证情况 - [x] 删除 `code.bin` 后调用 `getAuthCode`，验证即时自愈生成且成功返回 6 位验证码。 - [x] 验证 `node Plugin/UserAuth/auth.js` CLI 执行正常，stdout 正确输出验证码，stderr 记录生成日志。 - [x] 验证 `PluginManager._getDecryptedAuthCode()` 在 `code.bin` 物理丢失场景下自动触发自愈并成功解密。
 
-- **Issue #600** (2026-11-15): **fix(roleDivider): 保护记忆包络与代码字面量免受角色误切分并保留多模态缓存断点**
-  *Symptoms*: ### 动机与背景  1. **思忆托盘搬移后的跨模块误切分**：未开启 `MemoryThinkingTray` 时，第 0 条 `system` 消息受 `chatCompletionHandler` 中 `roleDivider.process(..., { skipCount: 1 })` 豁免保护；开启 `MemoryThinkingTray` 后，记忆思维区被搬移至对话尾部生成 `user` 角色承载消息（`index >= 1`），不再处于 `skipCount: 1` 豁免范围内。当 RAG 记忆、冷知识库或技术讨论正文中以行内代码（如 `` `<<<[END_ROLE_DIVIDE_USER]>>>` ``）或代码块形式引用角色分割符字面量时，会触发 `roleDivider` 的孤立结束标签鲁棒性分支，导致单条消息被从反引号中间错误劈裂为多个 `user` 消息块并吞噬标签文本。 2. **多模态分片属性丢失隐患**：`processArrayMessage` 在处理未发生角色拆分的文本分片时，重新构造了纯 `{ type: 'text', text: ... }` 字面量对象，导致上游预处理器（如 `MemoryThinkingTray` 开启 `MEMORY_THINKING_TRAY_CACHE_BREAKPOINT` 时）挂载在文本分片上的 `cache_control` 等扩展属性被意外剥落。  ### 架构与解决方案  在完全不改变合法角色分割语义与预处理器管线顺序的前提下，将 `modules/roleDivider.js` 中的 `protectToolContent` 升级为双阶段可组合的 Unicode 私用区（PUA）隐身护盾：  1. **`O(1)` 特征子串门禁直通**：扫描前快速检测消息是否包含 `ROLE_DIVIDE_` 子串，确保 99.9% 不含分割标记的常规消息零额外解析开销直接放行。 2. **第一阶段：结构化数据包络遮蔽（`findEnvelopeRanges`）**：在原有 `TOOL_REQUEST`（同步兼容 `TOOL_REQUEST_ESCAPE`）与工具结果汇总块保护基础上，增补对闭合 `<!-- VCP_RAG_BLOCK_START ... <!-- VCP_RAG_BLOCK_END -->` 与 `[--- TDB 冷知识库检索 ... [--- 知识库检索结束 ---]` 记忆包络的区间遮蔽，跨越上游多次对象浅拷贝依然稳定生效。 3. **第二阶段：带外层作用域上界的单遍代码词法护盾（`findCodeLiteralRanges`）**：    - **CommonMark 围栏与行内代码解析**：支持 3 字符及以上变长反引号/波浪线围栏（含 `>` 引用块前缀）、HTML `<pre>` / 单行 `<code>` 标签，以及遵循单行约束与前置反斜杠转义识别的等长行内反引号代码段；普通代码块通过统一游标整体跨过，防止代码块内奇数个孤立反引号泄露至外部引发错位配对。    - **外层角色作用域上界守卫（`isBrokenAcrossOuterRole`）**：当合法的未加引号 `ROLE_DIVIDE` 开启标签位于代码块外部时，严格校验内部围栏不得跨越并破坏外层配对的 `END` 标签；未闭合的孤立反引号或半截残缺代码围栏自动退化为普通字符推进，绝不吞噬真实的分割指令。 4. **多模态文本分片元数据保真**：在 `processArrayMessage`
+- **Issue #604** (2026-11-16): **feat(Plugin): 新增可选的 KeenableSearch 联网搜索插件（默认禁用）**
+  *Symptoms*: I work with Keenable  新增 `Plugin/KeenableSearch`，结构参考 YouSearch / TavilySearch。插件默认禁用，以 `plugin-manifest.json.block` 提交，需要的人改名后才会启用，不影响现有插件  - 不填 Key 也能用：`POST https://api.keenable.ai/v1/search/public`（`X-Keenable-Title` 请求头），每个 IP 每小时 1,000 次、每秒 10 次 - 填写 `KeenableKey` 后改走 `POST https://api.keenable.ai/v1/search`（`X-API-Key`） - 可选参数 `max_results`、`site`、`published_after`，返回 Markdown 列表 - 用 Node 自带的 fetch，不需要新依赖，也不需要 package.json  验证 - `node --test Plugin/KeenableSearch/KeenableSearch.test.js`：5/5 通过（fetch 全部 mock） - 本地 stdin 实测免 Key 接口，返回结果正常，`site` / `published_after` 也正常  English: an opt-in Keenable search plugin, shipped disabled. It works without a key, and setting `KeenableKey` switches it to the keyed API. No new dependencies 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1820,174 +1820,504 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c515e6c4` (2026-11-12)
-**Commit Message**: fix(native-rerank): keep the specific error code when a Rerank batch fails
+### Incident Patch 1: `3c8cd08f` (2026-11-16)
+**Commit Message**: fix
 
-Every traditional Rerank batch failure was reported as
-RERANK_BATCH_FAILED, so a wrong key (RERANK_HTTP_401), rate limiting
-(RERANK_HTTP_429), an oversized response or an invalid response all
-looked the same in diagnostics.nativeRerank.error. The codes returned by
-post and parse_rerank are static and contain no URL, key or document
-text, and the Jev path already passes them through. They are now passed
-through for Rerank too; a task that panicked or was cancelled still
-reports RERANK_BATCH_FAILED. Successful rankings are unchanged.
-
-**File**: `rust-vexus-lite/src/native_rerank.rs` (modified, +28/-1)
+**File**: `config.env.example` (modified, +7/-1)
 ```diff
-@@ -229,7 +229,9 @@ impl Ranker {
-             while let Some(result) = pending.join_next().await {
-                 match result {
-                     Ok(Ok(mut scores)) => output.append(&mut scores),
--                    _ => return Err("RERANK_BATCH_FAILED".into()),
-+                    // post/parse_rerank codes are already sanitized; keep them.
-+                    Ok(Err(error)) => return Err(error),
-+                    Err(_) => return Err("RERANK_BATCH_FAILED".into()),
-                 }
-             }
-         }
-@@ -430,6 +432,31 @@ mod tests {
-         }
+@@ -836,7 +836,13 @@ JevFoldDialogueRounds=1
+ # 附带对话里每条消息的截断长度，防 context rot。
+ JevFoldDialogueMsgChars=300
+ 
+-# --- Jev 上下文剪枝（仅在请求带 contextTokenLimit 时生效）---
++# --- 上下文裁剪服务端总开关 ---
++# 默认关闭：即使客户端携带 contextTokenLimit，也原样保留消息，不执行位置裁剪或 Jev 打分。
++# 设为 true 后才按客户端预算启用裁剪；JevContextPrune 仅控制是否使用智能排序。
++# 修改根 config.env 后重启服务生效。
++ContextPruneEnabled=false
++
++# --- Jev 上下文剪枝（仅在 ContextPruneEnabled=true 且请求带 contextTokenLimit 时生效）---
+ # 原行为：保住 system、保住 [系统提示:] 前缀、保住最后两条，然后**从最老的**往后删到预算内。
+ # 开启后：先让 Jev 给每条可删消息打"对继续当前任务是否还有用"的概率，按概率升序删——
+ #         即删"最没用的"而不是"最老的"。预算上限与三条不可删规则全部留在代码里，模型只提供排序。
+```
+
+**File**: `modules/contextManager.js` (modified, +11/-1)
+```diff
+@@ -3,6 +3,12 @@
+  */
+ 
+ const jevContextPruner = require('./jevContextPruner.js');
++const { readBool } = require('./jevScorer');
++
++// 服务端总开关，默认关闭；客户端 contextTokenLimit 不能绕过此开关。
++function isPruningEnabled() {
++    return readBool('ContextPruneEnabled', false);
++}
+ 
+ /**
+  * 估算消息的 Token 数量 (仅计算文本内容，排除 Base64 等多媒体数据)
+@@ -65,7 +71,7 @@ function computeMustKeepIndices(messages) {
+  * @returns {Array} 修剪后的消息数组
+  */
+ function pruneMessages(messages, limit, debugMode = false) {
+-    if (!limit || !Array.isArray(messages) || messages.length <= 2) {
++    if (!isPruningEnabled() || !limit || !Array.isArray(messages) || messages.length <= 2) {
+         return messages;
      }
  
-+    #[tokio::test]
-+    async fn traditional_batch_failure_keeps_sanitized_error_code() {
-+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
-+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let address = listener.local_addr().unwrap();
-+        let server = tokio::spawn(async move {
-+            let (mut socket, _) = listener.accept().await.unwrap();
-+            let mut bytes = [0; 4096];
-+            let _ = socket.read(&mut bytes).await;
-+            socket.write_all(b"HTTP/1.1 429 Too Many Requests\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
-+                .await.unwrap();
-+        });
-+        let values = HashMap::from([
-+            ("RerankUrl".into(), format!("http://{address}/")),
-+            ("RerankApi".into(), "fixture".into()),
-+            ("RerankModel".into(), "fixture".into()),
-+            ("NativeRerankTimeoutMs".into(), "5000".into()),
-+        ]);
-+        let ranker = Ranker::from_values(&values, Some(false)).unwrap();
-+        let error = ranker.rank("query", &[json!({"id":1,"text":"one"}), json!({"id":2,"text":"two"})])
-+            .await.unwrap_err();
-+        assert_eq!(error, "RERANK_HTTP_429");
-+        server.abort();
+@@ -140,6 +146,10 @@ function findLastUserText(messages) {
+  * @returns {Promise<Array>}
+  */
+ async function pruneMessagesSmart(messages, limit, debugMode = false, options = {}) {
++    // 必须先检查总开关，关闭时不估算、不打分、不删除，原样返回。
++    if (!isPruningEnabled()) {
++        return messages;
 +    }
+     if (!jevContextPruner.isEnabled()) {
+         return pruneMessages(messages, limit, debugMode);
+     }
+```
+
+**File**: `tests/jevContextPrune.test.js` (modified, +27/-2)
+```diff
+@@ -13,7 +13,7 @@ const path = require('path');
+ const contextManager = require(path.join(__dirname, '..', 'modules', 'contextManager.js'));
+ 
+ const ENV_KEYS = [
+-    'JevContextPrune', 'JevContextPruneChunk', 'JevContextPruneMaxChunks',
++    'ContextPruneEnabled', 'JevContextPrune', 'JevContextPruneChunk', 'JevContextPruneMaxChunks',
+     'JevContextPruneChars', 'JevContextPruneTimeoutMs'
+ ];
+ 
+@@ -23,6 +23,8 @@ function setEnv(vars) {
+         saved[k] = process.env[k];
+         delete process.env[k];
+     }
++    // 原有策略用例显式开启总开关；关闭行为由独立用例验证。
++    process.env.ContextPruneEnabled = 'true';
+     for (const [k, v] of Object.entries(vars)) process.env[k] = String(v);
+     return saved;
+ }
+@@ -87,7 +89,30 @@ const PROB_BY_TEXT = {
+     '哈哈': 0.10
+ };
+ 
+-test('默认关闭：与位置规则完全一致（会删掉最老的关键消息）', async () => {
++for (const enabled of [undefined, 'false', '', 'invalid']) {
++    test(`服务端总开关 ${String(enabled)}：超预算也原样返回，且不调用 Jev`, async () => {
++        const saved = setEnv({ JevContextPrune: 'true' });
++        try {
++            if (enabled === undefined) delete process.env.ContextPruneEnabled;
++            else process.env.ContextPruneEnabled = enabled;
++            const msgs = makeMessages();
++            msgs[3].content = [
++                { type: 'text', text: '今天天气不错啊' },
++                { type: 'image_url', image_url: { url: 'data:image/png;base64,test' } }
++            ];
++            const before = JSON.stringify(msgs);
++            const client = makeClient(PROB_BY_TEXT);
++            assert.strictEqual(contextManager.pruneMessages(msgs, 1), msgs);
++            assert.strictEqual(await contextManager.pruneMessagesSmart(msgs, 1, false, { client }), msgs);
++            assert.equal(JSON.stringify(msgs), before);
++            assert.equal(client.calls.length, 0);
++        } finally {
++            restoreEnv(saved);
++        }
++    });
++}
 +
-     #[test]
-     fn prompt_override_is_local_and_preserves_legacy_default() {
-         let values = HashMap::from([
++test('总开关开启、Jev 默认关闭：与位置规则完全一致（会删掉最老的关键消息）', async () => {
+     const saved = setEnv({});
+     try {
+         const msgs = makeMessages();
 ```
 
 ---
 
-### Incident Patch 2: `c1e9c4a9` (2026-11-14)
-**Commit Message**: perf(wormhole): build unified-bonus trace objects only when a trace is requested
+### Incident Patch 2: `933f7fe5` (2026-11-16)
+**Commit Message**: fix
 
-V4 retired the RRF fusion to a test-only reference, so the earlier change to its trace is reverted to upstream and the same gating moves to apply_unified_bonus: every numeric field is computed as before and only the JSON trace is skipped when includeTrace is off. Scores are bit-identical (test unified_trace_is_optional_and_preserves_score_bits).
-
-**File**: `rust-vexus-lite/src/rivermemo_wormhole.rs` (modified, +46/-1)
+**File**: `TVStxt/JevToolCall.txt` (modified, +1/-1)
 ```diff
-@@ -541,6 +541,9 @@ pub(super) fn apply_unified_bonus(
-         item.final_score = clamp01(item.pure_score + item.path_bonus
-             + item.gated_bonus + item.anchor_bonus);
-         item.ranking_score = item.final_score;
-+        // Only the optional topology trace consumes this JSON; score clipping
-+        // and ranking use the numeric fields above directly.
-+        if !input.include_trace { continue; }
-         traces.insert(item.curve.id, serde_json::json!({
-             "mode":"continuous-shared-topology-budget", "active": xw.eligible || proxy > 0.0,
-             "wormhole":xw, "proxyEvidence":proxy, "proxyEdge":proxy_edge,
-@@ -720,6 +723,48 @@ mod score_contract_fixture_tests {
-         assert_eq!(work[1].final_score,0.9);
-     }
- 
-+    #[test]
-+    fn unified_trace_is_optional_and_preserves_score_bits() {
-+        let mut input: NativeInput = serde_json::from_value(json!({
-+            "query":{"vector":[1,0]}, "queryState":{
-+                "completeObservation":true,
-+                "fieldProvenance":[{"id":1,"hop":0,"sourceType":"core"}],
-+                "riverNodes":[{"id":1,"hop":0},{"id":2,"hop":1}],
-+                "riverEdges":[{"sourceId":1,"targetId":2,"flow":0.1}]
-+            }
-+        })).unwrap();
-+        let omega = compute_omega(&input);
-+        let graph = NativeArtifact {
-+            node_ids:vec![1,2], node_index:HashMap::from([(1,0),(2,1)]),
-+            row_offsets:vec![0,1,1], targets:vec![1], weights:vec![0.4],
-+            ..NativeArtifact::default()
-+        };
-+        let model = Model { eligible_routes:1, routes:vec![Route {
-+            source_id:1,target_id:2,flow:1.0,relative_flow:0.625,
-+            vector:Arc::from(vec![1.0_f32,0.0]),
-+        }] };
-+        let mut expected = None;
-+        for trace in [true, false] {
-+            input.include_trace = trace;
-+            let mut work = vec![candidate(1,0.5,true),candidate(2,0.5,false)];
-+            work[0].v2_bonus = 0.013;
-+            let traces = apply_unified_bonus(&mut work,&model,&input,&omega,&graph);
-+            assert_eq!(traces.len(), if trace { work.len() } else { 0 });
-+            let bits = work.iter().map(|item| (item.curve.id,
-+                item.gated_bonus.to_bits(), item.final_score.to_bits(), item.ranking_score.to_bits()))
-+                .collect::<Vec<_>>();
-+            if trace {
-+                for item in &work {
-+                    assert_eq!(traces[&item.curve.id]["finalScore"].as_f64().unwrap().to_bits(),
-+                        item.final_score.to_bits());
+@@ -9,7 +9,7 @@ JEV:「始」请使用 {能力} 中的 `可选工具`，围绕【主要内容】
+ - 每个 JEV 块只执行一个动作，但支持同类多工具名并发。
+ - JEVCall也支持ink，archery等高级字段，灵活使用固化重要信息到上下文。
+ - 联网搜索和图片生成仍必须明确写 `{联网搜索}` 或 `{图片生成}`。
+-- `{联网搜索}`：默认使用 VSearch(通用AI总结)。可选工具为 `谷歌搜索`、`谷歌学术`、`Tavily`、`AnySearch`(深网数据库检索)、`YouSearch`(AI集群交叉验证)、`B站搜索`、`B站获取`；自然地说“打开网页”会自动使用 UrlFetch。
++- `{联网搜索}`：默认使用 VSearch(通用AI总结)。可选工具为 `Keenable`(极速通用搜索)、`谷歌学术`、`Tavily`、`AnySearch`(深网数据库检索)、`YouSearch`(AI集群交叉验证)、`B站搜索`、`B站获取`；自然地说“打开网页”会自动使用 UrlFetch。
+ - `YouSearch`：支持 `[lite]`、`[standard]`、`[deep]`三个档位。日用lite足够。
+ - `{图片生成}`：默认使用谷歌 NanoBanana2。可选工具为 `GPT生图`、`ZImage`、`豆包`。
+ - `【】` 标记句子中的主要任务负载，`[]` 标记目标、范围、数量、时间、模式、URL等目标。
+```
+
+---
+
+### Incident Patch 3: `9520d092` (2026-11-16)
+**Commit Message**: Merge pull request #605 from InSciTech/fix/userauth-self-healing
+
+fix(UserAuth): 增加 code.bin 缺失即时自愈生成机制并从版本控制中移除
+
+**File**: `Plugin.js` (modified, +12/-1)
+```diff
+@@ -1,5 +1,6 @@
+ // Plugin.js
+ const fs = require('fs').promises;
++const fsSync = require('fs');
+ const EventEmitter = require('events');
+ const path = require('path');
+ const { spawn } = require('child_process');
+@@ -195,6 +196,14 @@ class PluginManager extends EventEmitter {
+     async _getDecryptedAuthCode() {
+         try {
+             const authCodePath = path.join(__dirname, 'Plugin', 'UserAuth', 'code.bin');
++            // 物理文件缺失自愈：通知 UserAuth 插件更新以同步内存占位符与磁盘文件
++            if (!fsSync.existsSync(authCodePath)) {
++                console.warn('[PluginManager] Plugin/UserAuth/code.bin 缺失，正在触发自愈生成...');
++                const userAuthPlugin = this.plugins.get('UserAuth');
++                if (userAuthPlugin) {
++                    await this._updateStaticPluginValue(userAuthPlugin);
 +                }
-+                expected = Some(bits);
++            }
+             // 使用正确的 getAuthCode 函数，并传递文件路径
+             return await getAuthCode(authCodePath);
+         } catch (error) {
+@@ -561,7 +570,9 @@ class PluginManager extends EventEmitter {
+             const missingPlaceholder = Array.from(placeholderKeys).some(
+                 key => !this.staticPlaceholderValues.has(key)
+             );
+-            const needsRefresh = !wasInitialized || previousSignature !== signature || missingPlaceholder;
++            // 物理产物缺失检测（例如切分支导致动态生成的 code.bin 被清理）
++            const isMissingPhysicalArtifact = (plugin.name === 'UserAuth' && !fsSync.existsSync(path.join(__dirname, 'Plugin', 'UserAuth', 'code.bin')));
++            const needsRefresh = !wasInitialized || previousSignature !== signature || missingPlaceholder || isMissingPhysicalArtifact;
+ 
+             if (needsRefresh) {
+                 placeholderKeys.forEach(placeholderKey => {
+```
+
+**File**: `Plugin/UserAuth/auth.js` (modified, +92/-79)
+```diff
+@@ -1,79 +1,92 @@
+-const fs = require('fs').promises;
+-const path = require('path');
+-
+-// 生成一个真实的、随机的6位验证码
+-function generateRealAuthCode() {
+-    const realCode = Math.floor(100000 + Math.random() * 900000);
+-    return String(realCode);
+-}
+-
+-// 将验证码编码为括号序列
+-function encodeToBrackets(realCode) {
+-    // 定义6种括号类型，按顺序对应验证码的每一位数字
+-    const bracketTypes = [
+-        ['[', ']'],   // 第1位数字对应方括号
+-        ['{', '}'],   // 第2位数字对应花括号
+-        ['<', '>'],   // 第3位数字对应尖括号
+-        ['（', '）'], // 第4位数字对应全角小括号
+-        ['《', '》'], // 第5位数字对应书名号
+-        ['【', '】']  // 第6位数字对应全角方括号
+-    ];
+-    
+-    // 获取当前月份（1-12），计算右括号出现的概率
+-    const currentMonth = new Date().getMonth() + 1;
+-    const closeProbability = currentMonth / 12;
+-    
+-    let allBrackets = [];
+-    
+-    // 为验证码的每一位数字生成对应数量的括号
+-    for (let i = 0; i < realCode.length; i++) {
+-        const digit = parseInt(realCode[i], 10); // 0-9
+-        const [openBracket, closeBracket] = bracketTypes[i];
+-        
+-        // 生成 digit 个该类型的括号
+-        for (let j = 0; j < digit; j++) {
+-            // 根据月份概率决定是左括号还是右括号
+-            if (Math.random() < closeProbability) {
+-                allBrackets.push(closeBracket); // 右括号
+-            } else {
+-                allBrackets.push(openBracket);  // 左括号
+-            }
+-        }
+-    }
+-    
+-    // 随机打乱所有括号的顺序（Fisher-Yates洗牌算法）
+-    for (let i = allBrackets.length - 1; i > 0; i--) {
+-        const j = Math.floor(Math.random() * (i + 1));
+-        [allBrackets[i], allBrackets[j]] = [allBrackets[j], allBrackets[i]];
+-    }
+-    
+-    return allBrackets.join('');
+-}
+-
+-async function main() {
+-    try {
+-        const realCode = generateRealAuthCode();
+-        const bracketSequence = encodeToBrackets(realCode);
+-        
+-        // 将括号序列转换为base64编码后存入 code.bin（供后端 captchaDecoder 解码 + 注入 DECRYPTED_AUTH_CODE 环境变量给管理员插件比对）
+-        // 落盘加编码是为了防止 code.bin 被简单读取就拿到明文。
+-        const base64Encoded = Buffer.from(bracketSequence, 'utf-8').toString('base64');
+-        const filePath = path.join(__dirname, 'code.bin');
+-        await fs.writeFile(filePath, base64Encoded, 'utf-8');
+-        
+-        // ⚠️ static 插件协议：stdout 内容会被 PluginManager 作为 {{USER_AUTH_CODE}} 占位符的值注入到 system prompt。
+-        // 这里输出明文 6 位验证码，让被授权的 Agent（即 system prompt 中包含此占位符的 Agent）可以直接将其
+-        // 作为 tool_password 参数传递给需要管理员权限的工具（如 LinuxShellExecutor、PowerShellExecutor 等）。
+-        // 安全性来自于"是否注入此占位符"的访问控制，而不是 AI 端的解码难度。
+-        process.stdout.write(realCode);
+-        
+-        // 状态信息走 stderr，不会污染占位符值
+-        console.error('[UserAuth] 认证码已生成并保存到 code.bin');
+-        
+-    } catch (error) {
+-        console.error('[UserAuth] 生成认证码失败:', error);
+-        process.exit(1);
+-    }
+-}
+-
+-main();
+\ No newline at end of file
++const fs = require('fs').promises;
++const path = require('path');
++
++// 生成一个真实的、随机的6位验证码
++function generateRealAuthCode() {
++    const realCode = Math.floor(100000 + Math.random() * 900000);
++    return String(realCode);
++}
++
++// 将验证码编码为括号序列
++function encodeToBrackets(realCode) {
++    // 定义6种括号类型，按顺序对应验证码的每一位数字
++    const bracketTypes = [
++        ['[', ']'],   // 第1位数字对应方括号
++        ['{', '}'],   // 第2位数字对应花括号
++        ['<', '>'],   // 第3位数字对应尖括号
++        ['（', '）'], // 第4位数字对应全角小括号
++        ['《', '》'], // 第5位数字对应书名号
++        ['【', '】']  // 第6位数字对应全角方括号
++    ];
++    
++    // 获取当前月份（1-12），计算右括号出现的概率
++    const currentMonth = new Date().getMonth() + 1;
++    const closeProbability = currentMonth / 12;
++    
++    let allBrackets = [];
++    
++    // 为验证码的每一位数字生成对应数量的括号
++    for (let i = 0; i < realCode.length; i++) {
++        const digit = parseInt(realCode[i], 10); // 0-9
++        const [openBracket, closeBracket] = bracketTypes[i];
++        
++        // 生成 digit 个该类型的括号
++        for (let j = 0; j < digit; j++) {
++            // 根据月份概率决定是左括号还是右括号
++            if (Math.random() < closeProbability) {
++                allBrackets.push(closeBracket); // 右括号
 +            } else {
-+                assert_eq!(&bits, expected.as_ref().unwrap());
++                allBrackets.push(openBracket);  // 左括号
 +            }
 +        }
 +    }
-+
-     #[test]
-     fn complementary_graph_and_transport_are_bounded_and_idempotent() {
-         let input: NativeInput = serde_json::from_value(json!({
-@@ -803,4 +848,4 @@ mod score_contract_fixture_tests {
-         items.sort_by(|a,b| b.ranking_score.total_cmp(&a.ranking_score));
-         assert_eq!(items.iter().map(|c|c.curve.id).collect::<Vec<_>>(),vec![30,10,20]);
-     }
--}
-\ No newline at end of file
++    
++    // 随机打乱所有括号的顺序（Fisher-Yates洗牌算法）
++    for (let i = allBrackets.length - 1; i > 0; i--) {
++        const j = Math.floor(Math.random() * (i + 1));
++        [allBrackets[i], allBrackets[j]] = [allBrackets[j], allBrackets[i]];
++    }
++    
++    return allBrackets.join('');
 +}
++
++async function generateAndSaveAuthCode(targetDir = __dirname) {
++    const realCode = generateRealAuthCode();
++    const bracketSequence = encodeToBrackets(realCode);
++    
++    // 将括号序列转换为base64编码后存入 code.bin（供后端 captchaDecoder 解码 + 注入 DECRYPTED_AUTH_CODE 环境变量给管理员插件比对）
++    // 落盘加编码是为了防止 code.bin 被简单读取就拿到明文。
++    const base64Encoded = Buffer.from(bracketSequence, 'utf-8').toString('base64');
++    const filePath = path.join(targetDir, 'code.bin');
++    await fs.writeFile(filePath, base64Encoded, 'utf-8');
++    return realCode;
++}
++
++async function main() {
++    try {
++        const realCode = await generateAndSaveAuthC
 ```
 
----
-
-### Incident Patch 3: `f73945c2` (2026-11-12)
-**Commit Message**: refactor(index): use RetrievalIndex::model_hash for the SQL build identity
-
-index_source.rs hashed the model signature with its own
-Sha256::digest(model_sig.as_bytes()), while retrieval_index.rs and
-index_lifecycle.rs use RetrievalIndex::model_hash for the same identity
-field. Same input to the same SHA-256, so the identity is unchanged;
-the existing sql_owned_asset_is_removed_after_host_mapping_is_released
-test asserts this equality.
-
-**File**: `rust-vexus-lite/src/index_source.rs` (modified, +1/-1)
+**File**: `Plugin/UserAuth/code.bin` (removed, +0/-1)
 ```diff
-@@ -161,7 +161,7 @@ fn build_with_source(
-     let identity = AssetIdentity {
-         dimension,
-         scope: u8::from(diary.is_none()),
--        model_hash: Sha256::digest(model_sig.as_bytes()).into(),
-+        model_hash: crate::retrieval_index::RetrievalIndex::model_hash(model_sig),
-         content_digest: digest.finalize().into(),
-     };
-     let lookup = if diary.is_some() {
+@@ -1 +0,0 @@
+-44CQe1t7e+OAkOOAkeOAkO+8iT4844CQXVvjgJHvvIh977yJfX3jgJDjgIrjgJBd44CQXVs=
+\ No newline at end of file
+```
+
+**File**: `modules/captchaDecoder.js` (modified, +87/-64)
+```diff
+@@ -1,64 +1,87 @@
+-const fs = require('fs').promises;
+-const path = require('path');
+-
+-/**
+- * 从括号序列中解码出真实的验证码
+- * @param {string} bracketSequence - 括号序列字符串
+- * @returns {string} 解码后的6位数验证码
+- */
+-function decodeFromBrackets(bracketSequence) {
+-    // 定义括号类型映射表（左右括号映射到同一个索引位置）
+-    const bracketTypeMap = {
+-        '[': 0, ']': 0,     // 第1位数字
+-        '{': 1, '}': 1,     // 第2位数字
+-        '<': 2, '>': 2,     // 第3位数字
+-        '（': 3, '）': 3,   // 第4位数字（全角括号）
+-        '《': 4, '》': 4,   // 第5位数字
+-        '【': 5, '】': 5    // 第6位数字
+-    };
+-    
+-    // 统计每种括号类型的数量（初始化为6个0）
+-    const counts = [0, 0, 0, 0, 0, 0];
+-    
+-    // 遍历括号序列，统计每种类型的数量
+-    for (const char of bracketSequence) {
+-        const typeIndex = bracketTypeMap[char];
+-        if (typeIndex !== undefined) {
+-            counts[typeIndex]++;
+-        }
+-    }
+-    
+-    // 将统计结果拼接成6位数字符串
+-    return counts.join('');
+-}
+-
+-/**
+- * 从 code.bin 文件中读取并解码验证码
+- * @param {string} filePath - code.bin 文件路径（可选）
+- * @returns {Promise<string>} 解码后的验证码
+- */
+-async function getAuthCode(filePath = null) {
+-    try {
+-        const codePath = filePath || path.join(__dirname, 'code.bin');
+-        
+-        // 读取base64编码的内容
+-        const base64Encoded = await fs.readFile(codePath, 'utf-8');
+-        
+-        // base64解码得到原始括号序列
+-        const bracketSequence = Buffer.from(base64Encoded.trim(), 'base64').toString('utf-8');
+-        
+-        // 解码括号序列得到验证码
+-        const authCode = decodeFromBrackets(bracketSequence);
+-        
+-        return authCode;
+-        
+-    } catch (error) {
+-        console.error('读取或解码认证码失败:', error);
+-        return '';
+-    }
+-}
+-
+-module.exports = {
+-    decodeFromBrackets,
+-    getAuthCode
+-};
+\ No newline at end of file
++const fs = require('fs').promises;
++const fsSync = require('fs');
++const path = require('path');
++
++/**
++ * 从括号序列中解码出真实的验证码
++ * @param {string} bracketSequence - 括号序列字符串
++ * @returns {string} 解码后的6位数验证码
++ */
++function decodeFromBrackets(bracketSequence) {
++    // 定义括号类型映射表（左右括号映射到同一个索引位置）
++    const bracketTypeMap = {
++        '[': 0, ']': 0,     // 第1位数字
++        '{': 1, '}': 1,     // 第2位数字
++        '<': 2, '>': 2,     // 第3位数字
++        '（': 3, '）': 3,   // 第4位数字（全角括号）
++        '《': 4, '》': 4,   // 第5位数字
++        '【': 5, '】': 5    // 第6位数字
++    };
++    
++    // 统计每种括号类型的数量（初始化为6个0）
++    const counts = [0, 0, 0, 0, 0, 0];
++    
++    // 遍历括号序列，统计每种类型的数量
++    for (const char of bracketSequence) {
++        const typeIndex = bracketTypeMap[char];
++        if (typeIndex !== undefined) {
++            counts[typeIndex]++;
++        }
++    }
++    
++    // 将统计结果拼接成6位数字符串
++    return counts.join('');
++}
++
++/**
++ * 从 code.bin 文件中读取并解码验证码（若文件丢失具备自动生成自愈能力）
++ * @param {string} filePath - code.bin 文件路径（可选）
++ * @returns {Promise<string>} 解码后的验证码
++ */
++async function getAuthCode(filePath = null) {
++    try {
++        const codePath = filePath || path.join(__dirname, '..', 'Plugin', 'UserAuth', 'code.bin');
++        
++        // 自愈检测：如果物理文件不存在，即时调用 UserAuth 生成
++        if (!fsSync.existsSync(codePath)) {
++            const authDir = path.resolve(path.dirname(codePath));
++            const authScript = path.join(authDir, 'auth.js');
++            if (fsSync.existsSync(authScript)) {
++                try {
++                    const authModule = require(authScript);
++                    if (typeof authModule.generateAndSaveAuthCode === 'function') {
++                        await authModule.generateAndSaveAuthCode(authDir);
++                    } else {
++                        require('child_process').execFileSync(process.execPath, [authScript], {
++                            cwd: authDir,
++                            windowsHide: true,
++                            timeout: 5000
++                        });
++                    }
++                } catch (genErr) {
++                    console.error('自愈生成 code.bin 失败:', genErr.message);
++                }
++            }
++        }
++        
++        // 读取base64编码的内容
++        const base64Encoded = await fs.readFile(codePath, 'utf-8');
++        
++        // base64解码得到原始括号序列
++        const bracketSequence = Buffer.from(base64Encoded.trim(), 'base64').toString('utf-8');
++        
++        // 解码括号序列得到验证码
++        const authCode = decodeFromBrackets(bracketSequence);
++        
++        return authCode;
++        
++    } catch (error) {
++        console.error('读取或解码认证码失败:', error);
++        return '';
++    }
++}
++
++module.exports = {
++    decodeFromBrackets,
++    getAuthCode
++};
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #605** (2026-11-16): fix(UserAuth): 增加 code.bin 缺失即时自愈生成机制并从版本控制中移除 (@InSciTech)
+- **PR #604** (2026-11-16): feat(Plugin): 新增可选的 KeenableSearch 联网搜索插件（默认禁用） (@KGKallasmaa)
 - **PR #602** (2026-11-15): fix(Plugin): 插件子进程自动继承父进程 Node 运行时以防止原生模块 ABI 冲突 (@InSciTech)
 - **PR #600** (2026-11-15): fix(roleDivider): 保护记忆包络与代码字面量免受角色误切分并保留多模态缓存断点 (@infinite-vector)
 - **PR #599** (2026-11-14): perf(rust-vexus-lite): 去重、NNLS、索引、存储、入库、Spike、元思考、LightMemo 的一批逐位不变改进 (@CI-IISATO)
 - **PR #598** (2026-11-14): fix(RAGDiary): ContextVectorManager 向量表加上限，分段排除当前这一轮，复用清洗缓存 (@CI-IISATO)
-- **PR #597** (2026-11-14): fix(RAGDiary): ::TimeDecay 中文标签、::Time 名额、时间表头时区、联合日记本补三篇、时间片段日期 (@CI-IISATO)
-- **PR #596** (2026-11-13): feat(memo): deliver Cone-AGS NNLS and unified continuous topology scoring (@lioensky)
 
 ---
 
@@ -2007,52 +2337,37 @@ test asserts this equality.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. native-rerank): keep the specific error code when a Rerank batch fails
+## X. Empirical Invariant Guard in config.env.example
 
 **RULE**:
-When implementing operations in `rust-vexus-lite/src/native_rerank.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `config.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c515e6c4`: native-rerank): keep the specific error code when a Rerank batch fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c8cd08f`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust-vexus-lite/src/native_rerank.rs`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `config.env.example`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-                    // post/parse_rerank codes are already sanitized; keep them.
-                    Ok(Err(error)) => return Err(error),
-                    Err(_) => return Err("RERANK_BATCH_FAILED".into()),
-    #[tokio::test]
-    async fn traditional_batch_failure_keeps_sanitized_error_code() {
-        use tokio::io::{AsyncReadExt, AsyncWriteExt};
-        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-        let address = listener.local_addr().unwrap();
-        let server = tokio::spawn(async move {
-            let (mut socket, _) = listener.accept().await.unwrap();
-            let mut bytes = [0; 4096];
-            let _ = socket.read(&mut bytes).await;
-            socket.write_all(b"HTTP/1.1 429 Too Many Requests\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
-                .await.unwrap();
-        });
-        let values = HashMap::from([
-            ("RerankUrl".into(), format!("http://{address}/")),
-            ("RerankApi".into(), "fixture".into()),
-            ("RerankModel".into(), "fixture".into()),
-            ("NativeRerankTimeoutMs".into(), "5000".into()),
-        ]);
-        let ranker = Ranker::from_values(&values, Some(false)).un
+# --- 上下文裁剪服务端总开关 ---
+# 默认关闭：即使客户端携带 contextTokenLimit，也原样保留消息，不执行位置裁剪或 Jev 打分。
+# 设为 true 后才按客户端预算启用裁剪；JevContextPrune 仅控制是否使用智能排序。
+# 修改根 config.env 后重启服务生效。
+ContextPruneEnabled=false
+
+# --- Jev 上下文剪枝（仅在 ContextPruneEnabled=true 且请求带 contextTokenLimit 时生效）---
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-                    _ => return Err("RERANK_BATCH_FAILED".into()),
+# --- Jev 上下文剪枝（仅在请求带 contextTokenLimit 时生效）---
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c515e6c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c8cd08f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
