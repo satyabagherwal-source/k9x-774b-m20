@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T00:56:39.811Z",
+  "last_updated": "2026-11-17T01:16:03.930Z",
   "total_verified_learnings": 8823,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a2396be1c0c682492fa397434289c55d50bda88fa5fea2e4176a11639232a349",
+      "content_hash": "7c3cf83ebd2b994f521ee1b0917a7b9d159e9f27854358bf76610769016fda62",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T00:27:06.028Z"
+      "persisted_at": "2026-11-17T01:16:03.734Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b0078326545daeff4978789091e499e5401c18a99cb9125c41c343f9b81c14e",
+      "content_hash": "2e806f75b9181a79657f531db8c32782bdb735bf5230ba4310940513028d40ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:27:06.134Z"
+      "persisted_at": "2026-11-17T01:16:03.930Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5DMD-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-45YY-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "28857b76cf069b87b52869ddeee56ef4f6e00a7b552118b7e5d86c3853d7691d",
+      "content_hash": "c2694b42082d934f3d5fd07172ea061f1815eb948857161d91f3b3c3b99067a7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T23:53:00.473Z"
+      "persisted_at": "2026-11-17T01:16:02.749Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "708b3110016ebbca32021f83be30a1c796bde4b36496b5e0e165cf64bef86652",
+      "content_hash": "bbff7a74ad9fe53804c9214a4fcb11e7024782d26e4cfcb69c1bc34ff0053f80",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T23:53:00.579Z"
+      "persisted_at": "2026-11-17T01:16:02.921Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "44d059e9d10a5772de56db503b4cefbaf7b8659b47e59eb7eef9a0be018bdd0f",
+      "content_hash": "efe68a22a3957c5aec16498be2777aa1c0710df67238a132ea6f9aeeaaf7382f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:53:00.683Z"
+      "persisted_at": "2026-11-17T01:16:03.139Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214876,13 +214876,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-D7WD-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-46LV-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d941eb805adbd7482f530fd21f63f377fd6f88ccba33d3dfcf37a3c7c393801",
+      "content_hash": "8a11721e1c5ee05f78a862d4dd21eff3ebf61bee5733183c703f65629918e632",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T00:27:05.920Z"
+      "persisted_at": "2026-11-17T01:16:03.574Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -218053,13 +218053,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3W45-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-457T-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "417fdc5c93bb1c9d2263563e97778e12b81a9db348bcc56408d3482975e66b8b",
+      "content_hash": "c7cbb81a15a6db0d2986d8d7608173b6e7b965e35aa9147d6e499ec2a09e8be7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:55:51.893Z"
+      "persisted_at": "2026-11-17T01:16:01.771Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218069,9 +218069,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "4cb3f97ca3689991699f44560e16cd50cb1f7686231b39fd2f965dcb03023225",
+      "content_hash": "51b3c3088638d23102679e8cea61f476118579c9fe11809f90a407c641aab841",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:55:52.013Z"
+      "persisted_at": "2026-11-17T01:16:01.965Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218081,9 +218081,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "090a176f388607744ea1c9b6c7b7a50e1aac968ff75b7e02c43eec833be884f8",
+      "content_hash": "ee358c2c04604eba69cab8e2b6cff475b6b342decdad74b815bc452642f031d7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:55:52.166Z"
+      "persisted_at": "2026-11-17T01:16:02.148Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",

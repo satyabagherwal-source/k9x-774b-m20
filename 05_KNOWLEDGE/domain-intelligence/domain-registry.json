@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T00:56:39.678Z",
+  "last_updated": "2026-11-17T01:16:03.734Z",
   "total_records": 1383,
   "domains": {
     "A": {
@@ -7198,8 +7198,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "a2396be1c0c682492fa397434289c55d50bda88fa5fea2e4176a11639232a349",
-      "created_at": "2026-11-17T00:27:06.028Z"
+      "content_hash": "7c3cf83ebd2b994f521ee1b0917a7b9d159e9f27854358bf76610769016fda62",
+      "created_at": "2026-11-17T01:16:03.734Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -8116,8 +8116,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "708b3110016ebbca32021f83be30a1c796bde4b36496b5e0e165cf64bef86652",
-      "created_at": "2026-11-16T23:53:00.579Z"
+      "content_hash": "bbff7a74ad9fe53804c9214a4fcb11e7024782d26e4cfcb69c1bc34ff0053f80",
+      "created_at": "2026-11-17T01:16:02.921Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10774,8 +10774,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "4cb3f97ca3689991699f44560e16cd50cb1f7686231b39fd2f965dcb03023225",
-      "created_at": "2026-11-16T22:55:52.013Z"
+      "content_hash": "51b3c3088638d23102679e8cea61f476118579c9fe11809f90a407c641aab841",
+      "created_at": "2026-11-17T01:16:01.965Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
