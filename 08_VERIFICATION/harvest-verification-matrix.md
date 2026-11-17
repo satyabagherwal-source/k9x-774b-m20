@@ -10598,3 +10598,6 @@
 | `CYCLE-20261117-E2PM` | `2026-11-17T15:51:33.178Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8991` | Yes (`79f4da1c...`) |
 | `CYCLE-20261117-E4EQ` | `2026-11-17T15:51:35.378Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`768823d7...`) |
 | `CYCLE-20261117-E5XS` | `2026-11-17T15:51:37.360Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8992` | Yes (`98439934...`) |
+| `CYCLE-20261117-OION` | `2026-11-17T15:59:40.439Z` | `dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md` | Yes (`aade0549...`) |
+| `CYCLE-20261117-OU4Z` | `2026-11-17T15:59:55.283Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8993` | Yes (`3a85483b...`) |
+| `CYCLE-20261117-OW0O` | `2026-11-17T15:59:57.720Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8994` | Yes (`9bfc970e...`) |

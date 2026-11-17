@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "2825902a",
+    "sourceVersion": "2d4d05d7",
     "license": "MIT",
-    "contentHash": "fa001ba3c4fdfe882a77ef9e842ebbdb97e4f69515fa6b85f6a3594e87f2f824",
-    "lastHarvestedAt": "2026-11-14T22:39:34.177Z",
+    "contentHash": "9bfc970eba53a321d05d2c424ddce64b3d9e3a96664ab97789787417698c90ee",
+    "lastHarvestedAt": "2026-11-17T15:59:57.724Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "4d09fa5f",
+    "sourceVersion": "eb498cf2",
     "license": "MIT",
-    "contentHash": "a2ae6076e7cbc3f34045cd514c657e278bcfbc9ca2aceb945f884913992cf069",
-    "lastHarvestedAt": "2026-11-15T01:03:34.895Z",
+    "contentHash": "3a85483b8a2c666d43cb6ba5ed8d1c37c6e3d37357f1f576056ece00e8af587a",
+    "lastHarvestedAt": "2026-11-17T15:59:55.287Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -10375,8 +10375,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "3b9e2483700c2cec118487e9c149537e33d3941ec0d9a057a83cf7ea97b9b1aa",
-    "lastHarvestedAt": "2026-11-13T03:48:03.138Z",
+    "contentHash": "aade05491f2f5ec8eddb84e28ef3df4abb2308eeb3481972bdd13376846052de",
+    "lastHarvestedAt": "2026-11-17T15:59:40.445Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8"
   },
   "hf-lodestones-moss-image-sft-8-steps-dmd": {

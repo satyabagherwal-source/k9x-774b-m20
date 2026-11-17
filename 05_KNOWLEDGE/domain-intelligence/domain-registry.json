@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T15:51:42.054Z",
-  "total_records": 1592,
+  "last_updated": "2026-11-17T16:00:02.974Z",
+  "total_records": 1595,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 665,
+      "total": 667,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -714,7 +714,9 @@
         "domain_intelligence-research-knowledge-intelligence-reflection-beam-1-0-501b-a23b-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-",
         "domain_intelligence-research-knowledge-intelligence-lodestones-moss-image-sft-8-steps-dmd-core-invar",
-        "domain_intelligence-research-knowledge-intelligence-hf-lodestones-moss-image-sft-8-steps-dmd-learnin"
+        "domain_intelligence-research-knowledge-intelligence-hf-lodestones-moss-image-sft-8-steps-dmd-learnin",
+        "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-1017-uncensored-fp",
+        "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-1017-uncensored"
       ]
     },
     "E": {
@@ -766,7 +768,7 @@
       ]
     },
     "G": {
-      "total": 290,
+      "total": 291,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1057,7 +1059,8 @@
         "domain_intelligence-architecture-intelligence-meshery-meshery-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-redisearch-redisearch-core-invariants",
         "domain_intelligence-architecture-intelligence-dalance-procs-core-invariants",
-        "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-learnings-core-invarian"
       ]
     },
     "H": {
@@ -8256,8 +8259,8 @@
       "title": "Technical Construction Intelligence: Mintplex-Labs/anything-llm Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-technical-construction-intelligence-mintplex-labs-any.md",
       "repository": "Mintplex-Labs/anything-llm",
-      "content_hash": "94e801ce03e7a8810d5fe188447bc63d7643853963d0dc6035ccbbfabf32a4ca",
-      "created_at": "2026-11-15T01:03:35.111Z"
+      "content_hash": "9a25b31f22a775997c1a7a344e1be1c5599eba06ffba20f523c08db233f463ba",
+      "created_at": "2026-11-17T15:59:55.683Z"
     },
     "DOM-D-AFA4F352": {
       "record_id": "DOM-D-AFA4F352",
@@ -8316,8 +8319,8 @@
       "title": "Technical Construction Intelligence: mintplex-labs-anything-llm-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-learnings-technical-construction-intelligence-mintple.md",
       "repository": "mintplex-labs-anything-llm-learnings",
-      "content_hash": "7765b018e489c81e7e32d442499e6ea22fd599d0f528272f1b2b3cc3808a7f6d",
-      "created_at": "2026-11-15T01:04:03.060Z"
+      "content_hash": "07f61dbf071466d1cb239a0dd782db7e91c09d69e4fa283685a83f497a7d232d",
+      "created_at": "2026-11-17T16:00:02.172Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -17870,8 +17873,8 @@
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "497db509be041acd6e3287bb8aaf2fb46f94ea17b3abba95641294e8883e9298",
-      "created_at": "2026-11-14T22:39:34.483Z"
+      "content_hash": "a4f3b49143e5f2197ea88c62ee7c7153291e4d812fe4ce353767a7ea71829caa",
+      "created_at": "2026-11-17T15:59:58.135Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -27457,6 +27460,33 @@
       "repository": "hf-lodestones-moss-image-sft-8-steps-dmd-learnings",
       "content_hash": "8a4b0464fdce060eaa25fdf6116fc51e0ce2db5a3b39a2917be1baf11c69168a",
       "created_at": "2026-11-17T15:51:40.826Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-1017-uncensored-fp": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-1017-uncensored-fp",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8-research-knowledge-intellig.md",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
+      "content_hash": "293c1266eaf3bc567a5c5878753f6b62ee865799d2d6302a3b6ef7cd61848cee",
+      "created_at": "2026-11-17T15:59:40.696Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-1017-uncensored": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-1017-uncensored",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8-learnings-research-knowledg.md",
+      "repository": "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings",
+      "content_hash": "6cb5efdad95a5a42c1a00a22e234a0eabb64a1de9a3e545be0369cdfbd231a6b",
+      "created_at": "2026-11-17T16:00:01.405Z"
+    },
+    "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-learnings-core-invarian": {
+      "record_id": "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-learnings-core-invarian",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-learnings-architecture-intelligence-bitterbot-ai-.md",
+      "repository": "bitterbot-ai-bitterbot-desktop-learnings",
+      "content_hash": "078146570cea047858378bb58325a2f0b186f1dfae936f18e0506a059d6ba375",
+      "created_at": "2026-11-17T16:00:02.974Z"
     }
   }
 }

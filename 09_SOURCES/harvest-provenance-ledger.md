@@ -10631,3 +10631,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `6e7fbbd6` | Multi-dimensional audit evidence | 2026-11-17T15:51:33.182Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `8f113dc5` | Multi-dimensional audit evidence | 2026-11-17T15:51:35.382Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `551d11fe` | Multi-dimensional audit evidence | 2026-11-17T15:51:37.364Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-17T15:59:40.445Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `eb498cf2` | Multi-dimensional audit evidence | 2026-11-17T15:59:55.287Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `2d4d05d7` | Multi-dimensional audit evidence | 2026-11-17T15:59:57.724Z |

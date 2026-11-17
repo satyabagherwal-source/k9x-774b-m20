@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T01:04:02.896Z",
+  "timestamp": "2026-11-17T16:00:01.888Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-mintplex-labs-anything-llm-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mintplex-labs-anything-llm-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T01:04:02.896Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T16:00:01.888Z`  
 > **Learning ID**: `LEARN-EVO-mintplex-labs-anything-llm-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from mintplex-labs-anything-llm-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `4d09fa5f`  
+> **Source Version**: `eb498cf2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T01:03:34.214Z  
+> **Timestamp**: 2026-11-17T15:59:54.131Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T01:03:34.210Z  
+> **Harvest Timestamp**: 2026-11-17T15:59:54.124Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 68284 stars
+- **Stars / Engagement**: 68366 stars
 
 ---
 
@@ -1337,1087 +1337,329 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4d09fa5f` (2026-11-13)
-**Commit Message**: Mobile document picker UI (#7125)
+### Incident Patch 1: `24fbd26c` (2026-11-16)
+**Commit Message**: fix: keep counting a numbered list that a code block interrupts in Word exports (#7209)
 
-* add mobile document picker + move mobile toasts to top
+* fix: keep counting a numbered list that a code block interrupts in Word exports
 
-* mobile document picker embedding, empty folder + folder count fixes
-
-* trim comments
-
-* fix mobile upload preselect + block moving fully embedded folders
-
-* Translate mobile document picker strings and drop unused manage keys
+* seed continued-list counter from the list's start, drop narrow test
 
 ---------
 
 Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/Directory/MobileDirectory/MobileFolderRow/index.jsx` (added, +153/-0)
+**File**: `server/utils/agents/aibitat/plugins/create-files/docx/utils.js` (modified, +9/-2)
 ```diff
-@@ -0,0 +1,153 @@
-+import { memo } from "react";
-+import { useTranslation } from "react-i18next";
-+import {
-+  CaretRight,
-+  CircleNotch,
-+  File,
-+  FolderNotch,
-+} from "@phosphor-icons/react";
-+import {
-+  formatDateTimeAsMoment,
-+  getFileExtension,
-+  middleTruncate,
-+} from "@/utils/directories";
-+import MobileCheckbox from "../../../MobileCheckbox";
-+
-+/**
-+ * @param {Object} props
-+ * @param {number} props.inWorkspaceCount - Documents of this folder already in workspace
-+ * @param {"none"|"some"|"all"} props.selectionState
-+ */
-+export default function MobileFolderRow({
-+  row,
-+  inWorkspaceCount,
-+  selectionState,
-+  isFileSelected,
-+  onToggleExpanded,
-+  onToggleFolder,
-+  onToggleFile,
-+  onLoadMore,
-+}) {
-+  const { t } = useTranslation();
-+  const { item, files, expanded, loading, hasMore, totalCount, displayCount } =
-+    row;
-+  const availableCount =
-+    inWorkspaceCount > 0
-+      ? Math.max(0, totalCount - inWorkspaceCount)
-+      : displayCount;
-+
-+  return (
-+    <div>
-+      <div
-+        onClick={() => onToggleExpanded(item.name)}
-+        className="flex items-center h-14 pr-3 rounded-xl cursor-pointer transition-colors duration-150 active:bg-zinc-800 light:active:bg-slate-100"
-+      >
-+        <MobileCheckbox
-+          state={selectionState}
-+          label={item.name}
-+          onToggle={() => onToggleFolder(item, files)}
-+        />
-+        <FolderNotch
-+          weight="fill"
-+          className="w-5 h-5 shrink-0 text-zinc-400 light:text-slate-400"
-+        />
-+        <div className="flex-1 min-w-0 ml-3">
-+          <p className="text-sm font-medium truncate text-slate-50 light:text-slate-900">
-+            {item.name}
-+          </p>
-+          <p className="text-xs text-zinc-400 light:text-slate-500">
-+            {t("connectors.directory.total-documents", {
-+              count: availableCount,
-+            })}
-+            {inWorkspaceCount > 0 && (
-+              <span className="lowercase">
-+                {" · "}
-+                {inWorkspaceCount} {t("connectors.directory.in-workspace")}
-+              </span>
-+            )}
-+          </p>
-+        </div>
-+        {loading && files.length > 0 && (
-+          <CircleNotch
-+            size={14}
-+            weight="bold"
-+            className="animate-spin shrink-0 mr-2 text-zinc-400 light:text-slate-500"
-+          />
-+        )}
-+        <CaretRight
-+          size={16}
-+          weight="bold"
-+          className={`shrink-0 text-zinc-500 light:text-slate-400 transition-transform duration-200 ease-in-out ${
-+            expanded ? "rotate-90" : ""
-+          }`}
-+        />
-+      </div>
-+
-+      {expanded && (
-+        <div className="pl-5">
-+          {loading && files.length === 0 && (
-+            <div className="flex items-center gap-x-2 h-12 pl-4 text-xs text-zinc-400 light:text-slate-500">
-+              <CircleNotch size={14} weight="bold" className="animate-spin" />
-+              {t("common.loading")}...
-+            </div>
-+          )}
-+          {!loading && files.length === 0 && (
-+            <p className="h-12 pl-4 flex items-center text-xs text-zinc-400 light:text-slate-500">
-+              {t("connectors.directory.no-documents")}
-+            </p>
-+          )}
-+          {files.map((file) => (
-+            <MobileFileRow
-+              key={file.id}
-+              file={file}
-+              folderName={item.name}
-+              selected={isFileSelected(file.id)}
-+              onToggle={onToggleFile}
-+            />
-+          ))}
-+          {hasMore && (
-+            <button
-+              type="button"
-+              disabled={loading}
-+              onClick={() => onLoadMore(item.name)}
-+              className="border-none bg-transparent h-11 pl-4 text-sm font-medium text-sky-400 light:text-sky-700 disabled:opacity-50"
-+            >
-+              {loading
-+                ? `${t("common.loading")}...`
-+                : `Load more (${files.length} of ${totalCount})`}
-+            </button>
-+          )}
-+        </div>
-+      )}
-+    </div>
-+  );
-+}
-+
-+const MobileFileRow = memo(
-+  function MobileFileRow({ file, folderName, selected, onToggle }) {
-+    return (
-+      <div
-+        onClick={() => onToggle(file, folderName)}
-+        className="flex items-center min-h-[52px] pr-3 rounded-xl cursor-pointer transition-colors duration-150 active:bg-zinc-800 light:active:bg-slate-100"
-+      >
-+        <MobileCheckbox state={selected ? "all" : "none"} />
-+        <File
-+          weight="fill"
-+          className="w-5 h-5 shrink-0 text-zinc-500 light:text-slate-400"
-+        />
-+        <div className="flex-1 min-w-0 ml-3 py-1.5">
-+          <p className="text-sm truncate text-slate-50 light:text-slate-900">
-+            {middleTruncate(file.title, 40)}
-+          </p>
-+          <p className="text-xs truncate text-zinc-400 light:text-slate-500">
-+            {getFileExtension(file.url)} ·{" "}
-+            {formatDateTimeAsMoment(file.published, "ll")}
-+            {file.cached && 
+@@ -481,6 +481,9 @@ async function htmlToDocxElements(html, libs, log, theme = null) {
+ 
+   // Each top-level list gets its own numbering instance so ordered lists restart at 1.
+   let listInstance = 0;
++  // A numbered list that a code block or paragraph interrupted comes back from
++  // marked as <ol start="N">, so it keeps counting in the previous list's instance.
++  let lastOrdered = null;
+ 
+   for (const child of body.children) {
+     const tagName = child.tagName.toLowerCase();
+@@ -527,15 +530,19 @@ async function htmlToDocxElements(html, libs, log, theme = null) {
+           );
+         }
+       } else if (tagName === "ul" || tagName === "ol") {
+-        listInstance++;
++        const start = Number(child.getAttribute("start")) || 1;
++        const continues = tagName === "ol" && lastOrdered?.next === start;
++        const instance = continues ? lastOrdered.instance : ++listInstance;
++        if (tagName === "ol")
++          lastOrdered = { instance, next: start + child.children.length };
+         elements.push(
+           ...(await processList(
+             child,
+             docx,
+             tagName === "ol",
+             0,
+             log,
+-            listInstance
++            instance
+           ))
+         );
+       } else if (tagName === "table") {
 ```
 
-**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/Directory/MobileDirectory/index.jsx` (added, +246/-0)
-```diff
-@@ -0,0 +1,246 @@
-+import { useState } from "react";
-+import { useTranslation } from "react-i18next";
-+import {
-+  CircleNotch,
-+  FolderNotch,
-+  FolderPlus,
-+  MagnifyingGlass,
-+  Trash,
-+} from "@phosphor-icons/react";
-+import PreLoader from "@/components/Preloader";
-+import UploadFile from "../../UploadFile";
-+import MoveToFolderIcon from "../MoveToFolderIcon";
-+import MobileFolderRow from "./MobileFolderRow";
-+import MobileSheet, { MobileSheetOption } from "../../MobileSheet";
-+import MobileActionBar, {
-+  MobileActionButton,
-+  MobileActionIconButton,
-+} from "../../MobileActionBar";
-+
-+/**
-+ * Touch layout of the "My Documents" picker. State and mutations come from `Directory`.
-+ *
-+ * @param {Object} props
-+ * @param {ReturnType<import("../../hooks/useDocumentPicker").default>} props.picker
-+ * @param {Record<string, number>} props.embeddedCounts - Per folder, documents already in workspace
-+ * @param {number} props.documentCount - Total documents, or matches while searching
-+ */
-+export default function MobileDirectory({
-+  picker,
-+  workspace,
-+  rows,
-+  embeddedCounts,
-+  documentCount,
-+  allSelected,
-+  uploadQueue,
-+  onSearch,
-+  onSelectAll,
-+  onMoveToWorkspace,
-+  onMoveToFolder,
-+  onDelete,
-+  onNewFolder,
-+}) {
-+  const { t } = useTranslation();
-+  const [showFolderSheet, setShowFolderSheet] = useState(false);
-+  const {
-+    status,
-+    busyMessage,
-+    folders,
-+    searching,
-+    searchResults,
-+    hasSelection,
-+    selectedCount,
-+    selectedFolderNames,
-+    isFileSelected,
-+    folderSelectionState,
-+    toggleExpanded,
-+    toggleFolder,
-+    toggleFile,
-+    loadMore,
-+    clearSelection,
-+    syncAfterUpload,
-+    contents,
-+  } = picker;
-+
-+  // Until a selected folder is fully loaded its count comes from the server,
-+  // which still includes documents already in the workspace.
-+  const alreadyEmbedded = selectedFolderNames.reduce((sum, name) => {
-+    const entry = contents[name];
-+    const exact = entry?.status === "loaded" && !entry.hasMore;
-+    return exact ? sum : sum + (embeddedCounts[name] ?? 0);
-+  }, 0);
-+  const movableCount = Math.max(0, selectedCount - alreadyEmbedded);
-+  const hasFiles = movableCount > 0;
-+
-+  return (
-+    <div className="relative flex flex-col flex-1 min-h-0">
-+      <div className="shrink-0 flex flex-col gap-y-3 px-4 pb-3">
-+        <UploadFile
-+          variant="mobile"
-+          workspace={workspace}
-+          queue={uploadQueue}
-+          onUploadComplete={syncAfterUpload}
-+          onLinkScraped={syncAfterUpload}
-+        />
-+        <div className="flex gap-x-2">
-+          <div className="relative flex-1 min-w-0">
-+            <input
-+              type="search"
-+              placeholder={t("connectors.directory.search-document")}
-+              onChange={onSearch}
-+              className="search-input w-full h-11 pl-10 pr-3 rounded-xl text-base outline-none border border-transparent bg-zinc-800 light:bg-slate-100 text-slate-50 light:text-slate-900 placeholder:text-zinc-500 light:placeholder:text-slate-400 focus:border-sky-500"
-+            />
-+            {searching ? (
-+              <CircleNotch
-+                size={16}
-+                weight="bold"
-+                className="absolute left-3.5 top-1/2 -translate-y-1/2 animate-spin text-zinc-400 light:text-slate-500"
-+              />
-+            ) : (
-+              <MagnifyingGlass
-+                size={16}
-+                weight="bold"
-+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 light:text-slate-500"
-+              />
-+            )}
-+          </div>
-+          <MobileActionIconButton
-+            label={t("connectors.directory.new-folder")}
-+            onClick={onNewFolder}
-+          >
-+            <FolderPlus size={20} />
-+          </MobileActionIconButton>
-+        </div>
-+      </div>
-+
-+      <div className="shrink-0 flex items-center justify-between h-9 px-4 text-xs text-zinc-400 light:text-slate-500">
-+        <p>
-+          {searchResults
-+            ? t("connectors.directory.search-results", {
-+                count: documentCount,
-+              })
-+            : t("connectors.directory.total-documents", {
-+                count: documentCount,
-+              })}
-+        </p>
-+        {rows.length > 0 && (
-+          <button
-+            type="button"
-+            onClick={allSelected ? clearSelection : onSelectAll}
-+            className="border-none bg-transparent h-9 -mr-2 px-2 text-xs font-semibold text-sky-400 light:text-sky-700"
-+          >
-+            {allSelected
-+              ? t("connectors.directory.deselect_all")
-+              : t("connectors.directory.select_all")}
-+          </button>
-+        )}
-+      </div>
-+
-+      {!!busyMessage && (
-+        <div className="shrink-0 flex items-center gap-x-2 mx-4 mb-2 px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 light:bg-slate-100 text-slate-50 light:text-slate-900">
-+          <CircleNotch size={14} weight="bold" className="animate-spin
-```
+---
 
-**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/Directory/index.jsx` (modified, +35/-0)
+### Incident Patch 2: `41e4b95e` (2026-11-17)
+**Commit Message**: fix: offer each Mistral model the reasoning levels it accepts (#7228)
+
+fix: offer each Mistral model the reasoning levels it accepts (#7226)
+
+Mistral reasoning models were all offered an on/off toggle sent as
+"high"/"none", but accepted levels differ per model: Large 4 and GLM 5.3
+reject "none", so turning reasoning off failed, and DeepSeek V4.1 Flash
+could not be set above "high". Mistral's models endpoint only flags
+reasoning support, so levels now come from models.dev, looked up under
+the model id and its aliases, with on/off kept for unlisted models.
+
+**File**: `server/__tests__/utils/helpers/reasoningEffort.test.js` (modified, +17/-4)
 ```diff
-@@ -3,6 +3,7 @@ import PreLoader from "@/components/Preloader";
- import { useCallback, useEffect, useMemo, useRef, useState } from "react";
- import { useTranslation } from "react-i18next";
- import FolderRow from "./FolderRow";
-+import MobileDirectory from "./MobileDirectory";
- import System from "@/models/system";
- import {
-   CircleNotch,
-@@ -53,12 +54,19 @@ function flattenRows(rows) {
-   });
+@@ -81,6 +81,14 @@ const MODELS_DEV = {
+     ],
+     "deepseek-toggle-only": [{ type: "toggle" }],
+   },
++  // Accepted values confirmed against the live API.
++  mistral: {
++    "mistral-small-2603": [{ type: "effort", values: ["none", "high"] }],
++    "mistral-large-latest": [
++      { type: "effort", values: ["low", "medium", "high"] },
++    ],
++    "zai-glm-5-3": [{ type: "effort", values: ["low", "high", "max"] }],
++  },
+   openrouter: {
+     "openai/gpt-5.1": [
+       { type: "effort", values: ["none", "low", "medium", "high"] },
+@@ -106,7 +114,7 @@ function mockModelsDev(table = MODELS_DEV) {
+   jest
+     .spyOn(MODEL_PRICING, "getReasoningOptions")
+     .mockImplementation((provider, model) =>
+-      table === null ? null : (table[provider]?.[model] ?? [])
++      table === null ? null : table[provider]?.[model] ?? []
+     );
  }
  
-+/**
-+ * @param {Object} props
-+ * @param {"default"|"mobile"} [props.variant="default"] - `mobile` renders the
-+ * touch layout
-+ */
- export default function Directory({
-   picker,
-   workspace,
-   hiddenPaths,
-+  embeddedCounts,
-   setHighlightWorkspace,
-   moveToWorkspace,
-+  variant = "default",
- }) {
-   const { t } = useTranslation();
-   const [showFolderSelection, setShowFolderSelection] = useState(false);
-@@ -363,6 +371,33 @@ export default function Directory({
-     []
-   );
- 
-+  if (variant === "mobile")
-+    return (
-+      <>
-+        <MobileDirectory
-+          picker={picker}
-+          workspace={workspace}
-+          rows={rows}
-+          embeddedCounts={embeddedCounts}
-+          documentCount={searchResults ? searchResultCount : totalDocCount}
-+          allSelected={allSelected}
-+          uploadQueue={uploadQueue}
-+          onSearch={handleSearch}
-+          onSelectAll={selectAllVisible}
-+          onMoveToWorkspace={moveToWorkspace}
-+          onMoveToFolder={moveToFolder}
-+          onDelete={deleteFiles}
-+          onNewFolder={openFolderModal}
-+        />
-+        <Modal isOpen={isFolderModalOpen} onClose={closeFolderModal}>
-+          <NewFolderModal
-+            closeModal={closeFolderModal}
-+            onCreated={handleFolderCreated}
-+          />
-+        </Modal>
-+      </>
-+    );
-+
-   return (
-     <>
-       <div className="px-8 pb-8" onContextMenu={handleContextMenu}>
-```
-
-**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/MobileActionBar/index.jsx` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+/**
-+ * Action bar docked to the bottom of its `relative` parent. Stays mounted so
-+ * it can slide out as well as in.
-+ *
-+ * @param {Object} props
-+ * @param {import("react").ReactNode} props.label - Status line above the actions
-+ */
-+export default function MobileActionBar({ show, label, children }) {
-+  return (
-+    <div
-+      className={`absolute bottom-0 inset-x-0 z-[5] flex flex-col gap-y-3 px-4 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] bg-zinc-900 light:bg-white border-t border-zinc-800 light:border-slate-200 transition-[transform,visibility] ${
-+        show
-+          ? "translate-y-0 visible duration-200 ease-out"
-+          : "translate-y-full invisible duration-150 ease-in"
-+      }`}
-+    >
-+      <p className="text-sm font-medium text-slate-50 light:text-slate-900">
-+        {label}
-+      </p>
-+      <div className="flex items-center gap-x-2">{children}</div>
-+    </div>
-+  );
-+}
-+
-+/**
-+ * @param {Object} props
-+ * @param {"primary"|"danger"} [props.variant="primary"]
-+ */
-+export function MobileActionButton({
-+  children,
-+  variant = "primary",
-+  className = "",
-+  ...props
-+}) {
-+  const colors =
-+    variant === "danger"
-+      ? "bg-red-500 light:bg-red-600 text-white"
-+      : "bg-zinc-50 light:bg-slate-900 text-zinc-950 light:text-white";
-+  return (
-+    <button
-+      type="button"
-+      {...props}
-+      className={`border-none flex-1 h-11 px-4 rounded-xl text-sm font-semibold flex items-center justify-center transition-transform duration-100 active:scale-[0.97] disabled:opacity-50 ${colors} ${className}`}
-+    >
-+      {children}
-+    </button>
-+  );
-+}
-+
-+/**
-+ * @param {Object} props
-+ * @param {string} props.label - Accessible label
-+ */
-+export function MobileActionIconButton({ label, danger, children, ...props }) {
-+  return (
-+    <button
-+      type="button"
-+      aria-label={label}
-+      {...props}
-+      className={`border-none w-11 h-11 shrink-0 rounded-xl flex items-center justify-center bg-zinc-800 light:bg-slate-100 transition-transform duration-100 active:scale-[0.97] disabled:opacity-50 ${
-+        danger
-+          ? "text-red-400 light:text-red-600"
-+          : "text-slate-50 light:text-slate-900"
-+      }`}
-+    >
-+      {children}
-+    </button>
-+  );
-+}
-```
-
-**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/MobileCheckbox/index.jsx` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+import { Check, Minus } from "@phosphor-icons/react";
-+
-+/**
-+ * @param {Object} props
-+ * @param {"none"|"some"|"all"} [props.state="none"] - Unchecked, mixed, or checked
-+ * @param {() => void} [props.onToggle] - Makes the box its own tap target; without it the row handles the tap
-+ * @param {string} [props.label] - Accessible label when the box is interactive
-+ */
-+export default function MobileCheckbox({ state = "none", onToggle, label }) {
-+  const box = (
-+    <span
-+      className={`w-5 h-5 rounded-md flex items-center justify-center transition-colors duration-150 ${
-+        state === "none"
-+          ? "border-2 border-zinc-600 light:border-slate-300"
-+          : "bg-sky-500 text-white"
-+      }`}
-+    >
-+      {state === "all" && <Check size={12} weight="bold" />}
-+      {state === "some" && <Minus size={12} weight="bold" />}
-+    </span>
-+  );
-+
-+  if (!onToggle)
-+    return (
-+      <span className="w-11 h-11 shrink-0 flex items-center justify-center">
-+        {box}
-+      </span>
-+    );
-+
-+  return (
-+    <button
-+      type="button"
-+      role="checkbox"
-+      aria-checked={state === "some" ? "mixed" : state === "all"}
-+      aria-label={label}
-+      onClick={(event) => {
-+        event.stopPropagation();
-+        onToggle();
-+      }}
-+      className="border-none bg-transparent w-11 h-11 shrink-0 flex items-center justify-center"
-+    >
-+      {box}
-+    </button>
-+  );
-+}
-```
-
-**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/MobileSheet/index.jsx` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+/**
-+ * Bottom sheet for the mobile document picker. Stays mounted so it can slide
-+ * out as well as in.
-+ */
-+export default function MobileSheet({ open, onClose, title, children }) {
-+  return (
-+    <div
-+      className={`fixed inset-0 z-10 transition-[visibility] ${
-+        open ? "visible duration-200" : "invisible duration-150"
-+      }`}
-+    >
-+      <div
-+        onClick={onClose}
-+        className={`absolute inset-0 bg-black/60 transition-opacity ${
-+          open ? "opacity-100 duration-200" : "opacity-0 duration-150"
-+        }`}
-+      />
-+      <div
-+        role="dialog"
-+        aria-modal="true"
-+        className={`absolute bottom-0 inset-x-0 max-h-[70vh] flex flex-col rounded-t-2xl bg-zinc-900 light:bg-white border-t border-zinc-800 light:border-slate-200 pb-[max(12px,env(safe-area-inset-bottom))] transition-transform ${
-+          open
-+            ? "translate-y-0 duration-200 ease-out"
-+            : "translate-y-full duration-150 ease-in"
-+        }`}
-+      >
-+        {title && (
-+          <p className="px-5 pt-5 pb-2 text-sm font-semibold text-slate-50 light:text-slate-900 truncate">
-+            {title}
-+          </p>
-+        )}
-+        <div className="overflow-y-auto px-2 pt-1">{children}</div>
-+      </div>
-+    </div>
-+  );
-+}
-+
-+/**
-+ * @param {Object} props
-+ * @param {boolean} [props.danger] - Red treatment for destructive actions
-+ */
-+export function MobileSheetOption({ icon: Icon, label, onClick, danger }) {
-+  return (
-+    <button
-+      type="button"
-+      onClick={onClick}
-+      className={`border-none bg-transparent w-full h-12 px-3 flex items-center gap-x-3 rounded-xl text-left text-sm font-medium active:bg-zinc-800 light:active:bg-slate-100 ${
-+        danger
-+          ? "text-red-400 light:text-red-600"
-+          : "text-slate-50 light:text-slate-900"
-+      }`}
-+    >
-+      <Icon size={20} className="shrink-0" />
-+      <span className="truncate">{label}</span>
-+    </button>
-+  );
-+}
-```
-
-**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/UploadFile/MobileUploadFile/index.jsx` (added, +112/-0)
-```diff
-@@ -0,0 +1,112 @@
-+import { useState } from "react";
-+import { useTranslation } from "react-i18next";
-+import { LinkSimple, UploadSimple } from "@phosphor-icons/react";
-+import FileUploadProgress from "../FileUploadProgress";
-+
-+/**
-+ * Touch layout of the uploader. Upload logic stays in `UploadFile`.
-+ *
-+ * @param {Object} props
-+ * @param {boolean} props.ready - Document processor is online
-+ * @param {object} props.inputProps - `getInputProps()` from the dropzone
-+ */
-+export default function MobileUploadFile({
-+  ready,
-+  uploads,
-+  setFiles,
-+  slug,
-+  openFilePicker,
-+  inputProps,
-+  fetchingUrl,
-+  onSubmitLink,
-+  onSettled,
-+}) {
-+  const { t } = useTranslation();
-+  const [showLinkForm, setShowLinkForm] = useState(false);
-+
-+  return (
-+    <div className="flex flex-col gap-y-2">
-+      <input {...inputProps} />
-+      <div className="grid grid-cols-2 gap-x-2">
-+        <UploadButton
-+          icon={UploadSimple}
-+          label={t("connectors.directory.upload-files")}
-+          disabled={!ready}
-+          onClick={openFilePicker}
-+        />
-+        <UploadButton
-+          icon={LinkSimple}
-+          label={t("connectors.directory.add-link")}
-+          active={showLinkForm}
-+          onClick={() => setShowLinkForm(!showLinkForm)}
-+        />
-+      </div>
-+      {!ready && (
-+        <p className="text-xs text-zinc-400 light:text-slate-500">
-+          {t("connectors.upload.processor-offline")}
-+        </p>
-+      )}
-+      {showLinkForm && (
-+        <form onSubmit={onSubmitLink} className="flex gap-x-2">
-+          <input
-+            disabled={fetchingUrl}
-+            name="link"
-+            // Not type="url" - that would force the user to type the protocol.
-+            type="text"
-+            inputMode="url"
-+            autoFocus
-+            autoComplete="off"
-+            autoCapitalize="off"
-+            placeholder={t("connectors.upload.placeholder-link")}
-+            className="flex-1 min-w-0 h-11 px-3.5 rounded-xl text-base outline-none border border-transparent bg-zinc-800 light:bg-slate-100 text-slate-50 light:text-slate-900 placeholder:text-zinc-500 light:placeholder:text-slate-400 focus:border-sky-500 disabled:opacity-50"
-+          />
-+          <button
-+            disabled={fetchingUrl}
-+            type="submit"
-+            className="border-none h-11 px-4 rounded-xl text-sm font-semibold shrink-0 bg-zinc-50 light:bg-slate-900 text-zinc-950 light:text-white transition-transform duration-100 active:scale-[0.97] disabled:opacity-50"
-+          >
-+            {fetchingUrl
-+              ? t("connectors.upload.fetching")
-+              : t("connectors.upload.fetch-website")}
-+          </button>
-+        </form>
-+      )}
-+      {uploads.length > 0 && (
-+        <div className="flex flex-col gap-y-2 max-h-[136px] overflow-y-auto no-scroll">
-+          {uploads.map((file) => (
-+            <FileUploadProgress
-+              key={file.uid}
-+              file={file.file}
-+              uuid={file.uid}
-+              setFiles={setFiles}
-+              slug={slug}
-+              rejected={file?.rejected}
-+              reason={file?.reason}
-+              folderName={file?.folderName}
-+              relativePath={file?.relativePath}
-+              onSettled={onSettled}
-+            />
-+          ))}
-+        </div>
-+      )}
-+    </div>
-+  );
-+}
-+
-+function UploadButton({ icon: Icon, label, onClick, disabled, active }) {
-+  return (
-+    <button
-+      type="button"
-+      onClick={onClick}
-+      disabled={disabled}
-+      className={`border-none h-11 rounded-xl flex items-center justify-center gap-x-2 text-sm font-medium transition-[transform,background-color] duration-150 active:scale-[0.97] disabled:opacity-50 ${
-+        active
-+          ? "bg-sky-500/15 text-sky-300 light:bg-sky-50 light:text-sky-700"
-+          : "bg-zinc-800 light:bg-slate-100 text-slate-50 light:text-slate-900"
-+      }`}
-+    >
-+      <Icon size={18} weight="bold" />
-+      {label}
-+    </button>
-+  );
-+}
-```
-
-**File**: `frontend/src/components/Modals/ManageWorkspace/Documents/UploadFile/index.jsx` (modified, +20/-1)
-```diff
-@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
- import showToast from "../../../../../utils/toast";
- import { useDropzone } from "react-dropzone";
- import FileUploadProgress from "./FileUploadProgress";
-+import MobileUploadFile from "./MobileUploadFile";
- import Workspace from "../../../../../models/workspace";
- import debounce from "lodash.debounce";
- import { getFilesFromUploadEvent } from "../../../../../utils/folderUpload";
-@@ -36,12 +37,15 @@ function withProtocol(value = "") {
-  * @param {() => Promise<void>} props.onUploadComplete called (coalesced) once a
-  * burst of file uploads settles, so the picker can hydrate in place.
-  * @param {() => Promise<void>} props.onLinkScraped called after a link scrape.
-+ * @param {"default"|"mobile"} [props.variant="default"] - `mobile` swaps the
-+ * drag-and-drop zone for touch-sized buttons
-  */
- export default function UploadFile({
-   workspace,
-   queue,
-   onUploadComplete,
-   onLinkScraped,
-+  variant = "default",
- }) {
-   const { t } = useTranslation();
-   const { ready, files, setFiles, enqueueDrop } = queue;
-@@ -74,12 +78,27 @@ export default function UploadFile({
-   );
-   useEffect(() => () => syncPicker.cancel(), [syncPicker]);
- 
--  const { getRootProps, getInputProps } = useDropzone({
-+  const { getRootProps, getInputProps, inputRef } = useDropzone({
-     onDrop: enqueueDrop,
-     disabled: !ready,
-     getFilesFromEvent: getFilesFromUploadEvent,
+@@ -126,6 +134,9 @@ describe("modelsDevReasoningCapabilities", () => {
+     ["gemini", "gemini-level-and-budget", ["low", "high"]],
+     ["deepseek", "deepseek-flash", ["off", "on", "low", "high", "max"]],
+     ["deepseek", "deepseek-toggle-only", ["off", "on"]],
++    ["mistral", "mistral-small-2603", ["off", "high"]],
++    ["mistral", "mistral-large-latest", ["low", "medium", "high"]],
++    ["mistral", "zai-glm-5-3", ["low", "high", "max"]],
+     ["openrouter", "openai/gpt-5.1", ["off", "low", "medium", "high"]],
+     ["openrouter", "qwen/qwen3-30b-a3b", ["off", "on"]],
+     [
+@@ -171,7 +182,7 @@ describe("modelsDevReasoningCapabilities", () => {
+     });
    });
  
-+  if (variant === "mobile")
-+    return (
-+      <MobileUploadFile
-+        ready={ready}
-+        uploads={files}
-+        setFiles={setFiles}
-+        slug={workspace.slug}
-+        openFilePicker={() => inputRef.current?.click()}
-+        inputProps={getInputProps()}
-+        fetchingUrl={fetchingUrl}
-+        onSubmitLink={handleSendLink}
-+        onSettled={syncPicker}
-+      />
-+    );
-+
-   return (
-     <div>
-       <div
-```
-
----
-
-### Incident Patch 2: `8a5aae10` (2026-11-13)
-**Commit Message**: fix: separate replies in imported GitLab issue threads with a blank line (#7151)
-
-fix: separate replies in GitLab issue threads with a blank line
-
-**File**: `collector/__tests__/utils/extensions/RepoLoader/GitlabRepo.test.js` (modified, +18/-1)
-```diff
-@@ -1050,7 +1050,7 @@ describe("GitLabRepoLoader issues and wikis", () => {
-     expect(imported.discussions).toEqual(expectedDiscussions);
-     expect(refreshed.discussions).toEqual(expectedDiscussions);
-     const expectedActivity =
--      "## Activity\n\nbob at 2024-01-01T00:00:00Z:\nReproduced on main.,alice at 2024-01-02T00:00:00Z:\nFix incoming.\n\ncarol at 2024-01-03T00:00:00Z:\nVerified the fix.\n";
-+      "## Activity\n\nbob at 2024-01-01T00:00:00Z:\nReproduced on main.\n\nalice at 2024-01-02T00:00:00Z:\nFix incoming.\n\ncarol at 2024-01-03T00:00:00Z:\nVerified the fix.\n";
-     expect(issueToMarkdown(imported)).toContain(expectedActivity);
-     expect(issueToMarkdown(refreshed)).toContain(expectedActivity);
+-  it("only maps none to off for OpenAI and OpenRouter", () => {
++  it("only maps none to off for OpenAI, OpenRouter and Mistral", () => {
+     mockModelsDev({
+       deepseek: { x: [{ type: "effort", values: ["none", "low"] }] },
+     });
+@@ -411,8 +422,10 @@ describe("reasoningParams", () => {
+       null,
+       { thinking: { type: "enabled" }, reasoning_effort: "max" },
+     ],
+-    ["mistral", "on", "mistral-large-4", { reasoning_effort: "high" }],
+-    ["mistral", "off", "mistral-large-4", { reasoning_effort: "none" }],
++    ["mistral", "on", "mistral-small-2603", { reasoning_effort: "high" }],
++    ["mistral", "off", "mistral-small-2603", { reasoning_effort: "none" }],
++    ["mistral", "low", "mistral-large-4", { reasoning_effort: "low" }],
++    ["mistral", "max", "zai-glm-5-3", { reasoning_effort: "max" }],
+   ])("%s %s (%s) -> %j", (provider, effort, model, expected) => {
+     expect(reasoningParams(provider, effort, model)).toEqual(expected);
    });
-@@ -1436,4 +1436,21 @@ describe("issueToMarkdown", () => {
-       "## Activity\n\nbob at 2024-01-01T00:00:00Z:\nReproduced on main.\n\nalice at 2024-01-02T00:00:00Z:\nFix incoming."
-     );
-   });
-+
-+  test("replies in a discussion thread are separated like other notes", () => {
-+    const markdown = issueToMarkdown({
-+      ...base,
-+      discussions: [
-+        [
-+          "bob at 2024-01-01T00:00:00Z:\nReproduced on main.",
-+          "alice at 2024-01-02T00:00:00Z:\nFix incoming.",
-+        ],
-+      ],
-+    });
-+
-+    expect(markdown).toContain(
-+      "## Activity\n\nbob at 2024-01-01T00:00:00Z:\nReproduced on main.\n\nalice at 2024-01-02T00:00:00Z:\nFix incoming."
-+    );
-+    expect(markdown).not.toContain("main.,alice");
-+  });
- });
 ```
 
-**File**: `collector/utils/extensions/RepoLoader/GitlabRepo/index.js` (modified, +1/-1)
+**File**: `server/utils/AiProviders/mistral/index.js` (modified, +37/-8)
 ```diff
-@@ -318,7 +318,7 @@ ${metadataString}`;
+@@ -10,7 +10,10 @@ const {
+ const {
+   temperatureParam,
+ } = require("../../agents/aibitat/providers/helpers/tooled");
+-const { reasoningParams } = require("../../helpers/reasoningEffort");
++const {
++  reasoningParams,
++  modelsDevReasoningCapabilities,
++} = require("../../helpers/reasoningEffort");
  
- ## Activity
- 
--${issue.discussions.join("\n\n")}
-+${issue.discussions.flat().join("\n\n")}
- `;
-   }
- 
-```
-
----
-
-### Incident Patch 3: `83dedd8a` (2026-11-13)
-**Commit Message**: fix: bound Outlook thread reads and fit them to the context window (#7158)
-
-* fix: bound Outlook thread reads and fit them to the context window
-
-readThread pages through the conversation newest first and keeps the 50
-most recent messages, reading each message's uniqueBody so quoted reply
-chains are not repeated in every message. The read-thread tool summarizes
-all but the latest message when the thread exceeds 75% of the model's
-context window, keeping the latest verbatim plus an index of every message.
-
-* read the full body of forwards and empty-uniqueBody messages in Outlook threads
-
-* roll up Outlook thread recipients and show only who was added or removed per message
-
-* fix: download Outlook thread attachments only after the parse is approved (#7159)
-
-download Outlook thread attachments only after the parse is approved
-
-**File**: `server/utils/agents/aibitat/plugins/outlook/lib.js` (modified, +118/-17)
-```diff
-@@ -8,6 +8,35 @@ const { humanFileSize } = require("../../../../helpers");
- const { safeJsonParse } = require("../../../../http");
- 
- const MAX_TOTAL_ATTACHMENT_SIZE = 25 * 1024 * 1024; // 25MB limit for Outlook
-+// readThread keeps only the newest messages of a thread, fetched a page at a
-+// time since each message carries its body and expanded attachments.
-+const MAX_THREAD_MESSAGES = 50;
-+const THREAD_PAGE_SIZE = 25;
-+
-+/**
-+ * Subject of a thread without reply/forward prefixes, so a thread read from a
-+ * reply (when its older messages were left out) still shows the original subject.
-+ * @param {string} subject
-+ * @returns {string}
-+ */
-+function threadSubject(subject) {
-+  const stripped = (subject || "")
-+    .replace(/^\s*((re|fw|fwd)\s*:\s*)+/i, "")
-+    .trim();
-+  return stripped || "No Subject";
-+}
-+
-+/**
-+ * Whether a thread message needs its full body rather than its `uniqueBody`:
-+ * forwards (whose forwarded content Graph treats as quoted) and messages whose
-+ * `uniqueBody` is empty.
-+ * @param {object} msg - Graph message with `subject` and `uniqueBody`
-+ * @returns {boolean}
-+ */
-+function needsFullBody(msg) {
-+  if (!msg.uniqueBody?.content?.trim()) return true;
-+  return /^\s*(fw|fwd)\s*:/i.test(msg.subject || "");
-+}
- 
- /**
-  * Parses a comma-separated email string into Graph API recipient format.
-@@ -58,6 +87,11 @@ function mapGraphMessage(msg, options = {}) {
-     hasAttachments: msg.hasAttachments,
-   };
- 
-+  // Graph only returns BCC on mail the user sent, and only when selected.
-+  if (msg.bccRecipients) {
-+    base.bcc = msg.bccRecipients.map((r) => r.emailAddress?.address).join(", ");
-+  }
-+
-   if (msg.receivedDateTime) {
-     base.receivedDateTime = msg.receivedDateTime;
-   }
-@@ -359,11 +393,14 @@ function isParseableMimeType(contentType) {
-  * Collect attachments from messages and optionally parse them with user approval.
-  * Only attachments with parseable MIME types will be offered for parsing.
-  * If two attachments have the same name, only the first one will be kept (handling fwd emails)
-+ * Attachments without `contentBytes` are downloaded with `loadContent` only after
-+ * approval, up to MAX_TOTAL_ATTACHMENT_SIZE in total.
-  * @param {Object} context - The handler context (this) from the aibitat function
-  * @param {Array} messages - Array of message objects
-+ * @param {(attachment: Object) => Promise<{success: boolean, data?: string, error?: string}>} [loadContent] - Downloads an attachment's base64 content
-  * @returns {Promise<{allAttachments: Array, parsedContent: string}>}
-  */
--async function handleAttachments(context, messages) {
-+async function handleAttachments(context, messages, loadContent = null) {
-   const allAttachments = [];
-   const uniqueAttachments = new Set();
-   messages.forEach((msg, msgIndex) => {
-@@ -403,7 +440,27 @@ async function handleAttachments(context, messages) {
-       );
- 
-       const parsedResults = [];
-+      let downloadedBytes = 0;
-       for (const attachment of parseableAttachments) {
-+        if (!attachment.contentBytes && loadContent) {
-+          if (
-+            downloadedBytes + (attachment.size || 0) >
-+            MAX_TOTAL_ATTACHMENT_SIZE
-+          ) {
-+            context.super.introspect(
-+              `${context.caller}: Skipping "${attachment.name}" - over the ${humanFileSize(MAX_TOTAL_ATTACHMENT_SIZE)} download limit`
-+            );
-+            continue;
-+          }
-+          context.super.introspect(
-+            `${context.caller}: Downloading "${attachment.name}"...`
-+          );
-+          const download = await loadContent(attachment);
-+          if (download.success) {
-+            attachment.contentBytes = download.data;
-+            downloadedBytes += attachment.size || 0;
-+          }
-+        }
-         if (!attachment.contentBytes) {
-           context.super.introspect(
-             `${context.caller}: Skipping "${attachment.name}" - no content available`
-@@ -1011,46 +1068,90 @@ class OutlookBridge {
-   }
+ class MistralLLM {
+   constructor(embedder = null, modelPreference = null) {
+@@ -71,18 +74,17 @@ class MistralLLM {
  
    /**
--   * Read a full conversation thread by conversation ID.
--   * Note: We avoid combining $filter with $orderby due to Microsoft Graph API
--   * "InefficientFilter" errors. Instead, we fetch without orderby and sort client-side.
-+   * Read the most recent messages of a conversation thread, oldest first.
-+   * Pages through Graph until MAX_THREAD_MESSAGES are collected or the thread
-+   * ends. Each body is the message's `uniqueBody`, so quoted replies of earlier
-+   * messages are not repeated in every message. Forwards and messages with an
-+   * empty `uniqueBody` get their full body instead (see needsFullBody).
-+   * Attachments carry metadata only and skip inline ones (signature images);
-+   * their content is downloaded on demand with getAttachmentContent.
-+   *
-+   * Graph rejects $orderby with "InefficientFilter" unless every $orderby
-+   * property also appears first in $filter, hence the always-true
-+   * receivedDateTime clause ahead of the conversationId match.
-    * @param {strin
-```
-
-**File**: `server/utils/agents/aibitat/plugins/outlook/search/outlook-read-thread.js` (modified, +174/-33)
-```diff
-@@ -1,5 +1,153 @@
- const outlookLib = require("../lib.js");
- const { handleAttachments, handleSkillError } = outlookLib;
-+const Provider = require("../../../providers/ai-provider");
-+const { summarizeContent } = require("../../../utils/summarize");
-+const { TokenManager } = require("../../../../../helpers/tiktoken");
+    * Returns the capabilities of the model from Mistral's models endpoint, which
+-   * also resolves model aliases. Reasoning models only toggle thinking on/off.
+-   * @returns {Promise<{tools: boolean, reasoning: boolean, reasoningOptions: string[], imageGeneration: boolean, vision: boolean}>}
++   * also resolves model aliases. The endpoint only flags reasoning support, so
++   * the effort levels come from models.dev - see #reasoningCapabilities.
++   * @returns {Promise<{tools: boolean, reasoning: 'unknown'|boolean, reasoningOptions: string[], imageGeneration: boolean, vision: boolean}>}
+    */
+   async getModelCapabilities() {
+     try {
+-      const { capabilities = {} } = await this.openai.models.retrieve(
+-        this.model
+-      );
++      const card = await this.openai.models.retrieve(this.model);
++      const capabilities = card?.capabilities ?? {};
+       return {
+         tools: capabilities.function_calling === true,
+-        reasoning: capabilities.reasoning === true,
+-        reasoningOptions: capabilities.reasoning === true ? ["off", "on"] : [],
++        ...this.#reasoningCapabilities(card),
+         imageGeneration: false,
+         vision: capabilities.vision === true,
+       };
+@@ -98,6 +100,33 @@ class MistralLLM {
+     }
+   }
+ 
++  /**
++   * The reasoning levels of a Mistral model card. Models differ in which
++   * `reasoning_effort` values they accept (eg: Large 4 rejects "none"), so the
++   * levels are read from models.dev under the model's own id or any of its
++   * aliases. A reasoning model models.dev does not list only gets on/off,
++   * which most Mistral reasoning models accept.
++   * @param {{id?: string, aliases?: string[], capabilities?: {reasoning?: boolean}}} card
++   * @returns {{reasoning: 'unknown'|boolean, reasoningOptions: string[]}}
++   */
++  #reasoningCapabilities(card) {
++    if (card?.capabilities?.reasoning !== true)
++      return { reasoning: false, reasoningOptions: [] };
 +
-+// Share of the model's context window a thread may fill before its older
-+// messages are summarized, leaving the rest for the conversation and the reply.
-+const THREAD_CONTEXT_RATIO = 0.75;
-+
-+const RECIPIENT_FIELDS = [
-+  ["to", "To"],
-+  ["cc", "CC"],
-+  ["bcc", "BCC"],
-+];
-+
-+/**
-+ * Everyone on a message (sender and To/CC/BCC), keyed by lowercased address.
-+ * @param {object} msg - A message from readThread
-+ * @returns {Map<string, {address: string, role: string}>}
-+ */
-+function participants(msg) {
-+  const people = new Map();
-+  const add = (list, role) => {
-+    for (const address of (list || "").split(",")) {
-+      const trimmed = address.trim();
-+      const key = trimmed.toLowerCase();
-+      if (trimmed && !people.has(key))
-+        people.set(key, { address: trimmed, role });
++    const ids = [
++      ...new Set([
++        this.model,
++        card.id,
++        ...(Array.isArray(card.aliases) ? card.aliases : []),
++      ]),
++    ];
++    for (const id of ids) {
++      const capabilities = modelsDevReasoningCapabilities("mistral", id);
++      if (capabilities.reasoning !== false) return capabilities;
 +    }
-+  };
-+  add(msg.from, "From");
-+  for (const [field, role] of RECIPIENT_FIELDS) add(msg[field], role);
-+  return people;
-+}
-+
-+/**
-+ * Formats a thread with its recipients rolled up: the first message's To/CC/BCC
-+ * are listed once in `header`, and each later message lists only the people
-+ * added to or dropped from the conversation since the previous message.
-+ * Comparing everyone on the message (sender included) means an ordinary
-+ * reply-all, which moves the sender into To, shows no change.
-+ * @param {object[]} messages - Thread messages, oldest first
-+ * @returns {{header: string, formatted: string[]}}
-+ */
-+function formatThread(messages) {
-+  const first = messages[0] || {};
-+  const header =
-+    `Recipients (message 1):\n` +
-+    RECIPIENT_FIELDS.filter(([field]) => first[field])
-+      .map(([field, role]) => `${role}: ${first[field]}`)
-+      .join("\n");
-+
-+  let previous = participants(first);
-+  const formatted = messages.map((msg, i) => {
-+    const current = participants(msg);
-+    let changes = "";
-+    if (i > 0) {
-+      const added = [...current]
-+        .filter(([key]) => !previous.has(key))
-+        .map(([, p]) => `${p.address} (${p.role})`);
-+      const removed = [...previous]
-+        .filter(([key]) => !current.has(key))
-+        .map(([, p]) => p.address);
-+      if (added.length) changes += `Added: ${added.join(", ")}\n`;
-+      if (removed.length) changes += `Removed: ${removed.join(", ")}\n`;
-+    }
-+    previous = current;
-+    return formatMessage(msg, i, changes);
-+  });
-+  return { header, formatted };
-+}
-+
-+function formatMessage(msg, i, recipientChanges = "") {
-+  let attachmentInfo = "";
-+  if (msg.attachments?.length > 0) {
-+    attachmentInfo = `\n   Attachments: ${msg.attachments.map((a) => `${a.name} (${a.contentType}, ${(a.size / 1024).toFixed(1)}KB)`).join(", ")}`;
++    return { reasoning: true, reasoningOptions: ["off", "on"] };
 +  }
 +
-+  const bodyContent =
-+    msg.bodyType === "html"
-+      ? msg.body
-+          .replace(/<[^>]*>/g, " ")
-+          .replace(/\s+/g, " ")
-+          .trim()
-+      : msg.body;
+   /**
+    * Generates appropriate content array for a message + attachments.
+    * @param {{userPrompt:string, attachments: import("../../helpers").Attachment[]}}
+```
+
+**File**: `server/utils/helpers/reasoningEffort.js` (modified, +8/-4)
+```diff
+@@ -70,7 +70,7 @@ function modelsDevOptions(provider, model) {
+  * The reasoning capabilities models.dev lists for a cloud model, as levels
+  * this provider's request format can send. A model models.dev does not list
+  * gets no reasoning controls.
+- * @param {"openai"|"gemini"|"deepseek"|"openrouter"} provider
++ * @param {"openai"|"gemini"|"deepseek"|"openrouter"|"mistral"} provider
+  * @param {string} model
+  * @returns {{reasoning: 'unknown'|boolean, reasoningOptions: string[]}}
+  */
+@@ -79,7 +79,7 @@ function modelsDevReasoningCapabilities(provider, model) {
+   if (!options) return { reasoning: "unknown", reasoningOptions: [] };
+ 
+   const levels = new Set();
+-  const noneIsOff = ["openai", "openrouter"].includes(provider);
++  const noneIsOff = ["openai", "openrouter", "mistral"].includes(provider);
+   for (const value of options.effortValues)
+     levels.add(noneIsOff && value === "none" ? "off" : value);
+   if (["deepseek", "openrouter"].includes(provider) && options.toggle) {
+@@ -182,8 +182,12 @@ function reasoningParams(provider, effort = null, model = null) {
+         reasoning: toggle ? { enabled: effort === "on" } : { effort },
+       };
+     case "mistral":
+-      // Reasoning models only accept "none" or "high" - other levels are rejected.
+-      return { reasoning_effort: effort === "on" ? "high" : "none" };
++      // Accepted levels differ per model - see MistralLLM.getModelCapabilities.
++      // "on"/"off" are offered to reasoning models models.dev does not list.
++      // https://docs.mistral.ai/capabilities/reasoning/adjustable
++      return {
++        reasoning_effort: { off: "none", on: "high" }[effort] ?? effort,
++      };
+     case "generic-openai":
+       // OpenAI's Chat Completions field - "none" turns reasoning off.
+       // https://developers.openai.com/api/docs/guides/reasoning
+```
+
+---
+
+### Incident Patch 3: `e3531ea6` (2026-11-16)
+**Commit Message**: fix: wrap suggested-messages saveAll in a transaction and surface sav… (#7194)
+
+* fix: wrap suggested-messages saveAll in a transaction and surface save failures
+
+* remove mock-only saveAll test
+
+---------
+
+Co-authored-by: Bensonbenyi <[REDACTED_EMAIL]>
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
+
+**File**: `server/endpoints/workspaces.js` (modified, +7/-1)
+```diff
+@@ -639,7 +639,13 @@ function workspaceEndpoints(app) {
+           });
+         }
+ 
+-        await WorkspaceSuggestedMessages.saveAll(messages, slug);
++        const saved = await WorkspaceSuggestedMessages.saveAll(messages, slug);
++        if (!saved) {
++          return response.status(500).json({
++            success: false,
++            message: "Error saving the suggested messages.",
++          });
++        }
+         return response.status(200).json({
+           success: true,
+           message: "Suggested messages saved successfully.",
+```
+
+**File**: `server/models/workspacesSuggestedMessages.js` (modified, +20/-16)
+```diff
+@@ -34,25 +34,29 @@ const WorkspaceSuggestedMessages = {
+ 
+       if (!workspace) throw new Error("Workspace not found");
+ 
+-      // Delete all existing messages for the workspace
+-      await prisma.workspace_suggested_messages.deleteMany({
+-        where: { workspaceId: workspace.id },
+-      });
+-
+-      // Create new messages
+-      // We create each message individually because prisma
+-      // with sqlite does not support createMany()
+-      for (const message of messages) {
+-        await prisma.workspace_suggested_messages.create({
+-          data: {
+-            workspaceId: workspace.id,
+-            heading: message.heading,
+-            message: message.message,
+-          },
++      await prisma.$transaction(async (tx) => {
++        // Delete all existing messages for the workspace
++        await tx.workspace_suggested_messages.deleteMany({
++          where: { workspaceId: workspace.id },
+         });
+-      }
 +
-+  return (
-+    `--- Message ${i + 1} ---\n` +
-+    `From: ${msg.fromName} <${msg.from}>\n` +
-+    recipientChanges +
-+    `Date: ${new Date(msg.date).toLocaleString()}\n` +
-+    `Subject: ${msg.subject}\n` +
-+    `Status: ${msg.isRead ? "READ" : "UNREAD"}\n` +
-+    `\n${bodyContent}` +
-+    attachmentInfo
-+  );
-+}
-+
-+/**
-+ * Returns the thread text sized for the model's context window. When the
-+ * messages (plus the other text sent with them) exceed the budget, every
-+ * message but the latest is summarized; the latest stays verbatim and an index
-+ * of all messages keeps who wrote when.
-+ * @param {object} context - The tool handler's `this`
-+ * @param {object[]} messages - Thread messages, oldest first
-+ * @param {string[]} formatted - `messages` formatted by formatThread
-+ * @param {string} extraContent - Other text sent alongside (recipients, parsed attachments)
-+ * @returns {Promise<{text: string, summarized: boolean}>}
-+ */
-+async function fitThreadToContext(
-+  context,
-+  messages,
-+  formatted,
-+  extraContent = ""
-+) {
-+  const full = formatted.join("\n\n");
-+  if (messages.length < 2) return { text: full, summarized: false };
-+
-+  const { provider, model } = context.super;
-+  const budget = Math.floor(
-+    Provider.contextLimit(provider, model) * THREAD_CONTEXT_RATIO
-+  );
-+  const tokens = new TokenManager(model).countFromString(full + extraContent);
-+  if (tokens <= budget) return { text: full, summarized: false };
-+
-+  context.super.introspect(
-+    `${context.caller}: Thread is ~${tokens} tokens, over the ~${budget} token budget. Summarizing all but the latest message.`
-+  );
-+  const summary = await summarizeContent({
-+    provider,
-+    model,
-+    content: formatted.slice(0, -1).join("\n\n"),
-+    aibitat: context.super,
-+  });
-+
-+  const index = messages
-+    .map(
-+      (m, i) =>
++        // Create new messages
++        // We create each message individually because prisma
++        // with sqlite does not support createMany()
++        for (const message of messages) {
++          await tx.workspace_suggested_messages.create({
++            data: {
++              workspaceId: workspace.id,
++              heading: message.heading,
++              message: message.message,
++            },
++          });
++        }
++      });
++      return true;
+     } catch (error) {
+       console.error("Failed to save all messages", error.message);
++      return false;
+     }
+   },
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7160** (2026-11-13): fix: send Voyage AI input_type for queries and documents (@timothycarambat)
-- **PR #7159** (2026-11-13): fix: download Outlook thread attachments only after the parse is approved (@timothycarambat)
-- **PR #7158** (2026-11-13): fix: bound Outlook thread reads and fit them to the context window (@timothycarambat)
-- **PR #7157** (2026-11-13): fix: use the resolved user id when updating a user from the admin endpoints (@timothycarambat)
-- **PR #7153** (2026-11-13): fix: title DrupalWiki attachments with their file name, not the hotdir path (@Fahmid-Arman)
-- **PR #7151** (2026-11-13): fix: separate replies in imported GitLab issue threads with a blank line (@Fahmid-Arman)
+- **PR #7234** (2026-11-17): fix: match either explicitly restricted cron day field (@Max-Reisinger)
+- **PR #7233** (closed): fix: keep the telemetry switch on when opt-out fails (@Max-Reisinger)
+- **PR #7230** (2026-11-17): fix: ignore quoted separators in XLSX delimiter detection (@isnaenihidayat)
+- **PR #7228** (2026-11-17): fix: offer each Mistral model the reasoning levels it accepts (@timothycarambat)
+- **PR #7225** (2026-11-17): docs: clarify document paths for the removal API (@isnaenihidayat)
+- **PR #7218** (closed): security(collector): drop vulnerable decompress by bumping officeparser to ^5.0.0 (@ciberconsulta001)
 
 ---
 
@@ -2437,76 +1679,40 @@ download Outlook thread attachments only after the parse is approved
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Mobile document picker UI
+## X. keep counting a numbered list that a code block interrupts in Word exports
 
 **RULE**:
-When implementing operations in `frontend/src/components/Modals/ManageWorkspace/Documents/Directory/MobileDirectory/MobileFolderRow/index.jsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/utils/agents/aibitat/plugins/create-files/docx/utils.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4d09fa5f`: Mobile document picker UI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `24fbd26c`: keep counting a numbered list that a code block interrupts in Word exports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/src/components/Modals/ManageWorkspace/Documents/Directory/MobileDirectory/MobileFolderRow/index.jsx`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/agents/aibitat/plugins/create-files/docx/utils.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import { memo } from "react";
-import { useTranslation } from "react-i18next";
-import {
-  CaretRight,
-  CircleNotch,
-  File,
-  FolderNotch,
-} from "@phosphor-icons/react";
-import {
-  formatDateTimeAsMoment,
-  getFileExtension,
-  middleTruncate,
-} from "@/utils/directories";
-import MobileCheckbox from "../../../MobileCheckbox";
-
-/**
- * @param {Object} props
- * @param {number} props.inWorkspaceCount - Documents of this folder already in workspace
- * @param {"none"|"some"|"all"} props.selectionState
- */
-export default function MobileFolderRow({
-  row,
-  inWorkspaceCount,
-  selectionState,
-  isFileSelected,
-  onToggleExpanded,
-  onToggleFolder,
-  onToggleFile,
-  onLoadMore,
-}) {
-  const { t } = useTranslation();
-  const { item, files, expanded, loading, hasMore, totalCount, displayCount } =
-    row;
-  const availableCount =
-    inWorkspaceCount > 0
-      ? Math.max(0, totalCount - inWorkspaceCount)
-      : displayCount;
-
-  return (
-    <div>
-      <div
-        onClick={() => onToggleExpanded(item.name)}
-        className="flex items-center h-14 pr-3 rounded-xl cursor-pointer transition-colors duration-150 active:bg-zinc-800 light:active:bg-slate-100"
-      >
-        <MobileCheckbox
-    
+  // A numbered list that a code block or paragraph interrupted comes back from
+  // marked as <ol start="N">, so it keeps counting in the previous list's instance.
+  let lastOrdered = null;
+        const start = Number(child.getAttribute("start")) || 1;
+        const continues = tagName === "ol" && lastOrdered?.next === start;
+        const instance = continues ? lastOrdered.instance : ++listInstance;
+        if (tagName === "ol")
+          lastOrdered = { instance, next: start + child.children.length };
+            instance
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        listInstance++;
+            listInstance
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4d09fa5f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `24fbd26c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

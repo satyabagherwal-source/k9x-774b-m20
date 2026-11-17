@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T15:51:42.319Z",
+  "last_updated": "2026-11-17T16:00:03.307Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -1498,7 +1498,7 @@
       "staged_for_review": 0
     },
     "hf-dealignai-deepseek-v4.1-flash-1017-uncensored-fp8-learnings.md": {
-      "processed_at": "2026-11-13T03:48:36.400Z",
+      "processed_at": "2026-11-17T16:00:01.177Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1998,7 +1998,7 @@
       "staged_for_review": 0
     },
     "mintplex-labs-anything-llm-learnings.md": {
-      "processed_at": "2026-11-15T01:04:02.783Z",
+      "processed_at": "2026-11-17T16:00:01.594Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2233,7 +2233,7 @@
       "staged_for_review": 1
     },
     "bitterbot-ai-bitterbot-desktop-learnings.md": {
-      "processed_at": "2026-11-14T00:49:23.817Z",
+      "processed_at": "2026-11-17T16:00:02.518Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3333,7 +3333,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1611,
+  "total_dossiers_evaluated": 1614,
   "total_canonical_promoted": 322,
-  "total_staged_for_review": 1267
+  "total_staged_for_review": 1270
 }

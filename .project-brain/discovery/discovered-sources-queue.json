@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T15:43:54.374Z",
+  "updated_at": "2026-11-17T16:00:01.783Z",
   "stats": {
-    "total_discovered": 5033,
-    "approved_pending_harvest": 4745,
+    "total_discovered": 5035,
+    "approved_pending_harvest": 4747,
     "harvested_count": 0,
     "rejected_count": 288,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4734,
-      "OFFICIAL_DOCUMENTATION": 162,
+      "COMMUNITY_AND_EXPERT": 4735,
+      "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 20,
@@ -108731,6 +108731,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
         "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-402737D15997": {
+      "id": "SRC-402737D15997",
+      "url": "https://docs.mistral.ai/capabilities/reasoning/adjustable",
+      "title": "https://docs.mistral.ai/capabilities/reasoning/adjustable",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:00:01.737Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
+      }
+    },
+    "SRC-EC400E9E55DC": {
+      "id": "SRC-EC400E9E55DC",
+      "url": "https://developers.openai.com/api/docs/guides/reasoning",
+      "title": "https://developers.openai.com/api/docs/guides/reasoning",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:00:01.783Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
+        "fileName": "mintplex-labs-anything-llm-learnings.md"
       }
     }
   }
