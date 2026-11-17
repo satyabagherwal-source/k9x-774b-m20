@@ -5140,3 +5140,11 @@ https://github.com/yazinsai/OpenOats
 # --- Automatically Discovered by AI Scout Engine [2026-11-17T06:46:55.395Z] ---
 # [AI-AGENTS] mdiri-ai/SoduWork (981 score) - The AI-native engine for teams and their agents. Multi-harness, multi-agent, sel
 https://github.com/mdiri-ai/SoduWork
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-17T11:25:14.007Z] ---
+# [HUGGINGFACE-AI-MODELS] meituan-longcat/LongCat-Video-Avatar-1.6 (1685 score) - Verified Hugging Face Model: meituan-longcat/LongCat-Video-Avatar-1.6 (156 likes
+https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6
+# [HUGGINGFACE-AI-MODELS] nex-agi/Nex-N2.6 (2316 score) - Verified Hugging Face Model: nex-agi/Nex-N2.6 (140 likes, 916 downloads)
+https://huggingface.co/nex-agi/Nex-N2.6
+# [HUGGINGFACE-AI-MODELS] maxwell-model/Maxwell-V1-Flash (1247 score) - Verified Hugging Face Model: maxwell-model/Maxwell-V1-Flash (96 likes, 287 downl
+https://huggingface.co/maxwell-model/Maxwell-V1-Flash

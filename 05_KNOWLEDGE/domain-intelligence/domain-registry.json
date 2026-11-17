@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T11:10:02.320Z",
-  "total_records": 1525,
+  "last_updated": "2026-11-17T11:27:16.988Z",
+  "total_records": 1534,
   "domains": {
     "A": {
       "total": 11,
@@ -47,7 +47,7 @@
       ]
     },
     "D": {
-      "total": 627,
+      "total": 636,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -675,7 +675,16 @@
         "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-embedding-0-6b-learnings-core-inva",
         "DOM-D-C917D98C",
         "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
+        "domain_intelligence-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-maxwell-model-maxwell-v1-flash-core-invariants",
+        "DOM-D-5CFF0AF4",
+        "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-video-avatar-1-6-lear",
+        "DOM-D-1453C5CA",
+        "domain_intelligence-research-knowledge-intelligence-hf-nex-agi-nex-n2-6-learnings-core-invariants",
+        "DOM-D-4085BE40",
+        "domain_intelligence-research-knowledge-intelligence-hf-maxwell-model-maxwell-v1-flash-learnings-core"
       ]
     },
     "E": {
@@ -7919,8 +7928,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "9a2baf99021934416110cbbd3454fff732ebe720df7e8f438f3e89f1ae9d6456",
-      "created_at": "2026-11-16T04:17:57.311Z"
+      "content_hash": "3ae19679763e1c59704f1edb8115894ca8911c3aaaef70dacbf25fdb34bbb39e",
+      "created_at": "2026-11-17T11:25:33.573Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -15288,8 +15297,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "6231f59a333ee0f97ca32cb59798de8653b2675ee2ccaebe9fcfb5349e31af1f",
-      "created_at": "2026-11-17T07:20:19.861Z"
+      "content_hash": "e7301aa0fef46e96b10414ef00dea7d180a1949d6f5a27e082c5ee0092da2277",
+      "created_at": "2026-11-17T11:25:40.032Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -26523,6 +26532,186 @@
       "repository": "zama-ai-tfhe-rs-learnings",
       "content_hash": "cbda81037bcaa502de095098b97ef0b9fb763f4895a6fdb9f530610acfedaee5",
       "created_at": "2026-11-17T11:10:01.836Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: meituan-longcat/LongCat-Video-Avatar-1.6 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meituan-longcat-longcat-video-avatar-1-6-research-knowledge-intelligence-meit.md",
+      "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
+      "content_hash": "1ebac0ea832260ed4216f805e2fd671236d8a3623b5800f22c850b9ce40de212",
+      "created_at": "2026-11-17T11:25:20.706Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nex-agi/Nex-N2.6 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nex-agi-nex-n2-6-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invari.md",
+      "repository": "nex-agi/Nex-N2.6",
+      "content_hash": "08d6d3a2f695595797f3dc4ab41c54372e2d186412569a444382623207f79f9f",
+      "created_at": "2026-11-17T11:25:23.090Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-maxwell-model-maxwell-v1-flash-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-maxwell-model-maxwell-v1-flash-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: maxwell-model/Maxwell-V1-Flash Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-maxwell-model-maxwell-v1-flash-research-knowledge-intelligence-maxwell-model-.md",
+      "repository": "maxwell-model/Maxwell-V1-Flash",
+      "content_hash": "026295e458d58804e5518c5870ac3e66127e4ae1beca8b67d44afbc5214a41db",
+      "created_at": "2026-11-17T11:25:25.619Z"
+    },
+    "DOM-D-5CFF0AF4": {
+      "record_id": "DOM-D-5CFF0AF4",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): meituan-longcat/LongCat-Video-Avatar-1.6",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6](https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6))  \n> **Source Version**: `",
+      "content_hash": "033f9fd526a3c2b4bc16f21e9040b60e65ac6ea2a073135111144137ac8be364",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md`  \n> **Source**: huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-meituan-longcat-longcat-video-avatar-1.6/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T11:25:42.929Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meituan-longcat-longcat-video-avatar-1.6)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-meituan-longcat-longcat-video-avatar-1.6"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T11:26:09.498Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-video-avatar-1-6-lear": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-video-avatar-1-6-lear",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-meituan-longcat-longcat-video-avatar-1.6-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meituan-longcat-longcat-video-avatar-1-6-learnings-research-knowledge-intelli.md",
+      "repository": "hf-meituan-longcat-longcat-video-avatar-1.6-learnings",
+      "content_hash": "609ee2221a685e1d8917a71d1575bacebfaeb0318e4fef4bfa64d156c6bc6960",
+      "created_at": "2026-11-17T11:26:09.736Z"
+    },
+    "DOM-D-1453C5CA": {
+      "record_id": "DOM-D-1453C5CA",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): nex-agi/Nex-N2.6",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/nex-agi/Nex-N2.6](https://huggingface.co/nex-agi/Nex-N2.6))  \n> **Source Version**: `hf-nex-agi-n`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-",
+      "content_hash": "3ae8db5e481504af0d5ca85ad6efadb92d5dfe2704e61910607c3abbea4eed6a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md`  \n> **Source**: huggingface ([https://huggingface. -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md`  \n> **Source**: huggingface ([https://huggingface.",
+      "provenance": {
+        "source_uri": "project://hf-nex-agi-nex-n2.6/hf-nex-agi-nex-n2.6-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T11:26:09.892Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nex-agi-nex-n2.6)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-nex-agi-nex-n2.6"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T11:26:41.916Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nex-agi-nex-n2-6-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nex-agi-nex-n2-6-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nex-agi-nex-n2.6-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nex-agi-nex-n2-6-learnings-research-knowledge-intelligence-hf-nex-agi-nex-n2-.md",
+      "repository": "hf-nex-agi-nex-n2.6-learnings",
+      "content_hash": "f8e14dd7ac7a155e3ab0bfd08138cc89d8004e199abf38e97a571dfdcd2338f8",
+      "created_at": "2026-11-17T11:26:42.143Z"
+    },
+    "DOM-D-4085BE40": {
+      "record_id": "DOM-D-4085BE40",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): maxwell-model/Maxwell-V1-Flash",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/maxwell-model/Maxwell-V1-Flash](https://huggingface.co/maxwell-model/Maxwell-V1-Flash))  \n> **Source Version**: `hf-maxwell-m`  \n> **License**:",
+      "content_hash": "bb235bd733f4a6ead4208da3aa1f9af74c89a7b555fd0d4daf648607a4e7a986",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md`  \n> **Source**: huggingface ([https:",
+      "provenance": {
+        "source_uri": "project://hf-maxwell-model-maxwell-v1-flash/hf-maxwell-model-maxwell-v1-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T11:26:42.302Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-maxwell-model-maxwell-v1-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-maxwell-model-maxwell-v1-flash"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T11:27:16.737Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-maxwell-model-maxwell-v1-flash-learnings-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-maxwell-model-maxwell-v1-flash-learnings-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-maxwell-model-maxwell-v1-flash-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-maxwell-model-maxwell-v1-flash-learnings-research-knowledge-intelligence-hf-m.md",
+      "repository": "hf-maxwell-model-maxwell-v1-flash-learnings",
+      "content_hash": "63920ed04173dcd1c3ba91d1e5e595508b9a8da175deb0b4e192b2b7727cd146",
+      "created_at": "2026-11-17T11:27:16.988Z"
     }
   }
 }

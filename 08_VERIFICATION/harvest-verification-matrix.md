@@ -10530,3 +10530,11 @@
 | `CYCLE-20261117-BLI0` | `2026-11-17T11:09:41.400Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | Yes (`09723e7f...`) |
 | `CYCLE-20261117-BSSV` | `2026-11-17T11:09:50.863Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8957` | Yes (`4c78a8bd...`) |
 | `CYCLE-20261117-BY5K` | `2026-11-17T11:09:57.800Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8958` | Yes (`1898eaeb...`) |
+| `CYCLE-20261117-VQ53` | `2026-11-17T11:25:20.535Z` | `meituan-longcat/LongCat-Video-Avatar-1.6` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md` | Yes (`77084bf0...`) |
+| `CYCLE-20261117-VRZ8` | `2026-11-17T11:25:22.916Z` | `nex-agi/Nex-N2.6` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md` | Yes (`73d0fb5b...`) |
+| `CYCLE-20261117-VTXK` | `2026-11-17T11:25:25.448Z` | `maxwell-model/Maxwell-V1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md` | Yes (`20114d4e...`) |
+| `CYCLE-20261117-VZYW` | `2026-11-17T11:25:33.272Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4898` | Yes (`6f200f5e...`) |
+| `CYCLE-20261117-W4XS` | `2026-11-17T11:25:39.712Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`f592b8bf...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T11:26:09.516Z` | `hf-meituan-longcat-longcat-video-avatar-1.6` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5CFF0AF4` [Domain D] | Yes (`033f9fd5...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T11:26:41.933Z` | `hf-nex-agi-nex-n2.6` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1453C5CA` [Domain D] | Yes (`3ae8db5e...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T11:27:16.768Z` | `hf-maxwell-model-maxwell-v1-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4085BE40` [Domain D] | Yes (`bb235bd7...`) |

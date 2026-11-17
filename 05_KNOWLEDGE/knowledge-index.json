@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T11:10:02.428Z",
-  "total_verified_learnings": 8876,
+  "last_updated": "2026-11-17T11:27:16.988Z",
+  "total_verified_learnings": 8879,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20111,
+  "total_items": 20122,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -78822,15 +78822,15 @@
       "learning_id": "rule-4898",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 4898,
-      "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14699)",
+      "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "6b3bd71c",
+      "source_version": "c8c221d2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-27T16:31:38.451Z"
+      "verified_at": "2026-11-17T11:25:33.109Z"
     },
     "rule-4899": {
       "learning_id": "rule-4899",
@@ -113269,10 +113269,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "afcac4f0",
-      "content_hash": "9a2baf99021934416110cbbd3454fff732ebe720df7e8f438f3e89f1ae9d6456",
+      "source_version": "c8c221d2",
+      "content_hash": "3ae19679763e1c59704f1edb8115894ca8911c3aaaef70dacbf25fdb34bbb39e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T04:17:57.311Z"
+      "persisted_at": "2026-11-17T11:25:33.573Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113281,10 +113281,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "afcac4f0",
-      "content_hash": "18ca36060c5734b47a61999deb72a5ac2d9a8c0c6c3d7332563705c6f3e82d76",
+      "source_version": "c8c221d2",
+      "content_hash": "6d03dfda4ca0a3e00ec93d33028f5eb840e16b3024011d070da5ba0ab520c0e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T04:17:57.455Z"
+      "persisted_at": "2026-11-17T11:25:33.699Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -227849,8 +227849,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "92cbd316",
-      "content_hash": "d8cf873c8778e59d3e419f78c566e6b6b1cc179ebb966371c35c67942691c59e",
+      "source_version": "f9c95d84",
+      "content_hash": "f592b8bf74bdb32d44768135f739e63ac4ff624336ac4d34115f2eb05e2400ee",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -227920,7 +227920,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T07:20:19.446Z",
+      "verified_at": "2026-11-17T11:25:39.545Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227974,10 +227974,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "92cbd316",
-      "content_hash": "547447895b2bde95da1ea40720b3a93289f1690bab8eaa84c5ff163e6b370da3",
+      "source_version": "f9c95d84",
+      "content_hash": "d7f8db274a984016b2b668e7d0893bef3cacf45faeb72c64726848dd4e600bf1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:20:19.969Z"
+      "persisted_at": "2026-11-17T11:25:40.158Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -229442,10 +229442,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "92cbd316",
-      "content_hash": "6231f59a333ee0f97ca32cb59798de8653b2675ee2ccaebe9fcfb5349e31af1f",
+      "source_version": "f9c95d84",
+      "content_hash": "e7301aa0fef46e96b10414ef00dea7d180a1949d6f5a27e082c5ee0092da2277",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T07:20:19.861Z"
+      "persisted_at": "2026-11-17T11:25:40.032Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
@@ -236011,11 +236011,16 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "afcac4f0",
-      "content_hash": "27900d23b861f41d6cc25b4255d03d4b11829af10332d5389f6932bae3b09dc0",
+      "source_version": "c8c221d2",
+      "content_hash": "6f200f5ef41ea32d2b618b8a14e49ecb317d6b23a3e9810eee5105ad667f1116",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
+        {
+          "number": 4898,
+          "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8539,
           "title": "build(deps): bump gradle-wrapper",
@@ -236032,7 +236037,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T04:17:56.762Z",
+      "verified_at": "2026-11-17T11:25:33.109Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269172,6 +269177,183 @@
       "content_hash": "f53fdde4028a04ce62e8703456f3424096d3de8fd14158e12363010a4e1dc719",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T11:10:01.945Z"
+    },
+    "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6": {
+      "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "meituan-longcat/LongCat-Video-Avatar-1.6",
+      "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
+      "slug": "hf-meituan-longcat-longcat-video-avatar-1.6",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6",
+      "source_version": "hf-meituan-longcat-longcat-video-avatar-1.6",
+      "content_hash": "77084bf06e4435ef650ddd8e84e11fe046dc4784e1f27ece083b04a3f79ae2cf",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T11:25:20.351Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meituan-longcat-longcat-video-avatar-1-6-research-knowledge-intelligence-meit.md",
+      "title": "Research & Knowledge Intelligence: meituan-longcat/LongCat-Video-Avatar-1.6 Core Invariants",
+      "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
+      "source_version": "hf-meituan-longcat-longcat-video-avatar-1.6",
+      "content_hash": "1ebac0ea832260ed4216f805e2fd671236d8a3623b5800f22c850b9ce40de212",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T11:25:20.706Z"
+    },
+    "learn-huggingface-nex-agi-nex-n2-6": {
+      "learning_id": "learn-huggingface-nex-agi-nex-n2-6",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nex-agi/Nex-N2.6",
+      "repository": "nex-agi/Nex-N2.6",
+      "slug": "hf-nex-agi-nex-n2.6",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nex-agi/Nex-N2.6",
+      "source_version": "hf-nex-agi-nex-n2.6",
+      "content_hash": "73d0fb5b69299908bc64d9118435bb3e30f7c2099bf994976f82d97b6d2bce64",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T11:25:22.734Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nex-agi-nex-n2-6-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invari.md",
+      "title": "Research & Knowledge Intelligence: nex-agi/Nex-N2.6 Core Invariants",
+      "repository": "nex-agi/Nex-N2.6",
+      "source_version": "hf-nex-agi-nex-n2.6",
+      "content_hash": "08d6d3a2f695595797f3dc4ab41c54372e2d186412569a444382623207f79f9f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T11:25:23.090Z"
+    },
+    "learn-huggingface-maxwell-model-maxwell-v1-flash": {
+      "learning_id": "learn-huggingface-maxwell-model-maxwell-v1-flash",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "maxwell-model/Maxwell-V1-Flash",
+      "repository": "maxwell-model/Maxwell-V1-Flash",
+      "slug": "hf-maxwell-model-maxwell-v1-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/maxwell-model/Maxwell-V1-Flash",
+      "source_version": "hf-maxwell-model-maxwell-v1-flash",
+      "content_hash": "20114d4e199021e13656054101acf9bb26d5ecc5f579c7d7fee39ea906cb92f3",
+      "dossier_path": "07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T11:25:25.260Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-maxwell-model-maxwell-v1-flash-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-maxwell-model-maxwell-v1-flash-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-maxwell-model-maxwell-v1-flash-research-knowledge-intelligence-maxwell-model-.md",
+      "title": "Research & Knowledge Intelligence: maxwell-model/Maxwell-V1-Flash Core Invariants",
+      "repository": "maxwell-model/Maxwell-V1-Flash",
+      "source_version": "hf-maxwell-model-maxwell-v1-flash",
+      "content_hash": "026295e458d58804e5518c5870ac3e66127e4ae1beca8b67d44afbc5214a41db",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T11:25:25.619Z"
+    },
+    "candidate_directive-build-deps-ui-bump-filesize-in-server-src-main-webapp-web-inf-rails": {
+      "item_id": "candidate_directive-build-deps-ui-bump-filesize-in-server-src-main-webapp-web-inf-rails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W03X-build-deps-ui-bump-filesize-in-server-src-main-webapp-web-inf-rails.md",
+      "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails",
+      "repository": "gocd/gocd",
+      "source_version": "c8c221d2",
+      "content_hash": "c25857fa34a6f49eab7f5b58103c46fa0d00b6c9f4d62d96722f1d6fe82a9847",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T11:25:33.453Z"
+    },
+    "candidate_directive-nuc-112-node-names-of-reasoning-selections": {
+      "item_id": "candidate_directive-nuc-112-node-names-of-reasoning-selections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W53C-nuc-112-node-names-of-reasoning-selections.md",
+      "title": "NUC 112 Node Names of Reasoning Selections",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "f9c95d84",
+      "content_hash": "4b84deba6d5a2ed78757af792f8cf44a7c3fcb250891514a1a7caf0e8bc1f10d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T11:25:39.915Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-video-avatar-1-6-lear": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-video-avatar-1-6-lear",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meituan-longcat-longcat-video-avatar-1-6-learnings-research-knowledge-intelli.md",
+      "title": "Research & Knowledge Intelligence: hf-meituan-longcat-longcat-video-avatar-1.6-learnings Core Invariants",
+      "repository": "hf-meituan-longcat-longcat-video-avatar-1.6-learnings",
+      "source_version": "HEAD",
+      "content_hash": "609ee2221a685e1d8917a71d1575bacebfaeb0318e4fef4bfa64d156c6bc6960",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T11:26:09.736Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nex-agi-nex-n2-6-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nex-agi-nex-n2-6-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nex-agi-nex-n2-6-learnings-research-knowledge-intelligence-hf-nex-agi-nex-n2-.md",
+      "title": "Research & Knowledge Intelligence: hf-nex-agi-nex-n2.6-learnings Core Invariants",
+      "repository": "hf-nex-agi-nex-n2.6-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f8e14dd7ac7a155e3ab0bfd08138cc89d8004e199abf38e97a571dfdcd2338f8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T11:26:42.143Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-maxwell-model-maxwell-v1-flash-learnings-core": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-maxwell-model-maxwell-v1-flash-learnings-core",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-maxwell-model-maxwell-v1-flash-learnings-research-knowledge-intelligence-hf-m.md",
+      "title": "Research & Knowledge Intelligence: hf-maxwell-model-maxwell-v1-flash-learnings Core Invariants",
+      "repository": "hf-maxwell-model-maxwell-v1-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "63920ed04173dcd1c3ba91d1e5e595508b9a8da175deb0b4e192b2b7727cd146",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T11:27:16.988Z"
     }
   },
   "ai-builder-brain": {

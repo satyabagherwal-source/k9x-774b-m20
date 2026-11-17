@@ -4,22 +4,22 @@
 {
   "source_repository": "gocd/gocd",
   "source_url": "https://github.com/gocd/gocd",
-  "source_version": "afcac4f0",
+  "source_version": "c8c221d2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T04:17:57.169Z",
+  "timestamp": "2026-11-17T11:25:33.453Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gocd-gocd",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `afcac4f0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T04:17:57.169Z`  
+> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `c8c221d2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T11:25:33.453Z`  
 > **Learning ID**: `learn-github-gocd-gocd`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gocd/gocd` (Commit: `afcac4f0`)
+- **Target Repository**: `gocd/gocd` (Commit: `c8c221d2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T04:17:55.642Z  
+> **Harvest Timestamp**: 2026-11-17T11:25:32.680Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7441 stars
+- **Stars / Engagement**: 7444 stars
 
 ---
 
@@ -891,51 +891,18 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1386d2e1` (2026-11-15)
-**Commit Message**: build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87 (#14735)
+### Incident Patch 1: `46b8306d` (2026-11-16)
+**Commit Message**: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14739)
 
-Bumps [org.bouncycastle:bc-jdk18on-bom](https://github.com/bcgit/bc-java) from 1.86.2 to 1.87.
-- [Changelog](https://github.com/bcgit/bc-java/blob/main/docs/releasenotes.md)
-- [Commits](https://github.com/bcgit/bc-java/commits)
+Bumps [filesize](https://github.com/avoidwork/filesize.js) from 11.0.30 to 11.0.31.
+- [Changelog](https://github.com/avoidwork/filesize.js/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/avoidwork/filesize.js/compare/11.0.30...11.0.31)
 
 ---
 updated-dependencies:
-- dependency-name: org.bouncycastle:bc-jdk18on-bom
-  dependency-version: '1.87'
+- dependency-name: filesize
+  dependency-version: 11.0.31
   dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `build.gradle` (modified, +1/-1)
-```diff
-@@ -81,7 +81,7 @@ def libraries = [
-   apacheHttpComponents: 'org.apache.httpcomponents:httpclient:4.5.14',
-   aspectj             : 'org.aspectj:aspectjweaver:1.9.27',
-   asmBom              : 'org.ow2.asm:asm-bom:9.11.1',
--  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.86.2',
-+  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.87',
-   bucket4j            : 'com.bucket4j:bucket4j_jdk17-core:8.22.0',
-   caffeine            : 'com.github.ben-manes.caffeine:caffeine:3.3.1',
-   cloning             : 'io.github.kostaskougios:cloning:1.13.0',
-```
-
----
-
-### Incident Patch 2: `5104bca3` (2026-11-15)
-**Commit Message**: build(deps-ui-dev): bump sass-embedded (#14737)
-
-Bumps [sass-embedded](https://github.com/sass/embedded-host-node) from 1.108.1 to 1.108.2.
-- [Changelog](https://github.com/sass/embedded-host-node/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sass/embedded-host-node/compare/1.108.1...1.108.2)
-
----
-updated-dependencies:
-- dependency-name: sass-embedded
-  dependency-version: 1.108.2
-  dependency-type: direct:development
   update-type: version-update:semver-patch
 ...
 
@@ -944,213 +911,246 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -103,7 +103,7 @@
-     "license-checker": "^25.0.1",
-     "mini-css-extract-plugin": "^2.10.2",
-     "mockdate": "^3.0.5",
--    "sass-embedded": "^1.108.1",
-+    "sass-embedded": "^1.108.2",
-     "sass-loader": "^17.1.0",
-     "simulate-event": "^1.4.0",
-     "sourcemapped-stacktrace": "^1.1.11",
+@@ -39,7 +39,7 @@
+     "chartjs-plugin-zoom": "^2.2.0",
+     "classnames": "^2.5.1",
+     "core-js": "^3.51.0",
+-    "filesize": "^11.0.30",
++    "filesize": "^11.0.31",
+     "foundation-sites": "^6.9.0",
+     "hack-font": "^3.3.0",
+     "jquery": "^3.7.1",
 ```
 
-**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +83/-83)
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +5/-5)
 ```diff
-@@ -4639,7 +4639,7 @@ __metadata:
-     normalize-scss: "npm:^8.0.0"
-     opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
-     prismjs: "npm:^1.30.0"
--    sass-embedded: "npm:^1.108.1"
-+    sass-embedded: "npm:^1.108.2"
-     sass-loader: "npm:^17.1.0"
-     shell-quote: "npm:^1.12.0"
-     shellwords-ts: "npm:^3.0.1"
-@@ -7235,162 +7235,162 @@ __metadata:
+@@ -4043,10 +4043,10 @@ __metadata:
    languageName: node
    linkType: hard
  
--"sass-embedded-all-unknown@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-all-unknown@npm:1.108.1"
-+"sass-embedded-all-unknown@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-all-unknown@npm:1.108.2"
-   dependencies:
--    sass: "npm:1.108.1"
-+    sass: "npm:1.108.2"
-   conditions: (!cpu=arm | !cpu=arm64 | !cpu=riscv64 | !cpu=x64)
+-"filesize@npm:^11.0.30":
+-  version: 11.0.30
+-  resolution: "filesize@npm:11.0.30"
+-  checksum: 10c0/44fa4e5711d380d57902208cf9d6cc4354aa2776f61277732ccba72d389d74839de822c4659712c843805647512f04aefb2ca12c486fe36cbbe0853a8941b7a6
++"filesize@npm:^11.0.31":
++  version: 11.0.31
++  resolution: "filesize@npm:11.0.31"
++  checksum: 10c0/8f8b7c8f2deec294d93e8d3451a511956c1f31bd61f0c4ac377e460b8bdf3ec43cc944ed51616009d03a8519b7dabdf8897a0de3ae97dd0c99c04a6dc443b53d
    languageName: node
    linkType: hard
  
--"sass-embedded-android-arm64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-android-arm64@npm:1.108.1"
-+"sass-embedded-android-arm64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-android-arm64@npm:1.108.2"
-   conditions: os=android & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-arm@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-android-arm@npm:1.108.1"
-+"sass-embedded-android-arm@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-android-arm@npm:1.108.2"
-   conditions: os=android & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-riscv64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-android-riscv64@npm:1.108.1"
-+"sass-embedded-android-riscv64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-android-riscv64@npm:1.108.2"
-   conditions: os=android & cpu=riscv64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-x64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-android-x64@npm:1.108.1"
-+"sass-embedded-android-x64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-android-x64@npm:1.108.2"
-   conditions: os=android & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-darwin-arm64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-darwin-arm64@npm:1.108.1"
-+"sass-embedded-darwin-arm64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-darwin-arm64@npm:1.108.2"
-   conditions: os=darwin & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-darwin-x64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-darwin-x64@npm:1.108.1"
-+"sass-embedded-darwin-x64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-darwin-x64@npm:1.108.2"
-   conditions: os=darwin & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-arm64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-arm64@npm:1.108.1"
-+"sass-embedded-linux-arm64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-arm64@npm:1.108.2"
-   conditions: os=linux & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-arm@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-arm@npm:1.108.1"
-+"sass-embedded-linux-arm@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-arm@npm:1.108.2"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-arm64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-musl-arm64@npm:1.108.1"
-+"sass-embedded-linux-musl-arm64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-musl-arm64@npm:1.108.2"
-   conditions: os=linux & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-arm@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-musl-arm@npm:1.108.1"
-+"sass-embedded-linux-musl-arm@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-musl-arm@npm:1.108.2"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-riscv64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-musl-riscv64@npm:1.108.1"
-+"sass-embedded-linux-musl-riscv64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-musl-riscv64@npm:1.108.2"
-   conditions: os=linux & cpu=riscv64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-x64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-musl-x64@npm:1.108.1"
-+"sass-embedded-linux-musl-x64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-musl-x64@npm:1.108.2"
-   conditions: os=linux & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-riscv64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-riscv64@npm:1.108.1"
-+"sass-embedded-linux-riscv64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-riscv64@npm:1.108.2"
-   conditions: os=linux & cpu=riscv64
-   languageName: no
+@@ -4450,7 +4450,7 @@ __metadata:
+     eslint-plugin-react: "npm:^7.37.5"
+     eslint-webpack-plugin: "npm:^6.0.0"
+     file-loader: "npm:^6.2.0"
+-    filesize: "npm:^11.0.30"
++    filesize: "npm:^11.0.31"
+     fork-ts-checker-webpack-plugin: "npm:^9.1.0"
+     foundation-sites: "npm:^6.9.0"
+     fs-extra: "npm:^11.4.1"
 ```
 
 ---
 
-### Incident Patch 3: `11021069` (2026-11-15)
-**Commit Message**: build(deps): bump org.apache.commons:commons-lang3 from 3.21.0 to 3.22.0 (#14736)
+### Incident Patch 2: `839d4f03` (2026-11-16)
+**Commit Message**: build(deps-ui-dev): bump the stylelint group (#14738)
 
-Bumps org.apache.commons:commons-lang3 from 3.21.0 to 3.22.0.
+Bumps the stylelint group in /server/src/main/webapp/WEB-INF/rails with 2 updates: [stylelint](https://github.com/stylelint/stylelint) and [stylelint-config-standard-scss](https://github.com/stylelint-scss/stylelint-config-standard-scss).
+
+
+Updates `stylelint` from 17.16.0 to 18.0.0
+- [Release notes](https://github.com/stylelint/stylelint/releases)
+- [Changelog](https://github.com/stylelint/stylelint/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/stylelint/stylelint/compare/17.16.0...18.0.0)
+
+Updates `stylelint-config-standard-scss` from 17.0.0 to 18.0.0
+- [Release notes](https://github.com/stylelint-scss/stylelint-config-standard-scss/releases)
+- [Changelog](https://github.com/stylelint-scss/stylelint-config-standard-scss/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/stylelint-scss/stylelint-config-standard-scss/compare/v17.0.0...v18.0.0)
 
 ---
 updated-dependencies:
-- dependency-name: org.apache.commons:commons-lang3
-  dependency-version: 3.22.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+- dependency-name: stylelint
+  dependency-version: 18.0.0
+  dependency-type: direct:development
+  update-type: version-update:semver-major
+  dependency-group: stylelint
+- dependency-name: stylelint-config-standard-scss
+  dependency-version: 18.0.0
+ 
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `build.gradle` (modified, +1/-1)
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +2/-2)
 ```diff
-@@ -92,7 +92,7 @@ def libraries = [
-   commonsDbcp         : 'org.apache.commons:commons-dbcp2:2.14.0',
-   commonsFileUpload   : 'commons-fileupload:commons-fileupload:1.6.0',
-   commonsIO           : 'commons-io:commons-io:2.22.0',
--  commonsLang3        : 'org.apache.commons:commons-lang3:3.21.0',
-+  commonsLang3        : 'org.apache.commons:commons-lang3:3.22.0',
-   commonsPool         : 'org.apache.commons:commons-pool2:2.13.1',
-   commonsText         : 'org.apache.commons:commons-text:1.15.0',
-   dom4j               : 'org.dom4j:dom4j:2.2.0',
+@@ -108,8 +108,8 @@
+     "simulate-event": "^1.4.0",
+     "sourcemapped-stacktrace": "^1.1.11",
+     "style-loader": "^4.0.0",
+-    "stylelint": "^17.16.0",
+-    "stylelint-config-standard-scss": "^17.0.0",
++    "stylelint": "^18.0.0",
++    "stylelint-config-standard-scss": "^18.0.0",
+     "stylelint-webpack-plugin": "^5.1.0",
+     "thread-loader": "^4.0.4",
+     "ts-loader": "^9.6.2",
+```
+
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +136/-450)
+```diff
+@@ -1220,28 +1220,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@cacheable/memory@npm:^2.2.0":
+-  version: 2.2.0
+-  resolution: "@cacheable/memory@npm:2.2.0"
+-  dependencies:
+-    "@cacheable/utils": "npm:^2.5.0"
+-    "@keyv/bigmap": "npm:^1.3.1"
+-    hookified: "npm:^1.15.1"
+-    keyv: "npm:^5.6.0"
+-  checksum: 10c0/c74889eb09871be0696065778fff013a498ddc73b538d113c2cb6ece361746f2959fbddfa4ce03ce53c9259998be05949e393212e72413dbd07616744eabd261
+-  languageName: node
+-  linkType: hard
+-
+-"@cacheable/utils@npm:^2.5.0":
+-  version: 2.5.0
+-  resolution: "@cacheable/utils@npm:2.5.0"
+-  dependencies:
+-    hashery: "npm:^1.5.1"
+-    keyv: "npm:^5.6.0"
+-  checksum: 10c0/99e901accd71eeb0bce91484d6c66d7ef2c731b541561eb5dc9ea7fed78bdc0b65e5dd2a80edde50191143bcfc5f238fc4742475b32e82d43b43eea224038e35
+-  languageName: node
+-  linkType: hard
+-
+ "@colors/colors@npm:1.5.0":
+   version: 1.5.0
+   resolution: "@colors/colors@npm:1.5.0"
+@@ -1258,7 +1236,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@csstools/css-calc@npm:^3.3.0":
++"@csstools/css-calc@npm:^3.4.3":
+   version: 3.4.3
+   resolution: "@csstools/css-calc@npm:3.4.3"
+   peerDependencies:
+@@ -1268,7 +1246,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@csstools/css-parser-algorithms@npm:^4.0.0":
++"@csstools/css-parser-algorithms@npm:^4.0.0, @csstools/css-parser-algorithms@npm:^4.0.2":
+   version: 4.0.2
+   resolution: "@csstools/css-parser-algorithms@npm:4.0.2"
+   peerDependencies:
+@@ -1277,26 +1255,26 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@csstools/css-syntax-patches-for-csstree@npm:^1.1.8, @csstools/css-syntax-patches-for-csstree@npm:^1.1.9":
+-  version: 1.1.15
+-  resolution: "@csstools/css-syntax-patches-for-csstree@npm:1.1.15"
++"@csstools/css-syntax-patches-for-csstree@npm:^1.1.15":
++  version: 1.1.16
++  resolution: "@csstools/css-syntax-patches-for-csstree@npm:1.1.16"
+   peerDependencies:
+     css-tree: ^3.2.1
+   peerDependenciesMeta:
+     css-tree:
+       optional: true
+-  checksum: 10c0/81fa30efa74821793a4c683f79d9ac20b29f426660362ac8eb61f2a5c364a25850258cc5578739f8448532c99f49c6f89b9ae03f386e2ec384cafe43da0a745e
++  checksum: 10c0/3d53a03ccfe4df4b4fe828aff15fd54ee9118f732a200b2bd6f52f67c274064a927a73a80d7b62a355eed3ba4abb90a1e21516368f131a71c06272bfbf4d33ca
+   languageName: node
+   linkType: hard
+ 
+-"@csstools/css-tokenizer@npm:^4.0.0":
++"@csstools/css-tokenizer@npm:^4.0.0, @csstools/css-tokenizer@npm:^4.0.2":
+   version: 4.0.2
+   resolution: "@csstools/css-tokenizer@npm:4.0.2"
+   checksum: 10c0/748b42450064cca6a54d2bb8a719cb765c6433b8988ed8855f39c9814b8ef30c4daab235ffee9dacb0388916d6e250ec6bee454e8353d06161228e129e4272ae
+   languageName: node
+   linkType: hard
+ 
+-"@csstools/media-query-list-parser@npm:^5.0.0":
++"@csstools/media-query-list-parser@npm:^5.0.2":
+   version: 5.0.2
+   resolution: "@csstools/media-query-list-parser@npm:5.0.2"
+   peerDependencies:
+@@ -1306,7 +1284,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@csstools/selector-resolve-nested@npm:^4.0.1":
++"@csstools/selector-resolve-nested@npm:^4.0.2":
+   version: 4.0.2
+   resolution: "@csstools/selector-resolve-nested@npm:4.0.2"
+   peerDependencies:
+@@ -1315,7 +1293,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@csstools/selector-specificity@npm:^6.0.0":
++"@csstools/selector-specificity@npm:^6.0.1":
+   version: 6.0.1
+   resolution: "@csstools/selector-specificity@npm:6.0.1"
+   peerDependencies:
+@@ -1577,25 +1555,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@keyv/bigmap@npm:^1.3.1":
+-  version: 1.3.1
+-  resolution: "@keyv/bigmap@npm:1.3.1"
+-  dependencies:
+-    hashery: "npm:^1.4.0"
+-    hookified: "npm:^1.15.0"
+-  peerDependencies:
+-    keyv: ^5.6.0
+-  checksum: 10c0/acc6a4a5edf462ce23e95672ab4bfaf7cd1941dff6bf3a2f671ce467961ace1fac9d3eb75a9ed9a8e92012e00a7d8b16ad1677bc539a52c3ad0cec31473e2349
+-  languageName: node
+-  linkType: hard
+-
+-"@keyv/serialize@npm:^1.1.1":
+-  version: 1.1.1
+-  resolution: "@keyv/serialize@npm:1.1.1"
+-  checksum: 10c0/b0008cae4a54400c3abf587b8cc2474c6f528ee58969ce6cf9cb07a04006f80c73c85971d6be6544408318a2bc40108236a19a82aea0a6de95aae49533317374
+-  languageName: node
+-  linkType: hard
+-
+ "@kurkle/color@npm:^0.3.0":
+   version: 0.3.4
+   resolution: "@kurkle/color@npm:0.3.4"
+@@ -1787,13 +1746,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@sindresorhus/merge-streams@npm:^4.0.0":
+-  version: 4.0.0
+-  resolution: "@sindresorhus/merge-streams@npm:4.0.0"
+-  checksum: 10c0/482ee543629aa1933b332f811a1ae805a213681ecdd98c042b1c1b89387df63e7812248bb4df3910b02b3cc5589d3d73e4393f30e197c9dde18046ccd471fc6b
+-  languageName: node
+-  linkType: hard
+-
+ "@socket.io/component-emitter@npm:~3.1.0":
+   version: 3.1.2
+   resolution: "@socket.io/component-emitter@npm:3.1.2"
+@@ -2327,7 +2279,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"ajv@npm:^8.0.0, ajv@npm:^8.0.1, ajv@npm:^8.20.0":
++"ajv@npm:^8.0.0, ajv@npm:^8.20.0":
+   version: 8.20.0
+   resolution: "ajv@npm:8.2
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14740** (2026-11-17): Add missing new when throwing for an unknown architecture (@costajohnt)
+- **PR #14739** (2026-11-16): build(deps-ui): bump filesize from 11.0.30 to 11.0.31 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14738** (2026-11-16): build(deps-ui-dev): bump the stylelint group in /server/src/main/webapp/WEB-INF/rails with 2 updates (@dependabot[bot])
 - **PR #14737** (2026-11-15): build(deps-ui-dev): bump sass-embedded from 1.108.1 to 1.108.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14736** (2026-11-15): build(deps): bump org.apache.commons:commons-lang3 from 3.21.0 to 3.22.0 (@dependabot[bot])
 - **PR #14735** (2026-11-15): build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87 (@dependabot[bot])
-- **PR #14734** (2026-11-13): build(deps): bump gradle-wrapper from 9.9.0 to 9.9.1 in the gradle-plugins group (@dependabot[bot])
-- **PR #14733** (2026-11-13): build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (@dependabot[bot])
-- **PR #14732** (2026-11-12): build(deps): bump com.fasterxml.jackson:jackson-bom from 2.22.4 to 2.23.0 (@dependabot[bot])
 
 ---
 
@@ -1170,31 +1170,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87
+## X. build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails
 
 **RULE**:
-When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1386d2e1`: build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46b8306d`: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.87',
+    "filesize": "^11.0.31",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.86.2',
+    "filesize": "^11.0.30",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1386d2e1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46b8306d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

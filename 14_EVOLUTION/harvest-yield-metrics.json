@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T11:09:57.807Z",
-  "total_cycles_completed": 10094,
-  "total_learnings_persisted": 10094,
-  "total_rules_promoted": 9695,
+  "last_updated": "2026-11-17T11:25:39.733Z",
+  "total_cycles_completed": 10099,
+  "total_learnings_persisted": 10099,
+  "total_rules_promoted": 9696,
   "history": [
-    {
-      "timestamp": "2026-11-16T17:43:54.778Z",
-      "repository": "ArchiveBox/ArchiveBox",
-      "learningId": "learn-github-archivebox-archivebox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T17:43:59.958Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:01:34.810Z",
-      "repository": "n4ze3m/tiny-voca",
-      "learningId": "learn-huggingface-n4ze3m-tiny-voca",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:01:43.729Z",
-      "repository": "yazinsai/OpenOats",
-      "learningId": "learn-github-yazinsai-openoats",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:01:50.078Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T18:10:50.027Z",
       "repository": "nginx/kubernetes-ingress",
@@ -1403,6 +1368,41 @@
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T11:25:20.543Z",
+      "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
+      "learningId": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T11:25:22.925Z",
+      "repository": "nex-agi/Nex-N2.6",
+      "learningId": "learn-huggingface-nex-agi-nex-n2-6",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T11:25:25.458Z",
+      "repository": "maxwell-model/Maxwell-V1-Flash",
+      "learningId": "learn-huggingface-maxwell-model-maxwell-v1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T11:25:33.282Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T11:25:39.733Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -10563,3 +10563,11 @@ Every entry in this ledger must capture:
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `46b3069d` | Multi-dimensional audit evidence | 2026-11-17T11:09:41.403Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `723320f2` | Multi-dimensional audit evidence | 2026-11-17T11:09:50.866Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `fb116037` | Multi-dimensional audit evidence | 2026-11-17T11:09:57.803Z |
+| `learn-huggingface-meituan-longcat-longcat-video-avatar-1-6` | `https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6` | `hf-meituan` | Multi-dimensional audit evidence | 2026-11-17T11:25:20.538Z |
+| `learn-huggingface-nex-agi-nex-n2-6` | `https://huggingface.co/nex-agi/Nex-N2.6` | `hf-nex-agi` | Multi-dimensional audit evidence | 2026-11-17T11:25:22.920Z |
+| `learn-huggingface-maxwell-model-maxwell-v1-flash` | `https://huggingface.co/maxwell-model/Maxwell-V1-Flash` | `hf-maxwell` | Multi-dimensional audit evidence | 2026-11-17T11:25:25.452Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `c8c221d2` | Multi-dimensional audit evidence | 2026-11-17T11:25:33.277Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f9c95d84` | Multi-dimensional audit evidence | 2026-11-17T11:25:39.716Z |
+| `learn-dom-d-5cff0af4` | `project://hf-meituan-longcat-longcat-video-avatar-1.6` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md` | 2026-11-17T11:26:09.516Z |
+| `learn-dom-d-1453c5ca` | `project://hf-nex-agi-nex-n2.6` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md` | 2026-11-17T11:26:41.933Z |
+| `learn-dom-d-4085be40` | `project://hf-maxwell-model-maxwell-v1-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md` | 2026-11-17T11:27:16.768Z |

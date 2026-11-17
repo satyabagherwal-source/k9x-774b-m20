@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "92cbd316",
+    "sourceVersion": "f9c95d84",
     "license": "Apache-2.0",
-    "contentHash": "d8cf873c8778e59d3e419f78c566e6b6b1cc179ebb966371c35c67942691c59e",
-    "lastHarvestedAt": "2026-11-17T07:20:19.588Z",
+    "contentHash": "f592b8bf74bdb32d44768135f739e63ac4ff624336ac4d34115f2eb05e2400ee",
+    "lastHarvestedAt": "2026-11-17T11:25:39.716Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "afcac4f0",
+    "sourceVersion": "c8c221d2",
     "license": "Apache-2.0",
-    "contentHash": "27900d23b861f41d6cc25b4255d03d4b11829af10332d5389f6932bae3b09dc0",
-    "lastHarvestedAt": "2026-11-16T04:17:56.951Z",
+    "contentHash": "6f200f5ef41ea32d2b618b8a14e49ecb317d6b23a3e9810eee5105ad667f1116",
+    "lastHarvestedAt": "2026-11-17T11:25:33.277Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -12738,5 +12738,35 @@
     "contentHash": "17dffa20af8991643068f9b147d57429e9c49848c8260ed08ba0988f4a950a1d",
     "lastHarvestedAt": "2026-11-17T06:47:00.725Z",
     "learningId": "learn-github-mdiri-ai-soduwork"
+  },
+  "hf-meituan-longcat-longcat-video-avatar-1.6": {
+    "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6",
+    "sourceVersion": "hf-meituan-longcat-longcat-video-avatar-1.6",
+    "license": "Open-Source",
+    "contentHash": "77084bf06e4435ef650ddd8e84e11fe046dc4784e1f27ece083b04a3f79ae2cf",
+    "lastHarvestedAt": "2026-11-17T11:25:20.538Z",
+    "learningId": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6"
+  },
+  "hf-nex-agi-nex-n2.6": {
+    "repository": "nex-agi/Nex-N2.6",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/nex-agi/Nex-N2.6",
+    "sourceVersion": "hf-nex-agi-nex-n2.6",
+    "license": "Open-Source",
+    "contentHash": "73d0fb5b69299908bc64d9118435bb3e30f7c2099bf994976f82d97b6d2bce64",
+    "lastHarvestedAt": "2026-11-17T11:25:22.920Z",
+    "learningId": "learn-huggingface-nex-agi-nex-n2-6"
+  },
+  "hf-maxwell-model-maxwell-v1-flash": {
+    "repository": "maxwell-model/Maxwell-V1-Flash",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/maxwell-model/Maxwell-V1-Flash",
+    "sourceVersion": "hf-maxwell-model-maxwell-v1-flash",
+    "license": "Open-Source",
+    "contentHash": "20114d4e199021e13656054101acf9bb26d5ecc5f579c7d7fee39ea906cb92f3",
+    "lastHarvestedAt": "2026-11-17T11:25:25.452Z",
+    "learningId": "learn-huggingface-maxwell-model-maxwell-v1-flash"
   }
 }

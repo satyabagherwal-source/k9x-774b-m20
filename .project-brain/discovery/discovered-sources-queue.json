@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T10:51:43.262Z",
+  "updated_at": "2026-11-17T11:27:16.783Z",
   "stats": {
-    "total_discovered": 4933,
-    "approved_pending_harvest": 4647,
+    "total_discovered": 4936,
+    "approved_pending_harvest": 4650,
     "harvested_count": 0,
     "rejected_count": 286,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4638,
+      "COMMUNITY_AND_EXPERT": 4641,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 103,
       "ENGINEERING_BLOGS": 3,
@@ -106545,6 +106545,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
         "fileName": "zulip-zulip-learnings.md"
+      }
+    },
+    "SRC-A9ABC0070A7C": {
+      "id": "SRC-A9ABC0070A7C",
+      "url": "https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6",
+      "title": "https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T11:26:09.543Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md",
+        "fileName": "hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md"
+      }
+    },
+    "SRC-0B21BB8C1F87": {
+      "id": "SRC-0B21BB8C1F87",
+      "url": "https://huggingface.co/nex-agi/Nex-N2.6",
+      "title": "https://huggingface.co/nex-agi/Nex-N2.6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T11:26:41.949Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md",
+        "fileName": "hf-nex-agi-nex-n2.6-learnings.md"
+      }
+    },
+    "SRC-31D0562891DC": {
+      "id": "SRC-31D0562891DC",
+      "url": "https://huggingface.co/maxwell-model/Maxwell-V1-Flash",
+      "title": "https://huggingface.co/maxwell-model/Maxwell-V1-Flash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T11:27:16.783Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md",
+        "fileName": "hf-maxwell-model-maxwell-v1-flash-learnings.md"
       }
     }
   }
