@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T02:16:50.201Z",
-  "total_cycles_completed": 9991,
-  "total_learnings_persisted": 9991,
-  "total_rules_promoted": 9574,
+  "last_updated": "2026-11-17T02:32:23.422Z",
+  "total_cycles_completed": 9994,
+  "total_learnings_persisted": 9994,
+  "total_rules_promoted": 9576,
   "history": [
-    {
-      "timestamp": "2026-11-16T00:28:02.255Z",
-      "repository": "rqlite/rqlite",
-      "learningId": "learn-github-rqlite-rqlite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T00:36:38.295Z",
-      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T00:36:52.319Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T00:36:54.918Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T02:16:50.201Z",
       "repository": "beclab/Olares",
       "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T02:32:18.768Z",
+      "repository": "Viggle/Viggle-Remake",
+      "learningId": "learn-huggingface-viggle-viggle-remake",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T02:32:18.887Z",
+      "repository": "tuist/tuist",
+      "learningId": "learn-github-tuist-tuist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T02:32:23.422Z",
+      "repository": "TypeWhisper/typewhisper-mac",
+      "learningId": "learn-github-typewhisper-typewhisper-mac",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

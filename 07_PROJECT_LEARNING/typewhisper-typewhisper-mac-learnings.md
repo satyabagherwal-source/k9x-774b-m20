@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source**: github ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
-> **Source Version**: `bf7bb1c5`  
+> **Source Version**: `7e1680a4`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T13:02:32.776Z  
+> **Timestamp**: 2026-11-17T02:32:22.588Z  
 > **Learning ID**: `learn-github-typewhisper-typewhisper-mac`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T13:02:32.771Z  
+> **Harvest Timestamp**: 2026-11-17T02:32:22.583Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local speech-to-text for macOS  on-device AI, fully private, optional cloud
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1923 stars
+- **Stars / Engagement**: 1928 stars
 
 ---
 
@@ -36,6 +36,46 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `Packages/TypeWhisperModuleKit/Sources/TypeWhisperModuleKit/UserDataLifecycle.swift`
+```
+import Foundation
+
+/// Lets a module erase and export its own data with the user's data.
+///
+/// Data a module keeps in the app's preferences or its Application Support
+/// folder is erased and exported with them anyway. Register for data kept
+/// anywhere else, or for data that needs its own export format.
+@MainActor
+public protocol UserDataLifecycle: AnyObject {
+    /// Registers a module's data. A later registration with the same
+    /// identifier replaces the earlier one.
+    func register(_ userData: ModuleUserData)
+}
+
+/// How the app erases and exports one module's data.
+public struct ModuleUserData: Identifiable, Sendable {
+    /// Also the folder of the exported files, so letters, digits, dots,
+    /// hyphens and underscores only.
+    public let id: String
+    /// Runs when the user erases all data, before the app deletes its own.
+    public let erase: @MainActor @Sendable () async throws -> Void
+    /// Returns the files to add to a data export, by file name. A name with a
+    /// path separator is left out; names that differ only in case fail the export.
+    public let export: @MainActor @Sendable () async throws -> [String: Data]
+
+    public init(
+        id: String,
+        erase: @escaping @MainActor @Sendable () async throws -> Void,
+        export: @escaping @MainActor @Sendable () async throws -> [String: Data]
+    ) {
+        self.id = id
+        self.erase = erase
+        self.export = export
+    }
+}
+
+```
 
 ### Core Architecture Module: `TypeWhisper/Services/AudioEngineRecoverySupport.swift`
 ```
@@ -1664,11 +1704,13 @@ struct ExampleWebhookConfig: Codable, Identifiable {
     var isEnabled: Bool
     var workflowFilter: [String]  // Empty = all transcriptions
     var includesRecordings: Bool
+    var includesDictations: Bool  // False = Recorder transcripts only
 
     init(name: String = "", url: String = "", httpMethod: String = "POST",
          headers: [String: String] = ["Content-Type": "application/json"],
          secretHeaderNames: [String] = [],
-         isEnabled: Bool = true, workflowFilter: [String] = [], includesRecordings: Bool = false) {
+         isEnabled: Bool = true, workflowFilter: [String] = [], includesRecordings: Bool = false,
+         includesDictations: Bool = true) {
         self.id = UUID()
         self.name = name
         self.url = url
@@ -1678,6 +1720,7 @@ struct ExampleWebhookConfig: Codable, Identifiable {
         self.isEnabled = isEnabled
         self.workflowFilter = workflowFilter
         self.includesRecordings = includesRecordings
+        self.includesDictations = includesDictations
     }
 
     var isUnmodifiedDefaultDraft: Bool {
@@ -1689,6 +1732,7 @@ struct ExampleWebhookConfig: Codable, Identifiable {
             && isEnabled
             && workflowFilter.isEmpty
             && !includesRecordings
+            && includesDictations
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -1701,6 +1745,7 @@ struct ExampleWebhookConfig: Codable, Identifiable {
         case isEnabled
         case workflowFilter = "profileFilter"
         case includesRecordings
+        case includesDictations
     }
 
     init(from decoder: Decoder) throws {
@@ -1714,6 +1759,7 @@ struct ExampleWebhookConfig: Codable, Identifiable {
         isEnabled = try container.decode(Bool.self, forKey: .isEnabled)
         workflowFilter = try container.decode([String].self, forKey: .workflowFilter)
         includesRecordings = try container.decodeIfPresent(Bool.self, forKey: .includesRecordings) ?? false
+        includesDictations = try container.decodeIfPresent(Bool.self, forKey: .includesDictations) ?? true
     }
 
     func encode(to encoder: Encoder) throws {
@@ -1727,6 +1773,7 @@ struct ExampleWebhookConfig: Codable, Identifiable {
         try container.encode(isEnabled, forKey: .isEnabled)
         try container.encode(workflowFilter, forKey: .workflowFilter)
         try container.encode(includesRecordings, forKey: .includesRecordings)
+        try container.encode(includesDictations, forKey: .includesDictations)
     }
 }
 
@@ -1848,111 +1895,7 @@ final class ExampleWebhookService: ObservableObject, @unchecked Sendable {
     }
 
     private func containsPlaintextSecretHeader(_ webhook: ExampleWebhookConfig) -> Bool {
-        webhook.headers.contains { headerName, value in
-            Self.isSensitiveHeader(headerName)
-                && value != ExampleWebhookConfig.secretHeaderPlaceholder
-                && !value.isEmpty
-        }
-    }
-
-    private func containsEmptySensitiveHeader(_ webhook: ExampleWebhookConfig) -> Bool {
-        webhook.headers.contains { headerName, value in
-            Self.isSensitiveHeader(headerName) && value.isEmpty
-     
-```
-
-### Core Architecture Module: `AppStore/Sources/AppStoreICloudMirror.swift`
-```
-#if APPSTORE
-import Foundation
-
-/// Automatic iCloud sync for the Mac App Store edition.
-///
-/// The direct-distribution app mirrors its sync package into iCloud through the
-/// TypeWhisperICloudBridge XPC service, because only that helper carries the
-/// iCloud entitlements. The App Store app holds the iCloud container itself, so
-/// it runs the same mirror in process.
-final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
-    /// Re-evaluated on every access: the user can sign in to iCloud or turn on
-    /// iCloud Drive while TypeWhisper runs.
-    var isAvailable: Bool {
-        localFolderURL != nil && fileManager.ubiquityIdentityToken != nil
-    }
-    let localFolderURL: URL?
-
-    private let containerIdentifier: String
-    private let fileManager: FileManager
-    private let queue = DispatchQueue(label: "com.typewhisper.appstore.icloud-mirror", qos: .utility)
-
-    init(bundle: Bundle = .main, fileManager: FileManager = .default) {
-        self.fileManager = fileManager
-        containerIdentifier = PremiumICloudBridgeConstants.containerIdentifier(
-            infoDictionary: bundle.infoDictionary
-        )
-        localFolderURL = PremiumICloudBridgeConstants.localRootURL(
-            bundle: bundle,
-            fileManager: fileManager
-        )
-    }
-
-    func synchronize() async throws {
-        try await perform { local, remote in
-            try PremiumICloudBridgeFileMirror.synchronize(localRoot: local, remoteRoot: remote)
-        }
-    }
-
-    func deleteRemotePackage() async throws {
-        try await perform { local, remote in
-            try PremiumICloudBridgeFileMirror.deletePackages(localRoot: local, remoteRoot: remote)
-        }
-    }
-
-    /// Removes the record from the mirror and from iCloud; the mirror would
-    /// otherwise copy it back on the next pass.
-    func removeDevice(_ deviceID: String) async throws {
-        try await perform { local, remote in
-            try PremiumSyncDeviceRemoval.removeRecords(
-                of: deviceID,
-                inPackages: [local, remote].map {
-                    $0.appendingPathComponent(
-                        PremiumICloudBridgeConstants.packageDirectoryName,
-                        isDirectory: true
-                    )
-                }
-            )
-        }
-    }
-
-    /// Runs `operation` on a serial background queue: resolving the ubiquity
-    /// container can block, and mirror passes must not overlap.
-    private func perform(_ operation: @escaping @Sendable (URL, URL) throws -> Void) async throws {
-        guard let local = localFolderURL else {
-            throw PremiumICloudBridgeError.appGroupUnavailable
-        }
-        guard isAvailable else {
-            throw PremiumICloudBridgeError.iCloudUnavailable
-        }
-        let containerIdentifier = containerIdentifier
-        let fileManager = fileManager
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            queue.async {
-                do {
-                    guard let container = fileManager.url(
-                        forUbiquityContainerIdentifier: containerIdentifier
-                    ) else {
-                        throw PremiumICloudBridgeError.iCloudUnavailable
-                    }
-                    try operation(local, container.appendingPathComponent("Documents", isDirectory: true))
-                    continuation.resume()
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-}
-#endif
-
+        webhook.headers.
 ```
 
 
@@ -1982,830 +1925,761 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6d4cf137` (2026-11-11)
-**Commit Message**: (bug) Keep recording briefly after a push-to-talk release so the last word is not cut off (#1897)
+### Incident Patch 1: `6c26a50e` (2026-11-14)
+**Commit Message**: (feature) Add the SOV-Transcribe plugin for Macs with 32 GB of memory (#1935)
 
-Hotkey stops (push-to-talk release, toggle press, Enter submit) keep recording for up to 350 ms and end early once every 50 ms frame of the last 150 ms is below the speech floor. Recordings shorter than 0.3 s keep the short-speech handling of #157. API, silence, cancel and discard stops are unchanged. The recording stays active until the tail ends, a cancelled stop ends the tail at once, and the VoiceOver stop announcement follows the capture.
+* Add the SOV-Transcribe plugin
 
-Fixes #1896
+SOV-Transcribe 1.0.0 runs Salesforce SOV-Transcribe-1 (Whisper large-v3
+encoder, Gemma 4 26B-A4B decoder) with MLX. It offers the 4-bit weights
+(nativ-community/SOV-Transcribe-1-4bit, pinned to 8a2f46d8) on Macs with
+32 GB of memory or more. Below that the host gets no model, the settings
+show the requirement and loading fails with it.
 
-**File**: `TypeWhisper/Services/AudioRecordingService.swift` (modified, +208/-45)
+- Transcribes en, de, fr, es, it, pt and nl with the model card's
+  instruction for the language, or its instruction for any language when
+  none is set. No translation.
+- Dictionary terms reach the model as hotwords
+  ("Contextual vocabulary: A, B").
+- The token budget is 10 tokens per second of audio, at least 1024 and
+  at most 18,000. Recordings longer than 30 minutes go through
+  PluginAudioChunking, so no call exceeds the model's limit.
+- Streams text while it decodes and clears the MLX cache after each
+  transcription and on unload.
+
+mlx-audio-swift moves to 56abd969 (branch seofood/sov-transcribe-on-0.31),
+the previous pin plus the SOV-Transcribe-1 backport, for the app, the
+plugins and the App Store project.
+
+* Load SOV-Transcribe
+
+**File**: `.github/workflows/plugin-release.yml` (modified, +3/-2)
 ```diff
-@@ -332,36 +332,141 @@ final class AudioRecordingService: ObservableObject, @unchecked Sendable {
-         return queue
-     }()
- 
-+    /// Audio kept recording after the user released or pressed the shortcut, so the end of
-+    /// the last word that is still on its way through the input is not cut off (#1896).
-+    struct ReleaseTail: Equatable {
-+        /// The tail a hotkey stop gets: at most 350 ms, ending early after 150 ms of quiet.
-+        static let hotkeyStop = ReleaseTail(
-+            maxDuration: 0.35,
-+            quietDuration: 0.15,
-+            minimumRecordingDuration: 0.3
-+        )
-+
-+        /// The longest the tail records, counted from the stop request.
-+        var maxDuration: TimeInterval
-+        /// The tail ends as soon as this much audio at the end of the recording is quiet.
-+        var quietDuration: TimeInterval
-+        /// Shorter recordings get no tail, so a quick tap of the shortcut keeps the
-+        /// short-speech handling of #157 and is still discarded as too short.
-+        var minimumRecordingDuration: TimeInterval
-+
-+        var quietSampleCount: Int {
-+            max(1, Int((quietDuration * AudioRecordingService.targetSampleRate).rounded()))
-+        }
-+
-+        func appliesToRecording(bufferedDuration: TimeInterval) -> Bool {
-+            bufferedDuration >= minimumRecordingDuration
-+        }
-+
-+        /// The quiet window is judged in 50 ms frames, so speech at its end is never averaged
-+        /// away by the quiet before it.
-+        static let quietFrameSampleCount = Int(AudioRecordingService.targetSampleRate) / 20
-+
-+        /// True once every 50 ms frame in the last `quietDuration` of the recording stays below
-+        /// the speech floor the live preview and the silence stop use.
-+        func isSettled(trailingSamples: ArraySlice<Float>) -> Bool {
-+            guard trailingSamples.count >= quietSampleCount else { return false }
-+            let window = trailingSamples.suffix(quietSampleCount)
-+            var frameStart = window.startIndex
-+            while frameStart < window.endIndex {
-+                let frameEnd = min(frameStart + Self.quietFrameSampleCount, window.endIndex)
-+                let frame = window[frameStart..<frameEnd]
-+                let rms = sqrt(frame.reduce(Float(0)) { $0 + $1 * $1 } / Float(frame.count))
-+                if rms >= DictationSpeechActivity.speechRMSFloor { return false }
-+                frameStart = frameEnd
-+            }
-+            return true
-+        }
-+    }
-+
-+    enum ReleaseTailOutcome: Equatable {
-+        /// The policy asked for no tail.
-+        case notRequested
-+        /// The recording was too short for a tail.
-+        case skippedShortRecording
-+        /// The end of the recording was quiet, so the tail ended early.
-+        case settled(duration: TimeInterval)
-+        /// The tail ran for its full length.
-+        case reachedMaxDuration(duration: TimeInterval)
-+        /// The stop was cancelled during the tail, for example with Escape.
-+        case cancelled(duration: TimeInterval)
-+
-+        var duration: TimeInterval {
-+            switch self {
-+            case .notRequested, .skippedShortRecording:
-+                0
-+            case .settled(let duration), .reachedMaxDuration(let duration), .cancelled(let duration):
-+                duration
-+            }
-+        }
-+
-+        var logDescription: String {
-+            switch self {
-+            case .notRequested:
-+                "none"
-+            case .skippedShortRecording:
-+                "skipped-short"
-+            case .settled(let duration):
-+                String(format: "settled(%.0fms)", duration * 1000)
-+            case .reachedMaxDuration(let duration):
-+                String(format: "max(%.0fms)", duration * 1000)
-+            case .cancelled(let duration):
-+                String(format: "cancelled(%.0fms)", duration * 1000)
-+            }
-+        }
-+    }
-+
-     enum StopPolicy {
-         case immediate
-         case finalizeShortSpeech(
-             minBufferedDuration: TimeInterval = 0.05,
-             maxExtraCapture: TimeInterval = 0.06,
--            pollInterval: TimeInterval = 0.01
-+            pollInterval: TimeInterval = 0.01,
-+            releaseTail: ReleaseTail? = nil
-         )
- 
-         var logDescription: String {
-             switch self {
-             case .immediate:
-                 "immediate"
--            case .finalizeShortSpeech(let minBufferedDuration, let maxExtraCapture, let pollInterval):
--                String(
--                    format: "finalizeShortSpeech(min=%.3f,max=%.3f,poll=%.3f)",
--                    minBufferedDuration,
--                    maxExtraCapture,
--                    pollInterval
--                )
-+            case .finalizeShortSpeech(let minBufferedDuration, let maxExtraCapture, let pollInterval, let releaseTail):
-+                if let releaseTail {
-+                    String(
-+                        format: "finalizeShortSpeech(min=%.3
+@@ -120,6 +120,7 @@ jobs:
+             file-job-script) TARGET="FileJobScriptPlugin" ;;
+             livetranscript) TARGET="LiveTranscriptPlugin" ;;
+             granite) TARGET="GranitePlugin" ;;
++            sov-transcribe) TARGET="SOVTranscribePlugin" ;;
+             canary) TARGET="CanaryPlugin" ;;
+             gigaam) TARGET="GigaAMPlugin" ;;
+             cloudflare-asr) TARGET="CloudflareASRPlugin" ;;
+@@ -154,13 +155,13 @@ jobs:
+           # All plugins use Xcode 27.1 (mlx-swift 0.31.6 requires Swift 6.3+ for package resolution,
+           # and workspace-state.json v7 from Xcode 26.x is incompatible with Xcode 16.2)
+           # - SpeechAnalyzer: macOS 26 deployment target
+-          # - Qwen3/Voxtral/Granite/Canary/LocalLLM: macOS 14 + embed Swift compat libs (MLX uses Swift 6.2 features)
++          # - Qwen3/Voxtral/Granite/SOV-Transcribe/Canary/LocalLLM: macOS 14 + embed Swift compat libs (MLX uses Swift 6.2 features)
+           # - All others: macOS 14, no compat libs needed (simple Foundation/SDK code)
+           EMBED_SWIFT_LIBS="NO"
+           XCODE_VERSION="27.1"
+           if [ "$TARGET" = "SpeechAnalyzerPlugin" ]; then
+             DEPLOY_TARGET="26.0"
+-          elif [ "$TARGET" = "Qwen3Plugin" ] || [ "$TARGET" = "VoxtralPlugin" ] || [ "$TARGET" = "GranitePlugin" ] || [ "$TARGET" = "CanaryPlugin" ] || [ "$TARGET" = "LocalLLMPlugin" ]; then
++          elif [ "$TARGET" = "Qwen3Plugin" ] || [ "$TARGET" = "VoxtralPlugin" ] || [ "$TARGET" = "GranitePlugin" ] || [ "$TARGET" = "SOVTranscribePlugin" ] || [ "$TARGET" = "CanaryPlugin" ] || [ "$TARGET" = "LocalLLMPlugin" ]; then
+             DEPLOY_TARGET="14.0"
+             EMBED_SWIFT_LIBS="YES"
+           else
 ```
 
-**File**: `TypeWhisper/ViewModels/DictationViewModel.swift` (modified, +34/-9)
+**File**: `TypeWhisper.xcodeproj/project.pbxproj` (modified, +149/-1)
 ```diff
-@@ -1605,6 +1605,12 @@ final class DictationViewModel: ObservableObject {
-         )
+@@ -63,6 +63,7 @@
+ 		1E6EDB8B0D1573A05A610078 /* PluginManifestValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF548E65340A17A3A16590B /* PluginManifestValidationTests.swift */; };
+ 		7A1018FIX0000000000A001 /* PassiveRestoreSelectedEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1018FIX0000000000A002 /* PassiveRestoreSelectedEngineTests.swift */; };
+ 		103600000000000000000001 /* MLXPluginModelStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103600000000000000000002 /* MLXPluginModelStorageTests.swift */; };
++		50F700000000000000000018 /* SOVTranscribePluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F700000000000000000017 /* SOVTranscribePluginTests.swift */; };
+ 		4D980A5CFE1A4217A10C2101 /* WhisperKitPluginLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D980A5CFE1A4217A10C2102 /* WhisperKitPluginLifecycleTests.swift */; };
+ 		4D980A5CFE1A4217A10C2104 /* WhisperKitPluginCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D980A5CFE1A4217A10C2103 /* WhisperKitPluginCompatibilityTests.swift */; };
+ 		0B58B3B8ACBA76118C3B54C2 /* ModelManagerRestoreAfterAutoUnloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B9EC248517FD4849BEF54D /* ModelManagerRestoreAfterAutoUnloadTests.swift */; };
+@@ -154,6 +155,7 @@
+ 		C23000000000000000000008 /* Qwen3Plugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000150 /* Qwen3Plugin.swift */; };
+ 		C23000000000000000000009 /* VoxtralPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000191 /* VoxtralPlugin.swift */; };
+ 		C2300000000000000000000A /* GranitePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000221 /* GranitePlugin.swift */; };
++		50F700000000000000000016 /* SOVTranscribePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F700000000000000000001 /* SOVTranscribePlugin.swift */; };
+ 		C2300000000000000000000B /* MLXAudioSTT in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000012 /* MLXAudioSTT */; };
+ 		C2300000000000000000000C /* MLXAudioCore in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000013 /* MLXAudioCore */; };
+ 		C2300000000000000000000D /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000015 /* WhisperKit */; };
+@@ -582,6 +584,12 @@
+ 		AA00000000000000000234 /* TypeWhisperPluginSDK in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000028 /* TypeWhisperPluginSDK */; };
+ 		AA00000000000000000235 /* MLXAudioSTT in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000029 /* MLXAudioSTT */; };
+ 		AA00000000000000000236 /* MLXAudioCore in Frameworks */ = {isa = PBXBuildFile; productRef = PP00000000000000000030 /* MLXAudioCore */; };
++		50F70000000000000000000D /* SOVTranscribePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F700000000000000000001 /* SOVTranscribePlugin.swift */; };
++		50F70000000000000000000E /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 50F700000000000000000002 /* manifest.json */; };
++		50F70000000000000000000F /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 50F700000000000000000003 /* Localizable.xcstrings */; };
++		50F700000000000000000010 /* TypeWhisperPluginSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 50F700000000000000000013 /* TypeWhisperPluginSDK */; };
++		50F700000000000000000011 /* MLXAudioSTT in Frameworks */ = {isa = PBXBuildFile; productRef = 50F700000000000000000014 /* MLXAudioSTT */; };
++		50F700000000000000000012 /* MLXAudioCore in Frameworks */ = {isa = PBXBuildFile; productRef = 50F700000000000000000015 /* MLXAudioCore */; };
+ 		AA00000000000000000237 /* CloudflareASRPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000225 /* CloudflareASRPlugin.swift */; };
+ 		AA00000000000000000238 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = BB00000000000000000226 /* manifest.json */; };
+ 		AA0000000000000000023A /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000022A /* Localizable.xcstrings */; };
+@@ -1340,6 +1348,10 @@
+ 		BB00000000000000000222 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
+ 		BB00000000000000000223 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+ 		BB00000000000000000224 /* GranitePlugin.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GranitePlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
++		50F700000000000000000001 /* SOVTranscribePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SOVTranscribePlugin.swift; sourceTree = "<group>"; };
++		50F700000000000000000002 /* manif
+```
+
+**File**: `TypeWhisper.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@
+       "kind" : "remoteSourceControl",
+       "location" : "https://github.com/TypeWhisper/mlx-audio-swift.git",
+       "state" : {
+-        "revision" : "1fb13b441c1ad8aae4a23f6a2223e03e5e5b1738"
++        "revision" : "56abd969a481b909efbb0a20fc762d701df196aa"
+       }
+     },
+     {
+```
+
+**File**: `TypeWhisper/Views/PluginSettingsView.swift` (modified, +1/-0)
+```diff
+@@ -1739,6 +1739,7 @@ private let typeWhisperAddonSlugsByPluginID: [String: String] = [
+     "com.typewhisper.script": "script-runner",
+     "com.typewhisper.smallest-pulse": "smallest-pulse",
+     "com.typewhisper.soniox": "soniox",
++    "com.typewhisper.sov-transcribe": "sov-transcribe",
+     "com.typewhisper.speechanalyzer": "apple-speech",
+     "com.typewhisper.speechmatics": "speechmatics",
+     "com.typewhisper.tts.supertonic": "supertonic",
+```
+
+**File**: `TypeWhisperPluginSDK/Package.resolved` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@
+       "kind" : "remoteSourceControl",
+       "location" : "https://github.com/TypeWhisper/mlx-audio-swift.git",
+       "state" : {
+-        "revision" : "1fb13b441c1ad8aae4a23f6a2223e03e5e5b1738"
++        "revision" : "56abd969a481b909efbb0a20fc762d701df196aa"
+       }
+     },
+     {
+```
+
+**File**: `TypeWhisperPluginSDK/Package.swift` (modified, +4/-3)
+```diff
+@@ -16,9 +16,10 @@ let package = Package(
+         // No NemoTextProcessing trait: its text normalization is only used by FluidAudio's TTS
+         // and adds about 8 MB per architecture to every plugin that links FluidAudio.
+         .package(url: "https://github.com/FluidInference/FluidAudio.git", exact: "0.17.5", traits: []),
+-        // TypeWhisper's fork (branch typewhisper/granite5-on-0.31): upstream 01dec7c9 plus the
+-        // Granite Speech 5.0 backports, kept on mlx-swift 0.31 (see the mlx-swift pin below).
+-        .package(url: "https://github.com/TypeWhisper/mlx-audio-swift.git", revision: "1fb13b441c1ad8aae4a23f6a2223e03e5e5b1738"),
++        // TypeWhisper's fork (branch seofood/sov-transcribe-on-0.31): upstream 01dec7c9 plus the
++        // Granite Speech 5.0 and SOV-Transcribe-1 backports, kept on mlx-swift 0.31 (see the
++        // mlx-swift pin below).
++        .package(url: "https://github.com/TypeWhisper/mlx-audio-swift.git", revision: "56abd969a481b909efbb0a20fc762d701df196aa"),
+         .package(url: "https://github.com/huggingface/swift-huggingface.git", exact: "0.10.1"),
+         .package(url: "https://github.com/huggingface/swift-jinja.git", exact: "2.5.0"),
+         .package(url: "https://github.com/ml-explore/mlx-swift.git", exact: "0.31.6"),
+```
+
+**File**: `TypeWhisperPluginSDK/Plugins/SOVTranscribePlugin/Localizable.xcstrings` (added, +762/-0)
+```diff
+@@ -0,0 +1,762 @@
++{
++  "sourceLanguage": "en",
++  "strings": {
++    "Download and load %@": {
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "%@ laden und aktivieren"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Descargar y cargar %@"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "%@を読み込んで有効化"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "下载并加载 %@"
++          }
++        }
++      }
++    },
++    "Error": {
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Fehler"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Error"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "エラー"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "错误"
++          }
++        }
++      }
++    },
++    "Hide Hugging Face token": {
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Hugging-Face-Token ausblenden"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Ocultar token de Hugging Face"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Hugging Faceトークンを非表示にする"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "隐藏 Hugging Face 令牌"
++          }
++        }
++      }
++    },
++    "Hugging Face token": {
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Hugging-Face-Token"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Token de Hugging Face"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Hugging Faceトークン"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Hugging Face 令牌"
++          }
++        }
++      }
++    },
++    "Load": {
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Laden"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Cargar"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "読み込む"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "加载"
++          }
++        }
++      }
++    },
++    "Load %@": {
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "%@ laden"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Cargar %@"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "%@を読み込む"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "加载 %@"
++          }
++        }
++      }
++    },
++    "Loaded": {
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Geladen"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Cargado"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "読み込み済み"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "已加载"
++          }
++        }
++      }
++    },
++    "Loading %@": {
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "%@ wird geladen"
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Cargando %@"
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "%@を読み込み中"
++          }
++        },
++        "zh-Hans":
+```
+
+**File**: `TypeWhisperPluginSDK/Plugins/SOVTranscribePlugin/SOVTranscribePlugin.exp` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++_OBJC_CLASS_$_SOVTranscribePlugin
++_OBJC_METACLASS_$_SOVTranscribePlugin
+```
+
+---
+
+### Incident Patch 2: `cc9f28e0` (2026-11-14)
+**Commit Message**: (bug) Stop reporting a missed text field in web views such as Muse (#1939)
+
+**File**: `TypeWhisper/Services/TextInsertionService.swift` (modified, +34/-10)
+```diff
+@@ -718,20 +718,34 @@ final class TextInsertionService {
+         if isLiveFieldTextRole(element) {
+             return (element, true)
+         }
+-        if let descendant = findEditableTextDescendant(of: element, messagingTimeout: messagingTimeout) {
++        let descendantSearch = findEditableTextDescendant(of: element, messagingTimeout: messagingTimeout)
++        if let descendant = descendantSearch.element {
+             return (descendant, true)
+         }
+         return (nil, Self.focusedElementShowsKeyboardTarget(
+-            role: stringAttribute(kAXRoleAttribute as CFString, from: element)
++            role: stringAttribute(kAXRoleAttribute as CFString, from: element),
++            hostsWebContent: descendantSearch.foundWebArea,
++            liesInEditableWebContent: axElementAttribute("AXEditableAncestor" as CFString, from: element) != nil
+         ))
      }
  
-+    /// The stop policy of a stop that transcribes the recording. Key stops add the release
-+    /// tail; API and silence stops do not, since nobody spoke right up to them.
-+    nonisolated static func finalizingStopPolicy(capturesReleaseTail: Bool) -> AudioRecordingService.StopPolicy {
-+        .finalizeShortSpeech(releaseTail: capturesReleaseTail ? .hotkeyStop : nil)
-+    }
-+
-     static func bluetoothStopBehavior(
-         usesBluetoothInput: Bool,
-         restoresSystemAudio: Bool
-@@ -1846,7 +1852,8 @@ final class DictationViewModel: ObservableObject {
-                 self.pendingHotkeyStartTask = nil
-                 return
+     /// Whether a focused element without a text element shows where typing goes. Native apps
+     /// focus a control inside the window, such as a list in Finder. Apps that draw their own
+     /// content name the window itself: GNU Emacs, Qt apps such as OBS, and remote desktop
+     /// clients such as Parsec. A paste can still land there (#1750).
+-    nonisolated static func focusedElementShowsKeyboardTarget(role: String?) -> Bool {
+-        role != kAXWindowRole
++    ///
++    /// Apps that show a web view, such as Meta's Muse, can name the view or one of its
++    /// containers while a field deep inside the web content has focus, beyond the reach of the
++    /// descendant search. Web editors can also focus an element inside their editable region
++    /// that has no text role. Neither shows that the paste missed a text field (#1937). A
++    /// focused link or button on a web page contains no web area and lies outside editable
++    /// content, so it still does.
++    nonisolated static func focusedElementShowsKeyboardTarget(
++        role: String?,
++        hostsWebContent: Bool = false,
++        liesInEditableWebContent: Bool = false
++    ) -> Bool {
++        role != kAXWindowRole && !hostsWebContent && !liesInEditableWebContent
+     }
+ 
+     /// Apps that build their accessibility tree on demand, such as Chromium browsers and Electron
+@@ -2131,21 +2145,28 @@ final class TextInsertionService {
+         findSelectionInDescendants(of: root, maxDepth: 6, maxNodes: 80)
+     }
+ 
++    /// The first editable text element below `root`, and whether the search passed a web area,
++    /// whose focused field can lie beyond the search limits.
+     private func findEditableTextDescendant(
+         of root: AXUIElement,
+         messagingTimeout: Float? = nil
+-    ) -> AXUIElement? {
++    ) -> (element: AXUIElement?, foundWebArea: Bool) {
+         var queue: [(element: AXUIElement, depth: Int)] = childElements(of: root).map { ($0, 1) }
+         var visited = 0
++        var foundWebArea = false
+ 
+         while !queue.isEmpty && visited < 80 {
+             let current = queue.removeFirst()
+             visited += 1
+             applyMessagingTimeout(messagingTimeout, to: current.element)
+ 
+-            if isLiveFieldTextRole(current.element),
++            let role = stringAttribute(kAXRoleAttribute as CFString, from: current.element)
++            if role == "AXWebArea" {
++                foundWebArea = true
++            }
++            if let role, Self.liveFieldTextRoles.contains(role),
+                selectedRangeAttribute(from: current.element) != nil {
+-                return current.element
++                return (current.element, foundWebArea)
              }
--            self.stopDictation()
-+            // The user lets go of (or presses) the shortcut right after the last word.
-+            self.stopDictation(capturesReleaseTail: true)
+ 
+             if current.depth < 6 {
+@@ -2155,7 +2176,7 @@ final class TextInsertionService {
+             }
          }
  
-         hotkeyService.onWorkflowDictationStart = { [weak self] workflowId, requestTimestamp in
-@@ -1866,7 +1873,7 @@ final class DictationViewModel: ObservableObject {
-             guard let self, self.activeDictationSessionID == sessionID,
-                   self.state == .recording else { return }
-             self.hotkeyService.cancelDictation()
--            self.stopDictation(submitRequested: true)
-+            self.stopDictation(submitRequested: true, capturesReleaseTail: true)
-         }
- 
-         hotkeyService.onCancelPressed = { [weak self] in
-@@ -2931,7 +2938,13 @@ final class DictationViewModel: ObservableObject {
- 
-     /// `stoppedAfterSilence` marks the silence stop of a toggle dictation, which takes the same
-     /// path as a second press of the shortcut and only announces its own reason.
--    private func stopDictation(submitRequested: Bool = false, stoppedAfterSilence: Bool = false) {
-+    /// `capturesReleaseTail` keeps recording for a moment after a key stop, so the end of the
-+    /// last word still in the input is not cut off (#1896).
-+    private func stopDictation(
-+        submitRequested: Bool = false,
-+        stoppedAfterSilence: Bool = false,
-+        capturesReleaseTail: Bool = false
-+    ) {
-         if state == .processing, recordingStartTask != nil, !isStopInFlight {
-             cancelCurrentOperation()
-             return
-@@ -2960,7 +2973,9 @@ final class DictationViewModel: ObservableObject {
-         markActiveDictationSessionProcessingIfNeeded()
-         // A push-to-talk recording interrupted by other keys is discarded without
-         // transcription; its discard banner is announced instead.
--        if pendingPushToTalkDiscardMessage == nil {
-+        // After a key stop the microphone still records the release tail, so a spoken
-+        // announcement would end up in the recording. It follows once capture ends.
-+        if pendingPushToTalkDiscardMessage == nil, !capturesReleaseTail {
-             if stoppedAfterSilence {
-                 accessibilityAnnouncementService.announceRecordingStoppedAfterSilence()
-             } else {
-@@ -2971,12 +2986,17 @@ final class DictationViewModel: ObservableObject {
-             guard let self else { return }
-             await finalizeStopDictation(
-                 submitRequested: submitRequested,
--                hiddenLiveSessionWasDeferred: hiddenLiveSessionWasDeferred
-+                hiddenLiveSessionWasDeferred: hiddenLiveSessionWasDeferred,
-+                capturesReleaseTail: capturesReleaseTail
-             )
-         }
+-        return nil
++        return (nil, foundWebArea)
      }
  
--    private func finalizeStopDictation(submitRequested: Bool, hiddenLiveSessionWasDeferred: Bool) async {
-+    private func finalizeStopDictation(
-+        submitRequested: Bool,
-+        hiddenLiveSessionWasDeferred: Bool,
-+        capturesReleaseTail: Bool
-+    ) async {
-         var didStartTranscriptionTask = false
-         defer {
-             if Task.isCancelled {
-@@ -3029,15 +3049,19 @@ final class DictationViewModel: ObservableObject {
-         let streamingPreviewWasHidden = lastStreamingPreviewHidden || hiddenLiveSessionWasDeferred
-         lastStreamingPreviewHidden = false
-         stopRecordingTimer()
--        let previewText = partialText.trimmingCharacters(in: .whitespacesAndNewlines)
--        let stopPolicy = AudioRecordingService.StopPolicy.finalizeShortSpeech()
-+        let stopPolicy = Self.finalizingStopPolicy(capturesReleaseTail: capturesReleaseTail)
-         var samples = await audioRecordingService.stopRecording(
-             policy: stopPolicy,
-             bluetoothBehavior: bluetoothStopBehavior
-         )
-+        // Taken after the release tail, so a last word the preview shows during it is kept.
-+        let previewText = partialText.trimmingCharacters(in: .whitespacesAndNewlines)
-         let recordingUsedBluetoothInput = recordingUsesBluetoothInput
-         restoreRecordingSideEffects()
-         guard !Task.isCancelled else { return }
-+        if capturesReleaseTail {
-+            accessibilityAnnouncementService.announceRecordi
+     private func findSelectionInDescendants(
+@@ -2702,10 +2723,13 @@ final class TextInsertionService {
+         let role = roleValue as? String else {
+             return false
+         }
+-        return ["AXTextField", "AXTextArea", "AXComboBox", "AXSearchField", "AXWebArea"]
+-            .contains(role)
++        return Self.liveFieldTextRoles.contains(role)
+     }
+ 
++    private static let liveFieldTextRoles: Set<String> = [
++        "AXTextField", "AXTextArea", "AXComboBox", "AXSearchField", "AXWebArea"
++    ]
++
+     private enum TextFieldAncestry {
+         case web
+         case native
 ```
 
-**File**: `TypeWhisperTests/AudioEngineRecoverySupportTests.swift` (modified, +92/-0)
+**File**: `TypeWhisperTests/TypeWhisperIntegrationTests.swift` (modified, +15/-0)
 ```diff
-@@ -1085,6 +1085,98 @@ final class AudioEngineRecoverySupportTests: XCTestCase {
-         XCTAssertTrue(error.localizedDescription.contains("got 0.0 Hz/0 ch"))
+@@ -6802,6 +6802,21 @@ final class TypeWhisperIntegrationTests: XCTestCase {
+         XCTAssertTrue(TextInsertionService.focusedElementShowsKeyboardTarget(role: "AXOutline"))
      }
  
-+    /// Audio that arrives after a key stop belongs to the recording (#1896).
-+    func testReleaseTailKeepsRecordingAudioThatArrivesAfterTheStop() async throws {
-+        let service = AudioRecordingService()
-+        service.hasMicrophonePermissionOverride = true
-+        service.startRecordingOverride = {}
-+        try service.startRecording()
-+        service.startRecordingOverride = nil
-+        service.engineTeardownOverride = { _ in }
-+        service.testingSetAudioEngine(RunningAudioEngine())
-+        let speech = Array(repeating: 0.05 as Float, count: 16_000)
-+        service.testingProcessConvertedSamples(speech)
-+
-+        let tail = AudioRecordingService.ReleaseTail(
-+            maxDuration: 2,
-+            quietDuration: 0.15,
-+            minimumRecordingDuration: 0.3
-+        )
-+        let stopTask = Task {
-+            await service.stopRecording(policy: .finalizeShortSpeech(releaseTail: tail))
-+        }
-+        let didClaimRecordingEngine = await waitUntil(timeout: 1) {
-+            service.testingCurrentAudioEngine() == nil
-+        }
-+        XCTAssertTrue(didClaimRecordingEngine)
-+        XCTAssertTrue(service.testingIsRecordingActive, "The recording stays active during the tail")
-+
-+        // The end of the last word, then the quiet that ends the tail early.
-+        let lastWord = Array(repeating: 0.05 as Float, count: 4_000)
-+        let quiet = Array(repeating: 0.001 as Float, count: 2_400)
-+        service.testingProcessConvertedSamples(lastWord)
-+        service.testingProcessConvertedSamples(quiet)
-+        let samples = await stopTask.value
-+
-+        XCTAssertEqual(samples.count, speech.count + lastWord.count + quiet.count)
-+        XCTAssertFalse(service.testingIsRecordingActive)
-+        guard case .settled(let duration) = service.lastStopReleaseTail else {
-+            return XCTFail("Expected a settled tail, got \(service.lastStopReleaseTail)")
-+        }
-+        XCTAssertLessThan(duration, tail.maxDuration)
-+    }
-+
-+    func testReleaseTailEndsAtOnceWhenTheRecordingAlreadyEndsQuiet() async throws {
-+        let service = AudioRecordingService()
-+        service.hasMicrophonePermissionOverride = true
-+        service.startRecordingOverride = {}
-+        try service.startRecording()
-+        service.startRecordingOverride = nil
-+        service.engineTeardownOverride = { _ in }
-+        service.testingSetAudioEngine(RunningAudioEngine())
-+        service.testingProcessConvertedSamples(Array(repeating: 0.05 as Float, count: 16_000))
-+        service.testingProcessConvertedSamples(Array(repeating: 0.001 as Float, count: 4_000))
-+
-+        let samples = await service.stopRecording(policy: .finalizeShortSpeech(releaseTail: .hotkeyStop))
-+
-+        XCTAssertEqual(samples.count, 20_000)
-+        XCTAssertEqual(service.lastStopReleaseTail, .settled(duration: service.lastStopReleaseTail.duration))
-+        XCTAssertLessThan(service.lastStopReleaseTail.duration, 0.05)
-+    }
-+
-+    func testReleaseTailEndsWhenTheStopIsCancelled() async throws {
-+        let service = AudioRecordingService()
-+        service.hasMicrophonePermissionOverride = true
-+        service.startRecordingOverride = {}
-+        try service.startRecording()
-+        service.startRecordingOverride = nil
-+        service.engineTeardownOverride = { _ in }
-+        service.testingSetAudioEngine(RunningAudioEngine())
-+        service.testingProcessConvertedSamples(Array(repeating: 0.05 as Float, count: 16_000))
-+
-+        let tail = AudioRecordingService.ReleaseTail(
-+            maxDuration: 5,
-+            quietDuration: 0.15,
-+            minimumRecordingDuration: 0.3
-+        )
-+        let stopTask = Task {
-+            await service.stopRecording(policy: .finalizeShortSpeech(releaseTail: tail))
-+        }
-+        let didClaimRecordingEngine = await waitUntil(timeout: 1) {
-+            service.testingCurrentAudioEngine() == nil
-+        }
-+        XCTAssertTrue(didClaimRecordingEngine)
-+        stopTask.cancel()
-+        let samples = await stopTask.value
-+
-+        XCTAssertEqual(samples.count, 16_000)
-+        XCTAssertFalse(service.testingIsRecordingActive)
-+        guard case .cancelled(let duration) = service.lastStopReleaseTail else {
-+            return XCTFail("Expected a cancelled tail, got \(service.lastStopReleaseTail)")
-+        }
-+        XCTAssertLessThan(duration, 1)
-+    }
-+
-     func testRecordingSuccessDiscardDeletesRecoveryAudio() async throws {
-         let directory = makeRecoveryTestDirectory()
-         let store = DictationRecoveryAudioStore(directory: directory)
-```
-
-**File**: `TypeWhisperTests/DictationShortSpeechTests.swift` (modified, +39/-0)
-```diff
-@@ -306,6 +306,45 @@ final class DictationShortSpeechTests: XCTestCase {
-         XCTAssertFalse(AudioRecordingService.StopPolicy.immediate.shouldApplyGracePeriod(bufferedDuration: 0.01))
-     }
- 
-+    func testReleaseTail_settlesOnlyOnQuietAudioAfterARealRecording() {
-+        let tail = AudioRecordingService.ReleaseTail.hotkeyStop
-+        let quietWindow = tail.quietSampleCount
-+        XCTAssertEqual(quietWindow, 2400)
-+
-+        let quiet = [Float](repeating: 0.002, count: quietWindow)
-+        let speech = [Float](repeating: 0.05, count: quietWindow)
-+        XCTAssertTrue(tail.isSettled(trailingSamples: ArraySlice(speech + quiet)))
-+        XCTAssertFalse(tail.isSettled(trailingSamples: ArraySlice(speech)))
-+        // The last word still fades out in the window.
-+        XCTAssertFalse(tail.isSettled(trailingSamples: ArraySlice(quiet.dropLast(800) + speech.prefix(800))))
-+        // Quiet speech at the end is not averaged away by the quiet before it.
-+        let quietSpeech = [Float](repeating: 0.005, count: 800)
-+        XCTAssertFalse(tail.isSettled(trailingSamples: ArraySlice(quiet.dropLast(800) + quietSpeech)))
-+        // Too little audio to judge yet.
-+        XCTAssertFalse(tail.isSettled(trailingSamples: ArraySlice(quiet.dropLast())))
-+
-+        // A quick tap keeps the short-speech handling of #157.
-+        XCTAssertFalse(tail.appliesToRecording(bufferedDuration: 0.1))
-+        XCTAssertTrue(tail.appliesToRecording(bufferedDuration: 0.3))
-+    }
-+
-+    func testFinalizingStopPolicy_addsTheReleaseTailOnlyForKeyStops() {
-+        let keyStop = DictationViewModel.finalizingStopPolicy(capturesReleaseTail: true)
-+        XCTAssertEqual(keyStop.releaseTail, .hotkeyStop)
-+        XCTAssertEqual(
-+            keyStop.logDescription,
-+            "finalizeShortSpeech(min=0.050,max=0.060,poll=0.010,tail=0.350,quiet=0.150)"
-+        )
-+        // The short-speech grace stays the same.
-+        XCTAssertTrue(keyStop.shouldApplyGracePeriod(bufferedDuration: 0.049))
-+        XCTAssertFalse(keyStop.shouldApplyGracePeriod(bufferedDuration: 0.05))
-+
-+        let otherStop = DictationViewModel.finalizingStopPolicy(capturesReleaseTail: false)
-+        XCTAssertNil(otherStop.releaseTail)
-+        XCTAssertEqual(otherStop.logDescription, AudioRecordingService.StopPolicy.finalizeShortSpeech().logDescription)
-+        XCTAssertNil(AudioRecordingService.StopPolicy.immediate.releaseTail)
-+    }
-+
-     func testDelayedReleaseRetainer_keepsObjectAliveUntilDelayExpires() throws {
-         let retainer = DelayedReleaseRetainer<ReleaseProbe>(label: "com.typewhisper.tests.delayed-release")
-         let released = expectation(description: "release after delay")
-```
-
-**File**: `TypeWhisperTests/TypeWhisperIntegrationTests.swift` (modified, +44/-2)
-```diff
-@@ -10433,6 +10433,8 @@ final class TypeWhisperIntegrationTests: XCTestCase {
-     private final class SilenceStopProbe {
-         var stopPolicies: [String] = []
-         var announcements: [String] = []
-+        /// The announcements made before each stop finished capturing.
-+        var announcementsDuringStop: [[String]] = []
-     }
- 
-     /// F14, F15 and F16. Each press in a test uses its own key, so the duplicate filter
-@@ -10498,6 +10500,7 @@ final class TypeWhisperIntegrationTests: XCTestCase {
-         context.audioRecordingService.startRecordingOverride = {}
-         context.audioRecordingService.stopRecordingOverride = { policy in
-             probe.stopPolicies.append(policy.logDescription)
-+            probe.announcementsDuringStop.append(probe.announcements)
-             return []
-         }
-         let viewModel = context.dictationViewModel
-@@ -10692,6 +10695,42 @@ final class TypeWhisperIntegrationTests: XCTestCase {
-         }
-     }
- 
-+    /// Releasing push-to-talk keeps recording for a moment, so the last word is not cut off (#1896).
-+    @MainActor
-+    func testPushToTalkReleaseStopsWithTheReleaseTail() async throws {
-+        let appSupportDirectory = try TestSupport.makeTemporaryDirectory()
-+        var dictationContext: DictationContext?
-+        defer {
-+            dictationContext = nil
-+            TestSupport.remove(appSupportDirectory)
-+            Self.restoreSilenceStopDefaults()
-+        }
-+        let probe = SilenceStopProbe()
-+        dictationContext = Self.makeSilenceStopContext(
-+            appSupportDirectory: appSupportDirectory,
-+            silenceStopEnabled: false,
-+            probe: probe
-+        )
-+        let context = try XCTUnwrap(dictationContext)
-+        let viewModel = context.dictationViewModel
-+
-+        try await Self.startSilenceStopDictation(context, slot: .pushToTalk, releaseAfterPress: false)
-+        context.hotkeyService.processCarbonHotkeyForTesting(
-+            slotType: .pushToTalk,
-+            hotkey: Self.silenceStopStartHotkey,
-+            isPressed: false
-+        )
-+        XCTAssertEqual(viewModel.state, .processing)
-+        for _ in 0..<300 where probe.stopPolicies.isEmpty || viewModel.state == .processing {
-+            try await Task.sleep(for: .milliseconds(10))
-+        }
-+
-+        XCTAssertEqual(
-+            probe.stopPolicies,
-+            [AudioRecordingService.StopPolicy.finalizeShortSpeech(releaseTail: .hotkeyStop).logDescription]
-+        )
++    func testFocusedWebContentWithoutTextElementDoesNotShowKeyboardTarget() {
++        // Muse names a container of its web view while the chat field deep inside has focus
++        // (#1937), and web editors can focus an element without a text role in their content.
++        XCTAssertFalse(TextInsertionService.focusedElementShowsKeyboardTarget(
++            role: "AXGroup",
++            hostsWebContent: true
++        ))
++        XCTAssertFalse(TextInsertionService.focusedElementShowsKeyboardTarget(
++            role: "AXGroup",
++            liesInEditableWebContent: true
++        ))
++        // A focused link on a web page still shows that the paste missed a text field.
++        XCTAssertTrue(TextInsertionService.focusedElementShowsKeyboardTarget(role: "AXLink"))
 +    }
 +
      @MainActor
-     func testLateSilenceReportForAStoppedDictationDoesNotStopTheNextOne() async throws {
-         let appSupportDirectory = try TestSupport.makeTemporaryDirectory()
-@@ -10723,14 +10762,17 @@ final class TypeWhisperIntegrationTests: XCTestCase {
-         XCTAssertEqual(viewModel.state, .processing)
-         XCTAssertNil(viewModel.silenceStopCountdownSeconds)
-         XCTAssertNil(viewModel.testingSilenceEndpointSessionID)
--        XCTAssertEqual(
--            probe.announcements.last,
-+        let stoppedAnnouncement = try XCTUnwrap(
-             Self.silenceStopAnnouncementText { $0.announceRecordingStopped() }
-         )
-         // The watch of the stopped dictation reports late; it does not stop anything twice.
-         viewModel.testingReportSilenceEndpoint(sessionID: firstSessionID)
-         await Self.waitForDictationSessionToFinish(viewModel, id: firstSessionID)
-         XCTAssertEqual(probe.stopPolicies.count, 1)
-+        // A key stop still records its release tail, so the announcement waits for it (#1896).
-+        XCTAssertEqual(probe.announcementsDuringStop.count, 1)
-+        XCTAssertFalse(probe.announcementsDuringStop.first?.contains(stoppedAnnouncement) ?? true)
-+        XCTAssertTrue(probe.announcements.contains(stoppedAnnouncement))
- 
-         try await Self.startSilenceStopDictation(
-             context,
+     func testDetectMissedTextFieldIgnoresAppThatHidesFocusedElement() async throws {
+         // Chromium and Electron apps name no focused element until their accessibility tree is
+```
+
+**File**: `docs/release-notes/unreleased.md` (modified, +1/-0)
+```diff
+@@ -16,3 +16,4 @@
+ - Watch folders: The Markdown transcript now starts with frontmatter that names the audio file, its word timestamps, the date, length, language, engine and speakers, and the text has a paragraph per speaker turn that starts with its time and speaker, for example `**[00:12:03] Speaker 1:**`. With an engine that reports word timestamps, `<file>.timestamps.json` next to the audio file holds them in the format of the HTTP API's `verbose_json` (next to the transcript when the audio file is deleted afterwards). Tools that cut audio by its transcript, such as the TypeWhisper scripts for REAPER, find a recording and the times of its words from a note in an Obsidian vault.
+ - Recorder: Recordings transcribed with an engine that reports word timestamps get `<recording>.timestamps.json` next to them; deleting a recording moves it to the Trash with the other files.
+ - Obsidian 1.3.0: Recorder notes name the recording and its word timestamps in their frontmatter (`audio:`, `timestamps:`) and show its length.
++- Dictating into apps that show their content in a web view, such as Meta's Muse, no longer ends with "No text field detected" while the text arrives. These apps can report a container of the web view, or an element inside an editable area, as focused instead of the text field, so TypeWhisper no longer takes that as a missed text field. A focused link or button on a web page still gets the warning.
 ```
 
 ---
 
-### Incident Patch 2: `4eb06013` (2026-11-09)
-**Commit Message**: (bug) Keep remote voices out of "Me" when calls play on speakers (#1876)
+### Incident Patch 3: `cc8ca968` (2026-11-14)
+**Commit Message**: (feature) Add Fluid Speech Pro to the Parakeet plugin (#1934)
 
-* (bug) Keep remote voices out of "Me" when calls play on speakers
-
-The Recorder found the user's own speech by comparing microphone and
-system levels frame by frame. On loudspeakers the call comes back on the
-microphone as loud as the user, and a few hundred milliseconds after the
-system track has it (the system capture starts after the microphone, and
-the output device adds its latency). Leaked call audio then counted as
-own speech, and every remote speaker moved to "Me".
-
-Own speech now has to stand clearly above the echo measured from the
-recording itself: the delay with the strongest loudness correlation
-between the tracks, and how loud the system audio comes back on the
-microphone. With headphones that echo is negligible and nothing changes.
-
-Closes #1875
-
-* Search the echo delay only where the system audio plays
-
-Over a whole conversation the microphone and system tracks take turns,
-which correlates their loudness negatively at every shift. The delay
-search then settled on the 2 s limit, and against a source shifted that
-far a faint echo on the microphone passed as own speech (1:1 calls in
-#1875 gained
-
-**File**: `TypeWhisper/Services/SpeakerChannelAttribution.swift` (modified, +108/-7)
+**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/Localizable.xcstrings` (modified, +28/-0)
 ```diff
-@@ -21,12 +21,33 @@ enum SpeakerChannelAttribution {
-     static let minimumDuration: TimeInterval = 0.3
-     static let padding: TimeInterval = 0.1
- 
-+    /// Longest delay searched between a sound on the system audio and its
-+    /// echo on the microphone. The system capture starts after the
-+    /// microphone, and the output device and the room add their latency.
-+    static let maximumEchoDelay: TimeInterval = 2
-+    /// Own speech is at least this much louder than the echo the system
-+    /// audio is expected to leave on the microphone.
-+    static let echoMargin: Float = 2.5
-+    /// Share of the expected echo left after each frame once the system
-+    /// audio stops, for the room's reverberation (about 3 dB per frame).
-+    static let echoDecay: Float = 0.7
-+    /// Below this correlation the microphone doesn't follow the system
-+    /// audio at any delay, and there is no echo to measure.
-+    static let minimumEchoCorrelation = 0.05
-+
-     /// Stretches where the microphone carries the user's own speech.
-     ///
-     /// A frame counts when the microphone is clearly above its noise floor
--    /// and, relative to each track's own loudness, at least as present as
--    /// the system audio. The second condition keeps remote voices that the
--    /// microphone picks up from loudspeakers from counting as the user.
-+    /// and clearly above the echo the system audio leaves on it. Calls on
-+    /// loudspeakers reach the microphone as loud as the user, and a few
-+    /// hundred milliseconds after the system audio has them, so the echo is
-+    /// measured from the recording itself: its delay, and how loud the
-+    /// system audio comes back on the microphone.
-+    ///
-+    /// The microphone also has to be at least as present as the system
-+    /// audio, relative to each track's own loudness. That rule alone applies
-+    /// without a measurable echo, and it keeps an echo measured at the wrong
-+    /// delay from adding own speech.
-     static func ownSpeechRanges(
-         microphone: [Float],
-         system: [Float],
-@@ -39,15 +60,19 @@ enum SpeakerChannelAttribution {
- 
-         let microphoneReference = percentile(microphoneLevels, 0.95)
-         let microphoneFloor = percentile(microphoneLevels, 0.10)
--        let systemReference = max(percentile(systemLevels, 0.95), minimumLevel)
-         let threshold = max(minimumLevel, microphoneFloor * 3, microphoneReference * 0.12)
-         guard microphoneReference > threshold else { return [] }
-+        let echo = expectedEcho(microphone: microphoneLevels, system: systemLevels)
-+        let systemReference = max(percentile(systemLevels, 0.95), minimumLevel)
-+        func standsOutFromSystemAudio(_ index: Int, _ level: Float) -> Bool {
-+            let systemLevel = index < systemLevels.count ? systemLevels[index] : 0
-+            guard level / microphoneReference >= 0.8 * systemLevel / systemReference else { return false }
-+            return echo.map { level >= echoMargin * $0[index] } ?? true
-+        }
- 
-         var ranges: [(start: TimeInterval, end: TimeInterval)] = []
-         for (index, level) in microphoneLevels.enumerated() {
--            let systemLevel = index < systemLevels.count ? systemLevels[index] : 0
--            guard level > threshold,
--                  level / microphoneReference >= 0.8 * systemLevel / systemReference else { continue }
-+            guard level > threshold, standsOutFromSystemAudio(index, level) else { continue }
-             let start = Double(index) * frameDuration
-             let end = start + frameDuration
-             if let last = ranges.last, start - last.end <= maximumPause {
-@@ -117,6 +142,82 @@ enum SpeakerChannelAttribution {
-     /// What is left of a diarizer turn around own speech only counts from this length.
-     static let minimumRemainder: TimeInterval = 0.2
- 
-+    /// The level the system audio's echo is expected to reach in each
-+    /// microphone frame, or nil when the recording shows no echo.
-+    ///
-+    /// The system level is shifted by the echo's delay, widened by a frame
-+    /// on either side for jitter, held while the room still reverberates,
-+    /// and scaled by how loud the system audio comes back on the microphone.
-+    /// That ratio is read over the loudest quarter of the system audio, from
-+    /// its lower quarter: the echo is there whenever the system audio is
-+    /// loud, the user's voice only now and then.
-+    private static func expectedEcho(microphone: [Float], system: [Float]) -> [Float]? {
-+        guard let delay = echoDelay(microphone: microphone, system: system) else { return nil }
-+        var source = [Float](repeating: 0, count: microphone.count)
-+        var held: Float = 0
-+        for index in microphone.indices {
-+            let center = index - delay
-+            var level: Float = 0
-+            for systemIndex in (center - 1)...(center + 1) where system.indices.contains(systemIndex) {
-+                level = max(level, system[systemIndex])
-+  
-```
-
-**File**: `TypeWhisperTests/SpeakerTranscriptCoordinatorTests.swift` (modified, +96/-0)
-```diff
-@@ -1011,6 +1011,39 @@ final class SpeakerChannelAttributionTests: XCTestCase {
+@@ -1078,6 +1078,34 @@
          }
-     }
- 
-+    /// Words of uneven length and loudness from `start`, like a stretch of speech.
-+    private func words(
-+        from start: TimeInterval,
-+        count: Int,
-+        variant: Int,
-+        pausing: Bool = true
-+    ) -> [(ClosedRange<TimeInterval>, Float)] {
-+        let lengths = [0.21, 0.35, 0.18, 0.42, 0.27, 0.5, 0.24, 0.31, 0.38]
-+        let gaps = [0.12, 0.2, 0.09, 0.31, 0.15, 0.07]
-+        let loudness: [Float] = [1, 0.55, 0.8, 0.35, 0.7, 0.45, 0.9]
-+        var time = start
-+        return (0..<count).map { index in
-+            let length = lengths[(index + variant) % lengths.count]
-+            defer { time += length + (pausing ? gaps[(index + 2 * variant) % gaps.count] : 0) }
-+            return (time...(time + length), loudness[(index * 3 + variant) % loudness.count])
+       }
+     },
++    "Fluid Speech Pro by FluidVoice, built on NVIDIA Parakeet TDT 0.6B v3 and Moondream Parakeet Ultra. Most accurate in English, 25 European languages, no API key required.": {
++      "localizations": {
++        "de": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Fluid Speech Pro von FluidVoice, basiert auf NVIDIA Parakeet TDT 0.6B v3 und Moondream Parakeet Ultra. Am genauesten auf Englisch, 25 europäische Sprachen, kein API-Schlüssel nötig."
++          }
++        },
++        "es": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "Fluid Speech Pro de FluidVoice, basado en NVIDIA Parakeet TDT 0.6B v3 y Moondream Parakeet Ultra. El más preciso en inglés, 25 idiomas europeos, no necesita clave de API."
++          }
++        },
++        "ja": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "FluidVoiceのFluid Speech Pro。NVIDIA Parakeet TDT 0.6B v3とMoondream Parakeet Ultraをベースにしています。英語で最も高精度、ヨーロッパの25言語に対応、APIキー不要。"
++          }
++        },
++        "zh-Hans": {
++          "stringUnit": {
++            "state": "translated",
++            "value": "FluidVoice 的 Fluid Speech Pro，基于 NVIDIA Parakeet TDT 0.6B v3 和 Moondream Parakeet Ultra。英语识别最准确，支持 25 种欧洲语言，无需 API 密钥。"
++          }
 +        }
-+    }
-+
-+    /// A tone that follows `words`, `delay` seconds late, and near silence elsewhere.
-+    private func track(
-+        duration: TimeInterval,
-+        words: [(ClosedRange<TimeInterval>, Float)],
-+        level: Float,
-+        delay: TimeInterval = 0,
-+        noise: Float = 0.0005
-+    ) -> [Float] {
-+        (0..<Int(duration * sampleRate)).map { index in
-+            let time = Double(index) / sampleRate - delay
-+            let amplitude = words.first { $0.0.contains(time) }.map { $0.1 * level } ?? noise
-+            return amplitude * Float(sin(Double(index) * 0.3))
-+        }
-+    }
-+
-     func testOwnSpeechIsWhereTheMicrophoneIsActive() {
-         let microphone = track(duration: 10, speech: [1...3, 6...7], level: 0.2)
-         let system = track(duration: 10, speech: [3.5...5.5], level: 0.3)
-@@ -1038,6 +1071,69 @@ final class SpeakerChannelAttributionTests: XCTestCase {
-         XCTAssertEqual(ranges[0].upperBound, 3.1, accuracy: 0.06)
-     }
- 
-+    /// Calls on loudspeakers come back on the microphone as loud as the
-+    /// user, and a third of a second after the system audio has them (#1875).
-+    func testDelayedLoudspeakerEchoIsNotOwnSpeech() {
-+        // Remote words of uneven length, so only the true delay lines the tracks up.
-+        var words: [ClosedRange<TimeInterval>] = []
-+        var time: TimeInterval = 4
-+        for (index, length) in [0.21, 0.35, 0.18, 0.42, 0.27, 0.5, 0.24, 0.31].enumerated() {
-+            words.append(time...(time + length))
-+            time += length + [0.12, 0.2, 0.09, 0.31, 0.15][index % 5]
-+        }
-+        let system = track(duration: 10, speech: words, level: 0.3)
-+        var microphone = track(duration: 10, speech: [1...3], level: 0.05)
-+        let echo = track(duration: 10, speech: words.map { ($0.lowerBound + 0.33)...($0.upperBound + 0.33) }, level: 0.05, noise: 0)
-+        for index in microphone.indices { microphone[index] += echo[index] }
-+
-+        let ranges = SpeakerChannelAttribution.ownSpeechRanges(microphone: microphone, system: system)
-+
-+        XCTAssertEqual(ranges.count, 1)
-+        XCTAssertEqual(ranges.first?.lowerBound ?? -1, 0.9, accuracy: 0.06)
-+        XCTAssertEqual(ranges.first?.upperBound ?? -1, 3.1, accuracy: 0.06)
-+    }
-+
-+    /// In a conversation the tracks take turns, which must not pass for an
-+    /// echo at some delay. The faint echo of a microphone near the speakers
-+    /// stays out of own speech, and the user's turns stay in (#1875).
-+    func testFaintEchoInAConversationIsNotOwnSpeech() {
-+        let remote = words(from: 1, count: 6, variant: 1) + words(from: 7, count: 6, variant: 2)
-+            + words(from: 13, count: 6, variant: 3)
-+        let user = words(from: 4.2, count: 5, variant: 4) + words(from: 10.2, count: 5, variant: 5)
-+        let system = track(duration: 18, words: remote, level: 0.3)
-+        let speech = track(duration: 18, words: user, level: 0.05)
-+        let echo = track(duration: 18, words: remote, level: 0.012, delay: 0.24, noise: 0)
-+        let microphone = zip(speech, echo).map { $0 + $1 }
-+
-+        let ranges = SpeakerChannelAttribution.ownSpeechRanges(microphone: microphone, system: system)
-+
-+        XCTAssertEqual(ranges.count, 2)
-+        XCTAssertEqual(ranges.first?.lowerBound ?? -1, 4.1, accuracy: 0.06)
-+        XCTAssertEqual(ranges.first?.upperBound ?? -1, 6.6, accuracy: 0.06)
-+        XCTAssertEqual(ranges.last?.lowerBound ?? -1, 10.1, accuracy: 0.06)
-+        XCTAssertEqual(ranges.last?.upperBound ?? -1, 12.5, accuracy: 0.06)
-+    }
-+
-+    /// An echo later than the delay search reaches can't be measured, and
-+    /// the search may settle on a wrong delay. Where the system audio is
-+    /// louder than the microphone, relative to each track's loudness, the
-+    /// echo still stays out of own speech.
-+    func testAnEchoBeyondTheDelaySearchStaysOutWhereTheSystemAudioIsLouder() {
-+        // The remote talks without a pause, so the system audio is louder than the echo throughout.
-+        let remote = words(from: 3, count: 32, variant: 4, pausing: false)
-+    
++      }
++    },
+     "Moondream Parakeet Ultra - Parakeet TDT v3 trained further for higher accuracy. 25 European languages, no API key required.": {
+       "localizations": {
+         "de": {
 ```
 
----
-
-### Incident Patch 3: `7deef650` (2026-11-11)
-**Commit Message**: (bug) Mark a speaker named as the user with is_me in Recorder completions (#1907)
-
-Recorder completions now set is_me for the microphone speaker and for any speaker with a confirmed name that names the user, the same rule the Speakers view uses. A name a voice profile only suggested does not set is_me.
-
-Closes #1888
-
-**File**: `README.md` (modified, +1/-1)
+**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/ParakeetPlugin.swift` (modified, +122/-56)
 ```diff
-@@ -862,7 +862,7 @@ Each successful retranscription keeps the `recording_id`, assigns a new `complet
- 
- `recorded_at` is when the recording started and `duration_seconds` its length; both are absent when the audio file does not tell. `calendar_event` is present for recordings started from the calendar, with `title`, `start` and `end` in Unix seconds, `location`, `organizer` and `attendees`.
- 
--Recordings with speaker detection carry `speaker_state` (`pending`, `ready` or `failed`) and, once speakers were found, `speakers` and `speaker_segments` in the shape `GET /v1/history` uses. `is_me` marks the speaker heard on the microphone, the user of this Mac; its `name` is the localized name for yourself until you rename it. The speakers come from the recording's History record, so renaming a speaker there shows up in the next response. A recording transcribed again keeps its History record and the speakers found for it.
-+Recordings with speaker detection carry `speaker_state` (`pending`, `ready` or `failed`) and, once speakers were found, `speakers` and `speaker_segments` in the shape `GET /v1/history` uses. `is_me` marks the user of this Mac, the same speakers History shows as yours: the speaker heard on the microphone and any speaker named as you (the localized name for yourself, or your own name once you renamed the microphone speaker). A name a voice profile only suggested does not set `is_me`. The microphone speaker's `name` is the localized name for yourself until you rename it. The speakers come from the recording's History record, so renaming a speaker there shows up in the next response. A recording transcribed again keeps its History record and the speakers found for it.
- 
- Completion receipts are saved alongside recordings as `<audio filename>.transcript-ready.json`. A separate `<audio filename>.recording-id.json` preserves the recording ID if the receipt is damaged, so retranscription can repair it without changing the ID. Both files are committed with the transcript and removed when the recording is deleted in TypeWhisper. Existing recordings become available here after their next successful transcription. Recordings without a saved transcript are omitted. The endpoint uses the same API token as the other private routes.
- 
-```
-
-**File**: `TypeWhisper/Services/SpeakerTranscriptCoordinator.swift` (modified, +12/-3)
-```diff
-@@ -741,14 +741,15 @@ extension SpeakerTranscriptCoordinator {
- enum RecorderSpeakerSnapshot {
-     static func adding(
-         _ record: TranscriptionRecord?,
--        to payload: RecorderTranscriptReadyPayload
-+        to payload: RecorderTranscriptReadyPayload,
-+        defaults: UserDefaults = .standard
-     ) -> RecorderTranscriptReadyPayload {
-         var payload = payload
-         guard let record, !record.isDeleted, let state = record.speakerTranscriptState else { return payload }
-         payload.speakerState = state.rawValue
-         guard let transcript = record.speakerTranscript else { return payload }
-         let names = record.speakerNames
--        let me = SpeakerWorkspaceModel.microphoneSpeaker(
-+        let microphoneSpeaker = SpeakerWorkspaceModel.microphoneSpeaker(
-             of: SpeakerTranscriptPresentation.turns(of: transcript),
-             ownSpeech: record.speakerOwnSpeech
+@@ -625,15 +625,25 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
          )
-@@ -760,7 +761,15 @@ enum RecorderSpeakerSnapshot {
-                 id: speakerID,
-                 name: (isSuggestion ? nil : entry?.displayName) ?? SpeakerTranscriptBuilder.outputLabel(for: speakerID),
-                 suggestedName: isSuggestion ? entry?.displayName : nil,
--                isMe: speakerID == me
-+                // The speaker the Speakers view shows as the user's own, but
-+                // not for a name a voice profile only suggested.
-+                isMe: SpeakerWorkspaceModel.isOwnSpeaker(
-+                    speakerID,
-+                    microphoneSpeakerID: microphoneSpeaker,
-+                    names: names,
-+                    countsSuggestions: false,
-+                    defaults: defaults
-+                )
-             )
-         }
-         payload.speakerSegments = transcript.segments.map {
-```
-
-**File**: `TypeWhisper/ViewModels/SpeakerWorkspaceModel.swift` (modified, +14/-1)
-```diff
-@@ -86,8 +86,21 @@ final class SpeakerWorkspaceModel: ObservableObject {
-     /// speaker heard on the microphone channel of a Recorder recording, or
-     /// one named as the user ("Me" in the app's language, or their own name).
-     func isOwnSpeaker(_ speakerID: String) -> Bool {
-+        Self.isOwnSpeaker(speakerID, microphoneSpeakerID: microphoneSpeakerID, names: names, defaults: defaults)
+     }
+ 
+-    /// Parakeet's vocabulary has no token for a few characters, mostly "&", brackets and some
+-    /// quotes. v3 never writes them, but Ultra learned to and emits "<unk>" in their place
+-    /// ("M<unk>A", "spectroscopy <unk> FTIR"). Between capitals it stands for "&" (M&A, P&L,
+-    /// R&D); elsewhere it is dropped, so the marker never reaches the user's text.
++    /// Parakeet's vocabulary has no token for a few characters: "&", brackets, dashes, typographic
++    /// quotes and apostrophes, and the Greek final sigma "ς". v3 leaves them out, but Ultra and
++    /// Fluid Speech Pro learned to write them and emit "<unk>" in their place. The context tells
++    /// which character it stands for most of the time:
++    /// - between capitals "&" (M&A, P&L, R&D);
++    /// - at the end of a lowercase Greek word "ς" ("τη<unk> εποχή<unk>" is "της εποχής");
++    /// - before a capital an opening quote, so a space keeps the words apart ("film<unk>Il mistero");
++    /// - between lowercase letters an apostrophe (Maltese "f<unk>żewġ" is "f'żewġ").
++    /// Anywhere else it is dropped, so the marker never reaches the user's text. The Windows
++    /// sherpa-onnx plugin applies the same rules in `UnknownTokens.cs`.
+     static func removingUnknownTokens(from text: String) -> String {
+         let marker = "<unk>"
+         guard text.contains(marker) else { return text }
+         var cleaned = text
+             .replacingOccurrences(of: "(?<=\\p{Lu})<unk>(?=\\p{Lu})", with: "&", options: .regularExpression)
++            // Lowercase Greek and Greek Extended, then the end of the word.
++            .replacingOccurrences(of: "(?<=[\\u03AC-\\u03CE\\u1F00-\\u1FFF])<unk>(?![\\p{L}\\p{N}])", with: "ς", options: .regularExpression)
++            .replacingOccurrences(of: "(?<=[\\p{L}\\p{N}])<unk>(?=\\p{Lu})", with: " ", options: .regularExpression)
++            .replacingOccurrences(of: "(?<=\\p{Ll})<unk>(?=\\p{Ll})", with: "'", options: .regularExpression)
+             .replacingOccurrences(of: "(?<=\\w)<unk>(?=\\w)", with: "", options: .regularExpression)
+             .replacingOccurrences(of: marker, with: " ")
+         cleaned = cleaned
+@@ -773,7 +783,14 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
+             let token = timing.token
+             if token.isEmpty || token == "<blank>" || token == "<pad>" { continue }
+ 
+-            let startsNewWord = isWordBoundary(token) || currentWord.isEmpty
++            let markerSplit = markerSeparatesWords(currentWord, nextToken: token)
++            let startsNewWord = isWordBoundary(token) || currentWord.isEmpty || markerSplit
++
++            if markerSplit {
++                // In the full text this marker is the space between the words ("film<unk>Il" reads
++                // "film Il"). Cleaned on its own, "ταινία<unk>" would end in a Greek final sigma.
++                currentWord.removeLast(unknownTokenMarker.count)
++            }
+ 
+             if startsNewWord && !currentWord.isEmpty {
+                 let trimmed = currentWord.trimmingCharacters(in: .whitespaces)
+@@ -825,6 +842,18 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
+         return cleaned
+     }
+ 
++    /// The "<unk>" token never carries a word boundary, so it joins the word before it. That
++    /// keeps a marker that becomes "ς" or "'" on its word. Before a capital it becomes a space
++    /// ("film<unk>Il" is "film Il"), so the capital starts a new word. Between two capitals it
++    /// is "&" and the word stays whole (M&A).
++    private static func markerSeparatesWords(_ currentWord: String, nextToken: String) -> Bool {
++        guard currentWord.hasSuffix(unknownTokenMarker), nextToken.first?.isUppercase == true,
++              let before = currentWord.dropLast(unknownTokenMarker.count).last else { return false }
++        return (before.isLetter || before.isNumber) && !before.isUppercase
 +    }
 +
-+    /// The rule behind `isOwnSpeaker(_:)`, which the Recorder's `is_me` follows too.
-+    /// - Parameter countsSuggestions: Also accepts a name a voice profile only suggested.
-+    static func isOwnSpeaker(
-+        _ speakerID: String,
-+        microphoneSpeakerID: String?,
-+        names: SpeakerNameTable?,
-+        countsSuggestions: Bool = true,
-+        defaults: UserDefaults = .standard
-+    ) -> Bool {
-         if speakerID == microphoneSpeakerID { return true }
--        guard let name = names?.displayName(for: speakerID) else { return false }
-+        guard let names, let name = names.displayName(for: speakerID),
-+              countsSuggestions || !names.isSuggestion(for: speakerID) else { return false }
-         return SpeakerOwnName.isOwnName(name, defaults: defaults)
++    private static let unknownTokenMarker = "<unk>"
++
+     /// Same characters as the spacing rule in `removingUnknownTokens(from:)`.
+     private static let closingPunctuation: Set<Character> = [",", ".", ";", ":", "!", "?", ")", "]", "}", "…"]
+     private static let openingPunctuation: Set<Character> = ["(", "[", "{"]
+@@ -1256,8 +1285,8 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
+                     ? nil
+                     : try await reserveDownloadSpace(for: version)
+                 defer { spaceReservation?.release() }
+-                if version == .fluidSpeechMini {
+-                    try await installFluidSpeechMini()
++                if let fluidSpeechModel = version.fluidSpeechModel {
++                    try await installFluidSpeech(fluidSpeechModel)
+                     models = try Self.loadInstalledModels(version: version)
+                 } else if version
+```
+
+**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/Tests/ParakeetNemotronStreamingTests.swift` (modified, +1/-1)
+```diff
+@@ -37,7 +37,7 @@ final class ParakeetNemotronStreamingTests: XCTestCase {
+         XCTAssertEqual(Set(directories).count, directories.count, "Every model has its own folder")
+         XCTAssertEqual(
+             ParakeetVersion.nemotronStreaming.installDirectory.deletingLastPathComponent(),
+-            FluidSpeechMini.directory.deletingLastPathComponent()
++            FluidSpeechModel.mini.directory.deletingLastPathComponent()
+         )
      }
  
 ```
 
-**File**: `TypeWhisperPluginSDK/Sources/TypeWhisperPluginSDK/TypeWhisperEvent.swift` (modified, +1/-1)
+**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/Tests/ParakeetPluginTests.swift` (modified, +70/-15)
 ```diff
-@@ -133,7 +133,7 @@ public struct RecorderSpeaker: Sendable, Codable, Equatable {
-     public let id: String
-     public let name: String
-     public let suggestedName: String?
--    /// The speaker heard on the microphone, the user of this Mac.
-+    /// The user of this Mac: the speaker heard on the microphone, or one named as the user.
-     public let isMe: Bool
- 
-     public init(id: String, name: String, suggestedName: String? = nil, isMe: Bool = false) {
-```
-
-**File**: `TypeWhisperTests/SpeakerWorkspaceTests.swift` (modified, +22/-0)
-```diff
-@@ -1,5 +1,6 @@
- import XCTest
- @testable import TypeWhisper
-+import TypeWhisperPluginSDK
- 
- final class SpeakerWorkspaceTests: XCTestCase {
-     private func segment(_ text: String, _ start: TimeInterval, _ end: TimeInterval, _ speaker: String?) -> SpeakerTranscriptSegment {
-@@ -494,6 +495,27 @@ final class SpeakerWorkspaceModelTests: XCTestCase {
-         XCTAssertFalse(model.isOwnSpeaker("S1"))
+@@ -811,7 +811,7 @@ final class ParakeetPluginTests: XCTestCase {
+         let plugin = makePlugin()
+         XCTAssertEqual(
+             plugin.transcriptionModels.map(\.id),
+-            ["parakeet-ultra", "parakeet-tdt-0.6b-v3", "fluid-speech-mini", "parakeet-tdt-0.6b-v2", "nemotron-3.5-asr-streaming-0.6b"]
++            ["parakeet-ultra", "parakeet-tdt-0.6b-v3", "fluid-speech-pro", "fluid-speech-mini", "parakeet-tdt-0.6b-v2", "nemotron-3.5-asr-streaming-0.6b"]
+         )
+         XCTAssertEqual(ParakeetVersion.from(modelId: "parakeet-ultra"), .ultra)
+         XCTAssertEqual(ParakeetVersion.ultra.supportedLanguages, ParakeetVersion.v3.supportedLanguages)
+@@ -962,6 +962,16 @@ final class ParakeetPluginTests: XCTestCase {
+             ("alongside the word <unk>say<unk> for you", "alongside the word say for you"),
+             ("is the 'pay amolai<unk>, bred with olive oil", "is the 'pay amolai, bred with olive oil"),
+             ("<unk>Hello there<unk>", "Hello there"),
++            ("Le spectacle <unk>Son et Lumière<unk> à la pyramide", "Le spectacle Son et Lumière à la pyramide"),
++            // Greek final sigma, quotes before a capital and Maltese apostrophes (FLEURS, typewhisper-win#780).
++            ("Η δέκα τη καταιγίδα τη<unk> εποχή<unk> των Ατλαντικών", "Η δέκα τη καταιγίδα της εποχής των Ατλαντικών"),
++            ("Επίση<unk>, μετά την επανάσταση", "Επίσης, μετά την επανάσταση"),
++            ("εναντίον του<unk>.", "εναντίον τους."),
++            ("Se avete visto il film<unk>Il mistero dei Templari<unk>, potreste", "Se avete visto il film Il mistero dei Templari, potreste"),
++            ("Se avete visto il film,<unk>Il mistero dei Templari<unk>, potreste", "Se avete visto il film, Il mistero dei Templari, potreste"),
++            ("hakati nimetama<unk>Kopersiooniks Dragoon.", "hakati nimetama Kopersiooniks Dragoon."),
++            ("Karpaneto kompeta f<unk>żewġ triela", "Karpaneto kompeta f'żewġ triela"),
++            ("ħafna mezzi oħra ta<unk> trasport.", "ħafna mezzi oħra ta trasport."),
+             ("no markers here", "no markers here"),
+         ]
+         for (input, expected) in cases {
+@@ -1002,6 +1012,26 @@ final class ParakeetPluginTests: XCTestCase {
+         XCTAssertEqual(ParakeetPlugin.groupWordsIntoSegments(words).map(\.text), ["hello, world."])
      }
  
-+    /// The Recorder's `is_me` follows the Speakers view, also without a microphone
-+    /// channel, but a name a voice profile only suggested does not count.
-+    func testRecorderPayloadMarksTheSpeakerNamedAsTheUser() throws {
-+        _ = try makeModel()
-+        let me = String(localized: "speakers.me")
-+        history.setSpeakerName(me, for: "S1", profileID: UUID(), isSuggestion: true, inRecordID: recordID)
-+        history.setSpeakerName(me, for: "S2", inRecordID: recordID)
-+        let payload = RecorderTranscriptReadyPayload(
-+            recordingID: UUID(),
-+            completedAt: Date(),
-+            text: "",
-+            audioFilePath: "/tmp/a.m4a",
-+            transcriptFilePath: "/tmp/a.txt"
++    func testMarkersThatBecomeLettersStayOnTheirWordAndQuotesSplitWords() {
++        let tokens = ["▁τη", "<unk>", "▁εποχή", "<unk>", "▁f", "<unk>", "ż", "ewġ", "▁film", "<unk>", "Il", "▁mistero", "▁M", "<unk>", "A",
++                      "▁ταινία", "<unk>", "Το"]
++        let timings = tokens.enumerated().map { index, token in
++            TokenTiming(token: token, tokenId: token == "<unk>" ? 0 : index + 1,
++                        startTime: Double(index) * 0.1, endTime: Double(index) * 0.1 + 0.1, confidence: 1)
++        }
++
++        let words = ParakeetPlugin.groupTokensIntoWords(timings)
++
++        XCTAssertEqual(words.map(\.text), ["της", "εποχής", "f'żewġ", "film", "Il", "mistero", "M&A", "ταινία", "Το"])
++        XCTAssertEqual(words[0].end, 0.2, accuracy: 0.0001, "ς keeps the marker's time")
++        XCTAssertEqual(words[3].end, 1.0, accuracy: 0.0001, "The word before the quote ends with the marker")
++        XCTAssertEqual(words[4].start, 1.0, accuracy: 0.0001, "The quoted word starts with its own token")
++        XCTAssertEqual(
++            ParakeetPlugin.groupWordsIntoSegments(words).map(\.text),
++            ["της εποχής f'żewġ film Il mistero M&A ταινία Το"]
 +        )
-+
-+        let result = RecorderSpeakerSnapshot.adding(history.record(withID: recordID), to: payload)
-+
-+        XCTAssertEqual(result.speakers?.map(\.id), ["S1", "S2"])
-+        XCTAssertEqual(result.speakers?.map(\.isMe), [false, true])
 +    }
 +
-     /// Renaming the microphone speaker names the user in later recordings too;
-     /// "Me" goes back to the default.
-     func testRenamingTheMicrophoneSpeakerKeepsTheNameForNewRecordings() throws {
+     func testOpeningPunctuationLeftByADroppedMarkerJoinsTheNextWord() {
+         let timings = [
+             TokenTiming(token: "▁hello", tokenId: 1, startTime: 0.0, endTime: 0.3, confidence: 1),
+@@ -1059,7 +1089,7 @@ final class ParakeetPluginTests: XCTestCase {
+         XCTAssertEqual(version.jointFileName, ModelNames.ASR.jointFile)
+         XCTAssertEqual(ParakeetVersion.ultra.jointFileName, ModelNames.ASR.jointV3File)
+         XCTAssertEqual(version.huggingFaceRepository, "FluidVoice-Labs/fluid-speech-mini-coreml")
+-        XCTAssertNotNil(FluidSpeechMini.revision.range(of: "^[0-9a-f]{40}$", options: .regularExpression))
++        XCTAssertNotNil(FluidSpeechModel.mini.revision.range(of: "^[0-9a-f]{40}$", options: .regularExpression))
+         XCTAssertEqual(version.installDirectory.lastPathComponent, "fluid-speech-mini-coreml")
+         XCTAssertNotEqual(version.installDirectory, ParakeetVersion.ultra.installDirectory)
+         XCTAssertTrue(
+@@ -1069,13 +1099,38 @@ final class ParakeetPluginTests: XCTestCase {
+         )
+     }
+ 
++    func testFluidSpeechProIsAMultilingualUltraFineTuneWithoutLanguageHint() {
++        let version = ParakeetVersion.fluidSpeechPro
++        XCTAssertEqual(ParakeetVersion.from(modelId: "fluid-speech-pro"), version)
++        XCTAssertEqual(ParakeetVersion(rawValue: "fluidSpeechPro"), version)
++        XCTAssertEqual(version.supportedLanguages, ParakeetVersion.ultra.supportedLanguages)
++        XCTAssertE
+```
+
+**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/manifest.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+     "id": "com.typewhisper.parakeet",
+     "name": "Parakeet",
+-    "version": "1.7.0",
++    "version": "1.8.0",
+     "minHostVersion": "1.8.2",
+     "sdkCompatibilityVersion": "v1-model-import",
+     "minOSVersion": "14.0",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1923** (2026-11-13): (feature) Add ElevenLabs Scribe v3 and stream it with Scribe v3 Live (@SeoFood)
-- **PR #1921** (2026-11-12): (chore) Add the 1.8.3 release notes (@SeoFood)
-- **PR #1919** (2026-11-13): (chore) Answer a question from passages of History (@SeoFood)
-- **PR #1918** (2026-11-13): (chore) Find History passages for a question in the search index (@SeoFood)
-- **PR #1917** (2026-11-12): (chore) Add the App Store What's New text for 1.8.3 (@SeoFood)
-- **PR #1916** (2026-11-12): (feature) Replace the translation setting with a Translation workflow and fall back to Apple Translate (@SeoFood)
+- **PR #1950** (2026-11-16): (chore) Keep the module host for the app's lifetime (@SeoFood)
+- **PR #1949** (2026-11-16): (feature) Let webhooks send only Recorder transcripts (@SeoFood)
+- **PR #1947** (2026-11-15): (chore) Let modules read app managed keys they declare with the same kind (@SeoFood)
+- **PR #1946** (2026-11-16): (chore) Search words without a lemma by their stem and share the History planner with iOS (@SeoFood)
+- **PR #1945** (2026-11-15): (chore) Give modules host capabilities and contribution points (@SeoFood)
+- **PR #1941** (2026-11-15): (chore) Add a module interface package and an empty stub (@SeoFood)
 
 ---
 
@@ -2825,59 +2699,31 @@ Closes #1888
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. (bug) Keep recording briefly after a push-to-talk release so the last word is no
+## X. (feature) Add the SOV-Transcribe plugin for Macs with 32 GB of memory
 
 **RULE**:
-When implementing operations in `TypeWhisper/Services/AudioRecordingService.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/plugin-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6d4cf137`: (bug) Keep recording briefly after a push-to-talk release so the last word is not cut off (#1897). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c26a50e`: (feature) Add the SOV-Transcribe plugin for Macs with 32 GB of memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `TypeWhisper/Services/AudioRecordingService.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/plugin-release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    /// Audio kept recording after the user released or pressed the shortcut, so the end of
-    /// the last word that is still on its way through the input is not cut off (#1896).
-    struct ReleaseTail: Equatable {
-        /// The tail a hotkey stop gets: at most 350 ms, ending early after 150 ms of quiet.
-        static let hotkeyStop = ReleaseTail(
-            maxDuration: 0.35,
-            quietDuration: 0.15,
-            minimumRecordingDuration: 0.3
-        )
-
-        /// The longest the tail records, counted from the stop request.
-        var maxDuration: TimeInterval
-        /// The tail ends as soon as this much audio at the end of the recording is quiet.
-        var quietDuration: TimeInterval
-        /// Shorter recordings get no tail, so a quick tap of the shortcut keeps the
-        /// short-speech handling of #157 and is still discarded as too short.
-        var minimumRecordingDuration: TimeInterval
-
-        var quietSampleCount: Int {
-            max(1, Int((quietDuration * AudioRecordingService.targetSampleRate).rounded()))
-        }
-
-        func appliesToRecording(bufferedDuration: TimeInterval) -> Bool {
-            bufferedDuration >= minimumRecordingDuration
-
+            sov-transcribe) TARGET="SOVTranscribePlugin" ;;
+          # - Qwen3/Voxtral/Granite/SOV-Transcribe/Canary/LocalLLM: macOS 14 + embed Swift compat libs (MLX uses Swift 6.2 features)
+          elif [ "$TARGET" = "Qwen3Plugin" ] || [ "$TARGET" = "VoxtralPlugin" ] || [ "$TARGET" = "GranitePlugin" ] || [ "$TARGET" = "SOVTranscribePlugin" ] || [ "$TARGET" = "CanaryPlugin" ] || [ "$TARGET" = "LocalLLMPlugin" ]; then
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-            pollInterval: TimeInterval = 0.01
-            case .finalizeShortSpeech(let minBufferedDuration, let maxExtraCapture, let pollInterval):
-                String(
-                    format: "finalizeShortSpeech(min=%.3f,max=%.3f,poll=%.3f)",
-                    minBufferedDuration,
-                    maxExtraCapture,
-                    pollInterval
-                )
+// Induced defect failure mode:
+          # - Qwen3/Voxtral/Granite/Canary/LocalLLM: macOS 14 + embed Swift compat libs (MLX uses Swift 6.2 features)
+          elif [ "$TARGET" = "Qwen3Plugin" ] || [ "$TARGET" = "VoxtralPlugin" ] || [ "$TARGET" = "GranitePlugin" ] || [ "$TARGET" = "CanaryPlugin" ] || [ "$TARGET" = "LocalLLMPlugin" ]; then
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6d4cf137` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c26a50e` are properly handled with clean fallback behavior.

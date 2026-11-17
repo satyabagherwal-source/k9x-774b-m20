@@ -10406,3 +10406,6 @@
 | `CYCLE-20261117-RR78` | `2026-11-17T02:02:22.964Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`388d54b5...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T02:02:52.550Z` | `clementtsang-bottom` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BFBE4A28` [Domain D] | Yes (`1d39474e...`) |
 | `CYCLE-20261117-ACCX` | `2026-11-17T02:16:50.193Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8836` | Yes (`37ddf0e1...`) |
+| `CYCLE-20261117-U8UF` | `2026-11-17T02:32:18.759Z` | `Viggle/Viggle-Remake` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | Yes (`4352be78...`) |
+| `CYCLE-20261117-U8XQ` | `2026-11-17T02:32:18.878Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8837` | Yes (`f9ca6a7c...`) |
+| `CYCLE-20261117-UCFR` | `2026-11-17T02:32:23.415Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8838` | Yes (`3b21acf5...`) |

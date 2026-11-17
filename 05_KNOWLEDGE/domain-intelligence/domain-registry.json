@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T02:24:55.189Z",
-  "total_records": 1394,
+  "last_updated": "2026-11-17T02:32:27.833Z",
+  "total_records": 1398,
   "domains": {
     "A": {
       "total": 9,
@@ -42,7 +42,7 @@
       ]
     },
     "D": {
-      "total": 607,
+      "total": 609,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -650,7 +650,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",
         "DOM-D-C8024830",
         "domain_intelligence-research-knowledge-intelligence-oliviarossi-minimax-h3_singularity-x-10eros-max_",
-        "DOM-D-BFBE4A28"
+        "DOM-D-BFBE4A28",
+        "domain_intelligence-research-knowledge-intelligence-viggle-viggle-remake-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant"
       ]
     },
     "E": {
@@ -699,7 +701,7 @@
       ]
     },
     "G": {
-      "total": 257,
+      "total": 259,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -957,7 +959,9 @@
         "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-core-invariants",
         "domain_intelligence-architecture-intelligence-openkruise-kruise-core-invariants",
         "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-openkruise-kruise-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-openkruise-kruise-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-core-invariants",
+        "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-learnings-core-invariants"
       ]
     },
     "H": {
@@ -19730,8 +19734,8 @@
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "repository": "tuist/tuist",
-      "content_hash": "c1cf62e5e3124550135046e415a8656abfd117c663fc65b62e3cea1c6ca7d244",
-      "created_at": "2026-11-15T08:07:13.038Z"
+      "content_hash": "a266c36fef1d3d0c3d9193db6da536d8235b04f995019d577900032e5e07ff5e",
+      "created_at": "2026-11-17T02:32:19.169Z"
     },
     "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat": {
       "record_id": "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
@@ -19757,8 +19761,8 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-learnings-architecture-intelligence-tuist-tuist-learnings-core-invar.md",
       "repository": "tuist-tuist-learnings",
-      "content_hash": "6a0cf8249ba535bcb4723a010107b190729be7edd5ebf394dde9331b59a70dee",
-      "created_at": "2026-11-15T08:09:30.348Z"
+      "content_hash": "88b49407c5a2d630eb40e4f192f8a63a2879d91225960833df0961b2ca590d7f",
+      "created_at": "2026-11-17T02:32:26.981Z"
     },
     "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite": {
       "record_id": "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite",
@@ -24626,6 +24630,42 @@
       "repository": "openkruise-kruise-learnings",
       "content_hash": "778cabfa7badf628574ec46aef3df45cdedaec1cd77c9a12c64e25142a24b6b7",
       "created_at": "2026-11-17T02:02:54.015Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-viggle-viggle-remake-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-viggle-viggle-remake-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Viggle/Viggle-Remake Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-viggle-viggle-remake-research-knowledge-intelligence-viggle-viggle-remake-cor.md",
+      "repository": "Viggle/Viggle-Remake",
+      "content_hash": "00460d73d91f46645d05cd0dc6028d3e85d24b324c44224447f4a5f353a06a55",
+      "created_at": "2026-11-17T02:32:18.931Z"
+    },
+    "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: TypeWhisper/typewhisper-mac Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-typewhisper-typewhisper-mac-architecture-intelligence-typewhisper-typewhisper-ma.md",
+      "repository": "TypeWhisper/typewhisper-mac",
+      "content_hash": "c1ffe34d4067b391fa6871f0cc0fdc4e3c76732cb283a7f4a0b82b802abaa4d2",
+      "created_at": "2026-11-17T02:32:23.688Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-viggle-remake-learnings-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-viggle-viggle-remake-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-viggle-viggle-remake-learnings-research-knowledge-intelligence-hf-viggle-vigg.md",
+      "repository": "hf-viggle-viggle-remake-learnings",
+      "content_hash": "b702288b093bcde281580ccbc2e1034ea758f0e78c0268e7416f18bb5ad26439",
+      "created_at": "2026-11-17T02:32:27.336Z"
+    },
+    "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-typewhisper-typewhisper-mac-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: typewhisper-typewhisper-mac-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-typewhisper-typewhisper-mac-learnings-architecture-intelligence-typewhisper-type.md",
+      "repository": "typewhisper-typewhisper-mac-learnings",
+      "content_hash": "308fcb0de9608591beae9688e22d6cb6c1509c9b044bbd00f0c06952a25ae19e",
+      "created_at": "2026-11-17T02:32:27.833Z"
     }
   }
 }

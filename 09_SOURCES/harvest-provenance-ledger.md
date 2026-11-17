@@ -10439,3 +10439,6 @@ Every entry in this ledger must capture:
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `c4888cbb` | Multi-dimensional audit evidence | 2026-11-17T02:02:22.967Z |
 | `learn-dom-d-bfbe4a28` | `project://clementtsang-bottom` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md` | 2026-11-17T02:02:52.550Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `7d8af245` | Multi-dimensional audit evidence | 2026-11-17T02:16:50.196Z |
+| `learn-huggingface-viggle-viggle-remake` | `https://huggingface.co/Viggle/Viggle-Remake` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-17T02:32:18.763Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `de00da5d` | Multi-dimensional audit evidence | 2026-11-17T02:32:18.881Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `7e1680a4` | Multi-dimensional audit evidence | 2026-11-17T02:32:23.418Z |

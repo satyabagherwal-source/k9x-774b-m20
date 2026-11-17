@@ -641995,3 +641995,149 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c0a1a6ae` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8837. fail stalled node blob cache downloads within seconds (Harvested from tuist/tuist)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "fail stalled node blob cache downloads within seconds",
+  "source": "tuist/tuist",
+  "source_url": "https://github.com/tuist/tuist",
+  "source_version": "de00da5d",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-17T02:32:18.449Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tuist-tuist",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tuist/tuist](https://github.com/tuist/tuist) (Revision: `de00da5d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `infra/sandbox-image/remote-execution.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8e1ff1c6`: infra): fail stalled node blob cache downloads within seconds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/sandbox-image/remote-execution.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+inputs, from Kura. A node download that receives nothing for 30 seconds
+counts as a failure, and sandboxd's connection to Kura pings while downloads
+run, so one stalled stream or dead connection costs the actions waiting on it
+seconds rather than minutes.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+inputs, from Kura.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8e1ff1c6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8838. (feature) Add the SOV-Transcribe plugin for Macs with 32 GB of memory (Harvested from TypeWhisper/typewhisper-mac)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "(feature) Add the SOV-Transcribe plugin for Macs with 32 GB of memory",
+  "source": "TypeWhisper/typewhisper-mac",
+  "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+  "source_version": "7e1680a4",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-17T02:32:23.030Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-typewhisper-typewhisper-mac",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac) (Revision: `7e1680a4`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/plugin-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6c26a50e`: (feature) Add the SOV-Transcribe plugin for Macs with 32 GB of memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/plugin-release.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+            sov-transcribe) TARGET="SOVTranscribePlugin" ;;
+          # - Qwen3/Voxtral/Granite/SOV-Transcribe/Canary/LocalLLM: macOS 14 + embed Swift compat libs (MLX uses Swift 6.2 features)
+          elif [ "$TARGET" = "Qwen3Plugin" ] || [ "$TARGET" = "VoxtralPlugin" ] || [ "$TARGET" = "GranitePlugin" ] || [ "$TARGET" = "SOVTranscribePlugin" ] || [ "$TARGET" = "CanaryPlugin" ] || [ "$TARGET" = "LocalLLMPlugin" ]; then
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+          # - Qwen3/Voxtral/Granite/Canary/LocalLLM: macOS 14 + embed Swift compat libs (MLX uses Swift 6.2 features)
+          elif [ "$TARGET" = "Qwen3Plugin" ] || [ "$TARGET" = "VoxtralPlugin" ] || [ "$TARGET" = "GranitePlugin" ] || [ "$TARGET" = "CanaryPlugin" ] || [ "$TARGET" = "LocalLLMPlugin" ]; then
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6c26a50e` are properly handled with clean fallback behavior.

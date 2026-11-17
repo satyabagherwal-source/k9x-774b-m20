@@ -10103,10 +10103,10 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "platform": "github",
     "sourceUrl": "https://github.com/TypeWhisper/typewhisper-mac",
-    "sourceVersion": "bf7bb1c5",
+    "sourceVersion": "7e1680a4",
     "license": "GPL-3.0",
-    "contentHash": "a00b4d0b55648780b660baac82be6226e2f621e8be60975a389ba351d1569bb0",
-    "lastHarvestedAt": "2026-11-13T13:02:44.758Z",
+    "contentHash": "3b21acf597db42e932a34a840e3a91c50320e2c58c977f34873728783d3dc204",
+    "lastHarvestedAt": "2026-11-17T02:32:23.418Z",
     "learningId": "learn-github-typewhisper-typewhisper-mac"
   },
   "vitest-dev-vitest": {
@@ -12145,8 +12145,8 @@
     "sourceUrl": "https://huggingface.co/Viggle/Viggle-Remake",
     "sourceVersion": "hf-viggle-viggle-remake",
     "license": "Open-Source",
-    "contentHash": "9a90003a80949cbeeb1890223456f11b54a48a7cd5d2005227f8c5b6f7c893cc",
-    "lastHarvestedAt": "2026-11-12T09:54:51.593Z",
+    "contentHash": "4352be78a027a98f14822feae47a4827ec00b58b84b7efe8d301a4e02d2ee27c",
+    "lastHarvestedAt": "2026-11-17T02:32:18.763Z",
     "learningId": "learn-huggingface-viggle-viggle-remake"
   },
   "alchaincyf-nuwa-skill": {
@@ -12453,10 +12453,10 @@
     "repository": "tuist/tuist",
     "platform": "github",
     "sourceUrl": "https://github.com/tuist/tuist",
-    "sourceVersion": "3851a198",
+    "sourceVersion": "de00da5d",
     "license": "NOASSERTION",
-    "contentHash": "033b8230391ce14bfbe416ea0e21a0a6fc183ca78daa658e1dd12db28c14f2e4",
-    "lastHarvestedAt": "2026-11-15T08:07:12.674Z",
+    "contentHash": "f9ca6a7c116d49980779144281529540e801df5311cdaa26d9db004158a89f06",
+    "lastHarvestedAt": "2026-11-17T02:32:18.881Z",
     "learningId": "learn-github-tuist-tuist"
   },
   "mixelpixx-kicad-mcp-server": {

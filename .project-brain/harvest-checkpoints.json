@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T02:16:50.204Z",
+  "last_updated": "2026-11-17T02:32:23.426Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15201,14 +15201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typewhisper-typewhisper-mac",
-      "content_hash": "a00b4d0b55648780b660baac82be6226e2f621e8be60975a389ba351d1569bb0",
-      "verified_at": "2026-11-13T13:02:44.772Z",
+      "content_hash": "3b21acf597db42e932a34a840e3a91c50320e2c58c977f34873728783d3dc204",
+      "verified_at": "2026-11-17T02:32:23.425Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:02:44.772Z"
+      "last_updated": "2026-11-17T02:32:23.425Z"
     },
     "vitest-dev/vitest": {
       "repository": "vitest-dev/vitest",
@@ -18276,14 +18276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-viggle-remake",
-      "content_hash": "9a90003a80949cbeeb1890223456f11b54a48a7cd5d2005227f8c5b6f7c893cc",
-      "verified_at": "2026-11-12T09:54:51.601Z",
+      "content_hash": "4352be78a027a98f14822feae47a4827ec00b58b84b7efe8d301a4e02d2ee27c",
+      "verified_at": "2026-11-17T02:32:18.771Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T09:54:51.601Z"
+      "last_updated": "2026-11-17T02:32:18.771Z"
     },
     "alchaincyf/nuwa-skill": {
       "repository": "alchaincyf/nuwa-skill",
@@ -18741,14 +18741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tuist-tuist",
-      "content_hash": "033b8230391ce14bfbe416ea0e21a0a6fc183ca78daa658e1dd12db28c14f2e4",
-      "verified_at": "2026-11-15T08:07:12.688Z",
+      "content_hash": "f9ca6a7c116d49980779144281529540e801df5311cdaa26d9db004158a89f06",
+      "verified_at": "2026-11-17T02:32:18.889Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T08:07:12.688Z"
+      "last_updated": "2026-11-17T02:32:18.889Z"
     },
     "mixelpixx/KiCAD-MCP-Server": {
       "repository": "mixelpixx/KiCAD-MCP-Server",

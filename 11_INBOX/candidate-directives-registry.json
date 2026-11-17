@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T02:24:55.063Z",
+  "last_updated": "2026-11-17T02:32:27.732Z",
   "directives": [
     {
       "id": "CD-001",
@@ -21363,6 +21363,48 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AEC725-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-U92O",
+      "directive_title": "fail stalled node blob cache downloads within seconds",
+      "source_repo": "tuist/tuist",
+      "source_commit": "de00da5d",
+      "staged_file": "11_INBOX/candidate-directives/CD-U92O-fail-stalled-node-blob-cache-downloads-within-seconds.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-UFRL",
+      "directive_title": "(feature) Add the SOV-Transcribe plugin for Macs with 32 GB of memory",
+      "source_repo": "typewhisper-typewhisper-mac-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UFRL-feature-add-the-sov-transcribe-plugin-for-macs-with-32-gb-of-memory.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-UF3R",
+      "directive_title": "infra): fail stalled node blob cache downloads within seconds",
+      "source_repo": "tuist-tuist-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UF3R-infra-fail-stalled-node-blob-cache-downloads-within-seconds.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-9DBD1F",
+      "directive_title": "(feature) Add the SOV-Transcribe plugin for Macs with 32 GB of memory",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "typewhisper-typewhisper-mac",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9DBD1F--feature-add-the-sov-transcribe-plugin-f.md",
       "staged_date": "2026-11-17"
     }
   ]

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-4VYQ",
-    "timestamp": "2026-11-14T08:53:29.426Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-    "contentHash": "f9932d8d415ad9ae6cfc05e1a4b895e2848d739e72e01bcbb27c01fb1ab2d3c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-4WU0",
-    "timestamp": "2026-11-14T08:53:30.552Z",
-    "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
-    "contentHash": "527aa9603848b11eafabb7aa0d3fef0a19bbf7934d9bbee197d6b0346e1f8ac0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-NP4L",
-    "timestamp": "2026-11-14T09:08:07.029Z",
-    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-    "contentHash": "50c4ab9d3612d8bb692a137c5d927c8e9cf61cd7b81000207454fc5afd7c6001",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-0FNV",
     "timestamp": "2026-11-14T09:18:01.291Z",
     "repository": "laion/clap-htsat-fused",
@@ -7490,6 +7445,51 @@
     "repository": "beclab/Olares",
     "learningId": "learn-github-beclab-olares",
     "contentHash": "37ddf0e1c7f8c8bb675959bfa37c98c88124d75ef9c421c2d30c5546ca1dd462",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-U8UF",
+    "timestamp": "2026-11-17T02:32:18.759Z",
+    "repository": "Viggle/Viggle-Remake",
+    "learningId": "learn-huggingface-viggle-viggle-remake",
+    "contentHash": "4352be78a027a98f14822feae47a4827ec00b58b84b7efe8d301a4e02d2ee27c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-U8XQ",
+    "timestamp": "2026-11-17T02:32:18.878Z",
+    "repository": "tuist/tuist",
+    "learningId": "learn-github-tuist-tuist",
+    "contentHash": "f9ca6a7c116d49980779144281529540e801df5311cdaa26d9db004158a89f06",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-UCFR",
+    "timestamp": "2026-11-17T02:32:23.415Z",
+    "repository": "TypeWhisper/typewhisper-mac",
+    "learningId": "learn-github-typewhisper-typewhisper-mac",
+    "contentHash": "3b21acf597db42e932a34a840e3a91c50320e2c58c977f34873728783d3dc204",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

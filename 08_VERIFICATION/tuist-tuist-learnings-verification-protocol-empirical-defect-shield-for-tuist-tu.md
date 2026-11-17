@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T08:09:30.106Z",
+  "timestamp": "2026-11-17T02:32:26.768Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tuist-tuist-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tuist-tuist-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T08:09:30.106Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T02:32:26.768Z`  
 > **Learning ID**: `LEARN-EVO-tuist-tuist-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source**: github ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
-> **Source Version**: `3851a198`  
+> **Source Version**: `de00da5d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T08:07:11.617Z  
+> **Timestamp**: 2026-11-17T02:32:17.996Z  
 > **Learning ID**: `learn-github-tuist-tuist`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T08:07:05.261Z  
+> **Harvest Timestamp**: 2026-11-17T02:32:17.686Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Tuist builds infrastructure for faster, more reliable build and test workflows across developers, CI, and coding agents. Shared cache, tests, and insights that sit alongside your existing CI.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5864 stars
+- **Stars / Engagement**: 5867 stars
 
 ---
 
@@ -71,70 +71,6 @@ sealed interface AuthState {
     data object LoggedOut : AuthState
     data object Authenticating : AuthState
 }
-
-```
-
-### Core Architecture Module: `app/Sources/TuistApp/ThreadEmptyStateView.swift`
-```
-#if os(iOS)
-    import SwiftUI
-
-    struct ThreadEmptyStateView: View {
-        let archived: Bool
-        @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
-        var body: some View {
-            VStack(spacing: 20) {
-                if !dynamicTypeSize.isAccessibilitySize {
-                    ZStack {
-                        ForEach(0 ..< 3) { index in
-                            Circle()
-                                .stroke(Color.accentColor.opacity(0.14 - Double(index) * 0.035), lineWidth: 1)
-                                .frame(width: CGFloat(100 + index * 52), height: CGFloat(100 + index * 52))
-                        }
-
-                        RoundedRectangle(cornerRadius: 24)
-                            .fill(Color.accentColor.opacity(0.08))
-                            .frame(width: 94, height: 94)
-                            .rotationEffect(.degrees(-12))
-
-                        Image(systemName: archived ? "archivebox" : "bubble.left.and.bubble.right")
-                            .font(.system(size: 40, weight: .light))
-                            .foregroundStyle(Color.accentColor)
-                            .frame(width: 94, height: 94)
-                            .background(.background, in: RoundedRectangle(cornerRadius: 24))
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 24)
-                                    .stroke(Color.accentColor.opacity(0.2), lineWidth: 1)
-                            }
-                            .shadow(color: Color.accentColor.opacity(0.12), radius: 16, y: 8)
-                    }
-                    .frame(height: 220)
-                    .accessibilityHidden(true)
-                }
-
-                VStack(spacing: 8) {
-                    Text(LocalizedStringKey(archived ? "All clear, nothing archived" : "Big things start here"))
-                        .font(.title3.weight(.medium))
-                        .foregroundStyle(.primary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .accessibilityAddTraits(.isHeader)
-
-                    Text(LocalizedStringKey(archived
-                            ? "Archived threads will live here. You can come back to them anytime."
-                            : "Ask a question, explore an idea, or solve a problem with Tuist."))
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 24)
-            .padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 16 : 32)
-        }
-    }
-#endif
 
 ```
 
@@ -476,17 +412,59 @@ struct AppPreviewsEmptyStateView: View {
 
 ```
 
+### Core Architecture Module: `app/Sources/TuistPreviews/PreviewsView/PreviewsEmptyStateView.swift`
+```
+import SwiftUI
+import TuistNoora
+
+struct PreviewsEmptyStateView: View {
+    let title: LocalizedStringKey
+    let subtitle: LocalizedStringKey
+
+    var body: some View {
+        VStack(spacing: Noora.Spacing.spacing6) {
+            Image("iPhoneMockup")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 120, height: 240)
+                .shadow(color: Color.black.opacity(0.09), radius: 4.28, x: 0, y: 3.67)
+                .shadow(color: Color.black.opacity(0.08), radius: 8.56, x: 0, y: 17.11)
+                .shadow(color: Color.black.opacity(0.05), radius: 11.0, x: 0, y: 37.89)
+                .shadow(color: Color.black.opacity(0.01), radius: 13.45, x: 0, y: 66.0)
+                .padding(.top, Noora.Spacing.spacing8)
+
+            Text(title)
+                .font(.title3.weight(.medium))
+                .foregroundColor(Noora.Colors.surfaceLabelSecondary)
+                .multilineTextAlignment(.center)
+
+            Text(subtitle)
+                .font(.subheadline)
+                .foregroundColor(Noora.Colors.surfaceLabelSecondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, Noora.Spacing.spacing8)
+        .padding(.horizontal, Noora.Spacing.spacing7)
+        .listRowSeparator(.hidden)
+        .listRowInsets(EdgeInsets())
+        .listRowBackground(Noora.Colors.surfaceBackgroundPrimary)
+    }
+}
+
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15735** (2026-11-14): **chore(infra): name Pulse's Kafka WAL topics pulse_wal_topic**
-  *Symptoms*: ## What  Switches Pulse's Kafka WAL topic prefix from `greptimedb_wal_topic` to `pulse_wal_topic`, which is also the fork's built-in default. Apart from the staging Grafana plugin ID and URL, this was the last GreptimeDB name outside `pulse/`. The Grafana plugin is intentionally left unchanged.  ## Why it's safe on live clusters  The earlier comment said that changing the prefix would orphan unflushed writes. The source shows otherwise:  - Every region's WAL topic is recorded at creation in its table metadata (`DatanodeTableValue.region_wal_options`). Datanodes replay and write that recorded topic when they open a region, including during failover and migration. - metasrv persists each topic it creates (`TopicNameManager`). It never deletes those keys, and WAL pruning and flush triggers range over all persisted topics.  When metasrv restarts with the new prefix, it creates and persists 16 `pulse_wal_topic_*` topics, and only regions created after that use them. Existing regions keep writing to, pruning and flushing their earlier topics. The `wait-for-wal` init container still passes on a fresh install, because it also accepts three registered brokers.  The staging leg of the cascade qualifies this before canary and production: smoke writes and reads, a reread after restarting every stateful component, and checks on real collector telemetry.  ## Validation  - `infra/helm/pulse/test-managed.sh` passes. - `rg -i greptime` outside `pulse/` now matches only `infra/helm/pulse-grafa
+- **Issue #15754** (2026-11-16): **fix(cli): backport skipping the cache debugger pre-action on CI to 4.218.x**
+  *Symptoms*: ## What changed  Backports #15739 (commit 28dac0fd2a) to `releases/4.218.x`, so the next RC and `4.218.0` include it. It applied cleanly, with no changes.  The "Update Tuist cache debugger settings" scheme pre-action now exits before doing anything when it runs on CI: when `CI` is set to anything other than empty, `0`, `false` or `no`, or when `JENKINS_URL` is set. Generated schemes are unchanged, and Xcode and local `xcodebuild` runs still do the full preparation. `BUILD_NUMBER` is deliberately not checked, because projects often define it as a build setting and Xcode exports build settings to scheme actions.  ## Why  #14302 (4.215) made cached native modules debuggable when they were warmed in another checkout. Its pre-action links a `dsymutil` debug companion for every test bundle, one after another. Xcode runs Test pre-actions on every `xcodebuild test` and `test-without-building`, so on CI that cost lands before tests start, where no debugger ever attaches. Pinterest reported the regression between 4.214.1 and 4.216.6: on a fixture with 40 cached static frameworks and 150 test bundles, the wait before tests went from about 3s to about 20s, and back to about 2s with the pre-action skipped. The same fix shipped as 4.216.8 (#15750) and 4.217.1 (#15751).  #15740 (debug prefix map plus a cheaper `dsymutil` fallback) is not backported: it changes what goes into the cache, so it stays on main for 4.219.  ## Impact  - CI runs of `tuist test`, `xcodebuild test` and `test-without-
 
-- **Issue #15734** (2026-11-14): **chore(infra): drop Pulse's one-time pre-rename Grafana uninstall**
-  *Symptoms*: ## What  Removes the one-time `helm uninstall greptime-grafana-staging` from the staging Grafana step of `pulse-deployment.yml`. After this, the only remaining GreptimeDB references outside `pulse/` are the live WAL topic prefix and the third-party Grafana datasource plugin ID and URL.  ## Why  The uninstall only existed to remove the pre-rename Grafana release (#15731). The first continuous Pulse deploy (run 43635787145, commit b68a033) calls `pulse-deployment.yml` as it was at that commit, so its staging leg still performs the uninstall. Later runs no longer need it.  ## Validation  - actionlint passes on `pulse-deployment.yml`. - `rg -i greptime` outside `pulse/` returns only the WAL topic prefix and the Grafana plugin references. 
+- **Issue #15753** (2026-11-16): **`tuist cache` stopped caching ReactiveCocoa in 4.215.0**
+  *Symptoms*: Hey! After updating from 4.214.1, `tuist cache` builds ReactiveCocoa fine but won't store it anymore:  ``` ▸ Skipping ReactiveCocoa: Cannot export portable Swift package headers: module map references a header excluded from discovery ▸ 1 of 521 built targets were not stored and keep building from source: ReactiveCocoa ```  That one skip hurts quite a bit for us, since everything that depends on ReactiveCocoa then falls back to source too (313 of our modules). On 4.214.1 everything caches.  ## What I think is going on  It looks like it comes from the new header export in #14896 (backported to 4.215 in #14914).  ReactiveCocoa 12.0.0's Swift target has a module map at `ReactiveCocoa/include/module.modulemap`:  ``` framework module ReactiveCocoa { 	umbrella header "ReactiveCocoa.h" 	private header "ObjCRuntimeAliases.h"  	export * 	module * { export * } } ```  Those two headers aren't in that target, though. They live in the separate `ReactiveCocoaObjC` target, and the Swift target has no headers at all. So when `SwiftPackageHeadersExporter` checks that every header in the module map was discovered, it finds neither and bails out.  SwiftPM builds the package fine, and older Tuist versions never read the module map during caching, so this only started showing up with the new export step.  ## Repro  1. Add `.package(url: "https://github.com/ReactiveCocoa/ReactiveCocoa", from: "12.0.0")` to `Tuist/Package.swift` 2. Depend on it from a cacheable target 3. `tuist install && tuist cach
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -503,623 +481,374 @@ struct AppPreviewsEmptyStateView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2419de4e` (2026-11-14)
-**Commit Message**: feat(server): add MCP tools to explore Pulse metrics, logs and traces
+### Incident Patch 1: `8e1ff1c6` (2026-11-16)
+**Commit Message**: fix(infra): fail stalled node blob cache downloads within seconds
 
-Agents could only page through Pulse with query_pulse and read its fixed
-widgets. These tools give them roughly what Atlas offers through Grafana's
-MCP server, mapped onto what Pulse serves:
+sandboxd's node blob cache downloads every remote-execution input blob over
+one shared gRPC connection per CAS endpoint, with no keepalive and only a
+5-minute overall timeout per download. On a production benchmark one such
+connection to Kura stalled: 14 downloads on the node hung for 210 s until the
+peer reset it, and every action waiting on them, one of them on the critical
+path, waited the whole time before falling back to reading Kura directly.
 
-- query_pulse_metrics: instant or range PromQL.
-- list_pulse_labels: metric, log and trace label names, or one label's
-  values (with entry counts for logs and traces).
-- search_pulse_logs and search_pulse_traces: structured label filters,
-  body text, duration and root-span filters, newest/oldest/slowest.
-- get_pulse_trace: one trace's spans with attributes, events, links and
-  deduplicated resources.
+The connection now pings while downloads run (15 s, 10 s timeout), so a dead
+one fails and reconnects, and a download that receives nothing for 30 s
+fails, so the guests waiting on it fall back to the CAS at once. A slow
+download that keeps receiving is unaffected.
 
-Every tool uses the same Pulse.authorized?/2 check as the Pulse pages and
-existing tools, so only members of the configured organization with the
-pulse flag can read, and no other account is reachable. Callers never send
-SQL: values reach SQL only as escaped literals, trace labels become
-identifiers only when they name an existing safe column, and log labels are
-known columns or JSON paths. Windows stay at most 24h, results are row
-limited, and the read-only dashboard credential and timeouts still apply.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1a771-1ba7-7319-9a0e-55191d6c0ecd
+Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 
-Log columns are dis
-
-**File**: `server/lib/tuist/mcp/AGENTS.md` (modified, +11/-0)
+**File**: `infra/sandbox-image/remote-execution.md` (modified, +4/-1)
 ```diff
-@@ -93,6 +93,17 @@
-   must explicitly provide; Phoenix's `"arguments"` parameter filter keeps MCP
-   tool arguments out of request logs, so do not log or report them elsewhere.
+@@ -253,7 +253,10 @@ project. The cache comes out of the workers' disk budget and leaves 20% of
+ the host's data filesystem free, evicting its own blobs first, so it never
+ crowds out runner cache volumes or pushes kubelet into evictions. Any failure,
+ or no room, falls back to reading that blob, and the rest of the action's
+-inputs, from Kura.
++inputs, from Kura. A node download that receives nothing for 30 seconds
++counts as a failure, and sandboxd's connection to Kura pings while downloads
++run, so one stalled stream or dead connection costs the actions waiting on it
++seconds rather than minutes.
  
-+- Pulse tools share `Tuist.Pulse` with the Pulse pages: `PulseTools.execute/3`
-+  requires a user (or user-associated `mcp` credential), account read, then
-+  `Pulse.authorized?/2` (configured account, `pulse` flag, current
-+  membership) before any read. Exploration tools (`query_pulse_metrics`,
-+  `list_pulse_labels`, `search_pulse_logs`, `search_pulse_traces`,
-+  `get_pulse_trace`) go through `Pulse.explore/4` and `Pulse.Explore`, which
-+  takes structured filters only: values reach SQL as escaped literals, log
-+  labels as literal JSON paths, and trace labels only when they name an
-+  existing scalar trace column. Never accept SQL from callers; keep the
-+  15m–24h windows, row limits and transport bounds.
-+
- - Organization invitation tools reuse `Accounts.invite_user_to_organization/3`
-   and the `:invitation` policies, matching the dashboard and REST API. They
-   never return invitation tokens or links; `email_sent` tells the agent when
+ The host serves only while the action exec runs, only VMs of the template the
+ worker is configured with, and only until the executor seals the channel
 ```
 
-**File**: `server/lib/tuist/mcp/components/tools/pulse_tools.ex` (modified, +344/-4)
+**File**: `infra/sandboxd/AGENTS.md` (modified, +4/-1)
 ```diff
-@@ -11,12 +11,11 @@ defmodule Tuist.MCP.Components.Tools.PulseTools do
-     with %User{} = user <- credential_user(conn.assigns),
-          {:ok, account} <- Tool.resolve_and_authorize_account(args, conn.assigns, :read, :account_dashboard),
-          true <- Pulse.authorized?(user, account) do
--      params = Map.drop(args, ~w(account_handle signal))
--
-       result =
-         case action do
--          :query -> Pulse.query(user, account, args["signal"], params)
--          :analytics -> Pulse.analytics(user, account, args["signal"], params)
-+          :query -> Pulse.query(user, account, args["signal"], Map.drop(args, ~w(account_handle signal)))
-+          :analytics -> Pulse.analytics(user, account, args["signal"], Map.drop(args, ~w(account_handle signal)))
-+          operation -> Pulse.explore(user, account, operation, Map.delete(args, "account_handle"))
-         end
- 
-       case result do
-@@ -55,8 +54,96 @@ defmodule Tuist.MCP.Components.Tools.PulseTools do
- 
-   defp message(:query_result_limit), do: "Pulse query exceeded its result limit. Narrow the query or time range."
- 
-+  defp message(:match_required),
-+    do: "Listing a metric label other than __name__ requires match, a series selector such as up or {job=\"tuist\"}."
-+
-+  defp message(:instant_window), do: "range and step apply only to type range; an instant query evaluates once at end_at."
-+
-+  defp message(:unknown_label), do: "Unknown Pulse trace label. List trace label names with list_pulse_labels."
-+
-   defp message(:rate_limited), do: "Pulse is rate limited. Try again later."
-   defp message(_), do: "Pulse is temporarily unavailable."
-+
-+  @doc false
-+  def input_schema(properties, required, default_range \\ "1h") do
-+    %{
-+      "type" => "object",
-+      "properties" =>
-+        Map.merge(
-+          %{
-+            "account_handle" => %{"type" => "string"},
-+            "range" => %{
-+              "type" => "string",
-+              "enum" => ~w(15m 1h 6h 24h),
-+              "default" => default_range,
-+              "description" => "Window length ending at end_at."
-+            },
-+            "end_at" => %{
-+              "type" => "string",
-+              "maxLength" => 64,
-+              "description" => "ISO8601 window end, default now. Reuse a response's end_at to keep the same window."
-+            }
-+          },
-+          properties
-+        ),
-+      "required" => ["account_handle" | required],
-+      "additionalProperties" => false
-+    }
-+  end
-+
-+  @doc false
-+  def filters_schema(description) do
-+    %{
-+      "type" => "array",
-+      "maxItems" => 10,
-+      "description" => description <> " Filters are ANDed. contains and not_contains are case-insensitive literals.",
-+      "items" => %{
-+        "type" => "object",
-+        "properties" => %{
-+          "label" => %{"type" => "string", "maxLength" => 255},
-+          "op" => %{"type" => "string", "enum" => ~w(eq neq contains not_contains), "default" => "eq"},
-+          "value" => %{"type" => "string", "maxLength" => 4096}
-+        },
-+        "required" => ["label", "value"],
-+        "additionalProperties" => false
-+      }
-+    }
-+  end
-+
-+  @doc false
-+  def limit_schema(max, default), do: %{"type" => "integer", "minimum" => 1, "maximum" => max, "default" => default}
-+
-+  @doc false
-+  def output_schema(properties) do
-+    properties =
-+      Map.merge(%{"start_at" => %{"type" => "string"}, "end_at" => %{"type" => "string"}}, properties)
-+
-+    object(properties)
-+  end
-+
-+  @doc false
-+  def object(properties, extra \\ %{}),
-+    do:
-+      Map.merge(
-+        %{
-+          "type" => "object",
-+          "properties" => properties,
-+          "required" => Map.keys(properties),
-+          "additionalProperties" => false
-+        },
-+        extra
-+      )
-+
-+  @doc false
-+  def span_fields,
-+    do:
-+      ~w(trace_id span_id parent_span_id service_name span_name span_kind span_status_code span_status_message scope_name)
-+
-+  @doc false
-+  def nullable(type), do: %{"type" => [type, "null"]}
-+
-+  @doc false
-+  def array(items), do: %{"type" => "array", "items" => items}
- end
- 
- defmodule Tuist.MCP.Components.Tools.QueryPulse do
-@@ -92,3 +179,256 @@ defmodule Tuist.MCP.Components.Tools.GetPulseAnalytics do
- 
-   def execute(conn, args), do: Tuist.MCP.Components.Tools.PulseTools.execute(:analytics, conn, args)
- end
-+
-+defmodule Tuist.MCP.Components.Tools.QueryPulseMetrics do
-+  @moduledoc false
-+  use Tuist.MCP.Tool,
-+    name: "query_pulse_metrics",
-+    title: "Query Pulse Metrics",
-+    read_only_hint: true,
-+    schema:
-+      Tuist.MCP.Components.Tools.PulseTools.input_schema(
-+        %{
-+          "query" => %{"type" => "string", "maxLength" => 4096, "description" => "PromQL expression."},
-+          "type" => %{
-+            "type" => "string",
-+            "enum" => ~w(instant range),
-+            "default" => "instant",
-+            "description" =>
-+              "instant evaluates once at end_at and rejects range and step; range evaluates every step ov
+@@ -322,7 +322,10 @@ One request per connection, a JSON line:
+ A read answers `{"ok":true}` and exactly `L` bytes of the blob from `O`, or
+ `{"error":"..."}`, and the guest then reads that blob from the CAS. A miss
+ downloads the whole blob with the exec's credential, verifies its digest, and
+-serves every concurrent request for it from that one download. Blobs are kept
++serves every concurrent request for it from that one download. A download that
++receives nothing for 30 seconds fails, and the CAS connection pings while
++downloads run, so a stalled stream or a silently dead connection fails its
++waiting reads within seconds instead of holding them for minutes. Blobs are kept
+ per CAS scope (endpoint, account, instance), so a hit never serves another
+ project's blob. The least recently used are evicted to stay within the
+ budget and to leave 20% of the data filesystem free, which the cache shares
 ```
 
-**File**: `server/lib/tuist/mcp/server.ex` (modified, +6/-1)
+**File**: `infra/sandboxd/internal/blobcache/cache.go` (modified, +24/-2)
 ```diff
-@@ -23,6 +23,11 @@ defmodule Tuist.MCP.Server do
-     Tools.GetBazelIntegrationGuide,
-     Tools.QueryPulse,
-     Tools.GetPulseAnalytics,
-+    Tools.QueryPulseMetrics,
-+    Tools.ListPulseLabels,
-+    Tools.SearchPulseLogs,
-+    Tools.SearchPulseTraces,
-+    Tools.GetPulseTrace,
-     Tools.ListAccounts,
-     Tools.GetOrganization,
-     Tools.ListAccountTokens,
-@@ -178,7 +183,7 @@ defmodule Tuist.MCP.Server do
-   def server do
-     EMCP.Server.new(
-       name: "tuist",
--      version: "1.64.0",
-+      version: "1.65.0",
-       title: "Tuist",
-       description: "Tuist project setup, build, cache, and test insights.",
-       instructions: instructions(),
+@@ -26,6 +26,7 @@ import (
+ 	"google.golang.org/grpc"
+ 	"google.golang.org/grpc/credentials"
+ 	"google.golang.org/grpc/credentials/insecure"
++	"google.golang.org/grpc/keepalive"
+ 	"google.golang.org/grpc/metadata"
+ )
+ 
+@@ -36,6 +37,18 @@ const MaxBlob = 1 << 30
+ // action, whose cancellation must not fail the other actions waiting on it.
+ const fillTimeout = 5 * time.Minute
+ 
++// stallTimeout fails a download that receives nothing for this long, so the
++// actions waiting on it read the blob from the CAS themselves instead of
++// waiting out fillTimeout behind a stalled stream.
++const stallTimeout = 30 * time.Second
++
++var errStalled = errors.New("CAS download stalled")
++
++// keepaliveParams ping a CAS connection while downloads run on it, so one
++// that died silently fails its downloads within seconds and reconnects,
++// instead of hanging every download on the node until TCP gives up.
++var keepaliveParams = keepalive.ClientParameters{Time: 15 * time.Second, Timeout: 10 * time.Second}
++
+ // minFreeFraction is the share of the data filesystem the cache leaves free.
+ // It shares the filesystem with runner cache volumes, containerd and kubelet,
+ // and kubelet evicts Pods below 15% free, so the cache steps aside first.
+@@ -107,6 +120,7 @@ type Cache struct {
+ 	// Filesystem reports the data filesystem's size and free bytes; tests
+ 	// replace it.
+ 	Filesystem func(path string) (total, available uint64, err error)
++	stall      time.Duration // stallTimeout; tests shorten it
+ 
+ 	mu      sync.Mutex
+ 	entries map[string]*entry
+@@ -129,7 +143,7 @@ func New(dir string, budget int64, log *slog.Logger, metrics *Metrics) (*Cache,
+ 	if log == nil {
+ 		log = slog.Default()
+ 	}
+-	return &Cache{dir: dir, budget: budget, log: log, metrics: metrics, Dial: Dial, Filesystem: diskusage.Filesystem, entries: map[string]*entry{}, conns: map[string]*grpc.ClientConn{}}, nil
++	return &Cache{dir: dir, budget: budget, log: log, metrics: metrics, Dial: Dial, Filesystem: diskusage.Filesystem, stall: stallTimeout, entries: map[string]*entry{}, conns: map[string]*grpc.ClientConn{}}, nil
+ }
+ 
+ // Dir is where the cache keeps its files, for disk accounting.
+@@ -289,6 +303,10 @@ func (c *Cache) download(ctx context.Context, e *entry, s Scope, hash string) (e
+ 			os.Remove(tmp)
+ 		}
+ 	}()
++	ctx, cancel := context.WithCancelCause(ctx)
++	defer cancel(nil)
++	stall := time.AfterFunc(c.stall, func() { cancel(errStalled) })
++	defer stall.Stop()
+ 	ctx = metadata.NewOutgoingContext(ctx, metadata.Pairs("authorization", "Bearer "+s.Token, "x-tuist-account-handle", s.Account))
+ 	stream, err := bs.NewByteStreamClient(conn).Read(ctx, &bs.ReadRequest{ResourceName: fmt.Sprintf("%s/blobs/%s/%d", s.Instance, hash, e.size)})
+ 	if err != nil {
+@@ -302,8 +320,12 @@ func (c *Cache) download(ctx context.Context, e *entry, s Scope, hash string) (e
+ 			break
+ 		}
+ 		if err != nil {
++			if cause := context.Cause(ctx); errors.Is(cause, errStalled) {
++				return cause
++			}
+ 			return err
+ 		}
++		stall.Reset(c.stall)
+ 		n += int64(len(part.Data))
+ 		if n > e.size {
+ 			return errors.New("CAS blob exceeds digest size")
+@@ -358,7 +380,7 @@ func Dial(endpoint string) (*grpc.ClientConn, error) {
+ 	default:
+ 		return nil, ErrInvalid
+ 	}
+-	return grpc.NewClient(endpoint, grpc.WithTransportCredentials(transport))
++	return grpc.NewClient(endpoint, grpc.WithTransportCredentials(transport), grpc.WithKeepaliveParams(keepaliveParams))
+ }
+ 
+ func validHash(h string) bool {
 ```
 
-**File**: `server/lib/tuist/mcp/web_mcp.ex` (modified, +10/-1)
+**File**: `infra/sandboxd/internal/blobcache/cache_test.go` (modified, +43/-1)
 ```diff
-@@ -200,7 +200,16 @@ defmodule Tuist.MCP.WebMCP do
+@@ -34,6 +34,7 @@ type fakeCAS struct {
+ 	reads   map[string]int    // instance/hash -> reads
+ 	corrupt map[string]bool   // hash -> serve wrong bytes once
+ 	release chan struct{}     // when set, reads wait for it
++	pace    time.Duration     // when set, reads send one byte per pace
+ }
  
-   defp page_tools("projects", _build_system), do: [Tools.ListAccounts]
+ func (f *fakeCAS) Read(r *bs.ReadRequest, s bs.ByteStream_ReadServer) error {
+@@ -43,7 +44,7 @@ func (f *fakeCAS) Read(r *bs.ReadRequest, s bs.ByteStream_ReadServer) error {
+ 	f.mu.Lock()
+ 	f.reads[instance+"/"+hash]++
+ 	ok := len(md.Get("authorization")) == 1 && md.Get("authorization")[0] == "Bearer "+f.tokens[instance]
+-	data, corrupt, release := f.blobs[hash], f.corrupt[hash], f.release
++	data, corrupt, release, pace := f.blobs[hash], f.corrupt[hash], f.release, f.pace
+ 	delete(f.corrupt, hash)
+ 	f.mu.Unlock()
+ 	if release != nil {
+@@ -55,6 +56,12 @@ func (f *fakeCAS) Read(r *bs.ReadRequest, s bs.ByteStream_ReadServer) error {
+ 	if corrupt {
+ 		data = []byte(strings.Repeat("x", len(data)))
+ 	}
++	for ; pace > 0 && len(data) > 1; data = data[1:] {
++		if err := s.Send(&bs.ReadResponse{Data: data[:1]}); err != nil {
++			return err
++		}
++		time.Sleep(pace)
++	}
+ 	return s.Send(&bs.ReadResponse{Data: data})
+ }
  
--  defp page_tools("pulse", _build_system), do: [Tools.QueryPulse, Tools.GetPulseAnalytics]
-+  defp page_tools("pulse", _build_system),
-+    do: [
-+      Tools.QueryPulse,
-+      Tools.GetPulseAnalytics,
-+      Tools.QueryPulseMetrics,
-+      Tools.ListPulseLabels,
-+      Tools.SearchPulseLogs,
-+      Tools.SearchPulseTraces,
-+      Tools.GetPulseTrace
-+    ]
+@@ -206,6 +213,41 @@ func TestCorruptDownloadIsNotCached(t *testing.T) {
+ 	}
+ }
  
-   defp page_tools("runners", _build_system), do: @runner_tools
-   defp page_tools("webhooks", _build_system), do: @webhook_tools
-```
-
-**File**: `server/lib/tuist/pulse.ex` (modified, +48/-4)
-```diff
-@@ -36,7 +36,8 @@ defmodule Tuist.Pulse do
-   alias Tuist.Accounts
-   alias Tuist.Environment
-   alias Tuist.FeatureFlags
--  alias Tuist.Pulse.Greptime
-+  alias Tuist.Pulse.Explore
-+  alias Tuist.Pulse.SQL
-   alias Tuist.Pulse.Table
-   alias Tuist.Tasks
- 
-@@ -75,6 +76,49 @@ defmodule Tuist.Pulse do
-     end
-   end
- 
-+  @doc """
-+  Structured, read-only exploration for agents. Operations: `:metrics`
-+  (instant or range PromQL), `:labels` (label names, or one label's values with
-+  counts for logs and traces), `:logs` and `:traces` (filtered newest, oldest or
-+  slowest matches, at most 100) and `:trace` (one trace's spans, at most 1000).
-+  See `Tuist.Pulse.Explore` for parameters. Windows reuse the table's 15m, 1h,
-+  6h and 24h ranges ending at `end_at`; range queries have at most 361 points
-+  per series and 5000 series.
-+  """
-+  def explore(user, account, operation, params) do
-+    with true <- authorized?(user, account),
-+         {:ok, opts} <- Explore.validate(operation, params),
-+         {:ok, client} <- credentials() do
-+      if operation == :metrics,
-+        do: explore_metrics(opts, client),
-+        else: Explore.run(operation, opts, &request(client, &1, &2))
-+    else
-+      false -> {:error, :forbidden}
-+      error -> error
-+    end
-+  end
++func TestStalledDownloadFailsButSlowOneFinishes(t *testing.T) {
++	c, cas, endpoint := setup(t, 1<<20)
++	c.stall = 300 * time.Millisecond
++	s := Scope{Endpoint: endpoint, Instance: "a", Token: "token-a"}
 +
-+  defp explore_metrics(opts, client) do
-+    {path, params} =
-+      if opts.type == "range",
-+        do: {"/api/v1/query_range", [query: opts.query, start: opts.start, end: opts.finish, step: opts.step]},
-+        else: {"/api/v1/query", [query: opts.query, time: opts.finish]}
++	// A CAS that keeps sending finishes, however long the whole blob takes.
++	slow, slowSize := cas.put("0123456789")
++	cas.mu.Lock()
++	cas.pace = 100 * time.Millisecond
++	cas.mu.Unlock()
++	if got, err := readAll(t, c, s, slow, slowSize); err != nil || got != "0123456789" {
++		t.Fatalf("slow but steady download: %q %v", got, err)
++	}
 +
-+    with {:ok, body} <- request(client, path, params),
-+         {:ok, result} <- normalize(body),
-+         :ok <- complete_result("metrics", result) do
-+      {:ok,
-+       %{
-+         type: opts.type,
-+         series: Enum.sort_by(result.series, & &1["name"]),
-+         warnings: result.warnings,
-+         step: opts.step,
-+         start_at: opts.start_at,
-+         end_at: opts.end_at
-+       }}
-+    end
-+  end
++	// One that stops sending fails long before fillTimeout, so the guests
++	// waiting on it read the blob from the CAS themselves.
++	hash, size := cas.put("stalled content")
++	release := make(chan struct{})
++	cas.mu.Lock()
++	cas.pace, cas.release = 0, release
++	cas.mu.Unlock()
++	started := time.Now()
++	_, err := readAll(t, c, s, hash, size)
++	if !errors.Is(err, errStalled) || time.Since(started) > 5*time.Second {
++		t.Fatalf("stalled download: %v after %s", err, time.Since(started))
++	}
++	cas.mu.Lock()
++	cas.release = nil
++	cas.mu.Unlock()
++	close(release)
++	if got, err := readAll(t, c, s, hash, size); err != nil || got != "stalled content" || cas.readCount("a", hash) != 2 {
++		t.Fatalf("after a stalled download: %q %v, %d reads", got, err, cas.readCount("a", hash))
++	}
++}
 +
-   @doc """
-   Fixed aggregate widgets, independent of the table query. Only string-keyed
-   `range` is accepted. Values are end-of-window gauges for metrics and full-window
-@@ -157,7 +201,7 @@ defmodule Tuist.Pulse do
-   defp analytics_sample(client, signal, {id, unit}, period, window) do
-     mode = if period == :previous, do: :instant, else: period
- 
--    with {:ok, values, warnings} <- Greptime.aggregate(signal, id, mode, window, &request(client, "/v1/sql", &1)) do
-+    with {:ok, values, warnings} <- SQL.aggregate(signal, id, mode, window, &request(client, "/v1/sql", &1)) do
-       {:ok, {id, unit, period, values, warnings}}
-     end
-   end
-@@ -180,7 +224,7 @@ defmodule Tuist.Pulse do
-     ]
-   end
- 
--  # Log and trace widget SQL is authored by Tuist.Pulse.Greptime from the id.
-+  # Log and trace widget SQL is authored by Tuist.Pulse.SQL from the id.
-   defp widget_queries("logs"), do: [{"entries", :count}, {"errors", :count}, {"warnings", :count}]
-   defp widget_queries("traces"), do: [{"spans", :count}, {"errors", :count}, {"duration_p95", :milliseconds}]
- 
-@@ -326,7 +370,7 @@ defmodule Tuist.Pulse do
-         with {:ok, body} <- request(client, "/api/v1/query", query: opts.query, time: opts.finish),
-              do: normalize(body)
-       else
--        Greptime.query(signal, opts, &request(client, "/v1/sql", &1))
-+        SQL.query(signal, opts, &request(client, "/v1/sql", &1))
-       end
- 
-     with {:ok, result} <- result,
-```
-
-**File**: `server/lib/tuist/pulse/explore.ex` (added, +607/-0)
-```diff
-@@ -0,0 +1,607 @@
-+defmodule Tuist.Pulse.Explore do
-+  @moduledoc """
-+  Validation and SQL for agent-facing Pulse exploration: label discovery,
-+  structured log and span search, and trace lookup. `Tuist.Pulse.explore/4`
-+  authorizes the caller and supplies the read-only transport.
-+
-+  Callers never supply SQL. Their text reaches SQL only as escaped string
-+  literals. A trace label becomes a column only when it names one of Pulse's
-+  own trace columns; a log label is either a fixed log column or a JSON
-+  attribute key addressed through a literal path. Every read is bounded by a
-+  window of at most 24 hours ending at `end_at` and by a row limit, in
-+  addition to the transport's body-size and timeout limits.
-+
-+  Log labels are the optional log columns the table has (the Loki pipeline
-+  omits `span_id` and `scope_name`) and the keys of each entry's resource
-+  attributes (Loki stream labels such as `namespace` or `container`) and log
-+  attributes (structured metadata such as `pod`); a key present in both
-+  resolves to the resource attribute. Log label discovery returns only keys
-+  that filters accept and inspects at most 1000 distinct attribute sets of each
-+  kind in the window.
-+  """
-+
-+  alias Tuist.Pulse.SQL
-+
-+  @ranges %{"15m" => 900, "1h" => 3600, "6h" => 21_600, "24h" => 86_400}
-+  @ops ~w(eq neq contains not_contains)
-+  @log_columns ~w(severity_text scope_name trace_id span_id)
-+  @label ~r/\A[A-Za-z0-9_][A-Za-z0-9_.\-\/]{0,254}\z/
-+  @metric_label ~r/\A[A-Za-z_][A-Za-z0-9_]{0,127}\z/
-+  @trace_id ~r/\A[0-9a-f]{1,64}\z/
-+  @attribute_sets 1000
-+  @spans 1000
-+  @keys %{
-+    metrics: ~w(query type range end_at step),
-+    labels: ~w(signal label match filters search range end_at limit),
-+    logs: ~w(text filters range end_at limit order),
-+    traces: ~w(filters min_duration_ms max_duration_ms root_only range end_at limit order),
-+    trace: ~w(trace_id range end_at)
-+  }
-+  @span_fields ~w(trace_id span_id parent_span_id service_name span_name span_kind span_status_code span_status_message scope_name)
-+
-+  def validate(operation, params) when is_map_key(@keys, operation) and is_map(params) do
-+    with true <- Enum.all?(Map.keys(params), &(&1 in @keys[operation])),
-+         {:ok, window} <- window(params, if(operation == :trace, do: "24h", else: "1h")),
-+         {:ok, options} <- options(operation, params, window) do
-+      {:ok, Map.merge(window, options)}
-+    else
-+      {:error, _} = error -> error
-+      _ -> {:error, :invalid_params}
-+    end
-+  end
-+
-+  def validate(_operation, _params), do: {:error, :invalid_params}
-+
-+  defp window(params, default) do
-+    range = Map.get(params, "range", default)
-+
-+    with true <- is_binary(range) and Map.has_key?(@ranges, range),
-+         {:ok, finish} <- finish(Map.get(params, "end_at")),
-+         seconds = @ranges[range],
-+         true <- finish >= seconds and finish <= 9_223_372_036 do
-+      {:ok,
-+       %{
-+         start: finish - seconds,
-+         finish: finish,
-+         seconds: seconds,
-+         start_at: iso8601(finish - seconds),
-+         end_at: iso8601(finish)
-+       }}
-+    else
-+      _ -> {:error, :invalid_params}
-+    end
-+  end
-+
-+  defp finish(nil), do: {:ok, DateTime.to_unix(DateTime.utc_now())}
-+
-+  defp finish(value) when is_binary(value) and byte_size(value) <= 64 do
-+    case DateTime.from_iso8601(value) do
-+      {:ok, time, _} -> {:ok, DateTime.to_unix(time)}
-+      _ -> :error
-+    end
-+  end
-+
-+  defp finish(_value), do: :error
-+
-+  defp iso8601(seconds), do: seconds |> DateTime.from_unix!() |> DateTime.to_iso8601()
-+
-+  defp options(:metrics, params, window) do
-+    query = params["query"]
-+    min_step = max(1, ceil(window.seconds / 360))
-+
-+    if text?(query, 4096) and String.trim(query) != "" do
-+      case Map.get(params, "type", "instant") do
-+        "instant" ->
-+          if Map.has_key?(params, "range") or Map.has_key?(params, "step"),
-+            do: {:error, :instant_window},
-+            else: {:ok, %{query: query, type: "instant", step: nil, start_at: iso8601(window.finish)}}
-+
-+        "range" ->
-+          with {:ok, step} <- integer(Map.get(params, "step", min_step), min_step, window.seconds),
-+               do: {:ok, %{query: query, type: "range", step: step}}
-+
-+        _ ->
-+          :error
-+      end
-+    end
-+  end
-+
-+  defp options(:labels, params, _window) do
-+    signal = params["signal"]
-+    label = params["label"]
-+    match = params["match"]
-+
-+    with true <- signal in ~w(metrics logs traces),
-+         true <- is_nil(label) or (is_binary(label) and Regex.match?(label_pattern(signal), label)),
-+         true <- is_nil(match) or (signal == "metrics" and text?(match, 4096) and String.trim(match) != ""),
-+         true <- signal != "metrics" or not Map.has_key?(params, "filters"),
-+         # Trace label names come from the schema, so there are no entries to filter.
-+         true <- not (signal == "traces" and is_nil(label) and Map.has_key?(params, "filters")),
-+    
-```
-
-**File**: `server/lib/tuist/pulse/sql.ex` (renamed, +5/-4)
-```diff
-@@ -1,4 +1,4 @@
--defmodule Tuist.Pulse.Greptime do
-+defmodule Tuist.Pulse.SQL do
-   @moduledoc false
- 
-   # SQL is authored here, never supplied by a dashboard user. The database
-@@ -99,12 +99,13 @@ defmodule Tuist.Pulse.Greptime do
-   defp aggregate_expression("traces", "duration_p95"),
-     do: {"opentelemetry_traces", "approx_percentile_cont(duration_nano, 0.95) / 1000000000.0", ""}
- 
--  defp bounds(start, finish),
-+  def bounds(start, finish),
-     do: "timestamp > to_timestamp_seconds(#{start}) AND timestamp <= to_timestamp_seconds(#{finish})"
- 
--  defp literal(value), do: "'" <> String.replace(value, "'", "''") <> "'"
-+  # Pulse's SQL treats backslashes literally; doubling quotes is the only escape.
-+  def literal(value), do: "'" <> String.replace(value, "'", "''") <> "'"
- 
--  defp sql(request, query) do
-+  def sql(request, query) do
-     with {:ok, %{"output" => [%{"records" => %{"schema" => %{"column_schemas" => columns}, "rows" => rows}}]}} <-
-            request.(sql: query),
-          true <- is_list(columns) and is_list(rows),
-```
-
-**File**: `server/priv/docs/en/guides/features/agentic-coding/mcp.md` (modified, +25/-6)
-```diff
-@@ -49,14 +49,19 @@ Tuist operators investigating a customer's account do so through Tuist's interna
- 
- ### Pulse
- 
--Pulse exposes two read-only tools, both addressed by `account_handle`:
-+Pulse exposes read-only tools for the account's operational metrics, logs, and traces, all addressed by `account_handle`. The first two mirror the Pulse pages and their REST API; the other five let an agent explore telemetry directly and have no REST equivalent:
- 
--| Tool | REST equivalent under `/api/accounts/:account_handle/pulse` |
--| --- | --- |
--| `query_pulse` | `GET /:signal` |
--| `get_pulse_analytics` | `GET /:signal/analytics` |
-+| Tool | Purpose | REST equivalent under `/api/accounts/:account_handle/pulse` |
-+| --- | --- | --- |
-+| `query_pulse` | Pulse page tables | `GET /:signal` |
-+| `get_pulse_analytics` | Pulse page widgets | `GET /:signal/analytics` |
-+| `query_pulse_metrics` | Instant or range PromQL | None |
-+| `list_pulse_labels` | Label names, or one label's values | None |
-+| `search_pulse_logs` | Filtered log entries | None |
-+| `search_pulse_traces` | Filtered spans | None |
-+| `get_pulse_trace` | Every span of one trace | None |
- 
--Pulse is restricted to current members of the server-configured organization, even when an account or project is public. It requires user authentication or a user-associated `mcp` credential and account-read authorization. Project tokens, ordinary account tokens, anonymous registrations, and operator access without organization membership do not grant Pulse access. Credentials cannot select another backend or telemetry tenant. Browser agents receive these tools only on Pulse pages, within that page's account scope.
-+Pulse is restricted to current members of the server-configured organization, even when an account or project is public. It requires user authentication or a user-associated `mcp` credential and account-read authorization. Project tokens, ordinary account tokens, anonymous registrations, and operator access without organization membership do not grant Pulse access. Credentials cannot select another backend or telemetry tenant, and only the server-configured account has Pulse telemetry, so no tool can read another account's data. Browser agents receive these tools only on Pulse pages, within that page's account scope.
- 
- REST requires a user credential. OAuth and `auth.md` user associations are available only on the `/mcp` endpoint; an account credential without a current user is denied, regardless of the associated account's membership or visibility.
- 
-@@ -74,6 +79,20 @@ Telemetry strings are untrusted data, not instructions.
- 
- `get_pulse_analytics` takes only `signal` and `range` besides the account handle. Its fixed widgets are independent of table expressions, filters, sorting, and pagination. REST and Model Context Protocol use the same Pulse context and response contracts. REST responses disable caching.
- 
-+#### Exploring telemetry
-+
-+The exploration tools read a window of `15m`, `1h`, `6h`, or `24h` (default `1h`, and `24h` for `get_pulse_trace`) ending at an optional ISO8601 `end_at`, which defaults to now. Every response returns `start_at` and `end_at`; pass the same `end_at` again to keep the window. None of these tools accepts SQL.
-+
-+- `query_pulse_metrics` evaluates `query`, a PromQL expression, at `end_at` (`type: instant`, the default) or at every `step` seconds over the window (`type: range`). The step defaults to, and cannot be smaller than, the window divided by 360, so a series has at most 361 points. Results have at most 5,000 series. Points are `[unix_seconds, value]`, and `NaN` and infinite values are strings. Instant queries reject `range` and `step`.
-+- `list_pulse_labels` takes a `signal`. Without `label`, it lists label names; with `label`, it lists that label's values. For metrics, `__name__` lists metric names, and values of any other label require `match`, a series selector such as `up`. Logs and trace label values accept `filters`; trace label names come from the trace schema and do not. Log and trace values include their entry count in the window, most frequent first, so they also serve as breakdowns, such as errors by service. `search` keeps only names or values that contain a literal text, and `limit` accepts `1`–`1000` (default `100`). Log label-name discovery inspects at most 1,000 distinct attribute sets of each kind and lists only keys that filters accept.
-+- `search_pulse_logs` returns up to `limit` entries (`1`–`100`, default `50`), `newest` or `oldest` first, whose body contains `text` and that match every filter. Each entry includes its `severity_text`, `body`, `trace_id`, `span_id`, `scope_name`, and its merged resource and log `attributes`. `span_id` and `scope_name` are `null` for logs collected from Kubernetes, which only OTLP log senders set.
-+- `search_pulse_traces` returns up to `limit` spans, `newest`, `oldest`, or `slowest` first, that match every filter, optional `min_duration_ms` and `max_duration_ms`, and `
+ func TestEvictionKeepsTheBudget(t *testing.T) {
+ 	c, cas, endpoint := setup(t, 25)
+ 	s := Scope{Endpoint: endpoint, Instance: "a", Token: "token-a"}
 ```
 
 ---
 
-### Incident Patch 2: `3851a198` (2026-11-15)
-**Commit Message**: fix(infra): let management's Pulse reset run after the release is gone [skip ci]
+### Incident Patch 2: `6303f79f` (2026-11-16)
+**Commit Message**: fix(pulse): size production's datanode write buffer so scans stop failing
 
-The reset copied its S3 key references from the release's pulse-credentials
-ExternalSecret, which helm uninstall deletes, so a rerun after an uninstall
-failed. It now renders them from the chart, as the workload storage probe does.
+Production datanodes kept rejecting scans for lack of memory after the
+budget was doubled to 2 GiB. The 128MB global write buffer, shared by every
+region on a datanode, filled within seconds, so the metric region flushed a
+1 MB single-row-group L0 file about every 5 seconds (64 files in the 6
+minutes between compactions). A scan of recent data merges every overlapping
+file at once and reserves about 16 MiB of scan memory per file, so each
+alert rule needed about 1 GiB and two at once filled the budget.
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1d998-868c-775b-9e3f-8f81b1a21da7
+Make the buffer a chart value and give production 1GB (2GB reject), which is
+upstream's own default for an 8Gi node. Staging and canary keep 128MB/256MB;
+their rendered configuration is unchanged. The runbook now says to count L0
+files before adding memory.
+
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1e559-7d3c-7745-9d7b-709b90994a8d
 Co-authored-by: Pedro Piñera Buendía <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/mgmt-cluster-apply.yml` (modified, +7/-3)
+**File**: `infra/helm/k8s-monitoring/alerts.md` (modified, +12/-4)
 ```diff
-@@ -178,7 +178,7 @@ jobs:
-       - uses: actions/checkout@v4
-       - uses: ./.github/actions/mise
-         with:
--          install_args: "--locked helm kubectl jq"
-+          install_args: "--locked helm kubectl jq yq"
-           cache: "false"
-       - uses: 1password/install-cli-action@v2
-       - name: Load mgmt kubeconfig from 1Password
-@@ -453,9 +453,13 @@ jobs:
-           trap 'kubectl -n observability delete pod pulse-reset --ignore-not-found --wait=true --timeout=60s > /dev/null || true
-             kubectl -n observability delete externalsecret pulse-reset --ignore-not-found --wait=true --timeout=60s > /dev/null || true' EXIT
-           kubectl -n observability delete pod pulse-reset --ignore-not-found --wait=true --timeout=60s > /dev/null
--          # The wipe needs the release's S3 key, whose ExternalSecret goes with it.
-+          # The wipe needs the release's S3 key. Its references come from the
-+          # rendered chart, since the release's ExternalSecret goes with it.
-           if [[ -z "$(kubectl -n observability get externalsecret pulse-reset --ignore-not-found -o name)" ]]; then
--            kubectl -n observability get externalsecret pulse-credentials -o json | jq -e '
-+            helm template pulse infra/helm/pulse -n observability \
-+              -f infra/helm/pulse/values.yaml -f infra/helm/pulse/values-management.yaml |
-+              yq -o json 'select(.kind == "ExternalSecret" and .metadata.name == "pulse-credentials")' | jq -se '
-+              select(length == 1) | .[0] |
-               select([.spec.data[].secretKey] == ["accessKey", "secretKey"]) |
-               {apiVersion, kind, metadata:{name:"pulse-reset", namespace:"observability"}, spec:{
-                 refreshInterval:"0", secretStoreRef:.spec.secretStoreRef, data:.spec.data,
+@@ -9031,14 +9031,22 @@ To respond:
+ 
+ 1. `pulse_mito_scan_memory_usage_bytes` per pod shows which datanode is full.
+ 2. Find what it serves: `SELECT * FROM information_schema.region_peers`.
+-3. Raise the datanode memory limit in `infra/helm/pulse/values-production.yaml`
+-   (the budget follows it), or migrate other regions off that datanode.
++3. Check the L0 file count below before adding memory. Raise the datanode
++   memory limit in `infra/helm/pulse/values-production.yaml` (the budget
++   follows it), or migrate other regions off that datanode.
+ 4. The lasting fix is partitioning the metric table so reads spread over
+    every datanode.
+ 
+ `pulse_mito_flush_requests_total` by `reason` is scraped alongside it. A
+-steady `reason="EngineFull"` rate means the 128 MB write buffer forces tiny SST
+-files, which makes every scan open more files.
++steady `reason="EngineFull"` rate means the datanode's shared write buffer
++(`cluster.datanode.writeBufferSize`) forces tiny SST files. That matters more
++than the budget's size: a scan merges every overlapping file at once and
++reserves one projected row group (about 16 MiB on the metric region) per file.
++On 2026-11-16, with the budget already doubled to 2 GiB, the 128 MB buffer
++flushed the metric region every ~5 s, so a rule over the last few minutes
++merged ~64 L0 files (~1 GiB) and two at once filled the budget. Count the L0
++files of the region with
++`SELECT level, count(*) FROM information_schema.ssts_manifest WHERE region_id = <id> GROUP BY level`.
+ 
+ ### Pulse datanode telemetry missing
+ 
+```
+
+**File**: `infra/helm/pulse/templates/_cluster-config.tpl` (modified, +2/-2)
+```diff
+@@ -62,8 +62,8 @@ root = {{ printf "%sdistributed/" .Values.storage.prefix | quote }}
+ [region_engine.mito]
+ num_workers = 2
+ auto_flush_interval = "1m"
+-global_write_buffer_size = "128MB"
+-global_write_buffer_reject_size = "256MB"
++global_write_buffer_size = {{ .Values.cluster.datanode.writeBufferSize | quote }}
++global_write_buffer_reject_size = {{ .Values.cluster.datanode.writeBufferRejectSize | quote }}
+ write_cache_size = {{ .Values.cluster.datanode.writeCacheSize | quote }}
+ {{- if has .Values.environment .Values.cluster.gc.environments }}
+ [region_engine.mito.gc]
+```
+
+**File**: `infra/helm/pulse/values-production.yaml` (modified, +8/-0)
+```diff
+@@ -28,6 +28,14 @@ cluster:
+     resources:
+       requests: {cpu: "1", memory: 4Gi}
+       limits: {memory: 8Gi}
++    # At 128MB the shared write buffer filled within seconds, so the metric
++    # region flushed a 1MB, one-row-group L0 file every ~5s (64 files in 6
++    # minutes between compactions). A scan of recent data merges every
++    # overlapping file at once and reserves ~16MiB of scan memory per file, so
++    # each alert rule needed ~1GiB and two at once filled the 2GiB budget.
++    # 1GB is upstream's own default for an 8Gi node.
++    writeBufferSize: 1GB
++    writeBufferRejectSize: 2GB
+   etcd:
+     resources:
+       requests: {cpu: 250m, memory: 512Mi}
+```
+
+**File**: `infra/helm/pulse/values.yaml` (modified, +5/-0)
+```diff
+@@ -78,6 +78,11 @@ cluster:
+     # WAL until flushed to object storage, so a datanode may start empty.
+     cacheSize: 10Gi
+     writeCacheSize: 1GB
++    # Memtables of every region on the datanode share this buffer; when it
++    # fills, the largest region flushes. Each flush is a new SST file, and a
++    # scan reserves a row group per overlapping file (see values-production.yaml).
++    writeBufferSize: 128MB
++    writeBufferRejectSize: 256MB
+     resources:
+       requests: {cpu: 250m, memory: 768Mi}
+       limits: {memory: 2Gi}
 ```
 
 ---
 
-### Incident Patch 3: `aec3a626` (2026-11-14)
-**Commit Message**: fix(server): make the no-new-matches recovery test deterministic
+### Incident Patch 3: `9cbf44ce` (2026-11-16)
+**Commit Message**: fix(server): admit archived macOS Claude Code sessions on any Mac with room
 
-The test backdated each batch of runs by up to a millisecond per run
-from the time it reported them, while the worker stamps triggers and
-recoveries with NaiveDateTime.utc_now() just before it returns. When
-the next batch was reported within those few milliseconds, its earliest
-runs predated the stamp, recovery saw too few quiet runs, and the test
-failed on fast machines (9 of 10 local runs).
+A session whose macOS sandbox was archived has no host, so the session
+admission looked up a nil node and refused every retry with no_capacity.
+The session could never restore. Treat an archived sandbox like a new
+one, as Linux already does: any Mac with room admits it.
 
-The test now stubs NaiveDateTime.utc_now/0 with a clock that advances
-one millisecond per read, so every run falls strictly between the
-stamps around it. It still fails when recovery waits for the condition
-to clear, when a new flaky run does not restart the quiet period, or
-when old flaky runs re-mute after a recovery.
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1b00d-e3a3-718b-ac1c-ed6940d73474
+Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1d97b-d86b-7771-b7e8-dfe00b7e2deb
-Co-authored-by: Pedro Piñera Buendía <[REDACTED_EMAIL]>
-
-**File**: `server/test/tuist/automations/workers/alert_evaluation_worker_test.exs` (modified, +11/-8)
+**File**: `server/lib/tuist/sandboxes/macos_capacity.ex` (modified, +4/-0)
 ```diff
-@@ -892,15 +892,18 @@ defmodule Tuist.Automations.Workers.AlertEvaluationWorkerTest do
-     passing = fn ran_at -> run_attrs(project.id, test_case_id, ran_at) end
-     flaky = fn ran_at -> run_attrs(project.id, test_case_id, ran_at, git_branch: "experiment", is_flaky: true) end
- 
--    # Runs are dated when they are reported, in order, so the trigger and the
--    # recovery, which are stamped with the clock, fall between the batches.
--    report = fn runs ->
--      now = NaiveDateTime.utc_now()
-+    # Every read of the clock advances it, so each run is dated after the
-+    # trigger or recovery stamped before it was reported and before the next.
-+    clock = start_supervised!({Agent, fn -> NaiveDateTime.utc_now() end})
+@@ -108,6 +108,10 @@ defmodule Tuist.Sandboxes.MacosCapacity do
+   """
+   def admission(environment, session_id) do
+     case Sandboxes.get_sandbox_for_session(environment.id, session_id) do
++      # An archived sandbox has no host; it restores wherever a new one would go.
++      %Sandbox{state: :archived} = sandbox ->
++        with :ok <- quota(sandbox), do: placement(environment)
 +
-+    stub(NaiveDateTime, :utc_now, fn ->
-+      Agent.get_and_update(clock, fn now ->
-+        next = NaiveDateTime.add(now, 1, :millisecond)
-+        {next, next}
-+      end)
-+    end)
+       %Sandbox{} = sandbox ->
+         with :ok <- quota(sandbox), do: host_admission(sandbox)
  
--      runs
--      |> Enum.with_index(fn build, index -> build.(NaiveDateTime.add(now, index - length(runs), :millisecond)) end)
--      |> insert_test_case_runs()
--    end
-+    report = fn runs -> runs |> Enum.map(& &1.(NaiveDateTime.utc_now())) |> insert_test_case_runs() end
+```
+
+**File**: `server/test/tuist/sandboxes/macos_capacity_test.exs` (modified, +13/-0)
+```diff
+@@ -393,5 +393,18 @@ defmodule Tuist.Sandboxes.MacosCapacityTest do
  
-     report.([passing, passing, flaky])
- 
+     assert {:error, {node_name, :not_connected}} = Capacity.admission(environment, "paused-session")
+     assert node_name == node.name
++
++    # An archived session's sandbox left its host, so any host with room admits it.
++    sandbox(
++      state: :archived,
++      agent_environment_id: environment.id,
++      anthropic_session_id: "archived-session",
++      archive_key: "k",
++      archived_at: DateTime.utc_now()
++    )
++
++    assert :ok = Capacity.admission(environment, "archived-session")
++    stub(Nodes, :connected_nodes, fn -> [put_in(node.admission["slots"], 0)] end)
++    assert {:error, {:no_node, %{}}} = Capacity.admission(environment, "archived-session")
+   end
+ end
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15735** (2026-11-14): chore(infra): name Pulse's Kafka WAL topics pulse_wal_topic (@pepicrft)
-- **PR #15734** (2026-11-14): chore(infra): drop Pulse's one-time pre-rename Grafana uninstall (@pepicrft)
-- **PR #15732** (2026-11-14): feat(infra): deploy Pulse continuously like Kura (@pepicrft)
-- **PR #15731** (2026-11-14): refactor(infra): rename Pulse's infrastructure from GreptimeDB to Pulse (@pepicrft)
-- **PR #15730** (2026-11-14): feat(infra): add a sixth general node to canary for Pulse's cluster topology (@pepicrft)
-- **PR #15729** (2026-11-14): fix(infra): drain Pulse frontends before they stop serving (@pepicrft)
+- **PR #15754** (2026-11-16): fix(cli): backport skipping the cache debugger pre-action on CI to 4.218.x (@esnunes)
+- **PR #15751** (2026-11-16): fix(cli): backport skipping the cache debugger pre-action on CI to 4.217.x (@esnunes)
+- **PR #15750** (2026-11-16): fix(cli): backport skipping the cache debugger pre-action on CI to 4.216.x (@esnunes)
+- **PR #15749** (closed): ci(android): diagnose the configuration cache failure with Android coverage (@esnunes)
+- **PR #15748** (2026-11-16): fix(swifterpm): patch vulnerable Swift package pins (@pepicrft)
+- **PR #15747** (2026-11-16): fix(condukt): patch rustls, quinn-proto, microsandbox, and cmov (@pepicrft)
 
 ---
 
@@ -1139,41 +868,34 @@ Co-authored-by: Pedro Piñera Buendía <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): add MCP tools to explore Pulse metrics, logs and traces
+## X. infra): fail stalled node blob cache downloads within seconds
 
 **RULE**:
-When implementing operations in `server/lib/tuist/mcp/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `infra/sandbox-image/remote-execution.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2419de4e`: server): add MCP tools to explore Pulse metrics, logs and traces. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e1ff1c6`: infra): fail stalled node blob cache downloads within seconds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/lib/tuist/mcp/AGENTS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/sandbox-image/remote-execution.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Pulse tools share `Tuist.Pulse` with the Pulse pages: `PulseTools.execute/3`
-  requires a user (or user-associated `mcp` credential), account read, then
-  `Pulse.authorized?/2` (configured account, `pulse` flag, current
-  membership) before any read. Exploration tools (`query_pulse_metrics`,
-  `list_pulse_labels`, `search_pulse_logs`, `search_pulse_traces`,
-  `get_pulse_trace`) go through `Pulse.explore/4` and `Pulse.Explore`, which
-  takes structured filters only: values reach SQL as escaped literals, log
-  labels as literal JSON paths, and trace labels only when they name an
-  existing scalar trace column. Never accept SQL from callers; keep the
-  15m–24h windows, row limits and transport bounds.
-
+inputs, from Kura. A node download that receives nothing for 30 seconds
+counts as a failure, and sandboxd's connection to Kura pings while downloads
+run, so one stalled stream or dead connection costs the actions waiting on it
+seconds rather than minutes.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+inputs, from Kura.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2419de4e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e1ff1c6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
