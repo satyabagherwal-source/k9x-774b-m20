@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T18:18:38.924Z",
+  "last_updated": "2026-11-17T18:26:39.607Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "a63beb7624744bbcbf28834049e0bef21336130225ab97eacc5eed6fc68a9a70",
-      "verified_at": "2026-11-16T18:10:55.852Z",
+      "content_hash": "dcecdebe64f01f4b424fe4e711263b9ebe5a54ae552b554e3c842c2b30d00ec0",
+      "verified_at": "2026-11-17T18:26:39.607Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:10:55.852Z"
+      "last_updated": "2026-11-17T18:26:39.607Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "0fb1b7703d082d882f286bc6792e16eecbf72ded5a2a4b35bbb8b38658f7aaf1",
-      "verified_at": "2026-11-16T04:53:17.317Z",
+      "content_hash": "509372e2f3a16f1c095839e3623b9dbe81552efa7004d2c8a50b54bde2fe2fee",
+      "verified_at": "2026-11-17T18:26:25.985Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T04:53:17.317Z"
+      "last_updated": "2026-11-17T18:26:25.985Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",
@@ -18711,14 +18711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
-      "content_hash": "e96b4b5e647562def31356a757a7449b65a5677f459bd2415eba3ce124df18c9",
-      "verified_at": "2026-11-13T07:17:54.302Z",
+      "content_hash": "d36045fa50543c752f05f8c52f226c0a38dc43f4168ad20ee70b8976a6d1dede",
+      "verified_at": "2026-11-17T18:26:24.179Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T07:17:54.302Z"
+      "last_updated": "2026-11-17T18:26:24.179Z"
     },
     "thinkingmachines/Inkling-2-Small": {
       "repository": "thinkingmachines/Inkling-2-Small",

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T18:18:38.919Z",
-  "total_cycles_completed": 10212,
-  "total_learnings_persisted": 10212,
-  "total_rules_promoted": 9770,
+  "last_updated": "2026-11-17T18:26:39.604Z",
+  "total_cycles_completed": 10215,
+  "total_learnings_persisted": 10215,
+  "total_rules_promoted": 9772,
   "history": [
-    {
-      "timestamp": "2026-11-17T03:57:51.069Z",
-      "repository": "solidjs/solid",
-      "learningId": "learn-github-solidjs-solid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T03:57:53.999Z",
-      "repository": "software-mansion/react-native-screens",
-      "learningId": "learn-github-software-mansion-react-native-screens",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T03:58:00.097Z",
-      "repository": "koderover/zadig",
-      "learningId": "learn-github-koderover-zadig",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T03:58:03.342Z",
       "repository": "HelixDB/helix-db",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T18:18:38.919Z",
       "repository": "wcandillon/react-native-skia",
       "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:26:24.176Z",
+      "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:26:25.982Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T18:26:39.604Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

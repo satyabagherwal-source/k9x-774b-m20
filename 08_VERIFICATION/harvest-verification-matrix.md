@@ -10657,3 +10657,6 @@
 | `CYCLE-20261117-N0R8` | `2026-11-17T18:18:28.628Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md` | Yes (`a6826f66...`) |
 | `CYCLE-20261117-N2RS` | `2026-11-17T18:18:31.240Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9026` | Yes (`9ea7a3ed...`) |
 | `CYCLE-20261117-N8OT` | `2026-11-17T18:18:38.909Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8858` | Yes (`bb490618...`) |
+| `CYCLE-20261117-X7OO` | `2026-11-17T18:26:24.168Z` | `huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md` | Yes (`d36045fa...`) |
+| `CYCLE-20261117-X92U` | `2026-11-17T18:26:25.974Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9027` | Yes (`509372e2...`) |
+| `CYCLE-20261117-XJL7` | `2026-11-17T18:26:39.595Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9028` | Yes (`dcecdebe...`) |

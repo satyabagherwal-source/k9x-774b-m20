@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "6406c3f8",
+    "sourceVersion": "eacef66c",
     "license": "Apache-2.0",
-    "contentHash": "a63beb7624744bbcbf28834049e0bef21336130225ab97eacc5eed6fc68a9a70",
-    "lastHarvestedAt": "2026-11-16T18:10:55.844Z",
+    "contentHash": "dcecdebe64f01f4b424fe4e711263b9ebe5a54ae552b554e3c842c2b30d00ec0",
+    "lastHarvestedAt": "2026-11-17T18:26:39.599Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "53b7f598",
+    "sourceVersion": "77abba97",
     "license": "MIT",
-    "contentHash": "0fb1b7703d082d882f286bc6792e16eecbf72ded5a2a4b35bbb8b38658f7aaf1",
-    "lastHarvestedAt": "2026-11-16T04:53:17.305Z",
+    "contentHash": "509372e2f3a16f1c095839e3623b9dbe81552efa7004d2c8a50b54bde2fe2fee",
+    "lastHarvestedAt": "2026-11-17T18:26:25.978Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
@@ -12435,8 +12435,8 @@
     "sourceUrl": "https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
     "sourceVersion": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "e96b4b5e647562def31356a757a7449b65a5677f459bd2415eba3ce124df18c9",
-    "lastHarvestedAt": "2026-11-13T07:17:54.295Z",
+    "contentHash": "d36045fa50543c752f05f8c52f226c0a38dc43f4168ad20ee70b8976a6d1dede",
+    "lastHarvestedAt": "2026-11-17T18:26:24.172Z",
     "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf"
   },
   "hf-thinkingmachines-inkling-2-small": {

@@ -10690,3 +10690,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-17T18:18:28.632Z |
 | `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `1125e5dc` | Multi-dimensional audit evidence | 2026-11-17T18:18:31.244Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `0ac4f44a` | Multi-dimensional audit evidence | 2026-11-17T18:18:38.913Z |
+| `learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf` | `https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF` | `hf-huihui-` | Multi-dimensional audit evidence | 2026-11-17T18:26:24.172Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `77abba97` | Multi-dimensional audit evidence | 2026-11-17T18:26:25.978Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `eacef66c` | Multi-dimensional audit evidence | 2026-11-17T18:26:39.599Z |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T18:18:44.056Z",
+  "updated_at": "2026-11-17T18:26:42.856Z",
   "stats": {
-    "total_discovered": 5102,
-    "approved_pending_harvest": 4813,
+    "total_discovered": 5103,
+    "approved_pending_harvest": 4814,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4800,
+      "COMMUNITY_AND_EXPERT": 4801,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -110242,6 +110242,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
         "fileName": "shopify-react-native-skia-learnings.md"
+      }
+    },
+    "SRC-DA60332C1927": {
+      "id": "SRC-DA60332C1927",
+      "url": "https://pixelgui.com/",
+      "title": "https://pixelgui.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T18:26:42.856Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
+        "fileName": "zenbu-labs-terminal-browser-learnings.md"
       }
     }
   }

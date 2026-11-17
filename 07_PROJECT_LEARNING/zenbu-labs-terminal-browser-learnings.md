@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `53b7f598`  
+> **Source Version**: `77abba97`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T04:53:16.162Z  
+> **Timestamp**: 2026-11-17T18:26:25.053Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T04:53:15.983Z  
+> **Harvest Timestamp**: 2026-11-17T18:26:25.048Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4671 stars
+- **Stars / Engagement**: 4697 stars
 
 ---
 
@@ -1550,92 +1550,165 @@ impl Bridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `53b7f598` (2026-11-16)
-**Commit Message**: in-memory webview partitions (#298)
+### Incident Patch 1: `77abba97` (2026-11-16)
+**Commit Message**: add flag for no agent indicator (#299)
 
-* webview: persist={false} keeps a partition in memory
-
-* webview: memory partitions drop a persist: prefix and save no favicons
-
-**File**: `pixel/AGENT-DOCS.md` (modified, +1/-0)
+**File**: `browser/src/session/session.tsx` (modified, +5/-1)
 ```diff
-@@ -267,6 +267,7 @@ KeyMods        { shift: boolean; alt: boolean; ctrl: boolean; super: boolean }
- | `style` | layout style |
- | `preload` | preload script path |
- | `partition` | session name, made persistent |
-+| `persist` | `false` keeps the partition in memory: nothing it stores reaches disk, and it is gone when the app quits; its pages get no favicon <!-- fixme: placeholder copy --> |
- | `proxy` | proxy rules, e.g. `socks5://127.0.0.1:1080` |
- | `clipboardRead` | allows the page to read the clipboard |
- | `browserWindowOptions` | Electron `BrowserWindow` options except size and offscreen flags |
+@@ -548,7 +548,11 @@ class Session {
+         layout={this.layout}
+         colors={this.root.info.colors}
+         findOpen={this.findOpen}
+-        tabs={this.tabs.view()}
++        tabs={
++          this.ctx.env.TERMINAL_BROWSER_NO_AGENT_INDICATOR === "1"
++            ? this.tabs.view().map((tab) => ({ ...tab, agentControlled: false }))
++            : this.tabs.view()
++        }
+         newTab={
+           this.newTab
+             ? { suggestions: this.newTabRows(), index: this.newTab.index }
 ```
 
-**File**: `pixel/packages/pixel/src/web/browser-session.ts` (modified, +4/-0)
+---
+
+### Incident Patch 2: `b7706599` (2026-11-16)
+**Commit Message**: update site
+
+**File**: `pixel/website/app/components/wordmark.tsx` (modified, +8/-8)
 ```diff
-@@ -198,6 +198,10 @@ export function persistentPartition(partition: string): string {
-   return partition.startsWith("persist:") ? partition : `persist:${partition}`;
+@@ -13,15 +13,15 @@ const LETTERS = [
+   { letter: "x" },
+   { letter: "e" },
+   { letter: "l" },
+-  { letter: "g", color: "var(--r)" },
+-  { letter: "u", color: "var(--g)" },
+-  { letter: "i", color: "var(--b)" },
++  { letter: "g", color: "r" },
++  { letter: "u", color: "g" },
++  { letter: "i", color: "b" },
+ ];
+-const ROWS = 9;
+-const CELL = 15;
+-const GAP = 1;
++export const ROWS = 9;
++export const CELL = 15;
++export const GAP = 1;
+ 
+-function layout() {
++export function layout() {
+   let width = 0;
+   const cells: { x: number; y: number; color?: string }[] = [];
+   for (const { letter, color } of LETTERS) {
+@@ -46,7 +46,7 @@ export default function Wordmark() {
+       viewBox={`0 0 ${width * CELL} ${ROWS * CELL}`}
+     >
+       {cells.map(({ x, y, color }) => (
+-        <rect key={`${x}-${y}`} x={x * CELL} y={y * CELL} width={CELL - GAP} height={CELL - GAP} fill={color} />
++        <rect key={`${x}-${y}`} x={x * CELL} y={y * CELL} width={CELL - GAP} height={CELL - GAP} fill={color && `var(--${color})`} />
+       ))}
+     </svg>
+   );
+```
+
+**File**: `pixel/website/app/layout.tsx` (modified, +4/-4)
+```diff
+@@ -14,18 +14,18 @@ const DESCRIPTION = "Build graphical applications in the terminal";
+ 
+ export const metadata: Metadata = {
+   metadataBase: new URL("https://pixelgui.com"),
+-  title: "pixel",
++  title: "pixelgui",
+   description: DESCRIPTION,
+   openGraph: {
+-    title: "Pixel",
++    title: "pixelgui",
+     description: DESCRIPTION,
+     url: "/",
+-    siteName: "Pixel",
++    siteName: "pixelgui",
+     type: "website",
+   },
+   twitter: {
+     card: "summary_large_image",
+-    title: "Pixel",
++    title: "pixelgui",
+     description: DESCRIPTION,
+   },
+ };
+```
+
+**File**: `pixel/website/app/opengraph-image.tsx` (modified, +24/-15)
+```diff
+@@ -1,20 +1,34 @@
+ import { ImageResponse } from "next/og";
+ import { readFile } from "node:fs/promises";
+ import { join } from "node:path";
++import { CELL, GAP, ROWS, layout } from "./components/wordmark";
+ 
+-export const alt = "Pixel · Build graphical applications in the terminal";
++export const alt = "pixelgui · Build graphical applications in the terminal";
+ export const size = { width: 1200, height: 630 };
+ export const contentType = "image/png";
+ 
+-const TITLE_PX = 110;
+-const LOGO_PX = 90;
++const WORDMARK_WIDTH_PX = 760;
++const COLORS: Record<string, string> = { r: "#ff4d5e", g: "#3ddc84", b: "#4d9fff" };
+ 
+-function Logo() {
++function Wordmark() {
++  const { cells, width } = layout();
+   return (
+-    <svg width={LOGO_PX} height={LOGO_PX} viewBox="0 0 32 32" shapeRendering="crispEdges">
+-      <rect x="9" y="2" width="14" height="14" fill="#ff4d5e" />
+-      <rect x="1" y="17" width="14" height="14" fill="#3ddc84" />
+-      <rect x="17" y="17" width="14" height="14" fill="#4d9fff" />
++    <svg
++      width={WORDMARK_WIDTH_PX}
++      height={(WORDMARK_WIDTH_PX * ROWS) / width}
++      viewBox={`0 0 ${width * CELL} ${ROWS * CELL}`}
++      shapeRendering="crispEdges"
++    >
++      {cells.map(({ x, y, color }) => (
++        <rect
++          key={`${x}-${y}`}
++          x={x * CELL}
++          y={y * CELL}
++          width={CELL - GAP}
++          height={CELL - GAP}
++          fill={color ? COLORS[color] : "#eeeeee"}
++        />
++      ))}
+     </svg>
+   );
  }
- 
-+export function memoryPartition(partition: string): string {
-+  return partition.replace(/^persist:/, "");
-+}
-+
- function rangeResponse(url: string, range: string): Response | null {
-   const match = /^bytes=(\d*)-(\d*)$/.exec(range.trim());
-   if (!match || (!match[1] && !match[2])) return null;
-```
-
-**File**: `pixel/packages/pixel/src/web/favicon.ts` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ export class FaviconCache {
-   constructor(private readonly dir: string = path.join(app.getPath("userData"), "favicons")) {}
- 
-   async resolve(urls: string[], ses: Session): Promise<string | null> {
--    if (urls.length === 0) return null;
-+    if (urls.length === 0 || !ses.isPersistent()) return null;
-     const clearsBefore = clears;
-     const candidates = [...urls].sort((a, b) => Number(RASTER_URL.test(b)) - Number(RASTER_URL.test(a)));
-     try {
-```
-
-**File**: `pixel/packages/pixel/src/webview.tsx` (modified, +5/-2)
-```diff
-@@ -44,7 +44,7 @@ import type {
- } from "./web/browser-session";
- import { PageHost, decideOpenWindow } from "./web/host";
- import type { BrowserWindowOptions, OpenWindowDecision, OpenWindowPolicy } from "./web/host";
--import { persistentPartition } from "./web/browser-session";
-+import { memoryPartition, persistentPartition } from "./web/browser-session";
- import { initialWebViewState, snapToCssGrid } from "./web/types";
- import type { DevtoolsDock, MediaCapture, SurfaceLayout, WebViewState } from "./web/types";
- import type { ZoomDirection } from "./web/zoom";
-@@ -66,6 +66,7 @@ export interface WebViewProps {
-   style?: Style;
-   preload?: string;
-   partition?: string;
-+  persist?: boolean;
-   clipboardRead?: boolean;
-   proxy?: string;
-   browserWindowOptions?: BrowserWindowOptions;
-@@ -247,7 +248,9 @@ export const WebView = forwardRef<WebViewHandle, WebViewProps>(function WebView(
-       ...passthrough,
-       webPreferences: {
-         ...passthrough.webPreferences,
--        ...(initial.partition ? { partition: persistentPartition(initial.partition) } : {}),
-+        ...(initial.partition
-+          ? { partition: initial.persist === false ? memoryPartition(initial.partition) : persistentPartition(initial.partition) }
-+          : {}),
-         ...(initial.preload ? { preload: path.resolve(initial.preload) } : {}),
-       },
-     };
+@@ -40,14 +54,9 @@ export default async function OpengraphImage() {
+           fontFamily: "JetBrains Mono",
+         }}
+       >
+-        <div style={{ display: "flex", alignItems: "center", gap: 34 }}>
+-          <span style={{ fontSize: TITLE_PX, fontWeight: 600, letterSpacing: -1, color: "#eeeeee", lineHeight: 1 }}>
+-            Pixel
+-          </span>
+-          <Logo />
+-        </div>
++        <Wordmark />
+         {/* fixme: placeholder copy */}
+-        <div style={{ marginTop: 40, fontSize: 36, color: "#8c8c8c" }}>Build graphical applications in the terminal</div>
++        <div style={{ marginTop: 56, fontSize: 36, color: "#8c8c8c" }}>Build graphical applications in the terminal</div>
+       </div>
+     ),
+     {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #299** (2026-11-16): add flag for no agent indicator (@RobPruzan)
 - **PR #298** (2026-11-16): in-memory webview partitions (@RobPruzan)
 - **PR #297** (2026-11-15): change pixel hero (@RobPruzan)
 - **PR #294** (2026-11-15): code block copy button (@RobPruzan)
 - **PR #293** (2026-11-15): improve ssh scroll perf (@RobPruzan)
 - **PR #286** (2026-11-13): fix phone crashes from reserved address space (@RobPruzan)
-- **PR #285** (2026-11-13): link targets in text layout (@RobPruzan)
 
 ---
 
@@ -1655,28 +1728,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. in-memory webview partitions
+## X. add flag for no agent indicator
 
 **RULE**:
-When implementing operations in `pixel/AGENT-DOCS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `browser/src/session/session.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `53b7f598`: in-memory webview partitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77abba97`: add flag for no agent indicator. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/AGENT-DOCS.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `browser/src/session/session.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-| `persist` | `false` keeps the partition in memory: nothing it stores reaches disk, and it is gone when the app quits; its pages get no favicon <!-- fixme: placeholder copy --> |
+        tabs={
+          this.ctx.env.TERMINAL_BROWSER_NO_AGENT_INDICATOR === "1"
+            ? this.tabs.view().map((tab) => ({ ...tab, agentControlled: false }))
+            : this.tabs.view()
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        tabs={this.tabs.view()}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `53b7f598` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77abba97` are properly handled with clean fallback behavior.

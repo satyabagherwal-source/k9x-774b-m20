@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-PCJV",
-    "timestamp": "2026-11-15T13:09:01.003Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "371369efeac5c632ebb64e5e8bd6deeac9500b10b63392631eff27fd0ac77dff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-PGXG",
-    "timestamp": "2026-11-15T13:09:06.676Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "7e8cb2b2b731fd718ebbeb591bf664e50006ccc836589329ef60ee05b8fa143a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-CVIT",
-    "timestamp": "2026-11-15T13:27:18.677Z",
-    "repository": "LiquidAI/LFM3-VL-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
-    "contentHash": "0635b94793bfc6d3d2f28e87e82f2de9ac90d4478ae120c736c53d08bcd46c48",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-D2M0",
     "timestamp": "2026-11-15T13:27:27.864Z",
     "repository": "zeromicro/go-zero",
@@ -7490,6 +7445,51 @@
     "repository": "wcandillon/react-native-skia",
     "learningId": "learn-github-wcandillon-react-native-skia",
     "contentHash": "bb490618394828c3ef70cd85a5681db38fe246a68ab8572814a58ae9b77f76e7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-X7OO",
+    "timestamp": "2026-11-17T18:26:24.168Z",
+    "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+    "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
+    "contentHash": "d36045fa50543c752f05f8c52f226c0a38dc43f4168ad20ee70b8976a6d1dede",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-X92U",
+    "timestamp": "2026-11-17T18:26:25.974Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "509372e2f3a16f1c095839e3623b9dbe81552efa7004d2c8a50b54bde2fe2fee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-XJL7",
+    "timestamp": "2026-11-17T18:26:39.595Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "dcecdebe64f01f4b424fe4e711263b9ebe5a54ae552b554e3c842c2b30d00ec0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

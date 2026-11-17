@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T18:18:44.540Z",
-  "total_records": 1639,
+  "last_updated": "2026-11-17T18:26:43.978Z",
+  "total_records": 1641,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 699,
+      "total": 701,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -748,7 +748,9 @@
         "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva",
         "domain_intelligence-research-knowledge-intelligence-orcarouter-deepseek-v4-1-flash-1017-abliterated-",
-        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-deepseek-v4-1-flash-1017-abliterat"
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-deepseek-v4-1-flash-1017-abliterat",
+        "domain_intelligence-research-knowledge-intelligence-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-co",
+        "domain_intelligence-research-knowledge-intelligence-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf"
       ]
     },
     "E": {
@@ -9680,8 +9682,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "ba20cf6e1af50915197124a7d6117ae0a3a876a8f8efa494d3a0bab999a11f67",
-      "created_at": "2026-11-16T18:10:56.140Z"
+      "content_hash": "eb3cf53b143ce5e4c2b5a85ddee917d6e0f18590fd451c4e814e83b6844956af",
+      "created_at": "2026-11-17T18:26:39.889Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -14691,8 +14693,8 @@
       "title": "Architecture Intelligence: zenbu-labs/terminal-browser Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-architecture-intelligence-zenbu-labs-terminal-browse.md",
       "repository": "zenbu-labs/terminal-browser",
-      "content_hash": "5bf7ce5832608029dec4b5de8d3f3908e1684688dcf22c3f057bafeef8d00032",
-      "created_at": "2026-11-16T04:53:17.710Z"
+      "content_hash": "628108a2c7392fba81a6a63ebdd804ff35d3d743e30187322c8c71736482733e",
+      "created_at": "2026-11-17T18:26:26.270Z"
     },
     "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants",
@@ -14727,8 +14729,8 @@
       "title": "Architecture Intelligence: zenbu-labs-terminal-browser-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-learnings-architecture-intelligence-zenbu-labs-termi.md",
       "repository": "zenbu-labs-terminal-browser-learnings",
-      "content_hash": "39af90881ebbd7771f8a2ee20c325e9dceebebe69afe538010105bd814defc08",
-      "created_at": "2026-11-16T04:53:34.418Z"
+      "content_hash": "42059f989df1cb319bc941239ca4fba1b60e790ee9200ac160b4302cda34adac",
+      "created_at": "2026-11-17T18:26:43.153Z"
     },
     "DOM-D-2F30EB65": {
       "record_id": "DOM-D-2F30EB65",
@@ -19726,8 +19728,8 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-learnings-technical-construction-intelligence-t8y2-dbx-learnings-core-i.md",
       "repository": "t8y2-dbx-learnings",
-      "content_hash": "51ba96265212bd722da14e95d85058130d78815b093317319563940e655a5856",
-      "created_at": "2026-11-16T18:11:00.825Z"
+      "content_hash": "e3338af0278e8aca8d37787a2c98c0f2a0f0cf0d7de1bd30245816c9c19de31e",
+      "created_at": "2026-11-17T18:26:43.978Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants",
@@ -27960,6 +27962,24 @@
       "repository": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings",
       "content_hash": "8773c03e8fe23dd645513f04426f69ffced8ee3729ca7457f231251ea5f52e7c",
       "created_at": "2026-11-17T18:18:43.724Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-co": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-co",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-research-knowledge-intelligence.md",
+      "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "content_hash": "229eea3536dba991195f0edb098e57bbbb2054ae7737d8dd4f685a75b38374d0",
+      "created_at": "2026-11-17T18:26:24.338Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-learnings-research-knowledge-in.md",
+      "repository": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings",
+      "content_hash": "1c10c057fd0447be37b5bfd0c3b39e389fbdc8a9d9605dd383cf8630c0cb9e17",
+      "created_at": "2026-11-17T18:26:43.558Z"
     }
   }
 }

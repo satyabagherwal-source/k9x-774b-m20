@@ -4,22 +4,22 @@
 {
   "source_repository": "t8y2/dbx",
   "source_url": "https://github.com/t8y2/dbx",
-  "source_version": "6406c3f8",
+  "source_version": "eacef66c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T18:10:56.027Z",
+  "timestamp": "2026-11-17T18:26:39.777Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-t8y2-dbx",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `6406c3f8`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T18:10:56.027Z`  
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `eacef66c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T18:26:39.777Z`  
 > **Learning ID**: `learn-github-t8y2-dbx`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `t8y2/dbx` (Commit: `6406c3f8`)
+- **Target Repository**: `t8y2/dbx` (Commit: `eacef66c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:10:54.945Z  
+> **Harvest Timestamp**: 2026-11-17T18:26:38.729Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 30515 stars
+- **Stars / Engagement**: 30625 stars
 
 ---
 
@@ -2002,14 +2002,17 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15064** (2026-11-16): **[Bug] 粘贴多层嵌套 SQL 导致编辑器卡死**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  MySQL  ### 问题描述 / Problem description     #### 摘要     在「新建查询」标签页粘贴一条多层派生表嵌套的 SELECT（约 33 层 SELECT p.* FROM ( … ) p）后，编辑器立即卡死：WebContent 进程单核 100% 持续数十分钟，界面无响应，只能强杀进程。     #### 复现步骤     1. 连接任意 MySQL，打开「新建查询」。    2. 粘贴下方 SQL（或任何同形状的多层 SELECT 别名.* FROM (…) 别名 嵌套）。    3. 编辑器卡死。      完整复现 SQL：      SELECT         t.his_doctor_code, t.doctor_id, t.doctor_name,         COUNT(*) AS record_count,         SUM(t.han_cnt + t.word_cnt) AS total_words,         SUM(t.han_cnt) AS han_cnt,         SUM(t.word_cnt) AS word_cnt,                                                              ROUND(AVG(t.han_cnt + t.word_cnt), 1) AS avg_words     FROM (         SELECT             z.his_doctor_code, z.doctor_id, z.doctor_name,                                                                                                                          CHAR_LENGTH(z.latin) - CHAR_LENGTH(REPLACE(z.latin, '?', '')) AS han_cnt,             CASE WHEN TRIM(z.eng_final) = '' THEN 0                  ELSE CHAR_LENGTH(TRIM(z.eng_final)) - CHAR_LENGTH(REPLACE(TRIM(z.eng_final), ' ', '')) + 1             END AS word_cnt         FROM (             SELECT y.*, CONVERT(y.han9 USING latin1) AS latin             FROM (     SELECT p.*,                 REPLACE(REPLACE(REPLACE(p.eng_s4, ' - ', ' '), ' . ', ' '), ' / ', ' ') AS eng_final             FROM (     SELECT p.*, REPLACE(p.eng_s3, '  ', ' ') AS eng_s4                                                                            
-
-- **Issue #15057** (2026-11-16): **[Bug] elaticsearch 增加单独的搜索框，但是填入关键字搜索不能生效**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  elasticsearch  ### 问题描述 / Problem description  <img width="645" height="222" alt="image" src="https://github.com/user-attachments/assets/e2e46dfb-b8f7-49de-a749-19c429fb1e61" />  ### 支持信息 / Support information  从加入单独的搜索框那个版本开始 到目前最新版本 v0.6.71版本 bug一直存在   ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  _No response_
+- **Issue #15152** (2026-11-17): **[Bug] PostgreSQL 原生驱动把 real 查询结果舍入到小数点后六位**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  PostgreSQL 17.11，DBX 原生 PostgreSQL 驱动  ### 问题描述 / Problem description  通过原生驱动执行以下查询，无需建表。  ```sql SELECT 0.0000001::real AS tiny, 1.2345678::real AS fractional; ```  | 结果 | tiny | fractional | | --- | ---: | ---: | | PostgreSQL（psql） | 1e-07 | 1.2345678 | | DBX `execute_query` | 0.0 | 1.234568 |  第一个非零数在查询结果中变成了零。希望驱动返回的 JSON 数字保留 PostgreSQL 存储的单精度值，能够往返回同一个 `f32`。  ### 支持信息 / Support information  DBX 上游 main，复现提交 df7a91c694051fa5aa80a980ff4428ec175ac695。macOS 26.6.2 / arm64，通过 dbx-driver-postgres 的 connect 和 execute_query 连接本地 PostgreSQL 17.11。  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  `pg_fallback_value_to_json` 将标量 `f32` 乘以 1,000,000 再取整。#3951 已修复 pgvector 元素的同类精度问题，本例是普通 `real` 列。
   **Post-Mortem & Fix Analysis**:
-  > /claim  已确认截图中的连接位于文件夹内，而索引过滤只访问顶层连接。会让过滤覆盖文件夹内的 Elasticsearch 和 Easysearch 连接，保留各连接独立的搜索条件。 
-  > ✅ @ThugKd 已认领 #15057，开始处理吧！
+  > /claim
+  > ✅ @lyinglyingl 已认领 #15152，开始处理吧！
+
+- **Issue #15115** (2026-11-17): **[Bug] UI 类 Ai Agent 输出阶段，右键数据库，表查询DDL一直失焦被关闭**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  ALL  ### 问题描述 / Problem description  点击AI Agent 开启对话，AI在输出阶段，右键数据库，右侧菜单一直被自动关闭，失焦  ### 支持信息 / Support information  0.6.71 windows11  ### 优先级（是否紧急） / Priority (urgency)  🟢 P3 低优 · 有空再修 / Low · Fix when possible  ### 补充信息 / Additional information  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > /claim
+  > ✅ @onenewcode 已认领 #15115，开始处理吧！
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2026,766 +2029,316 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6406c3f8` (2026-11-16)
-**Commit Message**: fix(sql): respect query-block scope in SQL completion
+### Incident Patch 1: `082c5eb8` (2026-11-17)
+**Commit Message**: fix(sqlserver): keep module batches whole in the statement splitter (#15095)
 
-**File**: `apps/desktop/src/lib/__tests__/sql/sqlCompletion.context.spec.ts` (modified, +2/-1)
-```diff
-@@ -2802,7 +2802,8 @@ describe("line block statement boundary", () => {
-     const cursor = sql.length;
-     const context = getSqlCompletionContext(sql, cursor, { databaseType: "mysql" });
- 
--    expect(context.referencedTables.map((table) => table.name)).toEqual(expect.arrayContaining(["users"]));
-+    expect(context.referencedTables.map((table) => table.alias ?? table.name)).toEqual(["x"]);
-+    expect(context.referencedTables[0].columns).toContain("id");
-   });
- 
-   it("keeps WITH clause in scope when cursor is in the following top-level main query", () => {
-```
+* fix(sqlserver): keep module batches whole in the statement splitter
 
-**File**: `apps/desktop/src/lib/__tests__/sql/sqlCompletion.scope.spec.ts` (added, +639/-0)
+A native SQL Server connection splits scripts with the plain statement
+splitter (only agent pools split on GO), so a module batch such as
+
+    CREATE PROCEDURE dbo.p AS
+    BEGIN
+        SET NOCOUNT ON;
+        SELECT 1;
+    END;
+
+was cut at its first inner semicolon and the server rejected the
+fragments. T-SQL treats the whole CREATE/ALTER module as one batch.
+
+Reuse the existing SQL Server block scanner: once a module batch has
+opened a BEGIN block, keep its semicolons until every block is closed,
+then end the statement at the trailing semicolon. Modules without a
+BEGIN body (e.g. CREATE VIEW ... AS SELECT) keep the per-statement
+split so they do not swallow following statements.
+
+Refs #15087
+
+* chore: retrigger agent-rust after flaky duckdb worker test
+
+**File**: `crates/dbx-sql-core/src/sql.rs` (modified, +149/-1)
 ```diff
-@@ -0,0 +1,639 @@
-+import { describe, expect, it } from "vitest";
-+import { buildSqlCompletionItemsFromContext, getSqlCompletionContext, type SqlCompletionColumn } from "@/lib/sql/sqlCompletion";
-+import { sqlCompletionContextFromSemantic } from "@/lib/sql/semantic/completion";
-+import { SqlCompletionAnalysisEngine } from "@/lib/sql/sqlCompletionAnalysis";
-+import { sqlFixtureCursor } from "@/lib/sql/semantic/fixtures";
-+import { buildSqlSemanticModel } from "@/lib/sql/semantic/model";
-+import type { SqlSemanticBuildOptions } from "@/lib/sql/semantic/types";
-+
-+function complete(markedSql: string, semantic: boolean, editorAnalysis = false, options: SqlSemanticBuildOptions = { databaseType: "postgres", dialect: "postgres" }) {
-+  const { sql, cursor } = sqlFixtureCursor(markedSql);
-+  const base = getSqlCompletionContext(sql, cursor, options);
-+  const model = semantic ? buildSqlSemanticModel(sql, cursor, options) : undefined;
-+  const context = editorAnalysis ? new SqlCompletionAnalysisEngine().analyze({ sql, cursor, ...options, semanticCompletionEnabled: semantic }).completionContext : model ? sqlCompletionContextFromSemantic(model, base) : base;
-+  const columnsByTable = new Map<string, SqlCompletionColumn[]>(["a", "b", "c"].map((suffix) => [`probe_${suffix}`, ["id", `${suffix}_only`].map((name) => ({ name, table: `probe_${suffix}` }))]));
-+  // Match the editor metadata path: local columns come from the resolved context,
-+  // not every source in the global semantic model (including hidden query blocks).
-+  for (const table of context.referencedTables) {
-+    if (table.columns?.length)
-+      columnsByTable.set(
-+        table.name,
-+        table.columns.map((name) => ({ name, table: table.name, schema: table.schema })),
-+      );
-+  }
-+  const items = buildSqlCompletionItemsFromContext(context, { ...options, tables: [], columnsByTable });
-+  return { context, columns: items.filter((item) => item.type === "column").map((item) => item.apply ?? item.label) };
+@@ -3816,6 +3816,12 @@ fn keeps_oracle_style_block_together(options: SqlParsingOptions, statement_head:
+ /// TRY BEGIN CATCH ... END CATCH` counts as one). `BEGIN TRAN[SACTION]` and
+ /// friends have no matching `END` and stay split per statement. Only meaningful
+ /// when the profile keeps such batches (`keeps_sqlserver_control_flow_batches`).
++///
++/// A module batch (`CREATE`/`ALTER PROCEDURE|PROC|FUNCTION|TRIGGER|VIEW ...
++/// AS BEGIN ... END`, #15087) takes the same path: its body semicolons are
++/// syntax, and the batch ends where the block stack closes — so a final `END`
++/// without its own `;` still does not swallow the next statement. A native SQL
++/// Server connection uses this plain splitter; only agent pools split on `GO`.
+ fn keeps_sqlserver_control_flow_batch(options: SqlParsingOptions, statement_head: &str) -> bool {
+     if !options.profile.keeps_sqlserver_control_flow_batches {
+         return false;
+@@ -3827,7 +3833,37 @@ fn keeps_sqlserver_control_flow_batch(options: SqlParsingOptions, statement_head
+     if first.is_word("IF") || first.is_word("WHILE") {
+         return true;
+     }
+-    first.is_word("BEGIN") && sqlserver_begins_block(&tokens, 0)
++    if first.is_word("BEGIN") && sqlserver_begins_block(&tokens, 0) {
++        return true;
++    }
++    keeps_sqlserver_module_batch(options, statement_head)
 +}
 +
-+describe.each([false, true])("SQL completion query scopes (semantic=%s)", (semantic) => {
-+  it("only offers derived-table output in the outer query (#14475)", () => {
-+    const { context, columns } = complete("SELECT id| FROM (SELECT t1.id FROM probe_a t1 JOIN probe_b t2 ON t1.id = t2.id) sq", semantic);
-+    expect(context.referencedTables.map((table) => table.alias ?? table.name)).toEqual(["sq"]);
-+    expect(columns.length).toBeGreaterThan(0);
-+    expect(columns.every((column) => column === "id" || column === "sq.id")).toBe(true);
-+  });
++/// Whether the buffered statement is a T-SQL module batch (`CREATE`/`ALTER
++/// PROCEDURE|PROC|FUNCTION|TRIGGER|VIEW ... AS BEGIN ... END`) whose body has
++/// already opened a `BEGIN` block, so its inner semicolons are body syntax and
++/// not statement boundaries. A native SQL Server connection splits scripts with
++/// the plain statement splitter (only agent pools split on `GO`), so without
++/// this a routine body is cut at its first inner `;` and the server rejects the
++/// fragments (#15087).
++///
++/// Modules whose body has no `BEGIN` block keep the historical per-semicolon
++/// split: there is no block nesting that could tell body semicolons apart from
++/// statement boundaries, and a `CREATE VIEW ... AS SELECT` must not swallow the
++/// statements that follow it.
++fn keeps_sqlserver_module_batch(options: SqlParsingOptions, statement_head: &str) -> bool {
++    options.profile.keeps_sqlserver_module_batch_at_cursor
++        && starts_with_sqlserver_module_ddl(statement_head)
++        && sqlserver_module_batch_opens_begin_block(statement_head)
++}
 +
-+  it("keeps the current level of a multiply nested derived table", () => {
-+    const { context, columns } = complete("SELECT * FROM (SELECT id| FROM (SELECT a.id FROM probe_a a) inner_query) outer_query", semantic);
-+    expect(context.referencedTables.map((table) => table.alias ?? table.name)).toEqual(["inner_query"]);
-+    expect(columns.length).toBeGreaterThan(0);
-+    expect(columns.every((column) => column === "id" || column === "inner_query.id")).toBe(true);
-+  });
-+
-+  it("retains outer joins while hiding the derived table's implementation", () => {
-+    const { context, columns } = complete("SELECT id| FROM (SELECT a.id FROM probe_a a) sq JOIN probe_c c ON c.id = sq.id", semantic);
-+    expect(context.referencedTables.map((table) => table.alias ?? table.name).sort()).toEqual(["c", "sq"]);
-+    expect(columns).toEqual(expect.arrayContaining(["sq.id", "c.id"]));
-+    expect(columns).not.toContain("a.id");
-+  });
-+
-+  it("preserves access to the outer table from a correlated subquery", () => {
-+    const { columns } = complete("SELECT * FROM probe_a a WHERE EXISTS (SELECT 1 FROM probe_b b WHERE a.|)", semantic);
-+    expect(columns).toEqual(expect.arrayContaining(["id", "a_only"]));
-+    expect(columns).not.toContain("b_only");
-+  });
-+
-+  it.each(["SELECT 1, (SELECT a.|) FROM probe_a a", "SELECT COALESCE(1, (SELECT a.|)) FROM probe_a a"])("preserves correlation after an expression comma: %s", (sql) => {
-+    const { columns } = complete(sql, semantic);
-+    expect(columns).toEqual(expect.arrayContaining(["id", "a_only"]));
-+  });
-+
-+  it("does not correlate a non-LATERAL derived table with its outer FROM", () => {
-+    const { context } = complete("SELECT * FROM probe_a a, (SELECT b.| FROM probe_b b) sq", semantic);
-+    expect(context.referencedTables.map((table) => table.alias ?? table.name)).toEqual(["b"]);
-+  });
-+
-+  it("retains correlation in a LATERAL derived table", () => {
-+    const { columns } = complete("SELECT * FROM probe_a a, LATERAL (SELECT a.|) sq", semantic);
-+    expect(columns).toEqual(expect.arrayContaining(["id", "a_only"]));
-+  });
-+
-+  it("keeps completion available for unresolved derived-table star output", () => {
-+    const { columns } = complete("SELECT id| FROM (SELECT * FROM probe_a a) sq", semantic);
-+    expect(columns.some((column) => column === "id" || column.endsWith(".id"))).toBe(true);
-+  });
-+
-+  it.each(["SELECT a_only| FROM (SELECT a.a_only FROM probe_a a)
-```
-
-**File**: `apps/desktop/src/lib/sql/semantic/completion.ts` (modified, +1/-1)
-```diff
-@@ -381,7 +381,7 @@ export function sqlCompletionContextFromSemantic(model: SqlSemanticModel, base:
-     exclusiveRoutineSuggestions: scope.kind === "routine",
-     prioritizeSelectAliases: base.prioritizeSelectAliases || projectionAliases.length > 0,
-     selectAliases: projectionAliases.length > 0 ? projectionAliases : base.selectAliases,
--    referencedTables: referencedTables.length > 0 ? referencedTables : base.referencedTables,
-+    referencedTables: base.referencedTablesScoped ? base.referencedTables : referencedTables.length > 0 ? referencedTables : base.referencedTables,
-     insertTable: model.cursorIntent.kind === "insert_column" ? mutationTarget?.name : base.insertTable,
-     insertDatabase: model.cursorIntent.kind === "insert_column" ? mutationDatabase : base.insertDatabase,
-     insertSchema: model.cursorIntent.kind === "insert_column" ? mutationSchema : base.insertSchema,
-```
-
-**File**: `apps/desktop/src/lib/sql/sqlCompletion.ts` (modified, +639/-13)
-```diff
-@@ -7,8 +7,9 @@ import { CLOUDFLARE_D1_COMMON_FUNCTION_NAMES } from "@/lib/sql/cloudflareD1";
- import { searchClickHouseFunctions } from "@/lib/sql/clickhouse/functionRegistry";
- import type { ClickHouseFunctionDefinition, ClickHouseFunctionKind } from "@/lib/sql/clickhouse/functionTypes";
- import type { SqlObjectNavigationType } from "@/lib/sql/sqlNavigation";
--import { resolveSqlDialectId } from "@/lib/sql/semantic/dialect";
--import { findActiveSqlStatementSpan, matchDollarQuoteTag, tokenizeSqlSemantic } from "@/lib/sql/semantic/tokens";
-+import { resolveSqlDialectId, sqlSemanticDialectFor, type SqlSemanticDialectAdapter } from "@/lib/sql/semantic/dialect";
-+import { sqlSemanticQueryBlockSources, type SqlSemanticGroupedSourceScope } from "@/lib/sql/semantic/model";
-+import { findActiveSqlStatementSpan, matchDollarQuoteTag, tokenizeSqlSemantic, unquoteSqlSemanticIdentifier } from "@/lib/sql/semantic/tokens";
- import { expandToSqlStatementWindow } from "@/lib/sql/insertValueHints";
- import type { SqlSemanticBuildOptions, SqlSemanticSpan } from "@/lib/sql/semantic/types";
- import { isEditorStatePlausibleFor, resolveLexicalLeafFromSyntaxTree, resolveSqlStatementWindow } from "@/lib/sql/sqlSyntaxTreeWindow";
-@@ -1836,6 +1837,8 @@ export interface SqlCompletionContext {
-   prioritizeSelectAliases: boolean;
-   selectAliases: string[];
-   referencedTables: SqlCompletionReferencedTable[];
-+  /** References resolved within the cursor query block, including correlated ancestors. */
-+  referencedTablesScoped?: boolean;
-   insertTable?: string;
-   insertDatabase?: string;
-   insertSchema?: string;
-@@ -3119,6 +3122,199 @@ function getFollowingKeywordAfterCursor(sql: string, cursor: number, maxPos?: nu
-   return match ? match[1].toUpperCase() : undefined;
++/// Whether the module batch's head has opened a `BEGIN` block body. This stays
++/// true after the block closes, so the batch is still recognised at its final
++/// `END` (where `sqlserver_control_flow_open_blocks` is back to zero) and the
++/// boundary scanner can end it there instead of waiting for the next `;`.
++fn sqlserver_module_batch_opens_begin_block(statement_head: &str) -> bool {
++    let tokens = sqlserver_top_level_tokens(statement_head);
++    tokens.iter().enumerate().any(|(index, token)| token.is_word("BEGIN") && sqlserver_begins_block(&tokens, index))
  }
  
-+function isCompletionGroupedSource(tokens: ReturnType<typeof tokenizeSqlSemantic>, open: number, close: number, scopes: readonly SqlSemanticGroupedSourceScope[]): boolean {
-+  // Empty placeholder scopes also describe extra query parentheses, ((SELECT ...)).
-+  // Only a matching scope with parsed row sources identifies a table/JOIN group.
-+  return open >= 0 && close >= 0 && scopes.some((scope) => scope.sources.length > 0 && scope.span.start === tokens[open].span.end && scope.span.end === tokens[close].span.start);
-+}
+ /// Top-level `BEGIN`/`CASE` blocks the T-SQL statement has left open at its
+@@ -8627,6 +8663,118 @@ END";
+         );
+     }
+ 
++    // #15087: a native SQL Server connection splits scripts with the plain
++    // statement splitter (only agent pools split on `GO`), so a module batch has
++    // to survive its inner semicolons or the server rejects the fragments.
++    #[test]
++    fn sqlserver_statement_splitter_keeps_procedure_batch_with_inner_semicolons() {
++        let sql = "CREATE PROCEDURE dbo.p @a INT\nAS\nBEGIN\n    SET NOCOUNT ON;\n    IF @a > 0\n    BEGIN\n        SELECT 1;\n    END\n    ELSE\n    BEGIN\n        SELECT 0;\n    END\nEND;";
 +
-+/**
-+ * The legacy reference scan deliberately tolerates unfinished SQL, but scanning the whole
-+ * statement also finds declarations in sibling/child queries. For multi-query SELECTs,
-+ * use the semantic declaration parser to choose visible sources without replacing the
-+ * legacy projection metadata or relying on the cursor intent's confidence.
-+ */
-+function scopedQueryCompletionReferences(sql: string, cursor: number, references: SqlCompletionReferencedTable[], ctes: readonly ScannedCteDefinition[], options: SqlSemanticBuildOptions): SqlCompletionReferencedTable[] | undefined {
-+  if (sql.length > 128 * 1024 || !/\bselect\b[\s\S]*\bselect\b/i.test(sql)) return undefined;
-+  const dialect = sqlSemanticDialectFor(options);
-+  const tokens = tokenizeSqlSemantic(sql, dialect.id, {
-+    mysqlDashCommentRequiresWhitespace: dialect.id === "mysql",
-+    mysqlBackslashEscape: dialect.id === "mysql",
-+  }).filter((token) => token.kind !== "comment");
-+  if (!tokens.length || tokens.length > 20_000 || !["select", "with"].includes(tokens[0].normalized)) return undefined;
-+  // WITH can precede DML too; mutation targets use the established completion path.
-+  const mainStatement = tokens.find((token) => token.depth === 0 && token.kind === "word" && ["select", "insert", "update", "delete", "merge"].includes(token.normalized));
-+  if (mainStatement?.normalized !== "select") return undefined;
-+  const blocks: Array<{ start: number; end: number; depth: number }> = [];
-+  for (let index = 0; index < tokens.length; index++) {
-+    const token = tokens[index];
-+    if (token.kind !== "word" || token.normalized !== "select") continue;
-+    if (blocks.length >= 128) return undefined;
-+    let end = index + 1;
-+    while (end < tokens.length) {
-+      const next = tokens[end];
-+      if (next.depth < token.depth || next.text === ";" || (next.depth === token.depth && next.kind === "word" && ["union", "intersect", "except"].includes(next.normalized))) break;
-+      end++;
++        assert_eq!(split_sql_statements_for_database(sql, DatabaseType::SqlServer), vec![sql.to_string()]);
 +    }
-+    blocks.push({ start: index, end, depth: token.depth });
-+  }
-+  if (blocks.length < 2) return undefined;
-+  // Keep the established unresolved CTE-star fallback until column lineage is available.
-+  // A query containing an inline view still needs its own scope even when CTEs precede it.
-+  if (
-+    ctes.length > 0 &&
-+    blocks.filter((block) => block.depth === 0).length === 1 &&
-+    blocks.every((block) => block.depth === 0 || ctes.some((cte) => tokens[block.start].span.start > cte.bodyStart && tokens[block.start].span.start < cte.bodyEnd && block.depth === (tokens.find((token) => token.span.start === cte.bodyStart)?.depth ?? -1) + 1))
-+  )
-+    return undefined;
-+  function queryB
++
++    #[test]
++    fn sqlserver_statement_splitter_ends_procedure_batch_before_next_statement() {
++        let procedure = "CREATE PROCEDURE dbo.p\nAS\nBEGIN\n    SELECT 1;\nEND";
++        let sql = format!("{procedure};\nSELECT 999;");
++
++        assert_eq!(
++            split_sql_statements_for_database(&sql, DatabaseType::SqlServer),
++            vec![format!("{procedure};"), "SELECT 999".to_string()]
++        );
++    }
++
++    #[test]
++    fn sqlserver_statement_splitter_keeps_function_and_trigger_batches() {
++        let function = "CREATE FUNCTION dbo.f(@a INT)\nRETURNS INT\nAS\nBEGIN\n    DECLARE @r INT;\n    SET @r = @a + 1;\n    RETURN @r;\nEND;";
++        let trigger = "CREATE TRIGGER dbo.trg ON dbo.t AFTER INSERT\nAS\nBEGIN\n    SET NOCOUNT ON;\n    UPDATE dbo.t SET x = 1;\nEND;";
++
++        for body in [function, trigger] {
++            assert_eq!(
++                split_sql_statements_for_database(body, DatabaseType::SqlServer),
++                vec![body.to_string()],
++                "{body}"
++            );
++        }
++    }
++
++    #[test]
++    fn sqlserver_statement_splitter_does_not_swallow_statements_after_a_view() {
++        let sql = "CREATE VIEW dbo.v AS SELECT 1 AS x;\nSELECT 9
 ```
 
 ---
 
-### Incident Patch 2: `b6575377` (2026-11-15)
-**Commit Message**: fix(export): restore background tasks and their log after a crash
+### Incident Patch 2: `7fd1f4c4` (2026-11-17)
+**Commit Message**: fix(editor): preserve quoted values when pasting IN conditions (#15145)
 
-Refs: #14696
+Keep trimming and blank filtering outside quoted literals. Global carriage-return normalization also changed quoted line endings, so split CR and CRLF only outside quotes and retain the existing line-separated slash behavior. Cover padded, empty, whitespace-only and escaped literals through the existing paste behavior suite.
 
-**File**: `apps/desktop/src/App.vue` (modified, +2/-1)
+**File**: `apps/desktop/src/lib/__tests__/sql/sqlInListPaste.spec.ts` (modified, +46/-0)
 ```diff
-@@ -62,7 +62,7 @@ import {
-   type PendingComponentUpdatePlan,
- } from "@/lib/updates/componentUpdateOrchestration";
- import { isUpdatePreviewMockEnabled } from "@/lib/updates/updatePreviewMock";
--import { useExportTracker } from "@/composables/useExportTracker";
-+import { restoreExportTasksFromStorage, useExportTracker } from "@/composables/useExportTracker";
- import { useFileDrop } from "@/composables/useFileDrop";
- import { useSqlFilePicker } from "@/composables/useSqlFilePicker";
- import { usePanelResize } from "@/composables/usePanelResize";
-@@ -5225,6 +5225,7 @@ async function initApp() {
-     markStartupPhase("connections-ready");
-     console.log(`[STARTUP]   connectionStore.initFromDisk: ${(performance.now() - t0).toFixed(0)}ms`);
-     await queryStore.initOpenTabs({ validConnectionIds: connectionStore.connections.map((connection) => connection.id) });
-+    void restoreExportTasksFromStorage();
-     markStartupPhase("tabs-restored");
-     console.log(`[STARTUP]   queryStore.initOpenTabs: ${(performance.now() - t0).toFixed(0)}ms`);
-   };
-```
-
-**File**: `apps/desktop/src/components/export/__tests__/ExportProgressPopover.spec.ts` (modified, +5/-0)
-```diff
-@@ -4,6 +4,11 @@ import { createApp, defineComponent, h, nextTick, type App } from "vue";
- import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
- import i18n from "@/i18n";
- 
-+vi.mock("@/lib/backend/browserAppStateStorage", () => ({
-+  loadBrowserAppState: vi.fn(async () => null),
-+  saveBrowserAppState: vi.fn(async () => undefined),
-+}));
-+
- vi.mock("@/components/ui/popover", async () => {
-   const { defineComponent, h } = await import("vue");
-   const passthrough = defineComponent({
-```
-
-**File**: `apps/desktop/src/composables/__tests__/useExportTracker.queue.spec.ts` (modified, +4/-0)
-```diff
-@@ -3,6 +3,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
- vi.mock("@/lib/backend/api", () => ({ cancelTableExport: vi.fn() }));
- vi.mock("@/lib/export/exportPath", () => ({ autoRevealExportedPathIfConfigured: vi.fn() }));
- vi.mock("@/lib/schema/oracleRoutineDeploy", () => ({}));
-+vi.mock("@/lib/backend/browserAppStateStorage", () => ({
-+  loadBrowserAppState: vi.fn(async () => null),
-+  saveBrowserAppState: vi.fn(async () => undefined),
-+}));
- 
- function completion() {
-   let finish!: (outcome: "settled" | "unknown") => void;
-```
-
-**File**: `apps/desktop/src/composables/useExportTracker.ts` (modified, +50/-2)
-```diff
-@@ -1,11 +1,12 @@
--import { reactive, computed } from "vue";
-+import { reactive, computed, watch } from "vue";
- import * as api from "@/lib/backend/api";
- import { isTerminalTransferProgress } from "@/lib/backend/transferProgress";
- import { uuid } from "@/lib/common/utils";
- import { formatQueryDuration } from "@/lib/format/duration";
- import { autoRevealExportedPathIfConfigured } from "@/lib/export/exportPath";
- import { releaseManualExport, submitManualExport, type ManualExportMode } from "@/lib/export/manualExportQueue";
- import { acceptOraclePackageTransferApproval, acceptOraclePackageTransferPreflight, acceptOracleRoutineDeploymentOperation, type OracleRoutineDeployment } from "@/lib/schema/oracleRoutineDeploy";
-+import { loadPersistedExportTasks, savePersistedExportTasks } from "@/lib/export/exportTaskPersistence";
- 
- export type BackgroundTaskKind = "table-export" | "table-copy" | "database-export" | "data-dictionary" | "sql-file" | "data-transfer" | "data-generation" | "multi-db-execution" | "schema-diff" | "data-compare";
- export type BackgroundTaskStatus = "Queued" | "Unknown" | "PreparingSnapshot" | "Running" | "Writing" | "Cancelling" | "Done" | "Error" | "Cancelled";
-@@ -117,6 +118,8 @@ export interface ExportTask {
-   canCancel?: boolean;
-   canRemove?: boolean;
-   canRecoverCancellation?: boolean;
-+  /** Restored from the previous session's snapshot (#14696); no live handle exists. */
-+  restored?: boolean;
-   manualExportRootId?: string;
-   removed?: boolean;
-   copyPhase?: "preparing" | "structure" | "data" | "refreshing" | "cancelling" | "succeeded" | "failed" | "cancelled" | "unknown";
-@@ -235,6 +238,47 @@ const transferFailureStates = new Map<string, TransferFailureState>();
- const sqlFileFailureStates = new Map<string, SqlFileFailureState>();
- const textEncoder = new TextEncoder();
- 
-+let exportTaskPersistenceStarted = false;
-+let exportTaskPersistQueued = false;
-+
-+/**
-+ * Coalesce the burst of progress updates produced by one IPC tick into a single
-+ * write, without owning a timer: the export progress popover asserts on the
-+ * number of pending timers, and a long-lived debounce timer would both leak
-+ * into those assertions and keep running after the last task finished.
-+ */
-+function scheduleExportTaskPersist() {
-+  if (exportTaskPersistQueued) return;
-+  exportTaskPersistQueued = true;
-+  queueMicrotask(() => {
-+    exportTaskPersistQueued = false;
-+    void savePersistedExportTasks([...taskMap.values()]);
-+  });
-+}
-+
-+function ensureExportTaskPersistence() {
-+  if (exportTaskPersistenceStarted) return;
-+  exportTaskPersistenceStarted = true;
-+  watch(taskMap, scheduleExportTaskPersist, { deep: true });
-+}
-+
-+/**
-+ * Restore the background tasks left behind by the previous session (#14696).
-+ * Tasks that were running when the page went away come back as `Unknown` with
-+ * their execution log, because the reload has no handle on the original run.
-+ */
-+export async function restoreExportTasksFromStorage(): Promise<void> {
-+  ensureExportTaskPersistence();
-+  const restored = await loadPersistedExportTasks();
-+  let changed = false;
-+  for (const task of restored) {
-+    if (taskMap.has(task.exportId)) continue;
-+    taskMap.set(task.exportId, task);
-+    changed = true;
-+  }
-+  if (changed) scheduleExportTaskPersist();
-+}
-+
- function utf8ByteLength(value: string): number {
-   return textEncoder.encode(value).length;
- }
-@@ -476,9 +520,13 @@ function findActiveOverlappingTransfer(request: api.TransferRequest): string[] {
- }
- 
- export function useExportTracker() {
-+  ensureExportTaskPersistence();
-   const tasks = computed(() => Array.from(taskMap.values()));
- 
--  const activeCount = computed(() => tasks.value.filter((t) => t.status === "Queued" || t.status === "Unknown" || t.status === "PreparingSnapshot" || t.status === "Running" || t.status === "Writing" || t.status === "Cancelling").length);
-+  // Restored tasks have no live handle: they must not count as active, or the
-+  // "tasks are running, wait before updating" guard would block app updates
-+  // forever after a crash (#14696).
-+  const activeCount = computed(() => tasks.value.filter((t) => !t.restored && (t.status === "Queued" || t.status === "Unknown" || t.status === "PreparingSnapshot" || t.status === "Running" || t.status === "Writing" || t.status === "Cancelling")).length);
- 
-   const hasActive = computed(() => activeCount.value > 0);
- 
-```
-
-**File**: `apps/desktop/src/lib/__tests__/export/exportTaskPersistence.spec.ts` (added, +223/-0)
-```diff
-@@ -0,0 +1,223 @@
-+import { beforeEach, describe, expect, it, vi } from "vitest";
-+
-+vi.mock("@/lib/backend/browserAppStateStorage", () => ({
-+  loadBrowserAppState: vi.fn(),
-+  saveBrowserAppState: vi.fn(),
-+}));
-+vi.mock("@/lib/backend/api", () => ({}));
-+vi.mock("@/lib/export/exportPath", () => ({ autoRevealExportedPathIfConfigured: vi.fn() }));
-+vi.mock("@/lib/schema/oracleRoutineDeploy", () => ({}));
-+
-+describe("export task persistence", () => {
-+  beforeEach(() => {
-+    vi.resetModules();
-+    vi.clearAllMocks();
-+  });
-+
-+  it("keeps only the fields the task UI renders", async () => {
-+    const { serializeExportTasks } = await import("@/lib/export/exportTaskPersistence");
-+    const snapshot = serializeExportTasks([
-+      {
-+        exportId: "task-1",
-+        kind: "data-transfer",
-+        tableName: "orders",
-+        format: "csv",
-+        filePath: "/tmp/orders.csv",
-+        rowsExported: 12,
-+        totalRows: 100,
-+        status: "Running",
-+        errorMessage: null,
-+        logLines: [{ at: 1, key: "transfer.log.started", level: "info" }],
-+        dataTransferRequest: { source: "secret-payload" },
-+        onRemove: () => undefined,
-+        canRecoverCancellation: true,
-+      } as never,
-+    ]);
-+
-+    expect(snapshot).toHaveLength(1);
-+    expect(snapshot[0]).toMatchObject({
-+      exportId: "task-1",
-+      kind: "data-transfer",
-+      status: "Running",
-+      rowsExported: 12,
-+      totalRows: 100,
-+    });
-+    expect(snapshot[0].logLines).toEqual([{ at: 1, key: "transfer.log.started", level: "info" }]);
-+    expect(snapshot[0]).not.toHaveProperty("dataTransferRequest");
-+    expect(snapshot[0]).not.toHaveProperty("onRemove");
-+    expect(snapshot[0]).not.toHaveProperty("canRecoverCancellation");
-+  });
-+
-+  it("skips removed tasks and caps the snapshot length", async () => {
-+    const { serializeExportTasks } = await import("@/lib/export/exportTaskPersistence");
-+    const base = {
-+      kind: "table-export" as const,
-+      tableName: "t",
-+      format: "csv",
-+      filePath: "/tmp/t.csv",
-+      rowsExported: 0,
-+      totalRows: null,
-+      status: "Done" as const,
-+      errorMessage: null,
-+    };
-+    const tasks = Array.from({ length: 30 }, (_, index) => ({
-+      ...base,
-+      exportId: `task-${index}`,
-+    }));
-+    tasks.push({ ...base, exportId: "removed", removed: true });
-+    tasks.push({ ...base, exportId: "hidden", canRemove: false });
-+
-+    const snapshot = serializeExportTasks(tasks as never);
-+
-+    expect(snapshot).toHaveLength(25);
-+    expect(snapshot.map((task) => task.exportId)).not.toContain("removed");
-+    expect(snapshot.map((task) => task.exportId)).not.toContain("hidden");
-+    expect(snapshot[snapshot.length - 1].exportId).toBe("task-29");
-+  });
-+
-+  it("forgets finished tasks once they are a day old", async () => {
-+    const { serializeExportTasks } = await import("@/lib/export/exportTaskPersistence");
-+    const base = {
-+      kind: "table-export" as const,
-+      tableName: "t",
-+      format: "csv",
-+      filePath: "/tmp/t.csv",
-+      rowsExported: 0,
-+      totalRows: null,
-+      status: "Done" as const,
-+      errorMessage: null,
-+    };
-+    const snapshot = serializeExportTasks([
-+      { ...base, exportId: "fresh", finishedAt: Date.now() - 60_000 },
-+      { ...base, exportId: "stale", finishedAt: Date.now() - 48 * 60 * 60 * 1000 },
-+    ] as never);
-+
-+    expect(snapshot.map((task) => task.exportId)).toEqual(["fresh"]);
-+  });
-+
-+  it("forgets a restored task once its interruption is a day old", async () => {
-+    const { serializeExportTasks } = await import("@/lib/export/exportTaskPersistence");
-+    const snapshot = serializeExportTasks([
-+      {
-+        exportId: "restored-recent",
-+        kind: "table-export",
-+        tableName: "t",
-+        format: "csv",
-+        filePath: "/tmp/t.csv",
-+        rowsExported: 0,
-+        totalRows: null,
-+        status: "Unknown",
-+        errorMessage: null,
-+        restored: true,
-+        finishedAt: Date.now() - 60_000,
-+      },
-+      {
-+        exportId: "restored-stale",
-+        kind: "table-export",
-+        tableName: "t",
-+        format: "csv",
-+        filePath: "/tmp/t.csv",
-+        rowsExported: 0,
-+        totalRows: null,
-+        status: "Unknown",
-+        errorMessage: null,
-+        restored: true,
-+        finishedAt: Date.now() - 48 * 60 * 60 * 1000,
-+      },
-+    ] as never);
-+
-+    expect(snapshot.map((task) => task.exportId)).toEqual(["restored-recent"]);
-+  });
-+
-+  it("restores an interrupted task as unknown and keeps its pre-crash log", async () => {
-+    const { deserializeExportTasks } = await import("@/lib/export/exportTaskPersistence");
-+    const restored = deserializeExportTasks([
-+      {
-+        exportId: "task-1",
-+        kind: "data-transfer",
-+        tableName: "orders",
-+        format: "csv",
-+        filePath: "/tmp/orders.csv",
-+        rowsExported: 12,
-+        totalRows: 100,
-+        status: "Writing",
-+        e
-```
-
-**File**: `apps/desktop/src/lib/export/exportTaskPersistence.ts` (added, +184/-0)
-```diff
-@@ -0,0 +1,184 @@
-+import { loadBrowserAppState, saveBrowserAppState } from "@/lib/backend/browserAppStateStorage";
-+import type { BackgroundTaskKind, BackgroundTaskLogLine, BackgroundTaskStatus, ExportTask } from "@/composables/useExportTracker";
-+
-+/**
-+ * Background task snapshot (#14696).
-+ *
-+ * The task list lives in memory only, so a browser crash (or a desktop restart)
-+ * silently dropped every running export: when the app came back the tasks were
-+ * gone and the user had no way to tell whether the export was still running or
-+ * where the pre-crash log went. The snapshot keeps the last known state of each
-+ * task, including its execution log, in the same app-state store the tab
-+ * session uses. Tasks that were still running are restored as `Unknown`, which
-+ * the UI already renders as "export status unknown" — the export itself may or
-+ * may not have finished, and the user decides what to do with the output file.
-+ */
-+
-+const APP_STATE_KEY = "background_tasks";
-+const MAX_PERSISTED_TASKS = 25;
-+const MAX_PERSISTED_LOG_LINES = 200;
-+const FINISHED_TASK_RETENTION_MS = 24 * 60 * 60 * 1000;
-+
-+const TERMINAL_STATUSES: readonly BackgroundTaskStatus[] = ["Done", "Error", "Cancelled"];
-+
-+/** Fields the task UI renders. Anything else (callbacks, request payloads, failure maps) stays in memory. */
-+const PERSISTED_FIELDS = [
-+  "exportId",
-+  "kind",
-+  "tableName",
-+  "format",
-+  "filePath",
-+  "rowsExported",
-+  "totalRows",
-+  "status",
-+  "errorMessage",
-+  "logLines",
-+  "startedAt",
-+  "finishedAt",
-+  "databaseExportSource",
-+  "dataTransferLabel",
-+  "currentObject",
-+  "objectIndex",
-+  "totalObjects",
-+  "overallPercent",
-+  "statementSummary",
-+  "statementIndex",
-+  "currentTable",
-+  "totalTables",
-+  "tableIndex",
-+  "successCount",
-+  "failureCount",
-+  "affectedRows",
-+  "elapsedMs",
-+  "bytesRead",
-+  "totalBytes",
-+  "sqlFilePhase",
-+  "copyPhase",
-+  "comparePhase",
-+  "compareCurrent",
-+  "compareTotal",
-+  "compareCurrentObject",
-+  "compareResultCount",
-+  "compareSameCount",
-+  "compareDifferentCount",
-+  "compareFailedCount",
-+  "compareAddedCount",
-+  "compareRemovedCount",
-+  "compareModifiedCount",
-+  "dictionaryPhase",
-+  "dictionaryCompleted",
-+  "dictionaryTotal",
-+  "dictionaryCurrent",
-+  "dictionaryWarnings",
-+  "dictionaryProgressKnown",
-+  "multiDbTotal",
-+  "multiDbCompleted",
-+  "multiDbSuccessCount",
-+  "multiDbFailureCount",
-+  "multiDbSkippedCount",
-+  "multiDbNotExecutedCount",
-+  "canRemove",
-+] as const;
-+
-+export type PersistedExportTask = Record<string, unknown> & { exportId: string; status: BackgroundTaskStatus };
-+
-+const KNOWN_KINDS: readonly BackgroundTaskKind[] = ["table-export", "table-copy", "database-export", "data-dictionary", "sql-file", "data-transfer", "data-generation", "multi-db-execution", "schema-diff", "data-compare"];
-+
-+const KNOWN_STATUSES: readonly BackgroundTaskStatus[] = ["Queued", "Unknown", "PreparingSnapshot", "Running", "Writing", "Cancelling", "Done", "Error", "Cancelled"];
-+
-+function isTerminal(status: BackgroundTaskStatus): boolean {
-+  return TERMINAL_STATUSES.includes(status);
-+}
-+
-+/**
-+ * Snapshot the tasks worth restoring: everything still in flight plus the most
-+ * recent finished ones, in list order. Removed tasks and tasks the caller marked
-+ * as not removable are skipped — they are deliberately invisible.
-+ */
-+export function serializeExportTasks(tasks: readonly ExportTask[]): PersistedExportTask[] {
-+  const persisted: PersistedExportTask[] = [];
-+  const now = Date.now();
-+  for (const task of tasks) {
-+    if (task.removed || task.canRemove === false) continue;
-+    // Finished tasks are only kept long enough to explain what happened after a
-+    // crash; older ones must not resurrect on every start.
-+    if ((isTerminal(task.status) || task.restored) && typeof task.finishedAt === "number" && now - task.finishedAt > FINISHED_TASK_RETENTION_MS) continue;
-+    const snapshot: Record<string, unknown> = {};
-+    for (const field of PERSISTED_FIELDS) {
-+      const value = (task as unknown as Record<string, unknown>)[field];
-+      if (value !== undefined) snapshot[field] = value;
-+    }
-+    if (Array.isArray(task.logLines) && task.logLines.length > MAX_PERSISTED_LOG_LINES) {
-+      snapshot.logLines = task.logLines.slice(-MAX_PERSISTED_LOG_LINES);
-+    }
-+    persisted.push(snapshot as PersistedExportTask);
-+  }
-+  return persisted.slice(-MAX_PERSISTED_TASKS);
-+}
-+
-+function isLogLine(value: unknown): value is BackgroundTaskLogLine {
-+  if (!value || typeof value !== "object") return false;
-+  const line = value as Partial<BackgroundTaskLogLine>;
-+  return typeof line.at === "number" && typeof line.key === "string" && typeof line.level === "string";
-+}
-+
-+/**
-+ * Turn a stored snapshot back into tasks. Anything that was not terminal is
-+ * downgraded to `Unknown`: the run had no live handle after the reload, so the
-+ * app cannot claim it is still running, and it must not offer a cancel that
-+ * would silently 
-```
-
-**File**: `apps/desktop/src/stores/__tests__/tableCopyTaskStore.spec.ts` (modified, +4/-0)
-```diff
-@@ -20,6 +20,10 @@ const mocks = vi.hoisted(() => ({
-   refreshDataTabsForTable: vi.fn(),
- }));
- vi.mock("@/lib/backend/api", () => mocks);
-+vi.mock("@/lib/backend/browserAppStateStorage", () => ({
-+  loadBrowserAppState: vi.fn(async () => null),
-+  saveBrowserAppState: vi.fn(async () => undefined),
-+}));
- vi.mock("@/stores/connectionStore", () => ({ useConnectionStore: () => mocks }));
- vi.mock("@/stores/queryStore", () => ({ useQueryStore: () => mocks }));
- 
-```
-
----
-
-### Incident Patch 3: `ac48844f` (2026-11-16)
-**Commit Message**: fix(mysql): refresh databases when server version changes
-
-**File**: `apps/desktop/src/stores/__tests__/connectionStore.databaseInfo.spec.ts` (modified, +50/-0)
-```diff
-@@ -477,6 +477,56 @@ describe("connectionStore database info", () => {
-     expect(useLogicalTables).toBe(true);
+@@ -84,6 +84,52 @@ describe("sqlInListPaste", () => {
+     });
    });
  
-+  it("refreshes the database list after the detected MySQL server version changes", async () => {
-+    const config = {
-+      ...mysqlConnection(),
-+      database_info: { productName: "MySQL", productVersion: "5.7.26" },
-+    };
-+    let resolveDatabaseInfo!: (value: { productName: string; productVersion: string }) => void;
-+    const databaseInfo = new Promise<{ productName: string; productVersion: string }>((resolve) => {
-+      resolveDatabaseInfo = resolve;
++  it.each<[string, string, number]>([
++    ["('')", "IN ('')", 1],
++    ['("")', "IN ('')", 1],
++    ["(' alice ', '')", "IN (' alice ', '')", 2],
++    ['(" alice ", "")', "IN (' alice ', '')", 2],
++    ["('   ', '\t')", "IN ('   ', '\t')", 2],
++    ['("   ", "\t")', "IN ('   ', '\t')", 2],
++    [" A \n  \n ' B '\n''", "IN ('A', ' B ', '')", 3],
++    ["(' O''Reilly ', 'null', NULL)", "IN (' O''Reilly ', 'null', NULL)", 3],
++  ])("preserves quoted content in %s", (source, sql, valueCount) => {
++    expect(buildSqlInConditionFromPasteSource(source)).toEqual({
++      ok: true,
++      sql,
++      valueCount,
 +    });
-+    let useNewServer = false;
-+    const listDatabases = vi.fn().mockImplementation(async () => [{ name: useNewServer ? "new_db" : "old_db" }]);
-+
-+    vi.doMock("@/lib/backend/tauriRuntime", () => ({ isTauriRuntime: () => false }));
-+    vi.doMock("@/lib/backend/api", () => ({
-+      checkConnectionHealth: vi.fn().mockResolvedValue(undefined),
-+      connectDb: vi.fn().mockResolvedValue(config.id),
-+      connectionDatabaseInfo: vi.fn(() => databaseInfo),
-+      connectionIdentifierQuote: vi.fn().mockResolvedValue(undefined),
-+      deleteSchemaCachePrefix: vi.fn().mockResolvedValue(undefined),
-+      listDatabases,
-+      listObjects: vi.fn().mockResolvedValue([]),
-+      listTables: vi.fn().mockResolvedValue([]),
-+      loadSchemaCache: vi.fn().mockResolvedValue(null),
-+      saveConnectionDatabaseInfo: vi.fn().mockImplementation(async () => {
-+        useNewServer = true;
-+      }),
-+      saveConnections: vi.fn().mockResolvedValue(undefined),
-+      saveSchemaCache: vi.fn().mockResolvedValue(undefined),
-+      saveSidebarLayout: vi.fn().mockResolvedValue(undefined),
-+    }));
-+
-+    const { useConnectionStore } = await import("@/stores/connectionStore");
-+    const { useSettingsStore } = await import("@/stores/settingsStore");
-+    const store = useConnectionStore();
-+    useSettingsStore().editorSettings.sidebarObjectDisplay = "simple";
-+    await store.addConnection(config);
-+    await store.connect(config);
-+    await store.loadDatabases(config.id, { force: true });
-+    const databaseLabels = () => store.treeNodes[0]?.children?.filter((node) => node.type === "database").map((node) => node.label);
-+    expect(databaseLabels()).toEqual(["old_db"]);
-+
-+    resolveDatabaseInfo({ productName: "MySQL", productVersion: "8.0.12" });
-+
-+    await vi.waitFor(() => {
-+      expect(store.getConfig(config.id)?.database_info?.productVersion).toBe("8.0.12");
-+      expect(databaseLabels()).toEqual(["new_db"]);
-+    });
-+    expect(listDatabases).toHaveBeenCalledTimes(2);
 +  });
 +
-   it("keeps a successful connection when optional metadata refresh fails", async () => {
-     const config = mysqlConnection();
- 
++  it.each<[string, string]>([
++    ["('\r')", "IN ('\r')"],
++    ['("\r")', "IN ('\r')"],
++    ["('first\r\nsecond')", "IN ('first\r\nsecond')"],
++    ['("first\r\nsecond")', "IN ('first\r\nsecond')"],
++  ])("preserves quoted line endings in %s", (source, sql) => {
++    expect(buildSqlInConditionFromPasteSource(source)).toEqual({
++      ok: true,
++      sql,
++      valueCount: 1,
++    });
++  });
++
++  it("splits carriage-return and CRLF separated values outside quotes", () => {
++    expect(buildSqlInConditionFromPasteSource(" A\r\n \r\n B\rC")).toEqual({
++      ok: true,
++      sql: "IN ('A', 'B', 'C')",
++      valueCount: 3,
++    });
++  });
++
++  it.each(["A/\rB", "A/\r\nB", "A/\nB"])("keeps slashes in line-separated values in %s", (source) => {
++    expect(buildSqlInConditionFromPasteSource(source)).toEqual({
++      ok: true,
++      sql: "IN ('A/', 'B')",
++      valueCount: 2,
++    });
++  });
++
+   it("treats apostrophes inside unquoted values as text", () => {
+     expect(buildSqlInConditionFromPasteSource("O'Reilly\nBob")).toEqual({
+       ok: true,
 ```
 
-**File**: `apps/desktop/src/stores/connectionStore.ts` (modified, +18/-4)
+**File**: `apps/desktop/src/lib/sql/sqlInListPaste.ts` (modified, +3/-5)
 ```diff
-@@ -295,6 +295,16 @@ function mysqlTableListSourceChanged(config: ConnectionConfig, databaseInfo: Dat
-   return config.db_type === "mysql" && usesProxyLogicalTables(config.database_info) !== usesProxyLogicalTables(databaseInfo);
+@@ -60,7 +60,7 @@ export function insertTextForSqlInCondition(condition: string, prefix: string):
  }
  
-+// A MySQL server version change means the connection is talking to a different
-+// server (e.g. the deployment was swapped from 5.7 to 8.0 between disconnect
-+// and reconnect), so the database list cached from the old server is stale
-+// even though the table enumeration source did not change.
-+function mysqlServerVersionChanged(config: ConnectionConfig, databaseInfo: DatabaseConnectionInfo): boolean {
-+  const previousVersion = config.database_info?.productVersion;
-+  const nextVersion = databaseInfo.productVersion;
-+  return config.db_type === "mysql" && !!previousVersion && !!nextVersion && previousVersion !== nextVersion;
-+}
-+
- function normalizeTableNameFilter(filter: Partial<TableNameFilter> | undefined | null): TableNameFilter {
-   const normalizePatterns = (patterns: unknown): string[] => (Array.isArray(patterns) ? patterns.map((pattern) => (typeof pattern === "string" ? pattern.trim() : "")).filter(Boolean) : []);
-   return {
-@@ -5117,6 +5127,7 @@ export const useConnectionStore = defineStore("connection", () => {
-     if (expectedConfigFingerprint && connectionConfigFingerprint(current) !== expectedConfigFingerprint) return;
-     if (JSON.stringify(current.database_info) === JSON.stringify(normalized)) return;
-     const tableListSourceChanged = mysqlTableListSourceChanged(current, normalized);
-+    const serverVersionChanged = mysqlServerVersionChanged(current, normalized);
-     const jobEngine = nativeJobAdminEngine(current);
+ function parsePastedValues(source: string): ParsedPasteValues {
+-  const sourceText = source.replace(/\r\n?/g, "\n").trim();
++  const sourceText = source.trim();
+   const withoutInKeyword = stripLeadingInKeyword(sourceText);
+   const explicitSource = withoutInKeyword.trim();
+   const explicitList = explicitSource.startsWith("(") && explicitSource.endsWith(")") && hasSingleWrappingParentheses(explicitSource);
+@@ -109,7 +109,7 @@ function splitPasteTokens(source: string): string[] {
+       continue;
+     }
  
-     await api.saveConnectionDatabaseInfo(connectionId, normalized);
-@@ -5133,9 +5144,10 @@ export const useConnectionStore = defineStore("connection", () => {
-       const connectionNode = findConnectionNode(connectionId);
-       if (connectionNode) connectionNode.children = withConnectionUtilityNodes(connectionId, connectionNode.children ?? [], connectionNode);
-     }
--    if (tableListSourceChanged) {
--      // ShardingSphere switches table enumeration from information_schema to SHOW FULL TABLES.
--      // Discard physical-table metadata that may have loaded before background version detection completed.
-+    if (tableListSourceChanged || serverVersionChanged) {
-+      // ShardingSphere switches table enumeration from information_schema to SHOW FULL TABLES,
-+      // and a server version change means a different server answers now. Either way,
-+      // discard metadata that may have loaded before background version detection completed.
-       bumpTableListSourceRevision(connectionId);
-       treeNodeLoads.cancelPrefix(connectionId);
-       invalidateCompletionCache(connectionId);
-@@ -5151,7 +5163,9 @@ export const useConnectionStore = defineStore("connection", () => {
-     }
-     // Other database info is reactive connection metadata, not tree structure. Keep
-     // navigator node identities stable so an in-flight first expansion can apply
--    // its loaded children after this background refresh completes.
-+    // its loaded children after this background refresh completes. (A MySQL server
-+    // version change is the exception: it is handled above, because the database
-+    // list itself belongs to the server that reported the old version.)
+-    if (char === "," || char === "\n" || char === "\t" || (slashIsDelimiter && char === "/")) {
++    if (char === "," || char === "\r" || char === "\n" || char === "\t" || (slashIsDelimiter && char === "/")) {
+       tokens.push(current);
+       current = "";
+       continue;
+@@ -124,7 +124,7 @@ function splitPasteTokens(source: string): string[] {
+ 
+ function shouldSplitSlashSeparatedValues(source: string): boolean {
+   const trimmed = source.trim();
+-  if (!trimmed.includes("/") || /[,\n\t]/.test(trimmed)) return false;
++  if (!trimmed.includes("/") || /[,\r\n\t]/.test(trimmed)) return false;
+   if (trimmed.includes("'") || trimmed.includes('"')) return false;
+   if (trimmed.startsWith("/") || /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)) return false;
+   if (/^\d{4}\/\d{1,2}\/\d{1,2}(?:\D|$)/.test(trimmed) || /^\d{1,2}\/\d{1,2}\/\d{4}(?:\D|$)/.test(trimmed)) return false;
+@@ -151,8 +151,6 @@ function normalizePastedToken(token: string): ParsedPasteValue | null {
+     value = first === "'" ? value.replace(/''/g, "'") : value.replace(/""/g, '"');
    }
  
-   async function refreshConnectedDatabaseInfo(connectionId: string, config: ConnectionConfig, expectedConfigFingerprint: string, isCurrent: () => boolean): Promise<void> {
+-  value = value.trim();
+-  if (!value) return null;
+   return { value, quoted };
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `10b62cf6` (2026-11-17)
+**Commit Message**: fix(clickhouse): replace invalid UTF-8 in streamed rows (#15033)
+
+String columns can hold any bytes and JSONCompactEachRow* emits them raw, so one bad value failed the whole query.
+
+**File**: `crates/dbx-drivers/src/db/clickhouse_driver.rs` (modified, +37/-5)
+```diff
+@@ -279,9 +279,10 @@ fn process_stream_buffer(
+     while let Some(newline) = buffer.iter().position(|byte| *byte == b'\n') {
+         let line_bytes: Vec<u8> = buffer.drain(..=newline).collect();
+         let line_bytes = &line_bytes[..line_bytes.len().saturating_sub(1)];
+-        let line =
+-            std::str::from_utf8(line_bytes).map_err(|e| format!("ClickHouse stream contains invalid UTF-8: {e}"))?;
+-        if let Some(item) = parser.parse_line(line)? {
++        // String 列可以存任意字节，JSONCompactEachRow* 不校验 UTF-8 就原样输出；
++        // 与 JSONCompact 一样把非法字节换成 U+FFFD，而不是让整个查询失败。
++        let line = String::from_utf8_lossy(line_bytes);
++        if let Some(item) = parser.parse_line(&line)? {
+             on_item(item)?;
+         }
+     }
+@@ -294,8 +295,8 @@ fn process_stream_remainder(
+     on_item: &mut impl FnMut(ClickHouseQueryStreamItem) -> Result<(), String>,
+ ) -> Result<(), String> {
+     if !buffer.is_empty() {
+-        let line = std::str::from_utf8(buffer).map_err(|e| format!("ClickHouse stream contains invalid UTF-8: {e}"))?;
+-        if let Some(item) = parser.parse_line(line)? {
++        let line = String::from_utf8_lossy(buffer);
++        if let Some(item) = parser.parse_line(&line)? {
+             on_item(item)?;
+         }
+         buffer.clear();
+@@ -1462,6 +1463,37 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn stream_parser_replaces_invalid_utf8_in_string_values() {
++        // String 列里的 Latin-1 "café" 走整行路径，GBK "中文" 走末尾无换行的余量路径
++        let mut buffer =
++            b"[\"id\",\"name\"]\n[\"UInt64\",\"String\"]\n[1,\"caf\xe9\"]\n[2,\"\xd6\xd0\xce\xc4\"]".to_vec();
++        let mut parser = ClickHouseStreamParser::default();
++        let mut items = Vec::new();
++
++        process_stream_buffer(&mut buffer, &mut parser, &mut |item| {
++            items.push(item);
++            Ok(())
++        })
++        .unwrap();
++        process_stream_remainder(&mut buffer, &mut parser, &mut |item| {
++            items.push(item);
++            Ok(())
++        })
++        .unwrap();
++
++        assert_eq!(
++            items[1..],
++            [
++                ClickHouseQueryStreamItem::Row(vec![serde_json::json!(1), serde_json::json!("caf\u{FFFD}")]),
++                ClickHouseQueryStreamItem::Row(vec![
++                    serde_json::json!(2),
++                    serde_json::json!("\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}")
++                ]),
++            ]
++        );
++    }
++
+     #[test]
+     fn limited_query_result_truncates_extra_probe_row() {
+         let result = ChJsonResult {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15067** (2026-11-16): fix: stop exponential subquery scan in SQL completion (#15064) (@cdredfox)
-- **PR #15063** (2026-11-16): Show parameter hints for custom procedure calls (@ThugKd)
-- **PR #15060** (2026-11-16): fix(sidebar): filter Elasticsearch indexes inside connection folders (@ThugKd)
-- **PR #15056** (2026-11-16): fix(doris): support grid LIKE filters on Doris 2.1 (@ThugKd)
-- **PR #15055** (2026-11-16): feat(grid): preview table rows as JSON with column comments (@ThugKd)
-- **PR #15053** (2026-11-16): feat(sidebar): copy generated SQL and DDL to the clipboard (@ThugKd)
+- **PR #15154** (2026-11-17): fix(sidebar): 全局搜索过滤中保留局部表搜索框 (@dienaso)
+- **PR #15153** (2026-11-17): fix(postgres): preserve precision of scalar real query results (@lyinglyingl)
+- **PR #15146** (2026-11-17): feat(sidebar): Schema/库选择器支持 % 通配符搜索并一键选中匹配项 (@dienaso)
+- **PR #15145** (2026-11-17): fix(editor): preserve quoted values when pasting IN conditions (@Celestial-0)
+- **PR #15143** (2026-11-17): fix(mongodb): apply global format to mixed and nested BSON dates (@ThugKd)
+- **PR #15141** (2026-11-17): fix(db2): recognize DB2 connection deep links (@Aaron3S)
 
 ---
 
@@ -2805,32 +2358,52 @@ Refs: #14696
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sql): respect query-block scope in SQL completion
+## X. sqlserver): keep module batches whole in the statement splitter
 
 **RULE**:
-When implementing operations in `apps/desktop/src/lib/__tests__/sql/sqlCompletion.context.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/dbx-sql-core/src/sql.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6406c3f8`: sql): respect query-block scope in SQL completion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `082c5eb8`: sqlserver): keep module batches whole in the statement splitter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/lib/__tests__/sql/sqlCompletion.context.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-sql-core/src/sql.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    expect(context.referencedTables.map((table) => table.alias ?? table.name)).toEqual(["x"]);
-    expect(context.referencedTables[0].columns).toContain("id");
+///
+/// A module batch (`CREATE`/`ALTER PROCEDURE|PROC|FUNCTION|TRIGGER|VIEW ...
+/// AS BEGIN ... END`, #15087) takes the same path: its body semicolons are
+/// syntax, and the batch ends where the block stack closes — so a final `END`
+/// without its own `;` still does not swallow the next statement. A native SQL
+/// Server connection uses this plain splitter; only agent pools split on `GO`.
+    if first.is_word("BEGIN") && sqlserver_begins_block(&tokens, 0) {
+        return true;
+    }
+    keeps_sqlserver_module_batch(options, statement_head)
+}
+
+/// Whether the buffered statement is a T-SQL module batch (`CREATE`/`ALTER
+/// PROCEDURE|PROC|FUNCTION|TRIGGER|VIEW ... AS BEGIN ... END`) whose body has
+/// already opened a `BEGIN` block, so its inner semicolons are body syntax and
+/// not statement boundaries. A native SQL Server connection splits scripts with
+/// the plain statement splitter (only agent pools split on `GO`), so without
+/// this a routine body is cut at its first inner `;` and the server rejects the
+/// fragments (#15087).
+///
+/// Modules whose body has no `BEGIN` block keep the historical per-semicolon
+/// split: there is no block nesting that could tell body semicol
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    expect(context.referencedTables.map((table) => table.name)).toEqual(expect.arrayContaining(["users"]));
+    first.is_word("BEGIN") && sqlserver_begins_block(&tokens, 0)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6406c3f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `082c5eb8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

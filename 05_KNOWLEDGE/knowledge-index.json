@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T18:18:44.712Z",
-  "total_verified_learnings": 8922,
+  "last_updated": "2026-11-17T18:26:44.099Z",
+  "total_verified_learnings": 8923,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20465,
+  "total_items": 20473,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214099,8 +214099,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "6406c3f8",
-      "content_hash": "a63beb7624744bbcbf28834049e0bef21336130225ab97eacc5eed6fc68a9a70",
+      "source_version": "eacef66c",
+      "content_hash": "dcecdebe64f01f4b424fe4e711263b9ebe5a54ae552b554e3c842c2b30d00ec0",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -214118,6 +214118,11 @@
           "number": 8768,
           "title": "respect query-block scope in SQL completion",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9028,
+          "title": "keep module batches whole in the statement splitter",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214125,7 +214130,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:10:55.676Z",
+      "verified_at": "2026-11-17T18:26:39.443Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214167,10 +214172,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "repository": "t8y2/dbx",
-      "source_version": "6406c3f8",
-      "content_hash": "ba20cf6e1af50915197124a7d6117ae0a3a876a8f8efa494d3a0bab999a11f67",
+      "source_version": "eacef66c",
+      "content_hash": "eb3cf53b143ce5e4c2b5a85ddee917d6e0f18590fd451c4e814e83b6844956af",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T18:10:56.140Z"
+      "persisted_at": "2026-11-17T18:26:39.889Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx",
@@ -214179,10 +214184,10 @@
       "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
       "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
       "repository": "t8y2/dbx",
-      "source_version": "6406c3f8",
-      "content_hash": "7df7063cabadf9ea4240a408d6a540dba99f2831d7e784ce159e8a845393c7a2",
+      "source_version": "eacef66c",
+      "content_hash": "b5e1dd8944739891fedfabfa0e6a5122678f8fca30632cc91520d6d3d8ce1d66",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:10:56.365Z"
+      "persisted_at": "2026-11-17T18:26:40.011Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
@@ -227766,8 +227771,8 @@
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "53b7f598",
-      "content_hash": "0fb1b7703d082d882f286bc6792e16eecbf72ded5a2a4b35bbb8b38658f7aaf1",
+      "source_version": "77abba97",
+      "content_hash": "509372e2f3a16f1c095839e3623b9dbe81552efa7004d2c8a50b54bde2fe2fee",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "promoted_rules": [
@@ -227780,6 +227785,11 @@
           "number": 8714,
           "title": "in-memory webview partitions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9027,
+          "title": "add flag for no agent indicator",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227787,7 +227797,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T04:53:17.103Z",
+      "verified_at": "2026-11-17T18:26:25.809Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227829,10 +227839,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-architecture-intelligence-zenbu-labs-terminal-browse.md",
       "title": "Architecture Intelligence: zenbu-labs/terminal-browser Core Invariants",
       "repository": "zenbu-labs/terminal-browser",
-      "source_version": "53b7f598",
-      "content_hash": "5bf7ce5832608029dec4b5de8d3f3908e1684688dcf22c3f057bafeef8d00032",
+      "source_version": "77abba97",
+      "content_hash": "628108a2c7392fba81a6a63ebdd804ff35d3d743e30187322c8c71736482733e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T04:53:17.710Z"
+      "persisted_at": "2026-11-17T18:26:26.270Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser",
@@ -227841,10 +227851,10 @@
       "relative_path": "08_VERIFICATION/zenbu-labs-terminal-browser-verification-protocol-empirical-defect-shield-for-ze.md",
       "title": "Verification Protocol: Empirical Defect Shield for zenbu-labs/terminal-browser",
       "repository": "zenbu-labs/terminal-browser",
-      "source_version": "53b7f598",
-      "content_hash": "8355b322001ffbf1703093628e990f7d19a168da796cd2ad30bdabfa0fd768ac",
+      "source_version": "77abba97",
+      "content_hash": "502ea2376f505c661678e83c2ef582cd6a4aa5a906a56328fc8dba31a5cfc272",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T04:53:17.859Z"
+      "persisted_at": "2026-11-17T18:26:26.396Z"
     },
     "learn-github-okteto-okteto": {
       "learning_id": "learn-github-okteto-okteto",
@@ -228173,9 +228183,9 @@
       "title": "Architecture Intelligence: zenbu-labs-terminal-browser-learnings Core Invariants",
       "repository": "zenbu-labs-terminal-browser-learnings",
       "source_version": "HEAD",
-      "content_hash": "39af90881ebbd7771f8a2ee20c325e9dceebebe69afe538010105bd814defc08",
+      "content_hash": "42059f989df1cb319bc941239ca4fba1b60e790ee9200ac160b4302cda34adac",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T04:53:34.418Z"
+      "persisted_at": "2026-11-17T18:26:43.153Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zenbu-labs-terminal-browser-le",
@@ -228185,9 +228195,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zenbu-labs-terminal-browser-learnings",
       "repository": "zenbu-labs-terminal-browser-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1a0dd1082427958c637bf5c0503574b0bd74679ec20679ec4d55c4a1c7f734d",
+      "content_hash": "548fbed7372a6747252e6409879df78f9e4df3f357915ba957baea2ab6aa2876",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T04:53:34.566Z"
+      "persisted_at": "2026-11-17T18:26:43.279Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva",
@@ -241746,9 +241756,9 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "repository": "t8y2-dbx-learnings",
       "source_version": "HEAD",
-      "content_hash": "51ba96265212bd722da14e95d85058130d78815b093317319563940e655a5856",
+      "content_hash": "e3338af0278e8aca8d37787a2c98c0f2a0f0cf0d7de1bd30245816c9c19de31e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T18:11:00.825Z"
+      "persisted_at": "2026-11-17T18:26:43.978Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings",
@@ -241758,9 +241768,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for t8y2-dbx-learnings",
       "repository": "t8y2-dbx-learnings",
       "source_version": "HEAD",
-      "content_hash": "a5066b862b74bf6b62892ae796b821de927ce32aa5eaacac7ae1f35ce9b73964",
+      "content_hash": "6216dfbae9e69216e05c74adc4b4533c9ef2234c7380c8b1658b3ba65c62e096",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:11:01.052Z"
+      "persisted_at": "2026-11-17T18:26:44.099Z"
     },
     "learn-huggingface-tencent-hy-memory-30b-a3b": {
       "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
@@ -274601,6 +274611,121 @@
       "content_hash": "8773c03e8fe23dd645513f04426f69ffced8ee3729ca7457f231251ea5f52e7c",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T18:18:43.724Z"
+    },
+    "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf": {
+      "learning_id": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "slug": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "source_version": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf",
+      "content_hash": "d36045fa50543c752f05f8c52f226c0a38dc43f4168ad20ee70b8976a6d1dede",
+      "dossier_path": "07_PROJECT_LEARNING/hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T18:26:23.983Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-co": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-research-knowledge-intelligence.md",
+      "title": "Research & Knowledge Intelligence: huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF Core Invariants",
+      "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "source_version": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf",
+      "content_hash": "229eea3536dba991195f0edb098e57bbbb2054ae7737d8dd4f685a75b38374d0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T18:26:24.338Z"
+    },
+    "rule-9027": {
+      "learning_id": "rule-9027",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9027,
+      "title": "add flag for no agent indicator",
+      "source_url": "https://github.com/zenbu-labs/terminal-browser",
+      "source_version": "77abba97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T18:26:25.809Z"
+    },
+    "candidate_directive-add-flag-for-no-agent-indicator": {
+      "item_id": "candidate_directive-add-flag-for-no-agent-indicator",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XM8P-add-flag-for-no-agent-indicator.md",
+      "title": "add flag for no agent indicator",
+      "repository": "zenbu-labs-terminal-browser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aeef140ccbce75b36dd04daacd373d12a029adec601da50d4c36404b9b075ed4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T18:26:43.034Z"
+    },
+    "rule-9028": {
+      "learning_id": "rule-9028",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9028,
+      "title": "keep module batches whole in the statement splitter",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "eacef66c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T18:26:39.443Z"
+    },
+    "candidate_directive-keep-module-batches-whole-in-the-statement-splitter": {
+      "item_id": "candidate_directive-keep-module-batches-whole-in-the-statement-splitter",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XJQ6-keep-module-batches-whole-in-the-statement-splitter.md",
+      "title": "keep module batches whole in the statement splitter",
+      "repository": "t8y2/dbx",
+      "source_version": "eacef66c",
+      "content_hash": "35d777d56b9c74947fa922adf77c7f8954e1111193a69bfde6c4cf36e3c4c377",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T18:26:39.777Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-learnings-research-knowledge-in.md",
+      "title": "Research & Knowledge Intelligence: hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings Core Invariants",
+      "repository": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1c10c057fd0447be37b5bfd0c3b39e389fbdc8a9d9605dd383cf8630c0cb9e17",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T18:26:43.558Z"
+    },
+    "candidate_directive-sqlserver-keep-module-batches-whole-in-the-statement-splitter": {
+      "item_id": "candidate_directive-sqlserver-keep-module-batches-whole-in-the-statement-splitter",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XMVO-sqlserver-keep-module-batches-whole-in-the-statement-splitter.md",
+      "title": "sqlserver): keep module batches whole in the statement splitter",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "af3c176e50a6d3cd0f24279c3ca532e14010bf204dc269ffe32317ab66449c2d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T18:26:43.862Z"
     }
   },
   "ai-builder-brain": {
