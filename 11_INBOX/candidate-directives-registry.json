@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T02:51:32.958Z",
+  "last_updated": "2026-11-17T03:08:06.980Z",
   "directives": [
     {
       "id": "CD-001",
@@ -10262,11 +10262,11 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-IYX9",
+      "id": "CD-49NA",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-IYX9-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-49NA-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -17757,11 +17757,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-IZFI",
+      "id": "CD-4A2R",
       "directive_title": "engine): detect uv run script shebangs",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-IZFI-engine-detect-uv-run-script-shebangs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-4A2R-engine-detect-uv-run-script-shebangs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -21465,6 +21465,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-179CFB-engine-detect-uv-run-script-shebangs.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-6D7672",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6D7672-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-C4D361",
+      "directive_title": "engine): detect uv run script shebangs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C4D361-engine-detect-uv-run-script-shebangs.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-7A2C62",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7A2C62-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-17"
     }
   ]

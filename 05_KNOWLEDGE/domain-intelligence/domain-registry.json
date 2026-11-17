@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T02:51:33.094Z",
+  "last_updated": "2026-11-17T03:08:07.478Z",
   "total_records": 1401,
   "domains": {
     "A": {
@@ -7216,8 +7216,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "a7478f9cb468127c511b2faaa78786b39ba7e790b16ebae6afc48066a9b9aa2d",
-      "created_at": "2026-11-17T02:51:32.436Z"
+      "content_hash": "888382d42e8ab083969929417c7eec4cfd855814eb08cff44cae7e717e970228",
+      "created_at": "2026-11-17T03:08:06.096Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -17051,8 +17051,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "7cb7ea3a69f765123324733a96ec892321b08bf244a317a6806333a10c6da673",
-      "created_at": "2026-11-16T16:09:26.086Z"
+      "content_hash": "d0ed748491aaf941dc69c06e9cb81a0a51278ff3f0f141bd65862e437380c3af",
+      "created_at": "2026-11-17T03:08:07.478Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -22572,8 +22572,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "2ef90b56b9b77a6f7aab3916eaa36d5417e4c9408e24a8be71dfb59c351b3c81",
-      "created_at": "2026-11-17T02:51:33.094Z"
+      "content_hash": "c74a0745d7383a55e76ec4e34d5a2c3e45d4cfe30698d33accba9bb1f18d7ed1",
+      "created_at": "2026-11-17T03:08:06.647Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",

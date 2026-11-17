@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T02:51:02.978Z",
-    "lastVerified": "2026-11-17T02:51:02.978Z",
+    "lastChecked": "2026-11-17T03:08:05.654Z",
+    "lastVerified": "2026-11-17T03:08:05.654Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -370,8 +370,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-17T02:11:49.279Z",
-    "lastVerified": "2026-11-17T02:11:49.279Z",
+    "lastChecked": "2026-11-17T03:08:05.645Z",
+    "lastVerified": "2026-11-17T03:08:05.645Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -1025,8 +1025,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T21:10:27.752Z",
-    "lastVerified": "2026-11-16T21:10:27.752Z",
+    "lastChecked": "2026-11-17T03:08:00.625Z",
+    "lastVerified": "2026-11-17T03:08:00.625Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -3588,9 +3588,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-15T20:50:52.841Z",
+    "lastChecked": "2026-11-17T03:07:58.135Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-15T20:50:52.841Z"
+    "lastVerified": "2026-11-17T03:07:58.135Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -3602,9 +3602,9 @@
   "imsnif-bandwhich": {
     "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
-    "lastChecked": "2026-11-15T09:16:28.513Z",
+    "lastChecked": "2026-11-17T03:07:50.636Z",
     "revisionIdentifier": "1899870c",
-    "lastVerified": "2026-11-15T09:16:28.513Z"
+    "lastVerified": "2026-11-17T03:07:50.636Z"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
     "name": "unsloth/Qwen3.8-27B-GGUF",
@@ -4417,9 +4417,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-15T19:12:09.871Z",
+    "lastChecked": "2026-11-17T03:08:03.145Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-15T19:12:09.871Z"
+    "lastVerified": "2026-11-17T03:08:03.145Z"
   },
   "chmln-sd": {
     "name": "sd",
@@ -12275,9 +12275,9 @@
   "mozilla-readability": {
     "name": "readability",
     "officialUrl": "https://github.com/mozilla/readability",
-    "lastChecked": "2026-11-12T10:42:45.253Z",
+    "lastChecked": "2026-11-17T03:07:53.173Z",
     "revisionIdentifier": "ab4027a8",
-    "lastVerified": "2026-11-12T10:42:45.253Z"
+    "lastVerified": "2026-11-17T03:07:53.173Z"
   },
   "aheze-popovers": {
     "name": "Popovers",
@@ -12749,12 +12749,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "planetable-planet": {
-    "name": "Planetable/Planet",
+    "name": "Planet",
     "officialUrl": "https://github.com/Planetable/Planet",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-13T13:20:30.749Z",
-    "lastVerified": "2026-11-13T13:20:30.749Z",
+    "lastChecked": "2026-11-17T03:07:55.635Z",
+    "lastVerified": "2026-11-17T03:07:55.635Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-planetable-planet",
@@ -12763,7 +12763,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "544b4253"
   },
   "mswjs-msw": {
     "name": "mswjs/msw",
