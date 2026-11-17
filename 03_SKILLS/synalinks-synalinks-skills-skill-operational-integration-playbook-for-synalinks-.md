@@ -1,53 +1,39 @@
-# Skill: Operational & Integration Playbook for synalinks/synalinks/skills
+# Skill: Operational & Integration Playbook for SynaLinks/synalinks-skills
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "synalinks/synalinks/skills",
-  "source_url": "https://github.com/synalinks/synalinks/skills",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "SynaLinks/synalinks-skills",
+  "source_url": "https://github.com/SynaLinks/synalinks-skills",
+  "source_version": "17532841",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-17T16:14:17.213Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-synalinks-synalinks-skills",
   "canonical_classification": "skill_playbook"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [synalinks/synalinks/skills](https://github.com/synalinks/synalinks/skills) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [SynaLinks/synalinks-skills](https://github.com/SynaLinks/synalinks-skills) (Revision: `17532841`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T16:14:17.213Z`  
+> **Learning ID**: `learn-github-synalinks-synalinks-skills`
 
 
 ## 1. Skill Overview & Purpose
-Procedural playbook defining verified operational and implementation patterns for **synalinks/synalinks/skills**.
+Procedural playbook defining verified operational and implementation patterns for **SynaLinks/synalinks-skills**.
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
 - **Model Independence**: Universal (Applies across Claude, Gemini, GPT, and Local agents)
 
 ## 2. Prerequisites & Technical Boundary
-- Runtime ecosystem: Verified against synalinks/synalinks/skills revision `historical`.
+- Runtime ecosystem: Verified against SynaLinks/synalinks-skills revision `17532841`.
 - Required security tier: Sanitized against PII/secrets.
 
 ## 3. Step-by-Step Procedural Workflow
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md`  
-> **Source**: github ([https://github.com/SynaLinks/synalinks-skills](https://github.com/SynaLinks/synalinks-skills))  
-> **Source Version**: `092970a5`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:00:58.008Z  
-> **Learning ID**: `learn-github-synalinks-synalinks-skills`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): SynaLinks/synalinks-skills
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SynaLinks/synalinks-skills](https://github.com/SynaLinks/synalinks-skills))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:00:57.173Z  
+> **Harvest Timestamp**: 2026-11-17T16:14:16.588Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -56,16 +42,36 @@ Procedural playbook defining verified operational and implementation patterns fo
 - **Repository / Resource**: `SynaLinks/synalinks-skills`
 - **Description**: Coding Agents skills for Synalinks OSS
 - **Primary Language / Ecosystem**: Python
-- **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 908 stars
+- **Discovered Manifests / Configurations**: package.json, README.md
+- **Stars / Engagement**: 912 stars
 
 ---
 
 ## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
 
 ### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
+- Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `opencode/index.js`
+```
+// OpenCode plugin: registers this repo's skills/ directory as a skill source,
+// so OpenCode discovers every skill in it without copying files.
+import { fileURLToPath } from "node:url";
+
+const skillsDir = fileURLToPath(new URL("../skills", import.meta.url));
+
+export default {
+  id: "synalinks",
+  server: async () => ({
+    config: async (config) => {
+      config.skills = config.skills ?? {};
+      config.skills.paths = [...(config.skills.paths ?? []), skillsDir];
+    },
+  }),
+};
+
+```
 
 ### Core Architecture Module: `skills/synalinks/scripts/chain_of_thought.py`
 ```
@@ -1248,120 +1254,17 @@ if __name__ == "__main__":
 
 ```
 
-### Core Architecture Module: `skills/synalinks/scripts/lmstudio_setup.py`
-```
-#!/usr/bin/env python3
-"""LMStudio / vLLM setup helper for Synalinks.
-
-Local OpenAI-compatible servers need:
-1. A dummy OPENAI_API_KEY (any non-empty string)
-2. A LiteLLM model registration (so cost tracking returns 0.0 instead of None)
-3. An api_base pointing to the local server
-
-Usage:
-    from lmstudio_setup import create_lmstudio_language_model
-
-    lm = create_lmstudio_language_model("ibm/granite-4-h-tiny")
-
-Run log:
-    references/lmstudio_setup.log
-
-The __main__ demo points the same helper at a *live* local OpenAI-compatible
-server — ollama at http://localhost:11434/v1 — so it runs without LMStudio.
-The helper itself is server-agnostic; LMStudio (:1234) / vLLM (:8000) just need
-their own api_base.
-"""
-
-import os
-
-import litellm
-import synalinks
-
-
-def create_lmstudio_language_model(
-    model_name: str,
-    api_base: str = "http://localhost:1234/v1",
-    max_tokens: int = 4096,
-    api_key: str = "lm-studio",
-    **kwargs,
-) -> synalinks.LanguageModel:
-    """Create a Synalinks LanguageModel configured for an LMStudio-compatible server.
-
-    Args:
-        model_name: Model name (without provider prefix). Will be prefixed with "openai/".
-        api_base: Base URL of the local OpenAI-compatible server.
-        max_tokens: Max output tokens (used for LiteLLM registration).
-        api_key: Dummy API key. Any non-empty string works.
-        **kwargs: Forwarded to synalinks.LanguageModel.
-    """
-    os.environ["OPENAI_API_KEY"] = api_key
-    full_model_name = f"openai/{model_name}"
-
-    litellm.register_model({
-        full_model_name: {
-            "max_tokens": max_tokens,
-            "input_cost_per_token": 0.0,
-            "output_cost_per_token": 0.0,
-            "litellm_provider": "openai",
-            "mode": "chat",
-        }
-    })
-
-    return synalinks.LanguageModel(
-        model=full_model_name,
-        api_base=api_base,
-        **kwargs,
-    )
-
-
-# Same helper, friendlier name for vLLM
-def create_vllm_language_model(
-    model_name: str,
-    api_base: str = "http://localhost:8000/v1",
-    **kwargs,
-) -> synalinks.LanguageModel:
-    """Create a Synalinks LanguageModel configured for a vLLM server."""
-    return create_lmstudio_language_model(model_name, api_base=api_base, **kwargs)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    async def main():
-        # Demo against a live local OpenAI-compatible server (ollama). For a real
-        # LMStudio server use create_lmstudio_language_model("ibm/granite-4-h-tiny")
-        # (defaults to :1234).
-        lm = create_lmstudio_language_model(
-            "mistral", api_base="http://localhost:11434/v1"
-        )
-
-        class Q(synalinks.DataModel):
-            query: str = synalinks.Field(description="The user query")
-
-        class A(synalinks.DataModel):
-            answer: str = synalinks.Field(description="The answer")
-
-        inputs = synalinks.Input(data_model=Q)
-        outputs = await synalinks.Generator(data_model=A, language_model=lm)(inputs)
-        program = synalinks.Program(inputs=inputs, outputs=outputs)
-        result = await program(Q(query="Capital of France?"))
-        print(result.prettify_json())
-
-    asyncio.run(main())
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #51** (2026-09-28): **ci: validate and install skills for all agents; fix SKILL.md frontmatter**
-  *Symptoms*: ## Why  A user reported the repo as broken. Reproduced with the documented install command:  ``` npx skills add SynaLinks/synalinks-skills --skill synalinks ⚠ Skipped .../synalinks/SKILL.md — YAML parse error: Nested mappings are not allowed in compact mappings └ No valid skills found. Skills require a SKILL.md with name and description. ```  The `description` in `skills/synalinks/SKILL.md` contains an unquoted `(Keras-inspired): DataModel...`. A colon followed by a space inside a plain YAML scalar is invalid, so the `skills` CLI discovers no skills and installs nothing, for every agent.  ## Changes  - **`skills/synalinks/SKILL.md`**: double-quote the description (content unchanged, 990 chars, under the 1024 spec limit). - **`.github/workflows/ci.yml`** (new):   - `validate`: runs the official Agent Skills validator (`agentskills validate`) on every `skills/*/` folder. Fails on the previous frontmatter.   - `install`: `npx skills add <checkout> --skill '*' --agent '*' --copy --json`, then asserts every skill in the repo reports `installed` and that `SKILL.md` landed in `.claude/skills/` and `.agents/skills/` (read by Codex, OpenCode, Cursor and most others). Runs on PRs so a bad merge is caught before users see it.   - `install-from-github`: on push to main, weekly schedule and manual dispatch, runs the exact command users run against the published repo.   - `package`: on main, zips each skill into a `.skill` archive (Claude.ai / Desktop upload format) and uploads it as a wor
+- **Issue #54** (2026-11-17): **docs(agents): the answer comes from the step loop**
+  *Symptoms*: Documents SynaLinks/synalinks#165, to merge once that release is on PyPI.  - New "How the answer is given" section:   - a step's reply without tool calls is the answer;   - with a schema, the answer is a `final_answer` tool call (`tool_choice="required"`), and arguments that don't fit go back to the model as that call's error;   - the final generator is only the fallback;   - streaming hands over the answering step once it's written. - `final_instructions` is now described as the fallback's instructions. - The trajectory example now includes the `final_answer` call and its tool result.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #49** (2026-09-26): **Cover decision models and the new rewards**
-  *Symptoms*: ## Summary  Brings the `synalinks` skill up to date with decision models and the rewards added recently in Synalinks.  ### Decision models (new)  - **`references/decision-models.md`**:   - setup (`TYPESAFE_API_KEY`), and fields as questions (`bool`, `Literal`/`Enum`, score types like `synalinks.Rating`, `score_schema`);   - the `decision_model` argument, with a table per module (`Generator`, `Decision`, `MultiDecision`, `Branch`, `SelfCritique`, `RubricsAsJudge`);   - the order in which modules resolve between models, and `min_confidence` / `threshold`;   - tuning thresholds with KerasTuner (with a reward that prices an abstention, and `disable_keras_backend()`);   - in-context learning with `OMEGA`, reliability, metrics, tracing and pitfalls. - **`scripts/decision_model.py`**: triage `Generator`, `Decision` with `min_confidence`, a `Branch` routed by a decision model, and `RubricsAsJudge`. It has no captured run log, since that needs a TypeSafe key; it was checked against mocked models. - **`SKILL.md`**: a "Decision models" section, and a new universal gotcha: a decision model is never a `language_model`.  ### Rewards  - **`references/rewards-metrics.md`**:   - `RubricsAsJudge` (including grading with a decision model) and its 31 presets, grouped by area;   - `AgentAsJudge`, `DeepAgentAsJudge`, `RLMAsJudge`;   - `ComposableReward`, replacing the outdated "there's no built-in reward composition" note;   - `BatchReward` / `BatchRewardFunctionWrapper`;   - a "Choosing a judge" 
+- **Issue #53** (2026-11-13): **Add OpenCode plugin**
+  *Symptoms*: Makes the repo installable as an OpenCode plugin, alongside the Claude Code and Codex manifests (#52).  - `package.json` + `opencode/index.js`: a plugin whose `config` hook adds this repo's `skills/` directory to `skills.paths`. No files are copied. - README: install with `opencode plugin github:SynaLinks/synalinks-skills` (`--global` for every project), or list it in `plugin` in `opencode.json`. - `.gitignore`: `*.json` is ignored, so `package.json` gets an exception. - CI: new `opencode-plugin` job installs the plugin from the checkout with the latest `opencode-ai` and fails if any skill is missing from `opencode debug skill`.  Tested locally with opencode 1.19.5: installing from git lists `synalinks` from the plugin's `skills/` folder, with all 47 skill files present. - README: a **Quick install** section at the top with the one-line plugin install for Claude Code, Codex and OpenCode (and `npx skills` for other agents). The Install section now lists the plugins first, then `npx skills`, then the Claude.ai upload.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1378,613 +1281,91 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `092970a5` (2026-09-28)
-**Commit Message**: ci: validate and install skills for all agents; fix SKILL.md frontmatter (#51)
+### Incident Patch 1: `17532841` (2026-11-17)
+**Commit Message**: docs(agents): the answer comes from the step loop (#54)
 
-The synalinks skill description contained an unquoted ": " so the skills CLI
-parsed no skills and users could not install it. Quote the description and add
-a CI workflow that validates every SKILL.md against the Agent Skills spec,
-installs the skills into every agent the skills CLI supports (on PRs from the
-checkout, on main from GitHub), and packages the .skill archives on main.
+FunctionCallingAgent now answers as LangChain's agents do: a step's reply
+without tool calls is the answer, a schema is a final_answer tool, and the
+final generator is only the fallback. The trajectory example shows the
+final_answer call.
 
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci.yml` (added, +108/-0)
+**File**: `skills/synalinks/references/agents-tools.md` (modified, +36/-2)
 ```diff
-@@ -0,0 +1,108 @@
-+name: CI
-+
-+on:
-+  push:
-+    branches: [main]
-+  pull_request:
-+  schedule:
-+    # Weekly: catches upstream changes in the `skills` CLI or the spec.
-+    - cron: "0 6 * * 1"
-+  workflow_dispatch:
-+
-+jobs:
-+  validate:
-+    name: Validate SKILL.md (agentskills spec)
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@v4
-+      - uses: astral-sh/setup-uv@v5
-+      - name: Validate every skill folder
-+        run: |
-+          set -euo pipefail
-+          for skill in skills/*/; do
-+            uvx --from skills-ref agentskills validate "$skill"
-+          done
-+
-+  install:
-+    name: Install for all agents (skills CLI, local checkout)
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@v4
-+        with:
-+          path: repo
-+      - uses: actions/setup-node@v4
-+        with:
-+          node-version: 22
-+      - name: Install every skill into every supported agent
-+        run: |
-+          set -euo pipefail
-+          mkdir project && cd project
-+          npx -y skills@latest add "$GITHUB_WORKSPACE/repo" \
-+            --skill '*' --agent '*' --yes --copy --json > result.json
-+          cat result.json
-+      - name: Check every skill installed into every agent
-+        run: |
-+          set -euo pipefail
-+          python3 - <<'PY'
-+          import json, pathlib, sys
-+          results = json.load(open("project/result.json"))
-+          expected = sorted(p.parent.name for p in pathlib.Path("repo/skills").glob("*/SKILL.md"))
-+          installed = sorted(r.get("name") for r in results if r.get("status") == "installed")
-+          failed = [r for r in results if r.get("status") != "installed"]
-+          if failed or installed != expected:
-+              print("expected:", expected, "\ninstalled:", installed, "\nfailed:", failed)
-+              sys.exit(1)
-+          for r in results:
-+              print(f"{r['name']}: installed into {len(r['agents'])} agents")
-+          for name in expected:
-+              # Claude Code has its own dir; Codex, OpenCode, Cursor, ... read .agents.
-+              for agent_dir in (".claude", ".agents"):
-+                  path = pathlib.Path("project") / agent_dir / "skills" / name / "SKILL.md"
-+                  assert path.is_file(), f"missing {path}"
-+          PY
-+
-+  install-from-github:
-+    # What users actually run: install from the published repo, not the checkout.
-+    name: Install for all agents (skills CLI, GitHub source)
-+    if: github.event_name != 'pull_request'
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/setup-node@v4
-+        with:
-+          node-version: 22
-+      - name: Install from SynaLinks/synalinks-skills
-+        run: |
-+          set -euo pipefail
-+          mkdir project && cd project
-+          npx -y skills@latest add SynaLinks/synalinks-skills \
-+            --skill '*' --agent '*' --yes --json > result.json
-+          cat result.json
-+          python3 -c '
-+          import json, sys
-+          results = json.load(open("result.json"))
-+          failed = [r for r in results if r.get("status") != "installed"]
-+          if failed or not results:
-+              print("failed:", failed); sys.exit(1)
-+          '
-+
-+  package:
-+    # The `.skill` archive that Claude.ai / Claude Desktop uploads expect.
-+    name: Package .skill archives
-+    needs: [validate, install]
-+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@v4
-+      - name: Zip every skill folder
-+        run: |
-+          set -euo pipefail
-+          mkdir dist
-+          for skill in skills/*/; do
-+            name=$(basename "$skill")
-+            (cd skills && zip -qr "../dist/$name.skill" "$name")
-+          done
-+          ls -l dist
-+      - uses: actions/upload-artifact@v4
-+        with:
-+          name: skill-archives
-+          path: dist/*.skill
-```
-
-**File**: `README.md` (modified, +9/-0)
-```diff
-@@ -1,5 +1,7 @@
- # Agent Skills for Synalinks
- 
-+[![CI](https://github.com/SynaLinks/synalinks-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/SynaLinks/synalinks-skills/actions/workflows/ci.yml)
-+
- ---
- 
- This repository contains skills for coding agents that read the open Agent
-@@ -208,6 +210,13 @@ See the [LICENSE](LICENSE) file for full details.
- 
- Contributions are welcome! Please feel free to submit a Pull Request.
- 
-+Every push and pull request runs the [CI workflow](.github/workflows/ci.yml),
-+which validates each `skills/*/SKILL.md` against the Agent Skills spec and
-+installs the skills into every agent the `skills` CLI supports, so a broken
-+frontmatter or a missing file is caught before it reaches users. On `main` it
-+also re-installs from GitHub (the exact command users run) and uploads the
-+`.skill` archives as a workflow artifact.
-+
- ## Acknoledgement
- 
- These skills have been created by [Ramiro Salas](https://www.linkedin.com/in/rsalas/) the CTO of [Hexatropian](https://www.linkedin.com/company/hextropian-systems/) an active early member of [Synalinks](https://github.com/SynaLinks/synalinks) community.
-```
-
-**File**: `skills/synalinks/SKILL.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- ---
- name: synalinks
--description: Use for anything involving the Synalinks neuro-symbolic LM framework (Keras-inspired): DataModel/Field/Input, JSON operators (+ & | ^ ~), synalinks.ops; LanguageModel/EmbeddingModel and provider prefixes; DecisionModel (TypeSafe jev decision models, decision_model=, min_confidence/threshold); the Program class and its four APIs, save/load; modules (Generator, ChainOfThought, SelfCritique, PythonSynthesis, custom Module); control flow (Decision, MultiDecision, Branch, And/Or/Xor, guards); agents (FunctionCallingAgent, RLM, DeepAgent, Tool, MCP); KnowledgeBase/RAG; training (compile/fit/evaluate/predict, callbacks, KerasTuner tuners); rewards (ExactMatch, CosineSimilarity, LMAsJudge, ProgramAsJudge, RubricsAsJudge and presets like Faithfulness/Toxicity, AgentAsJudge, DeepAgentAsJudge, RLMAsJudge, ComposableReward, BatchReward) and metrics; optimizers (RandomFewShot, OMEGA); datasets, visualization. Synalinks is Keras-shaped: without guidance LMs mix Keras/LangChain/DSPy syntax.
-+description: "Use for anything involving the Synalinks neuro-symbolic LM framework (Keras-inspired): DataModel/Field/Input, JSON operators (+ & | ^ ~), synalinks.ops; LanguageModel/EmbeddingModel and provider prefixes; DecisionModel (TypeSafe jev decision models, decision_model=, min_confidence/threshold); the Program class and its four APIs, save/load; modules (Generator, ChainOfThought, SelfCritique, PythonSynthesis, custom Module); control flow (Decision, MultiDecision, Branch, And/Or/Xor, guards); agents (FunctionCallingAgent, RLM, DeepAgent, Tool, MCP); KnowledgeBase/RAG; training (compile/fit/evaluate/predict, callbacks, KerasTuner tuners); rewards (ExactMatch, CosineSimilarity, LMAsJudge, ProgramAsJudge, RubricsAsJudge and presets like Faithfulness/Toxicity, AgentAsJudge, DeepAgentAsJudge, RLMAsJudge, ComposableReward, BatchReward) and metrics; optimizers (RandomFewShot, OMEGA); datasets, visualization. Synalinks is Keras-shaped: without guidance LMs mix Keras/LangChain/DSPy syntax."
- ---
- 
- # Synalinks
-```
-
----
-
-### Incident Patch 2: `5ba96a75` (2026-04-11)
-**Commit Message**: fix: update skills docs for v0.7.1
-
-- Fix instructions parameter: string not list in all examples
-- Add decompose operation and pattern masking docs
-- Update LanguageModel with correct providers and defaults (retry=5)
-- Add masking/aggregation operations to api-reference
-
-Co-Authored-By: Claude Opus 4.6 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `synalinks/references/agents-tools.md` (modified, +2/-6)
-```diff
-@@ -136,7 +136,7 @@ synalinks.FunctionCallingAgent(
-     autonomous=True,                   # Run autonomously vs interactive
+@@ -145,7 +145,7 @@ synalinks.FunctionCallingAgent(
      return_inputs_with_trajectory=True, # Include full execution trajectory
      prompt_template=None,              # Custom prompt template
--    instructions=[],                   # Additional instructions
-+    instructions="",                    # Additional instructions (MUST be a string)
- )
+     instructions="",                   # Instructions string (NOT a list)
+-    final_instructions=None,           # Optional: overrides instructions for the final generator
++    final_instructions=None,           # Optional: instructions of the fallback answer (see below)
+     temperature=0.0,
+     use_chain_of_thought=False,
+     reasoning_effort=None,
+@@ -157,6 +157,25 @@ All arguments are **keyword-only** (note the `*,` after `self` in the source).
+ `language_model` may be omitted if `synalinks.set_default_language_model(...)`
+ was called — `ops.predict` resolves the default at call time.
+ 
++### How the answer is given
++
++As in LangChain's agents, each step is one LM call in which the model either
++calls tools or answers:
++
++- **No `schema`/`data_model`**: a reply without tool calls *is* the answer.
++  It is not asked for again.
++- **With a `schema`/`data_model`**: the schema becomes a `final_answer` tool
++  (named `final_answer_` if a tool of yours already has that name), sent with
++  `tool_choice="required"`. The model's call to it is the structured answer.
++  Arguments that do not fit the schema go back to the model as that call's
++  error, and the loop goes on.
++- **Fallback**: the final generator (`final_instructions`) writes the answer
++  only when the steps give none: an empty reply, a schema answered in prose,
++  or `max_iterations` spent.
++- **`streaming=True`**: the step that answers comes back as a
++  `StreamingIterator`, once it is written (a step is read whole first: a model
++  may write a few words, then call a tool, in the same reply).
++
+ ### Execution Trajectory
+ 
+ When `return_inputs_with_trajectory=True`, the output is the **`ChatMessages`
+@@ -180,12 +199,27 @@ a `tool` message referencing the call's `tool_call_id`.
+         }
+       ]
+     },
+-    {"role": "tool", "tool_call_id": "call_1", "content": {"result": 105, "log": "Success"}}
++    {"role": "tool", "tool_call_id": "call_1", "content": {"result": 105, "log": "Success"}},
++    {
++      "role": "assistant",
++      "content": "",
++      "tool_calls": [
++        {
++          "id": "call_2",
++          "type": "function",
++          "function": {"name": "final_answer", "arguments": {"answer": "105"}}
++        }
++      ]
++    },
++    {"role": "tool", "tool_call_id": "call_2", "content": "Answer accepted."}
+   ],
+   "answer": "105"
+ }
  ```
  
-@@ -321,11 +321,7 @@ async def main():
-         max_iterations=5,
-         autonomous=True,
-         return_inputs_with_trajectory=True,
--        instructions=[
--            "Always explain your reasoning",
--            "Use tools when needed, not for simple questions",
--            "Provide confidence estimate based on source quality",
--        ],
-+        instructions="Always explain your reasoning. Use tools when needed, not for simple questions. Provide confidence estimate based on source quality.",
-     )(inputs)
- 
-     agent = synalinks.Program(
-```
-
-**File**: `synalinks/references/api-reference.md` (modified, +35/-7)
-```diff
-@@ -97,7 +97,7 @@ outputs = await synalinks.Generator(
-     data_model=Answer,  # Or schema=Answer.get_schema()
-     language_model=lm,
-     prompt_template=None,  # Custom prompt template
--    instructions=["Be concise"],  # List of instructions
-+    instructions="Be concise",  # MUST be a string (not a list!)
-     examples=None,  # Few-shot examples
-     return_inputs=False,  # Include inputs in output
-     use_inputs_schema=False,  # Include input schema in prompt
-@@ -234,15 +234,22 @@ LLM wrapper supporting multiple providers via LiteLLM.
- ```python
- lm = synalinks.LanguageModel(
-     model="ollama/mistral",  # Provider/model format
--    # model="openai/gpt-4",
--    # model="anthropic/claude-3-opus",
--    # model="groq/llama-3-70b",
--    temperature=0.7,
--    max_tokens=1000,
-+    # model="openai/gpt-4o-mini",
-+    # model="anthropic/claude-3-sonnet-20240229",
-+    # model="gemini/gemini-2.5-pro",
-+    # model="groq/llama3-8b-8192",
-+    # model="mistral/codestral-latest",
-+    # model="xai/grok-code-fast-1",
-+    # model="azure/<your_deployment_name>",
-+    api_base=None,    # Optional endpoint override
-+    timeout=600,      # Timeout in seconds (default 600)
-+    retry=5,          # Number of retries with exponential backoff (default 5)
-+    fallback=None,    # Fallback LanguageModel if this one fails
-+    caching=False,    # Enable caching of LM calls
- )
- ```
- 
--**Supported providers:** ollama, openai, anthropic, mistral, groq, cohere, etc.
-+**Supported providers:** ollama, openai, anthropic, gemini, mistral, groq, xai, azure, hosted_vllm.
- 
- ### synalinks.EmbeddingModel
- 
-@@ -266,6 +273,27 @@ result = await synalinks.ops.concat(x1, x2, name="combined")
- # Or use operator: result = x1 + x2
- ```
- 
-+### Masking Operations
++The structured answer is the `final_answer` call's arguments: it also appears in
++the trajectory, with its `tool` result.
 +
-+```python
-+# Keep only specified fields
-+result = await synalinks.ops.in_mask(x, mask=["answer"])
-+# Remove specified fields
-+result = await synalinks.ops.out_mask(x, mask=["thinking"])
-+# Regex pattern matching
-+result = await synalinks.ops.in_mask(x, pattern="^input_")
-+result = await synalinks.ops.out_mask(x, pattern="name$")
-+```
-+
-+### Aggregation Operations
-+
-+```python
-+# Group similar fields into lists (e.g. answer, answer_1 -> answers: [...])
-+result = await synalinks.ops.factorize(x)
-+# Expand lists into individual fields (inverse of factorize)
-+result = await synalinks.ops.decompose(x)
-+```
-+
- ### Logical Operations
- 
- ```python
-```
-
-**File**: `synalinks/references/modules-catalog.md` (modified, +23/-0)
-```diff
-@@ -277,6 +277,29 @@ result = await synalinks.ops.logical_not(x)
- result = ~x
- ```
- 
-+### Factorize / Decompose
-+
-+```python
-+# Group similar fields into lists (e.g. answer, answer_1 -> answers: [...])
-+result = await synalinks.ops.factorize(x)
-+
-+# Expand lists into individual fields (inverse of factorize)
-+result = await synalinks.ops.decompose(x)
-+```
-+
-+### Masking with Regex Pattern
-+
-+```python
-+# Keep fields matching a regex pattern
-+result = await synalinks.ops.in_mask(x, pattern="^input_")
-+
-+# Remove fields matching a regex pattern
-+result = await synalinks.ops.out_mask(x, pattern="name$")
-+
-+# Both mask and pattern can be combined
-+result = await synalinks.ops.in_mask(x, mask=["answer"], pattern="^query")
-+```
-+
- ---
- 
- ## Creating Custom Modules
-```
-
----
-
-### Incident Patch 3: `e1076a3f` (2024-11-22)
-**Commit Message**: Clean up falkorDB memory systems and fix test workflow
-
-**File**: `.github/workflows/python-package.yaml` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ jobs:
-       - name: Display Python version
-         run: python -c "import sys; print(sys.version)"
-       - name: Start FalkorDB
--        run: docker run -d -p 6379:6379 falkordb/falkordb:edge &
-+        run: docker run -d -p 6379:6379 falkordb/falkordb:v4.2.2 &
-       - name: Install redis tools
-         run: sudo apt-get install -y redis-tools
-       - name: Verify that FalkorDB is up
-```
-
-**File**: `docs/Modules API/Agents/Graph interpreter Agent.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- # Graph Interpreter Agent
- 
--The `GraphInterpreterAgent` is the agent system that execute the Cypher software stored in memory, it can branch over the graph programs by asking itself question when encountering decision steps, and use tools when encountering an Action step and jump to other programs when encountering Program steps. 
-+The `GraphInterpreterAgent` is the agent system that execute the Cypher software stored in memory, it can branch over the graph programs by asking itself questions when encountering Decision steps, and use tools when encountering an Action step and jump to other programs when encountering Program steps. 
- 
- ## Usage
- 
-```
-
-**File**: `hybridagi/memory/integration/falkordb/falkordb_document_memory.py` (modified, +15/-12)
-```diff
-@@ -161,30 +161,33 @@ def get(self, id_or_ids: Union[UUID, str, List[Union[UUID, str]]]) -> DocumentLi
-             doc_id = str(doc_id)
-             if self.exist(doc_id):
-                 query_result = self._graph.query(
--                    "MATCH (d:Document {id: $id}) RETURN d",
--                    params={"id": doc_id}
-+                    " ".join(
-+                        [
-+                            "MATCH (d:Document {id: $id})",
-+                            "RETURN d.text as text,",
-+                            "d.parent_id as parent_id,",
-+                            "d.metadata as metadata,",
-+                            "d.vector as vector",
-+                        ]
-+                    ),
-+                    params={"id": doc_id},
-                 )
--                text = query_result.result_set[0][0].properties["text"]
--                metadata = query_result.result_set[0][0].properties["metadata"]
--                if "parent_id" in query_result.result_set[0][0].properties:
--                    parent_id = query_result.result_set[0][0].properties["parent_id"]
--                else:
--                    parent_id = None
-+                text = query_result.result_set[0][0]
-+                parent_id = query_result.result_set[0][1]
-+                metadata = query_result.result_set[0][2]
-                 if parent_id:
-                     try:
-                         parent_id = UUID(parent_id)
-                     except Exception:
-                         pass
--                else:
--                    parent_id = None
-                 try:
-                     doc_id = UUID(doc_id)
-                 except Exception:
-                     pass
-                 doc = Document(id=doc_id, parent_id=parent_id, text=text)
-                 doc.metadata = json.loads(metadata)
--                if "vector" in query_result.result_set[0][0].properties:
--                    doc.vector = query_result.result_set[0][0].properties["vector"]
-+                if query_result.result_set[0][3]:
-+                    doc.vector = query_result.result_set[0][3]
-                 result.docs.append(doc)
-         return result
- 
-```
-
-**File**: `hybridagi/memory/integration/falkordb/falkordb_fact_memory.py` (modified, +52/-79)
-```diff
-@@ -54,7 +54,7 @@ def exist(self, entity_or_fact_id: Union[UUID, str]) -> bool:
-             return self.exist_fact(entity_or_fact_id)
-         
-     def exist_fact(self, index: Union[UUID, str]) -> bool:
--        query = "MATCH ()-[r:FACT {id: $index}]->() RETURN r"
-+        query = "MATCH ()-[r:FACT {_id_: $index}]->() RETURN r._id_ as id"
-         result = self._graph.query(query, params={"index": str(index)})
-         return len(result.result_set) > 0
- 
-@@ -174,30 +174,32 @@ def get_entities(self, id_or_ids: Union[UUID, str, List[Union[UUID, str]]]) -> E
-         result = EntityList()
-         ids = [str(i) for i in id_or_ids]
-         for entity_id in entities_ids:
--            query_result = self._graph.query(
--                " ".join([
--                    "MATCH (e:Entity {id: $id})",
--                    "RETURN e"]),
--                params={"id": entity_id}
--            )
--            if len(query_result.result_set) > 0:
--                entity_data = query_result.result_set[0][0]
-+            if self.exist(entity_id):
-+                query_result = self._graph.query(
-+                    " ".join(
-+                        [
-+                            "MATCH (e:Entity {id: $id})",
-+                            "RETURN",
-+                            "e.name as name,",
-+                            "e.label as label,",
-+                            "e.description as description,",
-+                            "e.vector as vector",
-+                        ]
-+                    ),
-+                    params={"id": entity_id}
-+                )
-                 try:
--                    entity_id = UUID(entity_data.properties["id"])
-+                    entity_id = UUID(entity_id)
-                 except Exception:
--                    entity_id = entity_data.properties["id"]
--                if "description" in entity_data.properties:
--                    description = entity_data.properties["description"]
--                else:
--                    description = None
--                if "vector" in entity_data.properties:
--                    vector = entity_data.properties["vector"]
--                else:
--                    vector = None
-+                    pass
-+                name = query_result.result_set[0][0]
-+                label = query_result.result_set[0][1]
-+                description = query_result.result_set[0][2]
-+                vector = query_result.result_set[0][3]
-                 entity = Entity(
-                     id=entity_id,
--                    name=entity_data.properties["name"],
--                    label=entity_data.properties["label"],
-+                    name=name,
-+                    label=label,
-                     description=description,
-                     vector=vector,
-                 )
-@@ -221,70 +223,41 @@ def get_facts(self, id_or_ids: Union[UUID, str, List[Union[UUID, str]]]) -> Fact
-         result = FactList()
-         for fact_id in facts_ids:
-             fact_id = str(fact_id)
--            query_result = self._graph.query(
--                " ".join([
--                    "MATCH (s:Entity)-[r:FACT {_id_:$id}]->(o:Entity)",
--                    "RETURN r, s, o"]),
--                params={"id": fact_id},
--            )
--            if len(query_result.result_set) > 0:
--                fact_data, subject_data, object_data = query_result.result_set[0]
--                try:
--                    subject_id = UUID(subject_data.properties["id"])
--                except Exception:
--                    subject_id = subject_data.properties["id"]
--                if "description" in subject_data.properties:
--                    description = subject_data.properties["description"]
--                else:
--                    description = None
--                if "vector" in subject_data.properties:
--                    vector = subject_data.properties["vector"]
--                else:
--                    vector = None
--                subj = Entity(
--                    id=subject_id,
--                    name=subject_data.properties["name"], 
--                    label=subject_data.properties["label"],
--                    description=description,
--                    vector=vector,
--                    metadata=json.loads(subject_data.properties["metadata"]), 
-+            if self.exist_fact(fact_id):
-+                query_result = self._graph.query(
-+                    " ".join(
-+                        [
-+                            "MATCH (s:Entity)-[r:FACT {_id_:$id}]->(o:Entity)",
-+                            "RETURN",
-+                            "r.relationship as relationship_name,",
-+                            "r.metadata as metadata,",
-+                            "r.vector as relation_vector,",
-+                            "s.id as subject_id,",
-+                            "o.id as object_id",
-+                        ]
-+                    ),
-+                    params={"id": fact_id},
-                 )
--                rel = Relat
-```
-
-**File**: `hybridagi/memory/integration/falkordb/falkordb_memory.py` (modified, +1/-1)
-```diff
-@@ -56,7 +56,7 @@ def __init__(
-             self.clear()
-             
-     def exist(self, index: Union[UUID, str], label:str) -> bool:
--        query = "MATCH (n:"+label+" {id: $index}) RETURN n"
-+        query = "MATCH (n:"+label+" {id: $index}) RETURN n.id as id"
-         result = self._graph.query(query, params={"index": str(index)})
-         return len(result.result_set) > 0
- 
-```
-
-**File**: `hybridagi/memory/integration/falkordb/falkordb_program_memory.py` (modified, +12/-6)
-```diff
-@@ -134,16 +134,23 @@ def get(self, id_or_ids: Union[UUID, str, List[Union[UUID, str]]]) -> GraphProgr
-             prog_id = str(prog_id)
-             if self.exist(prog_id):
-                 query_result = self._graph.query(
--                    "MATCH (p:Program {id: $id}) RETURN p",
-+                    " ".join(
-+                        [
-+                            "MATCH (p:Program {id: $id})",
-+                            "RETURN",
-+                            "p.program as program,",
-+                            "p.metadata as metadata,",
-+                            "p.vector as vector",
-+                        ]
-+                    ),
-                     params={"id": prog_id}
-                 )
--                cypher_program = query_result.result_set[0][0].properties["program"]
--                metadata = query_result.result_set[0][0].properties["metadata"]
-+                cypher_program = query_result.result_set[0][0]
-+                metadata = query_result.result_set[0][1]
-                 prog = GraphProgram(name=prog_id)
-                 prog.from_cypher(cypher_program)
-                 prog.metadata = json.loads(metadata)
--                if "vector" in query_result.result_set[0][0].properties:
--                    prog.vector = query_result.result_set[0][0].properties["vector"]
-+                prog.vector = query_result.result_set[0][2]
-                 result.progs.append(prog)
-         return result
- 
-@@ -179,7 +186,6 @@ def depends_on(self, source_id: Union[UUID, str], target_id: Union[UUID, str]) -
-             "MATCH (n:Program {id:$source})-[r:DEPENDS_ON*]->(m:Program {id:$target}) RETURN r",
-             params = params,
-         )
--        print(result.result_set)
-         if len(result.result_set) > 0:
-             return True
-         return False
-```
-
-**File**: `hybridagi/memory/integration/falkordb/falkordb_trace_memory.py` (modified, +13/-2)
-```diff
-@@ -128,8 +128,19 @@ def get(self, id_or_ids: Union[UUID, str, List[Union[UUID, str]]]) -> AgentStepL
-         """
-         ids = [str(id_or_ids)] if isinstance(id_or_ids, (UUID, str)) else [str(id) for id in id_or_ids]
-         result = self._graph.query(
--            "MATCH (s:AgentStep) WHERE s.id IN $ids "
--            "RETURN s.id, s.step_type, s.parent_id, s.vector, s.name, s.description",
-+            " ".join(
-+                [
-+                    "MATCH (s:AgentStep)",
-+                    "WHERE s.id IN $ids",
-+                    "RETURN",
-+                    "s.id as id,",
-+                    "s.step_type as step_type,",
-+                    "s.parent_id as parent_id,",
-+                    "s.vector as vector,",
-+                    "s.name as name,",
-+                    "s.description as description",
-+                ]
-+            ),
-             params={"ids": ids}
-         )
-         steps = AgentStepList()
-```
-
-**File**: `notebooks/using_falkordb.ipynb` (modified, +13/-0)
-```diff
-@@ -1,5 +1,18 @@
- {
-  "cells": [
-+  {
-+   "cell_type": "markdown",
-+   "metadata": {},
-+   "source": [
-+    "First launch falkorDB using the following command:\n",
-+    "\n",
-+    "```\n",
-+    "docker run -p 6379:6379 -p 3000:3000 -it --rm -v ./data:/data falkordb/falkordb:v4.2.2\n",
-+    "```\n",
-+    "\n",
-+    "The open you browser to `http://localhost:3000`"
-+   ]
-+  },
-   {
-    "cell_type": "code",
-    "execution_count": 1,
+ With no `schema`/`data_model`, the agent returns the `ChatMessages` trajectory
+ directly; the final answer is the last `assistant` message
+ (`result.get("messages")[-1].get("content")`). The `ChatMessage` keys are a
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #54** (2026-11-17): docs(agents): the answer comes from the step loop (@YoanSallami)
+- **PR #53** (2026-11-13): Add OpenCode plugin (@YoanSallami)
+- **PR #52** (2026-11-12): Add Claude Code and Codex plugin manifests (@YoanSallami)
 - **PR #51** (2026-09-28): ci: validate and install skills for all agents; fix SKILL.md frontmatter (@YoanSallami)
 - **PR #49** (2026-09-26): Cover decision models and the new rewards (@YoanSallami)
 - **PR #47** (2026-08-07): docs: reframe the skill as agent-agnostic (open SKILL.md format) (@YoanSallami)
-- **PR #46** (closed): docs: add sk installation instructions (@alizain)
-- **PR #44** (closed): Implements Docling support (@RamXX)
-- **PR #38** (2024-11-26): Implements Ollama embeddings (@RamXX)
 
 ---
 
@@ -2004,75 +1385,55 @@ Co-Authored-By: Claude Opus 4.6 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: validate and install skills for all agents; fix SKILL.md frontmatter (#51)
+## X. docs(agents): the answer comes from the step loop
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SynaLinks/synalinks-skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `skills/synalinks/references/agents-tools.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SynaLinks/synalinks-skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `092970a5`: ci: validate and install skills for all agents; fix SKILL.md frontmatter (#51). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17532841`: docs(agents): the answer comes from the step loop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/synalinks/references/agents-tools.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-name: CI
+    final_instructions=None,           # Optional: instructions of the fallback answer (see below)
+### How the answer is given
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-  schedule:
-    # Weekly: catches upstream changes in the `skills` CLI or the spec.
-    - cron: "0 6 * * 1"
-  workflow_dispatch:
+As in LangChain's agents, each step is one LM call in which the model either
+calls tools or answers:
 
-jobs:
-  validate:
-    name: Validate SKILL.md (agentskills spec)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-      - name: Validate every skill folder
-        run: |
-          set -euo pipefail
-          for skill in skills/*/; do
-            uvx --from skills-ref agentskills validate "$skill"
-          done
+- **No `schema`/`data_model`**: a reply without tool calls *is* the answer.
+  It is not asked for again.
+- **With a `schema`/`data_model`**: the schema becomes a `final_answer` tool
+  (named `final_answer_` if a tool of yours already has that name), sent with
+  `tool_choice="required"`. The model's call to it is the structured answer.
+  Arguments that do not fit the schema go back to the model as that call's
+  error, and the loop goes on.
+- **Fallback**: the final generator (`final_instructions`) writes the answer
+  only when the steps give none: an empty reply, a schema answered in prose,
+  or `max_iterations` spent.
+- **`streaming=True`**: the step that answers comes back as a
+  `StreamingIterator`, once it is written (a step is read whole first: a model
+  may write a few words, then call a tool, in the same reply).
 
-  install:
-    name: Install for all agents (skills CLI, local checkout)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          path: repo
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Install every skill into every supported agent
-        run: |
-          set -euo pipefail
-          mkdir project && cd project
-          npx -y skills@latest add "$GITHUB_WORKSPACE/repo" \
-            --skill '*' --agent '*' --yes --copy --json > result.json
-          cat result.json
-      - name: Check every skill installed into every agent
-        run: |
-     
+    {"role": "tool", "tool_call_id": "call_1", "content": {"result": 105, "log": "Success"}},
+    {
+      "role": "assistant",
+      "conte
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    final_instructions=None,           # Optional: overrides instructions for the final generator
+    {"role": "tool", "tool_call_id": "call_1", "content": {"result": 105, "log": "Success"}}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `092970a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17532841` are properly handled with clean fallback behavior.
 
 
 ## 4. Empirical Verification & Quality Gate

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T16:05:54.490Z",
+  "last_updated": "2026-11-17T16:14:22.128Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -213,7 +213,7 @@
       "staged_for_review": 1
     },
     "temporalio-temporal-learnings.md": {
-      "processed_at": "2026-11-15T06:00:49.548Z",
+      "processed_at": "2026-11-17T16:14:21.531Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1238,7 +1238,7 @@
       "staged_for_review": 1
     },
     "domcyrus-rustnet-learnings.md": {
-      "processed_at": "2026-11-14T04:14:42.785Z",
+      "processed_at": "2026-11-17T16:14:20.336Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1518,8 +1518,8 @@
       "staged_for_review": 1
     },
     "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md": {
-      "processed_at": "2026-11-13T04:13:41.898Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T16:14:21.230Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "pixeltable-pixeltable-learnings.md": {
@@ -3333,7 +3333,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1617,
+  "total_dossiers_evaluated": 1620,
   "total_canonical_promoted": 322,
-  "total_staged_for_review": 1272
+  "total_staged_for_review": 1274
 }

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-QFXN",
-    "timestamp": "2026-11-15T04:17:59.339Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "066dc68059586ea40bc58f03292a91b6ddbdbe190e09fcd229fa5887f0f3b6e3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-S9OH",
-    "timestamp": "2026-11-15T04:19:24.545Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "cc4ef726b77d09864ee80a85d6e0e724315971fcc78e1416ab038c5a0e636ed3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-NOIM",
-    "timestamp": "2026-11-15T04:43:50.110Z",
-    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-    "contentHash": "5129eb1355d9058db0fb2e2ebd86fd913794fada4cb06f0e7abfbc1ffa641051",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-NT8T",
-    "timestamp": "2026-11-15T04:43:56.237Z",
-    "repository": "microsoft/react-native-windows",
-    "learningId": "learn-github-microsoft-react-native-windows",
-    "contentHash": "30b42071349ac385dcc4164df5514524d3bfed6048cec461fc7034d1dc89b980",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-ZR13",
     "timestamp": "2026-11-15T04:53:13.239Z",
     "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -7492,6 +7432,66 @@
     "contentHash": "015f62fc61113d1ec72a3ea7290a96a1e239931feab3e49a8e2d7ff9a586ab4b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-6XS2",
+    "timestamp": "2026-11-17T16:13:59.810Z",
+    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+    "contentHash": "fc71952aaeccab5c08f178e316a2fe0dc7ed4b1f9b5c88e48828c45aeb423a54",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-70A6",
+    "timestamp": "2026-11-17T16:14:03.054Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "f1b51596a49bf1746097c92d3e6ca1e225b98b3c6fab8a7b64f6e87a21c5b6fc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-75W2",
+    "timestamp": "2026-11-17T16:14:10.322Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "5ec636e839dda6afa871872737502490bd155e86b2036e58fcc0ac547df3399e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-7B1X",
+    "timestamp": "2026-11-17T16:14:17.013Z",
+    "repository": "SynaLinks/synalinks-skills",
+    "learningId": "learn-github-synalinks-synalinks-skills",
+    "contentHash": "918569d412663992b80a9544730ec5c4b7f15032b9fb86ff52c4f074b4255d8b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

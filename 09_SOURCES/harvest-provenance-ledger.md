@@ -10637,3 +10637,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-17T16:05:33.513Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `a4d26414` | Multi-dimensional audit evidence | 2026-11-17T16:05:49.430Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `d15a0866` | Multi-dimensional audit evidence | 2026-11-17T16:05:49.700Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-17T16:13:59.814Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `eac0a5e6` | Multi-dimensional audit evidence | 2026-11-17T16:14:03.057Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `a1e00523` | Multi-dimensional audit evidence | 2026-11-17T16:14:10.325Z |
+| `learn-github-synalinks-synalinks-skills` | `https://github.com/SynaLinks/synalinks-skills` | `17532841` | Multi-dimensional audit evidence | 2026-11-17T16:14:17.017Z |

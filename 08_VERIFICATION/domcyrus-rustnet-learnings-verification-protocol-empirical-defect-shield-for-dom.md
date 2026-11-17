@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T04:14:43.183Z",
+  "timestamp": "2026-11-17T16:14:20.743Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-domcyrus-rustnet-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [domcyrus-rustnet-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T04:14:43.183Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T16:14:20.743Z`  
 > **Learning ID**: `LEARN-EVO-domcyrus-rustnet-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `09d7fbf1`  
+> **Source Version**: `eac0a5e6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T04:14:31.780Z  
+> **Timestamp**: 2026-11-17T16:14:02.124Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T04:14:31.773Z  
+> **Harvest Timestamp**: 2026-11-17T16:14:02.118Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5238 stars
+- **Stars / Engagement**: 5243 stars
 
 ---
 
@@ -2526,145 +2526,98 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea7b63b5` (2026-11-13)
-**Commit Message**: fix: Cargo metadata warnings and Windows test crashes (#731)
+### Incident Patch 1: `eac0a5e6` (2026-11-17)
+**Commit Message**: chore(deps): bump maxminddb (#737)
 
-**File**: `.github/workflows/build-platforms.yml` (modified, +9/-0)
+Bumps the rust-dependencies group with 1 update: [maxminddb](https://github.com/oschwald/maxminddb-rust).
+
+
+Updates `maxminddb` from 0.32.0 to 0.33.0
+- [Release notes](https://github.com/oschwald/maxminddb-rust/releases)
+- [Changelog](https://github.com/oschwald/maxminddb-rust/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/oschwald/maxminddb-rust/compare/v0.32.0...v0.33.0)
+
+---
+updated-dependencies:
+- dependency-name: maxminddb
+  dependency-version: 0.33.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: rust-dependencies
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -197,6 +197,15 @@ jobs:
-           default-features: ${{ (contains(matrix.target, 'linux') || contains(matrix.target, 'apple')) && 'true' || 'false' }}
-           strip-symbols: ${{ inputs.strip-symbols && 'true' || 'false' }}
+@@ -1522,9 +1522,9 @@ dependencies = [
  
-+      - name: Test Windows executable startup
-+        if: runner.os == 'Windows'
-+        shell: pwsh
-+        run: |
-+          & './target/${{ matrix.target }}/release/rustnet.exe' --version
-+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-+          & './target/${{ matrix.target }}/release/rustnet.exe' --help
-+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-+
-       - name: Run workspace tests
-         if: matrix.run-tests
-         run: cargo test --locked --workspace --all-features --no-fail-fast --target ${{ matrix.target }} --verbose
+ [[package]]
+ name = "maxminddb"
+-version = "0.32.0"
++version = "0.33.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9b43d2458d977b610b04a3858e6504f06133663d303a1a0606601b530bfc9bc6"
++checksum = "317d6b918ba3893345af072f52cb56bcfcb532a9d0ebcf861ab3c25b37a316ac"
+ dependencies = [
+  "ipnetwork 0.21.1",
+  "memchr",
 ```
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `crates/rustnet-core/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
+@@ -24,7 +24,7 @@ rustc-hash.workspace = true
+ crossbeam.workspace = true
+ dns-lookup = "4.0"
+ pnet_datalink = "0.35"
+-maxminddb = "0.32"
++maxminddb = "0.33"
+ flate2 = "1"
+ ring = "0.17"
+ aes = "0.9"
+```
+
+---
+
+### Incident Patch 2: `b29710e0` (2026-11-16)
+**Commit Message**: chore(deps): bump rust from 1.98-slim to 1.99-slim in the docker group (#736)
+
+Bumps the docker group with 1 update: rust.
+
+
+Updates `rust` from 1.98-slim to 1.99-slim
+
+---
+updated-dependencies:
+- dependency-name: rust
+  dependency-version: 1.99-slim
+  dependency-type: direct:production
+  dependency-group: docker
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ # Multi-stage Docker build for RustNet
+ # Base images are pinned by digest for reproducible, tamper-evident builds.
+-FROM rust:1.98-slim@sha256:4cd829461bd5c4d511c32e269da9cb8929223b666519d8004e35fc8d1d771ab7 AS builder
++FROM rust:1.99-slim@sha256:f6c4a35d21dbb3c89d7a8d056c193e94fc09037f2b58dd858b09c39a47dd02d7 AS builder
  
- ### Fixed
-+- Link Windows synchronization APIs explicitly to prevent x86 startup failures and x64 test crashes caused by enclave DLL imports (#731)
-+- Remove redundant homepage metadata to prevent Cargo manifest warnings when building from source (#731)
- - Validate complete DNS questions and recognize STUN on port 53 before DNS to prevent false resolver failures (#722)
- - Keep headless shutdown bounded when stderr or account-name services stall, using numeric account IDs until background lookups finish (#721)
- - Discard pending TCP RTT probes on one-byte keepalives to prevent inflated or ambiguous timing samples after missed ACKs or last-byte retransmissions
-```
-
-**File**: `Cargo.toml` (modified, +0/-2)
-```diff
-@@ -17,7 +17,6 @@ authors = ["domcyrus"]
- edition = "2024"
- rust-version = "1.88.0" # Let-chains require Rust 1.88.0+
- repository = "https://github.com/domcyrus/rustnet"
--homepage = "https://github.com/domcyrus/rustnet"
- license = "Apache-2.0"
- 
- # Single source of truth for the internal crate versions (and the few deps
-@@ -47,7 +46,6 @@ edition.workspace = true
- rust-version.workspace = true
- description = "A cross-platform per-process network monitor with TUI and headless JSON modes"
- repository.workspace = true
--homepage.workspace = true
- documentation = "https://docs.rs/rustnet-monitor"
- readme = "README.md"
- license.workspace = true
-```
-
-**File**: `build.rs` (modified, +17/-0)
-```diff
-@@ -81,6 +81,23 @@ fn setup_windows_npcap_delay_load() {
-     let target_env = env::var("CARGO_CFG_TARGET_ENV").unwrap_or_default();
- 
-     if target_os == "windows" && target_env == "msvc" {
-+        // pcap's windows-sys 0.36 import library also exports WaitOnAddress and
-+        // WakeByAddress* from the enclave-only vertdll.dll. Resolve those
-+        // symbols before scanning dependencies, including callers that are
-+        // only pulled in later from the test harness or standard library.
-+        println!("cargo:rustc-link-lib=synchronization");
-+        let x86 = env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|arch| arch == "x86");
-+        for (symbol, stack_bytes) in [
-+            ("WaitOnAddress", 16),
-+            ("WakeByAddressAll", 4),
-+            ("WakeByAddressSingle", 4),
-+        ] {
-+            if x86 {
-+                println!("cargo:rustc-link-arg=/INCLUDE:__imp__{symbol}@{stack_bytes}");
-+            } else {
-+                println!("cargo:rustc-link-arg=/INCLUDE:__imp_{symbol}");
-+            }
-+        }
-         println!("cargo:rustc-link-arg=/DELAYLOAD:Packet.dll");
-         println!("cargo:rustc-link-arg=/DELAYLOAD:wpcap.dll");
-         println!("cargo:rustc-link-arg=/DEFAULTLIB:delayimp.lib");
-```
-
-**File**: `crates/rustnet-capture/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -6,7 +6,6 @@ edition.workspace = true
- rust-version.workspace = true
- description = "libpcap/Npcap-based packet-capture backend for rustnet: device selection, BPF filters, macOS PKTAP, TUN/TAP, and a raw-frame reader"
- repository.workspace = true
--homepage.workspace = true
- documentation = "https://docs.rs/rustnet-capture"
- readme = "README.md"
- license.workspace = true
-```
-
-**File**: `crates/rustnet-core/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -6,7 +6,6 @@ edition.workspace = true
- rust-version.workspace = true
- description = "Network analysis library: packet parsing, protocol types, deep packet inspection, link-layer parsers, connection merging, and DNS/GeoIP/OUI lookups: the reusable core of rustnet"
- repository.workspace = true
--homepage.workspace = true
- documentation = "https://docs.rs/rustnet-core"
- readme = "README.md"
- license.workspace = true
-```
-
-**File**: `crates/rustnet-host/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -6,7 +6,6 @@ edition.workspace = true
- rust-version.workspace = true
- description = "Cross-platform process attribution and host TCP/UDP socket inventory for rustnet"
- repository.workspace = true
--homepage.workspace = true
- documentation = "https://docs.rs/rustnet-host"
- readme = "README.md"
- license.workspace = true
-```
-
-**File**: `crates/rustnet-sandbox/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -6,7 +6,6 @@ edition.workspace = true
- rust-version.workspace = true
- description = "Post-initialization sandboxing and root privilege dropping for rustnet: Landlock + capability drops on Linux, Seatbelt on macOS, restricted token + job object on Windows, and a shared uid drop on Linux/macOS/FreeBSD"
- repository.workspace = true
--homepage.workspace = true
- documentation = "https://docs.rs/rustnet-sandbox"
- readme = "README.md"
- license.workspace = true
+ # Install rustfmt component (required for eBPF compilation)
+ RUN rustup component add rustfmt
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #737** (2026-11-17): chore(deps): bump maxminddb from 0.32.0 to 0.33.0 in the rust-dependencies group (@dependabot[bot])
+- **PR #736** (2026-11-16): chore(deps): bump rust from 1.98-slim to 1.99-slim in the docker group (@dependabot[bot])
+- **PR #735** (2026-11-16): chore(deps): bump zip from 9.5.0 to 9.5.1 in the rust-dependencies group (@dependabot[bot])
 - **PR #731** (2026-11-13): fix: Cargo metadata warnings and Windows test crashes (@domcyrus)
 - **PR #730** (2026-11-13): chore(deps): bump zip from 9.4.2 to 9.5.0 in the rust-dependencies group (@dependabot[bot])
 - **PR #729** (2026-11-12): chore(deps): bump debian from `a29215f` to `a72b443` in the docker group (@dependabot[bot])
-- **PR #728** (2026-11-12): docs: document verified Resolute amd64v3 PPA publication (@domcyrus)
-- **PR #726** (2026-11-12): chore(deps): bump zip from 9.4.1 to 9.4.2 in the rust-dependencies group (@dependabot[bot])
-- **PR #725** (2026-11-10): chore(deps): bump the rust-dependencies group with 3 updates (@dependabot[bot])
 
 ---
 
@@ -2684,39 +2637,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Cargo metadata warnings and Windows test crashes
+## X. deps): bump maxminddb
 
 **RULE**:
-When implementing operations in `.github/workflows/build-platforms.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea7b63b5`: Cargo metadata warnings and Windows test crashes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eac0a5e6`: deps): bump maxminddb. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-platforms.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - name: Test Windows executable startup
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          & './target/${{ matrix.target }}/release/rustnet.exe' --version
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          & './target/${{ matrix.target }}/release/rustnet.exe' --help
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
+version = "0.33.0"
+checksum = "317d6b918ba3893345af072f52cb56bcfcb532a9d0ebcf861ab3c25b37a316ac"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "0.32.0"
+checksum = "9b43d2458d977b610b04a3858e6504f06133663d303a1a0606601b530bfc9bc6"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea7b63b5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eac0a5e6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

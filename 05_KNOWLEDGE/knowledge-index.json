@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T16:05:54.382Z",
-  "total_verified_learnings": 8902,
+  "last_updated": "2026-11-17T16:14:21.994Z",
+  "total_verified_learnings": 8904,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20323,
+  "total_items": 20336,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215006,8 +215006,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "170fb83d",
-      "content_hash": "6ba19f9d258d52f4765810cdcc38c0b62090940f16a7f55d4aeb0051bf477be7",
+      "source_version": "a1e00523",
+      "content_hash": "5ec636e839dda6afa871872737502490bd155e86b2036e58fcc0ac547df3399e",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -215020,6 +215020,11 @@
           "number": 8581,
           "title": "Expose Nexus caller RPS throttle status in Describe",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8997,
+          "title": "refuse polls that arrive after ShutdownWorker of an unloaded task queue",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215027,7 +215032,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T06:00:10.053Z",
+      "verified_at": "2026-11-17T16:14:10.163Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215081,10 +215086,10 @@
       "relative_path": "08_VERIFICATION/temporalio-temporal-verification-protocol-empirical-defect-shield-for-temporalio.md",
       "title": "Verification Protocol: Empirical Defect Shield for temporalio/temporal",
       "repository": "temporalio/temporal",
-      "source_version": "170fb83d",
-      "content_hash": "67e82cf410df4faa0cabf2c812f22e5bdbcdd211aa4e6c3da301f958bce32cb5",
+      "source_version": "a1e00523",
+      "content_hash": "25d7c3ad3fa997ceca8ad1502fa0d11400797a3bf8c8403da395896a53dd6fbf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:00:10.821Z"
+      "persisted_at": "2026-11-17T16:14:10.743Z"
     },
     "learn-github-alibaba-zvec": {
       "learning_id": "learn-github-alibaba-zvec",
@@ -215206,9 +215211,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for temporalio-temporal-learnings",
       "repository": "temporalio-temporal-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c948943208ee125c8db4edbbc470577570495ca749356430a9493278cda874f",
+      "content_hash": "fdbe2b4a74b7b1130305f650a40805ebdad70e8706f5b5bec90552ac8bf706e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:00:50.122Z"
+      "persisted_at": "2026-11-17T16:14:21.994Z"
     },
     "candidate_directive-turbo-constrain-record-int8-kernels-to-dispatched-isa": {
       "item_id": "candidate_directive-turbo-constrain-record-int8-kernels-to-dispatched-isa",
@@ -222880,14 +222885,19 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "09d7fbf1",
-      "content_hash": "a522f2c1223dbc77c798903369b3db9a6fe4bbf295b27c71f947deccae7b9acb",
+      "source_version": "eac0a5e6",
+      "content_hash": "f1b51596a49bf1746097c92d3e6ca1e225b98b3c6fab8a7b64f6e87a21c5b6fc",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
         {
           "number": 8437,
           "title": "Cargo metadata warnings and Windows test crashes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8996,
+          "title": "bump maxminddb",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -222896,7 +222906,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T04:14:32.619Z",
+      "verified_at": "2026-11-17T16:14:02.895Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222938,10 +222948,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "repository": "domcyrus/rustnet",
-      "source_version": "09d7fbf1",
-      "content_hash": "1151ed1a965f972864ef2b6c8583218494c2aed0768c886782f00e668bc205e8",
+      "source_version": "eac0a5e6",
+      "content_hash": "f8b0ea5615d1d7b5c436bdf69cd05cfd0b971d678f2e7e75ce428df32996370d",
       "domain_letter": "B",
-      "persisted_at": "2026-11-14T04:14:33.163Z"
+      "persisted_at": "2026-11-17T16:14:03.362Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet",
@@ -222950,10 +222960,10 @@
       "relative_path": "08_VERIFICATION/domcyrus-rustnet-verification-protocol-empirical-defect-shield-for-domcyrus-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus/rustnet",
       "repository": "domcyrus/rustnet",
-      "source_version": "09d7fbf1",
-      "content_hash": "47acb1b0ea835948008b9696c4fae1cd7228ec70e46086c8f2f417abce53b29d",
+      "source_version": "eac0a5e6",
+      "content_hash": "14e50c4c44452f8e2c38d205e6610568363a8da8395e4ba60590d4ed613274fd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T04:14:33.279Z"
+      "persisted_at": "2026-11-17T16:14:03.497Z"
     },
     "learn-github-aws-amplify-amplify-js": {
       "learning_id": "learn-github-aws-amplify-amplify-js",
@@ -223046,9 +223056,9 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "5012950f27cb6ea07aa96fc4fc9fe953ab9c1b97c83c3a3736601675221920d0",
+      "content_hash": "55639e2070a4409db081c2c7f20d12b2e355238f2cba1fa0dacefb519913bde6",
       "domain_letter": "B",
-      "persisted_at": "2026-11-14T04:14:43.414Z"
+      "persisted_at": "2026-11-17T16:14:20.974Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings",
@@ -223058,9 +223068,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus-rustnet-learnings",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "f3dff4317c69c81e01c4a800eb1e54b2219b8e5fd7f09d72f0c6509a9ff48d4c",
+      "content_hash": "e130387200334423b368929c06053fdf90a8f7dbdd958e5ecc00ead65e687585",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T04:14:43.531Z"
+      "persisted_at": "2026-11-17T16:14:21.104Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning",
@@ -241276,10 +241286,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-architecture-intelligence-temporalio-temporal-core-invariant.md",
       "title": "Architecture Intelligence: temporalio/temporal Core Invariants",
       "repository": "temporalio/temporal",
-      "source_version": "170fb83d",
-      "content_hash": "82accb0f703c2dc7f178142e7053e7ae0b79411a82cef7a903a103df348d4763",
+      "source_version": "a1e00523",
+      "content_hash": "4f1e10aa2370c56773f0a33cf41659b740ce6739bd57e1aa31603abf8be10a80",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T06:00:10.565Z"
+      "persisted_at": "2026-11-17T16:14:10.616Z"
     },
     "rule-7277": {
       "learning_id": "rule-7277",
@@ -241327,9 +241337,9 @@
       "title": "Architecture Intelligence: temporalio-temporal-learnings Core Invariants",
       "repository": "temporalio-temporal-learnings",
       "source_version": "HEAD",
-      "content_hash": "dbc25bdadf081e2f709540653f7a97c20937896530f1c69da7c69afd974134d4",
+      "content_hash": "11d64b7d59331178b85f86343892c9894c47a1c2e12ec74adeb78639ada9914a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T06:00:49.991Z"
+      "persisted_at": "2026-11-17T16:14:21.861Z"
     },
     "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants",
@@ -272377,6 +272387,196 @@
       "content_hash": "2ef47b1bcc4e9633236492f789a6afa50b839d7f79e8e387ff213f07385408a9",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T16:05:53.747Z"
+    },
+    "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16": {
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "slug": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
+      "content_hash": "fc71952aaeccab5c08f178e316a2fe0dc7ed4b1f9b5c88e48828c45aeb423a54",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T16:13:59.639Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-research-knowledge-intelligence-n.md",
+      "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16 Core Invariants",
+      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
+      "content_hash": "1e26626681204ffae915f0ab0569c1894428d76b08b36e7c89fcf1987aeb2e0d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:13:59.987Z"
+    },
+    "rule-8996": {
+      "learning_id": "rule-8996",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8996,
+      "title": "bump maxminddb",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "eac0a5e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:14:02.895Z"
+    },
+    "candidate_directive-bump-maxminddb": {
+      "item_id": "candidate_directive-bump-maxminddb",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-70FC-bump-maxminddb.md",
+      "title": "bump maxminddb",
+      "repository": "domcyrus/rustnet",
+      "source_version": "eac0a5e6",
+      "content_hash": "7d51578e1c50fe64d9df07253b55c5acc1c714a600bca144f6823181f53dda5b",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-17T16:14:03.244Z"
+    },
+    "rule-8997": {
+      "learning_id": "rule-8997",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8997,
+      "title": "refuse polls that arrive after ShutdownWorker of an unloaded task queue",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "a1e00523",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:14:10.163Z"
+    },
+    "candidate_directive-refuse-polls-that-arrive-after-shutdownworker-of-an-unloaded-task-queue": {
+      "item_id": "candidate_directive-refuse-polls-that-arrive-after-shutdownworker-of-an-unloaded-task-queue",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7EP6-refuse-polls-that-arrive-after-shutdownworker-of-an-unloaded-task-queue.md",
+      "title": "refuse polls that arrive after ShutdownWorker of an unloaded task queue",
+      "repository": "temporalio-temporal-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0ae5d5d0280d0746ed302ec5ed6d19591ab5fc05cba9cbd9f4ad3be3ca2c4665",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T16:14:21.741Z"
+    },
+    "learn-github-synalinks-synalinks-skills": {
+      "learning_id": "learn-github-synalinks-synalinks-skills",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "SynaLinks/synalinks-skills",
+      "repository": "SynaLinks/synalinks-skills",
+      "slug": "synalinks-synalinks-skills",
+      "platform": "github",
+      "source_url": "https://github.com/SynaLinks/synalinks-skills",
+      "source_version": "17532841",
+      "content_hash": "918569d412663992b80a9544730ec5c4b7f15032b9fb86ff52c4f074b4255d8b",
+      "dossier_path": "07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T16:14:16.836Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-docs-agents-the-answer-comes-from-the-step-loop": {
+      "item_id": "candidate_directive-docs-agents-the-answer-comes-from-the-step-loop",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7B7H-docs-agents-the-answer-comes-from-the-step-loop.md",
+      "title": "docs(agents): the answer comes from the step loop",
+      "repository": "SynaLinks/synalinks-skills",
+      "source_version": "17532841",
+      "content_hash": "11a4325ae131d1b87a049706999cc5716f1016199a49dee8a2612d3b972706f4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T16:14:17.214Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-synalinks-synalinks-skills-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-synalinks-synalinks-skills-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-synalinks-synalinks-skills-technical-construction-intelligence-synalinks-synalin.md",
+      "title": "Technical Construction Intelligence: SynaLinks/synalinks-skills Core Invariants",
+      "repository": "SynaLinks/synalinks-skills",
+      "source_version": "17532841",
+      "content_hash": "382cd0f9988f01de496c2c69946e3259c5b5124ea5ed32476d3ed787711be45e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T16:14:17.332Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-synalinks-synalinks-skills": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-synalinks-synalinks-skills",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/synalinks-synalinks-skills-skill-operational-integration-playbook-for-synalinks-.md",
+      "title": "Skill: Operational & Integration Playbook for SynaLinks/synalinks-skills",
+      "repository": "SynaLinks/synalinks-skills",
+      "source_version": "17532841",
+      "content_hash": "f36352ffe5fdc8b049912f06407e844216fef39e40c2866dfb7308c87fadbbc9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T16:14:17.458Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-synalinks-synalinks-skills": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-synalinks-synalinks-skills",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/synalinks-synalinks-skills-verification-protocol-empirical-defect-shield-for-syn.md",
+      "title": "Verification Protocol: Empirical Defect Shield for SynaLinks/synalinks-skills",
+      "repository": "SynaLinks/synalinks-skills",
+      "source_version": "17532841",
+      "content_hash": "2aa2649fd05988d95940ab8c9e8016ff389abfd218be8af0f6d352abe8d052b7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T16:14:17.572Z"
+    },
+    "candidate_directive-deps-bump-maxminddb": {
+      "item_id": "candidate_directive-deps-bump-maxminddb",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7E0K-deps-bump-maxminddb.md",
+      "title": "deps): bump maxminddb",
+      "repository": "domcyrus-rustnet-learnings",
+      "source_version": "HEAD",
+      "content_hash": "154678b8c1f50c980221c8d9befac0bf37b41930a37376b56c73174b10d6595f",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-17T16:14:20.855Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-l": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-l",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-learnings-research-knowledge-inte.md",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings Core Invariants",
+      "repository": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings",
+      "source_version": "HEAD",
+      "content_hash": "58c392d624ea3627c24b9293081978bddcef9426c684d7637ed5ca11d4bc919b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:14:21.389Z"
     }
   },
   "ai-builder-brain": {

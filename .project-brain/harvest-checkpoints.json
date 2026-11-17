@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T16:05:49.708Z",
+  "last_updated": "2026-11-17T16:14:17.038Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3336,14 +3336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-synalinks-synalinks-skills",
-      "content_hash": "2be2a9241c3f3c3ad03b07095ae19b2852ed34aead2d24ae2824cf76e1a8eb1b",
-      "verified_at": "2026-11-13T09:17:35.642Z",
+      "content_hash": "918569d412663992b80a9544730ec5c4b7f15032b9fb86ff52c4f074b4255d8b",
+      "verified_at": "2026-11-17T16:14:17.037Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T09:17:35.642Z"
+      "last_updated": "2026-11-17T16:14:17.037Z"
     },
     "facebook/docusaurus": {
       "repository": "facebook/docusaurus",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "6ba19f9d258d52f4765810cdcc38c0b62090940f16a7f55d4aeb0051bf477be7",
-      "verified_at": "2026-11-15T06:00:10.239Z",
+      "content_hash": "5ec636e839dda6afa871872737502490bd155e86b2036e58fcc0ac547df3399e",
+      "verified_at": "2026-11-17T16:14:10.333Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T06:00:10.239Z"
+      "last_updated": "2026-11-17T16:14:10.333Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "a522f2c1223dbc77c798903369b3db9a6fe4bbf295b27c71f947deccae7b9acb",
-      "verified_at": "2026-11-14T04:14:32.808Z",
+      "content_hash": "f1b51596a49bf1746097c92d3e6ca1e225b98b3c6fab8a7b64f6e87a21c5b6fc",
+      "verified_at": "2026-11-17T16:14:03.065Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T04:14:32.808Z"
+      "last_updated": "2026-11-17T16:14:03.065Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",
@@ -15651,14 +15651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-      "content_hash": "1f3604121049bb9a2a7ccd4b2f6fb0f9572ef86423e0c055d1d2920f2d3c59de",
-      "verified_at": "2026-11-13T04:13:09.706Z",
+      "content_hash": "fc71952aaeccab5c08f178e316a2fe0dc7ed4b1f9b5c88e48828c45aeb423a54",
+      "verified_at": "2026-11-17T16:13:59.822Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T04:13:09.706Z"
+      "last_updated": "2026-11-17T16:13:59.822Z"
     },
     "mrjackwills/oxker": {
       "repository": "mrjackwills/oxker",

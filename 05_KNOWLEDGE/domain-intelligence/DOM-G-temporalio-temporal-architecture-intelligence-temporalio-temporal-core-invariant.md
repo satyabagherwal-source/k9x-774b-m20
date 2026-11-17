@@ -4,24 +4,24 @@
 {
   "source_repository": "temporalio/temporal",
   "source_url": "https://github.com/temporalio/temporal",
-  "source_version": "170fb83d",
+  "source_version": "a1e00523",
   "license": "MIT",
-  "timestamp": "2026-11-15T06:00:10.433Z",
+  "timestamp": "2026-11-17T16:14:10.497Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-temporalio-temporal",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `170fb83d`).  
-> **License**: MIT | **Timestamp**: `2026-11-15T06:00:10.433Z`  
+> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `a1e00523`).  
+> **License**: MIT | **Timestamp**: `2026-11-17T16:14:10.497Z`  
 > **Learning ID**: `learn-github-temporalio-temporal`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from temporalio/temporal:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T06:00:09.280Z  
+> **Harvest Timestamp**: 2026-11-17T16:14:09.417Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24404 stars
+- **Stars / Engagement**: 24455 stars
 
 ---
 
@@ -2135,468 +2135,186 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `623e5f17` (2026-11-14)
-**Commit Message**: Expose Nexus caller RPS throttle status in Describe (#13000)
+### Incident Patch 1: `a1e00523` (2026-11-17)
+**Commit Message**: fix: refuse polls that arrive after ShutdownWorker of an unloaded task queue (#13116)
 
 ## What changed?
+This PR makes matching record a Worker as shut down before the poll
+cancellation fan-out, so that a poll that arrives later is refused at
+once.
 
-Report scheduled Nexus operations and cancellations as BLOCKED when the
-shared caller-RPS throttle state tracks their namespace and destination.
-Covers HSM and CHASM Describe responses and preserves circuit-breaker
-precedence. Re-lands #12953, which merged into #12928's branch but was
-reverted before #12928 reached main.
+Fixes #13114
 
 ## Why?
+A Worker that shuts down right after its start can send `ShutdownWorker`
+while its first poll is still on its way. Matching skips the fan-out
+when the root partition isn't loaded, and it didn't record the Worker in
+`shutdownWorkers`. The late poll was then accepted and stayed open for
+50 to 60 seconds. An SDK that waits for the server to end its polls took
+that long to shut down.
 
-Make in-memory throttling visible to users without persisting a failure
-or retry timer.
+Related: temporalio/sdk-rust#1802 and temporalio/sdk-python#2133.
 
 ## How did you test it?
+- [x] built
+- [ ] run locally and tested manually
+- [ ] covered by existing tests
+- [x] added new unit test(s)
+- [x] added new functional test(s)
 
-- [x] Added unit tests; affected queue, history, and CHASM packages pass
-with `-tags test_dep`.
+Both new tests shut a Worker down for an unloaded task queue and then
+poll with the same key. In the functional test the poll took 59.9s
+without the fix, and 0.06s with it.
 
-**File**: `chasm/lib/nexusoperation/library.go` (modified, +15/-6)
+## Potential risks
+`shutdownWorkers` is local to each matching host. So a poll that lands
+on a partition of another host is still acc
+
+**File**: `service/matching/matching_engine.go` (modified, +10/-4)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"go.temporal.io/server/chasm"
- 	nexusoperationpb "go.temporal.io/server/chasm/lib/nexusoperation/gen/nexusoperationpb/v1"
- 	"go.temporal.io/server/common/dynamicconfig"
-+	"go.temporal.io/server/common/namespace"
- 	"go.uber.org/fx"
- 	"google.golang.org/grpc"
- )
-@@ -28,10 +29,14 @@ var OperationContextKey = operationContextKeyType{}
- // DestinationBlockedFn reports whether the outbound queue is blocking an endpoint.
- type DestinationBlockedFn func(namespaceID string, destination string) bool
- 
-+// DestinationThrottledFn reports whether the caller RPS budget is limiting a destination.
-+type DestinationThrottledFn func(namespaceName namespace.Name, destination string) bool
-+
- // OperationContext holds dependencies injected into the chasm.Context for use by Operation methods.
- type OperationContext struct {
--	DestinationBlocked DestinationBlockedFn
--	MetricTagConfig    dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
-+	DestinationBlocked   DestinationBlockedFn
-+	DestinationThrottled DestinationThrottledFn
-+	MetricTagConfig      dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
- }
- 
- // Library registers the Nexus operation components and tasks. The history service builds it with newLibrary, which
-@@ -41,8 +46,9 @@ type OperationContext struct {
- type Library struct {
- 	chasm.UnimplementedLibrary
- 
--	destinationBlocked DestinationBlockedFn
--	metricTagConfig    dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
-+	destinationBlocked   DestinationBlockedFn
-+	destinationThrottled DestinationThrottledFn
-+	metricTagConfig      dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
- 
- 	handler *handler
- 
-@@ -69,12 +75,14 @@ type libraryParams struct {
- 	CancellationBackoffTaskHandler             *cancellationBackoffTaskHandler
- 	DynamicConfig                              *dynamicconfig.Collection
- 	DestinationBlocked                         DestinationBlockedFn
-+	DestinationThrottled                       DestinationThrottledFn `optional:"true"`
- }
- 
- func newLibrary(params libraryParams) *Library {
- 	return &Library{
- 		metricTagConfig:                            MetricTagConfiguration.Get(params.DynamicConfig),
- 		destinationBlocked:                         params.DestinationBlocked,
-+		destinationThrottled:                       params.DestinationThrottled,
- 		handler:                                    params.Handler,
- 		operationBackoffTaskHandler:                params.OperationBackoffTaskHandler,
- 		operationInvocationTaskHandler:             params.OperationInvocationTaskHandler,
-@@ -108,8 +116,9 @@ func (l *Library) Components() []*chasm.RegistrableComponent {
- 			chasm.WithBusinessIDAlias("OperationId"),
- 			chasm.WithContextValues(map[any]any{
- 				OperationContextKey: &OperationContext{
--					MetricTagConfig:    l.metricTagConfig,
--					DestinationBlocked: l.destinationBlocked,
-+					MetricTagConfig:      l.metricTagConfig,
-+					DestinationBlocked:   l.destinationBlocked,
-+					DestinationThrottled: l.destinationThrottled,
- 				},
- 			}),
- 		),
-```
-
-**File**: `chasm/lib/nexusoperation/operation.go` (modified, +15/-0)
-```diff
-@@ -693,6 +693,14 @@ func (o *Operation) DestinationBlocked(ctx chasm.Context) bool {
- 	return opCtx.DestinationBlocked(ctx.ExecutionKey().NamespaceID, o.Endpoint)
- }
- 
-+// DestinationThrottled reports whether the caller RPS budget is holding this operation.
-+func (o *Operation) DestinationThrottled(ctx chasm.Context) bool {
-+	//nolint:revive // unchecked-type-assertion: intentional panic on missing context value
-+	opCtx := ctx.Value(OperationContextKey).(*OperationContext)
-+	return opCtx.DestinationThrottled != nil &&
-+		opCtx.DestinationThrottled(ctx.NamespaceEntry().Name(), taskDestination(o.Endpoint))
-+}
-+
- func (o *Operation) buildExecutionInfo(ctx chasm.Context) *nexuspb.NexusOperationExecutionInfo {
- 	requestData := o.RequestData.Get(ctx)
- 	key := ctx.ExecutionKey()
-@@ -753,11 +761,18 @@ func (o *Operation) buildExecutionInfo(ctx chasm.Context) *nexuspb.NexusOperatio
- 	if info.State == enumspb.PENDING_NEXUS_OPERATION_STATE_SCHEDULED && o.DestinationBlocked(ctx) {
- 		info.State = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
- 		info.BlockedReason = "The circuit breaker is open."
-+	} else if info.State == enumspb.PENDING_NEXUS_OPERATION_STATE_SCHEDULED && o.DestinationThrottled(ctx) {
-+		info.State = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
-+		info.BlockedReason = "Requests from this namespace to the endpoint are being rate limited."
- 	}
- 	if info.GetCancellationInfo().GetState() == enumspb.NEXUS_OPERATION_CANCELLATION_STATE_SCHEDULED &&
- 		o.DestinationBlocked(ctx) {
- 		info.CancellationInfo.State = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
- 		info.CancellationInfo.BlockedReason = "The circuit breaker is open."
-+	} else if info.GetCancellationInfo().GetState() == enumspb.NEXUS_OPERATION_CANCELLATION_STATE_SCHEDULED &&
-+		o.DestinationThrottled(ctx) {
-+		info.CancellationInfo.State = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
-+		info.CancellationInfo.BlockedReason = "Requests from this namespace to the endpoint are being rate limited."
- 	}
- 
- 	return info
-```
-
-**File**: `chasm/lib/nexusoperation/operation_test.go` (modified, +49/-0)
-```diff
-@@ -638,3 +638,52 @@ func TestOperation_BuildExecutionInfo_ReturnsIsolatedSearchAttributes(t *testing
- 	require.NotContains(t, op.Visibility.Get(ctx).CustomSearchAttributes(ctx), "injected",
- 		"DescribeNexusOperation response SearchAttributes must be a copy, not the live Visibility map")
- }
-+
-+func TestDescribeCallerRPSThrottled(t *testing.T) {
-+	t.Parallel()
-+	for _, tc := range []struct {
-+		name        string
-+		breakerOpen bool
-+		backingOff  bool
-+		wantReason  string
-+	}{
-+		{name: "throttled", wantReason: "Requests from this namespace to the endpoint are being rate limited."},
-+		{name: "breaker takes precedence", breakerOpen: true, wantReason: "The circuit breaker is open."},
-+		{name: "backing off", backingOff: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			ctx := newCallbackTestContext()
-+			ctx.GoCtx = context.WithValue(t.Context(), OperationContextKey, &OperationContext{
-+				DestinationBlocked: func(string, string) bool { return tc.breakerOpen },
-+				DestinationThrottled: func(ns namespace.Name, destination string) bool {
-+					require.Equal(t, namespace.Name("ns-name"), ns)
-+					require.Equal(t, "endpoint", destination)
-+					return true
-+				},
-+			})
-+			op := newTestOperation()
-+			op.Endpoint = "endpoint"
-+			op.Status = nexusoperationpb.OPERATION_STATUS_SCHEDULED
-+			cancel := newCancellation(&nexusoperationpb.CancellationState{Status: nexusoperationpb.CANCELLATION_STATUS_SCHEDULED})
-+			if tc.backingOff {
-+				op.Status = nexusoperationpb.OPERATION_STATUS_BACKING_OFF
-+				cancel.Status = nexusoperationpb.CANCELLATION_STATUS_BACKING_OFF
-+			}
-+			op.Cancellation = chasm.NewComponentField(ctx, cancel)
-+			op.RequestData = chasm.NewDataField(ctx, &nexusoperationpb.OperationRequestData{})
-+			op.Visibility = chasm.NewComponentField(ctx, chasm.NewVisibility(ctx))
-+			opStatus, cancelStatus := op.Status, cancel.Status
-+			info := op.buildExecutionInfo(ctx)
-+			wantState, wantCancelState := PendingOperationState(opStatus), CancellationAPIState(cancelStatus)
-+			if tc.wantReason != "" {
-+				wantState = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
-+				wantCancelState = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
-+			}
-+			require.Equal(t, wantState, info.State)
-+			require.Equal(t, wantCancelState, info.CancellationInfo.State)
-+			require.Equal(t, tc.wantReason, info.BlockedReason)
-+			require.Equal(t, tc.wantReason, info.CancellationInfo.BlockedReason)
-+		})
-+	}
-+}
-```
-
-**File**: `chasm/lib/workflow/nexus_methods.go` (modified, +6/-0)
-```diff
-@@ -286,6 +286,9 @@ func (w *Workflow) BuildPendingNexusOperationInfos(
- 		if state == enumspb.PENDING_NEXUS_OPERATION_STATE_SCHEDULED && op.DestinationBlocked(ctx) {
- 			state = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
- 			blockedReason = "The circuit breaker is open."
-+		} else if state == enumspb.PENDING_NEXUS_OPERATION_STATE_SCHEDULED && op.DestinationThrottled(ctx) {
-+			state = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
-+			blockedReason = "Requests from this namespace to the endpoint are being rate limited."
- 		}
- 
- 		info := &workflowpb.PendingNexusOperationInfo{
-@@ -314,6 +317,9 @@ func (w *Workflow) BuildPendingNexusOperationInfos(
- 			if state == enumspb.NEXUS_OPERATION_CANCELLATION_STATE_SCHEDULED && op.DestinationBlocked(ctx) {
- 				state = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
- 				blockedReason = "The circuit breaker is open."
-+			} else if state == enumspb.NEXUS_OPERATION_CANCELLATION_STATE_SCHEDULED && op.DestinationThrottled(ctx) {
-+				state = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
-+				blockedReason = "Requests from this namespace to the endpoint are being rate limited."
- 			}
- 
- 			info.CancellationInfo = &workflowpb.NexusOperationCancellationInfo{
-```
-
-**File**: `chasm/lib/workflow/nexus_methods_test.go` (modified, +27/-0)
-```diff
-@@ -8,9 +8,11 @@ import (
- 	"github.com/stretchr/testify/require"
- 	commandpb "go.temporal.io/api/command/v1"
- 	enumspb "go.temporal.io/api/enums/v1"
-+	"go.temporal.io/server/chasm"
- 	"go.temporal.io/server/chasm/lib/nexusoperation"
- 	nexusoperationpb "go.temporal.io/server/chasm/lib/nexusoperation/gen/nexusoperationpb/v1"
- 	"go.temporal.io/server/common/dynamicconfig"
-+	"go.temporal.io/server/common/namespace"
- 	commonnexus "go.temporal.io/server/common/nexus"
- 	"go.temporal.io/server/service/history/tests"
- )
-@@ -102,3 +104,28 @@ func TestBuildPendingNexusOperationInfos_CircuitBreaker(t *testing.T) {
- 		}
- 	}
- }
-+
-+func TestBuildPendingNexusOperationInfosCallerRPSThrottled(t *testing.T) {
-+	t.Parallel()
-+	tcx := newTestContext(t, defaultConfig)
-+	_, key := scheduleOperation(t, tcx)
-+	op := tcx.wf.Operations[key].Get(tcx.chasmCtx)
-+	op.Cancellation = chasm.NewComponentField(tcx.chasmCtx, &nexusoperation.Cancellation{
-+		CancellationState: &nexusoperationpb.CancellationState{Status: nexusoperationpb.CANCELLATION_STATUS_SCHEDULED},
-+	})
-+	tcx.chasmCtx.GoCtx = context.WithValue(t.Context(), nexusoperation.OperationContextKey, &nexusoperation.OperationContext{
-+		DestinationBlocked: func(string, string) bool { return false },
-+		DestinationThrottled: func(ns namespace.Name, destination string) bool {
-+			require.Equal(t, tests.GlobalNamespaceEntry.Name(), ns)
-+			require.Equal(t, op.Endpoint, destination)
-+			return true
-+		},
-+	})
-+	infos, err := tcx.wf.BuildPendingNexusOperationInfos(tcx.chasmCtx)
-+	require.NoError(t, err)
-+	require.Len(t, infos, 1)
-+	require.Equal(t, enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED, infos[0].State)
-+	require.Equal(t, "Requests from this namespace to the endpoint are being rate limited.", infos[0].BlockedReason)
-+	require.Equal(t, enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED, infos[0].CancellationInfo.State)
-+	require.Equal(t, "Requests from this namespace to the endpoint are being rate limited.", infos[0].CancellationInfo.BlockedReason)
-+}
-```
-
-**File**: `service/history/api/describeworkflow/api.go` (modified, +17/-2)
-```diff
-@@ -19,6 +19,7 @@ import (
- 	persistencespb "go.temporal.io/server/api/persistence/v1"
- 	"go.temporal.io/server/chasm"
- 	chasmcallback "go.temporal.io/server/chasm/lib/callback"
-+	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
- 	chasmworkflow "go.temporal.io/server/chasm/lib/workflow"
- 	"go.temporal.io/server/common"
- 	"go.temporal.io/server/common/definition"
-@@ -65,6 +66,7 @@ func Invoke(
- 	workflowConsistencyChecker api.WorkflowConsistencyChecker,
- 	persistenceVisibilityMgr manager.VisibilityManager,
- 	outboundQueueCBPool *circuitbreakerpool.OutboundQueueCircuitBreakerPool,
-+	destinationThrottled chasmnexus.DestinationThrottledFn,
- ) (_ *historyservice.DescribeWorkflowExecutionResponse, retError error) {
- 	namespaceID := namespace.ID(req.GetNamespaceId())
- 	err := api.ValidateNamespaceUUID(namespaceID)
-@@ -361,6 +363,7 @@ func Invoke(
- 		executionInfo,
- 		executionState,
- 		outboundQueueCBPool,
-+		destinationThrottled,
- 		shard.GetLogger(),
- 	)
- 	if err != nil {
-@@ -592,8 +595,10 @@ func buildPendingNexusOperationInfosFromHSM(
- 	executionInfo *persistencespb.WorkflowExecutionInfo,
- 	executionState *persistencespb.WorkflowExecutionState,
- 	outboundQueueCBPool *circuitbreakerpool.OutboundQueueCircuitBreakerPool,
-+	destinationThrottled chasmnexus.DestinationThrottledFn,
- 	logger log.Logger,
- ) ([]*workflowpb.PendingNexusOperationInfo, error) {
-+	namespaceName := mutableState.GetNamespaceEntry().Name()
- 	opColl := nexusoperations.MachineCollection(mutableState.HSM())
- 	ops := opColl.List()
- 	result := make([]*workflowpb.PendingNexusOperationInfo, 0, len(ops))
-@@ -610,7 +615,7 @@ func buildPendingNexusOperationInfosFromHSM(
- 			return nil, serviceerror.NewInternal("failed to construct describe response")
- 		}
- 
--		operationInfo, err := buildPendingNexusOperationInfo(namespaceID, node, op, outboundQueueCBPool)
-+		operationInfo, err := buildPendingNexusOperationInfo(namespaceID, namespaceName, node, op, outboundQueueCBPool, destinationThrottled)
- 		if err != nil {
- 			logger.Error(
- 				"failed to build Nexus operation info while building describe response",
-@@ -633,9 +638,11 @@ func buildPendingNexusOperationInfosFromHSM(
- 
- func buildPendingNexusOperationInfo(
- 	namespaceID namespace.ID,
-+	namespaceName namespace.Name,
- 	node *hsm.Node,
- 	op nexusoperations.Operation,
- 	outboundQueueCBPool *circuitbreakerpool.OutboundQueueCircuitBreakerPool,
-+	destinationThrottled chasmnexus.DestinationThrottledFn,
- ) (*workflowpb.PendingNexusOperationInfo, error) {
- 	var state enumspb.PendingNexusOperationState
- 	switch op.State() {
-@@ -665,10 +672,13 @@ func buildPendingNexusOperationInfo(
- 		if cb.State() != gobreaker.StateClosed {
- 			state = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
- 			blockedReason = "The circuit breaker is open."
-+		} else if destinationThrottled != nil && destinationThrottled(namespaceName, op.Endpoint) {
-+			state = enumspb.PENDING_NEXUS_OPERATION_STATE_BLOCKED
-+			blockedReason = "Requests from this namespace to the endpoint are being rate limited."
- 		}
- 	}
- 
--	cancellationInfo, err := buildNexusOperationCancellationInfo(namespaceID, node, op, outboundQueueCBPool)
-+	cancellationInfo, err := buildNexusOperationCancellationInfo(namespaceID, namespaceName, node, op, outboundQueueCBPool, destinationThrottled)
+@@ -1510,6 +1510,16 @@ func (e *matchingEngineImpl) CancelOutstandingWorkerPolls(
  	if err != nil {
  		return nil, err
  	}
-@@ -703,9 +713,11 @@ func buildPendingNexusOperationInfo(
- 
- func buildNexusOperationCancellationInfo(
- 	namespaceID namespace.ID,
-+	namespaceName namespace.Name,
- 	node *hsm.Node,
- 	op nexusoperations.Operation,
- 	outboundQueueCBPool *circuitbreakerpool.OutboundQueueCircuitBreakerPool,
-+	destinationThrottled chasmnexus.DestinationThrottledFn,
- ) (*workflowpb.NexusOperationCancellationInfo, error) {
- 	cancelation, err := op.Cancelation(node)
- 	if err != nil {
-@@ -726,6 +738,9 @@ func buildNexusOperationCancellationInfo(
- 		if cb.State() != gobreaker.StateClosed {
- 			state = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
- 			blockedReason = "The circuit breaker is open."
-+		} else if destinationThrottled != nil && destinationThrottled(namespaceName, op.Endpoint) {
-+			state = enumspb.NEXUS_OPERATION_CANCELLATION_STATE_BLOCKED
-+			blockedReason = "Requests from this namespace to the endpoint are being rate limited."
++	if request.WorkerInstanceKey != "" {
++		// Mark the worker as shut down before the fan-out. Matching skips that fan-out
++		// when the root partition isn't loaded, and this host still needs to refuse
++		// late polls on their way. Shutdown state is local to each matching host.
++		// Without the fan-out, other hosts don't learn about the shutdown and still
++		// accept late polls on their partitions.
++		// This also runs before active poll cancellation. Poll registration uses the
++		// opposite order, so a concurrent poll can't miss both.
++		e.shutdownWorkers.Put(request.WorkerInstanceKey, struct{}{})
++	}
+ 	if e.config.EnableMatchingFanOutForPollCancellation(ns.String()) {
+ 		// TODO: Remove the IsRoot/Sticky guard after EnableMatchingFanOutForPollCancellation is
+ 		// fully rolled out. This check is only needed during the transition since the legacy
+@@ -1519,10 +1529,6 @@ func (e *matchingEngineImpl) CancelOutstandingWorkerPolls(
  		}
  	}
- 
+ 	// TODO: Delete this code path after EnableMatchingFanOutForPollCancellation is rolled out.
+-	if request.WorkerInstanceKey != "" {
+-		// Keep Put before CancelAll; poll registration uses the inverse order to avoid missed polls.
+-		e.shutdownWorkers.Put(request.WorkerInstanceKey, struct{}{})
+-	}
+ 	cancelledCount := e.workerInstancePollers.CancelAll(request.WorkerInstanceKey)
+ 	e.removePollerFromHistory(ctx, partition, request.GetWorkerIdentity())
+ 	return &matchingservice.CancelOutstandingWorkerPollsResponse{CancelledCount: cancelledCount}, nil
 ```
 
-**File**: `service/history/fx.go` (modified, +15/-0)
+**File**: `service/matching/matching_engine_test.go` (modified, +53/-0)
 ```diff
-@@ -6,6 +6,7 @@ import (
+@@ -6473,6 +6473,59 @@ func TestCancelOutstandingWorkerPolls(t *testing.T) {
+ 		require.NotNil(t, engine.shutdownWorkers.Get(workerKey), "worker should be in shutdown cache")
+ 	})
  
- 	"github.com/nexus-rpc/sdk-go/nexus"
- 	"github.com/sony/gobreaker"
-+	enumspb "go.temporal.io/api/enums/v1"
- 	"go.temporal.io/server/api/historyservice/v1"
- 	"go.temporal.io/server/chasm"
- 	"go.temporal.io/server/chasm/lib/activity"
-@@ -49,6 +50,7 @@ import (
- 	"go.temporal.io/server/service/history/hsm/callbacks"
- 	hsmnexusoperations "go.temporal.io/server/service/history/hsm/nexusoperations"
- 	hsmnexusworkflow "go.temporal.io/server/service/history/hsm/nexusoperations/workflow"
-+	"go.temporal.io/server/service/history/queues"
- 	"go.temporal.io/server/service/history/replication"
- 	"go.temporal.io/server/service/history/shard"
- 	"go.temporal.io/server/service/history/tasks"
-@@ -75,6 +77,7 @@ var Module = fx.Options(
- 	fx.Provide(CallbackDestinationBlockedProvider),
- 	fx.Provide(CallbackValidatorProvider),
- 	fx.Provide(NexusOperationDestinationBlockedProvider),
-+	fx.Provide(NexusOperationDestinationThrottledProvider),
- 	fx.Provide(ConfigProvider), // might be worth just using provider for configs.Config directly
- 	fx.Provide(workflow.NewCommandHandlerRegistry),
- 	fx.Provide(ServiceErrorInterceptorProvider),
-@@ -166,6 +169,18 @@ func NexusOperationDestinationBlockedProvider(
- 	}
- }
- 
-+func NexusOperationDestinationThrottledProvider(
-+	throttleState *queues.ThrottleState,
-+) chasmnexus.DestinationThrottledFn {
-+	return func(namespaceName namespace.Name, destination string) bool {
-+		return throttleState.IsThrottled(queues.ThrottleKey{
-+			Cause:         enumspb.RESOURCE_EXHAUSTED_CAUSE_CALLER_RPS_LIMIT,
-+			NamespaceName: namespaceName,
-+			Destination:   destination,
-+		})
-+	}
-+}
++	t.Run("fan-out: refuses a poll that arrives after shutdown of an unloaded task queue", func(t *testing.T) {
++		t.Parallel()
++		ctrl := gomock.NewController(t)
++		ns, mockNsRegistry := createMockNamespaceCache(ctrl, matchingTestNamespace)
 +
- // CallbackValidatorProvider creates a callback Validator using the production dynamic config keys
- // so that existing operator configurations (callback.allowedAddresses) are honored.
- func CallbackValidatorProvider(dc *dynamicconfig.Collection, namespaceRegistry namespace.Registry) (commoncallbacks.Validator, error) {
++		config := defaultTestConfig()
++		config.EnableMatchingFanOutForPollCancellation = dynamicconfig.GetBoolPropertyFnFilteredByNamespace(true)
++
++		engine := &matchingEngineImpl{
++			config:                config,
++			namespaceRegistry:     mockNsRegistry,
++			logger:                log.NewNoopLogger(),
++			timeSource:            clock.NewRealTimeSource(),
++			workerInstancePollers: workerPollerTracker{pollers: make(map[string]map[string]context.CancelFunc)},
++			shutdownWorkers:       cache.New(shutdownWorkersCacheMaxSize, &cache.Options{TTL: shutdownWorkersCacheTTL}),
++			partitions:            make(map[tqid.PartitionKey]taskQueuePartitionManager),
++		}
++
++		workerKey := "test-worker"
++		taskQueue := &taskqueuepb.TaskQueue{Name: "test-queue", Kind: enumspb.TASK_QUEUE_KIND_NORMAL}
++
++		_, err := engine.CancelOutstandingWorkerPolls(context.Background(),
++			&matchingservice.CancelOutstandingWorkerPollsRequest{
++				NamespaceId:       ns.ID().String(),
++				TaskQueue:         taskQueue,
++				TaskQueueType:     enumspb.TASK_QUEUE_TYPE_NEXUS,
++				WorkerInstanceKey: workerKey,
++			})
++		require.NoError(t, err)
++
++		// The poll loads the partition that the shutdown found unloaded.
++		partition := tqid.UnsafeTaskQueueFamily(ns.ID().String(), taskQueue.GetName()).TaskQueue(enumspb.TASK_QUEUE_TYPE_NEXUS).RootPartition()
++		mockPM := NewMocktaskQueuePartitionManager(ctrl)
++		mockPM.EXPECT().WaitUntilInitialized(gomock.Any()).Return(nil)
++		mockPM.EXPECT().LongPollExpirationInterval().Return(time.Minute)
++		mockPM.EXPECT().PollTask(gomock.Any(), gomock.Any()).Times(0)
++		engine.partitions[partition.Key()] = mockPM
++
++		resp, err := engine.PollNexusTaskQueue(context.Background(),
++			&matchingservice.PollNexusTaskQueueRequest{
++				NamespaceId: ns.ID().String(),
++				Request: &workflowservice.PollNexusTaskQueueRequest{
++					Namespace:         ns.Name().String(),
++					TaskQueue:         taskQueue,
++					WorkerInstanceKey: workerKey,
++				},
++			},
++			metrics.NoopMetricsHandler,
++		)
++		require.NoError(t, err)
++		protorequire.ProtoEqual(t, &matchingservice.PollNexusTaskQueueResponse{}, resp)
++	})
++
+ 	t.Run("partition API adds worker to shutdown cache", func(t *testing.T) {
+ 		// CancelOutstandingWorkerPollsPartition should also populate the shutdown cache
+ 		// so that child matching hosts reject new polls from shutting-down workers.
 ```
 
-**File**: `service/history/history_engine.go` (modified, +12/-0)
+**File**: `tests/task_queue_test.go` (modified, +31/-0)
 ```diff
-@@ -14,6 +14,7 @@ import (
- 	replicationspb "go.temporal.io/server/api/replication/v1"
- 	workflowspb "go.temporal.io/server/api/workflow/v1"
- 	"go.temporal.io/server/chasm"
-+	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
- 	chasmworkflow "go.temporal.io/server/chasm/lib/workflow"
- 	"go.temporal.io/server/client"
- 	"go.temporal.io/server/common"
-@@ -106,6 +107,7 @@ import (
- type (
- 	engineOptions struct {
- 		workflowResendScheduler workflowresend.Scheduler
-+		destinationThrottled    chasmnexus.DestinationThrottledFn
- 	}
- 
- 	// EngineOption adds optional history engine dependencies without adding required parameters.
-@@ -159,6 +161,7 @@ type (
- 		replicationProgressCache   replication.ProgressCache
- 		syncStateRetriever         replication.SyncStateRetriever
- 		outboundQueueCBPool        *circuitbreakerpool.OutboundQueueCircuitBreakerPool
-+		destinationThrottled       chasmnexus.DestinationThrottledFn
- 		testHooks                  testhooks.TestHooks
- 	}
- )
-@@ -170,6 +173,13 @@ func WithWorkflowResendScheduler(scheduler workflowresend.Scheduler) EngineOptio
- 	}
+@@ -1609,6 +1609,37 @@ func (s *TaskQueueSuite) TestShutdownWorkerIsIdempotent() {
+ 	s.Less(time.Since(pollStart), 2*time.Minute, "poll should be rejected quickly by shutdown cache")
  }
  
-+// WithDestinationThrottled reports caller RPS throttling in Describe responses.
-+func WithDestinationThrottled(fn chasmnexus.DestinationThrottledFn) EngineOption {
-+	return func(options *engineOptions) {
-+		options.destinationThrottled = fn
-+	}
++func (s *TaskQueueSuite) TestShutdownWorkerRefusesLaterPollOfUnloadedTaskQueue() {
++	env := s.newTestEnv(testcore.WithDynamicConfig(dynamicconfig.EnableCancelWorkerPollsOnShutdown, true))
++
++	tv := testvars.New(s.T())
++	workerInstanceKey := uuid.NewString()
++
++	// No poll has loaded the task queue yet, so matching skips the fan-out of the cancellation.
++	_, err := env.FrontendClient().ShutdownWorker(s.Context(), &workflowservice.ShutdownWorkerRequest{
++		Namespace:         env.Namespace().String(),
++		StickyTaskQueue:   tv.StickyTaskQueue().GetName(),
++		Identity:          tv.WorkerIdentity(),
++		Reason:            "shutdown before the first poll",
++		WorkerInstanceKey: workerInstanceKey,
++		TaskQueue:         tv.TaskQueue().GetName(),
++		TaskQueueTypes:    []enumspb.TaskQueueType{enumspb.TASK_QUEUE_TYPE_NEXUS},
++	})
++	s.NoError(err)
++
++	pollStart := time.Now()
++	resp, err := env.FrontendClient().PollNexusTaskQueue(s.Context(), &workflowservice.PollNexusTaskQueueRequest{
++		Namespace:         env.Namespace().String(),
++		TaskQueue:         tv.TaskQueue(),
++		Identity:          tv.WorkerIdentity(),
++		WorkerInstanceKey: workerInstanceKey,
++	})
++	s.NoError(err)
++	s.Empty(resp.GetTaskToken(), "poll from a shut down Worker should return an empty response")
++	// An accepted poll stays open for at least 50s, the long poll interval minus its jitter.
++	s.Less(time.Since(pollStart), 20*time.Second, "poll should be refused by the shutdown cache")
 +}
 +
- func applyEngineOptions(options []EngineOption) engineOptions {
- 	var result engineOptions
- 	for _, option := range options {
-@@ -262,6 +272,7 @@ func NewEngineWithShardContext(
- 		replicationProgressCache:   replicationProgressCache,
- 		syncStateRetriever:         syncStateRetriever,
- 		outboundQueueCBPool:        outboundQueueCBPool,
-+		destinationThrottled:       engineOptions.destinationThrottled,
- 		testHooks:                  testHooks,
- 		chasmEngine:                chasmEngine,
- 		versionCache:               versionCache,
-@@ -566,6 +577,7 @@ func (e *historyEngineImpl) DescribeWorkflowExecution(
- 		e.workflowConsistencyChecker,
- 		e.persistenceVisibilityMgr,
- 		e.outboundQueueCBPool,
-+		e.destinationThrottled,
- 	)
- }
- 
+ func (s *TaskQueueSuite) TestAdminGetTaskQueueUserData_RootPartition() {
+ 	env := s.newTestEnv()
+ 	tv := testvars.New(s.T())
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13091** (2026-11-14): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13090** (closed): Add standalone lintconditions analyzer module (@stephanos)
-- **PR #13077** (2026-11-13): Require matching request IDs for Nexus completions (@tekkaya)
-- **PR #13075** (2026-11-13): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13070** (2026-11-14): Use CHASM UpdateWithStart in SANO. (@chanric)
-- **PR #13069** (2026-11-13): Keep CHASM schedule buffers progressing after discarded or failed starts (@chaptersix)
+- **PR #13132** (2026-11-17): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13126** (2026-11-16): [v1.31.x] Validate migrated schedule state (@chaptersix)
+- **PR #13125** (2026-11-16): Validate migrated schedule state (@chaptersix)
+- **PR #13124** (2026-11-16): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13123** (2026-11-16): Enables standalone nexus operations by default (@S15)
+- **PR #13122** (2026-11-16): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 
 ---
 
@@ -2616,50 +2334,43 @@ with `-tags test_dep`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Expose Nexus caller RPS throttle status in Describe
+## X. refuse polls that arrive after ShutdownWorker of an unloaded task queue
 
 **RULE**:
-When implementing operations in `chasm/lib/nexusoperation/library.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `service/matching/matching_engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `623e5f17`: Expose Nexus caller RPS throttle status in Describe. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a1e00523`: refuse polls that arrive after ShutdownWorker of an unloaded task queue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/nexusoperation/library.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/matching/matching_engine.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"go.temporal.io/server/common/namespace"
-// DestinationThrottledFn reports whether the caller RPS budget is limiting a destination.
-type DestinationThrottledFn func(namespaceName namespace.Name, destination string) bool
-
-	DestinationBlocked   DestinationBlockedFn
-	DestinationThrottled DestinationThrottledFn
-	MetricTagConfig      dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
-	destinationBlocked   DestinationBlockedFn
-	destinationThrottled DestinationThrottledFn
-	metricTagConfig      dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
-	DestinationThrottled                       DestinationThrottledFn `optional:"true"`
-		destinationThrottled:                       params.DestinationThrottled,
-					MetricTagConfig:      l.metricTagConfig,
-					DestinationBlocked:   l.destinationBlocked,
-					DestinationThrottled: l.destinationThrottled,
+	if request.WorkerInstanceKey != "" {
+		// Mark the worker as shut down before the fan-out. Matching skips that fan-out
+		// when the root partition isn't loaded, and this host still needs to refuse
+		// late polls on their way. Shutdown state is local to each matching host.
+		// Without the fan-out, other hosts don't learn about the shutdown and still
+		// accept late polls on their partitions.
+		// This also runs before active poll cancellation. Poll registration uses the
+		// opposite order, so a concurrent poll can't miss both.
+		e.shutdownWorkers.Put(request.WorkerInstanceKey, struct{}{})
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	DestinationBlocked DestinationBlockedFn
-	MetricTagConfig    dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
-	destinationBlocked DestinationBlockedFn
-	metricTagConfig    dynamicconfig.TypedPropertyFn[NexusMetricTagConfig]
-					MetricTagConfig:    l.metricTagConfig,
-					DestinationBlocked: l.destinationBlocked,
+	if request.WorkerInstanceKey != "" {
+		// Keep Put before CancelAll; poll registration uses the inverse order to avoid missed polls.
+		e.shutdownWorkers.Put(request.WorkerInstanceKey, struct{}{})
+	}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `623e5f17` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a1e00523` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

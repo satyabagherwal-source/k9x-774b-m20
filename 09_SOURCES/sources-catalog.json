@@ -2133,10 +2133,10 @@
     "repository": "SynaLinks/synalinks-skills",
     "platform": "github",
     "sourceUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "sourceVersion": "c5c3a70d",
+    "sourceVersion": "17532841",
     "license": "Apache-2.0",
-    "contentHash": "2be2a9241c3f3c3ad03b07095ae19b2852ed34aead2d24ae2824cf76e1a8eb1b",
-    "lastHarvestedAt": "2026-11-13T09:17:35.632Z",
+    "contentHash": "918569d412663992b80a9544730ec5c4b7f15032b9fb86ff52c4f074b4255d8b",
+    "lastHarvestedAt": "2026-11-17T16:14:17.017Z",
     "learningId": "learn-github-synalinks-synalinks-skills"
   },
   "facebook-docusaurus": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "170fb83d",
+    "sourceVersion": "a1e00523",
     "license": "MIT",
-    "contentHash": "6ba19f9d258d52f4765810cdcc38c0b62090940f16a7f55d4aeb0051bf477be7",
-    "lastHarvestedAt": "2026-11-15T06:00:10.228Z",
+    "contentHash": "5ec636e839dda6afa871872737502490bd155e86b2036e58fcc0ac547df3399e",
+    "lastHarvestedAt": "2026-11-17T16:14:10.325Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "09d7fbf1",
+    "sourceVersion": "eac0a5e6",
     "license": "Apache-2.0",
-    "contentHash": "a522f2c1223dbc77c798903369b3db9a6fe4bbf295b27c71f947deccae7b9acb",
-    "lastHarvestedAt": "2026-11-14T04:14:32.793Z",
+    "contentHash": "f1b51596a49bf1746097c92d3e6ca1e225b98b3c6fab8a7b64f6e87a21c5b6fc",
+    "lastHarvestedAt": "2026-11-17T16:14:03.057Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {
@@ -10415,8 +10415,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
     "license": "Open-Source",
-    "contentHash": "1f3604121049bb9a2a7ccd4b2f6fb0f9572ef86423e0c055d1d2920f2d3c59de",
-    "lastHarvestedAt": "2026-11-13T04:13:09.698Z",
+    "contentHash": "fc71952aaeccab5c08f178e316a2fe0dc7ed4b1f9b5c88e48828c45aeb423a54",
+    "lastHarvestedAt": "2026-11-17T16:13:59.814Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16"
   },
   "mrjackwills-oxker": {

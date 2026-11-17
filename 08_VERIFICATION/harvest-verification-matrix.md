@@ -10604,3 +10604,7 @@
 | `CYCLE-20261117-W346` | `2026-11-17T16:05:33.510Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md` | Yes (`b39c6d34...`) |
 | `CYCLE-20261117-WFEA` | `2026-11-17T16:05:49.426Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8995` | Yes (`8eb73627...`) |
 | `CYCLE-20261117-WFLS` | `2026-11-17T16:05:49.696Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7938` | Yes (`015f62fc...`) |
+| `CYCLE-20261117-6XS2` | `2026-11-17T16:13:59.810Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md` | Yes (`fc71952a...`) |
+| `CYCLE-20261117-70A6` | `2026-11-17T16:14:03.054Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8996` | Yes (`f1b51596...`) |
+| `CYCLE-20261117-75W2` | `2026-11-17T16:14:10.322Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8997` | Yes (`5ec636e8...`) |
+| `CYCLE-20261117-7B1X` | `2026-11-17T16:14:17.013Z` | `SynaLinks/synalinks-skills` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/synalinks-synalinks-skills-learnings.md` | Yes (`918569d4...`) |
