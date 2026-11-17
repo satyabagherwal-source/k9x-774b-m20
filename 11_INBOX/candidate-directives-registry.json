@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T05:58:19.504Z",
+  "last_updated": "2026-11-17T06:11:31.981Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-0AFF",
+      "id": "CD-O5XD",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0AFF-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-O5XD-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -22300,6 +22300,79 @@
       "source_repo": "tailscale-tailscale",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0B9DC9-go-mod-bump-5-modules.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-M469",
+      "directive_title": "notify only when reconciled PR associations change",
+      "source_repo": "makecindy/cindy",
+      "source_commit": "50dbd865",
+      "staged_file": "11_INBOX/candidate-directives/CD-M469-notify-only-when-reconciled-pr-associations-change.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-O4I1",
+      "directive_title": "Ephemeral Asynchronous Initialization with Self-Resetting Fault Erasure",
+      "source_repo": "qwikdev-qwik-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O4I1-ephemeral-asynchronous-initialization-with-self-resetting-fault-erasure.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-O4I2",
+      "directive_title": "Strict Boundary Isolation for Minified Class Expressions and Bare Specifiers",
+      "source_repo": "qwikdev-qwik-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O4I2-strict-boundary-isolation-for-minified-class-expressions-and-bare-specifiers.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-848E72",
+      "directive_title": "Unhandled Worker Rejection Freezing REPL Bundling (BUG-REPL-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "qwikdev-qwik",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-848E72-unhandled-worker-rejection-freezing-repl.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-O4I2",
+      "directive_title": "Fine-Grained Optimizer Segment Decoupling for Non-Rendering Lifecycle Tasks",
+      "source_repo": "qwikdev-qwik-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O4I2-fine-grained-optimizer-segment-decoupling-for-non-rendering-lifecycle-tasks.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-O57G",
+      "directive_title": "github): notify only when reconciled PR associations change",
+      "source_repo": "makecindy-cindy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O57G-github-notify-only-when-reconciled-pr-associations-change.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-07ED27",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-07ED27-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-17"
     }
   ]

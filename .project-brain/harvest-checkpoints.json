@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T05:58:15.084Z",
+  "last_updated": "2026-11-17T06:10:58.657Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15186,14 +15186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-qwikdev-qwik",
-      "content_hash": "953415d49d9b9771a6e542adcc0efd74afc9d839bcdcbd564147f9e6e2ef009f",
-      "verified_at": "2026-11-12T14:31:52.532Z",
+      "content_hash": "211ec8bcdb46c772ad13eeab066d8709adc3027fe14e02a2c29a21eb7184802c",
+      "verified_at": "2026-11-17T06:10:58.656Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T14:31:52.532Z"
+      "last_updated": "2026-11-17T06:10:58.656Z"
     },
     "TypeWhisper/typewhisper-mac": {
       "repository": "TypeWhisper/typewhisper-mac",
@@ -16056,14 +16056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-makecindy-cindy",
-      "content_hash": "ea290ce6f3ddb9d729c695145e9d23b2e0100934cc072a28cf09ba9a887b4e82",
-      "verified_at": "2026-11-13T16:49:03.241Z",
+      "content_hash": "37ef03bf4b9ed5ebeac7d8df22a514360c8f91d10b4ef7cf7bd3cd87a5430d89",
+      "verified_at": "2026-11-17T06:09:56.222Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T16:49:03.241Z"
+      "last_updated": "2026-11-17T06:09:56.222Z"
     },
     "Fei2411/DS-Bot": {
       "repository": "Fei2411/DS-Bot",

@@ -2,9 +2,9 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-17T04:13:59.661Z",
+  "updated_at": "2026-11-17T06:11:29.905Z",
   "statistics": {
-    "total_nodes": 294,
+    "total_nodes": 295,
     "total_edges": 151,
     "domain_distribution": {
       "D": 222,
@@ -15,7 +15,7 @@
       "L": 4,
       "G": 1,
       "F": 9,
-      "B": 1,
+      "B": 2,
       "E": 1,
       "I": 1
     },
@@ -6598,6 +6598,28 @@
       ],
       "created_at": "2026-11-17T04:13:59.661Z",
       "updated_at": "2026-11-17T04:13:59.661Z"
+    },
+    "DOM-B-6AFC12DD": {
+      "id": "DOM-B-6AFC12DD",
+      "domain": "B",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "WebContainer SSR Initialization Collision (BUG-OPTIMIZER-01)",
+      "summary": "An identifier collision generated during bundle minification. `packages/qwik-vite/src/index.ts` re-exported `createOptimizer` from `@qwik.de -> Do not rely on VM-spec conforming lexical scope isolation for class expressions when targeting sandboxed or virtualized execution engines li",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://qwikdev-qwik/qwikdev-qwik-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T06:11:02.061Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (qwikdev-qwik)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "B",
+        "Product Intelligence"
+      ],
+      "created_at": "2026-11-17T06:11:29.905Z",
+      "updated_at": "2026-11-17T06:11:29.905Z"
     }
   },
   "edges": [

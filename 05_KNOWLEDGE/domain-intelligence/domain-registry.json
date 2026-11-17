@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T05:58:19.611Z",
-  "total_records": 1450,
+  "last_updated": "2026-11-17T06:11:32.106Z",
+  "total_records": 1453,
   "domains": {
     "A": {
       "total": 9,
@@ -19,7 +19,7 @@
       ]
     },
     "B": {
-      "total": 12,
+      "total": 13,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -32,7 +32,8 @@
         "domain_intelligence-product-intelligence-domcyrus-rustnet-learnings-core-invariants",
         "domain_intelligence-product-intelligence-crate-ci-typos-core-invariants",
         "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants",
-        "domain_intelligence-product-intelligence-ganymedenil-document-ai-core-invariants"
+        "domain_intelligence-product-intelligence-ganymedenil-document-ai-core-invariants",
+        "DOM-B-6AFC12DD"
       ]
     },
     "C": {
@@ -989,7 +990,7 @@
       ]
     },
     "H": {
-      "total": 335,
+      "total": 337,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1325,7 +1326,9 @@
         "domain_intelligence-technical-construction-intelligence-rollup-rollup-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rollup-rollup-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tanstack-query-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8018,8 +8021,8 @@
       "title": "Technical Construction Intelligence: makecindy/cindy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-technical-construction-intelligence-makecindy-cindy-core-invaria.md",
       "repository": "makecindy/cindy",
-      "content_hash": "ade0b324a5a850bc5406fe5e01a554180dd27acea887dd811c7e6971c934a4e7",
-      "created_at": "2026-11-13T16:49:03.485Z"
+      "content_hash": "664abd9df684b1ca7efda92964a65b31c9a34b4b3c96f439442e05ad3b7c5af8",
+      "created_at": "2026-11-17T06:09:56.506Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants",
@@ -8087,8 +8090,8 @@
       "title": "Technical Construction Intelligence: makecindy-cindy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-learnings-technical-construction-intelligence-makecindy-cindy-le.md",
       "repository": "makecindy-cindy-learnings",
-      "content_hash": "c1db447987bbe579513a7c7a38ad510a49b9df093621027ee849a096fda78f53",
-      "created_at": "2026-11-13T16:49:53.521Z"
+      "content_hash": "1129916a17d9b4fcd833a53caf6479372e17256f95c8d7813e6c9b10935f5d2a",
+      "created_at": "2026-11-17T06:11:31.175Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",
@@ -8183,8 +8186,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "d544cf05c5cc5e87fc47512d7a343aeefeed9bb6f6423671bb6765af6c567ddd",
-      "created_at": "2026-11-17T04:56:58.976Z"
+      "content_hash": "fa25aa047b0a57946ee78e1add8b82ae89faef7ed82edc83a54282d7c31e605f",
+      "created_at": "2026-11-17T06:11:32.106Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -25335,6 +25338,58 @@
       "repository": "krakend-krakend-ce-learnings",
       "content_hash": "b94284c17e2fec437ebec86189158837045829506841ff063a1e35905ff33600",
       "created_at": "2026-11-17T05:58:19.132Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: QwikDev/qwik Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-qwikdev-qwik-technical-construction-intelligence-qwikdev-qwik-core-invariants.md",
+      "repository": "QwikDev/qwik",
+      "content_hash": "2a114abcef934f8867d9be62b4c9a61460f9e60b0d8c115b073713ca0fe31a2c",
+      "created_at": "2026-11-17T06:10:59.178Z"
+    },
+    "DOM-B-6AFC12DD": {
+      "record_id": "DOM-B-6AFC12DD",
+      "domain_letter": "B",
+      "domain_id": "product",
+      "domain_name": "Product Intelligence",
+      "secondary_domains": [],
+      "title": "WebContainer SSR Initialization Collision (BUG-OPTIMIZER-01)",
+      "content": "Do not rely on VM-spec conforming lexical scope isolation for class expressions when targeting sandboxed or virtualized execution engines like StackBlitz WebContainers. Ensure exported toolchain functions are never mangled to short single-letter tokens that collide with inlined utility class names.",
+      "content_hash": "cc4731e2b4cd5fa698db68979b42e24e3a48ffb20a8300d8df57e91281b8f490",
+      "summary": "An identifier collision generated during bundle minification. `packages/qwik-vite/src/index.ts` re-exported `createOptimizer` from `@qwik.de -> Do not rely on VM-spec conforming lexical scope isolation for class expressions when targeting sandboxed or virtualized execution engines li",
+      "provenance": {
+        "source_uri": "project://qwikdev-qwik/qwikdev-qwik-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T06:11:02.061Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (qwikdev-qwik)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Closed Issue `#9402`, reported against `2.0.0-rc.4`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T06:11:29.879Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: qwikdev-qwik-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-qwikdev-qwik-learnings-technical-construction-intelligence-qwikdev-qwik-learning.md",
+      "repository": "qwikdev-qwik-learnings",
+      "content_hash": "5075c45fa158395c5c36f92649f6b72e8682ed5fe458777e6268040ea47acb4a",
+      "created_at": "2026-11-17T06:11:30.523Z"
     }
   }
 }

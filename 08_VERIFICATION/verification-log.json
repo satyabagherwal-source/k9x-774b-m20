@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-57HL",
-    "timestamp": "2026-11-14T15:25:38.985Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "e812066f94fe7095c4d5e74e324dc34945aec2079bbcdc025483d91e6fd98c83",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-5E48",
-    "timestamp": "2026-11-14T15:25:47.576Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "469afe900402c0bae14be8431d34d4721d1ae30e942c9b349d590ccc32b3529e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-5GET",
     "timestamp": "2026-11-14T15:25:50.549Z",
     "repository": "apple/foundationdb",
@@ -7492,6 +7462,36 @@
     "contentHash": "deb816e5df5c030a37c086a907ccf2e8a67395885c930b691f1fc345609d80cd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-M41F",
+    "timestamp": "2026-11-17T06:09:56.211Z",
+    "repository": "makecindy/cindy",
+    "learningId": "learn-github-makecindy-cindy",
+    "contentHash": "37ef03bf4b9ed5ebeac7d8df22a514360c8f91d10b4ef7cf7bd3cd87a5430d89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-NG7O",
+    "timestamp": "2026-11-17T06:10:58.644Z",
+    "repository": "QwikDev/qwik",
+    "learningId": "learn-github-qwikdev-qwik",
+    "contentHash": "211ec8bcdb46c772ad13eeab066d8709adc3027fe14e02a2c29a21eb7184802c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

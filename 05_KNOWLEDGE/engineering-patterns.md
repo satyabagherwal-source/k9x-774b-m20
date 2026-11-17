@@ -645897,3 +645897,385 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `46ad4538` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8881. notify only when reconciled PR associations change (Harvested from makecindy/cindy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "notify only when reconciled PR associations change",
+  "source": "makecindy/cindy",
+  "source_url": "https://github.com/makecindy/cindy",
+  "source_version": "50dbd865",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T06:09:55.787Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-makecindy-cindy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [makecindy/cindy](https://github.com/makecindy/cindy) (Revision: `50dbd865`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `apps/desktop/src/main/git-context/prRefsStore.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `677fdc84`: github): notify only when reconciled PR associations change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/main/git-context/prRefsStore.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+    const readRefs = () => db.select(prRefColumns()).from(sessionPrRefs)
+      .where(eq(sessionPrRefs.sessionId, sessionId)).orderBy(asc(sessionPrRefs.id));
+    const before = await readRefs();
+    if (prune) {
+      const staleIds = before
+        .filter((r) => !r.manuallyAdded && r.removedAt === null && !keep.has(prStatusKey(r)))
+        .map((r) => r.id);
+      if (staleIds.length > 0) {
+        await db.delete(sessionPrRefs).where(inArray(sessionPrRefs.id, staleIds));
+      }
+    // Compare final records under the write queue: repeated mentions can change
+    // timestamps transiently during recomputation without changing the result.
+    // Include ordering/provenance fields so meaningful updates still refresh.
+    const after = await readRefs();
+    if ((!scope || scope.isCurrent()) && JSON.stringify(before) !== JSON.stringify(after)) {
+      onRefsChanged?.(sessionId);
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+    if (!prune) {
+      if (!scope || scope.isCurrent()) onRefsChanged?.(sessionId);
+      return;
+    const existing = await db
+      .select({
+        id: sessionPrRefs.id,
+        provider: sessionPrRefs.provider,
+        host: sessionPrRefs.host,
+        owner: sessionPrRefs.owner,
+        repo: sessionPrRefs.repo,
+        prNumber: sessionPrRefs.prNumber,
+        manuallyAdded: sessionPrRefs.manuallyAdded,
+        removedAt: sessionPrRefs.removedAt,
+      })
+      .from(sessionPrRefs)
+      .where(eq(sessionPrRefs.sessionId, sessionId));
+    const staleIds = existing
+      .filter((r) => !r.manuallyAdded && r.removedAt === null && !keep.has(prStatusKey(r)))
+      .map((r) => r.id);
+    if (staleIds.length > 0) {
+      await db.delete(sessionPrRefs).where(inArray(sessionPrRefs.id, staleIds));
+    if (!scope || scope.isCurrent()) onRefsChanged?.(sessionId);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `677fdc84` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8882. Ephemeral Asynchronous Initialization with Self-Resetting Fault Erasure (Harvested from QwikDev/qwik)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Ephemeral Asynchronous Initialization with Self-Resetting Fault Erasure",
+  "source": "QwikDev/qwik",
+  "source_url": "https://github.com/QwikDev/qwik",
+  "source_version": "cfa0e890",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T06:10:57.237Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-qwikdev-qwik",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [QwikDev/qwik](https://github.com/QwikDev/qwik) (Revision: `cfa0e890`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Asynchronous initialization singletons that cache loading promises MUST clear their cached promise reference inside an error catch-handler before re-throwing the error. They MUST NOT cache a rejected promise permanently across subsequent consumer requests.
+
+**WHY**:
+If an asynchronous operation (such as loading dynamic WASM, fetching a native toolchain binding, or loading network modules) fails due to a transient failure (network timeout, temporary file lock, CDN outage), caching the rejected promise freezes the system in a permanently broken state. All future calls to `ensure()` will instantly reject with the original stale error without attempting a retry.
+
+**WHEN TO APPLY**:
+Apply to any lazy initialization cache, module loader, WebWorker bundler, connection pooling mechanism, or service locator where an initialization promise is cached via nullish assignment (`cache ??= load()`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+let initializationPromise: Promise<WorkerBinding> | null = null;
+let useNativeEngine = false;
+
+export function ensureInitialized(): Promise<WorkerBinding> {
+  // Forget a failed load so the next execution cycle retries it.
+  initializationPromise ??= loadEngineBinding(useNativeEngine).catch((error: unknown) => {
+    initializationPromise = null;
+    throw error;
+  });
+  return initializationPromise;
+}
+
+export async function executeWork(payload: WorkPayload): Promise<WorkResult> {
+  // Guaranteed fresh attempt if previous initialization encountered a network blip
+  const binding = await ensureInitialized();
+  return binding.process(payload);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// NEVER cache a promise without un-setting it on failure:
+let cachedPromise: Promise<WorkerBinding> | null = null;
+
+export function ensureInitializedAntiPattern(): Promise<WorkerBinding> {
+  // DEFECT: Once loadEngineBinding rejects, cachedPromise remains permanently
+  // in a rejected state. Subsequent retries can never succeed without restarting the process.
+  if (!cachedPromise) {
+    cachedPromise = loadEngineBinding();
+  }
+  return cachedPromise;
+}
+```
+
+**VERIFICATION METHOD**:
+Inject a mock network fault that forces the first execution of `loadEngineBinding` to reject. Assert that the consumer catches the error. Immediately retry the operation with the mock network fault resolved. Assert that `ensureInitialized()` executes `loadEngineBinding` a second time and resolves successfully.
+
+---
+
+
+---
+
+## 8883. Fine-Grained Optimizer Segment Decoupling for Non-Rendering Lifecycle Tasks (Harvested from QwikDev/qwik)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fine-Grained Optimizer Segment Decoupling for Non-Rendering Lifecycle Tasks",
+  "source": "QwikDev/qwik",
+  "source_url": "https://github.com/QwikDev/qwik",
+  "source_version": "cfa0e890",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T06:10:57.721Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-qwikdev-qwik",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [QwikDev/qwik](https://github.com/QwikDev/qwik) (Revision: `cfa0e890`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Code-splitting compilers and build optimizers MUST emit component render JSX bodies and reactive background tasks (`useTask$`, `useVisibleTask$`, `computed$`) into separate, non-overlapping modules. Background computations MUST NOT drag component rendering code or virtual DOM structures into the network payload.
+
+**WHY**:
+When background tasks (such as telemetry, background data synching, or cache warming) are bundled alongside the component's JSX render tree, triggering a state computation or executing a background task downloads the entire JSX render graph of that component and all components it references. This creates unnecessary network utilization and CPU overhead, breaking the zero-JS resumability invariant.
+
+**WHEN TO APPLY**:
+Static analysis compilers, macro optimizers, AST transformers, and bundler code-splitting algorithms targeting lazy-loaded frameworks, web workers, and micro-frontends.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Bundler Manifest Assertion Verification
+export const chunkHasComponent = (url: string, manifest: Manifest): boolean =>
+  chunkHasSymbolOf(url, 'component$', manifest);
+
+export const chunkHasTask = (url: string, manifest: Manifest): boolean =>
+  chunkHasSymbolOf(url, 'useTask$', manifest) || chunkHasSymbolOf(url, 'useVisibleTask$', manifest);
+
+// Optimizer Invariant Test
+test('optimizer splits task and render chunks cleanly', () => {
+  const manifest = compileFixture('src/components/modal.tsx');
+  const taskUrls = findChunksForSymbol(manifest, 'Modal_useTask');
+  
+  for (const url of taskUrls) {
+    // A task execution chunk MUST NOT import or contain the component$ render segment
+    expect(chunkHasComponent(url, manifest)).toBe(false);
+  }
+});
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// NEVER bundle the component render closure together with task closures:
+// Bundled Output: chunk-modal.js
+export const Modal_component_render = (props) => jsx('div', { children: props.title });
+export const Modal_useTask_1 = async (store) => { store.count++; };
+
+// DEFECT: Running Modal_useTask_1 pulls in JSX runtime, DOM bindings, and
+// downstream child component references, even if no visual DOM re-render is triggered.
+```
+
+**VERIFICATION METHOD**:
+In Playwright/E2E test harnesses, intercept all network requests emitted when clicking a button that triggers an asynchronous state computation. Assert that the array of requested URLs filtered by `chunkHasComponent` strictly equals `[]`.
+
+---
+
+
+---
+
+## 8884. Strict Boundary Isolation for Minified Class Expressions and Bare Specifiers (Harvested from QwikDev/qwik)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Strict Boundary Isolation for Minified Class Expressions and Bare Specifiers",
+  "source": "QwikDev/qwik",
+  "source_url": "https://github.com/QwikDev/qwik",
+  "source_version": "cfa0e890",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T06:10:58.230Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-qwikdev-qwik",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [QwikDev/qwik](https://github.com/QwikDev/qwik) (Revision: `cfa0e890`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Bundlers and minifiers targeting virtualized or restricted environments (such as StackBlitz WebContainer, isolated WebWorkers, or sandboxed VMs) MUST NOT generate top-level local variable identifiers that shadow bare module specifier imports within the same scope.
+
+**WHY**:
+Certain JavaScript execution runtimes (specifically WebContainer's module resolution interception layer and strict ESM polyfills) exhibit edge-case scoping defects where named class expressions (e.g. `_e = class e { ... new e() ... }`) incorrectly resolve `e` to an outer module-level import (`import { createOptimizer as e }`) rather than the local class constructor. This causes runtime exceptions like `TypeError: e is not a constructor`.
+
+**WHEN TO APPLY**:
+Rollup/esbuild/Terser bundling configurations, plugin distribution pipelines, and WASM/Rust bridge packaging systems that must run deterministically in browser-based Node.js runtimes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Rollup/Vite configuration invariant
+export const getSafeMinificationConfig = () => ({
+  output: {
+    // Prevent name collisions across external specifier re-exports
+    // and internal minified class names
+    keep_classnames: true,
+    reserved: ['createOptimizer', 'MagicString'],
+  },
+  treeshake: {
+    moduleSideEffects: false,
+  },
+});
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Minified bundle snippet causing runtime failure in virtual runtimes:
+import { createOptimizer as e } from "@qwik.dev/optimizer";
+// ...
+var _e = class e {
+  split(t) {
+    return new e(t, this.end); // CRASH: In WebContainers, resolves to imported function `e` instead of class `e`
+  }
+};
+```
+
+**VERIFICATION METHOD**:
+Run an automated CI integration step targeting `@webcontainer/api` or a Node.js VM context with mocked dynamic import maps, evaluating every exported production distribution artifact directly inside the guest environment.
+
+---

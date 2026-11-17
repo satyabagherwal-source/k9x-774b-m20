@@ -10489,3 +10489,6 @@ Every entry in this ledger must capture:
 | `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `34b99c69` | Multi-dimensional audit evidence | 2026-11-17T05:58:07.898Z |
 | `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `b2187c50` | Multi-dimensional audit evidence | 2026-11-17T05:58:12.427Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `46ad4538` | Multi-dimensional audit evidence | 2026-11-17T05:58:15.077Z |
+| `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `50dbd865` | Multi-dimensional audit evidence | 2026-11-17T06:09:56.215Z |
+| `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `cfa0e890` | Multi-dimensional audit evidence | 2026-11-17T06:10:58.648Z |
+| `learn-dom-b-6afc12dd` | `project://qwikdev-qwik` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/qwikdev-qwik-learnings.md` | 2026-11-17T06:11:29.907Z |

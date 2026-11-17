@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T05:58:19.715Z",
-  "total_verified_learnings": 8850,
+  "last_updated": "2026-11-17T06:11:32.254Z",
+  "total_verified_learnings": 8852,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19805,
+  "total_items": 19822,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113485,10 +113485,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-technical-construction-intelligence-makecindy-cindy-core-invaria.md",
       "title": "Technical Construction Intelligence: makecindy/cindy Core Invariants",
       "repository": "makecindy/cindy",
-      "source_version": "3dd3844e",
-      "content_hash": "ade0b324a5a850bc5406fe5e01a554180dd27acea887dd811c7e6971c934a4e7",
+      "source_version": "50dbd865",
+      "content_hash": "664abd9df684b1ca7efda92964a65b31c9a34b4b3c96f439442e05ad3b7c5af8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:49:03.485Z"
+      "persisted_at": "2026-11-17T06:09:56.506Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy",
@@ -113497,10 +113497,10 @@
       "relative_path": "08_VERIFICATION/makecindy-cindy-verification-protocol-empirical-defect-shield-for-makecindy-cind.md",
       "title": "Verification Protocol: Empirical Defect Shield for makecindy/cindy",
       "repository": "makecindy/cindy",
-      "source_version": "3dd3844e",
-      "content_hash": "32ef10f68eb04b280e40af4074be9cd57c8004972b62e55289a2f2184bdb6b27",
+      "source_version": "50dbd865",
+      "content_hash": "cdb946ae975706548398a38ca93a3d466c027b0618931eaf38777514e795ff3c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:49:03.565Z"
+      "persisted_at": "2026-11-17T06:09:56.736Z"
     },
     "candidate_directive-react-align-the-file-browser-search-dialog-with-the-console-design-7570": {
       "item_id": "candidate_directive-react-align-the-file-browser-search-dialog-with-the-console-design-7570",
@@ -113558,9 +113558,9 @@
       "title": "Technical Construction Intelligence: makecindy-cindy-learnings Core Invariants",
       "repository": "makecindy-cindy-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1db447987bbe579513a7c7a38ad510a49b9df093621027ee849a096fda78f53",
+      "content_hash": "1129916a17d9b4fcd833a53caf6479372e17256f95c8d7813e6c9b10935f5d2a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:49:53.521Z"
+      "persisted_at": "2026-11-17T06:11:31.175Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy-learnings",
@@ -113570,9 +113570,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for makecindy-cindy-learnings",
       "repository": "makecindy-cindy-learnings",
       "source_version": "HEAD",
-      "content_hash": "14c562bbe959fc366d970d879f7138c42039a3fb5c2c8887c671c8d77fbb40ea",
+      "content_hash": "4fab5dc849798ee485b44ddbc3a7d80d955f02b65fcacffc62e8023748ac0c8f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:49:53.614Z"
+      "persisted_at": "2026-11-17T06:11:31.439Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0AFF-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-O5XD-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "015f8c01ee42810594ab44a97fb7bb38543e7e62912552f47fed7c4d1e3e53a5",
+      "content_hash": "402d6508537f647fa622845e5c1a50f3cf9ec0dfe860c0053a71667ecd6d5f51",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:56:58.832Z"
+      "persisted_at": "2026-11-17T06:11:31.981Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d544cf05c5cc5e87fc47512d7a343aeefeed9bb6f6423671bb6765af6c567ddd",
+      "content_hash": "fa25aa047b0a57946ee78e1add8b82ae89faef7ed82edc83a54282d7c31e605f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:56:58.976Z"
+      "persisted_at": "2026-11-17T06:11:32.106Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "bddeea87f60fc63235d08b37cdd4bb750355f824046e69f539ee59a428603a35",
+      "content_hash": "453c365d57fdddded6825dab14948b701f6e9532a6f0a1d5f6fefcbbecd166ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:56:59.127Z"
+      "persisted_at": "2026-11-17T06:11:32.254Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -264563,6 +264563,270 @@
       "content_hash": "2e5cd9974fbdbde6d8e31cb0d74e68c9c6f59b6a60db14ef3f69eacf8e4d24f7",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T05:58:19.240Z"
+    },
+    "learn-github-makecindy-cindy": {
+      "learning_id": "learn-github-makecindy-cindy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "makecindy/cindy",
+      "repository": "makecindy/cindy",
+      "slug": "makecindy-cindy",
+      "platform": "github",
+      "source_url": "https://github.com/makecindy/cindy",
+      "source_version": "50dbd865",
+      "content_hash": "37ef03bf4b9ed5ebeac7d8df22a514360c8f91d10b4ef7cf7bd3cd87a5430d89",
+      "dossier_path": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8881,
+          "title": "notify only when reconciled PR associations change",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T06:09:56.046Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8881": {
+      "learning_id": "rule-8881",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8881,
+      "title": "notify only when reconciled PR associations change",
+      "source_url": "https://github.com/makecindy/cindy",
+      "source_version": "50dbd865",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:09:56.046Z"
+    },
+    "candidate_directive-notify-only-when-reconciled-pr-associations-change": {
+      "item_id": "candidate_directive-notify-only-when-reconciled-pr-associations-change",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M469-notify-only-when-reconciled-pr-associations-change.md",
+      "title": "notify only when reconciled PR associations change",
+      "repository": "makecindy/cindy",
+      "source_version": "50dbd865",
+      "content_hash": "86ce29a823309f2b16f09d9afd0b7ab1d8366a764f1e6068f73381f309e78834",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:09:56.389Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-makecindy-cindy": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-makecindy-cindy",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-makecindy-cindy-adr-subsystem-boundary-modular-decoupling-in-makecindy-cindy.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in makecindy/cindy",
+      "repository": "makecindy/cindy",
+      "source_version": "50dbd865",
+      "content_hash": "e561943d23fd0b4abff4bd6ede24eacd4db4847152f120adde0f4d241f8782c3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:09:56.626Z"
+    },
+    "learn-github-qwikdev-qwik": {
+      "learning_id": "learn-github-qwikdev-qwik",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "QwikDev/qwik",
+      "repository": "QwikDev/qwik",
+      "slug": "qwikdev-qwik",
+      "platform": "github",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "cfa0e890",
+      "content_hash": "211ec8bcdb46c772ad13eeab066d8709adc3027fe14e02a2c29a21eb7184802c",
+      "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8882,
+          "title": "Ephemeral Asynchronous Initialization with Self-Resetting Fault Erasure",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8883,
+          "title": "Fine-Grained Optimizer Segment Decoupling for Non-Rendering Lifecycle Tasks",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8884,
+          "title": "Strict Boundary Isolation for Minified Class Expressions and Bare Specifiers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T06:10:58.487Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8882": {
+      "learning_id": "rule-8882",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8882,
+      "title": "Ephemeral Asynchronous Initialization with Self-Resetting Fault Erasure",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "cfa0e890",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:10:58.487Z"
+    },
+    "rule-8883": {
+      "learning_id": "rule-8883",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8883,
+      "title": "Fine-Grained Optimizer Segment Decoupling for Non-Rendering Lifecycle Tasks",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "cfa0e890",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:10:58.487Z"
+    },
+    "rule-8884": {
+      "learning_id": "rule-8884",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8884,
+      "title": "Strict Boundary Isolation for Minified Class Expressions and Bare Specifiers",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "cfa0e890",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:10:58.487Z"
+    },
+    "candidate_directive-ephemeral-asynchronous-initialization-with-self-resetting-fault-erasure": {
+      "item_id": "candidate_directive-ephemeral-asynchronous-initialization-with-self-resetting-fault-erasure",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O4I1-ephemeral-asynchronous-initialization-with-self-resetting-fault-erasure.md",
+      "title": "Ephemeral Asynchronous Initialization with Self-Resetting Fault Erasure",
+      "repository": "qwikdev-qwik-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2071091420bcab7bacbb65ed098aed07c9351e1450d1203ea5e7d6a3be1f46ba",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:11:30.123Z"
+    },
+    "candidate_directive-fine-grained-optimizer-segment-decoupling-for-non-rendering-lifecycle-tasks": {
+      "item_id": "candidate_directive-fine-grained-optimizer-segment-decoupling-for-non-rendering-lifecycle-tasks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O4I2-fine-grained-optimizer-segment-decoupling-for-non-rendering-lifecycle-tasks.md",
+      "title": "Fine-Grained Optimizer Segment Decoupling for Non-Rendering Lifecycle Tasks",
+      "repository": "qwikdev-qwik-learnings",
+      "source_version": "HEAD",
+      "content_hash": "50a881687070237d90f48e4c0cf606a7dbe39929f0d6334a57ae7b774e5a39f3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:11:30.257Z"
+    },
+    "candidate_directive-strict-boundary-isolation-for-minified-class-expressions-and-bare-specifiers": {
+      "item_id": "candidate_directive-strict-boundary-isolation-for-minified-class-expressions-and-bare-specifiers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O4I2-strict-boundary-isolation-for-minified-class-expressions-and-bare-specifiers.md",
+      "title": "Strict Boundary Isolation for Minified Class Expressions and Bare Specifiers",
+      "repository": "qwikdev-qwik-learnings",
+      "source_version": "HEAD",
+      "content_hash": "773440ad55c7f2e58b5546459cc645a649949e621ad2d77d4fb1f2c794dec2b6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:11:30.390Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-qwikdev-qwik-technical-construction-intelligence-qwikdev-qwik-core-invariants.md",
+      "title": "Technical Construction Intelligence: QwikDev/qwik Core Invariants",
+      "repository": "QwikDev/qwik",
+      "source_version": "cfa0e890",
+      "content_hash": "2a114abcef934f8867d9be62b4c9a61460f9e60b0d8c115b073713ca0fe31a2c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:10:59.178Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/qwikdev-qwik-verification-protocol-empirical-defect-shield-for-qwikdev-qwik.md",
+      "title": "Verification Protocol: Empirical Defect Shield for QwikDev/qwik",
+      "repository": "QwikDev/qwik",
+      "source_version": "cfa0e890",
+      "content_hash": "9b08bef5da27f4df053b4ed592987790cebdcc447e52bc3c0817e3e3b69f10cf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:10:59.296Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-qwikdev-qwik-learnings-technical-construction-intelligence-qwikdev-qwik-learning.md",
+      "title": "Technical Construction Intelligence: qwikdev-qwik-learnings Core Invariants",
+      "repository": "qwikdev-qwik-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5075c45fa158395c5c36f92649f6b72e8682ed5fe458777e6268040ea47acb4a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:11:30.523Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-qwikdev-qwik-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/qwikdev-qwik-learnings-verification-protocol-empirical-defect-shield-for-qwikdev.md",
+      "title": "Verification Protocol: Empirical Defect Shield for qwikdev-qwik-learnings",
+      "repository": "qwikdev-qwik-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b43461099b574922de4ced3ea0354ba57f4c00f2c9a1164e58b273d2eb939262",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:11:30.660Z"
+    },
+    "candidate_directive-github-notify-only-when-reconciled-pr-associations-change": {
+      "item_id": "candidate_directive-github-notify-only-when-reconciled-pr-associations-change",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O57G-github-notify-only-when-reconciled-pr-associations-change.md",
+      "title": "github): notify only when reconciled PR associations change",
+      "repository": "makecindy-cindy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1f7bde4f3364f2b2df946a0b7eb7e78514164d847954ecd64facf60f7308fd81",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:11:31.048Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-makecindy-cindy-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-makecindy-cindy-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-makecindy-cindy-learnings-adr-subsystem-boundary-modular-decoupling-in-makecindy.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in makecindy-cindy-learnings",
+      "repository": "makecindy-cindy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7656178cca1dac4dc73bdeff36fb9f3827e24daee41a0ab6f199c514b42e92f8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:11:31.313Z"
     }
   },
   "ai-builder-brain": {

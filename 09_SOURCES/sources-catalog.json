@@ -10093,10 +10093,10 @@
     "repository": "QwikDev/qwik",
     "platform": "github",
     "sourceUrl": "https://github.com/QwikDev/qwik",
-    "sourceVersion": "22e24311",
+    "sourceVersion": "cfa0e890",
     "license": "MIT",
-    "contentHash": "953415d49d9b9771a6e542adcc0efd74afc9d839bcdcbd564147f9e6e2ef009f",
-    "lastHarvestedAt": "2026-11-12T14:31:52.510Z",
+    "contentHash": "211ec8bcdb46c772ad13eeab066d8709adc3027fe14e02a2c29a21eb7184802c",
+    "lastHarvestedAt": "2026-11-17T06:10:58.648Z",
     "learningId": "learn-github-qwikdev-qwik"
   },
   "typewhisper-typewhisper-mac": {
@@ -10683,10 +10683,10 @@
     "repository": "makecindy/cindy",
     "platform": "github",
     "sourceUrl": "https://github.com/makecindy/cindy",
-    "sourceVersion": "3dd3844e",
+    "sourceVersion": "50dbd865",
     "license": "Apache-2.0",
-    "contentHash": "ea290ce6f3ddb9d729c695145e9d23b2e0100934cc072a28cf09ba9a887b4e82",
-    "lastHarvestedAt": "2026-11-13T16:49:03.217Z",
+    "contentHash": "37ef03bf4b9ed5ebeac7d8df22a514360c8f91d10b4ef7cf7bd3cd87a5430d89",
+    "lastHarvestedAt": "2026-11-17T06:09:56.215Z",
     "learningId": "learn-github-makecindy-cindy"
   },
   "fei2411-ds-bot": {

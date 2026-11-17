@@ -10456,3 +10456,6 @@
 | `CYCLE-20261117-6XHZ` | `2026-11-17T05:58:07.895Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8878` | Yes (`0f3806d2...`) |
 | `CYCLE-20261117-70ZS` | `2026-11-17T05:58:12.424Z` | `krakend/krakend-ce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8879` | Yes (`24eaddd6...`) |
 | `CYCLE-20261117-731D` | `2026-11-17T05:58:15.073Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8880` | Yes (`deb816e5...`) |
+| `CYCLE-20261117-M41F` | `2026-11-17T06:09:56.211Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8881` | Yes (`37ef03bf...`) |
+| `CYCLE-20261117-NG7O` | `2026-11-17T06:10:58.644Z` | `QwikDev/qwik` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8882, Rule 8883, Rule 8884` | Yes (`211ec8bc...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T06:11:29.907Z` | `qwikdev-qwik` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-6AFC12DD` [Domain B] | Yes (`cc4731e2...`) |

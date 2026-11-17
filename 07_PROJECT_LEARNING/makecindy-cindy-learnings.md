@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source**: github ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
-> **Source Version**: `3dd3844e`  
+> **Source Version**: `50dbd865`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T16:49:02.734Z  
+> **Timestamp**: 2026-11-17T06:09:55.314Z  
 > **Learning ID**: `learn-github-makecindy-cindy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T16:49:02.729Z  
+> **Harvest Timestamp**: 2026-11-17T06:09:55.182Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Consider it done. The open-source AI agent that works out of the box · 想到，就能做到。开源、开箱即用的 AI Agent。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10049 stars
+- **Stars / Engagement**: 10237 stars
 
 ---
 
@@ -996,16 +996,15 @@ export default {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10298** (2026-11-13): **bug(desktop): 创建伙伴时误报已有同名伙伴，但提交仍可成功**
-  *Symptoms*: ## 问题描述  在 Windows 11 和 macOS 上创建伙伴时，输入名字 `testc`，即使当前并没有同名伙伴，表单仍显示红色提示「已有同名伙伴，换一个更容易分辨的名字吧。」点击创建后，伙伴最终仍可创建成功。该提示与实际情况不符，容易误导用户。  ## 环境  - Cindy Desktop：0.1.136 CN - Windows：Windows 11 - macOS：系统版本未提供 - 创建的伙伴名称：`testc`  ## 复现步骤  1. 打开「创建伙伴」。 2. 在名字输入框填写 `testc`，确认当前没有同名伙伴。 3. 观察到「已有同名伙伴，换一个更容易分辨的名字吧。」提示。 4. 点击创建并等待操作完成。  ## 实际结果  - 当前没有同名伙伴，但创建表单显示同名提示。 - 创建按钮进入加载状态。 - 根据用户反馈，伙伴最终创建成功。 - 用户确认 Windows 11 和 macOS 上均出现此现象。  ## 预期结果  没有同名伙伴时，不应显示“已有同名伙伴”错误；名字校验结果应与实际伙伴列表一致。  ## 截图与证据边界  <img width="531" height="422" alt="c77dd15643ffbf6a5580d90a53fa57a9aa244b1b8e3e17b609e2632fa4134ffb" src="https://github.com/user-attachments/assets/9db9629d-d54b-406e-b4f3-5bf0f1e512d6" />  ## 相关 Issue  - [#6578](https://github.com/makecindy/cindy/issues/6578)：该 Issue 描述隐藏的旧伙伴副本实际占用名字并导致创建被拒。本次反馈是没有同名伙伴却显示提示，且仍创建成功；表现不同，是否同源尚未确认。
+- **Issue #10944** (2026-11-17): **iPhone 能收到待确认通知，但收不到定时任务完成通知**
+  *Symptoms*: **提交人**: Ben **客户端版本**: 0.1.136  ---  同一会话多次单次定时测试均执行成功、聊天正文可见，Windows 可弹窗；用户确认通知已开启、手机和电脑均离开该对话后，iPhone 横幅及通知中心仍无测试通知，但待确认问题可触发手机通知。  预期：定时任务通知已开启且接收端不在查看该对话时，iPhone 能收到相应完成通知。  请排查完成通知与待确认通知的分类处理、过滤及投递。现有证据尚不能确定具体故障环节。  本反馈不包含项目资料、账号、会话编号或原始日志。 --- ## 提交时的任务环境  仅代表提交时快照,不一定是故障环境。OS 来自提交客户端本机,不含 SSH 远端主机;Harness / 模型来自当前任务。与运行环境无关的反馈可忽略本段。 **版本区域**: CN **OS**: darwin arm64 (27.0.0) **Harness**: Codex **Model ID**: ` gpt-6-astra ` **界面语言**: zh-CN
   **Post-Mortem & Fix Analysis**:
-  > 更新：提报者已补充现场截图，确凿证实了表单在同名红字提示与创建按钮转圈加载中同时呈现。  ### 判断  新建伙伴时严格保持重名拦截是既定产品规则，本次反馈的实际情况属于提交在途的提示误显，而非重名拦截失效或放行。  进一步检查发现，现有交互逻辑与“输入重名后仍可提交”略有不同。在 `BotRosterView.tsx` 中，若在点击前检测到重名（`duplicate` 为 `true`），生成按钮受 `disabled` 属性严格禁用且提交函数前置早退，无法触发加载状态。截图所呈现的“同名提示与加载中按钮并存”，真实原因是用户提交了未重名的新伙伴，底层 `addBotProfileAndWait` 先执行了 store 的乐观更新，而当前表单在组件重新渲染时未隔离本次在途提交，误将刚被乐观推入列表的自身计算为重名。主进程随后在数据库层正常校验通过并完成创建。  ### 行动  建议 Desktop 前端开发牵头，修复创建表单对在途提交乐观状态的查重逻辑： - **具体动作**：在 `apps/desktop/src/renderer/features/bots/BotRosterView.tsx` 中，确保在异步提交状态（`creating` 为 `true`）期间抑制或排除对当前在途创建伙伴的重名判断； - 在 `apps/desktop/src/renderer/features/bots/__tests__/botRosterView.test.tsx` 中补充回归用例，模拟 `addBotProfileAndWait` 触发 store 乐观广播时组件的行为； - **完成条件**：新建未重名伙伴并点击创建后，按钮转圈期间不再闪现「已有同名伙伴」报错；若输入框填入真实存活的同名伙伴名称，继续保持在点击前禁用按钮并呈现明确提示。  ### 技术依据与范围  核查基线：`68caff760d2a3b40466f5427fc80ff58cb1a7e76`（origin/main）。以下为静态代码证据与时序核对：  1. **查重与禁用联动**：`BotRosterView.tsx` 中 `Button` 绑定 `disabled={creating || !name.trim() || duplicate || !portrait}`，且 `create()` 
+  > ### 判断 定时任务开启通知且接收端未查看该会话时，iPhone 能够收到相应的完成通知是自动化功能的核心体验，该问题值得推进修复。  进一步检查代码执行路径发现，通知未送达 iPhone 并非 APNs 离线、推送权限失效或手机端分类过滤问题，而是桌面端在调用 `sendMobileSessionNotify` 发出移动推送前，被本地会话注意力门禁拦截并静默丢弃。  ### 建议行动 由**桌面端 / 设备互联研发**核对并修复调度器与移动通知分发的门禁衔接： 1. **调整移动通知投递门禁**：在 `apps/desktop/src/main/scheduler-host/notifier.ts` 中，`ScheduleNotifier` 已在前置链路完成会话免打扰（`!muted`）及通知通道检查；向 `sendMobileSessionNotify` 投递调度终态（`done`/`error`）时，需确保该通知具备合理的豁免或来源标识（或由 `sendMobileSessionNotify` 识别调度来源），避免其因为未标记桌面灵动岛注意力（`activity.attention`）而被拦截丢弃。 2. **场景验收**：    - 在接收端手机离开目标会话（且电脑不在该会话）时，触发单次/周期定时任务执行，验证任务完成后 iPhone 能够稳定弹出横幅并在通知中心留存。    - 依赖分支验证：当会话开启了“消息免打扰”或手机正停留在该会话界面时，验证移动推送仍能正常被抑制；对于显式设置 `silentWhenIdle: true` 的静默任务，成功完成时仍保持不打扰手机。 - **完成条件**：定时任务完成通知在非免打扰且未查看该会话的手机端稳定触达，且不破坏既有的防打扰与静默任务设计。  ### 关键排查依据 1. **待确认与完成通知的差异处理**：    - 在 `apps/desktop/src/main/device-link/index.ts` 的 `sendMobileSessionNotify` 存在如下过滤条件：      `if (!payload.muteExempt && activity && (payload.kind === 'needs-reply' ? activity.phase !== 'needs-interac
 
-- **Issue #10270** (2026-11-13): **Crash on system resume: uncaughtException from WebSocket.terminate on a CONNECTING socket (device-link reconnect)**
-  *Symptoms*: **提交人**: 计三勇 **客户端版本**: 0.1.135  ---  ## 问题  Cindy 在 macOS 上于系统从睡眠唤醒的瞬间意外退出（uncaughtException，exitCode 1）。  ## 复现路径  1. 电脑断网（日志出现 `ERR_INTERNET_DISCONNECTED`、`getaddrinfo ENOTFOUND device-link.cindy.com.cn`），device-link WebSocket 反复重连失败，始终处于 CONNECTING 状态（`onlineForMs=never-online`）。 2. 系统进入睡眠。 3. 系统唤醒。Cindy 立即重建 device-link 连接：`system resume: rebuilding device-link connection immediately` → `discarding live socket for reconnect (reason=system-resume)`。  ## 崩溃点  清理旧 socket 时调用 `WebSocket.terminate()`。ws 库对仍处于 CONNECTING 状态的 WebSocket 调用 terminate() 会抛出 `Error: WebSocket was closed before the connection was established`，该错误未被捕获，触发 uncaughtException，应用退出。  关键日志：`FATAL process uncaughtException ... at WebSocket.terminate (ws/lib/websocket.js:496) at bootstrap-electron-*.js`，紧跟在 system resume 与 discarding live socket for reconnect 之后。  ## 预期行为  重连清理路径中 terminate() 一个 CONNECTING 状态的 socket 应当被容忍或捕获（例如先检查 readyState，或对该调用包 try/catch），系统唤醒不应导致应用崩溃。  ## 备注  故障环境：macOS，Cindy 0.1.135。数据无损坏，关闭流程（DbClient dispose、quit disposers）正常完成。 --- ## 相关日志  提交客户端本机最近 2 小时的运行日志摘录，不代表已定位故障，也不包含 SSH 远端或手机日志。已按来源和字段白名单过滤并脱敏；不读取对话正文或原始请求响应。 ```text - 2026-11-13T02:00:12.846Z [ERROR] [proxy/codex-proxy] upstream request failed ↵   reqId  : 128 ↵   err    : Error: getaddrinfo ENOTFOUND c - 2026-11-13T02:00:13.265Z [ERROR] [proxy/codex-proxy] upstream request failed ↵   reqId  : 129 ↵   err    : Error: getaddrinfo ENOTFOUND c - 2026-11-13T02:00:14.112Z [ERROR] [proxy/codex-proxy] upstream request failed ↵ 
+- **Issue #10911** (2026-11-17): **后台工具结果压缩会刷新旧会话的更新时间，导致历史会话突然出现在任务列表顶部**
+  *Symptoms*: **提交人**: YeGGo **客户端版本**: 0.1.137  ---  ## 现象  任务列表里突然冒出几条标题很怪的历史对话，看起来像刚创建的新任务。核对后确认：这些会话是**几周前**在伙伴群聊里产生的历史发言，消息内容**没有任何新增**，只是突然出现在了列表顶部。  ## 复现路径  1. 伙伴群聊里 @ 某个伙伴发言，会为其生成一条会话（群聊发言记录），标题取的是**建群时的群名**。 2. 这些会话创建于数周前，平时不显示。 3. 某次后台维护之后，它们突然出现在任务列表最上方，标题是那个早已改掉的旧群名。  ## 定位到的原因  后台的一次例行维护（主日志里可以看到 `localDb/toolResultCompaction` 的工具结果压缩记录，以及同一分钟内的 working-dir / git 探测）扫描到了这批旧会话并重写了它们的消息行。**重写消息时把会话行的 `updated_at` 一并刷新成了当前时间**——日志里 `toolResultCompaction` 记录的 sessionId，与该会话被刷新后的 `updated_at` 时间戳完全一致。  任务列表按 `updated_at` 排序，于是这些几周前的旧会话被当成"刚刚更新"顶到了最前面，看起来像凭空多出来的任务。  ## 期望行为  - 后台的工具结果压缩 / 维护性重写**不应修改会话的业务更新时间**。压缩只改变消息内容的存储形态，不该让会话在列表里"诈尸"。 - 如果确实需要记录维护时间，应该用独立字段，不要复用会话的 `updated_at`。 - 已经 `deleted` / `archived` 的会话更不应因此重新出现在列表里。 - 另外，群聊历史会话的标题绑定的是建群时的群名，群改名后旧会话仍留着旧名，用户看到时很难判断这不是新对话；这类标题建议在展示时带上群聊标识，或随群改名一并更新。  ## 环境  Windows 桌面端，除此之外无特殊要求。 --- ## 提交时的任务环境  仅代表提交时快照,不一定是故障环境。OS 来自提交客户端本机,不含 SSH 远端主机;Harness / 模型来自当前任务。与运行环境无关的反馈可忽略本段。 **版本区域**: CN **OS**: win32 x64 (10.0.19045) **Harness**: Claude Code **Model ID**: ` MiniMax-M3.1-Flash ` **界面语言**: zh-CN
   **Post-Mortem & Fix Analysis**:
-  > ### 判断  系统从休眠唤醒时重建 device-link 连接应具备完整的容错清理能力，即使旧连接尚未建立成功也不应因 socket 销毁导致主进程退出。经源码排查，该崩溃现象定位明确，属于重连路径上的异常防护缺口与单测覆盖盲区，建议直接进行最小修复。  ### 根因与机理分析  1. **清理路径缺少安全捕获与错误事件吸收**：    在 `packages/device-link/src/client.ts` 的 `connect(reason)` 丢弃旧 socket 阶段（约 2522–2526 行）：    ```ts    try {      prev.close(1000, 'reconnecting');    } catch {      prev.terminate?.();    }    ```    当电脑处于断网或重连失败阶段，旧 socket 保持在 `CONNECTING` 状态。此时外层的 `prev.terminate?.()` 没有 `try/catch` 保护；同时 Node.js `ws` 库在未建连阶段调用 `terminate()` 或 `close()` 会进入 `abortHandshake`，创建 `Error: WebSocket was closed before the connection was established` 并通过 EventEmitter 派发 `'error'` 事件。在旧 socket 闭包脱离主流程后，若未挂载静默监听器，该错误将直接冒泡为主进程的 `FATAL process uncaughtException` 并导致进程退出。    值得注意的是，同文件第 6577 行的 `closeOrTerminate` 函数已明确标注「已断开的 socket 上 close/terminate 可能抛，忽略」并带有完整捕获，但 `connect()` 与 `stop()` 的旧连接清理分支尚未接入统一的安全回收逻辑。  2. **单测替身覆盖盲区**：    `packages/device-link/src/__tests__/client.test.ts` 中注入的 `FakeWs` 替身其 `terminate()` 仅设置 `this.terminated = true`，
-  > Cindy 解决这个问题，发PR  _来自 Slack #cindy-issue · @dashhuang_ <!-- slack-sync hash=ca7fd655030706ac --> 
+  > ### 判断  历史群聊专线会话因后台维护刷新时间戳而导致列表异常置顶的现象值得修复，这有助于避免陈旧会话误导用户产生“凭空多出新任务”的困扰。  进一步核查本地源码与数据库事务链路发现，实际机制与最初归因略有不同： 1. **压缩本身不修改会话时间**：`toolResults.compactSession` 仅在 `messages` 表上通过 `json_patch` 压缩 `tool_result` 内容，并不修改 `sessions.updated_at`，本地库也没有更新该字段的触发器。 2. **时间刷新的真实来源**：这批旧会话是在后台触发了终态流转（例如群工作区路径变更时的专线替换 `botsCreateGroupLane`，或群成员/专线清理 `botGroupsTx.archiveLanes`），在执行 `sessions.setTerminalStatus` 或专线归档时写入了 `UPDATE sessions SET status = 'archived', updated_at = now`，直接将业务更新时间刷新为当前时间；归档成功后，异步触发了 `compactTerminalSessionToolResults`（记录 `localDb/toolResultCompaction` 日志）与 `recycleSessionWorktreeForStatusChange`（工作区 Git 探测）。日志中的压缩记录与 `updated_at` 时间戳一致是由于处于同一次归档流程，二者为伴生关系而非因果关系。 3. **置顶原因与标题脱节**：    - 任务列表最近活动排序依据换手时刻（#7063），缺少换手记录时回退至 `updated_at`。归档操作将 `updated_at` 刷到当前时间，导致数周前的会话被视为“最新活动”推至顶部。    - 群专线在创建时将 `sessions.title` 固化为建群时的群名；后续群改名仅更新了群元数据，未级联更新专线历史标题（与 #10243 伙伴改名未同步主对话标题表现一致），使用户在列表中看到早已弃用的旧群名。  ### 行动  1. **首要步骤（LocalDB / Desktop 研发）**：    在 `sessions.setTerminalStatus`、`botGroups
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1022,961 +1021,685 @@ export default {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0bbf1dc8` (2026-11-13)
-**Commit Message**: Merge pull request #9878 from 97Three/fix/queued-route-refresh-6793-v2
+### Incident Patch 1: `677fdc84` (2026-11-17)
+**Commit Message**: fix(github): notify only when reconciled PR associations change
 
-fix(desktop): refresh queued inputs after model route changes
+Signed-off-by: Chris <[REDACTED_EMAIL]>
 
-**File**: `apps/desktop/src/main/maker-ipc/__tests__/agent-input-coordinator.test.ts` (modified, +80/-0)
+**File**: `apps/desktop/src/main/git-context/prRefsStore.ts` (modified, +16/-22)
 ```diff
-@@ -11510,6 +11510,86 @@ describe('AgentInputCoordinator queue mutations', () => {
- });
- 
- describe('AgentInputCoordinator crash-recovery queue snapshots (issue #761)', () => {
-+  it('refreshes a queued route and its crash snapshot after a model switch (#6793)', async () => {
-+    const sid = 'queued-route-switch';
-+    const h = createHarness();
-+    await h.coordinator.ensureQueueRestored(sid);
-+    h.setRunning(true);
-+    const queued = makeItem('queued', 'Send on the selected route');
-+    queued.createOpts.providerId = 'old-provider';
-+    h.coordinator.enqueue(sid, queued);
-+    await flush();
-+
-+    h.coordinator.refreshQueuedRoute(sid, { model: 'new-model', providerId: 'new-provider' });
-+    const snapshot = h.persistQueueSnapshot.mock.calls.at(-1)?.[1][0];
-+    expect(snapshot?.createOpts).toMatchObject({ model: 'new-model', providerId: 'new-provider' });
-+    const restarted = createHarness();
-+    restarted.setLoadQueueSnapshot(async () => JSON.parse(JSON.stringify([snapshot])));
-+    await restarted.coordinator.ensureQueueRestored(sid);
-+    expect(restarted.coordinator.getQueueControlSnapshot(sid).pendingQueue[0]?.createOpts)
-+      .toMatchObject({ model: 'new-model', providerId: 'new-provider' });
-+
-+    h.setRunning(false);
-+    h.coordinator.onTurnEvent(sid, 'done');
-+    await flush();
-+    expect(h.sendToAgent.mock.calls[0]?.[2]).toMatchObject({ model: 'new-model', providerId: 'new-provider' });
-+  });
-+
-+  it('rebases an old snapshot that finishes loading after the model switch (#6793)', async () => {
-+    const sid = 'route-switch-during-restore';
-+    const h = createHarness();
-+    const loading = deferred<void>();
-+    const snapshot = deferred<AgentInputQueuedMessage[]>();
-+    h.setLoadQueueSnapshot(async () => {
-+      loading.resolve();
-+      return snapshot.promise;
-+    });
-+    const restoring = h.coordinator.ensureQueueRestored(sid);
-+    await loading.promise;
-+    h.coordinator.refreshQueuedRoute(sid, { model: 'new-model', providerId: 'new-provider' });
-+    const old = makeItem('restored-old-route', 'Recovered input');
-+    old.createOpts.providerId = 'old-provider';
-+    snapshot.resolve([old]);
-+    await restoring;
-+    await flush();
-+    expect(h.coordinator.getQueueControlSnapshot(sid).pendingQueue[0]?.createOpts)
-+      .toMatchObject({ model: 'new-model', providerId: 'new-provider' });
-+    expect(h.persistQueueSnapshot.mock.calls.at(-1)?.[1][0]?.createOpts)
-+      .toMatchObject({ model: 'new-model', providerId: 'new-provider' });
-+  });
-+
-+  it('keeps a scheduled run route scoped to that run during a user model switch (#6793)', async () => {
-+    const h = createHarness();
-+    const sid = 'scheduled-route-scope';
-+    await h.coordinator.ensureQueueRestored(sid);
-+    h.setRunning(true);
-+    const scheduled = makeItem('scheduled', 'Scheduled input', {
-+      origin: { kind: 'scheduler', scheduleId: 'schedule-1', scheduleName: 'Check', runId: 'run-1' },
-+    });
-+    scheduled.createOpts.providerId = 'run-provider';
-+    h.coordinator.enqueue(sid, scheduled);
-+    h.coordinator.refreshQueuedRoute(sid, { model: 'user-model', providerId: 'user-provider' });
-+    expect(h.coordinator.getQueueControlSnapshot(sid).pendingQueue[0]?.createOpts.providerId)
-+      .toBe('run-provider');
-+  });
-+
-+  it('retries a failed queue head on the newly selected provider (#6793)', async () => {
-+    const h = createHarness();
-+    const sid = 'failed-head-route';
-+    await h.coordinator.ensureQueueRestored(sid);
-+    h.sendToAgent.mockRejectedValueOnce(new Error('old provider unavailable'));
-+    const queued = makeItem('failed-head', 'Retry me');
-+    queued.createOpts.providerId = 'old-provider';
-+    h.coordinator.enqueue(sid, queued);
-+    await flush();
-+    expect(h.coordinator.getProjection(sid).recovery).toEqual({ kind: 'queue-head', clientId: 'failed-head' });
-+
-+    h.coordinator.refreshQueuedRoute(sid, { model: 'new-model', providerId: 'new-provider' });
-+    await h.coordinator.retryLastError(sid);
-+    await flush();
-+    expect(h.sendToAgent.mock.calls.at(-1)?.[2]).toMatchObject({ model: 'new-model', providerId: 'new-provider' });
-+  });
-+
-   it.each(['member', 'plan'] as const)('drops restored %s group inputs before a new execution can use their lane', async kind => {
-     const sid = 'reused-group-lane';
-     const oldId = kind === 'member' ? BOT_GROUP_CLIENT_ID.memberTurn('room', 'old-execution', 'bot')
-```
-
-**File**: `apps/desktop/src/main/maker-ipc/agent-input-coordinator.ts` (modified, +44/-0)
-```diff
-@@ -765,6 +765,8 @@ type AgentInputSendFailure = Extract<
- interface SessionInputState {
-   /** Runtime courtesy clock; never persisted or used for list ordering. */
-   lastUserActionAt: number | null;
-+  /** Last committed route while a crash snapshot may still be loading. */
-+  queuedRoute: Pick<AgentInputCreateOpts, 'model' | 'providerId' | 'effort' | 'fastMode'> | null;
-   pendingQueue: AgentInputQueuedMessage[];
-   pendingCompacts: PendingCompactRequest[];
-   steeringQueueClientIds: string[];
-@@ -925,6 +927,7 @@ function createInitialInputState(
- ): SessionInputState {
-   return {
-     lastUserActionAt: null,
-+    queuedRoute: null,
-     pendingQueue: [],
-     pendingCompacts: [],
-     steeringQueueClientIds: [],
-@@ -1297,6 +1300,20 @@ function isHostGeneratedSteerItem(item: AgentInputQueuedMessage): boolean {
-     || isSyntheticTriggerText((item.persistedContent ?? '').trimStart());
- }
- 
-+function rebaseQueuedItemRoute(
-+  item: AgentInputQueuedMessage,
-+  route: Pick<AgentInputCreateOpts, 'model' | 'providerId' | 'effort' | 'fastMode'>,
-+): void {
-+  // A scheduled run can select its own route for this one execution.
-+  if (item.origin?.kind === 'scheduler') return;
-+  item.model = route.model;
-+  item.createOpts.model = route.model;
-+  item.createOpts.providerId = route.providerId;
-+  item.createOpts.effort = route.effort;
-+  item.createOpts.fastMode = route.fastMode;
-+  if (route.effort) item.effort = route.effort;
-+}
-+
- export class AgentInputCoordinator {
-   private readonly states = new Map<string, SessionInputState>();
-   /** 账号限额等待计划的单调令牌（跨会话唯一，迟到的 host 定时器据此失效）。 */
-@@ -1760,6 +1777,11 @@ export class AgentInputCoordinator {
-       item.origin?.kind !== 'scheduler' && !isBotGroupClientId(item.clientId) && isUnrestorableMcpAppMessage(item));
-     const restored = restorable.filter((item) =>
-       item.origin?.kind !== 'scheduler' && !isBotGroupClientId(item.clientId) && !isUnrestorableMcpAppMessage(item));
-+    // set-model can finish while loadQueueSnapshot is still awaiting storage.
-+    // Apply that committed route before publishing or persisting restored rows.
-+    if (state.queuedRoute) {
-+      for (const item of restored) rebaseQueuedItemRoute(item, state.queuedRoute);
-+    }
-     for (const item of staleAppItems) {
-       this.deps.onDiscardedQueuedMessage?.(sessionId, item);
+@@ -331,6 +331,9 @@ async function reconcilePrRefsForSession(
+     // 时间戳,升序处理保证 lastSeenAt 终值正确),最后再删不在存活集里的旧行:
+     // 任何中断点都只会"多"不会"少",下次重算自然收敛,无需事务。
+     if (scope && !scope.isCurrent()) return;
++    const readRefs = () => db.select(prRefColumns()).from(sessionPrRefs)
++      .where(eq(sessionPrRefs.sessionId, sessionId)).orderBy(asc(sessionPrRefs.id));
++    const before = await readRefs();
+     const keep = new Set<string>();
+     for (const row of rows) {
+       if (scope && !scope.isCurrent()) return;
+@@ -353,31 +356,22 @@ async function reconcilePrRefsForSession(
      }
-@@ -5958,6 +5980,28 @@ export class AgentInputCoordinator {
+ 
+     if (scope && !scope.isCurrent()) return;
+-    if (!prune) {
+-      if (!scope || scope.isCurrent()) onRefsChanged?.(sessionId);
+-      return;
++    if (prune) {
++      const staleIds = before
++        .filter((r) => !r.manuallyAdded && r.removedAt === null && !keep.has(prStatusKey(r)))
++        .map((r) => r.id);
++      if (staleIds.length > 0) {
++        await db.delete(sessionPrRefs).where(inArray(sessionPrRefs.id, staleIds));
++      }
      }
+-    const existing = await db
+-      .select({
+-        id: sessionPrRefs.id,
+-        provider: sessionPrRefs.provider,
+-        host: sessionPrRefs.host,
+-        owner: sessionPrRefs.owner,
+-        repo: sessionPrRefs.repo,
+-        prNumber: sessionPrRefs.prNumber,
+-        manuallyAdded: sessionPrRefs.manuallyAdded,
+-        removedAt: sessionPrRefs.removedAt,
+-      })
+-      .from(sessionPrRefs)
+-      .where(eq(sessionPrRefs.sessionId, sessionId));
++    // Compare final records under the write queue: repeated mentions can change
++    // timestamps transiently during recomputation without changing the result.
++    // Include ordering/provenance fields so meaningful updates still refresh.
+     if (scope && !scope.isCurrent()) return;
+-    const staleIds = existing
+-      .filter((r) => !r.manuallyAdded && r.removedAt === null && !keep.has(prStatusKey(r)))
+-      .map((r) => r.id);
+-    if (staleIds.length > 0) {
+-      await db.delete(sessionPrRefs).where(inArray(sessionPrRefs.id, staleIds));
++    const after = await readRefs();
++    if ((!scope || scope.isCurrent()) && JSON.stringify(before) !== JSON.stringify(after)) {
++      onRefsChanged?.(sessionId);
+     }
+-    if (!scope || scope.isCurrent()) onRefsChanged?.(sessionId);
+   } finally {
+     release?.();
    }
+```
+
+**File**: `apps/desktop/src/main/localDb/__tests__/sessionPrManagement.test.ts` (modified, +39/-0)
+```diff
+@@ -20,6 +20,7 @@ import {
+   recordPrRefsForImportedMessages,
+   recomputePrRefsForSession,
+   ensurePrRefsBackfill,
++  setPrRefsChangedListener,
+ } from '../../git-context/prRefsStore';
  
-+  /** Rebase unsent inputs after a committed user route selection, including the crash snapshot. */
-+  refreshQueuedRoute(
-+    sessionId: string,
-+    route: Pick<AgentInputCreateOpts, 'model' | 'providerId' | 'effort' | 'fastMode'>,
-+  ): void {
-+    const state = this.getState(sessionId);
-+    state.queuedRoute = { ...route };
-+    for (const item of state.pendingQueue) rebaseQueuedItemRoute(item, route);
-+    // A head may already have left pendingQueue while pre-dispatch checks run.
-+    const active = state.activeTurn;
-+    // sendStarted may already be true while sendToAgent waits for the same
-+    // session lock held by set-model; no vendor dispatch has happened yet.
-+    if (active?.item && !active.persisted) rebaseQueuedItemRoute(active.item, route);
-+    for (const compact of state.pendingCompacts) {
-+      compact.createOpts.model = route.model;
-+      compact.createOpts.providerId = route.providerId;
-+      compact.createOpts.effort = route.effort;
-+      compact.createOpts.fastMode = route.fastMode;
-+    }
-+    this.emit(sessionId);
-+  }
-+
-   /** host 侧异步边界(pending 凭证切换 apply 完成等)后恢复该会话的队列派发。 */
-   wakeSession(sessionId: string, reason: string): void {
-     this.scheduleDrain(sessionId, reason);
-```
-
-**File**: `apps/desktop/src/main/maker-ipc/register.ts` (modified, +17/-0)
-```diff
-@@ -21193,6 +21193,14 @@ export function registerMakerIpc(maker: Maker, options: RegisterMakerIpcOptions)
-       assertPendingOwner();
-       setSessionEffort(sessionId, finalEffort);
-       setSessionFastMode(sessionId, finalFastMode);
-+      if (finalModel) {
-+        agentInputCoordinatorHolder?.refreshQueuedRoute(sessionId, {
-+          model: finalModel,
-+          providerId: route.providerId,
-+          effort: finalEffort ?? undefined,
-+          fastMode: finalFastMode,
-+        });
-+      }
-       broadcastSessionPatched(sessionId, patch);
-     },
-     logger: log,
-@@ -24751,6 +24759,15 @@ export function registerMakerIpc(maker: Maker, options: RegisterMakerIpcOptions)
-                 currentFastMode: getSessionFastMode(sessionId),
-               })
-             : undefined;
-+        if (result.status !== 'deferred') {
-+          agentInputCoordinatorHolder?.refreshQueuedRoute(sessionId, {
-+            model,
-+            providerId: getSessionProvider(sessionId),
-+            effort: getSessionEffort(sessionId) ?? undefined,
-+            fastMode: getSessionFastMode(sessionId),
-+          });
-+          wakeSessionInputAfterCredentialSwitch(sessionId);
-+        }
-         await broadcastSessionRuntimeProjection(sessionId, userBaselineOverride).catch((error) => {
-           log.debug('session runtime projection broadcast failed', {
-             sessionId,
-```
-
----
-
-### Incident Patch 2: `3dd3844e` (2026-11-13)
-**Commit Message**: Merge pull request #10408 from makecindy/fix/codex-default-account-quota
-
-fix(openai): 修复默认订阅账号额度读取失败
-
-**File**: `apps/desktop/src/main/maker-ipc/usage.ts` (modified, +16/-2)
-```diff
-@@ -78,6 +78,11 @@ import { observeSubscriptionAccountUsage, pooledCodexResetTarget, onSubscription
- import { getGrokAccessToken, hasGrokOAuthLogin } from '../maker-host/grok-oauth-login.desktop.js';
- import { outboundFetch } from '../maker-host/outbound-fetch.desktop.js';
- import { CodexResetAutoUse, parseCodexResetAutoUse } from '../usage/codexResetAutoUse.js';
-+import {
-+  detachedDefaultCodexHome,
-+  readDefaultCodexHomeIdentity,
-+  withDetachedDefaultCodexHome,
-+} from '../usage/codexDefaultAccountHome.js';
- import { codexResetAutoUseStore, codexResetAccountKey } from '../usage/codexResetAutoUseStore.js';
- import { observeUsageChanges } from '../usageBroadcaster.js';
- import type { CodexResetAutoUseSettings } from '@cindy/maker-shared/device-link-contract';
-@@ -291,7 +296,7 @@ export function registerMakerUsageIpc(maker: Maker): void {
-     const assertScope = () => {
-       if (isAppSessionBoundaryPending() || scope !== activeOwnerScopeKey()) throw new Error('PRECONDITION_FAILED: Account scope changed');
-     };
--  const service = createCodexRateLimitResetService(pooledCodexResetTarget(key) ?? {
-+  const nativeTarget: Parameters<typeof withDetachedDefaultCodexHome>[0] = {
-     readRateLimits: async () => { assertScope(); const result = await maker.readAgentAccountRateLimits('codex', providerId); assertScope(); return result; },
-     consumeResetCredit: async (params) => { assertScope(); const result = await maker.consumeAgentAccountRateLimitResetCredit('codex', params, providerId); assertScope(); return result; },
-     readAccountIdentity: async () => {
-@@ -306,7 +311,10 @@ export function registerMakerUsageIpc(maker: Maker): void {
-       return { email: identity, accountId };
-     },
-     recordRateLimitSnapshot: (snapshot) => scope === activeOwnerScopeKey() ? recordCodexAccountUsageSnapshot(snapshot, providerId) : Promise.resolve(),
--  });
-+  };
-+  // The built-in target is the pool's default account; without its own login it reads that account's home.
-+  const service = createCodexRateLimitResetService(pooledCodexResetTarget(key)
-+    ?? (providerId ? nativeTarget : withDetachedDefaultCodexHome(nativeTarget, assertScope)));
- 
-     resetServices.set(key, service);
-     return service;
-@@ -320,6 +328,12 @@ export function registerMakerUsageIpc(maker: Maker): void {
-       const identity = await pooled.readAccountIdentity();
-       return codexResetAccountKey(identity.email, identity.accountId);
-     }
-+    const defaultHome = id ? null : await detachedDefaultCodexHome();
-+    if (defaultHome) {
-+      const identity = await readDefaultCodexHomeIdentity(defaultHome);
-+      if (scope !== activeOwnerScopeKey() || isAppSessionBoundaryPending()) throw new Error('Account scope changed');
-+      return codexResetAccountKey(identity.email, identity.accountId);
-+    }
-     const state = await desktopCodexAuthAdapter.getState({ providerId: id });
-     const accountId = state.authSource === 'oauth' ? await desktopCodexAuthAdapter.getAccountId(id) : null;
-     if (scope !== activeOwnerScopeKey() || isAppSessionBoundaryPending()) throw new Error('Account scope changed');
-```
-
-**File**: `apps/desktop/src/main/subscription-accounts/__tests__/nativeCli.test.ts` (modified, +60/-0)
-```diff
-@@ -61,6 +61,66 @@ it('does not dispatch a reset after its credential guard expires during startup'
-   const methods = children[0].stdin.write.mock.calls.map(([line]) => JSON.parse(line).method);
-   expect(methods).toEqual(['initialize', 'initialized']);
+ const h = vi.hoisted(() => ({ client: null as unknown, changed: vi.fn() }));
+@@ -61,10 +62,48 @@ beforeEach(() => {
+     })
+     .run();
+   verify.mockClear();
++  h.changed.mockClear();
++  setPrRefsChangedListener(h.changed);
  });
+ afterAll(() => sqlite.close());
+ 
+ describe('manual PR management', () => {
++  // DB regression: notifications caused redundant window reads/status queries.
++  // Existing persistence tests miss no-op imports and intermediate timestamp
++  // changes during full recomputation; use the public store with real SQLite.
++  it('notifies only for final association changes, including mention ordering', async () => {
++    const url = 'https://github.com/example/repo/pull/1';
++    const first = { id: 'first', clientId: 'first', sessionId: 's',
++      role: 'assistant' as const, content: JSON.stringify(url), createdAt: 10 };
++    await recordPrRefsForImportedMessages('s');
++    expect(h.changed).not.toHaveBeenCalled();
++    db.insert(messages).values(first).run();
++    await recordPrRefsForMessage({ ...first, content: url });
++    expect(h.changed).toHaveBeenCalledTimes(1);
++    await recordPrRefsForImportedMessages('s');
++    expect(h.changed).toHaveBeenCalledTimes(1);
 +
-+// Existing pooled accounts use synchronous proofs. Do not insert a new yield between proof and write.
-+it('preserves synchronous guarded dispatch before the next microtask', async () => {
-+  let methodsAtNextMicrotask: string[] = [];
-+  await codexAccountRpc('/second', 'account/rateLimitResetCredit/consume', { idempotencyKey: 'key' }, () => {
-+    queueMicrotask(() => {
-+      methodsAtNextMicrotask = children[0].stdin.write.mock.calls.map(([line]) => JSON.parse(line).method);
-+    });
-+    return true;
-+  });
-+  expect(methodsAtNextMicrotask).toEqual(['initialize', 'initialized', 'account/rateLimitResetCredit/consume']);
-+});
-+
-+// #10408, unit: filesystem/source checks are asynchronous. A Promise is not authorization;
-+// inspect actual CLI writes, including connection termination while the proof is pending.
-+it.each([true, false])('waits for an asynchronous dispatch proof (allowed: %s)', async (allowed) => {
-+  let decide!: (allowed: boolean) => void;
-+  let entered!: () => void;
-+  const started = new Promise<void>(resolve => { entered = resolve; });
-+  const proof = new Promise<boolean>(resolve => { decide = resolve; });
-+  const pending = codexAccountRpc('/second', 'account/rateLimitResetCredit/consume',
-+    { idempotencyKey: 'key' }, () => { entered(); return proof; });
-+  const observed = allowed ? expect(pending).resolves.toBeDefined()
-+    : expect(pending).rejects.toThrow('changed before dispatch');
-+  await started;
-+  try {
-+    expect(children[0].stdin.write.mock.calls.map(([line]) => JSON.parse(line).method))
-+      .toEqual(['initialize', 'initialized']);
-+  } finally {
-+    decide(allowed);
-+    await observed;
-+  }
-+  expect(children[0].stdin.write.mock.calls.some(([line]) =>
-+    JSON.parse(line).method === 'account/rateLimitResetCredit/consume')).toBe(allowed);
-+});
-+
-+it('does not dispatch after the connection closes while an asynchronous proof is pending', async () => {
-+  let decide!: (allowed: boolean) => void;
-+  let entered!: () => void;
-+  const started = new Promise<void>(resolve => { entered = resolve; });
-+  const proof = new Promise<boolean>(resolve => { decide = resolve; });
-+  const pending = expect(codexAccountRpc('/second', 'account/rateLimitResetCredit/consume',
-+    { idempotencyKey: 'key' }, () => { entered(); return proof; })).rejects.toThrow('connection closed');
-+  await started;
-+  children[0].emit('close', null);
-+  await pending;
-+  decide(true);
-+  await Promise.resolve();
-+  expect(children[0].stdin.write.mock.calls.map(([line]) => JSON.parse(line).method))
-+    .toEqual(['initialize', 'initialized']);
-+});
-+
-+it('rejects a failed asynchronous proof without sending or exposing its error details', async () => {
-+  await expect(codexAccountRpc('/second', 'account/rateLimitResetCredit/consume',
-+    { idempotencyKey: 'key' }, async () => { throw new Error('fixture-secret-must-not-leak'); }))
-+    .rejects.toThrow('Codex account changed before dispatch');
-+  expect(children[0].stdin.write.mock.calls.map(([line]) => JSON.parse(line).method))
-+    .toEqual(['initialize', 'initialized']);
-+});
-+
- beforeEach(() => {
-   h.binary = '/fixture/codex';
-   h.error = false;
-```
-
-**File**: `apps/desktop/src/main/subscription-accounts/nativeCli.ts` (modified, +16/-3)
-```diff
-@@ -204,7 +204,7 @@ export function codexAccountRpc(
-   directory: string,
-   method: string,
-   params: unknown,
--  canDispatch?: () => boolean,
-+  canDispatch?: () => boolean | Promise<boolean>,
- ): Promise<unknown> {
-   const binary = getReadyBinaryPath('codex');
-   if (!binary) return Promise.reject(new Error('Codex CLI unavailable'));
-@@ -227,6 +227,20 @@ export function codexAccountRpc(
-     };
-     const timer = setTimeout(() => finish(new Error('Codex account read timed out')), 15_000);
-     const send = (message: unknown) => child.stdin.write(JSON.stringify(message) + '\n');
-+    const dispatch = async () => {
-+      try {
-+        if (canDispatch) {
-+          const allowed = canDispatch();
-+          // Existing synchronous proofs and the write must stay in the same synchronous segment.
-+          if (!(typeof allowed === 'boolean' ? allowed : await allowed))
-+            return finish(new Error('Codex account changed before dispatch'));
-+        }
-+        // An asynchronous credential/source check can outlive this control connection.
-+        if (!settled) send({ id: 2, method, params });
-+      } catch {
-+        finish(new Error('Codex account changed before dispatch'));
-+      }
-+    };
-     child.stdin.on('error', () => finish(new Error('Codex account connection closed')));
-     child.on('error', () => finish(new Error('Codex CLI unavailable')));
-     child.on('close', () => finish(new Error('Codex account connection closed')));
-@@ -248,8 +262,7 @@ export function codexAccountRpc(
-           send({ method: 'initialized', params: {} });
-           // Startup may await configuration/auth refresh. A reset must still use
-           // the exact credential observed before spawning this control connection.
--          if (canDispatch && !canDispatch()) return finish(new Error('Codex account changed before dispatch'));
--          send({ id: 2, method, params });
-+          void dispatch();
-         } else if (message.id === 2) finish(undefined, message.result);
-       }
-     });
-```
-
-**File**: `apps/desktop/src/main/usage/__tests__/codexDefaultAccountHome.test.ts` (added, +199/-0)
-```diff
-@@ -0,0 +1,199 @@
-+/**
-+ * 测试价值
-+ * - 生产入口与可观察结果：`maker:usage:codex-rate-limits` 的 `openai` 目标由
-+ *   `createCodexRateLimitResetService(withDetachedDefaultCodexHome(内置目标))` 组成（maker-ipc/usage.ts），
-+ *   这里用同样的组合读取额度并兑换重置次数，断言返回的额度与兑换落在哪个账号目录。
-+ * - Bug 依据：2026-11-13 Windows 无建链接权限，Cindy 的 codex-home 没有 auth.json，账号池默认账号在
-+ *   `~/.codex` 正常运行任务，设置页却一直「ChatGPT 配额更新失败」（`codex not authenticated: no_oauth`）。
-+ * - 现有覆盖缺口：codexRateLimitReset.test.ts 只用假依赖测重置控制面，没有覆盖内置目标与默认账号目录的选择。
-+ * - 最小失败输入：账号池含非旧版默认账号；codex-home 无 auth.json；默认账号目录有 auth.json。
-+ * - tier：unit（真实临时目录 + 进程内假 CLI，不启动 Codex）。
-+ * - 实测耗时：见交付说明。
-+ */
-+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-+import { tmpdir } from 'node:os';
-+import path from 'node:path';
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-+
-+const h = vi.hoisted(() => ({
-+  nativeHome: '',
-+  defaultHome: '',
-+  pool: null as null | { disconnected?: boolean; legacyCodexDefault?: boolean; accounts: Array<{ id: string; paused: boolean }> },
-+  rpc: vi.fn(),
-+  readNativeAccount: vi.fn(),
-+  readNativeCodexTokens: vi.fn(),
-+  readPool: vi.fn(),
-+  credentialCurrent: true,
-+}));
-+
-+vi.mock('../../maker-host/codex-home-path.js', () => ({ getCodexHome: () => h.nativeHome }));
-+vi.mock('../../subscription-accounts/store.js', () => ({
-+  readPool: h.readPool,
-+  accountDirectory: () => h.defaultHome,
-+}));
-+vi.mock('../../subscription-accounts/nativeCli.js', () => ({
-+  codexAccountRpc: h.rpc,
-+  readNativeAccount: h.readNativeAccount,
-+  // The real token reader parses auth.json; the fake only proves the guard is consulted.
-+  readNativeCodexTokens: h.readNativeCodexTokens,
-+}));
-+
-+import { createCodexRateLimitResetService } from '../codexRateLimitReset.js';
-+import { detachedDefaultCodexHome, withDetachedDefaultCodexHome } from '../codexDefaultAccountHome.js';
-+
-+const DEFAULT_LIMITS = {
-+  rateLimits: { planType: 'pro', primary: { usedPercent: 42, windowDurationMins: 10_080 } },
-+  rateLimitsByLimitId: null,
-+  rateLimitResetCredits: { availableCount: 1, credits: null },
-+};
-+
-+let root = '';
-+function native() {
-+  return {
-+    readRateLimits: vi.fn(async () => {
-+      throw new Error('codex not authenticated: no_oauth');
-+    }),
-+    consumeResetCredit: vi.fn(async () => ({ outcome: 'reset' as const })),
-+    readAccountIdentity: vi.fn(async () => ({ email: null, accountId: null })),
-+    recordRateLimitSnapshot: vi.fn(async () => undefined),
-+  };
-+}
-+
-+beforeEach(() => {
-+  root = mkdtempSync(path.join(tmpdir(), 'cindy-codex-default-home-'));
-+  h.nativeHome = path.join(root, 'codex-home');
-+  h.defaultHome = path.join(root, '.codex');
-+  mkdirSync(h.nativeHome);
-+  mkdirSync(h.defaultHome);
-+  writeFileSync(path.join(h.defaultHome, 'auth.json'), '{"tokens":"fake"}');
-+  h.pool = { accounts: [{ id: 'default', paused: false }, { id: 'cindy-abc-1', paused: false }] };
-+  h.readPool.mockReset().mockImplementation(() => h.pool);
-+  h.credentialCurrent = true;
-+  h.readNativeCodexTokens.mockReset().mockImplementation(async () => ({
-+    accessToken: 'fake-token', chatgptAccountId: 'workspace-default', canDispatch: () => h.credentialCurrent,
-+  }));
-+  h.rpc.mockReset().mockImplementation(async (_home: string, method: string) =>
-+    method === 'account/rateLimits/read' ? DEFAULT_LIMITS : { outcome: 'reset' });
-+  h.readNativeAccount.mockReset().mockResolvedValue({ authenticated: true, identity: 'default@example.com' });
-+});
-+afterEach(() => rmSync(root, { recursive: true, force: true }));
-+
-+describe('built-in Codex quota target of the account pool default account', () => {
-+  it('reads and redeems on the default account home when the built-in connection has no login', async () => {
-+    const builtIn = native();
-+    const service = createCodexRateLimitResetService(withDetachedDefaultCodexHome(builtIn, () => {}));
-+
-+    const snapshot = await service.read();
-+    expect(snapshot.rateLimits?.primary?.usedPercent).toBe(42);
-+    expect(snapshot.account?.email).toBe('de***@example.com');
-+    expect(builtIn.readRateLimits).not.toHaveBeenCalled();
-+    // The built-in usage cache is not overwritten by another home's read.
-+    expect(builtIn.recordRateLimitSnapshot).not.toHaveBeenCalled();
-+
-+    const result = await service.consume(snapshot.resetOffer!.idempotencyKey);
-+    expect(result.outcome).toBe('reset');
-+    expect(h.rpc).toHaveBeenCalledWith(
-+      h.defaultHome, 'account/rateLimitResetCredit/consume', expect.anything(), expect.any(Function));
-+    expect(builtIn.consumeResetCredit).not.toHaveBeenCalled();
++    const later = { ...first, id: 'later', clientId: 'later', createdAt: 20 };
++    db.insert(messages).values(later).run();
++    await recordPrRefsForMessage({ ...later, content: url });
++    expect(h.changed).toHaveBeenCalledTimes(2);
++    expect(await listPrRefs('s')).toMatchObject([{ firstSeenAt: 10, lastSeenAt: 20 }]);
++    // Full recomputation temporarily sets lastSeenAt to 10, then back to 20.
++    await recomputePrRefsForSession('s');
++    expect(h.changed).toHaveBeenCalledTimes(2);
++    db.update(messages).set({ content: JSON.stringify('Edited text without a link') })
++      .where(eq(messages.id, 'later')).run();
++    await recomputePrRefsForSession('s');
++    expect(h.changed).toHaveBeenCalledTimes(3);
++    expect(await listPrRefs('s')).toMatchObject([{ lastSeenAt: 10 }]);
++    db.delete(messages).run();
++    await recomputePrRefsForSession('s');
++    expect(h.changed).toHaveBeenCalledTimes(4);
++    expect(await listPrRefs('s')).toEqual([]);
++    await recomputePrRefsForSession('s');
++    expect(h.changed).toHaveBeenCalledTimes(4);
 +  });
 +
-+  it.each([
-+    ['the built-in connection has its own login', () => writeFileSync(path.join(h.nativeHome, 'auth.json'), '{}')],
-+    ['the default account is the legacy private home', () => { h.pool = { ...h.pool!, legacyCodexDefault: true }; }],
-+    ['there is no account pool', () => { h.pool = null; }],
-+    ['the default account has no login file', () => rmSync(path.join(h.defaultHome, 'auth.json'))],
+   // DB: MR imports and manual adds share identity across namespace/host/provider.
+   // Prior GitHub fixtures cannot detect cross-host collisions or dropped MR messages.
+   it('imports multi-group MRs and adds the same number on another host without collision', async () => {
 ```
 
-**File**: `apps/desktop/src/main/usage/__tests__/codexRateLimitReset.test.ts` (modified, +13/-14)
+**File**: `apps/desktop/src/main/mcp-apps/__tests__/ipcPrRefs.test.ts` (modified, +9/-0)
 ```diff
-@@ -9,6 +9,7 @@ import {
- const NOW_MS = Date.UTC(2026, 6, 22, 12, 0, 0);
- const KEY = '018f4ec7-c6d8-7f10-8d43-9f8791d33000';
- const NEXT_KEY = '018f4ec7-c6d8-7f10-8d43-9f8791d33001';
-+const ACCOUNT = { email: 'person@example.com', accountId: 'workspace-123456789' };
- 
- function response(over: Partial<AccountRateLimitsResponse> = {}): AccountRateLimitsResponse {
-   return {
-@@ -48,10 +49,7 @@ function harness(over: Partial<Parameters<typeof createCodexRateLimitResetServic
-   const deps = {
-     readRateLimits: vi.fn().mockResolvedValue(response()),
-     consumeResetCredit: vi.fn().mockResolvedValue({ outcome: 'reset' as const }),
--    readAccountIdentity: vi.fn().mockResolvedValue({
--      email: 'person@example.com',
--      accountId: 'workspace-123456789',
--    }),
-+    readAccountIdentity: vi.fn().mockResolvedValue(ACCOUNT),
-     recordRateLimitSnapshot: vi.fn().mockResolvedValue(undefined),
-     now: () => NOW_MS,
-     createIdempotencyKey: vi.fn()
-@@ -94,13 +92,14 @@ describe('Codex rate-limit reset control plane', () => {
-     expect(snapshot.rateLimitResetCredits?.credits?.[0]).not.toHaveProperty('id');
-     expect(deps.recordRateLimitSnapshot).toHaveBeenCalledWith(expect.objectContaining({
-       primary: expect.objectContaining({ windowMinutes: 300 }),
--    }));
-+    }), ACCOUNT);
- 
-     await service.consume(KEY);
-     expect(deps.consumeResetCredit).toHaveBeenCalledWith({
-       idempotencyKey: KEY,
-       creditId: 'earlier',
--    });
-+    }, ACCOUNT);
-+    expect(vi.mocked(deps.consumeResetCredit).mock.calls[0][1]).toBe(ACCOUNT);
-   });
- 
-   function detailedHarness(over: Partial<Parameters<typeof createCodexRateLimitResetService>[0]> = {}) {
-@@ -127,7 +126,7 @@ describe('Codex rate-limit reset control plane', () => {
-     await service.consume(later.resetOffer!.idempotencyKey);
-     expect(deps.consumeResetCredit).toHaveBeenCalledExactlyOnceWith({
-       idempotencyKey: later.resetOffer!.idempotencyKey, creditId: 'later',
--    });
-+    }, ACCOUNT);
-   });
- 
-   it('joins retries of the selected row and blocks another row during the same attempt', async () => {
-@@ -160,7 +159,7 @@ describe('Codex rate-limit reset control plane', () => {
-     await expect(service.consume(snapshot.resetOffer!.idempotencyKey)).rejects.toMatchObject({ reason: 'RESET_IN_PROGRESS' });
-     await service.consume(key);
-     expect(consumeResetCredit.mock.calls).toEqual([
--      [{ idempotencyKey: key, creditId: 'later' }], [{ idempotencyKey: key, creditId: 'later' }],
-+      [{ idempotencyKey: key, creditId: 'later' }, ACCOUNT], [{ idempotencyKey: key, creditId: 'later' }, ACCOUNT],
-     ]);
-   });
- 
-@@ -179,7 +178,7 @@ describe('Codex rate-limit reset control plane', () => {
-     expect(refreshed.resetOffer).toMatchObject({ idempotencyKey: key, retryOnly: true });
-     await expect(service.consume(refreshed.resetOffer!.idempotencyKey)).resolves.toMatchObject({ outcome: 'alreadyRedeemed' });
-     expect(consumeResetCredit.mock.calls).toEqual([
--      [{ idempotencyKey: key, creditId: 'later' }], [{ idempotencyKey: key, creditId: 'later' }],
-+      [{ idempotencyKey: key, creditId: 'later' }, ACCOUNT], [{ idempotencyKey: key, creditId: 'later' }, ACCOUNT],
-     ]);
-   });
- 
-@@ -227,7 +226,7 @@ describe('Codex rate-limit reset control plane', () => {
-     expect(deps.recordRateLimitSnapshot).toHaveBeenCalledWith(expect.objectContaining({
-       primary: expect.objectContaining({ windowMinutes: 300 }),
-       credits: { hasCredits: false, unlimited: false, balance: null },
--    }));
-+    }), ACCOUNT);
-   });
- 
-   it('reuses a count-only offer and lets app-server select the credit', async () => {
-@@ -255,7 +254,7 @@ describe('Codex rate-limit reset control plane', () => {
-     expect(createIdempotencyKey).toHaveBeenCalledOnce();
- 
-     await service.consume(KEY);
--    expect(deps.consumeResetCredit).toHaveBeenCalledWith({ idempotencyKey: KEY });
-+    expect(deps.consumeResetCredit).toHaveBeenCalledWith({ idempotencyKey: KEY }, ACCOUNT);
-   });
- 
-   it('replaces an unused offer when a fresh read selects a different credit', async () => {
-@@ -286,7 +285,7 @@ describe('Codex rate-limit reset control plane', () => {
-     expect(deps.consumeResetCredit).toHaveBeenCalledWith({
-       idempotencyKey: NEXT_KEY,
-       creditId: 'replacement',
--    });
-+    }, ACCOUNT);
-   });
- 
-   it('coalesces concurrent consumes and caches the terminal result for retries', async () => {
-@@ -346,11 +345,11 @@ describe('Codex rate-limit reset control plane', () => {
-     expect(deps.consumeResetCredit).toHaveBeenNthCalledWith(1, {
-       idempotencyKey: KEY,
-       creditId: 'earlier',
--    });
-+    }, ACCOUNT);
-     expect(deps.consumeResetCredit).toHaveBeenNthCalledWith(2, {
-       idempotencyKey: NEXT_KEY,
-       creditId: 'later',
--    });
-+    }, ACCOUNT);
-   });
- 
-   it('does not evict an in-flight offer when the registry reaches its soft limit', async () => {
-```
-
-**File**: `apps/desktop/src/main/usage/__tests__/codexResetAutoUseStore.test.ts` (modified, +4/-1)
-```diff
-@@ -50,7 +50,10 @@ describe('reset preferences persistence', () => {
-       restored: async () => { await waiter.resumeRestored(async () => redeemed); }, warn: vi.fn(),
-     });
-     await Promise.all([engine.check('openai'), engine.check('openai')]);
--    expect(consumeRpc).toHaveBeenCalledExactlyOnceWith({ creditId: 'one-credit', idempotencyKey: '00000000-0000-4000-8000-000000000001' });
-+    expect(consumeRpc).toHaveBeenCalledExactlyOnceWith(
-+      { creditId: 'one-credit', idempotencyKey: '00000000-0000-4000-8000-000000000001' },
-+      { email: 'test@example.com', accountId: 'workspace' },
-+    );
-     expect(continueSession).toHaveBeenCalledOnce();
-     expect(store.read('openai', account).lastUsedAt).toBe(now);
-     expect((await service.read()).rateLimitResetCredits?.availableCount).toBe(0);
-```
-
-**File**: `apps/desktop/src/main/usage/codexDefaultAccountHome.ts` (added, +149/-0)
-```diff
-@@ -0,0 +1,149 @@
-+/**
-+ * apps/desktop/src/main/usage/codexDefaultAccountHome.ts
-+ *
-+ * 额度读取／重置的 `openai` 目标属于 OpenAI 账号池的默认账号（官方 CLI 的 `~/.codex`）。
-+ * 通常内置连接的 `codex-home/auth.json` 就是它的共享链接，原有读取直接可用；Windows 没有
-+ * 建链接权限时内置连接改走独立登录（auth-adapters 的 `link-unsupported`），在用户没有另行
-+ * 登录前 Cindy 目录里没有任何登录，原有读取只会报未登录，而默认账号本身正常运行任务
-+ * （2026-11-13 实测：设置页默认账号一直显示「配额更新失败」）。
-+ *
-+ * 只有「内置连接没有自己的登录文件、默认账号目录有登录文件」时才改读默认账号自己的目录，
-+ * 读法与其它池内账号相同；内置连接有任何登录条目（共享链接、独立登录、恢复流程）或默认账号
-+ * 仍是旧版私有目录时，一律保留原读取。
-+ */
-+
-+import { lstat, stat } from 'node:fs/promises';
-+import path from 'node:path';
-+import type { CodexRateLimitAccountIdentity, CodexRateLimitResetServiceDeps } from './codexRateLimitReset.js';
-+import { getCodexHome } from '../maker-host/codex-home-path.js';
-+import { accountDirectory, readPool } from '../subscription-accounts/store.js';
-+import {
-+  codexAccountRpc,
-+  readNativeAccount,
-+  readNativeCodexTokens,
-+} from '../subscription-accounts/nativeCli.js';
-+
-+type ResetTarget = Pick<
-+  CodexRateLimitResetServiceDeps,
-+  'readRateLimits' | 'consumeResetCredit' | 'readAccountIdentity' | 'recordRateLimitSnapshot'
-+>;
-+
-+async function entryMissing(file: string): Promise<boolean> {
-+  try {
-+    // lstat: even a dangling link is still the built-in connection's own entry.
-+    await lstat(file);
-+    return false;
-+  } catch (err) {
-+    return (err as NodeJS.ErrnoException).code === 'ENOENT';
-+  }
-+}
-+
-+function defaultAccountAvailable(): boolean {
-+  const pool = readPool('openai');
-+  return Boolean(pool && !pool.disconnected && pool.legacyCodexDefault !== true
-+    && pool.accounts.some((account) => account.id === 'default'));
-+}
-+
-+/** The default account's CLI home when the built-in connection has no login entry of its own. */
-+export async function detachedDefaultCodexHome(): Promise<string | null> {
-+  if (!defaultAccountAvailable()) return null;
-+  let home: string;
-+  try {
-+    home = accountDirectory('openai', 'default');
-+  } catch {
-+    return null;
-+  }
-+  const nativeHome = getCodexHome();
-+  if (path.resolve(home) === path.resolve(nativeHome)) return null;
-+  try {
-+    // Keyring-only logins keep the original reader: the account bridge needs this file.
-+    if (!(await stat(path.join(home, 'auth.json'))).isFile()) return null;
-+  } catch {
-+    return null;
-+  }
-+  if (!await entryMissing(path.join(nativeHome, 'auth.json'))) return null;
-+  // Pool authorization can change while the filesystem checks yield.
-+  return defaultAccountAvailable() && accountDirectory('openai', 'default') === home ? home : null;
-+}
-+
-+/** Identity of that home, with the credential guard used before a redemption. */
-+export async function readDefaultCodexHomeIdentity(
-+  home: string,
-+): Promise<CodexRateLimitAccountIdentity & { canDispatch: () => boolean }> {
-+  const auth = await readNativeAccount('openai', home);
-+  const tokens = await readNativeCodexTokens(home);
-+  if (!auth.authenticated || !auth.identity || !tokens.canDispatch())
-+    throw new Error('PRECONDITION_FAILED: ChatGPT account changed');
-+  return { email: auth.identity, accountId: tokens.chatgptAccountId, canDispatch: tokens.canDispatch };
-+}
-+
-+/**
-+ * Wraps the built-in connection's reset target. Each call decides again, so a later built-in
-+ * login or a removed default account takes effect at once; the reset service's identity bracket
-+ * rejects a read or redemption that straddles the switch.
-+ */
-+export function withDetachedDefaultCodexHome(
-+  native: ResetTarget,
-+  assertScope: () => void,
-+  resolveHome: () => Promise<string | null> = detachedDefaultCodexHome,
-+): ResetTarget {
-+  // A concurrent read must not replace the credential proof that this redemption verified.
-+  const credentials = new WeakMap<CodexRateLimitAccountIdentity,
-+    { home: string | null; current: () => boolean }>();
-+  const assertHome = async (home: string) => {
-+    assertScope();
-+    if (await resolveHome() !== home) throw new Error('PRECONDITION_FAILED: ChatGPT account changed');
-+    assertScope();
-+  };
-+  return {
-+    readAccountIdentity: async () => {
-+      const home = await resolveHome();
-+      if (!home) {
-+        const identity = await native.readAccountIdentity();
-+        credentials.set(identity, { home: null, current: () => true });
-+        return identity;
-+      }
-+      await assertHome(home);
-+      const { canDispatch, ...identity } = await readDefaultCodexHomeIdentity(home);
-+      await assertHome(home);
-+      credentials.set(identity, { home, current: canDispatch });
-+      return identity;
-+    },
-+    readRateLimits: async () => {
-+      const home = await resolveHome();
-+      if (!home) return native.readRateLimits();
-+      await assertHome(home);
-+      const result = await codexAccountRpc(home, 'account/rateLimits/read', {});
-+      await assertHome(home);
-+      return result as Awaited<ReturnType<ResetTarget['readRateLimits']>>;
-+    },
-+    consumeResetCredit: async (params, identity) => {
-+      const bound = identity && cr
-```
-
-**File**: `apps/desktop/src/main/usage/codexRateLimitReset.ts` (modified, +4/-3)
-```diff
-@@ -30,9 +30,10 @@ export interface CodexRateLimitResetServiceDeps {
-   readRateLimits(): Promise<AccountRateLimitsResponse>;
-   consumeResetCredit(
-     params: ConsumeAccountRateLimitResetCreditParams,
-+    identity?: CodexRateLimitAccountIdentity,
-   ): Promise<ConsumeAccountRateLimitResetCreditResponse>;
-   readAccountIdentity(): Promise<CodexRateLimitAccountIdentity>;
--  recordRateLimitSnapshot(snapshot: unknown): Promise<void>;
-+  recordRateLimitSnapshot(snapshot: unknown, identity?: CodexRateLimitAccountIdentity): Promise<void>;
-   now?: () => number;
-   createIdempotencyKey?: () => string;
- }
-@@ -241,7 +242,7 @@ export function createCodexRateLimitResetService(
-         source: 'codex-app-server',
-         updatedAt: now(),
-         accountId,
--      });
-+      }, identity);
-     }
- 
-     const availableCount = normalizeAvailableCount(
-@@ -390,7 +391,7 @@ export function createCodexRateLimitResetService(
-       const response = await deps.consumeResetCredit({
-         idempotencyKey,
-         ...(offer.creditId ? { creditId: offer.creditId } : {}),
--      });
-+      }, currentAccount);
-       // Mark the attempt settled before refreshing. That refresh may expose another
-       // available credit and must receive a fresh idempotency key, while concurrent
-       // retries of this attempt still join offer.pending until the final result is ready.
+@@ -129,17 +129,26 @@ describe('MCP App result PR associations after backfill', () => {
+   it('associates public completion, replaces A with B and removes links without another backfill', async () => {
+     await write(pending);
+     expect(await refs()).toEqual([]);
++    // DB regression: no-link status updates used to broadcast PR changes and
++    // trigger renderer reads/status requests. Existing coverage only checked refs.
++    await write(completed('Processing'));
++    expect(h.changed).not.toHaveBeenCalled();
+     await write(completed(url(1)));
+     expect(await refs()).toEqual([1]);
++    expect(h.changed).toHaveBeenCalledTimes(1);
+     expect(h.changed).toHaveBeenLastCalledWith('task');
++    await write(completed(`Completed: ${url(1)}`));
++    expect(h.changed).toHaveBeenCalledTimes(1);
+     expect(h.broadcast).toHaveBeenCalledWith('local-db:messages:created',
+       expect.objectContaining({ message: expect.objectContaining({
+         content: { mcpAppHistory: { version: 1, title: 'form', text: url(1) } },
+       }) }));
+     await write(completed(url(2)));
+     expect(await refs()).toEqual([2]);
++    expect(h.changed).toHaveBeenCalledTimes(2);
+     await write(completed('Saved'));
+     expect(await refs()).toEqual([]);
++    expect(h.changed).toHaveBeenCalledTimes(3);
+     expect(h.warn).not.toHaveBeenCalled();
+     const row = db.select().from(messages).where(eq(messages.clientId, 'card')).get()!;
+     expect(JSON.parse(row.content)).toEqual({ mcpApp: completed('Saved') });
 ```
 
 ---
 
-### Incident Patch 3: `dcd6b2f6` (2026-11-13)
-**Commit Message**: Merge pull request #10423 from Lyz1116-FOUND/fix/buddy-creation-duplicate-feedback
+### Incident Patch 2: `50dbd865` (2026-11-17)
+**Commit Message**: Merge pull request #10969 from xuzini-xzn/fix/10428-share-navigation
 
-fix(buddies): 创建伙伴时不再将自身误报为同名伙伴
+fix(mobile): 修复系统分享离页时的导航循环闪退
 
-**File**: `apps/desktop/scripts/fixtures/buddy-creation/fixture.tsx` (added, +45/-0)
+**File**: `apps/mobile/app/incoming-share.tsx` (modified, +10/-4)
 ```diff
-@@ -0,0 +1,45 @@
-+import { useState } from 'react';
-+import { mountPage, subscription } from '../../ui-page/harness';
-+import { BotRosterView } from '../../../src/renderer/features/bots/BotRosterView';
-+import { refreshBotProfiles, type BotProfile } from '../../../src/renderer/features/bots/botStore';
-+import { beginProvidersRefresh, commitProvidersSnapshot } from '../../../src/renderer/lib/providersSnapshotStore';
-+import { getDataOwnerGeneration } from '../../../src/renderer/contexts/dataOwnerGeneration';
-+import { BUNDLED_CATALOG, type ProviderView } from '@cindy/model-providers';
-+
-+const route = { harness: 'codex' as const, model: 'fixture-model', providerId: 'openai', effort: 'high', fastMode: false };
-+const model = { id: route.model, name: 'GPT', contextWindow: 200000, efforts: ['high'], defaultEffort: 'high' };
-+const provider: ProviderView = { ...BUNDLED_CATALOG.providers.find(p => p.id === 'openai')!,
-+  connected: true, agents: ['codex'], access: { kind: 'subscription' }, models: { codex: [model] } };
-+
-+function Fixture() {
-+  const [created, setCreated] = useState<BotProfile | null>(null);
-+  return created ? <p role="status">{created.name}</p> : <BotRosterView onCreated={setCreated} />;
-+}
-+
-+void mountPage({
-+  route: '/bots',
-+  host: () => {
-+    Math.random = () => 0; // Keep the portrait identical in before/after captures.
-+    const owner = getDataOwnerGeneration();
-+    commitProvidersSnapshot(beginProvidersRefresh(), { dataOwnerId: owner.dataOwnerId,
-+      ownerGeneration: owner.generation, providers: [provider], providerOrder: ['openai'] });
-+    return {
-+      localDb: { bots: {
-+        list: async () => [],
-+        getModelChainSettings: async () => ({ modelChain: [route], isCustomized: true }),
-+        // Leave the real store's optimistic profile pending, without touching a database.
-+        create: () => {
-+          (window as unknown as { __buddyCreationPending: boolean }).__buddyCreationPending = true;
-+          return new Promise(() => {});
-+        },
-+      } },
-+      maker: {
-+        listAvailableAgents: async () => ['codex'],
-+        getCapabilities: async () => ({ hasFastMode: false, availableModels: [{ ...model, displayName: model.name }],
-+          effortLevels: [], permissionModes: [], turnPermissionPolicy: { supported: { supported: true }, unsupportedPermissionModes: [] } }),
-+        onProvidersChanged: subscription('providers'),
-+      },
-+    };
-+  },
-+  render: () => { refreshBotProfiles(); return <Fixture />; },
+@@ -121,8 +121,12 @@ export default function IncomingShareScreen() {
+   const text = batch ? incomingShareText(batch.payloads) : '';
+   const files = batch?.payloads.filter(item => item.shareType !== 'text' && item.shareType !== 'url') ?? [];
+   const handoffBatchId = useRef<string | null>(null);
++  const [leaving, setLeaving] = useState(false);
+   useEffect(() => {
+-    if (focused) handoffBatchId.current = null;
++    if (focused) {
++      handoffBatchId.current = null;
++      setLeaving(false);
++    }
+   }, [focused, batch?.id]);
+   const choose = (destination: string, action: () => void) => {
+     // A queued second press must not replace the destination during transition.
+@@ -133,9 +137,11 @@ export default function IncomingShareScreen() {
+   };
+   // Removing the chooser during a handoff retains the batch for its composer.
+   // Header/gesture cancellation still acknowledges and cleans the owned copies.
+-  usePreventRemove(!!batch, ({ data }) => {
+-    leaveIncomingShareChooser(batch && handoffBatchId.current !== batch.id ? batch.id : null,
+-      () => navigation.dispatch(data.action));
++  usePreventRemove(!!batch && !leaving, ({ repeat }) => {
++    // repeat releases this screen's prevention before replaying the action.
++    // The batch deliberately survives handoff or a failed native cancellation.
++    setLeaving(true);
++    leaveIncomingShareChooser(batch && handoffBatchId.current !== batch.id ? batch.id : null, repeat);
+   });
+   const back = () => goBackGuarded(router);
+   return <SafeAreaView edges={simpleScreenSafeAreaEdges()} style={styles.root}>
+```
+
+**File**: `apps/mobile/src/__tests__/incomingShareScreen.test.tsx` (modified, +71/-10)
+```diff
+@@ -4,9 +4,11 @@ import { createRoot, type Root } from 'react-dom/client';
+ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+ 
+ const mock = vi.hoisted(() => ({
+-  dismissTo: vi.fn(), select: vi.fn(() => true), readDevices: vi.fn(), invoke: vi.fn(async () => []),
++  dismissTo: vi.fn(), select: vi.fn(), dispatch: vi.fn(),
++  prevent: false, onRemove: undefined as ((event: { data: { action: object }; repeat: () => void }) => void) | undefined,
++  acknowledge: vi.fn(), readDevices: vi.fn(), invoke: vi.fn(async () => [] as any[]),
+   openLink: vi.fn(async () => undefined), owner: { generation: 1 },
+-  revoked: new Set<string>(), roster: { items: [], loading: false, error: null, refresh: vi.fn() },
++  revoked: new Set<string>(), roster: { items: [] as any[], loading: false, error: null, refresh: vi.fn() },
+ }));
+ vi.mock('react-native', () => ({
+   Platform: { OS: 'ios' }, StyleSheet: { create: (x: unknown) => x },
+@@ -22,31 +24,36 @@ vi.mock('lucide-react-native', () => ({ ChevronRight: () => null, Link: () => nu
+   Plus: () => null, Search: () => null, X: () => null }));
+ vi.mock('react-native-safe-area-context', () => ({ SafeAreaView: ({ children }: any) => el('div', null, children) }));
+ vi.mock('expo-router', () => ({ useIsFocused: () => true, useRouter: () => ({ dismissTo: mock.dismissTo }),
+-  useNavigation: () => ({ isFocused: () => true }) }));
+-vi.mock('expo-router/react-navigation', () => ({ usePreventRemove: () => undefined }));
++  useNavigation: () => ({ isFocused: () => true, dispatch: mock.dispatch }) }));
++vi.mock('expo-router/react-navigation', () => ({ usePreventRemove: (prevent: boolean, callback: typeof mock.onRemove) => {
++  mock.prevent = prevent; mock.onRemove = callback;
++} }));
+ vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (s: string) => s, i18n: { language: 'en' } }) }));
+ vi.mock('@/i18n', () => ({ i18n: { t: (s: string) => s } }));
+ vi.mock('@/i18n/presentationLocalizer', () => ({ mobilePresentationLocalizer: undefined }));
+ vi.mock('@/components/AppText', () => ({ Text: ({ children }: any) => el('span', null, children), TextInput: ({ value, onChangeText, testID }: any) => el('input', { value, onInput: (event: any) => onChangeText(event.currentTarget.value), 'data-testid': testID }) }));
+ vi.mock('@/components/RemoteCompanionAvatar', () => ({ RemoteCompanionAvatar: () => null }));
+ vi.mock('@/components/FileTypeIcon', () => ({ FileTypeIcon: () => null }));
+-vi.mock('@/platform/chrome/SimpleStackHeader', () => ({ SimpleStackHeader: () => null, simpleScreenSafeAreaEdges: () => [] }));
++vi.mock('@/platform/chrome/SimpleStackHeader', () => ({ SimpleStackHeader: ({ onBack }: any) => el('button', { onClick: onBack, 'data-testid': 'back' }, 'Back'), simpleScreenSafeAreaEdges: () => [] }));
+ vi.mock('@/auth/AuthContext', () => ({ useAuth: () => ({ accountGeneration: 1 }) }));
+-vi.mock('@/auth/authOwnerGeneration', () => ({ getMobileAuthOwner: () => mock.owner, isMobileAuthOwnerCurrent: () => true }));
++vi.mock('@/auth/authOwnerGeneration', () => ({ getMobileAuthOwner: () => mock.owner, isMobileAuthOwnerCurrent: () => true, subscribeMobileAuthOwner: () => () => undefined }));
+ vi.mock('@/device-link/DeviceLinkContext', () => ({ useDeviceLink: () => ({ readDeviceList: mock.readDevices,
+   openLink: mock.openLink, invoke: mock.invoke, status: 'online', presenceVersion: 0 }) }));
+ vi.mock('@/device-link/revokedDevicesStore', () => ({ useRevokedDevices: () => mock.revoked }));
+ vi.mock('@/session/useTeammateRoster', () => ({ useTeammateRoster: () => mock.roster }));
+ vi.mock('@/session/remoteSessionStore', () => ({ remoteSessionStore: { getSessions: () => [] } }));
+-vi.mock('@/session/incomingShare', () => ({
+-  useIncomingShareBatch: () => ({ id: 'share-1', payloads: [] }), incomingShareText: () => 'shared page',
+-  selectIncomingShareDestination: mock.select, leaveIncomingShareChooser: vi.fn(), incomingShareDestination: vi.fn(),
+-}));
++vi.mock('@/session/incomingShare', async importOriginal => {
++  const original = await importOriginal<typeof import('@/session/incomingShare')>();
++  return { ...original, selectIncomingShareDestination: (...args: Parameters<typeof original.selectIncomingShareDestination>) => {
++    mock.select(...args); return original.selectIncomingShareDestination(...args);
++  } };
 +});
+ vi.mock('@/theme', async () => {
+   const tokens = await import('@/theme/tokens');
+   return { ...tokens, useTheme: () => ({ colors: tokens.lightColors }),
+     useThemedStyles: (make: any) => make(tokens.lightColors) };
+ });
++import { __resetIncomingShareForTest, stageIncomingShareBatch, consumeIncomingShareBatch } from '@/session/incomingShare';
+ import IncomingShareScreen from '../../app/incoming-share';
+ import { parseNewSessionDeviceOptions, pickNewSessionDefaultDevice } from '@/session/newSession';
+ 
+@@ -55,6 +62,14 @@ let container: HTMLDivElement;
+ beforeEach(() => {
+   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
+   vi.clearAllMocks();
+
 ```
 
-**File**: `apps/desktop/scripts/fixtures/buddy-creation/ui-page.mjs` (added, +25/-0)
+---
+
+### Incident Patch 3: `ff89863a` (2026-11-17)
+**Commit Message**: Merge pull request #7356 from joei4cm/fix/codex-mcp-auto-review-evidence
+
+fix(codex): 不再把同一份 MCP 参数重复计入审阅预算
+
+**File**: `apps/desktop/src/main/maker-host/__tests__/autoPermissionReviewer.test.ts` (modified, +6/-1)
 ```diff
-@@ -0,0 +1,25 @@
-+import assert from 'node:assert/strict';
+@@ -327,7 +327,12 @@ describe('createAutoPermissionReviewer', () => {
+     const requestText = vi.fn(async () => '{"verdict":"allow"}');
+     const reviewer = createAutoPermissionReviewer({ requestText, logger: { debug: vi.fn(), warn: vi.fn() } });
+     await expect(reviewer(request({ userIntent: '', action: { kind: 'exec', command: './runtime/node lab/preflight.cjs', cwd: '/repo' } })))
+-      .resolves.toMatchObject({ verdict: 'block' });
++      .resolves.toMatchObject({
++        verdict: 'block',
++        // 宿主自己判的(没调模型)→ 标出来源,这条原因才能进诊断 / UI 通道。
++        hostReason: true,
++        reason: 'No user request authorizes this action; only reads may run without one.',
++      });
+     expect(requestText).not.toHaveBeenCalled();
+     await expect(reviewer(request({ userIntent: '', action: { kind: 'read', path: '/repo/README.md' } })))
+       .resolves.toMatchObject({ verdict: 'allow' });
+```
+
+**File**: `apps/desktop/src/main/maker-host/auto-permission-reviewer.ts` (modified, +7/-1)
+```diff
+@@ -375,7 +375,13 @@ export function createAutoPermissionReviewer(
+     // Risk-first models wave "low risk" steps through even when nothing at all was user-authored.
+     // Decide that case here, after the Host attached any delegated task.
+     if (!request.delegatedTask && request.action.kind !== 'read' && hasNoUserIntent(request.userIntent)) {
+-      return { verdict: 'block', reason: 'No user request authorizes this action; only reads may run without one.' };
++      // 宿主写死的判定(没有调用模型):标 hostReason,让这条原因能进诊断 / UI 通道 ——
++      // 否则它会被当成模型自由文本过滤掉,用户只看到一句通用「被拦截」。
++      return {
++        verdict: 'block',
++        reason: 'No user request authorizes this action; only reads may run without one.',
++        hostReason: true,
++      };
+     }
+     const startedAt = Date.now();
+     let prompt: string;
+```
+
+**File**: `docs/dev-rules/maker-core-and-agent-behavior.md` (modified, +18/-0)
+```diff
+@@ -739,6 +739,24 @@ IM 与官方 Hook 确认卡统一显示为「自动审批需要你决定：…
+ `agents/shared/continuation-policy.ts`，真实模型配对比较入口为 `scripts/eval-auto-approval.mts`
+ 的 `--baseline-bundle`（隔离打包的旧审核器）；只审核合成操作，不执行副作用。
+ 
++审阅证据只算**一份**。MCP 工具调用的证据取原始调用（server、tool name、原始参数、工具标题
++与描述），不得再带确认卡那份渲染副本：codex 会把同一份 `tool_params` 再渲染一份
++`tool_params_display` 发给客户端（codex-rs `build_mcp_tool_approval_display_params` 是同一对象的
++逐字段副本，不是截断版），两份都进证据等于把同一个动作按完整证据预算
++（`MAX_AUTO_REVIEW_ACTION_TEXT_CHARS` = 131,072 字符）数两遍，普通调用会凭空多出一倍。
++证据里不做截断：参数一字不删，审阅模型看到的内容与之前完全一致，变的只是同一份内容不再被计两次。
++另有一个数不要混用：`MAX_AUTO_REVIEW_STATIC_TEXT_CHARS` = 4,096 是同步静态解析自己的上限，
++超过只是转完整模型审阅，不是拦截；完整证据超预算时裁决是 `ask`（交用户确认），不是静默拦截。
++拦截原因分两类：**Cindy 自己的确定性文案**（动作文本超限、证据不足、审阅器故障、授权范围变化、
++宿主固定的授权失效原因、delegate 根本没调用模型时给出的宿主固定判定）在决定里标 `policyReason`，
++可原样进 UI／日志／诊断通道；**模型自由文本**
++不带该标记，可能含参数、路径、片段，一律不得外泄。delegate 若判定出的是宿主自己的文案
++（没有调用模型），要用 `hostReason` 声明来源，由 maker-core 转成 `policyReason`；委托方解析模型
++输出时必须**新建对象**（不展开模型给的 JSON），模型才无法自己带上这个标记。Codex 的 MCP
++拦截通知只带 policy 原因。
++模型看到的拒绝文案由 codex app-server 决定（`user rejected MCP tool call`，客户端改不动），
++所以真实原因必须先在 Cindy 侧保住，别再让界面只显示一句通用文案。
 +
-+export default {
-+  name: 'buddy-creation', entry: './fixture.tsx', viewport: { width: 800, height: 680 },
-+  real: 'BotRosterView, botStore optimistic creation, portrait picker, model editor, buttons, translations and themes',
-+  notCovered: 'Host persistence, account bootstrap, model execution and remote devices; unit tests cover completion and failure/retry',
-+  stubs: {
-+    'src/renderer/contexts/AuthContext': { partial: 'export const useAuth = () => ({ dataOwnerId: null });' },
-+    'src/renderer/hooks/useModelRouteDevices': 'export const useModelRouteDevices = () => ({ devices: [], leadAgentDeviceId: null });',
-+  },
-+  cases: { default: { about: 'Pending optimistic creation must not show a duplicate-name error (#10298)' } },
-+  async ready(page) {
-+    await page.getByRole('dialog').waitFor();
-+    await page.locator('input').fill('Mika');
-+    await page.waitForFunction(() => !document.querySelector('button[type="submit"]')?.disabled);
-+  },
-+  async check(page, ui) {
-+    await page.locator('button[type="submit"]').click();
-+    await page.waitForFunction(() => document.querySelector('button[type="submit"]')?.disabled);
-+    // Wait until the real store has emitted the optimistic row, not only the local busy state.
-+    await page.waitForFunction(() => window.__buddyCreationPending === true);
-+    await ui.capture('creating');
-+    assert.equal(await page.getByRole('alert').count(), 0, 'Its own optimistic profile is not a duplicate');
-+  },
-+};
+ 原生审批已接管的本地工具调用不叠加 Cindy 模型复审，以 Handle 的实时
+ `getAutoReviewOwner()` 为准；Codex Guardian 故障切换后恢复 Cindy 负责。
+ 路径解析暴露不同目标时，由 Cindy 审核 canonical 路径；只有 canonical 路径、
 ```
 
-**File**: `apps/desktop/src/renderer/features/bots/BotRosterView.tsx` (modified, +2/-1)
+**File**: `packages/maker-core/src/agents/codex/index.test.ts` (modified, +156/-0)
 ```diff
-@@ -60,7 +60,8 @@ export function BotRosterView({ onCreated, onClose, restoreFocus, inline = false
-     }).catch(() => { if (!cancelled) setError(t('bots.profile.avatarSelectionFailed')); });
-     return () => { cancelled = true; alive.current = false; };
-   }, [initialPortrait]);
--  const duplicate = bots.some(bot => bot.status !== 'archived' && normalizeBotName(bot.name) === normalizeBotName(name));
-+  // Creation publishes its own optimistic profile before the request settles.
-+  const duplicate = !creating && bots.some(bot => bot.status !== 'archived' && normalizeBotName(bot.name) === normalizeBotName(name));
-   const close = () => { if (onClose) onClose(); else navigate('/bots'); };
-   const create = async () => {
-     if (!name.trim() || duplicate || submitting.current || !portrait) return;
-```
-
-**File**: `apps/desktop/src/renderer/features/bots/__tests__/botRosterView.test.tsx` (modified, +47/-1)
-```diff
-@@ -213,6 +213,47 @@ describe('name-only creation', () => {
-     expect(mocks.generateDraft).not.toHaveBeenCalled();
+@@ -40,6 +40,7 @@ import {
+   AUTO_REVIEW_CONFIRM_UNDELIVERED_CODE,
+   AUTO_REVIEW_UNAVAILABLE_METADATA_KEY,
+   AUTO_REVIEW_UNAVAILABLE_PROMPT_TEXT,
++  MAX_AUTO_REVIEW_ACTION_TEXT_CHARS,
+   type AutoReviewDelegate,
+   type AutoReviewRequest,
+ } from '../shared/auto-review-decision.js';
+@@ -17356,6 +17357,161 @@ describe('CodexAgent MCP thread context hooks', () => {
+     }
    });
  
-+  // #10298: creation publishes its own optimistic profile before the request settles.
-+  // The existing immediate-success fixture never rendered this pending state.
-+  it.each(['success', 'failure'] as const)('does not report its pending profile as a duplicate: %s', async outcome => {
-+    let resolve!: (value: unknown) => void;
-+    let reject!: (error: Error) => void;
-+    const pending = new Promise((yes, no) => { resolve = yes; reject = no; });
-+    const profile = { id: 'bot-pending', name: 'Mika', invitation: { stage: 'ready' } };
-+    mocks.addBotProfileAndWait.mockImplementationOnce(() => {
-+      mocks.profiles = [profile];
-+      return pending;
++  it('Auto MCP reviews the raw call once: the display copy of the arguments is not evidence', async () => {
++    const review = vi.fn<AutoReviewDelegate>(async () => ({ verdict: 'allow' }));
++    const agent = new CodexAgent(createDeps({}, { reviewAutoPermissionAction: review, getMcpToolApprovalPolicy: () => 'prompt' }));
++    const host = installFakeHost(agent, (method) => method === Method.TurnStart ? { turn: { id: 'raw-evidence-turn' } } : undefined);
++    const handle = await agent.startSession({ sessionId: 'raw-evidence', model: 'gpt-5.5', providerId: 'xd', workingDir: '/repo', permissionMode: 'auto' });
++    await handle.send({ type: 'user', content: 'Delegate the task to the worker.' });
++    const handlers = host.getThreadHandlers();
++    if (!handlers?.mcpServerElicitation) throw new Error('missing elicitation handler');
++    const input = { ghost_id: 'worker', tool: 'delegate', args: { action: 'run' } };
++    const result = await handlers.mcpServerElicitation({ threadId: 'start-thread-id', turnId: 'raw-evidence-turn', serverName: 'cindy', mode: 'form',
++      _meta: { codex_approval_kind: 'mcp_tool_call', tool_name: 'ghost_call', tool_params: input,
++        // codex sends the same arguments again as a display rendering.
++        tool_params_display: [{ name: 'args', value: input.args, display_name: 'args' }] },
++      message: 'Allow tool call', requestedSchema: {},
 +    });
-+    render(<BotRosterView />);
-+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Mika' } });
-+    const submit = screen.getByRole('button', { name: 'bots.guided.generate' }) as HTMLButtonElement;
-+    await waitFor(() => expect(submit.disabled).toBe(false));
-+    fireEvent.click(submit);
-+    expect(submit.disabled).toBe(true);
-+    expect(screen.queryByRole('alert')).toBeNull();
-+    // A programmatic second submit must still be blocked during the request.
-+    fireEvent.submit(submit.closest('form')!);
-+    expect(mocks.addBotProfileAndWait).toHaveBeenCalledTimes(1);
-+    await act(async () => {
-+      if (outcome === 'success') resolve(profile);
-+      else {
-+        mocks.profiles = []; // Production rolls back its optimistic projection on failure.
-+        reject(new Error('Create failed'));
-+      }
-+    });
-+    if (outcome === 'success') {
-+      expect(mocks.navigate).toHaveBeenCalledWith('/bots/bot-pending');
-+    } else {
-+      expect(screen.getByRole('alert').textContent).toBe('bots.createWizard.createFailed');
-+      expect(mocks.navigate).not.toHaveBeenCalled();
-+      expect(submit.disabled).toBe(false);
-+      expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('Mika');
-+      fireEvent.click(submit);
-+      await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith('/bots/bot-new'));
-+      expect(mocks.addBotProfileAndWait).toHaveBeenCalledTimes(2);
-+    }
++    expect(result.action).toBe('accept');
++    expect(review).toHaveBeenCalledOnce();
++    const evidence = JSON.parse((review.mock.calls[0]?.[0].action as { description: string }).description);
++    expect(evidence.input.toolParams).toEqual(input);
++    expect(evidence.input.toolParamsDisplay).toBeUndefined();
++    await handle.close();
 +  });
 +
-   it.each([false, true])('keeps default-chain inheritance but saves only the visible explicit model: selected=%s', async selected => {
-     mocks.withDefaultBackup = true;
-     render(<BotRosterView />);
-@@ -264,8 +305,13 @@ describe('name-only creation', () => {
-     mocks.profiles = [{ id: 'existing', name: 'Mika', invitation: { stage: 'ready' } }];
-     render(<BotRosterView inline />);
-     expect(screen.queryByRole('dialog')).toBeNull();
-+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Another buddy' } });
-+    const submit = screen.getByRole('button', { name: 'bots.guided.generate' }) as HTMLButtonElement;
-+    await waitFor(() => expect(submit.disabled).toBe(false));
-     fireEvent.change(screen.getByRole('textbox'), { target: { value: ' Mika ' } });
--    expect((screen.getByRole('button', { name: 'bots.guided.generate' }) as HTMLButtonElement).disabled).toBe(true);
-+    expect(submit.disabled).toBe(true);
-+    expect(screen.getByRole('alert').textContent).toBe('bots.guided.duplicateName');
-+    fireEvent.submit(submit.closest('form')!);
-     expect(mocks.addBotProfileAndWait).not.toHaveBeenCalled();
++  it('Auto MCP reviews a large call with a display copy instead of tripping the complete-budget handoff', async () => {
++    const review = vi.fn<AutoReviewDelegate>(async () => ({ verdict: 'allow' }));
++    const agent = new CodexAgent(createDeps({}, { reviewAutoPermissionAction: review, getMcpToolApprovalPolicy: () => 'prompt' }));
++    const host = installFakeHost(agent, (method) => method === Method.TurnStart ? { turn: { id: 'long-args-turn' } } : undefined);
++    const handle = await agent.startSession({ sessionId: 'long-args', model: 'gpt-5.5', providerId: 'xd', workingDir: '/repo', permissionMode: 'auto' });
++    await handle.send({ type: 'user', content: 'Delegate the task to the worker.' });
++    const handlers = host.getThreadHandlers();
++    if (!handlers?.mcpServerElicitation) throw new Error('missing elicitation handler');
++    // A big-but-reviewable handoff (issue #7254, current budgets): the raw
++    // arguments alone fit MAX_AUTO_REVIEW_ACTION_TEXT_CHARS, but codex sends the
++    // same arguments again as a display rendering. Counting both copies pushed
++    // the evidence past the complete-review budget, so the call was handed off
++    // instead of reviewed. Counting one copy keeps it reviewable.
++    const args = { instruction: 'x'.repeat(90_000) };
++    const input = { ghost_id: 'worker', tool: 'delegate', args };
++    const result = await handlers.mcpServerElicitation({ threadId: 'start-thread-id', turnId: 'long-args-turn', serverName: 'cindy', mode: 'form',
++      _meta: { codex_approval_kind: 'mcp_tool_call', tool_name: 'ghost_call', tool_params: input,
++        tool_params_display: [{ name: 'args', value: args, display_name: 'args' }] },
++      message: 'Allow tool call', requestedSchema: {},
++    });
++    expect(result.action).toBe('accept');
++    expect(review).toHaveBeenCalledOnce();
++    const action = review.mock.calls[0]?.[0].action as { description: string };
++    // Single-counted: under the budget and nowhere near the doubled ~180k size.
++    expect(action.description.length).toBeLessThan(MAX_AUTO_REVIEW_ACTION_TEXT_CHARS);
++    expect(action.description.length).toBeLessThan(100_000);
++    expect(JSON.parse(action.description).input.toolParams).toEqual(input);
++    await handle.close();
++  });
++
++  it('Auto MCP hands an over-budget call to the user instead of silently declining', async () => {
++    const review = vi.fn<AutoReviewDelegate>(async () => ({ verdict: 'allow' }));
++    const agent = new CodexAgent(createDeps({}, { reviewAutoPermissionAction: review, getMcpToolApprovalPolicy: () => 'prompt' }));
++    const host = installFakeHost(agent, (method) => method === Method.TurnStart ? { turn: { id: 'over-budget-turn' } } : undefined);
++    const handle = await agent.startSession({ sessionId: 'over-budget', model: 'gpt-5.5', providerId: 'xd', workingDir: '/repo', pe
+```
+
+**File**: `packages/maker-core/src/agents/codex/index.ts` (modified, +75/-12)
+```diff
+@@ -5958,8 +5958,14 @@ assertRouteCurrent();
+       let key: string | undefined;
+       let pending: Promise<AutoReviewDecision> | undefined;
+       return withAutoReviewContext(request, this.deps.reviewAutoPermissionAction, (prepared) => {
++        // 这三处是 Cindy 自己的确定性文案(不含用户数据),标 policyReason 才能进诊断/UI 通道;
++        // 缺标会被当成模型自由文本过滤掉,通知只剩一句通用文案。
+         if (request.userIntent !== currentAutoReviewIntent || request.authorizationContext !== (currentAutoReviewAuthority ?? undefined)) {
+-          return Promise.resolve({ verdict: 'block', reason: 'User instructions changed; retry against the current request.' });
++          return Promise.resolve({
++            verdict: 'block',
++            reason: 'User instructions changed; retry against the current request.',
++            policyReason: true,
++          });
+         }
+         key = JSON.stringify([prepared, hostAutoApprove, hostShortcutOnly]);
+         const cached = autoReviewDecisionCache.get(key);
+@@ -5975,10 +5981,18 @@ assertRouteCurrent();
+         if (!pending || !key) return decision;
+         if (request.userIntent !== currentAutoReviewIntent || request.authorizationContext !== (currentAutoReviewAuthority ?? undefined)
+             || autoReviewDecisionCache.get(key) !== pending) {
+-          return { verdict: 'block', reason: 'User instructions changed; retry against the latest authorization.' };
++          return {
++            verdict: 'block',
++            reason: 'User instructions changed; retry against the latest authorization.',
++            policyReason: true,
++          };
+         }
+         if (directoryGeneration !== autoReviewDirectoryGeneration) {
+-          return { verdict: 'block', reason: 'Directory permissions changed; retry with the current scope.' };
++          return {
++            verdict: 'block',
++            reason: 'Directory permissions changed; retry with the current scope.',
++            policyReason: true,
++          };
+         }
+         autoReviewActionContext.record(action, decision);
+         return decision;
+@@ -8294,28 +8308,47 @@ assertRouteCurrent();
+       let denialReason = formatPermissionDenial('system', 'Approval was cancelled or became stale.');
+       const decision = await withCodexGenerationPaused<ApprovalDecision>(requestThreadId, turnId, timingPauseId, async () => {
+         // Native Codex currently flattens MCP declines to "user rejected" and
+-        // discards response content/_meta on that path. Preserve the cause in
+-        // Cindy's diagnostic/UI channel; this notice is NOT model context.
+-        const reportMcpDenial = (source: 'auto-review' | 'system' | 'user', reason?: string, visible = true) => {
++        // discards response content/_meta on that path (codex-rs
++        // core/src/mcp_tool_call.rs: ElicitationAction::Decline =>
++        // ReviewDecision::denied("user rejected MCP tool call")). The model
++        // facing text is owned by the app-server, so the real cause can only be
++        // preserved in Cindy's diagnostic/UI channel; this notice is NOT model
++        // context. Keep it truthful: it must never claim a user rejection that
++        // did not happen, and it must say why the call never reached the user.
++        const reportMcpDenial = (
++          source: 'auto-review' | 'system' | 'user',
++          reason?: string,
++          visible = true,
++          policyCause?: string,
++        ) => {
+           if (kind !== 'mcpServerElicitation') return;
+           const timedOut = source === 'system' && isSystemPermissionDenialReason(reason) &&
+             (reason === 'timeout' || reason?.endsWith('_timeout'));
+           const code = source === 'auto-review' ? 'MCP_APPROVAL_AUTO_BLOCKED'
+             : timedOut ? 'MCP_APPROVAL_CONFIRMATION_TIMEOUT' : 'MCP_APPROVAL_CONFIRMATION_UNAVAILABLE';
+           // IDs and a closed set of causes only: no arguments, credentials, or
+-          // free-text reviewer output may enter the diagnostic log.
++          // free-text reviewer output may enter the diagnostic log. Cindy's own
++          // policy reasons are fixed copy without user data and may be carried.
+           log.info('MCP approval denied', {
+             threadId: requestThreadId, turnId, requestId, itemId: opts?.itemId,
+             source, cause: source === 'user' ? 'user-denied' : code,
++            ...(policyCause ? { causeDetail: policyCause } : {}),
+           });
+           if (source === 'user' || !visible) return;
+           const text = source === 'auto-review'
+             ? 'Automatic approval review blocked this tool call. No user rejection was received.'
+             : timedOut
+               ? 'The permission request timed out without a confirmed decision. This does not establish whether the user clicked a button.'
+               : 'The permission confirmation could not be completed. No user rejection was received.';
+-          emitAutoReviewRuntimeNotice(`[${code}] ${text}`);
++          emitAutoReviewRuntimeNotice(`[${code}] ${text}${policyCaus
+```
+
+**File**: `packages/maker-core/src/agents/shared/auto-review-decision.test.ts` (modified, +40/-0)
+```diff
+@@ -242,6 +242,46 @@ describe('resolveAutoReviewDecision', () => {
+     expect(delegate).toHaveBeenCalledWith(expect.objectContaining({ action: { kind: 'exec', command } }));
    });
  
++  // 诊断通道只能带 Cindy 自己的确定性原因。模型自由文本可能含参数、路径、片段，
++  // 不得原样进 UI / 日志，所以来源必须逐条标出来。
++  it('marks the reason source so only policy copy may enter diagnostics', async () => {
++    await expect(resolveAutoReviewDecision(
++      request({ kind: 'exec', command: `npm run build -- ${'x'.repeat(131_100)}` }),
++      async () => ({ verdict: 'allow' }),
++    )).resolves.toMatchObject({ verdict: 'ask', policyReason: true });
++    // The model boundary never marks its reason as policy copy.
++    await expect(resolveAutoReviewDecision(
++      request({ kind: 'exec', command: 'npx tsc --noEmit' }),
++      async () => ({ verdict: 'block', reason: 'model free text about the command' }),
++    )).resolves.toMatchObject({ verdict: 'block', reason: 'model free text about the command' });
++    await expect(resolveAutoReviewDecision(
++      request({ kind: 'exec', command: 'npx tsc --noEmit' }),
++      async () => ({ verdict: 'block', reason: 'model free text about the command' }),
++    )).resolves.not.toHaveProperty('policyReason');
++  });
++
++  // delegate 自己声明「这条 reason 出自宿主固定文案」(它根本没调用模型)→ 保留为
++  // policy 原因,能进诊断 / UI 通道;否则用户只看到一句通用拦截,不知道宿主已经判过。
++  it('keeps a host-authored reason as policy copy while unmarked delegate text stays out', async () => {
++    await expect(resolveAutoReviewDecision(
++      request({ kind: 'exec', command: 'npx tsc --noEmit' }),
++      async () => ({
++        verdict: 'block',
++        reason: 'No user request authorizes this action; only reads may run without one.',
++        hostReason: true,
++      }),
++    )).resolves.toMatchObject({
++      verdict: 'block',
++      reason: 'No user request authorizes this action; only reads may run without one.',
++      policyReason: true,
++    });
++    // 没声明来源的 delegate 结果依旧按模型自由文本处理:不得进诊断通道。
++    await expect(resolveAutoReviewDecision(
++      request({ kind: 'exec', command: 'npx tsc --noEmit' }),
++      async () => ({ verdict: 'block', reason: 'model free text about the command' }),
++    )).resolves.not.toHaveProperty('policyReason');
++  });
++
+   it('counts exec cwd in the complete evidence size limit', async () => {
+     let called = false;
+     await expect(resolveAutoReviewDecision(
+```
+
+**File**: `packages/maker-core/src/agents/shared/auto-review-decision.ts` (modified, +56/-5)
+```diff
+@@ -15,6 +15,26 @@ import {
+ export type AutoReviewDecision = {
+   verdict: 'allow' | 'block' | 'ask';
+   reason?: string;
++  /**
++   * `true` = `reason` 是 Cindy 自己的确定性文案 —— 动作文本超限、证据不足、审阅器
++   * 故障、授权范围变化。内容是固定句式，不含用户数据，可以原样进 UI / 日志 / 诊断通道。
++   *
++   * 缺省即视为**模型自由文本**：可能含参数、路径、片段等用户内容，一律不得外泄。
++   * 只有显式标成 policy 的 reason 才允许进诊断通道（见 codex 的 MCP 拦截通知）。
++   */
++  policyReason?: true;
++  /**
++   * `true` = `reason` 是**宿主自己写死的判定**（delegate 在没有调用模型时给出的固定文案），
++   * 不是模型输出。模型判定永远不带这个标记 —— 模型只贡献 `reason` 里的纯文本。
++   *
++   * 与 `policyReason` 的分工：`policyReason` 标在**最终决定**上，由 maker-core 依据来源
++   * 自行加；本字段由 delegate 声明「这条 reason 出自宿主」。maker-core 见到它就把它转成
++   * `policyReason`（可进诊断 / UI 通道），其余 delegate 结果一律当模型自由文本处理。
++   *
++   * 委托方解析模型输出时是**新建对象**（不展开模型给的 JSON），所以模型无法自己带上这个
++   * 标记；只有宿主代码路径会标它。
++   */
++  hostReason?: true;
+   /**
+    * `true` = 这个 `ask` 来自**审阅器没跑起来**（delegate 缺失 / 超时 / 抛错 / 返回非法），
+    * 不是模型判定动作危险。
+@@ -304,7 +324,13 @@ export interface AutoReviewRequest {
+     workingDir: string;
+     authorizationRevision: string;
+   };
+-  /** A recognized delegation whose current authority could not be established. */
++  /**
++   * A recognized delegation whose current authority could not be established.
++   *
++   * 宿主固定文案（唯一生产者是 desktop 的 `createPluginTaskReviewResolver`，那里是
++   * 一组写死的句子），**不得**放模型或插件的自由文本：这条会带 `policyReason` 进诊断
++   * 与 UI 通道。
++   */
+   authorizationError?: string;
+   action: ReviewableAction;
+   /** 全部可读根；首项必须是主工作目录，供相对路径解析。 */
+@@ -329,19 +355,33 @@ export async function withAutoReviewContext(
+ ): Promise<AutoReviewDecision> {
+   try {
+     const prepared = delegate?.prepareRequest ? await delegate.prepareRequest(request) : request;
+-    if (prepared.authorizationError) return { verdict: 'block', reason: prepared.authorizationError };
++    if (prepared.authorizationError) {
++      // 宿主固定文案（见 authorizationError 的契约），不含用户数据：标 policyReason
++      // 才能进诊断/UI 通道。缺标会被当成模型自由文本过滤掉，用户只看到一句通用
++      // 「被拦截」，不知道是授权失效。
++      return { verdict: 'block', reason: prepared.authorizationError, policyReason: true };
++    }
+     const fingerprint = JSON.stringify(prepared);
+     const decision = await evaluate(prepared);
+     if (delegate?.prepareRequest) {
+       const current = await delegate.prepareRequest(request);
+       if (current.authorizationError || JSON.stringify(current) !== fingerprint) {
+-        return { verdict: 'block', reason: 'Delegated authorization changed; retry against the current scope.' };
++        return {
++          verdict: 'block',
++          reason: 'Delegated authorization changed; retry against the current scope.',
++          policyReason: true,
++        };
+       }
+     }
+     // No await after the live runtime fence: Host lookup may outlive accepted input.
+     return finalize(decision);
+   } catch {
+-    return { verdict: 'ask', unavailable: true, reason: 'Host could not verify the current authorization; this action needs your confirmation.' };
++    return {
++      verdict: 'ask',
++      unavailable: true,
++      reason: 'Host could not verify the current authorization; this action needs your confirmation.',
++      policyReason: true,
++    };
+   }
+ }
+ 
+@@ -551,7 +591,7 @@ export async function resolveAutoReviewDecision(
+   // Beyond the complete model-review budget, retain the existing confirmation path.
+   const oversizedEvidenceReason = oversizedReviewEvidence(request.action);
+   if (oversizedEvidenceReason) {
+-    return { verdict: 'ask', reason: oversizedEvidenceReason };
++    return { verdict: 'ask', reason: oversizedEvidenceReason, policyReason: true };
+   }
+   const localTier = classifyLocalAutoReviewTier(request);
+   // The registered task can constrain reads as well as writes. No delegated
+@@ -564,12 +604,14 @@ export async function resolveAutoReviewDecision(
+     return {
+       verdict: 'block',
+       reason: missingEvidenceReason,
++      policyReason: true,
+     };
+   }
+   if (!delegate) {
+     return {
+       verdict: 'ask',
+       reason: 'Automatic review is unavailable, so this action needs your confirmation.',
++      policyReason: true,
+       unavailable: true,
+     };
+   }
+@@ -607,9 +649,17 @@ export async function resolveAutoReviewDecision(
+       const reason = typeof decision.reason === 'string'
+         ? decision.reason.trim().slice(0, MAX_AUTO_REVIEW_REASON_CHARS)
+         : '';
++      // delegate 明确声明「这条 reason 出自宿主固定文案」(它没有调用模型)→ 保留为
++      // policy 原因,能进诊断 / UI 通道。其余一律是模型自由文本:可能含参数、路径、
++      // 片段,不得外泄(Codex review #7356)。
++      const hostAuthored = decision.hostReason === true;
+       return {
+         verdict: decision.verdict,
+         ...(reason ? { reason } : {}),
++        ...(hostAuthored ? { policyReason: true } : {}),
++        // The delegate is the model boundary: anything it returns is model free
++        // text and must stay out of diagnostics (no policyReason marker), unless
++        // the delegate declared the reason host-authored.
+       };
+     }
+   } catch {
+@@ -622,6 +672,7 @@ export async function resolveAutoReviewDecision(
+   
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10423** (2026-11-13): fix(buddies): 创建伙伴时不再将自身误报为同名伙伴 (@Lyz1116-FOUND)
-- **PR #10420** (closed): feat(dingtalk): acknowledge incoming messages with reactions (@qykong)
-- **PR #10415** (closed): fix(bridge): keep an ambiguous tool_choice selector unresolved (@cjyang)
-- **PR #10411** (closed): fix(codex): negotiate Responses exec format after HTTP 400 (@xuzini-xzn)
-- **PR #10408** (2026-11-13): fix(openai): 修复默认订阅账号额度读取失败 (@MagicLizi)
-- **PR #10407** (2026-11-13): fix(orca): 直投派单改用 durable 用户消息写入口，worker 才能自动续跑 (@zyjisdog)
+- **PR #10972** (2026-11-17): feat(worktree): 支持默认关闭的模型取名开关 (@MagicLizi)
+- **PR #10969** (2026-11-17): fix(mobile): 修复系统分享离页时的导航循环闪退 (@xuzini-xzn)
+- **PR #10967** (2026-11-17): revert(desktop): 回退首次登录资产交接，解除登录与供应商加载阻断 (@DavidShenXD)
+- **PR #10965** (2026-11-17): fix(github): 恢复消息 PR 自动关联及历史漏项 (@zqchris)
+- **PR #10961** (closed): fix(desktop): keep a failed local asset handoff off the login path (@WZBbiao)
+- **PR #10953** (2026-11-17): fix(desktop): preserve task recency during maintenance archive (@nothingyuancando)
 
 ---
 
@@ -1996,50 +1719,64 @@ fix(buddies): 创建伙伴时不再将自身误报为同名伙伴
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #9878 from 97Three/fix/queued-route-refresh-6793-v2
+## X. github): notify only when reconciled PR associations change
 
 **RULE**:
-When implementing operations in `apps/desktop/src/main/maker-ipc/__tests__/agent-input-coordinator.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/main/git-context/prRefsStore.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0bbf1dc8`: Merge pull request #9878 from 97Three/fix/queued-route-refresh-6793-v2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `677fdc84`: github): notify only when reconciled PR associations change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/main/maker-ipc/__tests__/agent-input-coordinator.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/main/git-context/prRefsStore.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  it('refreshes a queued route and its crash snapshot after a model switch (#6793)', async () => {
-    const sid = 'queued-route-switch';
-    const h = createHarness();
-    await h.coordinator.ensureQueueRestored(sid);
-    h.setRunning(true);
-    const queued = makeItem('queued', 'Send on the selected route');
-    queued.createOpts.providerId = 'old-provider';
-    h.coordinator.enqueue(sid, queued);
-    await flush();
-
-    h.coordinator.refreshQueuedRoute(sid, { model: 'new-model', providerId: 'new-provider' });
-    const snapshot = h.persistQueueSnapshot.mock.calls.at(-1)?.[1][0];
-    expect(snapshot?.createOpts).toMatchObject({ model: 'new-model', providerId: 'new-provider' });
-    const restarted = createHarness();
-    restarted.setLoadQueueSnapshot(async () => JSON.parse(JSON.stringify([snapshot])));
-    await restarted.coordinator.ensureQueueRestored(sid);
-    expect(restarted.coordinator.getQueueControlSnapshot(sid).pendingQueue[0]?.createOpts)
-      .toMatchObject({ model: 'new-model', providerId: 'new-provider' });
-
-    h.setRunning(false);
-    h.coordinator.onTurnEvent(sid, 'done');
-    await flush();
-    expect(h.sendToAgent.mock.calls[0]?.[2]).toMatchObject({ model: 'new
+    const readRefs = () => db.select(prRefColumns()).from(sessionPrRefs)
+      .where(eq(sessionPrRefs.sessionId, sessionId)).orderBy(asc(sessionPrRefs.id));
+    const before = await readRefs();
+    if (prune) {
+      const staleIds = before
+        .filter((r) => !r.manuallyAdded && r.removedAt === null && !keep.has(prStatusKey(r)))
+        .map((r) => r.id);
+      if (staleIds.length > 0) {
+        await db.delete(sessionPrRefs).where(inArray(sessionPrRefs.id, staleIds));
+      }
+    // Compare final records under the write queue: repeated mentions can change
+    // timestamps transiently during recomputation without changing the result.
+    // Include ordering/provenance fields so meaningful updates still refresh.
+    const after = await readRefs();
+    if ((!scope || scope.isCurrent()) && JSON.stringify(before) !== JSON.stringify(after)) {
+      onRefsChanged?.(sessionId);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    if (!prune) {
+      if (!scope || scope.isCurrent()) onRefsChanged?.(sessionId);
+      return;
+    const existing = await db
+      .select({
+        id: sessionPrRefs.id,
+        provider: sessionPrRefs.provider,
+        host: sessionPrRefs.host,
+        owner: sessionPrRefs.owner,
+        repo: sessionPrRefs.repo,
+        prNumber: sessionPrRefs.prNumber,
+        manuallyAdded: sessionPrRefs.manuallyAdded,
+        removedAt: sessionPrRefs.removedAt,
+      })
+      .from(sessionPrRefs)
+      .where(eq(sessionPrRefs.sessionId, sessionId));
+    const staleIds = existing
+      .filter((r) => !r.manuallyAdded && r.removedAt === null && !keep.has(prStatusKey(r)))
+      .map((r) => r.id);
+    if (staleIds.length > 0) {
+      await db.delete(sessionPrRefs).where(inArray(sessionPrRefs.id, staleIds));
+    if (!scope || scope.isCurrent()) onRefsChanged?.(sessionId);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0bbf1dc8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `677fdc84` are properly handled with clean fallback behavior.
