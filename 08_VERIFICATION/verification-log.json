@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-YHJ4",
-    "timestamp": "2026-11-15T23:59:58.528Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "98c6c67b5fb2a8dba84fb602bee594bde65827a9ba8b9d8d56a742e5eabcda04",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-L1MX",
-    "timestamp": "2026-11-16T00:17:31.017Z",
-    "repository": "MetrolistGroup/Metrolist",
-    "learningId": "learn-github-metrolistgroup-metrolist",
-    "contentHash": "871933eea4398d0a45b5dff5058d12d3e157afa8159929d9d029701b50d88e7e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-L5U7",
-    "timestamp": "2026-11-16T00:17:36.463Z",
-    "repository": "EhPanda-Team/EhPanda",
-    "learningId": "learn-github-ehpanda-team-ehpanda",
-    "contentHash": "cf9a0dfc65657508d548171c9fcbb296c5070cc0745ef68bfd88db552772d2a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-LBK5",
-    "timestamp": "2026-11-16T00:17:43.877Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "43dce82425fd62e91df28eceb72776f20308a56807b1e6a6e152bb8eeca4531b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-Y91M",
     "timestamp": "2026-11-16T00:27:47.146Z",
     "repository": "LiconStudio/Minimax-H3-VBVR",
@@ -7490,6 +7430,66 @@
     "repository": "black-forest-labs/FLUX.1-dev",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
     "contentHash": "7a79a84e98554862117d050289b05a26da4f77a4b4968def00b328e7406e186e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-Z43B",
+    "timestamp": "2026-11-17T22:39:49.367Z",
+    "repository": "deepseek-ai/DeepSeek-R1",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+    "contentHash": "a7465af694a75736fe92576cc2d7410d674505f102d41c61050e4f25d4deb98c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-Z5JO",
+    "timestamp": "2026-11-17T22:39:51.252Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "a1ab1a814223e50ca3ac8179e5344983801206f0dcbb620afde8360a3b87103c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-ZCG4",
+    "timestamp": "2026-11-17T22:40:00.196Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "472bc827164b171b34ecc69a0308ca4a2627c72fc788fc5e0cc2b51708d25ef0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-ZF3E",
+    "timestamp": "2026-11-17T22:40:03.626Z",
+    "repository": "xerj-org/xerj",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "f4aaf7202a0405a07e463dfcd22f248212629dd25b476907a5a862a1319aa191",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

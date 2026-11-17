@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `50e4ffde`  
+> **Source Version**: `b7d38137`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T12:53:27.964Z  
+> **Timestamp**: 2026-11-17T22:40:03.215Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T12:53:27.957Z  
+> **Harvest Timestamp**: 2026-11-17T22:40:03.209Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 18826 stars
+- **Stars / Engagement**: 19203 stars
 
 ---
 
@@ -1757,20 +1757,675 @@ impl EmbeddingProxy {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50e4ffde` (2026-11-09)
-**Commit Message**: chore(metrics): release downloads 2026-11-09 — 55271 assets, 45404 binaries [skip ci]
+### Incident Patch 1: `27a37fd3` (2026-11-17)
+**Commit Message**: Merge pull request #3073 from jelbirt/fix/max-buckets-cluster-setting
 
-Automated daily snapshot (.github/workflows/release-metrics.yml). GitHub keeps no history for download_count; this line is the history.
+# Conflicts:
+#	CHANGELOG.md
+#	engine/tests/es-compat-yaml/catch-lenient.txt
 
+**File**: `CHANGELOG.md` (modified, +21/-0)
+```diff
+@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   syntactic source-citation checks with stable line notes. This is a library
+   foundation; recipe-runner and MCP integration remain pending #2762.
+ 
++### Changed
++
++- With no `search.max_buckets` set, the node's `limits.max_buckets` (default
++  65536) now also caps the total buckets a `_search` or `_msearch` response
++  keeps across its whole aggregation tree, as Elasticsearch's default does.
++  Before, it capped each aggregation on its own, so a response could keep
++  more buckets in total.
++
+ ### Fixed
+ 
+ - `xerj autoindex` and `xerj feedback` check the node identity before querying
+@@ -35,6 +43,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   identical to another indexed file. The existing content group keeps its
+   identity and gains the path as an alias; the superseded group is retired
+   instead of failing with conflicting content and path identities.
++- `search.max_buckets` set through `PUT _cluster/settings` now caps the
++  aggregation buckets of `_search` and `_msearch`, as in Elasticsearch 8. It
++  was stored and returned by `GET _cluster/settings` but never read, so
++  `_search` kept answering 200. The buckets the response keeps are counted
++  across the whole aggregation tree, nested buckets included, with at most
++  `size` counted for `terms`, `significant_terms`, `significant_text`,
++  `multi_terms`, `composite` and the geo grids. A count over the limit is a
++  400 `too_many_buckets_exception` carrying `max_buckets`; transient wins over
++  persistent. A composite `size` over the limit (10 when not given) is
++  refused, and an `_msearch` item over it fails on its own. The node's
++  per-aggregation cap from `limits.max_buckets` still applies too, so a
++  setting above it does not raise that cap. `_async_search`,
++  `_search/template` and `_msearch/template` do not read the setting yet.
+ 
+ ## [1.0.0-rc.102] - 2026-11-06
+ 
+```
 
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +206/-14)
+```diff
+@@ -9291,11 +9291,18 @@ fn find_invalid_agg_order_path(aggs: Option<&Value>) -> Option<String> {
+ ///   found duplicates: [..]`;
+ /// * `missing_order` other than `default` without `missing_bucket: true` →
+ ///   `missingOrder can only be set if missingBucket is true`;
+-/// * `size` above `search.max_buckets` → ES's too-many-buckets message;
++/// * `size` (default 10) above `search.max_buckets` → ES's too-many-buckets
++///   message;
+ /// * a parent other than `nested`, `reverse_nested` or `filter` (through any
+ ///   chain of those) → `[composite] aggregation cannot be used with a parent
+ ///   aggregation of type: [..AggregatorFactory]`.
+ fn find_invalid_composite_agg(aggs: Option<&Value>) -> Option<String> {
++    find_invalid_composite_agg_with_cap(aggs, xerj_engine::aggs::max_buckets() as u64)
++}
++
++/// [`find_invalid_composite_agg`] with the `size` cap given: `_search` passes
++/// the request's `search.max_buckets` from `_cluster/settings`.
++fn find_invalid_composite_agg_with_cap(aggs: Option<&Value>, cap: u64) -> Option<String> {
+     fn sub_aggs(def: &Value) -> Option<&Value> {
+         def.get("aggs").or_else(|| def.get("aggregations"))
+     }
+@@ -9321,7 +9328,7 @@ fn find_invalid_composite_agg(aggs: Option<&Value>) -> Option<String> {
+             .collect();
+         format!("{camel}AggregatorFactory")
+     }
+-    fn check(params: &Value, blocking_parent: Option<&str>) -> Option<String> {
++    fn check(params: &Value, blocking_parent: Option<&str>, cap: u64) -> Option<String> {
+         let sources = match params.get("sources") {
+             None => return Some("Required [sources]".to_string()),
+             Some(Value::Array(a)) if !a.is_empty() => a,
+@@ -9359,8 +9366,20 @@ fn find_invalid_composite_agg(aggs: Option<&Value>) -> Option<String> {
+                 duplicates.join(", ")
+             ));
+         }
+-        let cap = xerj_engine::aggs::max_buckets() as u64;
+-        if let Some(size) = params.get("size").and_then(Value::as_u64) {
++        // ES refuses a blocking parent when it builds the aggregation, before
++        // it checks the size.
++        if let Some(parent) = blocking_parent {
++            return Some(format!(
++                "[composite] aggregation cannot be used with a parent aggregation of type: [{}]",
++                factory_name(parent)
++            ));
++        }
++        // ES checks the `size` it will use, so a missing one is its default
++        // of 10, and a numeric string counts as its number.
++        let size = params.get("size").map_or(Some(10), |size| {
++            size.as_u64().or_else(|| size.as_str()?.trim().parse().ok())
++        });
++        if let Some(size) = size {
+             if size > cap {
+                 return Some(format!(
+                     "Trying to create too many buckets. Must be less than or equal to: [{cap}] \
+@@ -9369,24 +9388,19 @@ fn find_invalid_composite_agg(aggs: Option<&Value>) -> Option<String> {
+                 ));
+             }
+         }
+-        if let Some(parent) = blocking_parent {
+-            return Some(format!(
+-                "[composite] aggregation cannot be used with a parent aggregation of type: [{}]",
+-                factory_name(parent)
+-            ));
+-        }
+         None
+     }
+     fn walk(
+         level: &serde_json::Map<String, Value>,
+         blocking_parent: Option<&str>,
++        cap: u64,
+     ) -> Option<String> {
+         for def in level.values() {
+             let Some((kind, params)) = kind_of(def) else {
+                 continue;
+             };
+             if kind == "composite" {
+-                if let Some(reason) = check(params, blocking_parent) {
++                if let Some(reason) = check(params, blocking_parent, cap) {
+                     return Some(reason);
+                 }
+             }
+@@ -9398,14 +9412,14 @@ fn find_invalid_composite_agg(aggs: Option<&Value>) -> Option<String> {
+                 Some(kind)
+             };
+             if let Some(subs) = sub_aggs(def).and_then(Value::as_object) {
+-                if let Some(reason) = walk(subs, below) {
++                if let Some(reason) = walk(subs, below, cap) {
+                     return Some(reason);
+                 }
+             }
+         }
+         None
+     }
+-    walk(aggs?.as_object()?, None)
++    walk(aggs?.as_object()?, None, cap)
+ }
+ 
+ #[cfg(test)]
+@@ -17802,6 +17816,13 @@ async fn search_impl(
+         .filter(|n| !value_type_failed_indices.contains(*n))
+         .collect();
+ 
++    // `search.max_buckets` from `_cluster/settings`, read once: it caps a
++    // composite `size` here and the merged bucket count after the search.
++    let max_buckets = effective_max_buckets(&state).await;
++    if let Some(msg) = find_invalid_composite_agg_with_cap(aggs_value.as_ref(), max_buckets) {
++        return ApiError::new(xerj_common::XerjError::invalid_query(msg)).into_response();
++    }
++
+     let mut search_req = match build_search_request(&body, aggs_value) {
+         Ok(mut r) => {
+             /
+```
+
+**File**: `engine/crates/xerj-api/tests/max_buckets_cluster_setting.rs` (added, +456/-0)
+```diff
+@@ -0,0 +1,456 @@
++//! `search.max_buckets` set through `PUT /_cluster/settings` caps the
++//! buckets a search's aggregations may return, as in Elasticsearch 8.
++//!
++//! ES counts every bucket the final reduce keeps, across the whole
++//! aggregation tree (nested `terms` buckets add to their parent's), and
++//! answers 400 `too_many_buckets_exception` once the count is over the
++//! limit. Transient overrides persistent, and `null` restores the default.
++//! Before this, XERJ stored the setting and kept answering 200.
++
++use axum::body::Body;
++use axum::http::{Request, StatusCode};
++use serde_json::{json, Value};
++use tower::ServiceExt;
++
++async fn app() -> (axum::Router, tempfile::TempDir) {
++    let dir = tempfile::tempdir().expect("tempdir");
++    let mut config = xerj_common::config::Config::default();
++    config.server.data_dir = dir.path().to_string_lossy().into_owned();
++    let metrics = xerj_common::metrics::Metrics::new().expect("metrics");
++    let engine = xerj_engine::Engine::new(config.clone()).expect("engine");
++    let state = xerj_api::state::AppState::new(config, engine, metrics);
++    (xerj_api::router::build_es_compat_router(state), dir)
++}
++
++async fn send(
++    app: &axum::Router,
++    method: &str,
++    path: &str,
++    content_type: &str,
++    body: String,
++) -> (StatusCode, Value) {
++    let request = Request::builder()
++        .method(method)
++        .uri(path)
++        .header("content-type", content_type)
++        .body(Body::from(body))
++        .expect("request");
++    let response = app.clone().oneshot(request).await.expect("response");
++    let status = response.status();
++    let bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
++        .await
++        .expect("body");
++    (
++        status,
++        serde_json::from_slice(&bytes).unwrap_or(Value::Null),
++    )
++}
++
++async fn put_settings(app: &axum::Router, body: Value) {
++    let (status, got) = send(
++        app,
++        "PUT",
++        "/_cluster/settings",
++        "application/json",
++        body.to_string(),
++    )
++    .await;
++    assert_eq!(status, StatusCode::OK, "{got}");
++}
++
++/// The eight documents of `aggregations/max_buckets.yml`: eight distinct
++/// `keyword` values, each with its own `date`.
++async fn seeded() -> (axum::Router, tempfile::TempDir) {
++    let (app, dir) = app().await;
++    let (status, got) = send(
++        &app,
++        "PUT",
++        "/test",
++        "application/json",
++        json!({"mappings": {"properties": {
++            "keyword": {"type": "keyword"},
++            "date": {"type": "date"}
++        }}})
++        .to_string(),
++    )
++    .await;
++    assert!(status.is_success(), "create: {status} {got}");
++    let keywords = ["dgx", "dfs", "foobar", "foo", "bar", "baz", "qux", "quux"];
++    let mut bulk = String::new();
++    for (i, keyword) in keywords.iter().enumerate() {
++        bulk.push_str(&format!("{{\"index\":{{\"_id\":\"{}\"}}}}\n", i + 1));
++        bulk.push_str(&format!(
++            "{{\"date\":\"{}-03-03T00:00:00\",\"keyword\":\"{keyword}\"}}\n",
++            2014 + i
++        ));
++    }
++    let (status, got) = send(
++        &app,
++        "POST",
++        "/test/_bulk?refresh=true",
++        "application/x-ndjson",
++        bulk,
++    )
++    .await;
++    assert_eq!(status, StatusCode::OK, "{got}");
++    assert_eq!(got["errors"], false, "{got}");
++    (app, dir)
++}
++
++/// Eight top-level buckets.
++fn terms() -> Value {
++    json!({"size": 0, "aggregations": {"test": {"terms": {"field": "keyword"}}}})
++}
++
++/// Eight top-level buckets, each holding one `date` bucket: sixteen in all.
++fn nested_terms() -> Value {
++    json!({"size": 0, "aggregations": {"test": {
++        "terms": {"field": "keyword"},
++        "aggs": {"2": {"terms": {"field": "date"}}}
++    }}})
++}
++
++async fn search(app: &axum::Router, body: Value) -> (StatusCode, Value) {
++    send(
++        app,
++        "POST",
++        "/test/_search",
++        "application/json",
++        body.to_string(),
++    )
++    .await
++}
++
++fn too_many_buckets(status: StatusCode, body: &Value, limit: u64) {
++    assert_eq!(status, StatusCode::BAD_REQUEST, "{body}");
++    let cause = &body["error"]["caused_by"];
++    assert_eq!(cause["type"], "too_many_buckets_exception", "{body}");
++    assert_eq!(cause["max_buckets"], limit, "{body}");
++    let reason = cause["reason"].as_str().unwrap_or("");
++    assert!(
++        reason.contains(&format!(
++            "Trying to create too many buckets. Must be less than or equal to: [{limit}]"
++        )),
++        "{body}"
++    );
++}
++
++fn answered(status: StatusCode, body: &Value, top_buckets: usize) {
++    assert_eq!(status, StatusCode::OK, "{body}");
++    let buckets = body["aggregations"]["test"]["buckets"]
++        .as_array()
++        .unwrap_or_else(|| panic!("no buckets: {body}"));
++    assert_eq!(buckets.len(), top_buckets, "{body}");
++}
++
++/// The vendored YAML case, step for step.
++#[tokio::test]
++async fn a_persistent_limit_refuses_aggregations_
+```
+
+**File**: `engine/tests/es-compat-yaml/catch-lenient.txt` (modified, +0/-1)
+```diff
+@@ -12,7 +12,6 @@ aggregations/bucket_script.yml · bad script
+ aggregations/bucket_selector.yml · bad script
+ aggregations/composite.yml · Composite aggregation with invalid format
+ aggregations/composite.yml · Composite aggregation with lossy format
+-aggregations/max_buckets.yml · Max bucket
+ aggregations/scripted_metric_allow_list.yml · allowed inline scripts do not affect allowed stored scripts
+ aggregations/scripted_metric_allow_list.yml · allowed stored scripts do not affect allowed inline scripts
+ aggregations/scripted_metric_allow_list.yml · disallow all for empty allow lists
+```
+
+---
+
+### Incident Patch 2: `803daf90` (2026-11-17)
+**Commit Message**: fix(bench): measure query cache hits per timed section, not across index deletes
+
+Review follow-up for #3020. xerj_query_cache_hits on /v1/metrics is not a
+process-lifetime counter: native.rs sets the gauge from
+Engine::query_cache_totals(), a sum of per-Index counters over the indexes
+open at scrape time, so it drops when an index is deleted. bench-matrix.mjs
+deletes /perf before each ingest, the read seed and the mixed load, and
+/perfvec before kNN, so a whole-run start/end difference dropped the read
+phase's hits under --mixed and could go to 0 or below on a second run against
+the same node, which the report then printed as "0 responses served from
+cache".
+
+The counter is now read right before and right after each timed read family,
+kNN probe loop and mixed op (after setup, before any later DELETE), and the
+per-section differences are added. A missing reading or a negative difference
+marks that section "not measured" in the log and in SCORECARD.md, never 0.
+
+The comments in bench-matrix.mjs and lib/repro.sh, CONTRIBUTING.md and
+scripts/bench/README.md now say the counter is per index and that a deleted
+index's hits are gone.
+
+Checked with a copy of bench-matrix.mjs that differs 
+
+**File**: `CONTRIBUTING.md` (modified, +5/-3)
+```diff
+@@ -158,9 +158,11 @@ XERJ caches whole search responses by default, so a repeated identical query is
+ answered from memory instead of being executed (#3020: 0.70 ms cached against
+ 7.80 ms executed). `request_cache=false` does not turn that cache off. Start
+ the node with `XERJ_DISABLE_QUERY_CACHE=1`, or send only unique queries, for any
+-latency you publish. The node counts the responses its cache served as
+-`xerj_query_cache_hits` on `/v1/metrics`; `bench-matrix.mjs` and the
+-[`scripts/bench`](./scripts/bench) repros print that count, and it should be 0.
++latency you publish. `xerj_query_cache_hits` on `/v1/metrics` counts the
++responses the cache served, per index, summed over the indexes open now (a
++deleted index's hits are gone). `bench-matrix.mjs` reads it before and after
++each timed section and the [`scripts/bench`](./scripts/bench) repros print it;
++it should be 0.
+ 
+ Read latencies are measured with a lean keep-alive HTTP client applied identically to both engines (see the methodology note the harness emits). If your change touches a hot path, include before/after numbers in the commit body.
+ 
+```
+
+**File**: `demo/playbooks/bench-matrix.mjs` (modified, +42/-20)
+```diff
+@@ -585,7 +585,8 @@ async function mixedBench(base, log) {
+   // flush/merge actually occurs during measurement and (b) p99 rests on enough
+   // tail samples to be trustworthy (index floor(0.99*3000)=2970 → ~30 tail obs).
+   for (const [label, body] of MIXED_OPS) {
+-    out[label] = await safeTimed(base, S, body, { iters: 3000, warmup: 20, rate: 300 });
++    out[label] = await meterXerjCache(base, `mixed: ${label}`,
++      () => safeTimed(base, S, body, { iters: 3000, warmup: 20, rate: 300 }));
+     log(`     mixed ${label}: p99 ${f3(statVal(out[label], 'p99'))}ms max ${f3(statVal(out[label], 'max'))}ms (achieved ${out[label] && out[label].achievedRate != null ? out[label].achievedRate : '—'}/s, under write load)`);
+   }
+   // stop the writer and measure achieved background throughput
+@@ -665,7 +666,8 @@ async function knnBench(base, log, dims = 128, M = 50000) {
+   const ids = (one.j?.hits?.hits || []).map((h) => parseInt(h._id, 10));
+   const recall = ids.length ? ids.filter((id) => exact.has(id)).length / 10 : null;
+   // >=2000 samples so kNN p99/max aren't dominated by 1-2 tail observations.
+-  const t = await safeTimed(base, '/perfvec/_search?request_cache=false', body, { iters: 2000, warmup: 15, rate: 200 });
++  const t = await meterXerjCache(base, 'kNN k=10',
++    () => safeTimed(base, '/perfvec/_search?request_cache=false', body, { iters: 2000, warmup: 15, rate: 200 }));
+   return { ...t, recall };
+ }
+ 
+@@ -772,13 +774,29 @@ function scoreRow(dim, xv, ev, higherBetter, fmt, xraw, eraw, tieBandMs = null)
+ // XERJ answers a repeated identical _search from its whole-response cache unless
+ // it was started with XERJ_DISABLE_QUERY_CACHE=1 (#3020: 0.70 ms cached against
+ // 7.80 ms executed), and `request_cache=false` does not switch that cache off.
+-// The node counts every response the cache served on /v1/metrics, so the run
+-// checks the flag instead of trusting it. null = the counter could not be read.
++// `xerj_query_cache_hits` on /v1/metrics is NOT a process-lifetime counter: it is
++// the sum of per-index counters over the indexes open at scrape time, so it drops
++// when an index is deleted (this harness DELETEs /perf before each ingest, the
++// read seed and the mixed load, and /perfvec before kNN). The counter is read
++// right before and right after each timed section, after its setup and before
++// any later DELETE, and the per-section differences are added. A missing reading
++// or a negative difference marks the section "not measured", never 0.
++// null = the counter could not be read.
+ async function xerjQueryCacheHits(base) {
+   const r = await req(base, 'GET', '/v1/metrics');
+   const m = /^xerj_query_cache_hits\s+(\d+)/m.exec(r.txt || '');
+   return m ? Number(m[1]) : null;
+ }
++const XERJ_CACHE = { base: null, hits: 0, measured: [], unmeasured: [] };
++async function meterXerjCache(base, section, fn) {
++  if (!XERJ_CACHE.base || base !== XERJ_CACHE.base) return fn();
++  const before = await xerjQueryCacheHits(base);
++  const out = await fn();
++  const after = await xerjQueryCacheHits(base);
++  if (before == null || after == null || after < before) XERJ_CACHE.unmeasured.push(section);
++  else { XERJ_CACHE.hits += after - before; XERJ_CACHE.measured.push(section); }
++  return out;
++}
+ 
+ async function main() {
+   const A = parseArgs(process.argv);
+@@ -805,7 +823,7 @@ async function main() {
+     catch (err) { alive[e.name] = false; log(`   ${e.name} (${e.url}) — UNREACHABLE: ${err.message}`); }
+   }
+ 
+-  const cacheHitsAtStart = alive.XERJ ? await xerjQueryCacheHits(A.xerj) : null;
++  XERJ_CACHE.base = A.xerj;
+ 
+   const R = { ingest: {}, reads: {}, mixed: {}, knn: {}, disk: {} };
+ 
+@@ -868,7 +886,8 @@ async function main() {
+         // families with per-engine setup (e.g. search_after sort-value capture)
+         // build their body against THIS engine right before timing.
+         const body = fam.makeBody ? await fam.makeBody(e.url) : fam.body;
+-        out[e.name] = await safeTimed(e.url, path, body, { iters: 1200, warmup: 60, ndjson: !!fam.ndjson });
++        out[e.name] = await meterXerjCache(e.url, `read: ${fam.label}`,
++          () => safeTimed(e.url, path, body, { iters: 1200, warmup: 60, ndjson: !!fam.ndjson }));
+       }
+       return out;
+     };
+@@ -1017,11 +1036,10 @@ async function main() {
+   rows.push(scoreRow('index on-disk size', R.disk.XERJ ?? null, R.disk.ES ?? null, false, mb));
+ 
+   const loses = rows.filter((r) => r.verdict === 'LOSE');
+-  const cacheHitsAtEnd = alive.XERJ ? await xerjQueryCacheHits(A.xerj) : null;
+-  const cacheHits = cacheHitsAtStart == null || cacheHitsAtEnd == null ? null : cacheHitsAtEnd - cacheHitsAtStart;
+-  if (cacheHits == null) log('   query cache: XERJ cache counter unreadable on /v1/metrics — cache-off not verified');
+-  else if (cacheHits > 0) log(`   WARNING: XERJ served ${cacheHits} responses from its query cache — start it with XERJ_DISABLE_QUERY_CACHE=1`);
+-  else log('   query cache: 0 XERJ responses served from cache');
++  c
+```
+
+**File**: `scripts/bench/README.md` (modified, +3/-1)
+```diff
+@@ -20,7 +20,9 @@ measured 0.70 ms cached against 7.80 ms executed), so a timed loop would
+ measure the cache, not search. `request_cache=false` does not turn that cache
+ off. The `run environment` block at the end of each run prints the node's own
+ `xerj_query_cache_hits` / `xerj_query_cache_misses` from `/v1/metrics`: both
+-are 0 with the cache off, and a non-zero hit count prints a warning. The same
++are 0 with the cache off, and a non-zero hit count prints a warning. The
++counters are per index, summed over the indexes open at that moment, so a
++deleted index's hits are gone: read them before deleting what you timed. The same
+ rule holds for any latency measured outside these scripts: start the node
+ with `XERJ_DISABLE_QUERY_CACHE=1`, or send only unique queries.
+ 
+```
+
+**File**: `scripts/bench/lib/repro.sh` (modified, +6/-3)
+```diff
+@@ -184,9 +184,12 @@ repro_header() {
+ }
+ 
+ # The node's own whole-response cache counters (xerj_query_cache_hits /
+-# _misses on /v1/metrics, summed over every index). With the cache off both
+-# stay 0: no request is even looked up. A non-zero hit count means some
+-# measured responses were served from the cache, so it is printed as a warning.
++# _misses on /v1/metrics). They are per-index counters summed over the indexes
++# open at scrape time: a deleted index takes its hits with it, so a script that
++# deletes the index it timed before calling this can read 0 with the cache on.
++# The current scripts report while their timed index still exists. With the
++# cache off both stay 0: no request is even looked up. A non-zero hit count
++# means some measured responses were served from the cache: a warning.
+ repro_query_cache_report() {
+   local metrics hits misses
+   metrics="$(curl -sf "http://127.0.0.1:$REPRO_PORT/v1/metrics" 2>/dev/null)" || {
+```
+
+---
+
+### Incident Patch 3: `a804022a` (2026-11-17)
+**Commit Message**: Merge pull request #3069 from jaromil/fix/autoindex-content-convergence
+
+# Conflicts:
+#	CHANGELOG.md
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   node writes the rows instead of skipping them as unchanged, and escapes tabs,
+   newlines and backslashes in `doc_id` when writing and replaying `.journal`
+   files (#3130).
++- Incremental autoindex and watch passes accept an edited file that becomes
++  identical to another indexed file. The existing content group keeps its
++  identity and gains the path as an alias; the superseded group is retired
++  instead of failing with conflicting content and path identities.
+ 
+ ## [1.0.0-rc.102] - 2026-11-06
+ 
+```
+
+**File**: `README.md` (modified, +4/-0)
+```diff
+@@ -773,6 +773,10 @@ editing a handful of files does work proportional to what changed, not to the wh
+ common edit-and-rerun / CI case, typically over 95% unchanged. The full content hash still runs
+ to detect changes, so total re-index time is floored by hashing, not parsing.
+ 
++If an edit makes a file identical to another indexed file, the next incremental
++or watch pass keeps the existing content group and records both paths in
++`ax_paths`. The superseded content group is removed; a fresh index is not needed.
++
+ ## Build from source
+ 
+ You need a stable Rust toolchain.
+```
+
+**File**: `engine/crates/xerj-autoindex/src/incremental_reconcile_http_tests.rs` (modified, +59/-0)
+```diff
+@@ -6038,6 +6038,65 @@ impl Rng {
+     }
+ }
+ 
++#[test]
++fn a_watch_edit_can_join_an_existing_content_group() {
++    watch_edit_joins_existing_content(false);
++}
++
++#[test]
++fn joining_an_existing_content_group_resumes_after_a_publish_failure() {
++    watch_edit_joins_existing_content(true);
++}
++
++fn watch_edit_joins_existing_content(fail_publish: bool) {
++    let _guard = HTTP_E2E_LOCK.lock().unwrap_or_else(|p| p.into_inner());
++    let corpus = tempfile::tempdir().unwrap();
++    let state_dir = tempfile::tempdir().unwrap();
++    let root = corpus.path().canonicalize().unwrap();
++    fs::write(root.join("a.csv"), "id,value\n1,alpha\n").unwrap();
++    fs::write(root.join("b.csv"), "id,value\n2,beta\n").unwrap();
++    let endpoint = HttpEndpoint::start();
++    let config = cfg(&root, state_dir.path(), &endpoint.url, false);
++    let mut carry = crate::watch::Carry::default();
++    crate::watch::one_pass(&config, &root, &mut carry, &crate::watch::ChangeSet::full())
++        .0
++        .unwrap();
++
++    fs::copy(root.join("b.csv"), root.join("a.csv")).unwrap();
++    endpoint.state.lock().unwrap().fail_next_data_bulk = fail_publish;
++    let burst = crate::watch::ChangeSet::from_paths(&[root.join("a.csv")]);
++    let (outcome, _) = crate::watch::one_pass(&config, &root, &mut carry, &burst);
++    if fail_publish {
++        assert!(
++            outcome.is_err(),
++            "the injected publish failure must be observed"
++        );
++        let mut restarted = crate::watch::Carry::default();
++        assert_eq!(
++            crate::watch::one_pass(
++                &config,
++                &root,
++                &mut restarted,
++                &crate::watch::ChangeSet::full(),
++            )
++            .0
++            .unwrap()
++            .0,
++            0
++        );
++    } else {
++        assert_eq!(outcome.unwrap().0, 0);
++    }
++    let docs = endpoint.data_docs();
++    assert_eq!(docs.len(), 1, "converged content must have one data record");
++    assert_eq!(docs[0]["value"], "beta");
++    assert_eq!(paths(&docs), vec!["a.csv"]);
++    assert_eq!(docs[0]["ax_paths"], serde_json::json!(["a.csv", "b.csv"]));
++    let (reference, _reference_state) = fresh_full_index(&root);
++    assert_eq!(published(&endpoint), published(&reference));
++    a_rerun_changes_nothing(&config, &endpoint, "edit joining existing content");
++}
++
+ #[test]
+ fn a_watch_pass_rehashes_only_what_changed_and_publishes_it() {
+     let _guard = HTTP_E2E_LOCK.lock().unwrap_or_else(|p| p.into_inner());
+```
+
+**File**: `engine/crates/xerj-autoindex/src/sync.rs` (modified, +42/-4)
+```diff
+@@ -739,10 +739,9 @@ pub fn reconcile_groups(
+             .map(|owner| owner.group_id.as_str())
+             .collect();
+         let group_id = if let Some(owner) = content_owner {
+-            anyhow::ensure!(
+-                path_owners.is_empty() || path_owners.contains(owner.group_id.as_str()),
+-                "desired group has conflicting content and path identities"
+-            );
++            // A changed file may now equal already indexed content. Preserve
++            // that content's group and let the operation planner retire its
++            // former group; path ownership must not veto this normal merge.
+             owner.group_id.clone()
+         } else if path_owners.len() == 1 {
+             path_owners.pop_first().unwrap().to_string()
+@@ -1831,6 +1830,45 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn changed_file_can_join_surviving_content_group() {
++        let previous = vec![
++            group("retired", "old-content", path("61", false)),
++            group("survivor", "existing-content", path("62", false)),
++        ];
++        let result = reconcile_groups(
++            &previous,
++            vec![desired(
++                "existing-content",
++                vec![path("61", false), path("62", false)],
++            )],
++        )
++        .unwrap();
++        assert_eq!(result.len(), 1);
++        assert_eq!(result[0].group_id, "survivor");
++        assert_eq!(result[0].canonical, path("61", false));
++        assert_eq!(result[0].aliases, vec![path("62", false)]);
++        let operations = plan_operations(&previous, &result);
++        assert_eq!(operations.len(), 2);
++        assert!(operations
++            .iter()
++            .any(|op| { op.group_id == "retired" && op.kind == SyncOperationKind::Delete }));
++        assert!(operations
++            .iter()
++            .any(|op| { op.group_id == "survivor" && op.kind == SyncOperationKind::Metadata }));
++        assert_eq!(
++            reconcile_groups(
++                &result,
++                vec![desired(
++                    "existing-content",
++                    vec![path("61", false), path("62", false)],
++                )]
++            )
++            .unwrap(),
++            result
++        );
++    }
++
+     #[test]
+     fn operation_planner_covers_add_delete_metadata_and_mixed() {
+         let unchanged = group("same", "same", path("01", false));
+```
 
 #### Recent Merged Pull Requests:
-- **PR #3104** (closed): Agent field report: re-index sol-interview monorepo after XERJ data dir moved from C: to D: (@Galaxy-VN)
-- **PR #3103** (closed): Agent field report: rewriting a Node (node:http + node:sqlite) auth backend in Rust (axum + rusqlite bundled + scrypt), porting its selftest to a Rust HTTP integration test, and re-indexing the monorepo (@Galaxy-VN)
-- **PR #3099** (2026-11-11): hub: CATALOGUE menu opens a catalogue page, not llms.txt (@xerj-team)
-- **PR #3097** (2026-11-10): hub site: every contributor page description names the person (@xerj-team)
-- **PR #3096** (2026-11-10): hub home: contributors added today on the contributors card (@xerj-team)
-- **PR #3095** (2026-11-10): hub: author-approved contribution candidates (12216 repos) (@xerj-team)
+- **PR #3256** (2026-11-17): hub: author-approved contribution candidates (13872 repos) (@xerj-team)
+- **PR #3255** (2026-11-17): docs(bench): switch the query cache off in benchmark recipes and report its hits (#3020) (@shu-chen-dot-ca)
+- **PR #3254** (2026-11-17): hub: author-approved contribution candidates (13876 repos) (@xerj-team)
+- **PR #3253** (2026-11-17): hub: author-approved contribution candidates (13877 repos) (@xerj-team)
+- **PR #3250** (2026-11-17): hub: author-approved contribution candidates (13887 repos) (@xerj-team)
+- **PR #3249** (2026-11-17): hub: author-approved contribution candidates (13887 repos) (@xerj-team)
 
 ---
 
@@ -1784,3 +2439,53 @@ Automated daily snapshot (.github/workflows/release-metrics.yml). GitHub keeps n
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Empirical Invariant Guard in CHANGELOG.md
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `27a37fd3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+### Changed
+
+- With no `search.max_buckets` set, the node's `limits.max_buckets` (default
+  65536) now also caps the total buckets a `_search` or `_msearch` response
+  keeps across its whole aggregation tree, as Elasticsearch's default does.
+  Before, it capped each aggregation on its own, so a response could keep
+  more buckets in total.
+
+- `search.max_buckets` set through `PUT _cluster/settings` now caps the
+  aggregation buckets of `_search` and `_msearch`, as in Elasticsearch 8. It
+  was stored and returned by `GET _cluster/settings` but never read, so
+  `_search` kept answering 200. The buckets the response keeps are counted
+  across the whole aggregation tree, nested buckets included, with at most
+  `size` counted for `terms`, `significant_terms`, `significant_text`,
+  `multi_terms`, `composite` and the geo grids. A count over the limit is a
+  400 `too_many_buckets_exception` carrying `max_buckets`; transient wins over
+  persistent. A composite `size` over the limit (10 when not given) is
+  refused, and an `_msearch` item over it fails on its own. The node's
+  per-aggregation cap from `limits.max_buckets` still applies too, so a
+  setting above it does not raise that cap. `_a
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `27a37fd3` are properly handled with clean fallback behavior.

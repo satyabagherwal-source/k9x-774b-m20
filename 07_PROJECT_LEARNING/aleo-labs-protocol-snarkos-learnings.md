@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `3707bf02`  
+> **Source Version**: `497534cd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T17:36:51.175Z  
+> **Timestamp**: 2026-11-17T22:39:59.582Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:36:51.165Z  
+> **Harvest Timestamp**: 2026-11-17T22:39:59.576Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1988,243 +1988,48 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3707bf02` (2026-11-17)
-**Commit Message**: Merge pull request #4692 from aleo-labs-protocol/ci/bump-snarkvm
+### Incident Patch 1: `1555d308` (2026-11-17)
+**Commit Message**: Merge pull request #4693 from aleo-labs-protocol/fix/mainnet-v4131-advisories
 
-Bump snarkVM to aleo-labs-protocol/snarkVM@de20fd4ea
+[Release] Address dependency advisories for v4.13.1
 
-**File**: `Cargo.lock` (modified, +61/-61)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -5864,7 +5864,7 @@ dependencies = [
+@@ -3015,9 +3015,9 @@ dependencies = [
+ 
  [[package]]
- name = "snarkvm"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ name = "libz-sys"
+-version = "1.1.31"
++version = "1.1.33"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
++checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
  dependencies = [
-  "anyhow",
-  "dotenvy",
-@@ -5886,7 +5886,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "ahash",
-  "anyhow",
-@@ -5913,7 +5913,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms-cuda"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "blst",
   "cc",
-@@ -5926,7 +5926,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "snarkvm-circuit-account",
-  "snarkvm-circuit-algorithms",
-@@ -5940,7 +5940,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-account"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "snarkvm-circuit-network",
-  "snarkvm-circuit-types",
-@@ -5950,7 +5950,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-algorithms"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "snarkvm-circuit-types",
-  "snarkvm-console-algorithms",
-@@ -5960,7 +5960,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-collections"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-types",
-@@ -5970,7 +5970,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "anyhow",
-  "indexmap 2.14.2",
-@@ -5990,12 +5990,12 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment-witness"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- 
- [[package]]
- name = "snarkvm-circuit-network"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-collections",
-@@ -6006,7 +6006,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-program"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a
+  "libc",
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `deny.toml` (modified, +3/-0)
 ```diff
-@@ -49,7 +49,7 @@ default-features = false
- [workspace.dependencies.snarkvm]
- #path = "../snarkVM"
- git = "https://github.com/aleo-labs-protocol/snarkVM.git"
--rev = "d36b2f7439fa1c7c311e589fcc824ee2c464720d" #staging
-+rev = "de20fd4ea81a87452c24826757c14f30e7f7c6b6" #staging
- #version = "=4.12.0"
- default-features = false
+@@ -11,6 +11,9 @@ ignore = [
+   "RUSTSEC-2025-0057",
+   # TODO remove once we migrate away from bincode, or it becomes maintained again.
+   "RUSTSEC-2025-0141",
++  # Ledger distribution and CLI diagnostics depend on these unmaintained crates.
++  "RUSTSEC-2026-0542",
++  "RUSTSEC-2026-0543",
+ ]
  
-```
-
----
-
-### Incident Patch 2: `de282ddc` (2026-11-17)
-**Commit Message**: Bump snarkVM to aleo-labs-protocol/snarkVM@de20fd4ea
-
-**File**: `Cargo.lock` (modified, +61/-61)
-```diff
-@@ -5864,7 +5864,7 @@ dependencies = [
- [[package]]
- name = "snarkvm"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "anyhow",
-  "dotenvy",
-@@ -5886,7 +5886,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "ahash",
-  "anyhow",
-@@ -5913,7 +5913,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms-cuda"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "blst",
-  "cc",
-@@ -5926,7 +5926,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "snarkvm-circuit-account",
-  "snarkvm-circuit-algorithms",
-@@ -5940,7 +5940,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-account"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "snarkvm-circuit-network",
-  "snarkvm-circuit-types",
-@@ -5950,7 +5950,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-algorithms"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "snarkvm-circuit-types",
-  "snarkvm-console-algorithms",
-@@ -5960,7 +5960,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-collections"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-types",
-@@ -5970,7 +5970,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "anyhow",
-  "indexmap 2.14.2",
-@@ -5990,12 +5990,12 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment-witness"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- 
- [[package]]
- name = "snarkvm-circuit-network"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-collections",
-@@ -6006,7 +6006,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-program"
- version = "4.13.0"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ default-features = false
- [workspace.dependencies.snarkvm]
- #path = "../snarkVM"
- git = "https://github.com/aleo-labs-protocol/snarkVM.git"
--rev = "d36b2f7439fa1c7c311e589fcc824ee2c464720d" #staging
-+rev = "de20fd4ea81a87452c24826757c14f30e7f7c6b6" #staging
- #version = "=4.12.0"
- default-features = false
- 
+ [licenses]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4695** (closed): Merge testnet into staging (@aleo-labs-merge-bot[bot])
+- **PR #4694** (2026-11-17): Merge mainnet into staging (@aleo-labs-merge-bot[bot])
 - **PR #4693** (2026-11-17): [Release] Address dependency advisories for v4.13.1 (@snarkworld)
 - **PR #4692** (2026-11-17): Bump snarkVM to aleo-labs-protocol/snarkVM@de20fd4ea (@aleo-labs-merge-bot[bot])
 - **PR #4691** (2026-11-17): [Release] Mainnet v4.13.1 (@snarkworld)
 - **PR #4690** (2026-11-17): [Release] Testnet v4.13.1 (@snarkworld)
-- **PR #4689** (2026-11-17): Scan every top-level use statement for lock imports (@cbeck88-ai-dev)
-- **PR #4685** (closed): [Release] Use published snarkVM 4.13.0 crates for mainnet (@snarkworld)
 
 ---
 
@@ -2250,7 +2055,7 @@ Bump snarkVM to aleo-labs-protocol/snarkVM@de20fd4ea
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3707bf02`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1555d308`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2258,28 +2063,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7
+version = "1.1.33"
+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c464720d"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=d36b2f7439fa1c7c311e589fcc824ee2c464720d#d36b2f7439fa1c7c311e589fcc824ee2c4
+version = "1.1.31"
+checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3707bf02` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1555d308` are properly handled with clean fallback behavior.

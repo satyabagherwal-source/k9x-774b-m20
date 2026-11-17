@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T22:27:14.297Z",
+  "last_updated": "2026-11-17T22:40:03.660Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -290,14 +290,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "content_hash": "0367de8ee5a632def34ac95b926db50359632d42b8cd4327841affcb96dc7ae1",
-      "verified_at": "2026-11-13T12:24:11.839Z",
+      "content_hash": "a7465af694a75736fe92576cc2d7410d674505f102d41c61050e4f25d4deb98c",
+      "verified_at": "2026-11-17T22:39:49.378Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:24:11.839Z"
+      "last_updated": "2026-11-17T22:39:49.378Z"
     },
     "moonshotai/Kimi-K3": {
       "repository": "moonshotai/Kimi-K3",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "0a266536445a7d2736ce7d6e6c97e47053f202576fc0548d68e09da7977ce3d5",
-      "verified_at": "2026-11-17T17:36:52.042Z",
+      "content_hash": "472bc827164b171b34ecc69a0308ca4a2627c72fc788fc5e0cc2b51708d25ef0",
+      "verified_at": "2026-11-17T22:40:00.207Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:36:52.042Z"
+      "last_updated": "2026-11-17T22:40:00.207Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -4281,14 +4281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "e3b5575a06a2e47f73555bec2e76a305db31ac4bb5b4da71cfd81db590607eed",
-      "verified_at": "2026-11-11T12:53:28.392Z",
+      "content_hash": "f4aaf7202a0405a07e463dfcd22f248212629dd25b476907a5a862a1319aa191",
+      "verified_at": "2026-11-17T22:40:03.659Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T12:53:28.392Z"
+      "last_updated": "2026-11-17T22:40:03.659Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "c2a7a096ccd37c9cafd9880a40da412a037b8d760c9d975590138b1abbd04893",
-      "verified_at": "2026-11-16T15:09:59.075Z",
+      "content_hash": "a1ab1a814223e50ca3ac8179e5344983801206f0dcbb620afde8360a3b87103c",
+      "verified_at": "2026-11-17T22:39:51.263Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T15:09:59.075Z"
+      "last_updated": "2026-11-17T22:39:51.263Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",

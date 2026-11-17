@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T22:27:27.924Z",
+  "last_updated": "2026-11-17T22:40:08.176Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1687,11 +1687,11 @@
       "learning_id": "learn-github-svenstaro-miniserve"
     },
     {
-      "id": "CD-5MBV",
+      "id": "CD-ZILP",
       "directive_title": "Empirical Invariant Guard in Cargo.lock",
       "source_repo": "aleo-labs-protocol-snarkos-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-5MBV-empirical-invariant-guard-in-cargo-lock.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZILP-empirical-invariant-guard-in-cargo-lock.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -3678,13 +3678,13 @@
       "learning_id": "learn-github-prometheus-prometheus"
     },
     {
-      "id": "CD-I3EG",
+      "id": "CD-ZF97",
       "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_repo": "openziti-zrok-learnings",
-      "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-I3EG-empirical-invariant-guard-in-changelog-md.md",
-      "status": "QUARANTINED_REJECT",
-      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "source_repo": "xerj-org/xerj",
+      "source_commit": "b7d38137",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZF97-empirical-invariant-guard-in-changelog-md.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
       "date_staged": "2026-11-17",
       "domain_letter": "D"
     },
@@ -26351,6 +26351,55 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DC129D-rust-address-the-remaining-issues-in-418.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-ZHVL",
+      "directive_title": "Propagate DeletePolicy alignment to ReportCorruptedFree.",
+      "source_repo": "google-tcmalloc-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZHVL-propagate-deletepolicy-alignment-to-reportcorruptedfree.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-ZF3R",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "xerj-org/xerj",
+      "source_commit": "b7d38137",
+      "date_staged": "2026-11-17",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-xerj-org-xerj",
+      "candidateDomain": "D",
+      "candidateDomainName": "Research & Knowledge Intelligence",
+      "secondaryDomains": [
+        "K"
+      ],
+      "classificationConfidence": 0.1,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-REV-82C118",
+      "directive_title": "Propagate DeletePolicy alignment to ReportCorruptedFree.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "google-tcmalloc",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-82C118-propagate-deletepolicy-alignment-to-repo.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-DC4490",
+      "directive_title": "Empirical Invariant Guard in Cargo.lock",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aleo-labs-protocol-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DC4490-empirical-invariant-guard-in-cargo-lock.md",
       "staged_date": "2026-11-17"
     }
   ]

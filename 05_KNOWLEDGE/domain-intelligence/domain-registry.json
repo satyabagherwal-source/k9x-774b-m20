@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T22:27:28.103Z",
-  "total_records": 1704,
+  "last_updated": "2026-11-17T22:40:08.305Z",
+  "total_records": 1707,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 744,
+      "total": 746,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -793,7 +793,9 @@
         "domain_intelligence-research-knowledge-intelligence-audio-cpp-audio-cpp-gguf-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-audio-cpp-audio-cpp-gguf-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-dev-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i"
+        "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i",
+        "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-r1-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari"
       ]
     },
     "E": {
@@ -1671,7 +1673,7 @@
       ]
     },
     "K": {
-      "total": 74,
+      "total": 75,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1746,7 +1748,8 @@
         "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-core-invariants",
         "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-core-invariants"
       ]
     },
     "L": {
@@ -7810,8 +7813,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "19c96d1eedf0434edc6910647d24b0c830f7acbdf0439c34ab4b1ff335419ed2",
-      "created_at": "2026-11-17T17:36:52.453Z"
+      "content_hash": "c753818b02b2bdc3370fd27518dfac743b9b3fa4c28cb64209291a329faeaedd",
+      "created_at": "2026-11-17T22:40:00.513Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -16883,8 +16886,8 @@
       "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
       "repository": "google/tcmalloc",
-      "content_hash": "f3b53cf3962718cb06f8b0e21bb48bbfff10a084dd3cf3230ddc723318525bc6",
-      "created_at": "2026-11-16T15:09:59.361Z"
+      "content_hash": "da337b4f1b29a664e6ff2de1791d3500465be745f2cb1c07941264bb1746b848",
+      "created_at": "2026-11-17T22:39:51.562Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants",
@@ -16901,8 +16904,8 @@
       "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-learnings-technical-construction-intelligence-google-tcmalloc-le.md",
       "repository": "google-tcmalloc-learnings",
-      "content_hash": "305b456bf2d6f4e49c27ddc4238c022f944d9d6655e6e793745a248e229591be",
-      "created_at": "2026-11-16T15:10:12.020Z"
+      "content_hash": "0a31d2697a69debdf0adcf88627e3bd851bffa4f0221566c5fb1092d0bc6851c",
+      "created_at": "2026-11-17T22:40:07.362Z"
     },
     "DOM-D-301C83AD": {
       "record_id": "DOM-D-301C83AD",
@@ -23226,8 +23229,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "6acd6e5b7173d8217a0f790efa12eb4325aa0b9f9d2e31520d2935d4fcb4b994",
-      "created_at": "2026-11-17T17:36:57.332Z"
+      "content_hash": "9ebbf03deddf9982971d221220fe402ddffb81abd0db240a5476f489a7607ebe",
+      "created_at": "2026-11-17T22:40:08.305Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -28701,6 +28704,33 @@
       "repository": "hf-black-forest-labs-flux.1-dev-learnings",
       "content_hash": "b8ce4919fb65a7cea586a4524eb645de7d8ee95b579ff0ae0a1c3c3119ab7729",
       "created_at": "2026-11-17T22:27:26.468Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-r1-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-r1-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-R1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-r1-research-knowledge-intelligence-deepseek-ai-deepseek-.md",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "content_hash": "1b3895ded4c2c81020161c31ab3cd1dfe3faf702fb77a830bc302cddceb66314",
+      "created_at": "2026-11-17T22:39:49.549Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: xerj-org/xerj Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-xerj-org-xerj-quality-verification-intelligence-xerj-org-xerj-core-invariants.md",
+      "repository": "xerj-org/xerj",
+      "content_hash": "a070a9467af6caf5b7221eda64bbf723fa9f95a8ad5d0cccb709974eea1db290",
+      "created_at": "2026-11-17T22:40:03.972Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-r1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-r1-learnings-research-knowledge-intelligence-hf-deepseek.md",
+      "repository": "hf-deepseek-ai-deepseek-r1-learnings",
+      "content_hash": "235931a9cd6bd51e7d4baeddf2f8cd5bbfe38441855feb4515efdf059b8847f6",
+      "created_at": "2026-11-17T22:40:07.800Z"
     }
   }
 }

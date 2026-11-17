@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T15:10:11.796Z",
+  "timestamp": "2026-11-17T22:40:07.126Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-google-tcmalloc-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [google-tcmalloc-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T15:10:11.796Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T22:40:07.126Z`  
 > **Learning ID**: `LEARN-EVO-google-tcmalloc-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `c2f1eaba`  
+> **Source Version**: `01b9fd85`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T15:09:58.167Z  
+> **Timestamp**: 2026-11-17T22:39:50.311Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:09:55.976Z  
+> **Harvest Timestamp**: 2026-11-17T22:39:50.306Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1272,13 +1272,15 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1929** (2026-11-17): **Encode x86-64 rseq signature inside a 7-byte nopl instruction**
+  *Symptoms*: Encode x86-64 rseq signature inside a 7-byte nopl instruction  On x86-64, prefix the 4-byte rseq signature with opcode bytes (`0x0f, 0x1f, 0x05`) to form a 7-byte `nopl disp32(%rip)` instruction, using the signature as the displacement. This prevents raw data bytes from desynchronizing linear disassembly across trampolines in `.text.unlikely`. 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1929/checks?check_run_id=133030576615) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+
 - **Issue #1928** (2026-11-14): **Avoid KCFI typeid emission in TestAliasedFunctions.**
   *Symptoms*: Avoid KCFI typeid emission in TestAliasedFunctions.  Co-authored-by: Mike Kruskal <mkruskal@google.com> 
   **Post-Mortem & Fix Analysis**:
   > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1928/checks?check_run_id=132481476045) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
-
-- **Issue #1921** (2026-11-13): **Use small-model RIP-relative addressing for tc_globals on x86-64.**
-  *Symptoms*: Use small-model RIP-relative addressing for tc_globals on x86-64.  Under `-mcmodel=medium` PIC builds, Clang treats objects larger than `-mlarge-data-threshold` (64 KiB) as potentially residing in .lbss (>2 GiB away) and materializes `&tc_globals` (sizeof(Static) ~ 719 KiB) via a 3-instruction, 20-byte GOTPC64 + GOTOFF64 sequence (`leaq _GLOBAL_OFFSET_TABLE_(%rip)` + 10-byte movabsq + addq) in every allocation and deallocation fast path. However, GOOGLE_MALLOC_SECTION_BEGIN on Clang/Linux explicitly places tc_globals in google_malloc_bss (a standard small BSS section without SHF_X86_64_LARGE), so 32-bit RIP-relative addressing is always in range.  Annotate tc_globals declarations and its definition with `__attribute__((model("small")))` on Clang/Linux x86-64 so `&tc_globals` collapses to a single 7-byte `leaq tc_globals(%rip), %reg`, removing 2 instructions, 2 uOps, 13 bytes, and 1 serial address-generation cycle from the SizeMap and PageMap critical paths. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1295,250 +1297,456 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c2f1eaba` (2026-11-16)
-**Commit Message**: Handle deferred-split THPs in PageFlags::Get.
+### Incident Patch 1: `01b9fd85` (2026-11-17)
+**Commit Message**: Propagate DeletePolicy alignment to ReportCorruptedFree.
 
-This preserves the compound head flags across interior non-compound pages within
-a 2MB region, reads the 2MB base page whenever a tail page has no cached head,
-and requires a compound THP head there.
+When a misaligned pointer into a small-object span is passed to aligned `operator delete`, `InvokeHooksAndFreePages` and `handle_sampled_or_illformed_ptrs` reported an expected alignment of `kAlignment` (8 bytes) even when the caller provided a larger alignment.
 
-PiperOrigin-RevId: 1022462135
+Pass `std::max(policy.align(), kAlignment)` to `ReportCorruptedFree` so the `InvalidFree` report reflects the caller's alignment.
 
-**File**: `tcmalloc/internal/pageflags.cc` (modified, +10/-15)
+PiperOrigin-RevId: 1024037018
+
+**File**: `tcmalloc/tcmalloc.cc` (modified, +4/-2)
 ```diff
-@@ -163,7 +163,7 @@ absl::StatusCode PageFlags::MaybeReadOne(uintptr_t vaddr, uint64_t& flags,
-                           /*bytes_read=*/nullptr) != kPagemapEntrySize) {
-       return absl::StatusCode::kUnavailable;
+@@ -757,7 +757,8 @@ ABSL_ATTRIBUTE_NOINLINE static void InvokeHooksAndFreePages(
+     // Spans with a size class are never sampled, guarded, or large, so any
+     // pointer into one that reaches here is corrupted.
+     if (absl::bit_cast<uintptr_t>(ptr) & kBadAlignmentMask) {
+-      ReportCorruptedFree(tc_globals, kAlignment, ptr);
++      ReportCorruptedFree(tc_globals, std::max(policy.align(), kAlignment),
++                          ptr);
      }
--    if (ABSL_PREDICT_FALSE(PageTail(flags))) {
-+    if (ABSL_PREDICT_FALSE(!PageHead(flags) || !PageThp(flags))) {
-       TC_LOG("Somehow still at tail page even after seeking?");
-       return absl::StatusCode::kFailedPrecondition;
-     }
-@@ -222,7 +222,6 @@ std::optional<PageStats> PageFlags::Get(const void* const addr,
-   const uintptr_t endPage =
-       (uend + kHardwarePageSize - 1) & ~(kHardwarePageSize - 1);
- 
--  const uintptr_t basePage = vaddr;
-   int64_t remainingPages = (endPage - vaddr) / kHardwarePageSize;
-   while (remainingPages > 0) {
-     const size_t batch_size = std::min<int64_t>(kEntriesInBuf, remainingPages);
-@@ -245,28 +244,24 @@ std::optional<PageStats> PageFlags::Get(const void* const addr,
-       if (PageHead(flags)) {
-         last_head_read_ = flags;
-       } else if (PageTail(flags)) {
--        // The object may start on a tail page of a hugepage, whose flags are
--        // only on the head page. Simplifying to four native pages per hugepage
--        // to make the diagram fit, an entire hugepage looks like (where X is
--        // the span of interest):
-+        // A tail page's flags are only on the compound head page, which we may
-+        // not have read yet (either because the span starts on a tail page or
-+        // because earlier pages in a deferred-split THP were unbacked/native).
-+        // Simplifying to four native pages per hugepage to make the diagram
-+        // fit, an entire hugepage looks like (where X is the span of interest):
-         // .                     vaddr & kHugePageMask (head page)
--        //      .                basePage
-+        //      .                vaddr
-         // [....|..XX|XXXX|XXXX]
-         //  ^^^^^^^              some other stale object(s)
--        if (vaddr == basePage) {
-+        if (ABSL_PREDICT_FALSE(last_head_read_ == -1)) {
-           bool is_huge = false;
-           if (MaybeReadOne(vaddr & kHugePageMask, last_head_read_, is_huge) !=
--              absl::StatusCode::kOk) {
-+                  absl::StatusCode::kOk ||
-+              ABSL_PREDICT_FALSE(!is_huge)) {
-             return std::nullopt;
-           }
--        } else if (ABSL_PREDICT_FALSE(last_head_read_ == -1)) {
--          TC_LOG("Did not see head page before tail page (i=%v, buf=%v)", i,
--                 buf_[i]);
--          return std::nullopt;
-         }
-         flags = last_head_read_;
--      } else {
--        last_head_read_ = -1;
-       }
-       // Intersect [uaddr, uend) (where X is the span of interest) with each
-       // page [vaddr, vaddr + kHardwarePageSize) (delimited by |) to get
-```
-
-**File**: `tcmalloc/internal/pageflags_test.cc` (modified, +354/-0)
-```diff
-@@ -908,6 +908,360 @@ TEST(PageFlagsTest, GetSinglePageBitmapsSuccess) {
-   EXPECT_EQ(ret.stale_scan_seconds, kSetScanSeconds);
+     ReportCorruptedFree(tc_globals, ptr);
+   }
+@@ -976,7 +977,8 @@ ABSL_ATTRIBUTE_NOINLINE static void handle_sampled_or_illformed_ptrs(
+   // If we get here, the object is small and this is the last line of defense
+   // to report the error.
+   TC_ASSERT_EQ((uptr & kBadAlignmentMask) != 0, true);
+-  return ReportCorruptedFree(tc_globals, kAlignment, ptr);
++  return ReportCorruptedFree(tc_globals, std::max(policy.align(), kAlignment),
++                             ptr);
  }
  
-+TEST(PageFlagsTest, DeferredSplitThpFlags) {
-+  const size_t kHardwarePageSize = GetPageSize();
-+  const size_t kPagesPerHugepage = kHugePageSize / kHardwarePageSize;
-+  std::vector<uint64_t> data(4 * kPagesPerHugepage, 0);
-+
-+  auto set_tails = [&](size_t huge_idx, size_t first_tail) {
-+    for (size_t i = first_tail; i < kPagesPerHugepage; ++i) {
-+      data[huge_idx * kPagesPerHugepage + i] = kPageTail | kPageThp;
-+    }
-+  };
-+
-+  // Hugepage 0: intact mlocked THP.
-+  data[0] = kPageHead | kPageThp | kPageMlocked;
-+  set_tails(0, 1);
-+
-+  // Hugepage 1: deferred-split THP with stale+incompressible compound head at
-+  // page 0, unbacked page 1 (0), native mlocked order-0 page 2, and tail pages
-+  // 3..N-1 inheriting the compound head's stale+incompressible flags.
-+  data[kPagesPerHugepage] =
-+      kPageHead | kPageThp | kPageStale | kPageIncompressible;
-+  data[kPagesPerHugepage + 2] = kPageMlocked;
-+  set_tails(1, 3);
-+
-+  // Hugepages 2 and 3: orphaned tail pages 1..N-1 with unbacked (0) or native
-+  // order-0 (kPageMlocked) page 0.
-+  set_tails(2, 1);
-+  data[3 * kPagesPerHugepage] = kPageMlocked;
-+  set_tails(3, 1);
-+
-+  std::string file_path =
-+      absl::StrCat(testing::TempDir(), "/deferred_split_thp_flags");
-+  SetContents(file_path,
-+              absl::string_view(reinterpret_cast<const char*>(data.data()),
-+                                data.size() * sizeof(data[0])));
-+
-+  PageFlagsFriend s(file_path);
-+  constexpr uint64_t kSetScanSeconds = 63;
-+  s.SetCachedScanSeconds(kSetScanSeconds);
-+
-+  const size_t kHeadBytes = (kPagesPerHugepage - 2) * kHardwarePageSize;
-+  const size_t kTailBytes = (kPagesPerHugepage - 3) * kHardwarePageSize;
-+  struct Case {
-+    uintptr_t offset;
-+    size_t size;
-+    PageStats expected;
-+  };
-+  for (const Case& tc : {
-+           Case{kHugePageSize, kHugePageSize,
-+                PageStats{kHeadBytes, kHardwarePageSize, kHeadBytes,
-+                          kSetScanSeconds}},
-+           Case{kHugePageSize + kHardwarePageSize,
-+                kHugePageSize - kHardwarePageSize,
-+                PageStats{kTailBytes, kHardwarePageSize, kTailBytes,
-+                          kSetScanSeconds}},
-+           Case{kHugePageSize + 2 * kHardwarePageSize + 100,
-+                kHugePageSize - 2 * kHardwarePageSize - 100,
-+                PageStats{kTailBytes, kHardwarePageSize - 100, kTailBytes,
-+                          kSetScanSeconds}},
-+           Case{kHugePageSize + 3 * kHardwarePageSize,
-+                kHugePageSize - 3 * kHardwarePageSize,
-+                PageStats{kTailBytes, 0, kTailBytes, kSetScanSeconds}},
-+           Case{0, 2 * kHugePageSize,
-+                PageStats{kHeadBytes, kHugePageSize + kHardwarePageSize,
-+                          kHeadBytes, kSetScanSeconds}},
-+       }) {
-+    SCOPED_TRACE(absl::StrCat("offset=", tc.offset, " size=", tc.size));
-+    EXPECT_THAT(s.Get(reinterpret_cast<const void*>(tc.offset), tc.size),
-+                Optional(tc.expected));
+ template <typename Policy>
+```
+
+**File**: `tcmalloc/testing/memory_errors_test.cc` (modified, +24/-0)
+```diff
+@@ -1061,6 +1061,30 @@ TEST_F(TcMallocTest, CorruptedPointerEdgeCases) {
+   }
+ }
+ 
++TEST_F(TcMallocTest, CorruptedPointerAlignedDelete) {
++#if defined(ABSL_HAVE_ADDRESS_SANITIZER) || \
++    defined(ABSL_HAVE_HWADDRESS_SANITIZER)
++  GTEST_SKIP() << "Skipping under address sanitizer";
++#endif
++  ScopedNeverSample never_sample;
++  constexpr std::align_val_t kAlign{64};
++  for (const bool sized : {false, true}) {
++    SCOPED_TRACE(absl::StrCat("sized=", sized));
++    EXPECT_DEATH(
++        {
++          char* ptr = static_cast<char*>(::operator new(8, kAlign));
++          if (sized) {
++            ::operator delete(ptr + 1, 8, kAlign);
++          } else {
++            ::operator delete(ptr + 1, kAlign);
++          }
++        },
++        absl::StrCat(
++            "Attempted to free corrupted pointer"
++            ));
 +  }
-+
-+  auto h1_bitmaps =
-+      s.GetSinglePageBitmaps(reinterpret_cast<const void*>(kHugePageSize));
-+  EXPECT_EQ(h1_bitmaps.status, absl::StatusCode::kOk);
-+  EXPECT_EQ(h1_bitmaps.stale.CountBits(), kPagesPerHugepage - 2);
-+  EXPECT_EQ(h1_bitmaps.locked.CountBits(), 1);
-+  EXPECT_TRUE(h1_bitmaps.locked.GetBit(2));
-+  EXPECT_EQ(h1_bitmaps.incompressible.CountBits(), kPagesPerHugepage - 2);
-+
-+  for (size_t huge_idx : {size_t{2}, size_t{3}}) {
-+    const uintptr_t h = huge_idx * kHugePageSize;
-+    EXPECT_THAT(
-+        s.Get(reinterpret_cast<const void*>(h), kHardwarePageSize),
-+        Optional(FieldsAre(0, huge_idx == 3 ? kHardwarePageSize : 0, 0, 0)));
-+    EXPECT_EQ(s.Get(reinterpret_cast<const void*>(h), kHugePageSize),
-+              std::nullopt);
-+    EXPECT_EQ(s.Get(reinterpret_cast<const void*>(h + kHardwarePageSize),
-+                    kHardwarePageSize),
-+              std::nullopt);
-+    EXPECT_EQ(s.GetSinglePageBitmaps(reinterpret_cast<const void*>(h)).status,
-+              absl::StatusCode::kFailedPrecondition);
-+  }
-+  EXPECT_EQ(s.Get(nullptr, 3 * kHugePageSize), std::nullopt);
 +}
 +
-+TEST(PageFlagsTest, DeferredSplitThp) {
-+  GTEST_SKIP() << "pageflags not commonly available";
-+
-+#if ABSL_HAVE_ADDRESS_SANITIZER || ABSL_HAVE_MEMORY_SANITIZER || \
-+    ABSL_HAVE_THREAD_SANITIZER
-+  GTEST_SKIP() << "Skipped under sanitizers.";
-+#endif
-+
-+  const size_t kHardwarePageSize = getpagesize();
-+  const size_t kSize = 3 * kHugePageSize;
-+  char* p = MmapWithHugepageMisalignment(kSize, /*misalignment=*/0);
-+  struct Unmapper {
-+    char* ptr;
-+    size_t size;
-+    ~Unmapper() { CHECK_EQ(munmap(ptr, size), 0) << errno; }
-+  } unmap_p{p, kSize};
-+  std::memset(p, 0x5a, kSize);
-+
-+  if (madvise(p, kSize, MADV_COLLAPSE) != 0) {
-+    GTEST_SKIP() << "MADV_COLLAPSE unavailable or out of hugepages: " << errno;
-+  }
-+  ASSERT_EQ(madvise(p, 
+ TEST_F(TcMallocTest, AllocationDeallocationConfusion) {
+ #if defined(ABSL_HAVE_HWADDRESS_SANITIZER)
+   GTEST_SKIP() << "HWASan does not currently detect alloc-dealloc-mismatch.";
 ```
 
 ---
 
-### Incident Patch 2: `d287419e` (2026-11-14)
-**Commit Message**: Avoid KCFI typeid emission in TestAliasedFunctions.
+### Incident Patch 2: `6eb91762` (2026-11-17)
+**Commit Message**: Add NUMA residency helpers to Residency.
 
-Co-authored-by: Mike Kruskal <[REDACTED_EMAIL]>
-PiperOrigin-RevId: 1021860779
+This adds GetCurrentNumaNode, ForEachRemoteNumaPage, and
+Residency::GetRemoteNumaBytes to query per-page remote NUMA residency via
+move_pages(2).
+PiperOrigin-RevId: 1024012371
 
-**File**: `tcmalloc/testing/tcmalloc_test.cc` (modified, +12/-1)
+**File**: `tcmalloc/internal/BUILD` (modified, +2/-0)
 ```diff
-@@ -1073,20 +1073,31 @@ void ExpectSameAddresses(T1 v1, T2 v2) {
- }
- }  // end unnamed namespace
- 
-+#if ABSL_HAVE_FEATURE(kcfi)
-+extern "C" char kDeleteNothrow[] asm("_ZdlPvRKSt9nothrow_t");
-+extern "C" char kDeleteArrayNothrow[] asm("_ZdaPvRKSt9nothrow_t");
-+#endif
-+
- TEST(TCMallocTest, TestAliasedFunctions) {
-   if (kSanitizerPresent) {
-     GTEST_SKIP() << "Skipping under sanitizers";
+@@ -636,6 +636,8 @@ cc_library(
+         ":page_size",
+         ":range_tracker",
+         ":util",
++        "@com_google_absl//absl/algorithm:container",
++        "@com_google_absl//absl/functional:function_ref",
+         "@com_google_absl//absl/status",
+     ],
+ )
+```
+
+**File**: `tcmalloc/internal/CMakeLists.txt` (modified, +4/-0)
+```diff
+@@ -649,6 +649,10 @@ tcmalloc_cc_library(
+   SRCS
+     "residency.cc"
+   DEPS
++    "absl::flat_hash_map"
++    "absl::flat_hash_set"
++    "absl::inlined_vector"
++    "absl::function_ref"
+     "absl::status"
+     "tcmalloc::internal_config"
+     "tcmalloc::internal_logging"
+```
+
+**File**: `tcmalloc/internal/fake_residency.h` (modified, +5/-0)
+```diff
+@@ -39,6 +39,11 @@ class NoopResidency : public Residency {
+     return kHugePageSize / GetPageSize();
    }
-   void (*operator_delete)(void*) = &::operator delete;
-+  void (*operator_delete_array)(void*) = &::operator delete[];
-+#if ABSL_HAVE_FEATURE(kcfi)
-+  ExpectSameAddresses(operator_delete, kDeleteNothrow);
-+  ExpectSameAddresses(operator_delete, operator_delete_array);
-+  ExpectSameAddresses(operator_delete, kDeleteArrayNothrow);
-+#else
-   void (*operator_delete_nothrow)(void*, const std::nothrow_t&) =
-       &::operator delete;
--  void (*operator_delete_array)(void*) = &::operator delete[];
-   void (*operator_delete_array_nothrow)(void*, const std::nothrow_t&) =
-       &::operator delete[];
  
-   ExpectSameAddresses(operator_delete, operator_delete_nothrow);
-   ExpectSameAddresses(operator_delete, operator_delete_array);
-   ExpectSameAddresses(operator_delete, operator_delete_array_nothrow);
++  [[nodiscard]] std::optional<size_t> GetRemoteNumaBytes(
++      const void* addr, size_t size, int local_node) override {
++    return std::nullopt;
++  }
++
+   [[nodiscard]] SinglePageBitmaps GetUnbackedAndSwappedBitmaps(
+       const void* addr) override {
+     return {{}, {}, absl::StatusCode::kOk};
+```
+
+**File**: `tcmalloc/internal/residency.cc` (modified, +97/-0)
+```diff
+@@ -14,24 +14,88 @@
+ 
+ #include "tcmalloc/internal/residency.h"
+ 
++#include <errno.h>
+ #include <fcntl.h>
+ #include <stddef.h>
++#if defined(__linux__)
++#include <sys/syscall.h>
 +#endif
+ #include <unistd.h>
+ 
+ #include <algorithm>
+ #include <cstdint>
+ #include <cstdio>
++#include <limits>
+ #include <optional>
+ 
++#include "absl/algorithm/container.h"
++#include "absl/functional/function_ref.h"
+ #include "absl/status/status.h"
+ #include "tcmalloc/internal/config.h"
+ #include "tcmalloc/internal/logging.h"
++#include "tcmalloc/internal/page_size.h"
+ #include "tcmalloc/internal/range_tracker.h"
+ #include "tcmalloc/internal/util.h"
+ 
+ GOOGLE_MALLOC_SECTION_BEGIN
+ namespace tcmalloc {
+ namespace tcmalloc_internal {
++
++// TODO(b/585745921): Move to internal/numa.h once :numa no longer pulls in
++// :percpu's initial-exec TLS globals.
++int GetCurrentNumaNode() {
++#if defined(__linux__) && defined(SYS_getcpu)
++  unsigned int node = 0;
++  if (syscall(SYS_getcpu, nullptr, &node, nullptr) == 0) {
++    return node;
++  }
++#endif
++  return 0;
++}
++
++bool ForEachRemoteNumaPage(
++    const uintptr_t base_page, const size_t num_pages, const int local_node,
++    const absl::FunctionRef<void(size_t page_index)> on_remote_page) {
++  const size_t kHardwarePageSize = GetPageSize();
++  if (local_node < 0 || (base_page % kHardwarePageSize) != 0) {
++    return false;
++  }
++  if (num_pages == 0) {
++    return true;
++  }
++  if (num_pages - 1 >
++      (std::numeric_limits<uintptr_t>::max() - base_page) / kHardwarePageSize) {
++    return false;
++  }
++#if defined(__linux__) && defined(SYS_move_pages)
++  constexpr size_t kBatchSize = 64;
++  const void* pages[kBatchSize];
++  int status[kBatchSize];
++
++  for (size_t page_idx = 0; page_idx < num_pages;) {
++    const size_t batch = std::min(kBatchSize, num_pages - page_idx);
++    for (size_t i = 0; i < batch; ++i) {
++      pages[i] = reinterpret_cast<const void*>(
++          base_page + static_cast<uintptr_t>(page_idx + i) * kHardwarePageSize);
++    }
++    absl::c_fill(status, -1);
++    if (TCMALLOC_RETRY_ON_TEMP_FAILURE(syscall(SYS_move_pages, 0, batch, pages,
++                                               nullptr, status, 0)) != 0) {
++      return false;
++    }
++    for (size_t i = 0; i < batch; ++i) {
++      if (status[i] >= 0 && status[i] != local_node) {
++        on_remote_page(page_idx + i);
++      }
++    }
++    page_idx += batch;
++  }
++  return true;
++#else
++  return false;
++#endif
++}
++
+ namespace {
+ 
+ // From fs/proc/task_mmu.c:
+@@ -202,6 +266,39 @@ std::optional<Residency::Info> ResidencyPageMap::Get(const void* const addr,
+   return info;
  }
  
- // This test is extremely slow on riscv.
++std::optional<size_t> ResidencyPageMap::GetRemoteNumaBytes(
++    const void* const addr, const size_t size, const int local_node) {
++  if (fd_ < 0 || addr == nullptr || local_node < 0) {
++    return std::nullopt;
++  }
++  if (size == 0) {
++    return 0;
++  }
++  const uintptr_t uaddr = reinterpret_cast<uintptr_t>(addr);
++  if (size > std::numeric_limits<uintptr_t>::max() - uaddr) {
++    return std::nullopt;
++  }
++  const uintptr_t end = uaddr + size;
++  const uintptr_t base_page = uaddr & ~(kHardwarePageSize - 1);
++  const uintptr_t last_page = (end - 1) & ~(kHardwarePageSize - 1);
++  const size_t total_pages = (last_page - base_page) / kHardwarePageSize + 1;
++
++  size_t remote_bytes = 0;
++  if (!ForEachRemoteNumaPage(
++          base_page, total_pages, local_node, [&](size_t page_index) {
++            const uintptr_t page_start =
++                base_page +
++                static_cast<uintptr_t>(page_index) * kHardwarePageSize;
++            const uintptr_t span_start = std::max(uaddr, page_start);
++            const size_t page_remaining =
++                kHardwarePageSize - (span_start - page_start);
++            remote_bytes += std::min<size_t>(end - span_start, page_remaining);
++          })) {
++    return std::nullopt;
++  }
++  return remote_bytes;
++}
++
+ Residency::SinglePageBitmaps ResidencyPageMap::GetUnbackedAndSwappedBitmaps(
+     const void* const addr) {
+   Bitmap<kMaxResidencyBits> page_unbacked;
+```
+
+**File**: `tcmalloc/internal/residency.h` (modified, +26/-0)
+```diff
+@@ -21,6 +21,8 @@
+ 
+ #include <optional>
+ #include <ostream>
++
++#include "absl/functional/function_ref.h"
+ #include "absl/status/status.h"
+ #include "tcmalloc/internal/config.h"
+ #include "tcmalloc/internal/page_size.h"
+@@ -30,6 +32,21 @@ GOOGLE_MALLOC_SECTION_BEGIN
+ namespace tcmalloc {
+ namespace tcmalloc_internal {
+ 
++// Returns the NUMA node of the CPU on which the calling thread is currently
++// running, or 0 if unavailable.
++// TODO(b/585745921): Move to internal/numa.h once :numa no longer pulls in
++// :percpu's initial-exec TLS globals.
++[[nodiscard]] int GetCurrentNumaNode();
++
++// Invokes `on_remote_page(page_index)` for each page in
++// `[base_page, base_page + num_pages * GetPageSize())` that resides on a NUMA
++// node other than `local_node` according to move_pages(2). `base_page` must be
++// aligned to `GetPageSize()`. Returns true on success, or false if NUMA
++// residency information is unavailable.
++[[nodiscard]] bool ForEachRemoteNumaPage(
++    uintptr_t base_page, size_t num_pages, int local_node,
++    absl::FunctionRef<void(size_t page_index)> on_remote_page);
++
+ // Abstract base class for Residency, which offers information about memory
+ // residency: whether or not specific spans of memory are resident in core ("m
+ // in core"), swapped, or not present.
+@@ -50,6 +67,12 @@ class Residency {
+                                                 size_t size) = 0;
+   [[nodiscard]] virtual inline size_t GetHardwarePagesInHugePage() const = 0;
+ 
++  // Returns the number of resident bytes in `[addr, addr + size)` that reside
++  // on a NUMA node other than `local_node`, or std::nullopt if NUMA residency
++  // information is unavailable.
++  [[nodiscard]] virtual std::optional<size_t> GetRemoteNumaBytes(
++      const void* addr, size_t size, int local_node) = 0;
++
+   // Struct is ordered with bitmaps first to optimize cacheline usage.
+   struct SinglePageBitmaps {
+     Bitmap<kMaxResidencyBits> unbacked;
+@@ -95,6 +118,9 @@ class ResidencyPageMap : public Residency {
+     return kHardwarePagesInHugePage;
+   }
+ 
++  [[nodiscard]] std::optional<size_t> GetRemoteNumaBytes(
++      const void* addr, size_t size, int local_node) override;
++
+   // Using a hugepage-aligned address, parse through /proc/self/pagemap
+   // to output two bitmaps - one for pages that are unbacked and one for pages
+   // that are swapped. Hugepage-sized regions are assumed to be 2MiB in size. A
+```
+
+**File**: `tcmalloc/internal/residency_test.cc` (modified, +114/-0)
+```diff
+@@ -31,6 +31,7 @@
+ 
+ #include <array>
+ #include <cstdint>
++#include <limits>
+ #include <optional>
+ #include <string>
+ #include <utility>
+@@ -71,6 +72,12 @@ class ResidencySpouse {
+     return r_.GetUnbackedAndSwappedBitmaps(addr);
+   }
+ 
++  decltype(auto) GetRemoteNumaBytes(const void* const addr, const size_t size,
++                                    const int local_node) {
++    AllocationGuard g;
++    return r_.GetRemoteNumaBytes(addr, size, local_node);
++  }
++
+  private:
+   ResidencyPageMap r_;
+ };
+@@ -634,6 +641,113 @@ TEST(PageMapIntegrationTest, GuardPages) {
+   ASSERT_EQ(munmap(raw, 2 * kHugePageSize), 0) << errno;
+ }
+ 
++TEST(ResidenceTest, GetRemoteNumaBytes) {
++  const size_t kHardwarePageSize = GetPageSize();
++  EXPECT_GE(GetCurrentNumaNode(), 0);
++  constexpr size_t kNumPages = 70;
++  constexpr size_t kResidentPages = 66;
++  void* ptr = mmap(nullptr, kNumPages * kHardwarePageSize,
++                   PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
++  ASSERT_NE(ptr, MAP_FAILED) << errno;
++
++  {
++    AllocationGuard g;
++    ResidencySpouse bad("/tmp/a667ba48-18ba-4523-a8a7-b49ece3a6c2b");
++    EXPECT_EQ(bad.GetRemoteNumaBytes(ptr, kHardwarePageSize, 0), std::nullopt);
++  }
++
++  ResidencySpouse r;
++  EXPECT_EQ(r.GetRemoteNumaBytes(nullptr, kHardwarePageSize, 0), std::nullopt);
++  EXPECT_EQ(r.GetRemoteNumaBytes(ptr, kHardwarePageSize, -1), std::nullopt);
++  EXPECT_THAT(r.GetRemoteNumaBytes(ptr, 0, 0), Optional(0));
++
++  // Unbacked pages are not resident on any NUMA node.
++  errno = 0;
++  std::optional<size_t> unbacked =
++      r.GetRemoteNumaBytes(ptr, kNumPages * kHardwarePageSize, 0);
++  if (!unbacked.has_value() && (errno == EPERM || errno == ENOSYS)) {
++    const int err = errno;
++    ASSERT_EQ(munmap(ptr, kNumPages * kHardwarePageSize), 0) << errno;
++    GTEST_SKIP() << "move_pages not supported: " << err;
++  }
++  EXPECT_THAT(unbacked, Optional(0));
++
++  // Fault in the first kResidentPages pages across multiple batches, leaving
++  // the remaining pages unbacked.
++  memset(ptr, 1, kResidentPages * kHardwarePageSize);
++  ::benchmark::DoNotOptimize(ptr);
++
++  int actual_node = -1;
++  for (int node = 0; node < 64; ++node) {
++    if (r.GetRemoteNumaBytes(ptr, kHardwarePageSize, node) == size_t{0}) {
++      actual_node = node;
++      break;
++    }
++  }
++  ASSERT_GE(actual_node, 0);
++  EXPECT_THAT(r.GetRemoteNumaBytes(ptr, kHardwarePageSize, actual_node + 1),
++              Optional(kHardwarePageSize));
++
++  // Querying against a node ID that holds none of the pages counts only the
++  // resident pages and respects sub-page start/end offsets.
++  constexpr int kOtherNode = 1000;
++  EXPECT_THAT(
++      r.GetRemoteNumaBytes(ptr, kNumPages * kHardwarePageSize, kOtherNode),
++      Optional(kResidentPages * kHardwarePageSize));
++  EXPECT_THAT(
++      r.GetRemoteNumaBytes(static_cast<char*>(ptr) + 7,
++                           kResidentPages * kHardwarePageSize, kOtherNode),
++      Optional(kResidentPages * kHardwarePageSize - 7));
++  EXPECT_THAT(r.GetRemoteNumaBytes(static_cast<char*>(ptr) + 7,
++                                   kHardwarePageSize - 11, kOtherNode),
++              Optional(kHardwarePageSize - 11));
++
++  const uintptr_t base_page = reinterpret_cast<uintptr_t>(ptr);
++  EXPECT_FALSE(ForEachRemoteNumaPage(base_page + 1, 1, 0, [](size_t) {}));
++  EXPECT_FALSE(ForEachRemoteNumaPage(base_page, 1, -1, [](size_t) {}));
++  std::vector<size_t> remote_indices;
++  ASSERT_TRUE(ForEachRemoteNumaPage(
++      base_page, kNumPages, kOtherNode,
++      [&](size_t page_index) { remote_indices.push_back(page_index); }));
++  ASSERT_EQ(remote_indices.size(), kResidentPages);
++  for (size_t i = 0; i < kResidentPages; ++i) {
++    EXPECT_EQ(remote_indices[i], i);
++  }
++
++  ASSERT_EQ(munmap(ptr, kNumPages * kHardwarePageSize), 0) << errno;
++}
++
++TEST(ResidenceTest, GetRemoteNumaBytesOverflow) {
++  const size_t kHardwarePageSize = GetPageSize();
++  const uintptr_t last_page =
++      std::numeric_limits<uintptr_t>::max() & ~(kHardwarePageSize - 1);
++
++  EXPECT_FALSE(ForEachRemoteNumaPage(last_page, 2, 0, [](size_t) {}));
++
++  ResidencySpouse r;
++  char c = 0;
++  const uintptr_t aligned_addr =
++      reinterpret_cast<uintptr_t>(&c) & ~(kHardwarePageSize - 1);
++  EXPECT_FALSE(ForEachRemoteNumaPage(
++      aligned_addr, std::numeric_limits<size_t>::max(), 0, [](size_t) {}));
++  EXPECT_EQ(r.GetRemoteNumaBytes(reinterpret_cast<const void*>(aligned_addr),
++                                 std::numeric_limits<size_t>::max(), 0),
++            std::nullopt);
++  EXPECT_EQ(r.GetRemoteNumaBytes(reinterpret_cast<const void*>(last_page),
++                                 kHardwarePageSize, 0),
++            std::nullopt);
++  EXPECT_EQ(r.GetRemoteNumaBytes(reinterpret_cast<const void*>(last_page + 1),
++                                 kHardwarePageSize - 1, 0),
++            std::nullopt);
++  errno = 0;
++  std::optional<size_t> last_page_res = r.GetRemoteNumaBytes(
++      reinterpret_cast<const void*>(last_page + 1), kH
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1929** (2026-11-17): Encode x86-64 rseq signature inside a 7-byte nopl instruction (@copybara-service[bot])
 - **PR #1928** (2026-11-14): Avoid KCFI typeid emission in TestAliasedFunctions. (@copybara-service[bot])
+- **PR #1925** (2026-11-17): Add NUMA residency helpers to Residency. (@copybara-service[bot])
 - **PR #1921** (2026-11-13): Use small-model RIP-relative addressing for tc_globals on x86-64. (@copybara-service[bot])
 - **PR #1920** (2026-11-13): Automated Code Change (@copybara-service[bot])
 - **PR #1918** (closed): No public description (@copybara-service[bot])
-- **PR #1917** (closed): No public description (@copybara-service[bot])
-- **PR #1916** (2026-11-12): Revert: percpu helper change (@copybara-service[bot])
 
 ---
 
@@ -1558,54 +1766,35 @@ PiperOrigin-RevId: 1021860779
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Handle deferred-split THPs in PageFlags::Get.
+## X. Propagate DeletePolicy alignment to ReportCorruptedFree.
 
 **RULE**:
-When implementing operations in `tcmalloc/internal/pageflags.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/tcmalloc.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c2f1eaba`: Handle deferred-split THPs in PageFlags::Get.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01b9fd85`: Propagate DeletePolicy alignment to ReportCorruptedFree.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/pageflags.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/tcmalloc.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    if (ABSL_PREDICT_FALSE(!PageHead(flags) || !PageThp(flags))) {
-        // A tail page's flags are only on the compound head page, which we may
-        // not have read yet (either because the span starts on a tail page or
-        // because earlier pages in a deferred-split THP were unbacked/native).
-        // Simplifying to four native pages per hugepage to make the diagram
-        // fit, an entire hugepage looks like (where X is the span of interest):
-        //      .                vaddr
-        if (ABSL_PREDICT_FALSE(last_head_read_ == -1)) {
-                  absl::StatusCode::kOk ||
-              ABSL_PREDICT_FALSE(!is_huge)) {
+      ReportCorruptedFree(tc_globals, std::max(policy.align(), kAlignment),
+                          ptr);
+  return ReportCorruptedFree(tc_globals, std::max(policy.align(), kAlignment),
+                             ptr);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    if (ABSL_PREDICT_FALSE(PageTail(flags))) {
-  const uintptr_t basePage = vaddr;
-        // The object may start on a tail page of a hugepage, whose flags are
-        // only on the head page. Simplifying to four native pages per hugepage
-        // to make the diagram fit, an entire hugepage looks like (where X is
-        // the span of interest):
-        //      .                basePage
-        if (vaddr == basePage) {
-              absl::StatusCode::kOk) {
-        } else if (ABSL_PREDICT_FALSE(last_head_read_ == -1)) {
-          TC_LOG("Did not see head page before tail page (i=%v, buf=%v)", i,
-                 buf_[i]);
-          return std::nullopt;
-      } else {
-        last_head_read_ = -1;
+      ReportCorruptedFree(tc_globals, kAlignment, ptr);
+  return ReportCorruptedFree(tc_globals, kAlignment, ptr);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c2f1eaba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01b9fd85` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

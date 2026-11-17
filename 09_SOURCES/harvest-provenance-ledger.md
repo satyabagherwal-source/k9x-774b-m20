@@ -10766,3 +10766,7 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `aa4b89d9` | Multi-dimensional audit evidence | 2026-11-17T22:11:01.954Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `8a1840ef` | Multi-dimensional audit evidence | 2026-11-17T22:11:10.878Z |
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-17T22:27:14.284Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-17T22:39:49.371Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `01b9fd85` | Multi-dimensional audit evidence | 2026-11-17T22:39:51.256Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `497534cd` | Multi-dimensional audit evidence | 2026-11-17T22:40:00.200Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `b7d38137` | Multi-dimensional audit evidence | 2026-11-17T22:40:03.630Z |

@@ -10733,3 +10733,7 @@
 | `CYCLE-20261117-Y37I` | `2026-11-17T22:11:01.950Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9075` | Yes (`ac22cb85...`) |
 | `CYCLE-20261117-YA3E` | `2026-11-17T22:11:10.874Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9076` | Yes (`1a19cb22...`) |
 | `CYCLE-20261117-IXGO` | `2026-11-17T22:27:14.280Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`7a79a84e...`) |
+| `CYCLE-20261117-Z43B` | `2026-11-17T22:39:49.367Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`a7465af6...`) |
+| `CYCLE-20261117-Z5JO` | `2026-11-17T22:39:51.252Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9077` | Yes (`a1ab1a81...`) |
+| `CYCLE-20261117-ZCG4` | `2026-11-17T22:40:00.196Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`472bc827...`) |
+| `CYCLE-20261117-ZF3E` | `2026-11-17T22:40:03.626Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md` | Yes (`f4aaf720...`) |

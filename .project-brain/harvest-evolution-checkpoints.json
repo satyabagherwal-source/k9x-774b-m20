@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T22:27:28.624Z",
+  "last_updated": "2026-11-17T22:40:08.577Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T22:27:26.674Z",
@@ -148,12 +148,12 @@
       "staged_for_review": 0
     },
     "aleo-labs-protocol-snarkos-learnings.md": {
-      "processed_at": "2026-11-17T17:36:56.749Z",
+      "processed_at": "2026-11-17T22:40:07.945Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "google-tcmalloc-learnings.md": {
-      "processed_at": "2026-11-16T15:10:11.675Z",
+      "processed_at": "2026-11-17T22:40:06.983Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1783,8 +1783,8 @@
       "staged_for_review": 1
     },
     "hf-deepseek-ai-deepseek-r1-learnings.md": {
-      "processed_at": "2026-11-13T12:24:54.932Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T22:40:07.640Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-moonshotai-kimi-k3-learnings.md": {
@@ -3363,7 +3363,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1728,
+  "total_dossiers_evaluated": 1731,
   "total_canonical_promoted": 326,
-  "total_staged_for_review": 1346
+  "total_staged_for_review": 1348
 }
