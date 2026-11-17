@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T17:02:42.698Z",
+  "updated_at": "2026-11-17T17:11:38.120Z",
   "stats": {
-    "total_discovered": 5059,
-    "approved_pending_harvest": 4770,
+    "total_discovered": 5068,
+    "approved_pending_harvest": 4779,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4757,
+      "COMMUNITY_AND_EXPERT": 4766,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -109296,6 +109296,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
         "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-7F373CF3BD66": {
+      "id": "SRC-7F373CF3BD66",
+      "url": "https://github.com/arxanas/git-branchless",
+      "title": "https://github.com/arxanas/git-branchless",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:11:37.758Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
+        "fileName": "arxanas-git-branchless-learnings.md"
+      }
+    },
+    "SRC-A006B401D50A": {
+      "id": "SRC-A006B401D50A",
+      "url": "https://doc.rust-lang.org/reference/expressions/operator-expr.html",
+      "title": "https://doc.rust-lang.org/reference/expressions/operator-expr.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:11:37.802Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
+        "fileName": "arxanas-git-branchless-learnings.md"
+      }
+    },
+    "SRC-D6BC90EBBFFC": {
+      "id": "SRC-D6BC90EBBFFC",
+      "url": "https://git-scm.com/docs/git-var",
+      "title": "https://git-scm.com/docs/git-var",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:11:37.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
+        "fileName": "arxanas-git-branchless-learnings.md"
+      }
+    },
+    "SRC-630EE335F729": {
+      "id": "SRC-630EE335F729",
+      "url": "https://github.com/arxanas/git-branchless/issues/412",
+      "title": "https://github.com/arxanas/git-branchless/issues/412",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:11:37.891Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
+        "fileName": "arxanas-git-branchless-learnings.md"
+      }
+    },
+    "SRC-7A48BD41A863": {
+      "id": "SRC-7A48BD41A863",
+      "url": "https://github.com/arxanas/git-branchless/pull/1685",
+      "title": "https://github.com/arxanas/git-branchless/pull/1685",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:11:37.938Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
+        "fileName": "arxanas-git-branchless-learnings.md"
+      }
+    },
+    "SRC-1532C8A37F1E": {
+      "id": "SRC-1532C8A37F1E",
+      "url": "https://github.com/arxanas/git-branchless/pull/1671",
+      "title": "https://github.com/arxanas/git-branchless/pull/1671",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:11:37.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
+        "fileName": "arxanas-git-branchless-learnings.md"
+      }
+    },
+    "SRC-B5333338AF6A": {
+      "id": "SRC-B5333338AF6A",
+      "url": "https://github.com/arxanas/git-branchless/issues/1334",
+      "title": "https://github.com/arxanas/git-branchless/issues/1334",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:11:38.030Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
+        "fileName": "arxanas-git-branchless-learnings.md"
+      }
+    },
+    "SRC-42888064355A": {
+      "id": "SRC-42888064355A",
+      "url": "https://github.blog/changelog/2026-09-17-ubuntu-26-generally-",
+      "title": "https://github.blog/changelog/2026-09-17-ubuntu-26-generally-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:11:38.078Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
+        "fileName": "arxanas-git-branchless-learnings.md"
+      }
+    },
+    "SRC-4541E5001B9C": {
+      "id": "SRC-4541E5001B9C",
+      "url": "https://gcc.gnu.org/gcc-15/porting_to.html",
+      "title": "https://gcc.gnu.org/gcc-15/porting_to.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:11:38.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
+        "fileName": "arxanas-git-branchless-learnings.md"
       }
     }
   }

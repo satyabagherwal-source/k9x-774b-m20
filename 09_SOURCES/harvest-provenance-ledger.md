@@ -10666,3 +10666,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-17T17:02:24.427Z |
 | `learn-github-aws-amplify-amplify-js` | `https://github.com/aws-amplify/amplify-js` | `9e01896b` | Multi-dimensional audit evidence | 2026-11-17T17:02:32.361Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `aaa21d53` | Multi-dimensional audit evidence | 2026-11-17T17:02:38.476Z |
+| `learn-github-arxanas-git-branchless` | `https://github.com/arxanas/git-branchless` | `d0eceb7e` | Multi-dimensional audit evidence | 2026-11-17T17:11:28.594Z |
+| `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-17T17:11:31.626Z |
+| `learn-github-berty-berty` | `https://github.com/berty/berty` | `a18636b2` | Multi-dimensional audit evidence | 2026-11-17T17:11:34.192Z |

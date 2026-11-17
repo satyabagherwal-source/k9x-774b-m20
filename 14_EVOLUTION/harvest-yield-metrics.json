@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T17:02:38.480Z",
-  "total_cycles_completed": 10188,
-  "total_learnings_persisted": 10188,
-  "total_rules_promoted": 9755,
+  "last_updated": "2026-11-17T17:11:34.199Z",
+  "total_cycles_completed": 10191,
+  "total_learnings_persisted": 10191,
+  "total_rules_promoted": 9757,
   "history": [
-    {
-      "timestamp": "2026-11-17T02:02:18.472Z",
-      "repository": "openkruise/kruise",
-      "learningId": "learn-github-openkruise-kruise",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T02:02:22.983Z",
-      "repository": "SeekStorm/SeekStorm",
-      "learningId": "learn-github-seekstorm-seekstorm",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T02:16:50.201Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T02:32:18.768Z",
       "repository": "Viggle/Viggle-Remake",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T17:02:38.480Z",
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:11:28.601Z",
+      "repository": "arxanas/git-branchless",
+      "learningId": "learn-github-arxanas-git-branchless",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:11:31.632Z",
+      "repository": "unsloth/flint-GGUF",
+      "learningId": "learn-huggingface-unsloth-flint-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:11:34.199Z",
+      "repository": "berty/berty",
+      "learningId": "learn-github-berty-berty",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

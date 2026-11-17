@@ -10633,3 +10633,6 @@
 | `CYCLE-20261117-X6ZS` | `2026-11-17T17:02:24.424Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md` | Yes (`240ee922...`) |
 | `CYCLE-20261117-XD45` | `2026-11-17T17:02:32.357Z` | `aws-amplify/amplify-js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9013` | Yes (`d4285a54...`) |
 | `CYCLE-20261117-XHU0` | `2026-11-17T17:02:38.472Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9014` | Yes (`af0f74cd...`) |
+| `CYCLE-20261117-8UVG` | `2026-11-17T17:11:28.588Z` | `arxanas/git-branchless` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9015` | Yes (`c14ab61e...`) |
+| `CYCLE-20261117-8X7O` | `2026-11-17T17:11:31.620Z` | `unsloth/flint-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md` | Yes (`fb3e06e4...`) |
+| `CYCLE-20261117-8Z6Z` | `2026-11-17T17:11:34.187Z` | `berty/berty` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9016` | Yes (`43db151d...`) |

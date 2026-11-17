@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T17:02:43.082Z",
-  "total_verified_learnings": 8913,
+  "last_updated": "2026-11-17T17:11:40.066Z",
+  "total_verified_learnings": 8915,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20403,
+  "total_items": 20416,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -223163,14 +223163,19 @@
       "slug": "berty-berty",
       "platform": "github",
       "source_url": "https://github.com/berty/berty",
-      "source_version": "85c32792",
-      "content_hash": "441fe4faca8bd26557449975ffe6c627f7196e5e1391a0476c1cbe30e17c8fc0",
+      "source_version": "a18636b2",
+      "content_hash": "43db151d324bd5fcbf424519aff51b22bba9b2909bf988b7dd56fe08f9b1ea1b",
       "dossier_path": "07_PROJECT_LEARNING/berty-berty-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/berty-berty-learnings.md",
       "promoted_rules": [
         {
           "number": 8439,
           "title": "upgrade to Expo SDK 58, fix iOS camera permission review",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9016,
+          "title": "BLE reconnection on iOS (weshnet v2.3.1) and Android handshake deadlock",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -223179,7 +223184,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T04:32:18.558Z",
+      "verified_at": "2026-11-17T17:11:33.941Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223221,10 +223226,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-berty-berty-architecture-intelligence-berty-berty-core-invariants.md",
       "title": "Architecture Intelligence: berty/berty Core Invariants",
       "repository": "berty/berty",
-      "source_version": "85c32792",
-      "content_hash": "6d80089246083d76b9cb87c26c35e186c456bbad68d37561a8b13fc428462262",
+      "source_version": "a18636b2",
+      "content_hash": "060a894a42f730ead1470918c64b9e6991b877254338d2b1f14dfa9a91af9b08",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T04:32:19.051Z"
+      "persisted_at": "2026-11-17T17:11:34.634Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty",
@@ -223233,10 +223238,10 @@
       "relative_path": "08_VERIFICATION/berty-berty-verification-protocol-empirical-defect-shield-for-berty-berty.md",
       "title": "Verification Protocol: Empirical Defect Shield for berty/berty",
       "repository": "berty/berty",
-      "source_version": "85c32792",
-      "content_hash": "04f75805ab149b02537ea33264498d8e3359fd7f5a24745300a1f4c218c31afb",
+      "source_version": "a18636b2",
+      "content_hash": "adc709139ad45ba1381ae2dd160bba2122fcc3809230225beebc8e6a1a0cdf30",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T04:32:19.170Z"
+      "persisted_at": "2026-11-17T17:11:34.869Z"
     },
     "learn-huggingface-meta-llama-llama-2-7b": {
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
@@ -223427,9 +223432,9 @@
       "title": "Architecture Intelligence: berty-berty-learnings Core Invariants",
       "repository": "berty-berty-learnings",
       "source_version": "HEAD",
-      "content_hash": "92357373a78144d751bf20357deb781b12f8cf757181cb6844ee2eb8b598aa33",
+      "content_hash": "5a6f4671b57b213d5dae95ad9daadf9a589b210ac8aa2553a57cc15883d67d75",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T04:37:57.730Z"
+      "persisted_at": "2026-11-17T17:11:39.847Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-berty-berty-learnings",
@@ -223439,9 +223444,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for berty-berty-learnings",
       "repository": "berty-berty-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a9b95c3acf4c3f1588fad4303e742353c20284695b018519e56c0f7840f8413",
+      "content_hash": "5d970f194ff1522021086561770482f4c6a01f264098fc2103896d7094a1a5ae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T04:37:57.870Z"
+      "persisted_at": "2026-11-17T17:11:40.066Z"
     },
     "learn-huggingface-deepseek-ai-deepseek-v3": {
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v3",
@@ -273637,6 +273642,202 @@
       "content_hash": "a5ca64e75dca647097f7595d521838a688c205ce92bbf637696060bb96661b2c",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T17:02:42.163Z"
+    },
+    "learn-github-arxanas-git-branchless": {
+      "learning_id": "learn-github-arxanas-git-branchless",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "arxanas/git-branchless",
+      "repository": "arxanas/git-branchless",
+      "slug": "arxanas-git-branchless",
+      "platform": "github",
+      "source_url": "https://github.com/arxanas/git-branchless",
+      "source_version": "d0eceb7e",
+      "content_hash": "c14ab61e542655531371637af9b6e38584bc251b918e6dca79fc2bbfae59efac",
+      "dossier_path": "07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9015,
+          "title": "pin build-git job to ubuntu-24.04",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T17:11:28.313Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9015": {
+      "learning_id": "rule-9015",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9015,
+      "title": "pin build-git job to ubuntu-24.04",
+      "source_url": "https://github.com/arxanas/git-branchless",
+      "source_version": "d0eceb7e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T17:11:28.313Z"
+    },
+    "candidate_directive-pin-build-git-job-to-ubuntu-24-04": {
+      "item_id": "candidate_directive-pin-build-git-job-to-ubuntu-24-04",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8V2U-pin-build-git-job-to-ubuntu-24-04.md",
+      "title": "pin build-git job to ubuntu-24.04",
+      "repository": "arxanas/git-branchless",
+      "source_version": "d0eceb7e",
+      "content_hash": "de3ad6223544679f257499d400457ddc2217fb7d64ef38b360e64937f126b4ec",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T17:11:28.859Z"
+    },
+    "domain_intelligence-architecture-intelligence-arxanas-git-branchless-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-arxanas-git-branchless-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arxanas-git-branchless-architecture-intelligence-arxanas-git-branchless-core-inv.md",
+      "title": "Architecture Intelligence: arxanas/git-branchless Core Invariants",
+      "repository": "arxanas/git-branchless",
+      "source_version": "d0eceb7e",
+      "content_hash": "4c996b70e1f64d09bee66908cd0dbd0b41321f1e23e4df5942deda6c57fc4bf8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T17:11:29.022Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-arxanas-git-branchless": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arxanas-git-branchless",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/arxanas-git-branchless-verification-protocol-empirical-defect-shield-for-arxanas.md",
+      "title": "Verification Protocol: Empirical Defect Shield for arxanas/git-branchless",
+      "repository": "arxanas/git-branchless",
+      "source_version": "d0eceb7e",
+      "content_hash": "bcf9e8af4346ddddeef5cc44cb558462e3c4c90abae0e783c97864922068e97b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T17:11:29.251Z"
+    },
+    "learn-huggingface-unsloth-flint-gguf": {
+      "learning_id": "learn-huggingface-unsloth-flint-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unsloth/flint-GGUF",
+      "repository": "unsloth/flint-GGUF",
+      "slug": "hf-unsloth-flint-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/flint-GGUF",
+      "source_version": "hf-unsloth-flint-gguf",
+      "content_hash": "fb3e06e4bebe2196340b8d9658ce79be5ece7cd96d3a5759aa0867a45f8e0e22",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T17:11:31.333Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-unsloth-flint-gguf-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-unsloth-flint-gguf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-flint-gguf-research-knowledge-intelligence-unsloth-flint-gguf-core-in.md",
+      "title": "Research & Knowledge Intelligence: unsloth/flint-GGUF Core Invariants",
+      "repository": "unsloth/flint-GGUF",
+      "source_version": "hf-unsloth-flint-gguf",
+      "content_hash": "4d88fb2067a0b4b461e6ce860e87b22ac417e21a311f76956a46a8ec066a8c26",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T17:11:31.874Z"
+    },
+    "rule-9016": {
+      "learning_id": "rule-9016",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9016,
+      "title": "BLE reconnection on iOS (weshnet v2.3.1) and Android handshake deadlock",
+      "source_url": "https://github.com/berty/berty",
+      "source_version": "a18636b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T17:11:33.941Z"
+    },
+    "candidate_directive-ble-reconnection-on-ios-weshnet-v2-3-1-and-android-handshake-deadlock": {
+      "item_id": "candidate_directive-ble-reconnection-on-ios-weshnet-v2-3-1-and-android-handshake-deadlock",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-93E9-ble-reconnection-on-ios-weshnet-v2-3-1-and-android-handshake-deadlock.md",
+      "title": "BLE reconnection on iOS (weshnet v2.3.1) and Android handshake deadlock",
+      "repository": "berty-berty-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1f264a94d908dff1aae61baff63b59fcdac2ae9800ffa463ef89b759e80e9a83",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T17:11:39.633Z"
+    },
+    "candidate_directive-ci-pin-build-git-job-to-ubuntu-24-04": {
+      "item_id": "candidate_directive-ci-pin-build-git-job-to-ubuntu-24-04",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-92FJ-ci-pin-build-git-job-to-ubuntu-24-04.md",
+      "title": "ci): pin build-git job to ubuntu-24.04",
+      "repository": "arxanas-git-branchless-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1c1767946a7ce1029eb6ff2d47cd5c3deac79adcf0319f00e37f3294f892888b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T17:11:38.387Z"
+    },
+    "domain_intelligence-architecture-intelligence-arxanas-git-branchless-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-arxanas-git-branchless-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arxanas-git-branchless-learnings-architecture-intelligence-arxanas-git-branchles.md",
+      "title": "Architecture Intelligence: arxanas-git-branchless-learnings Core Invariants",
+      "repository": "arxanas-git-branchless-learnings",
+      "source_version": "HEAD",
+      "content_hash": "96a770a410bceb31a63562ca2380ecd78aef6e820078ed6bf117e3b02e4ee41f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T17:11:38.583Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-arxanas-git-branchless-learnin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arxanas-git-branchless-learnin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/arxanas-git-branchless-learnings-verification-protocol-empirical-defect-shield-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for arxanas-git-branchless-learnings",
+      "repository": "arxanas-git-branchless-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9c0a425460cde5893bdde966f4e298dfabe5b2d8ecd216ef230d8474b5006509",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T17:11:38.781Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-unsloth-flint-gguf-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-flint-gguf-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-flint-gguf-learnings-research-knowledge-intelligence-hf-unsloth-flint.md",
+      "title": "Research & Knowledge Intelligence: hf-unsloth-flint-gguf-learnings Core Invariants",
+      "repository": "hf-unsloth-flint-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "51aace5764a41885959d36ba114f9b750987b7c3d38c6db7884d796a211fd27a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T17:11:39.193Z"
     }
   },
   "ai-builder-brain": {

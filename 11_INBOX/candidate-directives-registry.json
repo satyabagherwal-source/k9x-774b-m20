@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T17:02:42.854Z",
+  "last_updated": "2026-11-17T17:11:39.633Z",
   "directives": [
     {
       "id": "CD-001",
@@ -25033,6 +25033,48 @@
       "source_repo": "projectdiscovery-nuclei",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6CAD84-empirical-invariant-guard-in-security-co.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-8V2U",
+      "directive_title": "pin build-git job to ubuntu-24.04",
+      "source_repo": "arxanas/git-branchless",
+      "source_commit": "d0eceb7e",
+      "staged_file": "11_INBOX/candidate-directives/CD-8V2U-pin-build-git-job-to-ubuntu-24-04.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-93E9",
+      "directive_title": "BLE reconnection on iOS (weshnet v2.3.1) and Android handshake deadlock",
+      "source_repo": "berty-berty-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-93E9-ble-reconnection-on-ios-weshnet-v2-3-1-and-android-handshake-deadlock.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-92FJ",
+      "directive_title": "ci): pin build-git job to ubuntu-24.04",
+      "source_repo": "arxanas-git-branchless-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-92FJ-ci-pin-build-git-job-to-ubuntu-24-04.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-D6F5BB",
+      "directive_title": "BLE reconnection on iOS (weshnet v2.3.1) and Android handshake deadlock",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "berty-berty",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D6F5BB-ble-reconnection-on-ios-weshnet-v2-3-1-a.md",
       "staged_date": "2026-11-17"
     }
   ]

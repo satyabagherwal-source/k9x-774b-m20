@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T17:02:38.483Z",
+  "last_updated": "2026-11-17T17:11:34.204Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6576,14 +6576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-berty-berty",
-      "content_hash": "441fe4faca8bd26557449975ffe6c627f7196e5e1391a0476c1cbe30e17c8fc0",
-      "verified_at": "2026-11-14T04:32:18.737Z",
+      "content_hash": "43db151d324bd5fcbf424519aff51b22bba9b2909bf988b7dd56fe08f9b1ea1b",
+      "verified_at": "2026-11-17T17:11:34.203Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T04:32:18.737Z"
+      "last_updated": "2026-11-17T17:11:34.203Z"
     },
     "Agent-Field/agentfield": {
       "repository": "Agent-Field/agentfield",
@@ -10686,14 +10686,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arxanas-git-branchless",
-      "content_hash": "a4a853f3f32739254e3aa9df096f5b1b487daca318dc267f5f0cf72d1b9ecca9",
-      "verified_at": "2026-10-25T03:52:45.760Z",
+      "content_hash": "c14ab61e542655531371637af9b6e38584bc251b918e6dca79fc2bbfae59efac",
+      "verified_at": "2026-11-17T17:11:28.605Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T03:52:45.760Z"
+      "last_updated": "2026-11-17T17:11:28.605Z"
     },
     "pingcap/tidb": {
       "repository": "pingcap/tidb",
@@ -15861,14 +15861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-flint-gguf",
-      "content_hash": "db2e3a5ac711b87b256d7d21ef335acb754b70695d0578089b5cb09d4fc027a5",
-      "verified_at": "2026-11-13T05:43:46.698Z",
+      "content_hash": "fb3e06e4bebe2196340b8d9658ce79be5ece7cd96d3a5759aa0867a45f8e0e22",
+      "verified_at": "2026-11-17T17:11:31.636Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T05:43:46.698Z"
+      "last_updated": "2026-11-17T17:11:31.636Z"
     },
     "gauthierpiarrette/highball": {
       "repository": "gauthierpiarrette/highball",

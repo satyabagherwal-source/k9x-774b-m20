@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-035P",
-    "timestamp": "2026-11-15T08:09:26.270Z",
-    "repository": "SimonSchubert/LinuxCommandLibrary",
-    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "34e584f07e24e7dbb0bf127ae7a9333f0861e79c7291af03fea2760146a65996",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-EV3Q",
-    "timestamp": "2026-11-15T08:48:55.286Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "20381fcb29238b7d094e4b0e5f6232f9e4a588f427f07dbe9681ad68b677ac05",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-JC6Q",
-    "timestamp": "2026-11-15T08:52:24.050Z",
-    "repository": "MelnixDev/seo-crawl-audit",
-    "learningId": "learn-github-melnixdev-seo-crawl-audit",
-    "contentHash": "32664a22ec4793b1b8bec6e306b36d81e80c02221ea28f24d341c91c9dd76107",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-L0MH",
     "timestamp": "2026-11-15T09:21:41.993Z",
     "repository": "lancedb/lancedb",
@@ -7490,6 +7445,51 @@
     "repository": "projectdiscovery/nuclei",
     "learningId": "learn-github-projectdiscovery-nuclei",
     "contentHash": "af0f74cdd3c0aba6e0c002f7da77dc5bdcbd8f655330694bb1fb3abe6f0dce94",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-8UVG",
+    "timestamp": "2026-11-17T17:11:28.588Z",
+    "repository": "arxanas/git-branchless",
+    "learningId": "learn-github-arxanas-git-branchless",
+    "contentHash": "c14ab61e542655531371637af9b6e38584bc251b918e6dca79fc2bbfae59efac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-8X7O",
+    "timestamp": "2026-11-17T17:11:31.620Z",
+    "repository": "unsloth/flint-GGUF",
+    "learningId": "learn-huggingface-unsloth-flint-gguf",
+    "contentHash": "fb3e06e4bebe2196340b8d9658ce79be5ece7cd96d3a5759aa0867a45f8e0e22",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-8Z6Z",
+    "timestamp": "2026-11-17T17:11:34.187Z",
+    "repository": "berty/berty",
+    "learningId": "learn-github-berty-berty",
+    "contentHash": "43db151d324bd5fcbf424519aff51b22bba9b2909bf988b7dd56fe08f9b1ea1b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

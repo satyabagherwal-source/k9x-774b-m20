@@ -4303,10 +4303,10 @@
     "repository": "berty/berty",
     "platform": "github",
     "sourceUrl": "https://github.com/berty/berty",
-    "sourceVersion": "85c32792",
+    "sourceVersion": "a18636b2",
     "license": "NOASSERTION",
-    "contentHash": "441fe4faca8bd26557449975ffe6c627f7196e5e1391a0476c1cbe30e17c8fc0",
-    "lastHarvestedAt": "2026-11-14T04:32:18.726Z",
+    "contentHash": "43db151d324bd5fcbf424519aff51b22bba9b2909bf988b7dd56fe08f9b1ea1b",
+    "lastHarvestedAt": "2026-11-17T17:11:34.192Z",
     "learningId": "learn-github-berty-berty"
   },
   "agent-field-agentfield": {
@@ -7093,10 +7093,10 @@
     "repository": "arxanas/git-branchless",
     "platform": "github",
     "sourceUrl": "https://github.com/arxanas/git-branchless",
-    "sourceVersion": "f37244cb",
+    "sourceVersion": "d0eceb7e",
     "license": "Apache-2.0",
-    "contentHash": "a4a853f3f32739254e3aa9df096f5b1b487daca318dc267f5f0cf72d1b9ecca9",
-    "lastHarvestedAt": "2026-10-25T03:52:45.747Z",
+    "contentHash": "c14ab61e542655531371637af9b6e38584bc251b918e6dca79fc2bbfae59efac",
+    "lastHarvestedAt": "2026-11-17T17:11:28.594Z",
     "learningId": "learn-github-arxanas-git-branchless"
   },
   "pingcap-tidb": {
@@ -10555,8 +10555,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/flint-GGUF",
     "sourceVersion": "hf-unsloth-flint-gguf",
     "license": "Open-Source",
-    "contentHash": "db2e3a5ac711b87b256d7d21ef335acb754b70695d0578089b5cb09d4fc027a5",
-    "lastHarvestedAt": "2026-11-13T05:43:46.689Z",
+    "contentHash": "fb3e06e4bebe2196340b8d9658ce79be5ece7cd96d3a5759aa0867a45f8e0e22",
+    "lastHarvestedAt": "2026-11-17T17:11:31.626Z",
     "learningId": "learn-huggingface-unsloth-flint-gguf"
   },
   "gauthierpiarrette-highball": {
