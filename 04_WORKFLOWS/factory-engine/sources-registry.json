@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T01:34:12.138Z",
-    "lastVerified": "2026-11-17T01:34:12.138Z",
+    "lastChecked": "2026-11-17T01:41:54.064Z",
+    "lastVerified": "2026-11-17T01:41:54.064Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -330,12 +330,12 @@
     "lastVerified": "2026-11-16T18:01:41.858Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "microsoft/agent-governance-toolkit",
+    "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-16T18:38:35.017Z",
-    "lastVerified": "2026-11-16T18:38:35.017Z",
+    "lastChecked": "2026-11-17T01:41:49.149Z",
+    "lastVerified": "2026-11-17T01:41:49.149Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -344,7 +344,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5bcf1daa"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -470,8 +471,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T00:38:39.809Z",
-    "lastVerified": "2026-11-17T00:38:39.809Z",
+    "lastChecked": "2026-11-17T01:41:54.057Z",
+    "lastVerified": "2026-11-17T01:41:54.057Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -3125,8 +3126,8 @@
     "officialUrl": "https://github.com/kgateway-dev/kgateway",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-15T19:04:07.537Z",
-    "lastVerified": "2026-11-15T19:04:07.537Z",
+    "lastChecked": "2026-11-17T01:41:46.649Z",
+    "lastVerified": "2026-11-17T01:41:46.649Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kgateway-dev-kgateway",
@@ -3150,8 +3151,8 @@
     "officialUrl": "https://github.com/asciinema/asciinema",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T06:36:39.945Z",
-    "lastVerified": "2026-11-15T06:36:39.945Z",
+    "lastChecked": "2026-11-17T01:41:39.099Z",
+    "lastVerified": "2026-11-17T01:41:39.099Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-asciinema-asciinema",
@@ -3945,9 +3946,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-11-15T17:22:50.239Z",
+    "lastChecked": "2026-11-17T01:41:51.595Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-11-15T17:22:50.239Z"
+    "lastVerified": "2026-11-17T01:41:51.595Z"
   },
   "mfontanini-presenterm": {
     "name": "presenterm",
@@ -12134,9 +12135,9 @@
   "jsonld-java-jsonld-java": {
     "name": "jsonld-java",
     "officialUrl": "https://github.com/jsonld-java/jsonld-java",
-    "lastChecked": "2026-11-12T08:14:29.445Z",
+    "lastChecked": "2026-11-17T01:41:41.615Z",
     "revisionIdentifier": "4a7305f2",
-    "lastVerified": "2026-11-12T08:14:29.445Z"
+    "lastVerified": "2026-11-17T01:41:41.615Z"
   },
   "iplug2-iplug2": {
     "name": "iPlug2/iPlug2",
@@ -12550,9 +12551,9 @@
   "mikeroyal-apple-silicon-guide": {
     "name": "Apple-Silicon-Guide",
     "officialUrl": "https://github.com/mikeroyal/Apple-Silicon-Guide",
-    "lastChecked": "2026-11-13T12:16:04.242Z",
+    "lastChecked": "2026-11-17T01:41:44.082Z",
     "revisionIdentifier": "7e58c7d7",
-    "lastVerified": "2026-11-13T12:16:04.242Z"
+    "lastVerified": "2026-11-17T01:41:44.082Z"
   },
   "tanstack-query": {
     "name": "TanStack/query",
