@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T08:46:52.426Z",
-  "total_records": 1508,
+  "last_updated": "2026-11-17T08:57:19.469Z",
+  "total_records": 1514,
   "domains": {
     "A": {
       "total": 9,
@@ -45,7 +45,7 @@
       ]
     },
     "D": {
-      "total": 624,
+      "total": 625,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -670,7 +670,8 @@
         "domain_intelligence-research-knowledge-intelligence-facebook-sam-3d-body-dinov3-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam-3d-body-dinov3-learnings-core-in",
         "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-embedding-0-6b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-embedding-0-6b-learnings-core-inva"
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-embedding-0-6b-learnings-core-inva",
+        "DOM-D-C917D98C"
       ]
     },
     "E": {
@@ -722,7 +723,7 @@
       ]
     },
     "G": {
-      "total": 282,
+      "total": 284,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1005,11 +1006,13 @@
         "domain_intelligence-architecture-intelligence-storybookjs-storybook-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-avajs-ava-core-invariants",
         "domain_intelligence-architecture-intelligence-avajs-ava-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-pulumi-pulumi-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-pulumi-pulumi-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-faker-js-faker-core-invariants",
+        "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 359,
+      "total": 362,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1369,7 +1372,10 @@
         "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-learnings-core-invariants",
         "DOM-H-C6C068D9",
         "domain_intelligence-technical-construction-intelligence-trinodb-trino-learnings-core-invariants",
-        "DOM-H-A32D66BE"
+        "DOM-H-A32D66BE",
+        "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-apache-zookeeper-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria"
       ]
     },
     "I": {
@@ -9801,8 +9807,8 @@
       "title": "Technical Construction Intelligence: salvo-rs/salvo Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-salvo-rs-salvo-technical-construction-intelligence-salvo-rs-salvo-core-invariant.md",
       "repository": "salvo-rs/salvo",
-      "content_hash": "32c9e93d674cc7f69b294a15121753417a78715860864bf0b47ae78835b66d7c",
-      "created_at": "2026-11-15T19:32:03.855Z"
+      "content_hash": "9d44689492bfdee7af053f016eb0eb4d1e2de4c2e762ca7c3bb08f8f783ab560",
+      "created_at": "2026-11-17T08:56:28.910Z"
     },
     "domain_intelligence-architecture-intelligence-zulip-zulip-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zulip-zulip-core-invariants",
@@ -9828,8 +9834,8 @@
       "title": "Technical Construction Intelligence: salvo-rs-salvo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-salvo-rs-salvo-learnings-technical-construction-intelligence-salvo-rs-salvo-lear.md",
       "repository": "salvo-rs-salvo-learnings",
-      "content_hash": "569be10521a7a1d2fad360a7c6c2802014e0fc19bc3d5e57a19fe6deefe8065c",
-      "created_at": "2026-11-15T19:32:20.532Z"
+      "content_hash": "cef7ae1050bc73b6ff6b6f37a96bf1a31558a8c245306e7fdf41b1d077362618",
+      "created_at": "2026-11-17T08:56:46.327Z"
     },
     "DOM-D-A812096F": {
       "record_id": "DOM-D-A812096F",
@@ -26295,6 +26301,93 @@
       "repository": "pulumi-pulumi-learnings",
       "content_hash": "020165c3156b2823e6ac9c217728012016650a5ae3a16de28015085dd267c410",
       "created_at": "2026-11-17T08:46:52.426Z"
+    },
+    "domain_intelligence-architecture-intelligence-faker-js-faker-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-faker-js-faker-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: faker-js/faker Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-architecture-intelligence-faker-js-faker-core-invariants.md",
+      "repository": "faker-js/faker",
+      "content_hash": "153b0fed6de39dec75342b4481c24993500b86a4b15a3f914e76079bfc298307",
+      "created_at": "2026-11-17T08:56:32.072Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: mattermost/mattermost Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mattermost-mattermost-technical-construction-intelligence-mattermost-mattermost-.md",
+      "repository": "mattermost/mattermost",
+      "content_hash": "b946a3c44b39bc7b050f9a045182012e71bb69aa4458b99c2ed757996430e3dd",
+      "created_at": "2026-11-17T08:56:35.286Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-zookeeper-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-apache-zookeeper-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: apache/zookeeper Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-technical-construction-intelligence-apache-zookeeper-core-invar.md",
+      "repository": "apache/zookeeper",
+      "content_hash": "62a6f770d9a68a7d00ac4ca2988a1f341c3692d071213a8d66be89397bed9db1",
+      "created_at": "2026-11-17T08:56:42.744Z"
+    },
+    "DOM-D-C917D98C": {
+      "record_id": "DOM-D-C917D98C",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): faker-js/faker",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/faker-js-faker-learnings.md`  \n> **Source**: github ([https://github.com/faker-js/faker](https://github.com/faker-js/faker))  \n> **Source Version**: `5060c90a`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-clone-structural-synthesiz",
+      "content_hash": "d4325d5e1a2638ba36b8d4ca9e023bd278ffe7b54495526a669549a6fb166cc9",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/faker-js-faker-learnings.md`  \n> **Source**: github ([https://github.com/faker-js/fa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/faker-js-faker-learnings.md`  \n> **Source**: github ([https://github.com/faker-js/fa",
+      "provenance": {
+        "source_uri": "project://faker-js-faker/faker-js-faker-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:56:46.739Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (faker-js-faker)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of faker-js-faker"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:57:17.721Z"
+    },
+    "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: faker-js-faker-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-learnings-architecture-intelligence-faker-js-faker-learnings-core.md",
+      "repository": "faker-js-faker-learnings",
+      "content_hash": "f38a21a8b882309598973e49dfd573845c1e8ef1bdf40d4d2840b263c18ec28d",
+      "created_at": "2026-11-17T08:57:18.607Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: mattermost-mattermost-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mattermost-mattermost-learnings-technical-construction-intelligence-mattermost-m.md",
+      "repository": "mattermost-mattermost-learnings",
+      "content_hash": "5a91f5ee47444762550eb532f20945a8e28082e404c91018e44336772ef4056d",
+      "created_at": "2026-11-17T08:57:19.469Z"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T08:46:52.865Z",
+  "last_updated": "2026-11-17T08:57:20.425Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T08:09:42.782Z",
@@ -963,7 +963,7 @@
       "staged_for_review": 1
     },
     "salvo-rs-salvo-learnings.md": {
-      "processed_at": "2026-11-15T19:32:19.886Z",
+      "processed_at": "2026-11-17T08:56:45.700Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2093,7 +2093,7 @@
       "staged_for_review": 1
     },
     "mattermost-mattermost-learnings.md": {
-      "processed_at": "2026-11-13T19:27:35.348Z",
+      "processed_at": "2026-11-17T08:57:18.782Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3271,9 +3271,14 @@
       "processed_at": "2026-11-17T08:32:18.031Z",
       "promoted_canonical": 2,
       "staged_for_review": 0
+    },
+    "faker-js-faker-learnings.md": {
+      "processed_at": "2026-11-17T08:57:17.742Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1524,
-  "total_canonical_promoted": 312,
-  "total_staged_for_review": 1201
+  "total_dossiers_evaluated": 1527,
+  "total_canonical_promoted": 313,
+  "total_staged_for_review": 1203
 }

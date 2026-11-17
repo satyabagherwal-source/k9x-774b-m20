@@ -4,45 +4,31 @@
 {
   "source_repository": "apache/zookeeper",
   "source_url": "https://github.com/apache/zookeeper",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "9fde5223",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-17T08:56:42.618Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-apache-zookeeper",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/zookeeper](https://github.com/apache/zookeeper) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [apache/zookeeper](https://github.com/apache/zookeeper) (Revision: `9fde5223`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T08:56:42.618Z`  
+> **Learning ID**: `learn-github-apache-zookeeper`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `apache/zookeeper` (Commit: `historical`)
+- **Target Repository**: `apache/zookeeper` (Commit: `9fde5223`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
-> **Source**: github ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
-> **Source Version**: `5dd643fb`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:48:41.025Z  
-> **Learning ID**: `learn-github-apache-zookeeper`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): apache/zookeeper
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:48:40.861Z  
+> **Harvest Timestamp**: 2026-11-17T08:56:41.333Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Apache ZooKeeper
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12832 stars
+- **Stars / Engagement**: 12830 stars
 
 ---
 
@@ -1825,16 +1811,17 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2503** (2026-11-16): **ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeeper-contrib-zooinspector**
+  *Symptoms*: To fix CVE-2026-102554.
+  **Post-Mortem & Fix Analysis**:
+  > Verified this locally by building `zookeeper-contrib-zooinspector` and running tests with `mvn clean verify -Pfull-build -Dsurefire-forkcount=4 -DskipCppUnit -pl zookeeper-contrib/zookeeper-contrib-zooinspector`. It is successful.
+  > Many thanks @anmolnar for the review! :+1: 
+
 - **Issue #2493** (2026-11-06): **ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js**
   *Symptoms*: npm audit before:  23 vulnerabilities (4 low, 15 moderate, 4 high)  Fix: Executed `npm audit fix`.  after fixing:  18 vulnerabilities (4 low, 13 moderate, 1 high)
   **Post-Mortem & Fix Analysis**:
   > ### Testing  Verified this locally:  - quickly checked with `npm run dev` - site is working fine - :heavy_check_mark:  - by building the site with executing `mvn site -pl zookeeper-website` and then checking the site with a quick HTTP server by running `(cd zookeeper-website/build/client && python3 -m http.server)`  Both website and docs are looking good - :heavy_check_mark:   <img width="1845" height="1168" alt="image" src="https://github.com/user-attachments/assets/bf094caf-762f-45fe-bbc7-6be899d38f36" />  <img width="1845" height="1168" alt="image" src="https://github.com/user-attachments/assets/ab38ffd5-cd93-4332-bd5e-0727134b35f2" /> 
   > LGTM, thanks David!
-
-- **Issue #2492** (2026-11-04): **ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build**
-  *Symptoms*: Reviewers: kezhuw Author: PDavid Closes #2487 from PDavid/ZOOKEEPER-5116  (cherry picked from commit a9d2ce608314851c71eb09754d4c4698ff489ff5)
-  **Post-Mortem & Fix Analysis**:
-  > Cherry-picked the master commit which if course did not apply cleanly because there is no website build in this branch.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1851,294 +1838,33 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f9c048aa` (2026-11-09)
-**Commit Message**: Revert "ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigException`
+### Incident Patch 1: `9fde5223` (2026-11-16)
+**Commit Message**: ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeeper-contrib-zooinspector
 
 Reviewers: anmolnar
-Author: kezhuw
-Closes #2490 from kezhuw/ZOOKEEPER-4966-revert
+Author: PDavid
+Closes #2503 from PDavid/ZOOKEEPER-5127
 
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/client/ZKClientConfig.java` (modified, +7/-6)
+**File**: `zookeeper-contrib/zookeeper-contrib-zooinspector/pom.xml` (modified, +1/-1)
 ```diff
-@@ -23,6 +23,7 @@
- import org.apache.yetus.audience.InterfaceAudience;
- import org.apache.zookeeper.common.ConfigException;
- import org.apache.zookeeper.common.ZKConfig;
-+import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
+@@ -35,7 +35,7 @@
  
- /**
-  * Handles client specific properties
-@@ -84,22 +85,22 @@ public ZKClientConfig() {
-     /**
-      * <p><b>Use {@link ZKClientConfig#ZKClientConfig(Path configPath)} instead.</b>
-      *
--     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
--     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
-+     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
-+     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
-      */
-     @Deprecated
--    public ZKClientConfig(File configFile) throws ConfigException {
-+    public ZKClientConfig(File configFile) throws QuorumPeerConfig.ConfigException {
-         super(configFile);
-     }
+   <properties>
+     <rat.version>0.6</rat.version>
+-    <guava.version>32.1.3-jre</guava.version>
++    <guava.version>33.7.2-jre</guava.version>
+   </properties>
  
-     /**
-      * <p><b>Use {@link ZKClientConfig#ZKClientConfig(Path configPath)} instead.</b>
-      *
--     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
--     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
-+     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
-+     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
-      */
-     @Deprecated
--    public ZKClientConfig(String configPath) throws ConfigException {
-+    public ZKClientConfig(String configPath) throws QuorumPeerConfig.ConfigException {
-         super(configPath);
-     }
- 
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/common/ZKConfig.java` (modified, +38/-43)
-```diff
-@@ -23,14 +23,13 @@
- import java.io.File;
- import java.io.FileInputStream;
- import java.io.IOException;
--import java.lang.reflect.Constructor;
- import java.nio.file.Path;
--import java.nio.file.Paths;
- import java.util.HashMap;
- import java.util.Map;
- import java.util.Map.Entry;
- import java.util.Properties;
- import org.apache.zookeeper.Environment;
-+import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
- import org.apache.zookeeper.server.util.VerifyingFileFactory;
- import org.slf4j.Logger;
- import org.slf4j.LoggerFactory;
-@@ -68,33 +67,35 @@ public ZKConfig() {
-     /**
-      * <p><b>Use {@link ZKConfig#ZKConfig(Path configPath)} instead.</b>
-      *
--     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
--     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
-+     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
-+     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
-      *
-      * @param configPath
-      *            Configuration file path
-      * @throws ConfigException
-      *             if failed to load configuration properties
-      */
-     @Deprecated
--    public ZKConfig(String configPath) throws ConfigException {
--        this(Paths.get(configPath));
-+    public ZKConfig(String configPath) throws QuorumPeerConfig.ConfigException {
-+        this(new File(configPath));
-     }
- 
-     /**
-      * <p><b>Use {@link ZKConfig#ZKConfig(Path configPath)} instead.</b>
-      *
--     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
--     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
-+     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
-+     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
-      *
-      * @param configFile
-      *            Configuration file
-      * @throws ConfigException
-      *             if failed to load configuration properties
-      */
-     @Deprecated
--    public ZKConfig(File configFile) throws ConfigException {
--        this(configFile.toPath());
-+    public ZKConfig(File configFile) throws QuorumPeerConfig.ConfigException {
-+        this();
-+        addConfiguration(configFile);
-+        LOG.info("ZK Config {}", redactSensitiveValues(properties));
-     }
- 
-     /**
-@@ -103,6 +104,7 @@ public ZKConfig(File configFile) throws ConfigException {
-      * @param configPath path to configuration file
-      * @throws ConfigException
-      */
-+    @SuppressWarnings("deprecation")
-     public ZKConfig(Path configPath) throws ConfigException {
-         this();
-         addConfiguration(configPath);
-@@ -226,39 +228,16 @@ public void setProperty(String key, String value) {
-      *
-      * @param configPath path to Configuration file.
-      */
-+    @SuppressWarnings("deprecation")
-     public void addConfiguration(Path configPath) throws ConfigException {
--        Path absoluteConfigPath = configPath.toAbsolutePath();
--        LOG.info("Reading configuration from: {}", absoluteConfigPath);
--        try {
--            File configFile = (new VerifyingFileFactory.Builder(LOG).warnForRelativePath()
--                                                               .failForNonExistingPath()
--                                                               .build()).validate(configPath.toFile());
--            Properties cfg = new Properties();
--            try (FileInputStream in = new FileInputStream(configFile)) {
--                cfg.load(in);
--            }
--            parseProperties(cfg);
--        } catch (IOException | IllegalArgumentException e) {
--            LOG.error("Error while configuration from: {}", absoluteConfigPath, e);
--            String msg = "Error while processing " + absoluteConfigPath;
--            try {
--                Class<?> clazz = Class.forName("org.apache.zookeeper.server.quorum.QuorumPeerConfig.ConfigException");
--                Class<? extends ConfigException> exceptionClass = clazz.asSubclass(ConfigException.class);
--                Constructor<? extends ConfigException> constructor = exceptionClass.getDeclaredConstructor(String.class, Exception.class);
--                throw constructor.newInstance(msg, e);
--            } catch (ClassNotFoundException ignored) {
--            } catch (Exception ignored) {
--                LOG.warn("Fail to construct QuorumPeerConfig.ConfigException", e);
--            }
--            throw new ConfigException(msg, e);
--        }
-+        addConfiguration(configPath.toFile());
-     }
- 
-     /**
-      * <p><b>Use {@link #addConfiguration(Path)} instead.</b></p>
-      *
--     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
--     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
-+     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
-+     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
-      *
-
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/NettyServerCnxnFactory.java` (modified, +1/-2)
-```diff
-@@ -62,7 +62,6 @@
- import javax.net.ssl.SSLSession;
- import org.apache.zookeeper.KeeperException;
- import org.apache.zookeeper.common.ClientNettyX509Util;
--import org.apache.zookeeper.common.ConfigException;
- import org.apache.zookeeper.common.NettyUtils;
- import org.apache.zookeeper.common.X509Exception;
- import org.apache.zookeeper.common.X509Exception.SSLContextException;
-@@ -534,7 +533,7 @@ private ServerBootstrap configureBootstrapAllocator(ServerBootstrap bootstrap) {
-         if (usePortUnification) {
-             try {
-                 QuorumPeerConfig.configureSSLAuth();
--            } catch (ConfigException e) {
-+            } catch (QuorumPeerConfig.ConfigException e) {
-                 LOG.error("unable to set up SslAuthProvider, turning off client port unification", e);
-                 usePortUnification = false;
-             }
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/PrepRequestProcessor.java` (modified, +1/-1)
-```diff
-@@ -42,7 +42,6 @@
- import org.apache.zookeeper.StatsTrack;
- import org.apache.zookeeper.ZooDefs;
- import org.apache.zookeeper.ZooDefs.OpCode;
--import org.apache.zookeeper.common.ConfigException;
- import org.apache.zookeeper.common.PathUtils;
- import org.apache.zookeeper.common.StringUtils;
- import org.apache.zookeeper.common.Time;
-@@ -63,6 +62,7 @@
- import org.apache.zookeeper.server.quorum.LeaderZooKeeperServer;
- import org.apache.zookeeper.server.quorum.QuorumPeer.QuorumServer;
- import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
-+import org.apache.zookeeper.server.quorum.QuorumPeerConfig.ConfigException;
- import org.apache.zookeeper.server.quorum.flexible.QuorumMaj;
- import org.apache.zookeeper.server.quorum.flexible.QuorumOracleMaj;
- import org.apache.zookeeper.server.quorum.flexible.QuorumVerifier;
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/ServerConfig.java` (modified, +1/-1)
-```diff
-@@ -23,9 +23,9 @@
- import java.util.Arrays;
- import java.util.Properties;
- import org.apache.yetus.audience.InterfaceAudience;
--import org.apache.zookeeper.common.ConfigException;
- import org.apache.zookeeper.metrics.impl.DefaultMetricsProvider;
- import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
-+import org.apache.zookeeper.server.quorum.QuorumPeerConfig.ConfigException;
- 
- /**
-  * Server configuration storage.
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/ZooKeeperServerMain.java` (modified, +1/-1)
-```diff
-@@ -23,7 +23,6 @@
- import javax.management.JMException;
- import org.apache.yetus.audience.InterfaceAudience;
- import org.apache.zookeeper.audit.ZKAuditProvider;
--import org.apache.zookeeper.common.ConfigException;
- import org.apache.zookeeper.jmx.ManagedUtil;
- import org.apache.zookeeper.metrics.MetricsProvider;
- import org.apache.zookeeper.metrics.MetricsProviderLifeCycleException;
-@@ -34,6 +33,7 @@
- import org.apache.zookeeper.server.auth.ProviderRegistry;
- import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
- import org.apache.zookeeper.server.persistence.FileTxnSnapLog.DatadirException;
-+import org.apache.zookeeper.server.quorum.QuorumPeerConfig.ConfigException;
- import org.apache.zookeeper.server.util.JvmPauseMonitor;
- import org.apache.zookeeper.util.ServiceUtils;
- import org.slf4j.Logger;
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/controller/ControllerServerConfig.java` (modified, +0/-1)
-```diff
-@@ -25,7 +25,6 @@
- import java.net.ServerSocket;
- import java.util.HashMap;
- import java.util.Map;
--import org.apache.zookeeper.common.ConfigException;
- import org.apache.zookeeper.server.ServerConfig;
- import org.apache.zookeeper.server.quorum.QuorumPeer;
- import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
-```
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/controller/ControllerService.java` (modified, +2/-3)
-```diff
-@@ -19,7 +19,6 @@
- package org.apache.zookeeper.server.controller;
- 
- import java.io.IOException;
--import org.apache.zookeeper.common.ConfigException;
- import org.apache.zookeeper.server.ExitCode;
- import org.apache.zookeeper.server.ServerCnxnFactory;
- import org.apache.zookeeper.server.quorum.QuorumPeer;
-@@ -120,15 +119,15 @@ protected void cleanup() {
-     /**
-      * Runs the main loop for this application but does not exit the process.
-      */
--    public void initializeAndRun(String[] args) throws ConfigException {
-+    public void initializeAndRun(String[] args) throws QuorumPeerConfig.ConfigException {
-         initConfig(args);
-         run();
-     }
- 
-     /**
-      * Derived classes may override to do custom initialization of command line args.
-      */
--    protected void initConfig(String[] args) throws ConfigException {
-+    protected void initConfig(String[] args) throws QuorumPeerConfig.ConfigException {
-         if (args.length == 1) {
-             config.parse(args[0]);
-         }
+   <build>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2503** (2026-11-16): ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeeper-contrib-zooinspector (@PDavid)
 - **PR #2493** (2026-11-06): ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js (@PDavid)
 - **PR #2492** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
 - **PR #2491** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
 - **PR #2490** (2026-11-09): Revert "ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigException` (@kezhuw)
 - **PR #2487** (2026-11-04): ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website and CI build (@PDavid)
-- **PR #2484** (2026-11-04): ZOOKEEPER-5108: Client SASL settings set to true with trailing whitespace are read as false (@dajiaohuang)
 
 ---
 
@@ -2158,42 +1884,31 @@ Closes #2490 from kezhuw/ZOOKEEPER-4966-revert
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigExcepti
+## X. ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeepe
 
 **RULE**:
-When implementing operations in `zookeeper-server/src/main/java/org/apache/zookeeper/client/ZKClientConfig.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zookeeper-contrib/zookeeper-contrib-zooinspector/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f9c048aa`: Revert "ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigException`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9fde5223`: ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeeper-contrib-zooinspector. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-server/src/main/java/org/apache/zookeeper/client/ZKClientConfig.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-contrib/zookeeper-contrib-zooinspector/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
-     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
-     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
-    public ZKClientConfig(File configFile) throws QuorumPeerConfig.ConfigException {
-     * <p><b>The signature of this method will be changed to throw {@link ConfigException}
-     * instead of {@link QuorumPeerConfig.ConfigException} in future release.</b>
-    public ZKClientConfig(String configPath) throws QuorumPeerConfig.ConfigException {
+    <guava.version>33.7.2-jre</guava.version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
-     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
-    public ZKClientConfig(File configFile) throws ConfigException {
-     * <p><b>The signature of this method has been changed to throw {@link ConfigException}
-     * instead of {@code QuorumPeerConfig.ConfigException}.</b>
-    public ZKClientConfig(String configPath) throws ConfigException {
+// Induced defect failure mode:
+    <guava.version>32.1.3-jre</guava.version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f9c048aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9fde5223` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

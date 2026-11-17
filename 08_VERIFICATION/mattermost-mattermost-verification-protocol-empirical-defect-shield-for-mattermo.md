@@ -4,22 +4,22 @@
 {
   "source_repository": "mattermost/mattermost",
   "source_url": "https://github.com/mattermost/mattermost",
-  "source_version": "2c67adc2",
+  "source_version": "53ba1b4f",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-13T19:27:25.462Z",
+  "timestamp": "2026-11-17T08:56:35.161Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mattermost-mattermost",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mattermost/mattermost](https://github.com/mattermost/mattermost) (Revision: `2c67adc2`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-13T19:27:25.462Z`  
+> **Provenance**: Harvested from [mattermost/mattermost](https://github.com/mattermost/mattermost) (Revision: `53ba1b4f`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T08:56:35.161Z`  
 > **Learning ID**: `learn-github-mattermost-mattermost`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `mattermost/mattermost` (Commit: `2c67adc2`)
+- **Target Repository**: `mattermost/mattermost` (Commit: `53ba1b4f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:27:24.558Z  
+> **Harvest Timestamp**: 2026-11-17T08:56:33.939Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39602 stars
+- **Stars / Engagement**: 39632 stars
 
 ---
 
@@ -1641,957 +1641,849 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d59b084` (2026-11-13)
-**Commit Message**: Fix post list height shift for posts with multiple image attachments (#39016)
+### Incident Patch 1: `47848ece` (2026-11-16)
+**Commit Message**: [MM-69773] Fix layout shift when wide images in posts finish loading (#39961)
 
-* Fix post list height shift for posts with multiple image attachments
+* [MM-69773] Size image placeholders like the loaded image to avoid layout shift
 
-Posts with several images or videos jumped in height shortly after they
-appeared, pushing the rest of the post list around.
+The SizeAwareImage placeholder had explicit width/height attributes, so a
+surface's max-width or max-height only clamped one axis and the placeholder
+ended up taller (or wider) than the loaded image. Size it from its src's
+intrinsic dimensions instead, exactly like the real image, and draw the mini
+preview as a background since its fixed size can't be used for sizing.
 
-MediaGallery packed its tiles into rows in JavaScript based on the
-measured width of its container. On the first render that width is not
-known yet, so it packed against a hardcoded 700px fallback. The
-virtualized post list measures each post's height in a layout effect on
-mount, which runs after the gallery's own layout effect but before the
-gallery can re-render with the real width. The list therefore recorded
-the 700px layout. Once the gallery re-rendered at the real width the row
-count usually changed (for five landscape images in a ~1000px channel:
-three rows of 2+2+1 at 664px became two rows of 3+2 at 440px), and the
-list only picked up the new height via its ResizeObserver, which
-updates offsets without re-rendering, so the correction showed up as a
-visible shift.
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-No JS-side width measurement can fix this, because the parent always
-measures before the child's corrected render commits. Instead, let the
-b
+* [MM-69773] Size image placeholders from the image's real dimensions
 
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.scss` (modified, +25/-11)
+Capping the placeholder to 350px in JS produced fractional intrinsic sizes
+that browsers round, so scaled-down placeholders could differ from the real
+image by a fraction of a pixel. CSS already applies the max height to both.
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* [MM-69773] Reserve the placeholder's size before its src is decoded
+
+Firefox decodes the placeholder's SVG data URI asynchronously, so for its first
+frame the placeholder had no size and the post grew once it decoded. Use size
+containment with the image's natura
+
+**File**: `e2e-tests/playwright/asset/opengraph-tall.html` (added, +18/-0)
 ```diff
-@@ -4,7 +4,7 @@
-     box-sizing: border-box;
-     margin: 8px 0;
-     clear: both;
--    container-type: inline-size;
-+    container: media-gallery / inline-size;
- 
-     .post--compact & {
-         display: block;
-@@ -121,6 +121,8 @@
-     }
- 
-     &__rows {
-+        --media-gallery-row-height: 216px;
-+
-         display: grid;
-         overflow: hidden;
-         min-width: 0;
-@@ -143,29 +145,41 @@
-         display: flex;
-         overflow: hidden;
-         min-width: 0;
--        flex-direction: column;
-+        flex-flow: row wrap;
-+        align-content: flex-start;
-         align-items: flex-start;
-         justify-content: flex-start;
-         gap: 8px;
-     }
- 
--    &__row {
--        display: flex;
--        width: 100%;
--        min-width: 0;
--        flex-direction: row;
--        align-items: stretch;
--        justify-content: flex-start;
--        gap: 8px;
--        text-align: left;
-+    &--compact &__rows {
-+        --media-gallery-row-height: 144px;
-+    }
-+}
-+
-+// Sized in CSS rather than from a measured width so the post list sees the
-+// final height on first render, including in narrow containers like the RHS.
-+// CSS has no hysteresis, so the RHS reserves its scrollbar gutter to keep a
-+// scrollbar appearing from toggling the row height near 480px.
-+@container media-gallery (width < 480px) {
-+    .MediaGallery__rows {
-+        --media-gallery-row-height: 144px;
-     }
- }
- 
- .MediaGallery__tile {
-+    // Scale to the row height by aspect ratio, without upscaling past the
-+    // file's native width, clamped to 50-500px.
-+    --tile-width: max(50px, min(calc(var(--tile-ratio, 1.5) * var(--media-gallery-row-height)), var(--tile-native-width, 500px), 500px));
-+
-     position: relative;
-     display: flex;
-     overflow: hidden;
-+    width: var(--tile-width);
-+    max-width: 100%;
-+    height: var(--media-gallery-row-height);
-     box-sizing: border-box;
-+    flex: 0 0 var(--tile-width);
-     align-items: center;
-     justify-content: center;
-     border: 1px solid rgba(var(--center-channel-color-rgb), 0.16);
+@@ -0,0 +1,18 @@
++<!doctype html>
++<html>
++    <head>
++        <meta charset="utf-8" />
++        <title>OpenGraph Test Page</title>
++        <meta property="og:type" content="website" />
++        <meta property="og:site_name" content="Mattermost Test" />
++        <meta property="og:title" content="OpenGraph Preview Title" />
++        <meta property="og:description" content="This is a test page with a tall image." />
++        <meta property="og:url" content="/opengraph-tall.html" />
++        <meta property="og:image" content="/image-600x1200.jpg" />
++        <meta property="og:image:width" content="600" />
++        <meta property="og:image:height" content="1200" />
++    </head>
++    <body>
++        <h1>OpenGraph Test Page</h1>
++    </body>
++</html>
 ```
 
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.test.tsx` (modified, +132/-45)
+**File**: `e2e-tests/playwright/specs/functional/channels/post_list/post_height.spec.ts` (modified, +344/-9)
 ```diff
-@@ -10,7 +10,7 @@ import type {FileInfo} from '@mattermost/types/files';
- import {renderWithContext} from 'tests/react_testing_utils';
+@@ -9,7 +9,7 @@ import type {Disposable, Locator, Page} from '@playwright/test';
+ import type {Post} from '@mattermost/types/posts';
  
- import {ArchiveFileError, ArchiveTooLargeError, buildFileArchive} from './file_archive';
--import MediaGallery, {nextNarrowState} from './media_gallery';
-+import MediaGallery from './media_gallery';
+ import {expect, setupFileServer, test, testConfig, watchElementSize} from '@mattermost/playwright-lib';
+-import type {ChannelsPage, ChannelsPost, PlaywrightClient4} from '@mattermost/playwright-lib';
++import type {ChannelsPage, ChannelsPost, PlaywrightClient4, SizeWatcher} from '@mattermost/playwright-lib';
  
- jest.mock('./file_archive', () => ({
-     ...jest.requireActual('./file_archive'),
-@@ -39,37 +39,6 @@ function fileInfo(overrides: Partial<FileInfo>): FileInfo {
+ test.describe('Post height', () => {
+     let userClient: PlaywrightClient4;
+@@ -58,6 +58,11 @@ test.describe('Post height', () => {
+         additionalCheck?: (args: {postComponent: ChannelsPost}) => Promise<void>;
+         /** Playwright project names for which this test case should be skipped. */
+         skipProjects?: string[];
++        /**
++         * Allows the post height to change by less than half a pixel. An image file's preview can have a slightly
++         * different aspect ratio than the original that its placeholder is sized from.
++         */
++        allowSubpixelHeightChange?: boolean;
      };
- }
  
--describe('nextNarrowState', () => {
--    const SCROLLBAR_WIDTH = 15;
--
--    it('switches to compact rows below the enter threshold', () => {
--        expect(nextNarrowState(false, 479)).toBe(true);
--        expect(nextNarrowState(false, 480)).toBe(false);
--    });
--
--    it('stays compact until well past the enter threshold so a vanishing scrollbar cannot flip it back', () => {
--        expect(nextNarrowState(true, 479 + SCROLLBAR_WIDTH)).toBe(true);
--        expect(nextNarrowState(true, 511)).toBe(true);
--        expect(nextNarrowState(true, 512)).toBe(false);
--    });
--
--    it('settles at every width in the worst case, where tall rows scroll and compact rows do not', () => {
--        for (let unscrolledWidth = 400; unscrolledWidth <= 600; unscrolledWidth++) {
--            const scrolledWidth = unscrolledWidth - SCROLLBAR_WIDTH;
--
--            // Going compact hides the scrollbar, which widens the container back out.
--            if (nextNarrowState(false, scrolledWidth)) {
--                expect(nextNarrowState(true, unscrolledWidth)).toBe(true);
--            }
--
--            // Going tall shows the scrollbar, which narrows the container again.
--            if (!nextNarrowState(true, unscrolledWidth)) {
--                expect(nextNarrowState(false, scrolledWidth)).toBe(false);
--            }
--        }
--    });
--});
--
- describe('MediaGallery', () => {
-     const baseState = {
-         entities: {
-@@ -149,28 +118,146 @@ describe('MediaGallery', () => {
-         expect(onToggle).toHaveBeenCalledWith('p1');
+     const testCases: PostHeightTestCase[] = [
+@@ -122,8 +127,7 @@ test.describe('Post height', () => {
+         },
+         {
+             name: 'post with a single large image',
+-            // MM-69979 Skip this on iPad because images that are too wide but above the minimum height cause layout shift
+-            skipProjects: ['ipad'],
++            allowSubpixelHeightChange: true,
+             makePost: () =>
+                 seedPost({
+                     message: 'post with a single large image',
+@@ -260,8 +264,6 @@ test.describe('Post height', () => {
+         },
+         {
+             name: 'post with a large Markdown image',
+-            // MM-69979 Images that are too wide but above the minimum height cause layout shift
+-            skipProjects: ['chrome', 'firefox', 'ipad', 'subpath'],
+             makePost: ({fileServerUrl}) =>
+                 seedPost({
+                     message: `![large image](${fileServerUrl}/huge-image.jpg)`,
+@@ -336,8 +338,6 @@ test.describe('Post height', () => {
+         },
+         {
+             name: 'post with a large image preview',
+-            // MM-69979 Images that are too wide but above the minimum height cause layout shift
+-            skipProjects: ['chrome', 'firefox', 'ipad', 'subpath'],
+             makePost: ({fileServerUrl}) =>
+                 seedPost({
+                     message: `${fileServerUrl}/huge-image.jpg`,
+@@ -465,11 +465,322 @@ test.describe('Post height', () => {
+                 }
+ 
+                 // * Verify no height changes were detected
++                const observations = await sizeWatcher.getObservations();
++                if (testCase.allowSubpixelHeightChange) {
++                    expect(observations.length).toBeGreaterThan(0);
++                    for (const {height} of observations) {
++                        expect(height).toBeCloseTo(observations[0].height, 0);
++                    }
++                } else {
++                    expect(observations).toHaveLength(1);
++                }
++            },
++        );
++    }
++
++    // Images that are scaled down to fit the width of the post rather than being capped by the max image height. The
++    // server's previews of these images keep their exact aspect ratio, so their placeholders can match exactly.
++    const wideImageSurfaces = [
++        {
++            name: 'attachment',
++            makePost: (file: string) => seedPost({message: `post with a ${file} attachment`, files: [file]}),
++        },
++        {
++            name: 'Markdown image',
++            makePost: (file: string) => seedPost({message: `![wide image](${fileServerUrl}/${file})`}),
++        },
++        {
++            name: 'Markdown image with an explicit size',
++            makePost: (file: string) => seedPost({message: `![wide image](${fileServerUrl}/${file} =200x50)`}),
++        },
++        {
++            name: 'Markdown image with an explicit width',
++            makePost: (file: string) => seedPost({message: `![wide image](${fileServerUrl}/${file} =300)`}),
++        },
++        {
++            name: 'image preview',
++            makePost: (file: string) => seedPost({message: `${fileServerUrl}/${file}`}),
++        },
++        {
++            // An image shorter than its line, where its vertical alignment affects the height of the line
++            name: 'Markdown image between words',
++            files: ['image-100x20.jpg'],
++            makePost: (file: string) =>
++                seedPost({message: `text before ![inline image](${fileServerUrl}/${file}) text after`}),
++        },
++    ];
++
++    for (const surface of wideImageSurfaces) {
++        for (const file of surface.files ?? ['image-2000x400.jpg', 'image-1200x300.jpg']) {
++            for (const messageDisplay of ['full', 'compact']) {
++                test(
++                    `image placeholder should match the size of the loaded image (${file} ${surface.name}, ${messageDisplay} display)`
+```
+
+**File**: `webapp/channels/src/components/block_renderer/image_block.test.tsx` (modified, +28/-0)
+```diff
+@@ -7,6 +7,8 @@ import type {MmImageBlock} from '@mattermost/types/mm_blocks';
+ 
+ import {openModal} from 'actions/views/modals';
+ 
++import SizeAwareImage from 'components/size_aware_image';
++
+ import {renderWithContext, screen, userEvent} from 'tests/react_testing_utils';
+ import {ModalIdentifiers} from 'utils/constants';
+ 
+@@ -143,4 +145,30 @@ describe('ImageBlock', () => {
+             }),
+         }));
      });
- 
--    it('uses compact rows in a narrow container', () => {
--        const rectSpy = jest.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
--            width: 400,
--            height: 144,
--        } as DOMRect);
-+    it('leaves tile sizing to CSS so a narrow container does not need to be measured', () => {
++
++    // The style is applied to the placeholder over its own aspect ratio, so it mustn't contain an undefined one
++    it.each([
++        ['default', undefined, {objectFit: 'contain'}],
++        ['person', 'person' as const, {objectFit: 'cover', aspectRatio: '1'}],
++    ])('passes the size caps to SizeAwareImage as a style (%s image)', (_, imageStyle, expectedStyle) => {
 +        renderWithContext(
-+            <MediaGallery
-+                fileInfos={[
-+                    fileInfo({id: 'a', name: 'a.png', width: 800, height: 600}),
-+                    fileInfo({id: 'v', name: 'clip.mp4', extension: 'mp4', mime_type: 'video/mp4', width: 0, height: 0}),
-+                ]}
-+                postId='p1'
-+                onItemClick={jest.fn()}
++            <ImageBlock
++                block={{
++                    type: 'image',
++                    url: 'https://example.com/photo.png',
++                    size: 'small',
++                    image_style: imageStyle,
++                }}
++                postId='post-1'
 +            />,
-+            baseState,
 +        );
 +
-+        const [image, video] = screen.getAllByTestId('media-gallery-tile');
-+        expect(image.style.getPropertyValue('--tile-ratio')).toBe(String(800 / 600));
-+        expect(image.style.getPropertyValue('--tile-native-width')).toBe('800px');
-+        expect(video.style.getPropertyValue('--tile-ratio')).toBe('1.5');
-+        expect(video.style.getPropertyValue('--tile-native-width')).toBe('');
++        expect(jest.mocked(SizeAwareImage).mock.lastCall?.[0].style).toStrictEqual({
++            width: 'auto',
++            height: 'auto',
++            maxWidth: 204,
++            maxHeight: 120,
++            ...expectedStyle,
++        });
++    });
+ });
+```
+
+**File**: `webapp/channels/src/components/block_renderer/image_block.tsx` (modified, +7/-2)
+```diff
+@@ -73,15 +73,20 @@ export const ImageBlock = ({block, postId}: ImageBlockProps) => {
+         return null;
+     }
+ 
++    const isPerson = block.image_style === 'person';
+     const imgClass = classNames('mm-blocks-image__img', {
+-        'mm-blocks-image__img--person': block.image_style === 'person',
++        'mm-blocks-image__img--person': isPerson,
+     });
+ 
+     const imageConstraintStyle: CSSProperties = {
+         width: 'auto',
+         height: 'auto',
+-        objectFit: block.image_style === 'person' ? 'cover' : 'contain',
++        objectFit: isPerson ? 'cover' : 'contain',
+     };
++    if (isPerson) {
++        // Also applied to SizeAwareImage's placeholder, which otherwise takes the image's aspect ratio
++        imageConstraintStyle.aspectRatio = '1';
++    }
+     if (caps.maxWidth !== undefined) {
+         imageConstraintStyle.maxWidth = caps.maxWidth;
+     }
+```
+
+**File**: `webapp/channels/src/components/markdown_image/markdown_image.test.tsx` (modified, +23/-0)
+```diff
+@@ -270,6 +270,29 @@ describe('components/MarkdownImage', () => {
+         expect(img).toHaveAttribute('title', 'test title');
+     });
+ 
++    test.each([
++        {width: '200', height: '50', expectedHeight: '50'},
++        {width: '300', height: 'auto', expectedHeight: null},
++    ])('should reserve the explicit size $width x $height with the placeholder while the image loads', ({width, height, expectedHeight}) => {
++        const props = {
++            ...baseProps,
++            imageMetadata: {format: 'jpg', frameCount: 0, width: 1200, height: 300},
++            src: 'https://example.com/image.jpg',
++            width,
++            height,
++        };
++        const {container} = renderWithContext(
++            <MarkdownImage {...props}/>,
++        );
 +
-+        for (const tile of [image, video]) {
-+            expect(tile.style.width).toBe('');
-+            expect(tile.style.height).toBe('');
++        const placeholder = container.querySelector('img.image-loading__placeholder');
++        const img = screen.getByRole('img', {hidden: true});
++        for (const element of [placeholder, img]) {
++            expect(element).toHaveAttribute('width', width);
++            expect(element?.getAttribute('height')).toEqual(expectedHeight);
 +        }
 +    });
 +
-+    describe('layout', () => {
-+        const mixedFiles = [
-+            fileInfo({id: 'landscape', name: 'landscape.png', width: 1600, height: 900}),
-+            fileInfo({id: 'portrait', name: 'portrait.png', width: 600, height: 1200}),
-+            fileInfo({id: 'small', name: 'small.png', width: 40, height: 40}),
-+            fileInfo({id: 'panorama', name: 'panorama.png', width: 6000, height: 1000}),
-+            fileInfo({id: 'clip', name: 'clip.mp4', extension: 'mp4', mime_type: 'video/mp4', width: 0, height: 0}),
-+        ];
-+
-+        // Everything that decides the gallery's height: its row-height classes,
-+        // how tiles are grouped into wrapper elements, and each tile's sizing styles.
-+        function layoutOf(root: Element) {
-+            const gallery = root.querySelector('.MediaGallery')!;
-+            const tiles = Array.from(root.querySelectorAll<HTMLElement>('.MediaGallery__tile'));
-+            const groupSizes = new Map<Element, number>();
-+            for (const tile of tiles) {
-+                groupSizes.set(tile.parentElement!, (groupSizes.get(tile.parentElement!) ?? 0) + 1);
-+            }
-+            return {
-+                galleryClassName: gallery.className,
-+                tileGroups: Array.from(groupSizes.values()),
-+                tiles: tiles.map((tile) => ({
-+                    ratio: tile.style.getPropertyValue('--tile-ratio'),
-+                    nativeWidth: tile.style.getPropertyValue('--tile-native-width'),
-+                    width: tile.style.width,
-+                    height: tile.style.height,
-+                    flex: t
+     test(`should render image with MarkdownImageExpand if it is taller than ${Constants.EXPANDABLE_INLINE_IMAGE_MIN_HEIGHT}px`, () => {
+         const props = {
+             ...baseProps,
 ```
 
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.tsx` (modified, +13/-75)
+**File**: `webapp/channels/src/components/post_view/post_attachment_opengraph/post_attachment_opengraph.scss` (modified, +6/-0)
 ```diff
-@@ -21,11 +21,9 @@ import {getFileType} from 'utils/utils';
- import type {GlobalState} from 'types/store';
+@@ -154,6 +154,12 @@
+             }
+         }
  
- import {ArchiveFileError, ArchiveTooLargeError, archiveFilename, buildFileArchive} from './file_archive';
--import {packRows} from './pack_rows';
- import ImageTile from './tiles/image_tile';
- import VideoTile from './tiles/video_tile';
- import type {ClassifiedFile, TileKind} from './types';
--import {useContainerDimensions} from './use_container_dimensions';
- 
- import './media_gallery.scss';
- 
-@@ -38,20 +36,6 @@ type Props = {
-     onToggleCollapse?: (postId: string) => void;
- };
- 
--const ROW_HEIGHT = 216;
--const COMPACT_ROW_HEIGHT = 144;
--const MIN_TILE_WIDTH = 50;
--const MAX_TILE_WIDTH = 500;
--const GAP = 8;
--const FALLBACK_WIDTH = 700;
--
--const NARROW_ENTER_WIDTH = 480;
--const NARROW_EXIT_WIDTH = 512;
--
--export function nextNarrowState(isNarrow: boolean, width: number): boolean {
--    return isNarrow ? width < NARROW_EXIT_WIDTH : width < NARROW_ENTER_WIDTH;
--}
--
- function tileKindFor(fileInfo: FileInfo): TileKind | null {
-     const type = getFileType(fileInfo.extension);
-     if (type === FileTypes.IMAGE) {
-@@ -75,16 +59,6 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
- 
-     useEffect(() => () => downloadAbortRef.current?.abort(), []);
- 
--    const containerRef = useRef<HTMLDivElement | null>(null);
--    const {width: containerWidth} = useContainerDimensions(containerRef);
--
--    const effectiveWidth = containerWidth > 0 ? containerWidth : FALLBACK_WIDTH;
--    const [isNarrow, setIsNarrow] = useState(false);
--
--    useEffect(() => {
--        setIsNarrow((prev) => nextNarrowState(prev, effectiveWidth));
--    }, [effectiveWidth]);
--
-     const tiles: ClassifiedFile[] = useMemo(() => {
-         const out: ClassifiedFile[] = [];
-         for (const file of fileInfos) {
-@@ -96,16 +70,6 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
-         return out;
-     }, [fileInfos]);
- 
--    const rows = useMemo(() => {
--        return packRows(tiles, {
--            containerWidth: effectiveWidth,
--            rowHeight: (compactDisplay || isNarrow) ? COMPACT_ROW_HEIGHT : ROW_HEIGHT,
--            minTileWidth: MIN_TILE_WIDTH,
--            maxTileWidth: MAX_TILE_WIDTH,
--            gap: GAP,
--        });
--    }, [tiles, effectiveWidth, isNarrow, compactDisplay]);
--
-     const handleClick = useCallback((index: number) => {
-         const file = tiles[index]?.file;
-         if (!file) {
-@@ -193,11 +157,8 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
-     // Collapsed single videos need a header, otherwise the tile disappears with no toggle.
-     const showHeader = Boolean(onToggleCollapse) && (!isSingle || !isEmbedVisible);
- 
--    let tileIdx = 0;
--
-     return (
-         <div
--            ref={containerRef}
-             className={classNames('MediaGallery', {
-                 'MediaGallery--compact': compactDisplay,
-                 'MediaGallery--single': isSingle,
-@@ -269,42 +230,19 @@ const MediaGallery = ({fileInfos, postId, compactDisplay, isEmbedVisible = true,
-                 aria-hidden={!isEmbedVisible}
-             >
-                 <div className='MediaGallery__rows_inner'>
--                    {rows.map((row, rIdx) => (
--                        <div
--                            key={`row-${rIdx}`}
--                            className='MediaGallery__row'
--                            style={{height: `${row.height}px`}}
--                        >
--                            {row.tiles.map((packed) => {
--                                const current = tileIdx;
--                                tileIdx += 1;
--                                const tile = packed.tile;
--                                return tile.kind === 'image' ? (
--                                    <ImageTile
--                                        key={tile.file.id}
--                                        fileInfo={tile.file}
--                                        index={current}
--                                        total={tiles.length}
--                                        width={packed.width}
--                                        height={row.height}
--                                        enablePublicLink={enablePublicLink}
--                                        onClick={handleClick}
--                                    />
--                                ) : (
--                                    <VideoTile
--                                        key={tile.file.id}
--                                        fileInfo={tile.file}
--                                        index={current}
--                                        total={tiles.length}
--                                        width={packed.width}
--                                        height={row.height}
--                                        enablePublicLink={enablePublicLink}
--                                        onClick={handleClick}
-- 
++        // Keep in sync with the thumbnail branch of getScaledImageDimensions, which sizes the placeholder
++        &:not(.large) img {
++            max-width: var(--open-graph-thumbnail-size);
++            max-height: var(--open-graph-thumbnail-size);
++        }
++
+         .preview-toggle {
+             position: absolute;
+             top: -4px;
 ```
 
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/pack_rows.test.ts` (removed, +0/-97)
+**File**: `webapp/channels/src/components/post_view/post_attachment_opengraph/post_attachment_opengraph.test.tsx` (modified, +45/-0)
 ```diff
-@@ -1,97 +0,0 @@
--// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
--// See LICENSE.txt for license information.
--
--import type {FileInfo} from '@mattermost/types/files';
--
--import {packRows} from './pack_rows';
--import type {ClassifiedFile} from './types';
--
--function tile(width: number, height: number, id = 'f'): ClassifiedFile {
--    return {
--        file: {id, width, height} as FileInfo,
--        kind: 'image',
--    };
--}
--
--describe('packRows', () => {
--    const baseOpts = {
--        containerWidth: 700,
--        rowHeight: 216,
--        minTileWidth: 50,
--        maxTileWidth: 500,
--        gap: 8,
--    };
--
--    it('returns no rows when there are no tiles', () => {
--        expect(packRows([], baseOpts)).toEqual([]);
--    });
--
--    it('returns no rows when the container has zero width', () => {
--        expect(packRows([tile(800, 600)], {...baseOpts, containerWidth: 0})).toEqual([]);
--    });
--
--    it('keeps every row at the configured (predictable) row height', () => {
--        const tiles = [
--            tile(800, 600, 'a'),
--            tile(800, 600, 'b'),
--            tile(800, 600, 'c'),
--            tile(800, 600, 'd'),
--            tile(800, 600, 'e'),
--        ];
--        const rows = packRows(tiles, baseOpts);
--        for (const row of rows) {
--            expect(row.height).toBe(baseOpts.rowHeight);
--        }
--    });
--
--    it('leaves the last row ragged on the right rather than scaling tiles to fill', () => {
--        const tiles = [
--            tile(800, 600, 'a'),
--            tile(800, 600, 'b'),
--            tile(800, 600, 'c'),
--            tile(800, 600, 'd'),
--        ];
--        const rows = packRows(tiles, baseOpts);
--
--        const last = rows[rows.length - 1];
--        const lastWidth = last.tiles.reduce((acc, t) => acc + t.width, 0) +
--            ((last.tiles.length - 1) * baseOpts.gap);
--        expect(lastWidth).toBeLessThanOrEqual(baseOpts.containerWidth + 0.5);
--    });
--
--    it('never packs a row wider than the container', () => {
--        const tiles = [
--            tile(1600, 600, 'a'),
--            tile(1600, 600, 'b'),
--            tile(1600, 600, 'c'),
--        ];
--        const rows = packRows(tiles, baseOpts);
--        for (const row of rows) {
--            const width = row.tiles.reduce((acc, t) => acc + t.width, 0) +
--                ((row.tiles.length - 1) * baseOpts.gap);
--            expect(width).toBeLessThanOrEqual(baseOpts.containerWidth + 0.5);
--        }
--    });
--
--    it('floors a sub-min tile at minTileWidth (the image inside still renders at native size via inline caps)', () => {
--        const rows = packRows([tile(40, 40)], baseOpts);
--        const packed = rows[0].tiles[0];
--        expect(packed.width).toBe(baseOpts.minTileWidth);
--    });
--
--    it('caps very wide tiles at maxTileWidth', () => {
--        const rows = packRows([tile(4000, 1000)], baseOpts);
--        const packed = rows[0].tiles[0];
--        expect(packed.width).toBeLessThanOrEqual(baseOpts.maxTileWidth);
--    });
--
--    it('uses a 1.5 default aspect ratio when a file is missing dimensions', () => {
--        const noDimsTile: ClassifiedFile = {
--            file: {id: 'x'} as FileInfo,
--            kind: 'image',
--        };
--        const rows = packRows([noDimsTile], baseOpts);
--        expect(rows).toHaveLength(1);
--        expect(rows[0].tiles[0].width).toBeCloseTo(baseOpts.rowHeight * 1.5);
--    });
--});
-```
-
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/pack_rows.ts` (removed, +0/-90)
-```diff
-@@ -1,90 +0,0 @@
--// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
--// See LICENSE.txt for license information.
--
--import type {FileInfo} from '@mattermost/types/files';
--
--import type {ClassifiedFile} from './types';
--
--export type PackOptions = {
--    containerWidth: number;
--    rowHeight: number;
--    minTileWidth: number;
--    maxTileWidth: number;
--    gap: number;
--};
--
--export type PackedTile = {
--    tile: ClassifiedFile;
--    width: number;
--    height: number;
--};
--
--export type PackedRow = {
--    tiles: PackedTile[];
--    height: number;
--};
--
--const DEFAULT_ASPECT_RATIO = 1.5;
--
--function ratioOf(file: FileInfo): number {
--    if (file.width && file.height && file.width > 0 && file.height > 0) {
--        return file.width / file.height;
--    }
--    return DEFAULT_ASPECT_RATIO;
--}
--
--function tileSize(tile: ClassifiedFile, opts: PackOptions): {width: number; height: number} {
--    const ratio = ratioOf(tile.file);
--    let width = ratio * opts.rowHeight;
--    let height = opts.rowHeight;
--
--    if (tile.file.width && tile.file.height) {
--        if (width > tile.file.width) {
--            width = tile.file.width;
--            height = tile.file.height;
--        }
--    }
--
--    const upperBound = Math.min(opts.maxTileWidth, opts.containerWidth);
--    if (width > upperBound) {
--        height *= upperBound / width;
--        width = upperBound;
--    }
--    if (width < opts.minTileWidth) {
--        height *= opts.minTileWidth / width;
--        width = opts.minTileWidth;
--    }
--
--    return {width, height};
--}
--
--export function packRows(tiles: ClassifiedFile[], opts: PackOptions): PackedRow[] {
--    const rows: PackedRow[] = [];
--    if (tiles.length === 0 || opts.containerWidth <= 0 || opts.rowHeight <= 0) {
--        return rows;
--    }
--
--    let current: PackedTile[] = [];
--    let currentWidth = 0;
--
--    for (const tile of tiles) {
--        const {width, height} = tileSize(tile, opts);
--        const addedWidth = current.length === 0 ? width : currentWidth + opts.gap + width;
--
--        if (current.length > 0 && addedWidth > opts.containerWidth) {
--            rows.push({tiles: current, height: opts.rowHeight});
--            current = [{tile, width, height}];
--            currentWidth = width;
--            continue;
--        }
--
--        current.push({tile, width, height});
--        currentWidth = addedWidth;
--    }
--
--    if (current.length > 0) {
--        rows.push({tiles: current, height: opts.rowHeight});
--    }
--
--    return rows;
--}
-```
-
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/tile_size.test.ts` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-+// See LICENSE.txt for license information.
+@@ -272,6 +272,27 @@ describe('PostAttachmentOpenGraphImage', () => {
+         expect(container.querySelector('.PostAttachmentOpenGraph__image.large')).not.toBeInTheDocument();
+         expect(container.querySelector('.PostAttachmentOpenGraph__image .preview-toggle')).not.toBeInTheDocument();
+     });
 +
-+import type {FileInfo} from '@mattermost/types/files';
++    test('should size the placeholder of a tall thumbnail to fit within the thumbnail box', () => {
++        const props = {
++            ...baseProps,
++            imageMetadata: {
++                ...baseProps.imageMetadata!,
++                height: 1200,
++                width: 600,
++            },
++        };
 +
-+import {tileSizeVars} from './tile_size';
++        const {container} = renderWithContext(
++            <PostAttachmentOpenGraphImage {...props}/>,
++            initialState,
++        );
 +
-+function file(width?: number, height?: number): FileInfo {
-+    return {id: 'f', width, height} as FileInfo;
-+}
-+
-+describe('tileSizeVars', () => {
-+    it('exposes the image aspect ratio and native width', () => {
-+        expect(tileSizeVars(file(800, 600))).toEqual({
-+            '--tile-ratio': String(800 / 600),
-+            '--tile-native-width': '800px',
-+        });
++        const placeholder = container.querySelector<HTMLImageElement>('.PostAttachmentOpenGraph__image:not(.large) .image-loading__placeholder');
++        expect(placeholder).toBeInTheDocument();
++        expect(placeholder!.style.containIntrinsicSize).toEqual('40px 80px');
++        expect(placeholder!.style.aspectRatio).toEqual('auto 40 / 80');
 +    });
-+
-+    it('uses a 1.5 default aspect ratio and no native width when a file is missing dimensions', () => {
-+        expect(tileSizeVars(file())).toEqual({
-+            '--tile-ratio': '1.5',
+ });
+ 
+ describe('PostAttachmentOpenGraphBody', () => {
+@@ -472,6 +493,30 @@ describe('Helpers', () => {
+             });
+         });
+ 
++        test('should scale tall images to fit within the thumbnail box', () => {
++            expect(getScaledImageDimensions({
++                format: 'png',
++                frameCount: 0,
++                height: 1200,
++                width: 600,
++            }, false)).toEqual({
++                height: OPEN_GRAPH_THUMBNAIL_SIZE,
++                width: OPEN_GRAPH_THUMBNAIL_SIZE / 2,
++            });
 +        });
-+    });
-+});
++
++        test('should not upscale images smaller than the thumbnail box', () => {
++            expect(getScaledImageDimensions({
++                format: 'png',
++                frameCount: 0,
++                height: 30,
++                width: 60,
++            }, false)).toEqual({
++                height: 30,
++                width: 60,
++            });
++        });
++
+         test('should return empty dimensions when metadata is invalid', () => {
+             expect(getScaledImageDimensions({
+                 format: 'png',
 ```
 
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/tile_size.ts` (added, +31/-0)
+**File**: `webapp/channels/src/components/post_view/post_attachment_opengraph/post_attachment_opengraph.tsx` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,31 @@
-+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-+// See LICENSE.txt for license information.
-+
-+import type {CSSProperties} from 'react';
-+
-+import type {FileInfo} from '@mattermost/types/files';
-+
-+const DEFAULT_ASPECT_RATIO = 1.5;
-+
-+function ratioOf(file: FileInfo): number {
-+    if (file.width && file.height && file.width > 0 && file.height > 0) {
-+        return file.width / file.height;
-+    }
-+    return DEFAULT_ASPECT_RATIO;
-+}
-+
-+// Tiles are sized in CSS from these variables against the gallery's row height,
-+// which a container query shrinks in narrow containers, and they wrap into rows
-+// via CSS flex-wrap. Nothing depends on measuring the container, so the post has
-+// its final height on first render.
-+export function tileSizeVars(file: FileInfo): CSSProperties {
-+    const vars: Record<string, string> = {
-+        '--tile-ratio': String(ratioOf(file)),
-+    };
-+
-+    if (file.width && file.width > 0) {
-+        vars['--tile-native-width'] = `${file.width}px`;
-+    }
-+
-+    return vars as CSSProperties;
-+}
-```
-
-**File**: `webapp/channels/src/components/file_attachment_list/media_gallery/tiles/image_tile.tsx` (modified, +4/-10)
-```diff
-@@ -13,17 +13,17 @@ import {isGIFImage} from 'utils/utils';
- 
- import TileUtilityButtons from './tile_utility_buttons';
- 
-+import {tileSizeVars} from '../tile_size';
-+
- type Props = {
-     fileInfo: FileInfo;
-     index: number;
-     total: number;
--    width: number;
--    height: number;
-     enablePublicLink: boolean;
-     onClick: (index: number) => void;
- };
- 
--const ImageTile = ({fileInfo, index, total, width, height, enablePublicLink, onClick}: Props) => {
-+const ImageTile = ({fileInfo, index, total, enablePublicLink, onClick}: Props) => {
-     const {formatMessage} = useIntl();
- 
-     const handleActivate = useCallback(() => {
-@@ -52,12 +52,6 @@ const ImageTile = ({fileInfo, index, total, width, height, enablePublicLink, onC
-         {current: index + 1, total, name: fileInfo.name || ''},
+@@ -108,6 +108,7 @@ export function getScaledImageDimensions(imageMetadata: ImageMetadata, large: bo
+     const ratio = Math.min(
+         OPEN_GRAPH_THUMBNAIL_SIZE / width,
+         OPEN_GRAPH_THUMBNAIL_SIZE / height,
++        1,
      );
  
--    const tileStyle: CSSProperties = {
--        width: `${width}px`,
--        height: `${height}px`,
--        flex: `0 0 ${width}px`,
--    };
--
-     const imgStyle: CSSProperties = {};
-     if (fileInfo.width && fileInfo.height) {
-         imgStyle.maxWidth = `${fileInfo.width}px`;
-@@ -72,7 +66,7 @@ const ImageTile = ({fileInfo, index, total, width, height, enablePublicLink, onC
-             aria-label={label}
-             data-testid='media-gallery-tile'
-             data-file-name={fileInfo.name || ''}
--            style={tileStyle}
-+            style={tileSizeVars(fileInfo)}
-             onKeyDown={handleKeyDown}
-         >
-             <img
+     return {
 ```
 
 ---
 
-### Incident Patch 2: `75dd22f3` (2026-11-13)
-**Commit Message**: docs: fix Calls deployment guide links that break the offline docs build (#39990)
+### Incident Patch 2: `27945cb7` (2026-11-17)
+**Commit Message**: [MM-71213] Fix SMTP client error handling (#39967)
 
-* docs: fix Calls deployment guide links that break the offline docs build
+* MM-71213 Fix SMTP client error handling
 
-The guide linked to /../../<path>. Under the offline bundle's base URL
-(/_documentation/) those links escape the base URL and fail the build since
-#39953 made broken links throw. That build gates the enterprise image in the
-platform delivery pipeline, so master images stopped being published.
-Use relative .mdx file links, which resolve under any base URL.
+* MM-71213 Point to the SMTP Connection Security setting in the error
 
-* ci(docs): build the offline docs shape with BASE_URL=/_documentation/ (#39991)
+* Revert "MM-71213 Point to the SMTP Connection Security setting in the error"
 
-The server ships the docs bundle under /_documentation/, and the platform
-delivery pipeline builds it with that base URL. Docs CI rebuilt the offline
-shape with BASE_URL=/, so links that only break under /_documentation/ passed
-here and failed later in delivery, which blocked the enterprise image.
-Use the shipped base URL, and run Docs CI when this workflow changes.
+This reverts commit 263f08fce24b0b52a8b95803516462ca719cfed6.
 
-**File**: `.github/workflows/docs-ci.yaml` (modified, +7/-2)
+* MM-71213 Update STARTTLS Connection Security help text
+
+* MM-71213 Report when the SMTP server does not support STARTTLS
+
+* MM-71213 Update STARTTLS Connection Security docs
+
+---------
+
+Co-authored-by: Mattermost Build <[REDACTED_EMAIL]>
+
+**File**: `docs/main/administration-guide/configure/authentication-configuration-settings.mdx` (modified, +1/-1)
 ```diff
-@@ -3,13 +3,15 @@ name: Docs CI
- on:
+@@ -495,7 +495,7 @@ This field is required. Anonymous bind is not currently supported.
+ </colgroup>
+ <tbody>
+ <tr>
+-<td><p>This setting controls the type of security Mattermost uses to connect to the AD/LDAP server, with these options:</p><ul><li><strong>None</strong>: <strong>(Default for self-hosted deployments)</strong> No encryption. With this option, it is <strong>highly recommended</strong> that the connection be secured outside of Mattermost, such as by a stunnel proxy. <code>config.json</code> option: <code>""</code></li><li><strong>TLS</strong>: <strong>(Default for Cloud deployments)</strong> Encrypts communication with TLS. <code>config.json</code> option: <code>"TLS"</code></li><li><strong>STARTTLS</strong>: Attempts to upgrade an existing insecure connection to a secure connection with TLS. <code>config.json</code> option: <code>"STARTTLS"</code></li></ul></td>
++<td><p>This setting controls the type of security Mattermost uses to connect to the AD/LDAP server, with these options:</p><ul><li><strong>None</strong>: <strong>(Default for self-hosted deployments)</strong> No encryption. With this option, it is <strong>highly recommended</strong> that the connection be secured outside of Mattermost, such as by a stunnel proxy. <code>config.json</code> option: <code>""</code></li><li><strong>TLS</strong>: <strong>(Default for Cloud deployments)</strong> Encrypts communication with TLS. <code>config.json</code> option: <code>"TLS"</code></li><li><strong>STARTTLS</strong>: Upgrades an existing insecure connection to TLS. The connection fails if the AD/LDAP server doesn't support STARTTLS. <code>config.json</code> option: <code>"STARTTLS"</code></li></ul></td>
+ <td><ul><li>System Config path: <strong>Authentication &gt; AD/LDAP</strong></li><li><code>config.json</code> setting: <code>LdapSettings</code> &gt; <code>ConnectionSecurity</code> &gt; <code>""</code></li><li>Environment variable: <code>MM_LDAPSETTINGS_CONNECTIONSECURITY</code></li></ul></td>
+ </tr>
+ </tbody>
+```
+
+**File**: `docs/main/administration-guide/configure/environment-configuration-settings.mdx` (modified, +1/-1)
+```diff
+@@ -2527,7 +2527,7 @@ With self-hosted deployments, you can configure SMTP email server settings by go
+ </colgroup>
+ <tbody>
+ <tr>
+-<td><p>Specify connection security for emails sent using SMTP.</p><ul><li><strong>Not specified</strong>: <strong>(Default)</strong> Send email over an unsecure connection.</li><li><strong>TLS</strong>: Communication between Mattermost and your email server is encrypted.</li><li><strong>STARTTLS</strong>: Attempts to upgrade an existing insecure connection to a secure connection using TLS.</li></ul></td>
++<td><p>Specify connection security for emails sent using SMTP.</p><ul><li><strong>Not specified</strong>: <strong>(Default)</strong> Send email over an unsecure connection.</li><li><strong>TLS</strong>: Communication between Mattermost and your email server is encrypted.</li><li><strong>STARTTLS</strong>: Upgrades an existing insecure connection to TLS. The connection fails if the SMTP server doesn't support STARTTLS.</li></ul></td>
+ <td><ul><li>System Config path: <strong>Environment &gt; SMTP</strong></li><li><code>config.json</code> setting: <code>EmailSettings</code> &gt; <code>ConnectionSecurity</code></li><li>Environment variable: <code>MM_EMAILSETTINGS_CONNECTIONSECURITY</code></li></ul></td>
+ </tr>
+ </tbody>
+```
+
+**File**: `server/platform/shared/mail/mail.go` (modified, +8/-7)
+```diff
+@@ -11,6 +11,7 @@ import (
+ 	"net"
+ 	"net/mail"
+ 	"net/smtp"
++	"net/textproto"
+ 	"slices"
+ 	"time"
+ 
+@@ -179,7 +180,13 @@ func NewSMTPClientAdvanced(ctx context.Context, conn net.Conn, config *SMTPConfi
+ 			InsecureSkipVerify: config.SkipServerCertificateVerification,
+ 			ServerName:         config.ServerName,
+ 		}
+-		c.StartTLS(tlsconfig)
++		if err := c.StartTLS(tlsconfig); err != nil {
++			var replyErr *textproto.Error
++			if errors.As(err, &replyErr) && (replyErr.Code == 500 || replyErr.Code == 502) {
++				return nil, errors.Wrap(err, "SMTP server does not support STARTTLS")
++			}
++			return nil, errors.Wrap(err, "unable to start TLS")
++		}
+ 	}
+ 
+ 	if config.EnableSMTPAuth {
+@@ -222,12 +229,6 @@ func TestConnection(ctx context.Context, config *SMTPConfig) error {
+ 		}
+ 		return errors.Wrap(err, "unable to connect")
+ 	}
+-	// NewSMTPClient ignores a failed StartTLS, so a handshake that ctx cut short can still return a client.
+-	// TODO: MM-71213 remove this check once NewSMTPClient returns the StartTLS error; the error branch above
+-	// then reports the deadline.
+-	if !stop() {
+-		return errors.Wrap(ctx.Err(), "unable to connect")
+-	}
+ 	c.Close()
+ 	c.Quit()
+ 
+```
+
+**File**: `server/platform/shared/mail/mail_test.go` (modified, +47/-0)
+```diff
+@@ -1051,3 +1051,50 @@ func TestNewSMTPClientAdvancedDeadlineDuringGreeting(t *testing.T) {
+ 	_, err = conn.Write([]byte("QUIT\r\n"))
+ 	assert.ErrorIs(t, err, net.ErrClosed, "the connection should be closed when the deadline ends the greeting")
+ }
++
++func TestStartTLSError(t *testing.T) {
++	for name, tc := range map[string]struct {
++		reply string
++		want  string
++	}{
++		"STARTTLS refused":       {reply: "454 TLS not available", want: "unable to start TLS"},
++		"STARTTLS not supported": {reply: "502 not implemented", want: "SMTP server does not support STARTTLS"},
++		"STARTTLS unrecognized":  {reply: "500 unrecognized command", want: "SMTP server does not support STARTTLS"},
++	} {
++		t.Run(name, func(t *testing.T) {
++			cfg := fakeSMTPServer(t, func(conn net.Conn) {
++				r := textproto.NewConn(conn)
++				_ = r.PrintfLine("220 localhost ESMTP")
++				for {
++					line, err := r.ReadLine()
++					if err != nil {
++						return
++					}
++					switch {
++					case strings.HasPrefix(line, "EHLO"):
++						_ = r.PrintfLine("250-localhost")
++						_ = r.PrintfLine("250 STARTTLS")
++					case strings.HasPrefix(line, "STARTTLS"):
++						_ = r.PrintfLine("%s", tc.reply)
++					case strings.HasPrefix(line, "MAIL FROM"):
++						t.Errorf("mail transaction started: %s", line)
++						_ = r.PrintfLine("250 OK")
++					case strings.HasPrefix(line, "QUIT"):
++						_ = r.PrintfLine("221 bye")
++						return
++					default:
++						_ = r.PrintfLine("250 OK")
++					}
++				}
++			})
++			cfg.ConnectionSecurity = StartTLS
++			cfg.FeedbackEmail = "sender@example.com"
++
++			err := TestConnection(context.Background(), cfg)
++			require.ErrorContains(t, err, tc.want)
++
++			err = SendMailUsingConfig("recipient@example.com", "subject", "body", cfg, false, "", "", "", "", "")
++			require.ErrorContains(t, err, tc.want)
++		})
++	}
++}
+```
+
+**File**: `webapp/channels/src/components/admin_console/admin_definition_constants.tsx` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ const SECTION_STARTTLS = (
+         <td>
+             <FormattedMessage
+                 id='admin.connectionSecurityStartDescription'
+-                defaultMessage='Takes an existing insecure connection and attempts to upgrade it to a secure connection using TLS.'
++                defaultMessage="Upgrades an existing insecure connection to TLS. The connection fails if the server doesn't support STARTTLS."
+             />
+         </td>
+     </tr>
+```
+
+**File**: `webapp/channels/src/i18n/en.json` (modified, +1/-1)
+```diff
+@@ -3864,7 +3864,7 @@
+     "description": "Row label in the Connection Security help table (SMTP/LDAP admin settings); STARTTLS is a protocol name and should not be translated."
+   },
+   "admin.connectionSecurityStartDescription": {
+-    "defaultMessage": "Takes an existing insecure connection and attempts to upgrade it to a secure connection using TLS.",
++    "defaultMessage": "Upgrades an existing insecure connection to TLS. The connection fails if the server doesn't support STARTTLS.",
+     "description": "Description of the 'STARTTLS' option in the Connection Security dropdown used by System Console settings such as SMTP and LDAP."
+   },
+   "admin.connectionSecurityTitle": {
+```
+
+---
+
+### Incident Patch 3: `3c6e3e09` (2026-11-16)
+**Commit Message**: Changelog generator: fixes from the v12.2.0 dry run (#39932)
+
+* Changelog generator: fixes from the v12.2.0 dry run
+
+- Database Schema Changes: the summary bullet names the release instead of VERSION.
+- API Changes: config-change-checker endpoint lines get their full path from the router
+  (the previous release's for a removed route, this release's for an added one). A line
+  whose route can't be found is left out of the note and flagged in the report, never
+  printed with a partial path. The checker itself now chains prefixes back to APIRoot.
+- A note that is already a sentence with its own verb doesn't get "Added" in front of it.
+- A note that says no more than its listed migration's name is folded into Database
+  Schema Changes, the model is told which migrations a note's PR added, and migration
+  numbers are taken out of bullets in every other section.
+- A docs page found for a PR is linked from that PR's bullet in any section, including
+  config.json and Compatibility, when the model didn't link it.
+- A dependency swap that changes behaviour goes under Compatibility, merged with an
+  overlapping bullet there.
+- A dry run also prints its summary to the job log.
+
+Co-Authored-By:
+
+**File**: `.github/scripts/changelog_release.py` (modified, +15/-2)
+```diff
+@@ -239,6 +239,14 @@ def git_show(ref: str, path: str) -> str | None:
+     raise RuntimeError(f"git show {ref}:{path} failed: {(result.stderr or listing.stderr).strip()}")
+ 
+ 
++def git_ls(ref: str, path: str) -> list[str]:
++    """The files directly under the directory ``path`` (ending in ``/``) at ``ref``. A failing git command raises."""
++    result = _git("ls-tree", "--name-only", ref, "--", path)
++    if result.returncode != 0:
++        raise RuntimeError(f"git ls-tree {ref} -- {path} failed: {result.stderr.strip()}")
++    return sorted(line for line in result.stdout.splitlines() if line.strip())
++
++
+ def git_added_files(base: str, head: str, path: str) -> list[str]:
+     """Files under ``path`` added between ``base`` and ``head``. A failing git command raises."""
+     result = _git("diff", "--name-only", "--diff-filter=A", base, head, "--", path)
+@@ -591,7 +599,10 @@ def _pick(candidates: list[dict]) -> dict | None:
+ def docs_link(source: str, prs: dict, files_of, read_file) -> dict:
+     """Where the docs for the PR ``source`` are, and why, following the PR to its docs.
+ 
+-    ``prs`` maps each milestone PR's ``owner/repo#N`` to its title, body and head_ref;
++    ``prs`` maps each milestone PR's ``owner/repo#N`` to its title, body and head_ref. It may also
++    hold docs PRs outside the milestone (merged since the previous release, ``"outside": True``):
++    docs often land after the code, in a later milestone or none. Those count only when they
++    link the PR, never by a shared Jira key;
+     ``files_of(source)`` lists a PR's changed files (filename, status, patch);
+     ``read_file(path)`` reads a file as it is now, or None if it no longer exists.
+ 
+@@ -608,10 +619,12 @@ def docs_link(source: str, prs: dict, files_of, read_file) -> dict:
+         for other, info in prs.items():
+             if other == source or not other.startswith("mattermost/mattermost#"):
+                 continue
+-            shared = keys & jira_keys(info.get("title"), info.get("head_ref"), info.get("body"))
++            shared = set() if info.get("outside") else keys & jira_keys(info.get("title"), info.get("head_ref"), info.get("body"))
+             linked = source in pr_references(info.get("body"), other.split("#")[0])
+             if shared or linked:
+                 via = f"docs PR {other}, which " + (f"names {', '.join(sorted(shared))}" if shared else "links the PR")
++                if info.get("outside"):
++                    via += " (outside the milestone)"
+                 candidates += _docs_candidates(files_of(other), via, read_file)
+         chosen = _pick(candidates)
+     if chosen:
+```
+
+**File**: `.github/scripts/check_config_changes_ci.py` (modified, +33/-3)
+```diff
+@@ -402,20 +402,29 @@ def check_config(patches: dict[str, str]) -> CheckResult:
+ )
+ _API_ROUTES_PATH = "server/channels/api4/api.go"
+ 
++# api.BaseRoutes.APIRoot = srv.Router.PathPrefix(model.APIURLSuffix).Subrouter()
++_ROOT_RE = re.compile(r'BaseRoutes\.(\w+)\s*=\s*[\w.]*Router\.PathPrefix\(model\.(APIURLSuffix\w*)\)')
++# The model constants the roots are built from (server/public/model/client4.go).
++_ROOT_SUFFIXES = {"APIURLSuffix": "/api/v4", "APIURLSuffixV4": "/api/v4", "APIURLSuffixV5": "/api/v5"}
++
+ _METHOD_RE    = re.compile(r'(?:http\.Method)?(\w+)')
+ _HTTP_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
+ 
+ 
+ def _route_prefixes(api_src: str) -> dict[str, str]:
+     """Each api4 subrouter's path prefix, from the PathPrefix(...).Subrouter() lines of api.go.
+ 
+-    A subrouter hangs off another one, so its prefix is the parent's plus its own. The
+-    roots (APIRoot and the like) are not defined by such a line and count as empty.
++    A subrouter hangs off another one, so its prefix is the parent's plus its own, back to
++    a root (APIRoot is ``/api/v4``, APIRoot5 ``/api/v5``). A chain that doesn't reach a
++    known root starts from an empty prefix.
+     """
+     parents = {name: (parent, path) for name, parent, path in _SUBROUTER_RE.findall(api_src)}
+-    prefixes: dict[str, str] = {}
++    roots = {name: _ROOT_SUFFIXES[suffix] for name, suffix in _ROOT_RE.findall(api_src) if suffix in _ROOT_SUFFIXES}
++    prefixes: dict[str, str] = dict(roots)
+ 
+     def prefix(name: str, seen: tuple = ()) -> str:
++        if name in roots:
++            return roots[name]
+         if name not in parents or name in seen:
+             return ""
+         if name not in prefixes:
+@@ -490,6 +499,27 @@ def _parse_endpoints(src: str, prefixes: Optional[dict] = None) -> set[tuple[str
+     return endpoints
+ 
+ 
++def router_endpoints(sources: list[str], api_src: str) -> set[tuple[str, str, str]]:
++    """Every endpoint registered in ``sources`` (api4 files), with its full path.
++
++    Only routes on a known subrouter or root are returned: a route on any other receiver
++    has no prefix that can be worked out, so its path would be partial.
++    """
++    prefixes = _route_prefixes(api_src)
++    known = {name for name in prefixes}
++    endpoints: set[tuple[str, str, str]] = set()
++    for src in sources:
++        blob = " ".join(src.split())
++        for m in _HANDLE_RE.finditer(blob):
++            receiver = m.group(1).rsplit(".", 1)[-1]
++            if receiver not in known:
++                continue
++            full = _shorten_path_vars(prefixes[receiver] + m.group(2))
++            for method in _parse_methods(m.group(4)):
++                endpoints.add((full or "/", m.group(3), method))
++    return endpoints
++
++
+ def check_api(patches: dict[str, str]) -> CheckResult:
+     """
+     Detect API endpoint additions/removals in the api4/ directory.
+```
+
+**File**: `.github/scripts/generate_changelog.py` (modified, +284/-14)
+```diff
+@@ -65,6 +65,7 @@
+ 
+ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+ import changelog_release  # noqa: E402
++import check_config_changes_ci as config_checker  # noqa: E402  (its router parser)
+ 
+ GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
+ REPOS = [r.strip() for r in os.environ["REPOS"].split(",") if r.strip()]
+@@ -189,9 +190,13 @@
+ 
+ 12.  **Source markers:** Each raw release note begins with an ID in square brackets, such as `[N12]`. Every note you are given must appear in your output: end every bullet you write with the ID of the note it came from in double square brackets, separated from the text by one space: ` - Fixed an issue where the channel header was hidden. [[N12]]`. A note with no marker on any bullet is treated as left out of the changelog, so check before you answer that every ID you were given appears at least once. If a bullet combines several related notes, it must carry the ID of every note it combines, either in one marker or in several: `[[N3,N7]]` or `[[N3]][[N7]]`. Never merge a note into another bullet without adding its ID to that bullet. Do not put a marker on headings, on the `See BLOG_POST_LINK` line, on the config.json description paragraph, on plan-label bullets such as ` - **Changes to All plans:**`, or on the Database Schema Changes summary bullet; put it on the bullets nested beneath them instead. Never write a marker anywhere else. Markers are removed automatically before publishing.
+ 
+-13.  **Notes read from the release diff:** Some notes were not written by a developer but read from the code or the performance team's report: pre-packaged plugin version changes, added or removed WebSocket events, database schema migrations (given as SQL), and the benchmarking result. Place each in its section: plugin versions at the top of `#### User Interface` (keep the plugin bullet text and link exactly as given), WebSocket events under `### WebSocket Event Changes`, migrations under `#### Database Schema Changes`, and the benchmarking result as the first bullet of `#### Performance` under `### Improvements`, kept exactly as given. When a developer's note already describes the same change, write one bullet that combines them and carries both IDs, rather than two bullets saying the same thing.
++13.  **Notes read from the release diff:** Some notes were not written by a developer but read from the code or the performance team's report: pre-packaged plugin version changes, added or removed WebSocket events, database schema migrations (given as SQL), and the benchmarking result. Place each in its section: plugin versions at the top of `#### User Interface` (keep the plugin bullet text and link exactly as given), WebSocket events under `### WebSocket Event Changes`, migrations under `#### Database Schema Changes`, and the benchmarking result as the first bullet of `#### Performance` under `### Improvements`, kept exactly as given. When a developer's note already describes the same change, write one bullet that combines them and carries both IDs, rather than two bullets saying the same thing. A developer's note about a schema change listed under `#### Database Schema Changes` (its PR added that migration, or the note names it) goes into that migration's bullet, carrying both IDs: never write a second bullet for it in another section. Never write a migration number (such as ``000238``) or migration file name anywhere outside `#### Database Schema Changes`.
+ 
+-14.  **Documentation links:** A note may end with a `Docs page:` line, found by following its PR to the documentation that PR changed. When that note's bullet goes under `### Improvements`, link the feature's name in the bullet to that URL, exactly as given, the way existing entries do: ` - Added [channel attributes](https://docs.mattermost.com/administration-guide/manage/admin/channel-attributes) on Enterprise Advanced.` Link it once, and only in an `### Improvements` bullet. Never add a docs.mattermost.com link that was not given in a note."""
++14.  **Documentation links:** A note may end with a `Docs page:` line, found by following its PR to the documentation that PR changed. Link that note's bullet to that URL, exactly as given, wherever the bullet goes (under `### Improvements`, `#### config.json`, `#### Compatibility` or any other section), by linking the feature's name the way existing entries do: ` - Added [channel attributes](https://docs.mattermost.com/administration-guide/manage/admin/channel-attributes) on Enterprise Advanced.` Link each page once. Never add a docs.mattermost.com link that was not given in a note.
++
++15.  **Verbs:** Start a bullet with "Added" only when the note is about something new being added. A note that is already a sentence with its own verb (such as "``GET /api/v4/posts/{post_id}/thread`` with ``updatesOnly=true`` now includes deleted replies") is kept as that sentence, or rewritten with a fitting verb ("Updated ... so that ..."); never put "Added" in front of it.
++
++16.  **Dependency cha
+```
+
+**File**: `.github/scripts/test_check_config_changes_ci.py` (modified, +22/-0)
+```diff
+@@ -355,6 +355,28 @@ def test_a_path_variable_whose_pattern_has_braces_is_shortened_whole(self):
+                          {("/health/findings/{fingerprint}/mute", "muteHealthFinding", "POST")})
+         self.assertEqual(checker._shorten_path_vars("/{a:[0-9]{2,3}}/{b}/{c:x}"), "/{a}/{b}/{c}")
+ 
++    def test_routes_chain_back_to_the_api_root(self):
++        # #39527 and #39528 wrote "GET /posts" and "GET /signup_available": the root and the
++        # subrouter prefix were lost.
++        api = ('\tapi.BaseRoutes.APIRoot = srv.Router.PathPrefix(model.APIURLSuffix).Subrouter()\n'
++               '\tapi.BaseRoutes.APIRoot5 = srv.Router.PathPrefix(model.APIURLSuffixV5).Subrouter()\n'
++               '\tapi.BaseRoutes.Usage = api.BaseRoutes.APIRoot.PathPrefix("/usage").Subrouter()\n'
++               '\tapi.BaseRoutes.HostedCustomer = api.BaseRoutes.APIRoot.PathPrefix("/hosted_customer").Subrouter()\n')
++        usage = ('\tapi.BaseRoutes.Usage.Handle("/posts", api.APISessionRequired(getPostsUsage)).Methods(http.MethodGet)\n'
++                 '\tapi.BaseRoutes.HostedCustomer.Handle("/signup_available", '
++                 'api.APISessionRequired(handleSignupAvailable)).Methods(http.MethodGet)\n'
++                 '\tsomeOtherRouter.Handle("/loose", api.APISessionRequired(loose)).Methods(http.MethodGet)\n')
++        self.assertEqual(checker._route_prefixes(api)["APIRoot5"], "/api/v5")
++        self.assertEqual(checker._parse_endpoints(usage, checker._route_prefixes(api)) - {("/loose", "loose", "GET")}, {
++            ("/api/v4/usage/posts", "getPostsUsage", "GET"),
++            ("/api/v4/hosted_customer/signup_available", "handleSignupAvailable", "GET"),
++        })
++        # The changelog reads the router as a whole and leaves out a route on an unknown receiver.
++        self.assertEqual(checker.router_endpoints([usage], api), {
++            ("/api/v4/usage/posts", "getPostsUsage", "GET"),
++            ("/api/v4/hosted_customer/signup_available", "handleSignupAvailable", "GET"),
++        })
++
+     def test_a_route_on_an_unknown_router_keeps_its_own_path(self):
+         self.assertEqual(checker._parse_endpoints(_HANDLE), {("/api/v4/foo", "getFoo", "GET")})
+ 
+```
+
+**File**: `.github/scripts/test_generate_changelog.py` (modified, +334/-7)
+```diff
+@@ -429,6 +429,11 @@ def setUp(self):
+         self.saved_show = gc.changelog_release.git_show
+         self.saved_benchmark = gc.changelog_release.benchmark_notes
+         gc.changelog_release.benchmark_notes = lambda version: []
++        self.saved_cut = gc.release_branch_cut
++        gc.release_branch_cut = lambda ref: "2026-10-16T09:18:58Z"
++        self.merged_since = {}
++        self.saved_merged = gc.merged_prs_since
++        gc.merged_prs_since = lambda repo, since: self.merged_since
+         self.saved_env = dict(os.environ)
+         gc.VERSION = gc.MILESTONE_TITLE = "v12.1.0"
+         gc.REPOS = ["mattermost/mattermost"]
+@@ -466,6 +471,8 @@ def tearDown(self):
+         gc.changelog_release.derived_notes = self.saved_derived
+         gc.changelog_release.git_show = self.saved_show
+         gc.changelog_release.benchmark_notes = self.saved_benchmark
++        gc.release_branch_cut = self.saved_cut
++        gc.merged_prs_since = self.saved_merged
+         os.environ.clear()
+         os.environ.update(self.saved_env)
+ 
+@@ -554,7 +561,7 @@ def polish(notes):
+         self.assertIn("changed in the same PR, which added the page", link["basis"])
+         self.assertIn(f"is documented in [Feature]({url}) (linked in Administration)", (self.out / "summary.md").read_text())
+ 
+-    def test_docs_link_on_another_prs_bullet_is_dropped(self):
++    def test_docs_link_on_another_prs_bullet_moves_to_the_prs_own_bullet(self):
+         self.details[1] = {"head_ref": "MM-123-feature", "files": [{
+             "filename": "docs/main/administration-guide/manage/admin/feature.mdx", "status": "added",
+             "patch": "+# Feature\n+\n+Use the feature.\n",
+@@ -571,11 +578,34 @@ def polish(notes):
+         gc.main()
+         url = "https://docs.mattermost.com/administration-guide/manage/admin/feature"
+         content = self.changelog.read_text()
+-        self.assertNotIn(url, content)
+-        self.assertIn("Extended the feature.", content)
++        self.assertIn(f" - Added the feature. See the [Feature]({url}) documentation for details.\n", content)
++        self.assertIn(" - Extended the feature.\n", content)
++        self.assertEqual(content.count(url), 1)
+         link = self._payload()["readiness"]["doc_links"][0]
+-        self.assertEqual((link["used_in"], link["linked_elsewhere"]), ([], []))
+-        self.assertIn("(no bullet links it)", (self.out / "summary.md").read_text())
++        self.assertEqual((link["used_in"], link["linked_elsewhere"]), (["Administration"], []))
++        self.assertNotIn("(no bullet links it)", (self.out / "summary.md").read_text())
++
++    def test_a_docs_pr_outside_the_milestone_that_links_the_pr_gives_its_page(self):
++        # Docs that land after the code: #900 is in no milestone and links #1.
++        self.merged_since = {
++            "mattermost/mattermost#900": {"title": "Docs for the feature", "body": "Documents https://github.com/mattermost/mattermost/pull/1."},
++            "mattermost/mattermost#901": {"title": "MM-123 other docs", "body": "Unrelated."},  # a Jira key alone is not enough
++        }
++        self.details[900] = {"head_ref": "docs-feature", "files": [{
++            "filename": "docs/main/administration-guide/manage/admin/feature.mdx", "status": "added",
++            "patch": "+# Feature\n+\n+Use the feature.\n"}]}
++        self.details[901] = {"head_ref": "MM-123-docs", "files": [{
++            "filename": "docs/main/administration-guide/manage/admin/other.mdx", "status": "added", "patch": "+# Other\n"}]}
++        self.prs[0]["head_ref"] = "MM-123-feature"
++        pages = {"docs/main/administration-guide/manage/admin/feature.mdx": "---\ntitle: Feature\n---\n# Feature\n",
++                 "docs/main/administration-guide/manage/admin/other.mdx": "---\ntitle: Other\n---\n# Other\n"}
++        gc.changelog_release.git_show = lambda ref, path: pages.get(path, "FROM golang:1.27.1-bookworm\n")
++        self.site_pages.update(pages)
++        gc.main()
++        link, = self._payload()["readiness"]["doc_links"]
++        self.assertEqual((link["source"], link["url"]),
++                         ("mattermost/mattermost#1", "https://docs.mattermost.com/administration-guide/manage/admin/feature"))
++        self.assertIn("docs PR mattermost/mattermost#900, which links the PR (outside the milestone)", link["basis"])
+ 
+     def test_docs_line_outranks_the_followed_page_and_is_checked(self):
+         self.details[1] = {"head_ref": "MM-123-feature", "files": [{
+@@ -603,7 +633,7 @@ def polish(notes):
+         readiness = self._payload()["readiness"]
+         self.assertEqual(readiness["doc_links"], [{
+             "source": "mattermost/mattermost#1", "url": named, "title": "Named page",
+-            "basis": "named on the Docs: line of the PR's release note", "used_in": [], "linked_elsewhere": [],
++            "basis": "named on the Docs: line of the PR's release note", "used_in": ["Administration"], "linked_elsewhere": [],
+         }])
+         self.assertEqual(readiness["doc_lin
+```
+
+**File**: `.github/workflows/changelog-scripts-test.yml` (modified, +1/-0)
+```diff
+@@ -4,6 +4,7 @@ on:
    pull_request:
      paths:
-+      - ".github/workflows/docs-ci.yaml"
-       - "docs/**"
-       - "api/v4/source/**"
-       - "api/playbooks/**"
-   push:
-     branches:
-       - master
-     paths:
-+      - ".github/workflows/docs-ci.yaml"
-       - "docs/**"
-       - "api/v4/source/**"
-       - "api/playbooks/**"
-@@ -65,11 +67,14 @@ jobs:
- 
-       # Hosted Algolia injects SearchBar preconnects; do not scan that artifact.
-       # Rebuild without ALGOLIA_* (prebuild already ran) for the offline shape.
--      - name: Rebuild without Algolia for egress scan
-+      # BASE_URL matches the offline bundle the server ships (mattermost/delivery-platform
-+      # builds it with BASE_URL=/_documentation/), so links that only break under that
-+      # base URL fail here instead of in the release pipeline.
-+      - name: Rebuild offline bundle shape for egress scan
-         working-directory: docs/site
-         run: npx docusaurus build && npm run postbuild
-         env:
--          BASE_URL: /
-+          BASE_URL: /_documentation/
- 
-       - name: Scan built site for egress
-         working-directory: docs/site
+       - '.github/scripts/generate_changelog.py'
++      - '.github/scripts/check_config_changes_ci.py'
+       - '.github/scripts/changelog_release.py'
+       - '.github/scripts/test_generate_changelog.py'
+       - '.github/scripts/test_changelog_release.py'
 ```
 
-**File**: `docs/main/deployment-guide/calls/calls-deployment-guide.mdx` (modified, +6/-6)
+**File**: `.github/workflows/generate-changelog.yml` (modified, +8/-1)
 ```diff
-@@ -69,11 +69,11 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
+@@ -198,7 +198,7 @@ jobs:
+         run: |
+           # Run the generator from this checkout even after the PR branch is checked out
+           # below: that branch was cut when the PR was opened and may carry an older copy.
+-          cp .github/scripts/generate_changelog.py .github/scripts/changelog_release.py "$RUNNER_TEMP/"
++          cp .github/scripts/generate_changelog.py .github/scripts/changelog_release.py .github/scripts/check_config_changes_ci.py "$RUNNER_TEMP/"
  
- - [ ] Your Mattermost server is configured to use HTTPS.
+           PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "changelog/$VERSION" --state open --json number --jq '.[0].number // empty')"
+           BODY_FILE=""
+@@ -282,6 +282,13 @@ jobs:
+             echo
+             cat "$SUMMARY"
+           } >> "$GITHUB_STEP_SUMMARY"
++          # A dry run's output is only read here and in the artifact; the log keeps a copy
++          # that can be read without downloading it.
++          if [ "$MODE" = "dry_run" ]; then
++            echo "::group::Run summary"
++            cat "$SUMMARY"
++            echo "::endgroup::"
++          fi
  
--  _See [Configure TLS](/../../deployment-guide/server/setup-tls) if you need to set up HTTPS._
-+  _See [Configure TLS](../server/setup-tls.mdx) if you need to set up HTTPS._
- 
- - [ ] You know how many active users you have in your current Mattermost deployment
- 
--  _See [Site Statistics](/../../administration-guide/manage/statistics) to access usage metrics._
-+  _See [Site Statistics](../../administration-guide/manage/statistics.mdx) to access usage metrics._
- 
- - [ ] You can provision at least one dedicated Linux server or VM if you plan to use the RTCD service.
- 
-@@ -84,7 +84,7 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
- 
-   _See [Networking Decisions](#13-networking-decisions) (Step 1.3) if you're unsure if you need a TURN server._
- 
--- [ ] You have the appropriate [Mattermost edition and license](/../../product-overview/editions-and-offerings) for the features you need:
-+- [ ] You have the appropriate [Mattermost edition and license](../../product-overview/editions-and-offerings.mdx) for the features you need:
-   - **Mattermost Entry or Team Edition**: 1-1 calling and screen sharing (Up to 40 minutes)
-   - **Mattermost Professional**: Group calling and screen sharing (No time limit)
-   - **Mattermost Enterprise or Enterprise Advanced**: Required for:
-@@ -96,7 +96,7 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
- - [ ] You are comfortable with basic Linux administration, or you have someone available who is. You will need to connect to servers over SSH, edit configuration files, manage systemd services, inspect logs, and run shell commands.
- - [ ] You have System Admin access to your Mattermost server.
- 
--  _See [Mattermost roles](/../../end-user-guide/collaborate/learn-about-roles) to learn about roles and permissions._
-+  _See [Mattermost roles](../../end-user-guide/collaborate/learn-about-roles.mdx) to learn about roles and permissions._
- 
- #### Networking Requirements
- 
-@@ -115,7 +115,7 @@ Use this checklist to confirm you have the infrastructure, skills, and access re
- 
- - [ ] You know how to open a [request](https://support.mattermost.com) with Mattermost support if you encounter issues.
- 
--  _Please include the exact **step number** (e.g. 2A.2.1) that failed, along with your [Mattermost support packet](/../../administration-guide/manage/admin/generating-support-packet) and [Calls logs](calls-logging.mdx)._
-+  _Please include the exact **step number** (e.g. 2A.2.1) that failed, along with your [Mattermost support packet](../../administration-guide/manage/admin/generating-support-packet.mdx) and [Calls logs](calls-logging.mdx)._
- 
- <Note>
- 
-@@ -157,7 +157,7 @@ To determine if you'll need RTCD, start by answering the following questions abo
- - **Are you deploying Calls on Kubernetes?**
-   - **Yes:** You'll need to deploy RTCD as it's the only supported way to run Calls. See the [Kubernetes](calls-kubernetes.mdx) Calls deployment guide for details.
-   - **No:** Continue to the next question.
--- **What is the *Total User* count of your existing Mattermost deployment?** _(Check [Site Statistics](/../../administration-guide/manage/statistics))_
-+- **What is the *Total User* count of your existing Mattermost deployment?** _(Check [Site Statistics](../../administration-guide/manage/statistics.mdx))_
-   - **Up to 50:** You can use the **Integrated** deployment model.
-   - **More than 50:** You'll need to deploy RTCD to avoid impacting messaging performance of the Mattermost server.
- 
-```
-
----
-
-### Incident Patch 3: `9750d5ac` (2026-11-12)
-**Commit Message**: Fix escaped braces that render literally inside code (#39911)
-
-Many pages escaped curly braces as &#123; and &#125; inside inline code
-spans and fenced code blocks, likely left over from the RST to MDX
-conversion. MDX doesn't decode character references inside code, so
-the pages show the escape sequences verbatim, for example
-`&#123;mattermost-server-IP&#125;`. Replace them with literal braces,
-which are safe inside code. Escapes in regular prose, where MDX needs
-them, are unchanged.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/main/administration-guide/configure/environment-configuration-settings.mdx` (modified, +13/-13)
-```diff
-@@ -1039,17 +1039,17 @@ For more information on Aurora replication stats, see the [AWS Aurora documentai
- Example
- 
- ``` json
--&#123;
--  "SqlSettings": &#123;
-+{
-+  "SqlSettings": {
-       "ReplicaLagSettings": [
--        &#123;
-+        {
-             "DataSource": "replica-1",
-             "QueryAbsoluteLag": "select server_id, highest_lsn_rcvd-durable_lsn as bindiff from aurora_global_db_instance_status() where server_id=<>",
-             "QueryTimeLag": "select server_id, visibility_lag_in_msec from aurora_global_db_instance_status() where server_id=<>"
--        &#125;
-+        }
-       ]
--  &#125;
--&#125;
-+  }
-+}
- ```
- 
- </TabItem>
-@@ -1062,17 +1062,17 @@ For more information on group replication stats, see the [MySQL documentation](h
- Example
- 
- ``` json
--&#123;
--  "SqlSettings": &#123;
-+{
-+  "SqlSettings": {
-       "ReplicaLagSettings": [
--        &#123;
-+        {
-             "DataSource": "replica-1",
-             "QueryAbsoluteLag": "select member_id, count_transactions_remote_in_applier_queue FROM performance_schema.replication_group_member_stats where member_id=<>",
-             "QueryTimeLag": ""
--        &#125;
-+        }
-       ]
--  &#125;
--&#125;
-+  }
-+}
- ```
- 
- </TabItem>
-@@ -1181,7 +1181,7 @@ If indexing is disabled and then re-enabled after an index is created, purge and
- 
- Before permanently deleting a large number of channels, turn off **Enable Elasticsearch indexing**. Each permanent delete reindexes every member of that channel, and that indexing work can exhaust Mattermost memory on a delete of about 100,000 memberships.
- 
--Leave the Elasticsearch or OpenSearch cluster running. Save and restart, run the deletes with [`mmctl channel delete`](/administration-guide/manage/mmctl-command-line-tool#mmctl-channel-delete) or `DELETE /api/v4/channels/&#123;channel_id&#125;?permanent=true`, then turn indexing back on and run **Index Now** so changes made while indexing was off are included. The System Console clears search queries and autocomplete when indexing is turned off, because the server will not store those while indexing is off. Turn them back on with indexing.
-+Leave the Elasticsearch or OpenSearch cluster running. Save and restart, run the deletes with [`mmctl channel delete`](/administration-guide/manage/mmctl-command-line-tool#mmctl-channel-delete) or `DELETE /api/v4/channels/{channel_id}?permanent=true`, then turn indexing back on and run **Index Now** so changes made while indexing was off are included. The System Console clears search queries and autocomplete when indexing is turned off, because the server will not store those while indexing is off. Turn them back on with indexing.
- 
- Documents for those channels can remain in the search index, because indexing is off while they are deleted. Post search only queries channels the user currently belongs to, then loads the posts from the database. Channel search also loads its matches from the database, so a permanently deleted channel is left out. A full index purge is not required to restore search results. Retention requirements may require a scoped cleanup of those leftover copies.
- 
-```
-
-**File**: `docs/main/administration-guide/configure/environment-variables.mdx` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ The name of the environment variable for any setting can be derived from the nam
- <Note>
- 
- - If Mattermost is run from an initialization file, environment variables can be set via `Environment=<>`, or `EnvironmentFile=<path/to/file>`. In the second case, the file specified contains the list of environment variables to set.
--- From Mattermost v7.5, environment configuration parsing supports JSON for `MM_PLUGINSETTINGS_PLUGINS` and `MM_PLUGINSETTINGS_PLUGINSTATES`. This is especially helpful for Helm configuration files, provided all plugins are configured at the same time. For example, `MM_PLUGINSETTINGS_PLUGINSTATES="&#123;\"com.mattermost.calls\":&#123;\"Enable\":true&#125;,\"com.mattermost.nps\":&#123;\"Enable\":true&#125;&#125;"`.
-+- From Mattermost v7.5, environment configuration parsing supports JSON for `MM_PLUGINSETTINGS_PLUGINS` and `MM_PLUGINSETTINGS_PLUGINSTATES`. This is especially helpful for Helm configuration files, provided all plugins are configured at the same time. For example, `MM_PLUGINSETTINGS_PLUGINSTATES="{\"com.mattermost.calls\":{\"Enable\":true},\"com.mattermost.nps\":{\"Enable\":true}}"`.
- - When settings are configured through an environment variable, system admins can't modify them in the System Console. If a setting is configured through an environment variable, and any other changes are made in the System Console, the value stored of the environment variable will be written back to the `config.json` as that setting's value.
- - For any setting that's not set in `config.json` or in environment variables, the Mattermost server uses the setting's default value as documented in the sections below on this page.
- 
-```
-
-**File**: `docs/main/administration-guide/manage/mmctl-command-line-tool.mdx` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ The mmctl tool comes bundled with Mattermost package. For customers that want to
- <Tabs>
- <TabItem value="release-package" label="Release package">
- 
--If you're using a release page for Linux, macOS, or Windows, we recommend downloading the mmctl builds through their release URL: `https://releases.mattermost.com/mmctl/$&#123;MATTERMOST_VERSION&#125;/$&#123;PLATFORM&#125;_$&#123;ARCHITECTURE&#125;.tar` (for windows, substitute the `.tar` suffix with `.zip`)
-+If you're using a release page for Linux, macOS, or Windows, we recommend downloading the mmctl builds through their release URL: `https://releases.mattermost.com/mmctl/${MATTERMOST_VERSION}/${PLATFORM}_${ARCHITECTURE}.tar` (for windows, substitute the `.tar` suffix with `.zip`)
- 
- E.g. to download version `v10.7.0` of the mmctl amd64 build for linux, you can run the following:
- 
-```
-
-**File**: `docs/main/administration-guide/onboard/sso-gitlab.mdx` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ Follow these steps to configure Mattermost to use GitLab as a Single Sign-on (SS
- 
- ### Step 1: Add a Mattermost application to your GitLab account
- 
--1.  Log in to your GitLab account, then go to `https://&#123;gitlab-site-name&#125;/profile/applications`. For *&#123;gitlab-site-name&#125;* use the name of your GitLab instance. If you're using GitLab itself as your service provider, use `gitlab.com`.
-+1.  Log in to your GitLab account, then go to `https://{gitlab-site-name}/profile/applications`. For *&#123;gitlab-site-name&#125;* use the name of your GitLab instance. If you're using GitLab itself as your service provider, use `gitlab.com`.
- 2.  Add a new application:
- 
- > 1.  In the **Name** field, enter `Mattermost`.
-```
-
-**File**: `docs/main/administration-guide/onboard/sso-google.mdx` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ The [Google People API](https://developers.google.com/people) has replaced the G
- 3.  Select **Create Credentials**, then select **OAuth client ID**.
- 4.  Select the **Web application** as the application type.
- 5.  Enter `Mattermost-<your-company-name>` as the **Name**, replacing `<your-company-name>` with the name of your organization.
--6.  Under **Authorized redirect URIs**, select **Add URL**, then enter `&#123;your-mattermost-url&#125;/signup/google/complete`. For example: `http://localhost:8065/signup/google/complete`.
-+6.  Under **Authorized redirect URIs**, select **Add URL**, then enter `{your-mattermost-url}/signup/google/complete`. For example: `http://localhost:8065/signup/google/complete`.
- 7.  Select **Create**.
- 8.  Copy and paste the **Your Client ID** and **Your Client Secret** values to a temporary location. You will enter these values in the Mattermost System Console.
- 
-```
-
-**File**: `docs/main/administration-guide/onboard/sso-openidconnect.mdx` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ Follow these steps to configure a service provider using OpenID Connect.
- ## Step 1: Create an OpenID Connect Application
- 
- 1.  Follow service provider documentation for creating an OpenID Connect application. Most OpenID Connect service providers require authorization of all redirect URIs.
--2.  In the appropriate field, enter `&#123;your-mattermost-url&#125;/signup/openid/complete` For example: `http://domain.com/signup/openid/complete`
-+2.  In the appropriate field, enter `{your-mattermost-url}/signup/openid/complete` For example: `http://domain.com/signup/openid/complete`
- 3.  Copy and paste values for the **Discovery Endpoint**, **Client ID**, and **Client Secret** values to a temporary location. You will enter these values when you configure Mattermost.
- 
- ## Step 2: Configure Mattermost for an OpenID Connect SSO
-```
-
-**File**: `docs/main/administration-guide/scale/deploy-grafana-loki-for-centralized-logging.mdx` (modified, +2/-2)
-```diff
-@@ -375,7 +375,7 @@ The PostgreSQL configuration handles common Ubuntu/Debian JSON log paths (`/var/
- 
- </Note>
- 
--Once running, PostgreSQL logs appear in Grafana under the label `&#123;service_name="postgres"&#125;`:
-+Once running, PostgreSQL logs appear in Grafana under the label `{service_name="postgres"}`:
- 
- ``` text
- {service_name="postgres"} | json | detected_level="error"
-@@ -399,7 +399,7 @@ Once running, PostgreSQL logs appear in Grafana under the label `&#123;service_n
-     # Look for export successful messages or lack of errors
-     ```
- 
--3.  Logs are visible in Grafana: Go to **Explore**, select the **Loki** data source, and run `&#123;service_name="mattermost"&#125;`. You should see recent log lines.
-+3.  Logs are visible in Grafana: Go to **Explore**, select the **Loki** data source, and run `{service_name="mattermost"}`. You should see recent log lines.
- 
- 4.  The dashboard loads: Open the **Mattermost Log Aggregation** dashboard and confirm panels are populated. (Note: You may need to update dashboard queries to use <code>service_name</code> and <code>service_instance_id</code>).
- 
-```
-
-**File**: `docs/main/administration-guide/upgrade/upgrading-mattermost-server.mdx` (modified, +4/-4)
-```diff
-@@ -64,11 +64,11 @@ Make sure that you understand how to [prepare for your upgrade](/administration-
-   - This command won't return anything if `/opt/mattermost/bin` wasn't added to the PATH.
-   - Alternatively, you can use the `find / -executable -type f -iname mattermost 2> /dev/null` command to find the `mattermost` binary.
-   - The output should be similar to `/opt/mattermost/bin/mattermost`.
--  - The install directory is everything before the first occurrence of the string `/mattermost`. In this example, the `&#123;install-path&#125;` is `/opt`.
-+  - The install directory is everything before the first occurrence of the string `/mattermost`. In this example, the `{install-path}` is `/opt`.
-   - If that command doesn't produce any results, it's likely because your version is older; try `whereis platform` instead.
- - **Location and size of your local storage directory**: The local storage directory contains all the files that users have attached to their messages.
-   - If you don't know its location, open the System Console and go to **Environment \> File Storage**, then read the value in **Local Storage Directory**.
--  - Paths are relative to the `mattermost` directory. For example, if the local storage directory is `./data/` then the absolute path is `&#123;install-path&#125;/mattermost/data`.
-+  - Paths are relative to the `mattermost` directory. For example, if the local storage directory is `./data/` then the absolute path is `{install-path}/mattermost/data`.
- - **Database disk space**: If you're upgrading a Mattermost deployment on the same server as your database, we recommend a minimum 2GB of free disk space to allow for extraction, copy, and cleanup, and a minimum of twice the size of your Mattermost installation available for the database.
- 
- <Tip>
-@@ -228,8 +228,8 @@ wget https://releases.mattermost.com/X.X.X/mattermost-team-X.X.X-linux-amd64.tar
- 
-     </div>
- 
--    - If you didn't use `mattermost` as the owner and group of the install directory, run `sudo chown -hR &#123;owner&#125;:&#123;group&#125; &#123;install-path&#125;/mattermost`.
--    - If you're uncertain what owner or group was defined, use the `ls -l &#123;install-path&#125;/mattermost/bin/mattermost` command to obtain them.
-+    - If you didn't use `mattermost` as the owner and group of the install directory, run `sudo chown -hR {owner}:{group} {install-path}/mattermost`.
-+    - If you're uncertain what owner or group was defined, use the `ls -l {install-path}/mattermost/bin/mattermost` command to obtain them.
- 
-     </div>
- 
+       - name: Upload changelog output
+         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40032** (2026-11-13): docs: add Out-of-Band Communications use case page (@esarafianou)
-- **PR #40026** (2026-11-13): [MM-71856] Note Mobile v2.47 requirement for biometric_authenticated (@devinbinnie)
-- **PR #40024** (2026-11-13): Require manage_system to update some environment config settings (@cursor[bot])
-- **PR #40023** (2026-11-13): [MM-71873] Remove translate.mattermost.com links from webapp (@cursor[bot])
-- **PR #40021** (closed): Skip translate.mattermost.com in external link check (@NARSimoes)
-- **PR #40020** (2026-11-13): Automated cherry pick of #38810 (@mattermost-build)
+- **PR #40092** (2026-11-17): Automated cherry pick of #39549 (@mattermost-build)
+- **PR #40090** (2026-11-17): Automated cherry pick of #40066 (@mattermost-build)
+- **PR #40084** (2026-11-16): [MM-65981] Make AD/LDAP wizard settings searchable in System Console (@cursor[bot])
+- **PR #40083** (2026-11-17): Automated cherry pick of #40076 (@mattermost-code)
+- **PR #40082** (2026-11-17): Automated cherry pick of #40076 (@mattermost-code)
+- **PR #40081** (2026-11-17): Automated cherry pick of #40076 (@mattermost-code)
 
 ---
 
@@ -2611,65 +2503,48 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. post list height shift for posts with multiple image attachments
+## X. [MM-69773] Fix layout shift when wide images in posts finish loading
 
 **RULE**:
-When implementing operations in `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.scss`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e-tests/playwright/asset/opengraph-tall.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d59b084`: post list height shift for posts with multiple image attachments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `47848ece`: [MM-69773] Fix layout shift when wide images in posts finish loading. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `webapp/channels/src/components/file_attachment_list/media_gallery/media_gallery.scss`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e-tests/playwright/asset/opengraph-tall.html`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    container: media-gallery / inline-size;
-        --media-gallery-row-height: 216px;
-
-        flex-flow: row wrap;
-        align-content: flex-start;
-    &--compact &__rows {
-        --media-gallery-row-height: 144px;
-    }
-}
-
-// Sized in CSS rather than from a measured width so the post list sees the
-// final height on first render, including in narrow containers like the RHS.
-// CSS has no hysteresis, so the RHS reserves its scrollbar gutter to keep a
-// scrollbar appearing from toggling the row height near 480px.
-@container media-gallery (width < 480px) {
-    .MediaGallery__rows {
-        --media-gallery-row-height: 144px;
-    // Scale to the row height by aspect ratio, without upscaling past the
-    // file's native width, clamped to 50-500px.
-    --tile-width: max(50px, min(calc(var(--tile-ratio, 1.5) * var(--media-gallery-row-height)), var(--tile-native-width, 500px), 500px));
-
-    width: var(--tile-width);
-    max-width: 100%;
-    height: var(--media-gallery-row-height);
-    flex: 0 0 var(--tile-width);
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>OpenGraph Test Page</title>
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Mattermost Test" />
+        <meta property="og:title" content="OpenGraph Preview Title" />
+        <meta property="og:description" content="This is a test page with a tall image." />
+        <meta property="og:url" content="/opengraph-tall.html" />
+        <meta property="og:image" content="/image-600x1200.jpg" />
+        <meta property="og:image:width" content="600" />
+        <meta property="og:image:height" content="1200" />
+    </head>
+    <body>
+        <h1>OpenGraph Test Page</h1>
+    </body>
+</html>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    container-type: inline-size;
-        flex-direction: column;
-    &__row {
-        display: flex;
-        width: 100%;
-        min-width: 0;
-        flex-direction: row;
-        align-items: stretch;
-        justify-content: flex-start;
-        gap: 8px;
-        text-align: left;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d59b084` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `47848ece` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

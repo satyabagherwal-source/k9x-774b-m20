@@ -10507,3 +10507,8 @@
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:44:59.290Z` | `dubzzz-fast-check` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-D4FDB7F4` [Domain K] | Yes (`e3863b21...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:45:48.936Z` | `trinodb-trino` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-C6C068D9` [Domain H] | Yes (`83c46dcc...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:46:51.548Z` | `pulumi-pulumi` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-A32D66BE` [Domain H] | Yes (`40d05197...`) |
+| `CYCLE-20261117-KA64` | `2026-11-17T08:56:28.540Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md` | Yes (`51f0499e...`) |
+| `CYCLE-20261117-KCQJ` | `2026-11-17T08:56:31.867Z` | `faker-js/faker` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/faker-js-faker-learnings.md` | Yes (`08beee89...`) |
+| `CYCLE-20261117-KF30` | `2026-11-17T08:56:34.908Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8940` | Yes (`5dfd58ad...`) |
+| `CYCLE-20261117-KKVI` | `2026-11-17T08:56:42.414Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8941` | Yes (`256b12fb...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:57:17.742Z` | `faker-js-faker` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C917D98C` [Domain D] | Yes (`d4325d5e...`) |

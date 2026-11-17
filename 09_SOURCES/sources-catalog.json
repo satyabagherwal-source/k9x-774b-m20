@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "2c67adc2",
+    "sourceVersion": "53ba1b4f",
     "license": "NOASSERTION",
-    "contentHash": "b31e046c6bce7a822a50c84ddbb9c2e71a9e2aa2b70468e1c350708d874934b3",
-    "lastHarvestedAt": "2026-11-13T19:27:25.302Z",
+    "contentHash": "5dfd58ad6783d9202d47c05f201309ac50702d5f5a6aba079bd4cb29b4ae6852",
+    "lastHarvestedAt": "2026-11-17T08:56:34.955Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -5123,10 +5123,10 @@
     "repository": "apache/zookeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/zookeeper",
-    "sourceVersion": "5dd643fb",
+    "sourceVersion": "9fde5223",
     "license": "Apache-2.0",
-    "contentHash": "41bdfc7fc9fc362553fb53aa0be7f5521aa257012d23b7a4ef0d00c3889ef72d",
-    "lastHarvestedAt": "2026-11-12T03:48:49.602Z",
+    "contentHash": "256b12fb526e5359b243566de3e194af8b98d18ebd2d371b37d728442b88c16b",
+    "lastHarvestedAt": "2026-11-17T08:56:42.418Z",
     "learningId": "learn-github-apache-zookeeper"
   },
   "primer-react": {
@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "617611e8",
+    "sourceVersion": "6e2ee81a",
     "license": "Apache-2.0",
-    "contentHash": "d0b5e958086ae57bb73c73b137e3d756100b813c81dbf002a5303d343ab0d19e",
-    "lastHarvestedAt": "2026-11-15T19:32:03.471Z",
+    "contentHash": "51f0499ea818af710c26efa0a1a3f35c2cc50489d3a6050a3f9bd453a767ff8b",
+    "lastHarvestedAt": "2026-11-17T08:56:28.544Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {
@@ -10283,10 +10283,10 @@
     "repository": "faker-js/faker",
     "platform": "github",
     "sourceUrl": "https://github.com/faker-js/faker",
-    "sourceVersion": "5415aecc",
+    "sourceVersion": "5060c90a",
     "license": "NOASSERTION",
-    "contentHash": "0660ef8f4f6b1d8f488e31cf1c2427b69dc479429d3b8ee86118c07e342b0f6e",
-    "lastHarvestedAt": "2026-11-07T23:47:04.892Z",
+    "contentHash": "08beee8908af7822bb903a22f43215867b0f8b5115d362b25145fbc314e136ff",
+    "lastHarvestedAt": "2026-11-17T08:56:31.873Z",
     "learningId": "learn-github-faker-js-faker"
   },
   "storybookjs-storybook": {

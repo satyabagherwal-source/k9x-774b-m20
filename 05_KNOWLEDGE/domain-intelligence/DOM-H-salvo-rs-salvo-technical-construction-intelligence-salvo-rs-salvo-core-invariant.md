@@ -4,24 +4,24 @@
 {
   "source_repository": "salvo-rs/salvo",
   "source_url": "https://github.com/salvo-rs/salvo",
-  "source_version": "617611e8",
+  "source_version": "6e2ee81a",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T19:32:03.712Z",
+  "timestamp": "2026-11-17T08:56:28.779Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-salvo-rs-salvo",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [salvo-rs/salvo](https://github.com/salvo-rs/salvo) (Revision: `617611e8`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T19:32:03.712Z`  
+> **Provenance**: Harvested from [salvo-rs/salvo](https://github.com/salvo-rs/salvo) (Revision: `6e2ee81a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T08:56:28.779Z`  
 > **Learning ID**: `learn-github-salvo-rs-salvo`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from salvo-rs/salvo:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T19:32:02.292Z  
+> **Harvest Timestamp**: 2026-11-17T08:56:27.620Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A powerful web framework built with a simplified design.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4467 stars
+- **Stars / Engagement**: 4466 stars
 
 ---
 
@@ -1901,187 +1901,847 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `617611e8` (2026-11-15)
-**Commit Message**: Update cache save action and fix vendor spell checks (#2008)
+### Incident Patch 1: `6e2ee81a` (2026-11-17)
+**Commit Message**: Release 1.2.1
 
-* Bump actions/cache/save from 5.1.0 to 6.1.0
-
-Bumps [actions/cache/save](https://github.com/actions/cache) from 5.1.0 to 6.1.0.
-- [Release notes](https://github.com/actions/cache/releases)
-- [Changelog](https://github.com/actions/cache/blob/main/RELEASES.md)
-- [Commits](https://github.com/actions/cache/compare/caa296126883cff596d87d8935842f9db880ef25...55cc8345863c7cc4c66a329aec7e433d2d1c52a9)
-
----
-updated-dependencies:
-- dependency-name: actions/cache/save
-  dependency-version: 6.1.0
-  dependency-type: direct:production
-  update-type: version-update:semver-major
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-* Apply vendor spell-check exceptions to repository scans
-
----------
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Chris Young <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/fuzz.yml` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +9/-0)
 ```diff
-@@ -98,7 +98,7 @@ jobs:
+@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
  
-       - name: Save reusable corpus
-         if: always() && github.event_name != 'pull_request'
--        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
-+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-         with:
-           path: fuzz/.corpus-cache/${{ matrix.target }}
-           key: fuzz-corpus-v1-${{ matrix.target }}-${{ github.run_id }}-${{ github.run_attempt }}
+ ## [Unreleased]
+ 
++## [1.2.1] - 2026-11-17
++
++### Added
++
++- Expose `PathParams::tail_segments()` and `tail_raw_segments()` so custom
++  wildcard consumers can retain segment boundaries and original encoded spelling.
++
+ ### Fixed
+ 
+ - Preserve encoded separators inside individual route parameters, including Matrix
+@@ -15,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+   Static handlers reject embedded separators before resource lookup, and proxies
+   re-encode each segment while retaining their default strict escape checks.
+   Windows filesystem-name restrictions apply to static resources, not API routes.
++- Publish versioned development dependencies before dependent crates so release
++  packaging can resolve the synchronized workspace versions.
+ 
+ ## [1.2.0] - 2026-11-17
+ 
 ```
 
-**File**: `examples/vendor/rbdc/typos.toml` (removed, +0/-4)
+**File**: `Cargo.toml` (modified, +22/-22)
 ```diff
-@@ -1,4 +0,0 @@
--# Preserve these upstream documentation and test-fixture spellings.
--[default.extend-words]
--exmample = "exmample"
--abd = "abd"
+@@ -3,7 +3,7 @@ members = ["crates/*"]
+ resolver = "3"
+ 
+ [workspace.package]
+-version = "1.2.0"
++version = "1.2.1"
+ authors = ["Chris Young <chris@veco.id>"]
+ edition = "2024"
+ rust-version = "1.95"
+@@ -25,28 +25,28 @@ categories = [
+ 
+ [workspace.dependencies]
+ # Internal crate requirements track workspace.package.version.
+-salvo_macros = { version = "1.2.0", path = "crates/macros", default-features = false }
+-salvo_core = { version = "1.2.0", path = "crates/core", default-features = false }
+-salvo_extra = { version = "1.2.0", path = "crates/extra", default-features = false }
+-salvo-acme = { version = "1.2.0", path = "crates/acme", default-features = false }
+-salvo-compression = { version = "1.2.0", path = "crates/compression", default-features = false }
+-salvo-cache = { version = "1.2.0", path = "crates/cache", default-features = false }
+-salvo-cors = { version = "1.2.0", path = "crates/cors", default-features = false }
+-salvo-csrf = { version = "1.2.0", path = "crates/csrf", default-features = false }
+-salvo-flash = { version = "1.2.0", path = "crates/flash", default-features = false }
++salvo_macros = { version = "1.2.1", path = "crates/macros", default-features = false }
++salvo_core = { version = "1.2.1", path = "crates/core", default-features = false }
++salvo_extra = { version = "1.2.1", path = "crates/extra", default-features = false }
++salvo-acme = { version = "1.2.1", path = "crates/acme", default-features = false }
++salvo-compression = { version = "1.2.1", path = "crates/compression", default-features = false }
++salvo-cache = { version = "1.2.1", path = "crates/cache", default-features = false }
++salvo-cors = { version = "1.2.1", path = "crates/cors", default-features = false }
++salvo-csrf = { version = "1.2.1", path = "crates/csrf", default-features = false }
++salvo-flash = { version = "1.2.1", path = "crates/flash", default-features = false }
+ salvo-http3 = { version = "0.7.0", default-features = false }
+-salvo-jwt-auth = { version = "1.2.0", path = "crates/jwt-auth", default-features = false }
+-salvo-oapi = { version = "1.2.0", path = "./crates/oapi", default-features = false }
+-salvo-oapi-macros = { version = "1.2.0", path = "crates/oapi-macros", default-features = false }
+-salvo-otel = { version = "1.2.0", path = "crates/otel", default-features = false }
+-salvo-proxy = { version = "1.2.0", path = "crates/proxy", default-features = false }
+-salvo-rate-limiter = { version = "1.2.0", path = "crates/rate-limiter", default-features = false }
+-salvo-serde-util = { version = "1.2.0", path = "crates/serde-util", default-features = true }
+-salvo-serve-static = { version = "1.2.0", path = "crates/serve-static", default-features = false }
+-salvo-session = { version = "1.2.0", path = "crates/session", default-features = false }
+-salvo-craft = { version = "1.2.0", path = "crates/craft", default-features = false }
+-salvo-craft-macros = { version = "1.2.0", path = "crates/craft-macros", default-features = false }
+-salvo-tus = { version = "1.2.0", path = "crates/tus", default-features = false }
++salvo-jwt-auth = { version = "1.2.1", path = "crates/jwt-auth", default-features = false }
++salvo-oapi = { version = "1.2.1", path = "./crates/oapi", default-features = false }
++salvo-oapi-macros = { version = "1.2.1", path = "crates/oapi-macros", default-features = false }
++salvo-otel = { version = "1.2.1", path = "crates/otel", default-features = false }
++salvo-proxy = { version = "1.2.1", path = "crates/proxy", default-features = false }
++salvo-rate-limiter = { version = "1.2.1", path = "crates/rate-limiter", default-features = false }
++salvo-serde-util = { version = "1.2.1", path = "crates/serde-util", default-features = true }
++salvo-serve-static = { version = "1.2.1", path = "crates/serve-static", default-features = false }
++salvo-session = { version = "1.2.1", path = "crates/session", default-features = false }
++salvo-craft = { version = "1.2.1", path = "crates/craft", default-features = false }
++salvo-craft-macros = { version = "1.2.1", path = "crates/craft-macros", default-features = false }
++salvo-tus = { version = "1.2.1", path = "crates/tus", default-features = false }
+ 
+ certon = "0.4"
+ 
 ```
 
-**File**: `examples/vendor/sqlx-sqlite/typos.toml` (removed, +0/-3)
+**File**: `benchmarks/http-server-size/Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -1,3 +0,0 @@
--# Preserve this token in the unmodified upstream SQLite driver sources.
--[default.extend-words]
--doub = "doub"
-```
-
-**File**: `typos.toml` (modified, +7/-1)
-```diff
-@@ -3,6 +3,12 @@ extend-ignore-identifiers-re = [
-     # *sigh* this just isn't worth the cost of fixing
-     "AttributeID.*Supress.*",
+@@ -691,14 +691,14 @@ checksum = "cf54715a573b99ac80df0bc206da022bcd442c974952c7b9720069370852e21f"
+ 
+ [[package]]
+ name = "salvo"
+-version = "1.2.0"
++version = "1.2.1"
+ dependencies = [
+  "salvo_core",
  ]
-+extend-ignore-re = [
-+    # Preserve these exact upstream vendor snippets during a repository-root scan.
-+    'Bytes::from\(b"abd"\.to_vec\(\)\)',
-+    's\.contains\("doub"\)',
-+    '/// for exmample:',
-+]
  
- [default.extend-identifiers]
- # *sigh* this just isn't worth the cost of fixing
-@@ -15,4 +21,4 @@ Hashi = "Hashi"
- consts = "consts"
+ [[package]]
+ name = "salvo-serde-util"
+-version = "1.2.0"
++version = "1.2.1"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -707,7 +707,7 @@ dependencies = [
  
- [files]
--extend-exclude = ["**/*.js", "**/*.css", "**/*.html", "examples/*/static/**/*.*"]
-\ No newline at end of file
-+extend-exclude = ["**/*.js", "**/*.css", "**/*.html", "examples/*/static/**/*.*"]
+ [[package]]
+ name = "salvo_core"
+-version = "1.2.0"
++version = "1.2.1"
+ dependencies = [
+  "async-trait",
+  "base64 0.23.1",
+@@ -746,7 +746,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "salvo_macros"
+-version = "1.2.0"
++version = "1.2.1"
+ dependencies = [
+  "proc-macro-crate",
+  "proc-macro2",
+```
+
+**File**: `examples/mcp/README.md` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@ For a standalone application, enable these features:
+ 
+ ```toml
+ [dependencies]
+-salvo = { version = "1.2.0", features = ["tower-compat"] }
++salvo = { version = "1.2.1", features = ["tower-compat"] }
+ rmcp = { version = "3.5.1", features = ["server", "transport-streamable-http-server"] }
+ tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+ ```
 ```
 
 ---
 
-### Incident Patch 2: `31d4f408` (2026-11-15)
-**Commit Message**: Format new transport and response regressions with nightly rustfmt (#2006)
+### Incident Patch 2: `a65669f9` (2026-11-17)
+**Commit Message**: Preserve URL segment boundaries for Matrix IDs and resource handlers (#2015)
 
-**File**: `crates/core/tests/response_http_semantics.rs` (modified, +2/-1)
+**File**: `CHANGELOG.md` (modified, +10/-0)
 ```diff
-@@ -1,11 +1,12 @@
- //! HTTP response semantics are finalized before selecting a transport.
- #![cfg(feature = "test")]
+@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
  
-+use std::io::Cursor;
+ ## [Unreleased]
+ 
++### Fixed
 +
- use salvo_core::http::{HeaderMap, StatusCode};
- use salvo_core::prelude::*;
- use salvo_core::test::{ResponseExt, TestClient};
- use salvo_core::writing::ReadSeeker;
--use std::io::Cursor;
++- Preserve encoded separators inside individual route parameters, including Matrix
++  user IDs, and allow URL colons on Windows. Routing leaves the original request
++  URI unchanged and rejects NUL, literal backslashes, and invalid UTF-8.
++- Preserve wildcard segment boundaries for static resources and proxy forwarding.
++  Static handlers reject embedded separators before resource lookup, and proxies
++  re-encode each segment while retaining their default strict escape checks.
++  Windows filesystem-name restrictions apply to static resources, not API routes.
++
+ ## [1.2.0] - 2026-11-17
  
- #[tokio::test]
- async fn head_runs_the_catcher_but_suppresses_its_body() {
+ ### Added
 ```
 
-**File**: `crates/core/tests/transport_protocol_selection.rs` (modified, +6/-3)
+**File**: `crates/core/src/routing.rs` (modified, +34/-89)
 ```diff
-@@ -87,11 +87,14 @@ async fn cleartext_http2_follows_the_feature_and_advertised_capabilities() {
+@@ -15,11 +15,18 @@
+ //! # Request path normalization
+ //!
+ //! Dot segments (`.` and `..`), including percent-encoded forms, are normalized
+-//! before route matching. Encoded path separators, literal backslashes, and NUL
+-//! bytes are rejected with `400 Bad Request`. On Windows, paths containing
+-//! colon-bearing segments or reserved device names are also rejected. This
+-//! prevents downstream path normalization from changing the authorization scope
+-//! selected by the router.
++//! before route matching, without rewriting the request URI. Only literal `/`
++//! characters separate segments. Parameters are decoded once, so `%2F` remains
++//! data inside one parameter. This supports identifiers such as Matrix user IDs.
++//! Routing has the same semantics on all operating systems; filesystem filename
++//! restrictions belong to resource handlers. Literal backslashes, NUL bytes and
++//! invalid UTF-8 are rejected with `400 Bad Request`.
++//!
++//! Wildcard consumers must retain these boundaries: use [`PathParams::tail_segments`]
++//! rather than splitting its decoded [`PathParams::tail`] string again. Static
++//! resources reject separators inside a decoded segment. Proxies re-encode each
++//! segment separately and reject ambiguous escapes by default. Use the original
++//! request path and query, not reconstructed parameters, for signature verification.
+ //!
+ //! # Write in flat way
+ //!
+@@ -501,13 +508,13 @@ pub fn encode_url_path(path: &str) -> String {
  
- #[cfg(feature = "rustls")]
- mod tls {
--    use super::*;
--    use rustls::pki_types::{CertificateDer, ServerName, pem::PemObject};
--    use salvo_core::conn::rustls::{Keycert, RustlsConfig, default_crypto_provider};
-     use std::sync::Arc;
+ #[doc(hidden)]
+ #[must_use]
++/// Normalizes literal URL separators and dot segments without filesystem rules.
++/// This is not a filesystem path sanitizer; validate decoded segments before joining them.
+ pub fn normalize_url_path(path: &str) -> String {
+     let final_slash = if path.ends_with('/') { "/" } else { "" };
+     let mut used_parts = Vec::with_capacity(8);
+-    for part in path.split(['/', '\\']) {
+-        // Routing rejects invalid components before matching. Keep the legacy
+-        // normalizer's component policy shared with that validation.
+-        if part.is_empty() || part == "." || is_invalid_path_segment(part) {
++    for part in path.split('/') {
++        if part.is_empty() || part == "." {
+             continue;
+         }
+         // Handle parent directory references
+@@ -520,12 +527,6 @@ pub fn normalize_url_path(path: &str) -> String {
+     used_parts.join("/") + final_slash
+ }
  
-+    use rustls::pki_types::pem::PemObject;
-+    use rustls::pki_types::{CertificateDer, ServerName};
-+    use salvo_core::conn::rustls::{Keycert, RustlsConfig, default_crypto_provider};
-+
-+    use super::*;
-+
-     fn identity() -> Keycert {
-         Keycert::new()
-             .cert(include_bytes!("../certs/cert.pem").as_slice())
+-/// Components omitted by normalization must not reach route matching, where
+-/// retaining them could select a different authorization scope.
+-fn is_invalid_path_segment(part: &str) -> bool {
+-    part.contains('\0') || (cfg!(windows) && (part.contains(':') || is_windows_reserved_name(part)))
+-}
+-
+ #[doc(hidden)]
+ pub fn redirect_to_dir_url(req_uri: &Uri, res: &mut Response) {
+     let Some(path_and_query) = req_uri.path_and_query() else {
+@@ -552,36 +553,12 @@ pub fn redirect_to_dir_url(req_uri: &Uri, res: &mut Response) {
+     res.render(crate::writing::Redirect::found(redirect_uri));
+ }
+ 
+-/// Check if a path component is a Windows reserved device name.
+-/// These names are reserved regardless of extension (e.g., "CON.txt" is also reserved).
+-fn is_windows_reserved_name(name: &str) -> bool {
+-    // Get the base name without extension
+-    let base = name.split('.').next().unwrap_or(name);
+-    let is_numbered_device = match base.as_bytes() {
+-        [first, second, third, digit] => {
+-            let prefix = [
+-                first.to_ascii_uppercase(),
+-                second.to_ascii_uppercase(),
+-                third.to_ascii_uppercase(),
+-            ];
+-            (prefix == *b"COM" || prefix == *b"LPT") && digit.is_ascii_digit() && *digit != b'0'
+-        }
+-        _ => false,
+-    };
+-
+-    base.eq_ignore_ascii_case("CON")
+-        || base.eq_ignore_ascii_case("PRN")
+-        || base.eq_ignore_ascii_case("AUX")
+-        || base.eq_ignore_ascii_case("NUL")
+-        || is_numbered_device
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use crate::http::header::LOCATION;
+     use crate::http::uri::Uri;
+     use crate::prelude::*;
+-    use crate::routing::{decode_url_path, is_windows_reserved_name, normalize_url_path};
++    use crate::routing::{decode_url_path, normalize_url_path};
+     use crate::test::{ResponseExt, TestClient};
+ 
+     #[tokio::test]
+@@ -709,8 +686,8 @@ mod tests {
+         assert_eq!(normalize_url_path("a/./b"), "a/b");
+ 
+         // Backslash handling
+-        assert_eq!(normalize_url_path("a\\b\\c"), "a/b/c");
+-        assert_eq!(normalize_url_path("a\\..\\b"), "b");
++        assert_eq!(normalize_url_path("a\\b\\c"), "a\\b\\c");
++        assert_eq!(normalize_url_path("a\\..\\b"), "a\\..\\b");
+ 
+         // Empty parts
+         assert_eq!(normalize_url_path("a//b"), "a/b");
+@@ -753,52 +730,20 @@ mod tests {
+     }
+ 
+     #[test]
+-    #[cfg(windows)]
+-    fn test_normalize_url_path_windows() {
+-        // Windows drive letters
+-        assert_eq!(normalize_url_path("C:/Windows"), "Windows");
+-        assert_eq!(normalize_url_path
 ```
 
-**File**: `crates/proxy/tests/unix_upgrade.rs` (modified, +5/-1)
+**File**: `crates/core/src/routing/filters/path.rs` (modified, +14/-23)
 ```diff
-@@ -28,7 +28,11 @@ async fn unix_upgrade_transfers_both_ways_and_stops_with_its_front_server() {
-     let path = directory.path().join("app.sock.d");
-     std::fs::create_dir(&path).unwrap();
-     let path = path.join("server.sock");
--    let upstream = Server::new(salvo_core::conn::UnixListener::new(path.clone()).bind().await);
-+    let upstream = Server::new(
-+        salvo_core::conn::UnixListener::new(path.clone())
-+            .bind()
-+            .await,
+@@ -528,20 +528,17 @@ impl PathWisp for CombWisp {
+             // (e.g. `.ext` for `/first{id}world{**rest}` vs `first123world.ext`).
+             let wild_path_buf = state.all_rest().unwrap_or_default().into_owned();
+             let wild_path: &str = &wild_path_buf;
+-            if wild_start.starts_with("*?")
+-                && wild_path
+-                    .trim_start_matches('/')
+-                    .trim_end_matches('/')
+-                    .contains('/')
+-            {
++            if wild_start.starts_with("*?") && state.rest_segments_len() > 1 {
+                 return false;
+             }
+             if !wild_path.is_empty() || !wild_start.starts_with("*+") {
+                 let cap = wild_regex.captures(wild_path).and_then(|caps| caps.get(0));
+                 if let Some(cap) = cap {
+                     let cap = cap.as_str().to_owned();
+-                    state.forward(cap.len());
+-                    state.params.insert_tracked(wild_name, cap);
++                    if !state.capture_tail(&format!("{wild_start}{wild_name}"), cap) {
++                        return false;
++                    }
++                    state.cursor.0 = state.parts_len();
+                     #[cfg(feature = "matched-path")]
+                     push_named_part(&mut state.matched_parts, wild_name);
+                     true
+@@ -566,17 +563,14 @@ impl PathWisp for NamedWisp {
+     fn detect(&self, state: &mut PathState<'_>) -> bool {
+         if self.0.starts_with('*') {
+             let rest = state.all_rest().unwrap_or_default();
+-            if self.0.starts_with("*?")
+-                && rest
+-                    .trim_start_matches('/')
+-                    .trim_end_matches('/')
+-                    .contains('/')
+-            {
++            if self.0.starts_with("*?") && state.rest_segments_len() > 1 {
+                 return false;
+             }
+             if !rest.is_empty() || !self.0.starts_with("*+") {
+                 let rest = rest.into_owned();
+-                state.params.insert_tracked(&self.0, rest);
++                if !state.capture_tail(&self.0, rest) {
++                    return false;
++                }
+                 state.cursor.0 = state.parts_len();
+                 #[cfg(feature = "matched-path")]
+                 push_named_part(&mut state.matched_parts, &self.0);
+@@ -662,21 +656,18 @@ impl PathWisp for RegexWisp {
+     fn detect(&self, state: &mut PathState<'_>) -> bool {
+         if self.name.starts_with('*') {
+             let rest = state.all_rest().unwrap_or_default();
+-            if self.name.starts_with("*?")
+-                && rest
+-                    .trim_start_matches('/')
+-                    .trim_end_matches('/')
+-                    .contains('/')
+-            {
++            if self.name.starts_with("*?") && state.rest_segments_len() > 1 {
+                 return false;
+             }
+             if !rest.is_empty() || !self.name.starts_with("*+") {
+                 let cap = self.regex.captures(&rest).and_then(|caps| caps.get(0));
+ 
+                 if let Some(cap) = cap {
+                     let cap = cap.as_str().to_owned();
+-                    state.forward(cap.len());
+-                    state.params.insert_tracked(&self.name, cap);
++                    if !state.capture_tail(&self.name, cap) {
++                        return false;
++                    }
++                    state.cursor.0 = state.parts_len();
+                     #[cfg(feature = "matched-path")]
+                     push_named_part(&mut state.matched_parts, &self.name);
+                     true
+```
+
+**File**: `crates/core/src/routing/path_params.rs` (modified, +110/-13)
+```diff
+@@ -1,34 +1,76 @@
+ use std::fmt::{self, Debug, Formatter};
+-use std::ops::Deref;
++use std::ops::{Deref, Range};
+ 
+ use indexmap::IndexMap;
+ 
+ use super::split_wild_name;
+ 
++#[derive(Clone, Debug, Eq, PartialEq)]
++pub(crate) struct CapturedPath {
++    pub(crate) index: usize,
++    pub(crate) ranges: Vec<Range<usize>>,
++    pub(crate) encoded: String,
++}
++
++impl CapturedPath {
++    fn from_decoded(path: &str) -> Self {
++        use std::fmt::Write as _;
++        let mut offset = 0;
++        let ranges = path
++            .split('/')
++            .map(|part| {
++                let range = offset..offset + part.len();
++                offset += part.len() + 1;
++                range
++            })
++            .collect();
++        let mut encoded = String::with_capacity(path.len());
++        for (index, part) in path.split('/').enumerate() {
++            if index > 0 {
++                encoded.push('/');
++            }
++            let _ = write!(
++                encoded,
++                "{}",
++                percent_encoding::utf8_percent_encode(part, percent_encoding::NON_ALPHANUMERIC)
++            );
++        }
++        Self {
++            index: 0,
++            ranges,
++            encoded,
++        }
++    }
++}
++
+ /// The path parameters.
+ #[derive(Clone, Default)]
+ pub struct PathParams {
+     inner: IndexMap<String, String>,
+     greedy: bool,
++    tail_path: Option<CapturedPath>,
+     /// Transaction log of values overwritten by [`insert`](Self::insert), used to
+     /// undo in-place overwrites during [`rollback`](Self::rollback). Kept out of the
+     /// public identity of `PathParams` (`Debug`/`PartialEq`/`Eq`) because it is
+     /// transient routing state, not observable path data.
+     rollback_log: Vec<(usize, String)>,
+ }
+-// Only `inner` + `greedy` define the observable value of `PathParams`; `rollback_log`
+-// is internal bookkeeping, so it is excluded from these impls.
++// Captured values and segment provenance are observable; the rollback log is
++// internal bookkeeping, so it is excluded from these impls.
+ impl Debug for PathParams {
+     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+         f.debug_struct("PathParams")
+             .field("inner", &self.inner)
+             .field("greedy", &self.greedy)
++            .field("tail_path", &self.tail_path)
+             .finish()
+     }
+ }
+ impl PartialEq for PathParams {
+     fn eq(&self, other: &Self) -> bool {
+-        self.greedy == other.greedy && self.inner == other.inner
++        self.greedy == other.greedy
++            && self.inner == other.inner
++            && self.tail_path == other.tail_path
+     }
+ }
+ impl Eq for PathParams {}
+@@ -50,14 +92,45 @@ impl PathParams {
+     pub fn greedy(&self) -> bool {
+         self.greedy
+     }
+-    /// Get the last param starts with '*', for example: <**rest>, <*?rest>.
++    /// Get the decoded wildcard value, for example `{**rest}` or `{*?rest}`.
++    ///
++    /// This string does not distinguish encoded separators inside a segment from
++    /// separators between segments. Resource handlers should use [`Self::tail_segments`].
+     #[must_use]
+     pub fn tail(&self) -> Option<&str> {
+-        if self.greedy {
+-            self.inner.last().map(|(_, v)| &**v)
+-        } else {
+-            None
+-        }
++        self.tail_path
++            .as_ref()
++            .and_then(|path| self.inner.get_index(path.index))
++            .map(|(_, value)| value.as_str())
++    }
++
++    /// Returns the wildcard's decoded segments with their routing boundaries intact.
++    ///
++    /// A slash decoded from `%2F` remains inside one item. A trailing slash is
++    /// represented by a final empty item. Values are decoded exactly once.
++    /// For wildcard values inserted through [`Self::insert`], literal slashes in
++    /// the supplied value explicitly delimit segments.
++    #[must_use]
++    pub fn tail_segments(&self) -> Option<impl ExactSizeIterator<Item = &str>> {
++        let value = self.tail()?;
++        Some(
++            self.tail_path
++                .as_ref()?
++                .ranges
++                .iter()
++                .map(move |range| &value[range.clone()]),
++        )
++    }
++
++    /// Returns the wildcard's encoded segments before parameter decoding.
++    ///
++    /// Routing may remove dot and empty segments; use the request URI itself for
++    /// signature verification. Manually inserted values are percent-encoded.
++    #[must_use]
++    pub fn tail_raw_segments(&self) -> Option<impl Iterator<Item = &str>> {
++        self.tail_path
++            .as_ref()
++            .map(|path| path.encoded.split('/').take(path.ranges.len()))
+     }
+ 
+     /// Snapshot the current state so it can be rolled back after a failed match attempt.
+@@ -102,6 +175,9 @@ impl PathParams {
+         }
+         self.inner.truncate(len);
+         self.greedy = greedy;
++        if !greedy {
++            self.tail_path = None;
++        }
+     }
+ 
+     /// Clear the rollback log once route matching has finish
+```
+
+**File**: `crates/core/src/routing/path_state.rs` (modified, +113/-28)
+```diff
+@@ -2,20 +2,18 @@ use std::borrow::Cow;
+ use std::fmt::{self, Debug, Formatter};
+ use std::ops::Range;
+ 
+-use super::{PathParams, decode_url_path, is_invalid_path_segment};
++use super::PathParams;
++use super::path_params::CapturedPath;
+ 
+ #[derive(Clone, Debug, Eq, PartialEq)]
+-enum PathPart {
+-    Raw(Range<usize>),
+-    Decoded(String),
++struct PathPart {
++    raw: Range<usize>,
++    decoded: Option<Box<str>>,
+ }
+ impl PathPart {
+     #[inline]
+     fn as_str<'a>(&'a self, source: &'a str) -> &'a str {
+-        match self {
+-            Self::Raw(range) => &source[range.clone()],
+-            Self::Decoded(value) => value,
+-        }
++        self.decoded.as_deref().unwrap_or(&source[self.raw.clone()])
+     }
+ 
+     #[inline]
+@@ -210,6 +208,81 @@ impl<'a> PathState<'a> {
+         }
+     }
+ 
++    pub(crate) fn rest_segments_len(&self) -> usize {
++        self.parts.len().saturating_sub(self.cursor.0)
++    }
++
++    /// Capture before advancing the cursor so a wildcard never loses segment boundaries.
++    pub(crate) fn capture_tail(&mut self, name: &str, value: String) -> bool {
++        let mut ranges = Vec::new();
++        let mut encoded = String::with_capacity(value.len());
++        let mut value_offset = 0;
++        for (index, part) in self.parts.iter().enumerate().skip(self.cursor.0) {
++            let offset = if index == self.cursor.0 {
++                self.cursor.1
++            } else {
++                0
++            };
++            let Some(segment) = part.as_str(&self.path).get(offset..) else {
++                return false;
++            };
++            let raw = &self.path[part.raw.clone()];
++            // The cursor counts decoded UTF-8 bytes. Each valid percent triplet
++            // contributes one byte, even when several triplets form one character.
++            let mut raw_offset = 0;
++            for _ in 0..offset {
++                raw_offset += if raw.as_bytes()[raw_offset] == b'%'
++                    && raw
++                        .as_bytes()
++                        .get(raw_offset + 1)
++                        .is_some_and(u8::is_ascii_hexdigit)
++                    && raw
++                        .as_bytes()
++                        .get(raw_offset + 2)
++                        .is_some_and(u8::is_ascii_hexdigit)
++                {
++                    3
++                } else {
++                    1
++                };
++            }
++            if !ranges.is_empty() {
++                if value.as_bytes().get(value_offset) != Some(&b'/') {
++                    return false;
++                }
++                value_offset += 1;
++                encoded.push('/');
++            }
++            if value.get(value_offset..value_offset + segment.len()) != Some(segment) {
++                return false;
++            }
++            ranges.push(value_offset..value_offset + segment.len());
++            value_offset += segment.len();
++            encoded.push_str(&raw[raw_offset..]);
++        }
++        if self.end_slash && !ranges.is_empty() {
++            if value.as_bytes().get(value_offset) != Some(&b'/') {
++                return false;
++            }
++            value_offset += 1;
++            ranges.push(value_offset..value_offset);
++            encoded.push('/');
++        }
++        if value_offset != value.len() || self.params.greedy() {
++            return false;
++        }
++        self.params.insert_tail_tracked(
++            name,
++            value,
++            CapturedPath {
++                index: 0,
++                ranges,
++                encoded,
++            },
++        );
++        true
++    }
++
+     #[inline]
+     pub fn forward(&mut self, steps: usize) {
+         let mut steps = steps + self.cursor.1;
+@@ -264,24 +337,30 @@ fn parse_path_parts(path: &str) -> (Vec<PathPart>, bool) {
+         if start == cursor {
+             continue;
+         }
+-        let decoded = decode_url_path(&path[start..cursor]);
+-        if decoded
+-            .as_bytes()
+-            .iter()
+-            .any(|byte| matches!(byte, b'/' | b'\\'))
+-            || is_invalid_path_segment(&decoded)
+-        {
++        let raw = &path[start..cursor];
++        let decoded = if raw.as_bytes().contains(&b'%') {
++            let Ok(decoded) = percent_encoding::percent_decode_str(raw).decode_utf8() else {
++                return (parts, false);
++            };
++            decoded
++        } else {
++            Cow::Borrowed(raw)
++        };
++        if raw.contains('\\') || decoded.contains('\0') {
+             valid_path = false;
+         }
+         match decoded.as_ref() {
+             "." => {}
+             ".." => {
+                 parts.pop();
+             }
+-            _ => match decoded {
+-                Cow::Borrowed(_) => parts.push(PathPart::Raw(start..cursor)),
+-                Cow::Owned(decoded) => parts.push(PathPart::Decoded(decoded)),
+-            },
++            _ => parts.push(PathPart {
++                raw: start..cursor,
++                decoded: match decoded {
++    
+```
+
+**File**: `crates/core/src/routing/router.rs` (modified, +3/-3)
+```diff
+@@ -1161,13 +1161,13 @@ mod tests {
+     }
+ 
+     #[tokio::test]
+-    async fn test_router_rejects_encoded_path_separators() {
++    async fn test_router_keeps_encoded_separator_inside_one_parameter() {
+         let router = Router::new().path("api/{p}").get(fake_handler);
+         let mut req = TestClient::get("http://127.0.0.1:6060/api/a%2fb%2fc").build();
+         let mut path_state = PathState::from_owned_path(req.uri().path().to_owned());
+         let matched = router.detect(&mut req, &mut path_state).await;
+-        assert!(matched.is_none());
+-        assert!(path_state.params.is_empty());
++        assert!(matched.is_some());
++        assert_eq!(path_state.params["p"], "a/b/c");
+     }
+ 
+     #[tokio::test]
+```
+
+**File**: `crates/core/src/service.rs` (modified, +2/-6)
+```diff
+@@ -546,13 +546,9 @@ mod tests {
+             tokio::spawn(server.try_serve(Router::with_path("{**rest}").goal(unreachable_goal)));
+         for method in ["GET", "POST", "HEAD", "OPTIONS"] {
+             for path in [
+-                "/%2freport_note/secret.txt",
+-                "/%5creport_note/secret.txt",
+                 "/%00/report_note/secret.txt",
+-                #[cfg(windows)]
+-                "/C:/report_note/secret.txt",
+-                #[cfg(windows)]
+-                "/CON/report_note/secret.txt",
++                "/%FF/report_note/secret.txt",
++                "/report_note\\secret.txt",
+             ] {
+                 let mut client = tokio::net::TcpStream::connect(addr).await.unwrap();
+                 client.write_all(format!(
+```
+
+**File**: `crates/core/tests/matrix_path_segments.rs` (added, +236/-0)
+```diff
+@@ -0,0 +1,236 @@
++#![allow(missing_docs, clippy::unwrap_used)]
++#![cfg(feature = "test")]
++
++use salvo_core::prelude::*;
++use salvo_core::test::{ResponseExt, TestClient};
++
++#[handler]
++async fn original_uri(
++    req: &mut Request,
++    depot: &mut Depot,
++    res: &mut Response,
++    ctrl: &mut FlowCtrl,
++) {
++    let uri = req.uri().clone();
++    let target = req.uri().path_and_query().unwrap().as_str().to_owned();
++    depot.insert("signed_target", target.clone());
++    ctrl.call_next(req, depot, res).await;
++    assert_eq!(req.uri(), &uri);
++    assert_eq!(req.uri().path_and_query().unwrap().as_str(), target);
++}
++
++#[handler]
++async fn profile(req: &mut Request, depot: &mut Depot, res: &mut Response) {
++    res.render(Json(serde_json::json!({
++        "id": req.param::<String>("user_id").unwrap(),
++        "target": req.uri().path_and_query().unwrap().as_str(),
++        "signed_target": depot.get::<String>("signed_target").unwrap(),
++    })));
++}
++
++fn request(target: &str) -> Request {
++    let mut req = TestClient::get("http://localhost/").build();
++    *req.uri_mut() = target.parse().unwrap();
++    req
++}
++
++#[tokio::test]
++async fn matrix_ids_are_one_parameter_and_original_signed_target_is_unchanged() {
++    let service = Service::new(
++        Router::with_path("_matrix/client/v3/profile/{user_id}")
++            .hoop(original_uri)
++            .get(profile)
++            .push(Router::with_path("avatar_url").get(profile)),
 +    );
-     let upstream_handle = upstream.handle();
-     let upstream = tokio::spawn(upstream.serve(Router::new().goal(websocket)));
-     let front = TcpListener::new("127.0.0.1:0").bind().await;
-```
-
----
-
-### Incident Patch 3: `4fbccbbc` (2026-11-15)
-**Commit Message**: Declare catcher formats required by isolated crate tests (#2000)
-
-**File**: `crates/oapi/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -107,6 +107,7 @@ assert-json-diff = { workspace = true }
- salvo_core = { workspace = true, default-features = false, features = [
-     "cookie",
-     "test",
-+    "catcher-json",
- ] }
- serde_json = { workspace = true }
- serde = { workspace = true }
-```
-
-**File**: `crates/serve-static/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ tokio = { workspace = true }
- [dev-dependencies]
- stats_alloc = "0.1.10"
- flate2 = { workspace = true }
--salvo_core = { workspace = true, features = ["test"] }
-+salvo_core = { workspace = true, features = ["test", "catcher-html"] }
- tempfile = { workspace = true }
- tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
- 
++    for (encoded, decoded) in [
++        ("@alice:example.org", "@alice:example.org"),
++        ("@alice%3Aexample.org", "@alice:example.org"),
++        ("@a%2Fb:example.org", "@a/b:example.org"),
++        ("@a%2fb%3aexample.org", "@a/b:example.org"),
++        ("%40a%2Fb%3Aexample.org%3A8448", "@a/b:example.org:8448"),
++        ("@a+b=._-:example.org", "@a+b=._-:example.org"),
++        ("@a%2Bb:example.org", "@a+b:example.org"),
++        (
++            "@alice:%5B2001%3Adb8%3A%3A1%5D%3A8448",
++            "@alice:[2001:db8::1]:8448",
++        ),
++        // This is routing data, not a valid MXID. Business validation may reject
++        // it, but the router must never decode the percent escape twice.
++        ("@a%252Fb:example.org", "@a%2Fb:example.org"),
++    ] {
++        for suffix in ["", "/avatar_url"] {
++            let target =
++                format!("/_matrix/client/v3/profile/{encoded}{suffix}?b=%2f&a=1&a=2&plus=+");
++            let mut response = service.handle(request(&target)).await;
++            assert_eq!(response.status_code, Some(StatusCode::OK), "{target}");
++            let value: serde_json::Value = response.take_json().await.unwrap();
++            assert_eq!(value["id"], decoded, "{target}");
++            assert_eq!(value["target"], target);
++            assert_eq!(value["signed_target"], target);
++        }
++    }
++    let response = service
++        .handle(request("/_matrix/client/v3/profile/@a/b:example.org"))
++        .await;
++    assert_eq!(response.status_code, Some(StatusCode::NOT_FOUND));
++    let long_id = format!("@{}/{}:example.org", "a".repeat(120), "b".repeat(121));
++    assert_eq!(long_id.len(), 255);
++    let target = format!("/_matrix/client/v3/profile/{}", long_id.replace('/', "%2F"));
++    let mut response = service.handle(request(&target)).await;
++    assert_eq!(response.status_code, Some(StatusCode::OK));
++    let value: serde_json::Value = response.take_json().await.unwrap();
++    assert_eq!(value["id"], long_id);
++}
++
++#[handler]
++async fn tail(req: &mut Request, res: &mut Response) {
++    res.render(Json(serde_json::json!({
++        "decoded": req.params().tail_segments().unwrap().collect::<Vec<_>>(),
++        "encoded": req.params().tail_raw_segments().unwrap().collect::<Vec<_>>(),
++        "tail": req.params().tail().unwrap(),
++        "target": req.uri().path_and_query().unwrap().as_str(),
++    })));
++}
++
++#[tokio::test]
++async fn wildcard_forms_keep_boundaries_encoding_and_partial_utf8_offsets() {
++    for pattern in [
++        "{**rest}",
++        "{*?rest}",
++        #[cfg(feature = "routing-regex")]
++        "{**rest|.*}",
++        #[cfg(feature = "routing-regex")]
++        "{*?rest|.*}",
++        #[cfg(feature = "routing-regex")]
++        "prefix{**rest}",
++    ] {
++        let prefix = if pattern.starts_with("prefix") {
++            "pr%65fix"
++        } else {
++            ""
++        };
++        let service = Service::new(Router::with_path(pattern).goal(tail));
++        let target = format!("/{prefix}@a%2fb%3Aexample.org/");
++        let mut response = service.handle(request(&target)).await;
++        assert_eq!(response.status_code, Some(StatusCode::OK), "{pattern}");
++        let value: serde_json::Value = response.take_json().await.unwrap();
++        assert_eq!(
++            value["decoded"],
++            serde_json::json!(["@a/b:example.org", ""])
++        );
++        assert_eq!(
++            value["encoded"],
++            serde_json::json!(["@a%2fb%3Aexample.org", ""])
++        );
++        assert_eq!(value[
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2008** (2026-11-15): Update cache save action and fix vendor spell checks (@dependabot[bot])
-- **PR #2007** (2026-11-15): Preserve negotiated TLS protocol state in ACME listeners (@chrislearn)
-- **PR #2006** (2026-11-15): Format transport and response regression tests (@chrislearn)
-- **PR #2005** (2026-11-15): Clarify the existing RSA audit exception (@chrislearn)
-- **PR #2004** (2026-11-15): Migrate Toasty PostgreSQL PEM parsing to maintained APIs (@chrislearn)
-- **PR #2003** (2026-11-15): Patch RBatis cache and PEM dependencies (@chrislearn)
+- **PR #2015** (2026-11-17): Preserve URL parameter semantics and path segment boundaries (@chrislearn)
+- **PR #2014** (2026-11-17): Publish proxy after its versioned CSRF test dependency (@chrislearn)
+- **PR #2013** (2026-11-17): Add resolved-resource authorization and strict static path policies (@chrislearn)
+- **PR #2012** (2026-11-16): Measure real HTTP server executable sizes (@chrislearn)
+- **PR #2011** (2026-11-16): Use the examples workspace target for mTLS certificates (@chrislearn)
+- **PR #2010** (2026-11-16): Finish chunked file streams after read errors (@chrislearn)
 
 ---
 
@@ -2101,31 +2761,39 @@ Co-authored-by: Chris Young <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update cache save action and fix vendor spell checks
+## X. Release 1.2.1
 
 **RULE**:
-When implementing operations in `.github/workflows/fuzz.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in salvo-rs/salvo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in salvo-rs/salvo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `617611e8`: Update cache save action and fix vendor spell checks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e2ee81a`: Release 1.2.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzz.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+## [1.2.1] - 2026-11-17
+
+### Added
+
+- Expose `PathParams::tail_segments()` and `tail_raw_segments()` so custom
+  wildcard consumers can retain segment boundaries and original encoded spelling.
+
+- Publish versioned development dependencies before dependent crates so release
+  packaging can resolve the synchronized workspace versions.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `617611e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e2ee81a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

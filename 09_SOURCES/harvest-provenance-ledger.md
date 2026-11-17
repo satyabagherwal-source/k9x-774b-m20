@@ -10540,3 +10540,8 @@ Every entry in this ledger must capture:
 | `learn-dom-k-d4fdb7f4` | `project://dubzzz-fast-check` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md` | 2026-11-17T08:44:59.290Z |
 | `learn-dom-h-c6c068d9` | `project://trinodb-trino` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md` | 2026-11-17T08:45:48.936Z |
 | `learn-dom-h-a32d66be` | `project://pulumi-pulumi` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md` | 2026-11-17T08:46:51.548Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `6e2ee81a` | Multi-dimensional audit evidence | 2026-11-17T08:56:28.544Z |
+| `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `5060c90a` | Multi-dimensional audit evidence | 2026-11-17T08:56:31.873Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `53ba1b4f` | Multi-dimensional audit evidence | 2026-11-17T08:56:34.955Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `9fde5223` | Multi-dimensional audit evidence | 2026-11-17T08:56:42.418Z |
+| `learn-dom-d-c917d98c` | `project://faker-js-faker` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md` | 2026-11-17T08:57:17.742Z |

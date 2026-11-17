@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T08:46:52.650Z",
-  "total_verified_learnings": 8872,
+  "last_updated": "2026-11-17T08:57:19.636Z",
+  "total_verified_learnings": 8874,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20041,
+  "total_items": 20054,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212627,14 +212627,19 @@
       "slug": "mattermost-mattermost",
       "platform": "github",
       "source_url": "https://github.com/mattermost/mattermost",
-      "source_version": "2c67adc2",
-      "content_hash": "b31e046c6bce7a822a50c84ddbb9c2e71a9e2aa2b70468e1c350708d874934b3",
+      "source_version": "53ba1b4f",
+      "content_hash": "5dfd58ad6783d9202d47c05f201309ac50702d5f5a6aba079bd4cb29b4ae6852",
       "dossier_path": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "promoted_rules": [
         {
           "number": 8362,
           "title": "post list height shift for posts with multiple image attachments",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8940,
+          "title": "[MM-69773] Fix layout shift when wide images in posts finish loading",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -212643,7 +212648,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:27:25.181Z",
+      "verified_at": "2026-11-17T08:56:34.708Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212709,10 +212714,10 @@
       "relative_path": "08_VERIFICATION/mattermost-mattermost-verification-protocol-empirical-defect-shield-for-mattermo.md",
       "title": "Verification Protocol: Empirical Defect Shield for mattermost/mattermost",
       "repository": "mattermost/mattermost",
-      "source_version": "2c67adc2",
-      "content_hash": "aab3eb1bd993794836eaea20a4de366aa017e823b6e68c97885a39f1b9b2c0ed",
+      "source_version": "53ba1b4f",
+      "content_hash": "089953ae4c510d8044ff2026941ff5c86caf5664a0a70cb204809827f7fb9205",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:27:25.716Z"
+      "persisted_at": "2026-11-17T08:56:35.436Z"
     },
     "learn-github-juicedata-juicefs": {
       "learning_id": "learn-github-juicedata-juicefs",
@@ -212958,9 +212963,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mattermost-mattermost-learnings",
       "repository": "mattermost-mattermost-learnings",
       "source_version": "HEAD",
-      "content_hash": "e07bec9b224e69d6e4a71e00fbaea3ff5468a465d79b4c4757c12a77ae427460",
+      "content_hash": "9ba290c013970e658cbbab66496272efe3384274a20becf7b504077c85100a55",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:27:35.992Z"
+      "persisted_at": "2026-11-17T08:57:19.636Z"
     },
     "learn-github-embassy-rs-embassy": {
       "learning_id": "learn-github-embassy-rs-embassy",
@@ -214605,8 +214610,8 @@
       "slug": "salvo-rs-salvo",
       "platform": "github",
       "source_url": "https://github.com/salvo-rs/salvo",
-      "source_version": "617611e8",
-      "content_hash": "d0b5e958086ae57bb73c73b137e3d756100b813c81dbf002a5303d343ab0d19e",
+      "source_version": "6e2ee81a",
+      "content_hash": "51f0499ea818af710c26efa0a1a3f35c2cc50489d3a6050a3f9bd453a767ff8b",
       "dossier_path": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "promoted_rules": [
@@ -214621,7 +214626,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T19:32:03.285Z",
+      "verified_at": "2026-11-17T08:56:28.309Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214649,10 +214654,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-salvo-rs-salvo-technical-construction-intelligence-salvo-rs-salvo-core-invariant.md",
       "title": "Technical Construction Intelligence: salvo-rs/salvo Core Invariants",
       "repository": "salvo-rs/salvo",
-      "source_version": "617611e8",
-      "content_hash": "32c9e93d674cc7f69b294a15121753417a78715860864bf0b47ae78835b66d7c",
+      "source_version": "6e2ee81a",
+      "content_hash": "9d44689492bfdee7af053f016eb0eb4d1e2de4c2e762ca7c3bb08f8f783ab560",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T19:32:03.855Z"
+      "persisted_at": "2026-11-17T08:56:28.910Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-salvo-rs-salvo": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-salvo-rs-salvo",
@@ -214661,10 +214666,10 @@
       "relative_path": "12_DECISIONS/ADR-salvo-rs-salvo-adr-subsystem-boundary-modular-decoupling-in-salvo-rs-salvo.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in salvo-rs/salvo",
       "repository": "salvo-rs/salvo",
-      "source_version": "617611e8",
-      "content_hash": "3cc5610497d6a206b0da6e7d42963429650b433056c05ecc1f1096aab699fa5b",
+      "source_version": "6e2ee81a",
+      "content_hash": "c450e0784ecb337d90919abfdbb1148b6ec47c7568d5a0da6069dcae07798647",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T19:32:03.995Z"
+      "persisted_at": "2026-11-17T08:56:29.055Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-salvo-rs-salvo": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-salvo-rs-salvo",
@@ -214673,10 +214678,10 @@
       "relative_path": "08_VERIFICATION/salvo-rs-salvo-verification-protocol-empirical-defect-shield-for-salvo-rs-salvo.md",
       "title": "Verification Protocol: Empirical Defect Shield for salvo-rs/salvo",
       "repository": "salvo-rs/salvo",
-      "source_version": "617611e8",
-      "content_hash": "7211d9bd80fe75973009d297e7e5fc4e5fe828ffb3b598ccaa2562195f6010d5",
+      "source_version": "6e2ee81a",
+      "content_hash": "2bc5d2d2878b9949f0de41f5292e8d7c84dba86c756f3aac7428191e502022c6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T19:32:04.123Z"
+      "persisted_at": "2026-11-17T08:56:29.220Z"
     },
     "learn-github-zulip-zulip": {
       "learning_id": "learn-github-zulip-zulip",
@@ -214852,9 +214857,9 @@
       "title": "Technical Construction Intelligence: salvo-rs-salvo-learnings Core Invariants",
       "repository": "salvo-rs-salvo-learnings",
       "source_version": "HEAD",
-      "content_hash": "569be10521a7a1d2fad360a7c6c2802014e0fc19bc3d5e57a19fe6deefe8065c",
+      "content_hash": "cef7ae1050bc73b6ff6b6f37a96bf1a31558a8c245306e7fdf41b1d077362618",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T19:32:20.532Z"
+      "persisted_at": "2026-11-17T08:56:46.327Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-salvo-rs-salvo-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-salvo-rs-salvo-learnings",
@@ -214864,9 +214869,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in salvo-rs-salvo-learnings",
       "repository": "salvo-rs-salvo-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fe07b71f8d81c962288246e26df11b5dc216ebdc42eb62e403fe07ddb354e08",
+      "content_hash": "da19ee2bddb9269b4596ddfa2fd0b85db31cc51efec2667621a904ba4e74d822",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T19:32:20.671Z"
+      "persisted_at": "2026-11-17T08:56:46.477Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-salvo-rs-salvo-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-salvo-rs-salvo-learnings",
@@ -214876,9 +214881,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for salvo-rs-salvo-learnings",
       "repository": "salvo-rs-salvo-learnings",
       "source_version": "HEAD",
-      "content_hash": "7292899cafc09adc5e3f9a0cecfeccfc4cbaa8e1a597afb960ea468a42d5326b",
+      "content_hash": "d95239fff481b9924813b377b8aa13654d61330eae63dddfdad0272316627f44",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T19:32:20.798Z"
+      "persisted_at": "2026-11-17T08:56:46.613Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-flash-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-flash-learnings-core-invarian",
@@ -268137,6 +268142,202 @@
       "content_hash": "020165c3156b2823e6ac9c217728012016650a5ae3a16de28015085dd267c410",
       "domain_letter": "G",
       "persisted_at": "2026-11-17T08:46:52.426Z"
+    },
+    "candidate_directive-release-1-2-1": {
+      "item_id": "candidate_directive-release-1-2-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KNS9-release-1-2-1.md",
+      "title": "Release 1.2.1",
+      "repository": "salvo-rs-salvo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "33aeef677e9484f549d9c0f9a5a1b4cb99845a99472dcdb2412604c3452f9372",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:56:46.191Z"
+    },
+    "learn-github-faker-js-faker": {
+      "learning_id": "learn-github-faker-js-faker",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "faker-js/faker",
+      "repository": "faker-js/faker",
+      "slug": "faker-js-faker",
+      "platform": "github",
+      "source_url": "https://github.com/faker-js/faker",
+      "source_version": "5060c90a",
+      "content_hash": "08beee8908af7822bb903a22f43215867b0f8b5115d362b25145fbc314e136ff",
+      "dossier_path": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T08:56:31.661Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-architecture-intelligence-faker-js-faker-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-faker-js-faker-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-architecture-intelligence-faker-js-faker-core-invariants.md",
+      "title": "Architecture Intelligence: faker-js/faker Core Invariants",
+      "repository": "faker-js/faker",
+      "source_version": "5060c90a",
+      "content_hash": "153b0fed6de39dec75342b4481c24993500b86a4b15a3f914e76079bfc298307",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T08:56:32.072Z"
+    },
+    "rule-8940": {
+      "learning_id": "rule-8940",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8940,
+      "title": "[MM-69773] Fix layout shift when wide images in posts finish loading",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "53ba1b4f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:56:34.708Z"
+    },
+    "candidate_directive-mm-69773-fix-layout-shift-when-wide-images-in-posts-finish-loading": {
+      "item_id": "candidate_directive-mm-69773-fix-layout-shift-when-wide-images-in-posts-finish-loading",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LDCS-mm-69773-fix-layout-shift-when-wide-images-in-posts-finish-loading.md",
+      "title": "[MM-69773] Fix layout shift when wide images in posts finish loading",
+      "repository": "mattermost-mattermost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8e4b1f2189854e07bd0e608aee0e497f1a5e7ca64bc07d0d9c413efe0ece30a0",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-17T08:57:19.338Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mattermost-mattermost-technical-construction-intelligence-mattermost-mattermost-.md",
+      "title": "Technical Construction Intelligence: mattermost/mattermost Core Invariants",
+      "repository": "mattermost/mattermost",
+      "source_version": "53ba1b4f",
+      "content_hash": "b946a3c44b39bc7b050f9a045182012e71bb69aa4458b99c2ed757996430e3dd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:56:35.286Z"
+    },
+    "learn-github-apache-zookeeper": {
+      "learning_id": "learn-github-apache-zookeeper",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "apache/zookeeper",
+      "repository": "apache/zookeeper",
+      "slug": "apache-zookeeper",
+      "platform": "github",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "9fde5223",
+      "content_hash": "256b12fb526e5359b243566de3e194af8b98d18ebd2d371b37d728442b88c16b",
+      "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8941,
+          "title": "Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeepe",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T08:56:42.159Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8941": {
+      "learning_id": "rule-8941",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8941,
+      "title": "Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeepe",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "9fde5223",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:56:42.159Z"
+    },
+    "candidate_directive-upgrade-google-guava-to-33-7-2-jre-in-zookeeper-contrib-zookeepe": {
+      "item_id": "candidate_directive-upgrade-google-guava-to-33-7-2-jre-in-zookeeper-contrib-zookeepe",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KL12-upgrade-google-guava-to-33-7-2-jre-in-zookeeper-contrib-zookeepe.md",
+      "title": "Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeepe",
+      "repository": "apache/zookeeper",
+      "source_version": "9fde5223",
+      "content_hash": "10f7123061485a75a686fa43b11732f8ace8331022588a78ae93c6b7afae4e4d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:56:42.619Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-zookeeper-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-apache-zookeeper-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-technical-construction-intelligence-apache-zookeeper-core-invar.md",
+      "title": "Technical Construction Intelligence: apache/zookeeper Core Invariants",
+      "repository": "apache/zookeeper",
+      "source_version": "9fde5223",
+      "content_hash": "62a6f770d9a68a7d00ac4ca2988a1f341c3692d071213a8d66be89397bed9db1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:56:42.744Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/apache-zookeeper-verification-protocol-empirical-defect-shield-for-apache-zookee.md",
+      "title": "Verification Protocol: Empirical Defect Shield for apache/zookeeper",
+      "repository": "apache/zookeeper",
+      "source_version": "9fde5223",
+      "content_hash": "469991eda67c0b4954fc86b4c4d1099ca14f3905e096f07b338d48bf592d5a7c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T08:56:42.884Z"
+    },
+    "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-learnings-architecture-intelligence-faker-js-faker-learnings-core.md",
+      "title": "Architecture Intelligence: faker-js-faker-learnings Core Invariants",
+      "repository": "faker-js-faker-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f38a21a8b882309598973e49dfd573845c1e8ef1bdf40d4d2840b263c18ec28d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T08:57:18.607Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mattermost-mattermost-learnings-technical-construction-intelligence-mattermost-m.md",
+      "title": "Technical Construction Intelligence: mattermost-mattermost-learnings Core Invariants",
+      "repository": "mattermost-mattermost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5a91f5ee47444762550eb532f20945a8e28082e404c91018e44336772ef4056d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:57:19.469Z"
     }
   },
   "ai-builder-brain": {
