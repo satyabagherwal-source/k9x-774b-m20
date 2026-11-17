@@ -10482,3 +10482,7 @@ Every entry in this ledger must capture:
 | `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `4e00c805` | Multi-dimensional audit evidence | 2026-11-17T04:56:47.994Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `911f5a91` | Multi-dimensional audit evidence | 2026-11-17T04:56:53.593Z |
 | `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `1cbef31b` | Multi-dimensional audit evidence | 2026-11-17T05:19:45.815Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `b9712f7f` | Multi-dimensional audit evidence | 2026-11-17T05:37:08.622Z |
+| `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `d63a027c` | Multi-dimensional audit evidence | 2026-11-17T05:37:11.194Z |
+| `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `4ebe4fe0` | Multi-dimensional audit evidence | 2026-11-17T05:37:13.379Z |
+| `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `5cda2887` | Multi-dimensional audit evidence | 2026-11-17T05:37:15.911Z |

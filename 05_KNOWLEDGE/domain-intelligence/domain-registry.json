@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T05:19:50.922Z",
-  "total_records": 1444,
+  "last_updated": "2026-11-17T05:37:20.777Z",
+  "total_records": 1446,
   "domains": {
     "A": {
       "total": 9,
@@ -985,7 +985,7 @@
       ]
     },
     "H": {
-      "total": 333,
+      "total": 335,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1319,7 +1319,9 @@
         "domain_intelligence-technical-construction-intelligence-webpack-webpack-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-electron-electron-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rollup-rollup-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-rollup-rollup-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-rollup-rollup-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tanstack-query-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants"
       ]
     },
     "I": {
@@ -7829,8 +7831,8 @@
       "title": "Architecture Intelligence: gauthierpiarrette/highball Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-architecture-intelligence-gauthierpiarrette-highball-.md",
       "repository": "gauthierpiarrette/highball",
-      "content_hash": "50b046c9900c747a6f082824cf12dd5b5589b08dcbe9a9cc84361a4d9c0daeb0",
-      "created_at": "2026-11-13T16:25:48.749Z"
+      "content_hash": "f0b33f0af41ac2286b71e5a897f2b44949a525a2f682a3e53bdcc1ad56a546cd",
+      "created_at": "2026-11-17T05:37:13.657Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants",
@@ -7907,8 +7909,8 @@
       "title": "Architecture Intelligence: gauthierpiarrette-highball-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-learnings-architecture-intelligence-gauthierpiarrette.md",
       "repository": "gauthierpiarrette-highball-learnings",
-      "content_hash": "3f4ddb6af247c1faf5ca93c5c90555409f998ae9daf0d378351c600d6908eb04",
-      "created_at": "2026-11-13T16:26:52.990Z"
+      "content_hash": "c9e4ddc140872373c4f6daf44d57af6407948ccfb9ec8b2811a276117a50cec5",
+      "created_at": "2026-11-17T05:37:20.777Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants",
@@ -8291,8 +8293,8 @@
       "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
       "repository": "pimalaya/himalaya",
-      "content_hash": "a61cd1a7836a2b44d9dcabae84a0663565769ab6c5d56cbd0f0885545953ea56",
-      "created_at": "2026-11-15T14:56:02.156Z"
+      "content_hash": "c3607597f6572e4cd8e0236df0e33b27bde820b5e4251df794f9c76f78ee65b5",
+      "created_at": "2026-11-17T05:37:08.947Z"
     },
     "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle",
@@ -8309,8 +8311,8 @@
       "title": "Product Intelligence: pimalaya-himalaya-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-learnings-product-intelligence-pimalaya-himalaya-learnings-cor.md",
       "repository": "pimalaya-himalaya-learnings",
-      "content_hash": "6183ffcd1ec39a0dd7911dbec63ec241d381b7f59b8578848ff904259cb58d3e",
-      "created_at": "2026-11-15T14:56:12.641Z"
+      "content_hash": "d9d81a9af262031397388bf5df74657d2319eda0061b08078832e17a4212c483",
+      "created_at": "2026-11-17T05:37:19.504Z"
     },
     "DOM-F-456EB881": {
       "record_id": "DOM-F-456EB881",
@@ -15312,8 +15314,8 @@
       "title": "Architecture Intelligence: argoproj/argo-events Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-events-architecture-intelligence-argoproj-argo-events-core-invaria.md",
       "repository": "argoproj/argo-events",
-      "content_hash": "e062b6c1f38110b8633bba78c8849d37d387c0d2652f0157e98b0328af9f1f92",
-      "created_at": "2026-11-15T23:26:05.324Z"
+      "content_hash": "d5ac3a4e000b03fb313e2c36328880d2facb9b2b988f6301d6ae803523e2496d",
+      "created_at": "2026-11-17T05:37:16.209Z"
     },
     "domain_intelligence-architecture-intelligence-rqlite-rqlite-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rqlite-rqlite-core-invariants",
@@ -25275,6 +25277,24 @@
       "repository": "hf-liquidai-lfm3-1.7b-gguf-learnings",
       "content_hash": "f3a5da40ac2d8d315b8fa6ee05837ea04be5564829affeb10f1717ea669169f0",
       "created_at": "2026-11-17T04:43:58.670Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tanstack-query-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tanstack-query-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: TanStack/query Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-technical-construction-intelligence-tanstack-query-core-invariant.md",
+      "repository": "TanStack/query",
+      "content_hash": "1d469f78a9350b3a5803d03ae156891a4f648daf80045f1c71a0f82e3eb02cb7",
+      "created_at": "2026-11-17T05:37:11.509Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tanstack-query-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-learnings-technical-construction-intelligence-tanstack-query-lear.md",
+      "repository": "tanstack-query-learnings",
+      "content_hash": "d61ada48cf184029839a8fb462fd5e6338f7fc5732caa4700ab442436feef596",
+      "created_at": "2026-11-17T05:37:20.167Z"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T05:19:45.823Z",
+  "last_updated": "2026-11-17T05:37:15.919Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6066,14 +6066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-events",
-      "content_hash": "ab1f2b6d8f8b8113f0463f385d68cc970cc76704bc90f5647ae532394caaebdb",
-      "verified_at": "2026-11-15T23:26:05.055Z",
+      "content_hash": "fea7c4fd7df0c7eb965392e5214176e78549d7c4485bcf2ce8311a504ddf3e3f",
+      "verified_at": "2026-11-17T05:37:15.918Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T23:26:05.055Z"
+      "last_updated": "2026-11-17T05:37:15.918Z"
     },
     "HelixDB/helix-db": {
       "repository": "HelixDB/helix-db",
@@ -7236,14 +7236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pimalaya-himalaya",
-      "content_hash": "d260d27e945dba5d3a1d50bb38ddcb85b86810bbe495ba08eba27f449d722231",
-      "verified_at": "2026-11-15T14:56:01.882Z",
+      "content_hash": "2d931f626ca5fe7defdd2162a8f9a5ca1170260d5617776ffc4b1884872c05e9",
+      "verified_at": "2026-11-17T05:37:08.630Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T14:56:01.882Z"
+      "last_updated": "2026-11-17T05:37:08.630Z"
     },
     "wcandillon/react-native-skia": {
       "repository": "wcandillon/react-native-skia",
@@ -15126,14 +15126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-query",
-      "content_hash": "ebd533e916b9cad71a9b3593974865df9ca16741b837754ae17c6dc16963bb5d",
-      "verified_at": "2026-11-12T14:08:35.323Z",
+      "content_hash": "2a7862c8dff8e4989bc07af5a69e52f12c63007eb9b6222fd055b432e294d9ac",
+      "verified_at": "2026-11-17T05:37:11.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T14:08:35.323Z"
+      "last_updated": "2026-11-17T05:37:11.202Z"
     },
     "apple/sample-food-truck": {
       "repository": "apple/sample-food-truck",
@@ -15876,14 +15876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gauthierpiarrette-highball",
-      "content_hash": "e1d817ecf77b9bc98cdc66450546e6dd2b642b5c16b4bc710fa52c97b7c93a90",
-      "verified_at": "2026-11-13T16:25:48.436Z",
+      "content_hash": "7a3d26411b018bb3a94381a329fbdfd6c7f1c053513a94b5c1fff40b8e14637d",
+      "verified_at": "2026-11-17T05:37:13.387Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T16:25:48.436Z"
+      "last_updated": "2026-11-17T05:37:13.387Z"
     },
     "MiniMaxAI/MiniMax-M3.1-Flash": {
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",

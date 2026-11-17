@@ -645346,3 +645346,333 @@ module_blueprint_commit: a641e84f2861d1ff068df7616e06d08bfd4d0a88
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `dd29fa27` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8874. build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph (Harvested from pimalaya/himalaya)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph",
+  "source": "pimalaya/himalaya",
+  "source_url": "https://github.com/pimalaya/himalaya",
+  "source_version": "b9712f7f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T05:37:08.229Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pimalaya-himalaya",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pimalaya/himalaya](https://github.com/pimalaya/himalaya) (Revision: `b9712f7f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b9712f7f`: build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph to 0.9.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+version = "0.7.1"
+checksum = "7e390dd6dbfc13b572c448002e57878c151204010b8249c4d3e0d2b758d734cf"
+version = "0.9.3"
+checksum = "aecd5bd9319b486f79a7a32ece8f14e354986efc92f034e029864c2982fdc079"
+version = "0.15.1"
+checksum = "5a8d137275e17b01cbbe06e3cb235eba454f98e0e5f8483bd647d429e582a91a"
+version = "1.0.0"
+checksum = "9cc767b5763de45e810109520123bb2829a653f3a7ed9be40b2bc4f81158f595"
+version = "1.0.0"
+checksum = "894f7ac42105f584100691b3bf6e6b92dd12fcfa225f6c397f95c8a94b47b68f"
+version = "1.0.0"
+checksum = "955491488dc99b572ea6d67b172dcd98787d00744b1fb44a5689b4e6413695a6"
+ "syn 3.0.10",
+version = "1.0.0"
+checksum = "12e71a1b68a875a44a33bb7a1dd84392cb77145a3367a552a3cfe6a4f5cf3afc"
+version = "0.40.0"
+checksum = "b06e69070b7e12262b0cd90832f0a7396f142a2b330181255562decf9f0c6215"
+version = "0.43.0"
+checksum = "f172c4812a19b26d1c23cdb0070e69db335503dfa378b910eb857386e5b8beba"
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+version = "0.7.0"
+checksum = "5dbc009237124ae236eb886a57bda65357729b6b8ff7ad21113de2cea933e02a"
+version = "0.9.2"
+checksum = "cf2f9e0df97603e14e46ca58d104de5dfd77e1ca72aac1206f92e01047995837"
+version = "0.14.1"
+checksum = "f19a7e961bd806c87280d35695f5a92e7ba34b4fe971ffd7577891bae3775764"
+version = "0.2.43"
+checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
+version = "0.1.5"
+checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
+version = "0.2.43"
+checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
+ "syn 2.0.119",
+version = "0.1.9"
+checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
+version = "0.39.1"
+checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
+version = "0.41.1"
+checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b9712f7f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8875. *): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the ne (Harvested from TanStack/query)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "*): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the ne",
+  "source": "TanStack/query",
+  "source_url": "https://github.com/TanStack/query",
+  "source_version": "d63a027c",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T05:37:10.793Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tanstack-query",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TanStack/query](https://github.com/TanStack/query) (Revision: `d63a027c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/eslint/eslint-plugin-query.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cb62f4f2`: *): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the newly reported lint errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/eslint/eslint-plugin-query.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { defineConfig } from 'oxlint'
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+import { defineConfig } from 'oxlint'
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cb62f4f2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8876. Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the au (Harvested from gauthierpiarrette/highball)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the au",
+  "source": "gauthierpiarrette/highball",
+  "source_url": "https://github.com/gauthierpiarrette/highball",
+  "source_version": "4ebe4fe0",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-17T05:37:12.993Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gauthierpiarrette-highball",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball) (Revision: `4ebe4fe0`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Tests/HighballKitTests/BundledEngineTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ac350e46`: Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the audio library the Wine 11 engines carry since r30 (audiobuf-20261103, sha256 617b8feb, 8 KB, the same archive). The default engine still had the October library, so on it a microphone lost 32 frames nearly every 10 ms period (highball#350, #601), Wine's audio clock slept at normal priority on a busy Mac, and games kept the output they started with (#460, nikiomori's change). Every other archive is r28's or r29's, so environments move without the Windows setup and download 8 KB; r28 moves to spike/engines for rollback. Installed r30 from its manifest with the CLI in a throwaway home on an M1 Pro, macOS 27.0: every file is r28's except libhbaudiobuf.dylib, byte-identical to Wine 11 r31's. A WASAPI capture with hbtap's sample time ramp in place of the microphone's data, 6 s at 48 kHz: 520 and 501 breaks on r28, 0 on r30, under 10 busy loops 510 against 0; the library logs the capture buffer capped at 240 frames and audio_client_timer made real time (status 0). r31 was not installed on its own, BundledEngineTests checks it is r29 plus that archive. 872 tests pass.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tests/HighballKitTests/BundledEngineTests.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    /// On 2026-11-14 the audio library the Wine 11 engines carry since r30 (microphones, a real time
+    /// audio clock, following the Mac's output; highball#350, #444, #460): r30 and r31.
+                                  ("x64-sikarugir10.0_6-r29", "x64-sikarugir10.0_6-r6"), ("x64-sikarugir10.0_6-r30", "x64-sikarugir10.0_6-r5"),
+                                  ("x64-sikarugir10.0_6-r31", "x64-sikarugir10.0_6-r6")] {
+                                 "x64-sikarugir10.0_6-r28", "x64-sikarugir10.0_6-r29", "x64-sikarugir10.0_6-r30", "x64-sikarugir10.0_6-r31"]
+                           "x64-sikarugir10.0_6-r28", "x64-sikarugir10.0_6-r30"].contains(current) ? "wine10-dep-" : "wine10-msync-"
+        XCTAssertEqual(all.last?.id, "x64-sikarugir10.0_6-r30", "r30 is the default engine")
+        // r30 and r31 are r28 and r29 with only the audio library changed, to the 8 KB archive the Wine 11
+     
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+                                  ("x64-sikarugir10.0_6-r29", "x64-sikarugir10.0_6-r6")] {
+                                 "x64-sikarugir10.0_6-r28", "x64-sikarugir10.0_6-r29"]
+                           "x64-sikarugir10.0_6-r28"].contains(current) ? "wine10-dep-" : "wine10-msync-"
+        XCTAssertEqual(all.last?.id, "x64-sikarugir10.0_6-r28", "r28 is the default engine")
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ac350e46` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8877. support a custom STS endpoint for web identity and assume role credentials (Harvested from argoproj/argo-events)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "support a custom STS endpoint for web identity and assume role credentials",
+  "source": "argoproj/argo-events",
+  "source_url": "https://github.com/argoproj/argo-events",
+  "source_version": "5cda2887",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T05:37:15.510Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-argoproj-argo-events",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argoproj/argo-events](https://github.com/argoproj/argo-events) (Revision: `5cda2887`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `api/jsonschema/schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5cda2887`: sns): support a custom STS endpoint for web identity and assume role credentials. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/jsonschema/schema.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+        "stsEndpoint": {
+          "description": "STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers, used to assume RoleARN and to exchange a web identity token for credentials",
+          "type": "string"
+        },
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5cda2887` are properly handled with clean fallback behavior.

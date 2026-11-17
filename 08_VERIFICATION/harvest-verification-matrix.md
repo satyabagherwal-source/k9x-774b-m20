@@ -10449,3 +10449,7 @@
 | `CYCLE-20261117-022E` | `2026-11-17T04:56:47.990Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8871` | Yes (`e4882eac...`) |
 | `CYCLE-20261117-06DX` | `2026-11-17T04:56:53.589Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8872` | Yes (`803b7210...`) |
 | `CYCLE-20261117-TL78` | `2026-11-17T05:19:45.812Z` | `a2ui-project/a2ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8873` | Yes (`b88241c7...`) |
+| `CYCLE-20261117-FXU3` | `2026-11-17T05:37:08.619Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8874` | Yes (`2d931f62...`) |
+| `CYCLE-20261117-FZTJ` | `2026-11-17T05:37:11.191Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8875` | Yes (`2a7862c8...`) |
+| `CYCLE-20261117-G1I8` | `2026-11-17T05:37:13.376Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8876` | Yes (`7a3d2641...`) |
+| `CYCLE-20261117-G3GJ` | `2026-11-17T05:37:15.907Z` | `argoproj/argo-events` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8877` | Yes (`fea7c4fd...`) |

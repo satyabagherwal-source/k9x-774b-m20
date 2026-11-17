@@ -4,23 +4,23 @@
 {
   "source_repository": "argoproj/argo-events",
   "source_url": "https://github.com/argoproj/argo-events",
-  "source_version": "ba2dd434",
+  "source_version": "5cda2887",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T23:26:05.212Z",
+  "timestamp": "2026-11-17T05:37:16.093Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-argoproj-argo-events",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [argoproj/argo-events](https://github.com/argoproj/argo-events) (Revision: `ba2dd434`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T23:26:05.212Z`  
+> **Provenance**: Harvested from [argoproj/argo-events](https://github.com/argoproj/argo-events) (Revision: `5cda2887`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T05:37:16.093Z`  
 > **Learning ID**: `learn-github-argoproj-argo-events`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T23:26:04.182Z  
+> **Harvest Timestamp**: 2026-11-17T05:37:15.067Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -526,6 +526,16 @@ func ProcessRouteStatus(ctrl *Controller) {
 	}
 }
 
+// parseBearerAuthorization returns the token of an "Authorization: Bearer <token>" header.
+// The scheme is matched case-insensitively, as HTTP authentication schemes require.
+func parseBearerAuthorization(authHeader string) (string, bool) {
+	parts := strings.Fields(authHeader)
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
+		return "", false
+	}
+	return parts[1], true
+}
+
 // starts a http server
 func startServer(router Router, controller *Controller) {
 	// start a http server only if no other configuration previously started the server on given port
@@ -582,13 +592,13 @@ func startServer(router Router, controller *Controller) {
 					sharedutil.SendInternalErrorResponse(writer, "Error loading auth token")
 					return
 				}
-				authHeader := request.Header.Get("Authorization")
-				if !strings.HasPrefix(authHeader, "Bearer ") {
+				authToken, ok := parseBearerAuthorization(request.Header.Get("Authorization"))
+				if !ok {
 					route.Logger.Error("invalid auth header")
 					sharedutil.SendResponse(writer, http.StatusUnauthorized, "Invalid Authorization Header")
 					return
 				}
-				if strings.TrimPrefix(authHeader, "Bearer ") != token {
+				if subtle.ConstantTimeCompare([]byte(authToken), []byte(token)) != 1 {
 					route.Logger.Error("invalid auth token")
 					sharedutil.SendResponse(writer, http.StatusUnauthorized, "Invalid Auth token")
 					return
@@ -705,20 +715,7 @@ func ManageRoute(ctx context.Context, router Router, controller *Controller, dis
 	activateRoute(router, controller)
 
 	logger.Info("running operations post route activation...")
-	if err := router.PostActivate(); err != nil {
-		logger.Errorw("error occurred while performing post route activation operations", zap.Error(err))
-		return err
-	}
-
-	<-ctx.Done()
-	logger.Info("connection is closed by client")
-
-	logger.Info("marking route as inactive")
-	controller.RouteDeactivateChan <- router
-
-	logger.Info("running operations post route inactivation...")
-	if err := router.PostInactivate(); err != nil {
-		logge
+	if err := router.PostActivate(
 ```
 
 ### Core Architecture Module: `pkg/eventsources/sources/azurequeuestorage/start.go`
@@ -1060,331 +1057,467 @@ func (g *gerritWebhookService) Delete(project, remoteName string) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba2dd434` (2026-11-15)
-**Commit Message**: fix: stop PrevCronTime looping on the DST fall-back day (#4241)
+### Incident Patch 1: `5cda2887` (2026-11-16)
+**Commit Message**: fix(sns): support a custom STS endpoint for web identity and assume role credentials (#4215)
 
-Signed-off-by: Ahmed Laban <[REDACTED_EMAIL]>
+Signed-off-by: Youssef Omar Bouden <[REDACTED_EMAIL]>
+Signed-off-by: Derek Wang <[REDACTED_EMAIL]>
+Co-authored-by: Derek Wang <[REDACTED_EMAIL]>
 
-**File**: `pkg/shared/util/cronutil.go` (modified, +8/-4)
+**File**: `api/jsonschema/schema.json` (modified, +4/-0)
 ```diff
-@@ -90,8 +90,12 @@ WRAP:
- 
- 	for 1<<uint(t.Hour())&s.Hour == 0 {
- 		// set t to the last second of the previous hour
--		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), 0, 0, 0, loc)
--		t = t.Add(-1 * time.Second)
-+		//
-+		// Subtract the elapsed minutes and seconds instead of using time.Date:
-+		// on the day the clocks fall back, an hour happens twice and time.Date
-+		// returns the later of the two instants, which can move t forward and
-+		// loop forever.
-+		t = t.Add(-time.Duration(t.Minute())*time.Minute - time.Duration(t.Second()+1)*time.Second)
- 
- 		if t.Hour() == 23 {
- 			goto WRAP
-@@ -100,8 +104,8 @@ WRAP:
- 
- 	for 1<<uint(t.Minute())&s.Minute == 0 {
- 		// set t to the last second of the previous minute
--		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), 0, 0, loc)
--		t = t.Add(-1 * time.Second)
-+		// (see the hour loop above for why time.Date isn't used here)
-+		t = t.Add(-time.Duration(t.Second()+1) * time.Second)
- 
- 		if t.Minute() == 59 {
- 			goto WRAP
+@@ -3785,6 +3785,10 @@
+           "$ref": "#/definitions/io.k8s.api.core.v1.SecretKeySelector",
+           "description": "SecretKey refers K8s secret containing aws secret key"
+         },
++        "stsEndpoint": {
++          "description": "STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers, used to assume RoleARN and to exchange a web identity token for credentials",
++          "type": "string"
++        },
+         "topicArn": {
+           "description": "TopicArn",
+           "type": "string"
 ```
 
-**File**: `pkg/shared/util/cronutil_test.go` (modified, +57/-0)
+**File**: `api/openapi-spec/swagger.json` (modified, +4/-0)
 ```diff
-@@ -104,3 +104,60 @@ func getTime(value string) time.Time {
- 	}
- 	panic("could not parse time value " + value)
+@@ -3773,6 +3773,10 @@
+           "description": "SecretKey refers K8s secret containing aws secret key",
+           "$ref": "#/definitions/io.k8s.api.core.v1.SecretKeySelector"
+         },
++        "stsEndpoint": {
++          "description": "STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers, used to assume RoleARN and to exchange a web identity token for credentials",
++          "type": "string"
++        },
+         "topicArn": {
+           "description": "TopicArn",
+           "type": "string"
+```
+
+**File**: `docs/APIs.md` (modified, +21/-0)
+```diff
+@@ -18119,6 +18119,27 @@ Amazons servers
+ 
+ </tr>
+ 
++<tr>
++
++<td>
++
++<code>stsEndpoint</code></br> <em> string </em>
++</td>
++
++<td>
++
++<em>(Optional)</em>
++<p>
++
++STSEndpoint configures connection to a specific STS endpoint instead of
++Amazons servers, used to assume RoleARN and to exchange a web identity
++token for credentials
++</p>
++
++</td>
++
++</tr>
++
+ </tbody>
+ 
+ </table>
+```
+
+**File**: `pkg/apis/events/openapi/openapi_generated.go` (modified, +7/-0)
+```diff
+@@ -7099,6 +7099,13 @@ func schema_pkg_apis_events_v1alpha1_SNSEventSource(ref common.ReferenceCallback
+ 							Format:      "",
+ 						},
+ 					},
++					"stsEndpoint": {
++						SchemaProps: spec.SchemaProps{
++							Description: "STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers, used to assume RoleARN and to exchange a web identity token for credentials",
++							Type:        []string{"string"},
++							Format:      "",
++						},
++					},
+ 				},
+ 				Required: []string{"topicArn", "region"},
+ 			},
+```
+
+**File**: `pkg/apis/events/v1alpha1/eventsource_types.go` (modified, +4/-0)
+```diff
+@@ -622,6 +622,10 @@ type SNSEventSource struct {
+ 	// Endpoint configures connection to a specific SNS endpoint instead of Amazons servers
+ 	// +optional
+ 	Endpoint string `json:"endpoint" protobuf:"bytes,10,opt,name=endpoint"`
++	// STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers,
++	// used to assume RoleARN and to exchange a web identity token for credentials
++	// +optional
++	STSEndpoint string `json:"stsEndpoint,omitempty" protobuf:"bytes,11,opt,name=stsEndpoint"`
  }
+ 
+ // SQSEventSource refers to event-source for AWS SQS related events
+```
+
+**File**: `pkg/apis/events/v1alpha1/generated.proto` (modified, +5/-0)
+```diff
+@@ -2761,6 +2761,11 @@ message SNSEventSource {
+   // Endpoint configures connection to a specific SNS endpoint instead of Amazons servers
+   // +optional
+   optional string endpoint = 10;
 +
-+// TestPrevCronTimeDSTFallBack covers the day the clocks fall back, when one
-+// wall-clock hour happens twice. time.Date returns the later of the two
-+// instants for such a wall time, so truncating with time.Date there can move
-+// t forward instead of backward. See
-+// https://github.com/argoproj/argo-events/issues/4240.
-+func TestPrevCronTimeDSTFallBack(t *testing.T) {
-+	parser := cronlib.NewParser(cronlib.Second | cronlib.Minute | cronlib.Hour | cronlib.Dom | cronlib.Month | cronlib.DowOptional | cronlib.Descriptor)
-+
-+	runs := []struct {
-+		time, spec string
-+		expected   string
-+	}{
-+		// Europe/Berlin: 2026-10-25 03:00 CEST (+0200) -> 02:00 CET (+0100).
-+		// Walking back through the repeated 02:xx hour used to loop forever.
-+		{"2026-10-25T03:30:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
-+		{"2026-10-25T12:00:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
-+		{"2026-10-25T02:30:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
-+		{"2026-10-25T03:30:00+0100", "TZ=Europe/Berlin 0 0 1 * * *", "2026-10-25T01:00:00+0200"},
-+
-+		// Hourly job during the repeated hour: the first 02:00 (CEST) must not
-+		// be reported as the second 02:00 (CET), which is in the future.
-+		{"2026-10-25T02:30:00+0200", "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0200"},
-+		{"2026-10-25T02:30:00+0100", "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0100"},
-+		{"2026-10-25T03:00:00+0100", "TZ=Europe/Berlin 0 30 * * * *", "2026-10-25T02:30:00+0100"},
-+
-+		// America/New_York: 2026-11-01 02:00 EDT (-0400) -> 01:00 EST (-0500).
-+		{"2026-11-01T02:30:00-0500", "TZ=America/New_York 0 0 0 * * *", "2026-11-01T00:00:00-0400"},
-+		{"2026-11-01T01:30:00-0400", "TZ=America/New_York 0 0 * * * *", "2026-11-01T01:00:00-0400"},
++  // STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers,
++  // used to assume RoleARN and to exchange a web identity token for credentials
++  // +optional
++  optional string stsEndpoint = 11;
+ }
+ 
+ // SQSEventSource refers to event-source for AWS SQS related events
+```
+
+**File**: `pkg/eventsources/common/aws/aws.go` (modified, +37/-10)
+```diff
+@@ -22,7 +22,9 @@ import (
+ 	"github.com/aws/aws-sdk-go/aws"
+ 	"github.com/aws/aws-sdk-go/aws/credentials"
+ 	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
++	"github.com/aws/aws-sdk-go/aws/endpoints"
+ 	"github.com/aws/aws-sdk-go/aws/session"
++	"github.com/aws/aws-sdk-go/service/sts"
+ 	corev1 "k8s.io/api/core/v1"
+ 
+ 	sharedutil "github.com/argoproj/argo-events/pkg/shared/util"
+@@ -77,26 +79,51 @@ func GetAWSSession(creds *credentials.Credentials, region string) (*session.Sess
+ 	})
+ }
+ 
+-func GetAWSSessionWithoutCreds(region string) (*session.Session, error) {
++func GetAWSSessionWithoutCreds(region, stsEndpoint string) (*session.Session, error) {
+ 	return session.NewSession(&aws.Config{
+-		Region: &region,
++		Region:           &region,
++		EndpointResolver: stsEndpointResolver(stsEndpoint, region),
+ 	})
+ }
+ 
+-func GetAWSAssumeRoleCreds(roleARN, region string) (*session.Session, error) {
+-	sess := session.Must(session.NewSession())
++func GetAWSAssumeRoleCreds(roleARN, region, stsEndpoint string) (*session.Session, error) {
++	sess := session.Must(session.NewSession(&aws.Config{
++		EndpointResolver: stsEndpointResolver(stsEndpoint, region),
++	}))
+ 	creds := stscreds.NewCredentials(sess, roleARN)
+ 	return GetAWSSession(creds, region)
+ }
+ 
++// stsEndpointResolver sends STS requests, including the web identity token exchange done by
++// the default credential chain, to stsEndpoint. Other services keep their default endpoints.
++func stsEndpointResolver(stsEndpoint, fallbackRegion string) endpoints.Resolver {
++	if stsEndpoint == "" {
++		return nil
 +	}
-+
-+	for _, c := range runs {
-+		type result struct {
-+			t   time.Time
-+			err error
-+		}
-+		done := make(chan result, 1)
-+		go func() {
-+			actual, err := PrevCronTime(c.spec, parser, getTime(c.time))
-+			done <- result{actual, err}
-+		}()
-+
-+		select {
-+		case r := <-done:
-+			if r.err != nil {
-+				t.Errorf("%s, %q: error: %v", c.time, c.spec, r.err)
-+				continue
++	defaultResolver := endpoints.DefaultResolver()
++	return endpoints.ResolverFunc(func(service, region string, optFns ...func(*endpoints.Options)) (endpoints.ResolvedEndpoint, error) {
++		if service == sts.EndpointsID {
++			// Region comes from the ENV by default, take the region from the spec if not set.
++			if region == "" {
++				region = fallbackRegion
 +			}
-+			expected := getTime(c.expected)
-+			if !r.t.Equal(expected) {
-+				t.Errorf("%s, %q: (expected) %v != %v (actual)", c.time, c.spec, expected, r.t)
-+			}
-+		case <-time.After(5 * time.Second):
-+			t.Fatalf("%s, %q: PrevCronTime did not return within 5s", c.time, c.spec)
++			return endpoints.ResolvedEndpoint{
++				URL:           endpoints.AddScheme(stsEndpoint, false),
++				SigningRegion: region,
++			}, nil
 +		}
-+	}
++		return defaultResolver.EndpointFor(service, region, optFns...)
++	})
 +}
++
+ // CreateAWSSessionWithCredsInEnv based on credentials in ENV, return a aws session
+-func CreateAWSSessionWithCredsInEnv(region string, roleARN string, accessKey *corev1.SecretKeySelector, secretKey *corev1.SecretKeySelector) (*session.Session, error) {
++func CreateAWSSessionWithCredsInEnv(region string, roleARN string, accessKey *corev1.SecretKeySelector, secretKey *corev1.SecretKeySelector, stsEndpoint string) (*session.Session, error) {
+ 	if roleARN != "" {
+-		return GetAWSAssumeRoleCreds(roleARN, region)
++		return GetAWSAssumeRoleCreds(roleARN, region, stsEndpoint)
+ 	}
+ 
+ 	if accessKey == nil && secretKey == nil {
+-		return GetAWSSessionWithoutCreds(region)
++		return GetAWSSessionWithoutCreds(region, stsEndpoint)
+ 	}
+ 
+ 	creds, err := GetAWSCredFromEnvironment(accessKey, secretKey)
+@@ -108,13 +135,13 @@ func CreateAWSSessionWithCredsInEnv(region string, roleARN string, accessKey *co
+ }
+ 
+ // CreateAWSSessionWithCredsInVolume based on credentials in mounted volumes, return a aws session
+-func CreateAWSSessionWithCredsInVolume(region string, roleARN string, accessKey *corev1.SecretKeySelector, secretKey *corev1.SecretKeySelector, sessionToken *corev1.SecretKeySelector) (*session.Session, error) {
++func CreateAWSSessionWithCredsInVolume(region string, roleARN string, accessKey *corev1.SecretKeySelector, secretKey *corev1.SecretKeySelector, sessionToken *corev1.SecretKeySelector, stsEndpoint string) (*session.Session, error) {
+ 	if roleARN != "" {
+-		return GetAWSAssumeRoleCreds(roleARN, region)
++		return GetAWSAssumeRoleCreds(roleARN, region, stsEndpoint)
+ 	}
+ 
+ 	if accessKey == nil && secretKey == nil {
+-		return GetAWSSessionWithoutCreds(region)
++		return GetAWSSessionWithoutCreds(region, stsEndpoint)
+ 	}
+ 
+ 	creds, err := GetAWSCredFromVolume(accessKey, secretKey, sessionToken)
+```
+
+**File**: `pkg/eventsources/common/aws/aws_test.go` (modified, +84/-2)
+```diff
+@@ -18,7 +18,11 @@ package aws
+ 
+ import (
+ 	"context"
++	"fmt"
++	"net/http"
++	"net/http/httptest"
+ 	"os"
++	"path/filepath"
+ 	"testing"
+ 
+ 	"github.com/smartystreets/goconvey/convey"
+@@ -85,17 +89,95 @@ func TestAWS(t *testing.T) {
+ 
+ 	convey.Convey("create AWS credential using already present config/IAM role", t, func() {
+ 		convey.Convey("Get a new aws session", func() {
+-			session, err := GetAWSSessionWithoutCreds("mock-region")
++			session, err := GetAWSSessionWithoutCreds("mock-region", "")
+ 			convey.So(err, convey.ShouldBeNil)
+ 			convey.So(session, convey.ShouldNotBeNil)
+ 		})
+ 	})
+ 
+ 	convey.Convey("create AWS credential using assume roleARN", t, func() {
+ 		convey.Convey("Get a new aws session", func() {
+-			session, err := GetAWSAssumeRoleCreds("moke-roleARN", "mock-region")
++			session, err := GetAWSAssumeRoleCreds("moke-roleARN", "mock-region", "")
+ 			convey.So(err, convey.ShouldBeNil)
+ 			convey.So(session, convey.ShouldNotBeNil)
+ 		})
+ 	})
++
++	convey.Convey("create AWS session using a custom STS endpoint", t, func() {
++		stsEndpoint := "http://localhost:4566"
++
++		convey.Convey("Only STS is routed to the custom endpoint", func() {
++			session, err := GetAWSSessionWithoutCreds("mock-region", stsEndpoint)
++			convey.So(err, convey.ShouldBeNil)
++			convey.So(session.ClientConfig("sts").Endpoint, convey.ShouldEqual, stsEndpoint)
++			convey.So(session.ClientConfig("sns").Endpoint, convey.ShouldEqual, "https://sns.mock-region.amazonaws.com")
++		})
++
++		convey.Convey("Scheme is added when missing", func() {
++			resolved, err := stsEndpointResolver("localhost:4566", "").EndpointFor("sts", "mock-region")
++			convey.So(err, convey.ShouldBeNil)
++			convey.So(resolved.URL, convey.ShouldEqual, "https://localhost:4566")
++		})
++	})
++
++	convey.Convey("assume a role at a custom STS endpoint without a region in the environment", t, func() {
++		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			_ = r.ParseForm()
++			action := r.Form.Get("Action")
++			fmt.Fprintf(w, `<%[1]sResponse><%[1]sResult><Credentials><AccessKeyId>key</AccessKeyId><SecretAccessKey>secret</SecretAccessKey><SessionToken>token</SessionToken><Expiration>2099-01-01T00:00:00Z</Expiration></Credentials></%[1]sResult></%[1]sResponse>`, action)
++		}))
++		defer server.Close()
++
++		t.Setenv("AWS_REGION", "")
++		t.Setenv("AWS_DEFAULT_REGION", "")
++		t.Setenv("AWS_ACCESS_KEY_ID", "id")
++		t.Setenv("AWS_SECRET_ACCESS_KEY", "secret")
++
++		session, err := CreateAWSSessionWithCredsInVolume("mock-region", "arn:aws:iam::123456789012:role/assumed", nil, nil, nil, server.URL)
++		convey.So(err, convey.ShouldBeNil)
++
++		value, err := session.Config.Credentials.Get()
++		convey.So(err, convey.ShouldBeNil)
++		convey.So(value.AccessKeyID, convey.ShouldEqual, "key")
++	})
++
++	convey.Convey("exchange a web identity token at a custom STS endpoint", t, func() {
++		actions := make(chan string, 2)
++		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			_ = r.ParseForm()
++			action := r.Form.Get("Action")
++			actions <- action
++			fmt.Fprintf(w, `<%[1]sResponse><%[1]sResult><Credentials><AccessKeyId>%[2]s</AccessKeyId><SecretAccessKey>secret</SecretAccessKey><SessionToken>token</SessionToken><Expiration>2099-01-01T00:00:00Z</Expiration></Credentials></%[1]sResult></%[1]sResponse>`, action, "key-from-"+action)
++		}))
++		defer server.Close()
++
++		tokenFile := filepath.Join(t.TempDir(), "token")
++		convey.So(os.WriteFile(tokenFile, []byte("web-identity-token"), 0o600), convey.ShouldBeNil)
++		t.Setenv("AWS_ACCESS_KEY_ID", "")
++		t.Setenv("AWS_SECRET_ACCESS_KEY", "")
++		t.Setenv("AWS_REGION", "mock-region")
++		t.Setenv("AWS_ROLE_ARN", "arn:aws:iam::123456789012:role/web-identity")
++		t.Setenv("AWS_WEB_IDENTITY_TOKEN_FILE", tokenFile)
++
++		convey.Convey("Without roleARN", func() {
++			session, err := CreateAWSSessionWithCredsInVolume("mock-region", "", nil, nil, nil, server.URL)
++			convey.So(err, convey.ShouldBeNil)
++
++			value, err := session.Config.Credentials.Get()
++			convey.So(err, convey.ShouldBeNil)
++			convey.So(value.AccessKeyID, convey.ShouldEqual, "key-from-AssumeRoleWithWebIdentity")
++			convey.So(<-actions, convey.ShouldEqual, "AssumeRoleWithWebIdentity")
++		})
++
++		convey.Convey("With roleARN", func() {
++			session, err := CreateAWSSessionWithCredsInVolume("mock-region", "arn:aws:iam::123456789012:role/assumed", nil, nil, nil, server.URL)
++			convey.So(err, convey.ShouldBeNil)
++
++			value, err := session.Config.Credentials.Get()
++			convey.So(err, convey.ShouldBeNil)
++			convey.So(value.AccessKeyID, convey.ShouldEqual, "key-from-AssumeRole")
++			convey.So(<-actions, convey.ShouldEqual, "AssumeRoleWithWebIdentity")
++			convey.So(<-actions, convey.ShouldEqual, "AssumeRole")
++		})
++	})
+ }
 ```
 
 ---
 
-### Incident Patch 2: `3b39ad67` (2026-11-14)
-**Commit Message**: fix: encrypt the JetStream store with the generated key, not the literal $JS_KEY (#4224)
+### Incident Patch 2: `84ecb705` (2026-11-16)
+**Commit Message**: fix: accept case-insensitive webhook bearer schemes (#4242)
 
-Signed-off-by: Youssef Omar Bouden <[REDACTED_EMAIL]>
+Signed-off-by: Wu Shuwen <[REDACTED_EMAIL]>
+Co-authored-by: Derek Wang <[REDACTED_EMAIL]>
 
-**File**: `docs/eventbus/jetstream.md` (modified, +2/-0)
+**File**: `pkg/eventsources/common/webhook/testconsts_test.go` (modified, +1/-0)
 ```diff
-@@ -65,6 +65,8 @@ spec:
- 
- For Jetstream, TLS is turned on for all client-server communication as well as between Jetstream nodes. In addition, for client-server communication we by default use password authentication (and because TLS is turned on, the password is encrypted).
- 
-+The JetStream store on disk is encrypted with a key the controller generates and keeps in the `eventbus-<name>-js-server` Secret. On NATS 2.10 and later the server reads that key from the Secret; a server that was created by an earlier controller release encrypted its store with the literal string `$JS_KEY`, and the configuration names it as `prev_key`, so the store is re-encrypted with the real key on the first start after the upgrade. NATS 2.8 and 2.9 have no `prev_key`, so on those versions the configuration keeps the literal key to leave existing stores readable; move to 2.10 or later to have the generated key used.
-+
- ## How it works under the hood
- 
- Jetstream has the concept of a Stream, and Subjects (i.e. topics) which are used on a Stream. From the documentation: “Each Stream defines how messages are stored and what the limits (duration, size, interest) of the retention are.” For Argo Events, we have one Stream called "default" with a single set of settings, but we have multiple subjects, each of which is named `default.<eventsourcename>.<eventname>`. Sensors subscribe to the subjects they need using durable consumers.
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -19,6 +19,7 @@ require (
- 	github.com/Azure/azure-sdk-for-go/sdk/storage/azqueue v1.0.1
- 	github.com/IBM/sarama v1.43.0
- 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible
-+	github.com/Masterminds/semver/v3 v3.5.0
- 	github.com/Masterminds/sprig/v3 v3.3.0
- 	github.com/ahmetb/gen-crd-api-reference-docs v0.3.0
- 	github.com/aliyun/aliyun-mns-go-sdk v1.0.11
-@@ -130,7 +131,6 @@ require (
- 	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
- 	github.com/DataDog/zstd v1.5.0 // indirect
- 	github.com/Masterminds/goutils v1.1.1 // indirect
--	github.com/Masterminds/semver/v3 v3.5.0 // indirect
- 	github.com/Microsoft/go-winio v0.6.2 // indirect
- 	github.com/OvyFlash/telegram-bot-api v0.0.0-20241219171906-3f2ca0c14ada // indirect
- 	github.com/PagerDuty/go-pagerduty v1.8.0 // indirect
-```
-
-**File**: `pkg/reconciler/eventbus/installer/assets/jetstream/nats-cluster.conf` (modified, +5/-0)
-```diff
-@@ -14,7 +14,12 @@ server_name: $POD_NAME
- #                                 #
- ###################################
- jetstream {
-+{{- if .KeyFromEnv }}
-+  key: $JS_KEY
-+  prev_key: "$JS_KEY"
-+{{- else }}
-   key: "$JS_KEY"
-+{{- end }}
-   store_dir: "/data/jetstream/store"
-   {{.Settings}}
- }
-```
-
-**File**: `pkg/reconciler/eventbus/installer/assets/jetstream/nats.conf` (modified, +5/-0)
-```diff
-@@ -14,7 +14,12 @@ server_name: $POD_NAME
- #                                 #
- ###################################
- jetstream {
-+{{- if .KeyFromEnv }}
-+  key: $JS_KEY
-+  prev_key: "$JS_KEY"
-+{{- else }}
-   key: "$JS_KEY"
-+{{- end }}
-   store_dir: "/data/jetstream/store"
-   {{.Settings}}
- }
-```
-
-**File**: `pkg/reconciler/eventbus/installer/installer_test.go` (modified, +9/-0)
-```diff
-@@ -23,6 +23,9 @@ const (
+@@ -4,4 +4,5 @@ package webhook
+ const (
+ 	testEndpoint = "/fake"
+ 	testUsername = "username"
++	testToken    = "token"
  )
- 
- var (
-+	// testJetStreamPrevKeyVersion is the first NATS release with prev_key support.
-+	testJetStreamPrevKeyVersion = "2.10.29"
-+
- 	fakeConfig = &reconciler.GlobalConfig{
- 		EventBus: &reconciler.EventBusConfig{
- 			NATS: &reconciler.StanConfig{
-@@ -42,6 +45,12 @@ var (
- 						ConfigReloaderImage:  testJSReloaderImage,
- 						MetricsExporterImage: testJetStreamExporterImage,
- 					},
-+					{
-+						Version:              testJetStreamPrevKeyVersion,
-+						NatsImage:            testJetStreamImage,
-+						ConfigReloaderImage:  testJSReloaderImage,
-+						MetricsExporterImage: testJetStreamExporterImage,
-+					},
- 				},
- 			},
- 		},
 ```
 
-**File**: `pkg/reconciler/eventbus/installer/jetstream.go` (modified, +22/-1)
+**File**: `pkg/eventsources/common/webhook/validate_test.go` (modified, +1/-1)
 ```diff
-@@ -10,6 +10,7 @@ import (
- 	"text/template"
- 	"time"
- 
-+	"github.com/Masterminds/semver/v3"
- 	"github.com/spf13/viper"
- 	"go.uber.org/zap"
- 	appv1 "k8s.io/api/apps/v1"
-@@ -365,7 +366,9 @@ func (r *jetStreamInstaller) buildStatefulSetSpec(jsVersion *reconciler.JetStrea
- 							{Name: "SERVER_NAME", Value: "$(POD_NAME)"},
- 							{Name: "POD_NAMESPACE", ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.namespace"}}},
- 							{Name: "CLUSTER_ADVERTISE", Value: "$(POD_NAME)." + generateJetStreamServiceName(r.eventBus) + ".$(POD_NAMESPACE).svc"},
--							{Name: "JS_KEY", ValueFrom: &corev1.EnvVarSource{SecretKeyRef: &corev1.SecretKeySelector{LocalObjectReference: corev1.LocalObjectReference{Name: generateJetStreamServerSecretName(r.eventBus)}, Key: v1alpha1.JetStreamServerSecretEncryptionKey}}},
-+							{Name: "JS_KEY_RAW", ValueFrom: &corev1.EnvVarSource{SecretKeyRef: &corev1.SecretKeySelector{LocalObjectReference: corev1.LocalObjectReference{Name: generateJetStreamServerSecretName(r.eventBus)}, Key: v1alpha1.JetStreamServerSecretEncryptionKey}}},
-+							// Quoted so that nats-server reads the key as a string whatever characters it holds.
-+							{Name: "JS_KEY", Value: `"$(JS_KEY_RAW)"`},
- 						},
- 						VolumeMounts: []corev1.VolumeMount{
- 							{Name: configVolumeName, MountPath: "/etc/nats-config"},
-@@ -676,6 +679,7 @@ func (r *jetStreamInstaller) createConfigMap(ctx context.Context) error {
+@@ -53,7 +53,7 @@ func TestValidateWebhookContextBasicAuth(t *testing.T) {
+ 		context := &aev1.WebhookContext{
+ 			Endpoint:   testEndpoint,
+ 			Port:       "12000",
+-			AuthSecret: &corev1.SecretKeySelector{Key: "token"},
++			AuthSecret: &corev1.SecretKeySelector{Key: testToken},
+ 			BasicAuth: &aev1.BasicAuth{
+ 				Username: &corev1.SecretKeySelector{Key: testUsername},
+ 				Password: &corev1.SecretKeySelector{Key: "password"},
+```
+
+**File**: `pkg/eventsources/common/webhook/webhook.go` (modified, +13/-3)
+```diff
+@@ -87,6 +87,16 @@ func ProcessRouteStatus(ctrl *Controller) {
  	}
- 	var confTplOutput bytes.Buffer
- 	if err := confTpl.Execute(&confTplOutput, struct {
-+		KeyFromEnv     bool
- 		MaxPayloadSize string
- 		ClusterName    string
- 		MonitorPort    string
-@@ -684,6 +688,7 @@ func (r *jetStreamInstaller) createConfigMap(ctx context.Context) error {
- 		Routes         string
- 		Settings       string
- 	}{
-+		KeyFromEnv:     jetStreamSupportsPrevKey(r.eventBus.Spec.JetStream.Version),
- 		MaxPayloadSize: maxPayload,
- 		ClusterName:    r.eventBus.Name,
- 		MonitorPort:    strconv.Itoa(int(jsMonitorPort)),
-@@ -771,6 +776,22 @@ func (r *jetStreamInstaller) getPVCs(ctx context.Context) ([]corev1.PersistentVo
- 	return pvcl.Items, nil
  }
  
-+// jetStreamSupportsPrevKey reports whether the nats-server of the given version accepts the
-+// prev_key setting, added in 2.10. Those servers get the encryption key through an unquoted
-+// variable reference, with prev_key set to the literal "$JS_KEY" that older releases of this
-+// template encrypted the stores with, so an existing store is re-encrypted on the first start.
-+// Older servers keep the quoted reference, as the literal key is the only one they can read.
-+func jetStreamSupportsPrevKey(version string) bool {
-+	if version == "latest" {
-+		return true
++// parseBearerAuthorization returns the token of an "Authorization: Bearer <token>" header.
++// The scheme is matched case-insensitively, as HTTP authentication schemes require.
++func parseBearerAuthorization(authHeader string) (string, bool) {
++	parts := strings.Fields(authHeader)
++	if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
++		return "", false
 +	}
-+	v, err := semver.NewVersion(version)
-+	if err != nil {
-+		return false
-+	}
-+	return !v.LessThan(semver.MustParse("2.10.0"))
++	return parts[1], true
 +}
 +
- func generateJetStreamServerSecretName(eventBus *v1alpha1.EventBus) string {
- 	return fmt.Sprintf("eventbus-%s-js-server", eventBus.Name)
- }
+ // starts a http server
+ func startServer(router Router, controller *Controller) {
+ 	// start a http server only if no other configuration previously started the server on given port
+@@ -143,13 +153,13 @@ func startServer(router Router, controller *Controller) {
+ 					sharedutil.SendInternalErrorResponse(writer, "Error loading auth token")
+ 					return
+ 				}
+-				authHeader := request.Header.Get("Authorization")
+-				if !strings.HasPrefix(authHeader, "Bearer ") {
++				authToken, ok := parseBearerAuthorization(request.Header.Get("Authorization"))
++				if !ok {
+ 					route.Logger.Error("invalid auth header")
+ 					sharedutil.SendResponse(writer, http.StatusUnauthorized, "Invalid Authorization Header")
+ 					return
+ 				}
+-				if strings.TrimPrefix(authHeader, "Bearer ") != token {
++				if subtle.ConstantTimeCompare([]byte(authToken), []byte(token)) != 1 {
+ 					route.Logger.Error("invalid auth token")
+ 					sharedutil.SendResponse(writer, http.StatusUnauthorized, "Invalid Auth token")
+ 					return
 ```
 
-**File**: `pkg/reconciler/eventbus/installer/jetstream_test.go` (modified, +40/-1)
+**File**: `pkg/eventsources/common/webhook/webhook_test.go` (modified, +28/-0)
 ```diff
-@@ -113,9 +113,14 @@ func TestJetStreamCreateObjects(t *testing.T) {
- 		for _, e := range sts.Spec.Template.Spec.Containers[0].Env {
- 			envNames = append(envNames, e.Name)
- 		}
--		for _, e := range []string{"POD_NAME", "SERVER_NAME", "POD_NAMESPACE", "CLUSTER_ADVERTISE", "JS_KEY"} {
-+		for _, e := range []string{"POD_NAME", "SERVER_NAME", "POD_NAMESPACE", "CLUSTER_ADVERTISE", "JS_KEY_RAW", "JS_KEY"} {
- 			assert.Contains(t, envNames, e)
- 		}
-+		for _, e := range sts.Spec.Template.Spec.Containers[0].Env {
-+			if e.Name == "JS_KEY" {
-+				assert.Equal(t, `"$(JS_KEY_RAW)"`, e.Value)
-+			}
-+		}
- 	})
- 
- 	t.Run("test create svc", func(t *testing.T) {
-@@ -169,9 +174,43 @@ func TestJetStreamCreateObjects(t *testing.T) {
- 		assert.NoError(t, err)
- 		assert.Equal(t, 1, len(c.Data))
- 		assert.Contains(t, c.Annotations, v1alpha1.AnnotationResourceSpecHash)
-+		conf := c.Data[v1alpha1.JetStreamConfigMapKey]
-+		assert.Contains(t, conf, "\n  key: \"$JS_KEY\"\n")
-+		assert.NotContains(t, conf, "prev_key")
-+	})
-+
-+	t.Run("test create configmap with prev_key", func(t *testing.T) {
-+		testObj := testJetStreamEventBus.DeepCopy()
-+		testObj.Spec.JetStream.Version = testJetStreamPrevKeyVersion
-+		i.eventBus = testObj
-+		err := i.createConfigMap(ctx)
-+		assert.NoError(t, err)
-+		c := &corev1.ConfigMap{}
-+		err = cl.Get(ctx, types.NamespacedName{Namespace: testObj.Namespace, Name: generateJetStreamConfigMapName(testObj)}, c)
-+		assert.NoError(t, err)
-+		conf := c.Data[v1alpha1.JetStreamConfigMapKey]
-+		assert.Contains(t, conf, "\n  key: $JS_KEY\n")
-+		assert.Contains(t, conf, "\n  prev_key: \"$JS_KEY\"\n")
-+		assert.NotContains(t, conf, "\n  key: \"$JS_KEY\"\n")
+@@ -34,3 +34,31 @@ func TestNewWebhookHelper(t *testing.T) {
+ 		convey.So(controller, convey.ShouldNotBeNil)
  	})
  }
- 
-+func TestJetStreamSupportsPrevKey(t *testing.T) {
-+	for version, want := range map[string]bool{
-+		"2.8.2":         false,
-+		"2.8.2-alpine":  false,
-+		"2.9.16":        false,
-+		"2.10.0":        true,
-+		"2.10.29":       true,
-+		"2.14.4":        true,
-+		"latest":        true,
-+		"":              false,
-+		"not-a-version": false,
-+	} {
-+		assert.Equal(t, want, jetStreamSupportsPrevKey(version), version)
++
++func TestParseBearerAuthorization(t *testing.T) {
++	tests := []struct {
++		name      string
++		header    string
++		wantToken string
++		wantOK    bool
++	}{
++		{name: "canonical scheme", header: "Bearer token", wantToken: testToken, wantOK: true},
++		{name: "lowercase scheme", header: "bearer token", wantToken: testToken, wantOK: true},
++		{name: "mixed case scheme", header: "bEaReR  token", wantToken: testToken, wantOK: true},
++		{name: "wrong scheme", header: "Basic token"},
++		{name: "empty header", header: ""},
++		{name: "scheme only", header: "Bearer"},
++		{name: "token only", header: testToken},
++		{name: "missing token", header: "Bearer "},
++		{name: "token contains whitespace", header: "Bearer token extra"},
++	}
++
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			gotToken, gotOK := parseBearerAuthorization(test.header)
++			if gotToken != test.wantToken || gotOK != test.wantOK {
++				t.Fatalf("parseBearerAuthorization(%q) = (%q, %t), want (%q, %t)", test.header, gotToken, gotOK, test.wantToken, test.wantOK)
++			}
++		})
 +	}
 +}
-+
- func TestBuildJetStreamStatefulSetSpec(t *testing.T) {
- 	cl := fake.NewClientBuilder().Build()
- 	i := &jetStreamInstaller{
+```
+
+**File**: `pkg/shared/util/cronutil_test.go` (modified, +4/-4)
+```diff
+@@ -119,15 +119,15 @@ func TestPrevCronTimeDSTFallBack(t *testing.T) {
+ 	}{
+ 		// Europe/Berlin: 2026-10-25 03:00 CEST (+0200) -> 02:00 CET (+0100).
+ 		// Walking back through the repeated 02:xx hour used to loop forever.
+-		{"2026-10-25T03:30:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
+-		{"2026-10-25T12:00:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
+-		{"2026-10-25T02:30:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
++		{"2026-10-25T03:30:00+0100", testBerlinDaily, testBerlinMidnight},
++		{"2026-10-25T12:00:00+0100", testBerlinDaily, testBerlinMidnight},
++		{testBerlinAt0230, testBerlinDaily, testBerlinMidnight},
+ 		{"2026-10-25T03:30:00+0100", "TZ=Europe/Berlin 0 0 1 * * *", "2026-10-25T01:00:00+0200"},
+ 
+ 		// Hourly job during the repeated hour: the first 02:00 (CEST) must not
+ 		// be reported as the second 02:00 (CET), which is in the future.
+ 		{"2026-10-25T02:30:00+0200", "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0200"},
+-		{"2026-10-25T02:30:00+0100", "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0100"},
++		{testBerlinAt0230, "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0100"},
+ 		{"2026-10-25T03:00:00+0100", "TZ=Europe/Berlin 0 30 * * * *", "2026-10-25T02:30:00+0100"},
+ 
+ 		// America/New_York: 2026-11-01 02:00 EDT (-0400) -> 01:00 EST (-0500).
+```
+
+**File**: `pkg/shared/util/testconsts_test.go` (modified, +3/-0)
+```diff
+@@ -5,4 +5,7 @@ const (
+ 	testCronEvery15Min = "0 0/15 * * * *"
+ 	testHello          = "hello"
+ 	testWorld          = "world"
++	testBerlinMidnight = "2026-10-25T00:00:00+0200"
++	testBerlinAt0230   = "2026-10-25T02:30:00+0100"
++	testBerlinDaily    = "TZ=Europe/Berlin 0 0 0 * * *"
+ )
 ```
 
 #### Recent Merged Pull Requests:
@@ -1413,41 +1546,34 @@ Signed-off-by: Youssef Omar Bouden <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stop PrevCronTime looping on the DST fall-back day
+## X. sns): support a custom STS endpoint for web identity and assume role credentials
 
 **RULE**:
-When implementing operations in `pkg/shared/util/cronutil.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/jsonschema/schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba2dd434`: stop PrevCronTime looping on the DST fall-back day. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5cda2887`: sns): support a custom STS endpoint for web identity and assume role credentials. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/shared/util/cronutil.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/jsonschema/schema.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		//
-		// Subtract the elapsed minutes and seconds instead of using time.Date:
-		// on the day the clocks fall back, an hour happens twice and time.Date
-		// returns the later of the two instants, which can move t forward and
-		// loop forever.
-		t = t.Add(-time.Duration(t.Minute())*time.Minute - time.Duration(t.Second()+1)*time.Second)
-		// (see the hour loop above for why time.Date isn't used here)
-		t = t.Add(-time.Duration(t.Second()+1) * time.Second)
+        "stsEndpoint": {
+          "description": "STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers, used to assume RoleARN and to exchange a web identity token for credentials",
+          "type": "string"
+        },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), 0, 0, 0, loc)
-		t = t.Add(-1 * time.Second)
-		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), 0, 0, loc)
-		t = t.Add(-1 * time.Second)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba2dd434` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5cda2887` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T05:19:50.815Z",
+  "last_updated": "2026-11-17T05:37:20.663Z",
   "directives": [
     {
       "id": "CD-001",
@@ -22169,6 +22169,77 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1EE670-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-G657",
+      "directive_title": "build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph",
+      "source_repo": "pimalaya-himalaya-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-G657-build-deps-bump-jiff-to-1-io-pimdir-to-0-15-1-rusqlite-0-43-and-io-msgraph.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-G6NQ",
+      "directive_title": "*): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the ne",
+      "source_repo": "tanstack-query-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-G6NQ-adopt-tanstack-oxlint-config-and-tanstack-oxfmt-config-and-fix-the-ne.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-G74K",
+      "directive_title": "Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the au",
+      "source_repo": "gauthierpiarrette-highball-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-G74K-wine-10-engines-r30-default-and-r31-d3dmetal-4-line-r28-and-r29-with-the-au.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-G3LO",
+      "directive_title": "support a custom STS endpoint for web identity and assume role credentials",
+      "source_repo": "argoproj/argo-events",
+      "source_commit": "5cda2887",
+      "staged_file": "11_INBOX/candidate-directives/CD-G3LO-support-a-custom-sts-endpoint-for-web-identity-and-assume-role-credentials.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-E89868",
+      "directive_title": "build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pimalaya-himalaya",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E89868-build-deps-bump-jiff-to-1-io-pimdir-to-0.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-182E64",
+      "directive_title": "*): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the ne",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tanstack-query",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-182E64--adopt-tanstack-oxlint-config-and-tansta.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-1D7BB4",
+      "directive_title": "Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the au",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gauthierpiarrette-highball",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1D7BB4-wine-10-engines-r30-default-and-r31-d3dm.md",
       "staged_date": "2026-11-17"
     }
   ]

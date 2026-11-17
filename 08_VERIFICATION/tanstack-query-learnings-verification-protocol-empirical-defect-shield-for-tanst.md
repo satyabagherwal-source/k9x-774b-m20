@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:36.396Z",
+  "timestamp": "2026-11-17T05:37:19.961Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-tanstack-query-learnings",
+  "learning_id": "LEARN-EVO-tanstack-query-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tanstack-query-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:36.396Z`  
-> **Learning ID**: `LEARN-REEXTRACT-tanstack-query-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T05:37:19.961Z`  
+> **Learning ID**: `LEARN-EVO-tanstack-query-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source**: github ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
-> **Source Version**: `9b528b5e`  
+> **Source Version**: `d63a027c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T14:08:23.795Z  
+> **Timestamp**: 2026-11-17T05:37:10.336Z  
 > **Learning ID**: `learn-github-tanstack-query`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T14:08:23.582Z  
+> **Harvest Timestamp**: 2026-11-17T05:37:10.330Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 🤖 Powerful asynchronous state management, server-state utilities and data fetching for the web. TS/JS, React Query, Solid Query, Svelte Query and Vue Query.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 50580 stars
+- **Stars / Engagement**: 50568 stars
 
 ---
 
@@ -430,12 +430,12 @@ async function serializeRequest(request) {
 
 ### Core Architecture Module: `examples/lit/basic/src/lifecycle-contract.ts`
 ```
-import { LitElement, html } from 'lit'
 import {
   QueryClient,
   QueryClientProvider,
   createQueryController,
 } from '@tanstack/lit-query'
+import { LitElement, html } from 'lit'
 
 type ContractProbeData = {
   provider: 'provider-a' | 'provider-b'
@@ -3611,169 +3611,343 @@ async function serializeRequest(request) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9b528b5e` (2026-11-12)
-**Commit Message**: ci: apply automated fixes
+### Incident Patch 1: `cb62f4f2` (2026-11-16)
+**Commit Message**: chore(*): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the newly reported lint errors (#12555)
 
-**File**: `docs/framework/angular/reference/interfaces/QueryObserverOptions.md` (modified, +1/-1)
+* chore(*): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the newly reported lint errors
+
+* chore(pnpm-lock.yaml): run 'pnpm dedupe'
+
+* chore(scripts): move 'oxlint/plugin.ts' to 'oxlint-plugin.ts' to match the flat layout of 'scripts'
+
+* chore(pnpm-workspace.yaml): update '@typescript-eslint/parser' and '@typescript-eslint/rule-tester' to '^8.72.1' to match the deduped '@typescript-eslint/utils'
+
+**File**: `docs/eslint/eslint-plugin-query.md` (modified, +1/-1)
 ```diff
-@@ -17,8 +17,8 @@ The options of a `QueryObserver`, and of the hooks built on it like `useQuery`:
+@@ -125,8 +125,8 @@ The plugin can also be used with [Oxlint](https://oxc.rs/docs/guide/usage/linter
+ To enable all of the recommended rules for our plugin, add the plugin to `jsPlugins` and spread the rules of the `recommended` config:
  
- ## Extended by
+ ```ts
+-import { defineConfig } from 'oxlint'
+ import pluginQuery from '@tanstack/eslint-plugin-query'
++import { defineConfig } from 'oxlint'
  
--- [`InfiniteQueryObserverOptions`](InfiniteQueryObserverOptions.md)
- - [`CreateBaseQueryOptions`](CreateBaseQueryOptions.md)
-+- [`InfiniteQueryObserverOptions`](InfiniteQueryObserverOptions.md)
+ export default defineConfig({
+   jsPlugins: ['@tanstack/eslint-plugin-query'],
+```
+
+**File**: `docs/eslint/no-unstable-deps.md` (modified, +2/-2)
+```diff
+@@ -21,9 +21,9 @@ Instead, destructure the return value of the query hook and pass the destructure
+ Examples of **incorrect** code for this rule:
  
- ## Type Parameters
+ ```tsx
++import { useMutation } from '@tanstack/react-query'
+ /* eslint "@tanstack/query/no-unstable-deps": "warn" */
+ import { useCallback } from 'react'
+-import { useMutation } from '@tanstack/react-query'
+ 
+ function Component() {
+   const mutation = useMutation({ mutationFn: (value: string) => value })
+@@ -37,9 +37,9 @@ function Component() {
+ Examples of **correct** code for this rule:
+ 
+ ```tsx
++import { useMutation } from '@tanstack/react-query'
+ /* eslint "@tanstack/query/no-unstable-deps": "warn" */
+ import { useCallback } from 'react'
+-import { useMutation } from '@tanstack/react-query'
+ 
+ function Component() {
+   const { mutate } = useMutation({ mutationFn: (value: string) => value })
+```
+
+**File**: `docs/framework/angular/devtools.md` (modified, +2/-3)
+```diff
+@@ -20,7 +20,6 @@ import {
+   QueryClient,
+   provideTanStackQuery,
+ } from '@tanstack/angular-query-experimental'
+-
+ import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
+ 
+ export const appConfig: ApplicationConfig = {
+@@ -59,9 +58,9 @@ When setting the option to true, the devtools will be loaded in both development
+ This is useful if you want to load devtools based on [Angular environment configurations](https://angular.dev/tools/cli/environments). E.g. you could set this to true when the application is running on your production build staging environment.
+ 
+ ```ts
+-import { environment } from './environments/environment'
+ // Make sure to use the production sub-path to load devtools in production builds
+ import { withDevtools } from '@tanstack/angular-query-experimental/devtools/production'
++import { environment } from './environments/environment'
+ 
+ provideTanStackQuery(
+   new QueryClient(),
+@@ -87,8 +86,8 @@ The example below always loads devtools in development mode and loads on-demand
+ 
+ ```ts
+ import { Injectable, isDevMode } from '@angular/core'
+-import { fromEvent, map, scan } from 'rxjs'
+ import { toSignal } from '@angular/core/rxjs-interop'
++import { fromEvent, map, scan } from 'rxjs'
+ 
+ @Injectable({ providedIn: 'root' })
+ export class DevtoolsOptionsManager {
+```
+
+**File**: `docs/framework/angular/overview.md` (modified, +1/-1)
+```diff
+@@ -61,8 +61,8 @@ In the example below, you can see TanStack Query in its most basic and simple fo
+ [Open in StackBlitz](https://stackblitz.com/github/TanStack/query/tree/main/examples/angular/simple)
+ 
+ ```angular-ts
+-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+ import { HttpClient } from '@angular/common/http'
++import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+ import { injectQuery } from '@tanstack/angular-query-experimental'
+ import { lastValueFrom } from 'rxjs'
  
 ```
 
-**File**: `docs/framework/preact/reference/interfaces/QueryObserverOptions.md` (modified, +1/-1)
+**File**: `docs/framework/angular/quick-start.md` (modified, +2/-3)
 ```diff
-@@ -17,8 +17,8 @@ The options of a `QueryObserver`, and of the hooks built on it like `useQuery`:
+@@ -44,15 +44,14 @@ export class AppModule {}
+ ### Component with query and mutation
  
- ## Extended by
+ ```angular-ts
+-import { Component, Injectable, inject } from '@angular/core'
+ import { HttpClient } from '@angular/common/http'
+-import { lastValueFrom } from 'rxjs'
+-
++import { Component, Injectable, inject } from '@angular/core'
+ import {
+   injectMutation,
+   injectQuery,
+   QueryClient,
+ } from '@tanstack/angular-query-experimental'
++import { lastValueFrom } from 'rxjs'
  
--- [`InfiniteQueryObserverOptions`](InfiniteQueryObserverOptions.md)
- - [`UseBaseQueryOptions`](UseBaseQueryOptions.md)
-+- [`InfiniteQueryObserverOptions`](InfiniteQueryObserverOptions.md)
+ @Component({
+   template: `
+```
+
+**File**: `docs/framework/lit/guides/infinite-queries.md` (modified, +1/-1)
+```diff
+@@ -16,8 +16,8 @@ An infinite query result contains:
+ ## Load More Example
  
- ## Type Parameters
+ ```ts
+-import { LitElement, html } from 'lit'
+ import { createInfiniteQueryController } from '@tanstack/lit-query'
++import { LitElement, html } from 'lit'
+ 
+ class ProjectsList extends LitElement {
+   private readonly projects = createInfiniteQueryController(this, {
+```
+
+**File**: `docs/framework/lit/guides/mutations.md` (modified, +1/-1)
+```diff
+@@ -6,13 +6,13 @@ title: Mutations
+ Unlike queries, mutations are used to create, update, delete, or otherwise perform server side effects. In Lit, use [`createMutationController`](../reference/functions/createMutationController.md).
+ 
+ ```ts
+-import { LitElement, html } from 'lit'
+ import {
+   QueryClient,
+   QueryClientProvider,
+   createMutationController,
+   createQueryController,
+ } from '@tanstack/lit-query'
++import { LitElement, html } from 'lit'
+ 
+ const queryClient = new QueryClient()
  
 ```
 
-**File**: `docs/framework/react/reference/interfaces/QueryObserverOptions.md` (modified, +1/-1)
+**File**: `docs/framework/lit/guides/parallel-queries.md` (modified, +2/-2)
 ```diff
-@@ -17,8 +17,8 @@ The options of a `QueryObserver`, and of the hooks built on it like `useQuery`:
+@@ -10,8 +10,8 @@ Parallel queries are queries that run at the same time so the UI does not wait f
+ When the number of queries is fixed, create multiple query controllers on the same host. They will all subscribe when the host connects.
  
- ## Extended by
+ ```ts
+-import { LitElement, html } from 'lit'
+ import { createQueryController } from '@tanstack/lit-query'
++import { LitElement, html } from 'lit'
  
--- [`InfiniteQueryObserverOptions`](InfiniteQueryObserverOptions.md)
- - [`UseBaseQueryOptions`](UseBaseQueryOptions.md)
-+- [`InfiniteQueryObserverOptions`](InfiniteQueryObserverOptions.md)
+ class DashboardView extends LitElement {
+   private readonly users = createQueryController(this, {
+@@ -62,8 +62,8 @@ When the number of queries changes with host state, use [`createQueriesControlle
+ Use an options getter when the query list depends on reactive host fields:
  
- ## Type Parameters
+ ```ts
+-import { LitElement, html } from 'lit'
+ import { createQueriesController } from '@tanstack/lit-query'
++import { LitElement, html } from 'lit'
  
+ class UsersDetails extends LitElement {
+   static properties = {
 ```
 
 ---
 
-### Incident Patch 2: `10123d98` (2026-11-12)
-**Commit Message**: docs: expand agent contribution guidance (#12586)
+### Incident Patch 2: `2c1e767b` (2026-11-13)
+**Commit Message**: chore(vue-query/package.json): set 'parallelism: false' on 'test:lib' and 'test:types' so 'vue-demi-switch' does not race with vue example tasks (#12596)
 
-**File**: `AGENTS.md` (modified, +74/-6)
+**File**: `packages/vue-query/package.json` (modified, +10/-0)
 ```diff
-@@ -1,10 +1,78 @@
- # Agent Instructions
- 
- Before analyzing or changing this repository, read and follow
--[`CONTRIBUTING.md`](./CONTRIBUTING.md). Its contribution, development, testing,
--pull request, and changeset requirements apply to AI-assisted work as well as
--human-authored work.
-+[`CONTRIBUTING.md`](./CONTRIBUTING.md), [`AI_POLICY.md`](./AI_POLICY.md), and the
-+[pull request template](./.github/pull_request_template.md). Their requirements
-+apply to AI-assisted contributions. The contributor must understand and verify
-+every submitted change and communicate in their own voice.
- 
--Keep every change focused on one topic. Understand and verify all generated
--code, run the required checks, and provide a concise pull request description
--that follows the repository template.
-+## Establish the problem
-+
-+- Describe the application sequence and the observable failure before fixing a
-+  bug. Use a user report, a reproduction, or a realistic application flow.
-+  An unusual internal state alone does not justify more code.
-+- Check whether the behavior is supported, already fixed, or addressed by an
-+  existing issue or pull request. Follow the contribution guide before proposing
-+  a new feature.
-+- Keep each change focused on one topic. Assess unrelated findings separately.
-+
-+## Choose the smallest correct change
-+
-+- Trace the failure to its cause. Check existing state and behavior before adding
-+  fields, helpers, wrappers, overloads, or dependencies.
-+- Keep framework-specific corrections in the affected adapter when possible.
-+  Do not broaden core types or runtime behavior to accommodate one adapter.
-+  Explain why a core change is necessary when a local correction cannot work.
-+- Read relevant tests and previous fixes before changing behavior. Preserve
-+  intentional behavior and compatibility. Identify breaking behavior changes
-+  even when the public signatures stay the same.
-+- Add compatibility code only for a demonstrated requirement within the
-+  supported environments. Do not add fallbacks for hypothetical callers.
-+- Verify automated review findings against the code and the application path.
-+  Determine whether each finding is a regression, a pre-existing limitation, or
-+  a separate feature request before expanding the change.
-+
-+## Prove bug fixes
-+
-+- Include a regression test for each claimed fix. The same test must fail on
-+  current upstream `main` because of the defect and pass with the fix.
-+- Test observable behavior. For type fixes, test the public type behavior with
-+  the repository's type-test tools.
-+- Control the conditions that trigger the defect. Confirm that the selected
-+  tests actually execute. A setup failure, an invalid import, or an unrelated
-+  timeout is not regression evidence.
-+- Keep the baseline test independent of the fix. Transfer only the regression
-+  test and necessary test fixtures, without production changes.
-+- Use the commands and checks in the contribution guide. Record any missing
-+  verification instead of claiming that the fix is verified.
-+
-+## Assess bundle cost
-+
-+- Consider runtime work, dependencies, and bundle growth against the demonstrated
-+  benefit. Minimize the cost for applications that do not use the affected
-+  feature. Check imports and tree shaking when changing shared code.
-+- Report the available Size limit comparison from the current PR's Preview CI.
-+  Include byte and percentage changes for each measured entry when available,
-+  even when the check passes. Identify the compression mode when reported.
-+- State when a measurement is pending or unavailable. Do not treat a missing
-+  measurement as zero or apply one adapter's measurement to other adapters.
-+  A passing size limit does not by itself justify the increase.
-+
-+## Check related adapters
-+
-+- Trace shared behavior through the adapters that exist in the checkout.
-+  Inspect React and Preact together when either adapter changes.
-+- Check corresponding behavior, public types, JSDoc, and tests in the affected
-+  adapters. Preserve differences justified by each framework's model. Do not
-+  copy implementations solely to make the files match.
-+
-+## Document and report the result
-+
-+- Update source JSDoc for changed public APIs and behavior. Cover defaults,
-+  return values, restrictions, and relevant framework differences.
-+- Follow the contribution guide for guide pages, generated reference pages,
-+  changesets, and required checks. Keep those requirements in their existing
-+  documents rather than duplicating them here.
-+- Report what changed, why it changed, and what was verified. Distinguish checks
-+  for the current code from older results. State pending, failed, or unavailable
-+  checks explicitly.
+@@ -33,6 +33,16 @@
+     "test:build": "publint --strict && attw --pack",
+     "build": "tsdown --tsconfig tsconfig.prod.json"
+   },
++  "nx": {
++    "targets": {
++      "test:lib": {
++        "parallelism": false
++      },
++      "test:types": {
++        "parallelism": false
++      }
++    }
++  },
+   "type": "module",
+   "types": "build/legacy/index.d.ts",
+   "main": "build/legacy/index.cjs",
 ```
 
 ---
 
-### Incident Patch 3: `33aba0b5` (2026-11-12)
-**Commit Message**: docs(react/guides/scroll-restoration): list TanStack Router before React Router in the scroll restoration examples (#12584)
+### Incident Patch 3: `7b3a72e5` (2026-11-13)
+**Commit Message**: docs(examples/solid): rename 'astro' to 'ssr-astro', replace '@astrojs/tailwind' with Tailwind CSS v4 via '@tailwindcss/vite', and align it with the current Astro template (#12585)
 
-**File**: `docs/framework/react/guides/scroll-restoration.md` (modified, +1/-1)
+**File**: `docs/config.json` (modified, +2/-2)
 ```diff
-@@ -5,6 +5,6 @@ title: Scroll Restoration
+@@ -6868,8 +6868,8 @@
+               "to": "framework/solid/examples/streaming-solid-start2"
+             },
+             {
+-              "label": "Astro",
+-              "to": "framework/solid/examples/astro"
++              "label": "SSR (Astro)",
++              "to": "framework/solid/examples/ssr-astro"
+             },
+             {
+               "label": "Offline Queries and Mutations (TanStack Router)",
+```
+
+**File**: `examples/solid/astro/src/env.d.ts` (removed, +0/-2)
+```diff
+@@ -1,2 +0,0 @@
+-/// <reference path="../.astro/types.d.ts" />
+-/// <reference types="astro/client" />
+```
+
+**File**: `examples/solid/astro/tailwind.config.mjs` (removed, +0/-8)
+```diff
+@@ -1,8 +0,0 @@
+-/** @type {import('tailwindcss').Config} */
+-export default {
+-  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+-  theme: {
+-    extend: {},
+-  },
+-  plugins: [],
+-}
+```
+
+**File**: `examples/solid/ssr-astro/.gitignore` (renamed, +0/-1)
+```diff
+@@ -1,6 +1,5 @@
+ # build output
+ dist/
+-.vercel/
+ # generated types
+ .astro/
  
- Traditionally, when you navigate to a previously visited page on a web browser, you would find that the page would be scrolled to the exact position where you were before you navigated away from that page. This is called **scroll restoration** and has been in a bit of a regression since web applications have started moving towards client side data fetching. With TanStack Query however, that's no longer the case.
+```
+
+**File**: `examples/solid/ssr-astro/README.md` (renamed, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-# TanStack Solid Query Astro Example
++# TanStack Solid Query SSR Example (Astro)
  
--TanStack Query doesn’t implement scroll restoration by itself, but it removes one of the biggest causes of broken restoration in SPA’s: refetch-induced UI resets. By keeping previously fetched data in cache (and optionally using `placeholderData`), navigation back to a page can render instantly with stable layout, making scroll restoration reliable when handled by the router (e.g. React Router’s ScrollRestoration, TanStack Router’s scroll restoration, or a small custom history-based solution).
-+TanStack Query doesn’t implement scroll restoration by itself, but it removes one of the biggest causes of broken restoration in SPA’s: refetch-induced UI resets. By keeping previously fetched data in cache (and optionally using `placeholderData`), navigation back to a page can render instantly with stable layout, making scroll restoration reliable when handled by the router (e.g. TanStack Router’s scroll restoration, React Router’s ScrollRestoration, or a small custom history-based solution).
+ A Pokémon search with `keepPreviousData` and `<Suspense>`, rendered as a Solid island.
  
- Out of the box, "scroll restoration" for all queries (including paginated and infinite queries) Just Works™️ in TanStack Query. The reason for this is that query results are cached and able to be retrieved synchronously when a query is rendered. As long as your queries are being cached long enough (the default time is 5 minutes) and have not been garbage collected, scroll restoration will work out of the box all the time.
+```
+
+**File**: `examples/solid/ssr-astro/astro.config.mjs` (renamed, +6/-2)
+```diff
+@@ -1,12 +1,16 @@
++// @ts-check
+ import { defineConfig } from 'astro/config'
+ import solidJs from '@astrojs/solid-js'
+-import tailwind from '@astrojs/tailwind'
+ import node from '@astrojs/node'
++import tailwindcss from '@tailwindcss/vite'
+ // https://astro.build/config
+ export default defineConfig({
+   output: 'server',
+-  integrations: [solidJs(), tailwind()],
++  integrations: [solidJs()],
+   adapter: node({
+     mode: 'standalone',
+   }),
++  vite: {
++    plugins: [tailwindcss()],
++  },
+ })
+```
+
+**File**: `examples/solid/ssr-astro/eslint.config.js` (renamed, +0/-1)
+```diff
+@@ -6,7 +6,6 @@ import pluginSolid from 'eslint-plugin-solid/configs/typescript'
+ import { defineConfig } from 'eslint/config'
+ 
+ export default defineConfig([
+-  { ignores: ['src/env.d.ts'] },
+   ...tanstackConfig,
+   ...pluginQuery.configs['flat/recommended-strict'],
+   pluginSolid,
+```
+
+**File**: `examples/solid/ssr-astro/package.json` (renamed, +3/-4)
+```diff
+@@ -1,10 +1,9 @@
+ {
+-  "name": "@tanstack/query-example-solid-astro",
++  "name": "@tanstack/query-example-solid-ssr-astro",
+   "private": true,
+   "type": "module",
+   "scripts": {
+     "dev": "astro dev",
+-    "start": "astro dev",
+     "build": "astro build",
+     "preview": "astro preview",
+     "astro": "astro",
+@@ -15,12 +14,12 @@
+     "@astrojs/check": "^0.9.10",
+     "@astrojs/node": "^11.1.9",
+     "@astrojs/solid-js": "^7.0.2",
+-    "@astrojs/tailwind": "^6.0.2",
++    "@tailwindcss/vite": "^4.3.3",
+     "@tanstack/solid-query": "^5.107.1",
+     "@tanstack/solid-query-devtools": "^5.107.1",
+     "astro": "^7.4.4",
+     "solid-js": "^1.9.18",
+-    "tailwindcss": "^3.4.19",
++    "tailwindcss": "^4.3.3",
+     "typescript": "^6.0.3"
+   },
+   "devDependencies": {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12587** (2026-11-12): refactor: make query exports explicit (@TkDodo)
-- **PR #12586** (2026-11-12): docs: expand agent contribution guidance (@TkDodo)
-- **PR #12584** (2026-11-12): docs(react/guides/scroll-restoration): list TanStack Router before React Router in the scroll restoration examples (@sukvvon)
-- **PR #12583** (2026-11-12): docs(examples): rewrite the READMEs, add the framework or router to example titles, and rename examples to '<feature>-<framework>' (@sukvvon)
-- **PR #12582** (2026-11-12): chore(*): update pnpm to v12.18.0 and enable 'autoDedupe', 'lockfile.includeResolutionSettings' and exclusion pruning (@sukvvon)
-- **PR #12580** (2026-11-12): docs(examples): unify page titles to 'TanStack <Framework> Query <Name> Example' and remove scaffold leftovers (@sukvvon)
+- **PR #12604** (2026-11-16): docs(docs/framework): regenerate reference pages after adopting '@tanstack/oxfmt-config' (@sukvvon)
+- **PR #12602** (2026-11-16): docs({query-core,react,preact,vue,solid,svelte,angular}-query): describe the query result's 'status', its derived booleans and the error result types by the query's data and error (@sukvvon)
+- **PR #12601** (2026-11-14): docs({react,preact,vue,solid,svelte,angular}-query): describe when 'status' is 'error', 'success' or 'pending', and that 'data' is 'undefined' when 'select' throws with 'initialData' (@sukvvon)
+- **PR #12596** (2026-11-13): chore(vue-query/package.json): set 'parallelism: false' on 'test:lib' and 'test:types' so 'vue-demi-switch' does not race with vue example tasks (@sukvvon)
+- **PR #12593** (2026-11-13): docs(examples/angular): align 'angular.json', root components, 'OnPush', mock interceptors and 'tsconfig' across the examples (@sukvvon)
+- **PR #12592** (2026-11-13): docs(examples): use each framework's template '.gitignore' in every example (@sukvvon)
 
 ---
 
@@ -3793,31 +3967,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: apply automated fixes
+## X. *): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the ne
 
 **RULE**:
-When implementing operations in `docs/framework/angular/reference/interfaces/QueryObserverOptions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/eslint/eslint-plugin-query.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9b528b5e`: ci: apply automated fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cb62f4f2`: *): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the newly reported lint errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/framework/angular/reference/interfaces/QueryObserverOptions.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/eslint/eslint-plugin-query.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- [`InfiniteQueryObserverOptions`](InfiniteQueryObserverOptions.md)
+import { defineConfig } from 'oxlint'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-- [`InfiniteQueryObserverOptions`](InfiniteQueryObserverOptions.md)
+// Induced defect failure mode:
+import { defineConfig } from 'oxlint'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9b528b5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cb62f4f2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T05:19:51.027Z",
-  "total_verified_learnings": 8846,
+  "last_updated": "2026-11-17T05:37:20.891Z",
+  "total_verified_learnings": 8848,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19775,
+  "total_items": 19789,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113233,10 +113233,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-architecture-intelligence-gauthierpiarrette-highball-.md",
       "title": "Architecture Intelligence: gauthierpiarrette/highball Core Invariants",
       "repository": "gauthierpiarrette/highball",
-      "source_version": "d8187e2a",
-      "content_hash": "50b046c9900c747a6f082824cf12dd5b5589b08dcbe9a9cc84361a4d9c0daeb0",
+      "source_version": "4ebe4fe0",
+      "content_hash": "f0b33f0af41ac2286b71e5a897f2b44949a525a2f682a3e53bdcc1ad56a546cd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T16:25:48.749Z"
+      "persisted_at": "2026-11-17T05:37:13.657Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball",
@@ -113245,10 +113245,10 @@
       "relative_path": "08_VERIFICATION/gauthierpiarrette-highball-verification-protocol-empirical-defect-shield-for-gau.md",
       "title": "Verification Protocol: Empirical Defect Shield for gauthierpiarrette/highball",
       "repository": "gauthierpiarrette/highball",
-      "source_version": "d8187e2a",
-      "content_hash": "05717a35ea3bff900fb3a937358efb1a4a26f74512615932c199728b9d423858",
+      "source_version": "4ebe4fe0",
+      "content_hash": "d74710d6721e27e6299b4e893114c3637aed8314e58b0fb962e333233b1b8996",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:25:48.855Z"
+      "persisted_at": "2026-11-17T05:37:13.769Z"
     },
     "candidate_directive-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733": {
       "item_id": "candidate_directive-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733",
@@ -113318,9 +113318,9 @@
       "title": "Architecture Intelligence: gauthierpiarrette-highball-learnings Core Invariants",
       "repository": "gauthierpiarrette-highball-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f4ddb6af247c1faf5ca93c5c90555409f998ae9daf0d378351c600d6908eb04",
+      "content_hash": "c9e4ddc140872373c4f6daf44d57af6407948ccfb9ec8b2811a276117a50cec5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T16:26:52.990Z"
+      "persisted_at": "2026-11-17T05:37:20.777Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball-lea",
@@ -113330,9 +113330,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gauthierpiarrette-highball-learnings",
       "repository": "gauthierpiarrette-highball-learnings",
       "source_version": "HEAD",
-      "content_hash": "104bbf839d42b40574f27d7ffbb78ab4e50fda37f3bd403ea309367b21774f0f",
+      "content_hash": "c0381d7f24c75628e5737476cae2826eb069678c716c5bd226f527cd3d99b729",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:26:53.103Z"
+      "persisted_at": "2026-11-17T05:37:20.891Z"
     },
     "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants",
@@ -113917,10 +113917,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
       "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
       "repository": "pimalaya/himalaya",
-      "source_version": "8e8bdb37",
-      "content_hash": "a61cd1a7836a2b44d9dcabae84a0663565769ab6c5d56cbd0f0885545953ea56",
+      "source_version": "b9712f7f",
+      "content_hash": "c3607597f6572e4cd8e0236df0e33b27bde820b5e4251df794f9c76f78ee65b5",
       "domain_letter": "B",
-      "persisted_at": "2026-11-15T14:56:02.156Z"
+      "persisted_at": "2026-11-17T05:37:08.947Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya",
@@ -113929,10 +113929,10 @@
       "relative_path": "08_VERIFICATION/pimalaya-himalaya-verification-protocol-empirical-defect-shield-for-pimalaya-him.md",
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya/himalaya",
       "repository": "pimalaya/himalaya",
-      "source_version": "8e8bdb37",
-      "content_hash": "0ce7883896ff27492439afd3a98fac7beba9a4b325550b931aeec75cd9b80bb2",
+      "source_version": "b9712f7f",
+      "content_hash": "2d1cc4913609052cee2e672d298bb8d82f355c4815b5b4e73f041cb76d6c5d12",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:56:02.261Z"
+      "persisted_at": "2026-11-17T05:37:09.061Z"
     },
     "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731": {
       "item_id": "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731",
@@ -113978,9 +113978,9 @@
       "title": "Product Intelligence: pimalaya-himalaya-learnings Core Invariants",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "6183ffcd1ec39a0dd7911dbec63ec241d381b7f59b8578848ff904259cb58d3e",
+      "content_hash": "d9d81a9af262031397388bf5df74657d2319eda0061b08078832e17a4212c483",
       "domain_letter": "B",
-      "persisted_at": "2026-11-15T14:56:12.641Z"
+      "persisted_at": "2026-11-17T05:37:19.504Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya-learnings",
@@ -113990,9 +113990,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya-himalaya-learnings",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "b631679cf6f2d8f380e50bbec2f9950df46daa2967d08e1f1cb5b822452850cd",
+      "content_hash": "b0686efa0e8d3cb499774286a368a8c3c63a0bb522587cac171432b59079f23b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:56:12.744Z"
+      "persisted_at": "2026-11-17T05:37:19.618Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
@@ -229650,8 +229650,8 @@
       "slug": "argoproj-argo-events",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-events",
-      "source_version": "ba2dd434",
-      "content_hash": "ab1f2b6d8f8b8113f0463f385d68cc970cc76704bc90f5647ae532394caaebdb",
+      "source_version": "5cda2887",
+      "content_hash": "fea7c4fd7df0c7eb965392e5214176e78549d7c4485bcf2ce8311a504ddf3e3f",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
       "promoted_rules": [
@@ -229664,6 +229664,11 @@
           "number": 8666,
           "title": "stop PrevCronTime looping on the DST fall-back day",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8877,
+          "title": "support a custom STS endpoint for web identity and assume role credentials",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229671,7 +229676,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T23:26:04.890Z",
+      "verified_at": "2026-11-17T05:37:15.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229713,10 +229718,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-events-architecture-intelligence-argoproj-argo-events-core-invaria.md",
       "title": "Architecture Intelligence: argoproj/argo-events Core Invariants",
       "repository": "argoproj/argo-events",
-      "source_version": "ba2dd434",
-      "content_hash": "e062b6c1f38110b8633bba78c8849d37d387c0d2652f0157e98b0328af9f1f92",
+      "source_version": "5cda2887",
+      "content_hash": "d5ac3a4e000b03fb313e2c36328880d2facb9b2b988f6301d6ae803523e2496d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T23:26:05.324Z"
+      "persisted_at": "2026-11-17T05:37:16.209Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-events": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-events",
@@ -229725,10 +229730,10 @@
       "relative_path": "08_VERIFICATION/argoproj-argo-events-verification-protocol-empirical-defect-shield-for-argoproj-.md",
       "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-events",
       "repository": "argoproj/argo-events",
-      "source_version": "ba2dd434",
-      "content_hash": "e3aa664476ac5161df04816f7396ccba6e9e6d53d0d09042ba9358d1a1cf7e87",
+      "source_version": "5cda2887",
+      "content_hash": "d074ea3acbd8e927ef50f8f8be51e3c4cc235a8b1a2a7fb11bd7d9678eb6d04c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T23:26:05.438Z"
+      "persisted_at": "2026-11-17T05:37:16.332Z"
     },
     "learn-github-rqlite-rqlite": {
       "learning_id": "learn-github-rqlite-rqlite",
@@ -244528,14 +244533,19 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "8e8bdb37",
-      "content_hash": "d260d27e945dba5d3a1d50bb38ddcb85b86810bbe495ba08eba27f449d722231",
+      "source_version": "b9712f7f",
+      "content_hash": "2d931f626ca5fe7defdd2162a8f9a5ca1170260d5617776ffc4b1884872c05e9",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
         {
           "number": 8622,
           "title": "run a credential command shared by IMAP and SMTP once",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8874,
+          "title": "build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -244544,7 +244554,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T14:56:01.709Z",
+      "verified_at": "2026-11-17T05:37:08.469Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264090,6 +264100,224 @@
       "content_hash": "2ddaa170965b6c8603a71843a0b1bd8e1fc343c3c16610f41d09dc3c244284ce",
       "domain_letter": "G",
       "persisted_at": "2026-11-17T05:19:49.791Z"
+    },
+    "rule-8874": {
+      "learning_id": "rule-8874",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8874,
+      "title": "build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "b9712f7f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T05:37:08.469Z"
+    },
+    "candidate_directive-build-deps-bump-jiff-to-1-io-pimdir-to-0-15-1-rusqlite-0-43-and-io-msgraph": {
+      "item_id": "candidate_directive-build-deps-bump-jiff-to-1-io-pimdir-to-0-15-1-rusqlite-0-43-and-io-msgraph",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G657-build-deps-bump-jiff-to-1-io-pimdir-to-0-15-1-rusqlite-0-43-and-io-msgraph.md",
+      "title": "build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7f7ab1a05c5356eb05b03f835539d2d93c726bbd6058cb960f7f52fd9f64014e",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-17T05:37:19.391Z"
+    },
+    "learn-github-tanstack-query": {
+      "learning_id": "learn-github-tanstack-query",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "TanStack/query",
+      "repository": "TanStack/query",
+      "slug": "tanstack-query",
+      "platform": "github",
+      "source_url": "https://github.com/TanStack/query",
+      "source_version": "d63a027c",
+      "content_hash": "2a7862c8dff8e4989bc07af5a69e52f12c63007eb9b6222fd055b432e294d9ac",
+      "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8875,
+          "title": "*): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the ne",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T05:37:11.036Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8875": {
+      "learning_id": "rule-8875",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8875,
+      "title": "*): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the ne",
+      "source_url": "https://github.com/TanStack/query",
+      "source_version": "d63a027c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T05:37:11.036Z"
+    },
+    "candidate_directive-adopt-tanstack-oxlint-config-and-tanstack-oxfmt-config-and-fix-the-ne": {
+      "item_id": "candidate_directive-adopt-tanstack-oxlint-config-and-tanstack-oxfmt-config-and-fix-the-ne",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G6NQ-adopt-tanstack-oxlint-config-and-tanstack-oxfmt-config-and-fix-the-ne.md",
+      "title": "*): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the ne",
+      "repository": "tanstack-query-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ae3517ff0d31ccfe8af5f59f803644e968a1e737e603543fb3965a3a5405eeca",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T05:37:20.057Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tanstack-query-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tanstack-query-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-technical-construction-intelligence-tanstack-query-core-invariant.md",
+      "title": "Technical Construction Intelligence: TanStack/query Core Invariants",
+      "repository": "TanStack/query",
+      "source_version": "d63a027c",
+      "content_hash": "1d469f78a9350b3a5803d03ae156891a4f648daf80045f1c71a0f82e3eb02cb7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T05:37:11.509Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tanstack-query-verification-protocol-empirical-defect-shield-for-tanstack-query.md",
+      "title": "Verification Protocol: Empirical Defect Shield for TanStack/query",
+      "repository": "TanStack/query",
+      "source_version": "d63a027c",
+      "content_hash": "373c057bec9e313534a9792f695719fefb3bcc22977c9b1d54d1b0312a75622e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T05:37:11.619Z"
+    },
+    "learn-github-gauthierpiarrette-highball": {
+      "learning_id": "learn-github-gauthierpiarrette-highball",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "gauthierpiarrette/highball",
+      "repository": "gauthierpiarrette/highball",
+      "slug": "gauthierpiarrette-highball",
+      "platform": "github",
+      "source_url": "https://github.com/gauthierpiarrette/highball",
+      "source_version": "4ebe4fe0",
+      "content_hash": "7a3d26411b018bb3a94381a329fbdfd6c7f1c053513a94b5c1fff40b8e14637d",
+      "dossier_path": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8876,
+          "title": "Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the au",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T05:37:13.231Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8876": {
+      "learning_id": "rule-8876",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8876,
+      "title": "Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the au",
+      "source_url": "https://github.com/gauthierpiarrette/highball",
+      "source_version": "4ebe4fe0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T05:37:13.231Z"
+    },
+    "candidate_directive-wine-10-engines-r30-default-and-r31-d3dmetal-4-line-r28-and-r29-with-the-au": {
+      "item_id": "candidate_directive-wine-10-engines-r30-default-and-r31-d3dmetal-4-line-r28-and-r29-with-the-au",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G74K-wine-10-engines-r30-default-and-r31-d3dmetal-4-line-r28-and-r29-with-the-au.md",
+      "title": "Wine 10 engines r30 (default) and r31 (D3DMetal 4 line): r28 and r29 with the au",
+      "repository": "gauthierpiarrette-highball-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4b61be01049331c8952271caf01eb6655358ad5f935b25e129de51200ffe34e3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T05:37:20.663Z"
+    },
+    "rule-8877": {
+      "learning_id": "rule-8877",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8877,
+      "title": "support a custom STS endpoint for web identity and assume role credentials",
+      "source_url": "https://github.com/argoproj/argo-events",
+      "source_version": "5cda2887",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T05:37:15.756Z"
+    },
+    "candidate_directive-support-a-custom-sts-endpoint-for-web-identity-and-assume-role-credentials": {
+      "item_id": "candidate_directive-support-a-custom-sts-endpoint-for-web-identity-and-assume-role-credentials",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G3LO-support-a-custom-sts-endpoint-for-web-identity-and-assume-role-credentials.md",
+      "title": "support a custom STS endpoint for web identity and assume role credentials",
+      "repository": "argoproj/argo-events",
+      "source_version": "5cda2887",
+      "content_hash": "06b50caa99c32fabbace4e09ce3e7b1e748f458fd3ec74b2aad674556c4415b1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T05:37:16.093Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-learnings-technical-construction-intelligence-tanstack-query-lear.md",
+      "title": "Technical Construction Intelligence: tanstack-query-learnings Core Invariants",
+      "repository": "tanstack-query-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d61ada48cf184029839a8fb462fd5e6338f7fc5732caa4700ab442436feef596",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T05:37:20.167Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/tanstack-query-learnings-verification-protocol-empirical-defect-shield-for-tanst.md",
+      "title": "Verification Protocol: Empirical Defect Shield for tanstack-query-learnings",
+      "repository": "tanstack-query-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ee4d6b71ed29cd3aa0f9b9381e1e9951a98393bf298918e8bc95e190a0f8cb82",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T05:37:20.280Z"
     }
   },
   "ai-builder-brain": {

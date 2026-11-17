@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T14:56:12.427Z",
+  "timestamp": "2026-11-17T05:37:19.288Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pimalaya-himalaya-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pimalaya-himalaya-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T14:56:12.427Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T05:37:19.288Z`  
 > **Learning ID**: `LEARN-EVO-pimalaya-himalaya-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source**: github ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
-> **Source Version**: `8e8bdb37`  
+> **Source Version**: `b9712f7f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T14:56:00.994Z  
+> **Timestamp**: 2026-11-17T05:37:07.786Z  
 > **Learning ID**: `learn-github-pimalaya-himalaya`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T14:56:00.856Z  
+> **Harvest Timestamp**: 2026-11-17T05:37:07.673Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7654 stars
+- **Stars / Engagement**: 7664 stars
 
 ---
 
@@ -359,7 +359,7 @@ impl PimdirQueueCommand {
 //! # pimdir queue list
 //!
 //! The `pimdir queue list` command, listing the creations and sends staged
-//! in one mailbox.
+//! in one mailbox and the rows parked there.
 
 use std::fmt;
 
@@ -370,13 +370,8 @@ use schemars::JsonSchema;
 use serde::Serialize;
 
 use crate::{
-    account::context::Account,
-    backend::Backend,
-    pimdir::{backend::PimdirQueuedEnvelope, client::PimdirClient},
-    shared::{
-        envelope::list::{format_flags, format_names},
-        mailbox::arg::MailboxArg,
-    },
+    account::context::Account, backend::Backend, pimdir::client::PimdirClient,
+    shared::mailbox::arg::MailboxArg,
 };
 
 /// List the messages staged for creation or sending in a mailbox.
@@ -385,7 +380,8 @@ use crate::{
 /// has no id until then, so `envelope list` cannot show it. A sent message
 /// waits there until the store's owner sends it, filed under the mailbox it
 /// was saved to or the account's sent alias. This is where both show: the
-/// row id to cancel one by, when it was queued, and the mail.
+/// row id to cancel one by, when it was queued, its kind (`add` or
+/// `submit`) and its subject.
 ///
 /// Staged flags, moves and deletions need no such view, addressing messages
 /// that already exist. A row of any kind the sync engine parked, refusing to
@@ -393,7 +389,16 @@ use crate::{
 /// fix what parked it. A move or a deletion of a message a sync left in
 /// conflict parks so, listed in the mailbox the message stays in. One the
 /// engine sent without learning its outcome is listed `unconfirmed`
-/// instead: it may have taken effect.
+/// instead: it may have taken effect. A message a server refused for good
+/// the change it was synced with is listed `refused` last, with its source
+/// and reason: the store applied the change, and the sync engine holds it
+/// until the message changes again or is removed (pimdir STORAGE §15.4).
+///
+/// JSON output: `{"messages": [<row>], "parked": [<row>], "refused":
+/// [{"collection", "itemId", "source", "reason", "refusedAt"}]}`, each row,
+/// pending or parked, `{"row", "kind", "collection", "linkId", "itemId",
+/// "producer", "queuedAt", "attempts", "unconfirmed", "error",
+/// "subject"}`, as every Pimalaya program prints a queue row.
 #[derive(Debug, Parser)]
 pub struct PimdirQueueListCommand {
     #[command(flatten)]
@@ -401,7 +406,8 @@ pub struct PimdirQueueListCommand {
 }
 
 impl PimdirQueueListCommand {
-    /// Lists the creations and sends staged in the mailbox and prints them.
+    /// Lists the creations and sends staged in the mailbox and the rows
+    /// parked there, and prints them.
     pub fn execute(
         self,
         printer: &mut impl Printer,
@@ -409,80 +415,57 @@ impl PimdirQueueListCommand {
         client: &mut PimdirClient,
     ) -> Result<()> {
         let mailbox = self.mailbox.resolve(account);
-        let queued = client.queued_envelopes(&mailbox)?;
-        let parked = client.parked_actions(&mailbox)?;
+        let messages = client.queued_rows(&mailbox)?;
+        let parked = client.parked_rows(&mailbox)?;
+        let refused = client.refused_rows(&mailbox)?;
 
         printer.out(PimdirQueueListOutput {
             account: account.name().to_string(),
             mailbox,
-            messages: queued
-                .into_iter()
-                .map(|queued| PimdirQueuedMessage {
-                    id: queued.id,
-                    queued_at: queued.created_at,
-                    producer: queued.producer,
-                    send: queued.send,
-                    envelope: queued.envelope,
-                })
-                .collect(),
-            parked: parked
-                .into_iter()
-                .map(|parked| PimdirParkedRow {
-                    unconfirmed: parked.unconfirmed().is_some(),
-                    id: parked.id,
-                    queued_at: parked.created_at,
-                    producer: parked.producer,
-                    kind: parked.action,
-                    attempts: parked.attempts,
-                    error: parked.error,
-                })
-                .collect(),
+            messages,
+            parked,
+            refused,
         })
     }
 }
 
-/// One message waiting in the store's queue.
+/// One row of the store's queue, pending or parked, in the one shape
+/// every Pimalaya program prints it (pimalaya-cli's output contract, "A
+/// queue row keeps one shape"), every key printed.
 #[derive(Clone, Debug, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
-pub struct PimdirQueuedMessage {
-    /// The queue row id, which `pimdir queue cancel` takes. It names a
-    /// pending action, not a message: the message has no id until the sync
-    /// engine applies the action, and gets a different one then.
-    #[serde(rename = "row")]
-    pub id: i64,
-    /// When the row was appended, stamped by the store's own clock.
-    pub queued_at: String,
-    /// The process that staged it.
-    pub producer: String,
-    /// Whether the row sends the message rather than files it.
-    pub send: bool,
-    /// The mail the action carries, derived from the body it pins. Its `id`
-    /// is `null`, a queued message having none yet.
-    pub envelope: PimdirQueuedEnvelope,
-}
-
-/// One row the sync engine parked: it will not apply it again without an
-/// operator.
-#[derive(Clone, Debug, Serialize, JsonSchema)]
-#[serde(rename_all = "camelCase")]
-pub struct PimdirParkedRow {
-    /// The queue row id, which `pimdir queue cancel` takes.
-    #[serde(rename = "row")]
-    pub id: i64,
-    /// When the row was appended, stamped by the store's own clock.
-    pub queued_at: String,
-    /// The process that staged it.
-    pub producer: String,
-    /// The action kind: `add`, `submit`, `set-flags`, ...
+pub struct PimdirQueueRow {
+    /// The queue row id, which `pimdir queue show` and `cancel` take. It
+    /// names a queued action, not a message: a creation has no id until
+    /// the sync engine applies it, and gets a different one then.
+    pub row: i64,
+    /// The row's action as the store holds it, never re-spelled: `add`,
+    /// `submit`, `set-flags`, `move`, `remove`, `collection-create`, ...
     pub kind: String,
-    /// How many times the engine tried it before parking it.
-    pub attempts: i64,
-    /// Whether the row is unconfirmed: the engine sent its request and
-    /// cannot tell whether it took effect, so it may have.
+    /// The mailbox the row is queued on, as `mailbox list` prints its id.
+    pub collection: String,
+    /// The link id of the message the row creates, the bare `Message-ID`
+    /// `message add` printed, `null` when the row creates none.
+    pub link_id: Option<String>,
+    /// The id of the stored message the row addresses (a flag change, a
+    /// move, a copy, a removal), as `envelope list` prints it, `null` when
+    /// it addresses none, a creation among them.
+    pub item_id: Option<String>,
+    /// The process that staged the row.
+    pub producer: String,
+    /// When the row was appended, stamped by the store's own clock.
+    pub queued_at: String,
+    /// How many times the sync engine tried the row.
+    pub attempts: u64,
+    /// Whether the row's outcome is unknown: the engine sent its request
+    /// and cannot tell whether it took effect, so it may have.
     pub unconfirmed: bool,
-    /// Why it was parked, as the store records it: an unconfirmed row's
-    /// starts with `unconfirmed: `.
-    pub error: String,
+    /// Why the row was parked, as the store records it, an unconfirmed
+    /// row's beginning `unconfirmed: `; `null` while the row is pending.
+    pub error: Option<String>,
+    /// The subject of the body the row pins, else of the message it
+    /// addresses, `null` when there is none to read.
+    pub subject: Option<String>,
 }
 
 /// The `pimdir queue list` output.
@@ -495,10 +478,30 @@ pub struct PimdirQueueListOutput {
     /// The mailbox listed, its alias resolved.
     #[serde(skip)]
     pub mailbox: String,
-    /// The messages staged for creation in the mailbox.
-    pub messages: Vec<PimdirQueuedMessage>,
+    /// The creations and sends staged in the mailbox.
+    pub messages: Vec<PimdirQueueRow>,
     /// The mailbox's parked rows, any kind.
-    pub parked: Vec<PimdirParkedRow>,
+    pub parked: Vec<PimdirQueueRow>,
+    /// The refusals standing in the mailbox, per message and source.
+    pub refused: Vec<PimdirQueueRefused>,
+}
+
+/// A refusal standing on a message of the mailbox (pimdir STORAGE §15.4):
+/// the server of `source` refused for good a change the store applied, and
+/// the sync engine holds it until the message changes again or is removed.
+#[derive(Clone, Debug, Serialize, JsonSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct PimdirQueueRefused {
+    /// The mailbox holding the message, as `mailbox list` prints its id.
+    pub collection: String,
+    /// The message, as `envelope list` prints its id.
+    pub item_id: String,
+    /// The source whose server refused the change.
+    pub source: String,
+    /// The text the server gave.
+    pub reason: String,
+    /// When the refusal was recorded, RFC 3339.
+    pub refused_at: String,
 }
 
 impl fmt::Display for PimdirQueueListOutput {
@@ -507,39 +510,32 @@ impl fmt::Display for PimdirQueueListOutput {
         listing.head("Mailbox", &self.mailbox);
 
         for queued in &self.messages {
-            let envelope = &queued.envelope;
-            let to = match envelope.to.is_empty() {
-                true => String::new(),
-                false => format!("to {}", format_names(&envelope.to)),
-            };
-
-            listing.items.push([
-                queued.id.to_string(),
-                String::from("queued"),
-                format_flags(&envelope.flags, envelope.has_attachment),
-                sanitize::text(&queued.queued_at).into_owned(),
-                String::from(if queued.send { "send" } else { "save" }),
-                sanitize::text(&to).into_owned(),
-                sanitize::text(&envelope.subject).into_owned(),
-            ]);
+            let what = queued.subject.as_deref().or(queued.item_id.as_deref());
+            listing.items.push(cells(queued, "queued", what));
         }
 
         for parked in &self.parked {
+            let state = match parked.unconfirmed {
+                true => "unconfirmed",
+                false => "parked",
+            };
+            listing
+                .items
+                .push(cells(parked, state, parked.error.as_deref()));
+        }
+
+        for refused in &self.refused {
+            let reason = format!("{}: {}", refused.source, refused.reason);
             listing.items.push([
-                parked.id.to_string(),
-                String::from(match parked.unconfirmed {
-                    true => "unconfirmed",
-                    false => "parked",
-                }),
-                String::from("    "),
-                sanitize::text(&parked.queued_at).into_owned(),
-                sanitize::text(&parked.kind).into_owned(),
                 String::new(),
-                sanitize::text(&parked.error).into_owned(),
+                String::from("refused"),
+                sanitize::text(&refused.refused_at).into_owned(),
+                sanitize::text(&refused.item_id).into_owned(),
+                sanitize::text(&reason).into_owned(),
             ]);
         }
 
-        if !listing.items.rows.is_empty() {
+        if !self.messages.is_empty() || !self.parked.is_empty() {
             let cancel = String::from("himalaya pimdir queue cancel <ROW>");
             listing.header.push(("Cancel", cancel));
         }
@@ -548,6 +544,78 @@ impl fmt::Display for PimdirQueueListOutput {
     }
 }
 
+/// The text cells of `row`: its id, its `state`, when it was queued, its
+/// kind, then `last`.
+fn cells(row: &PimdirQueueRow, state: &str, last: Option<&str>) -> [String; 5] {
+    [
+        row.row.to_string(),
+        String::from(state),
+        sanitize::text(&row.queued_at).into_owned(),
+        sanitize::text(&row.kind).into_owned(),
+        sanitize::text(last.unwrap_or_default()).into_owned(),
+    ]
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use super::{PimdirQueueListOutput, PimdirQueueRefused, PimdirQueueRow};
+
+    /// A pending row of `kind` in `imap/Sent`.
+    fn row(row: i64, kind: &str) -> PimdirQueueRow {
+        PimdirQueueRow {
+            row,
+            kind: kind.into(),
+            collection: "imap/Sent".into(),
+            link_id: None,
+            item_id: None,
+            producer: "himalaya".into(),
+            queued_at: "2026-11-15T09:00:00Z".into(),
+            attempts: 0,
+            unconfirmed: false,
+            error: None,
+            subject: None,
+        }
+    }
+
+    /// A pending and a parked row print in one shape, every key present,
+    /// as every Pimalaya program prints them, and one line each under the
+    /// way to cancel one.
+    #[test]
+    fn a_pending_and_a_parked_row_keep_one_shape() {
+        let output = PimdirQueueListOutput {
+            account: "perso".into(),
+            mailbox: "imap/Sent".into(),
+            messages: vec![
+                PimdirQueueRow {
+                    link_id: Some("d1@x.org".into()),
+                    subject: Some("hi".into()),
+                    ..row(3, "add")
+                },
+                row(4, "submit"),
+            ],
+            parked: vec![PimdirQueueRow {
+                item_id: Some("7".into()),
+                attempts: 1,
+                unconfirmed: true,
+                error: Some("unconfirmed: timed out".into()),
+                subject: Some("Report".into()),
+                ..row(2, "move")
+            }],
+            refused: vec![PimdirQueueRefused {
+                collection: "imap/Sent".into(),
+                item_id: "9".into(),
+                source: "imap".into(),
+                reason: "NO [CANNOT] refused".into(),
+                refused_at: "2026-11-15T09:10:00.000Z".into(),
+            }],
+        };
+
+        let json = serde_json::to_value(&output).unwrap();
+        assert_eq!(
+            json["messages"][1],
+         
 ```
 
 ### Core Architecture Module: `src/pimdir/queue/mod.rs`
@@ -574,7 +642,7 @@ use std::fmt;
 
 use anyhow::Result;
 use clap::Parser;
-use io_pimdir::client::producer::PimdirActionStatus;
+use io_pimdir::client::producer::{PimdirActionStatus, PimdirReceiptRefusal};
 use pimalaya_cli::{printer::Printer, sanitize};
 use schemars::JsonSchema;
 use serde::Serialize;
@@ -591,10 +659,17 @@ use crate::pimdir::client::PimdirClient;
 /// change that may have happened: it waits for the engine to confirm it,
 /// or for a cancellation), and `applied` once done, a message sent or a
 /// mailbox created, renamed or deleted included, with the id of the
-/// message an add created. The store keeps what became of an applied row
-/// for seven days, under the mailbox it was queued on, or under none once
-/// that mailbox is gone; past that, and for a cancelled row, the state is
-/// `unknown`.
+/// message it acted on (the one an add created). An applied row lists the
+/// refusals standing on that message: a server that refused for good the
+/// change the row led to, with its reason, held until the message is
+/// changed again or removed. The store keeps what became of an applied row
+/// for seven days, and while a refusal stands on its message, under the
+/// mailbox it was queued on, or under none once that mailbox is gone; past
+/// that, and for a cancelled row, the state is `unknown`.
+///
+/// JSON output: `{"row", "state", "collection", "kind", "attempts",
+/// "error", "appliedAt", "seq", "refusals": [{"collection", "source",
+/// "reason", "refusedAt"}]}`.
 #[derive(Debug, Parser)]
 pub struct PimdirQueueShowCommand {
     /// The queue row id.
@@ -623,7 +698,8 @@ pub enum PimdirQueueState {
     /// cancellation; `error` holds what the engine recorded.
     Unconfirmed,
     /// Applied or performed by the sync engine (a message sent, a mailbox
-    /// created, renamed or deleted); `seq` is the message an add created.
+    /// created, renamed or deleted); `seq` is the message it acted on, and
+    /// `refusals` the servers that refused the change it led to.
     Applied,
     /// Neither queued nor known applied: cancelled, or applied long ago.
     Unknown,
@@ -653,8 +729,40 @@ pub struct PimdirQueueShowOutput {
     pub error: Option<String>,
     /// When the row was applied, RFC 3339.
     pub applied_at: Option<String>,
-    /// The id of the message an applied add created, in `collection`.
+    /// The id of the message an applied row acted on (the one an add
+    /// created), as `envelope list` prints it.
     pub seq: Option<i64>,
+    /// The refusals standing on that message, empty but for an applied
+    /// row.
+    pub refusals: Vec<PimdirQueueRefusal>,
+}
+
+/// A refusal standing on the message an applied row acted on (pimdir
+/// STORAGE §15.4): the server of `source` refused for good the change the
+/// row led to, and the sync engine holds it until the message changes
+/// again.
+#[derive(Clone, Debug, Serialize, JsonSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct PimdirQueueRefusal {
+    /// The mailbox filing the message, the target of a move.
+    pub collection: String,
+    /// The source whose server refused the change.
+    pub source: String,
+    /// The text the server gave.
+    pub reason: String,
+    /// When the refusal was recorded, RFC 3339.
+    pub refused_at: String,
+}
+
+impl From<PimdirReceiptRefusal> for PimdirQueueRefusal {
+    fn from(refusal: PimdirReceiptRefusal) -> Self {
+        Self {
+            collection: refusal.collection,
+            source: refusal.source,
+            reason: refusal.reason,
+            refused_at: refusal.refused_at,
+        }
+    }
 }
 
 impl PimdirQueueShowOutput {
@@ -669,6 +777,7 @@ impl PimdirQueueShowOutput {
             error: None,
             applied_at: None,
             seq: None,
+            refusals: Vec::new(),
         };
 
         match status {
@@ -713,11 +822,13 @@ impl PimdirQueueShowOutput {
                 applied_at,
                 collection,
                 seq,
+                refusals,
             } => Self {
                 state: PimdirQueueState::Applied,
                 collection,
                 applied_at: Some(applied_at),
                 seq,
+                refusals: refusals.into_iter().map(Into::into).collect(),
                 ..row
             },
             PimdirActionStatus::Unknown => row,
@@ -757,9 +868,20 @@ impl fmt::Display for PimdirQueueShowOutput {
                     None => write!(f, "Row {id} was applied in a mailbox deleted since")?,
                 }
                 if let Some(seq) = self.seq {
-                    write!(f, ", creating message {seq}")?;
+                    write!(f, ", on message {seq}")?;
                 }
-                writeln!(f)
+                writeln!(f)?;
+                for refusal in &self.refusals {
+                    writeln!(
+                        f,
+                        "Refused by {} in {} at {}: {}",
+                        sanitize::text(&refusal.source),
+                        sanitize::text(&refusal.collection),
+                        sanitize::text(&refusal.refused_at),
+                        sanitize::text(&refusal.reason),
+                    )?;
+                }
+                Ok(())
             }
             PimdirQueueState::Unknown => writeln!(
                 f,
@@ -783,70 +905,7 @@ mod tests {
         let row = PimdirQueueShowOutput::new(
             12,
             PimdirActionStatus::Applied {
-                applied_at: "2026-10-04T20:00:00Z".into(),
-                collection: Some("imap/Drafts".into()),
-                seq: Some(42),
-            },
-        );
-        let json = serde_json::to_value(&row).unwrap();
-        assert_eq!(
-            json,
-            serde_json::json!({
-                "row": 12,
-                "state": "applied",
-                "collection": "imap/Drafts",
-                "kind": null,
-                "attempts": null,
-                "error": null,
-                "appliedAt": "2026-10-04T20:00:00Z",
-                "seq": 42,
-            })
-        );
-    }
-
-    /// An intent its performer sent and could not confirm is no failure
-    /// and no success (pimdir STORAGE §15.2): it reads `unconfirmed`, with
-    /// what the performer recorded, never `parked`.
-    #[test]
-    fn an_unconfirmed_row_says_it_may_have_taken_effect() {
-        let row = PimdirQueueShowOutput::new(
-            9,
-            PimdirActionStatus::Unconfirmed {
-                collection: "imap/Sent".into(),
-                kind: "submit".into(),
-                attempts: 1,
-                detail: "connection lost after DATA".into(),
-            },
-        );
-
-        let json = serde_json::to_value(&row).unwrap();
-        assert_eq!(json["state"], "unconfirmed");
-        assert_eq!(json["kind"], "submit");
-        assert_eq!(json["error"], "connection lost after DATA");
-
-        let line = row.to_string();
-        assert!(line.contains("unconfirmed"), "{line}");
-        assert!(line.contains("maybe performed"), "{line}");
-        assert!(line.contains("connection lost after DATA"), "{line}");
-    }
-
-    /// A row applied on a mailbox deleted since keeps its receipt and
-    /// names no collection (pimdir STORAGE §15.4).
-    #[test]
-    fn an_applied_row_of_a_deleted_mailbox_names_no_collection() {
-        let row = PimdirQueueShowOutput::new(
-            4,
-            PimdirActionStatus::Applied {
-                applied_at: "2026-11-13T09:00:00Z".into(),
-                collection: None,
-                seq: None,
-            },
-        );
-
-        let json = serde_json::to_value(&row).unwrap();
-        assert_eq!(json["state"], "applied");
-        assert_eq!(json["collection"], serde_json::Value::Null);
-        assert!(row.to_s
+                applied_at: "2026-10-04T20:0
 ```
 
 ### Core Architecture Module: `src/account/capability.rs`
@@ -1340,6 +1399,10 @@ pub struct Account {
     pub name: Option<String>,
     /// Address the account sends as.
     pub email: Option<String>,
+    /// Addresses the account logs in as (its IMAP and SMTP logins holding
+    /// an `@`), which a reply to all leaves out beside `email`. Read from
+    /// the account's blocks before its client takes them.
+    pub logins: Vec<String>,
     /// Name that address carries.
     pub display_name: Option<String>,
     /// Signature appended to a composed message.
@@ -1377,6 +1440,7 @@ impl Account {
             name: other.name.or(self.name),
 
             email: other.email.or(self.email),
+            logins: [self.logins, other.logins].concat(),
             display_name: other.display_name.or(self.display_name),
             signature: other.signature.or(self.signature),
             signature_delim: other.signature_delim.or(self.signature_delim),
@@ -1549,16 +1613,7 @@ impl Account {
                         _ => continue,
                     }
                 }
-            };
-
-            for mailbox in mailboxes.iter_mut() {
-                if mailbox.id == id {
-                    mailbox.role = Some(role.clone());
-                } else if mailbox.role.as_ref() == Some(&role) {
-                    mailbox.role = None;
-                }
-            }
-        }
+          
 ```
 
 
@@ -1588,805 +1643,243 @@ impl Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `202eb72d` (2026-11-13)
-**Commit Message**: fix: run a credential command shared by IMAP and SMTP once
+### Incident Patch 1: `b9712f7f` (2026-11-16)
+**Commit Message**: build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph to 0.9.3
 
-EmailClient holds one SecretResolver and threads it into ImapClient::new
-and SmtpClient::new, so the lazy SMTP connect of a send reuses what the
-IMAP session resolved: `message send` with `save-copy` no longer asks
-twice (#813). Closes G2 of cli-alignment-leftovers.
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `Cargo.lock` (modified, +19/-19)
 ```diff
-@@ -203,6 +203,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -871,9 +871,9 @@ dependencies = [
  
- ### Fixed
+ [[package]]
+ name = "ical-rs"
+-version = "0.7.0"
++version = "0.7.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5dbc009237124ae236eb886a57bda65357729b6b8ff7ad21113de2cea933e02a"
++checksum = "7e390dd6dbfc13b572c448002e57878c151204010b8249c4d3e0d2b758d734cf"
+ dependencies = [
+  "jiff",
+  "jiff-tzdb",
+@@ -1066,9 +1066,9 @@ dependencies = [
  
-+- Fixed a send over SMTP running again the credential command the IMAP block already ran, which `message send` with `save-copy` asked for twice ([#813]).
- - Fixed a message sent over SMTP, or queued on a pimdir account, taking from its headers an envelope address holding a control character, and `message send` over SMTP an address the transaction cannot carry (a space, a line break): the send fails naming the address before anything is written (io-smtp).
- - Fixed `scram-sha-256` on IMAP and SMTP failing as an unsupported mechanism: the `imap` and `smtp` cargo features enable the SCRAM-SHA-256 of io-imap and io-smtp.
- - Fixed an IMAP answer holding lines that do not decode being printed as whole: a warning says how many were skipped, a `message read` whose message was among them fails rather than report it missing, and a server `ALERT` is logged as a warning (io-imap).
-@@ -1717,6 +1718,7 @@ Few major concepts changed:
- [#802]: https://github.com/pimalaya/himalaya/issues/802
- [#805]: https://github.com/pimalaya/himalaya/issues/805
- [#806]: https://github.com/pimalaya/himalaya/issues/806
-+[#813]: https://github.com/pimalaya/himalaya/issues/813
+ [[package]]
+ name = "io-msgraph"
+-version = "0.9.2"
++version = "0.9.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cf2f9e0df97603e14e46ca58d104de5dfd77e1ca72aac1206f92e01047995837"
++checksum = "aecd5bd9319b486f79a7a32ece8f14e354986efc92f034e029864c2982fdc079"
+ dependencies = [
+  "anyhow",
+  "base64-codec",
+@@ -1105,9 +1105,9 @@ dependencies = [
  
- [core#1]: https://github.com/pimalaya/core/issues/1
- [core#10]: https://github.com/pimalaya/core/issues/10
+ [[package]]
+ name = "io-pimdir"
+-version = "0.14.1"
++version = "0.15.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f19a7e961bd806c87280d35695f5a92e7ba34b4fe971ffd7577891bae3775764"
++checksum = "5a8d137275e17b01cbbe06e3cb235eba454f98e0e5f8483bd647d429e582a91a"
+ dependencies = [
+  "blake3",
+  "encoding_rs",
+@@ -1181,9 +1181,9 @@ checksum = "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4"
+ 
+ [[package]]
+ name = "jiff"
+-version = "0.2.43"
++version = "1.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
++checksum = "9cc767b5763de45e810109520123bb2829a653f3a7ed9be40b2bc4f81158f595"
+ dependencies = [
+  "jiff-core",
+  "jiff-static",
+@@ -1197,30 +1197,30 @@ dependencies = [
+ 
+ [[package]]
+ name = "jiff-core"
+-version = "0.1.5"
++version = "1.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
++checksum = "894f7ac42105f584100691b3bf6e6b92dd12fcfa225f6c397f95c8a94b47b68f"
+ dependencies = [
+  "log",
+ ]
+ 
+ [[package]]
+ name = "jiff-static"
+-version = "0.2.43"
++version = "1.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
++checksum = "955491488dc99b572ea6d67b172dcd98787d00744b1fb44a5689b4e6413695a6"
+ dependencies = [
+  "jiff-core",
+  "proc-macro2",
+  "quote",
+- "syn 2.0.119",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+ name = "jiff-tzdb"
+-version = "0.1.9"
++version = "1.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
++checksum = "12e71a1b68a875a44a33bb7a1dd84392cb77145a3367a552a3cfe6a4f5cf3afc"
+ 
+ [[package]]
+ name = "jni"
+@@ -1315,9 +1315,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "libsqlite3-sys"
+-version = "0.39.1"
++version = "0.40.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
++checksum = "b06e69070b7e12262b0cd90832f0a7396f142a2b330181255562decf9f0c6215"
+ dependencies = [
+  "cc",
+  "pkg-config",
+@@ -1844,9 +1844,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rusqlite"
+-version = "0.41.1"
++version = "0.43.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
++checksum = "f172c4812a19b26d1c23cdb0070e69db335503dfa378b910eb857386e5b8beba"
+ dependencies = [
+  "bitflags",
+  "fallible-iterator",
 ```
 
-**File**: `cairn/changes/cli-alignment-leftovers/proposal.md` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +4/-4)
 ```diff
-@@ -1,7 +1,7 @@
- ---
- cairn: change
- id: cli-alignment-leftovers
--status: active
-+status: landed
- created: 2026-10-18
- ---
+@@ -38,7 +38,7 @@ pimalaya-cli = { version = "0.6.0", default-features = false, features = ["build
  
-```
-
-**File**: `cairn/changes/cli-alignment-leftovers/tasks.md` (modified, +3/-3)
-```diff
-@@ -5,7 +5,7 @@ change: cli-alignment-leftovers
+ [dev-dependencies]
+ io-oauth = { version = "0.7", default-features = false, features = ["client", "jwt-bearer", "rustls-ring"] }
+-rusqlite = { version = "0.41", default-features = false, features = ["bundled"] }
++rusqlite = { version = "0.43", default-features = false, features = ["bundled"] }
+ tempfile = { version = "3", default-features = false }
+ toml = { version = "1.1", default-features = false, features = ["parse", "serde"] }
  
- # Tasks
- 
--- [ ] G2: thread one `SecretResolver` per account through `ImapClient::new` and `SmtpClient::new` (src/imap/client.rs:44, src/smtp/client.rs:45), or record why the lazy SMTP connect still rules it out
-+- [x] G2: thread one `SecretResolver` per account through `ImapClient::new` and `SmtpClient::new`: `EmailClient` holds it, so the lazy SMTP connect reuses what the IMAP session resolved ([#813](https://github.com/pimalaya/himalaya/issues/813))
- - [x] ~~H1, H2: once pimalaya-cli ships them, drop src/wizard/configure.rs:103, :223, :278 and src/cli.rs:221~~ H1 dropped with the wizard (the-wizard-leaves, 2026-11-11); H2 done by the-first-run-welcome (2026-11-11), `resolve_account` (src/cli.rs:178) now being `Config::load` then pimalaya-config's shared `take_account`.
--- [ ] CHANGELOG under [Unreleased]
--- [ ] Fold into the spec; log; land
-+- [x] CHANGELOG under [Unreleased]
-+- [x] Fold into the spec; log; land
-```
-
-**File**: `cairn/log/2026-11-13-cli-alignment-leftovers.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+---
-+cairn: log
-+change: cli-alignment-leftovers
-+landed: 2026-11-13
-+---
-+
-+# One resolver per account
-+
-+G2 closed ([#813](https://github.com/pimalaya/himalaya/issues/813)): `ImapClient::new` and `SmtpClient::new` each built their own `SecretResolver`, so an account whose IMAP and SMTP blocks name one password command ran it twice on `message send` with `save-copy`. `EmailClient` now builds one resolver, hands it to `ImapClient::new` when it opens the storage, and keeps it for the lazy SMTP connect of the send, which finds the value the IMAP session resolved. The protocol subcommands, building one client alone (`build_imap_client`, `build_smtp_client`), still give it its own. The regression test `a_send_reuses_the_credential_the_storage_resolved` (src/shared/client.rs) counts the command's runs against a scripted IMAP server and fails against the old wiring. H1 and H2 were settled earlier (the-wizard-leaves and the-first-run-welcome, 2026-11-11), so the change lands whole. Capabilities moved: config (scenario "A send saving its copy").
-```
-
-**File**: `cairn/spec/config.md` (modified, +5/-0)
-```diff
-@@ -85,6 +85,11 @@ Two commands SHALL count as one only where the configuration wrote them identica
- 
- The resolved value SHALL live no longer than the run that resolved it, and SHALL never be written to a config file, a log line or a cache.
- 
-+#### Scenario: A send saving its copy
-+- GIVEN an account whose IMAP and SMTP blocks name one password command
-+- WHEN `message send` sends over SMTP and saves the copy over IMAP
-+- THEN the command runs once, the SMTP transport connecting on the send with the value the IMAP session resolved
-+
- ### Requirement: A proxy is set per account and per backend
- An account's `proxy` SHALL apply to every network backend of that account (IMAP, SMTP, ManageSieve, JMAP, Gmail, Microsoft Graph) whose own block names no `proxy`, and a backend's own `proxy` SHALL win over it. With neither, the connection SHALL read the `all_proxy` and `https_proxy` environment variables, honouring `no_proxy`.
- 
-```
-
-**File**: `src/imap/backend.rs` (modified, +1/-1)
-```diff
-@@ -1808,7 +1808,7 @@ mod tests {
- 
-         fn client(server: &str) -> ImapClient {
-             let config: ImapConfig = toml::from_str(&format!("server = \"{server}\"")).unwrap();
--            ImapClient::new(config).unwrap()
-+            ImapClient::new(config, &mut pimalaya_config::secret::SecretResolver::new()).unwrap()
-         }
- 
-         /// Runs `op` against a scripted server, returning its count and
-```
-
-**File**: `src/imap/client.rs` (modified, +4/-5)
-```diff
-@@ -36,12 +36,11 @@ pub struct ImapClient {
- impl ImapClient {
-     /// Opens the connection and authenticates, caching the capabilities
-     /// the handshake reported.
--    pub fn new(config: ImapConfig) -> Result<Self> {
-+    pub fn new(config: ImapConfig, resolver: &mut SecretResolver) -> Result<Self> {
-         let sort_fallback = config.sort.fallback;
-         let tls = config.tls.into_tls(config.alpn);
-         let auto_id = resolve_auto_id_params(&config.id)?;
-         let server = parse_imap_server(&config.server)?;
--        let mut resolver = SecretResolver::new();
-         let sasl: Option<Sasl> = match config.sasl {
-             // NOTE: a `unix://` sirup socket greets with PREAUTH, so the
-             // session is already authenticated and no SASL is negotiated.
-@@ -53,13 +52,13 @@ impl ImapClient {
-                 // NOTE: url knows no imap default port, so the fallback is
-                 // the same scheme default io-imap connects with.
-                 let port = server.port().unwrap_or(default_port(server.scheme()));
--                Some(cfg.try_into_sasl(host, port, &mut resolver)?)
-+                Some(cfg.try_into_sasl(host, port, resolver)?)
-             }
-             None => None,
-         };
-         let opts = ImapClientStdConnectOptions {
-             tls,
--            proxy: ProxyConfig::resolve(config.proxy, &mut resolver)?,
-+            proxy: ProxyConfig::resolve(config.proxy, resolver)?,
-             sasl,
-             session: ImapSessionOpenOptions {
-                 starttls: config.starttls,
-@@ -165,7 +164,7 @@ pub fn build_imap_client(
-         name: Some(name.to_string()),
-         ..Account::from(config).merge(Account::from(account_config))
-     };
--    let client = ImapClient::new(imap_config)?;
-+    let client = ImapClient::new(imap_config, &mut SecretResolver::new())?;
-     Ok((account, client))
- }
- 
-```
-
-**File**: `src/shared/client.rs` (modified, +89/-3)
-```diff
-@@ -19,6 +19,7 @@
- #[cfg(feature = "gmail")]
- use anyhow::Context;
- use anyhow::{Result, anyhow, bail};
-+use pimalaya_config::secret::SecretResolver;
- 
- #[cfg(feature = "gmail")]
- use crate::gmail::client::GmailClient;
-@@ -71,6 +72,9 @@ pub struct EmailClient {
-     /// server dropped while idle.
-     #[cfg(feature = "smtp")]
-     smtp: Option<Box<SmtpConfig>>,
-+    /// The credentials of the run, so a send reuses those the storage ran.
-+    #[cfg(feature = "smtp")]
-+    resolver: SecretResolver,
- }
- 
- /// The active storage backend, one of the compiled-in per-protocol
-@@ -102,7 +106,8 @@ impl EmailClient {
-         backend: Backend,
-     ) -> Result<(Account, Self)> {
-         let resolution = Resolution::of(name, &account_config, backend);
--        let storage = open_storage(&mut account_config, resolution.storage)?;
-+        let mut resolver = SecretResolver::new();
-+        let storage = open_storage(&mut account_config, resolution.storage, &mut resolver)?;
- 
-         // NOTE: left unconnected, so a read-only command opens no SMTP
-         // connection and a single-session proxy serves storage alone.
-@@ -140,6 +145,8 @@ impl EmailClient {
-                 storage,
-                 #[cfg(feature = "smtp")]
-                 smtp,
-+                #[cfg(feature = "smtp")]
-+                resolver,
-             },
-         ))
-     }
-@@ -733,7 +740,7 @@ impl EmailClient {
- 
-         #[cfg(feature = "smtp")]
-         if let Some(config) = &self.smtp {
--            let mut smtp = SmtpClient::new(config.as_ref().clone())?;
-+            let mut smtp = SmtpClient::new(config.as_ref().clone(), &mut self.resolver)?;
-             return smtp.send_message(raw).map(|()| SentCopy::Owed);
-         }
- 
-@@ -818,6 +825,7 @@ fn named(id: String) -> (Option<String>, String) {
- fn open_storage(
-     account_config: &mut AccountConfig,
-     storage: Option<Backend>,
-+    #[cfg_attr(not(feature = "imap"), allow(unused_variables))] resolver: &mut SecretResolver,
- ) -> Result<Option<BackendClient>> {
-     let client = match storage {
-         #[cfg(feature = "maildir")]
-@@ -854,11 +862,89 @@ fn open_storage(
-         },
-         #[cfg(feature = "imap")]
-         Some(Backend::Imap) => match account_config.imap.take() {
--            Some(config) => Some(BackendClient::Imap(Box::new(ImapClient::new(config)?))),
-+            Some(config) => Some(BackendClient::Imap(Box::new(ImapClient::new(
-+                config, resolver,
-+            )?))),
-             None => None,
-         },
-         _ => None,
-     };
- 
-     Ok(client)
- }
-+
-+#[cfg(all(test, feature = "imap", feature = "smtp"))]
-+mod tests {
-+    use std::{
-+        fs,
-+        io::{BufRead, BufReader, Write},
-+        net::TcpListener,
-+        thread,
-+    };
-+
-+    use super::*;
-+
-+    /// Serves one IMAP session that accepts any credential.
-+    fn serve_imap() -> String {
-+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
-+        let addr = listener.local_addr().unwrap();
-+
-+        thread::spawn(move || {
-+            let (stream, _) = listener.accept().unwrap();
-+            let mut reader = BufReader::new(stream.try_clone().unwrap());
-+            let mut out = stream;
-+            write!(out, "* OK [CAPABILITY IMAP4rev1 AUTH=PLAIN SASL-IR] hi\r\n").unwrap();
-+
-+            let mut line = String::new();
-+            while reader.read_line(&mut line).unwrap_or(0) > 0 {
-+                let tag = line.split(' ').next().unwrap_or_default().to_owned();
-+                let reply = match line.split(' ').nth(1).map(str::trim) {
-+                    Some("CAPABILITY") => {
-+                        format!("* CAPABILITY IMAP4rev1\r\n{tag} OK done\r\n")
-+                    }
-+                    Some("LOGOUT") => format!("* BYE bye\r\n{tag} OK done\r\n"),
-+                    _ => format!("{tag} OK done\r\n"),
-+                };
-+
-+                line.clear();
-+                if out.write_all(reply.as_bytes()).is_err() {
-+                    break;
-+                }
-+            }
-+        });
-+
-+        format!("imap://{addr}")
-+    }
-+
-+    #[test]
-+    fn a_send_reuses_the_credential_the_storage_resolved() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let runs = dir.path().join("runs");
-+        let command = format!("echo run >> '{}'; echo secret", runs.display());
-+
-+        // NOTE: nothing listens there, so the send fails once its
-+        // credential is resolved.
-+        let closed = TcpListener::bind("127.0.0.1:0")
-+            .unwrap()
-+            .local_addr()
-+            .unwrap();
-+
-+        let account_config: AccountConfig = toml::from_str(&format!(
-+            "imap.server = \"{imap}\"\n\
-+             imap.sasl.plain.username = \"alice\"\n\
-+             imap.sasl.plain.password.command = \"{command}\"\n\
-+             smtp.server = \"smtp://{closed}\"\n\
-+             smtp.sasl.plain.username = \"alice\"\n\
-+             smtp.sasl.plain.password.command = \"{command}\"\n",
-+            imap = serve_imap(),
-+     
+@@ -59,11 +59,11 @@ io-jmap = { version = "0.10", default-features = false, optional = true }
+ io-maildir = { version = "0.5", default-features = false, optional = true }
+ io-managesieve = { version = "0.4", default-features = false, optional = true }
+ io-mbox = { version = "0.2", default-features = false, optional = true }
+-io-msgraph = { version = "0.9.2", default-features = false, optional = true }
+-io-pimdir = { version = "0.14.1", default-features = false, features = ["client"], optional = true }
++io-msgraph = { version = "0.9.3", default-features = false, optional = true }
++io-pimdir = { version = "0.15.1", default-features = false, features = ["client"], optional = true }
+ io-sasl = { version = "0.2", default-features = false, features = ["scram"] }
+ io-smtp = { version = "0.9", default-features = false, optional = true }
+-jiff = { version = "0.2", default-features = false, features = ["std", "tz-system", "tzdb-bundle-always"], optional = true }
++jiff = { version = "1", default-features = false, features = ["std", "tz-system", "tzdb-bundle-always"], optional = true }
+ log = { version = "0.4", default-features = false }
+ mime-rs = { version = "0.2", default-features = false, features = ["base64", "encoding", "parser"], optional = true }
+ mime_guess = { version = "2", default-features = false, features = ["rev-mappings"] }
 ```
 
 ---
 
-### Incident Patch 2: `39817e83` (2026-11-14)
-**Commit Message**: feat(config)!: refuse unknown keys at every level, himalaya-tui keys under tui
+### Incident Patch 2: `d98528b5` (2026-11-16)
+**Commit Message**: build(deps): bump io-pimdir to 0.14.1
 
-The CHANGELOG and MIGRATION.md entries of both changes land here, their hunks being shared.
-
-**File**: `CHANGELOG.md` (modified, +6/-4)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Added
- 
-+- Added `account_capability` to `himalaya mcp`, a reading tool listed whatever the flags, answering the rows `account capability` prints, as Calendula and Cardamum do.
- - Added `total` to the `envelope list` JSON output: how many messages the mailbox holds, read within the listing itself (IMAP `SELECT` `EXISTS`, JMAP `calculateTotal`, the entries Maildir, mbox and pimdir hold), `null` on Gmail and Microsoft Graph and always for `envelope search`.
- - Added a library target, for himalaya-tui alone, which pins it by git revision and runs Himalaya's commands in-process; it carries no semver promise beyond the CLI grammar and its `--json` output.
- - Added `errors` to `envelope list`, `envelope search`, `mailbox list`, `flag add|set|remove`, `message copy`, `message move` and `message delete`: one item error `{id, code, error, sources}` per item the command could not list or act on, `[]` when there is none, `count` counting what was acted on.
- 
--  A non-empty `errors` exits 3, printing nothing after the result. In text each entry prints as an `Error:` field of a list's header, after the paging fields, or as an `Error:` line after a write's sentence. `json-schema` describes it under `himalaya-item-error`; `himalaya mcp` returns such a result as `structuredContent` with `isError`.
-+  A non-empty `errors` exits 3, printing nothing after the result. In text the entries print last, after a list's items or a write's sentence and one blank line, one `Error:` line each, aligned among themselves, as pimalaya-cli prints them. `json-schema` describes it under `himalaya-item-error`; `himalaya mcp` returns such a result as `structuredContent` with `isError`.
- - Added the error codes `message-unreadable`, `mailbox-unreadable`, `permission-denied`, `quota-exceeded`, `rate-limited` and `recipient-refused`.
- - Added the `message-id <id>` clause to `envelope search`, finding a message by its whole `Message-ID:`, angle brackets optional: `HEADER Message-ID` re-checked exactly on IMAP, `rfc822msgid:` on Gmail, a `$filter` on `internetMessageId` on Microsoft Graph (the clause alone), the envelope's id on Maildir, mbox and pimdir; JMAP refuses it. Added `imap search --header NAME TEXT`, one `HEADER` key per pair ([#797](https://github.com/pimalaya/himalaya/issues/797), [#811](https://github.com/pimalaya/himalaya/pull/811)).
- - Added `tls.client.cert` and `tls.client.key` to every network backend, a client certificate presented when the server asks for one (mutual TLS). native-tls reads a PKCS#8 key only.
-@@ -73,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Changed
- 
-+- **BREAKING**: Changed the top level, the account blocks and the `message` table to refuse a key they do not know, as every other table did, so a typo fails the load naming the key and its line instead of being ignored. The rest of a v1 `[message]` table (`read`, `write`, `send.backend`) is refused with them. himalaya-tui's own keys go under a `[tui]` table at the top level and `[accounts.<name>.tui]` in an account, which Himalaya loads whatever they hold and never reads: `keybinds`, `contact-command`, `contact-complete-key` and `theme` at the top level, `contact-command` in an account.
- - **BREAKING**: Changed `flag add|set|remove`, `message copy`, `message move` and `message delete` given ids the mailbox does not hold to print each as a `message-not-found` entry and exit 3, the others acted on; given none it holds, they print `count: 0` where they printed the failure object and exited 1.
- - Changed `mailbox list --counts` to list a mailbox whose counts could not be fetched without them, beside a `mailbox-unreadable` entry: an IMAP `STATUS` refused or not decoding, a Gmail `labels.get` refused, an mbox index that does not sync. An IMAP `LIST` line that does not decode is a `mailbox-unreadable` entry with a `null` id.
- - Changed the Gmail listings to read the envelopes' metadata through batched `messages.get`, 50 per request, where they sent one request per message.
-@@ -151,7 +153,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Changed the default of `envelope.list.datetime-fmt` to `%F %R` and of `envelope.list.datetime-local-tz` to true: a date prints as `2026-11-12 10:15` in the local timezone, where it printed `%F %R%:z` at the offset it was sent with.
- - **BREAKING**: Changed every list to print as plain text, the way `mscan` prints a mailbox: one item per line in columns two spaces apart, with no header row, no border, no colour and no truncation, under the fields placing it.
- 
--  Above the items, a blank line apart, one block of fields: `Account:` names the account and the backend answering, followed by what is listed (`Mailbox:`, `Message:`, `Query:`, `Folder:`, `Thread:`); on a paged list, `Page:` names the page and what it holds (`2, envelopes 26 to 50`, `2
+@@ -183,7 +183,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Changed an mbox mailbox name holding a NUL or a `.` or `..` level, or a level ending in `.lock` or `.msf`, to be refused wherever a mailbox is taken, the reads included (io-mbox).
+ - Changed `message copy` and `message move` on a pimdir account to fail for a message whose body is not downloaded when the account does not sync the target mailbox yet, no copy being able to reach it (io-pimdir 0c70144, pimdir SYNC §7).
+ - Bumped pimalaya-cli and pimalaya-config to 0.5.
+-- Changed the pimdir backend to follow pimdir storage-draft-13, sync-draft-13 and search-draft-13 (io-pimdir 0.14.0). A store an earlier neverest wrote, storage-draft-11 included, is refused, never migrated (`store-version`), its message naming both drafts and saying to rebuild it as Cardamum and Calendula say (drain its queue with that neverest, upgrade neverest, move the store aside, `neverest init`, sync); a search index of an earlier draft is refused `index-version`. A store whose directory or pimdir.db another user can read is refused with `store-exposed`; restrict it (`chmod 700` the directory, `chmod 600` pimdir.db). The test-only rusqlite moves to 0.41, as io-pimdir requires.
++- Changed the pimdir backend to follow pimdir storage-draft-13, sync-draft-13 and search-draft-13 (io-pimdir 0.14.1). A store an earlier neverest wrote, storage-draft-11 included, is refused, never migrated (`store-version`), its message naming both drafts and saying to rebuild it as Cardamum and Calendula say (drain its queue with that neverest, upgrade neverest, move the store aside, `neverest init`, sync); a search index of an earlier draft is refused `index-version`. A store whose directory or pimdir.db another user can read is refused with `store-exposed`; restrict it (`chmod 700` the directory, `chmod 600` pimdir.db). The test-only rusqlite moves to 0.41, as io-pimdir requires.
+ - Changed `flag add`, `flag remove` and the `\Seen` a read stages on a pimdir account to state the flags they were read from (pimdir STORAGE §15.3), so a flag a sync lands or removes while the change waits in the queue survives it, where the staged set used to overwrite it. `flag set` still replaces the whole set.
+ - Changed a flag change on several pimdir messages to be queued as one batch, all or none: a change one source refuses on any message stages nothing, as before, and a store failing part-way no longer leaves the first rows queued.
+ - Changed `pimdir queue show` to read `unconfirmed` for a send or a mailbox change the sync engine sent without learning its outcome, with what the engine recorded as `error`, where it read `parked`; to read `applied` with `collection` `null` for a row whose mailbox was deleted since, where it read `unknown`; and to know the state `reset`. `pimdir queue list` marks an unconfirmed row (`unconfirmed`, and `unconfirmed` for `parked` in the plain output), and `pimdir queue cancel` prints `unconfirmed` beside `row` and `kind`, its question and its answer saying that such a row was sent and may have taken effect.
 ```
 
-**File**: `MIGRATION.md` (modified, +13/-3)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -1105,9 +1105,9 @@ dependencies = [
  
- ## From v2 to v3
- 
--v3 makes Himalaya a low-level CLI: plain text for a human to glance at, JSON for scripts and frontends. Daily mail is a frontend's job: see the interfaces listed in README.md. v3 drops the configuration wizard and the m2dir backend, takes one configuration path per `-c` and prints plain text, with no table nor colour. A v2 configuration loads as it is, unless it sets a colour key under `mailbox`, sets `envelope.list.datetime-relative` or marks several accounts default.
-+v3 makes Himalaya a low-level CLI: plain text for a human to glance at, JSON for scripts and frontends. Daily mail is a frontend's job: see the interfaces listed in README.md. v3 drops the configuration wizard and the m2dir backend, takes one configuration path per `-c` and prints plain text, with no table nor colour. A v2 configuration loads as it is, unless it sets a key v3 does not know (a colour, table or glyph key, `envelope.list.datetime-relative`, a himalaya-tui key outside a `[tui]` table) or marks several accounts default.
- 
- What a script or a frontend reads off `--json` and the text output changes, and a few commands that used to report a success they did not achieve now fail. The CHANGELOG lists every change; these are the ones to act on.
- 
-@@ -13,7 +13,17 @@ What a script or a frontend reads off `--json` and the text output changes, and
- - **`HIMALAYA_CONFIG` is no longer read.** Pass `-c "$HIMALAYA_CONFIG"` for one path, and one `-c` per path for what was a `:`-separated list.
- - **Every default path is read, as layers.** $XDG_CONFIG_HOME/himalaya/config.toml, $HOME/.config/himalaya/config.toml and $HOME/.himalayarc are each deep-merged on top of the ones before, where v2 read the first one found. An rc file left beside a config.toml now overrides it: delete the one you do not use.
- - **Several `default = true` accounts are refused**, naming them, where v2 picked one at random. Keep it on one account across the merged files: an rc file moving the default sets `default = false` on the account the other file marks.
--- **Colour, table and glyph keys are gone.** Remove the `*-color` keys of `envelope.list.table`, `mailbox.list.table`, `attachment.list.table` and `account.list.table`, `table.preset` and `table.arrangement`, and the `envelope.list.table.*-char` glyphs. Under `mailbox` they fail the configuration as unknown keys; elsewhere they are ignored, the whole `envelope.list.table` block included. The envelope lists mark a message's state with fixed characters, `*` unread, `R` answered, `!` flagged and `@` attachment.
-+- **Colour, table and glyph keys are gone.** Remove the `*-color` keys of `envelope.list.table`, `mailbox.list.table`, `attachment.list.table` and `account.list.table`, `table.preset` and `table.arrangement`, and the `envelope.list.table.*-char` glyphs. The `table`, `attachment` and top-level `account` blocks and the `envelope.list.table` block fail the configuration naming this guide, whatever they hold; the `mailbox` colour keys fail it as unknown keys. The envelope lists mark a message's state with fixed characters, `*` unread, `R` answered, `!` flagged and `@` attachment.
-+- **An unknown key fails the configuration**, at the top level and in an account as in every other table, naming the key and its line: a typo no longer passes silently. Fix or delete it. The rest of a v1 `[message]` table (`read`, `write`, `send.backend`) is refused too.
-+- **himalaya-tui's keys go under `[tui]`.** A file shared with himalaya-tui moves its `keybinds`, `contact-command`, `contact-complete-key` and `theme` under a top-level `[tui]` table, and an account's `contact-command` under `[accounts.<name>.tui]`, once himalaya-tui reads them there; Himalaya loads the `tui` tables whatever they hold and reads none of it:
-+
-+  ```toml
-+  [tui]
-+  contact-command = "khard email --parsable %s"
-+
-+  [accounts.work.tui]
-+  contact-command = ["abook", "--mutt-query", "%s"]
-+  ```
- - **`envelope.list.datetime-relative` is gone**, refused as an unknown key: remove it. Dates print as `envelope.list.datetime-fmt` and `datetime-local-tz` configure them.
- - **Dates default to `%F %R` in the local timezone**, where v2 printed `%F %R%:z` at the offset a message was sent with. Set `envelope.list.datetime-fmt = "%F %R%:z"` and `envelope.list.datetime-local-tz = false` to keep the v2 dates.
- - **`http` and `https` hosts are ASCII.** A JMAP `server` or an HTTP proxy `url` with an internationalised host is refused: write the host in Punycode (`https://xn--bcher-kva.example` for `bücher.example`). IMAP, SMTP and ManageSieve servers are unchanged.
-@@ -22,7 +32,7 @@ What a script or a frontend reads off `--json` and the text output changes, and
- ### Text output
- 
- - **Every list prints one item per line, the way `mscan` prints a mailbox**, in columns two spaces apart with no header row, no border, no colour and no truncation. A message prints its id, four flag columns (`*` unread, `R` answered, `!` flagged, `@` attachme
+ [[package]]
+ name = "io-pimdir"
+-version = "0.14.0"
++version = "0.14.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c6cf5ebcd9bfd37226c344216632cb8aa7fc1db3b9766dc2eb8b27efe599e21c"
++checksum = "f19a7e961bd806c87280d35695f5a92e7ba34b4fe971ffd7577891bae3775764"
+ dependencies = [
+  "blake3",
+  "encoding_rs",
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -186,7 +186,7 @@ A persistent configuration is loaded from every existing path among the followin
- 
- At most one account may be marked `default = true` across them: an rc file moving the default sets `default = false` on the account the other file marks.
- 
--These are the same paths the [himalaya-tui](https://github.com/pimalaya/himalaya-tui) TUI looks at: one TOML file backs both binaries. CLI-only fields and TUI-only sections coexist without errors.
-+These are the same paths the [himalaya-tui](https://github.com/pimalaya/himalaya-tui) TUI looks at: one TOML file backs both binaries. The TUI-only keys live under a `[tui]` table, at the top level and in an account (`[accounts.<name>.tui]`), which Himalaya leaves to the TUI; any other key Himalaya does not know fails the configuration.
- 
- Override those paths with `-c <PATH>`. Repeat it to merge several files, such as `-c public.toml -c private.toml`: the first one is the base and the next ones are deep-merged on top. Each `-c` takes one path, never split, and no environment variable is read.
- 
-```
-
-**File**: `cairn/changes/unknown-keys-are-refused/delta.md` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+---
-+cairn: delta
-+change: unknown-keys-are-refused
-+---
-+
-+# Delta
-+
-+## ADDED Requirements
-+
-+### Requirement: Unknown keys are refused
-+(config) Every table of the configuration SHALL refuse a key it does not know, the top level and the account blocks included, the error naming the key and the line. The one exception SHALL be the `tui` table, at the top level and in an account, which holds himalaya-tui's own keys: Himalaya SHALL load it whatever it holds and read none of it. A block a previous major version read and v3 dropped (`table`, `attachment`, the top-level `account`, `envelope.list.table`) SHALL be refused naming the block and MIGRATION.md. The v1 `backend` table and the `m2dir` block SHALL load as their requirements say.
-+
-+#### Scenario: A typo at the top level
-+- GIVEN a configuration setting `downloads-dri` at the top level
-+- WHEN any command reads it
-+- THEN it is refused naming `downloads-dri` and its line
-+
-+#### Scenario: himalaya-tui keys
-+- GIVEN a configuration holding `[tui]` with `keybinds`, `contact-command`, `contact-complete-key` and `theme`, and `[accounts.work.tui]` with `contact-command`
-+- WHEN any command reads it
-+- THEN it loads, and the same keys outside a `tui` table are refused
-+
-+## MODIFIED Requirements
-+
-+### Requirement: A v1 account layout is named, not silently ignored
-+(config) When no configured backend matches `--backend`, the error SHALL name the account and, under `auto`, the backends the command supports in this build; under a named backend, the missing block, or that the backend is unsupported. An account carrying the v1 `backend` table, which no binary reads since v2, SHALL load as if the table were absent, and that error SHALL name the table and point at MIGRATION.md.
-+
-+### Requirement: Sent copies are configured per account
-+(config) `message.send.save-copy`, global or per account, SHALL be the mailbox a sending command (`message send`, and `message compose`, `message reply` and `message forward` with `--send`) appends a copy to when `--save` is not passed. It takes a mailbox name, alias or role, resolved as `--save` is; `true` SHALL stand for `sent` and `false` for no copy. `--no-save` SHALL skip it for one call and conflict with `--save`. The `message` table SHALL refuse an unknown key as every table does, the rest of a v1 `[message]` table (`read`, `write`, `send.backend`) included.
-+
-+### Requirement: No colour is configured
-+(config) The configuration SHALL hold no colour, no table shape and no glyph. The v2 blocks holding them SHALL be refused by name as "Unknown keys are refused" says: `table` (`table.preset`, `table.arrangement`) and `attachment` at the top level and the account level, `account` at the top level, and `envelope.list.table`, whatever they hold; `mailbox.list` is an unknown key of `mailbox`. `envelope.list` SHALL keep refusing an unknown key of its own.
-+
-+#### Scenario: A v2 glyph key
-+- GIVEN an account setting `envelope.list.table.unseen-char = "N"`
-+- WHEN any command reads the configuration
-+- THEN it is refused with ``The `envelope.list.table` block is removed since v3: delete it, see MIGRATION.md``
-+
-+#### Scenario: A typo under envelope.list
-+- GIVEN an account setting `envelope.list.datetime-fnt`
-+- WHEN any command reads the configuration
-+- THEN it is refused naming `datetime-fnt`
-+
-+## REMOVED Requirements
-```
-
-**File**: `cairn/changes/unknown-keys-are-refused/proposal.md` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+---
-+cairn: change
-+id: unknown-keys-are-refused
-+status: landed
-+created: 2026-11-14
-+---
-+
-+# Unknown keys are refused
-+
-+> Cross-repo change. Order: **himalaya** (this side) → **himalaya-tui**, which moves its keys under the `tui` tables.
-+
-+## Why
-+
-+The top level, the account blocks and the `message` table tolerated any key, so a typo (`downloads-dri`, `emial`) loaded silently and the setting it meant did nothing. They were open because himalaya-tui shares the file and adds its own keys there (top-level `keybinds`, `contact-command`, `contact-complete-key`, `theme`; account `contact-command`), and so that the rest of a v1 `[message]` table kept loading. The v2 `envelope.list.table` block was ignored for the same reason, though himalaya-tui reads no `table` key; the v2 `table`, `attachment` and `account` blocks were ignored at the open levels while `mailbox.list.table` was refused.
-+
-+The owner decided on 2026-11-14 that every level refuses an unknown key, and that himalaya-tui's keys move under a `[tui]` table at the top level and `[accounts.<name>.tui]` in an account.
-+
-+## What
-+
-+- `#[serde(deny_unknown_fields)]` on `Config`, `AccountConfig`, `MessageConfig`, `MessageQuoteConfig` and `MessageSendConfig`, the only config structs without it. No config struct uses `#[serde(flatten)]`.
-+- `tui: Option<IgnoredAny>` at the top level and in an account, loaded whatever it holds and never read.
-+- The v2 blocks are refused by name, ``The `<block>` block is removed since v3: delete it, see MIGRATION.md``: `table` and `attachment` at both levels, the top-level `account`, and `envelope.list.table`. The v1 `backend` table and the `m2dir` block keep loading, named by the no-backend error.
-+- The `from` and `from-name` aliases himalaya-tui writes stay.
-+- himalaya-tui is not edited here: the owner moves its keys after.
-+- Spec: config ("Unknown keys are refused" added; "A v1 account layout is named, not silently ignored", "Sent copies are configured per account" and "No colour is configured" modified). CHANGELOG **BREAKING**, MIGRATION.md.
-```
-
-**File**: `cairn/changes/unknown-keys-are-refused/tasks.md` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+---
-+cairn: tasks
-+change: unknown-keys-are-refused
-+---
-+
-+# Tasks
-+
-+- [x] Tests failing on the old code: an unknown top-level key, an unknown account key, the `tui` tables loaded beside a refused `tuix`, the v2 `table`, `attachment` and `account` blocks and `envelope.list.table` refused naming MIGRATION.md, the rest of a v1 `[message]` table refused.
-+- [x] `deny_unknown_fields` on `Config`, `AccountConfig` and the three `message` structs; `tui` at both levels; the v2 blocks refused by name. No `flatten` among the config structs.
-+- [x] config.sample.toml loads (`the_sample_configuration_parses_with_each_variant`).
-+- [x] CHANGELOG **BREAKING**, MIGRATION.md v2 to v3.
-+- [x] Fold the delta into config.md, write the log entry, set `landed`.
-+- [ ] himalaya-tui moves its keys under `[tui]` and `[accounts.<name>.tui]` (owner).
-```
-
-**File**: `cairn/log/2026-11-14-unknown-keys-are-refused.md` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+---
-+cairn: log
-+change: unknown-keys-are-refused
-+landed: 2026-11-14
-+---
-+
-+# Unknown keys are refused
-+
-+Every table of the configuration refuses a key it does not know: `Config`, `AccountConfig`, `MessageConfig`, `MessageQuoteConfig` and `MessageSendConfig` took `deny_unknown_fields`, the other config structs having it already; none uses `flatten`. The rest of a v1 `[message]` table (`read`, `write`, `send.backend`) is refused with them.
-+
-+himalaya-tui's keys go under `tui`, at the top level and in an account, loaded as `IgnoredAny` and never read. The v2 blocks are refused by name, ``The `<block>` block is removed since v3: delete it, see MIGRATION.md``: `table` and `attachment` at both levels, the top-level `account`, and `envelope.list.table`, which was ignored for himalaya-tui though it reads no `table` key. The v1 `backend` table and the `m2dir` block keep loading, named by the no-backend error. himalaya-tui is not edited: its keys move under `tui` on its side.
-+
-+Tested: an unknown top-level key, an unknown account key, the `tui` tables at both levels beside a refused `tuix`, the v2 blocks at both levels, `envelope.list.table` at both levels and the v1 `[message]` keys, each failing on the old code. `save_copy_reads_a_v1_boolean` no longer loads v1 keys beside the boolean. config.sample.toml still loads as written and in every variant. Through the binary, `envelope.list.table.unseen-char` fails pointing at its line and MIGRATION.md, and an account's `contact-command` fails as an unknown field.
-+
-+Spec: config ("Unknown keys are refused" added; "A v1 account layout is named, not silently ignored", "Sent copies are configured per account" and "No colour is configured" modified).
-```
-
-**File**: `cairn/spec/config.md` (modified, +18/-5)
-```diff
-@@ -98,8 +98,21 @@ An account's `proxy` SHALL apply to every network backend of that account (IMAP,
- 
- `proxy.url` SHALL take `socks5://`, `socks5h://` or `http://`. `proxy.username` and `proxy.password` SHALL override the URL's user info, the password being a secret like any credential; a password without a username SHALL be rejected.
- 
-+### Requirement: Unknown keys are refused
-+Every table of the configuration SHALL refuse a key it does not know, the top level and the account blocks included, the error naming the key and the line. The one exception SHALL be the `tui` table, at the top level and in an account, which holds himalaya-tui's own keys: Himalaya SHALL load it whatever it holds and read none of it. A block a previous major version read and v3 dropped (`table`, `attachment`, the top-level `account`, `envelope.list.table`) SHALL be refused naming the block and MIGRATION.md. The v1 `backend` table and the `m2dir` block SHALL load as their requirements say.
-+
-+#### Scenario: A typo at the top level
-+- GIVEN a configuration setting `downloads-dri` at the top level
-+- WHEN any command reads it
-+- THEN it is refused naming `downloads-dri` and its line
-+
-+#### Scenario: himalaya-tui keys
-+- GIVEN a configuration holding `[tui]` with `keybinds`, `contact-command`, `contact-complete-key` and `theme`, and `[accounts.work.tui]` with `contact-command`
-+- WHEN any command reads it
-+- THEN it loads, and the same keys outside a `tui` table are refused
-+
- ### Requirement: A v1 account layout is named, not silently ignored
--Unknown keys SHALL stay tolerated, the file being shared with himalaya-tui. When no configured backend matches `--backend`, the error SHALL name the account and, under `auto`, the backends the command supports in this build; under a named backend, the missing block, or that the backend is unsupported. An account carrying the v1 `backend` table, which no binary reads since v2, SHALL load as if the table were absent, and that error SHALL name the table and point at MIGRATION.md.
-+When no configured backend matches `--backend`, the error SHALL name the account and, under `auto`, the backends the command supports in this build; under a named backend, the missing block, or that the backend is unsupported. An account carrying the v1 `backend` table, which no binary reads since v2, SHALL load as if the table were absent, and that error SHALL name the table and point at MIGRATION.md.
- 
- ### Requirement: An m2dir block is named, not loaded
- Himalaya SHALL NOT read m2dir stores. An account carrying an `m2dir` block, whatever it holds, SHALL load as if the block were absent, so a file shared with himalaya-tui or written for v2 keeps loading. When no configured backend matches `--backend`, that error SHALL name the `m2dir` block as ignored since v3 removed m2dir and point at MIGRATION.md. `m2dir` SHALL NOT be a `--backend` value, clap refusing it as any unknown value.
-@@ -110,18 +123,18 @@ Himalaya SHALL NOT read m2dir stores. An account carrying an `m2dir` block, what
- - THEN the configuration loads and the command fails naming the account, the ignored `m2dir` block and MIGRATION.md
- 
- ### Requirement: Sent copies are configured per account
--`message.send.save-copy`, global or per account, SHALL be the mailbox a sending command (`message send`, and `message compose`, `message reply` and `message forward` with `--send`) appends a copy to when `--save` is not passed. It takes a mailbox name, alias or role, resolved as `--save` is; `true` SHALL stand for `sent` and `false` for no copy. `--no-save` SHALL skip it for one call and conflict with `--save`. The `message` table SHALL accept unknown keys, so a v1 `[message]` table keeps loading.
-+`message.send.save-copy`, global or per account, SHALL be the mailbox a sending command (`message send`, and `message compose`, `message reply` and `message forward` with `--send`) appends a copy to when `--save` is not passed. It takes a mailbox name, alias or role, resolved as `--save` is; `true` SHALL stand for `sent` and `false` for no copy. `--no-save` SHALL skip it for one call and conflict with `--save`. The `message` table SHALL refuse an unknown key as every table does, the rest of a v1 `[message]` table (`read`, `write`, `send.backend`) included.
- 
- ### Requirement: Posting styles are configured per account
- `message.reply.posting-style` and `message.forward.posting-style`, global or per account, SHALL take `top`, `bottom` or `none` and SHALL be the posting style `message reply` and `message forward` use when `--posting-style` is not passed. With neither, the style SHALL be `top`.
- 
- ### Requirement: No colour is configured
--The configuration SHALL hold no colour, no table shape and no glyph: `*.list.table.*-color`, `table.preset` and `table.arrangement` are unknown keys, refused where their table denies unknown keys (`mailbox`) and ignored at the top level and the account level, which tolerate unknown keys for himalaya-tui. The `envelope.list.table` block SHALL b
+@@ -60,7 +60,7 @@ io-maildir = { version = "0.5", default-features = false, optional = true }
+ io-managesieve = { version = "0.4", default-features = false, optional = true }
+ io-mbox = { version = "0.2", default-features = false, optional = true }
+ io-msgraph = { version = "0.9.2", default-features = false, optional = true }
+-io-pimdir = { version = "0.14.0", default-features = false, features = ["client"], optional = true }
++io-pimdir = { version = "0.14.1", default-features = false, features = ["client"], optional = true }
+ io-sasl = { version = "0.2", default-features = false, features = ["scram"] }
+ io-smtp = { version = "0.9", default-features = false, optional = true }
+ jiff = { version = "0.2", default-features = false, features = ["std", "tz-system", "tzdb-bundle-always"], optional = true }
 ```
 
 ---
 
-### Incident Patch 3: `e2452a87` (2026-11-14)
-**Commit Message**: test: build the live suites' accounts from the new sample
+### Incident Patch 3: `7a9d76dc` (2026-11-15)
+**Commit Message**: ci: run the live suites weekly and by hand, never on push
 
-sample_section takes the paragraph a heading opens, one line per field; Fastmail and Exchange IMAP write their accounts; each suite checks offline that its accounts load.
-
-**File**: `cairn/log/2026-11-14-the-live-suites-follow-the-sample.md` (added, +13/-0)
+**File**: `.github/workflows/tests.yml` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,13 @@
-+---
-+cairn: log
-+change: the-live-suites-follow-the-sample
-+landed: 2026-11-14
-+---
-+
-+# The live suites follow the sample
-+
-+The sample rework of the same day (the-sample-lists-values-in-brackets) broke the three live suites in CI. tests/common.rs `sample_section` skipped the line after a heading, a blank comment line before, and uncommented every line, so the Gmail and Graph sections now set a token's `command` and `raw` together, which the configuration refuses. The Fastmail and Microsoft IMAP and SMTP sections were gone.
-+
-+`sample_section` now takes the paragraph a heading opens, keeping the first line of each field (a secret's `raw` after its `command` left out). The Gmail and Graph suites still read their sections. Fastmail and Exchange IMAP and SMTP, which the sample no longer presets, write their accounts in the test. Each suite gained a test that is not ignored, loading every account it writes offline through `account list`. It failed against the old helper with the CI's own error.
-+
-+Spec: packaging (the live suites' accounts are checked to load offline).
+@@ -2,6 +2,11 @@ name: Tests
+ 
+ on:
+   push:
++  workflow_dispatch:
++  # The suites against real accounts run weekly and by hand, never on push:
++  # a push storm burns the provider quotas and collides with live testing.
++  schedule:
++    - cron: "0 1 * * 1"
+ 
+ jobs:
+   tests:
+@@ -10,6 +15,7 @@ jobs:
+   live:
+     # The binary against the real providers, whose APIs drift without
+     # notice. RUST_LOG stays at debug: trace logs carry secrets and tokens.
++    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+     strategy:
+       fail-fast: false
+       matrix:
 ```
 
-**File**: `cairn/spec/packaging.md` (modified, +1/-1)
+**File**: `CONTRIBUTING.md` (modified, +10/-0)
 ```diff
-@@ -41,4 +41,4 @@ Every dependency, build and dev ones included, SHALL be declared with `default-f
- `cargo deny check` SHALL pass over the targets deny.toml lists, which are the release targets and the ones people build from source, allowing only the licences the tree carries. A duplicate the tree cannot avoid stays a visible warning rather than a skip: today getrandom 0.2 (ring 0.17), syn 2 (bounded-static-derive under io-imap and io-smtp, windows-core under chrono on Windows), and hashbrown 0.15 with foldhash 0.1 (chumsky 0.13).
+@@ -34,3 +34,13 @@ cargo test --no-default-features --features sieve,rustls-ring
+ ## Dependencies
  
- ### Requirement: Live provider suites
--The binary SHALL carry one ignored integration suite per provider under tests/ (google.rs, microsoft.rs, fastmail.rs), run with `--ignored` and sharing tests/common.rs. Each SHALL hold an `anonymous` module that runs every backend the provider's sample offers on a made-up token and touches no account, its accounts taken from the provider sections of config.sample.toml where one fits so a provider drifting from the sample fails it, and asserting the exit code of the output contract (3 with the `account check` report, 1 with the failure object) and a message naming the refusal in Himalaya's words. It MAY hold a `credentialed` module that mints its own token from `HIMALAYA_`-prefixed variables and only reads (`account check`, `mailbox list`, `envelope list`), failing naming the variables it misses, which CI runs in the upstream repository only and once its secrets exist. A token SHALL reach the binary through a token command reading its environment, never argv nor the configuration, and no assertion SHALL print a token or secret. CI SHALL run each suite in its own job at `RUST_LOG=debug` at most.
-+The binary SHALL carry one ignored integration suite per provider under tests/ (google.rs, microsoft.rs, fastmail.rs), run with `--ignored` and sharing tests/common.rs. Each SHALL hold an `anonymous` module that runs every backend the provider's sample offers on a made-up token and touches no account, its accounts taken from the provider sections of config.sample.toml where one fits so a provider drifting from the sample fails it, the accounts it writes checked to load offline by a test that is not ignored, and asserting the exit code of the output contract (3 with the `account check` report, 1 with the failure object) and a message naming the refusal in Himalaya's words. It MAY hold a `credentialed` module that mints its own token from `HIMALAYA_`-prefixed variables and only reads (`account check`, `mailbox list`, `envelope list`), failing naming the variables it misses, which CI runs in the upstream repository only and once its secrets exist. A token SHALL reach the binary through a token command reading its environment, never argv nor the configuration, and no assertion SHALL print a token or secret. CI SHALL run each suite in its own job at `RUST_LOG=debug` at most.
-```
-
-**File**: `tests/common.rs` (modified, +23/-7)
-```diff
-@@ -136,23 +136,39 @@ pub fn assert_envelopes(list: &Value, size: usize) {
-     }
- }
- 
--/// The commented section `name` of config.sample.toml, uncommented,
--/// each line setting a key of `overrides` set to its value instead.
-+/// The section `name` of config.sample.toml, the paragraph its `# name`
-+/// heading opens, uncommented: the first line setting each field, a
-+/// later alternative of it left out (a secret's `raw` after its
-+/// `command`), each key of `overrides` set to its value instead.
- pub fn sample_section(name: &str, overrides: &[(&str, &str)]) -> String {
-     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("config.sample.toml");
-     let sample = fs::read_to_string(path).unwrap();
-     let heading = format!("# {name}");
- 
--    let mut lines = sample.lines().skip_while(|line| *line != heading).skip(2);
-+    let lines = sample.lines().skip_while(|line| *line != heading).skip(1);
-+    let mut fields = Vec::new();
-     let mut section = String::new();
- 
--    for line in lines.by_ref().take_while(|line| !line.is_empty()) {
--        let line = line.strip_prefix('#').unwrap_or(line);
--        let key = line.split(" = ").next().unwrap_or_default();
-+    for line in lines.take_while(|line| !line.is_empty()) {
-+        let code = line.split('\t').next().unwrap_or_default();
-+        let code = code.strip_prefix('#').unwrap_or(code);
+ Cargo.toml patches the Pimalaya crates still ahead of their crates.io release to git. To build against a local checkout, swap the matching `.git` entry for `.path = "../<repo>"`. If cargo reports two versions of a crate, patch every Pimalaya crate that pulls it transitively so the graph converges on the local copies.
 +
-+        let Some((key, _)) = code.split_once(" = ") else {
-+            continue;
-+        };
++## Continuous integration
 +
-+        let secret = key.strip_suffix(".raw").or(key.strip_suffix(".command"));
-+        let field = secret.unwrap_or(key);
++Every push runs the offline jobs of .github/workflows/tests.yml: the tests, and clippy over every feature set a packager may pick (the `features` job). The live suites (tests/google.rs, tests/microsoft.rs, tests/fastmail.rs, the `live` job), which reach the real providers and spend their quotas, run weekly on Mondays at 01:00 UTC and by hand, never on a push:
 +
-+        if fields.contains(&field) {
-+            continue;
-+        }
++```sh
++gh workflow run tests.yml
++```
 +
-+        fields.push(field);
- 
-         match overrides.iter().find(|(k, _)| *k == key) {
-             Some((key, value)) => section.push_str(&format!("{key} = {value}\n")),
--            None => section.push_str(&format!("{line}\n")),
-+            None => section.push_str(&format!("{code}\n")),
-         }
-     }
- 
-```
-
-**File**: `tests/fastmail.rs` (modified, +20/-7)
-```diff
-@@ -1,9 +1,8 @@
- //! # Fastmail live suite
- //!
--//! The binary against Fastmail's JMAP server, on the Fastmail section of
--//! config.sample.toml with a made-up bearer token. Only a browser consent
--//! issues a Fastmail token, so the suite is `anonymous` only and touches
--//! no account.
-+//! The binary against Fastmail's JMAP server, on its session URL with a
-+//! made-up bearer token. Only a browser consent issues a Fastmail token, so
-+//! the suite is `anonymous` only and touches no account.
- //!
- //! Run with `cargo test --test fastmail -- --ignored`.
- 
-@@ -21,11 +20,25 @@ mod anonymous {
-     /// What Himalaya says of a session the server refuses.
-     const REFUSED: &str = "HTTP 401";
- 
--    /// Writes the sample's Fastmail account, its token read through
-+    /// Writes a Fastmail account, its token read through
-     /// [`TOKEN_COMMAND`].
-     fn write_account(dir: &Path) -> PathBuf {
--        let token = [("jmap.auth.bearer.token.command", TOKEN_COMMAND)];
--        write_config(dir, "fastmail", &sample_section("Fastmail", &token))
-+        let lines = format!(
-+            "jmap.server = \"https://api.fastmail.com/jmap/session\"\njmap.auth.bearer.token.command = {TOKEN_COMMAND}"
-+        );
-+        write_config(dir, "fastmail", &lines)
-+    }
-+
-+    /// The account the suite writes loads, offline.
-+    #[test]
-+    fn the_account_loads() {
-+        let dir = TempDir::new().unwrap();
-+        let config = write_account(dir.path());
-+
-+        json(
-+            &himalaya(&config, MADE_UP, &["--json", "account", "list"]),
-+            0,
-+        );
-     }
- 
-     #[test]
-```
-
-**File**: `tests/google.rs` (modified, +16/-0)
-```diff
-@@ -52,6 +52,22 @@ mod anonymous {
-     /// The user the made-up token claims to be.
-     const USER: &str = "alice@example.org";
- 
-+    /// The accounts the suite writes load, offline: a sample change
-+    /// breaking them fails here rather than against Google.
-+    #[test]
-+    fn the_accounts_load() {
-+        let dir = TempDir::new().unwrap();
-+        let list = ["--json", "account", "list"];
-+
-+        // NOTE: each account overwrites the one before, so each loads
-+        // before the next is written.
-+        let config = write_gmail_account(dir.path());
-+        json(&himalaya(&config, MADE_UP, &list), 0);
-+
-+        let config = write_imap_account(dir.path(), USER);
-+        json(&himalaya(&config, MADE_UP, &list), 0);
-+    }
-+
-     #[test]
-     #[ignore = "requires network and --ignored"]
-     fn gmail_account_check_refused() {
-```
-
-**File**: `tests/microsoft.rs` (modified, +47/-25)
-```diff
-@@ -1,8 +1,8 @@
- //! # Microsoft live suite
- //!
- //! The binary against Microsoft Graph and Exchange Online. `anonymous`
--//! runs the Microsoft sections of config.sample.toml with a made-up token,
--//! touching no account. `credentialed` reads the test tenant's mailbox
-+//! runs the Microsoft Graph section of config.sample.toml and an Exchange
-+//! IMAP and SMTP account with a made-up token, touching no account. `credentialed` reads the test tenant's mailbox
- //! through Graph and Exchange IMAP, with app-only tokens the suite mints
- //! through the client credentials grant of a confidential registration,
- //! read from `HIMALAYA_MICROSOFT_TENANT_ID`, `HIMALAYA_MICROSOFT_CLIENT_ID`
-@@ -16,12 +16,31 @@
- 
- mod common;
- 
-+use crate::common::TOKEN_COMMAND;
-+
-+/// The lines of an Exchange Online IMAP and SMTP account authenticating
-+/// `user`, a TOML string, with XOAUTH2, both tokens read through
-+/// [`TOKEN_COMMAND`].
-+fn exchange_account(user: &str) -> String {
-+    let token = TOKEN_COMMAND;
-+
-+    format!(
-+        "imap.server = \"outlook.office365.com\"\n\
-+         imap.sasl.xoauth2.username = {user}\n\
-+         imap.sasl.xoauth2.token.command = {token}\n\
-+         smtp.server = \"smtp://smtp.office365.com:587\"\n\
-+         smtp.starttls = true\n\
-+         smtp.sasl.xoauth2.username = {user}\n\
-+         smtp.sasl.xoauth2.token.command = {token}"
-+    )
-+}
-+
- mod anonymous {
-     use std::path::{Path, PathBuf};
- 
-     use tempfile::TempDir;
- 
--    use crate::common::*;
-+    use crate::{common::*, exchange_account};
- 
-     /// What Himalaya says of a request Graph refuses.
-     const GRAPH_REFUSED: &str = "HTTP 401";
-@@ -38,15 +57,27 @@ mod anonymous {
-         write_config(dir, "microsoft", &section)
-     }
- 
--    /// Writes the sample's Exchange IMAP and SMTP account, both tokens
--    /// read through [`TOKEN_COMMAND`].
-+    /// Writes an Exchange IMAP and SMTP account, both tokens read through
-+    /// [`TOKEN_COMMAND`].
-     fn write_imap_account(dir: &Path) -> PathBuf {
--        let tokens = [
--            ("imap.sasl.xoauth2.token.command", TOKEN_COMMAND),
--            ("smtp.sasl.xoauth2.token.command", TOKEN_COMMAND),
--        ];
--        let section = sample_section("Microsoft IMAP and SMTP", &tokens);
--        write_config(dir, "microsoft", &section)
-+        let account = exchange_account("\"alice@example.org\"");
-+        write_config(dir, "microsoft", &account)
-+    }
-+
-+    /// The accounts the suite writes load, offline: a sample change
-+    /// breaking them fails here rather than against Microsoft.
-+    #[test]
-+    fn the_accounts_load() {
-+        let dir = TempDir::new().unwrap();
-+        let list = ["--json", "account", "list"];
-+
-+        // NOTE: each account overwrites the one before, so each loads
-+        // before the next is written.
-+        let config = write_graph_account(dir.path());
-+        json(&himalaya(&config, MADE_UP, &list), 0);
-+
-+        let config = write_imap_account(dir.path());
-+        json(&himalaya(&config, MADE_UP, &list), 0);
-     }
- 
-     #[test]
-@@ -110,7 +141,7 @@ mod credentialed {
-     use secrecy::{ExposeSecret, SecretString};
-     use tempfile::TempDir;
- 
--    use crate::common::*;
-+    use crate::{common::*, exchange_account};
- 
-     /// The mailbox read when `HIMALAYA_MICROSOFT_USER` is unset.
-     const USER: &str = "microsoft@pimalaya.onmicrosoft.com";
-@@ -178,20 +209,11 @@ mod credentialed {
-         write_config(dir, "microsoft", &section)
-     }
- 
--    /// Writes the sample's Exchange IMAP and SMTP account on the test
--    /// mailbox, both tokens read through [`TOKEN_COMMAND`]. The suite never
--    /// reaches SMTP.
-+    /// Writes an Exchange IMAP and SMTP account on the test mailbox, both
-+    /// tokens read through [`TOKEN_COMMAND`]. The suite never reaches SMTP.
-     fn write_imap_account(dir: &Path) -> PathBuf {
--        let user = user();
--        let overrides = [
--            ("imap.sasl.xoauth2.username", user.as_str()),
--            ("imap.sasl.xoauth2.token.command", TOKEN_COMMAND),
--            ("smtp.sasl.xoauth2.username", user.as_str()),
--            ("smtp.sasl.xoauth2.token.command", TOKEN_COMMAND),
--        ];
--
--        let section = sample_section("Microsoft IMAP and SMTP", &overrides);
--        write_config(dir, "microsoft", &section)
-+        let account = exchange_account(&user());
-+        write_config(dir, "microsoft", &account)
-     }
- 
-     #[test]
++A release runs them by hand on the commit it tags, and tags it once they pass.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2415,32 +1908,67 @@ sample_section takes the paragraph a heading opens, one line per field; Fastmail
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. run a credential command shared by IMAP and SMTP once
+## X. build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph 
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `202eb72d`: run a credential command shared by IMAP and SMTP once. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9712f7f`: build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph to 0.9.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fixed a send over SMTP running again the credential command the IMAP block already ran, which `message send` with `save-copy` asked for twice ([#813]).
-[#813]: https://github.com/pimalaya/himalaya/issues/813
+version = "0.7.1"
+checksum = "7e390dd6dbfc13b572c448002e57878c151204010b8249c4d3e0d2b758d734cf"
+version = "0.9.3"
+checksum = "aecd5bd9319b486f79a7a32ece8f14e354986efc92f034e029864c2982fdc079"
+version = "0.15.1"
+checksum = "5a8d137275e17b01cbbe06e3cb235eba454f98e0e5f8483bd647d429e582a91a"
+version = "1.0.0"
+checksum = "9cc767b5763de45e810109520123bb2829a653f3a7ed9be40b2bc4f81158f595"
+version = "1.0.0"
+checksum = "894f7ac42105f584100691b3bf6e6b92dd12fcfa225f6c397f95c8a94b47b68f"
+version = "1.0.0"
+checksum = "955491488dc99b572ea6d67b172dcd98787d00744b1fb44a5689b4e6413695a6"
+ "syn 3.0.10",
+version = "1.0.0"
+checksum = "12e71a1b68a875a44a33bb7a1dd84392cb77145a3367a552a3cfe6a4f5cf3afc"
+version = "0.40.0"
+checksum = "b06e69070b7e12262b0cd90832f0a7396f142a2b330181255562decf9f0c6215"
+version = "0.43.0"
+checksum = "f172c4812a19b26d1c23cdb0070e69db335503dfa378b910eb857386e5b8beba"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "0.7.0"
+checksum = "5dbc009237124ae236eb886a57bda65357729b6b8ff7ad21113de2cea933e02a"
+version = "0.9.2"
+checksum = "cf2f9e0df97603e14e46ca58d104de5dfd77e1ca72aac1206f92e01047995837"
+version = "0.14.1"
+checksum = "f19a7e961bd806c87280d35695f5a92e7ba34b4fe971ffd7577891bae3775764"
+version = "0.2.43"
+checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
+version = "0.1.5"
+checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
+version = "0.2.43"
+checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
+ "syn 2.0.119",
+version = "0.1.9"
+checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
+version = "0.39.1"
+checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
+version = "0.41.1"
+checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `202eb72d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9712f7f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -3963,10 +3963,10 @@
     "repository": "argoproj/argo-events",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-events",
-    "sourceVersion": "ba2dd434",
+    "sourceVersion": "5cda2887",
     "license": "Apache-2.0",
-    "contentHash": "ab1f2b6d8f8b8113f0463f385d68cc970cc76704bc90f5647ae532394caaebdb",
-    "lastHarvestedAt": "2026-11-15T23:26:05.047Z",
+    "contentHash": "fea7c4fd7df0c7eb965392e5214176e78549d7c4485bcf2ce8311a504ddf3e3f",
+    "lastHarvestedAt": "2026-11-17T05:37:15.911Z",
     "learningId": "learn-github-argoproj-argo-events"
   },
   "helixdb-helix-db": {
@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "8e8bdb37",
+    "sourceVersion": "b9712f7f",
     "license": "Apache-2.0",
-    "contentHash": "d260d27e945dba5d3a1d50bb38ddcb85b86810bbe495ba08eba27f449d722231",
-    "lastHarvestedAt": "2026-11-15T14:56:01.874Z",
+    "contentHash": "2d931f626ca5fe7defdd2162a8f9a5ca1170260d5617776ffc4b1884872c05e9",
+    "lastHarvestedAt": "2026-11-17T05:37:08.622Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {
@@ -10053,10 +10053,10 @@
     "repository": "TanStack/query",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/query",
-    "sourceVersion": "9b528b5e",
+    "sourceVersion": "d63a027c",
     "license": "MIT",
-    "contentHash": "ebd533e916b9cad71a9b3593974865df9ca16741b837754ae17c6dc16963bb5d",
-    "lastHarvestedAt": "2026-11-12T14:08:35.295Z",
+    "contentHash": "2a7862c8dff8e4989bc07af5a69e52f12c63007eb9b6222fd055b432e294d9ac",
+    "lastHarvestedAt": "2026-11-17T05:37:11.194Z",
     "learningId": "learn-github-tanstack-query"
   },
   "apple-sample-food-truck": {
@@ -10563,10 +10563,10 @@
     "repository": "gauthierpiarrette/highball",
     "platform": "github",
     "sourceUrl": "https://github.com/gauthierpiarrette/highball",
-    "sourceVersion": "d8187e2a",
+    "sourceVersion": "4ebe4fe0",
     "license": "GPL-3.0",
-    "contentHash": "e1d817ecf77b9bc98cdc66450546e6dd2b642b5c16b4bc710fa52c97b7c93a90",
-    "lastHarvestedAt": "2026-11-13T16:25:48.408Z",
+    "contentHash": "7a3d26411b018bb3a94381a329fbdfd6c7f1c053513a94b5c1fff40b8e14637d",
+    "lastHarvestedAt": "2026-11-17T05:37:13.379Z",
     "learningId": "learn-github-gauthierpiarrette-highball"
   },
   "hf-minimaxai-minimax-m3.1-flash": {
