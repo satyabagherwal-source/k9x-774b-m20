@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T11:40:43.361Z",
+  "last_updated": "2026-11-17T12:09:32.791Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4326,14 +4326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pubkey-rxdb",
-      "content_hash": "f7efce8d1552b7b4a98986af42d37207aa560e3f0d1d8c00c660800abae9b897",
-      "verified_at": "2026-11-13T21:07:15.365Z",
+      "content_hash": "b9197e92f652a260a4f3b9c4f8c3a6cf4c010cbb312d9eedb77c2efc9589ede9",
+      "verified_at": "2026-11-17T12:09:28.078Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:07:15.365Z"
+      "last_updated": "2026-11-17T12:09:28.078Z"
     },
     "karmada-io/karmada": {
       "repository": "karmada-io/karmada",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "4f0c31bac81daf8857571bd7b74e4232eaa5502df25a07e00616da34acfcf78f",
-      "verified_at": "2026-11-16T23:35:06.236Z",
+      "content_hash": "dece0dd9a83801700cc6c8a1d6d86fd2f840f7acd949cfab294f79da9b5b0fee",
+      "verified_at": "2026-11-17T12:09:32.790Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:35:06.236Z"
+      "last_updated": "2026-11-17T12:09:32.790Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",

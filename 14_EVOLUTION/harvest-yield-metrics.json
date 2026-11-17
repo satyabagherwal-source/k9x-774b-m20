@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T11:40:43.358Z",
-  "total_cycles_completed": 10103,
-  "total_learnings_persisted": 10103,
-  "total_rules_promoted": 9699,
+  "last_updated": "2026-11-17T12:09:32.786Z",
+  "total_cycles_completed": 10105,
+  "total_learnings_persisted": 10105,
+  "total_rules_promoted": 9701,
   "history": [
-    {
-      "timestamp": "2026-11-16T18:18:58.419Z",
-      "repository": "gravitl/netmaker",
-      "learningId": "learn-github-gravitl-netmaker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T18:27:12.676Z",
-      "repository": "open-policy-agent/gatekeeper",
-      "learningId": "learn-github-open-policy-agent-gatekeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T18:27:17.594Z",
       "repository": "SeaQL/sea-orm",
@@ -1403,6 +1389,20 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T12:09:28.074Z",
+      "repository": "pubkey/rxdb",
+      "learningId": "learn-github-pubkey-rxdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T12:09:32.786Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

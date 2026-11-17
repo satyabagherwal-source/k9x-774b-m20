@@ -10543,3 +10543,5 @@
 | `CYCLE-20261117-FETP` | `2026-11-17T11:40:38.989Z` | `react-navigation/react-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8960` | Yes (`1b927e3d...`) |
 | `CYCLE-20261117-FI6T` | `2026-11-17T11:40:43.349Z` | `cilium/cilium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cilium-cilium-learnings.md` | Yes (`a962139d...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T11:41:15.942Z` | `react-navigation-react-navigation` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F963174B` [Domain H] | Yes (`67b2268f...`) |
+| `CYCLE-20261117-GGZH` | `2026-11-17T12:09:28.061Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8961` | Yes (`b9197e92...`) |
+| `CYCLE-20261117-GKMG` | `2026-11-17T12:09:32.776Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8962` | Yes (`dece0dd9...`) |

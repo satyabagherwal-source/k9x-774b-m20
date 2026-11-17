@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-GLTC",
-    "timestamp": "2026-11-14T21:38:25.776Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "d9cc59f05eafed22ea2fd4e78993cf3f2470337b96f4b8037378578600435484",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-GPM5",
-    "timestamp": "2026-11-14T21:38:30.701Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "bc901b40dac24daa45b7f4598b28ee3ec179db89ce3ab6428188f78170293b41",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-GROX",
     "timestamp": "2026-11-14T21:38:33.393Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7462,36 @@
     "contentHash": "a962139db2e9d024469a20289c45223bd025247aad8279ceec815cbffe337e71",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-GGZH",
+    "timestamp": "2026-11-17T12:09:28.061Z",
+    "repository": "pubkey/rxdb",
+    "learningId": "learn-github-pubkey-rxdb",
+    "contentHash": "b9197e92f652a260a4f3b9c4f8c3a6cf4c010cbb312d9eedb77c2efc9589ede9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-GKMG",
+    "timestamp": "2026-11-17T12:09:32.776Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "dece0dd9a83801700cc6c8a1d6d86fd2f840f7acd949cfab294f79da9b5b0fee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

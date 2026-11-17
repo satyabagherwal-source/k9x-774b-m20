@@ -4,22 +4,22 @@
 {
   "source_repository": "projectdiscovery/nuclei",
   "source_url": "https://github.com/projectdiscovery/nuclei",
-  "source_version": "f1e6395b",
+  "source_version": "2e591454",
   "license": "MIT",
-  "timestamp": "2026-11-16T23:35:06.421Z",
+  "timestamp": "2026-11-17T12:09:33.023Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-projectdiscovery-nuclei",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `f1e6395b`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T23:35:06.421Z`  
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `2e591454`).  
+> **License**: MIT | **Timestamp**: `2026-11-17T12:09:33.023Z`  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `projectdiscovery/nuclei` (Commit: `f1e6395b`)
+- **Target Repository**: `projectdiscovery/nuclei` (Commit: `2e591454`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T23:35:05.284Z  
+> **Harvest Timestamp**: 2026-11-17T12:09:31.624Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33001 stars
+- **Stars / Engagement**: 33037 stars
 
 ---
 
@@ -1325,22 +1325,7 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 					}
 
 					if result.OperatorsResult != nil && result.OperatorsResult.Extracts != nil {
-						for k, v := range result.OperatorsResult.Extracts {
-							// normalize items:
-							switch len(v) {
-							case 0, 1:
-								// - key:[item] => key: item
-								ctx.Input.Set(k, v[0])
-							default:
-								// - key:[item_0, ..., item_n] => key0:item_0, keyn:item_n
-								for vIdx, vVal := range v {
-									normalizedKIdx := fmt.Sprintf("%s%d", k, vIdx)
-									ctx.Input.Set(normalizedKIdx, vVal)
-								}
-								// also add the original name with full slice
-								ctx.Input.Set(k, v)
-							}
-						}
+						setWorkflowExtracts(ctx.Input, result.OperatorsResult.Extracts)
 					}
 				}
 				_, err = executer.Executer.ExecuteWithResults(ctx)
@@ -1378,9 +1363,7 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 				}
 
 				if event.OperatorsResult.Extracts != nil {
-					for k, v := range event.OperatorsResult.Extracts {
-						ctx.Input.Set(k, v)
-					}
+					setWorkflowExtracts(ctx.Input, event.OperatorsResult.Extracts)
 				}
 
 				for _, matcher := range template.Matchers {
@@ -1464,6 +1447,35 @@ func (e *Engine) syncWorkflowInputToTemplateCtx(executer *workflows.ProtocolExec
 	}
 
 	executer.Options.GetTemplateCtx(input.MetaInput).Merge(workflowValues)
+}
+
+// setWorkflowExtracts propagates the extracts of a workflow step to the step
+// input so the subtemplates started by that step resolve them the same way
+// whether the step matched through an operator or through a workflow matcher:
+//
+//   - key: [item] => key: item
+//   - key: [item_0, ..., item_n] => key0: item_0, ..., keyn: item_n, and the
+//     original name keeps the full slice for further indexing.
+//
+// Extracts without values are skipped: a scalar cannot be rendered from them
+// and there is nothing to index.
+func setWorkflowExtracts(input *contextargs.Context, extracts map[string][]string) {
+	if input == nil {
+		return
+	}
+	for k, v := range extracts {
+		switch len(v) {
+		case 0:
+			continue
+		case 1:
+			input.Set(k, v[0])
+		default:
+			for vIdx, vVal := range v {
+				input.Set(fmt.Sprintf("%s%d", k, vIdx), vVal)
+			}
+			input.Set(k, v)
+		}
+	}
 }
 
 ```
@@ -1605,246 +1617,516 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f1e6395b` (2026-11-16)
-**Commit Message**: Merge pull request #8149 from gnuletik/fix/interactsh-drop-expired-requests
+### Incident Patch 1: `7b5274f2` (2026-11-17)
+**Commit Message**: fix(stats): serialize counter creation so concurrent first hits are not dropped
 
-fix(interactsh): drop expired request registrations
+## Proposed changes
 
-**File**: `pkg/protocols/common/interactsh/interactsh.go` (modified, +31/-0)
+`Tracker.incrementCounter` in `pkg/output/stats` reads the counter map and, on a miss, creates a counter, stores
+`1` in it and publishes it with `Set`. Two goroutines that miss the same key at the same moment both create and
+both publish, and the second publication discards the first counter together with whatever it had counted. For
+`-http-stats` that shows up as under-reported status codes, error kinds and WAF vendors whenever a burst of
+requests shares a key.
+
+This change makes the create step atomic without touching the counting path:
+
+- `pkg/output/stats/stats.go` (+28 / −5, net +23, 221 → 244 lines): `Tracker` gains a `counterMu sync.Mutex`;
+  `incrementCounter`
+  keeps its current read-then-`Add` shape for keys that already exist and only calls a new
+  `getOrCreateCounter` on a miss, which takes the mutex, re-checks the map, and publishes the new counter. `Add(1)`
+  stays outside the lock, and a hit never touches the new mutex. The observable semantics for a single goroutine
+  are unchanged: the creating goroutine still counts its own request exactly once.
+- `pkg/output/stat
+
+**File**: `pkg/output/stats/stats.go` (modified, +28/-5)
 ```diff
-@@ -58,6 +58,8 @@ type Client struct {
- 	// determines if wait the cooldown period in case of generated URL
- 	generated atomic.Bool
- 	matched   atomic.Bool
-+	// lastExpirySweep is when dropExpiredRequests last ran, in Unix nanoseconds.
-+	lastExpirySweep atomic.Int64
+@@ -32,6 +32,13 @@ type Tracker struct {
+ 	wafSkips    atomic.Uint64
+ 	wafDuration atomic.Uint64
  
- 	onInteractionMu sync.RWMutex
- 	onInteraction   func(i *server.Interaction, foundRequest *RequestData)
-@@ -524,6 +526,7 @@ func (c *Client) RequestEvent(interactshURLs []string, data *RequestData) {
- 		return
- 	}
- 	c.initializeCaches()
-+	c.dropExpiredRequests()
- 	for _, interactshURL := range interactshURLs {
- 		id := strings.TrimRight(strings.TrimSuffix(interactshURL, c.getHostname()), ".")
- 
-@@ -557,6 +560,34 @@ func (c *Client) RequestEvent(interactshURLs []string, data *RequestData) {
- 	}
++	// counterMu serializes get-or-create of the counters above. Each map is
++	// concurrency safe on its own, but the read-then-write pair across a map
++	// is not: when two goroutines race on the first hit for the same key they
++	// each install their own counter, the later Set discards the earlier one,
++	// and every increment already made on the discarded counter is lost.
++	counterMu sync.Mutex
++
+ 	// internal stuff
+ 	wafDetector *waf.WafDetector
+ }
+@@ -99,13 +106,29 @@ func (t *Tracker) GetWAFMetrics() WAFMetrics {
  }
  
-+// dropExpiredRequests removes the registrations past their eviction deadline,
-+// at most once per poll interval.
-+//
-+// The cache drops an expired entry only when its key is read again or the LRU
-+// needs room, and the key of a target that never calls back is never read. So
-+// without this, a scan keeps the event of every OOB request, response body and
-+// full response included, until the cache is full: CacheSize times the response
-+// read size. An expired entry can no longer match anyway, since the poller's
-+// lookup drops it unprocessed.
-+func (c *Client) dropExpiredRequests() {
-+	now := time.Now().UnixNano()
-+	last := c.lastExpirySweep.Load()
-+	if now-last < int64(c.pollDuration) || !c.lastExpirySweep.CompareAndSwap(last, now) {
-+		return
+ func (t *Tracker) incrementCounter(m *mapsutil.SyncLockMap[string, *atomic.Int32], key string) {
++	counter, ok := m.Get(key)
++	if !ok {
++		counter = t.getOrCreateCounter(m, key)
++	}
++	counter.Add(1)
++}
++
++// getOrCreateCounter returns the counter stored for key, creating and storing
++// it when it is still absent. Only creation is serialized, so concurrent first
++// hits for the same key all end up incrementing one counter; the Add itself
++// stays outside the lock.
++func (t *Tracker) getOrCreateCounter(m *mapsutil.SyncLockMap[string, *atomic.Int32], key string) *atomic.Int32 {
++	t.counterMu.Lock()
++	defer t.counterMu.Unlock()
++
++	// Re-check under the lock: another goroutine may have created the counter
++	// between the caller's first Get and this point.
+ 	if counter, ok := m.Get(key); ok {
+-		counter.Add(1)
+-	} else {
+-		newCounter := new(atomic.Int32)
+-		newCounter.Store(1)
+-		_ = m.Set(key, newCounter)
++		return counter
+ 	}
++	counter := new(atomic.Int32)
++	_ = m.Set(key, counter)
++	return counter
+ }
+ 
+ type StatsOutput struct {
+```
+
+**File**: `pkg/output/stats/stats_test.go` (modified, +129/-0)
+```diff
+@@ -1,12 +1,141 @@
+ package stats
+ 
+ import (
++	"runtime"
+ 	"sync"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
+ )
+ 
++// Bounded scheduler stress for counter creation: every iteration uses a fresh
++// tracker, so the key is always seen for the first time while workers are
++// released together. The assertion is exact, so a fixed build never retries or
++// sleeps; an unfixed build drops increments on the racing first hits.
++const (
++	concurrentFirstHitWorkers    = 64
++	concurrentFirstHitIterations = 200
++)
++
++// releaseTogether runs fn in n goroutines that all start on one signal.
++func releaseTogether(n int, fn func()) {
++	var wg sync.WaitGroup
++	start := make(chan struct{})
++	wg.Add(n)
++	for range n {
++		go func() {
++			defer wg.Done()
++			<-start
++			fn()
++		}()
++	}
++	close(start)
++	wg.Wait()
++}
++
++// requireMultipleP raises P above one so the racing window is reachable on
++// small runners. It records the machine's real shape and does not claim that a
++// single-P run cannot interleave: the scheduler may still preempt mid-window.
++func requireMultipleP(t *testing.T) {
++	t.Helper()
++	t.Logf("scheduler shape: runtime.NumCPU=%d GOMAXPROCS=%d", runtime.NumCPU(), runtime.GOMAXPROCS(0))
++	if runtime.GOMAXPROCS(0) < 2 {
++		previous := runtime.GOMAXPROCS(4)
++		t.Cleanup(func() { runtime.GOMAXPROCS(previous) })
++	}
++}
++
++func TestTrackStatusCodeConcurrentFirstHit(t *testing.T) {
++	requireMultipleP(t)
++
++	for iteration := 0; iteration < concurrentFirstHitIterations; iteration++ {
++		tracker := NewTracker()
++		releaseTogether(concurrentFirstHitWorkers, func() { tracker.TrackStatusCode("200") })
++
++		require.Equalf(t, concurrentFirstHitWorkers, tracker.GetStats().StatusCodeStats["200"],
++			"iteration %d: concurrent first hits on status code 200 lost increments", iteration)
++	}
++}
++
++func TestTrackErrorKindConcurrentFirstHit(t *testing.T) {
++	requireMultipleP(t)
++
++	for iteration := 0; iteration < concurrentFirstHitIterations; iteration++ {
++		tracker := NewTracker()
++		releaseTogether(concurrentFirstHitWorkers, func() { tracker.TrackErrorKind("timeout") })
++
++		require.Equalf(t, concurrentFirstHitWorkers, tracker.GetStats().ErrorStats["timeout"],
++			"iteration %d: concurrent first hits on error kind timeout lost increments", iteration)
++	}
++}
++
++func TestTrackWAFDetectedConcurrentFirstHit(t *testing.T) {
++	requireMultipleP(t)
++
++	const workers = 16
++	for iteration := 0; iteration < 20; iteration++ {
++		tracker := NewTracker()
++		releaseTogether(workers, func() { tracker.TrackWAFDetected("Attention Required! | Cloudflare") })
++
++		// Read through the user-visible accessor, not the internal map: WAFStats
++		// is keyed by detector name ("CloudFlare"), while wafDetected is keyed by
++		// the detector id ("cloudflare").
++		require.Equalf(t, workers, tracker.GetStats().WAFStats["CloudFlare"],
++			"iteration %d: concurrent first WAF hits lost increments", iteration)
++	}
++}
++
++func TestTrackStatusCodeConcurrentThenSequential(t *testing.T) {
++	requireMultipleP(t)
++
++	tracker := NewTracker()
++	releaseTogether(concurrentFirstHitWorkers, func() { tracker.TrackStatusCode("200") })
++	for range 5 {
++		tracker.TrackStatusCode("200")
 +	}
 +
-+	// The write lock keeps a registration from being replaced between its
-+	// expiry check and its removal.
-+	c.requestLifecycleMu.Lock()
-+	defer c.requestLifecycleMu.Unlock()
++	// Sequential updates must land on the counter that stayed in the map.
++	require.Equal(t, concurrentFirstHitWorkers+5, tracker.GetStats().StatusCodeStats["200"])
++}
 +
-+	for _, id := range c.requests.Keys(false) {
-+		if !c.requests.Has(id) {
-+			c.requests.Remove(id)
++func TestTrackStatusCodeConcurrentExistingKey(t *testing.T) {
++	requireMultipleP(t)
++
++	tracker := NewTracker()
++	tracker.TrackStatusCode("200")
++	releaseTogether(concurrentFirstHitWorkers, func() { tracker.TrackStatusCode("200") })
++
++	require.Equal(t, concurrentFirstHitWorkers+1, tracker.GetStats().StatusCodeStats["200"])
++}
++
++func TestTrackStatusCodeConcurrentDistinctKeys(t *testing.T) {
++	requireMultipleP(t)
++
++	keys := []string{"200", "201", "204", "301", "302", "400", "401", "403", "404", "500"}
++	tracker := NewTracker()
++
++	var wg sync.WaitGroup
++	start := make(chan struct{})
++	wg.Add(len(keys))
++	for _, key := range keys {
++		go func() {
++			defer wg.Done()
++			<-start
++			tracker.TrackStatusCode(key)
++		}()
++	}
++	close(start)
++	wg.Wait()
++
++	stats := tracker.GetStats()
++	total := 0
++	for _, key := range keys {
++		require.Equalf(t, 1, stats.StatusCodeStats[key], "status code %s counted wrong", key)
++		total += stats.StatusCodeStats[key]
++	}
++	require.Equal(t, len(keys), total)
++}
++
+ func TestTrackErrorKind(t *testing.T) {
+ 	tracker := NewTracker()
+ 
+```
+
+---
+
+### Incident Patch 2: `ecb8677d` (2026-11-17)
+**Commit Message**: fix redirect
+
+**File**: `pkg/protocols/dns/dnsclientpool/doh_test.go` (modified, +20/-9)
+```diff
+@@ -4,7 +4,6 @@ import (
+ 	"net"
+ 	"net/http"
+ 	"net/http/httptest"
+-	"strings"
+ 	"sync/atomic"
+ 	"testing"
+ 
+@@ -17,7 +16,16 @@ import (
+ // newDohServer answers every DoH query with a TXT record and counts the hits.
+ func newDohServer(t *testing.T, hits *atomic.Int32) *httptest.Server {
+ 	t.Helper()
+-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++	return newDohServerOn(t, hits, "127.0.0.1:0")
++}
++
++// newDohServerOn is newDohServer bound to address, so a test can separate an
++// allowed redirector from a denied target.
++func newDohServerOn(t *testing.T, hits *atomic.Int32, address string) *httptest.Server {
++	t.Helper()
++	listener, err := net.Listen("tcp", address)
++	require.NoError(t, err)
++	server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+ 		hits.Add(1)
+ 		m := new(dns.Msg)
+ 		m.SetQuestion("example.com.", dns.TypeTXT)
+@@ -30,6 +38,8 @@ func newDohServer(t *testing.T, hits *atomic.Int32) *httptest.Server {
+ 		w.Header().Set("Content-Type", "application/dns-message")
+ 		_, _ = w.Write(packed)
+ 	}))
++	server.Listener = listener
++	server.Start()
+ 	t.Cleanup(server.Close)
+ 	return server
+ }
+@@ -65,18 +75,19 @@ func TestDohResolverObeysNetworkPolicy(t *testing.T) {
+ 
+ 	t.Run("redirect to denied address", func(t *testing.T) {
+ 		var hits atomic.Int32
+-		internal := newDohServer(t, &hits)
++		// The target listens on ::1, which is denied. The redirector stays on
++		// 127.0.0.1. localhost cannot be the allowed hop: denying 127.0.0.1
++		// denies localhost too, because that name resolves to 127.0.0.1.
++		internal := newDohServerOn(t, &hits, "[::1]:0")
+ 		redirector := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+ 			http.Redirect(w, r, internal.URL+"/internal", http.StatusFound)
+ 		}))
+ 		t.Cleanup(redirector.Close)
+-		// localhost passes the resolver check through ::1, while 127.0.0.1 is denied
+-		_, port, err := net.SplitHostPort(strings.TrimPrefix(redirector.URL, "http://"))
+-		require.NoError(t, err)
+-		options := dohOptions(t, []string{"127.0.0.1"})
+-		require.True(t, protocolstate.IsHostAllowed(options.ExecutionId, "localhost"))
++		options := dohOptions(t, []string{"::1"})
++		require.True(t, protocolstate.IsHostAllowed(options.ExecutionId, "127.0.0.1"))
++		require.False(t, protocolstate.IsHostAllowed(options.ExecutionId, "::1"))
+ 
+-		client, err := Get(options, &Configuration{Retries: 1, Resolvers: []string{"doh:http://localhost:" + port + "/dns-query:get"}})
++		client, err := Get(options, &Configuration{Retries: 1, Resolvers: []string{"doh:" + redirector.URL + "/dns-query:get"}})
+ 		require.NoError(t, err)
+ 		_, _ = client.Do(txtQuery())
+ 		require.Zero(t, hits.Load(), "DoH redirect reached a denied address")
+```
+
+---
+
+### Incident Patch 3: `b958b44b` (2026-11-17)
+**Commit Message**: Merge pull request #8154 from liangzaihuanyv/fix/workflow-matcher-extract-normalization-on-f1
+
+fix(workflow): normalize extracted values for matcher subtemplates
+
+**File**: `internal/tests/integration/workflow_test.go` (modified, +3/-2)
+```diff
+@@ -266,8 +266,9 @@ func (h *workflowMultiMatchKeyValueShare) Execute(filePath string) error {
+ 	}
+ 
+ 	// Check if we received the data from both request to /path1 and it is not overwritten by the later one.
+-	// They will appear in brackets because of another bug: https://github.com/orgs/projectdiscovery/discussions/3766
+-	if !sliceutil.Contains(receivedData, "[test-value-1]") || !sliceutil.Contains(receivedData, "[test-value-2]") {
++	// Each child event carries its own single extracted value, so it must render without brackets,
++	// see https://github.com/orgs/projectdiscovery/discussions/3766.
++	if !sliceutil.Contains(receivedData, "test-value-1") || !sliceutil.Contains(receivedData, "test-value-2") {
+ 		return fmt.Errorf(
+ 			"incorrect data: did not receive both extracted data from the first request!\nReceived Data:\n\t%s\nResults:\n\t%s",
+ 			strings.Join(receivedData, "\n\t"),
+```
+
+**File**: `pkg/core/workflow_execute.go` (modified, +31/-19)
+```diff
+@@ -92,22 +92,7 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
+ 					}
+ 
+ 					if result.OperatorsResult != nil && result.OperatorsResult.Extracts != nil {
+-						for k, v := range result.OperatorsResult.Extracts {
+-							// normalize items:
+-							switch len(v) {
+-							case 0, 1:
+-								// - key:[item] => key: item
+-								ctx.Input.Set(k, v[0])
+-							default:
+-								// - key:[item_0, ..., item_n] => key0:item_0, keyn:item_n
+-								for vIdx, vVal := range v {
+-									normalizedKIdx := fmt.Sprintf("%s%d", k, vIdx)
+-									ctx.Input.Set(normalizedKIdx, vVal)
+-								}
+-								// also add the original name with full slice
+-								ctx.Input.Set(k, v)
+-							}
+-						}
++						setWorkflowExtracts(ctx.Input, result.OperatorsResult.Extracts)
+ 					}
+ 				}
+ 				_, err = executer.Executer.ExecuteWithResults(ctx)
+@@ -145,9 +130,7 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
+ 				}
+ 
+ 				if event.OperatorsResult.Extracts != nil {
+-					for k, v := range event.OperatorsResult.Extracts {
+-						ctx.Input.Set(k, v)
+-					}
++					setWorkflowExtracts(ctx.Input, event.OperatorsResult.Extracts)
+ 				}
+ 
+ 				for _, matcher := range template.Matchers {
+@@ -232,3 +215,32 @@ func (e *Engine) syncWorkflowInputToTemplateCtx(executer *workflows.ProtocolExec
+ 
+ 	executer.Options.GetTemplateCtx(input.MetaInput).Merge(workflowValues)
+ }
++
++// setWorkflowExtracts propagates the extracts of a workflow step to the step
++// input so the subtemplates started by that step resolve them the same way
++// whether the step matched through an operator or through a workflow matcher:
++//
++//   - key: [item] => key: item
++//   - key: [item_0, ..., item_n] => key0: item_0, ..., keyn: item_n, and the
++//     original name keeps the full slice for further indexing.
++//
++// Extracts without values are skipped: a scalar cannot be rendered from them
++// and there is nothing to index.
++func setWorkflowExtracts(input *contextargs.Context, extracts map[string][]string) {
++	if input == nil {
++		return
++	}
++	for k, v := range extracts {
++		switch len(v) {
++		case 0:
++			continue
++		case 1:
++			input.Set(k, v[0])
++		default:
++			for vIdx, vVal := range v {
++				input.Set(fmt.Sprintf("%s%d", k, vIdx), vVal)
++			}
++			input.Set(k, v)
 +		}
 +	}
 +}
-+
- // HasMatchers returns true if an operator has interactsh part
- // matchers or extractors.
- //
 ```
 
-**File**: `pkg/protocols/common/interactsh/interactsh_test.go` (modified, +36/-0)
+**File**: `pkg/core/workflow_execute_matcher_extracts_test.go` (added, +147/-0)
 ```diff
-@@ -204,6 +204,42 @@ func TestRequestScopeCloseWaitsForInFlightCallback(t *testing.T) {
- 	require.False(t, scope.beginCallback(), "a closed scope must reject later callbacks")
- }
- 
-+func TestRequestEventDropsExpiredRegistrations(t *testing.T) {
-+	options := DefaultOptions(nil, nil, nil)
-+	options.Eviction = time.Millisecond
-+	options.PollDuration = time.Millisecond
-+	client, err := New(options)
-+	require.NoError(t, err)
-+	client.setHostname("oast.test")
-+
-+	client.RequestEvent([]string{"stale.oast.test"}, newTestRequestData())
-+	require.ElementsMatch(t, []string{"stale"}, client.requests.Keys(false))
-+
-+	time.Sleep(10 * time.Millisecond)
-+	client.RequestEvent([]string{"fresh.oast.test"}, newTestRequestData())
-+
-+	require.ElementsMatch(t, []string{"fresh"}, client.requests.Keys(false),
-+		"a registration past its eviction can no longer match and must not stay cached")
-+}
-+
-+func TestRequestEventKeepsLiveRegistrations(t *testing.T) {
-+	options := DefaultOptions(nil, nil, nil)
-+	options.PollDuration = time.Millisecond
-+	client, err := New(options)
-+	require.NoError(t, err)
-+	client.setHostname("oast.test")
-+
-+	client.RequestEvent([]string{"first.oast.test"}, newTestRequestData())
-+	time.Sleep(10 * time.Millisecond)
-+	client.RequestEvent([]string{"second.oast.test"}, newTestRequestData())
-+
-+	require.ElementsMatch(t, []string{"first", "second"}, client.requests.Keys(false))
-+}
-+
-+func newTestRequestData() *RequestData {
-+	return &RequestData{Event: &output.InternalWrappedEvent{InternalEvent: output.InternalEvent{}}}
-+}
-+
- func TestHasMarkersDoesNotTreatPipeAsEncodedBrace(t *testing.T) {
- 	require.True(t, HasMarkers("{{interactsh-url}}"))
- 	require.True(t, HasMarkers("%7B%7Binteractsh-url%7D%7D"))
-```
-
----
-
-### Incident Patch 2: `49634178` (2026-11-16)
-**Commit Message**: Merge pull request #8140 from Manuel-1312/fix/nil-safe-raw-stringslice
-
-fix(model): make String() on a nil RawStringSlice safe
-
-**File**: `pkg/model/types/stringslice/stringslice_raw.go` (modified, +9/-0)
-```diff
-@@ -8,6 +8,15 @@ func NewRawStringSlice(value interface{}) *RawStringSlice {
- 	return &RawStringSlice{StringSlice: StringSlice{Value: value}}
- }
- 
-+// String is nil-safe: model.Info.Reference is nil for templates without
-+// references, and the promoted StringSlice.String would dereference it.
-+func (rawStringSlice *RawStringSlice) String() string {
-+	if rawStringSlice == nil {
-+		return ""
-+	}
-+	return rawStringSlice.StringSlice.String()
-+}
-+
- func (rawStringSlice *RawStringSlice) Normalize(value string) string {
- 	return value
- }
-```
-
-**File**: `pkg/model/types/stringslice/stringslice_raw_test.go` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+package stringslice
+@@ -0,0 +1,147 @@
++package core
 +
 +import (
-+	"fmt"
++	"context"
 +	"testing"
 +
++	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/stringslice"
++	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/progress"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
++	"github.com/projectdiscovery/nuclei/v3/pkg/scan"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/projectdiscovery/nuclei/v3/pkg/workflows"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestRawStringSliceStringNilSafe(t *testing.T) {
-+	var nilSlice *RawStringSlice
-+	require.Equal(t, "", nilSlice.String())
-+	require.Equal(t, "", fmt.Sprint(nilSlice))
-+	require.Equal(t, "a, b", NewRawStringSlice([]string{"a", "b"}).String())
-+}
-```
-
----
-
-### Incident Patch 3: `6ffc30d2` (2026-11-16)
-**Commit Message**: Merge pull request #8139 from CJstate/fix/user-agent-include-random
-
-fix(model): include Random in supported user-agent options
-
-**File**: `pkg/model/types/userAgent/user_agent.go` (modified, +3/-1)
-```diff
-@@ -32,7 +32,9 @@ var userAgentMappings = map[UserAgent]string{
- 
- func GetSupportedUserAgentOptions() []UserAgent {
- 	var result []UserAgent
--	for index := UserAgent(1); index < limit; index++ {
-+	// Random is the zero value and a valid option (the headless default), so
-+	// the range starts at 0; unlike severity, there is no sentinel to skip.
-+	for index := UserAgent(0); index < limit; index++ {
- 		result = append(result, index)
- 	}
- 	return result
-```
-
-**File**: `pkg/model/types/userAgent/user_agent_test.go` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+package userAgent
++// runMatcherExtractWorkflow runs a workflow whose only step matches through a
++// workflow matcher and produces the given extracts, so the subtemplate started
++// by that matcher resolves them like any other workflow step.
++func runMatcherExtractWorkflow(t *testing.T, extracts map[string][]string, matcherName string, childHook func(ctx *scan.ScanContext, childOptions *protocols.ExecutorOptions)) bool {
++	t.Helper()
 +
-+import (
-+	"fmt"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// every named UserAgent value (i.e. every key in userAgentMappings) is a valid
-+// user_agent option. Random is the zero value and is the default for headless
-+// requests, so it must be offered alongside the others.
-+var allNamedUserAgents = []UserAgent{Random, Off, Default, Custom}
-+
-+func TestGetSupportedUserAgentOptions(t *testing.T) {
-+	got := GetSupportedUserAgentOptions()
-+
-+	for _, option := range allNamedUserAgents {
-+		t.Run(option.String(), func(t *testing.T) {
-+			require.Contains(t, got, option, "named user-agent option %q must be returned", option)
-+		})
++	progressBar, _ := progress.NewStatsTicker(0, false, false, false, 0)
++	childOptions := &protocols.ExecutorOptions{TemplateID: "child-template", Progress: progressBar}
++	childExecuter := &mockExecuter{result: true}
++	if childHook != nil {
++		childExecuter.executeScanHook = func(ctx *scan.ScanContext) {
++			childHook(ctx, childOptions)
++		}
 +	}
 +
-+	require.Len(t, got, len(userAgentMappings), "exactly the named options must be returned")
-+	require.NotContains(t, got, limit, "the limit sentinel must not be exposed as an option")
-+}
-+
-+func TestUserAgentHolderJSONSchemaEnum(t *testing.T) {
-+	schema := (UserAgentHolder{}).JSONSchema()
-+
-+	got := make([]string, 0, len(schema.Enum))
-+	for _, value := range schema.Enum {
-+		got = append(got, fmt.Sprint(value))
++	workflow := &workflows.Workflow{
++		Options: &protocols.ExecutorOptions{Options: &types.Options{TemplateThreads: 10}},
++		Workflows: []*workflows.WorkflowTemplate{{
++			Executers: []*workflows.ProtocolExecuterPair{{
++				Executer: &mockExecuter{result: true, outputs: []*output.InternalWrappedEvent{{
++					OperatorsResult: &operators.Result{
++						Matches:  map[string][]string{"tomcat": {}},
++						Extracts: extracts,
++					},
++					Results: []*output.ResultEvent{{}},
++				}}},
++				Options: &protocols.ExecutorOptions{TemplateID: "parent-template", Progress: progressBar},
++			}},
++			Matchers: []*workflows.Matcher{{
++				Name: stringslice.StringSlice{Value: matcherName},
++				Subtemplates: []*workflows.WorkflowTemplate{{
++					Executers: []*workflows.ProtocolExecuterPair{{
++						Executer: childExecuter,
++						Options:  childOptions,
++					}},
++				}},
++			}},
++		}},
 +	}
 +
-+	want := make([]string, 0, len(userAgentMappings))
-+	for _, name := range userAgentMappings {
-+		want = append(want, name)
-+	}
-+
-+	require.ElementsMatch(t, want, got, "schema enum must list every named user-agent option")
++	engine := &Engine{}
++	input := contextargs.NewWithInput(context.Background(), "https://test.com")
++	ctx := scan.NewScanContext(context.Background(), input)
++	return engine.executeWorkflow(ctx, workflow)
 +}
 +
-+func TestUserAgentHolderUnmarshalYAMLRandom(t *testing.T) {
-+	var holder UserAgentHolder
-+	require.NoError(t, holder.UnmarshalYAML(func(v interface{}) error {
-+		*(v.(*string)) = "random"
-+		return nil
-+	}))
-+	require.Equal(t, Random, holder.Value, `"random" must remain a valid user_agent value`)
++// TestWorkflowsMatcherSubtemplatesExtractSingleValue covers the common workflow
++// shape whose step declares matchers and extractors: the subtemplate must
++// resolve the extracted value as a scalar, not as a one element list.
++func TestWorkflowsMatcherSubtemplatesExtractSingleValue(t *testing.T) {
++	var childWhoami interface{}
++	var childRan bool
++
++	matched := runMatcherExtractWorkflow(t, map[string][]string{"whoami": {"foo"}}, "tomcat", func(ctx *scan.ScanContext, childOptions *protocols.ExecutorOptions) {
++		childRan = true
++		childWhoami, _ = childOptions.GetTemplateCtx(ctx.Input.MetaInput).Get("whoami")
++	})
++
++	require.True(t, matched, "could not get correct match value")
++	require.True(t, childRan, "matcher subtemplate should run when the matcher matches")
++	require.Equal(t, "foo", childWhoami, "matcher subtemplate should resolve a single extract as a scalar")
 +}
++
++// TestWorkflowsMatcherSubtemplatesExtractMultipleValues keeps the indexed and
++// the full slice forms available for extractors returning several values.
++func TestWorkflowsMatcherSubtemplatesExtractMultipleValues(t *testing.T) {
++	var childPaths0, childPaths1, childPaths interface{}
++
++	matched := runMatcherExtractWorkflow(t, map[string][]string{"paths": {"a", "b"}}, "tomcat", func(ctx *scan.ScanContext, childOptions *protocols.ExecutorOptions) {
++		templateCtx := childOptions.GetTemplateCtx(ctx.Input.MetaInput)
++		childPaths0, _ = templateCtx.Get("paths0")
++		childPaths1, _ = templateCtx.Get("paths1")
++		childPaths, _ = templateCtx.Get("paths")
++	})
++
++	require.True(t, matched, "could not get correct match value")
++	require.Equal(t, "a", childPaths0, "could not index the first extracted value")
++	require.Equal(t, "b", childPaths1, "could not index the second extracted value")
++	require.Equal(t, []string{"a", "b"}, childPaths, "could not keep the full slice of extracted values")
++}
++
++// TestWorkflowsMatcherSubtemplatesWithoutExtracts covers steps that extract
++// nothing at all: the subtemplate still runs and no value is invented.
++func TestWorkflowsMatcherSubtemplatesWithoutExtracts(t *testing.T) {
++	var childRan bool
++	var childWhoami interface{}
++
++	matched := runMatcherExtractWorkflow(t, map[string][]string{}, "tomcat", func(ctx *scan.ScanContext, childOptions *protocols.ExecutorOptions) {
++		childRan = true
++		childWhoami, _ = childOptions.GetTemplateCtx(ctx.Input.MetaInput).Get("whoami")
++	})
++
++	require.True(t, matched, "could not get correct match value")
++	requi
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8149** (2026-11-16): fix(interactsh): drop expired request registrations (@gnuletik)
-- **PR #8146** (2026-11-16): chore(deps): bump the workflows group with 2 updates (@dependabot[bot])
-- **PR #8141** (2026-11-15): fix(deps): bump golang.org/x/crypto v0.58.0 → v0.59.0 (GO-2026-5932) (@neo-by-projectdiscovery[bot])
-- **PR #8140** (2026-11-16): fix(model): make String() on a nil RawStringSlice safe (@Manuel-1312)
-- **PR #8139** (2026-11-16): fix(model): include Random in supported user-agent options (@CJstate)
-- **PR #8138** (2026-11-14): add -auto-tech to skip templates bound to products the tech templates did not detect (@dogancanbakir)
+- **PR #8161** (2026-11-17): fix(stats): serialize counter creation so concurrent first hits are not dropped (@liangzaihuanyv)
+- **PR #8160** (2026-11-17): fix(markdown): index findings only after writing their reports (@hakarrr)
+- **PR #8158** (2026-11-17): fix(jsonl): close the report file after a flush error (@hakarrr)
+- **PR #8156** (2026-11-17): fix(splunk): close HEC response bodies after export (@hakarrr)
+- **PR #8154** (2026-11-17): fix(workflow): normalize extracted values for matcher subtemplates (@liangzaihuanyv)
+- **PR #8152** (2026-11-17): fix(input): use the parsed URL host for SSL host:port assembly (@liangzaihuanyv)
 
 ---
 
@@ -1864,61 +2146,62 @@ fix(model): include Random in supported user-agent options
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in interactsh.go
+## X. stats): serialize counter creation so concurrent first hits are not dropped
 
 **RULE**:
-When implementing operations in `pkg/protocols/common/interactsh/interactsh.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/output/stats/stats.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f1e6395b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b5274f2`: stats): serialize counter creation so concurrent first hits are not dropped. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/common/interactsh/interactsh.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/output/stats/stats.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// lastExpirySweep is when dropExpiredRequests last ran, in Unix nanoseconds.
-	lastExpirySweep atomic.Int64
-	c.dropExpiredRequests()
-// dropExpiredRequests removes the registrations past their eviction deadline,
-// at most once per poll interval.
-//
-// The cache drops an expired entry only when its key is read again or the LRU
-// needs room, and the key of a target that never calls back is never read. So
-// without this, a scan keeps the event of every OOB request, response body and
-// full response included, until the cache is full: CacheSize times the response
-// read size. An expired entry can no longer match anyway, since the poller's
-// lookup drops it unprocessed.
-func (c *Client) dropExpiredRequests() {
-	now := time.Now().UnixNano()
-	last := c.lastExpirySweep.Load()
-	if now-last < int64(c.pollDuration) || !c.lastExpirySweep.CompareAndSwap(last, now) {
-		return
-	}
+	// counterMu serializes get-or-create of the counters above. Each map is
+	// concurrency safe on its own, but the read-then-write pair across a map
+	// is not: when two goroutines race on the first hit for the same key they
+	// each install their own counter, the later Set discards the earlier one,
+	// and every increment already made on the discarded counter is lost.
+	counterMu sync.Mutex
 
-	// The write lock keeps a registration from being replaced between its
-	// expiry check and its removal.
-	c.requestLifecycleMu.Lock()
-	defer c.requestLifecycleMu.Unlock()
-
-	for _, id := range c.requests.Keys(false) {
-		if !c.requests.Has(id) {
-			c.requests.Remove(id)
-		}
+	counter, ok := m.Get(key)
+	if !ok {
+		counter = t.getOrCreateCounter(m, key)
 	}
+	counter.Add(1)
 }
 
+// getOrCreateCounter returns the counter stored for key, creating and storing
+// it when it is still absent. Only creation is serialized, so concurrent first
+// hits for the same key all end up incrementing one counter; the Add itself
+// stays outside the lock.
+func (t *Tracker) getOrCreateCounter(m *mapsutil.SyncLockMap[string, *atomic.Int32], key string) *atomic.Int32 {
+	t.counterMu.Lock()
+	defer t.counterMu.Unlock()
+
+	// Re-check under the lock: another goroutine may have created the counter
+	// between the caller's first Get and this point.
+		return counter
+	counter := new(atomic.Int32)
+	_ = m.Set(key, counter)
+	return counter
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		counter.Add(1)
+	} else {
+		newCounter := new(atomic.Int32)
+		newCounter.Store(1)
+		_ = m.Set(key, newCounter)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f1e6395b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b5274f2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

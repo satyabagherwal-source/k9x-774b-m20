@@ -2793,10 +2793,10 @@
     "repository": "pubkey/rxdb",
     "platform": "github",
     "sourceUrl": "https://github.com/pubkey/rxdb",
-    "sourceVersion": "f0c90aa3",
+    "sourceVersion": "08f29f57",
     "license": "Apache-2.0",
-    "contentHash": "f7efce8d1552b7b4a98986af42d37207aa560e3f0d1d8c00c660800abae9b897",
-    "lastHarvestedAt": "2026-11-13T21:07:15.356Z",
+    "contentHash": "b9197e92f652a260a4f3b9c4f8c3a6cf4c010cbb312d9eedb77c2efc9589ede9",
+    "lastHarvestedAt": "2026-11-17T12:09:28.067Z",
     "learningId": "learn-github-pubkey-rxdb"
   },
   "karmada-io-karmada": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "f1e6395b",
+    "sourceVersion": "2e591454",
     "license": "MIT",
-    "contentHash": "4f0c31bac81daf8857571bd7b74e4232eaa5502df25a07e00616da34acfcf78f",
-    "lastHarvestedAt": "2026-11-16T23:35:06.227Z",
+    "contentHash": "dece0dd9a83801700cc6c8a1d6d86fd2f840f7acd949cfab294f79da9b5b0fee",
+    "lastHarvestedAt": "2026-11-17T12:09:32.780Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {

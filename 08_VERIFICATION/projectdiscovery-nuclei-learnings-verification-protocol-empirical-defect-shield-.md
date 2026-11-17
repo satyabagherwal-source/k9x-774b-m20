@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T03:57:50.875Z",
+  "timestamp": "2026-11-17T12:09:38.253Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-projectdiscovery-nuclei-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [projectdiscovery-nuclei-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T03:57:50.875Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T12:09:38.253Z`  
 > **Learning ID**: `LEARN-EVO-projectdiscovery-nuclei-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `b9c39f1f`  
+> **Source Version**: `2e591454`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T03:57:21.383Z  
+> **Timestamp**: 2026-11-17T12:09:31.631Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T03:57:21.378Z  
+> **Harvest Timestamp**: 2026-11-17T12:09:31.624Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32961 stars
+- **Stars / Engagement**: 33037 stars
 
 ---
 
@@ -1339,22 +1339,7 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 					}
 
 					if result.OperatorsResult != nil && result.OperatorsResult.Extracts != nil {
-						for k, v := range result.OperatorsResult.Extracts {
-							// normalize items:
-							switch len(v) {
-							case 0, 1:
-								// - key:[item] => key: item
-								ctx.Input.Set(k, v[0])
-							default:
-								// - key:[item_0, ..., item_n] => key0:item_0, keyn:item_n
-								for vIdx, vVal := range v {
-									normalizedKIdx := fmt.Sprintf("%s%d", k, vIdx)
-									ctx.Input.Set(normalizedKIdx, vVal)
-								}
-								// also add the original name with full slice
-								ctx.Input.Set(k, v)
-							}
-						}
+						setWorkflowExtracts(ctx.Input, result.OperatorsResult.Extracts)
 					}
 				}
 				_, err = executer.Executer.ExecuteWithResults(ctx)
@@ -1392,9 +1377,7 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
 				}
 
 				if event.OperatorsResult.Extracts != nil {
-					for k, v := range event.OperatorsResult.Extracts {
-						ctx.Input.Set(k, v)
-					}
+					setWorkflowExtracts(ctx.Input, event.OperatorsResult.Extracts)
 				}
 
 				for _, matcher := range template.Matchers {
@@ -1478,6 +1461,35 @@ func (e *Engine) syncWorkflowInputToTemplateCtx(executer *workflows.ProtocolExec
 	}
 
 	executer.Options.GetTemplateCtx(input.MetaInput).Merge(workflowValues)
+}
+
+// setWorkflowExtracts propagates the extracts of a workflow step to the step
+// input so the subtemplates started by that step resolve them the same way
+// whether the step matched through an operator or through a workflow matcher:
+//
+//   - key: [item] => key: item
+//   - key: [item_0, ..., item_n] => key0: item_0, ..., keyn: item_n, and the
+//     original name keeps the full slice for further indexing.
+//
+// Extracts without values are skipped: a scalar cannot be rendered from them
+// and there is nothing to index.
+func setWorkflowExtracts(input *contextargs.Context, extracts map[string][]string) {
+	if input == nil {
+		return
+	}
+	for k, v := range extracts {
+		switch len(v) {
+		case 0:
+			continue
+		case 1:
+			input.Set(k, v[0])
+		default:
+			for vIdx, vVal := range v {
+				input.Set(fmt.Sprintf("%s%d", k, vIdx), vVal)
+			}
+			input.Set(k, v)
+		}
+	}
 }
 
 ```
@@ -1619,135 +1631,516 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b9c39f1f` (2026-11-15)
-**Commit Message**: fix(deps): bump golang.org/x/crypto v0.58.0 → v0.59.0 (#8141)
+### Incident Patch 1: `7b5274f2` (2026-11-17)
+**Commit Message**: fix(stats): serialize counter creation so concurrent first hits are not dropped
 
-Resolves GO-2026-5932 (openpgp deprecated/unsafe package advisory).
+## Proposed changes
 
-golang.org/x/crypto v0.58.0 is flagged by govulncheck and osv-scanner
-for GO-2026-5932: the bundled golang.org/x/crypto/openpgp package is
-unmaintained, unsafe by design, and has known security issues.
+`Tracker.incrementCounter` in `pkg/output/stats` reads the counter map and, on a miss, creates a counter, stores
+`1` in it and publishes it with `Set`. Two goroutines that miss the same key at the same moment both create and
+both publish, and the second publication discards the first counter together with whatever it had counted. For
+`-http-stats` that shows up as under-reported status codes, error kinds and WAF vendors whenever a burst of
+requests shares a key.
 
-Reachability analysis: the vulnerable openpgp code is NOT called by
-nuclei or any of its transitive dependencies — no Go source file in the
-tree imports any golang.org/x/crypto/openpgp subpackage. This is an
-indirect dependency; the upgrade clears the scanner finding without
-behavioral change.
+This change makes the create step atomic without touching the counting path:
 
-This is the smallest tagged version bump that reaches a release past the
-fix commit (v0.58.1-0.20261009181718-2f1f834330b2). The bump also
-raises the matching x/ companion modules:
-  - golang.org/x/mod     v0.41.0 → v0.42.0
-  - golang.org/x/sync    v0.24.0 → v0.25.0
-  - golang.org/x/sys     v0.49.0 → v0.50.0
-  - golang.org/x/term    v0.47.0 → v0.48.0
-  - golang.org/x/text    v0.43.0 → v0.44.0
-  - golang.org/x/tools   v0.51.0 → v0.52.0
+- `pkg/output/stats/stats.go` (+28 / −5, net +23, 221 → 244 lines): `Tracker` gains a `counterMu sync.Mutex`;
+  `incrementCounter`
+  keeps its current read-then-`Add` shape for keys that already exist and only calls a new
+  `getOrCreateCounter` on a miss, which takes the mutex, re-checks the map, and publishes the new counter. `Add(1)`
+  stays outside the lock, and a hit never touches the new mutex. The observable semantics for a single goroutine
+  are unchanged: the creating goroutine still counts its own request exactly once.
+- `pkg/output/stat
 
-go mod tidy, go build ./cmd/nuclei, and go test ./lib/... all pass.
-
-Co-authored-by: Neo <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +7/-7)
+**File**: `pkg/output/stats/stats.go` (modified, +28/-5)
 ```diff
-@@ -131,12 +131,12 @@ require (
- 	golang.org/x/exp v0.0.0-20260527015227-08cc5374adb3
- 	golang.org/x/net v0.62.0
- 	golang.org/x/oauth2 v0.36.0
--	golang.org/x/sync v0.24.0
--	golang.org/x/sys v0.49.0
--	golang.org/x/term v0.47.0
--	golang.org/x/text v0.43.0
-+	golang.org/x/sync v0.25.0
-+	golang.org/x/sys v0.50.0
-+	golang.org/x/term v0.48.0
-+	golang.org/x/text v0.44.0
- 	golang.org/x/time v0.15.0
--	golang.org/x/tools v0.51.0
-+	golang.org/x/tools v0.52.0
- 	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.11
- 	gopkg.in/yaml.v3 v3.0.1
-@@ -456,8 +456,8 @@ require (
- 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
- 	goftp.io/server/v2 v2.0.1 // indirect
- 	golang.org/x/arch v0.3.0 // indirect
--	golang.org/x/crypto v0.58.0 // indirect
--	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
-+	golang.org/x/mod v0.42.0 // indirect
- 	google.golang.org/api v0.264.0 // indirect
- 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+@@ -32,6 +32,13 @@ type Tracker struct {
+ 	wafSkips    atomic.Uint64
+ 	wafDuration atomic.Uint64
+ 
++	// counterMu serializes get-or-create of the counters above. Each map is
++	// concurrency safe on its own, but the read-then-write pair across a map
++	// is not: when two goroutines race on the first hit for the same key they
++	// each install their own counter, the later Set discards the earlier one,
++	// and every increment already made on the discarded counter is lost.
++	counterMu sync.Mutex
++
+ 	// internal stuff
+ 	wafDetector *waf.WafDetector
+ }
+@@ -99,13 +106,29 @@ func (t *Tracker) GetWAFMetrics() WAFMetrics {
+ }
+ 
+ func (t *Tracker) incrementCounter(m *mapsutil.SyncLockMap[string, *atomic.Int32], key string) {
++	counter, ok := m.Get(key)
++	if !ok {
++		counter = t.getOrCreateCounter(m, key)
++	}
++	counter.Add(1)
++}
++
++// getOrCreateCounter returns the counter stored for key, creating and storing
++// it when it is still absent. Only creation is serialized, so concurrent first
++// hits for the same key all end up incrementing one counter; the Add itself
++// stays outside the lock.
++func (t *Tracker) getOrCreateCounter(m *mapsutil.SyncLockMap[string, *atomic.Int32], key string) *atomic.Int32 {
++	t.counterMu.Lock()
++	defer t.counterMu.Unlock()
++
++	// Re-check under the lock: another goroutine may have created the counter
++	// between the caller's first Get and this point.
+ 	if counter, ok := m.Get(key); ok {
+-		counter.Add(1)
+-	} else {
+-		newCounter := new(atomic.Int32)
+-		newCounter.Store(1)
+-		_ = m.Set(key, newCounter)
++		return counter
+ 	}
++	counter := new(atomic.Int32)
++	_ = m.Set(key, counter)
++	return counter
+ }
+ 
+ type StatsOutput struct {
 ```
 
-**File**: `go.sum` (modified, +14/-14)
+**File**: `pkg/output/stats/stats_test.go` (modified, +129/-0)
 ```diff
-@@ -1337,8 +1337,8 @@ golang.org/x/crypto v0.13.0/go.mod h1:y6Z2r+Rw4iayiXXAIxJIDAJ1zMW4yaTpebo8fPOliY
- golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
- golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
- golang.org/x/crypto v0.31.0/go.mod h1:kDsLvtWBEx7MV9tJOj9bnXsPbxwJQ6csT/x4KIN4Ssk=
--golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
--golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
-@@ -1376,8 +1376,8 @@ golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.12.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.15.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
- golang.org/x/mod v0.17.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
--golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
--golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
-+golang.org/x/mod v0.42.0 h1:ICeL3t2L30ljSPHHxDnR4fqVcBt/zR2zJAb9juavmQg=
-+golang.org/x/mod v0.42.0/go.mod h1:u5fzIrRInkL8MaO1cbRkUHT64v303YIT5KEqpNr7jRs=
- golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
-@@ -1454,8 +1454,8 @@ golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
- golang.org/x/sync v0.6.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
- golang.org/x/sync v0.7.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
- golang.org/x/sync v0.10.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
--golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
--golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
-+golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -1520,8 +1520,8 @@ golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.17.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.20.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.28.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/telemetry v0.0.0-20240228155512-f48c80bd79b2/go.mod h1:TeRTkGYfJXctD9OcfyVLyj2J3IxLnKwHJR8f4D8a3YE=
- golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
-@@ -1534,8 +1534,8 @@ golang.org/x/term v0.12.0/go.mod h1:owVbMEjm3cBLCHdkQu9b1opXd4ETQWc3BhuQGKgXgvU=
- golang.org/x/term v0.17.0/go.mod h1:lLRBjIVuehSbZlaOtGMbcMncT+aqLLLmKrsjNrUguwk=
- golang.org/x/term v0.20.0/go.mod h1:8UkIAJTvZgivsXaD6/pH6U9ecQzZ45awqEOzuCvwpFY=
- golang.org/x/term v0.27.0/go.mod h1:iMsnZpn0cago0GOrHO2+Y7u7JPn5AylBrcoWkElMTSM=
--golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
--golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
-+golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
- golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
-@@ -1552,8 +1552,8 @@ golang.org/x/text v0.13.0/go.mod h1:TvPlkZtksWOMsz7fbANvkp4WM8x/
+@@ -1,12 +1,141 @@
+ package stats
+ 
+ import (
++	"runtime"
+ 	"sync"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
+ )
+ 
++// Bounded scheduler stress for counter creation: every iteration uses a fresh
++// tracker, so the key is always seen for the first time while workers are
++// released together. The assertion is exact, so a fixed build never retries or
++// sleeps; an unfixed build drops increments on the racing first hits.
++const (
++	concurrentFirstHitWorkers    = 64
++	concurrentFirstHitIterations = 200
++)
++
++// releaseTogether runs fn in n goroutines that all start on one signal.
++func releaseTogether(n int, fn func()) {
++	var wg sync.WaitGroup
++	start := make(chan struct{})
++	wg.Add(n)
++	for range n {
++		go func() {
++			defer wg.Done()
++			<-start
++			fn()
++		}()
++	}
++	close(start)
++	wg.Wait()
++}
++
++// requireMultipleP raises P above one so the racing window is reachable on
++// small runners. It records the machine's real shape and does not claim that a
++// single-P run cannot interleave: the scheduler may still preempt mid-window.
++func requireMultipleP(t *testing.T) {
++	t.Helper()
++	t.Logf("scheduler shape: runtime.NumCPU=%d GOMAXPROCS=%d", runtime.NumCPU(), runtime.GOMAXPROCS(0))
++	if runtime.GOMAXPROCS(0) < 2 {
++		previous := runtime.GOMAXPROCS(4)
++		t.Cleanup(func() { runtime.GOMAXPROCS(previous) })
++	}
++}
++
++func TestTrackStatusCodeConcurrentFirstHit(t *testing.T) {
++	requireMultipleP(t)
++
++	for iteration := 0; iteration < concurrentFirstHitIterations; iteration++ {
++		tracker := NewTracker()
++		releaseTogether(concurrentFirstHitWorkers, func() { tracker.TrackStatusCode("200") })
++
++		require.Equalf(t, concurrentFirstHitWorkers, tracker.GetStats().StatusCodeStats["200"],
++			"iteration %d: concurrent first hits on status code 200 lost increments", iteration)
++	}
++}
++
++func TestTrackErrorKindConcurrentFirstHit(t *testing.T) {
++	requireMultipleP(t)
++
++	for iteration := 0; iteration < concurrentFirstHitIterations; iteration++ {
++		tracker := NewTracker()
++		releaseTogether(concurrentFirstHitWorkers, func() { tracker.TrackErrorKind("timeout") })
++
++		require.Equalf(t, concurrentFirstHitWorkers, tracker.GetStats().ErrorStats["timeout"],
++			"iteration %d: concurrent first hits on error kind timeout lost increments", iteration)
++	}
++}
++
++func TestTrackWAFDetectedConcurrentFirstHit(t *testing.T) {
++	requireMultipleP(t)
++
++	const workers = 16
++	for iteration := 0; iteration < 20; iteration++ {
++		tracker := NewTracker()
++		releaseTogether(workers, func() { tracker.TrackWAFDetected("Attention Required! | Cloudflare") })
++
++		// Read through the user-visible accessor, not the internal map: WAFStats
++		// is keyed by detector name ("CloudFlare"), while wafDetected is keyed by
++		// the detector id ("cloudflare").
++		require.Equalf(t, workers, tracker.GetStats().WAFStats["CloudFlare"],
++			"iteration %d: concurrent first WAF hits lost increments", iteration)
++	}
++}
++
++func TestTrackStatusCodeConcurrentThenSequential(t *testing.T) {
++	requireMultipleP(t)
++
++	tracker := NewTracker()
++	releaseTogether(concurrentFirstHitWorkers, func() { tracker.TrackStatusCode("200") })
++	for range 5 {
++		tracker.TrackStatusCode("200")
++	}
++
++	// Sequential updates must land on the counter that stayed in the map.
++	require.Equal(t, concurrentFirstHitWorkers+5, tracker.GetStats().StatusCodeStats["200"])
++}
++
++func TestTrackStatusCodeConcurrentExistingKey(t *testing.T) {
++	requireMultipleP(t)
++
++	tracker := NewTracker()
++	tracker.TrackStatusCode("200")
++	releaseTogether(concurrentFirstHitWorkers, func() { tracker.TrackStatusCode("200") })
++
++	require.Equal(t, concurrentFirstHitWorkers+1, tracker.GetStats().StatusCodeStats["200"])
++}
++
++func TestTrackStatusCodeConcurrentDistinctKeys(t *testing.T) {
++	requireMultipleP(t)
++
++	keys := []string{"200", "201", "204", "301", "302", "400", "401", "403", "404", "500"}
++	tracker := NewTracker()
++
++	var wg sync.WaitGroup
++	start := make(chan struct{})
++	wg.Add(len(keys))
++	for _, key := range keys {
++		go func() {
++			defer wg.Done()
++			<-start
++			tracker.TrackStatusCode(key)
++		}()
++	}
++	close(start)
++	wg.Wait()
++
++	stats := tracker.GetStats()
++	total := 0
++	for _, key := range keys {
++		require.Equalf(t, 1, stats.StatusCodeStats[key], "status code %s counted wrong", key)
++		total += stats.StatusCodeStats[key]
++	}
++	require.Equal(t, len(keys), total)
++}
++
+ func TestTrackErrorKind(t *testing.T) {
+ 	tracker := NewTracker()
+ 
+```
+
+---
+
+### Incident Patch 2: `ecb8677d` (2026-11-17)
+**Commit Message**: fix redirect
+
+**File**: `pkg/protocols/dns/dnsclientpool/doh_test.go` (modified, +20/-9)
+```diff
+@@ -4,7 +4,6 @@ import (
+ 	"net"
+ 	"net/http"
+ 	"net/http/httptest"
+-	"strings"
+ 	"sync/atomic"
+ 	"testing"
+ 
+@@ -17,7 +16,16 @@ import (
+ // newDohServer answers every DoH query with a TXT record and counts the hits.
+ func newDohServer(t *testing.T, hits *atomic.Int32) *httptest.Server {
+ 	t.Helper()
+-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++	return newDohServerOn(t, hits, "127.0.0.1:0")
++}
++
++// newDohServerOn is newDohServer bound to address, so a test can separate an
++// allowed redirector from a denied target.
++func newDohServerOn(t *testing.T, hits *atomic.Int32, address string) *httptest.Server {
++	t.Helper()
++	listener, err := net.Listen("tcp", address)
++	require.NoError(t, err)
++	server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+ 		hits.Add(1)
+ 		m := new(dns.Msg)
+ 		m.SetQuestion("example.com.", dns.TypeTXT)
+@@ -30,6 +38,8 @@ func newDohServer(t *testing.T, hits *atomic.Int32) *httptest.Server {
+ 		w.Header().Set("Content-Type", "application/dns-message")
+ 		_, _ = w.Write(packed)
+ 	}))
++	server.Listener = listener
++	server.Start()
+ 	t.Cleanup(server.Close)
+ 	return server
+ }
+@@ -65,18 +75,19 @@ func TestDohResolverObeysNetworkPolicy(t *testing.T) {
+ 
+ 	t.Run("redirect to denied address", func(t *testing.T) {
+ 		var hits atomic.Int32
+-		internal := newDohServer(t, &hits)
++		// The target listens on ::1, which is denied. The redirector stays on
++		// 127.0.0.1. localhost cannot be the allowed hop: denying 127.0.0.1
++		// denies localhost too, because that name resolves to 127.0.0.1.
++		internal := newDohServerOn(t, &hits, "[::1]:0")
+ 		redirector := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+ 			http.Redirect(w, r, internal.URL+"/internal", http.StatusFound)
+ 		}))
+ 		t.Cleanup(redirector.Close)
+-		// localhost passes the resolver check through ::1, while 127.0.0.1 is denied
+-		_, port, err := net.SplitHostPort(strings.TrimPrefix(redirector.URL, "http://"))
+-		require.NoError(t, err)
+-		options := dohOptions(t, []string{"127.0.0.1"})
+-		require.True(t, protocolstate.IsHostAllowed(options.ExecutionId, "localhost"))
++		options := dohOptions(t, []string{"::1"})
++		require.True(t, protocolstate.IsHostAllowed(options.ExecutionId, "127.0.0.1"))
++		require.False(t, protocolstate.IsHostAllowed(options.ExecutionId, "::1"))
+ 
+-		client, err := Get(options, &Configuration{Retries: 1, Resolvers: []string{"doh:http://localhost:" + port + "/dns-query:get"}})
++		client, err := Get(options, &Configuration{Retries: 1, Resolvers: []string{"doh:" + redirector.URL + "/dns-query:get"}})
+ 		require.NoError(t, err)
+ 		_, _ = client.Do(txtQuery())
+ 		require.Zero(t, hits.Load(), "DoH redirect reached a denied address")
+```
+
+---
+
+### Incident Patch 3: `b958b44b` (2026-11-17)
+**Commit Message**: Merge pull request #8154 from liangzaihuanyv/fix/workflow-matcher-extract-normalization-on-f1
+
+fix(workflow): normalize extracted values for matcher subtemplates
+
+**File**: `internal/tests/integration/workflow_test.go` (modified, +3/-2)
+```diff
+@@ -266,8 +266,9 @@ func (h *workflowMultiMatchKeyValueShare) Execute(filePath string) error {
+ 	}
+ 
+ 	// Check if we received the data from both request to /path1 and it is not overwritten by the later one.
+-	// They will appear in brackets because of another bug: https://github.com/orgs/projectdiscovery/discussions/3766
+-	if !sliceutil.Contains(receivedData, "[test-value-1]") || !sliceutil.Contains(receivedData, "[test-value-2]") {
++	// Each child event carries its own single extracted value, so it must render without brackets,
++	// see https://github.com/orgs/projectdiscovery/discussions/3766.
++	if !sliceutil.Contains(receivedData, "test-value-1") || !sliceutil.Contains(receivedData, "test-value-2") {
+ 		return fmt.Errorf(
+ 			"incorrect data: did not receive both extracted data from the first request!\nReceived Data:\n\t%s\nResults:\n\t%s",
+ 			strings.Join(receivedData, "\n\t"),
+```
+
+**File**: `pkg/core/workflow_execute.go` (modified, +31/-19)
+```diff
+@@ -92,22 +92,7 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
+ 					}
+ 
+ 					if result.OperatorsResult != nil && result.OperatorsResult.Extracts != nil {
+-						for k, v := range result.OperatorsResult.Extracts {
+-							// normalize items:
+-							switch len(v) {
+-							case 0, 1:
+-								// - key:[item] => key: item
+-								ctx.Input.Set(k, v[0])
+-							default:
+-								// - key:[item_0, ..., item_n] => key0:item_0, keyn:item_n
+-								for vIdx, vVal := range v {
+-									normalizedKIdx := fmt.Sprintf("%s%d", k, vIdx)
+-									ctx.Input.Set(normalizedKIdx, vVal)
+-								}
+-								// also add the original name with full slice
+-								ctx.Input.Set(k, v)
+-							}
+-						}
++						setWorkflowExtracts(ctx.Input, result.OperatorsResult.Extracts)
+ 					}
+ 				}
+ 				_, err = executer.Executer.ExecuteWithResults(ctx)
+@@ -145,9 +130,7 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
+ 				}
+ 
+ 				if event.OperatorsResult.Extracts != nil {
+-					for k, v := range event.OperatorsResult.Extracts {
+-						ctx.Input.Set(k, v)
+-					}
++					setWorkflowExtracts(ctx.Input, event.OperatorsResult.Extracts)
+ 				}
+ 
+ 				for _, matcher := range template.Matchers {
+@@ -232,3 +215,32 @@ func (e *Engine) syncWorkflowInputToTemplateCtx(executer *workflows.ProtocolExec
+ 
+ 	executer.Options.GetTemplateCtx(input.MetaInput).Merge(workflowValues)
+ }
++
++// setWorkflowExtracts propagates the extracts of a workflow step to the step
++// input so the subtemplates started by that step resolve them the same way
++// whether the step matched through an operator or through a workflow matcher:
++//
++//   - key: [item] => key: item
++//   - key: [item_0, ..., item_n] => key0: item_0, ..., keyn: item_n, and the
++//     original name keeps the full slice for further indexing.
++//
++// Extracts without values are skipped: a scalar cannot be rendered from them
++// and there is nothing to index.
++func setWorkflowExtracts(input *contextargs.Context, extracts map[string][]string) {
++	if input == nil {
++		return
++	}
++	for k, v := range extracts {
++		switch len(v) {
++		case 0:
++			continue
++		case 1:
++			input.Set(k, v[0])
++		default:
++			for vIdx, vVal := range v {
++				input.Set(fmt.Sprintf("%s%d", k, vIdx), vVal)
++			}
++			input.Set(k, v)
++		}
++	}
++}
+```
+
+**File**: `pkg/core/workflow_execute_matcher_extracts_test.go` (added, +147/-0)
+```diff
+@@ -0,0 +1,147 @@
++package core
++
++import (
++	"context"
++	"testing"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/stringslice"
++	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/progress"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
++	"github.com/projectdiscovery/nuclei/v3/pkg/scan"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/projectdiscovery/nuclei/v3/pkg/workflows"
++	"github.com/stretchr/testify/require"
++)
++
++// runMatcherExtractWorkflow runs a workflow whose only step matches through a
++// workflow matcher and produces the given extracts, so the subtemplate started
++// by that matcher resolves them like any other workflow step.
++func runMatcherExtractWorkflow(t *testing.T, extracts map[string][]string, matcherName string, childHook func(ctx *scan.ScanContext, childOptions *protocols.ExecutorOptions)) bool {
++	t.Helper()
++
++	progressBar, _ := progress.NewStatsTicker(0, false, false, false, 0)
++	childOptions := &protocols.ExecutorOptions{TemplateID: "child-template", Progress: progressBar}
++	childExecuter := &mockExecuter{result: true}
++	if childHook != nil {
++		childExecuter.executeScanHook = func(ctx *scan.ScanContext) {
++			childHook(ctx, childOptions)
++		}
++	}
++
++	workflow := &workflows.Workflow{
++		Options: &protocols.ExecutorOptions{Options: &types.Options{TemplateThreads: 10}},
++		Workflows: []*workflows.WorkflowTemplate{{
++			Executers: []*workflows.ProtocolExecuterPair{{
++				Executer: &mockExecuter{result: true, outputs: []*output.InternalWrappedEvent{{
++					OperatorsResult: &operators.Result{
++						Matches:  map[string][]string{"tomcat": {}},
++						Extracts: extracts,
++					},
++					Results: []*output.ResultEvent{{}},
++				}}},
++				Options: &protocols.ExecutorOptions{TemplateID: "parent-template", Progress: progressBar},
++			}},
++			Matchers: []*workflows.Matcher{{
++				Name: stringslice.StringSlice{Value: matcherName},
++				Subtemplates: []*workflows.WorkflowTemplate{{
++					Executers: []*workflows.ProtocolExecuterPair{{
++						Executer: childExecuter,
++						Options:  childOptions,
++					}},
++				}},
++			}},
++		}},
++	}
++
++	engine := &Engine{}
++	input := contextargs.NewWithInput(context.Background(), "https://test.com")
++	ctx := scan.NewScanContext(context.Background(), input)
++	return engine.executeWorkflow(ctx, workflow)
++}
++
++// TestWorkflowsMatcherSubtemplatesExtractSingleValue covers the common workflow
++// shape whose step declares matchers and extractors: the subtemplate must
++// resolve the extracted value as a scalar, not as a one element list.
++func TestWorkflowsMatcherSubtemplatesExtractSingleValue(t *testing.T) {
++	var childWhoami interface{}
++	var childRan bool
++
++	matched := runMatcherExtractWorkflow(t, map[string][]string{"whoami": {"foo"}}, "tomcat", func(ctx *scan.ScanContext, childOptions *protocols.ExecutorOptions) {
++		childRan = true
++		childWhoami, _ = childOptions.GetTemplateCtx(ctx.Input.MetaInput).Get("whoami")
++	})
++
++	require.True(t, matched, "could not get correct match value")
++	require.True(t, childRan, "matcher subtemplate should run when the matcher matches")
++	require.Equal(t, "foo", childWhoami, "matcher subtemplate should resolve a single extract as a scalar")
++}
++
++// TestWorkflowsMatcherSubtemplatesExtractMultipleValues keeps the indexed and
++// the full slice forms available for extractors returning several values.
++func TestWorkflowsMatcherSubtemplatesExtractMultipleValues(t *testing.T) {
++	var childPaths0, childPaths1, childPaths interface{}
++
++	matched := runMatcherExtractWorkflow(t, map[string][]string{"paths": {"a", "b"}}, "tomcat", func(ctx *scan.ScanContext, childOptions *protocols.ExecutorOptions) {
++		templateCtx := childOptions.GetTemplateCtx(ctx.Input.MetaInput)
++		childPaths0, _ = templateCtx.Get("paths0")
++		childPaths1, _ = templateCtx.Get("paths1")
++		childPaths, _ = templateCtx.Get("paths")
++	})
++
++	require.True(t, matched, "could not get correct match value")
++	require.Equal(t, "a", childPaths0, "could not index the first extracted value")
++	require.Equal(t, "b", childPaths1, "could not index the second extracted value")
++	require.Equal(t, []string{"a", "b"}, childPaths, "could not keep the full slice of extracted values")
++}
++
++// TestWorkflowsMatcherSubtemplatesWithoutExtracts covers steps that extract
++// nothing at all: the subtemplate still runs and no value is invented.
++func TestWorkflowsMatcherSubtemplatesWithoutExtracts(t *testing.T) {
++	var childRan bool
++	var childWhoami interface{}
++
++	matched := runMatcherExtractWorkflow(t, map[string][]string{}, "tomcat", func(ctx *scan.ScanContext, childOptions *protocols.ExecutorOptions) {
++		childRan = true
++		childWhoami, _ = childOptions.GetTemplateCtx(ctx.Input.MetaInput).Get("whoami")
++	})
++
++	require.True(t, matched, "could not get correct match value")
++	requi
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8141** (2026-11-15): fix(deps): bump golang.org/x/crypto v0.58.0 → v0.59.0 (GO-2026-5932) (@neo-by-projectdiscovery[bot])
-- **PR #8138** (2026-11-14): add -auto-tech to skip templates bound to products the tech templates did not detect (@dogancanbakir)
-- **PR #8136** (2026-11-14): follow appends to a running plan and its cancel log (@dogancanbakir)
-- **PR #8135** (2026-11-14): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in the go_modules group across 1 directory (@dependabot[bot])
-- **PR #8107** (2026-11-10): send identical requests once per scan (@dogancanbakir)
-- **PR #8103** (2026-11-10): add -store-events and -replay over stored events of any protocol (@dogancanbakir)
+- **PR #8161** (2026-11-17): fix(stats): serialize counter creation so concurrent first hits are not dropped (@liangzaihuanyv)
+- **PR #8160** (2026-11-17): fix(markdown): index findings only after writing their reports (@hakarrr)
+- **PR #8158** (2026-11-17): fix(jsonl): close the report file after a flush error (@hakarrr)
+- **PR #8156** (2026-11-17): fix(splunk): close HEC response bodies after export (@hakarrr)
+- **PR #8154** (2026-11-17): fix(workflow): normalize extracted values for matcher subtemplates (@liangzaihuanyv)
+- **PR #8152** (2026-11-17): fix(input): use the parsed URL host for SSL host:port assembly (@liangzaihuanyv)
 
 ---
 
@@ -1767,43 +2160,62 @@ Co-authored-by: Neo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump golang.org/x/crypto v0.58.0 → v0.59.0
+## X. stats): serialize counter creation so concurrent first hits are not dropped
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/output/stats/stats.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b9c39f1f`: deps): bump golang.org/x/crypto v0.58.0 → v0.59.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b5274f2`: stats): serialize counter creation so concurrent first hits are not dropped. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/output/stats/stats.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/sync v0.25.0
-	golang.org/x/sys v0.50.0
-	golang.org/x/term v0.48.0
-	golang.org/x/text v0.44.0
-	golang.org/x/tools v0.52.0
-	golang.org/x/crypto v0.59.0 // indirect
-	golang.org/x/mod v0.42.0 // indirect
+	// counterMu serializes get-or-create of the counters above. Each map is
+	// concurrency safe on its own, but the read-then-write pair across a map
+	// is not: when two goroutines race on the first hit for the same key they
+	// each install their own counter, the later Set discards the earlier one,
+	// and every increment already made on the discarded counter is lost.
+	counterMu sync.Mutex
+
+	counter, ok := m.Get(key)
+	if !ok {
+		counter = t.getOrCreateCounter(m, key)
+	}
+	counter.Add(1)
+}
+
+// getOrCreateCounter returns the counter stored for key, creating and storing
+// it when it is still absent. Only creation is serialized, so concurrent first
+// hits for the same key all end up incrementing one counter; the Add itself
+// stays outside the lock.
+func (t *Tracker) getOrCreateCounter(m *mapsutil.SyncLockMap[string, *atomic.Int32], key string) *atomic.Int32 {
+	t.counterMu.Lock()
+	defer t.counterMu.Unlock()
+
+	// Re-check under the lock: another goroutine may have created the counter
+	// between the caller's first Get and this point.
+		return counter
+	counter := new(atomic.Int32)
+	_ = m.Set(key, counter)
+	return counter
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	golang.org/x/sync v0.24.0
-	golang.org/x/sys v0.49.0
-	golang.org/x/term v0.47.0
-	golang.org/x/text v0.43.0
-	golang.org/x/tools v0.51.0
-	golang.org/x/crypto v0.58.0 // indirect
-	golang.org/x/mod v0.41.0 // indirect
+		counter.Add(1)
+	} else {
+		newCounter := new(atomic.Int32)
+		newCounter.Store(1)
+		_ = m.Set(key, newCounter)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b9c39f1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b5274f2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

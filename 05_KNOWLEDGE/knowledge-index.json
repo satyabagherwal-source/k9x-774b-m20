@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T11:41:16.510Z",
+  "last_updated": "2026-11-17T12:09:39.628Z",
   "total_verified_learnings": 8880,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20135,
+  "total_items": 20140,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OIQR-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GPNO-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "22b59b29e4d324839da26cb9f832bdbacd6411d26d40f2a4d09956d6ee3e7b7a",
+      "content_hash": "a9c98064d9a736b15c1fb1fec713325da23efb162dc551512035a6608c1a4e44",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T10:51:44.742Z"
+      "persisted_at": "2026-11-17T12:09:39.306Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "75941359b8743c57adc70adfc8dcd622f967e86d25a63e01740479cc020f1149",
+      "content_hash": "d9e6f212b4c81ca6293fd45e6f1a7b76cb10d25717f98c67f328aa57ee272a53",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T10:51:44.861Z"
+      "persisted_at": "2026-11-17T12:09:39.458Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f6e2defb98b37e2898aa47fb34ae6b81d62ba7164d9b6e96da8b186327a9e394",
+      "content_hash": "b1cdf250a065a6d517990cc7371e28afdd91afdff23ac8de35608a35838d003b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T10:51:44.990Z"
+      "persisted_at": "2026-11-17T12:09:39.628Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -215693,14 +215693,19 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "f0c90aa3",
-      "content_hash": "f7efce8d1552b7b4a98986af42d37207aa560e3f0d1d8c00c660800abae9b897",
+      "source_version": "08f29f57",
+      "content_hash": "b9197e92f652a260a4f3b9c4f8c3a6cf4c010cbb312d9eedb77c2efc9589ede9",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
         {
           "number": 8382,
           "title": "make the tauri example e2e test robust against a lost webdriver session",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8961,
+          "title": "limit 0 returns no documents and a negative limit throws (QU23)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -215709,7 +215714,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:07:15.200Z",
+      "verified_at": "2026-11-17T12:09:27.843Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215751,10 +215756,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-technical-construction-intelligence-pubkey-rxdb-core-invariants.md",
       "title": "Technical Construction Intelligence: pubkey/rxdb Core Invariants",
       "repository": "pubkey/rxdb",
-      "source_version": "f0c90aa3",
-      "content_hash": "63b679e82bc369b264ec967625d4daa0ca383b2c27fb967888c50eadc241aa25",
+      "source_version": "08f29f57",
+      "content_hash": "c791071e31aecd6c92b767e1b519789307dec765649582fa753bc479080cd6a4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T21:07:15.677Z"
+      "persisted_at": "2026-11-17T12:09:28.456Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb",
@@ -215763,10 +215768,10 @@
       "relative_path": "12_DECISIONS/ADR-pubkey-rxdb-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in pubkey/rxdb",
       "repository": "pubkey/rxdb",
-      "source_version": "f0c90aa3",
-      "content_hash": "e7e3b99efbe883d156ba9fc80e0f5efc199fef05f9e79bad49747d0ba7ecc12b",
+      "source_version": "08f29f57",
+      "content_hash": "dc2b7988beaaee60c52fa6161dfd0bbb75c0115f92f5123322c8c90566a56062",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T21:07:15.795Z"
+      "persisted_at": "2026-11-17T12:09:28.629Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb",
@@ -215775,10 +215780,10 @@
       "relative_path": "08_VERIFICATION/pubkey-rxdb-verification-protocol-empirical-defect-shield-for-pubkey-rxdb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pubkey/rxdb",
       "repository": "pubkey/rxdb",
-      "source_version": "f0c90aa3",
-      "content_hash": "18b9223947c5b2bd49ec45d9e7541393099f102124c455bfe3010ed6443e8064",
+      "source_version": "08f29f57",
+      "content_hash": "58e67c38acef8c92334211e8cba821080660240265d0c6f6e66425fd7bd55aec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:07:15.904Z"
+      "persisted_at": "2026-11-17T12:09:28.776Z"
     },
     "learn-github-k3s-io-k3s": {
       "learning_id": "learn-github-k3s-io-k3s",
@@ -215900,9 +215905,9 @@
       "title": "Technical Construction Intelligence: pubkey-rxdb-learnings Core Invariants",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce2287dff443907a4316df2a4a9388ab12113082fd9afa1657eaa8e9f24f0074",
+      "content_hash": "a87c45a6ec6d77e4081988ff983339906b30c3154018e7b379f314b82ceb2adb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T21:08:33.222Z"
+      "persisted_at": "2026-11-17T12:09:37.529Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb-learnings",
@@ -215912,9 +215917,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in pubkey-rxdb-learnings",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "5cf46299bec7ec9d575eb9d051da8c8e2ea6dd4401b09a71bd5c53e20970fe80",
+      "content_hash": "a65ccd95ba4e08a56c40b54c8cb8c914b222dcc7b0d26e2063c85589bd70d2e0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T21:08:33.349Z"
+      "persisted_at": "2026-11-17T12:09:37.695Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb-learnings",
@@ -215924,9 +215929,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pubkey-rxdb-learnings",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e41cf536a657612840917e941d53f47fd2c19f18623f3ce6b0d44f227eaec932",
+      "content_hash": "89e76bb58ca75058a9069ac4bf30c90f70a91ee303b354226eff57a1ee94966d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:08:33.473Z"
+      "persisted_at": "2026-11-17T12:09:37.843Z"
     },
     "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants",
@@ -228687,8 +228692,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "f1e6395b",
-      "content_hash": "4f0c31bac81daf8857571bd7b74e4232eaa5502df25a07e00616da34acfcf78f",
+      "source_version": "2e591454",
+      "content_hash": "dece0dd9a83801700cc6c8a1d6d86fd2f840f7acd949cfab294f79da9b5b0fee",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -228716,6 +228721,11 @@
           "number": 8817,
           "title": "Empirical Invariant Guard in interactsh.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8962,
+          "title": "serialize counter creation so concurrent first hits are not dropped",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228723,7 +228733,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T23:35:06.047Z",
+      "verified_at": "2026-11-17T12:09:32.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228765,10 +228775,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "f1e6395b",
-      "content_hash": "b52f01af74064097af6c9bf384776c442be5f3a8da9e9cd6cca72aa6376e1752",
+      "source_version": "2e591454",
+      "content_hash": "b1f6c068c0c36d3bc0ca8eb9d13fa454c65686f142f1348543608aba970ca017",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T23:35:06.541Z"
+      "persisted_at": "2026-11-17T12:09:33.172Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -228777,10 +228787,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "f1e6395b",
-      "content_hash": "93d4bab5be1e37a03938b59942264d209a89397a810b9defc18234006c4bce4a",
+      "source_version": "2e591454",
+      "content_hash": "d770eb68ebfcdcef199b1fad03f10314afcd21fa88e0331f47d8737e666fb250",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:35:06.673Z"
+      "persisted_at": "2026-11-17T12:09:33.340Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -241208,9 +241218,9 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "1112a59c0c166b7a1e57292a370612a8df8a5b8f51587f3a16bc4dba0cc131eb",
+      "content_hash": "0f9765f3c64f0a9548926c8dd323c9df1bd6ad309f3dcec8cdd4525cf9cd9d2f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T03:57:51.075Z"
+      "persisted_at": "2026-11-17T12:09:38.522Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni",
@@ -241220,9 +241230,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery-nuclei-learnings",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ce4cebfc41e5f0420f5cfd8745eae324de3539e6f58c01fb478420feb3adf3b",
+      "content_hash": "f98076bf3be28d687581b31e7ae0547cacda0ee752631b0828f92648015b3279",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:57:51.192Z"
+      "persisted_at": "2026-11-17T12:09:38.691Z"
     },
     "learn-huggingface-liquidai-lfm3-omni-2b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
@@ -269545,6 +269555,70 @@
       "content_hash": "b8d82cb5fda7204ddf5e15fa782fea8d5421879f09a4a59e7794be21783bfadd",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T11:41:16.348Z"
+    },
+    "rule-8961": {
+      "learning_id": "rule-8961",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8961,
+      "title": "limit 0 returns no documents and a negative limit throws (QU23)",
+      "source_url": "https://github.com/pubkey/rxdb",
+      "source_version": "08f29f57",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T12:09:27.843Z"
+    },
+    "candidate_directive-limit-0-returns-no-documents-and-a-negative-limit-throws-qu23": {
+      "item_id": "candidate_directive-limit-0-returns-no-documents-and-a-negative-limit-throws-qu23",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GO64-limit-0-returns-no-documents-and-a-negative-limit-throws-qu23.md",
+      "title": "limit 0 returns no documents and a negative limit throws (QU23)",
+      "repository": "pubkey-rxdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3cc1883bd51bf7b8b69213f1588317375d2e5d6bde4e6535007b7da537a6504a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T12:09:37.374Z"
+    },
+    "rule-8962": {
+      "learning_id": "rule-8962",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8962,
+      "title": "serialize counter creation so concurrent first hits are not dropped",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "2e591454",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T12:09:32.572Z"
+    },
+    "candidate_directive-serialize-counter-creation-so-concurrent-first-hits-are-not-dropped": {
+      "item_id": "candidate_directive-serialize-counter-creation-so-concurrent-first-hits-are-not-dropped",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GKT6-serialize-counter-creation-so-concurrent-first-hits-are-not-dropped.md",
+      "title": "serialize counter creation so concurrent first hits are not dropped",
+      "repository": "projectdiscovery/nuclei",
+      "source_version": "2e591454",
+      "content_hash": "c38445c92c00fc86614322756598603e5d05f8f015bcce510a66df8206d9a59b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T12:09:33.024Z"
+    },
+    "candidate_directive-stats-serialize-counter-creation-so-concurrent-first-hits-are-not-dropped": {
+      "item_id": "candidate_directive-stats-serialize-counter-creation-so-concurrent-first-hits-are-not-dropped",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GOXQ-stats-serialize-counter-creation-so-concurrent-first-hits-are-not-dropped.md",
+      "title": "stats): serialize counter creation so concurrent first hits are not dropped",
+      "repository": "projectdiscovery-nuclei-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2e78f65645c591388acfefd17d4849a95521b04da90369de2bace0d33ac4ba66",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T12:09:38.371Z"
     }
   },
   "ai-builder-brain": {

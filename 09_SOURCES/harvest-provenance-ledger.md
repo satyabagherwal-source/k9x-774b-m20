@@ -10576,3 +10576,5 @@ Every entry in this ledger must capture:
 | `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `3820f31f` | Multi-dimensional audit evidence | 2026-11-17T11:40:38.993Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `71959474` | Multi-dimensional audit evidence | 2026-11-17T11:40:43.353Z |
 | `learn-dom-h-f963174b` | `project://react-navigation-react-navigation` | `3820f31f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md` | 2026-11-17T11:41:15.942Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `08f29f57` | Multi-dimensional audit evidence | 2026-11-17T12:09:28.067Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `2e591454` | Multi-dimensional audit evidence | 2026-11-17T12:09:32.780Z |

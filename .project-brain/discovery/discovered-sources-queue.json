@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T11:40:47.166Z",
+  "updated_at": "2026-11-17T12:09:38.143Z",
   "stats": {
-    "total_discovered": 4943,
-    "approved_pending_harvest": 4657,
+    "total_discovered": 4964,
+    "approved_pending_harvest": 4677,
     "harvested_count": 0,
-    "rejected_count": 286,
+    "rejected_count": 287,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4648,
+      "COMMUNITY_AND_EXPERT": 4669,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 103,
       "ENGINEERING_BLOGS": 3,
@@ -106765,6 +106765,461 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
         "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-664E9DBA54AC": {
+      "id": "SRC-664E9DBA54AC",
+      "url": "https://redirect.github.com/dumbmatter/fakeIndexedDB",
+      "title": "https://redirect.github.com/dumbmatter/fakeIndexedDB",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.329Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-AE0CAB190B52": {
+      "id": "SRC-AE0CAB190B52",
+      "url": "https://renovatebot.com/diffs/npm/fake-indexeddb/6.2.7/6.2.8",
+      "title": "https://renovatebot.com/diffs/npm/fake-indexeddb/6.2.7/6.2.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.373Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-963CA48FEF5F": {
+      "id": "SRC-963CA48FEF5F",
+      "url": "https://developer.mend.io/api/mc/badges/age/npm/fake-indexeddb/6.2.8?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/npm/fake-indexeddb/6.2.8?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.414Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-728F3FD29F1E": {
+      "id": "SRC-728F3FD29F1E",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/npm/fake-indexeddb/6.2.7/6.2.8?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/npm/fake-indexeddb/6.2.7/6.2.8?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.458Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-FEF56565EE94": {
+      "id": "SRC-FEF56565EE94",
+      "url": "https://redirect.github.com/dumbmatter/fakeIndexedDB/blob/HEAD/CHANGELOG.md",
+      "title": "https://redirect.github.com/dumbmatter/fakeIndexedDB/blob/HEAD/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.501Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-69E8A2867248": {
+      "id": "SRC-69E8A2867248",
+      "url": "https://redirect.github.com/dumbmatter/fakeIndexedDB/compare/v6.2.7...v6.2.8",
+      "title": "https://redirect.github.com/dumbmatter/fakeIndexedDB/compare/v6.2.7...v6.2.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.541Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-15CF377470AF": {
+      "id": "SRC-15CF377470AF",
+      "url": "https://redirect.github.com/dumbmatter/fakeIndexedDB/issues/174",
+      "title": "https://redirect.github.com/dumbmatter/fakeIndexedDB/issues/174",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.588Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-9337136A36D8": {
+      "id": "SRC-9337136A36D8",
+      "url": "https://redirect.github.com/nolanlawson",
+      "title": "https://redirect.github.com/nolanlawson",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.644Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-D1DD6569B5BC": {
+      "id": "SRC-D1DD6569B5BC",
+      "url": "https://redirect.github.com/dumbmatter/fakeIndexedDB/issues/176",
+      "title": "https://redirect.github.com/dumbmatter/fakeIndexedDB/issues/176",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.692Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-C176A3351C2B": {
+      "id": "SRC-C176A3351C2B",
+      "url": "https://redirect.github.com/Huyvux12",
+      "title": "https://redirect.github.com/Huyvux12",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.734Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-1AB013EE7128": {
+      "id": "SRC-1AB013EE7128",
+      "url": "https://github.com/pubkey/rxdb/pull/9603",
+      "title": "https://github.com/pubkey/rxdb/pull/9603",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-F061E6B555EC": {
+      "id": "SRC-F061E6B555EC",
+      "url": "https://github.com/pubkey/rxdb/pull/9556",
+      "title": "https://github.com/pubkey/rxdb/pull/9556",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.820Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-25DF0B5A580D": {
+      "id": "SRC-25DF0B5A580D",
+      "url": "https://github.com/pubkey/rxdb/pull/9673",
+      "title": "https://github.com/pubkey/rxdb/pull/9673",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-46530F2159B2": {
+      "id": "SRC-46530F2159B2",
+      "url": "https://github.com/pubkey/rxdb/pull/9578",
+      "title": "https://github.com/pubkey/rxdb/pull/9578",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.911Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-745184B33F6C": {
+      "id": "SRC-745184B33F6C",
+      "url": "https://github.com/pubkey/rxdb/pull/9621",
+      "title": "https://github.com/pubkey/rxdb/pull/9621",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:36.954Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-470051EEA069": {
+      "id": "SRC-470051EEA069",
+      "url": "https://rxdb.info/rx-query-examples.html?console=errors&code=QU22",
+      "title": "https://rxdb.info/rx-query-examples.html?console=errors&code=QU22",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:37.016Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-AA628A90CC22": {
+      "id": "SRC-AA628A90CC22",
+      "url": "https://rxdb.info/rx-query.html?console=errors&code=QU23",
+      "title": "https://rxdb.info/rx-query.html?console=errors&code=QU23",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:37.059Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-24C2827B0C5E": {
+      "id": "SRC-24C2827B0C5E",
+      "url": "https://github.com/pubkey/rxdb/pull/9476",
+      "title": "https://github.com/pubkey/rxdb/pull/9476",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:37.099Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-340AB89D069B": {
+      "id": "SRC-340AB89D069B",
+      "url": "http://localhost/couchdb-custom-fetch-sequence",
+      "title": "http://localhost/couchdb-custom-fetch-sequence",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T12:09:37.142Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-4159D8E7B658": {
+      "id": "SRC-4159D8E7B658",
+      "url": "https://github.com/orgs/projectdiscovery/discussions/3766",
+      "title": "https://github.com/orgs/projectdiscovery/discussions/3766",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:38.101Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
+      }
+    },
+    "SRC-997744ED83A9": {
+      "id": "SRC-997744ED83A9",
+      "url": "https://test.com/",
+      "title": "https://test.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T12:09:38.142Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
+        "fileName": "projectdiscovery-nuclei-learnings.md"
       }
     }
   }
