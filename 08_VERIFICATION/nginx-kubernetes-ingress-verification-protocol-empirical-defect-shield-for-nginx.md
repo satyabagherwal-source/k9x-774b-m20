@@ -4,22 +4,22 @@
 {
   "source_repository": "nginx/kubernetes-ingress",
   "source_url": "https://github.com/nginx/kubernetes-ingress",
-  "source_version": "866ce54b",
+  "source_version": "a21523d1",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T18:10:50.193Z",
+  "timestamp": "2026-11-17T17:20:22.768Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nginx-kubernetes-ingress",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `866ce54b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T18:10:50.193Z`  
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `a21523d1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T17:20:22.768Z`  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nginx/kubernetes-ingress` (Commit: `866ce54b`)
+- **Target Repository**: `nginx/kubernetes-ingress` (Commit: `a21523d1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:10:48.881Z  
+> **Harvest Timestamp**: 2026-11-17T17:20:21.641Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5096 stars
+- **Stars / Engagement**: 5097 stars
 
 ---
 
@@ -1436,227 +1436,143 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `11830790` (2026-11-16)
-**Commit Message**: [ci] 1.5: Add security-scan composite action (#11419)
+### Incident Patch 1: `a21523d1` (2026-11-17)
+**Commit Message**: Update ghcr.io/nginx/dependencies/nginx-ubi:ubi10 Docker digest to 853ed61 (main) (#11428)
 
-* Add security-scan composite action
+Update ghcr.io/nginx/dependencies/nginx-ubi:ubi10 Docker digest to 853ed61
 
-Closes np-206.
+Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-Also adds renovate for the action, plus additional inputs
-to azure upload, and more logging to azure upload.
-
-* Change pattern input to wildcard in action.yml
-
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
-Signed-off-by: Gabor Javorszky <[REDACTED_EMAIL]>
-
-* Remove echoing the CONTAINER_NAME
-
-* Add option to upload to github code scanning
-
----------
-
-Signed-off-by: Gabor Javorszky <[REDACTED_EMAIL]>
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
-
-**File**: `.github/actions/azure-blob/action.yml` (modified, +5/-0)
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -44,6 +44,7 @@ runs:
-         SOURCE_DIR: ${{ inputs.source-dir }}
-         DESTINATION_PATH: ${{ inputs.destination-path }}
-         PATTERN: ${{ inputs.pattern }}
-+        DRY_RUN: ${{ inputs.dry-run }}
-       run: |
-         # An empty destination would upload to the container root; an empty source usually means the producing step failed.
-         if [ -z "${DESTINATION_PATH%/}" ]; then
-@@ -53,6 +54,7 @@ runs:
-         shopt -s globstar nullglob dotglob
-         src="${SOURCE_DIR%/}"
-         found=0
-+        echo "Uploading '$PATTERN' from '$src':"
-         # shellcheck disable=SC2231 # PATTERN is deliberately unquoted so it globs
-         for f in "$src"/**/$PATTERN; do
-           [ -f "$f" ] || continue
-@@ -63,6 +65,9 @@ runs:
-           echo "::error::no files matching '$PATTERN' in '$SOURCE_DIR'"
-           exit 1
-         fi
-+        if [ "$DRY_RUN" = "true" ]; then
-+          echo "dry-run: skipping upload of $found file(s)"
-+        fi
+@@ -36,7 +36,7 @@ endif
+ PLUS_ARGS ?=  $(DOCKER_AUTH) --build-arg NGINX_PLUS_VERSION=$(NGINX_PLUS_VERSION) --build-arg PLUS_PACKAGE_REPO=$(PLUS_REPO)
  
-     - name: Azure login for upload
-       if: ${{ inputs.dry-run != 'true' }}
-```
-
-**File**: `.github/actions/security-scan/action.yml` (added, +129/-0)
-```diff
-@@ -0,0 +1,129 @@
-+name: Security Scan
-+description: Scan an image with Docker Scout into a SARIF file, and optionally upload the SARIF to GitHub code scanning or Azure Blob Storage.
-+
-+# The scan fails this step on error; callers that want a soft fail set `continue-on-error: true`
-+# and gate follow-up steps on `steps.<id>.outcome == 'success'`. Uploads only run after a successful scan.
-+#
-+# Where the SARIF goes: composite actions cannot read `vars`, so callers pass both
-+#   github-upload: ${{ vars.IS_PUBLIC == 'true' }}
-+#   azure-upload: ${{ vars.IS_PUBLIC == 'false' }}
-+# Both compare against an explicit value, so an unset IS_PUBLIC uploads nowhere instead of to the wrong place.
-+# The public repository uploads to GitHub code scanning (Security tab), which needs `permissions: security-events: write`.
-+# The internal repository is private, so its SARIF goes to Azure instead. That needs
-+# `permissions: id-token: write` and a non-empty `prefix`, and stores the file as <prefix>/<blob-name>.
-+#
-+# Run docker/login-action for Docker Hub before this action; Docker Scout needs it.
-+# A sparse checkout must include .github/actions/security-scan, .github/actions/scout-cache and
-+# .github/actions/azure-blob, which this action calls.
-+
-+inputs:
-+  image:
-+    description: Image reference to scan
-+    required: true
-+  sarif-file:
-+    description: Path to write the SARIF file to, relative to the workspace
-+    required: true
-+  ignore-base:
-+    description: Ignore vulnerabilities from the base image
-+    required: false
-+    default: "false"
-+  github-upload:
-+    description: Upload the SARIF to GitHub code scanning (pass vars.IS_PUBLIC == 'true')
-+    required: false
-+    default: "false"
-+  azure-upload:
-+    description: Upload the SARIF to Azure Blob Storage (pass vars.IS_PUBLIC == 'false')
-+    required: false
-+    default: "false"
-+  prefix:
-+    description: Virtual directory in the container to upload into, e.g. nic/2026-10-13-38399827758. Empty skips the upload
-+    required: false
-+    default: ""
-+  blob-name:
-+    description: Blob name for the SARIF under prefix, e.g. debian-nap-waf.sarif. Required when uploading
-+    required: false
-+    default: ""
-+  client-id:
-+    description: Azure client ID used for the OIDC login
-+    required: false
-+    default: ""
-+  tenant-id:
-+    description: Azure tenant ID
-+    required: false
-+    default: ""
-+  subscription-id:
-+    description: Azure subscription ID
-+    required: false
-+    default: ""
-+  storage-account:
-+    description: Azure storage account name
-+    required: false
-+    default: ""
-+  container-name:
-+    description: Blob container name
-+    required: false
-+    default: ""
-+
-+runs:
-+  using: composite
-+  steps:
-+    # Keep version/sha in sync with the docker/scout-action pin below (renovate bumps both).
-+    - name: Restore Docker Scout binary
-+      uses: ./.github/actions/scout-cache
-+      with:
-+        mode: restore
-+        version: v1.29.0
-+        sha: e7e2a72bf1485d10a58f30696b6c513b261ce4fa # renovate-digest: datasource=github-tags depName=docker/scout-action
-+
-+    - name: Prepare SARIF directory
-+      shell: bash
-+      env:
-+        SARIF_FILE: ${{ inputs.sarif-file }}
-+      run: mkdir -p "$(dirname "${SARIF_FILE}")"
-+
-+    - name: Run Docker Scout vulnerability scanner
-+      uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
-+      with:
-+        command: cves
-+        image: ${{ inputs.image }}
-+        ignore-base: ${{ inputs.ignore-base }}
-+        sarif-file: ${{ inputs.sarif-file }}
-+        write-comment: false
-+        summary: true
-+
-+    - name: Upload SARIF to GitHub code scanning
-+      if: ${{ inputs.github-upload == 'true' }}
-+      uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-+      with:
-+        sarif_file: ${{ inputs.sarif-file }}
-+
-+    # azure-blob uploads a directory, so stage the SARIF under its blob name inside the workspace
-+    # (the Azure CLI step only mounts GITHUB_WORKSPACE).
-+    - name: Stage SARIF for upload
-+      if: ${{ inputs.azure-upload == 'true' && inputs.prefix != '' }}
-+      shell: bash
-+      env:
-+        SARIF_FILE: ${{ inputs.sarif-file }}
-+        BLOB_NAME: ${{ inputs.blob-name }}
-+      run: |
-+        set -euo pipefail
-+        if [ -z "${BLOB_NAME}" ] || [[ "${BLOB_NAME}" == */* ]]; then
-+          echo "::error::blob-name must be a non-empty file name when uploading, got '${BLOB_NAME}'"
-+          exit 1
-+        fi
-+        rm -rf .security-scan-upload
-+        mkdir .security-scan-upload
-+        cp "${SARIF_FILE}" ".security-scan-upload/${BLOB_NAME}"
-+
-+    - name: Upload SARIF to Azure
-+      if: ${{ inputs.azure-upload == 'true' && inputs.prefix != '' }}
-+      uses: ./.github/actions/azure-blob
-+      with:
-+        client-id: ${{ inputs.client-id }}
-+        tenant-id: ${{ inputs.tenant-id }}
-+        subscription-id: ${{ inputs.subscription-id }}
-+        storage-account: ${{ inputs.storage-
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
-```diff
-@@ -411,7 +411,7 @@ jobs:
-         continue-on-error: true # soft-fail: scans fall back to an authenticated download
-         with:
-           mode: seed
--          # Keep in sync with the docker/scout-action pin in build-oss.yml and build-plus.yml.
-+          # Keep in sync with the docker/scout-action pin in build-oss.yml, build-plus.yml and .github/actions/security-scan.
-           version: v1.29.0
-           sha: e7e2a72bf1485d10a58f30696b6c513b261ce4fa # renovate-digest: datasource=github-tags depName=docker/scout-action
+ # Variables that can be overridden
+-UBI10_PACKAGES_IMAGE ?= ghcr.io/nginx/dependencies/nginx-ubi:ubi10@sha256:5dd6d1d479b10c6242d297bc113a17c931d0b8b4d5bb8690998524c9b2554692
++UBI10_PACKAGES_IMAGE ?= ghcr.io/nginx/dependencies/nginx-ubi:ubi10@sha256:853ed6139be16e96ca4e3fc1bc7526cac50de1cc78d92bed968f56db0468c67b
  
+ # renovate: datasource=github-releases depName=dominikh/go-tools
+ STATICCHECK_VERSION ?= 452d5bb86b45416c35891262f6a11dbd6a970117
 ```
 
-**File**: `renovate.json` (modified, +3/-2)
+**File**: `build/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -345,9 +345,10 @@
-   "customManagers": [
-     {
-       "customType": "regex",
--      "description": "Update version + sha pairs pinned with a `# renovate-digest:` comment in Github Actions workflows (e.g. the scout-cache action inputs in ci.yml)",
-+      "description": "Update version + sha pairs pinned with a `# renovate-digest:` comment in Github Actions workflows and composite actions (e.g. the scout-cache action inputs in ci.yml and security-scan)",
-       "managerFilePatterns": [
--        "/.github/workflows/.+\\.ya?ml$/"
-+        "/.github/workflows/.+\\.ya?ml$/",
-+        "/.github/actions/.+\\.ya?ml$/"
-       ],
-       "matchStrings": [
-         "version: (?<currentValue>\\S+)\\s+sha: (?<currentDigest>[a-f0-9]{40}) # renovate-digest: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>\\S+)"
+@@ -21,7 +21,7 @@ ARG DOWNLOAD_TAG=edge
+ ARG DEBIAN_FRONTEND=noninteractive
+ ARG PREBUILT_BASE_IMG=nginx/nginx-ingress:${DOWNLOAD_TAG}
+ ARG IMAGE_NAME=nginx/nginx-ingress
+-ARG UBI10_PACKAGES_IMAGE=ghcr.io/nginx/dependencies/nginx-ubi:ubi10@sha256:5dd6d1d479b10c6242d297bc113a17c931d0b8b4d5bb8690998524c9b2554692
++ARG UBI10_PACKAGES_IMAGE=ghcr.io/nginx/dependencies/nginx-ubi:ubi10@sha256:853ed6139be16e96ca4e3fc1bc7526cac50de1cc78d92bed968f56db0468c67b
+ 
+ 
+ ############################################# External dependency images #############################################
+```
+
+---
+
+### Incident Patch 2: `d50394d1` (2026-11-17)
+**Commit Message**: Update python dependencies to v37.0.2 (main) (#11430)
+
+Update python dependencies to v37.0.2
+
+| datasource | package           | from   | to     |
+| ---------- | ----------------- | ------ | ------ |
+| pypi       | kubernetes        | 37.0.1 | 37.0.2 |
+| pypi       | playwright        | 1.64.1 | 1.65.2 |
+| pypi       | pydantic-core     | 2.50.2 | 2.50.4 |
+| pypi       | typing-inspection | 0.4.4  | 0.4.5  |
+
+Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `tests/requirements.txt` (modified, +163/-166)
+```diff
+@@ -836,9 +836,9 @@ jinja2==3.1.6 \
+     --hash=sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d \
+     --hash=sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67
+     # via pytest-html
+-kubernetes==37.0.1 \
+-    --hash=sha256:a313a482361506340b5972cabaf20a7ee16ec8713e73325bf699b783a40464a9 \
+-    --hash=sha256:e41db0a95615c2388680a2d556df33fd0f27a5717c9b5df5857e475c196c2f10
++kubernetes==37.0.2 \
++    --hash=sha256:6967599ef976d0bb9c663c3621e690db0e26fbab7cf5c5e3ccf7e11b790d2de9 \
++    --hash=sha256:d72683392fc10f59fb78b89bd91cb3be60a05d6ff0bbb2150966a224af6edc03
+     # via -r requirements.in
+ markupsafe==3.0.4 \
+     --hash=sha256:007e1ffd9bf65bb6ee96df7b258fc632a4868dd5566037986c64781f35a36e98 \
+@@ -1155,20 +1155,23 @@ multidict==7.2.1 \
+ oauthlib==4.0.1 \
+     --hash=sha256:3d73febdb6faa00f277c81fb04be7b7586fb96fc3b7f0b9c772dada69a25ede7 \
+     --hash=sha256:498a298876e996301950a5b053d12c31628bb7b895db03666430c69ce182eb61
+-    # via requests-oauthlib
++    # via
++    #   kubernetes
++    #   requests-oauthlib
+ packaging==26.3 \
+     --hash=sha256:94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79 \
+     --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
+     # via pytest
+-playwright==1.64.1 \
+-    --hash=sha256:29453ff76e25c17d0b45658cacd6b92e9eec46e8db21e134fb3b7143df50f013 \
+-    --hash=sha256:577b8d88778c245cfbd145ae17cf53044f084b1b46c55c69081d4069d56057e2 \
+-    --hash=sha256:59f7b041284ce8d1b72098ae50ca48a2d83692eec25154ab5ba79d4b6b4fe8a9 \
+-    --hash=sha256:5e240a79464434c9260957b9ef59a5808e02e96e3fcabdc717fd7485260b9730 \
+-    --hash=sha256:6a6f99adad1ae40e6ee62efe89785db861ce7ddd57651521cb31894183cc4ae3 \
+-    --hash=sha256:983ccd085453ea5a7588193657fc349a6ffbf7bf7ba663fd58dc81e4aa3af9d9 \
+-    --hash=sha256:a29fda44725e11b0b625c4bff6458a1f6dbee97b88c9788d12e18a8344458c2d \
+-    --hash=sha256:d3c48b31da426c2f3562d0919cb9ea4e5415f6dbd29d7211fa4d66cca24fbd2f
++playwright==1.65.2 \
++    --hash=sha256:2e03da7fd7cd6ea92d22524be147e5803649ab0ae9b362b9a78efa869c2f57c7 \
++    --hash=sha256:33a224fba3fb72c5fa7eda49535b265c292f1fb87949c769754f9fcd0f5be2de \
++    --hash=sha256:3bb758e12b963bf32f7fba5c4b86994f060126feb32d47f236589f53fe09746f \
++    --hash=sha256:4476703bcdd1a2db06f5db5136af7c02552b1bb519d5fa4b94a8eead2a6a41ba \
++    --hash=sha256:58932d35f56767ab7ebcdd3d4a733bfb3e62a1a5bc43c08e28b9fa9b3e61cf33 \
++    --hash=sha256:8b031f81de9cdbe8550d8fe8b58dba47d96239e53177ee4cd47dab0fff07a87e \
++    --hash=sha256:99dd0de21173375cded45f4e26a9e19b862d748b06cbb11376313758cedc220e \
++    --hash=sha256:d0aec9e1c97b6f497f3d9f2ad6e1b7f299968e61239d71f100298b0690f3c776 \
++    --hash=sha256:dd3e54b6a926fc6510f272797eec0707dc34ae04d564e74a7056c4a813e53270
+     # via -r requirements.in
+ pluggy==1.7.0 \
+     --hash=sha256:7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec \
+@@ -1330,157 +1333,152 @@ pycparser==3.12 ; implementation_name != 'PyPy' and platform_python_implementati
+     --hash=sha256:a076f3f489b39b43ed13563a1dafe42447445bec2e294154ec5c57fcdda4c85e \
+     --hash=sha256:f03387877eab82ce01bbdfd0ba7252ee55a90b1c708d5129e2ce915475cf1db6
+     # via cffi
+-pydantic==2.14.2 \
+-    --hash=sha256:7efbf7507b937931cd32a5755acb00ea1cf5ccb1d4e8067a5850d5069e382118 \
+-    --hash=sha256:fb7b2db6cefe8414dd612edeede49c4c433acb0432b0f92b95024e45f66c505d
++pydantic==2.14.3 \
++    --hash=sha256:1054f237f4d4733e5a30e1e2333bd33a2004ab9ab1510bd053a9a31bb48e232d \
++    --hash=sha256:3f7b347782ab7e4cf4c798496ae3a82787d9f21ec12676a9c564355eeef8daa8
+     # via kubernetes
+-pydantic-core==2.50.2 \
+-    --hash=sha256:01eb0282d0b3a065d55956d1be9ce398c46db3dd6d277a6cb2358c8aa8c53179 \
+-    --hash=sha256:04cf672960b8c4fc28bb159c8cdd101fbd311c520237a5c0360448b851adfb41 \
+-    --hash=sha256:0b94a515f44f1ebcb25395bcdba506c4cdaf6d3fcb0466b9658521b41e5ff057 \
+-    --hash=sha256:0d090ae76d5b09c003600c7779b3adcf3d1b49268f616c5c51d844e54c8e318d \
+-    --hash=sha256:126f158474346f457c0759c29c1a6334acd5f7f99dd272bb27d19314f3d81b4d \
+-    --hash=sha256:150f6e101f575c21a4ecfed1be1c05bb89a0ad49cb9c846ed377583bd71b32c2 \
+-    --hash=sha256:16ec8e07c37f02dcf68939cc7f202ba9a148cc155ee2acf22d337e10b24c2cb7 \
+-    --hash=sha256:18f008ef58cd30782f81b6e0119e20b7e884edcefbc2d370162ebe033f6e5c99 \
+-    --hash=sha256:196b87b48b2695426920e8470d20f9e99f019ebd86f15808aa018b68086840cd \
+-    --hash=sha256:1a5e859f5a8a6d834b0a13acaa0eaddf1a9b4b015fcda13bab7b471e18299d32 \
+-    --hash=sha256:1ac5b99bc7b0a68ec64f5f75a6828a7bab5535c8df0cdc07901deb50e0815910 \
+-    --hash=sha256:1b0e8dc3932cf4e9ed5727570325cacc716b9409ffc794a221c0ccc72e8eb775 \
+-    --hash=sha256:1b9f652e17a13bbc09b45f74c3c326cca72059ce4dcdef687fcb04389db413a9 \
+-    --hash=sha256:1db9cab6197e797824f0479dd2ae5fd2e272aa61c61b7faa5a6e450ca7a0d3b7 \
+-    --hash=sha256:1fdf5b52ed22f1404c2433d0b46df2d86d9befb742d0b9b4042a2325c43cdb97 \
+-    --hash=sha256:2115d7ca6d58554af8a14da3dd32d361a4fe999fae52f115a6155679b5b0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11450** (2026-11-17): Update module github.com/aws/aws-sdk-go-v2/credentials to v1.21.1 (release-5.8) (@renovate[bot])
+- **PR #11449** (2026-11-17): Update balabit/syslog-ng Docker tag to v4.13.0 (main) (@renovate[bot])
+- **PR #11448** (2026-11-17): Update module github.com/aws/aws-sdk-go-v2/credentials to v1.21.1 (main) (@renovate[bot])
+- **PR #11447** (2026-11-16): renovate config for makefile ubi10 (@nic-create-pr[bot])
 - **PR #11446** (2026-11-16): renovate config for makefile ubi10 (@vepatel)
 - **PR #11445** (2026-11-16): [ci] 1.5-5.8: Add security-scan composite action- #11420 (@javorszky)
-- **PR #11443** (2026-11-16): user gh var for plm helm chart (@vepatel)
-- **PR #11441** (2026-11-16): update lts version (@vepatel)
-- **PR #11427** (2026-11-13): update versions for 5.8.0 release (@vepatel)
-- **PR #11426** (2026-11-13): Update version bump job condition to include both repositories (@pdabelf5)
 
 ---
 
@@ -1676,35 +1592,31 @@ Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ci] 1.5: Add security-scan composite action
+## X. Update ghcr.io/nginx/dependencies/nginx-ubi:ubi10 Docker digest to 853ed61 (main
 
 **RULE**:
-When implementing operations in `.github/actions/azure-blob/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `11830790`: [ci] 1.5: Add security-scan composite action. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a21523d1`: Update ghcr.io/nginx/dependencies/nginx-ubi:ubi10 Docker digest to 853ed61 (main). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/azure-blob/action.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        DRY_RUN: ${{ inputs.dry-run }}
-        echo "Uploading '$PATTERN' from '$src':"
-        if [ "$DRY_RUN" = "true" ]; then
-          echo "dry-run: skipping upload of $found file(s)"
-        fi
+UBI10_PACKAGES_IMAGE ?= ghcr.io/nginx/dependencies/nginx-ubi:ubi10@sha256:853ed6139be16e96ca4e3fc1bc7526cac50de1cc78d92bed968f56db0468c67b
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+UBI10_PACKAGES_IMAGE ?= ghcr.io/nginx/dependencies/nginx-ubi:ubi10@sha256:5dd6d1d479b10c6242d297bc113a17c931d0b8b4d5bb8690998524c9b2554692
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `11830790` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a21523d1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

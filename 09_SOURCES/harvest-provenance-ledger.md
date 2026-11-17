@@ -10669,3 +10669,8 @@ Every entry in this ledger must capture:
 | `learn-github-arxanas-git-branchless` | `https://github.com/arxanas/git-branchless` | `d0eceb7e` | Multi-dimensional audit evidence | 2026-11-17T17:11:28.594Z |
 | `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-17T17:11:31.626Z |
 | `learn-github-berty-berty` | `https://github.com/berty/berty` | `a18636b2` | Multi-dimensional audit evidence | 2026-11-17T17:11:34.192Z |
+| `learn-huggingface-minimaxai-minimax-m3-1-flash` | `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-17T17:20:11.509Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `75047201` | Multi-dimensional audit evidence | 2026-11-17T17:20:14.341Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `0d1e3966` | Multi-dimensional audit evidence | 2026-11-17T17:20:20.985Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `a21523d1` | Multi-dimensional audit evidence | 2026-11-17T17:20:22.573Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `9123e6e2` | Multi-dimensional audit evidence | 2026-11-17T17:20:24.686Z |

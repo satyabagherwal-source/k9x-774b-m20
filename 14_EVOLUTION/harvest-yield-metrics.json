@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T17:11:34.199Z",
-  "total_cycles_completed": 10191,
-  "total_learnings_persisted": 10191,
-  "total_rules_promoted": 9757,
+  "last_updated": "2026-11-17T17:20:24.691Z",
+  "total_cycles_completed": 10196,
+  "total_learnings_persisted": 10196,
+  "total_rules_promoted": 9761,
   "history": [
-    {
-      "timestamp": "2026-11-17T02:32:18.768Z",
-      "repository": "Viggle/Viggle-Remake",
-      "learningId": "learn-huggingface-viggle-viggle-remake",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T02:32:18.887Z",
-      "repository": "tuist/tuist",
-      "learningId": "learn-github-tuist-tuist",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T02:32:23.422Z",
-      "repository": "TypeWhisper/typewhisper-mac",
-      "learningId": "learn-github-typewhisper-typewhisper-mac",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T02:50:59.749Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T03:16:04.776Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T03:16:54.246Z",
       "repository": "kumahq/kuma",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-17T17:11:34.199Z",
       "repository": "berty/berty",
       "learningId": "learn-github-berty-berty",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:20:11.514Z",
+      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:20:14.347Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:20:20.990Z",
+      "repository": "keybase/client",
+      "learningId": "learn-github-keybase-client",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:20:22.578Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:20:24.691Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

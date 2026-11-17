@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "46ad4538",
+    "sourceVersion": "9123e6e2",
     "license": "BSD-3-Clause",
-    "contentHash": "deb816e5df5c030a37c086a907ccf2e8a67395885c930b691f1fc345609d80cd",
-    "lastHarvestedAt": "2026-11-17T05:58:15.077Z",
+    "contentHash": "1469bf05681a671c7988712054b5fe59d7659e7e214575c7800cbcedbc0dab5d",
+    "lastHarvestedAt": "2026-11-17T17:20:24.686Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4403,10 +4403,10 @@
     "repository": "keybase/client",
     "platform": "github",
     "sourceUrl": "https://github.com/keybase/client",
-    "sourceVersion": "c241b403",
+    "sourceVersion": "0d1e3966",
     "license": "BSD-3-Clause",
-    "contentHash": "5bdf6aca9f8919b627c7fb5d539f4567407dcc393544e95ec99655d6b437b52f",
-    "lastHarvestedAt": "2026-11-14T04:50:35.530Z",
+    "contentHash": "3827cef6d5e3a8e77f6bb2fe65252b380c11665e44307a739a8fc232c18bbf12",
+    "lastHarvestedAt": "2026-11-17T17:20:20.985Z",
     "learningId": "learn-github-keybase-client"
   },
   "sealerio-sealer": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "866ce54b",
+    "sourceVersion": "a21523d1",
     "license": "Apache-2.0",
-    "contentHash": "fd4f9f984e1b92755b47b0f0460247a8684a2df9f454752553ed025192d347db",
-    "lastHarvestedAt": "2026-11-16T18:10:50.021Z",
+    "contentHash": "b1f0df368ba81c36ae79e9e0d566ce5ac7af06323c92462c17ed6d8f15be370c",
+    "lastHarvestedAt": "2026-11-17T17:20:22.573Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "38cb1af6",
+    "sourceVersion": "75047201",
     "license": "Apache-2.0",
-    "contentHash": "0c7ef5a355d715f6d383f4e045063df8a425ee0a9f358765ac5b1ab2c6501071",
-    "lastHarvestedAt": "2026-11-16T02:44:25.821Z",
+    "contentHash": "41f4f1538515e4df527482fe01324090b031410a52a3f9d6f97f1a01d9a45c69",
+    "lastHarvestedAt": "2026-11-17T17:20:14.341Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {
@@ -10575,8 +10575,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
     "sourceVersion": "hf-minimaxai-minimax-m3.1-flash",
     "license": "Open-Source",
-    "contentHash": "40caac05bfc42611dbe3bc0b8ed7da109700e55433cb68448742e5a2a12d7a80",
-    "lastHarvestedAt": "2026-11-13T05:51:20.959Z",
+    "contentHash": "f1050e030f337b984a71f5d06f6b0be61a06534f75569719fb88e9514fa1dc2d",
+    "lastHarvestedAt": "2026-11-17T17:20:11.509Z",
     "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash"
   },
   "nomadamas-cozyclay": {

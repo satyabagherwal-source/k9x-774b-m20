@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T17:11:39.847Z",
-  "total_records": 1623,
+  "last_updated": "2026-11-17T17:20:29.338Z",
+  "total_records": 1625,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 686,
+      "total": 688,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -735,7 +735,9 @@
         "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-14b-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-unsloth-flint-gguf-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-flint-gguf-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-flint-gguf-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-m3-1-flash-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i"
       ]
     },
     "E": {
@@ -7510,8 +7512,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "b23644eb33b854fa9377aa54ebaf325f2483847daa6cacd5a354990f7fa40e26",
-      "created_at": "2026-11-17T05:58:15.353Z"
+      "content_hash": "e0278bb31e7ccea215c02047fc184c4acfb647d8a17e2055b43308a1453b230e",
+      "created_at": "2026-11-17T17:20:25.000Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -12994,8 +12996,8 @@
       "title": "Architecture Intelligence: keybase/client Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keybase-client-architecture-intelligence-keybase-client-core-invariants.md",
       "repository": "keybase/client",
-      "content_hash": "18f1139f6b8c21e5fc388ecb6235a256ea588ccb4e47daa47f5d9f5130c41d7f",
-      "created_at": "2026-11-14T04:50:35.792Z"
+      "content_hash": "79a17463a906dbb7a207bea108023b2703d307d0dd840ae971c815c599ed25bb",
+      "created_at": "2026-11-17T17:20:21.289Z"
     },
     "DOM-D-C791DEC9": {
       "record_id": "DOM-D-C791DEC9",
@@ -13054,8 +13056,8 @@
       "title": "Architecture Intelligence: keybase-client-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keybase-client-learnings-architecture-intelligence-keybase-client-learnings-core.md",
       "repository": "keybase-client-learnings",
-      "content_hash": "bbdcbfcc4824e7ce97d4dce2e0d72bcc79a5024cd724e6dc9da6365ea0a0f7c1",
-      "created_at": "2026-11-14T04:51:08.613Z"
+      "content_hash": "a58f6fcd0ddaf0aa666e84b395870df2bba2c6baaff0aeb417737130c8c54499",
+      "created_at": "2026-11-17T17:20:29.338Z"
     },
     "domain_intelligence-design-intelligence-edge0-audio8-tts-realistic-air-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
@@ -22785,8 +22787,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai/zvec-grep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-research-knowledge-intelligence-zvec-ai-zvec-grep-core-invaria.md",
       "repository": "zvec-ai/zvec-grep",
-      "content_hash": "f4b88e6fb4202eb1df20e0e397615bf0efeb4794b2a4924bf5a142478abaf455",
-      "created_at": "2026-11-16T02:44:26.166Z"
+      "content_hash": "27550009f8def471585d7bc82ff3816601159352e25da0e08071a8e017101aad",
+      "created_at": "2026-11-17T17:20:14.652Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -22794,8 +22796,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "3210df5353eb941dc95308eb2b825e8bf3afe292c5e3dcb36f79da8a1e49fb77",
-      "created_at": "2026-11-17T13:48:15.751Z"
+      "content_hash": "83f6af6cc2b4ae6316bd689fe576c96d3a127069ed3ca2a358eee594f9a88b3b",
+      "created_at": "2026-11-17T17:20:28.280Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -23872,8 +23874,8 @@
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "repository": "nginx/kubernetes-ingress",
-      "content_hash": "5c9a50d28314efcbdf6dd5dcc433cedda01bae1f3aa1d4ce0408748041eac10b",
-      "created_at": "2026-11-16T18:10:50.313Z"
+      "content_hash": "b35223d0ade5ecc5d973d677c327cfb4f61b040a3540fc2bb81db19c52f34931",
+      "created_at": "2026-11-17T17:20:22.894Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
@@ -27800,6 +27802,24 @@
       "repository": "hf-unsloth-flint-gguf-learnings",
       "content_hash": "51aace5764a41885959d36ba114f9b750987b7c3d38c6db7884d796a211fd27a",
       "created_at": "2026-11-17T17:11:39.193Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-m3-1-flash-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-m3-1-flash-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-M3.1-Flash Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-m3-1-flash-research-knowledge-intelligence-minimaxai-minima.md",
+      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+      "content_hash": "a734f0889039e407fc148f6949875c954b6b05fc7491fe7c24dc8aa477554157",
+      "created_at": "2026-11-17T17:20:11.686Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-m3.1-flash-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-m3-1-flash-learnings-research-knowledge-intelligence-hf-min.md",
+      "repository": "hf-minimaxai-minimax-m3.1-flash-learnings",
+      "content_hash": "6952115a0782ed60befc9f58d440bd4b30030e7eab595bb6c7aa3b9f2d24dd21",
+      "created_at": "2026-11-17T17:20:28.856Z"
     }
   }
 }

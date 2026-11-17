@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T17:11:34.204Z",
+  "last_updated": "2026-11-17T17:20:24.695Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "deb816e5df5c030a37c086a907ccf2e8a67395885c930b691f1fc345609d80cd",
-      "verified_at": "2026-11-17T05:58:15.084Z",
+      "content_hash": "1469bf05681a671c7988712054b5fe59d7659e7e214575c7800cbcedbc0dab5d",
+      "verified_at": "2026-11-17T17:20:24.694Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T05:58:15.084Z"
+      "last_updated": "2026-11-17T17:20:24.694Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -6726,14 +6726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keybase-client",
-      "content_hash": "5bdf6aca9f8919b627c7fb5d539f4567407dcc393544e95ec99655d6b437b52f",
-      "verified_at": "2026-11-14T04:50:35.537Z",
+      "content_hash": "3827cef6d5e3a8e77f6bb2fe65252b380c11665e44307a739a8fc232c18bbf12",
+      "verified_at": "2026-11-17T17:20:20.992Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T04:50:35.537Z"
+      "last_updated": "2026-11-17T17:20:20.992Z"
     },
     "sealerio/sealer": {
       "repository": "sealerio/sealer",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "fd4f9f984e1b92755b47b0f0460247a8684a2df9f454752553ed025192d347db",
-      "verified_at": "2026-11-16T18:10:50.029Z",
+      "content_hash": "b1f0df368ba81c36ae79e9e0d566ce5ac7af06323c92462c17ed6d8f15be370c",
+      "verified_at": "2026-11-17T17:20:22.582Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:10:50.029Z"
+      "last_updated": "2026-11-17T17:20:22.582Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",
@@ -10746,14 +10746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zvec-ai-zvec-grep",
-      "content_hash": "0c7ef5a355d715f6d383f4e045063df8a425ee0a9f358765ac5b1ab2c6501071",
-      "verified_at": "2026-11-16T02:44:25.831Z",
+      "content_hash": "41f4f1538515e4df527482fe01324090b031410a52a3f9d6f97f1a01d9a45c69",
+      "verified_at": "2026-11-17T17:20:14.349Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T02:44:25.831Z"
+      "last_updated": "2026-11-17T17:20:14.349Z"
     },
     "JetBrains/kotlinconf-app": {
       "repository": "JetBrains/kotlinconf-app",
@@ -15891,14 +15891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-      "content_hash": "40caac05bfc42611dbe3bc0b8ed7da109700e55433cb68448742e5a2a12d7a80",
-      "verified_at": "2026-11-13T05:51:20.969Z",
+      "content_hash": "f1050e030f337b984a71f5d06f6b0be61a06534f75569719fb88e9514fa1dc2d",
+      "verified_at": "2026-11-17T17:20:11.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T05:51:20.969Z"
+      "last_updated": "2026-11-17T17:20:11.517Z"
     },
     "NomaDamas/CozyClay": {
       "repository": "NomaDamas/CozyClay",

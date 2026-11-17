@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-L0MH",
-    "timestamp": "2026-11-15T09:21:41.993Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "b0d20128c906d99208e6e8c47d2c77d299ee5584655880a24ae838860335ea51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-RC6H",
-    "timestamp": "2026-11-15T09:26:36.905Z",
-    "repository": "meshtastic/Meshtastic-Android",
-    "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "7d45f78be9227ea7c25d098099ffeacc6943a900ace2f5b0faa063d75802d5c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-LC18",
-    "timestamp": "2026-11-15T09:49:56.396Z",
-    "repository": "thaw-app/Thaw",
-    "learningId": "learn-github-thaw-app-thaw",
-    "contentHash": "c72bfc81746e5c50cf43b9f3639b0ef222040d45ec98f8348f17304f21fc8e59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-LDK9",
-    "timestamp": "2026-11-15T09:49:58.377Z",
-    "repository": "open-policy-agent/gatekeeper",
-    "learningId": "learn-github-open-policy-agent-gatekeeper",
-    "contentHash": "7c8cc1c0afa2f22d7357bc6e8d3b483ad4616536e1672e5c482a86667673234c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-RXG9",
-    "timestamp": "2026-11-15T09:55:04.089Z",
-    "repository": "LiquidAI/d1-2B",
-    "learningId": "learn-huggingface-liquidai-d1-2b",
-    "contentHash": "50adaf2ae139c9170e96ee6dc00d56e3a62578edb8a82c30974a1a65654f95cb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-3P23",
     "timestamp": "2026-11-15T10:04:13.083Z",
     "repository": "tencent/Qwen3.8-27B-DSpine-b16",
@@ -7490,6 +7415,81 @@
     "repository": "berty/berty",
     "learningId": "learn-github-berty-berty",
     "contentHash": "43db151d324bd5fcbf424519aff51b22bba9b2909bf988b7dd56fe08f9b1ea1b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-K2CX",
+    "timestamp": "2026-11-17T17:20:11.505Z",
+    "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+    "contentHash": "f1050e030f337b984a71f5d06f6b0be61a06534f75569719fb88e9514fa1dc2d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-K4JL",
+    "timestamp": "2026-11-17T17:20:14.337Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "41f4f1538515e4df527482fe01324090b031410a52a3f9d6f97f1a01d9a45c69",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-K9O5",
+    "timestamp": "2026-11-17T17:20:20.981Z",
+    "repository": "keybase/client",
+    "learningId": "learn-github-keybase-client",
+    "contentHash": "3827cef6d5e3a8e77f6bb2fe65252b380c11665e44307a739a8fc232c18bbf12",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-KAW9",
+    "timestamp": "2026-11-17T17:20:22.569Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "b1f0df368ba81c36ae79e9e0d566ce5ac7af06323c92462c17ed6d8f15be370c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-KCIZ",
+    "timestamp": "2026-11-17T17:20:24.683Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "1469bf05681a671c7988712054b5fe59d7659e7e214575c7800cbcedbc0dab5d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

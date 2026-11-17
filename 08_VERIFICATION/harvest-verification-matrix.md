@@ -10636,3 +10636,8 @@
 | `CYCLE-20261117-8UVG` | `2026-11-17T17:11:28.588Z` | `arxanas/git-branchless` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9015` | Yes (`c14ab61e...`) |
 | `CYCLE-20261117-8X7O` | `2026-11-17T17:11:31.620Z` | `unsloth/flint-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md` | Yes (`fb3e06e4...`) |
 | `CYCLE-20261117-8Z6Z` | `2026-11-17T17:11:34.187Z` | `berty/berty` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9016` | Yes (`43db151d...`) |
+| `CYCLE-20261117-K2CX` | `2026-11-17T17:20:11.505Z` | `MiniMaxAI/MiniMax-M3.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md` | Yes (`f1050e03...`) |
+| `CYCLE-20261117-K4JL` | `2026-11-17T17:20:14.337Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9017` | Yes (`41f4f153...`) |
+| `CYCLE-20261117-K9O5` | `2026-11-17T17:20:20.981Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9018` | Yes (`3827cef6...`) |
+| `CYCLE-20261117-KAW9` | `2026-11-17T17:20:22.569Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9019` | Yes (`b1f0df36...`) |
+| `CYCLE-20261117-KCIZ` | `2026-11-17T17:20:24.683Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9020` | Yes (`1469bf05...`) |
