@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T13:29:57.651Z",
+  "last_updated": "2026-11-17T13:48:16.071Z",
   "total_verified_learnings": 8886,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "728d0e7821a174bd1a47ee227b4cfbf71728c9370874d6a983656e5450c8f6de",
+      "content_hash": "7ed3e101b8a1ddce87d60a042afa7a9ea0793c156c91b7d1597a9e25029ba0a0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T12:46:17.374Z"
+      "persisted_at": "2026-11-17T13:48:15.920Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "82143b1c32b813f7396502bc87796dbe652f02fbf9c520f7b1e35e890615f477",
+      "content_hash": "f45f6c6683bd890554fe2f22a7aa22565dae07e42dfb809547d7379d5def210f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T12:46:17.504Z"
+      "persisted_at": "2026-11-17T13:48:16.071Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "8516f6a1ed322b4f3fead03d0465e9428ad5d0648f6e8a8ddb64569c2c2c3a31",
+      "content_hash": "aa4b8a07259dd8c9bcb15b45ab9f2b3cbc2dee04673e664621ec1fadf8e31cc3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T10:51:43.702Z"
+      "persisted_at": "2026-11-17T13:48:15.165Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GPNO-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZHF5-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9c98064d9a736b15c1fb1fec713325da23efb162dc551512035a6608c1a4e44",
+      "content_hash": "c820e1c9930c784a8006e3db2dcf4ccf776ee026f7ef408dc8440bb5c272243a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T12:09:39.306Z"
+      "persisted_at": "2026-11-17T13:48:13.943Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9e6f212b4c81ca6293fd45e6f1a7b76cb10d25717f98c67f328aa57ee272a53",
+      "content_hash": "a04695ec29bc69351f20bde02a07f9dfc9f431399ee99ec527ed5c0cfe02516f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T12:09:39.458Z"
+      "persisted_at": "2026-11-17T13:48:14.101Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b1cdf250a065a6d517990cc7371e28afdd91afdff23ac8de35608a35838d003b",
+      "content_hash": "b5ade4571e75dbc60bc5762206c3322df934babc93e5dd124aa297da9969e82c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T12:09:39.628Z"
+      "persisted_at": "2026-11-17T13:48:14.272Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -251232,13 +251232,13 @@
       "item_id": "candidate_directive-engine-detect-uv-run-script-shebangs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RTIP-engine-detect-uv-run-script-shebangs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZIP4-engine-detect-uv-run-script-shebangs.md",
       "title": "engine): detect uv run script shebangs",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "149eb98161ddd23dd6d8a31f91fed204de502d9418f892beb13e168fb64d261d",
+      "content_hash": "2eef6b4b6aa9d746da805f2faddcb55b505727da5cbc396daece90250d114479",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T12:46:17.138Z"
+      "persisted_at": "2026-11-17T13:48:15.593Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -251248,9 +251248,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7ad30714dfda1de95bd629d1640cfa83ce101805ec977292343840e5e5bcdcd2",
+      "content_hash": "3210df5353eb941dc95308eb2b825e8bf3afe292c5e3dcb36f79da8a1e49fb77",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T12:46:17.254Z"
+      "persisted_at": "2026-11-17T13:48:15.751Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -269103,13 +269103,13 @@
       "item_id": "candidate_directive-portico-fix-typos-on-development-community-and-security-pages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OHQU-portico-fix-typos-on-development-community-and-security-pages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZI44-portico-fix-typos-on-development-community-and-security-pages.md",
       "title": "portico: Fix typos on development community and security pages.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0df811abdc634e231dca44d78b74e61dcbc753934e4fdb149b8129a1bcf1431",
+      "content_hash": "6c4906221717fc20232e8aa0ce884d668429de72f17162501aa22839349d1725",
       "domain_letter": "L",
-      "persisted_at": "2026-11-17T10:51:43.450Z"
+      "persisted_at": "2026-11-17T13:48:14.841Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
@@ -269119,9 +269119,9 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "55d541877aa53d7f38ad9dd420f90ebe2791c6b4bd842e6b87ee89c81c2b4bbc",
+      "content_hash": "32e834137f73a22761303f29f8e740b0e19da897d0d098568e242bb836bb3f19",
       "domain_letter": "A",
-      "persisted_at": "2026-11-17T10:51:43.571Z"
+      "persisted_at": "2026-11-17T13:48:14.993Z"
     },
     "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it": {
       "item_id": "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it",
