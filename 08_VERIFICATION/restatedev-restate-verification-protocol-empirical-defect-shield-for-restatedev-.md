@@ -4,22 +4,22 @@
 {
   "source_repository": "restatedev/restate",
   "source_url": "https://github.com/restatedev/restate",
-  "source_version": "12adfb14",
+  "source_version": "d2695f8c",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-16T01:52:40.456Z",
+  "timestamp": "2026-11-17T16:38:41.079Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-restatedev-restate",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [restatedev/restate](https://github.com/restatedev/restate) (Revision: `12adfb14`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-16T01:52:40.456Z`  
+> **Provenance**: Harvested from [restatedev/restate](https://github.com/restatedev/restate) (Revision: `d2695f8c`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T16:38:41.079Z`  
 > **Learning ID**: `learn-github-restatedev-restate`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `restatedev/restate` (Commit: `12adfb14`)
+- **Target Repository**: `restatedev/restate` (Commit: `d2695f8c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T01:52:39.074Z  
+> **Harvest Timestamp**: 2026-11-17T16:38:39.913Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4702 stars
+- **Stars / Engagement**: 4705 stars
 
 ---
 
@@ -1645,230 +1645,85 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12adfb14` (2026-11-15)
-**Commit Message**: [DataFusion] Report remote scan failures as external errors, not DataFusion bugs
+### Incident Patch 1: `53f09d52` (2026-11-17)
+**Commit Message**: [Dependencies] Update libz-sys for zlib security fix
 
-When a partition scan failed on another node, the coordinating node wrapped
-the remote error message in `DataFusionError::Internal`. DataFusion prints
-that as a bug in its own code and asks for a bug report, so an expected
-condition, such as querying the statistics tables while a node's statistics
-are reset, read like this:
+Upgrade libz-sys from 1.1.31 to 1.1.33 to address RUSTSEC-2026-0544, a heap-buffer-overflow advisory in bundled zlib. Keep the lockfile update limited to libz-sys; cargo deny now passes advisories, bans, licenses, and sources.
 
-  Internal error: External error: generic storage error: 'service_stats/1' is
-  not ready on partition 12: no maintained index.
-  This issue was likely caused by a bug in DataFusion's code. Please help us
-  to resolve this by filing a bug report in our issue tracker: ...
-
-The coordinator now reports remote scan failures as
-`DataFusionError::External`, through a `RemoteScanError` that names the node.
-That covers a failed scan, a scanner that failed to open or no longer exists,
-an unknown reply, and a failed send. The remote node sends errors from outside
-DataFusion without DataFusion's `External error: ` prefix, so the prefix
-appears once. The same failure now reads:
-
-  External error: scan on <node> failed: generic storage error:
-  'service_stats/1' is not ready on partition 12: n
-
-**File**: `crates/storage-query-datafusion/src/remote_query_scanner_client.rs` (modified, +43/-11)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -34,6 +34,31 @@ use restate_util_string::ReString;
+@@ -5380,9 +5380,9 @@ dependencies = [
  
- use crate::{decode_record_batch, encode_expr, encode_schema};
- 
-+/// A remote scan that failed for a reason outside DataFusion: the remote node
-+/// reported an error, or couldn't serve the scanner. Surfaced as
-+/// [`DataFusionError::External`], because [`DataFusionError::Internal`] reads as
-+/// a DataFusion bug and asks users to report it to DataFusion.
-+#[derive(Debug, thiserror::Error)]
-+pub enum RemoteScanError {
-+    /// The scan failed on the remote node, with its error message.
-+    #[error("scan on {peer} failed: {message}")]
-+    Failed { peer: NodeId, message: String },
-+    #[error("{peer} could not open a remote scanner")]
-+    OpenFailed { peer: NodeId },
-+    #[error(
-+        "scanner {scanner_id} no longer exists on {peer}; it may have expired after a long period of inactivity"
-+    )]
-+    NoSuchScanner { peer: NodeId, scanner_id: ScannerId },
-+    #[error("{peer} sent a remote scanner reply this node doesn't understand")]
-+    UnknownReply { peer: NodeId },
-+}
-+
-+impl From<RemoteScanError> for DataFusionError {
-+    fn from(err: RemoteScanError) -> Self {
-+        DataFusionError::External(Box::new(err))
-+    }
-+}
-+
- #[derive(derive_more::Debug)]
- pub struct RemoteScanner {
-     scanner_id: ScannerId,
-@@ -81,7 +106,7 @@ impl RemoteScanner {
-                 },
-                 None,
-             )
--            .map_err(|e| DataFusionError::Internal(e.to_string()))?;
-+            .map_err(|e| DataFusionError::External(e.into()))?;
- 
-         reply.await.map_err(|e| DataFusionError::External(e.into()))
-     }
-@@ -200,26 +225,35 @@ pub fn remote_scan_as_datafusion_stream(
-                     return Err(e);
-                 }
-                 Ok(RemoteQueryScannerNextResult::Unknown) => {
--                    return Err(DataFusionError::Internal(
--                        "Received unknown scanner result".to_owned(),
--                    ));
-+                    return Err(RemoteScanError::UnknownReply {
-+                        peer: target_node_id,
-+                    }
-+                    .into());
-                 }
-                 Ok(RemoteQueryScannerNextResult::NextBatch(ScannerBatch {
-                     record_batch, ..
-                 })) => decode_record_batch(&record_batch)?,
-                 Ok(RemoteQueryScannerNextResult::Failure(ScannerFailure { message, .. })) => {
-                     // assume server closed the scanner before responding
-                     remote_scanner.forget();
--                    return Err(DataFusionError::Internal(message));
-+                    return Err(RemoteScanError::Failed {
-+                        peer: target_node_id,
-+                        message,
-+                    }
-+                    .into());
-                 }
-                 Ok(RemoteQueryScannerNextResult::NoMoreRecords(_)) => {
-                     // assume server closed the scanner before responding
-                     remote_scanner.forget();
-                     return Ok(());
-                 }
--                Ok(RemoteQueryScannerNextResult::NoSuchScanner(_)) => {
-+                Ok(RemoteQueryScannerNextResult::NoSuchScanner(scanner_id)) => {
-                     remote_scanner.forget();
--                    return Err(DataFusionError::Internal("No such scanner. It could have expired due to a long period of inactivity.".to_string()));
-+                    return Err(RemoteScanError::NoSuchScanner {
-+                        peer: target_node_id,
-+                        scanner_id,
-+                    }
-+                    .into());
-                 }
-             };
- 
-@@ -315,7 +349,7 @@ impl<T: TransportConnect> RemoteScannerService for RemoteScannerServiceProxy<T>
-         })?;
-         let open_reply = open_permit
-             .send_rpc(req, None)
--            .map_err(|e| DataFusionError::Internal(e.to_string()))?;
-+            .map_err(|e| DataFusionError::External(e.into()))?;
- 
-         // From here on we must guarantee a `Close` reaches the server if we
-         // don't hand a `RemoteScanner` back to the caller — otherwise the
-@@ -338,9 +372,7 @@ impl<T: TransportConnect> RemoteScannerService for RemoteScannerServiceProxy<T>
-             }
-             Ok(RemoteQueryScannerOpened::Failure) => {
-                 remote_scanner.forget();
--                Err(DataFusionError::Internal(
--                    "Unable to open a remote scanner".to_string(),
--                ))
-+                Err(RemoteScanError::OpenFailed { peer }.into())
-             }
-             Err(e) => Err(DataFusionError::External(e.into())),
-         }
+ [[package]]
+ name = "libz-sys"
+-version = "1.1.31"
++version = "1.1.33"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
++checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
+ dependencies = [
+  "cc",
+  "libc",
 ```
 
-**File**: `crates/storage-query-datafusion/src/scanner_task.rs` (modified, +48/-2)
+---
+
+### Incident Patch 2: `3a1e026f` (2026-11-17)
+**Commit Message**: [Tests] Fix replicated seal tests racing paused time
+
+The log-server writer now runs on its own OS thread, outside the paused Tokio test runtime. Advancing virtual time while it commits can exhaust seal RPC retries before the writer responds. Use real time in the two affected seal tests so their timeouts reflect actual writer progress.
+
+**File**: `crates/bifrost/src/providers/replicated_loglet/loglet.rs` (modified, +5/-2)
 ```diff
-@@ -15,6 +15,7 @@ use std::time::Duration;
- use anyhow::Context;
- use datafusion::arrow::datatypes::SchemaRef;
- use datafusion::arrow::record_batch::RecordBatch;
-+use datafusion::error::DataFusionError;
- use datafusion::execution::{SendableRecordBatchStream, TaskContext};
- use datafusion::physical_expr::expressions::DynamicFilterPhysicalExpr;
- use datafusion::physical_plan::metrics::Time;
-@@ -209,7 +210,7 @@ impl ScannerTask {
-                             .reciprocal
-                             .send(RemoteQueryScannerNextResult::Failure(ScannerFailure {
-                                 scanner_id: self.scanner_id,
--                                message: e.to_string(),
-+                                message: failure_message(&e),
-                             }));
-                         return;
-                     }
-@@ -242,7 +243,7 @@ impl ScannerTask {
-                         .reciprocal
-                         .send(RemoteQueryScannerNextResult::Failure(ScannerFailure {
-                             scanner_id: self.scanner_id,
--                            message: e.to_string(),
-+                            message: failure_message(&e),
-                         }));
-                     return;
-                 }
-@@ -251,10 +252,55 @@ impl ScannerTask {
+@@ -557,7 +557,9 @@ mod tests {
      }
- }
  
-+/// The message of a failed scan for the client, which reports it as a
-+/// [`RemoteScanError::Failed`]. An error from outside DataFusion, such as a
-+/// storage error, goes without DataFusion's `External error: ` prefix, which the
-+/// client adds back once.
-+///
-+/// [`RemoteScanError::Failed`]: crate::remote_query_scanner_client::RemoteScanError::Failed
-+fn failure_message(err: &DataFusionError) -> String {
-+    match err {
-+        DataFusionError::External(err) => err.to_string(),
-+        err => err.to_string(),
-+    }
-+}
-+
- impl Drop for ScannerTask {
-     fn drop(&mut self) {
-         if let Some(scanners) = self.scanners.upgrade() {
-             let _ = scanners.remove(&self.scanner_id);
-         }
+     // ** Single-node replicated-loglet seal **
+-    #[test(restate_core::test(start_paused = true))]
++    // The log-server writer runs on a separate thread; paused time can exhaust seal RPC retries
++    // before its RocksDB write completes.
++    #[test(restate_core::test(start_paused = false))]
+     async fn seal_local_sequencer_single_node() -> Result<()> {
+         let loglet_id = LogletId::new_unchecked(122);
+         let params = ReplicatedLogletParams {
+@@ -660,7 +662,8 @@ mod tests {
+         .await
      }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use datafusion::error::DataFusionError;
-+
-+    use restate_types::NodeId;
-+
-+    use super::failure_message;
-+    use crate::remote_query_scanner_client::RemoteScanError;
-+
-+    #[test]
-+    fn remote_scan_failures_are_not_reported_as_datafusion_bugs() {
-+        let not_ready = "'service_stats/1' is not ready on partition 12: no maintained index";
-+        let storage = DataFusionError::External(anyhow::anyhow!(not_ready).into());
-+        assert_eq!(failure_message(&storage), not_ready);
-+
-+        // The coordinator reports it as external once, and names the node.
-+        let reported: DataFusionError = RemoteScanError::Failed {
-+            peer: NodeId::new_plain(3),
-+            message: failure_message(&storage),
-+        }
-+        .into();
-+        assert_eq!(
-+            reported.to_string(),
-+            format!("External error: scan on N3 failed: {not_ready}")
-+        );
-+
-+        // A DataFusion bug on the remote node keeps DataFusion's report.
-+        let bug = DataFusionError::Internal("unexpected plan".to_owned());
-+        assert!(failure_message(&bug).contains("bug in DataFusion"));
-+    }
-+}
+ 
+-    #[test(restate_core::test(start_paused = true))]
++    // Seal RPCs must use real time while the log-server writer commits on another thread.
++    #[test(restate_core::test(start_paused = false))]
+     async fn single_node_append_after_seal() -> Result<()> {
+         let loglet_id = LogletId::new_unchecked(122);
+         let params = ReplicatedLogletParams {
+```
+
+---
+
+### Incident Patch 3: `595fef5c` (2026-11-17)
+**Commit Message**: Fix merge conflict
+
+Merged change caused issue on main
+
+**File**: `crates/distributed-datafusion/src/tables/journal/tests.rs` (modified, +1/-0)
+```diff
+@@ -151,6 +151,7 @@ async fn journal_matches_v1_and_id_lookups_skip_other_invocations() {
+         for (index, entry) in current_entries.iter().enumerate() {
+             let entry = StoredRawEntry::new(
+                 StoredRawEntryHeader::new(MillisSinceEpoch::new(1_700_000_000_000 + index as u64)),
++                None,
+                 entry.clone().encode::<ServiceProtocolV4Codec>(),
+             );
+             WriteJournalTableV2::put_journal_entry(&mut tx, &id, index as u32, &entry, &[])
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5888** (2026-11-15): [DataFusion] Report remote scan failures as external errors, not DataFusion bugs (@AhmedSoliman)
-- **PR #5887** (2026-11-15): [CI] Lock rust-toolchain from master instead of stable (@AhmedSoliman)
-- **PR #5881** (2026-11-15): [Query] Show why a background migration isn't progressing in migration_jobs (@AhmedSoliman)
-- **PR #5880** (2026-11-15): [Query] Show each index's approximate size in restate.cluster.indexes (@AhmedSoliman)
-- **PR #5879** (2026-11-14): [Storage] Configurable backfill slice size, without filling the block cache (@AhmedSoliman)
-- **PR #5878** (2026-11-14): [Query] Show when each migration pass should end in migration_jobs (@AhmedSoliman)
+- **PR #5922** (2026-11-17): [Tests] Fix replicated seal tests racing paused time (@AhmedSoliman)
+- **PR #5921** (2026-11-17): [QueryEngineV2] Count only each query's own admissions in shard-JOIN tests (@AhmedSoliman)
+- **PR #5920** (2026-11-17): [Dependencies] Update libz-sys for zlib security fix (@AhmedSoliman)
+- **PR #5919** (2026-11-17): [Dependencies] Ignore chrono ecosystem unmaintained advisories (@AhmedSoliman)
+- **PR #5918** (2026-11-17): [QueryEngineV2] Compact large literal lists in EXPLAIN and ANALYZE (@AhmedSoliman)
+- **PR #5917** (2026-11-17): [MetadataServer] Dispatch RocksDB writes to the high-priority I/O pool (@AhmedSoliman)
 
 ---
 
@@ -1888,68 +1743,33 @@ appears once. The same failure now reads:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [DataFusion] Report remote scan failures as external errors, not DataFusion bugs
+## X. [Dependencies] Update libz-sys for zlib security fix
 
 **RULE**:
-When implementing operations in `crates/storage-query-datafusion/src/remote_query_scanner_client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12adfb14`: [DataFusion] Report remote scan failures as external errors, not DataFusion bugs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53f09d52`: [Dependencies] Update libz-sys for zlib security fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/storage-query-datafusion/src/remote_query_scanner_client.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// A remote scan that failed for a reason outside DataFusion: the remote node
-/// reported an error, or couldn't serve the scanner. Surfaced as
-/// [`DataFusionError::External`], because [`DataFusionError::Internal`] reads as
-/// a DataFusion bug and asks users to report it to DataFusion.
-#[derive(Debug, thiserror::Error)]
-pub enum RemoteScanError {
-    /// The scan failed on the remote node, with its error message.
-    #[error("scan on {peer} failed: {message}")]
-    Failed { peer: NodeId, message: String },
-    #[error("{peer} could not open a remote scanner")]
-    OpenFailed { peer: NodeId },
-    #[error(
-        "scanner {scanner_id} no longer exists on {peer}; it may have expired after a long period of inactivity"
-    )]
-    NoSuchScanner { peer: NodeId, scanner_id: ScannerId },
-    #[error("{peer} sent a remote scanner reply this node doesn't understand")]
-    UnknownReply { peer: NodeId },
-}
-
-impl From<RemoteScanError> for DataFusionError {
-    fn from(err: RemoteScanError) -> Self {
-        DataFusionError::External(Box::new(err))
-    }
-}
-
-            .map_err(|e| DataFusionError::External(e.into()))?;
-                    return Err(RemoteScanError::UnknownReply {
-        
+version = "1.1.33"
+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            .map_err(|e| DataFusionError::Internal(e.to_string()))?;
-                    return Err(DataFusionError::Internal(
-                        "Received unknown scanner result".to_owned(),
-                    ));
-                    return Err(DataFusionError::Internal(message));
-                Ok(RemoteQueryScannerNextResult::NoSuchScanner(_)) => {
-                    return Err(DataFusionError::Internal("No such scanner. It could have expired due to a long period of inactivity.".to_string()));
-            .map_err(|e| DataFusionError::Internal(e.to_string()))?;
-                Err(DataFusionError::Internal(
-                    "Unable to open a remote scanner".to_string(),
-                ))
+version = "1.1.31"
+checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12adfb14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53f09d52` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

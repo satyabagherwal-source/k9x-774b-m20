@@ -10615,3 +10615,8 @@
 | `CYCLE-20261117-SM7G` | `2026-11-17T16:30:51.244Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9000` | Yes (`f08ce536...`) |
 | `CYCLE-20261117-SPN2` | `2026-11-17T16:30:55.694Z` | `i18next/react-i18next` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9001` | Yes (`877f3bf2...`) |
 | `CYCLE-20261117-SX5T` | `2026-11-17T16:31:05.441Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9002` | Yes (`ac4a63a0...`) |
+| `CYCLE-20261117-2MLG` | `2026-11-17T16:38:38.308Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md` | Yes (`f0583bea...`) |
+| `CYCLE-20261117-2OKS` | `2026-11-17T16:38:40.876Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9003` | Yes (`7743f64b...`) |
+| `CYCLE-20261117-2U1K` | `2026-11-17T16:38:47.960Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9004` | Yes (`d1cf5c7c...`) |
+| `CYCLE-20261117-2WO2` | `2026-11-17T16:38:51.362Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9005` | Yes (`96132406...`) |
+| `CYCLE-20261117-2YJ2` | `2026-11-17T16:38:53.774Z` | `surrealdb/surrealdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9006` | Yes (`8de3dd7b...`) |

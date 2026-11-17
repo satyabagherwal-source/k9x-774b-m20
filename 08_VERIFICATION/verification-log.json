@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-DVY2",
-    "timestamp": "2026-11-15T06:00:12.026Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "4738272aeabc31184e4f6e98f3ac4ff40e5ab59ccdac134ecc1948b6b52a87c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-DXYT",
-    "timestamp": "2026-11-15T06:00:14.645Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "ab35ea80df53299e2e920a020986fa065f47fba5a18230edccc546fb0f0cfd80",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-0ZWB",
-    "timestamp": "2026-11-15T06:18:10.235Z",
-    "repository": "LiquidAI/LFM3-Omni-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
-    "contentHash": "e906a90dfd1747e119601f80ef95b18d332d5136244486fb663d490bd0693ef0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-10TK",
-    "timestamp": "2026-11-15T06:18:11.432Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "07b29fa0a5d8fb831de3345ed618c90f77d394a7e96c2907f83bac3613c02da0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-16WN",
-    "timestamp": "2026-11-15T06:18:19.320Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "19e6fb586854d3110ccb7b456f85ed9684d472b2218928469388acda95835133",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-OUKJ",
     "timestamp": "2026-11-15T06:36:43.075Z",
     "repository": "datalab-to/indra-ocr",
@@ -7490,6 +7415,81 @@
     "repository": "milvus-io/milvus",
     "learningId": "learn-github-milvus-io-milvus",
     "contentHash": "ac4a63a0790cea296481eab66498636c57b4eec4cc207f79de4e2680a7e21d66",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-2MLG",
+    "timestamp": "2026-11-17T16:38:38.308Z",
+    "repository": "XHToken/Spark-X2.6-4B",
+    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
+    "contentHash": "f0583beaa60d15cd4df12f938342e9318824c72373f49a586cb6965111d89d67",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-2OKS",
+    "timestamp": "2026-11-17T16:38:40.876Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "7743f64be02d58c8f3253b1f0e353ca9a68068b1eefaf2d70c764fc9d5d2c819",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-2U1K",
+    "timestamp": "2026-11-17T16:38:47.960Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "d1cf5c7cdc4ebb8774b09100a7702edf5e2cedafed1982fb65b99fe3a31789d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-2WO2",
+    "timestamp": "2026-11-17T16:38:51.362Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "96132406565710a1df78d54ef7c3604469f8b07e3139a97f492597e433afe10d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-2YJ2",
+    "timestamp": "2026-11-17T16:38:53.774Z",
+    "repository": "surrealdb/surrealdb",
+    "learningId": "learn-github-surrealdb-surrealdb",
+    "contentHash": "8de3dd7b4d73d98f249bf6af3db9626fbc5ff3c403b022622f3d9298c49a6c3d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

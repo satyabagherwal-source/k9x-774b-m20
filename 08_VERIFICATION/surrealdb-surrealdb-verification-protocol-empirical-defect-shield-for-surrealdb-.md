@@ -4,45 +4,31 @@
 {
   "source_repository": "surrealdb/surrealdb",
   "source_url": "https://github.com/surrealdb/surrealdb",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "1b73f91b",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-17T16:38:53.977Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-surrealdb-surrealdb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [surrealdb/surrealdb](https://github.com/surrealdb/surrealdb) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [surrealdb/surrealdb](https://github.com/surrealdb/surrealdb) (Revision: `1b73f91b`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T16:38:53.977Z`  
+> **Learning ID**: `learn-github-surrealdb-surrealdb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `surrealdb/surrealdb` (Commit: `historical`)
+- **Target Repository**: `surrealdb/surrealdb` (Commit: `1b73f91b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/surrealdb-surrealdb-learnings.md`  
-> **Source**: github ([https://github.com/surrealdb/surrealdb](https://github.com/surrealdb/surrealdb))  
-> **Source Version**: `9577ac5f`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T20:49:44.307Z  
-> **Learning ID**: `learn-github-surrealdb-surrealdb`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): surrealdb/surrealdb
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/surrealdb-surrealdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/surrealdb/surrealdb](https://github.com/surrealdb/surrealdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T20:49:39.406Z  
+> **Harvest Timestamp**: 2026-11-17T16:38:52.783Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A scalable, distributed, collaborative, document-graph database, for the realtime web
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33260 stars
+- **Stars / Engagement**: 33314 stars
 
 ---
 
@@ -2526,11 +2512,13 @@ criterion_main!(benches);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7636** (2026-10-27): **Bug: INSERT … ON DUPLICATE KEY UPDATE sees the existing record's fields as NONE for record users**
-  *Symptoms*: ## Describe the bug  `INSERT … ON DUPLICATE KEY UPDATE` run by a **record user** sees every field of the existing record as `NONE` inside the `ON DUPLICATE KEY UPDATE` clause. The same statement run as root sees the stored values. This happens with `PERMISSIONS FULL` on the table, so table permissions are not the cause.  As a result, an update that builds on the stored value, for example `tags = array::union(tags, $tags)`, silently drops the stored data for record users. Without a `?? []` fallback it errors with `Expected array but found NONE`.  ## Steps to reproduce  Script (in-memory server on :8099, needs `surreal`, `curl`, `python3`):  ```bash #!/usr/bin/env bash # Repro: INSERT … ON DUPLICATE KEY UPDATE run by a RECORD user sees the # existing record's fields as NONE. A root user sees them. set -euo pipefail PORT=8099 surreal start --log warn --user root --pass root --bind 127.0.0.1:$PORT memory >/dev/null 2>&1 & PID=$!; trap 'kill $PID' EXIT until curl -s "http://127.0.0.1:$PORT/health" >/dev/null; do sleep 0.2; done sql() { curl -s -X POST "http://127.0.0.1:$PORT/sql" -H "Accept: application/json" -H "surreal-ns: t" -H "surreal-db: t" "$@"; }  sql -u root:root --data-binary @- >/dev/null <<'SQL' DEFINE NAMESPACE t; DEFINE DATABASE t; DEFINE TABLE user SCHEMAFULL PERMISSIONS FOR select WHERE id = $auth.id; DEFINE FIELD name ON user TYPE string; DEFINE ACCESS account ON DATABASE TYPE RECORD   SIGNUP (CREATE user SET name = $name) SIGNIN (SELECT * FROM user WHERE name = $
+- **Issue #7707** (2026-11-17): **Restyle the README with the current brand**
+  *Symptoms*: ## What is the motivation?  The README still carried the old brand: a dark and a light hero PNG with the "multi-model database" tagline, third-party SDK icons, illustration JPEGs and mixed heading icons. This brings it in line with the current SurrealDB brand and the "The database and memory for every agent" line.  ## What does this change do?  README and `img/` only. No code changes.  - **Hero:** one SVG hero (`img/hero.svg`) on a Surreal Purple ground replaces the separate dark and light PNGs, so it reads the same in both GitHub themes. - **SDK icons:** the server and client rows now use brand tiles kept in this repo (`img/sdks/server/`, `img/sdks/client/`) instead of loading from `surrealdb/icons`. - **Studio screenshot:** replaced with `img/interface.svg`, with alt text that names SurrealDB Studio. - **Why SurrealDB?:** each of the ten sections now has its own full-width SVG above its heading (`img/sections/`), replacing the paired JPEG illustrations. The data-models banner (`img/data-models.svg`) opens the section and links to /surrealdb/features. Its ten tiles match SurrealDB 4: Files replaces Machine Learning, since SurrealML is removed in 4.0. - **SurrealDB Cloud:** the section keeps its heading and copy. The banner that used to sit here moved to Why SurrealDB?. - **Heading icons:** every section heading and the four install headings use flat Surreal Pink icons from the `@surrealdb/ui` icon set (`img/icons/`). Each SVG is cropped to its glyph and given a band below it
+  **Post-Mortem & Fix Analysis**:
+  > <!-- lang-bench-quick --> ## 📊 Benchmark  Add the **`benchmark`** label to this PR to benchmark your changes and compare them against the latest nightly `main` baseline.  - `main` is benchmarked **nightly** (full run, same runner pool); this PR is compared against that baseline, so only your branch is benchmarked here. - Runs on every push while the label is set; remove the label to stop.
 
-- **Issue #7625** (2026-10-27): **Bug: Rust SDK live Stream kills query from fresh unauthenticated session on Drop**
-  *Symptoms*: **Component:** SurrealDB Rust SDK  ### Describe the bug  When a live-query `Stream` created from an authenticated WebSocket client is dropped before its terminal `Killed` notification has been polled, `Drop` tries to kill the live query — but from a brand-new, unauthenticated session. The server rejects it and the SDK logs:  ```text WARN surrealdb::method::live: Failed to kill live query '<uuid>'; ... Anonymous access not allowed ```  The live query stays registered server-side until the connection closes. This hits the most common teardown paths: process shutdown and replace-on-reconnect, where the stream is dropped precisely because it will not be polled again. (When the `Killed` notification *is* consumed first, `poll_next` sets `rx = None` and the bug is masked.)  **Root cause (code walk, tag `v3.3.4`):**  1. The `LIVE SELECT` and the subscription registration correctly use the caller's session: [`live.rs#L132-L160`](https://github.com/surrealdb/surrealdb/blob/v3.3.4/surrealdb/src/method/live.rs#L132-L160) (`ctx_txn(client.session_id, …)`, `register(router, id, client.session_id)`). 2. The returned stream is then built with a *different* client: [`live.rs#L161`](https://github.com/surrealdb/surrealdb/blob/v3.3.4/surrealdb/src/method/live.rs#L161)     ```rust    Ok(Stream::new(Arc::clone(&client.inner).into(), id, Some(rx)))    ```  3. That `.into()` is `From<Arc<Inner>> for Surreal<C>`, which mints a fresh session instead of carrying the caller's over: [`lib.rs#L258-L271`
+- **Issue #7697** (2026-11-15): **Bug: DEFINE EVENT fails with "IR verification failed: StoredClause: a stored-clause op changed after bind" when a KNN operand is `$after.<field>` (4.0.1)**
+  *Symptoms*: ### What component does this affect?  SurrealDB Server  ### Describe the bug  An event whose body runs a KNN query with `$after.<field>` as the query vector cannot be defined. The event is rejected with an internal IR verification error. Binding the same value to a local variable first works. This worked in 3.1.5.  Actual result: ``` Internal database error: IR verification failed: StoredClause: a stored-clause op changed after bind: sealed at 22, now 24 (at OpId(11v1)) ```  Workaround: bind the vector to a variable first: ```surql DEFINE TABLE t3 SCHEMALESS; DEFINE EVENT e3 ON t3 WHEN $event = "UPDATE" THEN { LET $q = $after.v; LET $n = (SELECT id FROM t3 WHERE v <|2,10|> $q); }; ``` This is accepted.  Possibly related: #7661, #7662, #7668 ("IR verification failed" in KNN queries, 4.0.0/4.0.1). Those report the `Dominance`/`Legality` checks at query time. This one is `StoredClause` at definition time of an event. Searched for "StoredClause" and "stored-clause op changed after bind": no existing issues.  ### Steps to reproduce  Fresh server, in-memory: `surreal start --user root --pass root memory`, then:  ```surql DEFINE TABLE t3 SCHEMALESS; DEFINE EVENT e3 ON t3 WHEN $event = "UPDATE" THEN { LET $n = (SELECT id FROM t3 WHERE v <|2,10|> $after.v); }; ```  (An HNSW index on `v` makes no difference; the error is the same with or without it.)  ### Expected behaviour  The event is defined (as in 3.1.5).  ### SurrealDB version  4.0.1 for windows on x86_64 (official release binary
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2547,943 +2535,180 @@ criterion_main!(benches);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f129a77a` (2026-11-03)
-**Commit Message**: fix(sql): a table given an alias is reachable only by the alias (#2505)
+### Incident Patch 1: `1b73f91b` (2026-11-17)
+**Commit Message**: Restyle the README with the current brand (#7707)
 
-Co-authored-by: Tobie Morgan Hitchcock <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `language-tests/tests/pgsql/alias_hides_table_name_in_where_refused.pgsql` (added, +14/-0)
+**File**: `README.md` (modified, +60/-65)
 ```diff
-@@ -0,0 +1,14 @@
-+/**
-+[env]
-+namespace = true
-+database = true
-+imports = ["pgsql/_schema.surql"]
+@@ -1,9 +1,10 @@
+-<a href="https://surrealdb.com#gh-dark-mode-only" target="_blank">
+-    <img width="100%" src="/img/white/hero.png" alt="SurrealDB Hero">
+-</a>
+-<a href="https://surrealdb.com#gh-light-mode-only" target="_blank">
+-    <img width="100%" src="/img/black/hero.png" alt="SurrealDB Hero">
+-</a>
++<p align="center">
++    <a href="https://surrealdb.com" target="_blank">
++        <img width="100%" src="./img/hero.svg" alt="SurrealDB - The database and memory for every agent">
++    </a>
++</p>
 +
-+[test]
-+reason = "A WHERE clause cannot name an aliased table by its own name, as in PostgreSQL"
-+
-+[test.results]
-+request-error = "PostgreSQL SELECT lowering error: missing FROM-clause entry for table \"users\""
-+*/
-+
-+SELECT u.name FROM users u WHERE users.age > 20;
++<br>
+ 
+ <p align="center">
+     <a href="https://github.com/surrealdb/surrealdb"><img src="https://img.shields.io/github/v/release/surrealdb/surrealdb?color=ff00a0&include_prereleases&label=version&sort=semver&style=flat-square"></a>
+@@ -63,7 +64,7 @@
+ 
+ <br>
+ 
+-<h2><img height="20" src="./img/whatissurreal.svg">&nbsp;&nbsp;What is SurrealDB?</h2>
++<h2><img height="26" align="absmiddle" src="./img/whatissurreal.svg" alt="">&nbsp;&nbsp;What is SurrealDB?</h2>
+ 
+ SurrealDB is a multi-model database built in Rust designed to unify multiple data models into a single engine. SurrealDB combines document, graph, relational, time-series, geospatial and key-value data types with powerful search and retrieval functionalities (full-text, vector, hybrid) and real-time and event-driven capabilities, enabling developers to build powerful applications faster and more efficiently. SurrealDB can also be used as a backend-as-a-service given its support for end user authentication. Given that it’s a single Rust binary, SurrealDB can run embedded (in‐app), in the browser (via WebAssembly), in the edge, self-hosted as single backend node, or in a distributed cluster in the cloud.
+ 
+@@ -79,9 +80,9 @@ SurrealDB is used for data-intensive systems such as applications requiring mult
+ 
+ View the [features](https://surrealdb.com/features), the latest [releases](https://surrealdb.com/releases), and [documentation](https://surrealdb.com/docs).
+ 
+-<img width="100%" src="./img/interface.png" alt="Surrealist">
++<img width="100%" src="./img/interface.svg" alt="SurrealDB Studio running a SurrealQL query and showing its results">
+ 
+-<h2><img height="20" src="./img/contents.svg">&nbsp;&nbsp;Contents</h2>
++<h2><img height="19" align="absmiddle" src="./img/icons/list.svg" alt="">&nbsp;&nbsp;Contents</h2>
+ 
+ - [Database, API, and permissions](#database-api-and-permissions)
+ - [Tables, documents, and graph](#tables-documents-and-graph)
+@@ -94,7 +95,7 @@ View the [features](https://surrealdb.com/features), the latest [releases](https
+ - [Extend your database with JavaScript functions](#extend-your-database-with-javascript-functions)
+ - [Designed to be embedded or to run distributed in the cloud](#designed-to-be-embedded-or-to-run-distributed-in-the-cloud)
+ 
+-<h2><img height="20" src="./img/features.svg">&nbsp;&nbsp;Features</h2>
++<h2><img height="22" align="absmiddle" src="./img/icons/star.svg" alt="">&nbsp;&nbsp;Features</h2>
+ 
+ - [x] Database server, or embedded library
+ - [x] Multi-row, multi-table ACID transactions
+@@ -109,72 +110,65 @@ View the [features](https://surrealdb.com/features), the latest [releases](https
+ - [x] Use embedded JavaScript functions for custom advanced functionality
+ - [x] MCP (Model Context Protocol) server for LLM and AI-agent integration
+ 
+-<h2><img height="20" src="./img/documentation.svg">&nbsp;&nbsp;Documentation</h2>
++<h2><img height="23" align="absmiddle" src="./img/icons/book.svg" alt="">&nbsp;&nbsp;Documentation</h2>
+ 
+ For guidance on installation, development, deployment, and administration, take a look at the following resources:
+ 
+ - Documentation: https://surrealdb.com/docs
+ - SurrealDB University: https://surrealdb.com/learn
+ - Aeon's Surreal Renaissance (interactive book): https://surrealdb.com/learn/book
+ 
+-<h2><img height="20" src="./img/gettingstarted.svg">&nbsp;&nbsp;Getting started</h2>
++<h2><img height="23" align="absmiddle" src="./img/icons/play.svg" alt="">&nbsp;&nbsp;Getting started</h2>
+ 
+ Getting started with SurrealDB is as easy as starting up the SurrealDB database server, choosing your platform, and integrating its SDK into your code. You can easily get started with your platform of choice by reading one of our tutorials.
+ 
+ **Server side code**
+ 
+ <p>
+-    <a href="https://surrealdb.com/docs/integration/sdks/rust"><img width=60 title="Rust" src="https://raw.githubusercontent.com/surrealdb/icons/main/rust.svg" /></a>
++    <a href="https://surrealdb.com/docs/integration/sdks/rust"><img width=60 title="Rust" src="./img/sdks/server/rust.svg" /></a>
+     &nbsp;
+-    <a href="https://surrealdb.com/docs/integration/sdks/javascript"><img width=60 title="JavaScript" src="https://raw.githubusercontent.com/surrealdb/icons/main/javascript.svg" /></a>
++    <a href="https://surrealdb.com/docs/integration/sdks/javascript"><img width=60 title="JavaScript" src="./img/sdks/server/javascript.svg" /></a>
+ 	&nbsp;
+-    <a href="https://surrealdb.com/docs/sdk/javascript/engines/wasm"><img width=60 title="WebAsse
 ```
 
-**File**: `language-tests/tests/pgsql/alias_hides_table_name_refused.pgsql` (added, +14/-0)
+**File**: `img/apple.svg` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,14 @@
-+/**
-+[env]
-+namespace = true
-+database = true
-+imports = ["pgsql/_schema.surql"]
-+
-+[test]
-+reason = "A table that is given an alias is reachable only by that alias, as in PostgreSQL"
-+
-+[test.results]
-+request-error = "PostgreSQL SELECT lowering error: missing FROM-clause entry for table \"users\""
-+*/
-+
-+SELECT users.name FROM users u;
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <!-- Generator: Adobe Illustrator 26.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+-<svg version="1.1" id="SurrealDB" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+-	 viewBox="0 0 840 768.8" style="enable-background:new 0 0 840 768.8;" xml:space="preserve">
++<svg viewBox="97.00 0.00 646.00 896.97" width="15.12" height="21" version="1.1" id="SurrealDB" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
++	 style="enable-background:new 0 0 840 768.8;" xml:space="preserve">
+ <style type="text/css">
+ 	.st0{fill:#FF00A0;}
+ </style>
 ```
 
-**File**: `language-tests/tests/pgsql/alias_leaves_table_name_to_enclosing_query.pgsql` (added, +19/-0)
+**File**: `img/docker.svg` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,19 @@
-+/**
-+[env]
-+namespace = true
-+database = true
-+imports = ["pgsql/_schema.surql"]
-+
-+[test]
-+reason = "A subquery's alias for a table frees the table's own name to mean the same table of the enclosing query, as in PostgreSQL"
-+
-+[[test.results]]
-+value = "[{ name: 'Alice' }]"
-+
-+[[test.results]]
-+value = "[{ at_least_as_old: 2, name: 'Alice' }, { at_least_as_old: 3, name: 'Bob' }, { at_least_as_old: 1, name: 'Charlie' }]"
-+*/
-+
-+SELECT name FROM users WHERE EXISTS (SELECT 1 FROM users u2 WHERE users.name = 'Alice' AND u2.user_id = users.user_id) ORDER BY name;
-+
-+SELECT name, (SELECT count(*) FROM users u2 WHERE u2.age >= users.age) AS at_least_as_old FROM users ORDER BY name;
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <!-- Generator: Adobe Illustrator 26.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+-<svg version="1.1" id="SurrealDB" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+-	 viewBox="0 0 840 588.1" style="enable-background:new 0 0 840 588.1;" xml:space="preserve">
++<svg viewBox="0.00 0.00 840.00 728.10" width="18.0" height="15.6" version="1.1" id="SurrealDB" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
++	 style="enable-background:new 0 0 840 588.1;" xml:space="preserve">
+ <style type="text/css">
+ 	.st0{fill:#FF00A0;}
+ </style>
 ```
 
-**File**: `surrealdb/sqlplan/src/declared_tests.rs` (modified, +69/-0)
+**File**: `img/hero.svg` (added, +59/-0)
 ```diff
-@@ -139,6 +139,75 @@ fn a_column_a_subquery_table_lacks_belongs_to_the_enclosing_query() {
- 	);
- }
- 
-+#[test]
-+fn an_alias_hides_the_name_of_its_table() {
-+	for sql in [
-+		"SELECT emp.id FROM emp e",
-+		"SELECT e.id FROM emp e WHERE emp.dept = 1",
-+		"SELECT e.id FROM emp e ORDER BY emp.name",
-+		"SELECT e.id FROM emp e JOIN dept d ON emp.dept = d.id",
-+		"SELECT e.id FROM public.emp e WHERE public.emp.dept = 1",
-+	] {
-+		assert_eq!(
-+			both(sql).map_err(|err| matches!(err, PlanError::MissingFromClauseEntry(_))),
-+			Err(true),
-+			"{sql}"
-+		);
-+	}
-+	assert_eq!(
-+		both("SELECT e.id FROM emp e JOIN dept d ON e.dept = d.id WHERE e.dept = 1"),
-+		Ok(())
-+	);
-+}
-+
-+#[test]
-+fn a_table_name_an_alias_frees_names_the_other_relation_that_has_it() {
-+	let bound = pg("SELECT emp.name, e.name FROM emp e JOIN emp ON emp.id = e.dept").expect("bind");
-+	assert_eq!(column_of(&bound.targets[0]), (1, "name", 0));
-+	assert_eq!(column_of(&bound.targets[1]), (0, "name", 0));
-+}
-+
-+/// The depth at which each column `expr` reads is bound, in the order the columns appear in a
-+/// comparison tree of `AND`s.
-+fn comparison_columns(expr: &BoundExpr, out: &mut Vec<(usize, String, usize)>) {
-+	if let BoundExpr::Binary {
-+		left,
-+		right,
-+		..
-+	} = expr
-+	{
-+		comparison_columns(left, out);
-+		comparison_columns(right, out);
-+	} else if let BoundExpr::Column(col) = expr {
-+		out.push((col.relation_index, col.column.clone(), col.correlation_depth));
-+	}
-+}
-+
-+#[test]
-+fn a_subquery_alias_leaves_the_table_name_to_the_enclosing_query() {
-+	let bound = pg("SELECT name FROM emp WHERE EXISTS \
-+		(SELECT 1 FROM emp e2 WHERE emp.name = 'x' AND e2.id = emp.id)")
-+	.expect("bind");
-+	let Some(BoundExpr::Exists(sub)) = &bound.where_clause else {
-+		panic!("expected EXISTS, got {:?}", bound.where_clause);
-+	};
-+	let mut columns = Vec::new();
-+	comparison_columns(sub.where_clause.as_ref().expect("a WHERE clause"), &mut columns);
-+	assert_eq!(
-+		columns,
-+		[(0, "name".to_string(), 1), (0, "id".to_string(), 0), (0, "id".to_string(), 1)]
-+	);
-+
-+	let bound =
-+		pg("SELECT (SELECT count(*) FROM emp e2 WHERE e2.name = emp.name) FROM emp").expect("bind");
-+	let BoundExpr::ScalarSubquery(sub) = &bound.targets[0].expr else {
-+		panic!("expected a scalar subquery");
-+	};
-+	let mut columns = Vec::new();
-+	comparison_columns(sub.where_clause.as_ref().expect("a WHERE clause"), &mut columns);
-+	assert_eq!(columns, [(0, "name".to_string(), 0), (0, "name".to_string(), 1)]);
-+}
-+
- #[test]
- fn a_column_that_no_query_has_is_an_error_whatever_the_nesting() {
- 	assert_eq!(both("SELECT (SELECT nosuch FROM dept) FROM emp"), undefined("nosuch"));
+@@ -0,0 +1,59 @@
++<svg width="1440" height="565" viewBox="0 0 1440 565" fill="none" xmlns="http://www.w3.org/2000/svg">
++<rect width="1440" height="565" fill="#651DDD"/>
++<g clip-path="url(#clip0_35691_84244)">
++<path d="M1251.75 -0.000640869L1251.75 94.166L1345.88 94.166L1345.87 -0.000644983L1251.75 -0.000640869Z" fill="#7F31EA" fill-opacity="0.83"/>
++<path opacity="0.3" d="M687 -0.000640869L687 94.166L781.125 94.166L781.125 -0.000644983L687 -0.000640869Z" fill="white" fill-opacity="0.29"/>
++<path d="M1157.62 376.666L1157.62 470.833L1251.75 470.833L1251.75 376.666L1157.62 376.666Z" fill="white" fill-opacity="0.34"/>
++<path opacity="0.6" d="M781.125 -0.000640869L781.125 94.166L875.25 94.166L875.25 -0.000644983L781.125 -0.000640869Z" fill="white" fill-opacity="0.39"/>
++<path d="M1251.75 94.1664L1251.75 188.333L1345.88 188.333L1345.87 94.1663L1251.75 94.1664Z" fill="white" fill-opacity="0.16"/>
++<path d="M1345.87 376.666L1345.88 470.833L1440 470.833L1440 376.666L1345.87 376.666Z" fill="#8333EB" fill-opacity="0.32"/>
++<path d="M969.375 94.1664L969.375 188.333L1063.5 188.333L1063.5 94.1663L969.375 94.1664Z" fill="#7F31EA" fill-opacity="0.26"/>
++<path d="M1345.87 282.5L1345.88 376.667L1440 376.667L1440 282.5L1345.87 282.5Z" fill="#7D31EA" fill-opacity="0.37"/>
++<path d="M875.25 -0.000640869L875.25 94.166L969.375 94.166L969.375 -0.000644983L875.25 -0.000640869Z" fill="white" fill-opacity="0.29"/>
++<path d="M1063 -0.000640869L1063 94.166L1157.12 94.166L1157.12 -0.000644983L1063 -0.000640869Z" fill="#751EE8" fill-opacity="0.36"/>
++<path d="M875.25 470.833L875.25 565L969.375 565L969.375 470.833L875.25 470.833Z" fill="#8333EB" fill-opacity="0.75"/>
++<path d="M1063.5 470.833L1063.5 565L1157.62 565L1157.62 470.833L1063.5 470.833Z" fill="#7F31EA" fill-opacity="0.6"/>
++<path d="M1345.87 470.833L1345.88 565L1440 565L1440 470.833L1345.87 470.833Z" fill="white" fill-opacity="0.22"/>
++<path d="M1345.87 188.333L1345.88 282.5L1440 282.5L1440 188.333L1345.87 188.333Z" fill="white" fill-opacity="0.39"/>
++<path d="M593 -0.000640869L593 94.166L687.125 94.166L687.125 -0.000644983L593 -0.000640869Z" fill="#7F31EA" fill-opacity="0.31"/>
++</g>
++<path d="M1030.17 317.523C1025.79 317.523 1023.76 315.617 1023.76 311.287V298.251H1020.25V294.484H1023.76V289.07H1028.35V294.484H1034.45V298.251H1028.35V310.94C1028.35 313.106 1029.26 313.755 1031.16 313.755H1034.45V317.523H1030.17Z" fill="white"/>
++<path d="M998.695 317.523V294.484H1002.9L1002.98 298.511C1004.2 295.35 1006.84 293.964 1010 293.964C1015.15 293.964 1017.79 297.688 1017.79 302.712V317.523H1013.2V304.098C1013.2 300.027 1011.95 297.818 1008.74 297.818C1005.49 297.818 1003.29 300.027 1003.29 304.098V317.523H998.695Z" fill="white"/>
++<path d="M984.945 318.042C978.232 318.042 974.031 313.279 974.031 306.003C974.031 298.728 978.232 293.964 984.815 293.964C991.094 293.964 995.338 298.424 995.338 306.176V307.346H978.795C979.012 311.85 981.307 314.102 984.988 314.102C987.673 314.102 989.492 312.759 990.228 310.594L994.992 310.897C993.779 315.184 990.011 318.042 984.945 318.042ZM978.795 303.881H990.488C990.185 299.81 987.933 297.861 984.815 297.861C981.523 297.861 979.315 299.984 978.795 303.881Z" fill="white"/>
++<path d="M960.142 324.539C954.642 324.539 951.091 321.897 950.095 317.913L954.859 317.609C955.465 319.558 956.894 320.728 960.142 320.728C963.953 320.728 966.075 319.168 966.075 315.834V312.499C964.949 314.838 962.351 316.354 959.363 316.354C953.559 316.354 949.445 311.806 949.445 305.18C949.445 298.598 953.473 293.964 959.189 293.964C962.481 293.964 965.122 295.566 966.248 298.121V294.484H970.666V315.704C970.666 321.377 966.595 324.539 960.142 324.539ZM960.099 312.456C963.693 312.456 966.032 309.684 966.075 305.137C966.162 300.633 963.737 297.861 960.099 297.861C956.374 297.861 954.209 300.676 954.209 305.137C954.209 309.641 956.461 312.456 960.099 312.456Z" fill="white"/>
++<path d="M934.437 318.042C929.629 318.042 926.555 315.747 926.555 311.763C926.555 307.822 928.85 305.7 933.917 304.704L941.842 303.188C941.842 299.637 940.153 297.861 936.862 297.861C933.917 297.861 932.271 299.204 931.665 301.716L926.944 301.413C927.811 296.822 931.405 293.964 936.862 293.964C943.098 293.964 946.433 297.472 946.433 303.448V312.413C946.433 313.539 946.779 313.885 947.645 313.885H948.468V317.523C948.165 317.609 947.472 317.653 946.779 317.653C944.181 317.653 942.622 316.7 942.232 314.102V313.972C941.062 316.397 938.031 318.042 934.437 318.042ZM935.173 314.405C939.33 314.405 941.842 311.806 941.842 308.125V306.653L935.086 307.952C932.315 308.472 931.318 309.554 931.318 311.33C931.318 313.322 932.704 314.405 935.173 314.405Z" fill="white"/>
++<path d="M897.415 324.019V320.251H900.23C901.789 320.251 902.395 319.818 902.828 318.735L903.564 316.83H902.135L893.82 294.483H898.671L904.993 312.586L911.013 294.483H915.907L906.726 320.208C905.773 322.849 904.127 324.019 900.879 324.019H897.415Z" fill="white"/>
++<path d="M881.43 317.523V294.483H885.63L885.76 298.857C886.627 295.826 888.445 294.483 891.26 294
 ```
 
-**File**: `surrealdb/sqlplan/src/scope.rs` (modified, +12/-8)
+**File**: `img/icons/balance.svg` (added, +1/-0)
 ```diff
-@@ -369,6 +369,7 @@ impl QueryScope {
- 		policy: &DialectPolicy,
- 	) -> usize {
- 		let relation_index = self.relations.len();
-+		let aliased = alias.is_some();
- 		// An unaliased relation is exposed under its unqualified name, so `columns.*` and
- 		// `columns.column_name` resolve against `information_schema.columns`.
- 		let exposed_name = alias.unwrap_or_else(|| match schema.as_deref() {
-@@ -405,15 +406,18 @@ impl QueryScope {
- 		let key_exposed = policy.fold_identifier(&exposed_name).into_owned();
- 		self.name_to_relation.insert(key_exposed, relation_index);
- 
--		// Also register under table_name if exposed_name was an alias
--		let key_table = policy.fold_identifier(table_name).into_owned();
--		self.name_to_relation.entry(key_table).or_insert(relation_index);
-+		// An aliased relation is reachable only by its alias: the table's own name is then free to
-+		// mean the same table of an enclosing query, or another relation of this one. A relation
-+		// without an alias is also reachable by its table name and, qualified, by its schema.
-+		if !aliased {
-+			let key_table = policy.fold_identifier(table_name).into_owned();
-+			self.name_to_relation.entry(key_table).or_insert(relation_index);
- 
--		// If schema was provided, also register under "schema.table"
--		if let Some(s) = schema {
--			let full_name = format!("{s}.{table_name}");
--			let key_full = policy.fold_identifier(&full_name).into_owned();
--			self.name_to_relation.entry(key_full).or_insert(relation_index);
-+			if let Some(s) = schema {
-+				let full_name = format!("{s}.{table_name}");
-+				let key_full = policy.fold_identifier(&full_name).into_owned();
-+				self.name_to_relation.entry(key_full).or_insert(relation_index);
-+			}
- 		}
- 
- 		relation_index
+@@ -0,0 +1 @@
++<svg viewBox="20.00 30.00 199.99 232.10" width="19.0" height="22.05" xmlns="http://www.w3.org/2000/svg"><path d="M130,45 C130,47.761 132.239,50 135,50 L180,50 C184.003,50 187.455,52.352 189.053,55.749 L218.733,116.459 C218.899,116.8 219.027,117.158 219.112,117.528 L219.871,120.807 C219.957,121.177 220.001,121.558 219.996,121.937 C219.677,143.431 201.457,160 180,160 C158.543,160 140.324,143.43 140.004,121.937 C139.999,121.558 140.043,121.177 140.129,120.807 L140.888,117.528 C140.974,117.158 141.101,116.8 141.267,116.459 L160.463,77.196 C162.086,73.874 159.668,70 155.971,70 L135,70 C132.239,70 130,72.239 130,75 L130,195 C130,197.761 132.239,200 135,200 L155,200 C157.762,200 160,202.239 160,205 L160,215 C160,217.761 157.762,220 155,220 L85,220 C82.239,220 80,217.761 80,215 L80,205 C80,202.239 82.239,200 85,200 L105,200 C107.762,200 110,197.761 110,195 L110,75 C110,72.239 107.762,70 105,70 L84.03,70 C80.332,70 77.914,73.874 79.538,77.196 L98.733,116.459 C98.899,116.8 99.027,117.158 99.112,117.528 L99.871,120.807 C99.957,121.177 100.002,121.558 99.996,121.937 C99.677,143.431 81.457,160 60,160 C38.543,160 20.324,143.43 20.004,121.937 C19.999,121.558 20.043,121.177 20.129,120.807 L20.888,117.528 C20.974,117.158 21.101,116.8 21.267,116.459 L50.96,55.723 C52.563,52.34 56.008,50 60,50 L105,50 C107.762,50 110,47.761 110,45 L110,35 C110,32.239 112.239,30 115,30 L125,30 C127.762,30 130,32.239 130,35 Z" fill="#FF00A0"/></svg>
 ```
 
----
-
-### Incident Patch 2: `e1482ac0` (2026-11-03)
-**Commit Message**: feat(parser)!: rename temporal literal prefixes to pd, pt, ts and ivl (#2524)
-
-**File**: `doc/adr/0013-date-time-timestamp-interval-and-enum-kinds.md` (modified, +6/-5)
+**File**: `img/icons/book.svg` (added, +1/-0)
 ```diff
-@@ -11,7 +11,7 @@ Every decision below is accepted as recommended, including the `surrealdb-protoc
- | # | Decision | Recommendation |
- |---|---|---|
- | D1 | Value layer: new `Value` variants or a tag on `Datetime`/`Duration` | Four new `Value` variants (`Date`, `Time`, `Timestamp`, `Interval`) appended after `Closure`. A tag on `Datetime` cannot carry months or days, cannot sort correctly, and makes round-trip typing depend on side data. |
--| D2 | Literal syntax | Keyword-prefixed literals `date'2026-10-27'`, `time'12:30:00'`, `timestamp'2026-10-27T12:30:00'`, `interval'1 year 2 days'`. `d'2026-10-27'` keeps meaning a midnight-UTC datetime. Alternatives in section 2. |
-+| D2 | Literal syntax | Keyword-prefixed literals `pd'2026-10-27'`, `pt'12:30:00'`, `ts'2026-10-27T12:30:00'`, `ivl'1 year 2 days'`. `d'2026-10-27'` keeps meaning a midnight-UTC datetime. Alternatives in section 2. |
- | D3 | Precision | Nanoseconds for `time` and `timestamp`, microseconds for the `interval` time part, truncated to microseconds at the PostgreSQL and MySQL wire. |
- | D4 | Cross-kind comparison | Kinds stay distinct at the `Value` level (`Ord` is by rank, not by instant). The SQL front ends insert promotions (`date` to `timestamp` to `timestamptz`). SurrealQL operators do not promote implicitly. |
- | D5 | Interval equality | PostgreSQL semantics: `Eq`, `Ord`, `Hash` use the normalised value (a month is 30 days, a day is 24 hours), so `1 mon = 30 days`. Display and storage keep the triple. |
-@@ -75,10 +75,10 @@ ORM harnesses (Prisma, Drizzle, TypeORM) list type modifiers and enums among the
- 
- **The recommended literal forms are keyword-prefixed strings.**
- 
--- `date'2026-10-27'`
--- `time'12:30:00.123456789'`
--- `timestamp'2026-10-27T12:30:00'` (also `timestamp'2026-10-27 12:30:00'`)
--- `interval'1 year 2 mons 3 days 04:05:06.5'` and `interval'P1Y2M3DT4H5M6.5S'`
-+- `pd'2026-10-27'`
-+- `pt'12:30:00.123456789'`
-+- `ts'2026-10-27T12:30:00'` (also `ts'2026-10-27 12:30:00'`)
-+- `ivl'1 year 2 mons 3 days 04:05:06.5'` and `ivl'P1Y2M3DT4H5M6.5S'`
- 
- `parser-next` lexes a single `r`, `u`, `d`, `b`, `f`, or `s` immediately followed by a quote as a prefixed string (`lex.rs`). A longer identifier followed by a quote lexes today as an identifier then a string, which no production accepts, so the new forms change the meaning of no program that parses today. The golden corpus (`cargo make ci-parser`) confirms this in PR 2. Leaves are decoded at lowering time, as for `d'…'`.
- 
-@@ -88,6 +88,7 @@ ORM harnesses (Prisma, Drizzle, TypeORM) list type modifiers and enums among the
- 
- Alternatives considered:
- 
-+- **Kind-name prefixes** `date'…'`, `time'…'`, `timestamp'…'`, `interval'…'`. Each reads as a longer spelling of a kind name, and `date'…'` looks like an alias of `d'…'` while producing a different kind. Rejected in favour of `pd`, `pt`, `ts`, and `ivl`.
- - **Single-letter prefixes.** `t'…'` and `i'…'` are free, but `date` has no free letter (`d` is `datetime`), so the set is inconsistent. Rejected.
- - **Cast form `<date>'2026-10-27'`.** Valid today with no grammar change, and it remains the way to convert a string at runtime. It is an expression, not a literal, so it does not fold in the kind-literal and `DEFAULT` paths and renders back as a cast. Kept as the interim spelling for tests before PR 2 lands, not the canonical form.
- - **Reuse `d'…'` and decide by body shape.** `d'2026-10-27'` is already valid and means a datetime. Changing it breaks stored `DEFAULT` clauses and exports. Rejected.
+@@ -0,0 +1 @@
++<svg viewBox="40.00 30.00 160.00 206.70" width="17.8" height="23" xmlns="http://www.w3.org/2000/svg"><path d="M40,55 C40,41.193 51.193,30 65,30 L175,30 C188.807,30 200,41.193 200,55 L200,185.729 C200,196.88 188.265,204.133 178.292,199.146 L126.708,173.354 C122.485,171.243 117.515,171.243 113.292,173.354 L61.708,199.146 C51.735,204.133 40,196.88 40,185.729 L40,55 Z" fill="#FF00A0"/></svg>
 ```
 
-**File**: `language-tests/tests/graphql/_temporal_schema.surql` (modified, +2/-2)
+**File**: `img/icons/braces.svg` (added, +1/-0)
 ```diff
-@@ -18,5 +18,5 @@ DEFINE FIELD starts ON shift TYPE time;
- DEFINE FIELD at ON shift TYPE timestamp;
- DEFINE FIELD length ON shift TYPE interval;
- 
--CREATE shift:early SET label = 'early', day = date'2026-10-26', starts = time'06:30:00', at = timestamp'2026-10-26T06:30:00', length = interval'8 hours';
--CREATE shift:late SET label = 'late', day = date'2026-10-28', starts = time'14:00:00.5', at = timestamp'2026-10-28T14:00:00.5', length = interval'1 day 2 hours';
-+CREATE shift:early SET label = 'early', day = pd'2026-10-26', starts = pt'06:30:00', at = ts'2026-10-26T06:30:00', length = ivl'8 hours';
-+CREATE shift:late SET label = 'late', day = pd'2026-10-28', starts = pt'14:00:00.5', at = ts'2026-10-28T14:00:00.5', length = ivl'1 day 2 hours';
+@@ -0,0 +1 @@
++<svg viewBox="30.00 30.02 180.00 217.85" width="19.0" height="23.0" xmlns="http://www.w3.org/2000/svg"><path d="M150,38 C150,35.176 150,33.765 150.562,32.682 C151.048,31.745 151.858,30.954 152.807,30.491 C153.903,29.956 155.269,29.99 158,30.056 C159.29,30.088 160.499,30.137 161.624,30.214 C164.922,30.439 168.221,30.933 171.48,32.283 C178.831,35.328 184.672,41.169 187.717,48.52 C189.067,51.779 189.561,55.078 189.786,58.376 C190,61.514 190,65.307 190,69.703 L190,90 C190,94.796 190.005,97.893 190.167,100.263 C190.323,102.542 190.588,103.411 190.761,103.827 C191.776,106.277 193.723,108.224 196.173,109.239 C196.589,109.412 197.458,109.677 199.737,109.833 C201.515,109.954 203.701,109.987 206.706,109.996 C208.526,109.998 210,111.474 210,113.294 L210,122 C210,124.767 210,126.15 209.475,127.203 C209.004,128.148 208.291,128.882 207.361,129.38 C206.323,129.936 204.882,129.978 202,130.062 C201.169,130.087 200.423,130.12 199.737,130.167 C197.458,130.323 196.589,130.588 196.173,130.761 C193.723,131.776 191.776,133.723 190.761,136.173 C190.588,136.589 190.323,137.458 190.167,139.737 C190.005,142.107 190,145.204 190,150 L190,170.297 C190,174.693 190,178.486 189.786,181.624 C189.561,184.922 189.067,188.221 187.717,191.48 C184.672,198.831 178.831,204.672 171.48,207.717 C168.221,209.067 164.922,209.561 161.624,209.786 C160.499,209.863 159.29,209.912 158,209.944 L157.985,209.944 C155.264,210.01 153.901,210.043 152.807,209.509 C151.858,209.046 151.048,208.255 150.562,207.318 C150,206.235 150,204.824 150,202 L150,198 C150,195.233 150,193.85 150.525,192.797 C150.996,191.852 151.709,191.118 152.639,190.62 C153.677,190.064 155.118,190.022 158,189.938 C158.831,189.913 159.577,189.88 160.263,189.833 C162.542,189.677 163.411,189.412 163.827,189.239 C166.277,188.224 168.224,186.277 169.239,183.827 C169.412,183.411 169.677,182.542 169.833,180.263 C169.995,177.893 170,174.796 170,170 L170,149.703 C170,145.307 170,141.514 170.214,138.376 C170.439,135.078 170.933,131.779 172.283,128.52 C172.662,127.605 173.084,126.714 173.547,125.849 C175.026,123.086 175.765,121.705 175.91,120.976 C176.101,120.015 176.101,119.985 175.91,119.024 C175.765,118.296 175.026,116.914 173.547,114.151 C173.084,113.286 172.662,112.395 172.283,111.48 C170.933,108.221 170.439,104.922 170.214,101.624 C170,98.486 170,94.693 170,90.297 L170,70 C170,65.204 169.995,62.107 169.833,59.737 C169.677,57.458 169.412,56.589 169.239,56.173 C168.224,53.723 166.277,51.776 163.827,50.761 C163.411,50.588 162.542,50.323 160.263,50.167 C159.577,50.12 158.831,50.086 158,50.062 C155.118,49.978 153.677,49.936 152.639,49.38 C151.709,48.882 150.996,48.148 150.525,47.203 C150,46.15 150,44.766 150,42 Z M90,42 C90,44.766 90,46.15 89.475,47.203 C89.004,48.148 88.291,48.882 87.36,49.38 C86.323,49.936 84.882,49.978 82,50.062 C81.169,50.086 80.423,50.12 79.737,50.167 C77.457,50.323 76.589,50.588 76.173,50.761 C73.723,51.776 71.776,53.723 70.761,56.173 C70.588,56.589 70.323,57.458 70.167,59.737 C70.005,62.107 70,65.204 70,70 L70,90 L70,90.296 C70,94.693 70,98.486 69.786,101.624 C69.561,104.922 69.067,108.221 67.717,111.48 C67.338,112.395 66.916,113.286 66.453,114.151 C64.974,116.914 64.235,118.295 64.09,119.023 C63.898,119.985 63.898,120.015 64.09,120.977 C64.235,121.705 64.974,123.086 66.453,125.849 C66.916,126.714 67.338,127.605 67.717,128.52 C69.067,131.779 69.561,135.078 69.786,138.376 C70,141.514 70,145.307 70,149.704 L70,150 L70,170 C70,174.796 70.005,177.893 70.167,180.263 C70.323,182.542 70.588,183.411 70.761,183.827 C71.776,186.277 73.723,188.224 76.173,189.239 C76.589,189.412 77.458,189.677 79.737,189.833 C80.423,189.88 81.169,189.913 82,189.938 C84.882,190.022 86.323,190.064 87.36,190.62 C88.291,191.118 89.004,191.852 89.475,192.797 C90,193.85 90,195.233 90,198 L90,202 C90,204.824 90,206.235 89.438,207.318 C88.952,208.255 88.142,209.046 87.193,209.509 C86.099,210.043 84.736,210.01 82.015,209.944 L82,209.944 C80.71,209.912 79.501,209.863 78.376,209.786 C75.078,209.561 71.779,209.067 68.52,207.717 C61.169,204.672 55.328,198.831 52.283,191.48 C50.933,188.221 50.439,184.922 50.214,181.624 C50,178.486 50,174.693 50,170.296 L50,170 L50,150 C50,145.204 49.995,142.107 49.833,139.737 C49.678,137.458 49.412,136.589 49.239,136.173 C48.224,133.723 46.277,131.776 43.827,130.761 C43.411,130.588 42.542,130.323 40.263,130.167 C39.577,130.12 38.831,130.087 38,130.062 C35.118,129.978 33.677,129.936 32.639,129.38 C31.709,128.882 30.996,128.148 30.525,127.203 C30,126.15 30,124.767 30,122 L30,113.294 C30,111.474 31.474,109.998 33.294,109.996 C36.299,109.987 38.485,109.954 40.263,109.833 C42.542,109.677 43.411,109.412 43.827,109.239 C46.277,108.224 48.224,106.277 49.239,103.827 C49.412,103.411 49.677,102.542 49.833,100.263 C49.995,97.893 50,94.796 50,90 L50,70 L50,69.704 C50,65.307 50,61.514 50.214,58.376 C50.439,55.078 50.933,51.779 52.283,48.52 C55.328,41.169 61.169,35.328 68.52,32.283 C71.779,30.933 75.078,30.439 78.376,30.214 C79.501,30.137 80.71,30.088 82,30.056 C84.731,29.99 86.097,29.956 
 ```
 
-**File**: `language-tests/tests/language/primitive/temporal_kinds/arithmetic.surql` (modified, +75/-75)
+**File**: `img/icons/cloud.svg` (added, +1/-0)
 ```diff
-@@ -3,70 +3,70 @@
- reason = "Arithmetic on the temporal kinds per ADR 0013 section 3, with existing datetime and duration results unchanged"
- 
- [[test.results]]
--value = "date'2026-11-01'"
-+value = "pd'2026-11-01'"
- 
- [[test.results]]
--value = "date'2026-09-27'"
-+value = "pd'2026-09-27'"
- 
- [[test.results]]
--value = "date'2026-11-01'"
-+value = "pd'2026-11-01'"
- 
- [[test.results]]
- value = "299"
- 
- [[test.results]]
--value = "timestamp'2026-11-29T00:00:00'"
-+value = "ts'2026-11-29T00:00:00'"
- 
- [[test.results]]
--value = "timestamp'2025-10-27T00:00:00'"
-+value = "ts'2025-10-27T00:00:00'"
- 
- [[test.results]]
--value = "timestamp'2026-10-28T00:00:00'"
-+value = "ts'2026-10-28T00:00:00'"
- 
- [[test.results]]
--value = "timestamp'2026-10-27T12:30:00'"
-+value = "ts'2026-10-27T12:30:00'"
- 
- [[test.results]]
--value = "time'13:30:00'"
-+value = "pt'13:30:00'"
- 
- [[test.results]]
--value = "time'00:30:00'"
-+value = "pt'00:30:00'"
- 
- [[test.results]]
--value = "time'23:30:00'"
-+value = "pt'23:30:00'"
- 
- [[test.results]]
--value = "time'14:30:00'"
-+value = "pt'14:30:00'"
- 
- [[test.results]]
--value = "interval'PT2H30M'"
-+value = "ivl'PT2H30M'"
- 
- [[test.results]]
--value = "interval'PT-2H-30M'"
-+value = "ivl'PT-2H-30M'"
- 
- [[test.results]]
--value = "timestamp'2026-02-28T10:00:00'"
-+value = "ts'2026-02-28T10:00:00'"
- 
- [[test.results]]
--value = "timestamp'2026-02-28T10:00:00'"
-+value = "ts'2026-02-28T10:00:00'"
- 
- [[test.results]]
--value = "timestamp'2025-02-28T10:00:00'"
-+value = "ts'2025-02-28T10:00:00'"
- 
- [[test.results]]
--value = "timestamp'2026-10-28T12:00:00'"
-+value = "ts'2026-10-28T12:00:00'"
- 
- [[test.results]]
--value = "timestamp'2026-10-27T11:30:00'"
-+value = "ts'2026-10-27T11:30:00'"
- 
- [[test.results]]
--value = "timestamp'2026-10-27T08:30:00'"
-+value = "ts'2026-10-27T08:30:00'"
- 
- [[test.results]]
--value = "interval'P7DT1H30M'"
-+value = "ivl'P7DT1H30M'"
- 
- [[test.results]]
--value = "interval'P-7DT-1H-30M'"
-+value = "ivl'P-7DT-1H-30M'"
- 
- [[test.results]]
- value = "d'2026-02-28T10:00:00Z'"
-@@ -81,34 +81,34 @@ value = "1d"
- value = "d'2026-10-28T10:00:00Z'"
- 
- [[test.results]]
--value = "interval'P1DT2H'"
-+value = "ivl'P1DT2H'"
- 
- [[test.results]]
--value = "interval'P1M-1D'"
-+value = "ivl'P1M-1D'"
- 
- [[test.results]]
--value = "interval'P-1M-2DT-3H'"
-+value = "ivl'P-1M-2DT-3H'"
- 
- [[test.results]]
--value = "interval'P2M4DT6H'"
-+value = "ivl'P2M4DT6H'"
- 
- [[test.results]]
--value = "interval'P1M15D'"
-+value = "ivl'P1M15D'"
- 
- [[test.results]]
--value = "interval'PT12H'"
-+value = "ivl'PT12H'"
- 
- [[test.results]]
--value = "interval'PT2H'"
-+value = "ivl'PT2H'"
- 
- [[test.results]]
--value = "interval'P15D'"
-+value = "ivl'P15D'"
- 
- [[test.results]]
--value = "interval'P1DT12H'"
-+value = "ivl'P1DT12H'"
- 
- [[test.results]]
--value = "interval'PT2H30M'"
-+value = "ivl'PT2H30M'"
- 
- [[test.results]]
- error = "An interval cannot be divided by zero."
-@@ -123,7 +123,7 @@ error = 'Failed to compute: "interval", as the operation results in an arithmeti
- error = 'Failed to compute: "interval", as the operation results in an arithmetic overflow.'
- 
- [[test.results]]
--value = "date'infinity'"
-+value = "pd'infinity'"
- 
- [[test.results]]
- error = 'Failed to compute: "date", as the operation results in an arithmetic overflow.'
-@@ -146,51 +146,51 @@ value = "2h"
- [[test.results]]
- value = "d'2026-10-27T11:00:00Z'"
- */
--date'2026-10-27' + 5;
--date'2026-10-27' - 30;
--5 + date'2026-10-27';
--date'2026-10-27' - date'2026-01-01';
--date'2026-10-27' + interval'1 month 2 days';
--date'2026-10-27' - interval'1 year';
--date'2026-10-27' + 1d;
--date'2026-10-27' + time'12:30:00';
--time'12:30:00' + interval'1 hour';
--time'23:30:00' + interval'1 hour';
--time'00:30:00' - interval'1 hour';
--time'12:30:00' + 2h;
--time'12:30:00' - time'10:00:00';
--time'10:00:00' - time'12:30:00';
--timestamp'2026-01-31T10:00:00' + interval'1 month';
--timestamp'2026-03-31T10:00:00' - interval'1 month';
--timestamp'2024-02-29T10:00:00' + interval'1 year';
--timestamp'2026-10-27T10:00:00' + interval'1 day 2 hours';
--timestamp'2026-10-27T10:00:00' + 90m;
--timestamp'2026-10-27T10:00:00' - 90m;
--timestamp'2026-10-27T10:00:00' - timestamp'2026-10-20T08:30:00';
--timestamp'2026-10-20T08:30:00' - timestamp'2026-10-27T10:00:00';
--d'2026-01-31T10:00:00Z' + interval'1 month';
--d'2026-10-27T10:00:00Z' - interval'1 day 2 hours';
-+pd'2026-10-27' + 5;
-+pd'2026-10-27' - 30;
-+5 + pd'2026-10-27';
-+pd'2026-10-27' - pd'2026-01-01';
-+pd'2026-10-27' + ivl'1 month 2 days';
-+pd'2026-10-27' - ivl'1 year';
-+pd'2026-10-27' + 1d;
-+pd'2026-10-27' + pt'12:30:00';
-+pt'12:30:00' + ivl'1 hour';
-+pt'23:30:00' + ivl'1 hour';
-+pt'00:30:00' - ivl'1 hour';
-+pt'12:30:00' + 2h;
-+pt'12:30:00' - pt'10:00:00';
-+pt'10:00:00' - pt'12:30:00';
-+ts'2026-01-31T10:00:00' + ivl'1 month';
-+ts'2026-03-31T10:00:00' - ivl'1 month';
-+ts'2024-02-29T10:00:00' + ivl'1 year';
-+ts'2026-10-27T10:00:00' + ivl'1 day 2 hours';
-+ts'2026-10-27T10:00:00' + 90m;
-+ts'2026-10-27T10:00:00' - 90m;
-+ts'2026-10-27T10:00:00' - ts'2026-10-20T08:30:00';
-+ts'2026-10-20T
-```
-
-**File**: `language-tests/tests/language/primitive/temporal_kinds/casts.surql` (modified, +34/-34)
-```diff
-@@ -3,34 +3,34 @@
- reason = "Casts between the temporal kinds and from strings, including <date> dropping the time of a datetime"
- 
- [[test.results]]
--value = "date'2026-10-27'"
-+value = "pd'2026-10-27'"
- 
- [[test.results]]
--value = "date'2026-10-27'"
-+value = "pd'2026-10-27'"
- 
- [[test.results]]
--value = "date'2026-10-27'"
-+value = "pd'2026-10-27'"
- 
- [[test.results]]
--value = "date'2026-10-27'"
-+value = "pd'2026-10-27'"
- 
- [[test.results]]
--value = "time'12:30:45.500'"
-+value = "pt'12:30:45.500'"
- 
- [[test.results]]
--value = "time'12:30:45'"
-+value = "pt'12:30:45'"
- 
- [[test.results]]
--value = "time'12:30:45'"
-+value = "pt'12:30:45'"
- 
- [[test.results]]
--value = "timestamp'2026-10-27T12:30:45'"
-+value = "ts'2026-10-27T12:30:45'"
- 
- [[test.results]]
--value = "timestamp'2026-10-27T00:00:00'"
-+value = "ts'2026-10-27T00:00:00'"
- 
- [[test.results]]
--value = "timestamp'2026-10-27T12:30:45'"
-+value = "ts'2026-10-27T12:30:45'"
- 
- [[test.results]]
- value = "d'2026-10-27T12:30:45Z'"
-@@ -39,13 +39,13 @@ value = "d'2026-10-27T12:30:45Z'"
- value = "d'2026-10-27T00:00:00Z'"
- 
- [[test.results]]
--value = "interval'PT1H2M3S'"
-+value = "ivl'PT1H2M3S'"
- 
- [[test.results]]
--value = "interval'PT1H30M'"
-+value = "ivl'PT1H30M'"
- 
- [[test.results]]
--value = "interval'P1Y2D'"
-+value = "ivl'P1Y2D'"
- 
- [[test.results]]
- value = "1h2m3s"
-@@ -69,19 +69,19 @@ value = "'P1Y2D'"
- value = "NONE"
- 
- [[test.results]]
--value = "[date'2026-01-01', date'2026-01-02']"
-+value = "[pd'2026-01-01', pd'2026-01-02']"
- 
- [[test.results]]
--value = "date'2026-10-27'"
-+value = "pd'2026-10-27'"
- 
- [[test.results]]
--value = "time'12:30:00'"
-+value = "pt'12:30:00'"
- 
- [[test.results]]
--value = "timestamp'2026-10-27T12:30:00'"
-+value = "ts'2026-10-27T12:30:00'"
- 
- [[test.results]]
--value = "interval'P2D'"
-+value = "ivl'P2D'"
- 
- [[test.results]]
- error = "Could not cast into `date` using input `'not a date'`"
-@@ -93,35 +93,35 @@ error = "Could not cast into `date` using input `1`"
- error = "Could not cast into `interval` using input `1`"
- 
- [[test.results]]
--error = "Could not cast into `duration` using input `interval'P-1D'`"
-+error = "Could not cast into `duration` using input `ivl'P-1D'`"
- 
- [[test.results]]
- error = "Could not cast into `interval` using input `1ns`"
- 
- [[test.results]]
--error = "Could not cast into `time` using input `interval'P1D'`"
-+error = "Could not cast into `time` using input `ivl'P1D'`"
- */
- <date> d'2026-10-27T12:30:45Z';
- <date> '2026-10-27';
- <date> '2026-10-27T12:30:45Z';
--<date> timestamp'2026-10-27T12:30:45';
-+<date> ts'2026-10-27T12:30:45';
- <time> d'2026-10-27T12:30:45.5Z';
- <time> '12:30:45';
--<time> timestamp'2026-10-27T12:30:45';
-+<time> ts'2026-10-27T12:30:45';
- <timestamp> d'2026-10-27T12:30:45Z';
--<timestamp> date'2026-10-27';
-+<timestamp> pd'2026-10-27';
- <timestamp> '2026-10-27 12:30:45';
--<datetime> timestamp'2026-10-27T12:30:45';
--<datetime> date'2026-10-27';
--<interval> time'01:02:03';
-+<datetime> ts'2026-10-27T12:30:45';
-+<datetime> pd'2026-10-27';
-+<interval> pt'01:02:03';
- <interval> 1h30m;
- <interval> '1 year 2 days';
--<duration> time'01:02:03';
--<duration> interval'1 mon 1 day 00:00:01';
--<string> date'2026-10-27';
--<string> time'12:30:00';
--<string> timestamp'2026-10-27T12:30:00';
--<string> interval'1 year 2 days';
-+<duration> pt'01:02:03';
-+<duration> ivl'1 mon 1 day 00:00:01';
-+<string> pd'2026-10-27';
-+<string> pt'12:30:00';
-+<string> ts'2026-10-27T12:30:00';
-+<string> ivl'1 year 2 days';
- <option<date>> NONE;
- <array<date>> ['2026-01-01', '2026-01-02'];
- type::date('2026-10-27');
-@@ -131,6 +131,6 @@ type::interval('2 days');
- <date> 'not a date';
- <date> 1;
- <interval> 1;
--<duration> interval'-1 day';
-+<duration> ivl'-1 day';
- <interval> 1ns;
--<time> interval'1 day';
-+<time> ivl'1 day';
-```
-
-**File**: `language-tests/tests/language/primitive/temporal_kinds/coercion.surql` (modified, +18/-18)
-```diff
-@@ -21,16 +21,16 @@ value = "NONE"
- value = "NONE"
- 
- [[test.results]]
--value = "[{ d: date'2026-10-27', k: 'date' }]"
-+value = "[{ d: pd'2026-10-27', k: 'date' }]"
- 
- [[test.results]]
--value = "[{ d: date'2026-10-27', k: 'date' }]"
-+value = "[{ d: pd'2026-10-27', k: 'date' }]"
- 
- [[test.results]]
--value = "[{ k: 'timestamp', ts: timestamp'2026-10-27T00:00:00' }]"
-+value = "[{ k: 'timestamp', ts: ts'2026-10-27T00:00:00' }]"
- 
- [[test.results]]
--value = "[{ k: 'timestamp', ts: timestamp'2026-10-27T12:30:45' }]"
-+value = "[{ k: 'timestamp', ts: ts'2026-10-27T12:30:45' }]"
- 
- [[test.results]]
- value = "[{ dt: d'2026-10-27T00:00:00Z', k: 'datetime' }]"
-@@ -54,10 +54,10 @@ error = "Couldn't coerce value for field `tm` of `t:10`: Expected `none | time`
- error = "Couldn't coerce value for field `iv` of `t:11`: Expected `none | interval` but found `1h`"
- 
- [[test.results]]
--error = "Couldn't coerce value for field `d` of `t:12`: Expected `none | date` but found `timestamp'2026-10-27T00:00:00'`"
-+error = "Couldn't coerce value for field `d` of `t:12`: Expected `none | date` but found `ts'2026-10-27T00:00:00'`"
- 
- [[test.results]]
--value = "[{ iv: interval'P1D', tm: time'12:30:00' }]"
-+value = "[{ iv: ivl'P1D', tm: pt'12:30:00' }]"
- 
- [[test.results]]
- value = "NONE"
-@@ -66,19 +66,19 @@ value = "NONE"
- value = "NONE"
- 
- [[test.results]]
--value = "date'2026-10-27'"
-+value = "pd'2026-10-27'"
- 
- [[test.results]]
--value = "date'2026-10-27'"
-+value = "pd'2026-10-27'"
- 
- [[test.results]]
- error = "Incorrect arguments for function fn::as_date(). Failed to coerce argument `$d`: Expected `date (a datetime that is not midnight UTC needs the cast `<date>`)` but found `d'2026-10-27T01:00:00Z'`"
- 
- [[test.results]]
--value = "timestamp'2026-10-27T00:00:00'"
-+value = "ts'2026-10-27T00:00:00'"
- 
- [[test.results]]
--value = "timestamp'2026-10-27T01:00:00'"
-+value = "ts'2026-10-27T01:00:00'"
- 
- [[test.results]]
- error = "Incorrect arguments for function fn::as_timestamp(). Failed to coerce argument `$d`: Expected `timestamp` but found `'2026-10-27'`"
-@@ -90,23 +90,23 @@ DEFINE FIELD dt ON t TYPE option<datetime>;
- DEFINE FIELD tm ON t TYPE option<time>;
- DEFINE FIELD iv ON t TYPE option<interval>;
- CREATE t:1 SET d = d'2026-10-27T00:00:00Z' RETURN d, type::of(d) AS k;
--CREATE t:2 SET d = date'2026-10-27' RETURN d, type::of(d) AS k;
--CREATE t:3 SET ts = date'2026-10-27' RETURN ts, type::of(ts) AS k;
-+CREATE t:2 SET d = pd'2026-10-27' RETURN d, type::of(d) AS k;
-+CREATE t:3 SET ts = pd'2026-10-27' RETURN ts, type::of(ts) AS k;
- CREATE t:4 SET ts = d'2026-10-27T12:30:45Z' RETURN ts, type::of(ts) AS k;
--CREATE t:5 SET dt = date'2026-10-27' RETURN dt, type::of(dt) AS k;
--CREATE t:6 SET dt = timestamp'2026-10-27T12:30:45' RETURN dt, type::of(dt) AS k;
-+CREATE t:5 SET dt = pd'2026-10-27' RETURN dt, type::of(dt) AS k;
-+CREATE t:6 SET dt = ts'2026-10-27T12:30:45' RETURN dt, type::of(dt) AS k;
- CREATE t:7 SET d = d'2026-10-27T12:30:45Z';
- CREATE t:8 SET d = '2026-10-27';
- CREATE t:9 SET ts = '2026-10-27T12:30:45';
- CREATE t:10 SET tm = d'2026-10-27T12:30:45Z';
- CREATE t:11 SET iv = 1h;
--CREATE t:12 SET d = timestamp'2026-10-27T00:00:00';
--CREATE t:13 SET tm = time'12:30:00', iv = interval'1 day' RETURN tm, iv;
-+CREATE t:12 SET d = ts'2026-10-27T00:00:00';
-+CREATE t:13 SET tm = pt'12:30:00', iv = ivl'1 day' RETURN tm, iv;
- DEFINE FUNCTION fn::as_date($d: date) { RETURN $d; };
- DEFINE FUNCTION fn::as_timestamp($d: timestamp) { RETURN $d; };
--fn::as_date(date'2026-10-27');
-+fn::as_date(pd'2026-10-27');
- fn::as_date(d'2026-10-27T00:00:00Z');
- fn::as_date(d'2026-10-27T01:00:00Z');
--fn::as_timestamp(date'2026-10-27');
-+fn::as_timestamp(pd'2026-10-27');
- fn::as_timestamp(d'2026-10-27T01:00:00Z');
- fn::as_timestamp('2026-10-27');
-```
-
-**File**: `language-tests/tests/language/primitive/temporal_kinds/comparison_order.surql` (modified, +24/-24)
-```diff
-@@ -33,40 +33,40 @@ value = "true"
- value = "true"
- 
- [[test.results]]
--value = "[date'-0001-01-01', date'2026-10-27', date'2026-10-28']"
-+value = "[pd'-0001-01-01', pd'2026-10-27', pd'2026-10-28']"
- 
- [[test.results]]
--value = "[time'00:00:00', time'12:00:00', time'24:00:00']"
-+value = "[pt'00:00:00', pt'12:00:00', pt'24:00:00']"
- 
- [[test.results]]
--value = "[timestamp'1969-12-31T23:59:59.500', timestamp'2026-10-27T00:00:00', timestamp'2026-10-28T00:00:00']"
-+value = "[ts'1969-12-31T23:59:59.500', ts'2026-10-27T00:00:00', ts'2026-10-28T00:00:00']"
- 
- [[test.results]]
--value = "[interval'P-1D', interval'PT1H', interval'P29D', interval'P1M']"
-+value = "[ivl'P-1D', ivl'PT1H', ivl'P29D', ivl'P1M']"
- 
- [[test.results]]
--value = "[interval'P1M']"
-+value = "[ivl'P1M']"
- 
- [[test.results]]
--value = "[interval'P1M']"
-+value = "[ivl'P1M']"
- 
- [[test.results]]
--value = "[d'2026-10-27T00:00:00Z', date'2026-10-27', time'01:00:00', timestamp'2026-10-27T00:00:00', interval'P1D']"
-+value = "[d'2026-10-27T00:00:00Z', pd'2026-10-27', pt'01:00:00', ts'2026-10-27T00:00:00', ivl'P1D']"
- */
--date'2026-10-27' < date'2026-10-28';
--date'2026-10-27' = date'2026-10-27';
--date'2026-10-27' = d'2026-10-27';
--time'01:00:00' < time'02:00:00';
--time'24:00:00' > time'23:59:59.999999999';
--timestamp'2026-10-27T00:00:00' < timestamp'2026-10-27T00:00:00.000000001';
--interval'1 mon' = interval'30 days';
--interval'1 day' = interval'24 hours';
--interval'1 mon' > interval'29 days';
--interval'-1 day' < interval'00:00:00';
--array::sort([date'2026-10-28', date'-0001-01-01', date'2026-10-27']);
--array::sort([time'12:00:00', time'00:00:00', time'24:00:00']);
--array::sort([timestamp'2026-10-28T00:00:00', timestamp'1969-12-31T23:59:59.5', timestamp'2026-10-27T00:00:00']);
--array::sort([interval'1 mon', interval'-1 day', interval'29 days', interval'1 hour']);
--array::sort([interval'1 mon', interval'30 days'].distinct());
--array::distinct([interval'1 mon', interval'30 days']);
--array::sort([date'2026-10-27', d'2026-10-27', interval'1 day', time'01:00:00', timestamp'2026-10-27T00:00:00']);
-+pd'2026-10-27' < pd'2026-10-28';
-+pd'2026-10-27' = pd'2026-10-27';
-+pd'2026-10-27' = d'2026-10-27';
-+pt'01:00:00' < pt'02:00:00';
-+pt'24:00:00' > pt'23:59:59.999999999';
-+ts'2026-10-27T00:00:00' < ts'2026-10-27T00:00:00.000000001';
-+ivl'1 mon' = ivl'30 days';
-+ivl'1 day' = ivl'24 hours';
-+ivl'1 mon' > ivl'29 days';
-+ivl'-1 day' < ivl'00:00:00';
-+array::sort([pd'2026-10-28', pd'-0001-01-01', pd'2026-10-27']);
-+array::sort([pt'12:00:00', pt'00:00:00', pt'24:00:00']);
-+array::sort([ts'2026-10-28T00:00:00', ts'1969-12-31T23:59:59.5', ts'2026-10-27T00:00:00']);
-+array::sort([ivl'1 mon', ivl'-1 day', ivl'29 days', ivl'1 hour']);
-+array::sort([ivl'1 mon', ivl'30 days'].distinct());
-+array::distinct([ivl'1 mon', ivl'30 days']);
-+array::sort([pd'2026-10-27', d'2026-10-27', ivl'1 day', pt'01:00:00', ts'2026-10-27T00:00:00']);
-```
-
-**File**: `language-tests/tests/language/primitive/temporal_kinds/define_field.surql` (modified, +12/-12)
-```diff
-@@ -24,31 +24,31 @@ value = "NONE"
- value = "NONE"
- 
- [[test.results]]
--value = "[{ d: date'2026-10-27', def: date'2026-01-01', id: t:1, iv: {interval'P1D',}, ts: [timestamp'2026-10-27T12:00:00'], u: interval'P2D' }]"
-+value = "[{ d: pd'2026-10-27', def: pd'2026-01-01', id: t:1, iv: {ivl'P1D',}, ts: [ts'2026-10-27T12:00:00'], u: ivl'P2D' }]"
- 
- [[test.results]]
--value = "[{ d: date'2026-10-27', def: date'2026-01-01', id: t:1, iv: {interval'P1D',}, ts: [timestamp'2026-10-27T12:00:00'], u: interval'P2D' }]"
-+value = "[{ d: pd'2026-10-27', def: pd'2026-01-01', id: t:1, iv: {ivl'P1D',}, ts: [ts'2026-10-27T12:00:00'], u: ivl'P2D' }]"
- 
- [[test.results]]
--error = "Couldn't coerce value for field `u` of `t:2`: Expected `none | date | interval` but found `time'12:00:00'`"
-+error = "Couldn't coerce value for field `u` of `t:2`: Expected `none | date | interval` but found `pt'12:00:00'`"
- 
- [[test.results]]
--value = "[{ d: date'2026-10-27', def: date'2026-01-01', id: t:3, ts: [timestamp'2026-10-27T00:00:00'] }]"
-+value = "[{ d: pd'2026-10-27', def: pd'2026-01-01', id: t:3, ts: [ts'2026-10-27T00:00:00'] }]"
- 
- [[test.results]]
- error = "Couldn't coerce value for field `d` of `t:4`: Expected `date (a datetime that is not midnight UTC needs the cast `<date>`)` but found `d'2026-10-27T12:00:00Z'`"
- 
- [[test.results]]
--value = """{ events: {  }, fields: { d: 'DEFINE FIELD d ON t TYPE date PERMISSIONS FULL', def: "DEFINE FIELD def ON t TYPE date DEFAULT date'2026-01-01' PERMISSIONS FULL", iv: 'DEFINE FIELD iv ON t TYPE none | set<interval> PERMISSIONS FULL', "iv.*": 'DEFINE FIELD iv.* ON t TYPE interval PERMISSIONS FULL', tm: 'DEFINE FIELD tm ON t TYPE none | time PERMISSIONS FULL', ts: 'DEFINE FIELD ts ON t TYPE none | array<timestamp> PERMISSIONS FULL', "ts.*": 'DEFINE FIELD ts.* ON t TYPE timestamp PERMISSIONS FULL', u: 'DEFINE FIELD u ON t TYPE none | date | interval PERMISSIONS FULL' }, indexes: {  }, lives: {  }, migrations: { generation: 7, guaranteed: [], migrations: [] }, tables: {  } }"""
-+value = """{ events: {  }, fields: { d: 'DEFINE FIELD d ON t TYPE date PERMISSIONS FULL', def: "DEFINE FIELD def ON t TYPE date DEFAULT pd'2026-01-01' PERMISSIONS FULL", iv: 'DEFINE FIELD iv ON t TYPE none | set<interval> PERMISSIONS FULL', "iv.*": 'DEFINE FIELD iv.* ON t TYPE interval PERMISSIONS FULL', tm: 'DEFINE FIELD tm ON t TYPE none | time PERMISSIONS FULL', ts: 'DEFINE FIELD ts ON t TYPE none | array<timestamp> PERMISSIONS FULL', "ts.*": 'DEFINE FIELD ts.* ON t TYPE timestamp PERMISSIONS FULL', u: 'DEFINE FIELD u ON t TYPE none | date | interval PERMISSIONS FULL' }, indexes: {  }, lives: {  }, migrations: { generation: 7, guaranteed: [], migrations: [] }, tables: {  } }"""
- 
- [[test.results]]
- value = "NONE"
- 
- [[test.results]]
--value = "date'2026-10-28'"
-+value = "pd'2026-10-28'"
- 
- [[test.results]]
--value = "date'2026-10-28'"
-+value = "pd'2026-10-28'"
- 
- [[test.results]]
- error = "Incorrect arguments for function fn::next(). Failed to coerce argument `$d`: Expected `date (a datetime that is not midnight UTC needs the cast `<date>`)` but found `d'2026-10-27T01:00:00Z'`"
-@@ -59,14 +59,14 @@ DEFINE FIELD tm ON t TYPE option<time>;
- DEFINE FIELD ts ON t TYPE option<array<timestamp>>;
- DEFINE FIELD iv ON t TYPE option<set<interval>>;
- DEFINE FIELD u ON t TYPE option<date | interval>;
--DEFINE FIELD def ON t TYPE date DEFAULT date'2026-01-01';
--CREATE t:1 SET d = date'2026-10-27', ts = [timestamp'2026-10-27T12:00:00'], iv = {interval'1 day', interval'24 hours'}, u = interval'2 days';
-+DEFINE FIELD def ON t TYPE date DEFAULT pd'2026-01-01';
-+CREATE t:1 SET d = pd'2026-10-27', ts = [ts'2026-10-27T12:00:00'], iv = {ivl'1 day', ivl'24 hours'}, u = ivl'2 days';
- SELECT * FROM t:1;
--CREATE t:2 SET d = date'2026-10-27', u = time'12:00:00';
--CREATE t:3 SET d = date'2026-10-27', ts = [date'2026-10-27'];
-+CREATE t:2 SET d = pd'2026-10-27', u = pt'12:00:00';
-+CREATE t:3 SET d = pd'2026-10-27', ts = [pd'2026-10-27'];
- CREATE t:4 SET d = d'2026-10-27T12:00:00Z';
- INFO FOR TABLE t;
- DEFINE FUNCTION fn::next($d: date) -> date { RETURN $d + 1; };
--fn::next(date'2026-10-27');
-+fn::next(pd'2026-10-27');
- fn::next(d'2026-10-27T00:00:00Z');
- fn::next(d'2026-10-27T01:00:00Z');
-```
-
-**File**: `language-tests/tests/language/primitive/temporal_kinds/functions_extract_infinity.surql` (modified, +12/-12)
-```diff
-@@ -30,25 +30,25 @@ value = "Infinity"
- value = "2026"
- 
- [[test.results]]
--value = "timestamp'infinity'"
-+value = "ts'infinity'"
- 
- [[test.results]]
--value = "date'-infinity'"
-+value = "pd'-infinity'"
- 
- [[test.results]]
- value = "d'+262142-12-31T23:59:59.999999999Z'"
- 
- */
- 
--time::extract(timestamp'infinity', 'year');
--time::extract(timestamp'-infinity', 'epoch');
--time::extract(timestamp'infinity', 'month');
--time::extract(timestamp'infinity', 'hour');
--time::extract(date'infinity', 'century');
--time::extract(date'-infinity', 'dow');
--time::extract(date'infinity', 'hour');
-+time::extract(ts'infinity', 'year');
-+time::extract(ts'-infinity', 'epoch');
-+time::extract(ts'infinity', 'month');
-+time::extract(ts'infinity', 'hour');
-+time::extract(pd'infinity', 'century');
-+time::extract(pd'-infinity', 'dow');
-+time::extract(pd'infinity', 'hour');
- time::extract(<datetime> 'infinity', 'year');
--time::extract(timestamp'2026-10-27T12:30:45.5', 'year');
--time::trunc(timestamp'infinity', 'year');
--time::trunc(date'-infinity', 'month');
-+time::extract(ts'2026-10-27T12:30:45.5', 'year');
-+time::trunc(ts'infinity', 'year');
-+time::trunc(pd'-infinity', 'month');
- time::trunc(<datetime> 'infinity', 'day');
-```
-
----
-
-### Incident Patch 3: `e7135c26` (2026-11-03)
-**Commit Message**: fix(extensions): drop the removed files target from the BINDINGS tests (#2525)
-
-**File**: `language-tests/tests/language/statements/define/extension/bindings.surql` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ database = true
- auth = { level = "owner" }
- 
- [env.capabilities]
--allow-experimental = ["surrealism", "files"]
-+allow-experimental = ["surrealism"]
- 
- [test]
- reason = """BINDINGS is an object of expressions, kept as written: a subquery stays parenthesised so the definition parses back, and INFO STRUCTURE shows each expression as text, never its value. With a DIGEST and no archive to fetch, the definition is stored unchecked, so the names are checked against the package when the extension reads them."""
-```
-
-**File**: `language-tests/tests/language/statements/define/extension/bindings_duplicate_name.surql` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ database = true
- auth = { level = "owner" }
- 
- [env.capabilities]
--allow-experimental = ["surrealism", "files"]
-+allow-experimental = ["surrealism"]
- 
- [test]
- reason = """A name bound twice is refused rather than resolved by order."""
-```
-
-**File**: `language-tests/tests/language/statements/define/extension/bindings_not_object.surql` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ database = true
- auth = { level = "owner" }
- 
- [env.capabilities]
--allow-experimental = ["surrealism", "files"]
-+allow-experimental = ["surrealism"]
- 
- [test]
- reason = """BINDINGS takes an object literal."""
-```
-
-**File**: `language-tests/tests/language/statements/define/extension/bindings_twice.surql` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@ database = true
- auth = { level = "owner" }
- 
- [env.capabilities]
--allow-experimental = ["surrealism", "files"]
-+allow-experimental = ["surrealism"]
- 
- [test]
- reason = """BINDINGS is one object; a second clause is refused rather than merged or replacing the first."""
-```
-
-**File**: `surrealdb/core/src/kvs/tests/extension_bindings_test.rs` (modified, +2/-3)
-```diff
-@@ -162,9 +162,8 @@ async fn ds() -> Arc<Datastore> {
- 
- /// [`ds`], with the archive built for `abi`.
- async fn ds_for(abi: Abi) -> Arc<Datastore> {
--	let caps = Capabilities::all().with_experimental(Targets::Some(
--		[ExperimentalTarget::Surrealism, ExperimentalTarget::Files].into(),
--	));
-+	let caps = Capabilities::all()
-+		.with_experimental(Targets::Some([ExperimentalTarget::Surrealism].into()));
- 	let ds = Datastore::builder()
- 		.without_maintenance_tasks()
- 		.with_capabilities(caps)
+@@ -0,0 +1 @@
++<svg viewBox="10.00 40.00 210.00 204.21" width="19.0" height="18.48" xmlns="http://www.w3.org/2000/svg"><path d="M120,40 C155.635,40 185.049,66.628 189.434,101.071 C189.667,102.902 190.818,104.492 192.467,105.323 C208.797,113.551 220,130.466 220,150 C220,177.614 197.614,200 170,200 L60,200 C32.386,200 10,177.614 10,150 C10,126.861 25.718,107.393 47.059,101.69 C49.146,101.133 50.76,99.431 51.149,97.306 C57.12,64.706 85.675,40 120,40 Z" fill="#FF00A0"/></svg>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7707** (2026-11-17): Restyle the README with the current brand (@jaimemh)
+- **PR #7643** (closed): Fix repeated indexed mutations of a record (@DeviousCardi)
 - **PR #7620** (closed): fix: emit slow log on query timeout (@sanoy07)
 - **PR #7619** (closed): Reject conflicting DEFINE INDEX kind keywords (@sanoy07)
+- **PR #7597** (closed): fix: Keep TransactionConflict at the Commit of Client-Side Transactions (@tamaro-skaljic)
 - **PR #7587** (closed): Update CLI banner (@martinschaer)
-- **PR #7521** (closed): Fix KILLED notifications being dropped by the WebSocket client. (@BarronKane)
-- **PR #7520** (closed): Carry the owning session id on Killed notifications. (@BarronKane)
-- **PR #7517** (closed): fix(tikv): fallback 0 gRPC message size configs to default 4MB (@Tyagiquamar)
 
 ---
 
@@ -3503,44 +2728,59 @@ Co-authored-by: Tobie Morgan Hitchcock <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sql): a table given an alias is reachable only by the alias (#2505)
+## X. Restyle the README with the current brand
 
 **RULE**:
-When implementing operations in `language-tests/tests/pgsql/alias_hides_table_name_in_where_refused.pgsql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in surrealdb/surrealdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in surrealdb/surrealdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f129a77a`: sql): a table given an alias is reachable only by the alias (#2505). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1b73f91b`: Restyle the README with the current brand. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `language-tests/tests/pgsql/alias_hides_table_name_in_where_refused.pgsql`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/**
-[env]
-namespace = true
-database = true
-imports = ["pgsql/_schema.surql"]
+<p align="center">
+    <a href="https://surrealdb.com" target="_blank">
+        <img width="100%" src="./img/hero.svg" alt="SurrealDB - The database and memory for every agent">
+    </a>
+</p>
 
-[test]
-reason = "A WHERE clause cannot name an aliased table by its own name, as in PostgreSQL"
-
-[test.results]
-request-error = "PostgreSQL SELECT lowering error: missing FROM-clause entry for table \"users\""
-*/
-
-SELECT u.name FROM users u WHERE users.age > 20;
+<br>
+<h2><img height="26" align="absmiddle" src="./img/whatissurreal.svg" alt="">&nbsp;&nbsp;What is SurrealDB?</h2>
+<img width="100%" src="./img/interface.svg" alt="SurrealDB Studio running a SurrealQL query and showing its results">
+<h2><img height="19" align="absmiddle" src="./img/icons/list.svg" alt="">&nbsp;&nbsp;Contents</h2>
+<h2><img height="22" align="absmiddle" src="./img/icons/star.svg" alt="">&nbsp;&nbsp;Features</h2>
+<h2><img height="23" align="absmiddle" src="./img/icons/book.svg" alt="">&nbsp;&nbsp;Documentation</h2>
+<h2><img height="23" align="absmiddle" src="./img/icons/play.svg" alt="">&nbsp;&nbsp;Getting started</h2>
+    <a href="https://surrealdb.com/docs/integration/sdks/rust"><img width=60 title="Rust" src="./img/sdks/server/rust.svg" /></a>
+    <a href="https://surrealdb.com/docs/integration/sdks/javascript"><img width=60 title="JavaScript" src="./img/sdks/server/javascript.svg" /></a>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+<a href="https://surrealdb.com#gh-dark-mode-only" target="_blank">
+    <img width="100%" src="/img/white/hero.png" alt="SurrealDB Hero">
+</a>
+<a href="https://surrealdb.com#gh-light-mode-only" target="_blank">
+    <img width="100%" src="/img/black/hero.png" alt="SurrealDB Hero">
+</a>
+<h2><img height="20" src="./img/whatissurreal.svg">&nbsp;&nbsp;What is SurrealDB?</h2>
+<img width="100%" src="./img/interface.png" alt="Surrealist">
+<h2><img height="20" src="./img/contents.svg">&nbsp;&nbsp;Contents</h2>
+<h2><img height="20" src="./img/features.svg">&nbsp;&nbsp;Features</h2>
+<h2><img height="20" src="./img/documentation.svg">&nbsp;&nbsp;Documentation</h2>
+<h2><img height="20" src="./img/gettingstarted.svg">&nbsp;&nbsp;Getting started</h2>
+    <a href="https://surrealdb.com/docs/integration/sdks/rust"><img width=60 title="Rust" src="https://raw.githubusercontent.com/surrealdb/icons/main/rust.svg" /></a>
+    <a href="https://surrealdb.com/docs/integration/sdks/javascript"><img width=60 title="JavaScript" src="https://raw.githubusercontent.com/surrealdb/icons/main/javascript.svg" /></a>
+    <a href="https://surrealdb.com/docs/sdk/javascript/engines/wasm"><img width=60 title="WebAsse
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f129a77a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1b73f91b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

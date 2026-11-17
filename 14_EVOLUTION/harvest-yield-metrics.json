@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T16:31:05.448Z",
-  "total_cycles_completed": 10171,
-  "total_learnings_persisted": 10171,
-  "total_rules_promoted": 9743,
+  "last_updated": "2026-11-17T16:38:53.783Z",
+  "total_cycles_completed": 10176,
+  "total_learnings_persisted": 10176,
+  "total_rules_promoted": 9747,
   "history": [
-    {
-      "timestamp": "2026-11-17T00:27:02.012Z",
-      "repository": "NousResearch/Arete-27B",
-      "learningId": "learn-huggingface-nousresearch-arete-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T00:38:27.980Z",
-      "repository": "PrunaAI/P-H3-Image",
-      "learningId": "learn-huggingface-prunaai-p-h3-image",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T00:38:32.000Z",
-      "repository": "ratatui/ratatui",
-      "learningId": "learn-github-ratatui-ratatui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T00:38:39.092Z",
-      "repository": "goodrain/rainbond",
-      "learningId": "learn-github-goodrain-rainbond",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T00:38:41.544Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T00:55:57.323Z",
       "repository": "1jehuang/jcode",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-17T16:31:05.448Z",
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:38:38.318Z",
+      "repository": "XHToken/Spark-X2.6-4B",
+      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:38:40.885Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:38:47.969Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:38:51.371Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T16:38:53.783Z",
+      "repository": "surrealdb/surrealdb",
+      "learningId": "learn-github-surrealdb-surrealdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

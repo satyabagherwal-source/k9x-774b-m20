@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T16:31:09.639Z",
-  "total_records": 1606,
+  "last_updated": "2026-11-17T16:38:58.567Z",
+  "total_records": 1609,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 675,
+      "total": 677,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -724,7 +724,9 @@
         "domain_intelligence-research-knowledge-intelligence-orcarouter-orcacyber-nano-1-0-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-",
         "domain_intelligence-research-knowledge-intelligence-recursivesi-flint-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-recursivesi-flint-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-recursivesi-flint-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-learnings-core-invarian"
       ]
     },
     "E": {
@@ -1073,7 +1075,7 @@
       ]
     },
     "H": {
-      "total": 385,
+      "total": 386,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1459,7 +1461,8 @@
         "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-learnings-core-invar",
         "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor",
         "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-lea",
-        "domain_intelligence-technical-construction-intelligence-synalinks-synalinks-skills-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-synalinks-synalinks-skills-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-surrealdb-surrealdb-core-invariants"
       ]
     },
     "I": {
@@ -9455,8 +9458,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "e44e7e0cba00558e68ab2f46602423f953a26d9c2c5379b61b2b5d6a06c09cd9",
-      "created_at": "2026-11-17T11:09:51.126Z"
+      "content_hash": "b8adee97426ad053e017ce8f2dc501d57210734ddaa3671f874fddfd74700685",
+      "created_at": "2026-11-17T16:38:51.694Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -10352,8 +10355,8 @@
       "title": "Content & Information Intelligence: prometheus/prometheus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-content-information-intelligence-prometheus-prometheus-cor.md",
       "repository": "prometheus/prometheus",
-      "content_hash": "657b2c3095b8946448218b9df0efbef662f08a22835cdb2106241cc89615bfb5",
-      "created_at": "2026-11-16T16:00:11.239Z"
+      "content_hash": "beb707eb3bc2c5495dfb74840c31b62ff7877dd2640111a27ae833a1bc3447f3",
+      "created_at": "2026-11-17T16:38:48.346Z"
     },
     "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants",
@@ -13064,8 +13067,8 @@
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "repository": "restatedev/restate",
-      "content_hash": "0337700791c3cc40a48281cd89c29c346a38bd93973abc712da38743b33e569c",
-      "created_at": "2026-11-16T01:52:40.570Z"
+      "content_hash": "dce2057354140146c7d34a533c07226b8344c9e86b7652b38551751d35a1e295",
+      "created_at": "2026-11-17T16:38:41.235Z"
     },
     "DOM-H-948029CF": {
       "record_id": "DOM-H-948029CF",
@@ -13141,8 +13144,8 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-learnings-architecture-intelligence-restatedev-restate-learni.md",
       "repository": "restatedev-restate-learnings",
-      "content_hash": "996a21e734932454dbd8ae522510ec89364a0bad214a3b1fa96123803ac79ec0",
-      "created_at": "2026-11-16T01:52:53.108Z"
+      "content_hash": "fd2af14f11e69b2107fc074710f6595fd5f08ae0747e5a755ee7c5b000b05f09",
+      "created_at": "2026-11-17T16:38:57.506Z"
     },
     "DOM-H-C33FF226": {
       "record_id": "DOM-H-C33FF226",
@@ -23669,8 +23672,8 @@
       "title": "Content & Information Intelligence: prometheus-prometheus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-learnings-content-information-intelligence-prometheus-prom.md",
       "repository": "prometheus-prometheus-learnings",
-      "content_hash": "58f5f8e18b80faa5decc244e37d3b5df0a9ea2021afefa67be38e0f2a1dbb6e8",
-      "created_at": "2026-11-16T16:00:23.233Z"
+      "content_hash": "02097c87b9edc2fe68ed61384cfec03fa451d2b4e73874c25233ff6ccd18ecb4",
+      "created_at": "2026-11-17T16:38:58.567Z"
     },
     "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants",
@@ -27597,6 +27600,33 @@
       "repository": "hf-recursivesi-flint-learnings",
       "content_hash": "2605cdad1d4a38239328622a2e249aed1064b609298becc53d0e0eb851c2f2c5",
       "created_at": "2026-11-17T16:31:09.222Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: XHToken/Spark-X2.6-4B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xhtoken-spark-x2-6-4b-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-c.md",
+      "repository": "XHToken/Spark-X2.6-4B",
+      "content_hash": "92dc98e65e7d3911320b8332fe88669f8d5738e1d530dd1b60b830fcbac39d9a",
+      "created_at": "2026-11-17T16:38:38.506Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-surrealdb-surrealdb-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-surrealdb-surrealdb-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: surrealdb/surrealdb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-surrealdb-surrealdb-technical-construction-intelligence-surrealdb-surrealdb-core.md",
+      "repository": "surrealdb/surrealdb",
+      "content_hash": "9c3b27e5ddb8af65d89b7c750c91ccec8c9a5f3fafbc2d6aa62d5a7827304763",
+      "created_at": "2026-11-17T16:38:54.107Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-xhtoken-spark-x2.6-4b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xhtoken-spark-x2-6-4b-learnings-research-knowledge-intelligence-hf-xhtoken-sp.md",
+      "repository": "hf-xhtoken-spark-x2.6-4b-learnings",
+      "content_hash": "0471c32079f73966a1af40d844f86c43d8f070ab5fd5f0d4bb956d04c651f057",
+      "created_at": "2026-11-17T16:38:58.022Z"
     }
   }
 }

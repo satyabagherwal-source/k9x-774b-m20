@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T16:31:09.538Z",
+  "last_updated": "2026-11-17T16:38:58.438Z",
   "directives": [
     {
       "id": "CD-001",
@@ -24832,6 +24832,68 @@
       "source_repo": "i18next-react-i18next",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-25867D-re-render-for-a-bindi18nstore-event-betw.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-31AX",
+      "directive_title": "[Dependencies] Update libz-sys for zlib security fix",
+      "source_repo": "restatedev-restate-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-31AX-dependencies-update-libz-sys-for-zlib-security-fix.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-324I",
+      "directive_title": "Empirical Invariant Guard in write_otlp_handler.go",
+      "source_repo": "prometheus-prometheus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-324I-empirical-invariant-guard-in-write_otlp_handler-go.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-2WTH",
+      "directive_title": "make pip timeout longer to avoid problem with potentially safe-chain",
+      "source_repo": "zama-ai/tfhe-rs",
+      "source_commit": "16249fae",
+      "staged_file": "11_INBOX/candidate-directives/CD-2WTH-make-pip-timeout-longer-to-avoid-problem-with-potentially-safe-chain.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-2YOL",
+      "directive_title": "Restyle the README with the current brand",
+      "source_repo": "surrealdb/surrealdb",
+      "source_commit": "1b73f91b",
+      "staged_file": "11_INBOX/candidate-directives/CD-2YOL-restyle-the-readme-with-the-current-brand.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "E"
+    },
+    {
+      "id": "CD-REV-4566B7",
+      "directive_title": "[Dependencies] Update libz-sys for zlib security fix",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "restatedev-restate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4566B7--dependencies-update-libz-sys-for-zlib-s.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-2C4C95",
+      "directive_title": "Empirical Invariant Guard in write_otlp_handler.go",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "prometheus-prometheus",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2C4C95-empirical-invariant-guard-in-write-otlp-.md",
       "staged_date": "2026-11-17"
     }
   ]

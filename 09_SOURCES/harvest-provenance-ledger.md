@@ -10648,3 +10648,8 @@ Every entry in this ledger must capture:
 | `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `d0482266` | Multi-dimensional audit evidence | 2026-11-17T16:30:51.247Z |
 | `learn-github-i18next-react-i18next` | `https://github.com/i18next/react-i18next` | `96a8573c` | Multi-dimensional audit evidence | 2026-11-17T16:30:55.697Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `f266503a` | Multi-dimensional audit evidence | 2026-11-17T16:31:05.444Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-17T16:38:38.312Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `d2695f8c` | Multi-dimensional audit evidence | 2026-11-17T16:38:40.879Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `620819d1` | Multi-dimensional audit evidence | 2026-11-17T16:38:47.964Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `16249fae` | Multi-dimensional audit evidence | 2026-11-17T16:38:51.366Z |
+| `learn-github-surrealdb-surrealdb` | `https://github.com/surrealdb/surrealdb` | `1b73f91b` | Multi-dimensional audit evidence | 2026-11-17T16:38:53.777Z |

@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "723320f2",
+    "sourceVersion": "16249fae",
     "license": "NOASSERTION",
-    "contentHash": "4c78a8bdb0a53f6bcfa0cf676423fb1e97e3e2a5037f730cbd55ab2de1e2734c",
-    "lastHarvestedAt": "2026-11-17T11:09:50.866Z",
+    "contentHash": "96132406565710a1df78d54ef7c3604469f8b07e3139a97f492597e433afe10d",
+    "lastHarvestedAt": "2026-11-17T16:38:51.366Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -6373,10 +6373,10 @@
     "repository": "surrealdb/surrealdb",
     "platform": "github",
     "sourceUrl": "https://github.com/surrealdb/surrealdb",
-    "sourceVersion": "9577ac5f",
+    "sourceVersion": "1b73f91b",
     "license": "NOASSERTION",
-    "contentHash": "22f57728f96504831b3a41cb37b4c8b2dcb5821a7479e5ff84607478d4c8a6a2",
-    "lastHarvestedAt": "2026-11-03T20:49:45.109Z",
+    "contentHash": "8de3dd7b4d73d98f249bf6af3db9626fbc5ff3c403b022622f3d9298c49a6c3d",
+    "lastHarvestedAt": "2026-11-17T16:38:53.777Z",
     "learningId": "learn-github-surrealdb-surrealdb"
   },
   "mantinedev-mantine": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "05bbd304",
+    "sourceVersion": "620819d1",
     "license": "Apache-2.0",
-    "contentHash": "499c6a7a4aac8939f1c61cef323f3348589e70f1351c89f948cb24bde48c52bd",
-    "lastHarvestedAt": "2026-11-16T16:00:10.925Z",
+    "contentHash": "d1cf5c7cdc4ebb8774b09100a7702edf5e2cedafed1982fb65b99fe3a31789d2",
+    "lastHarvestedAt": "2026-11-17T16:38:47.964Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "12adfb14",
+    "sourceVersion": "d2695f8c",
     "license": "NOASSERTION",
-    "contentHash": "e9c4f18bd4402c94a12274402c926965ae603b8905ced4211a72442d396c2f70",
-    "lastHarvestedAt": "2026-11-16T01:52:40.282Z",
+    "contentHash": "7743f64be02d58c8f3253b1f0e353ca9a68068b1eefaf2d70c764fc9d5d2c819",
+    "lastHarvestedAt": "2026-11-17T16:38:40.879Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {
@@ -10495,8 +10495,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b",
     "license": "Open-Source",
-    "contentHash": "0eab085bcc89e35488d81961e15771764d7f11c0f6884b804c51865ddfedfc13",
-    "lastHarvestedAt": "2026-11-13T04:50:07.323Z",
+    "contentHash": "f0583beaa60d15cd4df12f938342e9318824c72373f49a586cb6965111d89d67",
+    "lastHarvestedAt": "2026-11-17T16:38:38.312Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b"
   },
   "hf-internscience-sage-a1.5": {

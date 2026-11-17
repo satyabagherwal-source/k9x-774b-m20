@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T16:31:09.750Z",
-  "total_verified_learnings": 8906,
+  "last_updated": "2026-11-17T16:38:58.713Z",
+  "total_verified_learnings": 8908,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20355,
+  "total_items": 20369,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213325,8 +213325,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "723320f2",
-      "content_hash": "4c78a8bdb0a53f6bcfa0cf676423fb1e97e3e2a5037f730cbd55ab2de1e2734c",
+      "source_version": "16249fae",
+      "content_hash": "96132406565710a1df78d54ef7c3604469f8b07e3139a97f492597e433afe10d",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213339,6 +213339,11 @@
           "number": 8957,
           "title": "refactor!: remove ShortintParameterSet and PublicKey",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9005,
+          "title": "make pip timeout longer to avoid problem with potentially safe-chain",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213346,7 +213351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T11:09:50.714Z",
+      "verified_at": "2026-11-17T16:38:51.172Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213388,10 +213393,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "723320f2",
-      "content_hash": "e44e7e0cba00558e68ab2f46602423f953a26d9c2c5379b61b2b5d6a06c09cd9",
+      "source_version": "16249fae",
+      "content_hash": "b8adee97426ad053e017ce8f2dc501d57210734ddaa3671f874fddfd74700685",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T11:09:51.126Z"
+      "persisted_at": "2026-11-17T16:38:51.694Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213400,10 +213405,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "723320f2",
-      "content_hash": "dd54ef723c5957f886e2ec0d9e5234a2e98ca51d1e8a6b3c0406de7f6780dd17",
+      "source_version": "16249fae",
+      "content_hash": "3e988e0dc8a8cae731928d8e5c560640e8bd1be037ad37880b24286baa21125c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T11:09:51.241Z"
+      "persisted_at": "2026-11-17T16:38:51.840Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -216220,8 +216225,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "05bbd304",
-      "content_hash": "499c6a7a4aac8939f1c61cef323f3348589e70f1351c89f948cb24bde48c52bd",
+      "source_version": "620819d1",
+      "content_hash": "d1cf5c7cdc4ebb8774b09100a7702edf5e2cedafed1982fb65b99fe3a31789d2",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -216234,6 +216239,11 @@
           "number": 8757,
           "title": "ui: align literal and duration keyword parsing with PromQL",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9004,
+          "title": "Empirical Invariant Guard in write_otlp_handler.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216241,7 +216251,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T16:00:10.760Z",
+      "verified_at": "2026-11-17T16:38:47.782Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216283,10 +216293,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-content-information-intelligence-prometheus-prometheus-cor.md",
       "title": "Content & Information Intelligence: prometheus/prometheus Core Invariants",
       "repository": "prometheus/prometheus",
-      "source_version": "05bbd304",
-      "content_hash": "657b2c3095b8946448218b9df0efbef662f08a22835cdb2106241cc89615bfb5",
+      "source_version": "620819d1",
+      "content_hash": "beb707eb3bc2c5495dfb74840c31b62ff7877dd2640111a27ae833a1bc3447f3",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T16:00:11.239Z"
+      "persisted_at": "2026-11-17T16:38:48.346Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-prometheus-prometheus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-prometheus-prometheus",
@@ -216295,10 +216305,10 @@
       "relative_path": "08_VERIFICATION/prometheus-prometheus-verification-protocol-empirical-defect-shield-for-promethe.md",
       "title": "Verification Protocol: Empirical Defect Shield for prometheus/prometheus",
       "repository": "prometheus/prometheus",
-      "source_version": "05bbd304",
-      "content_hash": "bb2f2628629c4123145a2efb589beb13fe839039d0d7ab462761974e53643374",
+      "source_version": "620819d1",
+      "content_hash": "b7e46dd66e2003bdc8f5749e8de78dec584ec7051be51d23871c3e2211a50e59",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T16:00:11.386Z"
+      "persisted_at": "2026-11-17T16:38:48.492Z"
     },
     "learn-github-lancedb-lancedb": {
       "learning_id": "learn-github-lancedb-lancedb",
@@ -223867,8 +223877,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "12adfb14",
-      "content_hash": "e9c4f18bd4402c94a12274402c926965ae603b8905ced4211a72442d396c2f70",
+      "source_version": "d2695f8c",
+      "content_hash": "7743f64be02d58c8f3253b1f0e353ca9a68068b1eefaf2d70c764fc9d5d2c819",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -223891,6 +223901,11 @@
           "number": 8686,
           "title": "[DataFusion] Report remote scan failures as external errors, not DataFusion bugs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9003,
+          "title": "[Dependencies] Update libz-sys for zlib security fix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223898,7 +223913,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T01:52:40.122Z",
+      "verified_at": "2026-11-17T16:38:40.701Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223992,10 +224007,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "repository": "restatedev/restate",
-      "source_version": "12adfb14",
-      "content_hash": "0337700791c3cc40a48281cd89c29c346a38bd93973abc712da38743b33e569c",
+      "source_version": "d2695f8c",
+      "content_hash": "dce2057354140146c7d34a533c07226b8344c9e86b7652b38551751d35a1e295",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T01:52:40.570Z"
+      "persisted_at": "2026-11-17T16:38:41.235Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate",
@@ -224016,10 +224031,10 @@
       "relative_path": "08_VERIFICATION/restatedev-restate-verification-protocol-empirical-defect-shield-for-restatedev-.md",
       "title": "Verification Protocol: Empirical Defect Shield for restatedev/restate",
       "repository": "restatedev/restate",
-      "source_version": "12adfb14",
-      "content_hash": "01b9e9606c4e62109c73da386163b8e943a7062ab2717a7ff0696f8cd78a9ab1",
+      "source_version": "d2695f8c",
+      "content_hash": "6b63febc8fdb64c0695c824c7be784acf448ef5bcfc9fdccf291edb1131d2b96",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T01:52:40.685Z"
+      "persisted_at": "2026-11-17T16:38:41.379Z"
     },
     "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants",
@@ -224029,9 +224044,9 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "996a21e734932454dbd8ae522510ec89364a0bad214a3b1fa96123803ac79ec0",
+      "content_hash": "fd2af14f11e69b2107fc074710f6595fd5f08ae0747e5a755ee7c5b000b05f09",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T01:52:53.108Z"
+      "persisted_at": "2026-11-17T16:38:57.506Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings",
@@ -224053,9 +224068,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for restatedev-restate-learnings",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "8097ccc2422e91378127210312fa4ce68a49bb61e60d7668f16963c6617e452c",
+      "content_hash": "2abaa09d2b4ed4e7b484251f2ab7e5ba9129057b45923ff9e06a82e4d61b319e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T01:52:53.221Z"
+      "persisted_at": "2026-11-17T16:38:57.654Z"
     },
     "candidate_directive-dual-ar-state-decoupling-invariant": {
       "item_id": "candidate_directive-dual-ar-state-decoupling-invariant",
@@ -255788,9 +255803,9 @@
       "title": "Content & Information Intelligence: prometheus-prometheus-learnings Core Invariants",
       "repository": "prometheus-prometheus-learnings",
       "source_version": "HEAD",
-      "content_hash": "58f5f8e18b80faa5decc244e37d3b5df0a9ea2021afefa67be38e0f2a1dbb6e8",
+      "content_hash": "02097c87b9edc2fe68ed61384cfec03fa451d2b4e73874c25233ff6ccd18ecb4",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T16:00:23.233Z"
+      "persisted_at": "2026-11-17T16:38:58.567Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-prometheus-prometheus-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-prometheus-prometheus-learning",
@@ -255800,9 +255815,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for prometheus-prometheus-learnings",
       "repository": "prometheus-prometheus-learnings",
       "source_version": "HEAD",
-      "content_hash": "b6611bf286f48f44ca982d5443cc6cec6dca75d32e1ee4d655976a6efd140ee5",
+      "content_hash": "f0d578bbf20fb2a0f0186c709c53855db0d86f913e48c34970ce6ebc1c06ea3d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T16:00:23.358Z"
+      "persisted_at": "2026-11-17T16:38:58.713Z"
     },
     "learn-github-stakater-reloader": {
       "learning_id": "learn-github-stakater-reloader",
@@ -272870,6 +272885,218 @@
       "content_hash": "2605cdad1d4a38239328622a2e249aed1064b609298becc53d0e0eb851c2f2c5",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T16:31:09.222Z"
+    },
+    "learn-huggingface-xhtoken-spark-x2-6-4b": {
+      "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "XHToken/Spark-X2.6-4B",
+      "repository": "XHToken/Spark-X2.6-4B",
+      "slug": "hf-xhtoken-spark-x2.6-4b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B",
+      "source_version": "hf-xhtoken-spark-x2.6-4b",
+      "content_hash": "f0583beaa60d15cd4df12f938342e9318824c72373f49a586cb6965111d89d67",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T16:38:38.108Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xhtoken-spark-x2-6-4b-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-c.md",
+      "title": "Research & Knowledge Intelligence: XHToken/Spark-X2.6-4B Core Invariants",
+      "repository": "XHToken/Spark-X2.6-4B",
+      "source_version": "hf-xhtoken-spark-x2.6-4b",
+      "content_hash": "92dc98e65e7d3911320b8332fe88669f8d5738e1d530dd1b60b830fcbac39d9a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:38:38.506Z"
+    },
+    "rule-9003": {
+      "learning_id": "rule-9003",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9003,
+      "title": "[Dependencies] Update libz-sys for zlib security fix",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "d2695f8c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:38:40.701Z"
+    },
+    "candidate_directive-dependencies-update-libz-sys-for-zlib-security-fix": {
+      "item_id": "candidate_directive-dependencies-update-libz-sys-for-zlib-security-fix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-31AX-dependencies-update-libz-sys-for-zlib-security-fix.md",
+      "title": "[Dependencies] Update libz-sys for zlib security fix",
+      "repository": "restatedev-restate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "631d97b2488bcc20687ed935484d4b9118c938f8a4d3bf57d5a9f144b5f2b0bc",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T16:38:57.374Z"
+    },
+    "rule-9004": {
+      "learning_id": "rule-9004",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9004,
+      "title": "Empirical Invariant Guard in write_otlp_handler.go",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "620819d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:38:47.782Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-write_otlp_handler-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-write_otlp_handler-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-324I-empirical-invariant-guard-in-write_otlp_handler-go.md",
+      "title": "Empirical Invariant Guard in write_otlp_handler.go",
+      "repository": "prometheus-prometheus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "17e4f9ce0d414b5b17449d92ac0929075d2173b344f1b15ec21fd9171cb76a3d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:38:58.438Z"
+    },
+    "rule-9005": {
+      "learning_id": "rule-9005",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9005,
+      "title": "make pip timeout longer to avoid problem with potentially safe-chain",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "16249fae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:38:51.172Z"
+    },
+    "candidate_directive-make-pip-timeout-longer-to-avoid-problem-with-potentially-safe-chain": {
+      "item_id": "candidate_directive-make-pip-timeout-longer-to-avoid-problem-with-potentially-safe-chain",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2WTH-make-pip-timeout-longer-to-avoid-problem-with-potentially-safe-chain.md",
+      "title": "make pip timeout longer to avoid problem with potentially safe-chain",
+      "repository": "zama-ai/tfhe-rs",
+      "source_version": "16249fae",
+      "content_hash": "c7f06906da9d5a6c45a4b63680276782f95122a7fbd6a773b28a273d0b12dcf9",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-17T16:38:51.562Z"
+    },
+    "learn-github-surrealdb-surrealdb": {
+      "learning_id": "learn-github-surrealdb-surrealdb",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "surrealdb/surrealdb",
+      "repository": "surrealdb/surrealdb",
+      "slug": "surrealdb-surrealdb",
+      "platform": "github",
+      "source_url": "https://github.com/surrealdb/surrealdb",
+      "source_version": "1b73f91b",
+      "content_hash": "8de3dd7b4d73d98f249bf6af3db9626fbc5ff3c403b022622f3d9298c49a6c3d",
+      "dossier_path": "07_PROJECT_LEARNING/surrealdb-surrealdb-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/surrealdb-surrealdb-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9006,
+          "title": "Restyle the README with the current brand",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T16:38:53.573Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9006": {
+      "learning_id": "rule-9006",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9006,
+      "title": "Restyle the README with the current brand",
+      "source_url": "https://github.com/surrealdb/surrealdb",
+      "source_version": "1b73f91b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T16:38:53.573Z"
+    },
+    "candidate_directive-restyle-the-readme-with-the-current-brand": {
+      "item_id": "candidate_directive-restyle-the-readme-with-the-current-brand",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2YOL-restyle-the-readme-with-the-current-brand.md",
+      "title": "Restyle the README with the current brand",
+      "repository": "surrealdb/surrealdb",
+      "source_version": "1b73f91b",
+      "content_hash": "d926d16d8561162cd4f8f13e6fdd4317d8790c1ecd7c7c20dcdda4fcd0d7803f",
+      "domain_letter": "E",
+      "persisted_at": "2026-11-17T16:38:53.978Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-surrealdb-surrealdb-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-surrealdb-surrealdb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-surrealdb-surrealdb-technical-construction-intelligence-surrealdb-surrealdb-core.md",
+      "title": "Technical Construction Intelligence: surrealdb/surrealdb Core Invariants",
+      "repository": "surrealdb/surrealdb",
+      "source_version": "1b73f91b",
+      "content_hash": "9c3b27e5ddb8af65d89b7c750c91ccec8c9a5f3fafbc2d6aa62d5a7827304763",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T16:38:54.107Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-surrealdb-surrealdb": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-surrealdb-surrealdb",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/surrealdb-surrealdb-verification-protocol-empirical-defect-shield-for-surrealdb-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for surrealdb/surrealdb",
+      "repository": "surrealdb/surrealdb",
+      "source_version": "1b73f91b",
+      "content_hash": "943596598496731edf4b5564c68c6cd5e7672a3ea345e20b11a4a2602e5934bc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T16:38:54.251Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-learnings-core-invarian": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xhtoken-spark-x2-6-4b-learnings-research-knowledge-intelligence-hf-xhtoken-sp.md",
+      "title": "Research & Knowledge Intelligence: hf-xhtoken-spark-x2.6-4b-learnings Core Invariants",
+      "repository": "hf-xhtoken-spark-x2.6-4b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0471c32079f73966a1af40d844f86c43d8f070ab5fd5f0d4bb956d04c651f057",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T16:38:58.022Z"
     }
   },
   "ai-builder-brain": {

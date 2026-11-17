@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T16:22:04.043Z",
+  "updated_at": "2026-11-17T16:38:58.249Z",
   "stats": {
-    "total_discovered": 5041,
-    "approved_pending_harvest": 4753,
+    "total_discovered": 5042,
+    "approved_pending_harvest": 4754,
     "harvested_count": 0,
     "rejected_count": 288,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4741,
+      "COMMUNITY_AND_EXPERT": 4742,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -108907,6 +108907,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
         "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-21668694FA0E": {
+      "id": "SRC-21668694FA0E",
+      "url": "https://github.com/prometheus/prometheus/pull/19940",
+      "title": "https://github.com/prometheus/prometheus/pull/19940",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T16:38:58.248Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
       }
     }
   }

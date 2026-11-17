@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T16:31:05.451Z",
+  "last_updated": "2026-11-17T16:38:53.787Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "4c78a8bdb0a53f6bcfa0cf676423fb1e97e3e2a5037f730cbd55ab2de1e2734c",
-      "verified_at": "2026-11-17T11:09:50.873Z",
+      "content_hash": "96132406565710a1df78d54ef7c3604469f8b07e3139a97f492597e433afe10d",
+      "verified_at": "2026-11-17T16:38:51.374Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T11:09:50.873Z"
+      "last_updated": "2026-11-17T16:38:51.374Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -9651,14 +9651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-surrealdb-surrealdb",
-      "content_hash": "22f57728f96504831b3a41cb37b4c8b2dcb5821a7479e5ff84607478d4c8a6a2",
-      "verified_at": "2026-11-03T20:49:45.117Z",
+      "content_hash": "8de3dd7b4d73d98f249bf6af3db9626fbc5ff3c403b022622f3d9298c49a6c3d",
+      "verified_at": "2026-11-17T16:38:53.786Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T20:49:45.117Z"
+      "last_updated": "2026-11-17T16:38:53.786Z"
     },
     "mantinedev/mantine": {
       "repository": "mantinedev/mantine",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "499c6a7a4aac8939f1c61cef323f3348589e70f1351c89f948cb24bde48c52bd",
-      "verified_at": "2026-11-16T16:00:10.933Z",
+      "content_hash": "d1cf5c7cdc4ebb8774b09100a7702edf5e2cedafed1982fb65b99fe3a31789d2",
+      "verified_at": "2026-11-17T16:38:47.973Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T16:00:10.933Z"
+      "last_updated": "2026-11-17T16:38:47.973Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "e9c4f18bd4402c94a12274402c926965ae603b8905ced4211a72442d396c2f70",
-      "verified_at": "2026-11-16T01:52:40.291Z",
+      "content_hash": "7743f64be02d58c8f3253b1f0e353ca9a68068b1eefaf2d70c764fc9d5d2c819",
+      "verified_at": "2026-11-17T16:38:40.888Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T01:52:40.291Z"
+      "last_updated": "2026-11-17T16:38:40.888Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -15771,14 +15771,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "content_hash": "0eab085bcc89e35488d81961e15771764d7f11c0f6884b804c51865ddfedfc13",
-      "verified_at": "2026-11-13T04:50:07.330Z",
+      "content_hash": "f0583beaa60d15cd4df12f938342e9318824c72373f49a586cb6965111d89d67",
+      "verified_at": "2026-11-17T16:38:38.321Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T04:50:07.330Z"
+      "last_updated": "2026-11-17T16:38:38.321Z"
     },
     "InternScience/Sage-A1.5": {
       "repository": "InternScience/Sage-A1.5",
