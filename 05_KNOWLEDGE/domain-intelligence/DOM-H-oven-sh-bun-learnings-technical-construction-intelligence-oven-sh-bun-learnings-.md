@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T12:53:12.926Z",
+  "timestamp": "2026-11-17T21:03:28.020Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-oven-sh-bun-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [oven-sh-bun-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T12:53:12.926Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T21:03:28.020Z`  
 > **Learning ID**: `LEARN-EVO-oven-sh-bun-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from oven-sh-bun-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `237bba51`  
+> **Source Version**: `73e945ec`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T12:53:08.728Z  
+> **Timestamp**: 2026-11-17T21:03:04.559Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T12:48:06.819Z  
+> **Harvest Timestamp**: 2026-11-17T21:03:04.553Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96712 stars
+- **Stars / Engagement**: 96727 stars
 
 ---
 
@@ -1006,13 +1006,11 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #48765** (2026-11-12): **error: Unexpected token: /**
-  *Symptoms*: ### What version of Bun is running?  1.4.4+38afee6c8  ### What platform is your computer?  macos  ### What steps can reproduce the bug?  ``` echo "@supports (content:counter(line) / '') {}" > /tmp/bun-css-test.css bun build /tmp/bun-css-test.css --outdir /tmp/bun-css-test ```  ### What is the expected behavior?  _No response_  ### What do you see instead?  _No response_  ### Additional information  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > This is fixed on `main` by #47025 (commit 7942008688a, merged 2026-10-27). The fix is not in a release yet. Bun 1.4.4 (tag `bun-v1.4.4` = 38afee6c8, the version in the report) is from before that commit.  **Root cause:** `Parser::expect_no_error_token` in `src/css/css_parser.rs` returned right after it scanned a nested block (a function or a parenthesis group). Any token after the nested block in an `@supports` declaration condition then failed the "input is exhausted" check. `counter(line)` is the nested block here, and `/` is the token after it. The same failure hit `@supports (transform: translate(1px) rotate(1deg))` and `@import ... supports(...)`. #47025 removed that early return and added tests for it (`test/js/bun/css/css.test.ts`, "Tokens after a nested block"). See also #38552.  **Bun version:** `1.4.3` (release) and `1.4.4-debug` (main, 8aa496e1df5) on `linux x64`  **Attempt 1:** The report's steps on the released Bun 1.4.3 (same code path as 1.4.4). ```console $ echo "@suppo
+- **Issue #49227** (2026-11-17): **RedisClient: after a reconnect with an in-flight command, replies are delivered to the wrong command**
+  *Symptoms*: ### What version of Bun is running? 1.3.14 (Windows x64). Redis 8 (Docker).  ### What steps can reproduce the bug? Run with a Redis on localhost:6379:  ```ts import { RedisClient } from "bun";  const admin = new RedisClient("redis://localhost:6379"); const client = new RedisClient("redis://localhost:6379"); await admin.connect(); await client.connect(); for (let i = 0; i < 8; i++) await admin.set(`repro:k${i}`, `value-${i}`);  // 1. A command is in flight when the connection drops. const id = String(await client.send("CLIENT", ["ID"])); const inFlight = client.send("BLPOP", ["repro:empty-list", "2"]).then( 	(v) => `resolved: ${v}`, 	(e) => `rejected: ${e.message}`, ); await Bun.sleep(100); await admin.send("CLIENT", ["KILL", "ID", id]); await Bun.sleep(500);  // 2. Normal traffic after the automatic reconnect: one GET every 200 ms. const results: string[] = []; for (let i = 1; i < 8; i++) { 	void client.get(`repro:k${i}`).then((value) => 		results.push(`GET repro:k${i} -> ${value}${value === `value-${i}` ? "" : "   <-- WRONG"}`), 	); 	await Bun.sleep(200); } await Bun.sleep(1000);  console.log("in-flight command:", await Promise.race([inFlight, Bun.sleep(100).then(() => "never settled")])); console.log(results.join("\n")); console.log(`Bun ${Bun.version} (${process.platform}), connected=${client.connected}`); for (let i = 0; i < 8; i++) await admin.del(`repro:k${i}`); client.close(); admin.close(); process.exit(0); ```  ### What is the expected behavior? The in-flight `BLPOP`
 
-- **Issue #48450** (2026-11-10): **AOT regression since 1.4.4-canary.20261108.1: build plugin modules are added as entry points**
-  *Symptoms*: ### What version of Bun is running?  1.4.4-canary.1+98cda0d8b  ### What platform is your computer?  Darwin 25.6.0 x86_64 i386  ### What steps can reproduce the bug?  This is a canary regression. The same project and the same source build on one canary and fail on the next. A standalone, framework-free reproduction repository is public: [TiBianMod/bun-aot-build-plugin-entry-point](https://github.com/TiBianMod/bun-aot-build-plugin-entry-point).  ```sh git clone https://github.com/TiBianMod/bun-aot-build-plugin-entry-point.git cd bun-aot-build-plugin-entry-point ./repro.sh ```  **1. Canary bisect**  | canary                    | revision                   | result         | | ------------------------- | -------------------------- | -------------- | | `1.4.4-canary.20261107.1` | `1.4.4-canary.1+7ca0042d3` | build succeeds | | `1.4.4-canary.20261108.1` | `1.4.4-canary.1+2596ac5`   | build fails    |  ```sh npx -y bun@1.4.4-canary.20261107.1 build.ts   # succeeds npx -y bun@1.4.4-canary.20261108.1 build.ts   # fails ```  Only one commit is between them: **#47942 — “AOT: the Bun side of the rewritten ahead-of-time compiler”**.  **2. Reproduction files**  A single entry point is passed to `Bun.build`. It loads a build plugin module through a helper that takes the module path as a parameter and calls `import(entry)`:  ```ts // entry.tsx import { load } from "./loader.js";  export const pluginFactory = load("./plugins/tsx.ts"); ```  ```ts // loader.ts export async function load(entry: 
+- **Issue #49123** (2026-11-16): **CSS modules: keyframe name in an `animation` shorthand is not hashed when the value holds `var()`**
+  *Symptoms*: ### What version of Bun is running?  1.4.4  ### What steps can reproduce the bug?  `a.module.css`:  ```css @keyframes spin { from { rotate: 0 } } .plain    { animation: spin 1s linear; } .withvar  { animation: spin var(--d) linear; } .longhand { animation-name: spin; animation-duration: var(--d); } ```  `i.js`:  ```js import s from "./a.module.css"; console.log(s); ```  Run `bun build i.js --outdir out` and open `out/i.css`.  ### What is the expected behavior?  All three rules name the hashed keyframes, `spin_BLNoTg`.  ### What do you see instead?  ```css @keyframes spin_BLNoTg { from { rotate: 0; } } .plain_BLNoTg    { animation: 1s linear spin_BLNoTg; } .withvar_BLNoTg  { animation: spin var(--d) linear; }   /* not hashed */ .longhand_BLNoTg { animation-name: spin_BLNoTg; animation-duration: var(--d); } ```  The `var()` rule keeps `spin`, so the animation silently never plays. There is no warning.  ### Additional information  #18921 fixed the plain shorthand (PR #33322). When the value holds `var()`, it stays an unparsed token list, so the rename probably skips it. A possible fix: in an `animation` (or `animation-name`) declaration with unparsed tokens, rename any ident token that matches a `@keyframes` name declared in the same module.  The workaround is to use longhands: `animation-name: spin; animation-duration: var(--d);`. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1029,1007 +1027,1765 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bdd1a6a8` (2026-11-16)
-**Commit Message**: jsc: event loop keep-alives and VM handle references have owners (#49060)
+### Incident Patch 1: `7bc51bbf` (2026-11-17)
+**Commit Message**: postgres: the handshake and the request pipeline are enums without JS types, with 9 bug fixes (#49172)
 
 ### What does this PR do?
 
-C++ kept the event loop alive with paired `+1` / `-1` calls guarded by
-flags, and counted its references to a VM's handle by hand. Both have
-owners now. 18 manual releases are gone, and `src` is 85 lines shorter.
+The connection held two state machines as flags and counters, mixed with
+JS calls. They are now enums in `bun_sql`, which cannot name `bun_jsc`.
 
-- **`EventLoopKeepAlive`:** one byte that holds the loop while it is
-active and lets go when it is destroyed. `MessagePort`,
-`BroadcastChannel`, the worker's global scope and inspector connections
-hold one in place of their flags.
-- **`MessagePort`:** the reference it holds to itself after `ref()` or
-`onmessage =` is a `RefPtr`.
-- **VM handle:** a `RefPtr` / `Ref` in the client data, the N-API env
-and cross-thread posts.
-- **Windows signal handles:** a `unique_ptr` in the map that tracks
-them.
-- **Cells:** the check that the GC runs a cell's destructor also rejects
-a `destroy` inherited from a base class with fewer members. Four types
-get their own.
-- Left as they are: the pairs in `JSCTaskScheduler` and the webview
-backends, which are released from another thread.
+- New: `handshake.rs`, `pipeline.rs`, `frontend.rs`.
+- Deleted: 17 files, `NewWriter`, `MessageType`, three counters, some
+debug logs. `src` without tests: +2,211 / -3,433.
+- Deleted, unused since #49155: `QueryStatus.rs`, `StatementStatus.rs`,
+`sql_jsc/error.rs`, `ON_CONNECT_PENDING`, three dependencies of
+`bun_sql_jsc`.
+- Outside tests: 7 panic sites removed, none added. 2 `unsafe` blocks
+removed, 1 moved, none added.
 
-### Bugs and issues fixed
+**Bugs this fixes**
 
-No open issue. Each has a test that fails on `main`.
+| What happened | Cause | Fix | Test |
+| --- | --- | --- | --- |
+| Password or query sent before `checkServerIdentity` returned | nested
+tick | refused until startup | sql-tls-server-identity |
+| Cancelled query ran after 26000 | retry forgot the cancel | rejects |
+postgres-connection |
+| `[{}]` for ever, 42P05, leaked statement | error before RowDescription
+| close, prepare again | postgres-connection |
+| Rejected query still ran | stray error | never written |
+postgres-c
 
-- The process never exited
-
-**File**: `src/jsc/VmHandle.rs` (modified, +18/-15)
+**File**: `Cargo.lock` (modified, +3/-5)
 ```diff
-@@ -783,9 +783,9 @@ pub extern "C" fn Bun__VmHandle__retain(vm: &VirtualMachine) -> *const Shared {
- /// # Safety
- /// `r` is a live reference its holder keeps for the duration of the call.
- #[unsafe(no_mangle)]
--pub unsafe extern "C" fn Bun__VmHandle__retainRef(r: *const Shared) -> *const Shared {
-+pub unsafe extern "C" fn Bun__VmHandle__retainRef(r: *const Shared) {
-     // SAFETY: fn contract.
--    unsafe { VmHandle::borrow_ref(r) }.clone().into_ref()
-+    unsafe { Arc::increment_strong_count(r) };
- }
+@@ -1978,9 +1978,12 @@ version = "0.0.0"
+ dependencies = [
+  "bitflags",
+  "bstr",
++ "bun_alloc",
++ "bun_base64",
+  "bun_boringssl",
+  "bun_collections",
+  "bun_core",
++ "bun_ptr",
+  "bun_sha_hmac",
+  "bun_sys",
+  "strum",
+@@ -1993,9 +1996,7 @@ version = "0.0.0"
+ dependencies = [
+  "bitflags",
+  "bstr",
+- "bun_alloc",
+  "bun_analytics",
+- "bun_base64",
+  "bun_boringssl",
+  "bun_boringssl_sys",
+  "bun_collections",
+@@ -2005,12 +2006,9 @@ dependencies = [
+  "bun_io",
+  "bun_jsc",
+  "bun_ptr",
+- "bun_sha_hmac",
+  "bun_sql",
+  "bun_uws",
+  "scopeguard",
+- "strum",
+- "thiserror",
+ ]
  
- /// Any thread: give a reference up.
-@@ -798,31 +798,34 @@ pub unsafe extern "C" fn Bun__VmHandle__release(r: *const Shared) {
-     drop(unsafe { VmHandle::from_ref(r) });
- }
+ [[package]]
+```
+
+**File**: `docs/runtime/sql.mdx` (modified, +7/-8)
+```diff
+@@ -1728,14 +1728,13 @@ The client raises these errors while it decodes a result, after the server ran t
  
--/// Any thread: post a C++ task to the VM's `kind` loop through a reference and
--/// give the reference up (queued, or deleted unrun if the VM is closed).
-+/// Any thread: see [`VmHandle::post_cpp_task`].
- ///
- /// # Safety
--/// `r` came from `Bun__VmHandle__retain*` and is not used afterwards; `task` is
--/// a live heap `WebCore::EventLoopTask` handed over.
-+/// `r` is a live reference its holder keeps for the duration of the call; `task` is a live heap `WebCore::EventLoopTask` handed over.
- #[unsafe(no_mangle)]
--pub unsafe extern "C" fn Bun__VmHandle__postAndRelease(
-+pub unsafe extern "C" fn Bun__VmHandle__post(
-     r: *const Shared,
-     task: *mut crate::cpp_task::CppTask,
-     kind: LoopKind,
- ) {
-     // SAFETY: fn contract.
--    let handle = unsafe { VmHandle::from_ref(r) };
--    // SAFETY: fn contract.
--    unsafe { handle.post_cpp_task(kind, task) };
-+    unsafe { VmHandle::borrow_ref(r).post_cpp_task(kind, task) };
-+}
-+
-+/// The JS thread, or the collector's while the JS thread is stopped.
-+#[unsafe(no_mangle)]
-+pub extern "C" fn Bun__eventLoop__refKeepAlive(vm: &VirtualMachine) {
-+    vm.event_loop().ref_keep_alive();
- }
+ ### PostgreSQL Protocol Errors
  
--/// JS thread: adjust this VM's keep-alive directly.
-+/// `Bun::EventLoopKeepAlive`.
- #[unsafe(no_mangle)]
--pub extern "C" fn Bun__eventLoop__refKeepAlive(vm: &VirtualMachine, delta: core::ffi::c_int) {
--    if delta > 0 {
--        vm.event_loop().ref_keep_alive();
-+pub extern "C" fn Bun__eventLoop__setKeptAlive(kept_alive: bool) {
-+    let event_loop = VirtualMachine::get().event_loop();
-+    if kept_alive {
-+        event_loop.ref_keep_alive();
-     } else {
--        vm.event_loop().unref_keep_alive();
-+        event_loop.unref_keep_alive();
+-| Protocol Errors                         | Description                 |
+-| --------------------------------------- | --------------------------- |
+-| `ERR_POSTGRES_EXPECTED_REQUEST`         | Expected client request     |
+-| `ERR_POSTGRES_EXPECTED_STATEMENT`       | Expected prepared statement |
+-| `ERR_POSTGRES_INVALID_BACKEND_KEY_DATA` | Invalid backend key data    |
+-| `ERR_POSTGRES_INVALID_MESSAGE`          | Invalid protocol message    |
+-| `ERR_POSTGRES_INVALID_MESSAGE_LENGTH`   | Invalid message length      |
+-| `ERR_POSTGRES_UNEXPECTED_MESSAGE`       | Unexpected message type     |
++| Protocol Errors                         | Description              |
++| --------------------------------------- | ------------------------ |
++| `ERR_POSTGRES_EXPECTED_REQUEST`         | Expected client request  |
++| `ERR_POSTGRES_INVALID_BACKEND_KEY_DATA` | Invalid backend key data |
++| `ERR_POSTGRES_INVALID_MESSAGE`          | Invalid protocol message |
++| `ERR_POSTGRES_INVALID_MESSAGE_LENGTH`   | Invalid message length   |
++| `ERR_POSTGRES_UNEXPECTED_MESSAGE`       | Unexpected message type  |
+ 
+ ### PostgreSQL Transaction Errors
+ 
+```
+
+**File**: `src/sql/Cargo.toml` (modified, +3/-0)
+```diff
+@@ -14,8 +14,11 @@ thiserror.workspace = true
+ strum.workspace = true
+ bstr.workspace = true
+ bitflags.workspace = true
++bun_alloc.workspace = true
++bun_base64.workspace = true
+ bun_core.workspace = true
+ bun_collections.workspace = true
+ bun_sys.workspace = true
+ bun_boringssl.workspace = true
++bun_ptr.workspace = true
+ bun_sha_hmac.workspace = true
+```
+
+**File**: `src/sql/error.rs` (modified, +0/-3)
+```diff
+@@ -1,7 +1,5 @@
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
+ pub enum Error {
+-    #[error("InvalidCharacter")]
+-    InvalidCharacter,
+     #[error("UnknownFieldType")]
+     UnknownFieldType,
+     #[error(transparent)]
+@@ -12,7 +10,6 @@ impl Error {
+     #[allow(clippy::trivially_copy_pass_by_ref)]
+     pub fn name(&self) -> &'static str {
+         match self {
+-            Self::InvalidCharacter => "InvalidCharacter",
+             Self::UnknownFieldType => "UnknownFieldType",
+             Self::Postgres(e) => <&'static str>::from(e),
+         }
+```
+
+**File**: `src/sql/lib.rs` (modified, +3/-37)
+```diff
+@@ -9,16 +9,12 @@ pub mod shared {
+     pub mod column_identifier;
+     #[path = "ConnectionFlags.rs"]
+     pub mod connection_flags;
+-    #[path = "QueryStatus.rs"]
+-    pub mod query_status;
+     #[path = "SQLQueryResultMode.rs"]
+     pub mod sql_query_result_mode;
+     #[path = "SSLMode.rs"]
+     pub mod ssl_mode;
+     #[path = "StackReader.rs"]
+     pub(crate) mod stack_reader;
+-    #[path = "StatementStatus.rs"]
+-    pub mod statement_status;
+ 
+     pub use column_identifier::ColumnIdentifier;
+     pub use connection_flags::ConnectionFlags;
+@@ -97,16 +93,15 @@ pub mod postgres {
+     pub mod any_postgres_error;
+     #[path = "CommandTag.rs"]
+     pub mod command_tag;
++    pub mod frontend;
++    pub mod handshake;
++    pub mod pipeline;
+     #[path = "PostgresProtocol.rs"]
+     pub mod postgres_protocol;
+     #[path = "PostgresTypes.rs"]
+     pub mod postgres_types;
+     #[path = "SocketMonitor.rs"]
+     pub mod socket_monitor;
+-    #[path = "Status.rs"]
+-    pub mod status;
+-    #[path = "TLSStatus.rs"]
+-    pub mod tls_status;
+ 
+     pub mod types {
+         #[path = "int_types.rs"]
+@@ -118,35 +113,21 @@ pub mod postgres {
+     pub mod protocol {
+         #[path = "FieldType.rs"]
+         pub mod field_type;
+-        #[path = "PortalOrPreparedStatement.rs"]
+-        pub mod portal_or_prepared_statement;
+-        #[path = "zHelpers.rs"]
+-        pub(crate) mod z_helpers;
+ 
+-        #[path = "Authentication.rs"]
+-        pub mod authentication;
+         #[path = "BackendKeyData.rs"]
+         pub mod backend_key_data;
+         #[path = "CommandComplete.rs"]
+         pub mod command_complete;
+-        #[path = "CopyData.rs"]
+-        pub mod copy_data;
+         #[path = "DataRow.rs"]
+         pub mod data_row;
+-        #[path = "Describe.rs"]
+-        pub mod describe;
+         #[path = "ErrorResponse.rs"]
+         pub mod error_response;
+-        #[path = "Execute.rs"]
+-        pub mod execute;
+         #[path = "FieldDescription.rs"]
+         pub mod field_description;
+         #[path = "FieldMessage.rs"]
+         pub mod field_message;
+         #[path = "NewReader.rs"]
+         pub mod new_reader;
+-        #[path = "NewWriter.rs"]
+-        pub mod new_writer;
+         pub mod notice_response {
+             /// Same wire format as `ErrorResponse` (length-prefixed list of
+             /// field messages), so it reuses the same decoder.
+@@ -158,27 +139,12 @@ pub mod postgres {
+         pub mod parameter_description;
+         #[path = "ParameterStatus.rs"]
+         pub mod parameter_status;
+-        #[path = "Parse.rs"]
+-        pub mod parse;
+-        #[path = "PasswordMessage.rs"]
+-        pub mod password_message;
+         #[path = "ReadyForQuery.rs"]
+         pub mod ready_for_query;
+         #[path = "RowDescription.rs"]
+         pub mod row_description;
+-        #[path = "SASLInitialResponse.rs"]
+-        pub mod sasl_initial_response;
+-        #[path = "SASLResponse.rs"]
+-        pub mod sasl_response;
+-        #[path = "StartupMessage.rs"]
+-        pub mod startup_message;
+-
+-        // ── flat re-exports for `bun_sql_jsc` (Write trait surface) ──
+-        pub use new_writer::WriterContext;
      }
- }
  
+     pub use any_postgres_error::{AnyPostgresError, PostgresErrorOptions};
+     pub use command_tag::CommandTag;
+-    pub use status::Status;
+-    pub use tls_status::TLSStatus;
+ }
 ```
 
-**File**: `src/jsc/bindings/BunClientData.cpp` (modified, +2/-4)
+**File**: `src/sql/postgres/AnyPostgresError.rs` (modified, +4/-12)
 ```diff
-@@ -100,8 +100,6 @@ JSVMClientData::~JSVMClientData()
-     ASSERT(m_sqliteDatabases.isEmpty());
+@@ -6,14 +6,15 @@
+ // We hand-roll Display via `IntoStaticStr` so the message == the variant name,
+ // and impl `std::error::Error` manually.
+ #[allow(non_camel_case_types)]
+-#[derive(Debug, Copy, Clone, Eq, PartialEq, strum::IntoStaticStr, strum::EnumString)]
++#[derive(Debug, Copy, Clone, Eq, PartialEq, strum::IntoStaticStr)]
+ pub enum AnyPostgresError {
++    ChannelBindingFailed,
++    ChannelBindingRequired,
+     ConnectionClosed,
+     ConnectionFailed,
+     ConnectionRefused,
+     CopyNotSupported,
+     ExpectedRequest,
+-    ExpectedStatement,
+     InvalidBackendKeyData,
+     InvalidBinaryData,
+     InvalidByteSequence,
+@@ -28,6 +29,7 @@ pub enum AnyPostgresError {
+     SASL_SIGNATURE_MISMATCH,
+     SASL_SIGNATURE_INVALID_BASE64,
+     SASLIterationCountOutOfRange,
++    SASLNoKnownMechanism,
+     ShortRead,
+     TLSNotAvailable,
+     TLSUpgradeFailed,
+@@ -43,16 +45,6 @@ pub enum AnyPostgresError {
  
-     m_normalWorld = nullptr;
--    if (vmHandle)
--        Bun__VmHandle__release(std::exchange(vmHandle, nullptr));
- }
- void JSVMClientData::create(VM* vm, void* bunVM, WorkerMessagingProxy* worker)
- {
-@@ -110,8 +108,8 @@ void JSVMClientData::create(VM* vm, void* bunVM, WorkerMessagingProxy* worker)
-     clientData->bunVM = bunVM;
-     clientData->m_isWorkerVM = !!worker;
-     clientData->m_isNodeWorkerVM = worker && worker->options().kind == WorkerOptions::Kind::Node;
--    clientData->vmHandle = Bun__VmHandle__retain(bunVM);
--    clientData->vmHandleState = Bun__VmHandle__stateAddress(clientData->vmHandle);
-+    clientData->vmHandle = adoptRef(Bun__VmHandle__retain(bunVM));
-+    clientData->vmHandleState = Bun__VmHandle__stateAddress(clientData->vmHandle.get());
-     vm->deferredWorkTimer->onAddPendingWork = [clientData](Ref<JSC::DeferredWorkTimer::Ticket>&& ticket, JSC::DeferredWorkTimer::WorkType kind) -> void {
-         Bun::JSCTaskScheduler::onAddPendingWork(clientData, WTF::move(ticket), kind);
-     };
+ bun_core::impl_tag_error!(AnyPostgresError);
+ 
+-// Reverse of the above: `crate::Error` is just an interned name; recover the
+-// matching variant by name (or `JSError` as a catch-all). Needed because the
+-// protocol `write_internal` helpers were widened to `crate::Error` while
+-// callers (e.g. `PostgresRequest`) still propagate `AnyPostgresError`.
+-impl From<crate::Error> for AnyPostgresError {
+-    fn from(e: crate::Error) -> Self {
+-        e.name().parse().unwrap_or(AnyPostgresError::JSError)
+-    }
+-}
+-
+ /// Options for creating a PostgresError
+ // These slices borrow from the parsed wire buffer for the duration of
+ // `createPostgresError`; the `'a` lifetime ties them to that buffer.
 ```
 
-**File**: `src/jsc/bindings/BunClientData.h` (modified, +26/-17)
+**File**: `src/sql/postgres/PostgresProtocol.rs` (modified, +1/-27)
 ```diff
-@@ -2,13 +2,18 @@
+@@ -1,4 +1,4 @@
+-use crate::postgres::types::int_types::{int4, int32};
++use crate::postgres::types::int_types::int4;
  
- // A counted reference to a VM's handle (bun_jsc::VmHandle): what any thread other than the
- // VM's own uses to post work to it, keep its loop alive, or ask whether it may still run
--// script. retain / retainRef take a count, release gives one up; valid however long it is held.
-+// script. Valid however long it is held.
- #include "BunLoopKind.h"
- #include <wtf/SharedTask.h>
- struct BunVmHandleRef;
- extern "C" const BunVmHandleRef* Bun__VmHandle__retain(void* bunVM); // JS thread
--extern "C" const BunVmHandleRef* Bun__VmHandle__retainRef(const BunVmHandleRef*); // any thread
-+extern "C" void Bun__VmHandle__retainRef(const BunVmHandleRef*); // any thread
- extern "C" void Bun__VmHandle__release(const BunVmHandleRef*);
-+struct BunVmHandleRef {
-+    BunVmHandleRef() = delete;
-+    void ref() const { Bun__VmHandle__retainRef(this); }
-+    void deref() const { Bun__VmHandle__release(this); }
-+};
- namespace JSC {
- class TopExceptionScope;
- }
-@@ -25,9 +30,7 @@ namespace WebCore {
- class WorkerMessagingProxy;
- class EventLoopTask;
- }
--// Post to the VM's `kind` loop through a reference and give it up in one step (a reference taken only
--// to outlive a lock).
--extern "C" void Bun__VmHandle__postAndRelease(const BunVmHandleRef*, WebCore::EventLoopTask*, BunLoopKind);
-+extern "C" void Bun__VmHandle__post(const BunVmHandleRef*, WebCore::EventLoopTask*, BunLoopKind);
- extern "C" void Bun__VmHandle__refKeepAlive(const BunVmHandleRef*, BunLoopKind, int delta);
- extern "C" void Bun__VmHandle__wake(const BunVmHandleRef*); // any thread
- // Node's can_call_into_js(): false once the VM's stop was requested (terminate()/exit/teardown). Any thread.
-@@ -41,8 +44,6 @@ inline bool Bun__VmHandle__scriptAllowedInline(const unsigned char* state)
-     // Rust's AtomicU8 has the layout of u8; a relaxed load pairs with its stores.
-     return reinterpret_cast<const std::atomic<unsigned char>*>(state)->load(std::memory_order_relaxed) == BUN_VM_HANDLE_STATE_OPEN;
- }
--// JS thread only: adjust the keep-alive of the VM this thread runs.
--extern "C" void Bun__eventLoop__refKeepAlive(void* bunVM, int delta);
+ // The big-endian (network-order) byte representation of `n`.
+ #[inline(always)]
+@@ -19,43 +19,17 @@ pub const BIND_COMPLETE: [u8; 5] = tag_len(b'2', 4);
  
- namespace WebCore {
+ pub const PARSE_COMPLETE: [u8; 5] = tag_len(b'1', 4);
  
-@@ -269,10 +270,8 @@ class JSVMClientData : public JSC::VM::ClientData {
-     RefPtr<WTF::SharedTask<void()>> idleCollectionDidFinish;
+-pub const SYNC: [u8; 5] = tag_len(b'S', 4);
+ pub const NO_DATA: [u8; 5] = tag_len(b'n', 4);
  
-     void* bunVM;
--    // Opaque box of the Rust VmHandle for this VM: what any *other* thread uses
--    // to post work / ref the loop (never bunVM). Created in create(), released
--    // in the destructor; valid however long C++ holds it.
--    const ::BunVmHandleRef* vmHandle { nullptr };
-+    // A count on the Rust VmHandle for this VM: what any *other* thread uses to post work / ref the loop (never bunVM).
-+    RefPtr<const ::BunVmHandleRef> vmHandle;
-     // vmHandle's state byte (Bun__VmHandle__stateAddress): the per-callback "may run script" test is one load.
-     const unsigned char* vmHandleState { nullptr };
-     ALWAYS_INLINE bool scriptAllowed() const { return Bun__VmHandle__scriptAllowedInline(vmHandleState); }
-@@ -431,20 +430,30 @@ const JSC::HeapCellType& customHeapCellType()
-     return heapCellType;
- }
+-pub fn write_query<Context: WriterContext>(
+-    query: &[u8],
+-    writer: &mut NewWriter<Context>,
+-) -> Result<(), crate::postgres::AnyPostgresError> {
+-    let count: usize = core::mem::size_of::<u32>() + query.len() + 1;
+-    let header: [u8; 5] = {
+-        let b = int32(count)?;
+-        [b'Q', b[0], b[1], b[2], b[3]]
+-    };
+-    writer.write(&header)?;
+-    writer.string(query)?;
+-    Ok(())
+-}
+-
+-pub use crate::postgres::protocol::authentication::Authentication;
+ pub use crate::postgres::protocol::backend_key_data::BackendKeyData;
+ pub use crate::postgres::protocol::command_complete::CommandComplete;
+-pub use crate::postgres::protocol::copy_data::CopyData;
+ pub use crate::postgres::protocol::data_row as DataRow;
+-pub use crate::postgres::protocol::describe::Describe;
+ pub use crate::postgres::protocol::error_response::ErrorResponse;
+-pub use crate::postgres::protocol::execute::Execute;
+ pub use crate::postgres::protocol::field_description::FieldDescription;
+ pub use crate::postgres::protocol::new_reader::NewReader;
+-pub use crate::postgres::protocol::new_writer::{NewWriter, WriterContext};
+ pub use crate::postgres::protocol::notice_response::NoticeResponse;
+ pub use crate::postgres::protocol::notification_response::NotificationResponse;
+ pub use crate::postgres::protocol::parameter_description::ParameterDescription;
+ pub use crate::postgres::protocol::parameter_status::ParameterStatus;
+-pub use crate::postgres::protocol::parse::Parse;
+-pub use crate::postgres::protocol::password_message::PasswordMessage;
+-pub use crate::postgres::protocol::portal_or_prepared_statement::PortalOrPreparedStatement;
+ pub use crate::postgres::protocol::ready_for_query::ReadyForQuery;
+ pub use crate::postgres::protocol::row_description::RowDescription;
+-pub use crate::postgres::protocol::sasl_initial_response::SASLInitialResponse;
+-pub use crate::postgres::protocol::sasl_response::SASLResponse;
+-pub use crate::postgres::protocol::startup_message::StartupMessage;
+```
+
+**File**: `src/sql/postgres/Status.rs` (removed, +0/-16)
+```diff
+@@ -1,16 +0,0 @@
+-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+-pub enum Status {
+-    Disconnected,
+-    Connecting,
+-    // Prevent sending the startup message multiple times.
+-    // Particularly relevant for TLS connections.
+-    SentStartupMessage,
+-    Connected,
+-    Failed,
+-}
+-
+-impl Status {
+-    pub fn is_closed(self) -> bool {
+-        matches!(self, Status::Disconnected | Status::Failed)
+-    }
+-}
+```
+
+---
+
+### Incident Patch 2: `5ada9fff` (2026-11-17)
+**Commit Message**: shell: builtins share one write path and one state enum (#49161)
+
+### What does this PR do?
+
+Every builtin had its own copy of "write to stdout or stderr, wait if it
+is an fd, then finish", with a private state enum. They now share
+`Builtin::sink`, `finish`, `fail` and one `on_io_writer_chunk`. Replaces
+the shell part of #32023.
+
+- Ten builtins keep no state. `State` has 7 variants instead of 19.
+- touch, mkdir, ls, cp and rm report through `Batch`. mv's batches are
+`PoolTask`s.
+- Arguments are `BackRef<[u8]>` instead of `*const c_char`.
+- Deleted: `OutputTask*`, `FlagParser`, `BuiltinState`,
+`OutputNeedsIOSafeGuard`, `needs_io`, `write_no_io`, `enqueue_fmt_bltn`,
+`err_buf`, rm's `RemoveFileHandler` and `need_to_wait`, `true_.rs`,
+`false_.rs`. src: +1483/-5449.
+- Panic sites: 52 removed, 0 added. `unsafe` blocks: 19 removed, 11
+added (rewrites of removed ones). `YesTask::run_from_main_thread` became
+an `unsafe fn`: it can free the task.
+
+**Bugs this fixes**
+
+- `rm -dv dir` printed nothing on Linux. That `rmdir` did not record the
+path. Now it does. Test: `rm.test.ts`.
+
+**Visible changes**
+
+The fix above: like `rm -v file`, it now waits if stdout is a full pipe.
+A failed `mv` into a
+
+**File**: `src/runtime/dispatch.rs` (modified, +4/-6)
+```diff
+@@ -810,7 +810,7 @@ fn run_task_cold(task: &Task) {
+         task_tag::ShellTouchTask => shell_dispatch!(PoolTask<ShellTouchTask>),
+         task_tag::ShellMkdirTask => shell_dispatch!(PoolTask<ShellMkdirTask>),
+         task_tag::ShellLsTask => shell_dispatch!(PoolTask<ShellLsTask>),
+-        task_tag::ShellMvBatchedTask => shell_dispatch!(ShellMvBatchedTask),
++        task_tag::ShellMvBatchedTask => shell_dispatch!(PoolTask<ShellMvBatchedTask>),
+         task_tag::ShellMvCheckTargetTask => shell_dispatch!(PoolTask<ShellMvCheckTargetTask>),
+         task_tag::ShellRmTask => shell_dispatch!(ShellRmTask),
+         task_tag::ShellRmDirTask => {
+@@ -819,10 +819,8 @@ fn run_task_cold(task: &Task) {
+         }
+         task_tag::ShellGlobTask => shell_dispatch!(PoolTask<ShellGlobTask>),
+         task_tag::ShellYesTask => {
+-            // SAFETY: §Dispatch — tag identifies pointee; enqueued by
+-            // `YesTask::enqueue`, storage lives inside `Box<Yes>` in the
+-            // interpreter arena and is stable until the builtin deinits.
+-            ShellYesTask::run_from_main_thread(unsafe { &*cast_ptr!(ShellYesTask) });
++            // SAFETY: §Dispatch — tag identifies pointee; enqueued by `YesTask::enqueue`.
++            unsafe { ShellYesTask::run_from_main_thread(cast_ptr!(ShellYesTask)) };
+         }
  
--// True when T::destroy is JSCell::destroy, which runs no destructor. A non-public destroy can only be an override.
--template<typename T>
--inline constexpr bool inheritsJSCellDestroy = [] {
--    if constexpr (requires { static_cast<void (*)(JSC::JSCell*)>(&T::destroy); })
--        return static_cast<void (*)(JSC::JSCell*)>(&T::destroy) == static_cast<void (*)(JSC::JSCell*)>(&JSC::JSCell::destroy);
-+// A non-public destroy can only be an override.
-+template<typename T, typename From>
-+inline constexpr bool inheritsDestroy = [] {
-+    using Destroy = void (*)(JSC::JSCell*);
-+    if constexpr (requires { static_cast<Destroy>(&T::destroy) == static_cast<Destroy>(&From::destroy); })
-+        return static_cast<Destroy>(&T::destroy) == static_cast<Destroy>(&From::destroy);
-     else
-         return false;
- }();
+         // Any tag the hot path mis-routed: producer bug.
+@@ -1775,7 +1773,7 @@ fn __bun_release_task_unrun(task: bun_event_loop::Task) {
+         task_tag::ShellGlobTask => release_in!([Shell], PoolTask<ShellGlobTask>),
+         task_tag::ShellLsTask => release_in!([Shell], PoolTask<ShellLsTask>),
+         task_tag::ShellMkdirTask => release_in!([Shell], PoolTask<ShellMkdirTask>),
+-        task_tag::ShellMvBatchedTask => release_in!([Shell], ShellMvBatchedTask),
++        task_tag::ShellMvBatchedTask => release_in!([Shell], PoolTask<ShellMvBatchedTask>),
+         task_tag::ShellMvCheckTargetTask => release_in!([Shell], PoolTask<ShellMvCheckTargetTask>),
+         task_tag::ShellRmDirTask => release_in!([Shell], ShellRmDirTask),
+         task_tag::ShellRmTask => release_in!([Shell], ShellRmTask),
+```
+
+**File**: `src/runtime/shell/Builtin.rs` (modified, +239/-545)
+```diff
+@@ -1,204 +1,113 @@
+-//! A builtin command runs inside a `Cmd` state node. The builtin stores the
+-//! `NodeId` of its owning Cmd and every method takes `&Interpreter`.
++//! A builtin command runs inside a `Cmd` state node and is reached through that node's `NodeId`.
  
-+// JSCell::destroy runs no destructor, and that of another base class only its own.
-+template<typename T>
-+inline constexpr bool destroySkipsMembers = [] {
-+    if constexpr (requires { typename T::Base; })
-+        return inheritsDestroy<T, JSC::JSCell> || (inheritsDestroy<T, typename T::Base> && __datasizeof(T) != __datasizeof(typename T::Base));
-+    else
-+        return inheritsDestroy<T, JSC::JSCell>;
-+}();
++use bstr::BStr;
+ use bun_collections::VecExt;
+ use bun_jsc::PinnedArrayBuffer;
+-use core::ffi::c_char;
++use bun_ptr::BackRef;
++use core::fmt;
++use core::sync::atomic::{AtomicBool, AtomicUsize};
+ use std::rc::Rc;
+ 
+ use crate::node::fs::{note_shell_redirect, open_embedded_shell_operand, refuse_shell_redirect};
+ use crate::shell::ExitCode;
+ use crate::shell::ast;
+-use crate::shell::interpreter::{
+-    Interpreter, NodeId, OutputNeedsIOSafeGuard, ParseError, is_pollable_from_mode, shell_openat,
++use crate::shell::builtins::batch::Batch;
++use crate::shell::builtins::{
++    basename, cat, cd, cp, dirname, echo, exit, export, ls, mkdir, mv, pwd, rm, seq, touch, which,
++    yes,
+ };
++use crate::shell::interpreter::{Interpreter, NodeId, is_pollable_from_mode, shell_openat};
+ use crate::shell::io::{InKind, OutFd, OutKind};
+ use crate::shell::io_reader::IOReader;
+ use crate::shell::io_writer::{self, IOWriter};
+-use crate::shell::states::cmd::{Cmd, CmdState};
++use crate::shell::states::cmd::{Cmd, CmdState, Exec};
+ use crate::shell::yield_::Yield;
+ 
++/// Points into the `args` of the Cmd, which outlive the builtin.
++pub(crate) type Arg = BackRef<[u8]>;
 +
- template<typename T, UseCustomHeapCellType useCustomHeapCellType>
- ALWAYS_INLINE JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm, SubspaceSlots slots)
- {
-     static_assert(useCustomHeapCellType == UseCustomHeapCellType::Yes || std::is_base_of_v<JSC::JSDestructibleObject, T> || T::needsDestruction == JSC::DoesNotNeedDestruction);
--    static_assert(std::is_trivially_destructible_v<T> || (T::needsDestruction != JSC::DoesNotNeedDestruction && !inheritsJSCellDestroy<T>),
-+    static_assert(std::is_trivially_destructible_v<T> || (T::needsDestruction != JSC::DoesNotNeedDestruction && !destroySkipsMembers<T>),
-         "the
+ pub(crate) struct Builtin {
+-    pub(crate) kind: Kind,
+-    /// argv[1..] as NUL-terminated strings (argv[0] is the builtin name).
+-    /// Points into the Cmd's `args` storage.
+-    pub args: Vec<*const c_char>,
++    kind: Kind,
++    /// argv[1..]
++    args: Vec<Arg>,
+     pub(crate) stdin: BuiltinInput,
+-    pub(crate) stdout: BuiltinIO,
+-    pub(crate) stderr: BuiltinIO,
+-    /// Scratch for `fmt_error_arena`. One outstanding error string at a time.
+-    pub(crate) err_buf: Vec<u8>,
+-    pub(crate) impl_: Impl,
++    stdout: BuiltinIO,
++    stderr: BuiltinIO,
++    pub(crate) state: State,
++    /// Reports a [`Batch`] still waits for. A pool task adds the ones it causes before it reports.
++    pub(crate) running: AtomicUsize,
++    /// Tells the pool tasks of `rm` and `mv` that one of them has failed.
++    pub(crate) stop: AtomicBool,
+ }
+ 
+-// ──────────────────────────────────────────────────────────────────────────
+-// shell_builtins! — single source of truth for the builtin set.
+-//
+-// This table macro keeps the single-definition property: each row declares
+-// {Variant, argv0 name, module path, storage shape, usage, posix-gate} once
+-// and the macro emits `Kind`, `Impl`, `as_str`, `usage_string`,
+-// `from_argv0_raw`, `DISABLED_ON_POSIX`, `make_impl`, `start`,
+-// `on_io_writer_chunk`, and the per-variant [`BuiltinState`] downcast impls.
+-//
+-// Rows are grouped by storage shape (`unit` → bare variant, `inline` →
+-// `Variant(T)`, `boxed` → `Variant(Box<T>)`) because `macro_rules!` cannot
+-// expand a per-row helper in enum-variant position; grouping keeps the table
+-// declarative without a tt-muncher.
+-// ──────────────────────────────────────────────────────────────────────────
+-
+-/// Per-builtin state downcast. Replaces the 17 hand-rolled
+-/// `fn state_mut(interp, cmd) -> &mut Self { match Builtin::of_mut(..).impl_ {
+-/// Impl::X(v) => v, _ => unreachable!() } }` copies that every
+-/// `src/runtime/shell/builtin/*.rs` carried.
+-///
+-/// `extract` is the bare variant projection (knows whether the payload is
+-/// boxed in `Impl`); `state_mut` is the convenience entry point every builtin
+-/// actually calls. Call sites keep writing `Self::state_mut(interp, cmd)` —
+-/// they only need this trait in scope. Impls are generated per-row by
+-/// [`shell_builtins!`].
+-pub(crate) trait BuiltinState: Sized {
+-    /// Project `&mut Impl` → `&mut Self`. `unreachable!` on variant mismatch.
+-    fn extract(impl_: &mut Impl) -> &mut Self;
+-
+-    #[inline]
+-    #[track_caller]
+-    fn state_mut(interp: &Interpreter, cmd: NodeId) -> &mut Self {
+-        Self::extract(&mut Builtin::of_mut(interp, cmd).impl_)
+-    }
++/// What a builtin keeps between events.
++pub(crate) enum State {
++    /// No write is in flight.
++    Idle,
++    /// The last write is in flight.
++    Exiting(ExitCode),
++    Batch(Batch),
++    Cat(cat::Cat),
++    Mv(mv::Mv),
++    Which {
++        next: usize,
++        missing: bool,
++    },
++    Yes(Box<yes::Yes>),
+ }
+ 
+ macro_rules! shell_builtins {
+-    (
+-        unit:   { $( $UV:ident => ($u_mod:ident :: $UT:ident, $u_name:literal, $u_usage:expr) ),* $(,)? }
+-        inline: { $( $IV:ident => ($i_mod:ident :: $IT:ident, $i_name:literal, $i_usage:expr) ),* $(,)? }
+-        boxed:  { $( $BV:ident => ($b_mod:ident :: $BT:ident, $b_name:literal, $b_usage:expr) ),* $(,)? }
+-        posix_disabled: [ $( $PD:ident ),* $(,)? ]
+-    ) => {
++    ($( $kind:ident $name:literal $start:expr, )*) => {
+         #[repr(u8)]
+-        #[derive(Clone, Copy, PartialEq, Eq, Debug, strum::IntoStaticStr)]
+-        p
 ```
 
-**File**: `src/jsc/bindings/BunDebugger.cpp` (modified, +7/-9)
+**File**: `src/runtime/shell/IO.rs` (modified, +0/-11)
 ```diff
-@@ -3,6 +3,7 @@
- #include "BunDebugger.h"
- #include "BunCompiledModules.h"
- #include "CodeGenerationFromStrings.h"
-+#include "EventLoopKeepAlive.h"
- #include "ZigGlobalObject.h"
+@@ -5,7 +5,6 @@
+ use bun_collections::VecExt;
  
- #include <JavaScriptCore/InspectorFrontendChannel.h>
-@@ -103,7 +104,7 @@ class BunInspectorConnection : public ThreadSafeRefCounted<BunInspectorConnectio
-         : Inspector::FrontendChannel()
-         , globalObject(globalObject)
-         , scriptExecutionContextIdentifier(scriptExecutionContext.identifier())
--        , unrefOnDisconnect(shouldRefEventLoop)
-+        , shouldRefEventLoop(shouldRefEventLoop)
-     {
+ use crate::api::bun_spawn::stdio::Stdio;
+-use crate::shell::interpreter::OutputNeedsIOSafeGuard;
+ use crate::shell::io_reader::IOReader;
+ use crate::shell::io_writer::IOWriter;
+ use crate::shell::shell_body::subproc::ShellIO;
+@@ -123,16 +122,6 @@ impl OutKind {
+         }
      }
  
-@@ -125,9 +126,7 @@ class BunInspectorConnection : public ThreadSafeRefCounted<BunInspectorConnectio
-     {
-         this->status = ConnectionStatus::Connected;
-         auto* globalObject = context.jsGlobalObject();
--        if (this->unrefOnDisconnect) {
--            Bun__VmHandle__refKeepAlive(WebCore::clientData(JSC::getVM(globalObject))->vmHandle, BunLoopKind::Regular, 1);
+-    /// If this output requires async IO (i.e. it's an `Fd`), return the
+-    /// safeguard token; otherwise `None` and the caller can write
+-    /// synchronously to the captured buffer / drop.
+-    pub(crate) fn needs_io(&self) -> Option<OutputNeedsIOSafeGuard> {
+-        match self {
+-            OutKind::Fd(_) => Some(OutputNeedsIOSafeGuard::OutputNeedsIo),
+-            _ => None,
 -        }
-+        this->keepAlive.setActive(this->shouldRefEventLoop);
-         globalObject->setInspectable(true);
-         auto& inspector = globalObject->inspectorDebuggable();
-         inspector.setInspectable(true);
-@@ -211,10 +210,7 @@ class BunInspectorConnection : public ThreadSafeRefCounted<BunInspectorConnectio
-                 connection->inspector().disconnect(connection.get());
-             }
+-    }
+-
+     /// Retains the `IOWriter` Rc on
+     /// `shellio` so the subprocess's `PipeReader::captured_writer` can drain
+     /// captured bytes into it after the spawn returns.
+```
+
+**File**: `src/runtime/shell/IOWriter.rs` (modified, +2/-48)
+```diff
+@@ -164,7 +164,7 @@ struct State {
+     writer_idx: usize,
+     total_bytes_written: usize,
+     /// Set (and never cleared) by `fail_pending_writers`. A writer with a
+-    /// stored error is dead: `enqueue`/`enqueue_fmt_bltn` must reject new
++    /// stored error is dead: `enqueue` must reject new
+     /// chunks with this error instead of queueing them (see
+     /// `handle_dead_writer`). The syscall error is kept (not the derived
+     /// `SystemError`) so each rejected chunk gets its own freshly-derived
+@@ -869,52 +869,6 @@ impl IOWriter {
+         });
+         self.enqueue_internal(child)
+     }
+-
+-    /// Prefix `"{kind}: "` then format.
+-    pub(crate) fn enqueue_fmt_bltn(
+-        &self,
+-        child: ChildPtr,
+-        bytelist: Option<*mut Vec<u8>>,
+-        kind: Option<crate::shell::builtin::Kind>,
+-        args: core::fmt::Arguments<'_>,
+-    ) -> Yield {
+-        use std::io::Write as _;
+-        let s = self.state();
+-        let start = s.buf.len();
+-        if let Some(k) = kind {
+-            let _ = write!(&mut s.buf, "{}: ", k.as_str());
+-        }
+-        let _ = s.buf.write_fmt(args);
+-        // `buf` is written *before* the dead-writer checks (the bytes are dead
+-        // on the error path but no `Writer` references them, and an errored
+-        // writer never drains again).
+-        // NOTE: inline `handle_dead_writer` instead of calling the helper —
+-        // the helper re-derives `state()` while `s` is still live, which is two
+-        // simultaneous `&mut State` (UB under Stacked Borrows).
+-        if s.flags.broken_pipe {
+-            let err = sys::Error::from_code(E::EPIPE, sys::Tag::write).to_system_error();
+-            return Yield::OnIoWriterChunk {
+-                child,
+-                written: 0,
+-                err: Some(err),
+-            };
+-        }
+-        if let Some(err) = &s.err {
+-            return Yield::OnIoWriterChunk {
+-                child,
+-                written: 0,
+-                err: Some(err.to_shell_system_error()),
+-            };
+-        }
+-        let end = s.buf.len();
+-        s.writers.push(Writer {
+-            ptr: child,
+-            len: end - start,
+-            written: 0,
+-            bytelist,
+-        });
+-        self.enqueue_internal(child)
+-    }
+ }
  
--            if (connection->unrefOnDisconnect) {
--                connection->unrefOnDisconnect = false;
--                Bun__VmHandle__refKeepAlive(WebCore::clientData(context.vm())->vmHandle, BunLoopKind::Regular, -1);
+ enum WriteOutcome {
+@@ -1049,7 +1003,7 @@ pub(crate) fn on_io_writer_chunk(
+     use crate::shell::builtin::Builtin;
+     use crate::shell::states::{cmd, cond_expr, pipeline};
+     match child.tag {
+-        WriterTag::Builtin => Builtin::on_io_writer_chunk(interp, child.node, written, err),
++        WriterTag::Builtin => Builtin::on_io_writer_chunk(interp, child.node, err),
+         WriterTag::Cmd => cmd::Cmd::on_io_writer_chunk(interp, child.node, written, err),
+         WriterTag::CondExpr => {
+             cond_expr::CondExpr::on_io_writer_chunk(interp, child.node, written, err)
+```
+
+**File**: `src/runtime/shell/builtin/basename.rs` (modified, +10/-64)
+```diff
+@@ -1,70 +1,16 @@
+-use crate::shell::builtin::{Builtin, BuiltinState, IoKind, Kind};
++use crate::shell::builtin::{Builtin, IoKind};
+ use crate::shell::interpreter::{Interpreter, NodeId};
+-use crate::shell::io_writer::{ChildPtr, WriterTag};
+ use crate::shell::yield_::Yield;
+ 
+-#[derive(Default)]
+-pub(crate) struct Basename {
+-    state: State,
+-    buf: Vec<u8>,
+-}
+-
+-#[derive(Default)]
+-enum State {
+-    #[default]
+-    Idle,
+-    Err,
+-    Done,
+-}
+-
+-impl Basename {
+-    pub(crate) fn start(interp: &Interpreter, cmd: NodeId) -> Yield {
+-        let buf = {
+-            let bltn = Builtin::of(interp, cmd);
+-            let argc = bltn.args_slice().len();
+-            if argc == 0 {
+-                return Self::fail(interp, cmd, Kind::Basename.usage_string());
 -            }
-+            connection->keepAlive.setActive(false);
- 
-             {
-                 Locker<Lock> locker(inspectorConnectionsLock);
-@@ -476,7 +472,9 @@ class BunInspectorConnection : public ThreadSafeRefCounted<BunInspectorConnectio
- 
-     std::atomic<ConnectionStatus> status = ConnectionStatus::Pending;
- 
--    bool unrefOnDisconnect = false;
-+    const bool shouldRefEventLoop;
-+    // The inspected context's thread only. inspectorConnections holds the connection while it is active.
-+    EventLoopKeepAlive keepAlive;
- 
-     bool hasEverConnected = false;
- };
+-            let mut buf = Vec::new();
+-            for i in 0..argc {
+-                buf.extend_from_slice(bun_paths::resolve_path::basename(bltn.arg_bytes(i)));
+-                buf.push(b'\n');
+-            }
+-            buf
+-        };
+-
+-        Self::state_mut(interp, cmd).state = State::Done;
+-        if let Some(safeguard) = Builtin::of(interp, cmd).stdout.needs_io() {
+-            Self::state_mut(interp, cmd).buf = buf;
+-            let owned = Self::state_mut(interp, cmd).buf.clone();
+-            let child = ChildPtr::new(cmd, WriterTag::Builtin);
+-            return Builtin::of_mut(interp, cmd)
+-                .stdout
+-                .enqueue(child, &owned, safeguard);
+-        }
+-        let _ = Builtin::write_no_io(interp, cmd, IoKind::Stdout, &buf);
+-        Builtin::done(interp, cmd, 0)
+-    }
+-
+-    fn fail(interp: &Interpreter, cmd: NodeId, msg: &[u8]) -> Yield {
+-        Self::state_mut(interp, cmd).state = State::Err;
+-        Builtin::write_failing_error(interp, cmd, msg, 1)
++pub(crate) fn start(interp: &Interpreter, cmd: NodeId) -> Yield {
++    let args = Builtin::of(interp, cmd).args();
++    if args.is_empty() {
++        return Builtin::fail_usage(interp, cmd, b"usage: basename string\n");
+     }
+-
+-    pub(crate) fn on_io_writer_chunk(
+-        interp: &Interpreter,
+-        cmd: NodeId,
+-        _: usize,
+-        err: Option<bun_sys::SystemError>,
+-    ) -> Yield {
+-        if let Some(_err) = err {
+-            Self::state_mut(interp, cmd).state = State::Err;
+-            return Builtin::done(interp, cmd, 1);
+-        }
+-        match Self::state_mut(interp, cmd).state {
+-            State::Done => Builtin::done(interp, cmd, 0),
+-            State::Err => Builtin::done(interp, cmd, 1),
+-            State::Idle => unreachable!("Basename.onIOWriterChunk: idle"),
+-        }
++    let mut out = Vec::new();
++    for path in args {
++        out.extend_from_slice(bun_paths::resolve_path::basename(path));
++        out.push(b'\n');
+     }
++    Builtin::finish(interp, cmd, IoKind::Stdout, &out, 0)
+ }
 ```
 
-**File**: `src/jsc/bindings/BunProcess.cpp` (modified, +13/-16)
+**File**: `src/runtime/shell/builtin/batch.rs` (added, +99/-0)
 ```diff
-@@ -1081,10 +1081,16 @@ JSC_DEFINE_HOST_FUNCTION(Process_functionChdir, (JSC::JSGlobalObject * globalObj
- static HashMap<int, Vector<String, 2>>* signalNumberToNamesMap = nullptr;
- static HashMap<String, int>* signalNameToNumberMap = nullptr;
- 
-+#if OS(WINDOWS)
-+extern "C" void Bun__UVSignalHandle__close(uv_signal_t*);
-+struct SignalHandleCloser {
-+    void operator()(uv_signal_t* handle) const { Bun__UVSignalHandle__close(handle); }
-+};
-+#endif
- // On windows, signals need to have a handle to the uv_signal_t. When sigaction is used, this is kept track globally for you.
- struct SignalHandleValue {
- #if OS(WINDOWS)
--    uv_signal_t* handle;
-+    std::unique_ptr<uv_signal_t, SignalHandleCloser> handle;
- #endif
- };
- static HashMap<int, SignalHandleValue>* signalToContextIdsMap = nullptr;
-@@ -1349,7 +1355,6 @@ extern "C" bool Bun__onSignalForJS(int signalNumber, Zig::GlobalObject* globalOb
- 
- #if OS(WINDOWS)
- extern "C" uv_signal_t* Bun__UVSignalHandle__init(JSC::JSGlobalObject* lexicalGlobalObject, int signalNumber, void (*callback)(uv_signal_t*, int));
--extern "C" uv_signal_t* Bun__UVSignalHandle__close(uv_signal_t*);
- #endif
- 
- #if !OS(WINDOWS)
-@@ -1604,9 +1609,9 @@ extern "C" bool Bun__AOT__isRecordingOrder();
- // `bun run --watch` keeps this signal's handler installed for the process
- // lifetime (node's watcher process owns SIGINT the same way), so the
- // listener-removal path below must never restore SIG_DFL for it.
-+#if !OS(WINDOWS)
- static int watchModeStickySignal = 0;
- 
--#if !OS(WINDOWS)
- __attribute__((noinline)) static void forwardSignal(int signalNumber, siginfo_t* info, void* context)
- {
-     Bun::reportOwnCrash(signalNumber, info, context);
-@@ -1740,39 +1745,31 @@ static void onDidChangeListeners(EventEmitter& eventEmitter, const Identifier& e
- 
-                 if (isAdded) {
-                     if (!signalToContextIdsMap->contains(signalNumber)) {
--                        SignalHandleValue signal_handle = {
--#if OS(WINDOWS)
--                            .handle = nullptr,
--#endif
--                        };
-+                        SignalHandleValue signal_handle;
- #if !OS(WINDOWS)
-                         Bun__ensureSignalHandler();
-                         installForwardSignalHandler(signalNumber);
- #else
--                        signal_handle.handle = Bun__UVSignalHandle__init(
-+                        signal_handle.handle.reset(Bun__UVSignalHandle__init(
-                             eventEmitter.scriptExecutionContext()->jsGlobalObject(),
-                             signalNumber,
--                            &signalHandler);
-+                            &signalHandler));
- 
-                         if (!signal_handle.handle) [[unlikely]]
-                             return;
- #endif
- 
--                        signalToContextIdsMap->set(signalNumber, signal_handle);
-+                        signalToContextIdsMap->set(signalNumber, WTF::move(signal_handle));
-                     }
-                 } else {
-                     if (signalToContextIdsMap->find(signalNumber) != signalToContextIdsMap->end() && listenerCount == 0) {
-                         // The watch-mode sticky signal keeps its OS handler installed; only the
-                         // handler teardown is skipped. The map entry is still removed — it is the
-                         // "has JS listeners" source of truth that e.g. self-kill flush consults.
--                        if (signalNumber != watchModeStickySignal) {
- #if !OS(WINDOWS)
-+                        if (signalNumber != watchModeStickySignal)
-                             uninstallForwardSignalHandler(signalNumber);
--#else
--                            SignalHandleValue signal_handle = signalToContextIdsMap->get(signalNumber);
--                            Bun__UVSignalHandle__close(signal_handle.handle);
- #endif
--                        }
-                         signalToContextIdsMap->remove(signalNumber);
-                     }
-                 }
-```
-
-**File**: `src/jsc/bindings/EventLoopKeepAlive.h` (added, +39/-0)
-```diff
-@@ -0,0 +1,39 @@
-+#pragma once
+@@ -0,0 +1,99 @@
++//! What touch, mkdir, ls, cp and rm share: pool tasks that each come back with something to print.
 +
-+#include <wtf/Noncopyable.h>
-+#include <wtf/Threading.h>
++use core::sync::atomic::Ordering;
++use std::collections::VecDeque;
 +
-+extern "C" void Bun__eventLoop__setKeptAlive(bool);
++use crate::shell::ExitCode;
++use crate::shell::builtin::{Builtin, IoKind, Sink, State};
++use crate::shell::interpreter::{Interpreter, NodeId};
++use crate::shell::yield_::Yield;
 +
-+namespace Bun {
++#[derive(Default)]
++pub(crate) struct Batch {
++    failed: bool,
++    /// An entry per write in flight. Any completion takes the oldest, and prints it if it is `Some`.
++    writes: VecDeque<Option<Vec<u8>>>,
++    #[cfg(windows)]
++    pub(crate) ebusy: Option<Box<super::cp::Ebusy>>,
++}
 +
-+// Keeps the event loop of this thread's VM alive while it is active. An inactive one can be destroyed on any thread.
-+class EventLoopKeepAlive {
-+    WTF_MAKE_NONCOPYABLE(EventLoopKeepAlive);
-+
-+public:
-+    EventLoopKeepAlive() = default;
-+    ~EventLoopKeepAlive() { setActive(false); }
-+
-+    bool isActive() const { return m_isActive; }
-+    void setActive(bool isActive)
-+    {
-+        if (m_isActive == isActive)
-+            return;
-+#if ASSERT_ENABLED
-+        uint32_t thread = Thread::currentSingleton().uid();
-+        ASSERT(isActive || m_thread == thread);
-+        m_thread = thread;
-+#endif
-+        m_isActive = isActive;
-+        Bun__eventLoop__setKeptAlive(isActive);
++impl Batch {
++    pub(crate) fn start(interp: &Interpreter, cmd: NodeId, tasks: usize) {
++        let me = Builtin::of_mut(interp, cmd);
++        *me.running.get_mut() = tasks;
++        me.state = State::Batch(Batch::default());
 +    }
 +
-+private:
-+    bool m_isActive { false };
-+#if ASSERT_ENABLED
-+    uint32_t m_thread { 0 };
-+#endif
-+};
++    pub(crate) fn of(interp: &Interpreter, cmd: NodeId) -> Option<&mut Batch> {
++        match &mut Builtin::of_mut(interp, cmd).state {
++            State::Batch(batch) => Some(batch),
++            _ => None,
++        }
++    }
 +
++    pub(crate) fn report(
++        interp: &Interpreter,
++        cmd: NodeId,
++        err: Option<Vec<u8>>,
++        out: Vec<u8>,
++    ) -> Yield {
++        let me = Builtin::of_mut(interp, cmd);
++        if let State::Batch(batch) = &mut me.state {
++            me.running.fetch_sub(1, Ordering::SeqCst);
++            batch.failed |= err.is_some();
++        }
++        Self::print(interp, cmd, err, out)
++    }
++
++    fn print(interp: &Interpreter, cmd: NodeId, err: Option<Vec<u8>>, out: Vec<u8>) -> Yield {
++        if let Some(err) = err {
++            match Builtin::sink(interp, cmd, IoKind::Stderr) {
++                Sink::Fd(fd) => {
++                    let Some(batch) = Self::of(interp, cmd) else {
++                        return Yield::suspended();
++                    };
++                    batch.writes.push_back(Some(out));
++                    return fd.enqueue(&err);
++                }
++                Sink::Memory(memory) => drop(memory.write(&err)),
++            }
++        }
++        match Builtin::sink(interp, cmd, IoKind::Stdout) {
++            Sink::Fd(fd) => {
++                // An empty write completes at once, which releases what the oldest entry holds back.
++                if let Some(batch) = Self::of(interp, cmd)
++                    && (!out.is_empty() || !batch.writes.is_empty())
++                {
++                    batch.writes.push_back(None);
++                    return fd.enqueue(&out);
++                }
++            }
++            Sink::Memory(memory) => drop(memory.write(&out)),
++        }
++        Self::settle(interp, cmd)
++    }
++
++    /// Whether the write failed makes no difference.
++    pub(crate) fn on_write(interp: &Interpreter, cmd: NodeId) -> Yield {
++        match Self::of(interp, cmd).and_then(|batch| batch.writes.pop_front().flatten()) {
++            Some(out) => Self::print(interp, cmd, None, out),
++            None => Self::settle(interp, cmd),
++        }
++    }
++
++    pub(crate) fn settle(interp: &Interpreter, cmd: NodeId) -> Yield {
++        let me = Builtin::of_mut(interp, cmd);
++        let State::Batch(batch) = &mut me.state else {
++            return Yield::suspended();
++        };
++        if me.running.load(Ordering::SeqCst) > 0 || !batch.writes.is_empty() {
++            return Yield::suspended();
++        }
++        // These errors do not change the exit code.
++        #[cfg(windows)]
++        if let Some((err, out)) = batch.ebusy.as_mut().and_then(|it| it.next_failure()) {
++            return Self::print(interp, cmd, err, out);
++        }
++        Builtin::done(interp, cmd, ExitCode::from(batch.failed))
++    }
 +}
 ```
 
-**File**: `src/jsc/bindings/GlobalEventScope.cpp` (modified, +1/-11)
+**File**: `src/runtime/shell/builtin/cat.rs` (modified, +100/-381)
 ```diff
-@@ -16,26 +16,16 @@ void GlobalEventScope::onDidChangeListenerImpl(EventTarget& self, const AtomStri
-         auto& global = static_cast<GlobalEventScope&>(self);
-         switch (kind) {
-         case Add:
--            if (global.m_messageEventCount == 0) {
--                global.scriptExecutionContext()->refEventLoop();
--            }
-             global.m_messageEventCount++;
-             break;
-         case Remove:
-             global.m_messageEventCount--;
--            if (global.m_messageEventCount == 0) {
--                global.scriptExecutionContext()->unrefEventLoop();
--            }
-             break;
--        // I dont think clear in this context is ever called. If it is (search OnDidChangeListenerKind::Clear for the impl),
--        // it may actually call once per event, in a way the Remove code above would suffice.
-         case Clear:
--            if (global.m_messageEventCount > 0) {
--                global.scriptExecutionContext()->unrefEventLoop();
--            }
-             global.m_messageEventCount = 0;
-             break;
-         }
-+        global.m_keepAlive.setActive(global.m_messageEventCount > 0);
-     }
- };
+@@ -1,369 +1,123 @@
+ use std::rc::Rc;
  
++use bun_core::ZStr;
++
+ use crate::shell::ExitCode;
+-use crate::shell::builtin::{Builtin, BuiltinIO, BuiltinInput, BuiltinState, IoKind, Kind};
+-use crate::shell::interpreter::{
+-    FlagParser, Interpreter, NodeId, ParseFlagResult, parse_flags, shell_openat,
+-};
++use crate::shell::builtin::{BadFlag, Builtin, BuiltinInput, IoKind, Kind, Sink, State};
++use crate::shell::interpreter::{Interpreter, NodeId, shell_openat};
+ use crate::shell::io_reader::{ChildPtr as ReaderChildPtr, IOReader, ReaderTag};
+-use crate::shell::io_writer::{ChildPtr, WriterTag};
+ use crate::shell::yield_::Yield;
+ 
+-#[derive(Default)]
++/// One input on its way to stdout.
+ pub(crate) struct Cat {
+-    pub(crate) state: CatState,
++    reader: Rc<IOReader>,
++    /// The argument to open after this input, if there is one.
++    next: usize,
++    /// Chunks queued on stdout and not written yet.
++    pending: usize,
++    /// What the reader finished with, 0 at EOF.
++    ended: Option<ExitCode>,
+ }
+ 
+-#[derive(Default)]
+-pub(crate) enum CatState {
+-    #[default]
+-    Idle,
+-    ExecStdin {
+-        in_done: bool,
+-        chunks_queued: usize,
+-        chunks_done: usize,
+-        /// What the reader finished with (0 at EOF). It becomes the exit code.
+-        errno: ExitCode,
+-    },
+-    ExecFilepathArgs {
+-        /// Index into argv where filepath args start.
+-        args_start: usize,
+-        /// Current index into the filepath args.
+-        idx: usize,
+-        /// Per-file reader.
+-        reader: Option<Rc<IOReader>>,
+-        chunks_queued: usize,
+-        chunks_done: usize,
+-        in_done: bool,
+-        /// What the current file's reader finished with. Non-zero ends the command.
+-        errno: ExitCode,
+-    },
+-    WaitingWriteErr,
++pub(crate) fn start(interp: &Interpreter, cmd: NodeId) -> Yield {
++    let bltn = Builtin::of(interp, cmd);
++    let (flags, files) = bltn.split_flags();
++    if let [flag, ..] = flags {
++        return Builtin::fail_flag(interp, cmd, reject(flag));
++    }
++    if !files.is_empty() {
++        return Cat::open(interp, cmd, 0);
++    }
++    let input = match &bltn.stdin {
++        BuiltinInput::Fd(reader) => return Cat::read(interp, cmd, &Rc::clone(reader), 0),
++        BuiltinInput::ArrayBuf { buf } => buf.slice(),
++        BuiltinInput::Blob(blob) => blob.blob.shared_view(),
++        BuiltinInput::Ignore => b"",
++    };
++    Builtin::finish(interp, cmd, IoKind::Stdout, input, 0)
+ }
+ 
+-/// Internal: what to do after dropping the &mut state borrow.
+-pub(crate) enum Step {
+-    Suspend,
+-    Done(ExitCode),
+-    Next,
+-    /// Every chunk queued so far is written and the input goes on.
+-    ReadMore,
++fn reject(flag: &[u8]) -> BadFlag<'_> {
++    match flag {
++        [] | [_] => BadFlag::Illegal(flag),
++        [_, b'b' | b'e' | b'n' | b's' | b't' | b'u' | b'v', ..] => BadFlag::Unsupported(&flag[..2]),
++        [_, _, rest @ ..] => BadFlag::Illegal(rest),
++    }
+ }
+ 
+-impl Step {
+-    fn run(self, interp: &Interpreter, cmd: NodeId) -> Yield {
+-        match self {
+-            Step::Suspend => Yield::suspended(),
+-            Step::Done(code) => Builtin::done(interp, cmd, code),
+-            Step::Next => Cat::next(interp, cmd),
+-            Step::ReadMore => Cat::read_more(interp, cmd),
+-        }
++fn listener(cmd: NodeId) -> ReaderChildPtr {
++    ReaderChildPtr {
++        node: cmd,
++        tag: ReaderTag::Cat,
+     }
+ }
+ 
+-impl CatState {
+-    /// Finishes the input once its reader is done and every chunk it queued is written.
+-    fn input_step(&mut self) -> Step {
+-        match self {
+-            CatState::ExecStdin {
+-                in_done,
+-                chunks_queued,
+-                chunks_done,
+-                errno,
+-            } => {
+-                if *chunks_done < *chunks_queued {
+-                    Step::Suspend
+-                } else if *in_done {
+-                    Step::Done(*errno)
+-                } else {
+-                    Step::ReadMore
+-                }
+-            }
+-            CatState::ExecFilepathArgs {
+-                in_done,
+-                chunks_queued,
+-                chunks_done,
+-                errno,
+-                reader,
+-                ..
+-            } => {
+-                if *chunks_done < *chunks_queued {
+-                    Step::Suspend
+-                } else if !*in_done {
+-                    Step::ReadMore
+-                } else if *errno != 0 {
+-                    *reader = None;
+-                    Step::Done(*errno)
+-                } else {
+-                    Step::Next
+-                }
+-            }
+-            CatState::WaitingWriteErr | CatState::Idle => Step::Suspend,
++impl Cat {
++    fn of(interp: &Interpreter, cmd: NodeId) -> Option<&mut Cat> {
++        match &mut Builtin::of_mut(interp, cmd).state {
++            State::Cat(cat) => Some(cat),
++            _ => None,
+         }
+     }
+-}
+ 
+-impl Cat {
+-    pub(crate) fn start(interp: &Interpreter, cmd: NodeId) -> Yi
 ```
 
-**File**: `src/jsc/bindings/GlobalEventScope.h` (modified, +2/-0)
+**File**: `src/runtime/shell/builtin/cd.rs` (modified, +29/-113)
 ```diff
-@@ -2,6 +2,7 @@
+@@ -2,126 +2,42 @@
+ //! - `cd` by itself or `cd ~` will always put the user in their home directory.
+ //! - `cd -` will put the user in the previous directory
  
- #include "root.h"
+-use crate::shell::builtin::{Builtin, BuiltinState, IoKind, Kind};
++use bstr::BStr;
++use bun_sys::E;
++
++use crate::shell::builtin::Builtin;
+ use crate::shell::interpreter::{Interpreter, NodeId};
+-use crate::shell::io_writer::{ChildPtr, WriterTag};
+ use crate::shell::yield_::Yield;
  
-+#include "EventLoopKeepAlive.h"
- #include "EventNames.h"
- #include "EventTarget.h"
- #include "ContextDestructionObserver.h"
-@@ -16,6 +17,7 @@ class GlobalEventScope : public RefCounted<GlobalEventScope>, public EventTarget
-     WTF_MAKE_TZONE_ALLOCATED(GlobalEventScope);
- 
-     uint32_t m_messageEventCount { 0 };
-+    Bun::EventLoopKeepAlive m_keepAlive;
- 
-     static void onDidChangeListenerImpl(EventTarget&, const AtomString&, OnDidChangeListenerKind);
- 
+-#[derive(Default)]
+-pub(crate) struct Cd {
+-    state: State,
+-}
+-
+-#[derive(Default)]
+-enum State {
+-    #[default]
+-    Idle,
+-    WaitingIo,
+-    Done,
+-}
+-
+-impl Cd {
+-    pub(crate) fn start(interp: &Interpreter, cmd: NodeId) -> Yield {
+-        let args = Builtin::of(interp, cmd).args_slice();
+-        if args.len() > 1 {
+-            return Self::write_stderr_non_blocking(
+-                interp,
+-                cmd,
+-                format_args!("too many arguments\n"),
+-            );
+-        }
+-
+-        if args.is_empty() {
+-            let home = Builtin::shell(interp, cmd).get_homedir().to_vec();
++pub(crate) fn start(interp: &Interpreter, cmd: NodeId) -> Yield {
++    let args = Builtin::of(interp, cmd).args();
++    let shell = &mut interp.as_cmd_mut(cmd).shell;
++    let home;
++    let (result, dir) = match args {
++        [] => {
++            home = shell.get_homedir().to_vec();
+             if home.is_empty() {
+-                return Self::write_stderr_non_blocking(
+-                    interp,
+-                    cmd,
+-                    format_args!("HOME not set\n"),
+-                );
+-            }
+-            if let Err(err) = interp.as_cmd_mut(cmd).shell.change_cwd(&home) {
+-                return Self::handle_change_cwd_err(interp, cmd, &err, &home);
++                return Builtin::fail(interp, cmd, format_args!("HOME not set\n"));
+             }
+-            return Builtin::done(interp, cmd, 0);
++            (shell.change_cwd(&home), &home[..])
+         }
+-
+-        let first_arg = Builtin::of(interp, cmd).arg_bytes(0);
+-        if first_arg == b"-" {
+-            let prev = Builtin::shell(interp, cmd).prev_cwd().to_vec();
+-            if let Err(err) = interp.as_cmd_mut(cmd).shell.change_prev_cwd() {
+-                return Self::handle_change_cwd_err(interp, cmd, &err, &prev);
+-            }
+-        } else {
+-            let target = first_arg.to_vec();
+-            if let Err(err) = interp.as_cmd_mut(cmd).shell.change_cwd(&target) {
+-                return Self::handle_change_cwd_err(interp, cmd, &err, &target);
+-            }
++        // Still the one that was tried if this fails.
++        [dir] if dir.get() == b"-" => (shell.change_prev_cwd(), shell.prev_cwd()),
++        [dir] => (shell.change_cwd(dir), dir.get()),
++        _ => return Builtin::fail(interp, cmd, format_args!("too many arguments\n")),
++    };
++    let Err(err) = result else {
++        return Builtin::done(interp, cmd, 0);
++    };
++    let dir = BStr::new(dir);
++    match err.get_errno() {
++        E::ENOTDIR | E::ENOENT => {
++            Builtin::fail(interp, cmd, format_args!("not a directory: {dir}\n"))
+         }
+-
+-        Builtin::done(interp, cmd, 0)
+-    }
+-
+-    fn handle_change_cwd_err(
+-        interp: &Interpreter,
+-        cmd: NodeId,
+-        err: &bun_sys::Error,
+-        new_cwd: &[u8],
+-    ) -> Yield {
+-        use bun_sys::E;
+-        let errno = err.get_errno();
+-        match errno {
+-            E::ENOTDIR | E::ENOENT => Self::write_stderr_non_blocking(
+-                interp,
+-                cmd,
+-                format_args!("not a directory: {}\n", bstr::BStr::new(new_cwd)),
+-            ),
+-            E::ENAMETOOLONG => {
+-                Self::write_stderr_non_blocking(interp, cmd, format_args!("file name too long\n"))
+-            }
+-            _ => {
+-                let errmsg = err.msg().unwrap_or_else(|| err.name());
+-                Self::write_stderr_non_blocking(
+-                    interp,
+-                    cmd,
+-                    format_args!(
+-                        "{}: {}\n",
+-                        bstr::BStr::new(errmsg),
+-                        bstr::BStr::new(new_cwd),
+-                    ),
+-                )
+-            }
++        E::ENAMETOOLONG => Builtin::fail(interp, cmd, format_args!("file name too long\n")),
++        _ => {
++            let words = BStr::new(err.msg().unwrap_or_else(|| err.name()));
++            Builtin::fail(interp, cmd, format_args!("{words}: {dir}\n"))
+         }
+     }
+-
+-    fn write_stderr_non_blocking(
+-        interp: &Interpreter,
+-        cmd: NodeId,
+-        args: core::fmt::Arguments<'_>,
+-    ) -> Yield {
+-        Self::state_mut(interp, cmd).state = State::WaitingIo;
+-        if let Some(safeguard) = Builtin::of(interp, cmd).stderr.needs_io() {
+-            let child = ChildPtr::new(cmd, WriterTag::Builtin);
+-            return Builtin::of_mut(interp, cmd).stderr.enqueue_fmt(
+-                child,
+-                Some(Kind::Cd),
+-                args,
+-              
 ```
 
 ---
 
-### Incident Patch 2: `b48179a7` (2026-11-16)
-**Commit Message**: dns, event loop, threading, quic: fix three use-after-frees between threads; initialize lsquic once (#49058)
+### Incident Patch 3: `7f52d048` (2026-11-16)
+**Commit Message**: webview, cli, event loop, crash handler: statics are owned or written once (#49128)
 
 ### What does this PR do?
 
-In three hand-overs between threads, one thread went on to use memory
-that the other could already have freed. A fourth bug ran
-`lsquic_global_init` up to three times. Net 1 `unsafe` block fewer.
+Statics and per-thread state that safe code could race, or that outlived
+what they pointed to, get an owner. 30 `unsafe` blocks and about 205
+lines of `src` fewer. 3 `unsafe fn` go, and 4 come: 3 of them run in a
+signal handler and were safe functions over raw pointers.
 
-- DNS: a lookup notifies its waiters with their list and the cache
-locked. The loop borrows the guard of the list, so unlocking it early
-does not compile. `Bun__addrinfo_set` is an `unsafe fn`.
-- QUIC: every engine comes from `us_quic_engine_new`, which has the only
-guard of the init. `create_client` is safe and sizes its own slots.
-- Pool: `Drop` waits whenever `shutdown` saw a thread. `join` is no
-longer idempotent. `Event::notify` wakes by address.
-- Deleted: `notify_threadsafe`, `quic::global_init`, the imports of
-`us_quic_global_init` and `lsquic_global_init`, `LSQUIC_GLOBAL_*`, two
-once-guards.
-- Not checked by the compiler: how long `after_result_entries` keeps the
-cache locked, and the order in `enqueue_task_concurrent`. Its `&self`,
-the `&BundleV2` of its callers and the `&self` of `Event::notify` can
-still point at freed memory until they retur
+- **WebView**: a browser process is owned by the runtime state of the VM
+that spawned it, until it is reaped or the VM is torn down. The Rust
+code of other threads only sees its pid.
+- **argv**: a view is written once and published through one pointer, so
+`set_argv` is safe.
+- **Mini event loop**: a handle holds a `&'static`. The package manager
+holds a handle, where it lent handles to a loop that it owned.
+- **Crash handler**: a stack trace is a slice. The saved registers are a
+`SignalContext`, or a `CONTEXT` on Windows, where they were a raw
+pointer or a pointer in a `usize`.
+- **`working_on`** takes a closure, so a path cannot be put back after
+its end. The abort handler of `bun test --parallel` keeps the previous
+handlers in its guard. C++ returns the field offsets for `bun:ffi` by
+value.
+- Deleted: `
 
-**File**: `packages/bun-usockets/src/internal/internal.h` (modified, +5/-0)
+**File**: `mordant-baseline.toml` (modified, +0/-1)
 ```diff
-@@ -242,6 +242,11 @@ void us_nq_loop_drain(struct us_loop_t *loop);
- void us_nq_loop_register(struct us_loop_t *loop, struct us_nq_driver_s *d, void *owner);
- void us_nq_loop_unregister(struct us_loop_t *loop, struct us_nq_driver_s *d);
+@@ -23,7 +23,6 @@
+ "defaulted_failure:src/bun_core/string/immutable.rs" = 1
+ "generic_body_not_generic:src/bun_core/fmt.rs" = 1
+ "generic_body_not_generic:src/bun_core/string/mod.rs" = 1
+-"unused_pub:src/bun_core/Global.rs" = 1
+ "unused_pub:src/bun_core/lib.rs" = 1
  
-+/* lsquic_engine_new after the one lsquic_global_init of the process: a second one breaks handshakes in flight. */
-+struct lsquic_engine;
-+struct lsquic_engine_api;
-+struct lsquic_engine *us_quic_engine_new(unsigned flags, const struct lsquic_engine_api *api);
-+
- /* Asyncs (old) */
- struct us_internal_async *us_internal_create_async(struct us_loop_t *loop,
-                                                    int fallthrough,
+ [bun_css]
 ```
 
-**File**: `packages/bun-usockets/src/node_quic_shim.c` (modified, +1/-1)
+**File**: `src/aot/compile/lower_stage.rs` (modified, +11/-1)
 ```diff
-@@ -533,7 +533,7 @@ lsquic_engine_t *us_nq_engine_new(int is_server, int is_http,
-         api.ea_hsi_ctx = NQ_HSI_CTX_PACK(settings->es_max_h3_header_pairs,
-                                          settings->es_max_h3_header_bytes);
-     }
--    return lsquic_engine_new(flags, &api);
-+    return us_quic_engine_new(flags, &api);
- }
- 
- const struct sockaddr *us_nq_spec_dest(const struct lsquic_out_spec *s) { return s->dest_sa; }
-```
-
-**File**: `packages/bun-usockets/src/quic.c` (modified, +23/-5)
-```diff
-@@ -20,6 +20,7 @@
- #include <netinet/in.h>
- #include <netinet/ip.h>
- #include <arpa/inet.h>
-+#include <pthread.h>
- #else
- #include <ws2tcpip.h>
- #endif
-@@ -821,9 +822,7 @@ static int us_quic_log_buf(void *ctx, const char *buf, size_t len) {
- static const struct lsquic_logger_if us_quic_logger = { us_quic_log_buf };
- #endif
- 
--/* Called once via a thread-safe static local in uws_h3_create_app
-- * (libuwsockets_h3.cpp), so quic.c stays free of pthread/call_once. */
--void us_quic_global_init(void) {
-+static void us_quic_global_init(void) {
-     lsquic_global_init(LSQUIC_GLOBAL_SERVER | LSQUIC_GLOBAL_CLIENT);
- #ifdef BUN_DEBUG
-     if (getenv("BUN_DEBUG_lsquic")) {
-@@ -833,6 +832,25 @@ void us_quic_global_init(void) {
- #endif
- }
- 
-+#ifdef _WIN32
-+static BOOL CALLBACK us_quic_global_init_win(PINIT_ONCE o, PVOID p, PVOID *c) {
-+    (void) o; (void) p; (void) c;
-+    us_quic_global_init();
-+    return TRUE;
-+}
-+#endif
-+
-+lsquic_engine_t *us_quic_engine_new(unsigned flags, const struct lsquic_engine_api *api) {
-+#ifdef _WIN32
-+    static INIT_ONCE once = INIT_ONCE_STATIC_INIT;
-+    InitOnceExecuteOnce(&once, us_quic_global_init_win, NULL, NULL);
-+#else
-+    static pthread_once_t once = PTHREAD_ONCE_INIT;
-+    pthread_once(&once, us_quic_global_init);
-+#endif
-+    return lsquic_engine_new(flags, api);
-+}
-+
- static void us_quic_prepare_ssl_ctx(SSL_CTX *ssl, const struct us_bun_socket_context_options_t *options) {
-     SSL_CTX_set_min_proto_version(ssl, TLS1_3_VERSION);
-     SSL_CTX_set_max_proto_version(ssl, TLS1_3_VERSION);
-@@ -889,7 +907,7 @@ us_quic_socket_context_t *us_create_quic_socket_context(
-     api.ea_hsi_if = &us_quic_hset_if;
-     api.ea_hsi_ctx = ctx;
- 
--    ctx->engine = lsquic_engine_new(LSENG_HTTP_SERVER, &api);
-+    ctx->engine = us_quic_engine_new(LSENG_HTTP_SERVER, &api);
-     if (!ctx->engine) {
-         SSL_CTX_free(ssl);
-         us_free(ctx);
-@@ -1437,7 +1455,7 @@ us_quic_socket_context_t *us_create_quic_client_context(
-     api.ea_hsi_if = &us_quic_hset_if;
-     api.ea_hsi_ctx = ctx;
- 
--    ctx->engine = lsquic_engine_new(LSENG_HTTP, &api);
-+    ctx->engine = us_quic_engine_new(LSENG_HTTP, &api);
-     if (!ctx->engine) {
-         SSL_CTX_free(ssl);
-         us_free(ctx);
-```
-
-**File**: `packages/bun-usockets/src/quic.h` (modified, +0/-5)
-```diff
-@@ -41,11 +41,6 @@ struct us_quic_header_t {
-     int qpack_index;
- };
- 
--/* Process-wide lsquic init. Must be called once before the first
-- * us_create_quic_socket_context; the C++ layer (uws_h3_create_app) does this
-- * via a thread-safe static local so quic.c stays free of pthread/call_once. */
--void us_quic_global_init(void);
--
- us_quic_socket_context_t *us_create_quic_socket_context(
-     struct us_loop_t *loop, struct us_bun_socket_context_options_t options,
-     unsigned int ext_size, unsigned int idle_timeout_s);
-```
-
-**File**: `packages/bun-usockets/src/socket.c` (modified, +1/-1)
-```diff
-@@ -241,7 +241,7 @@ void us_connecting_socket_close(struct us_connecting_socket_t *c) {
-     if (c->pending_resolve_callback) {
-         // The DNS callback has not been drained. Try to remove c from the
-         // request's notify list so it never fires. Returns 0 if the result is
--        // already set (the callback has fired or is about to), in which case
-+        // already set (the callback has fired), in which case
-         // after_resolve will see c->closed and finish teardown.
-         if (c->addrinfo_req && Bun__addrinfo_cancel(c->addrinfo_req, c)) {
- #ifdef _WIN32
-```
-
-**File**: `src/event_loop/MiniEventLoop.rs` (modified, +4/-5)
-```diff
-@@ -226,8 +226,10 @@ impl MiniEventLoop {
-     /// `task` must outlive the queued work item; ownership of the intrusive
-     /// node stays with the caller until the callback runs.
-     pub fn enqueue_task_concurrent(&self, task: NonNull<AnyTaskWithExtraContext>) {
-+        // Read first: the push lets a bundle finish and drop `self`. The main and bundle threads never call `free_thread_loop`.
-+        let loop_ = self.loop_;
-         self.concurrent_tasks.push(task);
--        self.loop_.wakeup();
-+        loop_.wakeup();
-     }
- 
-     /// The caller supplies `field_offset = core::mem::offset_of!(C, <field>)` of the
-@@ -249,10 +251,7 @@ impl MiniEventLoop {
-         unsafe { task.write(New::<C, P>::init(ctx, callback)) };
- 
-         // SAFETY: `task` was just initialized above and is non-null (derived from `ctx`).
--        self.concurrent_tasks
--            .push(unsafe { NonNull::new_unchecked(task) });
--
--        self.loop_.wakeup();
-+        self.enqueue_task_concurrent(unsafe { NonNull::new_unchecked(task) });
-     }
- }
- 
-```
-
-**File**: `src/http/h3_client/ClientContext.rs` (modified, +2/-14)
-```diff
-@@ -2,7 +2,7 @@
- //! client engine and the live-session registry. Never freed — the engine
- //! lives for the process, same as the HTTP thread itself.
- 
--use core::ffi::{c_uint, c_void};
-+use core::ffi::c_void;
- use core::ptr::NonNull;
- 
- use bun_ptr::RefPtr;
-@@ -13,7 +13,6 @@ use bun_uws::quic::context::ConnectResult;
- use super::callbacks;
- use super::client_session::{ClientSession, quic_socket_mut, session_mut};
- use super::pending_connect::PendingConnect;
--use super::stream::Stream;
- use crate::HTTPClient;
- use crate::http_thread::WriteMessageType;
- 
-@@ -37,7 +36,6 @@ pub(crate) struct ClientContext {
- // uncontended atomic op is free on the single HTTP client thread.
- static INSTANCE: bun_core::AtomicCell<Option<NonNull<ClientContext>>> =
-     bun_core::AtomicCell::new(None);
--static LSQUIC_INIT_ONCE: std::sync::Once = std::sync::Once::new();
- 
- impl ClientContext {
-     /// Mutable access to the lsquic client engine.
-@@ -74,17 +72,7 @@ impl ClientContext {
-         if let Some(i) = INSTANCE.load() {
-             return Some(i);
+@@ -198,7 +198,17 @@ impl<'a, 'b, 's> ProjectToLower<'a, 'b, 's> {
+             ranges.lock().extend(unchecked);
          }
--        LSQUIC_INIT_ONCE.call_once(quic::global_init);
--        // SAFETY: `global_init` ran above.
--        let qctx = unsafe {
--            quic::Context::create_client(
--                UwsLoop::get(),
--                0,
--                core::mem::size_of::<*mut ClientSession>() as c_uint,
--                core::mem::size_of::<*mut Stream>() as c_uint,
--            )
--        }?;
--        let qctx = NonNull::new(qctx).expect("us_create_quic_socket_context returned null");
-+        let qctx = quic::Context::create_client(UwsLoop::get())?;
- 
-         // Process-lifetime singleton — published into `INSTANCE` below and
-         // never torn down (the lsquic engine outlives every request).
-```
-
-**File**: `src/lsquic_sys/lib.rs` (modified, +0/-4)
-```diff
-@@ -47,9 +47,6 @@ pub const LSCONN_ST_VERNEG_FAILURE: c_int = 10;
- 
- pub const N_LSQVER: c_int = 8;
- 
--pub const LSQUIC_GLOBAL_CLIENT: c_int = 1;
--pub const LSQUIC_GLOBAL_SERVER: c_int = 2;
--
- /// **Layout must match `struct us_nq_vtable` in node_quic_shim.c exactly.**
- /// The first field of every conn-ctx and stream-ctx the Rust side returns
- /// must be a `*const NqVtable` so the thunks can recover it via
-@@ -112,7 +109,6 @@ pub struct NqVtable {
- }
- 
- unsafe extern "C" {
--    pub fn lsquic_global_init(flags: c_int) -> c_int;
-     pub fn lsquic_engine_destroy(engine: *mut lsquic_engine);
-     pub fn lsquic_engine_conn_count(engine: *const lsquic_engine) -> c_uint;
-     pub fn lsquic_engine_cid_in_use(
-```
-
----
-
-### Incident Patch 3: `237bba51` (2026-11-16)
-**Commit Message**: AOT: stores into enums, children of wrapped functions, JSX settings, order files, and tests of the engine's fixes (#49081)
-
-Bun's side of fixes of the ahead-of-time compiler (`bun build --compile --aot` and `bun test
---aot`, both experimental), with the programs and test runs of the engine's. The JavaScriptCore
-side is merged: oven-sh/WebKit#1064, which is `3bc94211496460feda299ef85eef710eb67fafb3`. This
-follows oven-sh/bun#49037.
-
-425 files, +4,017 -186: src 19 files, +477 -61; the pin; docs, types; test 403 files, +3,534 -121.
-
-Programs and types
-
-- A member of an enum of another file is read off the enum where the program stores into it
-  through a proxy, a method, a container, an exported constant or a spread. A known issue of
-  oven-sh/bun#49037.
-- `module.children` doesn't list the functions that `__commonJS` or webpack's table holds. A file
-  that such a function requires is a child of the file around it.
-- A text that the build knows, evaluated inside a TypeScript namespace, doesn't find the
-  namespace's exported variables by their names.
-- An empty literal that is a default of a pattern takes no type from it. The work of a build grew
-  with the square of the number of suc
-
-**File**: `docs/compiler/aot.mdx` (modified, +2/-2)
-```diff
-@@ -149,11 +149,11 @@ await Bun.build({
- 
- - **Record the start you want to speed up.** A start of another kind gains less.
- - **Several profiles** cover several ways of starting the app: `--aot-order=interactive.order,oneshot.order`. List the most important one first. A function that more than one of them lists lies where the first one lists it.
--- **Profiles keep working as your code changes.** A function that is gone or renamed is skipped, and new code goes behind the recorded code. A build that differs in a version or a date alone finds every function.
-+- **Profiles keep working as your code changes.** A function that is gone or renamed is skipped, and new code goes behind the recorded code. A build that differs in a version or a date alone, that runs in another folder, or whose files were moved or renamed, finds every function.
- - **Only an executable built with `--aot-record-order` can record.** Every other one has no recorder and reads no environment variable for it.
- - **Only the layout changes.** No function is compiled differently, and builds stay reproducible. The profile contains module paths and function names, not source code.
- - **On Linux, the executable asks for that part of the file when it starts**, so a cold start waits for the disk once and not for one page after the other.
--- A profile that can't be read is an error. A file that isn't a profile prints a warning, and nothing is placed by it. A profile that was cut off is used as far as it goes.
-+- A profile that can't be read is an error. A file that isn't a profile prints a warning, and nothing is placed by it. So does a profile of another program, which lists none of this program's functions. A profile that was cut off is used as far as it goes.
- - `%p` in `BUN_AOT_ORDER_OUT` becomes the process id. `Worker` threads are recorded too. A run that records is several times slower.
- - Recording works on Linux.
- 
-```
-
-**File**: `packages/bun-types/bun.d.ts` (modified, +3/-1)
-```diff
-@@ -4089,11 +4089,13 @@ declare module "bun" {
-      * With several files, list the most important one first. A function lies where the first file that
-      * lists it places it.
-      *
-+     * `false` and `null` mean no file, so `aotOrder: haveProfile && path` works.
-+     *
-      * Equivalent CLI flag: `--aot-order <file>[,<file>...]`
-      *
-      * @see https://bun.com/docs/compiler/aot#order-the-executable-by-a-recorded-start
-      */
--    aotOrder?: string | string[];
-+    aotOrder?: string | string[] | false | null;
-     /**
-      * Build an executable that writes what `aotOrder` takes when it runs with `BUN_AOT_ORDER_OUT=<path>`.
-      * Other executables have no recorder. Requires `aot: true`.
-```
-
-**File**: `scripts/build/deps/webkit.ts` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@
-  * for local mode. Override via `--webkit-version=<hash>` to test a branch.
-  * From https://github.com/oven-sh/WebKit releases.
-  */
--export const WEBKIT_VERSION = "9e983dfc1d378eafa5701725231dde903cbf86c4";
-+export const WEBKIT_VERSION = "3bc94211496460feda299ef85eef710eb67fafb3";
- 
- /**
-  * WebKit (JavaScriptCore) — the JS engine, with WTF and bmalloc.
-```
-
-**File**: `src/aot/lower/module/body.rs` (modified, +1/-0)
-```diff
-@@ -227,6 +227,7 @@ impl FileLowering<'_, '_, '_, '_> {
-         if let Some(failure) = load_failure {
-             lowering.emit_module_failure(failure, false);
-         }
-+        lowering.store_namespaces_found_by_loader();
-         lowering.initialize_path_variables();
-         lowering.lower_file_statements();
-         finish_body(lowering, Some(scope));
-```
-
-**File**: `src/aot/lower/module/imports.rs` (modified, +58/-23)
-```diff
-@@ -11,7 +11,8 @@ use crate::builtins::id::{BuiltinId, BuiltinName};
- use crate::builtins::{BuiltinPath, Mutability, Resolved, RuntimeModule, table};
- use crate::ir::generated::{ImportPhase, ModuleKind};
- use crate::ir::{
--    BlockId, Edge, LayoutKey, ModuleId, PropertyKeyId, StringId, TypeTable, ValueId, VariableKey,
-+    BlockId, Edge, LayoutId, LayoutKey, ModuleId, PropertyKeyId, StringId, TypeTable, ValueId,
-+    VariableKey,
- };
- use crate::lower::member::PropertyName;
- use crate::lower::{FileLowering, FunctionLowering, commonjs, scope};
-@@ -176,18 +177,30 @@ impl FunctionLowering<'_, '_, '_, '_, '_> {
-         let instance = self.emit_linked_instance(target, path);
-         let layout = LayoutKey::ModuleInstance(target);
-         let layout = self.file.fragment.declare_layout(layout);
--        let created = self.builder.get_environment_field(instance, layout, field);
-+        self.read_field_made_at_first_use(instance, layout, field, &mut |lowering| {
-+            let module = (lowering.file.fragment).declare_module(ModuleRef::File(target));
-+            (lowering.builder).instance_namespace(instance, layout, module, phase)
+         let path = self.loaded.loaded.files().module(file).file_name();
+-        let _work = current_work::working_on(current_work::Step::Lower, path);
++        current_work::working_on(current_work::Step::Lower, path, || {
++            self.lower_or_refuse(checker, file, parts)
 +        })
 +    }
 +
-+    fn read_field_made_at_first_use(
-+        &mut self,
-+        instance: ValueId,
-+        layout: LayoutId,
-+        field: u32,
-+        make: &mut dyn FnMut(&mut Self) -> ValueId,
-+    ) -> ValueId {
-+        let made = self.builder.get_environment_field(instance, layout, field);
-         let result = self.builder.create_variable(None);
-         let (first_use, join) = (self.create_unlikely_block(), self.create_block());
--        let split = self.split_on_type(created, TypeTable::ABSENT);
-+        let split = self.split_on_type(made, TypeTable::ABSENT);
-         self.builder.switch_to(split.not_taken);
-         self.builder.write_variable(result, split.not_taken_value);
-         self.jump(join);
-         self.builder.switch_to(split.taken);
-         self.jump(first_use);
-         self.continue_in(first_use);
--        let module = self.file.fragment.declare_module(ModuleRef::File(target));
--        let object = (self.builder).instance_namespace(instance, layout, module, phase);
-+        let object = make(self);
-         self.builder.write_variable(result, object);
-         self.jump(join);
-         self.continue_in(join);
-@@ -199,24 +212,12 @@ impl FunctionLowering<'_, '_, '_, '_, '_> {
-         let field = self.file.ensure_import_meta_field();
-         let instance = self.get_module_instance();
-         let layout = scope::instance_layout(self.file);
--        let created = self.builder.get_environment_field(instance, layout, field);
--        let result = self.builder.create_variable(None);
--        let (first_use, join) = (self.create_unlikely_block(), self.create_block());
--        let split = self.split_on_type(created, TypeTable::ABSENT);
--        self.builder.switch_to(split.not_taken);
--        self.builder.write_variable(result, split.not_taken_value);
--        self.jump(join);
--        self.builder.switch_to(split.taken);
--        self.jump(first_use);
--        self.continue_in(first_use);
--        let module = self.file.module_id();
--        let object = (self.builder).instance_import_meta(instance, layout, module);
--        self.builder
--            .put_environment_field(instance, layout, field, object);
--        self.builder.write_variable(result, object);
--        self.jump(join);
--        self.continue_in(join);
--        self.builder.read_variable(result)
-+        self.read_field_made_at_first_use(instance, layout, field, &mut |lowering| {
-+            let module = lowering.file.module_id();
-+            let object = (lowering.builder).instance_import_meta(instance, layout, module);
-+            (lowering.builder).put_environment_field(instance, layout, field, object);
-+            object
-+        })
-     }
- 
-     /// Splits on whether the instance of this code, or the instance at the end of `path`, sees a mock of `target`.
-@@ -376,6 +377,12 @@ impl FunctionLowering<'_, '_, '_, '_, '_> {
-         {
-             return self.emit_current_mock_namespace(module);
-         }
-+        if phase == ImportPhase::Evaluation
-+            && path.is_empty()
-+            && let Some(object) = self.emit_namespace_found_by_loader(module)
-+        {
-+            return object;
-+        }
-         let mocked = match module {
-             ModuleRef::File(file) if phase == ImportPhase::Evaluation => {
-                 Some(file).filter(|&file| holds_mock_in_variable(self.file.inputs.modules, file))
-@@ -425,6 +432,34 @@ impl FunctionLowering<'_, '_, '_, '_, '_> {
-         self.emit_namespace_behind_mock(mocked, module, Some(importer))
-     }
- 
-+    fn emit_namespace_found_by_loader(&mut self, module: ModuleRef) -> Option<ValueId> {
-+        let fields = self.file.inputs.modules.instance_layout(self.file.file)?;
-+        let mut found = fields.fields_found_by_loader();
-+        let (field, _) = found.find(|it| it.1 == module)?;
-+        let instance = self.get_
++    fn lower_or_refuse(
++        &self,
++        checker: &mut Checker<'_, 's>,
++        file: FileId,
++        parts: &PartsOfVisit<'_, 's>,
++    ) -> Option<Option<LoweredUnit>> {
+         let may_fail_where_loaded = self.may_fail_where_loaded(file);
+         if let Some(sentence) = self.decided.refusal_of(file) {
+             let lower = || self.lower_module_that_throws(checker, file, sentence);
 ```
 
-**File**: `src/aot/lower/module/loads.rs` (modified, +9/-2)
+**File**: `src/aot/lower/parts.rs` (modified, +25/-24)
 ```diff
-@@ -1578,10 +1578,17 @@ impl FunctionLowering<'_, '_, '_, '_, '_> {
-             false => None,
-         };
-         let from_created_require = plan.is_from_created_require;
-+        let requirer = match plan.records {
-+            true => {
-+                let file = ModuleRef::File(self.file.file);
-+                self.file.fragment.declare_module(file)
+@@ -719,31 +719,32 @@ impl<'a, 'c, 'p, 's> FileLowering<'a, 'c, 'p, 's> {
+             parts.count,
+             &|checker, part| {
+                 let _step = file_steps::count(FileStep::Lower);
+-                let _work = current_work::working_on(current_work::Step::Lower, path);
+-                let began_part = Instant::now();
+-                let mut task = TaskState::new();
+-                checker.share_indexes(file, indexes);
+-                let outcome = checker.with_queries(file, &inputs.query_inputs(), |queries| {
+-                    queries.take_over_inferred_types(indexes);
+-                    lower_part(
+-                        inputs,
+-                        queries,
+-                        file,
+-                        &mut task,
+-                        &shared,
+-                        &parts,
+-                        part,
+-                        &beginnings[part],
+-                    )
+-                });
+-                match outcome {
+-                    Ok(part_lowered) => *lowered[part].lock() = Some(part_lowered),
+-                    Err(NotInParts::Discarded) => {}
+-                    Err(NotInParts::Shared) => {
+-                        is_shared.store(true, Ordering::Relaxed);
++                current_work::working_on(current_work::Step::Lower, path, || {
++                    let began_part = Instant::now();
++                    let mut task = TaskState::new();
++                    checker.share_indexes(file, indexes);
++                    let outcome = checker.with_queries(file, &inputs.query_inputs(), |queries| {
++                        queries.take_over_inferred_types(indexes);
++                        lower_part(
++                            inputs,
++                            queries,
++                            file,
++                            &mut task,
++                            &shared,
++                            &parts,
++                            part,
++                            &beginnings[part],
++                        )
++                    });
++                    match outcome {
++                        Ok(part_lowered) => *lowered[part].lock() = Some(part_lowered),
++                        Err(NotInParts::Discarded) => {}
++                        Err(NotInParts::Shared) => {
++                            is_shared.store(true, Ordering::Relaxed);
++                        }
+                     }
+-                }
+-                longest.fetch_max(began_part.elapsed().as_millis() as u64, Ordering::Relaxed);
++                    longest.fetch_max(began_part.elapsed().as_millis() as u64, Ordering::Relaxed);
++                });
+             },
+             &mut || self.define_remaining_layouts(),
+         );
+```
+
+**File**: `src/bun_core/Global.rs` (modified, +4/-33)
+```diff
+@@ -90,13 +90,6 @@ pub static WINDOWS_SEGFAULT_HANDLE: core::sync::atomic::AtomicPtr<core::ffi::c_v
+ // platform-specific symbolication / SEH bits stay in bun_crash_handler (T>core).
+ // ──────────────────────────────────────────────────────────────────────────
+ 
+-/// Slice of return addresses + cursor.
+-#[derive(Clone, Copy)]
+-pub struct StackTrace<'a> {
+-    pub index: usize,
+-    pub instruction_addresses: &'a [usize],
+-}
+-
+ /// Fixed 31-frame stack-trace buffer.
+ #[derive(Clone, Copy)]
+ pub struct StoredTrace {
+@@ -110,11 +103,8 @@ impl StoredTrace {
+     };
+ 
+     #[inline]
+-    pub fn trace(&self) -> StackTrace<'_> {
+-        StackTrace {
+-            index: self.index,
+-            instruction_addresses: &self.data,
+-        }
++    pub fn trace(&self) -> &[usize] {
++        &self.data[..self.index.min(self.data.len())]
+     }
+ 
+     /// Capture the current call stack starting at `begin` (or the caller's return addr).
+@@ -139,21 +129,6 @@ impl StoredTrace {
+         }
+         stored
+     }
+-
+-    pub fn from(stack_trace: Option<&StackTrace<'_>>) -> StoredTrace {
+-        match stack_trace {
+-            None => StoredTrace::EMPTY,
+-            Some(stack) => {
+-                let mut data = [0usize; 31];
+-                let items = core::cmp::min(stack.instruction_addresses.len(), 31);
+-                data[..items].copy_from_slice(&stack.instruction_addresses[..items]);
+-                StoredTrace {
+-                    data,
+-                    index: core::cmp::min(items, stack.index),
+-                }
+-            }
+-        }
+-    }
+ }
+ 
+ #[derive(Copy, Clone, Debug)]
+@@ -188,13 +163,9 @@ impl Default for DumpStackTraceOptions {
+ /// `limits.stop_at_jsc_llint` / `skip_stdlib` / `skip_*_patterns` are accepted
+ /// for signature parity but **ignored** here (they require symbol names to
+ /// match against). Only `frame_count` is honoured.
+-pub fn dump_stack_trace(trace: &StackTrace<'_>, limits: DumpStackTraceOptions) {
++pub fn dump_stack_trace(trace: &[usize], limits: DumpStackTraceOptions) {
+     crate::output::flush();
+-    let n = trace
+-        .index
+-        .min(trace.instruction_addresses.len())
+-        .min(limits.frame_count);
+-    for &addr in &trace.instruction_addresses[..n] {
++    for &addr in trace.iter().take(limits.frame_count) {
+         if addr == 0 {
+             break;
+         }
+```
+
+**File**: `src/bun_core/current_work.rs` (modified, +43/-43)
+```diff
+@@ -2,7 +2,6 @@
+ //! what it is still busy with. Only its thread writes a record. Any thread reads it at any moment, a signal handler too.
+ 
+ use core::cell::Cell;
+-use core::marker::PhantomData;
+ use core::sync::atomic::Ordering::{Acquire, Relaxed, Release};
+ use core::sync::atomic::{AtomicBool, AtomicU8, AtomicU64};
+ use std::sync::OnceLock;
+@@ -198,38 +197,37 @@ fn record_of_this_thread() -> Option<&'static Record> {
+     free
+ }
+ 
+-pub struct WorkGuard<'a> {
+-    previous: Option<(Step, *const [u8], u64)>,
+-    path: PhantomData<&'a [u8]>,
++/// Only a local of [`working_on`].
++struct PutsBack(Option<(Step, *const [u8], u64)>);
++
++impl PutsBack {
++    fn enter(step: Step, path: &[u8]) -> PutsBack {
++        let started_at = milliseconds_now();
++        let previous = CURRENT.replace(Some((step, core::ptr::from_ref(path), started_at)));
++        ensure_build_signal_stack();
++        if let Some(record) = record_of_this_thread() {
++            record.set(Some((step, path, started_at)));
++        }
++        PutsBack(previous)
++    }
+ }
+ 
+-impl Drop for WorkGuard<'_> {
++impl Drop for PutsBack {
+     fn drop(&mut self) {
+-        CURRENT.set(self.previous);
++        CURRENT.set(self.0);
+         if let Some(record) = record_of_this_thread() {
+-            // SAFETY: the guard that was given that path is dropped after this one.
++            // SAFETY: the path is an argument of the `working_on` call around this one.
+             record.set(
+-                self.previous
+-                    .map(|(step, path, started_at)| (step, unsafe { &*path }, started_at)),
++                (self.0).map(|(step, path, started_at)| (step, unsafe { &*path }, started_at)),
+             );
+         }
+     }
+ }
+ 
+-/// Until the guard is dropped, the calling thread is at that step of that file. Guards are dropped in the reverse of the
+-/// order they are made in.
+-#[must_use]
+-pub fn working_on(step: Step, path: &[u8]) -> WorkGuard<'_> {
+-    let started_at = milliseconds_now();
+-    let previous = CURRENT.replace(Some((step, core::ptr::from_ref(path), started_at)));
+-    ensure_build_signal_stack();
+-    if let Some(record) = record_of_this_thread() {
+-        record.set(Some((step, path, started_at)));
+-    }
+-    WorkGuard {
+-        previous,
+-        path: PhantomData,
+-    }
++/// While `work` runs, the calling thread is at that step of that file.
++pub fn working_on<R>(step: Step, path: &[u8], work: impl FnOnce() -> R) -> R {
++    let _puts_back = PutsBack::enter(step, path);
++    work()
+ }
+ 
+ /// Gives this thread an alternate signal stack, so that a build that overflows the stack can report it. Does nothing
+@@ -359,36 +357,38 @@ mod tests {
+     #[test]
+     fn a_thread_names_the_file_it_is_at_and_the_one_around_it_afterwards() {
+         assert_eq!(said(describe_where_this_thread_stopped), "");
+-        let outer = working_on(Step::Lower, b"/project/outer.ts");
+-        {
+-            let _inner = working_on(Step::Check, b"/project/inner.ts");
++        working_on(Step::Lower, b"/project/outer.ts", || {
++            working_on(Step::Check, b"/project/inner.ts", || {
++                assert_eq!(
++                    said(describe_where_this_thread_stopped),
++                    "Stopped while checking /project/inner.ts.\n"
++                );
++            });
+             assert_eq!(
+                 said(describe_where_this_thread_stopped),
+-                "Stopped while checking /project/inner.ts.\n"
++                "Stopped while compiling /project/outer.ts in Lower.\n"
++            );
++            let from_elsewhere = std::thread::spawn(|| {
++                (
++                    said(describe_where_this_thread_stopped),
++                    said(describe_what_threads_are_compiling),
++                )
++            });
++            let (of_other_thread, of_all_threads) = from_elsewhere.join().unwrap();
++            assert_eq!(of_other_thread, "");
++            assert!(
++                of_all_threads.contains("Still compiling /project/outer.ts in Lower for 0 s.\n")
+             );
+-        }
+-        assert_eq!(
+-            said(describe_where_this_thread_stopped),
+-            "Stopped while compiling /project/outer.ts in Lower.\n"
+-        );
+-        let from_elsewhere = std::thread::spawn(|| {
+-            (
+-                said(describe_where_this_thread_stopped),
+-                said(describe_what_threads_are_compiling),
+-            )
+         });
+-        let (of_other_thread, of_all_threads) = from_elsewhere.join().unwrap();
+-        assert_eq!(of_other_thread, "");
+-        assert!(of_all_threads.contains("Still compiling /project/outer.ts in Lower for 0 s.\n"));
+-        drop(outer);
+         assert_eq!(said(describe_where_this_thread_stopped), "");
+     }
+ 
+     #[test]
+     fn a_long_path_keeps_its_end() {
+         let path = [b"/long".repeat(60), b"/end.ts".to_vec()].concat();
+-        let _work = working_on(Step::Load, &path);
+-        let said = said(describe_where_this_thread_stopped);
++        l
+```
+
+**File**: `src/bun_core/debug.rs` (modified, +25/-42)
+```diff
+@@ -637,7 +637,7 @@ pub(crate) fn capture_current(first_address: Option<usize>, out: &mut [usize]) -
+ }
+ 
+ #[cfg(windows)]
+-pub fn with_current_context<R>(run: impl FnOnce(usize, usize) -> R) -> R {
++pub fn with_current_context<R>(run: impl FnOnce(usize, &bun_windows_sys::CONTEXT) -> R) -> R {
+     unsafe extern "system" {
+         fn RtlCaptureContext(context: *mut bun_windows_sys::CONTEXT);
+     }
+@@ -651,40 +651,39 @@ pub fn with_current_context<R>(run: impl FnOnce(usize, usize) -> R) -> R {
+     let pc = context.Rip;
+     #[cfg(target_arch = "aarch64")]
+     let pc = context.Pc;
+-    run(pc as usize, &raw const context as usize)
++    run(pc as usize, &context)
+ }
+ 
+ /// Capture a faulting thread's call stack from the fault context. `pc` is the
+-/// exact faulting instruction (`ExceptionAddress` / `mcontext` PC) and becomes
+-/// frame 0.
++/// exact faulting instruction (`ExceptionAddress`) and becomes frame 0.
+ ///
+-/// POSIX: walk frame pointers from `fp` (the saved frame pointer register).
+-/// No trimming is needed — the walk starts on the faulting stack, so the
+-/// signal handler's own frames (on the altstack) are never in the chain.
+-///
+-/// Windows: `fp` is the `*const CONTEXT` the VEH received (`EXCEPTION_POINTERS
+-/// ::ContextRecord`). The walk is `RtlLookupFunctionEntry` + `RtlVirtualUnwind`
++/// The walk is `RtlLookupFunctionEntry` + `RtlVirtualUnwind`
+ /// seeded from that context, so it starts at the fault frame and the handler's
+ /// own frames are never in the chain. `rbp` is not a reliable frame pointer
+ /// across the prebuilt JavaScriptCore/LLInt code, so an fp-walk would derail;
+ /// `.pdata` is always emitted, so the Rtl unwinder works everywhere.
+-pub fn capture_from_context(pc: usize, fp: usize, out: &mut [usize]) -> usize {
++#[cfg(windows)]
++pub fn capture_from_context(
++    pc: usize,
++    context: Option<&bun_windows_sys::CONTEXT>,
++    out: &mut [usize],
++) -> usize {
+     if out.is_empty() {
+         return 0;
+     }
+     out[0] = pc;
+     let mut n = 1usize;
+-    #[cfg(windows)]
+-    {
+-        use bun_windows_sys::{CONTEXT, UNW_FLAG_NHANDLER, ntdll};
+-        if fp == 0 {
+-            // No CONTEXT available (should not happen for a real VEH fault).
+-            return n;
+-        }
+-        // SAFETY: `fp` is `EXCEPTION_POINTERS::ContextRecord` from the kernel;
+-        // valid for the duration of the handler. Copy so RtlVirtualUnwind can
+-        // mutate freely without touching the kernel's record.
+-        let mut ctx: CONTEXT = unsafe { *(fp as *const CONTEXT) };
++    if let Some(context) = context {
++        use bun_windows_sys::{UNW_FLAG_NHANDLER, ntdll};
++        // Copy so RtlVirtualUnwind can mutate freely without touching the kernel's record.
++        let mut ctx = *context;
++        let load = |address: usize| {
++            // An aligned word lies in one page, which is all that `is_valid_memory` looks at.
++            if !address.is_multiple_of(core::mem::size_of::<usize>()) {
++                return None;
 +            }
-+            false => referrer,
++            MemoryAccessor {}.load_usize(address)
 +        };
-         if plan.records {
-             self.builder.record_require(
-                 module,
--                referrer,
-+                requirer,
-                 requirer_object,
-                 from_created_require,
-                 false,
-@@ -1595,7 +1602,7 @@ impl FunctionLowering<'_, '_, '_, '_, '_> {
-             let names_run = requirer_object.is_some();
-             self.builder.record_require(
-                 module,
--                referrer,
-+                requirer,
-                 requirer_object,
-                 from_created_require,
-                 names_run,
-```
-
-**File**: `src/aot/lower/scope/environments.rs` (modified, +2/-3)
-```diff
-@@ -12,7 +12,7 @@ use smallvec::SmallVec;
- use super::{BindingRef, ScopeSlot, Storage, dead_zone};
- use crate::builtins::id::BuiltinId;
- use crate::builtins::{BuiltinPath, Mutability};
--use crate::ir::generated::{Field, FieldFlags, ImportPhase, Layout, LayoutKind};
-+use crate::ir::generated::{Field, FieldFlags, Layout, LayoutKind};
- use crate::ir::{
-     ClassSlot, DeclaredType, LayoutId, LayoutKey, Mapped, OpaqueKind, PositionFlags, Primitives,
-     PropertyKey, StringId, Type, TypeId, TypeTable,
-@@ -79,11 +79,10 @@ pub(in crate::lower) fn instance_layout(file: &mut FileLowering<'_, '_, '_, '_>)
-     for &target in fields_of_instance.links() {
-         fields.push(file.create_link_field(fields.len(), target));
-     }
--    let namespaces = [ImportPhase::Evaluation, ImportPhase::Defer];
-     for _ in fields_of_instance.mocks() {
-         fields.push(file.create_word_field(fields.len()));
-     }
--    for _ in namespaces {
-+    while fields.len() < fields_of_instance.field_of_scope() as usize {
-         let types = &mut file.fragment.types;
-         let ty = types.union(TypeTable::ANYTHING, TypeTable::ABSENT);
-         fields.push(file.create_hidden_field(fields.len(), ty));
-```
-
-**File**: `src/aot/lower/scope/plan.rs` (modified, +8/-3)
-```diff
-@@ -9,6 +9,7 @@ mod tests;
- use bun_sema::bind::{BindingStability, CodeUnit, Decl, ScopeId, SymbolId};
- use bun_sema::hir::{ExprId, FnId};
- use bun_sema::import_sites::{ImportSiteKind, JsxImport};
-+use bun_sema::program::FileId;
+         // Termination: on x64 RtlVirtualUnwind sets Pc = 0 at the end of the
+         // chain; on ARM64 it can leave the CONTEXT entirely unchanged, so a
+         // step that changed neither Pc nor Sp is also terminal. An Sp-only or
+@@ -713,13 +712,6 @@ pub fn capture_from_context(pc: usize, fp: usize, out: &mut [usize]) -> usize {
+                 let frame_pointer = ctx.Rbp;
+                 #[cfg(target_arch = "aarch64")]
+                 let frame_pointer = ctx.Fp;
+-                let load = |address: usize| {
+-                    if address % core::mem::size_of::<usize>() != 0 || !is_valid_memory(address) {
+-                        return None;
+-                    }
+-                    // SAFETY: the word is aligned, so it lies in the one page that is_valid_memory found committed and readable.
+-                    Some(unsafe { *(address as *const usize) })
+-                };
+                 let Some((caller_pc, caller_sp, caller_fp)) = caller_of_compiled_frame(
+                     compiled_frame,
+                     control_sp as usize,
+@@ -747,15 +739,10 @@ pub fn capture_from_context(pc: usize, fp: usize, out: &mut [usize]) -> usize {
+                 // so `Sp` is correctly left unchanged here.
+                 #[cfg(target_arch = "x86_64")]
+                 {
+-                    if ctx.Rsp & 7 != 0 || !is_valid_memory(ctx.Rsp as usize) {
++                    let Some(return_address) = load(ctx.Rsp as usize) else {
+                         break;
+-                    }
+-                    // SAFETY: is_valid_memory confirmed the page at `Rsp` is
+-                    // committed and readable (not reserved/guard/noaccess),
+-                    // and `Rsp` is 8-aligned.
+-                    unsafe {
+-                        ctx.Rip = *(ctx.Rsp as *const u64);
+-                    }
++                    };
++                    ctx.Rip = return_address as u64;
  
- pub(in crate::lower) use self::loop_updates::is_let_declaration;
- use super::analysis::{ArgumentsObjects, ScopeAnalysis, SlotKey, find_by_key, sort_unique};
-@@ -38,6 +39,7 @@ struct Context<'x, 's> {
- /// `file`: a link or a mock word leads to it.
- fn is_read_through_instance(
-     modules: &ModuleGraph,
-+    reader: FileId,
-     binding: ImportBinding,
-     named: Option<ModuleRef>,
- ) -> bool {
-@@ -54,7 +56,10 @@ fn is_read_through_instance(
-             modules.has_instances(file) || modules.holds_mock_in_variable(file)
-         }
-         ModuleRef::Runtime(_) => modules.is_named_by_mock(module),
--        ModuleRef::External { .. } => modules.is_absent_module(module),
-+        ModuleRef::External { .. } => {
-+            modules.is_absent_module(module)
-+                || modules.is_found_by_loader_for_test_file(module, reader)
+```
+
+**File**: `src/bun_core/util.rs` (modified, +30/-61)
+```diff
+@@ -1776,7 +1776,7 @@ pub struct RacyCell<T: ?Sized>(core::cell::Cell<T>);
+ // exact contract `static mut` already imposed. **Do not** wrap *payloads*
+ // whose `!Sync` is load-bearing (`Cell<U>`, `Rc<U>`, `RefCell<U>`); use
+ // `thread_local!` or a real lock for those. (The inner storage here is
+-// `Cell<T>` purely so `read`/`write` bodies are safe code — the cross-thread
++// `Cell<T>` purely so the body of `write` is safe code — the cross-thread
+ // hazard is fully accounted for by this `unsafe impl Sync`.)
+ unsafe impl<T: ?Sized> Sync for RacyCell<T> {}
+ 
+@@ -1791,31 +1791,16 @@ impl<T> RacyCell<T> {
+     pub const fn get(&self) -> *mut T {
+         self.0.as_ptr()
+     }
+-    /// Convenience: read a `Copy` value. Single load, no aliasing assertion.
+-    ///
+-    /// # Safety
+-    /// Caller guarantees no concurrent writer on another thread.
+-    #[inline]
+-    pub unsafe fn read(&self) -> T
+-    where
+-        T: Copy,
+-    {
+-        self.0.get()
+-    }
+     /// Convenience: overwrite the value.
+     ///
+     /// # Safety
+     /// Caller guarantees no concurrent reader/writer on another thread.
++    #[cfg(windows)]
+     #[inline]
+     pub unsafe fn write(&self, value: T) {
+         self.0.set(value)
+     }
+ }
+-impl<T: Default> Default for RacyCell<T> {
+-    fn default() -> Self {
+-        Self::new(T::default())
+-    }
+-}
+ 
+ // ─── ThreadLock (from bun_safety) ─────────────────────────────────────────
+ // Debug-only re-entrancy guard. Release builds compile to a ZST.
+@@ -1896,7 +1881,7 @@ impl ThreadLock {
+                 // swap observes it. Debug-only diagnostic on the panic path.
+                 let stored = self.locked_at.get();
+                 crate::dump_stack_trace(
+-                    &stored.trace(),
++                    stored.trace(),
+                     crate::DumpStackTraceOptions {
+                         frame_count: 10,
+                         stop_at_jsc_llint: true,
+@@ -3473,16 +3458,16 @@ pub use bun_alloc::secure_zero;
+ // ── argv ──────────────────────────────────────────────────────────────────
+ // `bun.argv` — process argv as a slice of NUL-terminated byte strings.
+ // The owned `ZBox` backing for the
+-// initial OS argv lives in `ARGV_STORAGE`; `ARGV` is the mutable *view*
++// initial OS argv lives in `ARGV_STORAGE`; `ARGV` points to the *view*
+ // slice that call sites read (and that `set_argv` swaps for the
+ // `--compile` exec-argv splicing path). Exposed via a tiny
+ // `Argv` wrapper so call sites can use it both as a slice (`.get(0)`,
+ // `.iter()`, `.len()`, `.as_slice()`) and as an `IntoIterator<Item = &[u8]>`
+ // for `for arg in argv()`.
+ static ARGV_STORAGE: Once<Vec<ZBox>> = Once::new();
+-static ARGV_VIEW: Once<Vec<&'static ZStr>> = Once::new();
+-static ARGV: RacyCell<&'static [&'static ZStr]> = RacyCell::new(&[]);
+-static ARGV_INIT: std::sync::Once = std::sync::Once::new();
++/// Null, or from a `&'static`.
++static ARGV: core::sync::atomic::AtomicPtr<&'static [&'static ZStr]> =
++    core::sync::atomic::AtomicPtr::new(core::ptr::null_mut());
+ 
+ /// Raw `(argc, argv)` as passed to `main` by the C runtime. Captured by
+ /// [`init_argv`] before any other code runs. On glibc / macOS / Windows,
+@@ -3571,27 +3556,29 @@ fn argv_storage() -> &'static [ZBox] {
+ 
+ #[cold]
+ #[inline(never)]
+-fn argv_view_init() {
+-    let storage: &'static [ZBox] = argv_storage();
+-    // ARGV_STORAGE is process-static via `Once`; `as_zstr` borrows for `'static`.
+-    let mut view: Vec<&'static ZStr> = storage.iter().map(ZBox::as_zstr).collect();
+-    // Splice BUN_OPTIONS tokens after argv[0].
+-    if let Some(opts) = crate::env_var::BUN_OPTIONS.get() {
+-        let original_len = view.len();
+-        append_options_env::<&'static ZStr>(opts, &mut view);
+-        set_bun_options_argc(view.len() - original_len);
+-    }
+-    let view: &'static [&'static ZStr] = ARGV_VIEW.get_or_init(move || view);
+-    // SAFETY: single-threaded lazy init guarded by Once.
+-    unsafe { ARGV.write(view) };
++fn argv_view_init() -> &'static &'static [&'static ZStr] {
++    use core::sync::atomic::Ordering::{Relaxed, Release};
++    static INITIAL: Once<&'static [&'static ZStr]> = Once::new();
++    let initial = INITIAL.get_or_init(|| {
++        let mut view: Vec<&'static ZStr> = argv_storage().iter().map(ZBox::as_zstr).collect();
++        // Splice BUN_OPTIONS tokens after argv[0].
++        if let Some(opts) = crate::env_var::BUN_OPTIONS.get() {
++            let original_len = view.len();
++            append_options_env::<&'static ZStr>(opts, &mut view);
++            set_bun_options_argc(view.len() - original_len);
 +        }
-         _ => false,
-     };
-     let reaches_mock = |module| match module {
-@@ -82,7 +87,7 @@ fn find_instance_imports(input: &ScopeInput<'_, '_>) -> Vec<SymbolId> {
-             Some(SiteAnswer::Module(named)) => Some(named),
-             _ => None,
-         };
--        is_read_through_instance(modules, binding, named)
-+        is_read_through_instance(modules, file, binding, named)
-     });
-     imports.map(|it| it.0).collect()
- }
-@@ -98,7 +103,7 @@ pub(super) fn is_instance_jsx_import(input: &ScopeInput<'_, '_>, import: JsxImpo
-     };
-     let bindings = modules.jsx_bindings(file).iter();
-     let mut bindings = bindings.filter(|it| it.0 == import);
--    bindings.any(|&(_, binding)| is_read_through_instance(modules, binding, named))
-+    bindings.any(|&(_, binding)| is_read_through_instance(modules, file, binding, named))
++        view.leak()
++    });
++    let published = core::ptr::from_ref(initial).cast_mut();
++    let _ = ARGV.compare_exchange(core::ptr::null_mut(), published, Release, Relaxed);
++    initial
  }
  
- struct NormalizedUses {
+ #[inline]
+ fn argv_view() -> &'static [&'static ZStr] {
+-    ARGV_INIT.call_once(argv_view_init);
+-    // SAFETY: ARGV is a Copy fat-pointer; only mutated via `set_argv` during
+-    // single-th
+```
+
+**File**: `src/crash_handler/fault_registers.rs` (modified, +12/-16)
+```diff
+@@ -2,9 +2,10 @@
+ //! work for a build. No line gives away where anything was loaded: a value that may be an address is printed by what it points
+ //! into, or by its place in its page alone.
+ 
+-use core::ffi::c_void;
+ use core::fmt::Write as _;
+ 
++use crate::SignalContext;
++
+ #[cfg(target_arch = "x86_64")]
+ const NAMES: [&str; 16] = [
+     "rax", "rbx", "rcx", "rdx", "rsi", "rdi", "rbp", "rsp", "r8", "r9", "r10", "r11", "r12", "r13",
+@@ -33,7 +34,7 @@ const END_OF_ADDRESSES: usize = if cfg!(target_arch = "x86_64") {
+ const REACH_OF_STACK: usize = 1 << 20;
+ 
+ #[cfg(target_arch = "x86_64")]
+-fn read(context: *mut c_void) -> ([usize; NAMES.len()], usize, usize) {
++fn read(machine: &libc::mcontext_t) -> ([usize; NAMES.len()], usize, usize) {
+     const INDICES: [libc::c_int; NAMES.len()] = [
+         libc::REG_RAX,
+         libc::REG_RBX,
+@@ -52,20 +53,12 @@ fn read(context: *mut c_void) -> ([usize; NAMES.len()], usize, usize) {
+         libc::REG_R14,
+         libc::REG_R15,
+     ];
+-    // SAFETY: the kernel passes a valid ucontext_t as the handler's third argument.
+-    let gregs = unsafe {
+-        &(*context.cast::<libc::ucontext_t>().cast_const())
+-            .uc_mcontext
+-            .gregs
+-    };
+-    let of = |index: libc::c_int| gregs[index as usize] as usize;
++    let of = |index: libc::c_int| machine.gregs[index as usize] as usize;
+     (INDICES.map(of), of(libc::REG_RIP), of(libc::REG_RSP))
+ }
+ 
+ #[cfg(target_arch = "aarch64")]
+-fn read(context: *mut c_void) -> ([usize; NAMES.len()], usize, usize) {
+-    // SAFETY: the kernel passes a valid ucontext_t as the handler's third argument.
+-    let machine = unsafe { &(*context.cast::<libc::ucontext_t>().cast_const()).uc_mcontext };
++fn read(machine: &libc::mcontext_t) -> ([usize; NAMES.len()], usize, usize) {
+     let sp = machine.sp as usize;
+     let mut registers = [sp; NAMES.len()];
+     for (register, value) in registers.iter_mut().zip(machine.regs) {
+@@ -114,14 +107,17 @@ fn write_value(line: &mut Line, value: usize, sp: usize) -> core::fmt::Result {
+     }
+ }
+ 
+-/// `context`: the third argument of the signal handler, which has not returned. `fault`: the address that could not be
+-/// reached, where the signal has one.
+-pub(crate) fn write_to(context: *mut c_void, fault: Option<usize>, write: &mut dyn FnMut(&[u8])) {
++/// `fault`: the address that could not be reached, where the signal has one.
++pub(crate) fn write_to(
++    context: SignalContext<'_>,
++    fault: Option<usize>,
++    write: &mut dyn FnMut(&[u8]),
++) {
+     let holds_compiled_code = crate::build_id::build_id().is_some();
+     if !holds_compiled_code && crate::stopped_builds::place_of_this_thread().is_none() {
+         return;
+     }
+-    let (registers, pc, sp) = read(context);
++    let (registers, pc, sp) = read(context.mcontext());
+     let could_not_fetch = fault.is_some_and(|fault| fault.wrapping_sub(pc) < BYTES_OF_CODE);
+     let code = (!could_not_fetch && (PAGE..END_OF_ADDRESSES).contains(&pc)).then(|| {
+         let length = BYTES_OF_CODE.min(PAGE - pc % PAGE);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49089** (2026-11-16): install: the Windows bin shim works on slices (@dylan-conway)
-- **PR #49087** (2026-11-16): bindings: system handles and native addons have owners (@dylan-conway)
-- **PR #49084** (2026-11-16): usockets: socket creation and HTTP/3 are C++, and what they allocate has an owner (@dylan-conway)
-- **PR #49083** (2026-11-16): dns: c-ares replies and the dns_sd connection are owned, and address lists are iterators (@dylan-conway)
-- **PR #49081** (2026-11-16): AOT: stores into enums, children of wrapped functions, JSX settings, order files, and tests of the engine's fixes (@Jarred-Sumner)
-- **PR #49080** (2026-11-16): glob, dns, ipc, sys: descriptors, temporary files and C results have owners (@dylan-conway)
+- **PR #49226** (2026-11-17): Crash reports: signed return addresses of compiled code; update WebKit (@dylan-conway)
+- **PR #49202** (2026-11-17): Bun.Image: decode large WebP coefficients as libwebp does (@dylan-conway)
+- **PR #49201** (2026-11-17): redis: null and undefined do not shift, cut or name the arguments of nine commands (@alii)
+- **PR #49194** (closed): jsc: reaching the VM takes a zero-sized token, and what it lends is not 'static (@dylan-conway)
+- **PR #49192** (closed): AOT: report legacy octal numbers and escapes where the parser of bun run reads strict code (@robobun)
+- **PR #49189** (2026-11-17): test: fold 13 pending JavaScriptCore regression tests into one PR (@robobun)
 
 ---
 
@@ -2049,62 +2805,37 @@ Programs and types
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. jsc: event loop keep-alives and VM handle references have owners
+## X. postgres: the handshake and the request pipeline are enums without JS types, wit
 
 **RULE**:
-When implementing operations in `src/jsc/VmHandle.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bdd1a6a8`: jsc: event loop keep-alives and VM handle references have owners. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7bc51bbf`: postgres: the handshake and the request pipeline are enums without JS types, with 9 bug fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/jsc/VmHandle.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pub unsafe extern "C" fn Bun__VmHandle__retainRef(r: *const Shared) {
-    unsafe { Arc::increment_strong_count(r) };
-/// Any thread: see [`VmHandle::post_cpp_task`].
-/// `r` is a live reference its holder keeps for the duration of the call; `task` is a live heap `WebCore::EventLoopTask` handed over.
-pub unsafe extern "C" fn Bun__VmHandle__post(
-    unsafe { VmHandle::borrow_ref(r).post_cpp_task(kind, task) };
-}
-
-/// The JS thread, or the collector's while the JS thread is stopped.
-#[unsafe(no_mangle)]
-pub extern "C" fn Bun__eventLoop__refKeepAlive(vm: &VirtualMachine) {
-    vm.event_loop().ref_keep_alive();
-/// `Bun::EventLoopKeepAlive`.
-pub extern "C" fn Bun__eventLoop__setKeptAlive(kept_alive: bool) {
-    let event_loop = VirtualMachine::get().event_loop();
-    if kept_alive {
-        event_loop.ref_keep_alive();
-        event_loop.unref_keep_alive();
+ "bun_alloc",
+ "bun_base64",
+ "bun_ptr",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-pub unsafe extern "C" fn Bun__VmHandle__retainRef(r: *const Shared) -> *const Shared {
-    unsafe { VmHandle::borrow_ref(r) }.clone().into_ref()
-/// Any thread: post a C++ task to the VM's `kind` loop through a reference and
-/// give the reference up (queued, or deleted unrun if the VM is closed).
-/// `r` came from `Bun__VmHandle__retain*` and is not used afterwards; `task` is
-/// a live heap `WebCore::EventLoopTask` handed over.
-pub unsafe extern "C" fn Bun__VmHandle__postAndRelease(
-    let handle = unsafe { VmHandle::from_ref(r) };
-    // SAFETY: fn contract.
-    unsafe { handle.post_cpp_task(kind, task) };
-/// JS thread: adjust this VM's keep-alive directly.
-pub extern "C" fn Bun__eventLoop__refKeepAlive(vm: &VirtualMachine, delta: core::ffi::c_int) {
-    if delta > 0 {
-        vm.event_loop().ref_keep_alive();
-        vm.event_loop().unref_keep_alive();
+ "bun_alloc",
+ "bun_base64",
+ "bun_sha_hmac",
+ "strum",
+ "thiserror",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bdd1a6a8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7bc51bbf` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

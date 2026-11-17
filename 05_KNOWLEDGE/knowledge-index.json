@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T20:45:45.272Z",
-  "total_verified_learnings": 8940,
+  "last_updated": "2026-11-17T21:03:53.846Z",
+  "total_verified_learnings": 8941,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20626,
+  "total_items": 20634,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218692,8 +218692,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "208f3fc1",
-      "content_hash": "7e8cb2b2b731fd718ebbeb591bf664e50006ccc836589329ef60ee05b8fa143a",
+      "source_version": "b9d146c8",
+      "content_hash": "7c0e03d8c765f89a122603a53ab8c876b4fdfb03cf386c4574497ec306776793",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -218706,6 +218706,11 @@
           "number": 8617,
           "title": "Potential fix for pull request finding 'CodeQL / Statement has no effect'",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9067,
+          "title": "Reject page-memory documents whose page count cannot be read",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218713,7 +218718,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T13:09:06.532Z",
+      "verified_at": "2026-11-17T21:03:24.560Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218755,10 +218760,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-architecture-intelligence-ontos-ai-knowhere-core-invariants.md",
       "title": "Architecture Intelligence: Ontos-AI/knowhere Core Invariants",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "208f3fc1",
-      "content_hash": "343a207e3add8af97081ef948f324796996cd4c43710afdc5a04ef6c94bde86e",
+      "source_version": "b9d146c8",
+      "content_hash": "baa5e282740f5bd59d28afc0bcdd6883fde3f8805b32409ddec6a1b44fa5fb7d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T13:09:06.951Z"
+      "persisted_at": "2026-11-17T21:03:25.002Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere",
@@ -218767,10 +218772,10 @@
       "relative_path": "08_VERIFICATION/ontos-ai-knowhere-verification-protocol-empirical-defect-shield-for-ontos-ai-kno.md",
       "title": "Verification Protocol: Empirical Defect Shield for Ontos-AI/knowhere",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "208f3fc1",
-      "content_hash": "ad89ed9d66ac457b19d3f794604c8a5398bb6ef568db558f01ca0eec4343fcf5",
+      "source_version": "b9d146c8",
+      "content_hash": "8ea483971610c566f8de48db13f0682b263aeb06df3692bd370ce46ff9137ba2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:09:07.052Z"
+      "persisted_at": "2026-11-17T21:03:25.122Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv",
@@ -232159,14 +232164,19 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "237bba51",
-      "content_hash": "db4aade0cc15a77c184a3fb84da21e063ea7d790630278ac7277d67eb652eba5",
+      "source_version": "73e945ec",
+      "content_hash": "01a5efcffa9dde9fcfa58d7c0974921dcbcef701a8831d99df21dbcb861f44fd",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
         {
           "number": 8735,
           "title": "event loop keep-alives and VM handle references have owners",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9066,
+          "title": "the handshake and the request pipeline are enums without JS types, wit",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -232175,7 +232185,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T12:53:09.406Z",
+      "verified_at": "2026-11-17T21:03:05.279Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232191,10 +232201,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "repository": "oven-sh/bun",
-      "source_version": "237bba51",
-      "content_hash": "0662b0da4c10928febd41798eb69d9d833dad4e8acb8da09a853593a9c4bfb1d",
+      "source_version": "73e945ec",
+      "content_hash": "f3385fa52581333a978c49c4949ff18c330697e9bbabc4164d2bcae2cedc3460",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T12:53:09.819Z"
+      "persisted_at": "2026-11-17T21:03:05.747Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun",
@@ -232203,10 +232213,10 @@
       "relative_path": "12_DECISIONS/ADR-oven-sh-bun-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh/bun",
       "repository": "oven-sh/bun",
-      "source_version": "237bba51",
-      "content_hash": "9e66c5df178f6ed22041c48040476697417bbaf3f2cc3f46e78b2e9ed3c47b86",
+      "source_version": "73e945ec",
+      "content_hash": "beb4e666db58706387c2851208bf9b39503075ab596ebf843048fcc465242f33",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T12:53:09.919Z"
+      "persisted_at": "2026-11-17T21:03:05.872Z"
     },
     "learn-huggingface-autotrust-gev-26b-decide": {
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
@@ -232255,9 +232265,9 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "d20461e21e77b5df3de5cd021460b7c14fea6193a0525cee1db03389e949664a",
+      "content_hash": "b1a374f1d3e64a3d79891a0ae8e6b24be62210c07a4ee8a099dbec4fcf5e549c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T12:53:13.142Z"
+      "persisted_at": "2026-11-17T21:03:28.252Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings",
@@ -232267,9 +232277,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh-bun-learnings",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c3116fa5af2c4335f94ee4c72bdb37c1b1ae7b76b5ec8cc51118da4a18b9d9c",
+      "content_hash": "56ed854e764d606bf751ba12f5b9c0dce36ea4668bc13e65cc8750a62246fdd9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T12:53:13.252Z"
+      "persisted_at": "2026-11-17T21:03:28.381Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar",
@@ -254363,10 +254373,10 @@
       "relative_path": "08_VERIFICATION/oven-sh-bun-verification-protocol-empirical-defect-shield-for-oven-sh-bun.md",
       "title": "Verification Protocol: Empirical Defect Shield for oven-sh/bun",
       "repository": "oven-sh/bun",
-      "source_version": "237bba51",
-      "content_hash": "d58dc94922818cc092dc5174d351a36d712730b300850909ecad2682a4b26fea",
+      "source_version": "73e945ec",
+      "content_hash": "c18c72fb1eef442605ecb14e17ba4f1f382f7f80bf3c67bbc097f92b6afd389a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T12:53:10.010Z"
+      "persisted_at": "2026-11-17T21:03:05.983Z"
     },
     "candidate_directive-jsc-event-loop-keep-alives-and-vm-handle-references-have-owners": {
       "item_id": "candidate_directive-jsc-event-loop-keep-alives-and-vm-handle-references-have-owners",
@@ -254388,9 +254398,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oven-sh-bun-learnings",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "284df8ded94a09fc815c27083a4e16faf2e6ccd1a923b3634a1cbc782adf73d8",
+      "content_hash": "9df42bd5cf99dc2f594364874281658613e52c10cc54c02a99f2ee007e777e0c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T12:53:13.350Z"
+      "persisted_at": "2026-11-17T21:03:28.486Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria",
@@ -259934,8 +259944,8 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "2ec8094c",
-      "content_hash": "c03a65280d7f4db365ed6c9016aca058e899d567ee5531b89f486b3ad43460b8",
+      "source_version": "d93bbdba",
+      "content_hash": "64355267f68d9f1c4d0cce3feddf29239a4eed3ff857e960cca3653a07bebfa9",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
@@ -259960,7 +259970,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:46:44.735Z",
+      "verified_at": "2026-11-17T21:03:13.314Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260002,10 +260012,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "repository": "sigstore/cosign",
-      "source_version": "2ec8094c",
-      "content_hash": "e1f912416f6fe35d81244c0aedcd0362859c459a315a1c9ff0879bd9841beec7",
+      "source_version": "d93bbdba",
+      "content_hash": "0f224434e4f0575ca7c8b37d4445187b19d387a6294d8a0af5451196473f4919",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T16:46:45.218Z"
+      "persisted_at": "2026-11-17T21:03:13.667Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign",
@@ -260063,9 +260073,9 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "repository": "sigstore-cosign-learnings",
       "source_version": "HEAD",
-      "content_hash": "68c04bd169247a1aeefcbc2942eaa5f3ccf502bac7871417924d5ec0ae3bdf02",
+      "content_hash": "6e7e9325bc2841baeadc7224680dbef099ef58cc81c48c75297e983a774c1c61",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T04:43:59.171Z"
+      "persisted_at": "2026-11-17T21:03:53.846Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sigstore-cosign-learnings",
@@ -277089,6 +277099,121 @@
       "content_hash": "2a89cc4363d10d218feab4d3571eda55da980ce8479cdd4bd4edd94f6cc71523",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T20:45:45.126Z"
+    },
+    "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2": {
+      "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "slug": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "content_hash": "63ab8016765d188326432b5e65397e970a188adcd52aa06b1adb8755fba7dfe0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T21:03:02.439Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cross-encoder-ms-marco-minilm-l6-v2-research-knowledge-intelligence-cross-enc.md",
+      "title": "Research & Knowledge Intelligence: cross-encoder/ms-marco-MiniLM-L6-v2 Core Invariants",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "content_hash": "19473611230a4cb0f854d45ccdcd2ff962790765a3587ba36c56f4a910dfb35b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T21:03:02.801Z"
+    },
+    "rule-9066": {
+      "learning_id": "rule-9066",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9066,
+      "title": "the handshake and the request pipeline are enums without JS types, wit",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "73e945ec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T21:03:05.279Z"
+    },
+    "candidate_directive-the-handshake-and-the-request-pipeline-are-enums-without-js-types-wit": {
+      "item_id": "candidate_directive-the-handshake-and-the-request-pipeline-are-enums-without-js-types-wit",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IPW2-the-handshake-and-the-request-pipeline-are-enums-without-js-types-wit.md",
+      "title": "the handshake and the request pipeline are enums without JS types, wit",
+      "repository": "oven-sh/bun",
+      "source_version": "73e945ec",
+      "content_hash": "5c49df31e18d07edbb6cb9dbbc8e56c7f9e2e75878c6812a388ef209f0afb0b6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T21:03:05.622Z"
+    },
+    "rule-9067": {
+      "learning_id": "rule-9067",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9067,
+      "title": "Reject page-memory documents whose page count cannot be read",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "b9d146c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T21:03:24.560Z"
+    },
+    "candidate_directive-reject-page-memory-documents-whose-page-count-cannot-be-read": {
+      "item_id": "candidate_directive-reject-page-memory-documents-whose-page-count-cannot-be-read",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J4RB-reject-page-memory-documents-whose-page-count-cannot-be-read.md",
+      "title": "Reject page-memory documents whose page count cannot be read",
+      "repository": "Ontos-AI/knowhere",
+      "source_version": "b9d146c8",
+      "content_hash": "4da8a718940fa9ee969ccb8980ad4ce25f6c95e38a2aa7b3cdeaa0ac2d8769d7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T21:03:24.888Z"
+    },
+    "candidate_directive-postgres-the-handshake-and-the-request-pipeline-are-enums-without-js-types-wit": {
+      "item_id": "candidate_directive-postgres-the-handshake-and-the-request-pipeline-are-enums-without-js-types-wit",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J79A-postgres-the-handshake-and-the-request-pipeline-are-enums-without-js-types-wit.md",
+      "title": "postgres: the handshake and the request pipeline are enums without JS types, wit",
+      "repository": "oven-sh-bun-learnings",
+      "source_version": "HEAD",
+      "content_hash": "295eb7b67b2980b2ea3747666c82a2d909ad8580e54a4cf817979f37c40d3e4b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T21:03:28.130Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings-research-knowledge-intelligence.md",
+      "title": "Research & Knowledge Intelligence: hf-cross-encoder-ms-marco-minilm-l6-v2-learnings Core Invariants",
+      "repository": "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e3347c72d21a241eae024dec1cad65c4cb0f70c10d7b30358b36ae51456a66d6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T21:03:28.758Z"
     }
   },
   "ai-builder-brain": {

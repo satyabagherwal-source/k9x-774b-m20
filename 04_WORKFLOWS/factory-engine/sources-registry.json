@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T20:45:43.481Z",
-    "lastVerified": "2026-11-17T20:45:43.481Z",
+    "lastChecked": "2026-11-17T21:03:27.755Z",
+    "lastVerified": "2026-11-17T21:03:27.755Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,12 +253,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T20:17:46.452Z",
-    "lastVerified": "2026-11-17T20:17:46.452Z",
+    "lastChecked": "2026-11-17T21:03:14.666Z",
+    "lastVerified": "2026-11-17T21:03:14.666Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -267,7 +267,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d6fb6afa"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -495,12 +496,12 @@
     "officialUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T11:13:48.745Z",
-    "lastVerified": "2026-11-13T11:13:48.745Z",
+    "lastChecked": "2026-11-17T21:03:02.106Z",
+    "lastVerified": "2026-11-17T21:03:02.106Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-    "contentHash": "6dc88efa261b1eee917e20df05bc2d98592f44e0fa396c901d6368826d2f511a",
+    "contentHash": "63ab8016765d188326432b5e65397e970a188adcd52aa06b1adb8755fba7dfe0",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -1941,14 +1942,14 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-17T16:46:43.981Z",
-    "lastVerified": "2026-11-17T16:46:43.981Z",
+    "lastChecked": "2026-11-17T21:03:13.080Z",
+    "lastVerified": "2026-11-17T21:03:13.080Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "c03a65280d7f4db365ed6c9016aca058e899d567ee5531b89f486b3ad43460b8",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "64355267f68d9f1c4d0cce3feddf29239a4eed3ff857e960cca3653a07bebfa9",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2609,9 +2610,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-16T23:52:48.391Z",
+    "lastChecked": "2026-11-17T21:03:07.124Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-16T23:52:48.391Z"
+    "lastVerified": "2026-11-17T21:03:07.124Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -2991,22 +2992,21 @@
     "revisionIdentifier": "b8d95290"
   },
   "ontos-ai-knowhere": {
-    "name": "knowhere",
+    "name": "Ontos-AI/knowhere",
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-16T22:34:17.347Z",
-    "lastVerified": "2026-11-16T22:34:17.347Z",
+    "lastChecked": "2026-11-17T21:03:23.806Z",
+    "lastVerified": "2026-11-17T21:03:23.806Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "7e8cb2b2b731fd718ebbeb591bf664e50006ccc836589329ef60ee05b8fa143a",
+    "contentHash": "7c0e03d8c765f89a122603a53ab8c876b4fdfb03cf386c4574497ec306776793",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "208f3fc1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
@@ -5491,9 +5491,9 @@
   "react-native-modal-react-native-modal": {
     "name": "react-native-modal",
     "officialUrl": "https://github.com/react-native-modal/react-native-modal",
-    "lastChecked": "2026-11-14T13:29:01.228Z",
+    "lastChecked": "2026-11-17T21:03:04.650Z",
     "revisionIdentifier": "3e413c4c",
-    "lastVerified": "2026-11-14T13:29:01.228Z"
+    "lastVerified": "2026-11-17T21:03:04.650Z"
   },
   "saltstack-salt": {
     "name": "salt",
@@ -8967,14 +8967,14 @@
     "officialUrl": "https://github.com/oven-sh/bun",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T12:48:06.819Z",
-    "lastVerified": "2026-11-16T12:48:06.819Z",
+    "lastChecked": "2026-11-17T21:03:04.553Z",
+    "lastVerified": "2026-11-17T21:03:04.553Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "db4aade0cc15a77c184a3fb84da21e063ea7d790630278ac7277d67eb652eba5",
+    "contentHash": "01a5efcffa9dde9fcfa58d7c0974921dcbcef701a8831d99df21dbcb861f44fd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T20:45:45.126Z",
-  "total_records": 1686,
+  "last_updated": "2026-11-17T21:03:53.846Z",
+  "total_records": 1689,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 728,
+      "total": 731,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -777,7 +777,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-asr-infinite-learnings-core-inva",
         "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-gguf-lear",
         "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-minilm-l6-v2-core-inva",
-        "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-minilm-l6-v2-learni"
+        "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-minilm-l6-v2-learni",
+        "domain_intelligence-research-knowledge-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
+        "DOM-D-6018CADD"
       ]
     },
     "E": {
@@ -11200,8 +11203,8 @@
       "title": "Architecture Intelligence: Ontos-AI/knowhere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-architecture-intelligence-ontos-ai-knowhere-core-invariants.md",
       "repository": "Ontos-AI/knowhere",
-      "content_hash": "343a207e3add8af97081ef948f324796996cd4c43710afdc5a04ef6c94bde86e",
-      "created_at": "2026-11-15T13:09:06.951Z"
+      "content_hash": "baa5e282740f5bd59d28afc0bcdd6883fde3f8805b32409ddec6a1b44fa5fb7d",
+      "created_at": "2026-11-17T21:03:25.002Z"
     },
     "DOM-J-44A35728": {
       "record_id": "DOM-J-44A35728",
@@ -16334,8 +16337,8 @@
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "repository": "oven-sh/bun",
-      "content_hash": "0662b0da4c10928febd41798eb69d9d833dad4e8acb8da09a853593a9c4bfb1d",
-      "created_at": "2026-11-16T12:53:09.819Z"
+      "content_hash": "f3385fa52581333a978c49c4949ff18c330697e9bbabc4164d2bcae2cedc3460",
+      "created_at": "2026-11-17T21:03:05.747Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants",
@@ -16394,8 +16397,8 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-learnings-technical-construction-intelligence-oven-sh-bun-learnings-.md",
       "repository": "oven-sh-bun-learnings",
-      "content_hash": "d20461e21e77b5df3de5cd021460b7c14fea6193a0525cee1db03389e949664a",
-      "created_at": "2026-11-16T12:53:13.142Z"
+      "content_hash": "b1a374f1d3e64a3d79891a0ae8e6b24be62210c07a4ee8a099dbec4fcf5e549c",
+      "created_at": "2026-11-17T21:03:28.252Z"
     },
     "DOM-D-02DACB51": {
       "record_id": "DOM-D-02DACB51",
@@ -24472,8 +24475,8 @@
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "repository": "sigstore/cosign",
-      "content_hash": "e1f912416f6fe35d81244c0aedcd0362859c459a315a1c9ff0879bd9841beec7",
-      "created_at": "2026-11-17T16:46:45.218Z"
+      "content_hash": "0f224434e4f0575ca7c8b37d4445187b19d387a6294d8a0af5451196473f4919",
+      "created_at": "2026-11-17T21:03:13.667Z"
     },
     "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
@@ -24490,8 +24493,8 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-learnings-content-information-intelligence-sigstore-cosign-learn.md",
       "repository": "sigstore-cosign-learnings",
-      "content_hash": "68c04bd169247a1aeefcbc2942eaa5f3ccf502bac7871417924d5ec0ae3bdf02",
-      "created_at": "2026-11-17T04:43:59.171Z"
+      "content_hash": "6e7e9325bc2841baeadc7224680dbef099ef58cc81c48c75297e983a774c1c61",
+      "created_at": "2026-11-17T21:03:53.846Z"
     },
     "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",
@@ -28455,6 +28458,66 @@
       "repository": "kubeedge-kubeedge-learnings",
       "content_hash": "2a89cc4363d10d218feab4d3571eda55da980ce8479cdd4bd4edd94f6cc71523",
       "created_at": "2026-11-17T20:45:45.126Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: cross-encoder/ms-marco-MiniLM-L6-v2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cross-encoder-ms-marco-minilm-l6-v2-research-knowledge-intelligence-cross-enc.md",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "content_hash": "19473611230a4cb0f854d45ccdcd2ff962790765a3587ba36c56f4a910dfb35b",
+      "created_at": "2026-11-17T21:03:02.801Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-cross-encoder-ms-marco-minilm-l6-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings-research-knowledge-intelligence.md",
+      "repository": "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
+      "content_hash": "e3347c72d21a241eae024dec1cad65c4cb0f70c10d7b30358b36ae51456a66d6",
+      "created_at": "2026-11-17T21:03:28.758Z"
+    },
+    "DOM-D-6018CADD": {
+      "record_id": "DOM-D-6018CADD",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): sigstore/cosign",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  \n> **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  \n> **Source Version**: `d93bbdba`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthes",
+      "content_hash": "4835554d97010c2a86ff38f492aa554bdc605de99cf37e60c0e8a4e957ec3bc2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  \n> **Source**: github ([https://github.com/sigstore/c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  \n> **Source**: github ([https://github.com/sigstore/c",
+      "provenance": {
+        "source_uri": "project://sigstore-cosign/sigstore-cosign-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T21:03:28.889Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (sigstore-cosign)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of sigstore-cosign"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T21:03:53.520Z"
     }
   }
 }

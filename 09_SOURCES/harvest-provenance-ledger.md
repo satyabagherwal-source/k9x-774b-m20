@@ -10744,3 +10744,8 @@ Every entry in this ledger must capture:
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `3a9cb19f` | Multi-dimensional audit evidence | 2026-11-17T20:45:36.357Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `935a8e49` | Multi-dimensional audit evidence | 2026-11-17T20:45:38.354Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `bf89cdfb` | Multi-dimensional audit evidence | 2026-11-17T20:45:40.340Z |
+| `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-11-17T21:03:02.632Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `73e945ec` | Multi-dimensional audit evidence | 2026-11-17T21:03:05.447Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `d93bbdba` | Multi-dimensional audit evidence | 2026-11-17T21:03:13.488Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `b9d146c8` | Multi-dimensional audit evidence | 2026-11-17T21:03:24.719Z |
+| `learn-dom-d-6018cadd` | `project://sigstore-cosign` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md` | 2026-11-17T21:03:53.544Z |

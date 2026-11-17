@@ -155,8 +155,8 @@
     "sourceUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceVersion": "hf-cross-encoder-ms-marco-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "6dc88efa261b1eee917e20df05bc2d98592f44e0fa396c901d6368826d2f511a",
-    "lastHarvestedAt": "2026-11-13T11:13:49.109Z",
+    "contentHash": "63ab8016765d188326432b5e65397e970a188adcd52aa06b1adb8755fba7dfe0",
+    "lastHarvestedAt": "2026-11-17T21:03:02.632Z",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2"
   },
   "hf-baai-bge-small-en-v1.5": {
@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "208f3fc1",
+    "sourceVersion": "b9d146c8",
     "license": "Apache-2.0",
-    "contentHash": "7e8cb2b2b731fd718ebbeb591bf664e50006ccc836589329ef60ee05b8fa143a",
-    "lastHarvestedAt": "2026-11-15T13:09:06.680Z",
+    "contentHash": "7c0e03d8c765f89a122603a53ab8c876b4fdfb03cf386c4574497ec306776793",
+    "lastHarvestedAt": "2026-11-17T21:03:24.719Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "2ec8094c",
+    "sourceVersion": "d93bbdba",
     "license": "Apache-2.0",
-    "contentHash": "c03a65280d7f4db365ed6c9016aca058e899d567ee5531b89f486b3ad43460b8",
-    "lastHarvestedAt": "2026-11-17T16:46:44.908Z",
+    "contentHash": "64355267f68d9f1c4d0cce3feddf29239a4eed3ff857e960cca3653a07bebfa9",
+    "lastHarvestedAt": "2026-11-17T21:03:13.488Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "237bba51",
+    "sourceVersion": "73e945ec",
     "license": "NOASSERTION",
-    "contentHash": "db4aade0cc15a77c184a3fb84da21e063ea7d790630278ac7277d67eb652eba5",
-    "lastHarvestedAt": "2026-11-16T12:53:09.552Z",
+    "contentHash": "01a5efcffa9dde9fcfa58d7c0974921dcbcef701a8831d99df21dbcb861f44fd",
+    "lastHarvestedAt": "2026-11-17T21:03:05.447Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {

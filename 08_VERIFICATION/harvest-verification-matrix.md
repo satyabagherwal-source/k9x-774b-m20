@@ -10711,3 +10711,8 @@
 | `CYCLE-20261117-W89U` | `2026-11-17T20:45:36.354Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9063` | Yes (`766e6afb...`) |
 | `CYCLE-20261117-W9TA` | `2026-11-17T20:45:38.350Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9064` | Yes (`9a7d93fb...`) |
 | `CYCLE-20261117-WBCH` | `2026-11-17T20:45:40.337Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9065` | Yes (`9d661941...`) |
+| `CYCLE-20261117-INL0` | `2026-11-17T21:03:02.628Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`63ab8016...`) |
+| `CYCLE-20261117-IPR8` | `2026-11-17T21:03:05.444Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9066` | Yes (`01a5efcf...`) |
+| `CYCLE-20261117-IVYK` | `2026-11-17T21:03:13.484Z` | `sigstore/cosign` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sigstore-cosign-learnings.md` | Yes (`64355267...`) |
+| `CYCLE-20261117-J4MJ` | `2026-11-17T21:03:24.715Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9067` | Yes (`7c0e03d8...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T21:03:53.544Z` | `sigstore-cosign` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6018CADD` [Domain D] | Yes (`4835554d...`) |
