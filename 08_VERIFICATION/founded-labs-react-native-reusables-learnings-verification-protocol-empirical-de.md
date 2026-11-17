@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T06:06:26.473Z",
+  "timestamp": "2026-11-17T17:57:59.883Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-founded-labs-react-native-reusables-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [founded-labs-react-native-reusables-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T06:06:26.473Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T17:57:59.883Z`  
 > **Learning ID**: `LEARN-EVO-founded-labs-react-native-reusables-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md`  
 > **Source**: github ([https://github.com/founded-labs/react-native-reusables](https://github.com/founded-labs/react-native-reusables))  
-> **Source Version**: `da1e1f22`  
+> **Source Version**: `7df9e76c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T06:05:41.623Z  
+> **Timestamp**: 2026-11-17T17:57:47.473Z  
 > **Learning ID**: `learn-github-founded-labs-react-native-reusables`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/founded-labs/react-native-reusables](https://github.com/founded-labs/react-native-reusables))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T06:05:41.617Z  
+> **Harvest Timestamp**: 2026-11-17T17:57:47.468Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Bringing shadcn/ui to React Native. Beautifully crafted components with Nativewind/Uniwind, open source, and almost as easy to use.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8728 stars
+- **Stars / Engagement**: 8739 stars
 
 ---
 
@@ -420,268 +420,115 @@ Effect.suspend(Cli.run).pipe(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da1e1f22` (2026-11-13)
-**Commit Message**: Remove Catalogs integration and publishing files
+### Incident Patch 1: `7df9e76c` (2026-11-17)
+**Commit Message**: Update À proximité description
 
-**File**: `apps/docs/app/(home)/page.tsx` (modified, +2/-2)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01SJw3ChXELLcKA4TbtXHDpG
+
+**File**: `apps/docs/content/docs/founded-labs.mdx` (modified, +1/-1)
 ```diff
-@@ -18,8 +18,8 @@ export default function HomePage() {
-               variant="outline"
-               asChild
-               className="bg-card dark:bg-secondary border-border/75 gap-1 rounded-full pr-2 font-normal">
--              <Link href="/docs/catalogs">
--                Now available on catalogs.dev <ArrowRightIcon className="size-3" />
-+              <Link href="/docs/blocks/authentication">
-+                New Authentication Blocks <ArrowRightIcon className="size-3" />
-               </Link>
-             </Badge>
-           </div>
+@@ -29,7 +29,7 @@ Visit <a href="https://foundedlabs.com" rel="noopener">foundedlabs.com</a> to le
+   />
+   <Card
+     title="À proximité"
+-    description="A free service for homeowners in Vaudreuil-Soulanges, Québec. They describe the work once, and the best local company for it calls them back."
++    description="A company that comes to do the work at your place, throughout Vaudreuil-Soulanges, chosen on merit. No company can pay for its place."
+     href="https://aproximite.ca/"
+     rel="noopener"
+   />
 ```
 
-**File**: `apps/docs/app/docs/[[...slug]]/page.tsx` (modified, +11/-22)
+---
+
+### Incident Patch 2: `d430e9a7` (2026-11-14)
+**Commit Message**: docs: add Founded Labs page and point the sidebar item to it
+
+The sidebar "Founded Labs" item now opens a short page with a studio
+description, a link to foundedlabs.com, and Founded Labs projects.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/docs/app/docs/[[...slug]]/page.tsx` (modified, +1/-5)
 ```diff
-@@ -1,18 +1,14 @@
- import { Button } from '@docs/components/ui/button';
--import { CatalogsMark } from '@docs/lib/CatalogsIcon';
- import { source } from '@docs/lib/source';
- import { cn } from '@docs/lib/utils';
- import { findNeighbour } from 'fumadocs-core/server';
- import { CodeBlock, Pre } from 'fumadocs-ui/components/codeblock';
- import defaultMdxComponents from 'fumadocs-ui/mdx';
- import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/page';
--import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon } from 'lucide-react';
--import { Hanken_Grotesk } from 'next/font/google';
-+import { ArrowLeftIcon, ArrowRightIcon, ExternalLinkIcon } from 'lucide-react';
- import Link from 'next/link';
- import { notFound } from 'next/navigation';
- 
--const hankenGrotesk = Hanken_Grotesk({ subsets: ['latin'], weight: '700' });
--
- export default async function Page(props: { params: Promise<{ slug?: string[] }> }) {
-   const params = await props.params;
-   const page = source.getPage(params.slug);
-@@ -172,27 +168,20 @@ export function Footer({ url }: { url: string }) {
- 
- function TableOfContentFooter() {
-   return (
--    <div className="bg-card dark:bg-fd-muted border-border/50 text-fd-foreground/80 group relative mt-12 flex flex-col overflow-clip rounded-lg border p-6 text-sm">
--      <div
--        className={cn(
--          hankenGrotesk.className,
--          'text-fd-foreground flex items-center gap-2 text-lg font-bold leading-none tracking-[-0.02em]'
--        )}>
--        <CatalogsMark className="h-auto w-[1em]" />
--        catalogs.dev
--      </div>
--      <div className="text-fd-foreground mt-4 font-medium">The new place for UI.</div>
--      <div className="text-muted-foreground mt-1 text-pretty">
--        Every catalog in one place, adapted to your project.
-+    <div className="bg-card dark:bg-fd-muted border-border/50 text-fd-foreground/80 group relative mt-12 flex flex-col gap-2 overflow-clip rounded-lg border p-6 text-sm">
-+      <div className="text-balance text-base font-semibold leading-tight group-hover:underline">
-+        Want to work with us?
-       </div>
-+      <div className="">Mention us to your team.</div>
-+      <div className="text-muted-foreground pb-2">We help companies ship world-class UI/UX.</div>
-       <Button
-         size="sm"
--        className="relative mt-4 w-fit opacity-[.85] transition-opacity duration-150 group-hover:opacity-100 dark:opacity-80 dark:group-hover:opacity-100">
--        Explore
--        <ArrowUpRightIcon />
-+        className="from-primary to-primary/75 group-hover:to-primary/80 relative w-fit bg-transparent bg-gradient-to-br duration-150 group-hover:pr-8">
-+        Learn more
-+        <ExternalLinkIcon className="absolute right-2 top-1/2 size-3.5 -translate-x-1 -translate-y-1/2 scale-y-0 opacity-0 duration-100 group-hover:translate-x-0 group-hover:scale-y-100 group-hover:opacity-100" />
-       </Button>
--      <Link href="https://catalogs.dev" target="_blank" className="absolute inset-0">
--        <span className="sr-only">Explore catalogs.dev</span>
-+      <Link href="https://foundedlabs.com" target="_blank" className="absolute inset-0">
-+        <span className="sr-only">Learn more about Founded Labs</span>
-       </Link>
-     </div>
-   );
+@@ -77,11 +77,7 @@ function NeighbourButtons({ url }: { url: string }) {
+       ) : null}
+       {neighbours.next || isManualInstallation ? (
+         <Button variant="outline" size="icon" className="border-border/70 size-8" asChild>
+-          <Link
+-            href={neighbours.next?.url || '/docs/customization'}
+-            target={
+-              neighbours.next?.url.startsWith('https://foundedlabs.com') ? '_blank' : undefined
+-            }>
++          <Link href={neighbours.next?.url || '/docs/customization'}>
+             <ArrowRightIcon />
+           </Link>
+         </Button>
 ```
 
-**File**: `apps/docs/content/docs/catalogs.mdx` (removed, +0/-64)
+**File**: `apps/docs/content/docs/founded-labs.mdx` (added, +36/-0)
 ```diff
-@@ -1,64 +0,0 @@
-----
--title: catalogs.dev
--description: Choose what feels right. Your agent builds from there.
-----
--
--import { Button } from '@docs/components/ui/button';
--import { ArrowUpRightIcon } from 'lucide-react';
--
--<a href="https://catalogs.dev" target="_blank" rel="noreferrer" className="not-prose block">
--  <img
--    src="/images/catalogs-og.png"
--    alt="catalogs.dev"
--    width={1200}
--    height={630}
--    className="my-0 w-full rounded-xl border"
--  />
--</a>
--
--[catalogs.dev](https://catalogs.dev) is what we've been building at Founded Labs, next to React Native Reusables. It comes from how we work now: coding agents write most of the code, but choosing what to build with is still up to us.
--
--## You choose, your agent builds
--
--Agents are fast, but they can't see what a component looks like or tell whether it fits your app. You can. [catalogs.dev](https://catalogs.dev) splits the work that way. You pick with your own eyes, and your agent handles the integration.
--
--## See it before you add it
--
--Every item shows how it looks and behaves. You choose from the real thing, not a name in a list or a guess in a prompt.
--
--## Your agent brings the options
--
--Ask your agent for a sign in screen, and it gathers options for your project on one page. Compare them, keep what you like, add a note, and send your picks back. No commands to copy, no URLs to paste.
--
--## It fits your code
--
--Your agent places each file next to your other components, named the way you name things. It uses your imports and helpers, and adds a dependency only when one is needed. Items come with setup notes, so your agent knows how each one should be wired in.
--
--## More than React Native Reusables
--
--[catalogs.dev](https://catalogs.dev) lists work from many teams, including shadcn, Expo, Vercel, HeroUI, and Magic UI. Components, blocks, screens, and themes, all found and added the same way.
--
--## Who it's for
--
--- You build with Claude Code, Cursor, Codex, or another coding agent.
--- You care how your app looks and want to choose the pieces yourself.
--- You like to browse on your own first. Collect items in a cart, add instructions, and hand your agent one prompt.
--
--## Nothing changes here
--
--React Native Reusables stays open source, and the [CLI](/docs/cli) works as it always has. [catalogs.dev](https://catalogs.dev) is another way in, with the same files.
--
--<div className="not-prose mt-8 flex flex-wrap gap-2">
--  <Button asChild>
--    <a href="https://catalogs.dev/founded-labs" target="_blank" rel="noreferrer">
--      Browse React Native Reusables
--      <ArrowUpRightIcon />
--    </a>
--  </Button>
--  <Button asChild variant="outline">
--    <a href="https://catalogs.dev" target="_blank" rel="noreferrer">
--      Explore catalogs.dev
--      <ArrowUpRightIcon />
--    </a>
--  </Button>
--</div>
+@@ -0,0 +1,36 @@
++---
++title: Founded Labs
++description: The studio behind React Native Reusables.
++---
++
++Founded Labs is a React Native app studio and product lab. We design and build iOS and Android apps with React Native and Expo, help teams with apps already in production, and build our own tools, including React Native Reusables.
++
++Visit <a href="https://foundedlabs.com" rel="noopener">foundedlabs.com</a> to learn more.
++
++## Projects
++
++<Cards>
++  <Card
++    title="React Native Reusables"
++    description="Accessible, customizable components for React Native. The shadcn/ui of the ecosystem."
++    href="/docs"
++  />
++  <Card
++    title="rn-primitives"
++    description="Unstyled, accessible UI primitives. The foundation for custom design systems."
++    href="https://rnprimitives.com"
++    rel="noopener"
++  />
++  <Card
++    title="NativewindUI"
++    description="Native-feel components and templates for React Native, Expo, and Nativewind."
++    href="https://nativewindui.com"
++    rel="noopener"
++  />
++  <Card
++    title="À proximité"
++    description="A free service for homeowners in Vaudreuil-Soulanges, Québec. They describe the work once, and the best local company for it calls them back."
++    href="https://aproximite.ca/"
++    rel="noopener"
++  />
++</Cards>
 ```
 
-**File**: `apps/docs/content/docs/changelog.mdx` (modified, +0/-10)
+**File**: `apps/docs/content/docs/meta.json` (modified, +2/-1)
 ```diff
-@@ -9,16 +9,6 @@ import { VercelOssBadge } from '@docs/components/vercel-oss-badge';
- import { ClerkLogo } from '@docs/components/clerk-logo';
- import { DownloadAppBanner } from '@docs/components/download-app-banner';
- 
--## September 2026 - Now on catalogs.dev
--
--Every React Native Reusables component and block is now on [catalogs.dev](https://catalogs.dev/founded-labs), the platform we've been building at Founded Labs for working with coding agents.
--
--- **See it first:** every item shows how it looks and behaves, in light and dark, before it touches your project.
--- **You pick, your agent builds:** your agent gathers options for what you're making. You keep what feels right, and it fits the files to your code.
--- **More than one catalog:** shadcn, Expo, Vercel, Magic UI, and many more teams, all found and added the same way.
--
--The [CLI](/docs/cli) works as it always has. Read more on the [catalogs.dev](/docs/catalogs) page.
--
- ## December 2025 - Uniwind Integration
- 
- React Native Reusables now has full support for [Uniwind](https://uniwind.dev).
-```
-
-**File**: `apps/docs/content/docs/index.mdx` (modified, +0/-7)
-```diff
-@@ -12,13 +12,6 @@ This is not a component library. It is how you build your component library.
- 
- Built with familiar tools and libraries, it follows consistent styling, structure, and naming conventions, letting you use your favorite design system to create beautiful universal apps.
- 
--There are two ways to add components:
--
--- <span className='font-medium'>The shadcn/ui way:</span> Run the [CLI](/docs/cli). It copies the component source into your project.
--- <span className='font-medium'>The agentic way:</span> Browse [catalogs.dev](/docs/catalogs), pick what you want, and let your coding agent add it to your project.
--
--Either way, you get the same files, and the code is yours.
--
- 
- <div className="my-12">
- <DownloadAppBanner />
-```
-
-**File**: `apps/docs/content/docs/meta.json` (modified, +0/-2)
-```diff
-@@ -9,11 +9,9 @@
-     "!installation",
-     "!customization",
-     "!cli",
--    "!catalogs",
-     "!figma",
-     "!changelog",
-     "[BookOpen][Introduction](/docs)",
--    "[Catalogs][catalogs.dev](/docs/catalogs)",
-     "[FolderDown][Installation](/docs/installation)",
-     "[FileSliders][Customization](/docs/customization)",
-     "[SquareTerminal][CLI](/docs/cli)",
-```
-
-**File**: `apps/docs/lib/CatalogsIcon.tsx` (removed, +0/-24)
-```diff
-@@ -1,24 +0,0 @@
--const PATH =
--  'M0 37.2407C0 16.6732 16.8372 0 37.6068 0L220.392 0C230.862 0 240.858 4.32199 247.974 11.9261L283.565 49.9536C290.682 57.5577 300.678 61.8797 311.148 61.8797H474.393C495.163 61.8797 512 78.5529 512 99.1203L498.556 321.759C498.556 342.327 481.718 359 460.949 359H53.2917C32.5221 359 15.6849 342.327 15.6849 321.759L0 37.2407Z';
--
--export function CatalogsMark({ className }: { className?: string }) {
--  return (
--    <svg
--      viewBox="0 0 512 359"
--      fill="none"
--      xmlns="http://www.w3.org/2000/svg"
--      className={className}
--      role="img"
--      aria-label="Catalogs">
--      <path d={PATH} fill="currentColor" />
--    </svg>
--  );
--}
--
--export default function CatalogsIcon() {
--  return (
--    <svg width="16" height="16" viewBox="-40 -116.5 592 592" fill="none" xmlns="http://www.w3.org/2000/svg">
--      <path d={PATH} fill="currentColor" />
--    </svg>
--  );
--}
-```
-
-**File**: `apps/docs/lib/source.ts` (modified, +0/-4)
-```diff
-@@ -3,7 +3,6 @@ import { loader } from 'fumadocs-core/source';
- import { createMDXSource } from 'fumadocs-mdx';
- import { icons } from 'lucide-react';
- import { createElement } from 'react';
--import CatalogsIcon from './CatalogsIcon';
- import FoundedLabsIcon from './FoundedLabsIcon';
- 
- export const source = loader({
-@@ -16,9 +15,6 @@ export const source = loader({
-     if (icon === 'FoundedLabs') {
-       return createElement(FoundedLabsIcon);
-     }
--    if (icon === 'Catalogs') {
--      return createElement(CatalogsIcon);
--    }
- 
-     if (icon in icons) return createElement(icons[icon as keyof typeof icons]);
-   },
+@@ -29,8 +29,9 @@
+     "------",
+     "---Registry---",
+     "create-your-own-registry",
++    "!founded-labs",
+     "------",
+     "---About us---",
+-    "[FoundedLabs][Founded Labs](https://foundedlabs.com)"
++    "[FoundedLabs][Founded Labs](/docs/founded-labs)"
+   ]
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #553** (2026-11-17): docs: update À proximité description on the Founded Labs page (@mrzachnugent)
+- **PR #552** (2026-11-14): docs: add Founded Labs page (@mrzachnugent)
 - **PR #551** (2026-11-13): Remove Catalogs integration and publishing files (@mrzachnugent)
 - **PR #543** (2026-06-19): chore(deps): update dependencies across multiple packages to latest versions, including React, Expo, and related libraries (@mrzachnugent)
 - **PR #541** (2026-06-19): Fix dialog overlay press on mobile web (@badabadabing)
 - **PR #540** (2026-06-01): feat(docs): add figma kit details to docs (@Amirthananth)
-- **PR #537** (2026-05-02): feat(#533): update clerk blocks to use clerk v3 + enhance component ref types (@mrzachnugent)
-- **PR #527** (closed): fix(separator): use border instead of background for web (@ekkoitac)
 
 ---
 
@@ -701,33 +548,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove Catalogs integration and publishing files
+## X. Update À proximité description
 
 **RULE**:
-When implementing operations in `apps/docs/app/(home)/page.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in founded-labs/react-native-reusables. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/docs/content/docs/founded-labs.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in founded-labs/react-native-reusables. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da1e1f22`: Remove Catalogs integration and publishing files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7df9e76c`: Update À proximité description. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/app/(home)/page.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/content/docs/founded-labs.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-              <Link href="/docs/blocks/authentication">
-                New Authentication Blocks <ArrowRightIcon className="size-3" />
+    description="A company that comes to do the work at your place, throughout Vaudreuil-Soulanges, chosen on merit. No company can pay for its place."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-              <Link href="/docs/catalogs">
-                Now available on catalogs.dev <ArrowRightIcon className="size-3" />
+    description="A free service for homeowners in Vaudreuil-Soulanges, Québec. They describe the work once, and the best local company for it calls them back."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da1e1f22` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7df9e76c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-JRTJ",
-    "timestamp": "2026-11-15T11:12:42.391Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "8c50138dadd3753e0a7c39eb942b3d0e2a1e1a5935a66b09cb95c1f60fcb790c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-JV9D",
-    "timestamp": "2026-11-15T11:12:46.849Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "910723abce1fbddad86ae0c0fd567fb41e218f8361685db29fe1d19eb3b25c6a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-JE6J",
-    "timestamp": "2026-11-15T11:40:24.331Z",
-    "repository": "Nasiko-Labs/nasiko",
-    "learningId": "learn-github-nasiko-labs-nasiko",
-    "contentHash": "ba1e71c66731667ae312eadf1eeaff065b0ae4386a8bf34b91dfdce5c5dd8d62",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-PNC0",
     "timestamp": "2026-11-15T12:13:15.744Z",
     "repository": "infiniflow/infinity",
@@ -7492,6 +7447,51 @@
     "contentHash": "96230bc3fe5797d5a075b2158fa1ec6f5f0a69acaffd59c371d44e520677e296",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-W966",
+    "timestamp": "2026-11-17T17:57:39.822Z",
+    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
+    "contentHash": "632038690498b863934f5484e4bdc9e241bcefc8f0ea241fbeb5786cc713b834",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-WFTS",
+    "timestamp": "2026-11-17T17:57:48.448Z",
+    "repository": "founded-labs/react-native-reusables",
+    "learningId": "learn-github-founded-labs-react-native-reusables",
+    "contentHash": "033b87b64c7389fcfd5a7a74cf6463f8bb029491f78f15ae3b0fc414200169f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-WLPG",
+    "timestamp": "2026-11-17T17:57:56.068Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "5beb8c10c469d7d81be00adbe7ff467bca2944250c82e23fd65afce6e34ad9e2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -4553,10 +4553,10 @@
     "repository": "founded-labs/react-native-reusables",
     "platform": "github",
     "sourceUrl": "https://github.com/founded-labs/react-native-reusables",
-    "sourceVersion": "da1e1f22",
+    "sourceVersion": "7df9e76c",
     "license": "MIT",
-    "contentHash": "f18f0249bb5d2dc29dd12544090e8481ad71c3275dd25a6bf20d4abd71475c7b",
-    "lastHarvestedAt": "2026-11-14T06:05:42.613Z",
+    "contentHash": "033b87b64c7389fcfd5a7a74cf6463f8bb029491f78f15ae3b0fc414200169f3",
+    "lastHarvestedAt": "2026-11-17T17:57:48.453Z",
     "learningId": "learn-github-founded-labs-react-native-reusables"
   },
   "openyurtio-openyurt": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "07e99d13",
+    "sourceVersion": "7082c5ea",
     "license": "NOASSERTION",
-    "contentHash": "3d96506b5ca0eb3bb2b74b8d3d1ec423fca5fd79a590dba7f2f0745cb667cdfd",
-    "lastHarvestedAt": "2026-11-13T19:27:31.729Z",
+    "contentHash": "5beb8c10c469d7d81be00adbe7ff467bca2944250c82e23fd65afce6e34ad9e2",
+    "lastHarvestedAt": "2026-11-17T17:57:56.072Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {
@@ -11905,8 +11905,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "98bde72443e93ebdde6876d942515a892c928fba83b0b0a5f292318744dbadbb",
-    "lastHarvestedAt": "2026-11-13T06:51:00.365Z",
+    "contentHash": "632038690498b863934f5484e4bdc9e241bcefc8f0ea241fbeb5786cc713b834",
+    "lastHarvestedAt": "2026-11-17T17:57:39.827Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf"
   },
   "matthart1983-netwatch": {

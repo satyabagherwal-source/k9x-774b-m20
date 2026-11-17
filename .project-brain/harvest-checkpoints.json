@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T17:50:04.238Z",
+  "last_updated": "2026-11-17T17:57:56.104Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6951,14 +6951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-founded-labs-react-native-reusables",
-      "content_hash": "f18f0249bb5d2dc29dd12544090e8481ad71c3275dd25a6bf20d4abd71475c7b",
-      "verified_at": "2026-11-14T06:05:42.623Z",
+      "content_hash": "033b87b64c7389fcfd5a7a74cf6463f8bb029491f78f15ae3b0fc414200169f3",
+      "verified_at": "2026-11-17T17:57:48.462Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T06:05:42.623Z"
+      "last_updated": "2026-11-17T17:57:48.462Z"
     },
     "openyurtio/openyurt": {
       "repository": "openyurtio/openyurt",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "3d96506b5ca0eb3bb2b74b8d3d1ec423fca5fd79a590dba7f2f0745cb667cdfd",
-      "verified_at": "2026-11-13T19:27:31.736Z",
+      "content_hash": "5beb8c10c469d7d81be00adbe7ff467bca2944250c82e23fd65afce6e34ad9e2",
+      "verified_at": "2026-11-17T17:57:56.104Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:27:31.736Z"
+      "last_updated": "2026-11-17T17:57:56.104Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -17916,14 +17916,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-      "content_hash": "98bde72443e93ebdde6876d942515a892c928fba83b0b0a5f292318744dbadbb",
-      "verified_at": "2026-11-13T06:51:00.372Z",
+      "content_hash": "632038690498b863934f5484e4bdc9e241bcefc8f0ea241fbeb5786cc713b834",
+      "verified_at": "2026-11-17T17:57:39.837Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T06:51:00.372Z"
+      "last_updated": "2026-11-17T17:57:39.837Z"
     },
     "matthart1983/netwatch": {
       "repository": "matthart1983/netwatch",

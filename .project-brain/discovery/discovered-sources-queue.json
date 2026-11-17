@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T17:50:08.289Z",
+  "updated_at": "2026-11-17T17:58:00.587Z",
   "stats": {
-    "total_discovered": 5073,
-    "approved_pending_harvest": 4784,
+    "total_discovered": 5085,
+    "approved_pending_harvest": 4796,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4771,
+      "COMMUNITY_AND_EXPERT": 4783,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -109604,6 +109604,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/builderio-builder-learnings.md",
         "fileName": "builderio-builder-learnings.md"
+      }
+    },
+    "SRC-5EA8F2C01D88": {
+      "id": "SRC-5EA8F2C01D88",
+      "url": "https://claude.ai/code/session_01SJw3ChXELLcKA4TbtXHDpG",
+      "title": "https://claude.ai/code/session_01SJw3ChXELLcKA4TbtXHDpG",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:57:59.705Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
+        "fileName": "founded-labs-react-native-reusables-learnings.md"
+      }
+    },
+    "SRC-6FA5694B0220": {
+      "id": "SRC-6FA5694B0220",
+      "url": "https://aproximite.ca/",
+      "title": "https://aproximite.ca/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:57:59.753Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
+        "fileName": "founded-labs-react-native-reusables-learnings.md"
+      }
+    },
+    "SRC-79AD1919982B": {
+      "id": "SRC-79AD1919982B",
+      "url": "https://rnprimitives.com/",
+      "title": "https://rnprimitives.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:57:59.786Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
+        "fileName": "founded-labs-react-native-reusables-learnings.md"
+      }
+    },
+    "SRC-62576D590C30": {
+      "id": "SRC-62576D590C30",
+      "url": "https://nativewindui.com/",
+      "title": "https://nativewindui.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:57:59.817Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
+        "fileName": "founded-labs-react-native-reusables-learnings.md"
+      }
+    },
+    "SRC-BECE4C75E420": {
+      "id": "SRC-BECE4C75E420",
+      "url": "https://spacetimedb.com/docs/clients/typescript",
+      "title": "https://spacetimedb.com/docs/clients/typescript",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:58:00.384Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-E3647799AE7E": {
+      "id": "SRC-E3647799AE7E",
+      "url": "https://spacetimedb.com/docs/quickstarts/react",
+      "title": "https://spacetimedb.com/docs/quickstarts/react",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:58:00.412Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-ED98EEC53454": {
+      "id": "SRC-ED98EEC53454",
+      "url": "https://spacetimedb.com/blog/how-does-spacetime-scale",
+      "title": "https://spacetimedb.com/blog/how-does-spacetime-scale",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:58:00.440Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-892A19506CF8": {
+      "id": "SRC-892A19506CF8",
+      "url": "https://spacetimedb.com/docs/http/database",
+      "title": "https://spacetimedb.com/docs/http/database",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:58:00.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-39993599C946": {
+      "id": "SRC-39993599C946",
+      "url": "https://spacetimedb.com/docs/intro/language-support",
+      "title": "https://spacetimedb.com/docs/intro/language-support",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:58:00.501Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-15BE355F21EF": {
+      "id": "SRC-15BE355F21EF",
+      "url": "https://spacetimedb.com/docs/modules",
+      "title": "https://spacetimedb.com/docs/modules",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:58:00.528Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-DB5E503C875A": {
+      "id": "SRC-DB5E503C875A",
+      "url": "https://spacetimedb.com/docs/functions/procedures",
+      "title": "https://spacetimedb.com/docs/functions/procedures",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:58:00.560Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-34789893CF6D": {
+      "id": "SRC-34789893CF6D",
+      "url": "https://spacetimedb.com/docs/how-to/unit-testing",
+      "title": "https://spacetimedb.com/docs/how-to/unit-testing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:58:00.586Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
+        "fileName": "clockworklabs-spacetimedb-learnings.md"
       }
     }
   }

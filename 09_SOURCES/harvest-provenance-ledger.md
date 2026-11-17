@@ -10681,3 +10681,6 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `3707bf02` | Multi-dimensional audit evidence | 2026-11-17T17:36:52.032Z |
 | `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-17T17:49:55.233Z |
 | `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `aa20a509` | Multi-dimensional audit evidence | 2026-11-17T17:50:04.227Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-17T17:57:39.827Z |
+| `learn-github-founded-labs-react-native-reusables` | `https://github.com/founded-labs/react-native-reusables` | `7df9e76c` | Multi-dimensional audit evidence | 2026-11-17T17:57:48.453Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `7082c5ea` | Multi-dimensional audit evidence | 2026-11-17T17:57:56.072Z |

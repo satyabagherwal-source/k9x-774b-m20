@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T17:50:04.234Z",
-  "total_cycles_completed": 10203,
-  "total_learnings_persisted": 10203,
-  "total_rules_promoted": 9765,
+  "last_updated": "2026-11-17T17:57:56.090Z",
+  "total_cycles_completed": 10206,
+  "total_learnings_persisted": 10206,
+  "total_rules_promoted": 9766,
   "history": [
-    {
-      "timestamp": "2026-11-17T03:34:08.373Z",
-      "repository": "microsoft/Mage-VL-Cowork",
-      "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T03:34:15.618Z",
-      "repository": "sweetpad-dev/sweetpad",
-      "learningId": "learn-github-sweetpad-dev-sweetpad",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T03:34:20.226Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T03:41:55.337Z",
       "repository": "Nasiko-Labs/nasiko",
@@ -1403,6 +1382,27 @@
       "repository": "BuilderIO/builder",
       "learningId": "learn-github-builderio-builder",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:57:39.834Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:57:48.459Z",
+      "repository": "founded-labs/react-native-reusables",
+      "learningId": "learn-github-founded-labs-react-native-reusables",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T17:57:56.090Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

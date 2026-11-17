@@ -10648,3 +10648,6 @@
 | `CYCLE-20261117-5ID7` | `2026-11-17T17:36:52.027Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`0a266536...`) |
 | `CYCLE-20261117-MAOT` | `2026-11-17T17:49:55.229Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md` | Yes (`f7de76d7...`) |
 | `CYCLE-20261117-MHMN` | `2026-11-17T17:50:04.223Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9023` | Yes (`96230bc3...`) |
+| `CYCLE-20261117-W966` | `2026-11-17T17:57:39.822Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md` | Yes (`63203869...`) |
+| `CYCLE-20261117-WFTS` | `2026-11-17T17:57:48.448Z` | `founded-labs/react-native-reusables` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9024` | Yes (`033b87b6...`) |
+| `CYCLE-20261117-WLPG` | `2026-11-17T17:57:56.068Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md` | Yes (`5beb8c10...`) |

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:29.532Z",
+  "timestamp": "2026-11-17T17:58:00.650Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-clockworklabs-spacetimedb-learnings",
+  "learning_id": "LEARN-EVO-clockworklabs-spacetimedb-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clockworklabs-spacetimedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:29.532Z`  
-> **Learning ID**: `LEARN-REEXTRACT-clockworklabs-spacetimedb-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T17:58:00.650Z`  
+> **Learning ID**: `LEARN-EVO-clockworklabs-spacetimedb-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `0863eb48`  
+> **Source Version**: `7082c5ea`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T14:44:41.630Z  
+> **Timestamp**: 2026-11-17T17:57:55.660Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T14:44:41.622Z  
+> **Harvest Timestamp**: 2026-11-17T17:57:55.654Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25543 stars
+- **Stars / Engagement**: 25561 stars
 
 ---
 
@@ -855,97 +855,191 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0863eb48` (2026-11-12)
-**Commit Message**: Fix TypeScript SDK crash on React Native with automatic reconnect (#6511)
+### Incident Patch 1: `7082c5ea` (2026-11-17)
+**Commit Message**: docs: fix daily docs audit drift (#5936)
 
-Fixes a crash on React Native (reported with Expo) when a connection
-uses `withAutomaticReconnect()`:
+# Description of Changes
 
-```
-TypeError: undefined is not a function
-  win?.addEventListener("focus", onResume);
-```
+- Update the TypeScript client reference so `TableHandle.count()`
+returns `bigint`, matching `crates/bindings-typescript/src/lib/table.ts`
+and existing TypeScript SDK tests.
+- Clarify `spacetime publish` environment behavior: ordinary publishes
+preserve unspecified stored values by default, and optional values are
+removed only through explicit unset or replacement.
+- Fix the C# authentication guide's SpacetimeAuth connection reducer
+snippet so it is exported as `[Reducer(ReducerKind.ClientConnected)]
+public static`, matching the C# server module requirements.
+- Document procedure HTTP response decompression: outbound procedure
+HTTP requests now automatically accept and decode gzip/Brotli responses,
+and module code should not manually decompress those bodies.
+- Fix the TypeScript procedure transaction example so the `b` procedure
+argument is declared as `t.string()`, matching the `myTable.b` column
+inserted inside `withTx`.
+- Align the TypeScript, C#, and Unity client agent skills with the
+current automatic-reconnect callback contract: `onConnect`/`OnConnect`
+runs once per connection object, and successful recovery 
 
-React Native defines a global `window` without the DOM event API; the
-page-resume listeners from #5927 only checked that it exists.
-
-- Listeners attach only to a `window` or `document` that has both event
-methods.
-- On React Native, reconnect still works via its backoff timer, without
-early retry on foreground.
-
-## Rollback safety impact
-
-n/a
-
-## Testing
-
-- Liveness test with no `document` and an event-less `window`; fails
-without the fix.
-- Not yet tried in a React Native or Expo app.
-
-**File**: `crates/bindings-typescript/src/sdk/db_connection_impl.ts` (modified, +11/-2)
+**File**: `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md` (modified, +4/-0)
 ```diff
-@@ -912,8 +912,17 @@ export class DbConnectionImpl<RemoteModule extends UntypedRemoteModule>
-     if (!this.#automaticReconnect || this.#livenessCleanup) {
-       return;
-     }
--    const doc = typeof document !== 'undefined' ? document : undefined;
--    const win = typeof window !== 'undefined' ? window : undefined;
-+    // React Native defines `window` without the DOM event API.
-+    const hasEvents = (target: unknown): boolean =>
-+      typeof (target as EventTarget | undefined)?.addEventListener ===
-+        'function' &&
-+      typeof (target as EventTarget).removeEventListener === 'function';
-+    const doc =
-+      typeof document !== 'undefined' && hasEvents(document)
-+        ? document
-+        : undefined;
-+    const win =
-+      typeof window !== 'undefined' && hasEvents(window) ? window : undefined;
-     if (!doc && !win) {
-       return;
-     }
-```
-
-**File**: `crates/bindings-typescript/tests/db_connection_liveness.test.ts` (modified, +10/-0)
-```diff
-@@ -162,6 +162,16 @@ describe('liveness listeners', () => {
-     expect(listeners).toEqual({});
-   });
+@@ -52,6 +52,10 @@ spacetime generate --lang typescript|csharp|rust --out-dir ./bindings --module-p
+ spacetime generate --lang unrealcpp --uproject-dir ./MyGame --module-path ./server --unreal-module-name MyGame
+ ```
  
-+  test('are skipped when window lacks the event API (React Native)', async () => {
-+    vi.stubGlobal('document', undefined);
-+    vi.stubGlobal('window', {});
-+    const harness = build();
-+    await establish(harness);
++### TypeScript Import Extensions
 +
-+    expect(harness.connects).toHaveLength(1);
-+    expect(harness.connection.isActive).toBe(true);
-+  });
++For TypeScript client bindings, `spacetime generate --lang typescript --import-extension none|js|ts` selects the relative import suffix: `none` is the bundler-friendly default, `js` suits `moduleResolution: "nodenext"`, and `ts` suits runtimes executing TypeScript source directly. Set `"import-extension"` per `generate` entry in `spacetime.json` to persist it. This setting changes imports inside generated files, not application imports; NodeNext applications should import an explicit file such as `./module_bindings/index.js`. See https://spacetimedb.com/docs/clients/typescript#import-extensions for direct-TypeScript typecheck settings.
 +
-   test('are removed when the connection ends', async () => {
-     const harness = build();
-     await establish(harness);
+ ### Client and Module Bindings
+ 
+ `spacetime generate --bindings client` (default) generates bindings for clients connecting to a database. `--bindings module` generates receiver bindings used inside a **sending database module** to call reducers in another **receiving database** through asynchronous IDC. Rust and TypeScript module bindings are supported; C#/C++ module bindings are not implemented yet. `unrealcpp` is client-only; `cpp` is accepted only in module mode.
+```
+
+**File**: `codex-plugin/plugins/spacetimedb/skills/concepts/SKILL.md` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ This describes Spacetime 2.x. The API changed substantially from 1.x, so older a
+ - **App types.** It is used for games, such as BitCraft Online, and for web apps such as chat, collaboration tools, dashboards, and SaaS. The TypeScript SDK has quickstarts for React, Next.js, Vue, Svelte, and more. ([React quickstart](https://spacetimedb.com/docs/quickstarts/react/))
+ - **Storage.** Tiered storage keeps hot data in memory and colder data on disk. On Maincloud, tables can also be backed by object storage, so a single database can store an effectively unbounded amount of data. ([How does Spacetime scale?](https://spacetimedb.com/blog/how-does-spacetime-scale))
+ - **Scaling.** Each database runs its transactions one at a time on a single thread. One app can span many databases with asynchronous inter-database communication, and Maincloud replicates each database. ([How does Spacetime scale?](https://spacetimedb.com/blog/how-does-spacetime-scale))
+-- **Durability.** Transactions are ACID with serializable isolation. By default, clients see a transaction's results, including the acknowledgment of their own writes, only after it is durable. ([Confirmed reads](https://spacetimedb.com/docs/clients/typescript/#method-withconfirmedreads))
++- **Durability.** Transactions are ACID with serializable isolation. By default, clients see a transaction's results, including the acknowledgment of their own writes, only after it is durable. ([Confirmed reads](https://spacetimedb.com/docs/clients/typescript/#method-withconfirmedreads)) An HTTP durability-confirmation timeout after five seconds returns `504` with an unknown outcome, not proof of rollback; do not retry non-idempotent calls without deduplication. ([HTTP calls](https://spacetimedb.com/docs/http/database#post-v1databasename_or_identitycallreducer))
+ - **Module languages.** TypeScript, Rust, C#, and C++. TypeScript modules run on V8 and can use npm packages, which are bundled when you publish; Rust, C#, and C++ modules compile to WebAssembly. ([Language support](https://spacetimedb.com/docs/intro/language-support/))
+ - **Composing modules.** TypeScript and C# modules can mount other modules as submodules, each under its own namespace, to reuse logic such as authentication, rate limiting, or email. Official and community modules are listed at spacetimedb.com/modules. ([Modules](https://spacetimedb.com/docs/modules/))
+ - **External APIs.** Reducers are deterministic and make no network calls. Procedures make outbound HTTP requests, with a 30-second default timeout and a 180-second maximum. ([Procedures](https://spacetimedb.com/docs/functions/procedures/))
+```
+
+**File**: `codex-plugin/plugins/spacetimedb/skills/csharp-client/SKILL.md` (modified, +2/-2)
+```diff
+@@ -54,9 +54,9 @@ Automatic reconnect is opt-in: add `.WithAutomaticReconnect()` to the builder. I
+ 
+ Keep calling `FrameTick()` while `IsActive` is false. `IsReconnecting` is true while recovering before the next handshake. Use `.OnDisconnect((conn, error, next) => ...)` and `.OnConnectError((error, next) => ...)` to inspect `NextReconnect?`: a non-null value provides `Attempt` and `Delay`; null means no retry is scheduled. Existing callback overloads still work.
+ 
+-`OnConnect` runs on every successful reconnect, so create the subscription in the example above only on the first connection, or move it after `Build()`. Register row callbacks once as well. The same connection, identity, table handles, and subscriptions survive; each attempt gets a fresh `ConnectionId`. Cached rows stay readable but stale during outages. The SDK replays subscriptions in one batch and emits only net row changes. Subscription `OnApplied` runs again after replay; use it to mark data ready, not for repeated one-time setup.
++`OnConnect` runs once per `DbConnection`, on the first successful connection. Successful automatic reconnects invoke `OnAutomaticReconnect` before subscription replay instead. Register subscriptions and row callbacks once, either in `OnConnect` or after `Build()`, and use `OnAutomaticReconnect` for recovery-specific work such as saving a refreshed token. The same connection, identity, table handles, and subscriptions survive; each attempt gets a fresh `ConnectionId`. Cached rows stay readable but stale during outages. The SDK replays subscriptions in one batch and emits only net row changes. Subscription `OnApplied` runs again after replay; use it to mark data ready, not for repeated one-time setup.
+ 
+-For expiring credentials, combine `.WithToken(initialToken)` with `.WithTokenProvider(() => RefreshTokenAsync())`, where your provider returns `Task<string>` for the same identity. The provider is not called for the initial connection. Before retries, it is called when remaining validity is at most 30 seconds or 5% of the token lifetime, whichever is greater, when expiry cannot be read, or after a reused token is rejected. Provider failures retry; rejection of a freshly provided token is terminal. No periodic refresh runs while connected. Disconnecting ignores a pending provider result but does not cancel the provider's own work.
++For expiring credentials, combine `.WithToken(initialToken)` with `.WithTokenProvider(() => RefreshTokenAsync())`, where your provider returns `Task<string>` for the same identity. The provider is not called for the initial connection. Before retries, it is called when remaining validity is at most 30 seconds or 5% of the token lifetime, whichever is greater, when expiry cannot be read, or after a reused token is rejected. Provider failures retry; rejection of a freshly provided token is terminal. No periodic refresh runs while connected. After recovery, persist the token passed to `OnAutomaticReconnect` if the application stores tokens. Disconnecting ignores a pending provider result but does not cancel the provider's own work.
+ 
+ Calls made while disconnected fail immediately. Pending reducer calls receive `Status.UnknownResult`; pending procedures and one-off queries fail with `UnknownResultException`. These calls may already have executed and are never replayed. Regenerate bindings so unhandled unknown reducer outcomes reach `OnUnhandledReducerError`.
+ 
+```
+
+**File**: `codex-plugin/plugins/spacetimedb/skills/rust-server/SKILL.md` (modified, +2/-0)
+```diff
+@@ -507,4 +507,6 @@ mod tests {
+ 
+ `with_reducer_tx` commits on `Ok` and rolls back on `Err` or panic unwinding; propagate reducer errors with `?` when the reducer returns `Result`. Create a new `TestContext` for each test: cloning shares the database. Use `TestAuth::from_jwt_payload(payload, connection_id)?` for client calls and `TestAuth::internal()` for the database itself. The harness exposes `clock`, `rng`, procedure/view contexts, and query execution. It does not simulate subscriptions, RLS, lifecycle calls, or timers. Invoke lifecycle/scheduled reducers explicitly and retain integration tests for host behavior.
+ 
++In SDK 2.13+, native tests support `ProcedureContext::with_tx` and environment reads. Use `TestContext::set_env` / `unset_env` for module-declared environment keys; undeclared keys and disallowed values are rejected. Clones share the same test environment. The `with_tx` panic workaround applies only to SDK 2.12.
++
+ See https://spacetimedb.com/docs/how-to/unit-testing for test setup, HTTP mocking, and current limitations.
+```
+
+**File**: `codex-plugin/plugins/spacetimedb/skills/typescript-client/SKILL.md` (modified, +9/-2)
+```diff
+@@ -15,6 +15,8 @@ metadata:
+ 
+ Generated bindings convert snake_case names to camelCase, including row fields: a server column `trip_id` is `tripId` on client rows.
+ 
++The examples below use bundler-style extensionless imports. For NodeNext or direct-TypeScript execution, choose the matching binding import extension and use explicit file imports in your application; see https://spacetimedb.com/docs/clients/typescript#import-extensions.
++
+ ## React: main.tsx
+ 
+ ```typescript
+@@ -34,7 +36,8 @@ function Root() {
+       .withDatabaseName(MODULE_NAME)
+       .withToken(localStorage.getItem(TOKEN_KEY) ?? undefined)
+       .withAutomaticReconnect()
+-      .onConnect((_conn, _identity, token) => localStorage.setItem(TOKEN_KEY, token)),
++      .onConnect((_conn, _identity, token) => localStorage.setItem(TOKEN_KEY, token))
++      .onAutomaticReconnect((_conn, _identity, token) => localStorage.setItem(TOKEN_KEY, token)),
+     []
+   );
+   return (
+@@ -110,6 +113,10 @@ const conn = DbConnection.builder()
+     localStorage.setItem(TOKEN_KEY, token);
+     console.log('Connected as:', identity.toHexString());
+   })
++  .onAutomaticReconnect((_conn, identity, token) => {
++    localStorage.setItem(TOKEN_KEY, token);
++    console.log('Reconnected as:', identity.toHexString());
++  })
+   .onDisconnect((_ctx, error, nextAttempt, delayMs) => {
+     if (nextAttempt !== undefined) {
+       console.warn(`Reconnect attempt ${nextAttempt} in ${delayMs} ms`, error);
+@@ -161,7 +168,7 @@ Use explicit queries for every table on that connection, not subscribe-all, whic
+ 
+ The React provider's connection manager enables automatic reconnect; the explicit `.withAutomaticReconnect()` above also shows the setting to use for direct connections. Without it, a direct connection does not recover automatically. For direct connections, initial failures are not retried. After an established connection drops, retries use exponential backoff and jitter from `minDelayMs` (default 1 s) up to `maxDelayMs` (default 30 s), until `disconnect()` or a terminal failure. Tune these with `.withAutomaticReconnect({ minDelayMs, maxDelayMs })`; values below the 500 ms and 1 s floors are raised with a warning, so that retrying clients cannot overwhelm the database. While mounted, the React provider also preserves its separate connection-manager retries: it builds a replacement connection after an initial or terminal failure that the core connection will not retry. It respects an explicit `disconnect()`.
+ 
+-The same connection, identity, table handles, subscriptions, and row callbacks survive recovery. Each attempt gets a fresh connection ID. `onConnect` runs again before subscription replay, so register subscriptions and row callbacks once, outside that callback. The SDK replays subscriptions in one batch, retains readable but stale cached rows during outages, and emits net row changes after reconciliation. Subscription `onApplied` runs again after replay; keep one-time setup separate.
++The same connection, identity, table handles, subscriptions, and row callbacks survive recovery. Each attempt gets a fresh connection ID. `onConnect` fires once per `DbConnection`; successful automatic reconnects invoke `onAutomaticReconnect` before subscription replay instead. Register subscriptions and row callbacks once, either in `onConnect` or after `build()`, and use `onAutomaticReconnect` for recovery-specific work such as saving a refreshed token. The SDK replays subscriptions in one batch, retains readable but stale cached rows during outages, and emits net row changes after reconciliation. Subscription `onApplied` runs again after replay; keep one-time setup separate.
+ 
+ In React, let `useTable` manage its own subscriptions. Do not add a second subscription effect for the same queries or recreate subscriptions whenever `isActive` changes. Use the hook's `isReady` result for data readiness: a successful reconnect handshake does not mean replay has completed. Invoke reducers from event handlers, not during rendering. For a manually created subscription, retain its handle and call `unsubscribe()` when it is no longer needed, including during an outage.
+ 
+```
+
+**File**: `codex-plugin/plugins/spacetimedb/skills/unity/SKILL.md` (modified, +2/-2)
+```diff
+@@ -122,7 +122,7 @@ public class SpacetimeManager : MonoBehaviour
+ 
+ ## Automatic Reconnect
+ 
+-Add `.WithAutomaticReconnect()` to the builder to recover an established connection after an outage. In the singleton above, create subscriptions only on the first `OnConnected`, or move them after `Build()`: `OnConnected` runs again after each successful reconnect. Keep calling `FrameTick()` during outages, or use `SpacetimeDBNetworkManager`, which also ticks reconnecting connections. Do not gate ticking on `IsActive`.
++Add `.WithAutomaticReconnect()` to the builder to recover an established connection after an outage. In the singleton above, create subscriptions in `OnConnected` or move them after `Build()`: `OnConnected` runs only on the first successful connection. Successful automatic reconnects invoke `OnAutomaticReconnect` before subscription replay; use it for recovery-specific work such as saving a refreshed token. Keep calling `FrameTick()` during outages, or use `SpacetimeDBNetworkManager`, which also ticks reconnecting connections. Do not gate ticking on `IsActive`.
+ 
+ The SDK retains the identity, table handles, callbacks, and subscriptions, and replays subscriptions in one batch. Cached rows stay readable during an outage; row callbacks report net changes after recovery. `OnApplied` runs again, so separate one-time object setup from marking data ready. Each reconnect attempt has a fresh `ConnectionId`.
+ 
+@@ -234,6 +234,6 @@ The SpacetimeDB SDK uses code generation. If you encounter issues with IL2CPP bu
+ ### Token Persistence
+ Token save/load via `PlayerPrefs` is demonstrated in the SpacetimeManager singleton above. Persisting the server-issued token and passing it back on reconnect keeps the same identity; without a saved token the server issues a new identity in the `OnConnect` callback. This token does not expire and a lost one can't be recovered, so self-issued identities are for development. For production, authenticate with an OIDC provider such as SpacetimeAuth, which handles token lifecycle.
+ 
+-With automatic reconnect enabled, the SDK retains the authentication token and passes it to `OnConnect`, including on WebGL. Without automatic reconnect, a WebGL connection using a saved token may return a short-lived WebSocket token instead; in that case, keep the original saved token rather than overwriting it in the callback above.
++With automatic reconnect enabled, the SDK retains the authentication token and passes it to `OnConnect` on the initial connection, including on WebGL. Successful recovery passes the retained or refreshed token to `OnAutomaticReconnect`. Without automatic reconnect, a WebGL connection using a saved token may return a short-lived WebSocket token instead; in that case, keep the original saved token rather than overwriting it in the callback above.
+ 
+ For expiring credentials, configure `.WithToken(initialToken)`, `.WithAutomaticReconnect()`, and `.WithTokenProvider(() => RefreshTokenAsync())`. The provider returns `Task<string>` for the same identity. It is used before reconnect attempts when expiry is unreadable, remaining validity is at most 30 seconds or 5% of the original lifetime, or a reused token is rejected. It is not called for the initial connection or periodically while connected. Provider failures retry; rejection of a freshly provided token stops recovery. `Disconnect()` ignores a pending provider result without canceling the provider's own asynchronous work.
+```
+
+**File**: `docs/docs/00200-core-concepts/00100-databases/00300-spacetime-publish.md` (modified, +1/-1)
+```diff
+@@ -106,7 +106,7 @@ For all available publishing options and flags, see the [`spacetime publish` CLI
+ 
+ ### Environment Variables
+ 
+-Modules can declare environment variables for configuration and secrets. Each publish supplies the complete set of values from the target's `env` configuration and declared shell variables. Required values must be supplied on every publish; omitted optional values are removed. The module and its environment update atomically.
++Modules can declare environment variables for configuration and secrets. Each publish supplies values from the target's `env` configuration and declared shell variables, then preserves unspecified stored values by default. Required values must exist in the resulting environment; optional values are removed only when you unset them explicitly or use `--replace-env`. The module and its environment update atomically.
+ 
+ See [Environment Variables](./00700-environment-variables.md) for declarations, reading values in module code, publishing examples, and private tables for secrets that need to change without republishing.
+ 
+```
+
+**File**: `docs/docs/00200-core-concepts/00100-databases/00650-inter-database-communication.md` (modified, +1/-1)
+```diff
+@@ -128,7 +128,7 @@ The sending module needs **receiver bindings**: code generated from the receivin
+ 
+ `parent` makes `game-world` a child database of `lobby` when it's first published, so that it inherits the lobby's team permissions. Async IDC doesn't require this; any database can call another on the same server.
+ 
+-`name` is the name of the directory created for the generated code, and `database` refers to either a deployed receiving database or the receiving database's source code. Next generate the bindings:
++`name` is the name of the directory created for the generated code. `database` must match another target in the same `spacetime.json`; here, it selects the `game-world` child's local `./game_world` module source. It does not fetch a deployed database's schema, so the receiving module's source must be available locally. Next generate the bindings:
+ 
+ ```bash
+ spacetime generate lobby
 ```
 
 ---
 
-### Incident Patch 2: `0247e79f` (2026-11-11)
-**Commit Message**: Expand agent guidance for writing pull requests (#6557)
+### Incident Patch 2: `8756175d` (2026-11-16)
+**Commit Message**: Fix the CLI logout endpoint path (#6606)
 
 # Description of Changes
 
-Broaden `.agents/testing-sections.md` into `.agents/writing-prs.md` and
-update `AGENTS.md` to require consulting it when creating or updating
-PRs. Narrow the testing guidance to actual automated or manual testing
-and relevant coverage.
+`spacetime logout` never revoked the web session on spacetimedb.com.
 
-Also made these changes:
-- Require verified commits and instruct agents to alert the user if not
-set up
-- Require every template section to be retained and faithfully populated
-- Tweak to PR testing sections
+- Posts to `api/auth/cli/logout`, the path the website serves.
+- Checks the response status, so a rejected logout prints the existing
+"Failed to logout from auth server" warning. Local credentials are still
+cleared.
+
+The website route's bugs are fixed in clockworklabs/spacetime-web#1589,
+which serves the old path for released CLIs.
 
 # API and ABI breaking changes
 
@@ -953,111 +1047,175 @@ None.
 
 # Rollback safety impact
 
+n/a 
+
+# Expected complexity level and risk
+
+1
+
+# Testing
+
+- Ran this CLI against a local website running
+clockworklabs/spacetime-web#1589: `spacetime login` then `spacetime
+logout` deleted the CLI session on the website and printed no warning.
+- Existing smoketest `cli_logout_removes_cached_tokens` runs `spacetime
+logout` with a fake web session token. A rejected request now prints a
+warning on stderr, which the test does not check. I did not run it
+locally.
+
+**File**: `crates/cli/src/subcommands/logout.rs` (modified, +3/-2)
+```diff
+@@ -35,10 +35,11 @@ async fn server_logout(config: &mut Config, host: &Url) -> Result<(), anyhow::Er
+     // Best-effort server-side session invalidation.
+     let client = reqwest::Client::builder().timeout(Duration::from_secs(5)).build()?;
+     client
+-        .post(host.join("auth/cli/logout")?)
++        .post(host.join("api/auth/cli/logout")?)
+         .header("Authorization", format!("Bearer {web_session_token}"))
+         .send()
+-        .await?;
++        .await?
++        .error_for_status()?;
+     Ok(())
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `928db6ce` (2026-11-16)
+**Commit Message**: Fix seeding collisions in the TypeScript module RNG (#6323)
+
+# Description of Changes
+
+- `pcg32` rotates with `>>>` instead of `>>`.
+- The xoroshiro128+ state is filled from four successive PCG32 outputs
+instead of a single 32-bit value, as `rand`'s `seed_from_u64` does.
+
+Each reducer and procedure transaction seeds its RNG from its timestamp.
+The signed shift and the 32-bit seed made different timestamps share the
+same stream. Across 1,000,000 consecutive microsecond timestamps,
+243,733 produced the same first 16 bytes as an earlier timestamp.
+`ctx.newUuidV4()` could return duplicate UUIDs, which surfaced as `Value
+with given unique identifier already exists`. With this change: 0.
+
+# API and ABI breaking changes
+
+None. The API is unchanged. A given timestamp now produces different
+random values than before. Transactions with the same timestamp still
+share values, as in the Rust bindings.
+
+# Rollback safety impact
+
 n/a
 
 # Expected complexity level and risk
 
-1 — Documentation and agent instructions only. No runtime behavior
-changes.
+1
 
 # Testing
 
-Not tested.
+- [x] New test: 100,000 consecutive timestamps produce distinct 16-byte
+outputs. Fails on master, passes with this change.
+- [x] `pnpm exec vitest run tests/rng.test.ts`
+- [x] Full `bindings-typescript` lint, type 
 
----------
-
-Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
-
-**File**: `.agents/writing-prs.md` (renamed, +23/-8)
+**File**: `crates/bindings-typescript/src/server/rng.ts` (modified, +11/-6)
 ```diff
-@@ -1,18 +1,33 @@
--# Writing testing sections
-+# Writing pull requests
+@@ -65,17 +65,16 @@ export interface Random {
+ }
  
--A PR's testing section should explain what verification gives the reviewer confidence that the change works as intended and avoids bugs. The goal is evidence for correctness, not a list of testing activities.
-+Read this guide when creating or updating a PR. Use the repository's [PR template](../.github/pull_request_template.md) and preserve every section when updating an existing PR.
+ const { asUintN } = BigInt;
++const MUL = 6364136223846793005n;
++const INC = 11634580027462260723n;
  
--## Choose the evidence
-+## Verified commits
-+
-+Verified commits are required: a PR cannot be merged without them. Enable commit signing before creating commits for a PR, and ensure GitHub recognizes the commits as **Verified**. A local signature alone does not establish that GitHub can verify it.
-+
-+If you cannot create verified commits, alert the user promptly, explicitly tell them that the PR cannot be merged without verified commits, and help them set up commit signing and GitHub verification. Do not silently proceed with unverified commits or present the PR as ready to merge. After setup, confirm that GitHub marks the PR's commits as **Verified**.
-+
-+## Preserve and complete the template
-+
-+No section of the PR template may be removed. PRs that remove any template section will be rejected. Populate every section faithfully, following its instructions and describing the actual change; do not leave placeholders or invent information. Where a section does not apply, say so explicitly and follow any prescribed wording.
-+
-+## Writing the testing section
-+
-+Describe the automated or manual testing performed and what behavior it covers, including relevant existing test coverage. Include important gaps in that coverage.
-+
-+If no testing was performed, write “Not tested.” Do not justify the absence of testing or pad the section with routine checks. Reviewing the diff or instructions, checking whitespace or links, and verifying commit signatures are not substitutes for testing the change.
-+
-+### Choose the evidence
+ /** Based on the function of the same name in `rand_core::SeedableRng::seed_from_u64` */
+ function pcg32(state: bigint): number {
+-  const MUL = 6364136223846793005n;
+-  const INC = 11634580027462260723n;
+-
+   state = asUintN(64, state * MUL + INC);
+   const xorshifted = Number(asUintN(32, ((state >> 18n) ^ state) >> 27n));
+   const rot = Number(asUintN(32, state >> 59n));
+   // rotate `xorshifted` right by `rot` bits
+-  return (xorshifted >> rot) | (xorshifted << (32 - rot));
++  return ((xorshifted >>> rot) | (xorshifted << (32 - rot))) >>> 0;
+ }
  
- - Start from the change's intended outcome and the important ways it could fail. Identify what verification addresses those concerns, including existing coverage.
- - Usually, the strongest evidence is how automated tests were extended or adapted, or why existing tests cover the change. Manual tests, successful use, and other verification can also provide evidence.
- - State what the evidence establishes. A same-client compilation test supports source compatibility; a client/server test supports actual interaction. Neither proves the other.
--- For documentation and instructions, look for evidence that readers can accomplish the intended task. Consistency checks and working links are useful, but don't establish that the content is effective.
- - Include important remaining uncertainty and explain any barriers to testing it. Distinguish "not tested yet" from "cannot be tested"; don't invent a reason or imply impossibility.
+ /** From the `pure-rand` README */
+@@ -89,8 +88,14 @@ function generateFloat64(rng: RandomGenerator): number {
+ export function makeRandomFromSeed(
+   seed: Timestamp | number | bigint | Uint8Array
+ ): Random {
+-  // Use PCG32 to turn a 64-bit seed into a 32-bit seed, as the Rust `rand` crate does.
+-  const rng = xoroshiro128plus(pcg32(seedToBigInt(seed)));
++  // Fill the 128-bit state with successive PCG32 outputs, as `seed_from_u64` does.
++  let state = seedToBigInt(seed);
++  const words: number[] = [];
++  for (let i = 0; i < 4; i++) {
++    words.push(pcg32(state) | 0);
++    state = asUintN(64, state * MUL + INC);
++  }
++  const rng = xoroshiro128plus.fromState(words);
  
- The connection between the evidence and the intended outcome should be clear from the wording. It doesn't need a separate justification after every bullet.
- 
--## Content
-+### Content
- 
- - Distinguish updated tests, added tests, and relevant existing coverage. Use short bullets; omit categories that don't apply.
- - Describe what each test or other check verifies. Name the inputs or API when needed to make the claim clear: incorrect reducer arguments, generated bindings, or the built package.
-@@ -23,7 +38,7 @@ The connection between the evidence and the intended outcome should be clear fro
- - Label manual verification as manual and state what was checked and the result.
- - Keep caveats focused on gaps that affect confidence in the change, not a routine list of what tests don't do.
- 
--## Wording and detail
-+### Wording and detail
- 
- Brevity comes from removing unnecessary detail, not replacing concrete information with vague labels.
- 
-@@ -34,7 +49,7 @@ Brevity comes from removing unnecessary detail, not replacing concrete informati
- - Omit routine mechanics, commands, counts, and assertion details unless they materially help the reviewer.
- - Scale the section to the change. Don't turn it into an inventory of every assertion or an explicit question-and-answer checklist.
- 
--## Wording examples
-+### Wording examples
- 
- | Vague or misleading | Concrete |
- | --- | --- |
-@@ -45,7 +60,7 @@ Brevity comes from removing unnecessary detail, not replacing concrete informati
- | Package and browser checks. | Tests that the new declaration API works with ESM and CommonJS imports and browser builds. |
- | End-to-end coverage. | Existing integration tests connect to a server, subscribe, call reducers, and check received rows. |
- 
--## Example: generated bindings
-+### Example: generated bindings
- 
- Updated:
+   const random: Random = () => generateFloat64(rng);
  
 ```
 
-**File**: `AGENTS.md` (modified, +2/-2)
+**File**: `crates/bindings-typescript/tests/rng.test.ts` (modified, +36/-0)
 ```diff
-@@ -14,6 +14,6 @@ A path's review tier comes from the nearest `.deep` marker in its directory or a
+@@ -105,6 +105,42 @@ describe('Random', () => {
+     expect(new Set(first)).toEqual(new Set(values));
+     expect(first).toHaveLength(values.length);
+   });
++
++  test('first draw is uniform across sequential timestamp seeds (#6247)', () => {
++    const N = 5000;
++    const base = 1_791_964_800_000_000n;
++    let belowOneTenthPercent = 0;
++    let belowOnePercent = 0;
++    let belowHalf = 0;
++
++    for (let i = 0; i < N; i++) {
++      const seed = base + BigInt(i) * 7919n;
++      const random = makeRandom(new Timestamp(seed));
++      const draw = random();
++
++      if (draw < 0.001) belowOneTenthPercent++;
++      if (draw < 0.01) belowOnePercent++;
++      if (draw < 0.5) belowHalf++;
++    }
++
++    // Prior to the signed-shift fix, about 28% of first draws were below 0.001.
++    // Fixed seeds keep this distribution regression test repeatable.
++    expect(belowOneTenthPercent / N).toBeLessThan(0.005);
++    expect(belowOnePercent / N).toBeGreaterThan(0.005);
++    expect(belowOnePercent / N).toBeLessThan(0.02);
++    expect(belowHalf / N).toBeGreaterThan(0.45);
++    expect(belowHalf / N).toBeLessThan(0.55);
++  });
++
++  test('distinct timestamps start distinct streams', () => {
++    const start = 1_791_964_800_000_000n;
++    const seen = new Set<string>();
++    for (let i = 0n; i < 100_000n; i++) {
++      const random = makeRandom(new Timestamp(start + i));
++      seen.add(random.fill(new Uint8Array(16)).join(','));
++    }
++    expect(seen.size).toBe(100_000);
++  });
+ });
  
- These markers are provisional, and CI does not check any of this yet.
- 
--# PR testing sections
-+# Writing PRs
- 
--When writing or updating a PR's testing section, read [Writing testing sections](.agents/testing-sections.md). Explain what verification supports confidence that the change works as intended, and identify important remaining uncertainty.
-+When creating or updating a PR, read [Writing pull requests](.agents/writing-prs.md). Follow its requirements for verified commits, preserving and faithfully completing every template section, and explaining verification and remaining uncertainty.
+ function isNonZero(value: number | bigint): boolean {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6557** (2026-11-11): Expand agent guidance for writing pull requests (@bfops)
-- **PR #6552** (2026-11-11): Disable Nagle's algorithm in the Rust SDK (@JulienLavocat)
-- **PR #6551** (closed): fix: update pgwire 0.42.2 (@sunng87)
-- **PR #6550** (2026-11-11): Tiered storage metrics (@joshua-spacetime)
-- **PR #6548** (2026-11-10): Bump version to 2.16.0 (@rekhoff)
-- **PR #6547** (2026-11-10): Fix database name publication (@bfops)
+- **PR #6617** (2026-11-17): Correct docs on restricting scheduled reducers (@JulienLavocat)
+- **PR #6609** (2026-11-17): More tiered storage metrics (@joshua-spacetime)
+- **PR #6607** (2026-11-16): Database-wide eviction for (some) reads (@joshua-spacetime)
+- **PR #6606** (2026-11-16): Fix the CLI logout endpoint path (@JulienLavocat)
+- **PR #6599** (2026-11-16): Separate namespaces for pages and blobs in disk storage (@kim)
+- **PR #6593** (2026-11-16): Emit mod.rs as the Rust receiver bindings root instead of lib.rs (@LucasWithK)
 
 ---
 
@@ -1077,42 +1235,34 @@ Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. TypeScript SDK crash on React Native with automatic reconnect (#6511)
+## X. docs: fix daily docs audit drift
 
 **RULE**:
-When implementing operations in `crates/bindings-typescript/src/sdk/db_connection_impl.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0863eb48`: TypeScript SDK crash on React Native with automatic reconnect (#6511). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7082c5ea`: docs: fix daily docs audit drift. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/src/sdk/db_connection_impl.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `codex-plugin/plugins/spacetimedb/skills/cli/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // React Native defines `window` without the DOM event API.
-    const hasEvents = (target: unknown): boolean =>
-      typeof (target as EventTarget | undefined)?.addEventListener ===
-        'function' &&
-      typeof (target as EventTarget).removeEventListener === 'function';
-    const doc =
-      typeof document !== 'undefined' && hasEvents(document)
-        ? document
-        : undefined;
-    const win =
-      typeof window !== 'undefined' && hasEvents(window) ? window : undefined;
+### TypeScript Import Extensions
+
+For TypeScript client bindings, `spacetime generate --lang typescript --import-extension none|js|ts` selects the relative import suffix: `none` is the bundler-friendly default, `js` suits `moduleResolution: "nodenext"`, and `ts` suits runtimes executing TypeScript source directly. Set `"import-extension"` per `generate` entry in `spacetime.json` to persist it. This setting changes imports inside generated files, not application imports; NodeNext applications should import an explicit file such as `./module_bindings/index.js`. See https://spacetimedb.com/docs/clients/typescript#import-extensions for direct-TypeScript typecheck settings.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-    const doc = typeof document !== 'undefined' ? document : undefined;
-    const win = typeof window !== 'undefined' ? window : undefined;
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0863eb48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7082c5ea` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

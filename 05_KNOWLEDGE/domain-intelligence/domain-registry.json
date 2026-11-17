@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T17:50:09.514Z",
-  "total_records": 1632,
+  "last_updated": "2026-11-17T17:58:00.872Z",
+  "total_records": 1635,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 694,
+      "total": 695,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -743,7 +743,8 @@
         "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-fibo-2-0-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-preview-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-cod"
       ]
     },
     "E": {
@@ -1096,7 +1097,7 @@
       ]
     },
     "H": {
-      "total": 388,
+      "total": 390,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1485,7 +1486,9 @@
         "domain_intelligence-technical-construction-intelligence-synalinks-synalinks-skills-core-invariants",
         "domain_intelligence-technical-construction-intelligence-surrealdb-surrealdb-core-invariants",
         "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-core-inva",
-        "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-learnings"
+        "domain_intelligence-technical-construction-intelligence-margelo-react-native-vision-camera-learnings",
+        "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv"
       ]
     },
     "I": {
@@ -13418,8 +13421,8 @@
       "title": "Technical Construction Intelligence: founded-labs/react-native-reusables Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-founded-labs-react-native-reusables-technical-construction-intelligence-founded-.md",
       "repository": "founded-labs/react-native-reusables",
-      "content_hash": "b256bbd214ff1f3103f3289b7e4cc9311ec29a94d4793b6d3fa964d0daebf343",
-      "created_at": "2026-11-14T06:05:42.926Z"
+      "content_hash": "9299ef0783d9354d7c5ee2b86f469d2f3c917d3ee9e2faea5b536a26a578cc09",
+      "created_at": "2026-11-17T17:57:48.768Z"
     },
     "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-core-invariants",
@@ -13487,8 +13490,8 @@
       "title": "Technical Construction Intelligence: founded-labs-react-native-reusables-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-founded-labs-react-native-reusables-learnings-technical-construction-intelligenc.md",
       "repository": "founded-labs-react-native-reusables-learnings",
-      "content_hash": "5dd1fcab338642bd7e91d4aeecb3d2448b5a47a4dab80930293fe6a3a3e6150c",
-      "created_at": "2026-11-14T06:06:26.712Z"
+      "content_hash": "43b1984e6623034b5d87eabc84ca70125cb0b591616c3b011f60ee90784991bf",
+      "created_at": "2026-11-17T17:58:00.096Z"
     },
     "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-learnings-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-learnings-core-inv",
@@ -27840,11 +27843,11 @@
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-",
       "domain_letter": "D",
-      "title": "Research & Knowledge Intelligence: hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf-learnings-research-knowledg.md",
-      "repository": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf-learnings",
-      "content_hash": "bdcfa91eab85b9921c7c5f5306bac1af50c0cf459b7644ddc72d2a7636a02c6c",
-      "created_at": "2026-11-17T17:28:12.454Z"
+      "title": "Research & Knowledge Intelligence: hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf-learnings-research-kn.md",
+      "repository": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings",
+      "content_hash": "ac1e93fc561b776de21f6aa1a1d3aeed2e4e57c079c738d64671339e5d897586",
+      "created_at": "2026-11-17T17:57:59.496Z"
     },
     "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-weaviate-weaviate-learnings-core-invariants",
@@ -27890,6 +27893,33 @@
       "repository": "hf-krafton-raon-1-mini-preview-learnings",
       "content_hash": "21005fae71594c75bf5fa17a26c14eccb40ddbf4291144372bb05a0c8826130f",
       "created_at": "2026-11-17T17:50:07.879Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-cod": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-cod",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf-research-knowledge-in.md",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "content_hash": "f87cd199f9f3454fa57a7a8d18c71f8ecb3ba12687f4542c9781baa768d5daf5",
+      "created_at": "2026-11-17T17:57:40.007Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: clockworklabs/SpacetimeDB Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clockworklabs-spacetimedb-technical-construction-intelligence-clockworklabs-spac.md",
+      "repository": "clockworklabs/SpacetimeDB",
+      "content_hash": "12234fe4e46544e267a43d0673a4dbd5aa8faa47a75377acf971e7dd7d66b3ed",
+      "created_at": "2026-11-17T17:57:56.428Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: clockworklabs-spacetimedb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clockworklabs-spacetimedb-learnings-technical-construction-intelligence-clockwor.md",
+      "repository": "clockworklabs-spacetimedb-learnings",
+      "content_hash": "feb2e7dd99d783fc57f1d063fc69ec6c50700a8199f8c5c97168b10d6427fdff",
+      "created_at": "2026-11-17T17:58:00.872Z"
     }
   }
 }

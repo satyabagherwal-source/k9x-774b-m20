@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T17:50:09.984Z",
+  "last_updated": "2026-11-17T17:58:01.131Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -1183,9 +1183,9 @@
       "staged_for_review": 2
     },
     "clockworklabs-spacetimedb-learnings.md": {
-      "processed_at": "2026-11-12T14:45:15.021Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-17T17:58:00.334Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "tonhowtf-omniget-learnings.md": {
       "processed_at": "2026-11-12T15:04:44.369Z",
@@ -1603,7 +1603,7 @@
       "staged_for_review": 0
     },
     "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md": {
-      "processed_at": "2026-11-13T06:51:14.851Z",
+      "processed_at": "2026-11-17T17:57:59.324Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2438,7 +2438,7 @@
       "staged_for_review": 0
     },
     "founded-labs-react-native-reusables-learnings.md": {
-      "processed_at": "2026-11-14T06:06:26.224Z",
+      "processed_at": "2026-11-17T17:57:59.675Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3348,7 +3348,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1653,
+  "total_dossiers_evaluated": 1656,
   "total_canonical_promoted": 323,
-  "total_staged_for_review": 1296
+  "total_staged_for_review": 1299
 }
