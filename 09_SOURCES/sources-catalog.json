@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "331de6ea",
+    "sourceVersion": "194da2ab",
     "license": "Apache-2.0",
-    "contentHash": "256d9291fe10b073350c0b6b8f00313cc7f1e34150641161b0c80d4d42ace40d",
-    "lastHarvestedAt": "2026-11-16T11:45:08.442Z",
+    "contentHash": "4ca1d6ad94c6874585507489b786a8558b205069a8d1380abd57e99f3f2f0f2b",
+    "lastHarvestedAt": "2026-11-17T15:16:34.728Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "323ddd36",
+    "sourceVersion": "ae2cb738",
     "license": "MIT",
-    "contentHash": "b770a9b8166830cf06931be3c0c448f76577fdc2e8e99f799ffe102420f983b4",
-    "lastHarvestedAt": "2026-11-16T06:59:40.878Z",
+    "contentHash": "0eeb82952060bb286459e6c24d4ea6223c4caab4cb2ef8cf27009172809eafe0",
+    "lastHarvestedAt": "2026-11-17T15:16:42.504Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -11895,8 +11895,8 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
     "sourceVersion": "hf-moonshotai-kimi-k3.1-pro",
     "license": "Open-Source",
-    "contentHash": "b7ae7462dfdbafb623c00c47f1389b8b64aaae5d2f5b373b2c5261365b5dd59d",
-    "lastHarvestedAt": "2026-11-13T02:33:19.446Z",
+    "contentHash": "756c0ea6ed39ae8fcf64132830c573d2e9722f474c7afebd5859ab2d4cb7b065",
+    "lastHarvestedAt": "2026-11-17T15:16:54.347Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro"
   },
   "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf": {

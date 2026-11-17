@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T15:06:29.353Z",
-  "total_verified_learnings": 8893,
+  "last_updated": "2026-11-17T15:16:58.662Z",
+  "total_verified_learnings": 8894,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20250,
+  "total_items": 20261,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113002,13 +113002,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "063ca631",
-      "content_hash": "0533db00290935326c17e8a6281a3fa4b2352cb04ce32bd1677f326250f7750f",
+      "source_version": "ae2cb738",
+      "content_hash": "927a9ca8a60b07f022514becd1768533a08dafc4ce3cb9c010f9377be8d0d78f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T17:44:00.337Z"
+      "persisted_at": "2026-11-17T15:16:42.934Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -212732,14 +212732,19 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "331de6ea",
-      "content_hash": "256d9291fe10b073350c0b6b8f00313cc7f1e34150641161b0c80d4d42ace40d",
+      "source_version": "194da2ab",
+      "content_hash": "4ca1d6ad94c6874585507489b786a8558b205069a8d1380abd57e99f3f2f0f2b",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
         {
           "number": 8730,
           "title": "fix CImodel expectations and TiUP bootstrap failures",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8984,
+          "title": "fix DeleteObjects losing keys and errors from multi-delete responses",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -212748,7 +212753,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T11:45:08.259Z",
+      "verified_at": "2026-11-17T15:16:34.551Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212776,10 +212781,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "repository": "juicedata/juicefs",
-      "source_version": "331de6ea",
-      "content_hash": "4b35f1665d6e346d812700a865620434e86c6d734037b4d73419ddb53a9483bd",
+      "source_version": "194da2ab",
+      "content_hash": "56432419f437b067d9429787c03966006967e1b27320932f422c7ea7011590fa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T11:45:08.725Z"
+      "persisted_at": "2026-11-17T15:16:35.045Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs",
@@ -212800,10 +212805,10 @@
       "relative_path": "08_VERIFICATION/juicedata-juicefs-verification-protocol-empirical-defect-shield-for-juicedata-ju.md",
       "title": "Verification Protocol: Empirical Defect Shield for juicedata/juicefs",
       "repository": "juicedata/juicefs",
-      "source_version": "331de6ea",
-      "content_hash": "ea29aed2f7bb434c04fa926e73fb5fc30a04777e084d33361a29e240163e2064",
+      "source_version": "194da2ab",
+      "content_hash": "b68af4a48deb48323339a76330bfdcc48cd567eca02d577b8f11fcbee2beb02b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T11:45:08.949Z"
+      "persisted_at": "2026-11-17T15:16:35.195Z"
     },
     "learn-github-clockworklabs-spacetimedb": {
       "learning_id": "learn-github-clockworklabs-spacetimedb",
@@ -213400,13 +213405,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "063ca631",
-      "content_hash": "f7dcf9bf2a0050220357641caf336307c1f0f87a150fbefca7dcb4ca238a0eb6",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "ae2cb738",
+      "content_hash": "0eeb82952060bb286459e6c24d4ea6223c4caab4cb2ef8cf27009172809eafe0",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213427,6 +213432,11 @@
           "number": 8763,
           "title": "require CREATE on the schema for the new owner of ALTER ... OWNER TO",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8985,
+          "title": "list row-level security policies in pg_policy",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213434,7 +213444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T17:43:59.805Z",
+      "verified_at": "2026-11-17T15:16:42.335Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253428,9 +253438,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-limbo-learnings",
       "repository": "tursodatabase-limbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "6db2a9e1af82fa42699e9a4ed0509980fea5b5485ba23fd89e7f87614119d1ee",
+      "content_hash": "98c8a95428137cb8914494679dfb4879bc50eb4e9e0eaea6c66522d080409f9b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T06:59:44.538Z"
+      "persisted_at": "2026-11-17T15:16:58.662Z"
     },
     "rule-8724": {
       "learning_id": "rule-8724",
@@ -253840,9 +253850,9 @@
       "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
       "repository": "juicedata-juicefs-learnings",
       "source_version": "HEAD",
-      "content_hash": "f76d1ddce46b7f4bbf726477cd81692fc58fb77134db6aee283adb8bc9447ce6",
+      "content_hash": "2139fb607dac61134ba44c8f6bb86c40d4330798be3c0886b562d2caab36462d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T11:45:20.565Z"
+      "persisted_at": "2026-11-17T15:16:57.960Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs-learnings",
@@ -253864,9 +253874,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for juicedata-juicefs-learnings",
       "repository": "juicedata-juicefs-learnings",
       "source_version": "HEAD",
-      "content_hash": "6401eef178e46aac33971f44227ca98896292874b79d32408f67ae981e7f5d0c",
+      "content_hash": "36b5596442d1719f241949c83a0ac422808ef7ddbe83b11bbe843a603a4b6333",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T11:45:20.779Z"
+      "persisted_at": "2026-11-17T15:16:58.092Z"
     },
     "learn-huggingface-pika-labs-pika-h3-flex": {
       "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
@@ -271280,6 +271290,157 @@
       "content_hash": "33e42b83ef96387424868b5a0709f1d0de00c20ec8dafd334c4fc15522dbe0f3",
       "domain_letter": "A",
       "persisted_at": "2026-11-17T15:06:29.107Z"
+    },
+    "rule-8984": {
+      "learning_id": "rule-8984",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8984,
+      "title": "fix DeleteObjects losing keys and errors from multi-delete responses",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "194da2ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T15:16:34.551Z"
+    },
+    "candidate_directive-fix-deleteobjects-losing-keys-and-errors-from-multi-delete-responses": {
+      "item_id": "candidate_directive-fix-deleteobjects-losing-keys-and-errors-from-multi-delete-responses",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-53OK-fix-deleteobjects-losing-keys-and-errors-from-multi-delete-responses.md",
+      "title": "fix DeleteObjects losing keys and errors from multi-delete responses",
+      "repository": "juicedata/juicefs",
+      "source_version": "194da2ab",
+      "content_hash": "a82be38a641053827dc11b8e9e638a0696ef3b83f180c58d8bc052a06f5f7677",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T15:16:34.917Z"
+    },
+    "rule-8985": {
+      "learning_id": "rule-8985",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8985,
+      "title": "list row-level security policies in pg_policy",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "ae2cb738",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T15:16:42.335Z"
+    },
+    "candidate_directive-list-row-level-security-policies-in-pg_policy": {
+      "item_id": "candidate_directive-list-row-level-security-policies-in-pg_policy",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-59O8-list-row-level-security-policies-in-pg_policy.md",
+      "title": "list row-level security policies in pg_policy",
+      "repository": "tursodatabase/turso",
+      "source_version": "ae2cb738",
+      "content_hash": "ce2825017ebf410b4f09052d49872fac81b81aab22c0898f8ae52ff6397fdff3",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T15:16:42.684Z"
+    },
+    "domain_intelligence-content-information-intelligence-tursodatabase-turso-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-tursodatabase-turso-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tursodatabase-limbo-content-information-intelligence-tursodatabase-turso-core-in.md",
+      "title": "Content & Information Intelligence: tursodatabase/turso Core Invariants",
+      "repository": "tursodatabase/turso",
+      "source_version": "ae2cb738",
+      "content_hash": "286d448dd85ebae8187024ed378fa4c5f9acd50b26253d16985b80aaf53e25ac",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T15:16:42.803Z"
+    },
+    "learn-huggingface-moonshotai-kimi-k3-1-pro": {
+      "learning_id": "learn-huggingface-moonshotai-kimi-k3-1-pro",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "moonshotai/Kimi-K3.1-Pro",
+      "repository": "moonshotai/Kimi-K3.1-Pro",
+      "slug": "hf-moonshotai-kimi-k3.1-pro",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+      "source_version": "hf-moonshotai-kimi-k3.1-pro",
+      "content_hash": "756c0ea6ed39ae8fcf64132830c573d2e9722f474c7afebd5859ab2d4cb7b065",
+      "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T15:16:54.182Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-1-pro-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-1-pro-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-1-pro-research-knowledge-intelligence-moonshotai-kimi-k3-1.md",
+      "title": "Research & Knowledge Intelligence: moonshotai/Kimi-K3.1-Pro Core Invariants",
+      "repository": "moonshotai/Kimi-K3.1-Pro",
+      "source_version": "hf-moonshotai-kimi-k3.1-pro",
+      "content_hash": "bcbdfb42890c3c825c720fb97e1b6ea4368a10886fe368ae56251a4b58a63600",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T15:16:54.521Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-1-pro-learnings-research-knowledge-intelligence-hf-moonsho.md",
+      "title": "Research & Knowledge Intelligence: hf-moonshotai-kimi-k3.1-pro-learnings Core Invariants",
+      "repository": "hf-moonshotai-kimi-k3.1-pro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c7e7fcc7c0fe2ca86c97919c611b2353a1eee1cc08c634518e62be8981c391c8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T15:16:57.502Z"
+    },
+    "candidate_directive-gateway-fix-deleteobjects-losing-keys-and-errors-from-multi-delete-responses": {
+      "item_id": "candidate_directive-gateway-fix-deleteobjects-losing-keys-and-errors-from-multi-delete-responses",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5LD5-gateway-fix-deleteobjects-losing-keys-and-errors-from-multi-delete-responses.md",
+      "title": "gateway: fix DeleteObjects losing keys and errors from multi-delete responses",
+      "repository": "juicedata-juicefs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "db0d95d1dbdf726c1f3b5279060a60594fc35f8c9253a092dc583424f7c70dc8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T15:16:57.833Z"
+    },
+    "candidate_directive-postgres-list-row-level-security-policies-in-pg_policy": {
+      "item_id": "candidate_directive-postgres-list-row-level-security-policies-in-pg_policy",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5LSZ-postgres-list-row-level-security-policies-in-pg_policy.md",
+      "title": "postgres: list row-level security policies in pg_policy",
+      "repository": "tursodatabase-limbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b828f10b02eae71a23b8941ac89c1283ae4058a8687afe9127be543c24fabdb2",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T15:16:58.406Z"
+    },
+    "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tursodatabase-limbo-learnings-content-information-intelligence-tursodatabase-lim.md",
+      "title": "Content & Information Intelligence: tursodatabase-limbo-learnings Core Invariants",
+      "repository": "tursodatabase-limbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cdc0ba50c6ac8071d776cb428d03a08e9dca2befbdcfdaddc296f40a64493cee",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T15:16:58.528Z"
     }
   },
   "ai-builder-brain": {

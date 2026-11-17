@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T15:06:29.225Z",
-  "total_records": 1574,
+  "last_updated": "2026-11-17T15:16:58.528Z",
+  "total_records": 1578,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 655,
+      "total": 657,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -704,7 +704,9 @@
         "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv",
         "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b",
         "domain_intelligence-research-knowledge-intelligence-mistralai-timestral-209m-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-mistralai-timestral-209m-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-mistralai-timestral-209m-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-1-pro-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar"
       ]
     },
     "E": {
@@ -1434,7 +1436,7 @@
       ]
     },
     "I": {
-      "total": 78,
+      "total": 80,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1513,7 +1515,9 @@
         "DOM-I-6DA6494F",
         "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-learnings-core-i",
         "domain_intelligence-content-information-intelligence-apache-pinot-learnings-core-invariants",
-        "domain_intelligence-content-information-intelligence-gravitl-netmaker-core-invariants"
+        "domain_intelligence-content-information-intelligence-gravitl-netmaker-core-invariants",
+        "domain_intelligence-content-information-intelligence-tursodatabase-turso-core-invariants",
+        "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants"
       ]
     },
     "J": {
@@ -9342,8 +9346,8 @@
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "repository": "juicedata/juicefs",
-      "content_hash": "4b35f1665d6e346d812700a865620434e86c6d734037b4d73419ddb53a9483bd",
-      "created_at": "2026-11-16T11:45:08.725Z"
+      "content_hash": "56432419f437b067d9429787c03966006967e1b27320932f422c7ea7011590fa",
+      "created_at": "2026-11-17T15:16:35.045Z"
     },
     "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants",
@@ -23309,8 +23313,8 @@
       "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-learnings-architecture-intelligence-juicedata-juicefs-learning.md",
       "repository": "juicedata-juicefs-learnings",
-      "content_hash": "f76d1ddce46b7f4bbf726477cd81692fc58fb77134db6aee283adb8bc9447ce6",
-      "created_at": "2026-11-16T11:45:20.565Z"
+      "content_hash": "2139fb607dac61134ba44c8f6bb86c40d4330798be3c0886b562d2caab36462d",
+      "created_at": "2026-11-17T15:16:57.960Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants",
@@ -27277,6 +27281,42 @@
       "repository": "hf-mistralai-timestral-209m-learnings",
       "content_hash": "3066b075600896c55b4395c6bb538806911323f9c0ed2874bbebd4fbdc5dddf6",
       "created_at": "2026-11-17T15:06:27.429Z"
+    },
+    "domain_intelligence-content-information-intelligence-tursodatabase-turso-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-tursodatabase-turso-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: tursodatabase/turso Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tursodatabase-limbo-content-information-intelligence-tursodatabase-turso-core-in.md",
+      "repository": "tursodatabase/turso",
+      "content_hash": "286d448dd85ebae8187024ed378fa4c5f9acd50b26253d16985b80aaf53e25ac",
+      "created_at": "2026-11-17T15:16:42.803Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-1-pro-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-1-pro-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: moonshotai/Kimi-K3.1-Pro Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-1-pro-research-knowledge-intelligence-moonshotai-kimi-k3-1.md",
+      "repository": "moonshotai/Kimi-K3.1-Pro",
+      "content_hash": "bcbdfb42890c3c825c720fb97e1b6ea4368a10886fe368ae56251a4b58a63600",
+      "created_at": "2026-11-17T15:16:54.521Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-moonshotai-kimi-k3.1-pro-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-1-pro-learnings-research-knowledge-intelligence-hf-moonsho.md",
+      "repository": "hf-moonshotai-kimi-k3.1-pro-learnings",
+      "content_hash": "c7e7fcc7c0fe2ca86c97919c611b2353a1eee1cc08c634518e62be8981c391c8",
+      "created_at": "2026-11-17T15:16:57.502Z"
+    },
+    "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: tursodatabase-limbo-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tursodatabase-limbo-learnings-content-information-intelligence-tursodatabase-lim.md",
+      "repository": "tursodatabase-limbo-learnings",
+      "content_hash": "cdc0ba50c6ac8071d776cb428d03a08e9dca2befbdcfdaddc296f40a64493cee",
+      "created_at": "2026-11-17T15:16:58.528Z"
     }
   }
 }

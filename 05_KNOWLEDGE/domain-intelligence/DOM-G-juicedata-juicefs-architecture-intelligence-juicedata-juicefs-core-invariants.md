@@ -4,24 +4,24 @@
 {
   "source_repository": "juicedata/juicefs",
   "source_url": "https://github.com/juicedata/juicefs",
-  "source_version": "331de6ea",
+  "source_version": "194da2ab",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T11:45:08.609Z",
+  "timestamp": "2026-11-17T15:16:34.917Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-juicedata-juicefs",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [juicedata/juicefs](https://github.com/juicedata/juicefs) (Revision: `331de6ea`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T11:45:08.609Z`  
+> **Provenance**: Harvested from [juicedata/juicefs](https://github.com/juicedata/juicefs) (Revision: `194da2ab`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T15:16:34.917Z`  
 > **Learning ID**: `learn-github-juicedata-juicefs`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence)
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from juicedata/juicefs:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T11:45:02.607Z  
+> **Harvest Timestamp**: 2026-11-17T15:16:33.670Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14740 stars
+- **Stars / Engagement**: 14746 stars
 
 ---
 
@@ -1175,11 +1175,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7857** (2026-11-16): **docs: clarify routing and concurrency for multiple gateways**
-  *Symptoms*: <!-- Keep the description proportional to the change. Small, self-explanatory fixes can be brief and do not need a separate issue. Remove optional sections that do not apply. Link existing discussions instead of repeating their full history. -->  ## Problem  Multi-gateway docs omit object routing recommendations and cross-instance concurrency limitations. Related to #7827.  ## Change  Update English and Chinese docs with object-based routing guidance and concurrency limitations.  ## Validation  <!-- List checks you actually ran and their results, including relevant versions or backends. For a bug fix, describe the before/after behavior and regression coverage. State what was not run and why; do not present suggested checks as completed. For documentation changes, describe the relevant content/link checks. -->  ## Risks and open questions (if applicable)  <!-- Note compatibility, persisted formats, mixed-version clients, backend parity, failure recovery, or performance tradeoffs only when relevant to this change. Identify decisions that need maintainer input and link user-facing doc updates. --> 
+- **Issue #7867** (2026-11-17): **gateway: fix DeleteObjects losing keys and errors from multi-delete responses**
+  *Symptoms*: ## What  `jfsObjects.DeleteObjects` never fills the `objs` return slice, so every entry stays zero-value. This PR fills `ObjectName`/`VersionID` for every request key up front, on both success and failure paths.  ## Why it's broken  The minio handler (`DeleteMultipleObjectsHandler` in `cmd/bucket-handlers.go`) maps each result back to its request index by rebuilding an `ObjectToDelete` from the returned `dObjects[i]` and looking it up in the request map:  ```go objToDel := ObjectToDelete{     ObjectName:                    dObjects[i].ObjectName,     VersionID:                     dObjects[i].VersionID,     VersionPurgeStatus:            dObjects[i].VersionPurgeStatus,     DeleteMarkerReplicationStatus: dObjects[i].DeleteMarkerReplicationStatus,     PurgeTransitioned:             dObjects[i].PurgeTransitioned, } dindex := objectsToDelete[objToDel] if errs[i] == nil || isErrObjectNotFound(errs[i]) || isErrVersionNotFound(errs[i]) {     deletedObjects[dindex] = dObjects[i]     continue } dErrs[dindex] = DeleteError{ ... } ```  When `dObjects[i]` (i.e. our `objs[i]`) is zero-value, the lookup misses and Go's map returns the zero value, so `dindex` is **always 0**. Every result is written to slot 0 and the remaining slots are never touched:  - **Errors collapse**: each failure overwrites `dErrs[0]`, so only the *last* failed key survives in `<Error>`; the other failed keys silently vanish from the response. - **Deleted list is garbage**: successes overwrite `deletedObjects[0]`, a
 
-- **Issue #7855** (2026-11-16): **object/sharding: do not format the endpoint query**
-  *Symptoms*: ## Problem  With `--shards`, `NewSharded` uses the whole bucket as a `fmt` format string, so any percent-encoded query value is taken as a verb. E.g. `jfs%d?auth-url=https%3A%2F%2Fa.com%2Fv3` becomes `jfs0?auth-url=https%!A(MISSING)%!F(MISSING)...`. `format` also re-encodes the query when `tls-insecure-skip-verify` is set, which produces such values. And a bucket without `%d` outside the query (e.g. `mybucket?x=a%2Fb`) passes the placeholder check, so all shards share one bucket. This becomes more likely with Swift Keystone settings in the bucket query (juicedata/juicefs#7833).  ## Change  Only format the part before `?` and append the query verbatim. A literal `%` in the host or path is still not supported.  ## Validation  - Extended `TestSharding`: per-shard endpoints keep an encoded query intact, and a bucket whose only `%` is in the query is rejected. It fails before the fix and passes after. - `go test ./pkg/object` passes.  ## Risks and open questions (if applicable)  A `%d` placed only in the query is no longer substituted; existing endpoints with `%` in the query were already mangled before this change. 
+- **Issue #7860** (2026-11-17): **utils: backport Cond wakeup fix and channel reuse to ee-5.4**
+  *Symptoms*: Backport two Cond changes to ee-5.4:  - #7820: fix lost wakeups when Signal runs before a waiter starts receiving, including regression tests. - #7845: reuse buffered notification channels to avoid one allocation per wait. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1196,54 +1196,76 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6185d131` (2026-11-16)
-**Commit Message**: ci: fix CImodel expectations and TiUP bootstrap failures (#7852)
+### Incident Patch 1: `194da2ab` (2026-11-17)
+**Commit Message**: gateway: fix DeleteObjects losing keys and errors from multi-delete responses (#7867)
 
-**File**: `.github/scripts/start_meta_engine.sh` (modified, +3/-2)
+**File**: `pkg/gateway/gateway.go` (modified, +6/-0)
 ```diff
-@@ -124,7 +124,8 @@ install_tikv(){
-     # Pin 8.5.7: the tiup mirror currently serves tikv/pd tarballs for 8.5.3-8.5.6
-     # that no longer match their (republished) manifest checksums, so playground
-     # aborts with "sha256 checksum mismatch". 8.5.7 is consistent.
--    $tiup playground 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
-+    # Pin playground to skip the background update check racing with root manifest updates.
-+    $tiup playground:v1.17.1 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
-     pid=$!
-     timeout=60
-     count=0
-@@ -188,7 +189,7 @@ install_tidb(){
-     # manifest version instead of a pruned one, see https://github.com/pingcap/tiup/issues/2057
-     rm -f "$tiup_home/manifests/snapshot.json" "$tiup_home/manifests/timestamp.json"
-     # Pin 8.5.7, see the note in install_tikv (mirror checksum mismatch on 8.5.3-8.5.6).
--    $tiup playground 8.5.7 > tidb.log 2>&1  &
-+    $tiup playground:v1.17.1 8.5.7 > tidb.log 2>&1  &
-     pid=$!
-     timeout=60
-     count=0
+@@ -625,6 +625,12 @@ func (n *jfsObjects) delObj(bucket string, object string) error {
+ func (n *jfsObjects) DeleteObjects(ctx context.Context, bucket string, objects []minio.ObjectToDelete, options minio.ObjectOptions) (objs []minio.DeletedObject, errs []error) {
+ 	objs = make([]minio.DeletedObject, len(objects))
+ 	errs = make([]error, len(objects))
++	// objs must be filled even on error: the minio handler maps each result
++	// back to its request index via the fields of objs[idx], so a zero-value
++	// entry makes the lookup miss and collapses every result onto index 0.
++	for idx, object := range objects {
++		objs[idx] = minio.DeletedObject{ObjectName: object.ObjectName, VersionID: object.VersionID}
++	}
+ 	if err := n.checkBucket(ctx, bucket); err != nil {
+ 		for idx := range objects {
+ 			errs[idx] = minio.BucketNotFound{Bucket: bucket}
 ```
 
-**File**: `pkg/meta/random_test.go` (modified, +2/-2)
+**File**: `pkg/gateway/gateway_test.go` (modified, +34/-0)
 ```diff
-@@ -1922,8 +1922,8 @@ func (m *fsMachine) chown(inode Ino, flag uint16, uid, gid uint32) syscall.Errno
- 	if n == nil {
- 		return syscall.ENOENT
- 	}
--	if flag&SetAttrUID != 0 && n.uid != uid {
--		if m.ctx.Uid() != 0 {
-+	if flag&SetAttrUID != 0 {
-+		if m.ctx.Uid() != 0 && (m.ctx.Uid() != n.uid || uid != n.uid) {
- 			return syscall.EPERM
+@@ -975,4 +975,38 @@ func TestDeleteObjects(t *testing.T) {
+ 			t.Fatalf("sibling bucket dir /jmrqfoo must not be pruned, got: %s", eno)
  		}
- 		n.uid = uid
+ 	})
++
++	t.Run("fill deleted object for every key", func(t *testing.T) {
++		jfsObj, jfs, _ := newTestGateway(t, Config{MultiBucket: true})
++		bucket := "bkt3"
++		if eno := jfs.Mkdir(mctx, "/"+bucket, 0777, 022); eno != 0 {
++			t.Fatalf("mkdir bucket: %s", eno)
++		}
++		createTestFile(t, jfs, "/"+bucket+"/ok1")
++		createTestFile(t, jfs, "/"+bucket+"/ok2")
++
++		reqs := []minio.ObjectToDelete{
++			{ObjectName: "ok1"},
++			{ObjectName: "missing-dir/child"}, // parent was never created, so this one fails
++			{ObjectName: "ok2"},
++		}
++		objs, errs := jfsObj.DeleteObjects(context.Background(), bucket, reqs, minio.ObjectOptions{})
++		if len(objs) != len(reqs) {
++			t.Fatalf("got %d objs, want %d", len(objs), len(reqs))
++		}
++		// The minio handler maps each result back to its request index via the
++		// fields of objs[idx], so every entry must carry its key even when the
++		// delete fails.
++		for i, req := range reqs {
++			if objs[i].ObjectName != req.ObjectName {
++				t.Fatalf("objs[%d].ObjectName = %q, want %q", i, objs[i].ObjectName, req.ObjectName)
++			}
++		}
++		if errs[0] != nil || errs[2] != nil {
++			t.Fatalf("ok keys should succeed: errs[0]=%v, errs[2]=%v", errs[0], errs[2])
++		}
++		if errs[1] == nil {
++			t.Fatalf("key under missing parent should fail")
++		}
++	})
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7867** (2026-11-17): gateway: fix DeleteObjects losing keys and errors from multi-delete responses (@sjp00556)
+- **PR #7860** (2026-11-17): utils: backport Cond wakeup fix and channel reuse to ee-5.4 (@myangitzh)
+- **PR #7859** (2026-11-17): sdk/python: validate seek offsets and truncate sizes (@adenzhou1350)
 - **PR #7857** (2026-11-16): docs: clarify routing and concurrency for multiple gateways (@myangitzh)
 - **PR #7855** (2026-11-16): object/sharding: do not format the endpoint query (@jiefenghuang)
 - **PR #7854** (2026-11-16): CI: delete the per-run tier test bucket after tier.sh (@mt5225)
-- **PR #7853** (2026-11-16): deps: update minio to reject dot path components in object names (@jiefenghuang)
-- **PR #7852** (2026-11-16): ci: fix CImodel expectations and TiUP bootstrap failures (@zxh326)
-- **PR #7848** (closed): meta: prevent directory cycles within rename transactions (@adenzhou1350)
 
 ---
 
@@ -1263,34 +1285,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: fix CImodel expectations and TiUP bootstrap failures
+## X. gateway: fix DeleteObjects losing keys and errors from multi-delete responses
 
 **RULE**:
-When implementing operations in `.github/scripts/start_meta_engine.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/gateway/gateway.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6185d131`: ci: fix CImodel expectations and TiUP bootstrap failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `194da2ab`: gateway: fix DeleteObjects losing keys and errors from multi-delete responses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/start_meta_engine.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/gateway/gateway.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    # Pin playground to skip the background update check racing with root manifest updates.
-    $tiup playground:v1.17.1 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
-    $tiup playground:v1.17.1 8.5.7 > tidb.log 2>&1  &
+	// objs must be filled even on error: the minio handler maps each result
+	// back to its request index via the fields of objs[idx], so a zero-value
+	// entry makes the lookup miss and collapses every result onto index 0.
+	for idx, object := range objects {
+		objs[idx] = minio.DeletedObject{ObjectName: object.ObjectName, VersionID: object.VersionID}
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    $tiup playground 8.5.7 --mode tikv-slim > tikv.log 2>&1  &
-    $tiup playground 8.5.7 > tidb.log 2>&1  &
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6185d131` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `194da2ab` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

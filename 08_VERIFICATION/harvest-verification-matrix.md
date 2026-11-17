@@ -10581,3 +10581,6 @@
 | `CYCLE-20261117-RQXS` | `2026-11-17T15:06:11.872Z` | `mistralai/Timestral-209M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md` | Yes (`1b3d9b2c...`) |
 | `CYCLE-20261117-RY65` | `2026-11-17T15:06:21.245Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8982` | Yes (`218425ef...`) |
 | `CYCLE-20261117-S0CZ` | `2026-11-17T15:06:24.083Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8983` | Yes (`87a579b7...`) |
+| `CYCLE-20261117-53J8` | `2026-11-17T15:16:34.724Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8984` | Yes (`4ca1d6ad...`) |
+| `CYCLE-20261117-59J8` | `2026-11-17T15:16:42.500Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8985` | Yes (`0eeb8295...`) |
+| `CYCLE-20261117-5IO7` | `2026-11-17T15:16:54.343Z` | `moonshotai/Kimi-K3.1-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md` | Yes (`756c0ea6...`) |

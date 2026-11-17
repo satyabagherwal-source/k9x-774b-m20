@@ -10614,3 +10614,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-17T15:06:11.876Z |
 | `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `0d426fe3` | Multi-dimensional audit evidence | 2026-11-17T15:06:21.249Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `8c331dbf` | Multi-dimensional audit evidence | 2026-11-17T15:06:24.087Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `194da2ab` | Multi-dimensional audit evidence | 2026-11-17T15:16:34.728Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `ae2cb738` | Multi-dimensional audit evidence | 2026-11-17T15:16:42.504Z |
+| `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-17T15:16:54.347Z |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T15:06:24.092Z",
-  "total_cycles_completed": 10137,
-  "total_learnings_persisted": 10137,
-  "total_rules_promoted": 9722,
+  "last_updated": "2026-11-17T15:16:54.352Z",
+  "total_cycles_completed": 10140,
+  "total_learnings_persisted": 10140,
+  "total_rules_promoted": 9724,
   "history": [
-    {
-      "timestamp": "2026-11-16T22:04:03.247Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T22:19:16.444Z",
-      "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
-      "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T22:19:20.048Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T22:19:24.910Z",
       "repository": "iPlug2/iPlug2",
@@ -1403,6 +1382,27 @@
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:16:34.733Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:16:42.509Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:16:54.352Z",
+      "repository": "moonshotai/Kimi-K3.1-Pro",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
