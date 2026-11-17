@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T19:19:50.734Z",
+  "last_updated": "2026-11-17T19:27:35.988Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "e0fa56cb4a4c5e24758a5705270b76f38380c4feeeac055e87e4fc81c495267a",
-      "verified_at": "2026-11-16T22:03:56.423Z",
+      "content_hash": "462f2d59ef9b46f969f3203798665769e716b72cf38702932cebeac233be57c9",
+      "verified_at": "2026-11-17T19:27:30.676Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T22:03:56.423Z"
+      "last_updated": "2026-11-17T19:27:30.676Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "c41e775bb8292d2b59e10dade3be27161ea3f43bae5bc11e131b8a1e6fdd2bea",
-      "verified_at": "2026-11-16T20:11:18.150Z",
+      "content_hash": "6b9858ea9bf1ee60afedb4282d47e000172c24fb71a029f9d40890cab529e639",
+      "verified_at": "2026-11-17T19:27:35.987Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T20:11:18.150Z"
+      "last_updated": "2026-11-17T19:27:35.987Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
@@ -16401,14 +16401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr-2",
-      "content_hash": "a6a6483d2b0aab2db9d1bb68844d21c6a3d5e6b14e8c054ca5f39a2834cecc77",
-      "verified_at": "2026-11-13T08:21:38.985Z",
+      "content_hash": "d5f5961c767fa865a66fa13fdbf04dec03dbb4b8e05bf77c5ab2fab31561b7ad",
+      "verified_at": "2026-11-17T19:27:21.097Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T08:21:38.985Z"
+      "last_updated": "2026-11-17T19:27:21.097Z"
     },
     "Joooook/12306-mcp": {
       "repository": "Joooook/12306-mcp",
@@ -18516,14 +18516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yyjeqhc-webcodex",
-      "content_hash": "d8cd0526021646b1b2612b4682656dbe29c3765cf60d0a714ebca11f1ba98f42",
-      "verified_at": "2026-11-16T06:17:32.365Z",
+      "content_hash": "262f70187b726a8dd0e7aa03923f3f4154ecb4bfc5366c3e912bca3e8c921f86",
+      "verified_at": "2026-11-17T19:27:23.286Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T06:17:32.365Z"
+      "last_updated": "2026-11-17T19:27:23.286Z"
     },
     "MiniMaxAI/MiniMax-H3-Image": {
       "repository": "MiniMaxAI/MiniMax-H3-Image",

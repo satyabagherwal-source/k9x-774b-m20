@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T19:19:50.724Z",
-  "total_cycles_completed": 10230,
-  "total_learnings_persisted": 10230,
-  "total_rules_promoted": 9782,
+  "last_updated": "2026-11-17T19:27:35.984Z",
+  "total_cycles_completed": 10234,
+  "total_learnings_persisted": 10234,
+  "total_rules_promoted": 9785,
   "history": [
-    {
-      "timestamp": "2026-11-17T05:37:11.199Z",
-      "repository": "TanStack/query",
-      "learningId": "learn-github-tanstack-query",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T05:37:13.384Z",
-      "repository": "gauthierpiarrette/highball",
-      "learningId": "learn-github-gauthierpiarrette-highball",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T05:37:15.915Z",
-      "repository": "argoproj/argo-events",
-      "learningId": "learn-github-argoproj-argo-events",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T05:58:07.903Z",
-      "repository": "preactjs/preact",
-      "learningId": "learn-github-preactjs-preact",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T05:58:12.432Z",
       "repository": "krakend/krakend-ce",
@@ -1403,6 +1375,34 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:27:21.094Z",
+      "repository": "baidu/Unlimited-OCR-2",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:27:23.284Z",
+      "repository": "yyjeqhc/webcodex",
+      "learningId": "learn-github-yyjeqhc-webcodex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:27:30.673Z",
+      "repository": "nats-io/nats-server",
+      "learningId": "learn-github-nats-io-nats-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T19:27:35.984Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

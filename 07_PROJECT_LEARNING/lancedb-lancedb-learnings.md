@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `bf4d6c80`  
+> **Source Version**: `16af7297`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T20:11:17.347Z  
+> **Timestamp**: 2026-11-17T19:27:34.975Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T20:11:17.342Z  
+> **Harvest Timestamp**: 2026-11-17T19:27:34.970Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11912 stars
+- **Stars / Engagement**: 11917 stars
 
 ---
 
@@ -1233,11 +1233,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5062** (2026-11-16): **fix: allow matched merge updates to Function inputs**
-  *Symptoms*: Matched merge-insert updates rejected every non-key source column that a Function binding reads, while update already accepts input changes and the merge freshness path records their changed signatures. Use the same `ensure_not_written` guard for the matched source columns: inputs pass, computed outputs and assignment columns stay rejected before any write, and insert-only or unrelated-column merges keep their behavior.  Regressions confirm a matched input update retains prior outputs, dirties only the affected rows, keeps an independent binding fresh, and rejects mixed input/output sources without committing.  Tested on `2ab103d7` + this change: `cargo test -p lancedb --lib` 1083 passed, 82 ignored.  Refs ENT-3515 
+- **Issue #5073** (2026-11-17): **fix(deps): ignore unmaintained chrono family advisories**
+  *Symptoms*: `cargo deny` fails on main because RUSTSEC-2026-0543 (`chrono`), RUSTSEC-2026-0555 (`chrono-tz`) and RUSTSEC-2026-0542 (`humantime`) mark the chrono family unmaintained. Add exceptions reviewed on 2026-11-17, with the advisory links and the upstream migration constraint; none of the three is a vulnerability and RustSec lists no patched version for any of them (chrono recommends jiff/time).  Dependency paths (from `cargo tree -i` at version fb34b1c7 of main):  - `chrono` 0.4.45: arrow 59 / datafusion 55 and the lance stack, across the workspace. - `chrono-tz` 0.10.4: arrow-array → arrow → datafusion/lance. - `humantime` 2.3.0: lance, object_store (through datafusion), and xet-runtime.  Clearing the advisories requires the arrow/datafusion/lance ecosystem to migrate off chrono; no upstream fix exists to consume. Also remove the RUSTSEC-2026-0441 `pin-utils` ignore, which the current lockfile no longer needs.  Validation on commit 04259a04 (cargo-deny 0.21.0, the version the CI action installs):  - Before: `cargo deny check advisories` failed on the three chrono-family advisories, and warned that the pin-utils ignore was not encountered. - After: `cargo deny check advisories bans licenses sources` passes all four checks, matching the Rust CI deny job. - `git diff --check` passes. 
 
-- **Issue #5060** (2026-11-16): **fix(python): explain blob descriptor copy guidance**
-  *Symptoms*: The descriptor-copy error only named the missing `data`/`uri` child. It now says that this shape is an SDK blob descriptor rather than payload bytes, and points to `blob_mode="bytes"` for supported materialization, `blob_mode="descriptions"` for inspection, and the row-id plus `fetch_blobs`/`fetch_blob_files` copy path while the source stays unchanged.  This reuses the merged guidance from #4940 and the direct-materialization contract from #4973. Ray integration remains out of scope for ENT-3556.  Refs ENT-3556  Test: `python/tests/test_blob.py` (210 passed, 39 skipped), including a regression that writes default lazy descriptor rows into a blob-schema table, checks the guidance, and confirms no target is created. `python/tests/test_util.py -k blob` (12 passed, 2 skipped). 
+- **Issue #5071** (2026-11-17): **fix(remote): forward job statistics through refresh handles**
+  *Symptoms*: A Function refresh submitted through the LanceDB SDK returns a handle wrapped for read-freshness tracking. lancedb/lancedb#5016 added canonical `Job::stats()` on the server-job handle, but the refresh wrapper did not forward `stats`. The returned handle therefore reported `job statistics is only available for server-side jobs`, while `db.open_job(<same id>).stats()` returned the server report.  Forward `stats` through the refresh wrapper and cover it at the public refresh entry point. The regression submits with `refresh_column_async`, then reads `stats` from that returned handle without reopening the job. With the forwarding removed, the test fails with the same `NotSupported` error; with the change, it passes.  Validation on `57b20fb11`: the targeted Rust test passed, `cargo fmt --check` passed, and `cargo clippy -p lancedb --features remote --lib --tests -- -D warnings` passed.  Part of ENT-3974. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1254,853 +1254,291 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3aed07c3` (2026-11-15)
-**Commit Message**: fix(python): show Function registration progress and image details (#5040)
+### Incident Patch 1: `16708593` (2026-11-17)
+**Commit Message**: fix(deps): ignore unmaintained chrono family advisories (#5073)
 
-Report registration lifecycle and client elapsed time through existing job handles, and provide concise image inspection. Preserve quiet wait behavior, environment-lock forwarding, failure diagnostics and timeout recovery.
+`cargo deny` fails on main because RUSTSEC-2026-0543 (`chrono`),
+RUSTSEC-2026-0555 (`chrono-tz`) and RUSTSEC-2026-0542 (`humantime`) mark
+the chrono family unmaintained. Add exceptions reviewed on 2026-11-17,
+with the advisory links and the upstream migration constraint; none of
+the three is a vulnerability and RustSec lists no patched version for
+any of them (chrono recommends jiff/time).
 
-**File**: `docs/src/python/python.md` (modified, +19/-0)
+Dependency paths (from `cargo tree -i` at version fb34b1c7 of main):
+
+- `chrono` 0.4.45: arrow 59 / datafusion 55 and the lance stack, across
+the workspace.
+- `chrono-tz` 0.10.4: arrow-array → arrow → datafusion/lance.
+- `humantime` 2.3.0: lance, object_store (through datafusion), and
+xet-runtime.
+
+Clearing the advisories requires the arrow/datafusion/lance ecosystem to
+migrate off chrono; no upstream fix exists to consume. Also remove the
+RUSTSEC-2026-0441 `pin-utils` ignore, which the current lockfile no
+longer needs.
+
+Validation on commit 04259a04 (cargo-deny 0.21.0, the version the CI
+action installs):
+
+- Before: `cargo deny check advisories` failed on the three
+chrono-family advisories, and warned that the pin-utils ignore was
+
+**File**: `deny.toml` (modified, +24/-6)
 ```diff
-@@ -424,6 +424,25 @@ code that used the former LanceDB Enterprise-only argument order.
+@@ -132,13 +132,31 @@ ignore = [
+     { id = "RUSTSEC-2026-0398", reason = "zstd-safe 7 via arrow-ipc 58; affected seekable API is not enabled" },
+     { id = "RUSTSEC-2026-0403", reason = "zstd-safe 7 via arrow-ipc 58; affected streaming decoder API is unused" },
  
- ## Functions and Jobs
- 
-+Use `progress=True` when waiting for Function registration in a notebook or
-+terminal. A callback receives structured snapshots instead:
+-    # pin-utils: unmaintained; reviewed 2026-11-05. Transitive via
+-    # aws-smithy-http/runtime/types, including aws-config -> lance-io.
+-    # No safe upgrade exists; clearing requires AWS Smithy to migrate to
+-    # core::pin::pin!, pin-project, or pin-project-lite. Revisit on AWS updates.
++    # pin-utils: unmaintained; reviewed 2026-11-05, removed 2026-11-17 after
++    # the lockfile dropped the aws-smithy pins that carried it.
+     # https://rustsec.org/advisories/RUSTSEC-2026-0441
+-    # https://github.com/rustsec/advisory-db/issues/3314
+-    { id = "RUSTSEC-2026-0441", reason = "pin-utils unmaintained via AWS Smithy; no safe upgrade, awaiting upstream migration" },
 +
-+```python
-+fn = db.create_function(my_function, progress=True)
-+registration = db.create_function_async(other_function)
-+fn = registration.wait(progress=lambda snapshot: print(snapshot))
-+print(fn.image.describe())
-+```
++    # chrono: unmaintained; reviewed 2026-11-17. Informational notice, not a
++    # vulnerability. Transitive via arrow 59 / datafusion 55 and the lance
++    # stack throughout the workspace. RustSec lists no patched version and
++    # recommends jiff/time; clearing it requires the arrow/datafusion/lance
++    # ecosystem to migrate.
++    # https://rustsec.org/advisories/RUSTSEC-2026-0543
++    { id = "RUSTSEC-2026-0543", reason = "chrono unmaintained via arrow/datafusion/lance; no fixed upstream release, awaiting ecosystem migration" },
 +
-+Registration uses the existing SQL query handle. The current handle reports
-+lifecycle state and `client_elapsed_time_millis` since the handle was created;
-+detailed build phases and build logs are unavailable. Keep the same handle after
-+a wait timeout to resume waiting. Failures retain the server error and request
-+identifiers. `fn.image` has a concise representation; `describe()` exposes Python
-+and CUDA requirements without inspecting Pydantic internals. Platforms, base image
-+and size are `None` until the service reports them. The full image descriptor and
-+canonical JSON remain available.
++    # chrono-tz: unmaintained; reviewed 2026-11-17. Informational notice, not
++    # a vulnerability. Transitive via arrow-array → arrow → datafusion/lance.
++    # No patched version exists; clearing it needs the same ecosystem
++    # migration off chrono as RUSTSEC-2026-0543.
++    # https://rustsec.org/advisories/RUSTSEC-2026-0555
++    { id = "RUSTSEC-2026-0555", reason = "chrono-tz unmaintained via arrow/datafusion/lance; no fixed upstream release" },
 +
- A `@function` definition is also a local callable. Call a decorated function
- directly with row inputs, or call a decorated class with its initialization fields
- and then call the returned instance; call `close()` if the class defines it. This
-```
-
-**File**: `python/python/lancedb/db.py` (modified, +9/-2)
-```diff
-@@ -1051,6 +1051,7 @@ def create_function(
-         exist_ok: bool = False,
-         namespace_path: Optional[List[str]] = None,
-         refresh_lock: bool = False,
-+        progress: Any = False,
-     ) -> FunctionVersion:
-         """Build and register a scalar Python function, then return its version.
- 
-@@ -1076,6 +1077,9 @@ def create_function(
-         refresh_lock : bool, default False
-             Ask the server to resolve a fresh environment lock instead of
-             reusing the published version's lock.
-+        progress : bool, callable, or tqdm-like object, default False
-+            Display lifecycle state and elapsed time, or receive structured
-+            snapshots through a callback. See [Job.wait][lancedb.job.Job.wait].
- 
-         When the registration job resolves, each resolved-environment warning
-         reported by the server is emitted as a Python ``UserWarning``. Catalog
-@@ -1095,13 +1099,16 @@ def create_function(
-         )
-         ```
-         """
--        return self.create_function_async(
-+        job = self.create_function_async(
-             definition,
-             secrets=secrets,
-             exist_ok=exist_ok,
-             namespace_path=namespace_path,
-             refresh_lock=refresh_lock,
--        ).wait()
-+        )
-+        if progress is False or progress is None:
-+            return job.wait()
-+        return job.wait(progress=progress)
- 
-     def create_function_async(
-         self,
-```
-
-**File**: `python/python/lancedb/functions.py` (modified, +58/-1)
-```diff
-@@ -544,13 +544,70 @@ def digest(self) -> str:
++    # humantime: unmaintained; reviewed 2026-11-17. Informational notice, not
++    # a vulnerability. Transitive via lance, object_store (through datafusion)
++    # and xet-runtime. No patched version exists; the advisory follows chrono's
++    # maintenance status.
++    # https://rustsec.org/advisories/RUSTSEC-2026-0542
++    { id = "RUSTSEC-2026-0542", reason = "humantime unmaintained via lance/object_store/xet-runtime; no fixed upstream release" },
+ ]
  
  
- class FunctionImage(_RemoteValue):
--    """A complete OCI Function image identified by its exact manifest digest."""
-+    """A complete OCI Function image identified by its exact manifest digest.
-+
-+    ``describe()`` and the concise representation inspect the descriptor without
-+    walking Pydantic model internals. Missing metadata is ``None`` (unknown).
-+    The current service does not report image platforms, base image or byte size;
-+    these cannot be inferred from the client's platform or the manifest digest.
-+    The full descriptor remains available through ``descriptor``.
-+    """
- 
-     manifest_digest: str
-     descriptor: Mapping[str, Any]
-     source: bool
-     models: tuple[HuggingFaceModel, ...] = ()
- 
-+    def describe(self) -> dict[str, Any]:
-+        """Return concise image details without fetching registry content.
-+
-+        ``requires_gpu`` reflects a ``lance.cuda`` requirement in a v1
-+        descriptor, rather than promising compatibility with every GPU.
-+        ``platforms``, ``base_image`` and ``size_bytes`` are unavailable from
-+        the current wire contract and return ``None``.
-+
-+        Examples
-+        --------
-+        >>> print(fn.image.describe())  # doctest: +SKIP
-+        """
-+        python = self.descriptor.get("python")
-+        requires = self.descriptor.get("requires")
-+        capabilities = (
-+            requires.get("capabilities") if isinstance(requires, Mapping) else None
-+        )
-+        known_capabilities = (
-+            self.descriptor.get("format_version") == 1
-+            and isinstance(capabilities, (list, tuple))
-+            and all(isinstance(item, Mapping) for item in capabilities)
-+        )
-+        cuda = (
-+            next(
-+                (item for item in capabilities if item.get("type") == "lance.cuda"),
-+                None,
-+            )
-+            if known_capabilities
-+            else None
-+        )
-+        python_version = python.get("version") if isinstance(python, Mapping) else None
-+        cuda_toolkit = cuda.get("cuda_toolkit") if cuda is not None else None
-+        return {
-+            "manifest_digest": self.manifest_digest,
-+            "python_version": python_version
-+            if isinstance(python_version, str)
-+            else None,
-+            "requires_gpu": cuda is not None if known_capabilities else None,
-+            "cuda_toolkit": cuda_toolkit if isinstance(cuda_toolkit, str) else None,
-+            "platforms": None,
-+            "base_image": None,
-+            "size_bytes": None,
-+        }
-+
-+    def __repr_args__(self):
-+        for name, value in self.describe().items():
-+            if isinstance(value, str) and len(value) > 80:
-+                value = value[:77] + "..."
-+            yield name, value
-+
- 
- class ResolvedPackage(_RemoteValue):
-     """One installed Python distribution measured from a baked environment.
-```
-
-**File**: `python/python/lancedb/job.py` (modified, +68/-7)
-```diff
-@@ -4,8 +4,10 @@
- """Handles to asynchronous registry jobs, SQL queries, and local operations."""
- 
- import asyncio
-+import logging
- import reprlib
- import time
-+from contextlib import suppress
- from datetime import timedelta
- from os import PathLike
- from pathlib import Path
-@@ -53,18 +55,21 @@ def _timeout_message(
-     )
- 
- 
--def _normalize_job_progress(progress):
-+def _normalize_job_progress(progress, *, query=False):
-     """Normalize ``wait(progress=...)`` using the same convention as writes."""
-     if progress is True:
-         from tqdm.auto import tqdm
- 
-+        if query:
-+            return tqdm(bar_format="Query{postfix} [{elapsed}]"), True
-         return tqdm(unit=" rows"), True
-     if progress is False or progress is None:
-         return None, False
-     return progress, False
- 
- 
- _ETA_MAX_SAMPLE_INTERVAL_MILLIS = 10 * 60 * 1_000
-+_QUERY_PROGRESS_INTERVAL_SECONDS = 1.0
- 
- 
- def _progress_eta(previous, current):
-@@ -203,6 +208,7 @@ def __init__(
-         self._inner = inner
-         self._result_decoder = result_decoder
-         self._last_progress_snapshot = None
-+        self._created_at = time.monotonic()
- 
-     def _enrich_progress(self, snapshot):
-         enriched = _with_progress_eta(self._last_progress_snapshot, snapshot)
-@@ -235,17 +241,29 @@ async def status(self) -> str:
-     async def progress(self) -> Optional[dict[str, Any]]:
-         """Fetch a structured progress snapshot.
- 
--        Registry jobs always report lifecycle fields. Queue metadata and
--        counters are included when supplied by the server. Older servers may
-+        Registry jobs always report lifecycle fields. SQL query handles report
-+        lifecycle state and ``client_elapsed_time_millis``, measured since this
-+        handle was created. They do not expose server build phases or logs.
-+        Queue metadata and counters are included when supplied by the server.
-+        Older servers may
-         omit counters, and in-process operations return ``None``. A missing
-         counter is unknown rather than zero. This is additive to :meth:`status`,
-         whose string contract is unchanged.
-         """
-         if self._inner is None:
-             return None
--        await self._inner.status()
-+        state = await self._inner.status()
-         description = getattr(self._inner, "_description", None)
-         if description is None or description.progress is None:
-+            if self.job_type == "query":
-+                return {
-+                    "job_id": self.id,
-+                    "job_type": "query",
-+                    "state": state,
-+                    "client_elapsed_time_millis": int(
-+                        (time.monotonic() - self._created_at) * 1_000
-+                    ),
-+                }
-             return None
-         return self._enrich_progress(description.progress)
- 
-@@ -270,6 +288,13 @@ async def wait(
-         new execution epoch or smaller plan resets the bar to that plan.
-         ``False`` preserves the original wait behavior.
- 
-+        For SQL-backed Function registration, progress shows the query's
-+        lifecycle state and client elapsed time. It observes the existing
-+        query handle while its original waiter runs; it does not resubmit or
-+        cancel the registration. Detailed bake phases and build logs are not
-+        available from the current query handle. Failure exceptions retain the
-+        server's cause and request identifiers.
-+
-         Raises `JobFailedError` if the operation failed, `JobCancelledError`
-         if it was cancelled, and `TimeoutError` if `timeout` elapses first.
-         Transient connection and read errors are retried with capped exponential
-@@ -285,7 +310,10 @@ async def wait(
-         """
-         if self._inner is None:
-             return cast(T, None)
--        progress_obj, owns = _normalize_job_progress(progress)
-+        query_progress = (
-+            progress is not False and progress is not None and self.job_type == "query"
-+        )
-+        progress_obj, owns = _normalize_job_progress(progress, query=query_progress)
-         progress_callback = _job_progress_callback(progress_obj, self._enrich_progress)
-         last_error = None
- 
-@@ -311,13 +339,46 @@ async def wait_with_retries():
-                 await asyncio.sleep(delay)
-                 delay = min(delay * 2, 30.0)
- 
-+        async def observe_query():
-+            async def report():
-+                try:
-+                    snapshot = await self.progress()
-+                    if snapshot is not None:
-+                        progress_callback(snapshot)
-+                except Exception:
-+                    logging.getLogger(__name__).warning(
-+                        "job progress observer failed", exc_info=True
-+                    )
-+
-+            waiter = asyncio.create_task(wait_with_retries())
-+            try:
-+                while not waiter.done():
-+                    await report()
-+                    await asyncio.wait(
-+       
-```
-
-**File**: `python/python/tests/test_first_class_function_slice1.py` (modified, +55/-0)
-```diff
-@@ -2,6 +2,7 @@
- # SPDX-FileCopyrightText: Copyright The LanceDB Authors
- 
- import json
-+import warnings
- from collections import UserDict
- from pathlib import Path
- from types import MappingProxyType
-@@ -13,6 +14,7 @@
- from lancedb.functions import (
-     FunctionApplication,
-     FunctionBinding,
-+    FunctionImage,
-     FunctionVersion,
-     PythonRuntimeSpec,
-     SecretBinding,
-@@ -149,6 +151,59 @@ def test_function_version_identity_is_immutable_and_exact():
-             FunctionVersion(**{**value, "version": invalid})
- 
- 
-+@pytest.mark.parametrize("gpu", [False, True])
-+def test_image_inspection_is_concise_warning_free_and_preserves_wire_state(gpu):
-+    value = job_result("remote_function_job.json")["image"]
-+    value["descriptor"]["future_metadata"] = "x" * 100_000
-+    if gpu:
-+        value["descriptor"]["requires"]["capabilities"] = [
-+            {
-+                "type": "lance.cuda",
-+                "version": 1,
-+                "device_count": 1,
-+                "cuda_toolkit": "12.4",
-+            }
-+        ]
-+    image = FunctionImage(**value)
-+    with warnings.catch_warnings():
-+        warnings.simplefilter("error", DeprecationWarning)
-+        details = image.describe()
-+        rendered = repr(image)
-+        assert "manifest_digest=" in str(image)
-+        encoded = json.loads(image.to_canonical_json())
-+    assert details == {
-+        "manifest_digest": value["manifest_digest"],
-+        "python_version": "3.12.14",
-+        "requires_gpu": gpu,
-+        "cuda_toolkit": "12.4" if gpu else None,
-+        "platforms": None,
-+        "base_image": None,
-+        "size_bytes": None,
-+    }
-+    assert len(rendered) < 350
-+    assert f"requires_gpu={gpu}" in rendered
-+    assert "future_metadata" not in rendered
-+    assert encoded == value
-+
-+
-+@pytest.mark.parametrize(
-+    "descriptor",
-+    [
-+        {},
-+        {"format_version": 2, "requires": {"capabilities": []}},
-+        {"format_version": 1, "requires": {"capabilities": [None]}},
-+        {"python": {"version": {"future": "x" * 100_000}}},
-+    ],
-+)
-+def test_image_inspection_leaves_missing_or_unrecognized_metadata_unknown(descriptor):
-+    image = FunctionImage(
-+        manifest_digest="sha256:example", descriptor=descriptor, source=True
-+    )
-+    assert image.describe()["requires_gpu"] is None
-+    assert image.describe()["python_version"] is None
-+    assert len(repr(image)) < 350
-+
-+
- @pytest.mark.parametrize(
-     "case", json.loads(fixture("runtime_identity.json")), ids=lambda case: case["name"]
- )
-```
-
-**File**: `python/python/tests/test_job.py` (modified, +187/-3)
-```diff
-@@ -11,6 +11,7 @@
- import pytest
- 
- from lancedb.exceptions import JobCancelledError, JobFailedError
-+from lancedb.db import DBConnection
- from lancedb.job import AsyncJob, Job, _progress_eta
- from lancedb.remote.errors import HttpError, RetryError
- 
-@@ -729,15 +730,198 @@ async def wait(self, progress):
- 
- 
- @pytest.mark.asyncio
--async def test_wait_progress_false_keeps_legacy_inner_wait_call():
-+@pytest.mark.parametrize("progress", [False, None])
-+async def test_wait_progress_false_keeps_legacy_inner_wait_call(progress):
-     class NoProgressArgument:
-         id = "job-legacy"
--        job_type = None
-+
-+        @property
-+        def job_type(self):
-+            raise AssertionError("quiet waits must not inspect progress metadata")
- 
-         async def wait(self):
-             return None
- 
--    assert await AsyncJob(NoProgressArgument()).wait(progress=False) is None
-+    assert await AsyncJob(NoProgressArgument()).wait(progress=progress) is None
-+
-+
-+class _RegistrationQuery:
-+    id = "registration-query"
-+    job_type = "query"
-+    _description = None
-+
-+    def __init__(self, error=None):
-+        self.ready = asyncio.Event()
-+        self.error = error
-+        self.state = "running"
-+        self.wait_calls = 0
-+        self.cancel_calls = 0
-+
-+    async def status(self):
-+        return self.state
-+
-+    async def wait(self, progress=None):
-+        self.wait_calls += 1
-+        await self.ready.wait()
-+        if self.error is not None:
-+            self.state = (
-+                "cancelled" if isinstance(self.error, JobCancelledError) else "failed"
-+            )
-+            raise self.error
-+        self.state = "finished"
-+        return '{"version": "1"}'
-+
-+    async def cancel(self):
-+        self.cancel_calls += 1
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("sync", [False, True])
-+async def test_query_progress_observes_one_registration_waiter(sync, monkeypatch):
-+    monkeypatch.setattr("lancedb.job._QUERY_PROGRESS_INTERVAL_SECONDS", 0)
-+    inner = _RegistrationQuery()
-+    job = AsyncJob(inner, json.loads)
-+    updates = []
-+
-+    def observe(snapshot):
-+        updates.append(snapshot)
-+        if len(updates) == 2:
-+            inner.ready.set()
-+
-+    if sync:
-+        result = await asyncio.to_thread(Job(job).wait, progress=observe)
-+    else:
-+        result = await job.wait(progress=observe)
-+    assert result == {"version": "1"}
-+    assert inner.wait_calls == 1
-+    assert inner.cancel_calls == 0
-+    assert updates[0]["state"] == "running"
-+    assert updates[-1]["state"] == "finished"
-+    assert all(snapshot["job_id"] == inner.id for snapshot in updates)
-+    elapsed = [snapshot["client_elapsed_time_millis"] for snapshot in updates]
-+    assert elapsed == sorted(elapsed)
-+    assert elapsed[0] >= 0
-+    assert all("phase" not in snapshot for snapshot in updates)
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    "error",
-+    [
-+        JobFailedError("bake failed", job_id="registration-query"),
-+        JobCancelledError("cancelled"),
-+    ],
-+)
-+async def test_query_progress_preserves_terminal_exceptions(error):
-+    inner = _RegistrationQuery(error)
-+    inner.ready.set()
-+    updates = []
-+    with pytest.raises(type(error)) as raised:
-+        await AsyncJob(inner).wait(progress=updates.append)
-+    assert raised.value is error
-+    assert updates[-1]["state"] == inner.state
-+    assert inner.wait_calls == 1
-+
-+
-+@pytest.mark.asyncio
-+async def test_query_progress_display_has_no_row_counter_and_closes_on_failure(
-+    monkeypatch,
-+):
-+    tqdm_module = pytest.importorskip("tqdm.auto")
-+    bar = SimpleNamespace(
-+        n=0,
-+        total=None,
-+        update=MagicMock(),
-+        set_postfix_str=MagicMock(),
-+        close=MagicMock(),
-+    )
-+    constructor = MagicMock(return_value=bar)
-+    monkeypatch.setattr(tqdm_module, "tqdm", constructor)
-+    inner = _RegistrationQuery(JobFailedError("bake failed"))
-+    inner.ready.set()
-+
-+    with pytest.raises(JobFailedError, match="bake failed"):
-+        await AsyncJob(inner).wait(progress=True)
-+    assert "elapsed" in constructor.call_args.kwargs["bar_format"]
-+    assert "rows" not in str(constructor.call_args)
-+    assert bar.set_postfix_str.call_args.args == ("failed",)
-+    bar.close.assert_called_once_with()
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("failed", [False, True])
-+@pytest.mark.parametrize("observer_error", ["status", "callback"])
-+async def test_query_progress_observer_errors_do_not_replace_result_or_server_failure(
-+    failed, observer_error, caplog
-+):
-+    error = (
-+        JobFailedError("bake failed", job_id="registration-query") if failed else None
-+    )
-+    inner = _RegistrationQuery(error)
-+    inner.ready.set()
-+    if observer_error == "status":
-+        inner.status = AsyncMock(side_effect=RuntimeError("observer failed"))
-+
-+    def observe(snapshot):
-+        if observer_error == "callback":
-+            raise RuntimeError("observer failed")
-+
-+    job = As
 ```
 
 ---
 
-### Incident Patch 2: `3b7c4dcf` (2026-11-16)
-**Commit Message**: fix: allow matched merge updates to Function inputs (#5062)
+### Incident Patch 2: `961a4518` (2026-11-17)
+**Commit Message**: fix(remote): forward job statistics through refresh handles (#5071)
 
-Matched merge-insert updates rejected every non-key source column that a
-Function binding reads, while update already accepts input changes and
-the merge freshness path records their changed signatures. Use the same
-`ensure_not_written` guard for the matched source columns: inputs pass,
-computed outputs and assignment columns stay rejected before any write,
-and insert-only or unrelated-column merges keep their behavior.
+A Function refresh submitted through the LanceDB SDK returns a handle
+wrapped for read-freshness tracking. lancedb/lancedb#5016 added
+canonical `Job::stats()` on the server-job handle, but the refresh
+wrapper did not forward `stats`. The returned handle therefore reported
+`job statistics is only available for server-side jobs`, while
+`db.open_job(<same id>).stats()` returned the server report.
 
-Regressions confirm a matched input update retains prior outputs,
-dirties only the affected rows, keeps an independent binding fresh, and
-rejects mixed input/output sources without committing.
+Forward `stats` through the refresh wrapper and cover it at the public
+refresh entry point. The regression submits with `refresh_column_async`,
+then reads `stats` from that returned handle without reopening the job.
+With the forwarding removed, the test fails with the same `NotSupported`
+error; with the change, it passes.
 
-Tested on `2ab103d7` + this change: `cargo test -p lancedb --lib` 1083
-passed, 82 ignored.
+Validation on `57b20fb11`: the targeted Rust test passed, `cargo fmt
+--check` passed, and `cargo clippy -p lancedb --features remote --lib
+--tests -- -D warnings` passed.
 
-Refs ENT-3515
+Part of ENT-3974.
 
-**File**: `rust/lancedb/src/table/freshness.rs` (modified, +130/-0)
+**File**: `rust/lancedb/src/remote/table.rs` (modified, +43/-0)
 ```diff
-@@ -3248,6 +3248,136 @@ mod tests {
-         }
+@@ -335,6 +335,10 @@ impl<S: HttpSend> crate::job::JobHandle for FreshnessJob<S> {
+         crate::job::JobHandle::events(&self.inner, request).await
      }
  
-+    #[tokio::test]
-+    async fn input_merge_dirties_only_the_updated_rows_and_retains_outputs() {
-+        let table = fresh_function_table().await;
-+        let source =
-+            arrow_array::record_batch!(("title", Utf8, ["a"]), ("body", Utf8, ["changed"]))
-+                .unwrap();
-+        let mut merge = table.merge_insert(&["title"]);
-+        merge.when_matched_update_all(None);
-+        let result = merge
-+            .execute(Box::new(RecordBatchIterator::new(
-+                [Ok(source.clone())],
-+                source.schema(),
-+            )))
-+            .await
-+            .unwrap();
-+        assert_eq!(result.num_updated_rows, 1);
-+        let dataset = table.as_native().unwrap().dataset.get().await.unwrap();
-+        for output in ["search_text", "search_token_count"] {
-+            let stale = function_plan(&dataset, output).await;
-+            let mut dirty_rows = 0;
-+            for fragment in dataset.get_fragments() {
-+                if stale.needs_recompute(fragment.id() as u32) {
-+                    let batch = fragment
-+                        .scan()
-+                        .project(&["title"])
++    async fn stats(&self) -> Result<Option<String>> {
++        crate::job::JobHandle::stats(&self.inner).await
++    }
++
+     async fn wait(&self) -> Result<crate::job::TerminalResult> {
+         crate::job::JobHandle::wait_with_progress(self, None).await
+     }
+@@ -424,6 +428,10 @@ impl<S: HttpSend> crate::job::JobHandle for MaterializedViewRefreshJob<S> {
+         crate::job::JobHandle::events(&self.inner, request).await
+     }
+ 
++    async fn stats(&self) -> Result<Option<String>> {
++        crate::job::JobHandle::stats(&self.inner).await
++    }
++
+     async fn wait(&self) -> Result<crate::job::TerminalResult> {
+         crate::job::JobHandle::wait_with_progress(self, None).await
+     }
+@@ -11601,6 +11609,19 @@ mod tests {
+                         .to_string(),
+                     )
+                     .unwrap(),
++                "/v1/jobs/stats" => {
++                    let body: serde_json::Value =
++                        serde_json::from_slice(request.body().unwrap().as_bytes().unwrap())
++                            .unwrap();
++                    assert_eq!(body["job_id"], "job-1");
++                    http::Response::builder()
++                        .status(200)
++                        .body(
++                            r#"{"job_id":"job-1","profile":{},"report":"Function job: finished\nRows: 1600\n"}"#
++                                .to_string(),
++                        )
 +                        .unwrap()
-+                        .try_into_batch()
-+                        .await
-+                        .unwrap();
-+                    let titles = batch
-+                        .column(0)
-+                        .as_any()
-+                        .downcast_ref::<arrow_array::StringArray>()
-+                        .unwrap();
-+                    assert!(titles.iter().all(|title| title == Some("a")), "{stale:?}");
-+                    dirty_rows += batch.num_rows();
 +                }
-+            }
-+            assert_eq!(dirty_rows, 1, "{stale:?}");
-+        }
-+        assert_eq!(table.count_rows(Some("title = 'a' AND body = 'changed' AND search_text = 'a x' AND search_token_count = 2".into())).await.unwrap(), 1);
-+    }
-+
-+    #[tokio::test]
-+    async fn input_merge_keeps_an_independent_function_binding_fresh() {
-+        let batch = arrow_array::record_batch!(
-+            ("title", Utf8, ["a", "b", "c", "d"]),
-+            ("body", Utf8, ["x", "y", "z", "w"]),
-+            ("search_text", Utf8, ["a x", "b y", "c z", "d w"]),
-+            ("search_token_count", Int64, [2, 2, 2, 2]),
-+            ("search_text_other", Utf8, ["a a", "b b", "c c", "d d"]),
-+            ("search_token_count_other", Int64, [2, 2, 2, 2])
-+        )
-+        .unwrap();
-+        let table = crate::connect("memory://")
-+            .execute()
-+            .await
-+            .unwrap()
-+            .create_table("independent_merge", batch)
-+            .write_options(crate::table::WriteOptions {
-+                lance_write_params: Some(WriteParams {
-+                    max_rows_per_file: 2,
-+                    ..Default::default()
-+                }),
-+            })
-+            .execute()
-+            .await
-+            .unwrap();
-+        let mut other = serde_json::to_value(text_features_binding("_other")).unwrap();
-+        other["inputs"][1]["field_path"] = serde_json::json!("title");
-+        other["inputs"][1]["field_id"] = other["inputs"][0]["field_id"].clone();
-+        let bindings = [
-+            text_features_binding(""),
-+            serde_json::from_value(other).unwrap(),
-+        ];
-+        stamp_bindings(&table, &bindings).await;
-+        let native = table.as_native().unwrap();
-+        let mut dataset = native.dataset.get().await.unwrap().as_ref().clone();
-+        for binding in &bindings {
-+            let paths = binding
-+                .inputs()
-+                .iter()
-+                .map(|input| input.field_path.clone())
-+                .collect::<Vec<_>>();
-+            let inputs = fields_for_paths(dataset.schema(), &paths).unwrap();
-+            let signatures = signatures_for(&dataset, &[0, 1], &inputs).unwrap();
-+            for output in binding.outputs() {
-+                write_signatures(
-+                    &mut dataset,
-+                    &output.output_name,
-+                    binding.binding_id(),
-+                    signatures.clone(),
-+                )
-+                .await
-+                .unwrap();
-+            }
-+        }
-+        native.dataset.update(dataset);
-+        let source =
-+            arrow_array::record_batch!(("title", Utf8, ["a"]), ("body", Utf8, ["changed"]))
-+                .unwrap();
-+        let mut merge = table.merge_insert(&["title"]);
-+        merge.when_matched_update_all(None);
-+        merge
-+            .execute(Box::new(RecordBatchIterator::new(
-+                [Ok(source.clone())],
-+                source.schema(),
-+            )))
-+            .await
-+            .unwrap();
-+        let dataset = native.dataset.get().await.unwrap();
-+        assert!(
-+            function_plan(&dataset, "search_text")
-+                .await
-+                .needs_recompute(2)
-+        );
-+        let other = &bindings[1];
-+        l
-```
-
-**File**: `rust/lancedb/src/table/merge.rs` (modified, +50/-18)
-```diff
-@@ -249,11 +249,13 @@ impl MergeInsertBuilder {
-         Ok(())
-     }
+                 "/v1/table/ns$view/describe/" => http::Response::builder()
+                     .status(200)
+                     .body(r#"{"version":42,"schema":{"fields":[]}}"#.to_string())
+@@ -11623,6 +11644,10 @@ mod tests {
+         }));
  
--    /// The existing columns a matched row takes from `source`: every source
--    /// column but the join keys, which a match leaves equal. An insert-only
--    /// merge rewrites none; its new rows get Function outputs from the next
--    /// refresh, as appended rows do.
--    pub(crate) fn function_guarded_columns(&self, source: &Fields) -> Vec<String> {
-+    /// The source columns a matched row writes: every column but the join
-+    /// keys, which a match leaves equal. Function inputs stay writable; the
-+    /// merge records their changed signatures so the next refresh recomputes
-+    /// the affected rows. Computed outputs and assignment columns remain
-+    /// protected by the direct-write guard. An insert-only merge writes none;
-+    /// its new rows get Function outputs from the next refresh.
-+    pub(crate) fn matched_source_columns(&self, source: &Fields) -> Vec<String> {
-         if !self.when_matched_update_all {
-             return Vec::new();
-         }
-@@ -351,10 +353,10 @@ pub(crate) async fn execute_merge_insert(
- ) -> Result<MergeResult> {
-     params.canonicalize_filters()?;
-     let schema = table.schema().await?;
--    super::computed_columns::ensure_not_function_bound(
-+    let matched_columns = params.matched_source_columns(new_data.schema().fields());
-+    super::computed_columns::ensure_not_written(
-         schema.as_ref(),
--        "merge_insert",
--        params.function_guarded_columns(new_data.schema().fields()),
-+        matched_columns.iter().map(String::as_str),
-     )?;
-     // Normalize blob layouts and JSON extension metadata just as on append.
-     // Keep arrow.json text labelled until Lance encodes it as JSONB.
-@@ -970,10 +972,11 @@ mod tests {
-         assert_eq!(table.count_rows(None).await.unwrap(), 2);
-     }
- 
--    /// A matched row takes every non-key source column, so the merge is
--    /// refused only when one of those is a binding's input or output.
-+    /// A matched row takes every non-key source column. Function inputs are
-+    /// writable and become stale for the next refresh; computed outputs stay
-+    /// protected, and a mixed input/output source is rejected before commit.
-     #[tokio::test]
--    async fn merge_update_on_a_function_table_refuses_only_bound_columns() {
-+    async fn merge_update_allows_function_inputs_but_protects_outputs() {
-         let table = crate::table::computed_columns::test_support::bound_table_from(
-             arrow_array::record_batch!(
-                 ("id", Int32, [1]),
-@@ -998,18 +1001,47 @@ mod tests {
- 
-         let mut merge = table.merge_insert(&["id"]);
-         merge.when_matched_update_all(None);
--        let err = merge
-+        let result = merge
-             .execute(reader(
-                 arrow_array::record_batch!(("id", Int32, [1]), ("title", Utf8, ["z"])).unwrap(),
-             ))
-             .await
--            .unwrap_err();
--        assert!(
--            matches!(&err, crate::Error::InvalidInput { message }
--                if message.contains("merge_insert of 'title'")
--                    && message.contains("a Function binding reads or writes it")),
--            "{err:?}"
-+            .unwrap();
-+        assert_eq!(result.num_updated_rows, 1);
+         assert_eq!(job.id(), Some("job-1"));
 +        assert_eq!(
-+            table
-+                .count_rows(Some("title = 'z' AND search_text = 'a b'".into()))
-+                .await
-+                .unwrap(),
-+            1
-         );
-+
-+        let version = table.version().await.unwrap();
-+        for source in [
-+            arrow_array::record_batch!(("id", Int32, [1]), ("search_text", Utf8, ["uncomputed"]))
-+                .unwrap(),
-+            arrow_array::record_batch!(
-+                ("id", Int32, [1]),
-+                ("title", Utf8, ["must not commit"]),
-+                ("search_text", Utf8, ["uncomputed"])
-+            )
-+            .unwrap(),
-+        ] {
-+            let mut merge = table.merge_insert(&["id"]);
-+            merge.when_matched_update_all(None);
-+            let err = merge.execute(reader(source)).await.unwrap_err();
-+            assert!(
-+                matches!(&err, crate::Error::InvalidInput { message }
-+                    if message.contains("is computed")
-+                        && message.contains("cannot be written directly")),
-+                "{err:?}"
-+            );
-+            assert_eq!(table.version().await.unwrap(), version);
-+            assert_eq!(
-+                table.count_rows(Some("title = 'z'".into())).await.unwrap(),
-+                1
-+            );
-+        }
-     }
- }
++            job.stats().await.unwrap().as_deref(),
++            Some("Function job: finished\nRows: 1600\n")
++        );
+         let observations = Arc::new(Mutex::new(Vec::new()));
+         let observed = observations.clone();
+         let result: RefreshMaterializedViewResult = if with_progress {
+@@ -13142,13 +13167,31 @@ mod tests {
+                         .body(events.clone())
+                         .unwrap()
+                 }
++                "/v1/jobs/stats" => {
++                    let body: serde_json::Value =
++                        serde_json::from_slice(request.body().unwrap().as_bytes().unwrap())
++                            .unwrap();
++                    assert_eq!(body["job_id"], "j-42");
++                    http::Response::builder()
++                        .status(200)
++                        .body(
++                            r#"{"job_id":"j-42","profile":{},"report":"Function job: finished\nRows: 1600\n"}"#
++                                .as_bytes()
++                                .to_vec(),
++                        )
++                        .unwrap()
++                }
+                 "/v1/jobs/timeline" => http::Response::builder().status(200)
+                     .body(br#"{"traceEvents":[],"metadata":{"partial":true}}"#.to_vec()).unwrap(),
+                 other => panic!("unexpected path {other}"),
+             }
+         });
  
+         let job = table.refresh_column_async("doubled").await.unwrap();
++        assert_eq!(
++            job.stats().await.unwrap().as_deref(),
++            Some("Function job: finished\nRows: 1600\n")
++        );
+         job.refresh().await.unwrap();
+         assert_eq!(job.state().as_deref(), Some("running"));
+         assert_eq!(job.job_type().as_deref(), Some("refresh_column"));
 ```
 
 ---
 
-### Incident Patch 3: `c7d972fe` (2026-11-16)
-**Commit Message**: fix(python): explain blob descriptor copy guidance (#5060)
+### Incident Patch 3: `c278f90c` (2026-11-17)
+**Commit Message**: feat: expose shared Arrow type golden behind test-fixtures (#5065)
 
-The descriptor-copy error only named the missing `data`/`uri` child. It
-now says that this shape is an SDK blob descriptor rather than payload
-bytes, and points to `blob_mode="bytes"` for supported materialization,
-`blob_mode="descriptions"` for inspection, and the row-id plus
-`fetch_blobs`/`fetch_blob_files` copy path while the source stays
-unchanged.
+Downstream compatibility tests currently load the Function Arrow type
+golden from a LanceDB source checkout. Add a default-off `test-fixtures`
+feature that exposes
+`lancedb::test_fixtures::FUNCTION_ARROW_TYPES_JSON`, so consumers can
+enable it on their existing LanceDB dev-dependency and use the golden
+from the same revision.
 
-This reuses the merged guidance from #4940 and the
-direct-materialization contract from #4973. Ray integration remains out
-of scope for ENT-3556.
+The golden stays in its existing location with unchanged bytes.
+LanceDB's Rust test reads the exported constant; Python tests and
+release/versioning workflows remain unchanged.
 
-Refs ENT-3556
-
-Test: `python/tests/test_blob.py` (210 passed, 39 skipped), including a
-regression that writes default lazy descriptor rows into a blob-schema
-table, checks the guidance, and confirms no target is created.
-`python/tests/test_util.py -k blob` (12 passed, 2 skipped).
-
-**File**: `python/python/lancedb/table.py` (modified, +8/-1)
+**File**: `rust/lancedb/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -1150,7 +1150,14 @@ def _align_field(field: pa.Field, target_field: pa.Field) -> pa.Field:
-             if not any(child.name in ("data", "uri") for child in source_type):
-                 raise ValueError(
-                     f"blob struct input for column '{field.name}' must contain "
--                    "a 'data' or 'uri' child"
-+                    "a 'data' or 'uri' child. A blob query returns an SDK "
-+                    "descriptor in this shape, and a descriptor is not payload "
-+                    "bytes. Use blob_mode='bytes' to materialize payloads, or "
-+                    "inspect descriptors with blob_mode='descriptions'. To copy "
-+                    "payloads, select row IDs with with_row_id(True), then call "
-+                    "table.fetch_blobs(column, row_ids) or "
-+                    "table.fetch_blob_files(column, row_ids). Keep the source "
-+                    "unchanged between selection and fetching."
-                 )
-         elif not _can_coerce_to_blob(source_type) and not isinstance(
-             source_type, pa.ExtensionType
+@@ -140,6 +140,8 @@ pprof = { version = "0.14", features = ["flamegraph"] }
+ 
+ [features]
+ default = []
++# Shared golden data for downstream compatibility tests.
++test-fixtures = []
+ # Local SQL computed columns and materialized-view creation/refresh.
+ # Remote clients and shared server primitives do not require this feature.
+ experimental-functions = []
 ```
 
-**File**: `python/python/tests/test_blob.py` (modified, +18/-0)
+**File**: `rust/lancedb/src/lib.rs` (modified, +4/-0)
 ```diff
-@@ -1135,6 +1135,24 @@ def test_copy_blob_subset_preserves_payloads_nulls_and_empty_values(tmp_path):
-     assert sorted(copied, key=lambda row: row["id"]) == rows[:3]
+@@ -48,6 +48,8 @@
+ //!   Install any `metrics`-compatible recorder to collect them.
+ //! - `metrics-otel` - Add a pull-based adapter (the `metrics_otel` module) over
+ //!   the `metrics` facade for bridging metrics into OpenTelemetry or similar.
++//! - `test-fixtures` - Expose shared golden data through `test_fixtures` for
++//!   downstream compatibility tests. Disabled by default.
+ //!
+ //! ### Quick Start
+ //!
+@@ -220,6 +222,8 @@ pub mod server_info;
+ pub mod sql;
+ pub mod storage_integration;
+ pub mod table;
++#[cfg(any(test, feature = "test-fixtures"))]
++pub mod test_fixtures;
+ #[cfg(test)]
+ pub mod test_utils;
+ pub mod utils;
+```
+
+**File**: `rust/lancedb/src/table/computed_columns.rs` (modified, +2/-4)
+```diff
+@@ -2906,10 +2906,8 @@ mod tests {
  
- 
-+def test_copy_blob_descriptor_rows_explains_payload_materialization(tmp_path):
-+    db = lancedb.connect(tmp_path)
-+    schema = pa.schema([pa.field("id", pa.int64()), lancedb.blob("image")])
-+    source = db.create_table("source", data=[{"id": 1, "image": b"one"}], schema=schema)
-+    hits = source.search().where("id = 1").to_arrow()
+     #[test]
+     fn output_arrow_type_grammar_matches_the_shared_golden() {
+-        let golden: serde_json::Value = serde_json::from_str(include_str!(
+-            "../../tests/fixtures/first_class_functions/v1/arrow_types.json"
+-        ))
+-        .unwrap();
++        let golden: serde_json::Value =
++            serde_json::from_str(crate::test_fixtures::FUNCTION_ARROW_TYPES_JSON).unwrap();
+         let valid = golden["valid"].as_array().unwrap().iter();
+         for case in valid.chain(golden["server_only"].as_array().unwrap()) {
+             let raw = case["arrow_type"].as_str().unwrap();
+```
+
+**File**: `rust/lancedb/src/test_fixtures.rs` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: Apache-2.0
++// SPDX-FileCopyrightText: Copyright The LanceDB Authors
 +
-+    with pytest.raises(ValueError, match="must contain a 'data' or 'uri' child") as exc:
-+        db.create_table("copy", data=hits, schema=schema)
++//! Shared golden data for downstream compatibility tests.
++//!
++//! Enable the `test-fixtures` feature to access these fixtures from another crate.
 +
-+    message = str(exc.value)
-+    assert "blob_mode='bytes'" in message
-+    assert "blob_mode='descriptions'" in message
-+    assert "with_row_id(True)" in message
-+    assert "fetch_blobs(column, row_ids)" in message
-+    assert "fetch_blob_files(column, row_ids)" in message
-+    assert not db.table_exists(["copy"])
-+
-+
- def test_fetch_blobs_round_trip():
-     table = _blob_table(
-         "round_trip",
++/// The version 1 Function Arrow type golden as UTF-8 JSON.
++///
++/// Contains supported declaration spellings, their canonical JSON Arrow types,
++/// and declarations that must be rejected. The contents match the golden used by
++/// LanceDB's Rust and Python tests; parsing is left to the consumer.
++///
++/// ```
++/// let golden: serde_json::Value =
++///     serde_json::from_str(lancedb::test_fixtures::FUNCTION_ARROW_TYPES_JSON).unwrap();
++/// assert!(golden["valid"].is_array());
++/// assert!(golden["invalid"].is_array());
++/// ```
++pub const FUNCTION_ARROW_TYPES_JSON: &str =
++    include_str!("../tests/fixtures/first_class_functions/v1/arrow_types.json");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5063** (2026-11-16): chore: update lance dependency to v15.0.0-beta.23 (@lancedb-robot)
-- **PR #5062** (2026-11-16): fix: allow matched merge updates to Function inputs (@Xuanwo)
-- **PR #5060** (2026-11-16): fix(python): explain blob descriptor copy guidance (@Xuanwo)
-- **PR #5059** (closed): docs: add Simplified Chinese translation (README.zh.md) (@JasonYeYuhe)
-- **PR #5057** (2026-11-15): chore: update lance dependency to v15.0.0-beta.22 (@lancedb-robot)
-- **PR #5055** (closed): feat(sdk): add durable compaction jobs with typed results (@ChilePiquin)
+- **PR #5073** (2026-11-17): fix(deps): ignore unmaintained chrono family advisories (@Xuanwo)
+- **PR #5071** (2026-11-17): fix(remote): forward job statistics through refresh handles (@Xuanwo)
+- **PR #5069** (2026-11-17): chore: update lance dependency to v15.0.0-beta.25 (@Xuanwo)
+- **PR #5068** (closed): chore: update lance dependency to v15.0.0-beta.24 (@lancedb-robot)
+- **PR #5065** (2026-11-17): feat: expose shared Arrow type golden behind test-fixtures (@Xuanwo)
+- **PR #5064** (2026-11-17): feat(function): expose descriptor refresh plan in terminal result (@Xuanwo)
 
 ---
 
@@ -2120,46 +1558,51 @@ table, checks the guidance, and confirms no target is created.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python): show Function registration progress and image details
+## X. deps): ignore unmaintained chrono family advisories
 
 **RULE**:
-When implementing operations in `docs/src/python/python.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deny.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3aed07c3`: python): show Function registration progress and image details. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `16708593`: deps): ignore unmaintained chrono family advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/python/python.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `deny.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Use `progress=True` when waiting for Function registration in a notebook or
-terminal. A callback receives structured snapshots instead:
+    # pin-utils: unmaintained; reviewed 2026-11-05, removed 2026-11-17 after
+    # the lockfile dropped the aws-smithy pins that carried it.
 
-```python
-fn = db.create_function(my_function, progress=True)
-registration = db.create_function_async(other_function)
-fn = registration.wait(progress=lambda snapshot: print(snapshot))
-print(fn.image.describe())
-```
+    # chrono: unmaintained; reviewed 2026-11-17. Informational notice, not a
+    # vulnerability. Transitive via arrow 59 / datafusion 55 and the lance
+    # stack throughout the workspace. RustSec lists no patched version and
+    # recommends jiff/time; clearing it requires the arrow/datafusion/lance
+    # ecosystem to migrate.
+    # https://rustsec.org/advisories/RUSTSEC-2026-0543
+    { id = "RUSTSEC-2026-0543", reason = "chrono unmaintained via arrow/datafusion/lance; no fixed upstream release, awaiting ecosystem migration" },
 
-Registration uses the existing SQL query handle. The current handle reports
-lifecycle state and `client_elapsed_time_millis` since the handle was created;
-detailed build phases and build logs are unavailable. Keep the same handle after
-a wait timeout to resume waiting. Failures retain the server error and request
-identifiers. `fn.image` has a concise representation; `describe()` exposes Python
-and CUDA requirements without inspecting Pydantic internals. Platforms, base image
-and size are `None` until the service reports them. The full image descriptor and
-canonical JSON remain available.
+    # chrono-tz: unmaintained; reviewed 2026-11-17. Informational notice, not
+    # a vulnerability. Transitive via arrow-array → arrow → datafusion/lance.
+    # No patched version exists; clearing it needs the same ecosystem
+    # migration off chrono as RUSTSEC-2026-0543.
+    # https://rustsec.org/advisories/RUSTSEC-2026-0555
+    { id = "RUSTSEC-2026-0555", reason = "chrono-tz unmaintained via arrow/datafusion/lance; no fixed upstream release" },
 
+    # humantime: unmaintained; reviewed 2026-11-17. Informational n
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    # pin-utils: unmaintained; reviewed 2026-11-05. Transitive via
+    # aws-smithy-http/runtime/types, including aws-config -> lance-io.
+    # No safe upgrade exists; clearing requires AWS Smithy to migrate to
+    # core::pin::pin!, pin-project, or pin-project-lite. Revisit on AWS updates.
+    # https://github.com/rustsec/advisory-db/issues/3314
+    { id = "RUSTSEC-2026-0441", reason = "pin-utils unmaintained via AWS Smithy; no safe upgrade, awaiting upstream migration" },
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3aed07c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `16708593` are properly handled with clean fallback behavior.

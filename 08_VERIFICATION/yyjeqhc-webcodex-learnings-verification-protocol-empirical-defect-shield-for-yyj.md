@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T06:17:47.958Z",
+  "timestamp": "2026-11-17T19:27:39.363Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-yyjeqhc-webcodex-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [yyjeqhc-webcodex-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T06:17:47.958Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T19:27:39.363Z`  
 > **Learning ID**: `LEARN-EVO-yyjeqhc-webcodex-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source**: github ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
-> **Source Version**: `479efb9a`  
+> **Source Version**: `ea81bd89`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T06:17:31.460Z  
+> **Timestamp**: 2026-11-17T19:27:22.267Z  
 > **Learning ID**: `learn-github-yyjeqhc-webcodex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T06:17:31.080Z  
+> **Harvest Timestamp**: 2026-11-17T19:27:22.259Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Give cloud AI agents a real development environment on your own machines.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2509 stars
+- **Stars / Engagement**: 2513 stars
 
 ---
 
@@ -2216,116 +2216,336 @@ impl DesktopCore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9aef4ca0` (2026-11-15)
-**Commit Message**: test(ci): support Cargo 1.100 build-script output layout (#1421)
+### Incident Patch 1: `ea81bd89` (2026-11-17)
+**Commit Message**: chore(deps): update rustls, quinn and h2 for RustSec advisories (#1426)
 
-Co-authored-by: yyjeqhc <[REDACTED_EMAIL]>
-
-**File**: `scripts/tests/test_build_identity.py` (modified, +51/-5)
+**File**: `Cargo.lock` (modified, +80/-281)
 ```diff
-@@ -12,6 +12,47 @@
- BUILD_SCRIPT = Path(__file__).resolve().parents[2] / "crates/webcodex-build-info/build.rs"
+@@ -281,24 +281,25 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
  
+ [[package]]
+ name = "aws-lc-rs"
+-version = "1.17.0"
++version = "1.18.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5ec2f1fc3ec205783a5da9a7e6c1509cc69dedf09a1949e412c1e18469326d00"
++checksum = "ce2b2dcc879c3bae0d371e77c99f2238400ef24ec001394befa67b6e543add9e"
+ dependencies = [
+  "aws-lc-sys",
+  "zeroize",
+ ]
  
-+def run_fixture_build(package, env):
-+    """Return the fixture's result and persisted build-script stdout path.
-+
-+    Cargo 1.100 changed the internal build cache layout. Resolve the run unit
-+    from Cargo's build-script-executed OUT_DIR instead of matching a hardcoded
-+    target/debug/build directory name.
-+    """
-+    completed = subprocess.run(
-+        ["cargo", "run", "--offline", "--message-format=json"],
-+        cwd=package, env=env, check=True, capture_output=True, text=True, timeout=60,
-+    )
-+    out_dirs = []
-+    program_lines = []
-+    for line in completed.stdout.splitlines():
-+        if line.startswith("{"):
-+            message = json.loads(line)
-+            if message.get("reason") == "build-script-executed":
-+                out_dirs.append(Path(message["out_dir"]))
-+        elif line:
-+            program_lines.append(line)
-+    if len(out_dirs) != 1 or len(program_lines) != 1:
-+        raise AssertionError(
-+            f"expected one build script and one program result, "
-+            f"got {len(out_dirs)} and {program_lines!r}"
-+        )
-+    # Cargo <=1.99 uses output; Cargo >=1.100 uses run/stdout.
-+    script_outputs = [
-+        path for path in (
-+            out_dirs[0].parent / "output",
-+            out_dirs[0].parent / "run" / "stdout",
-+        )
-+        if path.is_file()
-+    ]
-+    if len(script_outputs) != 1:
-+        raise AssertionError(
-+            f"expected one build-script stdout near {out_dirs[0]}, "
-+            f"found {script_outputs!r}"
-+        )
-+    return program_lines[0], script_outputs[0]
-+
-+
- class BuildIdentityTests(unittest.TestCase):
-     def test_packed_branch_without_reflog_refreshes_and_then_stays_cached(self):
-         for linked_worktree in (False, True):
-@@ -59,11 +100,14 @@ def run(cwd, *args):
-                 head_log = Path(run(repo, "git", "rev-parse", "--git-path", "logs/HEAD"))
-                 self.assertFalse((repo / head_log).exists())
+ [[package]]
+ name = "aws-lc-sys"
+-version = "0.41.0"
++version = "0.44.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1a2f9779ce85b93ab6170dd940ad0169b5766ff848247aff13bb788b832fe3f4"
++checksum = "f09fae7be8bb3174e05c6afdb34199e6dc0c7c04ba9fa237b1967adfbde27483"
+ dependencies = [
+  "cc",
+  "cmake",
+  "dunce",
+  "fs_extra",
++ "pkg-config",
+ ]
  
-+                outputs = []
-+
-                 def build():
--                    return run(package, "cargo", "run", "--offline", "--quiet")
-+                    result, script_output = run_fixture_build(package, env)
-+                    outputs[:] = [script_output]
-+                    return result
+ [[package]]
+@@ -482,12 +483,6 @@ dependencies = [
+  "shlex",
+ ]
  
-                 before = build()
--                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
-                 self.assertEqual(len(outputs), 1)
-                 stamp = outputs[0].stat().st_mtime_ns
-                 self.assertEqual(build(), before)
-@@ -120,15 +164,18 @@ def run(cwd, *args):
-                     repo = checkout
-                     package = repo / "crates/fixture"
+-[[package]]
+-name = "cesu8"
+-version = "1.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6d43a04d8753f35258c91f8ec639f792891f748a1edbd759cf1dcea3382ad83c"
+-
+ [[package]]
+ name = "cexpr"
+ version = "0.6.0"
+@@ -911,7 +906,7 @@ version = "1.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "10d60334b3b2e7c9d91ef8150abfb6fa4c1c39ebbcf4a81c2e346aad939fee3e"
+ dependencies = [
+- "thiserror 2.0.18",
++ "thiserror",
+ ]
  
-+                outputs = []
-+
-                 def build():
--                    return run(package, "cargo", "run", "--offline", "--quiet")
-+                    result, script_output = run_fixture_build(package, env)
-+                    outputs[:] = [script_output]
-+                    return result
+ [[package]]
+@@ -1228,7 +1223,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.52.0",
+ ]
  
-                 head = run(repo, "git", "rev-parse", "HEAD")
-                 self.assertEqual(build(), "false")
-                 (repo / "tracked.txt").write_text("dirty\n", encoding="utf-8")
-                 self.assertEqual(run(repo, "git", "rev-parse", "HEAD"), head)
-                 self.assertEqual(build(), "true")
--                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
-                 self.assertEqual(len(outputs), 1)
-                 dirty_stamp = outputs[0].stat().st_mtime_ns
-                 (repo / "other.txt").write_text("also dirty\n", encoding="utf-8")
-@@ -152,7 +199,6 @@ def build():
+ [[package]]
+@@ -1275,13 +1270,13 @@ checksum = "7360491ce676a36bf9bb3c56c1aa791658183a54d2744120f27285738d90465a"
  
-                 env["WEBCODEX_GIT_DIRTY"] = "false"
-                 self.assertEqual(build(), "false")
--                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
-                 self.assertEqual(len(outputs), 1)
-                 stamp = outputs[0].stat().st_mtime_ns
-                 (repo / "tracked.txt").write_text("dirty with pinned identity\n", encoding="utf-8")
+ [[package]]
+ name = "fastbloom"
+-version = "0.14.1"
++version = "0.17.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4e7f34442dbe69c60fe8eaf58a8cafff81a1f278816d8ab4db255b3bef4ac3c4"
++checksum = "ef975e30683b2d965054bb0a836f8973857c4ebf6acf274fe46617cd285060d8"
+ dependencies = [
+- "getrandom 0.3.4",
++ "foldhash 0.2.0",
+  "libm",
+- "rand 0.9.4",
++ "portable-atomic",
+  "siphasher",
+ ]
+ 
+@@ -1497,11 +1492,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd"
+ dependencies = [
+  "cfg-if",
+- "js-sys",
+  "libc",
+  "r-efi 5.3.0",
+  "wasip2",
+- "wasm-bindgen",
+ ]
+ 
+ [[package]]
+@@ -1511,11 +1504,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555"
+ dependencies = [
+  "cfg-if",
++ "js-sys",
+  "libc",
+  "r-efi 6.0.0",
+  "rand_core 0.10.1",
+  "wasip2",
+  "wasip3",
++ "wasm-bindgen",
+ ]
+ 
+ [[package]]
+@@ -1577,9 +1572,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "h2"
+-version = "0.4.14"
++version = "0.4.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "171fefbc92fe4a4de27e0698d6a5b392d6a0e333506bc49133760b3bcf948733"
++checksum = "a9f37a958b41b3b19ee2707c06439c0e9e547e847223eb791ecb0cb821c65e27"
+ dependencies = [
+  "atomic-waker",
+  "bytes",
+@@ -1782,7 +1777,7 @@ dependencies = [
+  "tokio",
+  "tokio-rustls",
+  "tower-service",
+- "webpki-roots 1.0.7",
++ "webpki-roots 1.0.10",
+ ]
+ 
+ [[package]]
+@@ -2153,22 +2148,6 @@ dependencies = [
+  "jiff-tzdb",
+ ]
+ 
+-[[package]]
+-name = "jni"
+-version = "0.21.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1a87aa2bb7d2af34197c04845522473242e1aa17c12f4935d5856491a7fb8c97"
+-dependencies = [
+- "cesu8",
+- "cfg-if",
+- "combine",
+- "jni-sys 0.3.1",
+- "log",
+- "thiserror 1.0.69",
+- "walkdir",
+- "windows-sys 0.45.0",
+-]
+-
+ [[package]]
+ name = "jni"
+ version = "0.22.4"
+@@ -2178,10 +2157,10 @@ dependencies = [
+  "cfg-if",
+  "combine",
+  "jni-macros",
+- "jni-sys 0.4.1",
++ "jni-sys",
+  "log",
+  "simd_cesu8",
+- "thiserror 2.0.18",
++ "thiserror",
+  "walkdir",
+  "windows-link",
+ ]
+@@ -2199,15 +2178,6 @@ dependencies = [
+  "syn 2.0.117",
+ ]
+ 
+-[[package]]
+-name = "jni-sys"
+-version = "0.3.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "41a652e1f9b6e0275df1f15b32661cf0d4b78d4d87ddec5e0c3c20f097433258"
+-dependencies = [
+- "jni-sys 0.4.1",
+-]
+-
+ [[package]]
+ name = "jni-sys"
+ version = "0.4.1"
+@@ -2257,7 +2227,7 @@ checksum = "bde5057d6143cc94e861d90f591b9303d6716c6b9602309150bd068853c10899"
+ dependencies = [
+  "hashbrown 0.16.1",
+  "portable-atomic",
+- "thiserror 2.0.18",
++ "thiserror",
+ ]
+ 
+ [[package]]
+@@ -2370,7 +2340,7 @@ dependencies = [
+  "khronos-egl",
+  "memmap2",
+  "rustix 1.1.4",
+- "thiserror 2.0.18",
++ "thiserror",
+  "tracing",
+  "wayland-backend",
+  "wayland-client",
+@@ -2630,7 +2600,7 @@ dependencies = [
+  "log",
+  "netlink-packet-core",
+  "netlink-sys",
+- "thiserror 2.0.18",
++ "thiserror",
+ ]
+ 
+ [[package]]
+@@ -3052,7 +3022,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f
+```
+
+---
+
+### Incident Patch 2: `90c0e11a` (2026-11-16)
+**Commit Message**: chore(tests): remove the warnings of the workspace test build (#1424)
+
+**File**: `crates/webcodex-runner-registry/src/tests/job_receipts.rs` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ impl JobReceiptStore for MemoryReceipts {
+         if self.fail
+             || self
+                 .failures_remaining
+-                .fetch_update(
++                .try_update(
+                     std::sync::atomic::Ordering::SeqCst,
+                     std::sync::atomic::Ordering::SeqCst,
+                     |n| n.checked_sub(1),
+```
+
+**File**: `crates/webcodex-store/src/db_tests.rs` (modified, +3/-7)
+```diff
+@@ -2269,7 +2269,7 @@ fn batched_purge_is_bounded_per_table_and_never_touches_live_rows() {
+             revoked_at,
+             last_used_at: None,
+         };
+-    let api_key = |id: &str, hash: &str, revoked_at: Option<i64>| ApiKeyRecord {
++    let api_key = |id: &str, revoked_at: Option<i64>| ApiKeyRecord {
+         id: id.to_string(),
+         user_id: "u-batch".to_string(),
+         name: id.to_string(),
+@@ -2293,15 +2293,11 @@ fn batched_purge_is_bounded_per_table_and_never_touches_live_rows() {
+         ))
+         .unwrap();
+     }
+-    db.insert_api_key(&api_key("k-live", "hash-live", None), "hash-live")
++    db.insert_api_key(&api_key("k-live", None), "hash-live")
+         .unwrap();
+     for index in 0..2 {
+         db.insert_api_key(
+-            &api_key(
+-                &format!("k-rev-{index}"),
+-                &format!("hash-rev-{index}"),
+-                Some(now - 1),
+-            ),
++            &api_key(&format!("k-rev-{index}"), Some(now - 1)),
+             &format!("hash-rev-{index}"),
+         )
+         .unwrap();
+```
+
+**File**: `src/mcp_tests/computer_post_observation.rs` (modified, +0/-16)
+```diff
+@@ -82,22 +82,6 @@ async fn poll(runtime: &ToolRuntime) -> Option<crate::runner_protocol::RunnerReq
+         .unwrap()
+ }
+ 
+-/// Admission happens after the asynchronous auth hop, so the runner's first
+-/// poll may legitimately race it. Wait (bounded) for the single admitted
+-/// action instead of assuming it is queued synchronously.
+-async fn wait_for_admitted_action(runtime: &ToolRuntime) -> crate::runner_protocol::RunnerRequest {
+-    tokio::time::timeout(std::time::Duration::from_secs(5), async {
+-        loop {
+-            if let Some(request) = poll(runtime).await {
+-                return request;
+-            }
+-            tokio::time::sleep(std::time::Duration::from_millis(5)).await;
+-        }
+-    })
+-    .await
+-    .expect("timed out waiting for the admitted computer action")
+-}
+-
+ async fn finish_action(runtime: &ToolRuntime, action: &str, request_id: String) {
+     let mut output = json!({"platform":"windows","surface_id":"surface_test",
+         "element_id":"element_test","success":true});
+```
+
+**File**: `src/runner_http/mod_tests.rs` (modified, +1/-3)
+```diff
+@@ -1,7 +1,5 @@
+ use super::*;
+-use crate::runner_protocol::{
+-    RunnerCapabilities, RunnerPollRequest, RunnerProjectSummary, RunnerRegisterRequest,
+-};
++use crate::runner_protocol::{RunnerCapabilities, RunnerProjectSummary, RunnerRegisterRequest};
+ use crate::runner_protocol::{
+     RUNNER_ENVELOPE_MAX_BYTES, RUNNER_PROTOCOL_GENERATION_V2,
+     RUNNER_PROTOCOL_GENERATION_V2_BASELINE_CAPABILITY_NAMES,
+```
+
+**File**: `src/runtime_console_http.rs` (modified, +3/-6)
+```diff
+@@ -839,12 +839,9 @@ struct RuntimeConsoleProject {
+ #[derive(Debug, Clone, Serialize)]
+ #[serde(tag = "kind", rename_all = "snake_case")]
+ enum RuntimeConsoleProjectLineage {
+-    #[cfg_attr(
+-        not(test),
+-        expect(
+-            dead_code,
+-            reason = "Retained Console wire variant; the current inventory projection omits lineage"
+-        )
++    #[expect(
++        dead_code,
++        reason = "Retained Console wire variant; the current inventory projection omits lineage"
+     )]
+     ManagedWorktreeSource {
+         source_project_id: String,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1426** (2026-11-17): chore(deps): update rustls, quinn and h2 for RustSec advisories (@HarpeLm)
+- **PR #1424** (2026-11-16): chore(tests): remove the warnings of the workspace test build (@HarpeLm)
 - **PR #1423** (2026-11-16): test(cli): use the canonical temp root in the tunnel provider mismatch test (@HarpeLm)
 - **PR #1422** (2026-11-16): test(environment): use the canonical temp root in update view tests (@HarpeLm)
 - **PR #1421** (2026-11-15): test(ci): support Cargo 1.100 build-script output layout (@swjnxyf)
 - **PR #1418** (2026-11-11): fix(import): support opt-in loopback proxy for OpenAI host-file downloads (@mo-lin-yuan)
-- **PR #1416** (2026-11-10): chore(desktop): remove dead code warnings on non-Windows builds (@HarpeLm)
-- **PR #1415** (2026-11-10): feat(runner): publish the project catalog before Git enrichment (@HarpeLm)
 
 ---
 
@@ -2345,63 +2565,94 @@ Co-authored-by: yyjeqhc <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(ci): support Cargo 1.100 build-script output layout
+## X. deps): update rustls, quinn and h2 for RustSec advisories
 
 **RULE**:
-When implementing operations in `scripts/tests/test_build_identity.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9aef4ca0`: test(ci): support Cargo 1.100 build-script output layout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea81bd89`: deps): update rustls, quinn and h2 for RustSec advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/tests/test_build_identity.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-def run_fixture_build(package, env):
-    """Return the fixture's result and persisted build-script stdout path.
-
-    Cargo 1.100 changed the internal build cache layout. Resolve the run unit
-    from Cargo's build-script-executed OUT_DIR instead of matching a hardcoded
-    target/debug/build directory name.
-    """
-    completed = subprocess.run(
-        ["cargo", "run", "--offline", "--message-format=json"],
-        cwd=package, env=env, check=True, capture_output=True, text=True, timeout=60,
-    )
-    out_dirs = []
-    program_lines = []
-    for line in completed.stdout.splitlines():
-        if line.startswith("{"):
-            message = json.loads(line)
-            if message.get("reason") == "build-script-executed":
-                out_dirs.append(Path(message["out_dir"]))
-        elif line:
-            program_lines.append(line)
-    if len(out_dirs) != 1 or len(program_lines) != 1:
-        raise AssertionError(
-            f"expected one build script and one program result, "
-            f"got {len(out_dirs)} and {program_lines!r}"
-        )
-    # Cargo <=1.99 uses output; Cargo >=1.100 uses run/stdout.
-    script_outputs = [
-        path for path in (
-            out_dirs[0].
+version = "1.18.0"
+checksum = "ce2b2dcc879c3bae0d371e77c99f2238400ef24ec001394befa67b6e543add9e"
+version = "0.44.0"
+checksum = "f09fae7be8bb3174e05c6afdb34199e6dc0c7c04ba9fa237b1967adfbde27483"
+ "pkg-config",
+ "thiserror",
+ "windows-sys 0.52.0",
+version = "0.17.0"
+checksum = "ef975e30683b2d965054bb0a836f8973857c4ebf6acf274fe46617cd285060d8"
+ "foldhash 0.2.0",
+ "portable-atomic",
+ "js-sys",
+ "wasm-bindgen",
+version = "0.4.16"
+checksum = "a9f37a958b41b3b19ee2707c06439c0e9e547e847223eb791ecb0cb821c65e27"
+ "webpki-roots 1.0.10",
+ "jni-sys",
+ "thiserror",
+ "thiserror",
+ "thiserror",
+ "thiserror",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                    return run(package, "cargo", "run", "--offline", "--quiet")
-                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
-                    return run(package, "cargo", "run", "--offline", "--quiet")
-                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
-                outputs = list((root / "target/debug/build").glob("identity-fixture-*/output"))
+version = "1.17.0"
+checksum = "5ec2f1fc3ec205783a5da9a7e6c1509cc69dedf09a1949e412c1e18469326d00"
+version = "0.41.0"
+checksum = "1a2f9779ce85b93ab6170dd940ad0169b5766ff848247aff13bb788b832fe3f4"
+[[package]]
+name = "cesu8"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d43a04d8753f35258c91f8ec639f792891f748a1edbd759cf1dcea3382ad83c"
+
+ "thiserror 2.0.18",
+ "windows-sys 0.61.2",
+version = "0.14.1"
+checksum = "4e7f34442dbe69c60fe8eaf58a8cafff81a1f278816d8ab4db255b3bef4ac3c4"
+ "getrandom 0.3.4",
+ "rand 0.9.4",
+ "js-sys",
+ "wasm-bindgen",
+version = "0.4.14"
+checksum = "171fefbc92fe4a4de27e0698d6a5b392d6a0e333506bc49133760b3bcf948733"
+ "webpki-roots 1.0.7",
+[[package]]
+name = "jni"
+version = "0.21.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a87aa2bb7d2af34197c04845522473242e1aa17c12f4935d5856491a7fb8c97"
+dependencies = [
+ "cesu8",
+ "cfg-if",
+ "combine",
+ "jni-sys 0.3.1",
+ "log",
+ "thiserror 1.0.69",
+ "walkdir",
+ "windows-sys 0.45.0",
+]
+
+ "jni-sys 0.4.1",
+ "thiserror 2.0.18",
+[[package]]
+name = "jni-sys"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41a652e1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9aef4ca0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea81bd89` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

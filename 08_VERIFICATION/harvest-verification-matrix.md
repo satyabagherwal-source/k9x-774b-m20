@@ -10676,3 +10676,7 @@
 | `CYCLE-20261117-KJI0` | `2026-11-17T19:12:32.184Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9036` | Yes (`3721ca6f...`) |
 | `CYCLE-20261117-TKB6` | `2026-11-17T19:19:33.138Z` | `FastVideo/FastH3-Omni-Comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md` | Yes (`a4b51ce8...`) |
 | `CYCLE-20261117-TXV6` | `2026-11-17T19:19:50.706Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`1b81cfe4...`) |
+| `CYCLE-20261117-3LDN` | `2026-11-17T19:27:21.083Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md` | Yes (`d5f5961c...`) |
+| `CYCLE-20261117-3N2I` | `2026-11-17T19:27:23.274Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9037` | Yes (`262f7018...`) |
+| `CYCLE-20261117-3SRR` | `2026-11-17T19:27:30.663Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9038` | Yes (`462f2d59...`) |
+| `CYCLE-20261117-3WVB` | `2026-11-17T19:27:35.975Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9039` | Yes (`6b9858ea...`) |

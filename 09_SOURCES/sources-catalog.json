@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "08f7bd21",
+    "sourceVersion": "582fb8e9",
     "license": "Apache-2.0",
-    "contentHash": "e0fa56cb4a4c5e24758a5705270b76f38380c4feeeac055e87e4fc81c495267a",
-    "lastHarvestedAt": "2026-11-16T22:03:56.416Z",
+    "contentHash": "462f2d59ef9b46f969f3203798665769e716b72cf38702932cebeac233be57c9",
+    "lastHarvestedAt": "2026-11-17T19:27:30.668Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "bf4d6c80",
+    "sourceVersion": "16af7297",
     "license": "Apache-2.0",
-    "contentHash": "c41e775bb8292d2b59e10dade3be27161ea3f43bae5bc11e131b8a1e6fdd2bea",
-    "lastHarvestedAt": "2026-11-16T20:11:18.143Z",
+    "contentHash": "6b9858ea9bf1ee60afedb4282d47e000172c24fb71a029f9d40890cab529e639",
+    "lastHarvestedAt": "2026-11-17T19:27:35.979Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
@@ -10915,8 +10915,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR-2",
     "sourceVersion": "hf-baidu-unlimited-ocr-2",
     "license": "Open-Source",
-    "contentHash": "a6a6483d2b0aab2db9d1bb68844d21c6a3d5e6b14e8c054ca5f39a2834cecc77",
-    "lastHarvestedAt": "2026-11-13T08:21:38.977Z",
+    "contentHash": "d5f5961c767fa865a66fa13fdbf04dec03dbb4b8e05bf77c5ab2fab31561b7ad",
+    "lastHarvestedAt": "2026-11-17T19:27:21.088Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr-2"
   },
   "joooook-12306-mcp": {
@@ -12303,10 +12303,10 @@
     "repository": "yyjeqhc/webcodex",
     "platform": "github",
     "sourceUrl": "https://github.com/yyjeqhc/webcodex",
-    "sourceVersion": "479efb9a",
+    "sourceVersion": "ea81bd89",
     "license": "Apache-2.0",
-    "contentHash": "d8cd0526021646b1b2612b4682656dbe29c3765cf60d0a714ebca11f1ba98f42",
-    "lastHarvestedAt": "2026-11-16T06:17:32.356Z",
+    "contentHash": "262f70187b726a8dd0e7aa03923f3f4154ecb4bfc5366c3e912bca3e8c921f86",
+    "lastHarvestedAt": "2026-11-17T19:27:23.278Z",
     "learningId": "learn-github-yyjeqhc-webcodex"
   },
   "hf-minimaxai-minimax-h3-image": {

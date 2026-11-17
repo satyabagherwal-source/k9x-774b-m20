@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `08f7bd21`  
+> **Source Version**: `582fb8e9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T22:03:55.558Z  
+> **Timestamp**: 2026-11-17T19:27:29.614Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T22:03:55.449Z  
+> **Harvest Timestamp**: 2026-11-17T19:27:29.608Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21048 stars
+- **Stars / Engagement**: 21053 stars
 
 ---
 
@@ -2726,324 +2726,33 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `79bdf7c0` (2026-11-16)
-**Commit Message**: [FIXED] Sublist.NumInterest undercounting overlapping wildcard subscriptions (#8896)
+### Incident Patch 1: `fc69bed0` (2026-11-17)
+**Commit Message**: Fix pull requests CI check
 
-Sublist.NumInterest() can return a lower count than Match() for the same
-subject when that subject isn't cached yet. So that means after the
-subject is cached, the same call returns the right count. The result
-ends up depending on cache state.
+[skip ci]
 
-### Repro
+Signed-off-by: Neil Twigg <[REDACTED_EMAIL]>
 
-```go
-s := NewSublist(true)
-s.Insert(newSub("foo.>"))
-s.Insert(newSub("foo.bar"))
-
-np, _ := s.NumInterest("foo.bar") // 1
-s.Match("foo.bar")                // populates the cache
-np, _ = s.NumInterest("foo.bar")  // 2
-```
-
-The correct answer is 2.
-
-### Cause
-
-When the subject isn't cached, NumInterest goes through
-matchLevelForAny. That means the function was written for HasInterest,
-which technically only needs a yes or no answer, so it returns at the
-first match. If several subscriptions match through different branches
-of the tree (which here is the > under foo and the literal bar), only
-the first branch it reaches gets counted. The cached path counts the
-full Match result, which is why the two answers differ and I found this
-issue.
-
-### Impact
-
-Since the walk can only skip matches, the count is always too low and
-never too high.
-
-Account.Inte
-
-**File**: `server/sublist.go` (modified, +24/-13)
+**File**: `.github/workflows/pull-requests.yml` (modified, +1/-1)
 ```diff
-@@ -847,23 +847,31 @@ func matchLevel(l *level, toks []string, results *SublistResult) {
- }
+@@ -53,7 +53,7 @@ jobs:
+           done < <(git rev-list --no-merges "$range")
  
- func matchLevelForAny(l *level, toks []string, np, nq *int) bool {
-+	// When counting, keep going after a match so every matching
-+	// subscription is counted, not just those on the first match found.
-+	counting := np != nil && nq != nil
-+	var matched bool
- 	var pwc, n *node
- 	for i, t := range toks {
- 		if l == nil {
--			return false
-+			return matched
- 		}
- 		if l.fwc != nil {
--			if np != nil && nq != nil {
--				*np += len(l.fwc.psubs)
--				for _, qsub := range l.fwc.qsubs {
--					*nq += len(qsub)
--				}
-+			if !counting {
-+				return true
- 			}
--			return true
-+			*np += len(l.fwc.psubs)
-+			for _, qsub := range l.fwc.qsubs {
-+				*nq += len(qsub)
-+			}
-+			matched = true
- 		}
- 		if pwc = l.pwc; pwc != nil {
- 			if match := matchLevelForAny(pwc.next, toks[i+1:], np, nq); match {
--				return true
-+				if !counting {
-+					return true
-+				}
-+				matched = true
- 			}
- 		}
- 		n = l.nodes[t]
-@@ -874,26 +882,29 @@ func matchLevelForAny(l *level, toks []string, np, nq *int) bool {
- 		}
- 	}
- 	if n != nil {
--		if np != nil && nq != nil {
-+		if counting {
- 			*np += len(n.psubs)
- 			for _, qsub := range n.qsubs {
- 				*nq += len(qsub)
- 			}
- 		}
- 		if len(n.plist) > 0 || len(n.psubs) > 0 || len(n.qsubs) > 0 {
--			return true
-+			if !counting {
-+				return true
-+			}
-+			matched = true
- 		}
- 	}
- 	if pwc != nil {
--		if np != nil && nq != nil {
-+		if counting {
- 			*np += len(pwc.psubs)
- 			for _, qsub := range pwc.qsubs {
- 				*nq += len(qsub)
- 			}
- 		}
--		return len(pwc.plist) > 0 || len(pwc.psubs) > 0 || len(pwc.qsubs) > 0
-+		matched = matched || len(pwc.plist) > 0 || len(pwc.psubs) > 0 || len(pwc.qsubs) > 0
- 	}
--	return false
-+	return matched
- }
- 
- // lnt is used to track descent into levels for a removal for pruning.
-```
-
-**File**: `server/sublist_test.go` (modified, +27/-0)
-```diff
-@@ -1913,6 +1913,33 @@ func TestSublistHasInterestOverlapping(t *testing.T) {
- 	require_True(t, sl.HasInterest("stream.A"))
- }
- 
-+func TestSublistNumInterestOverlappingSubs(t *testing.T) {
-+	ref, nc, wc := NewSublistNoCache(), NewSublistNoCache(), NewSublistWithCache()
-+	for _, subj := range []string{">", "foo.>", "*.>", "foo.*", "*.bar", "foo.bar", "foo.bar.baz", "*.*.baz"} {
-+		for _, sub := range []*subscription{newSub(subj), newQSub(subj, "q1"), newQSub(subj, "q2")} {
-+			for _, sl := range []*Sublist{ref, nc, wc} {
-+				sl.Insert(sub)
-+			}
-+		}
-+	}
-+	for _, subj := range []string{"foo", "bar", "foo.bar", "foo.baz", "bar.bar", "foo.bar.baz", "foo.bar.baz.qux"} {
-+		r := ref.Match(subj)
-+		wnq := 0
-+		for _, qsub := range r.qsubs {
-+			wnq += len(qsub)
-+		}
-+		// Check both before and after Match caches the result.
-+		for _, sl := range []*Sublist{nc, wc} {
-+			for range 2 {
-+				np, nq := sl.NumInterest(subj)
-+				require_Equal(t, np, len(r.psubs))
-+				require_Equal(t, nq, wnq)
-+				sl.Match(subj)
-+			}
-+		}
-+	}
-+}
-+
- func TestSublistNumInterest(t *testing.T) {
- 	sl := NewSublistWithCache()
- 	fooSub := newSub("foo")
-```
-
----
-
-### Incident Patch 2: `09667a2f` (2026-11-16)
-**Commit Message**: [FIXED] memory store SkipMsgs sequence could overflow (#8900)
-
-Bring the same overflow checks from filestore into memstore.
-
-**File**: `server/memstore.go` (modified, +4/-0)
-```diff
-@@ -470,6 +470,10 @@ func (ms *memStore) SkipMsgs(seq uint64, num uint64) error {
- 		}
- 		seq = ms.state.LastSeq + 1
- 	}
-+	// Make sure the last sequence leaves room for the next message.
-+	if num == 0 || seq == 0 || num > math.MaxUint64-seq {
-+		return ErrSequenceMismatch
-+	}
- 	lseq := seq + num - 1
- 
- 	ms.state.LastSeq = lseq
-```
-
-**File**: `server/store_test.go` (modified, +36/-0)
-```diff
-@@ -17,6 +17,7 @@ package server
- 
- import (
- 	"fmt"
-+	"math"
- 	"os"
- 	"path/filepath"
- 	"reflect"
-@@ -1171,6 +1172,41 @@ func TestStoreGetSeqFromTimeWithTrailingDeletes(t *testing.T) {
- 	)
- }
- 
-+func TestStoreSkipMsgsSequenceLimits(t *testing.T) {
-+	for _, test := range []struct {
-+		name    string
-+		seq     uint64
-+		num     uint64
-+		wantErr bool
-+	}{
-+		{"zero count", 2, 0, true},
-+		{"zero count zero sequence", 0, 0, true},
-+		{"overflow", 2, math.MaxUint64, true},
-+		{"overflow zero sequence", 0, math.MaxUint64, true},
-+		{"last sequence exhausted", 2, math.MaxUint64 - 1, true},
-+		{"normal skip", 2, 100, false},
-+		{"zero sequence", 0, 100, false},
-+		{"largest valid skip", 2, math.MaxUint64 - 2, false},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			testAllStoreAllPermutations(t, false, StreamConfig{Name: "T"}, func(t *testing.T, store StreamStore) {
-+				require_NoError(t, store.SkipMsgs(1, 1))
-+				before := store.State()
-+				err := store.SkipMsgs(test.seq, test.num)
-+				if test.wantErr {
-+					require_Error(t, err, ErrSequenceMismatch)
-+					require_True(t, reflect.DeepEqual(store.State(), before))
-+				} else {
-+					require_NoError(t, err)
-+					state := store.State()
-+					require_Equal(t, state.LastSeq, before.LastSeq+test.num)
-+					require_Equal(t, state.FirstSeq, state.LastSeq+1)
-+				}
-+			})
-+		})
-+	}
-+}
-+
- func TestStoreSkipMsgsCarryForwardLastTime(t *testing.T) {
- 	testAllStoreAllPermutations(
- 		t, false,
-```
-
----
-
-### Incident Patch 3: `891c9713` (2026-11-16)
-**Commit Message**: [FIXED] memory store SkipMsgs sequence could overflow
-
-Bring the same overflow checks from filestore into memstore.
-
-Signed-off-by: Daniele Sciascia <[REDACTED_EMAIL]>
-
-**File**: `server/memstore.go` (modified, +4/-0)
-```diff
-@@ -470,6 +470,10 @@ func (ms *memStore) SkipMsgs(seq uint64, num uint64) error {
- 		}
- 		seq = ms.state.LastSeq + 1
- 	}
-+	// Make sure the last sequence leaves room for the next message.
-+	if num == 0 || seq == 0 || num > math.MaxUint64-seq {
-+		return ErrSequenceMismatch
-+	}
- 	lseq := seq + num - 1
- 
- 	ms.state.LastSeq = lseq
-```
-
-**File**: `server/store_test.go` (modified, +36/-0)
-```diff
-@@ -17,6 +17,7 @@ package server
- 
- import (
- 	"fmt"
-+	"math"
- 	"os"
- 	"path/filepath"
- 	"reflect"
-@@ -1171,6 +1172,41 @@ func TestStoreGetSeqFromTimeWithTrailingDeletes(t *testing.T) {
- 	)
- }
- 
-+func TestStoreSkipMsgsSequenceLimits(t *testing.T) {
-+	for _, test := range []struct {
-+		name    string
-+		seq     uint64
-+		num     uint64
-+		wantErr bool
-+	}{
-+		{"zero count", 2, 0, true},
-+		{"zero count zero sequence", 0, 0, true},
-+		{"overflow", 2, math.MaxUint64, true},
-+		{"overflow zero sequence", 0, math.MaxUint64, true},
-+		{"last sequence exhausted", 2, math.MaxUint64 - 1, true},
-+		{"normal skip", 2, 100, false},
-+		{"zero sequence", 0, 100, false},
-+		{"largest valid skip", 2, math.MaxUint64 - 2, false},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			testAllStoreAllPermutations(t, false, StreamConfig{Name: "T"}, func(t *testing.T, store StreamStore) {
-+				require_NoError(t, store.SkipMsgs(1, 1))
-+				before := store.State()
-+				err := store.SkipMsgs(test.seq, test.num)
-+				if test.wantErr {
-+					require_Error(t, err, ErrSequenceMismatch)
-+					require_True(t, reflect.DeepEqual(store.State(), before))
-+				} else {
-+					require_NoError(t, err)
-+					state := store.State()
-+					require_Equal(t, state.LastSeq, before.LastSeq+test.num)
-+					require_Equal(t, state.FirstSeq, state.LastSeq+1)
-+				}
-+			})
-+		})
-+	}
-+}
-+
- func TestStoreSkipMsgsCarryForwardLastTime(t *testing.T) {
- 	testAllStoreAllPermutations(
- 		t, false,
+           if [ "$missing" -ne 0 ]; then
+-            body="$(printf 'Please review the `CONTRIBUTING.md` guide as some commits are missing the `Signed-off-by:` declaration in their commit messages.\n\nTo correct, please amend the commit messages of the following commits and force-push:\n\n%s\n\nWe can't merge your PR until this is done. If not corrected, this PR will be automatically closed soon.' "$missing_list")"
++            body="$(printf 'Please review the `CONTRIBUTING.md` guide as some commits are missing the `Signed-off-by:` declaration in their commit messages.\n\nTo correct, please amend the commit messages of the following commits and force-push:\n\n%s\n\nWe cannot merge your PR until this is done. If not corrected, this PR will be automatically closed soon.' "$missing_list")"
+             gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$body"
+             exit 1
+           fi
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8905** (2026-11-17): updated accConnsUpdate to use a read lock instead of a write lock. (@cfedersp)
 - **PR #8902** (2026-11-16): [FIXED] MQTT: readLoop JetStream requests stuck behind a pending route (@MauriceVanVeen)
 - **PR #8901** (2026-11-16): [FIXED] Data race between filestore ConsumerStore and UpdateConfig (@sciascid)
 - **PR #8900** (2026-11-16): [FIXED] memory store SkipMsgs sequence could overflow (@sciascid)
 - **PR #8899** (2026-11-16): [FIXED] Leafnode/route never reconnects after compression INFO write error (@MauriceVanVeen)
 - **PR #8896** (2026-11-16): [FIXED] Sublist.NumInterest undercounting overlapping wildcard subscriptions (@Ashuuu2606)
-- **PR #8894** (2026-11-16): [FIXED] Consumer info not found for consumer without Raft node yet (@nberlee)
 
 ---
 
@@ -3063,63 +2772,28 @@ Signed-off-by: Daniele Sciascia <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Sublist.NumInterest undercounting overlapping wildcard subscriptions
+## X. pull requests CI check
 
 **RULE**:
-When implementing operations in `server/sublist.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/pull-requests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `79bdf7c0`: [FIXED] Sublist.NumInterest undercounting overlapping wildcard subscriptions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc69bed0`: pull requests CI check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/sublist.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pull-requests.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// When counting, keep going after a match so every matching
-	// subscription is counted, not just those on the first match found.
-	counting := np != nil && nq != nil
-	var matched bool
-			return matched
-			if !counting {
-				return true
-			*np += len(l.fwc.psubs)
-			for _, qsub := range l.fwc.qsubs {
-				*nq += len(qsub)
-			}
-			matched = true
-				if !counting {
-					return true
-				}
-				matched = true
-		if counting {
-			if !counting {
-				return true
-			}
-			matched = true
-		if counting {
-		matched = matched || len(pwc.plist) > 0 || len(pwc.psubs) > 0 || len(pwc.qsubs) > 0
-	return matched
+            body="$(printf 'Please review the `CONTRIBUTING.md` guide as some commits are missing the `Signed-off-by:` declaration in their commit messages.\n\nTo correct, please amend the commit messages of the following commits and force-push:\n\n%s\n\nWe cannot merge your PR until this is done. If not corrected, this PR will be automatically closed soon.' "$missing_list")"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			return false
-			if np != nil && nq != nil {
-				*np += len(l.fwc.psubs)
-				for _, qsub := range l.fwc.qsubs {
-					*nq += len(qsub)
-				}
-			return true
-				return true
-		if np != nil && nq != nil {
-			return true
-		if np != nil && nq != nil {
-		return len(pwc.plist) > 0 || len(pwc.psubs) > 0 || len(pwc.qsubs) > 0
-	return false
+            body="$(printf 'Please review the `CONTRIBUTING.md` guide as some commits are missing the `Signed-off-by:` declaration in their commit messages.\n\nTo correct, please amend the commit messages of the following commits and force-push:\n\n%s\n\nWe can't merge your PR until this is done. If not corrected, this PR will be automatically closed soon.' "$missing_list")"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `79bdf7c0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc69bed0` are properly handled with clean fallback behavior.

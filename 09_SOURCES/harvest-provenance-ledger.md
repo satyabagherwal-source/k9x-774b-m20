@@ -10709,3 +10709,7 @@ Every entry in this ledger must capture:
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `698c89f6` | Multi-dimensional audit evidence | 2026-11-17T19:12:32.187Z |
 | `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-11-17T19:19:33.141Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `16ae8c24` | Multi-dimensional audit evidence | 2026-11-17T19:19:50.709Z |
+| `learn-huggingface-baidu-unlimited-ocr-2` | `https://huggingface.co/baidu/Unlimited-OCR-2` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-17T19:27:21.088Z |
+| `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `ea81bd89` | Multi-dimensional audit evidence | 2026-11-17T19:27:23.278Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `582fb8e9` | Multi-dimensional audit evidence | 2026-11-17T19:27:30.668Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `16af7297` | Multi-dimensional audit evidence | 2026-11-17T19:27:35.979Z |

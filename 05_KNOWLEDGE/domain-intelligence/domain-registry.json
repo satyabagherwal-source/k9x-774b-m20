@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T19:19:55.118Z",
-  "total_records": 1663,
+  "last_updated": "2026-11-17T19:27:40.816Z",
+  "total_records": 1665,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 713,
+      "total": 715,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -762,7 +762,9 @@
         "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-core-inv",
         "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb-learn",
         "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-fastvideo-fasth3-omni-comfy-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-fastvideo-fasth3-omni-comfy-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-2-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-2-learnings-core-invarian"
       ]
     },
     "E": {
@@ -12077,8 +12079,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats-server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-technical-construction-intelligence-nats-io-nats-server-core.md",
       "repository": "nats-io/nats-server",
-      "content_hash": "54777d23051715bfb321cf4e18c0443028db26108fdd0901a8507c43452675b7",
-      "created_at": "2026-11-14T02:37:07.212Z"
+      "content_hash": "d489350393dd04c3288541303c8b33b8acd864b17c089f625fe61adf9314a43d",
+      "created_at": "2026-11-17T19:27:31.000Z"
     },
     "DOM-D-3A6226D8": {
       "record_id": "DOM-D-3A6226D8",
@@ -12188,8 +12190,8 @@
       "title": "Technical Construction Intelligence: nats-io-nats-server-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-learnings-technical-construction-intelligence-nats-io-nats-s.md",
       "repository": "nats-io-nats-server-learnings",
-      "content_hash": "0bb05d9fcf9500b41ef054707cec0fd4eac8f859dde45d07ee2ac88ef97094fd",
-      "created_at": "2026-11-14T02:38:24.403Z"
+      "content_hash": "8436d24e75cc5be89de49f4b4e305113d25ae2e0cfceaba90c9c9df2e971e6aa",
+      "created_at": "2026-11-17T19:27:40.816Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria",
@@ -20157,8 +20159,8 @@
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "repository": "lancedb/lancedb",
-      "content_hash": "8608d3b5d6bafef98aa3881196e08669bb6cadeac3e04f9ea1be342702ca62f1",
-      "created_at": "2026-11-16T20:11:18.398Z"
+      "content_hash": "df48bdc2ca6b663b2593502052f4da3367943e126af1f624be6fbbe8a87f5eb7",
+      "created_at": "2026-11-17T19:27:36.295Z"
     },
     "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant",
@@ -23317,8 +23319,8 @@
       "title": "Technical Construction Intelligence: yyjeqhc/webcodex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-technical-construction-intelligence-yyjeqhc-webcodex-core-invar.md",
       "repository": "yyjeqhc/webcodex",
-      "content_hash": "d812e8c8ddac9cbe506a6bec3f98d418688ff9583ed641bc54812fc6f99af466",
-      "created_at": "2026-11-16T06:17:32.650Z"
+      "content_hash": "e994a5820f79f0fc7d811201e9d8662e16735fc254b9cd1f1d2117786edc02d5",
+      "created_at": "2026-11-17T19:27:23.608Z"
     },
     "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants",
@@ -23326,8 +23328,8 @@
       "title": "Technical Construction Intelligence: yyjeqhc-webcodex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-learnings-technical-construction-intelligence-yyjeqhc-webcodex-.md",
       "repository": "yyjeqhc-webcodex-learnings",
-      "content_hash": "8c11ec00f6a1496b96a087675ed164863176e98188af5e60fbebc68fba9adb18",
-      "created_at": "2026-11-16T06:17:48.167Z"
+      "content_hash": "56cb4b36eecc2de0d030a9a63578d237263cc97c8fc6244900bba80cf6fee975",
+      "created_at": "2026-11-17T19:27:39.620Z"
     },
     "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant",
@@ -28225,6 +28227,24 @@
       "repository": "hf-fastvideo-fasth3-omni-comfy-learnings",
       "content_hash": "b68ca945b1a012ba377365a2302d21ed935a9fbf75b56aeffb36cbe70f942db9",
       "created_at": "2026-11-17T19:19:54.002Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-2-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-2-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: baidu/Unlimited-OCR-2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-2-research-knowledge-intelligence-baidu-unlimited-ocr-2-c.md",
+      "repository": "baidu/Unlimited-OCR-2",
+      "content_hash": "f2e0831cde0638e31c05cee0e7a71f2660631eda3bbb4078b8d9ce8a7e5672fa",
+      "created_at": "2026-11-17T19:27:21.266Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-2-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-2-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-baidu-unlimited-ocr-2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-2-learnings-research-knowledge-intelligence-hf-baidu-unli.md",
+      "repository": "hf-baidu-unlimited-ocr-2-learnings",
+      "content_hash": "daaa5f5f8ec2e8d84eaa2897d6eb65829ece4b943c9a404caa6088dec90a3cfc",
+      "created_at": "2026-11-17T19:27:40.107Z"
     }
   }
 }
